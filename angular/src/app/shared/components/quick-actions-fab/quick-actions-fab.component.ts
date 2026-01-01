@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { NavigationEnd, Router } from "@angular/router";
@@ -39,10 +39,14 @@ interface QuickActionItem {
         <!-- Action Items -->
         @if (isExpanded()) {
           <div class="action-items">
-            @for (action of quickActions(); track action.label; let i = $index) {
-              <button 
+            @for (
+              action of quickActions();
+              track action.label;
+              let i = $index
+            ) {
+              <button
                 class="action-item"
-                [style.animation-delay]="(i * 0.04) + 's'"
+                [style.animation-delay]="i * 0.04 + 's'"
                 (click)="executeAction(action)"
               >
                 <span class="action-label">{{ action.label }}</span>
@@ -55,14 +59,14 @@ interface QuickActionItem {
         }
 
         <!-- Main FAB Button -->
-        <button 
-          class="main-fab" 
+        <button
+          class="main-fab"
           [class.active]="isExpanded()"
           (click)="toggleMenu()"
         >
           <div class="fab-icon">
-            <img 
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvE6wGt8diMxqRhHi__HyjI-mheOoOW8m8fg&s" 
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvE6wGt8diMxqRhHi__HyjI-mheOoOW8m8fg&s"
               alt="Merlin"
               class="merlin-img"
             />
@@ -91,8 +95,12 @@ interface QuickActionItem {
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       /* Container */
@@ -146,7 +154,13 @@ interface QuickActionItem {
         padding: 12px 20px;
         background: var(--surface-primary, #ffffff);
         border-radius: 25px;
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family:
+          "Poppins",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
         font-size: 0.9375rem;
         font-weight: 600;
         color: var(--color-text-primary, #1a1a1a);
@@ -198,7 +212,7 @@ interface QuickActionItem {
         padding: 0;
         cursor: pointer;
         background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
-        box-shadow: 
+        box-shadow:
           0 6px 24px rgba(8, 153, 73, 0.4),
           0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -208,7 +222,7 @@ interface QuickActionItem {
 
       .main-fab:hover {
         transform: scale(1.08);
-        box-shadow: 
+        box-shadow:
           0 8px 32px rgba(8, 153, 73, 0.5),
           0 4px 12px rgba(0, 0, 0, 0.15);
       }
@@ -287,12 +301,22 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
   currentRoute = signal("");
 
   // Routes where FAB should be hidden
-  private hiddenRoutes = ["/login", "/register", "/reset-password", "/update-password", "/", "/onboarding"];
+  private hiddenRoutes = [
+    "/login",
+    "/register",
+    "/reset-password",
+    "/update-password",
+    "/",
+    "/onboarding",
+  ];
 
   showFAB = computed(() => {
     const route = this.currentRoute();
     const isAuthenticated = this.authService.isAuthenticated();
-    return isAuthenticated && !this.hiddenRoutes.some(r => route === r || route.startsWith("/auth"));
+    return (
+      isAuthenticated &&
+      !this.hiddenRoutes.some((r) => route === r || route.startsWith("/auth"))
+    );
   });
 
   // Quick actions - always show these core actions
@@ -328,9 +352,9 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
-    
+
     this.routerSub = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
         this.isExpanded.set(false);

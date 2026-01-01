@@ -14,12 +14,12 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-page-error-state',
+  selector: "app-page-error-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonModule],
@@ -86,9 +86,10 @@ import { ButtonModule } from 'primeng/button';
   ],
 })
 export class PageErrorStateComponent {
-  @Input() title = 'Unable to load data';
-  @Input() message = 'Something went wrong while loading this page. Please try again.';
-  @Input() icon = 'pi-exclamation-circle';
+  @Input() title = "Unable to load data";
+  @Input() message =
+    "Something went wrong while loading this page. Please try again.";
+  @Input() icon = "pi-exclamation-circle";
   @Input() showRetry = true;
   @Input() helpText?: string;
 
@@ -98,4 +99,3 @@ export class PageErrorStateComponent {
     this.retry.emit();
   }
 }
-

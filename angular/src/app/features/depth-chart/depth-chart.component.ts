@@ -10,7 +10,11 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CdkDragDrop, DragDropModule, moveItemInArray } from "@angular/cdk/drag-drop";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
@@ -88,7 +92,10 @@ interface PositionGroup {
               <div class="empty-state">
                 <i class="pi pi-sitemap"></i>
                 <h3>No Depth Charts</h3>
-                <p>Initialize depth charts to start managing your roster positions.</p>
+                <p>
+                  Initialize depth charts to start managing your roster
+                  positions.
+                </p>
                 @if (isCoach()) {
                   <p-button
                     label="Initialize Depth Charts"
@@ -99,10 +106,15 @@ interface PositionGroup {
               </div>
             </p-card>
           } @else {
-            <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange($event)">
+            <p-tabs
+              [(value)]="activeTabIndex"
+              (valueChange)="onTabChange($event)"
+            >
               <p-tablist>
                 @for (chart of depthCharts(); track chart.id; let i = $index) {
-                  <p-tab [value]="i">{{ getChartTypeLabel(chart.chart_type) }}</p-tab>
+                  <p-tab [value]="i">{{
+                    getChartTypeLabel(chart.chart_type)
+                  }}</p-tab>
                 }
               </p-tablist>
               <p-tabpanels>
@@ -111,11 +123,18 @@ interface PositionGroup {
                     <div class="chart-container">
                       @if (activeChart()) {
                         <div class="positions-grid">
-                          @for (group of positionGroups(); track group.position) {
+                          @for (
+                            group of positionGroups();
+                            track group.position
+                          ) {
                             <div class="position-card">
                               <div class="position-header">
-                                <span class="position-abbr">{{ group.abbreviation }}</span>
-                                <span class="position-name">{{ group.position }}</span>
+                                <span class="position-abbr">{{
+                                  group.abbreviation
+                                }}</span>
+                                <span class="position-name">{{
+                                  group.position
+                                }}</span>
                               </div>
                               <div
                                 class="players-list"
@@ -123,7 +142,11 @@ interface PositionGroup {
                                 [cdkDropListData]="group.players"
                                 (cdkDropListDropped)="onDrop($event, group)"
                               >
-                                @for (entry of group.players; track entry.id; let j = $index) {
+                                @for (
+                                  entry of group.players;
+                                  track entry.id;
+                                  let j = $index
+                                ) {
                                   <div
                                     class="player-slot"
                                     [class.empty]="!entry.player_id"
@@ -131,17 +154,25 @@ interface PositionGroup {
                                     cdkDrag
                                     [cdkDragDisabled]="!isCoach()"
                                   >
-                                    <div class="depth-indicator">{{ j + 1 }}</div>
+                                    <div class="depth-indicator">
+                                      {{ j + 1 }}
+                                    </div>
                                     @if (entry.player_id) {
                                       <p-avatar
-                                        [label]="getInitials(entry.player_name || 'U')"
+                                        [label]="
+                                          getInitials(entry.player_name || 'U')
+                                        "
                                         shape="circle"
                                         size="normal"
                                       ></p-avatar>
                                       <div class="player-info">
-                                        <span class="player-name">{{ entry.player_name }}</span>
+                                        <span class="player-name">{{
+                                          entry.player_name
+                                        }}</span>
                                         @if (entry.player_number) {
-                                          <span class="player-number">#{{ entry.player_number }}</span>
+                                          <span class="player-number"
+                                            >#{{ entry.player_number }}</span
+                                          >
                                         }
                                       </div>
                                       @if (isCoach()) {
@@ -156,7 +187,10 @@ interface PositionGroup {
                                         ></p-button>
                                       }
                                     } @else {
-                                      <div class="empty-slot" (click)="openAssignDialog(entry)">
+                                      <div
+                                        class="empty-slot"
+                                        (click)="openAssignDialog(entry)"
+                                      >
                                         <i class="pi pi-user-plus"></i>
                                         <span>Assign Player</span>
                                       </div>
@@ -193,7 +227,10 @@ interface PositionGroup {
                 <ng-template pTemplate="header">
                   <div class="card-header">
                     <h3>Unassigned Players</h3>
-                    <p-tag [value]="unassignedPlayers().length + ' players'" severity="warn"></p-tag>
+                    <p-tag
+                      [value]="unassignedPlayers().length + ' players'"
+                      severity="warn"
+                    ></p-tag>
                   </div>
                 </ng-template>
                 <div class="unassigned-list">
@@ -221,8 +258,9 @@ interface PositionGroup {
         >
           <div class="assign-dialog">
             <p class="assign-info">
-              Assign a player to <strong>{{ selectedEntry()?.position_name }}</strong>
-              (Depth {{ (selectedEntry()?.depth_order || 0) }})
+              Assign a player to
+              <strong>{{ selectedEntry()?.position_name }}</strong> (Depth
+              {{ selectedEntry()?.depth_order || 0 }})
             </p>
             <p-select
               [options]="availablePlayersForAssign()"
@@ -525,7 +563,7 @@ export class DepthChartComponent implements OnInit {
 
     // Get all assigned player IDs in this chart
     const assignedIds = new Set(
-      chart.entries.filter((e) => e.player_id).map((e) => e.player_id)
+      chart.entries.filter((e) => e.player_id).map((e) => e.player_id),
     );
 
     // Return unassigned players
@@ -538,7 +576,10 @@ export class DepthChartComponent implements OnInit {
 
   isCoach(): boolean {
     const user = this.authService.getUser();
-    return user?.user_metadata?.role === "coach" || user?.user_metadata?.role === "admin";
+    return (
+      user?.user_metadata?.role === "coach" ||
+      user?.user_metadata?.role === "admin"
+    );
   }
 
   loadDepthCharts(): void {
@@ -570,7 +611,8 @@ export class DepthChartComponent implements OnInit {
             this.loadUnassignedPlayers(chart.id);
           }
         },
-        error: () => this.toastService.error("Failed to load depth chart details"),
+        error: () =>
+          this.toastService.error("Failed to load depth chart details"),
       });
   }
 
@@ -589,7 +631,7 @@ export class DepthChartComponent implements OnInit {
 
   onTabChange(index: string | number | undefined): void {
     if (index === undefined) return;
-    const numIndex = typeof index === 'string' ? parseInt(index, 10) : index;
+    const numIndex = typeof index === "string" ? parseInt(index, 10) : index;
     const charts = this.depthCharts();
     if (charts[numIndex]) {
       this.loadChartDetails(charts[numIndex].id);
@@ -629,7 +671,8 @@ export class DepthChartComponent implements OnInit {
           }
           this.toastService.success("Depth charts initialized successfully");
         },
-        error: () => this.toastService.error("Failed to initialize depth charts"),
+        error: () =>
+          this.toastService.error("Failed to initialize depth charts"),
       });
   }
 

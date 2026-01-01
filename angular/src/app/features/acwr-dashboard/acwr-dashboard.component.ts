@@ -11,7 +11,14 @@
  * @version 1.0.0
  */
 
-import { Component, computed, signal, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  computed,
+  signal,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { AcwrService } from "../../core/services/acwr.service";
@@ -34,7 +41,12 @@ import { PageLoadingStateComponent } from "../../shared/components/page-loading-
   selector: "app-acwr-dashboard",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, PageErrorStateComponent, PageLoadingStateComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
+  ],
   template: `
     <!-- Loading State -->
     @if (isPageLoading()) {
@@ -55,251 +67,284 @@ import { PageLoadingStateComponent } from "../../shared/components/page-loading-
 
     <!-- Content -->
     @else {
-    <div class="acwr-dashboard">
-      <!-- Header -->
-      <div class="dashboard-header">
-        <h1>
-          <i class="icon-activity"></i>
-          Load Monitoring & Injury Prevention
-        </h1>
-        <p class="subtitle">Acute:Chronic Workload Ratio (ACWR) Analysis</p>
-      </div>
-
-      <!-- Alert Banner -->
-      @if (alerts().length > 0 && topAlert()) {
-        <div class="alert-banner" [class]="'alert-' + topAlert()!.severity">
-          <div class="alert-icon">
-            @if (topAlert()!.severity === "critical") {
-              🚨
-            } @else if (topAlert()!.severity === "warning") {
-              ⚠️
-            } @else {
-              ℹ️
-            }
-          </div>
-          <div class="alert-content">
-            <h3>{{ topAlert()!.message }}</h3>
-            <p>{{ topAlert()!.recommendation }}</p>
-          </div>
-          <button class="alert-dismiss" (click)="dismissTopAlert()">✕</button>
+      <div class="acwr-dashboard">
+        <!-- Header -->
+        <div class="dashboard-header">
+          <h1>
+            <i class="icon-activity"></i>
+            Load Monitoring & Injury Prevention
+          </h1>
+          <p class="subtitle">Acute:Chronic Workload Ratio (ACWR) Analysis</p>
         </div>
-      }
 
-      <!-- Main ACWR Display -->
-      <div class="acwr-main-card">
-        @if (hasInsufficientData()) {
-          <!-- Empty State for New Athletes - Using Centralized UX Copy -->
-          <div class="acwr-empty-state">
-            <div class="empty-icon"><i [class]="'pi ' + insufficientDataMessage.icon"></i></div>
-            <h3>{{ insufficientDataMessage.title }}</h3>
-            <p>{{ insufficientDataMessage.reason }}</p>
-            
-            <div class="data-progress">
-              <div class="progress-item">
-                <span class="progress-label">Days with data</span>
-                <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="(dataQuality().daysWithData || 0) / 21 * 100"></div>
-                </div>
-                <span class="progress-value">{{ dataQuality().daysWithData || 0 }} / 21</span>
-              </div>
-              <div class="progress-item">
-                <span class="progress-label">Sessions logged</span>
-                <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="(dataQuality().sessionsInChronicWindow || 0) / 10 * 100"></div>
-                </div>
-                <span class="progress-value">{{ dataQuality().sessionsInChronicWindow || 0 }} / 10</span>
-              </div>
+        <!-- Alert Banner -->
+        @if (alerts().length > 0 && topAlert()) {
+          <div class="alert-banner" [class]="'alert-' + topAlert()!.severity">
+            <div class="alert-icon">
+              @if (topAlert()!.severity === "critical") {
+                🚨
+              } @else if (topAlert()!.severity === "warning") {
+                ⚠️
+              } @else {
+                ℹ️
+              }
             </div>
-            
-            <p class="empty-tip">💡 <strong>Olympic Tip:</strong> Consistent training logging helps prevent overtraining injuries during your LA28 preparation.</p>
-            
-            <a [routerLink]="insufficientDataMessage.helpLink" class="action-btn primary">
-              <i class="icon-plus"></i>
-              {{ insufficientDataMessage.actionLabel }}
-            </a>
-          </div>
-        } @else {
-          <!-- Full ACWR Display -->
-          <div class="acwr-ratio-display">
-            <div class="ratio-circle" [style.border-color]="riskZone().color">
-              <div class="ratio-value">{{ acwrRatio() | number: "1.2-2" }}</div>
-              <div class="ratio-label">ACWR</div>
+            <div class="alert-content">
+              <h3>{{ topAlert()!.message }}</h3>
+              <p>{{ topAlert()!.recommendation }}</p>
             </div>
-
-            <div
-              class="risk-zone-indicator"
-              [style.background-color]="riskZone().color"
-            >
-              <div class="risk-icon">
-                @if (riskZone().level === "sweet-spot") {
-                  ✓
-                } @else if (riskZone().level === "danger-zone") {
-                  ⚠
-                } @else {
-                  ●
-                }
-              </div>
-              <div class="risk-label">{{ riskZone().label }}</div>
-              <div class="risk-description">{{ riskZone().description }}</div>
-            </div>
-          </div>
-
-          <!-- Load Breakdown -->
-          <div class="load-breakdown">
-            <div class="load-metric">
-              <div class="metric-label">Acute Load (7-day)</div>
-              <div class="metric-value">
-                {{ acuteLoad() | number: "1.0-0" }} AU
-              </div>
-              <div class="metric-description">Current fatigue level</div>
-            </div>
-
-            <div class="load-divider">÷</div>
-
-            <div class="load-metric">
-              <div class="metric-label">Chronic Load (28-day)</div>
-              <div class="metric-value">
-                {{ chronicLoad() | number: "1.0-0" }} AU
-              </div>
-              <div class="metric-description">Training fitness base</div>
-            </div>
+            <button class="alert-dismiss" (click)="dismissTopAlert()">✕</button>
           </div>
         }
-      </div>
 
-      <!-- Risk Zones Guide -->
-      <div class="risk-zones-guide">
-        <h3>Understanding Risk Zones</h3>
-        <div class="zones-grid">
-          <div class="zone-card zone-under">
-            <div class="zone-header">
-              <span class="zone-dot" style="background: orange"></span>
-              <span class="zone-range">&lt; 0.80</span>
-            </div>
-            <div class="zone-label">Under-Training</div>
-            <p>Player lacks conditioning. Gradually increase load by 5-10%.</p>
-          </div>
-
-          <div class="zone-card zone-sweet">
-            <div class="zone-header">
-              <span class="zone-dot" style="background: green"></span>
-              <span class="zone-range">0.80 - 1.30</span>
-            </div>
-            <div class="zone-label">Sweet Spot</div>
-            <p>Optimal workload. Lowest injury risk. Maintain current load.</p>
-          </div>
-
-          <div class="zone-card zone-elevated">
-            <div class="zone-header">
-              <span class="zone-dot" style="background: yellow"></span>
-              <span class="zone-range">1.30 - 1.50</span>
-            </div>
-            <div class="zone-label">Elevated Risk</div>
-            <p>Caution needed. Reduce high-intensity work, monitor closely.</p>
-          </div>
-
-          <div class="zone-card zone-danger">
-            <div class="zone-header">
-              <span class="zone-dot" style="background: red"></span>
-              <span class="zone-range">&gt; 1.50</span>
-            </div>
-            <div class="zone-label">Danger Zone</div>
-            <p>Highest injury risk. Reduce load 20-30%, skip sprints.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Weekly Progression Check -->
-      <div class="weekly-progression">
-        <h3>Weekly Load Progression</h3>
-        <div
-          class="progression-card"
-          [class.unsafe]="!weeklyProgression().isSafe"
-        >
-          <div class="progression-stats">
-            <div class="stat">
-              <div class="stat-label">Current Week</div>
-              <div class="stat-value">
-                {{ weeklyProgression().currentWeek | number: "1.0-0" }} AU
+        <!-- Main ACWR Display -->
+        <div class="acwr-main-card">
+          @if (hasInsufficientData()) {
+            <!-- Empty State for New Athletes - Using Centralized UX Copy -->
+            <div class="acwr-empty-state">
+              <div class="empty-icon">
+                <i [class]="'pi ' + insufficientDataMessage.icon"></i>
               </div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Previous Week</div>
-              <div class="stat-value">
-                {{ weeklyProgression().previousWeek | number: "1.0-0" }} AU
+              <h3>{{ insufficientDataMessage.title }}</h3>
+              <p>{{ insufficientDataMessage.reason }}</p>
+
+              <div class="data-progress">
+                <div class="progress-item">
+                  <span class="progress-label">Days with data</span>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      [style.width.%]="
+                        ((dataQuality().daysWithData || 0) / 21) * 100
+                      "
+                    ></div>
+                  </div>
+                  <span class="progress-value"
+                    >{{ dataQuality().daysWithData || 0 }} / 21</span
+                  >
+                </div>
+                <div class="progress-item">
+                  <span class="progress-label">Sessions logged</span>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      [style.width.%]="
+                        ((dataQuality().sessionsInChronicWindow || 0) / 10) *
+                        100
+                      "
+                    ></div>
+                  </div>
+                  <span class="progress-value"
+                    >{{ dataQuality().sessionsInChronicWindow || 0 }} / 10</span
+                  >
+                </div>
               </div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Change</div>
-              <div
-                class="stat-value"
-                [class.positive]="weeklyProgression().changePercent > 0"
+
+              <p class="empty-tip">
+                💡 <strong>Olympic Tip:</strong> Consistent training logging
+                helps prevent overtraining injuries during your LA28
+                preparation.
+              </p>
+
+              <a
+                [routerLink]="insufficientDataMessage.helpLink"
+                class="action-btn primary"
               >
-                {{ weeklyProgression().changePercent > 0 ? "+" : ""
-                }}{{ weeklyProgression().changePercent | number: "1.1-1" }}%
-              </div>
-            </div>
-          </div>
-
-          @if (weeklyProgression().warning) {
-            <div class="progression-warning">
-              <i class="icon-alert"></i>
-              {{ weeklyProgression().warning }}
+                <i class="icon-plus"></i>
+                {{ insufficientDataMessage.actionLabel }}
+              </a>
             </div>
           } @else {
-            <div class="progression-safe">
-              <i class="icon-check"></i>
-              Weekly progression is within safe limits (&lt;10%)
+            <!-- Full ACWR Display -->
+            <div class="acwr-ratio-display">
+              <div class="ratio-circle" [style.border-color]="riskZone().color">
+                <div class="ratio-value">
+                  {{ acwrRatio() | number: "1.2-2" }}
+                </div>
+                <div class="ratio-label">ACWR</div>
+              </div>
+
+              <div
+                class="risk-zone-indicator"
+                [style.background-color]="riskZone().color"
+              >
+                <div class="risk-icon">
+                  @if (riskZone().level === "sweet-spot") {
+                    ✓
+                  } @else if (riskZone().level === "danger-zone") {
+                    ⚠
+                  } @else {
+                    ●
+                  }
+                </div>
+                <div class="risk-label">{{ riskZone().label }}</div>
+                <div class="risk-description">{{ riskZone().description }}</div>
+              </div>
+            </div>
+
+            <!-- Load Breakdown -->
+            <div class="load-breakdown">
+              <div class="load-metric">
+                <div class="metric-label">Acute Load (7-day)</div>
+                <div class="metric-value">
+                  {{ acuteLoad() | number: "1.0-0" }} AU
+                </div>
+                <div class="metric-description">Current fatigue level</div>
+              </div>
+
+              <div class="load-divider">÷</div>
+
+              <div class="load-metric">
+                <div class="metric-label">Chronic Load (28-day)</div>
+                <div class="metric-value">
+                  {{ chronicLoad() | number: "1.0-0" }} AU
+                </div>
+                <div class="metric-description">Training fitness base</div>
+              </div>
             </div>
           }
         </div>
-      </div>
 
-      <!-- Training Recommendations -->
-      <div class="recommendations-section">
-        <h3>Training Recommendations</h3>
-        <div class="recommendation-card" [class]="'rec-' + riskZone().level">
-          <div class="rec-icon">💡</div>
-          <div class="rec-content">
-            <h4>{{ riskZone().label }} Guidance</h4>
-            <p>{{ riskZone().recommendation }}</p>
+        <!-- Risk Zones Guide -->
+        <div class="risk-zones-guide">
+          <h3>Understanding Risk Zones</h3>
+          <div class="zones-grid">
+            <div class="zone-card zone-under">
+              <div class="zone-header">
+                <span class="zone-dot" style="background: orange"></span>
+                <span class="zone-range">&lt; 0.80</span>
+              </div>
+              <div class="zone-label">Under-Training</div>
+              <p>
+                Player lacks conditioning. Gradually increase load by 5-10%.
+              </p>
+            </div>
 
-            @if (trainingMods().shouldModify) {
-              <div class="modifications">
-                <strong>Recommended Modifications:</strong>
-                <ul>
-                  @for (mod of trainingMods().modifications; track mod) {
-                    <li>{{ mod }}</li>
-                  }
-                </ul>
+            <div class="zone-card zone-sweet">
+              <div class="zone-header">
+                <span class="zone-dot" style="background: green"></span>
+                <span class="zone-range">0.80 - 1.30</span>
+              </div>
+              <div class="zone-label">Sweet Spot</div>
+              <p>
+                Optimal workload. Lowest injury risk. Maintain current load.
+              </p>
+            </div>
+
+            <div class="zone-card zone-elevated">
+              <div class="zone-header">
+                <span class="zone-dot" style="background: yellow"></span>
+                <span class="zone-range">1.30 - 1.50</span>
+              </div>
+              <div class="zone-label">Elevated Risk</div>
+              <p>
+                Caution needed. Reduce high-intensity work, monitor closely.
+              </p>
+            </div>
+
+            <div class="zone-card zone-danger">
+              <div class="zone-header">
+                <span class="zone-dot" style="background: red"></span>
+                <span class="zone-range">&gt; 1.50</span>
+              </div>
+              <div class="zone-label">Danger Zone</div>
+              <p>Highest injury risk. Reduce load 20-30%, skip sprints.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Progression Check -->
+        <div class="weekly-progression">
+          <h3>Weekly Load Progression</h3>
+          <div
+            class="progression-card"
+            [class.unsafe]="!weeklyProgression().isSafe"
+          >
+            <div class="progression-stats">
+              <div class="stat">
+                <div class="stat-label">Current Week</div>
+                <div class="stat-value">
+                  {{ weeklyProgression().currentWeek | number: "1.0-0" }} AU
+                </div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Previous Week</div>
+                <div class="stat-value">
+                  {{ weeklyProgression().previousWeek | number: "1.0-0" }} AU
+                </div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Change</div>
+                <div
+                  class="stat-value"
+                  [class.positive]="weeklyProgression().changePercent > 0"
+                >
+                  {{ weeklyProgression().changePercent > 0 ? "+" : ""
+                  }}{{ weeklyProgression().changePercent | number: "1.1-1" }}%
+                </div>
+              </div>
+            </div>
+
+            @if (weeklyProgression().warning) {
+              <div class="progression-warning">
+                <i class="icon-alert"></i>
+                {{ weeklyProgression().warning }}
+              </div>
+            } @else {
+              <div class="progression-safe">
+                <i class="icon-check"></i>
+                Weekly progression is within safe limits (&lt;10%)
               </div>
             }
           </div>
         </div>
-      </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <button class="action-btn primary" (click)="logSession()">
-          <i class="icon-plus"></i>
-          Log Training Session
-        </button>
-        <button class="action-btn" (click)="viewHistory()">
-          <i class="icon-chart"></i>
-          View Load History
-        </button>
-        <button class="action-btn" (click)="downloadReport()">
-          <i class="icon-download"></i>
-          Export Report
-        </button>
-      </div>
+        <!-- Training Recommendations -->
+        <div class="recommendations-section">
+          <h3>Training Recommendations</h3>
+          <div class="recommendation-card" [class]="'rec-' + riskZone().level">
+            <div class="rec-icon">💡</div>
+            <div class="rec-content">
+              <h4>{{ riskZone().label }} Guidance</h4>
+              <p>{{ riskZone().recommendation }}</p>
 
-      <!-- Last Updated -->
-      <div class="dashboard-footer">
-        <small> Last updated: {{ lastUpdated() | date: "short" }} </small>
+              @if (trainingMods().shouldModify) {
+                <div class="modifications">
+                  <strong>Recommended Modifications:</strong>
+                  <ul>
+                    @for (mod of trainingMods().modifications; track mod) {
+                      <li>{{ mod }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="action-btn primary" (click)="logSession()">
+            <i class="icon-plus"></i>
+            Log Training Session
+          </button>
+          <button class="action-btn" (click)="viewHistory()">
+            <i class="icon-chart"></i>
+            View Load History
+          </button>
+          <button class="action-btn" (click)="downloadReport()">
+            <i class="icon-download"></i>
+            Export Report
+          </button>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="dashboard-footer">
+          <small> Last updated: {{ lastUpdated() | date: "short" }} </small>
+        </div>
       </div>
-    </div>
-    } <!-- End of @else for content -->
+    }
+    <!-- End of @else for content -->
   `,
   styles: [
     `
@@ -670,7 +715,9 @@ export class AcwrDashboardComponent implements OnInit {
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(false);
   hasPageError = signal<boolean>(false);
-  pageErrorMessage = signal<string>('Something went wrong while loading ACWR data. Please try again.');
+  pageErrorMessage = signal<string>(
+    "Something went wrong while loading ACWR data. Please try again.",
+  );
 
   // Reactive signals from services
   public readonly acwrRatio = this.acwrService.acwrRatio;
@@ -694,10 +741,12 @@ export class AcwrDashboardComponent implements OnInit {
   );
 
   // Data quality signal from service
-  public readonly dataQuality = computed(() => this.acwrService.acwrData().dataQuality);
+  public readonly dataQuality = computed(
+    () => this.acwrService.acwrData().dataQuality,
+  );
   public readonly hasInsufficientData = computed(() => {
     const quality = this.dataQuality();
-    return quality?.level === 'insufficient' || quality?.level === 'low';
+    return quality?.level === "insufficient" || quality?.level === "low";
   });
 
   // Centralized UX copy for insufficient data state
@@ -714,14 +763,18 @@ export class AcwrDashboardComponent implements OnInit {
     try {
       // Request notification permission for alerts
       this.alertsService.requestNotificationPermission();
-      
-      // Real training data is loaded automatically by AcwrService 
+
+      // Real training data is loaded automatically by AcwrService
       // when user authenticates (via effect in constructor)
-      this.logger.info('[ACWR Dashboard] Initialized - waiting for real training data');
+      this.logger.info(
+        "[ACWR Dashboard] Initialized - waiting for real training data",
+      );
     } catch (error) {
-      this.logger.error('[ACWR Dashboard] Init error:', error);
+      this.logger.error("[ACWR Dashboard] Init error:", error);
       this.hasPageError.set(true);
-      this.pageErrorMessage.set('Failed to initialize ACWR dashboard. Please try again.');
+      this.pageErrorMessage.set(
+        "Failed to initialize ACWR dashboard. Please try again.",
+      );
     }
   }
 
@@ -785,7 +838,9 @@ export class AcwrDashboardComponent implements OnInit {
           severity: a.severity,
           recommendation: a.recommendation,
         })),
-        recommendations: this.getRecommendationsForRiskZone(acwrData.riskZone.label),
+        recommendations: this.getRecommendationsForRiskZone(
+          acwrData.riskZone.label,
+        ),
       };
 
       // Save report to Supabase
@@ -800,11 +855,15 @@ export class AcwrDashboardComponent implements OnInit {
 
       if (error) {
         // If table doesn't exist, just download locally
-        this.logger.debug("ACWR reports table not available, generating local report");
+        this.logger.debug(
+          "ACWR reports table not available, generating local report",
+        );
       }
 
       // Generate and download JSON report
-      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+        type: "application/json",
+      });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

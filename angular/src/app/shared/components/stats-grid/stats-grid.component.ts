@@ -167,6 +167,9 @@ export class StatsGridComponent {
     }
 
     // Apply formatting based on formatType
-    return formatStat(stat.value, stat.formatType as 'number' | 'percent' | 'average');
+    return formatStat(
+      stat.value,
+      stat.formatType as "number" | "percent" | "average",
+    );
   }
 }

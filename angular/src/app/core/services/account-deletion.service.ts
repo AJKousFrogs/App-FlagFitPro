@@ -1,30 +1,30 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { SupabaseService } from './supabase.service';
-import { AuthService } from './auth.service';
-import { LoggerService } from './logger.service';
-import { ToastService } from './toast.service';
-import { Router } from '@angular/router';
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { SupabaseService } from "./supabase.service";
+import { AuthService } from "./auth.service";
+import { LoggerService } from "./logger.service";
+import { ToastService } from "./toast.service";
+import { Router } from "@angular/router";
 
 /**
  * Account Deletion Service
- * 
+ *
  * Implements GDPR Article 17 - Right to Erasure ("Right to be Forgotten")
- * 
+ *
  * Deletion Pipeline:
  * 1. User requests deletion → Immediate soft-delete
  * 2. Sessions revoked → User logged out
  * 3. 30-day grace period → User can cancel
  * 4. Hard delete → All PII permanently removed
  * 5. Emergency medical records retained for 7 years (legal requirement)
- * 
+ *
  * Privacy Policy Reference: Sections 6, 7.3
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
 export interface DeletionStatus {
   requestId: string;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'failed';
+  status: "pending" | "processing" | "completed" | "cancelled" | "failed";
   requestedAt: string;
   scheduledHardDeleteAt: string;
   daysUntilDeletion: number;
@@ -37,7 +37,7 @@ export interface DeletionRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AccountDeletionService {
   private supabase = inject(SupabaseService);
@@ -59,7 +59,7 @@ export class AccountDeletionService {
   // Computed signals
   readonly hasPendingDeletion = computed(() => {
     const status = this._deletionStatus();
-    return status?.status === 'pending' || status?.status === 'processing';
+    return status?.status === "pending" || status?.status === "processing";
   });
 
   readonly daysRemaining = computed(() => {
@@ -84,8 +84,10 @@ export class AccountDeletionService {
     this._error.set(null);
 
     try {
-      const { data, error } = await this.supabase.client
-        .rpc('get_deletion_status', { p_user_id: userId });
+      const { data, error } = await this.supabase.client.rpc(
+        "get_deletion_status",
+        { p_user_id: userId },
+      );
 
       if (error) {
         throw error;
@@ -107,9 +109,10 @@ export class AccountDeletionService {
       this._deletionStatus.set(null);
       return null;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to check deletion status';
+      const message =
+        err instanceof Error ? err.message : "Failed to check deletion status";
       this._error.set(message);
-      this.logger.error('Error checking deletion status:', err);
+      this.logger.error("Error checking deletion status:", err);
       return null;
     } finally {
       this._loading.set(false);
@@ -127,13 +130,13 @@ export class AccountDeletionService {
   async requestDeletion(request: DeletionRequest): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error('Not authenticated');
+      this.toastService.error("Not authenticated");
       return false;
     }
 
     // Verify confirmation text
-    if (request.confirmText !== 'DELETE') {
-      this.toastService.error('Please type DELETE to confirm');
+    if (request.confirmText !== "DELETE") {
+      this.toastService.error("Please type DELETE to confirm");
       return false;
     }
 
@@ -142,11 +145,13 @@ export class AccountDeletionService {
 
     try {
       // Call the database function to initiate deletion
-      const { data: requestId, error } = await this.supabase.client
-        .rpc('initiate_account_deletion', {
+      const { data: requestId, error } = await this.supabase.client.rpc(
+        "initiate_account_deletion",
+        {
           p_user_id: userId,
           p_reason: request.reason || null,
-        });
+        },
+      );
 
       if (error) {
         throw error;
@@ -156,21 +161,22 @@ export class AccountDeletionService {
       await this.supabase.signOut();
 
       this.toastService.success(
-        'Account deletion requested. Your data will be permanently deleted in 30 days. ' +
-        'You can cancel this request by logging back in within 30 days.'
+        "Account deletion requested. Your data will be permanently deleted in 30 days. " +
+          "You can cancel this request by logging back in within 30 days.",
       );
 
-      this.logger.info('Account deletion initiated', { requestId });
+      this.logger.info("Account deletion initiated", { requestId });
 
       // Redirect to login
-      this.router.navigate(['/login']);
+      this.router.navigate(["/login"]);
 
       return true;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to request deletion';
+      const message =
+        err instanceof Error ? err.message : "Failed to request deletion";
       this._error.set(message);
       this.toastService.error(message);
-      this.logger.error('Error requesting deletion:', err);
+      this.logger.error("Error requesting deletion:", err);
       return false;
     } finally {
       this._loading.set(false);
@@ -190,12 +196,12 @@ export class AccountDeletionService {
     const status = this._deletionStatus();
 
     if (!userId || !status?.requestId) {
-      this.toastService.error('No pending deletion to cancel');
+      this.toastService.error("No pending deletion to cancel");
       return false;
     }
 
     if (!status.canCancel) {
-      this.toastService.error('This deletion request cannot be cancelled');
+      this.toastService.error("This deletion request cannot be cancelled");
       return false;
     }
 
@@ -203,11 +209,13 @@ export class AccountDeletionService {
     this._error.set(null);
 
     try {
-      const { data: success, error } = await this.supabase.client
-        .rpc('cancel_account_deletion', {
+      const { data: success, error } = await this.supabase.client.rpc(
+        "cancel_account_deletion",
+        {
           p_request_id: status.requestId,
           p_user_id: userId,
-        });
+        },
+      );
 
       if (error) {
         throw error;
@@ -215,17 +223,22 @@ export class AccountDeletionService {
 
       if (success) {
         this._deletionStatus.set(null);
-        this.toastService.success('Account deletion cancelled. Your account has been reactivated.');
-        this.logger.info('Account deletion cancelled', { requestId: status.requestId });
+        this.toastService.success(
+          "Account deletion cancelled. Your account has been reactivated.",
+        );
+        this.logger.info("Account deletion cancelled", {
+          requestId: status.requestId,
+        });
         return true;
       } else {
-        throw new Error('Failed to cancel deletion');
+        throw new Error("Failed to cancel deletion");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to cancel deletion';
+      const message =
+        err instanceof Error ? err.message : "Failed to cancel deletion";
       this._error.set(message);
       this.toastService.error(message);
-      this.logger.error('Error cancelling deletion:', err);
+      this.logger.error("Error cancelling deletion:", err);
       return false;
     } finally {
       this._loading.set(false);
@@ -239,13 +252,15 @@ export class AccountDeletionService {
   /**
    * Get privacy audit log for the current user
    */
-  async getAuditLog(limit = 50): Promise<Array<{
-    id: string;
-    action: string;
-    affectedTable: string | null;
-    affectedData: Record<string, unknown> | null;
-    createdAt: string;
-  }>> {
+  async getAuditLog(limit = 50): Promise<
+    Array<{
+      id: string;
+      action: string;
+      affectedTable: string | null;
+      affectedData: Record<string, unknown> | null;
+      createdAt: string;
+    }>
+  > {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
       return [];
@@ -253,17 +268,17 @@ export class AccountDeletionService {
 
     try {
       const { data, error } = await this.supabase.client
-        .from('privacy_audit_log')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .from("privacy_audit_log")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
         throw error;
       }
 
-      return (data || []).map(row => ({
+      return (data || []).map((row) => ({
         id: row.id,
         action: row.action,
         affectedTable: row.affected_table,
@@ -271,7 +286,7 @@ export class AccountDeletionService {
         createdAt: row.created_at,
       }));
     } catch (err) {
-      this.logger.error('Error fetching audit log:', err);
+      this.logger.error("Error fetching audit log:", err);
       return [];
     }
   }
@@ -287,33 +302,41 @@ export class AccountDeletionService {
   async createEmergencyRecord(
     eventType: string,
     medicalData: Record<string, unknown>,
-    locationData?: Record<string, unknown>
+    locationData?: Record<string, unknown>,
   ): Promise<string | null> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error('Not authenticated');
+      this.toastService.error("Not authenticated");
       return null;
     }
 
     try {
-      const { data: recordId, error } = await this.supabase.client
-        .rpc('create_emergency_medical_record', {
+      const { data: recordId, error } = await this.supabase.client.rpc(
+        "create_emergency_medical_record",
+        {
           p_user_id: userId,
           p_event_type: eventType,
           p_medical_data: medicalData,
           p_location_data: locationData || null,
-        });
+        },
+      );
 
       if (error) {
         throw error;
       }
 
-      this.logger.info('Emergency medical record created', { recordId, eventType });
+      this.logger.info("Emergency medical record created", {
+        recordId,
+        eventType,
+      });
       return recordId;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create emergency record';
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to create emergency record";
       this.toastService.error(message);
-      this.logger.error('Error creating emergency record:', err);
+      this.logger.error("Error creating emergency record:", err);
       return null;
     }
   }
@@ -321,14 +344,16 @@ export class AccountDeletionService {
   /**
    * Get emergency medical records for the current user
    */
-  async getEmergencyRecords(): Promise<Array<{
-    id: string;
-    eventType: string;
-    eventDate: string;
-    medicalData: Record<string, unknown>;
-    locationData: Record<string, unknown> | null;
-    retentionExpiresAt: string;
-  }>> {
+  async getEmergencyRecords(): Promise<
+    Array<{
+      id: string;
+      eventType: string;
+      eventDate: string;
+      medicalData: Record<string, unknown>;
+      locationData: Record<string, unknown> | null;
+      retentionExpiresAt: string;
+    }>
+  > {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
       return [];
@@ -336,16 +361,16 @@ export class AccountDeletionService {
 
     try {
       const { data, error } = await this.supabase.client
-        .from('emergency_medical_records')
-        .select('*')
-        .eq('user_id', userId)
-        .order('event_date', { ascending: false });
+        .from("emergency_medical_records")
+        .select("*")
+        .eq("user_id", userId)
+        .order("event_date", { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      return (data || []).map(row => ({
+      return (data || []).map((row) => ({
         id: row.id,
         eventType: row.event_type,
         eventDate: row.event_date,
@@ -354,9 +379,8 @@ export class AccountDeletionService {
         retentionExpiresAt: row.retention_expires_at,
       }));
     } catch (err) {
-      this.logger.error('Error fetching emergency records:', err);
+      this.logger.error("Error fetching emergency records:", err);
       return [];
     }
   }
 }
-

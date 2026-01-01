@@ -92,7 +92,10 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  post<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
+  post<T = unknown>(
+    endpoint: string,
+    data?: unknown,
+  ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -103,7 +106,10 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  put<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
+  put<T = unknown>(
+    endpoint: string,
+    data?: unknown,
+  ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -112,7 +118,10 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  patch<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
+  patch<T = unknown>(
+    endpoint: string,
+    data?: unknown,
+  ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -135,7 +144,7 @@ export class ApiService {
 
     if (error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.message}`;
-    } else if (error && typeof error === 'object' && 'error' in error) {
+    } else if (error && typeof error === "object" && "error" in error) {
       const httpError = error as {
         error?: {
           error?: string;
@@ -339,10 +348,12 @@ export const API_ENDPOINTS = {
     events: "/api/attendance/events",
     createEvent: "/api/attendance/events",
     eventDetails: (eventId: string) => `/api/attendance/events/${eventId}`,
-    eventAttendance: (eventId: string) => `/api/attendance/events/${eventId}/attendance`,
+    eventAttendance: (eventId: string) =>
+      `/api/attendance/events/${eventId}/attendance`,
     record: "/api/attendance/record",
     recordBulk: "/api/attendance/record/bulk",
-    playerStats: (playerId: string) => `/api/attendance/stats/player/${playerId}`,
+    playerStats: (playerId: string) =>
+      `/api/attendance/stats/player/${playerId}`,
     teamStats: (teamId: string) => `/api/attendance/stats/team/${teamId}`,
     absenceRequest: "/api/attendance/absence-request",
     absenceRequests: "/api/attendance/absence-requests",
@@ -350,9 +361,12 @@ export const API_ENDPOINTS = {
   // Depth Chart endpoints
   depthChart: {
     templates: "/api/depth-chart/templates",
-    templateDetails: (templateId: string) => `/api/depth-chart/templates/${templateId}`,
-    templateHistory: (templateId: string) => `/api/depth-chart/templates/${templateId}/history`,
-    unassigned: (templateId: string) => `/api/depth-chart/templates/${templateId}/unassigned`,
+    templateDetails: (templateId: string) =>
+      `/api/depth-chart/templates/${templateId}`,
+    templateHistory: (templateId: string) =>
+      `/api/depth-chart/templates/${templateId}/history`,
+    unassigned: (templateId: string) =>
+      `/api/depth-chart/templates/${templateId}/unassigned`,
     entries: "/api/depth-chart/entries",
     entry: (entryId: string) => `/api/depth-chart/entries/${entryId}`,
     swap: "/api/depth-chart/entries/swap",
@@ -364,7 +378,8 @@ export const API_ENDPOINTS = {
     item: (itemId: string) => `/api/equipment/items/${itemId}`,
     itemHistory: (itemId: string) => `/api/equipment/items/${itemId}/history`,
     assignments: "/api/equipment/assignments",
-    playerAssignments: (playerId: string) => `/api/equipment/player/${playerId}/assignments`,
+    playerAssignments: (playerId: string) =>
+      `/api/equipment/player/${playerId}/assignments`,
     checkout: "/api/equipment/checkout",
     checkoutBulk: "/api/equipment/checkout/bulk",
     return: "/api/equipment/return",
@@ -376,11 +391,13 @@ export const API_ENDPOINTS = {
     list: "/api/officials",
     details: (officialId: string) => `/api/officials/${officialId}`,
     games: (officialId: string) => `/api/officials/${officialId}/games`,
-    availability: (officialId: string) => `/api/officials/${officialId}/availability`,
+    availability: (officialId: string) =>
+      `/api/officials/${officialId}/availability`,
     available: "/api/officials/available",
     schedule: "/api/officials/schedule",
     gameOfficials: (gameId: string) => `/api/officials/game/${gameId}`,
-    assignment: (assignmentId: string) => `/api/officials/assignments/${assignmentId}`,
+    assignment: (assignmentId: string) =>
+      `/api/officials/assignments/${assignmentId}`,
     paymentSummary: "/api/officials/payments/summary",
   },
   // Push Notification endpoints

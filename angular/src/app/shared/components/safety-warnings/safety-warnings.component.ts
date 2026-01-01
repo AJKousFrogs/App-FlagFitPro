@@ -38,7 +38,8 @@ import { AuthService } from "../../../core/services/auth.service";
             <div>
               <h3 class="header-title">Training Safety Alerts</h3>
               <p class="header-subtitle">
-                {{ warningCount() }} issue(s) detected that may affect your training
+                {{ warningCount() }} issue(s) detected that may affect your
+                training
               </p>
             </div>
           </div>
@@ -76,17 +77,27 @@ import { AuthService } from "../../../core/services/auth.service";
                 <p class="warning-message">{{ warning.message }}</p>
                 @if (warning.recommendation) {
                   <p class="warning-recommendation">
-                    <strong>Recommendation:</strong> {{ warning.recommendation }}
+                    <strong>Recommendation:</strong>
+                    {{ warning.recommendation }}
                   </p>
                 }
                 @if (warning.metric && warning.currentValue !== undefined) {
                   <div class="warning-metric">
-                    <span class="metric-label">{{ formatMetricLabel(warning.metric) }}:</span>
-                    <span class="metric-value" [class.over-threshold]="warning.currentValue > (warning.threshold || 0)">
+                    <span class="metric-label"
+                      >{{ formatMetricLabel(warning.metric) }}:</span
+                    >
+                    <span
+                      class="metric-value"
+                      [class.over-threshold]="
+                        warning.currentValue > (warning.threshold || 0)
+                      "
+                    >
                       {{ warning.currentValue }}
                     </span>
                     @if (warning.threshold) {
-                      <span class="metric-threshold">/ {{ warning.threshold }}</span>
+                      <span class="metric-threshold"
+                        >/ {{ warning.threshold }}</span
+                      >
                     }
                   </div>
                 }
@@ -392,7 +403,7 @@ export class SafetyWarningsComponent implements OnInit {
       info: 3,
     };
     return [...warnings].sort(
-      (a, b) => severityOrder[a.severity] - severityOrder[b.severity]
+      (a, b) => severityOrder[a.severity] - severityOrder[b.severity],
     );
   });
 
@@ -411,7 +422,7 @@ export class SafetyWarningsComponent implements OnInit {
     // Perform initial safety check with a hypothetical medium session
     await this.safetyService.performSafetyCheck(
       { intensity: "medium", duration: 60 },
-      user.id
+      user.id,
     );
   }
 
@@ -446,7 +457,7 @@ export class SafetyWarningsComponent implements OnInit {
   }
 
   getSeverityTagType(
-    severity: WarningSeverity
+    severity: WarningSeverity,
   ): "danger" | "warn" | "info" | "success" {
     switch (severity) {
       case "critical":

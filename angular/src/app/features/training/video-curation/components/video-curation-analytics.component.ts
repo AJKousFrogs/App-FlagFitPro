@@ -27,15 +27,15 @@ import { formatFocus } from "../video-curation-utils";
         <p-card header="Top Videos by Position">
           <div class="analytics-list">
             @for (stat of videosByPosition(); track stat.position) {
-            <div class="analytics-item">
-              <span class="analytics-label">{{ stat.position }}</span>
-              <p-progressBar
-                [value]="stat.percentage"
-                [showValue]="false"
-                styleClass="analytics-bar"
-              ></p-progressBar>
-              <span class="analytics-value">{{ stat.count }}</span>
-            </div>
+              <div class="analytics-item">
+                <span class="analytics-label">{{ stat.position }}</span>
+                <p-progressBar
+                  [value]="stat.percentage"
+                  [showValue]="false"
+                  styleClass="analytics-bar"
+                ></p-progressBar>
+                <span class="analytics-value">{{ stat.count }}</span>
+              </div>
             }
           </div>
         </p-card>
@@ -44,15 +44,17 @@ import { formatFocus } from "../video-curation-utils";
         <p-card header="Videos by Training Focus">
           <div class="analytics-list">
             @for (stat of videosByFocus(); track stat.focus) {
-            <div class="analytics-item">
-              <span class="analytics-label">{{ getFormatFocus(stat.focus) }}</span>
-              <p-progressBar
-                [value]="stat.percentage"
-                [showValue]="false"
-                styleClass="analytics-bar"
-              ></p-progressBar>
-              <span class="analytics-value">{{ stat.count }}</span>
-            </div>
+              <div class="analytics-item">
+                <span class="analytics-label">{{
+                  getFormatFocus(stat.focus)
+                }}</span>
+                <p-progressBar
+                  [value]="stat.percentage"
+                  [showValue]="false"
+                  styleClass="analytics-bar"
+                ></p-progressBar>
+                <span class="analytics-value">{{ stat.count }}</span>
+              </div>
             }
           </div>
         </p-card>
@@ -61,24 +63,24 @@ import { formatFocus } from "../video-curation-utils";
         <p-card header="Top Creators">
           <div class="creator-stats-list">
             @for (creator of topCreators(); track creator.username) {
-            <div class="creator-stat-item">
-              <p-avatar
-                [label]="creator.displayName.charAt(0)"
-                shape="circle"
-                styleClass="creator-stat-avatar"
-              ></p-avatar>
-              <div class="creator-stat-info">
-                <span class="creator-stat-name">
-                  {{ creator.displayName }}
-                  @if (creator.verified) {
-                  <i class="pi pi-verified"></i>
-                  }
-                </span>
-                <span class="creator-stat-count"
-                  >{{ creator.videoCount }} videos</span
-                >
+              <div class="creator-stat-item">
+                <p-avatar
+                  [label]="creator.displayName.charAt(0)"
+                  shape="circle"
+                  styleClass="creator-stat-avatar"
+                ></p-avatar>
+                <div class="creator-stat-info">
+                  <span class="creator-stat-name">
+                    {{ creator.displayName }}
+                    @if (creator.verified) {
+                      <i class="pi pi-verified"></i>
+                    }
+                  </span>
+                  <span class="creator-stat-count"
+                    >{{ creator.videoCount }} videos</span
+                  >
+                </div>
               </div>
-            </div>
             }
           </div>
         </p-card>
@@ -200,4 +202,3 @@ export class VideoCurationAnalyticsComponent {
     return formatFocus(focus);
   }
 }
-

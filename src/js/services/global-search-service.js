@@ -7,7 +7,7 @@
 // MORNING_MOBILITY_ROUTINE available for future use
 // import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Dynamic import for team data and API (to avoid circular dependencies)
 let getAllPlayers = null;
@@ -19,7 +19,7 @@ async function loadDependencies() {
   if (!getAllPlayers) {
     try {
       const teamData = await import("../../real-team-data.js");
-      getAllPlayers = teamData.getAllPlayers;
+      ({ getAllPlayers } = teamData);
     } catch (error) {
       logger.warn("Failed to load team data:", error);
       getAllPlayers = () => [];
@@ -29,8 +29,7 @@ async function loadDependencies() {
   if (!apiClient || !API_ENDPOINTS) {
     try {
       const apiConfig = await import("../../api-config.js");
-      apiClient = apiConfig.apiClient;
-      API_ENDPOINTS = apiConfig.API_ENDPOINTS;
+      ({ apiClient, API_ENDPOINTS } = apiConfig);
     } catch (error) {
       logger.warn("Failed to load API config:", error);
     }
@@ -189,7 +188,7 @@ async function loadPlayers() {
 
     for (const endpoint of possibleEndpoints) {
       try {
-        const response = await apiClient.get(endpoint);
+        const response = await apiClient.get(endpoint); // eslint-disable-line no-await-in-loop
         const players =
           response?.data?.players ||
           response?.data ||

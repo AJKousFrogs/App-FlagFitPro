@@ -58,9 +58,12 @@ import {
       >
         <!-- Wellness Alert Banner -->
         @if (wellnessAlert()) {
-          <div class="wellness-alert-banner" [class]="'alert-' + wellnessAlert()!.severity">
+          <div
+            class="wellness-alert-banner"
+            [class]="'alert-' + wellnessAlert()!.severity"
+          >
             <div class="alert-icon">
-              @if (wellnessAlert()!.severity === 'critical') {
+              @if (wellnessAlert()!.severity === "critical") {
                 🚨
               } @else {
                 ⚠️
@@ -78,7 +81,9 @@ import {
               <button class="alert-btn" (click)="goToWellnessCheckin()">
                 Update Wellness
               </button>
-              <button class="alert-dismiss" (click)="dismissWellnessAlert()">✕</button>
+              <button class="alert-dismiss" (click)="dismissWellnessAlert()">
+                ✕
+              </button>
             </div>
           </div>
         }
@@ -87,12 +92,19 @@ import {
         @if (readinessScore() > 0 && !wellnessAlert()) {
           <div class="readiness-badge" [class]="readinessStatus()">
             <span class="readiness-icon">
-              @if (readinessStatus() === 'excellent') { 🟢 }
-              @else if (readinessStatus() === 'good') { 🔵 }
-              @else if (readinessStatus() === 'caution') { 🟡 }
-              @else { 🔴 }
+              @if (readinessStatus() === "excellent") {
+                🟢
+              } @else if (readinessStatus() === "good") {
+                🔵
+              } @else if (readinessStatus() === "caution") {
+                🟡
+              } @else {
+                🔴
+              }
             </span>
-            <span class="readiness-label">Readiness: {{ readinessScore() }}%</span>
+            <span class="readiness-label"
+              >Readiness: {{ readinessScore() }}%</span
+            >
           </div>
         }
 
@@ -429,23 +441,31 @@ import {
         font-size: var(--font-body-sm);
         opacity: 0.9;
         margin-bottom: var(--space-4);
+        color: inherit; /* Inherit white from hero-card */
       }
 
       .hero-title {
         font-size: var(--font-display-sm);
         font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-4);
+        color: inherit; /* Inherit white from hero-card */
+
+        span {
+          color: inherit; /* Ensure nested span also inherits white */
+        }
       }
 
       .hero-subtitle {
         font-size: var(--font-heading-sm);
         opacity: 0.9;
         margin-bottom: var(--space-6);
+        color: inherit; /* Inherit white from hero-card */
       }
 
       .hero-note {
         font-size: var(--font-body-sm);
         opacity: 0.7;
+        color: inherit; /* Inherit white from hero-card */
       }
 
       .schedule-cta-card {
@@ -732,18 +752,18 @@ export class TrainingComponent implements OnInit {
 
       // Update state service with loaded data
       this.trainingState.setAllTrainingData({
-        userName: data.userName || 'Athlete',
+        userName: data.userName || "Athlete",
         stats: data.stats,
         schedule: data.schedule,
         workouts: data.workouts,
         achievements: data.achievements,
         wellnessAlert: data.wellnessData.alert,
         readinessScore: data.wellnessData.readinessScore,
-        readinessStatus: data.wellnessData.readinessStatus
+        readinessStatus: data.wellnessData.readinessStatus,
       });
     } catch (error) {
-      console.error('Error loading training data:', error);
-      this.toastService.error('Failed to load training data');
+      console.error("Error loading training data:", error);
+      this.toastService.error("Failed to load training data");
     }
   }
 
@@ -752,15 +772,15 @@ export class TrainingComponent implements OnInit {
   // ============================================================================
 
   goToWellnessCheckin(): void {
-    this.router.navigate(['/wellness']);
+    this.router.navigate(["/wellness"]);
   }
 
   toggleScheduleView(): void {
-    this.router.navigate(['/training/schedule']);
+    this.router.navigate(["/training/schedule"]);
   }
 
   openScheduleBuilder(): void {
-    this.router.navigate(['/training/builder']);
+    this.router.navigate(["/training/builder"]);
   }
 
   // ============================================================================
@@ -781,12 +801,12 @@ export class TrainingComponent implements OnInit {
    */
   startWorkout(workout: Workout): void {
     this.toastService.info(`Starting ${workout.title}`);
-    this.router.navigate(['/workout'], {
+    this.router.navigate(["/workout"], {
       queryParams: {
         type: workout.type,
         title: workout.title,
-        duration: workout.duration
-      }
+        duration: workout.duration,
+      },
     });
   }
 
@@ -795,17 +815,18 @@ export class TrainingComponent implements OnInit {
    */
   async onSwipeRight(event: SwipeEvent, workout: Workout): Promise<void> {
     // Set swipe animation state
-    this.trainingState.setSwipeState(workout.title, 'right');
+    this.trainingState.setSwipeState(workout.title, "right");
 
     // Animate, then complete workout
     setTimeout(async () => {
-      const success = await this.trainingDataLoader.markWorkoutComplete(workout);
+      const success =
+        await this.trainingDataLoader.markWorkoutComplete(workout);
 
       if (success) {
         this.trainingState.removeWorkout(workout.title);
         this.toastService.success(`${workout.title} marked as complete!`);
       } else {
-        this.toastService.error('Failed to mark workout as complete');
+        this.toastService.error("Failed to mark workout as complete");
       }
 
       this.trainingState.clearSwipeState();
@@ -817,7 +838,7 @@ export class TrainingComponent implements OnInit {
    */
   async onSwipeLeft(event: SwipeEvent, workout: Workout): Promise<void> {
     // Set swipe animation state
-    this.trainingState.setSwipeState(workout.title, 'left');
+    this.trainingState.setSwipeState(workout.title, "left");
 
     // Animate, then postpone workout
     setTimeout(async () => {
@@ -827,7 +848,7 @@ export class TrainingComponent implements OnInit {
         this.trainingState.removeWorkout(workout.title);
         this.toastService.info(`${workout.title} postponed to tomorrow`);
       } else {
-        this.toastService.error('Failed to postpone workout');
+        this.toastService.error("Failed to postpone workout");
       }
 
       this.trainingState.clearSwipeState();
@@ -845,7 +866,7 @@ export class TrainingComponent implements OnInit {
 
     setTimeout(() => {
       this.trainingState.setRefreshing(false);
-      this.toastService.success('Training data refreshed');
+      this.toastService.success("Training data refreshed");
     }, 1000);
   }
 
@@ -857,7 +878,10 @@ export class TrainingComponent implements OnInit {
     return day.name;
   }
 
-  trackBySessionTime(index: number, session: { time: string; title: string }): string {
+  trackBySessionTime(
+    index: number,
+    session: { time: string; title: string },
+  ): string {
     return session.time || index.toString();
   }
 

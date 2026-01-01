@@ -245,7 +245,7 @@ export class GameStatsService {
    */
   private getErrorMessage(error: unknown): string {
     if (error instanceof Error) return error.message;
-    if (error && typeof error === 'object' && 'status' in error) {
+    if (error && typeof error === "object" && "status" in error) {
       return `HTTP ${(error as { status: number }).status}`;
     }
     if (typeof error === "string") return error;

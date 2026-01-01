@@ -251,7 +251,10 @@ describe("SupabaseService", () => {
         error: { message: "Email already registered" },
       });
 
-      const result = await service.signUp("existing@example.com", "password123");
+      const result = await service.signUp(
+        "existing@example.com",
+        "password123",
+      );
 
       expect(result.error).toBeDefined();
       expect(result.error!.message).toBe("Email already registered");
@@ -297,7 +300,7 @@ describe("SupabaseService", () => {
       const result = await service.resetPassword("test@example.com");
 
       expect(mockSupabaseAuth.resetPasswordForEmail).toHaveBeenCalledWith(
-        "test@example.com"
+        "test@example.com",
       );
       expect(result.error).toBeNull();
     });
@@ -421,7 +424,8 @@ describe("SupabaseService", () => {
 
     it("should handle SIGNED_IN event", async () => {
       // Get the callback that was passed to onAuthStateChange
-      const authCallback = mockSupabaseAuth.onAuthStateChange.mock.calls[0]?.[0];
+      const authCallback =
+        mockSupabaseAuth.onAuthStateChange.mock.calls[0]?.[0];
 
       if (authCallback) {
         const mockSession = {
@@ -435,20 +439,21 @@ describe("SupabaseService", () => {
         // Verify logger was called
         expect(mockLoggerService.debug).toHaveBeenCalledWith(
           "Auth state changed:",
-          "SIGNED_IN"
+          "SIGNED_IN",
         );
       }
     });
 
     it("should handle SIGNED_OUT event", async () => {
-      const authCallback = mockSupabaseAuth.onAuthStateChange.mock.calls[0]?.[0];
+      const authCallback =
+        mockSupabaseAuth.onAuthStateChange.mock.calls[0]?.[0];
 
       if (authCallback) {
         authCallback("SIGNED_OUT", null);
 
         expect(mockLoggerService.debug).toHaveBeenCalledWith(
           "Auth state changed:",
-          "SIGNED_OUT"
+          "SIGNED_OUT",
         );
       }
     });
@@ -485,4 +490,3 @@ describe("SupabaseService", () => {
     });
   });
 });
-

@@ -3,34 +3,34 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { CookieConsentService } from '../../../core/services/cookie-consent.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { CookieConsentService } from "../../../core/services/cookie-consent.service";
 
 /**
  * Cookie Consent Banner Component
- * 
+ *
  * GDPR-compliant cookie consent banner for FlagFit Pro.
  * Displays at the bottom of the screen until user makes a choice.
- * 
+ *
  * Features:
  * - Accept all / Necessary only quick actions
  * - Expandable detailed preferences
  * - Links to privacy policy
  * - Remembers choice in localStorage
  * - Accessible (keyboard navigation, ARIA labels)
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 @Component({
-  selector: 'app-cookie-consent-banner',
+  selector: "app-cookie-consent-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterLink],
   template: `
     @if (cookieService.showBanner()) {
-      <div 
+      <div
         class="cookie-banner"
         role="dialog"
         aria-labelledby="cookie-title"
@@ -45,9 +45,12 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
 
           <!-- Description -->
           <p id="cookie-description" class="cookie-description">
-            We use cookies to make the app work properly and to understand how you use it.
-            We're a volunteer sports club with zero budget — we don't sell your data or show ads.
-            <a routerLink="/privacy-policy" class="cookie-link">Read our Privacy Policy</a>
+            We use cookies to make the app work properly and to understand how
+            you use it. We're a volunteer sports club with zero budget — we
+            don't sell your data or show ads.
+            <a routerLink="/privacy-policy" class="cookie-link"
+              >Read our Privacy Policy</a
+            >
           </p>
 
           <!-- Detailed Preferences (expandable) -->
@@ -56,7 +59,9 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
               <div class="cookie-preference">
                 <div class="preference-info">
                   <span class="preference-name">Necessary Cookies</span>
-                  <span class="preference-description">Required for the app to function. Cannot be disabled.</span>
+                  <span class="preference-description"
+                    >Required for the app to function. Cannot be disabled.</span
+                  >
                 </div>
                 <div class="preference-toggle always-on">
                   <span class="toggle-label">Always On</span>
@@ -66,11 +71,13 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
               <div class="cookie-preference">
                 <div class="preference-info">
                   <span class="preference-name">Functional Cookies</span>
-                  <span class="preference-description">Remember your preferences and settings.</span>
+                  <span class="preference-description"
+                    >Remember your preferences and settings.</span
+                  >
                 </div>
                 <label class="toggle-switch">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     [checked]="functionalEnabled()"
                     (change)="toggleFunctional()"
                   />
@@ -81,11 +88,13 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
               <div class="cookie-preference">
                 <div class="preference-info">
                   <span class="preference-name">Analytics Cookies</span>
-                  <span class="preference-description">Help us understand how you use the app (anonymous).</span>
+                  <span class="preference-description"
+                    >Help us understand how you use the app (anonymous).</span
+                  >
                 </div>
                 <label class="toggle-switch">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     [checked]="analyticsEnabled()"
                     (change)="toggleAnalytics()"
                   />
@@ -98,7 +107,7 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
           <!-- Actions -->
           <div class="cookie-actions">
             @if (!showDetails()) {
-              <button 
+              <button
                 class="cookie-btn cookie-btn-secondary"
                 (click)="toggleDetails()"
                 type="button"
@@ -106,7 +115,7 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
                 Customize
               </button>
             } @else {
-              <button 
+              <button
                 class="cookie-btn cookie-btn-secondary"
                 (click)="saveCustom()"
                 type="button"
@@ -114,16 +123,16 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
                 Save Preferences
               </button>
             }
-            
-            <button 
+
+            <button
               class="cookie-btn cookie-btn-outline"
               (click)="acceptNecessary()"
               type="button"
             >
               Necessary Only
             </button>
-            
-            <button 
+
+            <button
               class="cookie-btn cookie-btn-primary"
               (click)="acceptAll()"
               type="button"
@@ -134,337 +143,347 @@ import { CookieConsentService } from '../../../core/services/cookie-consent.serv
 
           <!-- Club Info -->
           <p class="cookie-footer">
-            <span class="club-name">Športno društvo Žabe</span> · 
-            <a href="mailto:merlin@ljubljanafrogs.si" class="cookie-link">merlin&#64;ljubljanafrogs.si</a>
+            <span class="club-name">Športno društvo Žabe</span> ·
+            <a href="mailto:merlin@ljubljanafrogs.si" class="cookie-link"
+              >merlin&#64;ljubljanafrogs.si</a
+            >
           </p>
         </div>
       </div>
     }
   `,
-  styles: [`
-    /* ================================
+  styles: [
+    `
+      /* ================================
        BANNER CONTAINER
        ================================ */
-    .cookie-banner {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999;
-      background: var(--surface-primary, #ffffff);
-      border-top: 1px solid var(--color-border-subtle, #e5e7eb);
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-      animation: slide-up 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes slide-up {
-      from {
-        transform: translateY(100%);
-        opacity: 0;
+      .cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: var(--surface-primary, #ffffff);
+        border-top: 1px solid var(--color-border-subtle, #e5e7eb);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        animation: slide-up 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
       }
-      to {
-        transform: translateY(0);
-        opacity: 1;
+
+      @keyframes slide-up {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
-    }
 
-    .cookie-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
-    }
+      .cookie-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+      }
 
-    /* ================================
+      /* ================================
        HEADER
        ================================ */
-    .cookie-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2, 0.5rem);
-      margin-bottom: var(--space-2, 0.5rem);
-    }
-
-    .cookie-icon {
-      font-size: 1.5rem;
-    }
-
-    .cookie-title {
-      font-size: var(--font-body-lg, 1.125rem);
-      font-weight: var(--font-weight-semibold, 600);
-      color: var(--color-text-primary, #111827);
-      margin: 0;
-    }
-
-    /* ================================
-       DESCRIPTION
-       ================================ */
-    .cookie-description {
-      font-size: var(--font-body-sm, 0.875rem);
-      color: var(--color-text-secondary, #6b7280);
-      line-height: 1.5;
-      margin: 0 0 var(--space-4, 1rem) 0;
-    }
-
-    .cookie-link {
-      color: var(--ds-primary-green, #22c55e);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .cookie-link:hover {
-      color: var(--ds-primary-green-dark, #16a34a);
-    }
-
-    /* ================================
-       DETAILED PREFERENCES
-       ================================ */
-    .cookie-details {
-      background: var(--surface-secondary, #f9fafb);
-      border-radius: var(--radius-lg, 0.75rem);
-      padding: var(--space-4, 1rem);
-      margin-bottom: var(--space-4, 1rem);
-      animation: fade-in 200ms ease-out;
-    }
-
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .cookie-preference {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-3, 0.75rem) 0;
-      border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
-    }
-
-    .cookie-preference:last-child {
-      border-bottom: none;
-    }
-
-    .preference-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1, 0.25rem);
-    }
-
-    .preference-name {
-      font-size: var(--font-body-sm, 0.875rem);
-      font-weight: var(--font-weight-medium, 500);
-      color: var(--color-text-primary, #111827);
-    }
-
-    .preference-description {
-      font-size: var(--font-body-xs, 0.75rem);
-      color: var(--color-text-secondary, #6b7280);
-    }
-
-    .always-on {
-      background: var(--ds-primary-green-subtle, #dcfce7);
-      color: var(--ds-primary-green-dark, #16a34a);
-      padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-      border-radius: var(--radius-full, 9999px);
-      font-size: var(--font-body-xs, 0.75rem);
-      font-weight: var(--font-weight-medium, 500);
-    }
-
-    /* Toggle Switch */
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      cursor: pointer;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-slider {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--color-border-subtle, #d1d5db);
-      border-radius: 24px;
-      transition: background-color 200ms ease;
-    }
-
-    .toggle-slider::before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 200ms ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-      background-color: var(--ds-primary-green, #22c55e);
-    }
-
-    .toggle-switch input:checked + .toggle-slider::before {
-      transform: translateX(20px);
-    }
-
-    .toggle-switch input:focus + .toggle-slider {
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
-    }
-
-    /* ================================
-       ACTIONS
-       ================================ */
-    .cookie-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2, 0.5rem);
-      margin-bottom: var(--space-3, 0.75rem);
-    }
-
-    .cookie-btn {
-      padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
-      border-radius: var(--radius-lg, 0.75rem);
-      font-size: var(--font-body-sm, 0.875rem);
-      font-weight: var(--font-weight-medium, 500);
-      cursor: pointer;
-      transition: all 150ms ease;
-      border: none;
-    }
-
-    .cookie-btn-primary {
-      background: var(--ds-primary-green, #22c55e);
-      color: white;
-    }
-
-    .cookie-btn-primary:hover {
-      background: var(--ds-primary-green-dark, #16a34a);
-      transform: translateY(-1px);
-    }
-
-    .cookie-btn-secondary {
-      background: var(--surface-secondary, #f3f4f6);
-      color: var(--color-text-primary, #111827);
-    }
-
-    .cookie-btn-secondary:hover {
-      background: var(--color-border-subtle, #e5e7eb);
-    }
-
-    .cookie-btn-outline {
-      background: transparent;
-      color: var(--color-text-secondary, #6b7280);
-      border: 1px solid var(--color-border-subtle, #d1d5db);
-    }
-
-    .cookie-btn-outline:hover {
-      background: var(--surface-secondary, #f9fafb);
-      border-color: var(--color-text-secondary, #9ca3af);
-    }
-
-    /* ================================
-       FOOTER
-       ================================ */
-    .cookie-footer {
-      font-size: var(--font-body-xs, 0.75rem);
-      color: var(--color-text-tertiary, #9ca3af);
-      margin: 0;
-    }
-
-    .club-name {
-      font-weight: var(--font-weight-medium, 500);
-    }
-
-    /* ================================
-       RESPONSIVE
-       ================================ */
-    @media (max-width: 640px) {
-      .cookie-content {
-        padding: var(--space-4, 1rem);
-      }
-
-      .cookie-actions {
-        flex-direction: column;
-      }
-
-      .cookie-btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .cookie-preference {
-        flex-direction: column;
-        align-items: flex-start;
+      .cookie-header {
+        display: flex;
+        align-items: center;
         gap: var(--space-2, 0.5rem);
+        margin-bottom: var(--space-2, 0.5rem);
       }
-    }
 
-    /* ================================
-       DARK MODE
-       ================================ */
-    @media (prefers-color-scheme: dark) {
-      .cookie-banner {
-        background: var(--surface-primary, #1f2937);
-        border-top-color: var(--color-border-subtle, #374151);
+      .cookie-icon {
+        font-size: 1.5rem;
       }
 
       .cookie-title {
-        color: var(--color-text-primary, #f9fafb);
+        font-size: var(--font-body-lg, 1.125rem);
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--color-text-primary, #111827);
+        margin: 0;
       }
 
+      /* ================================
+       DESCRIPTION
+       ================================ */
       .cookie-description {
-        color: var(--color-text-secondary, #9ca3af);
+        font-size: var(--font-body-sm, 0.875rem);
+        color: var(--color-text-secondary, #6b7280);
+        line-height: 1.5;
+        margin: 0 0 var(--space-4, 1rem) 0;
       }
 
+      .cookie-link {
+        color: var(--ds-primary-green, #22c55e);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .cookie-link:hover {
+        color: var(--ds-primary-green-dark, #16a34a);
+      }
+
+      /* ================================
+       DETAILED PREFERENCES
+       ================================ */
       .cookie-details {
-        background: var(--surface-secondary, #111827);
+        background: var(--surface-secondary, #f9fafb);
+        border-radius: var(--radius-lg, 0.75rem);
+        padding: var(--space-4, 1rem);
+        margin-bottom: var(--space-4, 1rem);
+        animation: fade-in 200ms ease-out;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .cookie-preference {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3, 0.75rem) 0;
+        border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
+      }
+
+      .cookie-preference:last-child {
+        border-bottom: none;
+      }
+
+      .preference-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1, 0.25rem);
       }
 
       .preference-name {
-        color: var(--color-text-primary, #f9fafb);
+        font-size: var(--font-body-sm, 0.875rem);
+        font-weight: var(--font-weight-medium, 500);
+        color: var(--color-text-primary, #111827);
       }
 
-      .cookie-btn-secondary {
-        background: var(--surface-secondary, #374151);
-        color: var(--color-text-primary, #f9fafb);
+      .preference-description {
+        font-size: var(--font-body-xs, 0.75rem);
+        color: var(--color-text-secondary, #6b7280);
       }
 
-      .cookie-btn-secondary:hover {
-        background: var(--color-border-subtle, #4b5563);
+      .always-on {
+        background: var(--ds-primary-green-subtle, #dcfce7);
+        color: var(--ds-primary-green-dark, #16a34a);
+        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        border-radius: var(--radius-full, 9999px);
+        font-size: var(--font-body-xs, 0.75rem);
+        font-weight: var(--font-weight-medium, 500);
+      }
+
+      /* Toggle Switch */
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        cursor: pointer;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
       }
 
       .toggle-slider {
-        background-color: var(--color-border-subtle, #4b5563);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--color-border-subtle, #d1d5db);
+        border-radius: 24px;
+        transition: background-color 200ms ease;
       }
-    }
 
-    /* ================================
+      .toggle-slider::before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 200ms ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      .toggle-switch input:checked + .toggle-slider {
+        background-color: var(--ds-primary-green, #22c55e);
+      }
+
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(20px);
+      }
+
+      .toggle-switch input:focus + .toggle-slider {
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+      }
+
+      /* ================================
+       ACTIONS
+       ================================ */
+      .cookie-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2, 0.5rem);
+        margin-bottom: var(--space-3, 0.75rem);
+      }
+
+      .cookie-btn {
+        padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+        border-radius: var(--radius-lg, 0.75rem);
+        font-size: var(--font-body-sm, 0.875rem);
+        font-weight: var(--font-weight-medium, 500);
+        cursor: pointer;
+        transition: all 150ms ease;
+        border: none;
+      }
+
+      .cookie-btn-primary {
+        background: var(--ds-primary-green, #22c55e);
+        color: white;
+      }
+
+      .cookie-btn-primary:hover {
+        background: var(--ds-primary-green-dark, #16a34a);
+        transform: translateY(-1px);
+      }
+
+      .cookie-btn-secondary {
+        background: var(--surface-secondary, #f3f4f6);
+        color: var(--color-text-primary, #111827);
+      }
+
+      .cookie-btn-secondary:hover {
+        background: var(--color-border-subtle, #e5e7eb);
+      }
+
+      .cookie-btn-outline {
+        background: transparent;
+        color: var(--color-text-secondary, #6b7280);
+        border: 1px solid var(--color-border-subtle, #d1d5db);
+      }
+
+      .cookie-btn-outline:hover {
+        background: var(--surface-secondary, #f9fafb);
+        border-color: var(--color-text-secondary, #9ca3af);
+      }
+
+      /* ================================
+       FOOTER
+       ================================ */
+      .cookie-footer {
+        font-size: var(--font-body-xs, 0.75rem);
+        color: var(--color-text-tertiary, #9ca3af);
+        margin: 0;
+      }
+
+      .club-name {
+        font-weight: var(--font-weight-medium, 500);
+      }
+
+      /* ================================
+       RESPONSIVE
+       ================================ */
+      @media (max-width: 640px) {
+        .cookie-content {
+          padding: var(--space-4, 1rem);
+        }
+
+        .cookie-actions {
+          flex-direction: column;
+        }
+
+        .cookie-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .cookie-preference {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-2, 0.5rem);
+        }
+      }
+
+      /* ================================
+       DARK MODE
+       ================================ */
+      @media (prefers-color-scheme: dark) {
+        .cookie-banner {
+          background: var(--surface-primary, #1f2937);
+          border-top-color: var(--color-border-subtle, #374151);
+        }
+
+        .cookie-title {
+          color: var(--color-text-primary, #f9fafb);
+        }
+
+        .cookie-description {
+          color: var(--color-text-secondary, #9ca3af);
+        }
+
+        .cookie-details {
+          background: var(--surface-secondary, #111827);
+        }
+
+        .preference-name {
+          color: var(--color-text-primary, #f9fafb);
+        }
+
+        .cookie-btn-secondary {
+          background: var(--surface-secondary, #374151);
+          color: var(--color-text-primary, #f9fafb);
+        }
+
+        .cookie-btn-secondary:hover {
+          background: var(--color-border-subtle, #4b5563);
+        }
+
+        .toggle-slider {
+          background-color: var(--color-border-subtle, #4b5563);
+        }
+      }
+
+      /* ================================
        REDUCED MOTION
        ================================ */
-    @media (prefers-reduced-motion: reduce) {
-      .cookie-banner {
-        animation: none;
-      }
+      @media (prefers-reduced-motion: reduce) {
+        .cookie-banner {
+          animation: none;
+        }
 
-      .cookie-details {
-        animation: none;
-      }
+        .cookie-details {
+          animation: none;
+        }
 
-      .toggle-slider,
-      .toggle-slider::before,
-      .cookie-btn {
-        transition: none;
+        .toggle-slider,
+        .toggle-slider::before,
+        .cookie-btn {
+          transition: none;
+        }
       }
-    }
-  `]
+    `,
+  ],
 })
 export class CookieConsentBannerComponent {
   protected readonly cookieService = inject(CookieConsentService);
@@ -497,8 +516,7 @@ export class CookieConsentBannerComponent {
   saveCustom(): void {
     this.cookieService.saveCustomPreferences(
       this.analyticsEnabled(),
-      this.functionalEnabled()
+      this.functionalEnabled(),
     );
   }
 }
-

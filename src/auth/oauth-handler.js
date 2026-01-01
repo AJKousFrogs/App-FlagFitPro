@@ -58,7 +58,7 @@ export class OAuthHandler {
    * @param {Function} onAuthChange - Callback for auth state changes
    * @returns {Promise<Function>} Cleanup function to remove listener
    */
-  static async setupAuthListener(supabase, safeSupabaseQuery, onAuthChange) {
+  static setupAuthListener(supabase, safeSupabaseQuery, onAuthChange) {
     try {
       if (!supabase) {
         throw new Error("Supabase client not initialized");
@@ -98,7 +98,9 @@ export class OAuthHandler {
                 }),
                 "Auth:UpdateUserMetadata",
               );
-              logger.debug(`[Auth] Updated user metadata with role: ${pendingRole}`);
+              logger.debug(
+                `[Auth] Updated user metadata with role: ${pendingRole}`,
+              );
             }
             localStorage.removeItem("pending_oauth_role");
           }

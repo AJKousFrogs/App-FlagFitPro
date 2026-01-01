@@ -1,20 +1,20 @@
 /**
  * Form Submission Handler Utility
- * 
+ *
  * Provides a reusable pattern for handling form submissions with loading states,
  * error handling, and success/failure notifications.
- * 
+ *
  * @example
  * ```typescript
  * import { FormSubmitHandler } from '@shared/utils/form-submit.utils';
- * 
+ *
  * class MyComponent {
  *   private submitHandler = new FormSubmitHandler(
  *     inject(ToastService),
  *     inject(Router),
  *     inject(DestroyRef)
  *   );
- * 
+ *
  *   async onSubmit(): Promise<void> {
  *     await this.submitHandler.handle({
  *       form: this.myForm,
@@ -27,43 +27,43 @@
  * ```
  */
 
-import { FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { signal, Signal } from '@angular/core';
-import { ToastService } from '@core/services/toast.service';
-import { Observable, firstValueFrom } from 'rxjs';
-import { DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormGroup } from "@angular/forms";
+import { Router } from "@angular/router";
+import { signal, Signal } from "@angular/core";
+import { ToastService } from "@core/services/toast.service";
+import { Observable, firstValueFrom } from "rxjs";
+import { DestroyRef } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface FormSubmitOptions<T = unknown> {
   /** The form to validate and submit */
   form: FormGroup;
-  
+
   /** The API call to make (can return Promise or Observable) */
   apiCall: () => Promise<T> | Observable<T>;
-  
+
   /** Success message to display (optional) */
   successMessage?: string;
-  
+
   /** Error message to display (optional, uses API error if not provided) */
   errorMessage?: string;
-  
+
   /** Route to navigate to after successful submission (optional) */
   navigateTo?: string[];
-  
+
   /** Callback to run after successful submission (optional) */
   onSuccess?: (result: T) => void;
-  
+
   /** Callback to run after failed submission (optional) */
   onError?: (error: Error) => void;
-  
+
   /** Whether to mark all fields as touched on validation failure (default: true) */
   touchOnValidationFailure?: boolean;
 }
 
 export class FormSubmitHandler {
   private _isSubmitting = signal(false);
-  
+
   /** Signal tracking submission state */
   readonly isSubmitting: Signal<boolean> = this._isSubmitting.asReadonly();
 
@@ -107,13 +107,13 @@ export class FormSubmitHandler {
       // Execute API call
       let result: T;
       const apiResult = apiCall();
-      
+
       if (apiResult instanceof Observable) {
         // Handle Observable
-        const takeUntil = this.destroyRef 
+        const takeUntil = this.destroyRef
           ? takeUntilDestroyed(this.destroyRef)
           : (source: Observable<T>) => source;
-        
+
         result = (await firstValueFrom(apiResult.pipe(takeUntil))) as T;
       } else {
         // Handle Promise
@@ -179,28 +179,31 @@ export class FormSubmitHandler {
     if (error instanceof Error) {
       return error.message;
     }
-    
-    if (typeof error === 'object' && error !== null) {
+
+    if (typeof error === "object" && error !== null) {
       const errorObj = error as Record<string, unknown>;
-      
-      if (typeof errorObj['message'] === 'string') {
-        return errorObj['message'];
+
+      if (typeof errorObj["message"] === "string") {
+        return errorObj["message"];
       }
-      
-      if (typeof errorObj['error'] === 'string') {
-        return errorObj['error'];
+
+      if (typeof errorObj["error"] === "string") {
+        return errorObj["error"];
       }
-      
+
       if (
-        typeof errorObj['error'] === 'object' &&
-        errorObj['error'] !== null &&
-        typeof (errorObj['error'] as Record<string, unknown>)['message'] === 'string'
+        typeof errorObj["error"] === "object" &&
+        errorObj["error"] !== null &&
+        typeof (errorObj["error"] as Record<string, unknown>)["message"] ===
+          "string"
       ) {
-        return (errorObj['error'] as Record<string, unknown>)['message'] as string;
+        return (errorObj["error"] as Record<string, unknown>)[
+          "message"
+        ] as string;
       }
     }
-    
-    return 'An error occurred. Please try again.';
+
+    return "An error occurred. Please try again.";
   }
 
   /**
@@ -210,4 +213,3 @@ export class FormSubmitHandler {
     this._isSubmitting.set(false);
   }
 }
-

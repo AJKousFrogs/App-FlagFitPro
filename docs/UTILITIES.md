@@ -23,13 +23,13 @@ FlagFit Pro uses a modern Angular 21 architecture with signal-based state manage
 
 ### Architecture Summary
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **State Management** | Angular Signals + Computed | Reactive UI state |
-| **Data Fetching** | RxJS Observables | API calls, real-time subscriptions |
-| **Backend** | Netlify Functions | Serverless API endpoints |
-| **Database** | Supabase PostgreSQL | Data persistence, RLS security |
-| **AI** | Groq LLM (FREE tier) | AI coaching with safety tiers |
+| Layer                | Technology                 | Purpose                            |
+| -------------------- | -------------------------- | ---------------------------------- |
+| **State Management** | Angular Signals + Computed | Reactive UI state                  |
+| **Data Fetching**    | RxJS Observables           | API calls, real-time subscriptions |
+| **Backend**          | Netlify Functions          | Serverless API endpoints           |
+| **Database**         | Supabase PostgreSQL        | Data persistence, RLS security     |
+| **AI**               | Groq LLM (FREE tier)       | AI coaching with safety tiers      |
 
 ---
 
@@ -84,12 +84,12 @@ The ACWR (Acute:Chronic Workload Ratio) service implements evidence-based injury
 
 ### Risk Zones (Gabbett 2016)
 
-| ACWR Range | Zone | Color | Injury Risk |
-|------------|------|-------|-------------|
-| < 0.80 | Under-training | Orange | Detraining risk |
-| 0.80 - 1.30 | Sweet Spot | Green | Lowest risk |
-| 1.30 - 1.50 | Elevated | Yellow | Monitor closely |
-| > 1.50 | Danger Zone | Red | High injury risk |
+| ACWR Range  | Zone           | Color  | Injury Risk      |
+| ----------- | -------------- | ------ | ---------------- |
+| < 0.80      | Under-training | Orange | Detraining risk  |
+| 0.80 - 1.30 | Sweet Spot     | Green  | Lowest risk      |
+| 1.30 - 1.50 | Elevated       | Yellow | Monitor closely  |
+| > 1.50      | Danger Zone    | Red    | High injury risk |
 
 ### Usage
 
@@ -99,14 +99,14 @@ import { AcwrService } from '@core/services/acwr.service';
 @Component({...})
 export class DashboardComponent {
   private acwrService = inject(AcwrService);
-  
+
   // Reactive signals
   acwrRatio = this.acwrService.acwrRatio;
   riskZone = this.acwrService.riskZone;
   dataQuality = this.acwrService.dataQuality;
-  
+
   // Check if high-intensity training is safe
-  canTrainHard = computed(() => 
+  canTrainHard = computed(() =>
     this.acwrRatio() <= 1.5 && this.riskZone().level !== 'danger-zone'
   );
 }
@@ -116,18 +116,18 @@ export class DashboardComponent {
 
 ```typescript
 interface ACWRConfig {
-  acuteWindowDays: number;      // Default: 7
-  chronicWindowDays: number;    // Default: 28
-  acuteLambda: number;          // Default: 0.2 (EWMA decay)
-  chronicLambda: number;        // Default: 0.05
+  acuteWindowDays: number; // Default: 7
+  chronicWindowDays: number; // Default: 28
+  acuteLambda: number; // Default: 0.2 (EWMA decay)
+  chronicLambda: number; // Default: 0.05
   thresholds: {
-    sweetSpotLow: number;       // Default: 0.8
-    sweetSpotHigh: number;      // Default: 1.3
-    dangerHigh: number;         // Default: 1.5
+    sweetSpotLow: number; // Default: 0.8
+    sweetSpotHigh: number; // Default: 1.3
+    dangerHigh: number; // Default: 1.5
     maxWeeklyIncreasePercent: number; // Default: 10%
   };
-  minChronicLoad: number;       // Default: 50 AU
-  minDaysForChronic: number;    // Default: 21 days
+  minChronicLoad: number; // Default: 50 AU
+  minDaysForChronic: number; // Default: 21 days
   minSessionsForChronic: number; // Default: 12 sessions
 }
 ```
@@ -171,12 +171,12 @@ if (this.acwrService.shouldBlockHighIntensity()) {
 
 ### Safety Tier System
 
-| Tier | Risk Level | Example Topics | AI Behavior |
-|------|------------|----------------|-------------|
-| 1 | Low | Technique, warm-ups, drills | Full guidance |
-| 2 | Medium | Injury prevention, recovery | With disclaimers |
-| 3 | High | Supplements, medical dosing | Strong disclaimers, no dosing |
-| **ACWR Override** | High | High-intensity when ACWR > 1.5 | **Blocks recommendation** |
+| Tier              | Risk Level | Example Topics                 | AI Behavior                   |
+| ----------------- | ---------- | ------------------------------ | ----------------------------- |
+| 1                 | Low        | Technique, warm-ups, drills    | Full guidance                 |
+| 2                 | Medium     | Injury prevention, recovery    | With disclaimers              |
+| 3                 | High       | Supplements, medical dosing    | Strong disclaimers, no dosing |
+| **ACWR Override** | High       | High-intensity when ACWR > 1.5 | **Blocks recommendation**     |
 
 ### Usage
 
@@ -186,10 +186,10 @@ import { AiChatService } from '@core/services/ai-chat.service';
 @Component({...})
 export class ChatComponent {
   private chatService = inject(AiChatService);
-  
+
   loading = this.chatService.loading;
   messages = this.chatService.messages;
-  
+
   sendMessage(text: string) {
     this.chatService.sendMessage({
       message: text,
@@ -209,10 +209,10 @@ export class ChatComponent {
 ```typescript
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  riskLevel?: 'low' | 'medium' | 'high';
+  riskLevel?: "low" | "medium" | "high";
   disclaimer?: string;
   citations?: Citation[];
   suggestedActions?: SuggestedAction[];
@@ -239,22 +239,22 @@ FlagFit Pro uses **Angular Signals** for state management, NOT NgRx. This is a d
 #### NotificationStateService
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class NotificationStateService {
   // State signals
   private readonly notifications = signal<Notification[]>([]);
   private readonly loading = signal<boolean>(false);
   private readonly error = signal<string | null>(null);
-  
+
   // Computed signals (derived state)
-  readonly unreadCount = computed(() => 
-    this.notifications().filter(n => !n.read).length
+  readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.read).length,
   );
-  
+
   readonly unreadNotifications = computed(() =>
-    this.notifications().filter(n => !n.read)
+    this.notifications().filter((n) => !n.read),
   );
-  
+
   // Combined state for components
   readonly state = computed<NotificationState>(() => ({
     notifications: this.notifications(),
@@ -268,16 +268,16 @@ export class NotificationStateService {
 #### SupabaseService (Auth State)
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class SupabaseService {
   // UI State: Signals instead of BehaviorSubject
   private readonly _currentUser = signal<User | null>(null);
   private readonly _session = signal<Session | null>(null);
-  
+
   // Public readonly signals
   readonly currentUser = this._currentUser.asReadonly();
   readonly session = this._session.asReadonly();
-  
+
   // Computed signals for derived state
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
   readonly userId = computed(() => this._currentUser()?.id ?? null);
@@ -293,31 +293,28 @@ For complex components, use the ViewModel pattern:
 export abstract class BaseViewModel {
   protected destroyRef = inject(DestroyRef);
   protected logger = inject(LoggerService);
-  
+
   // Common state signals
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   // Subscribe helper with automatic cleanup
   protected subscribe<T>(
     observable: Observable<T>,
     callbacks: {
       next?: (value: T) => void;
       error?: (error: unknown) => void;
-    }
+    },
   ): void {
-    observable.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(callbacks);
+    observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(callbacks);
   }
-  
+
   // Consistent error handling
   protected handleError(error: unknown): void {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'An error occurred';
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
     this.error.set(errorMessage);
-    this.logger.error('[ViewModel Error]', error);
+    this.logger.error("[ViewModel Error]", error);
   }
 }
 ```
@@ -339,12 +336,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         authService.logout().subscribe();
-        router.navigate(['/login']);
+        router.navigate(["/login"]);
       } else if (error.status === 403) {
-        router.navigate(['/dashboard']);
+        router.navigate(["/dashboard"]);
       }
       return throwError(() => error);
-    })
+    }),
   );
 };
 ```
@@ -359,8 +356,8 @@ private handleError = (error: unknown): Observable<never> => {
     errorMessage = `Error: ${error.message}`;
   } else if (error && typeof error === 'object' && 'error' in error) {
     const httpError = error as HttpErrorResponse;
-    errorMessage = httpError.error?.error 
-      || httpError.error?.message 
+    errorMessage = httpError.error?.error
+      || httpError.error?.message
       || `Error Code: ${httpError.status}`;
   }
 
@@ -379,7 +376,8 @@ export class FormSubmitHandler {
   readonly isSubmitting = this._isSubmitting.asReadonly();
 
   async handle<T>(options: FormSubmitOptions<T>): Promise<T | undefined> {
-    const { form, apiCall, successMessage, errorMessage, onSuccess, onError } = options;
+    const { form, apiCall, successMessage, errorMessage, onSuccess, onError } =
+      options;
 
     if (form.invalid) {
       this.markFormGroupTouched(form);
@@ -390,11 +388,11 @@ export class FormSubmitHandler {
 
     try {
       const result = await firstValueFrom(apiCall());
-      
+
       if (successMessage) {
         this.toastService.success(successMessage);
       }
-      
+
       onSuccess?.(result);
       return result;
     } catch (error) {
@@ -418,7 +416,7 @@ export class FormSubmitHandler {
 **File:** `angular/src/app/core/services/validation.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ValidationService {
   /**
    * Physical measurements validation with medical guidelines
@@ -427,7 +425,8 @@ export class ValidationService {
     if (weight < 40) {
       return {
         valid: false,
-        message: 'Weight below viable minimum (40kg). Medical evaluation needed.',
+        message:
+          "Weight below viable minimum (40kg). Medical evaluation needed.",
       };
     }
     // ... more validation
@@ -437,7 +436,8 @@ export class ValidationService {
     if (percentage < 3) {
       return {
         valid: false,
-        message: 'Body fat below minimum viable level (3%). Medical evaluation needed.',
+        message:
+          "Body fat below minimum viable level (3%). Medical evaluation needed.",
       };
     }
     // ... more validation
@@ -460,7 +460,7 @@ The following utilities are from the original vanilla JS implementation and are 
 Escapes HTML special characters to prevent XSS attacks.
 
 ```javascript
-import { escapeHtml } from './utils/sanitize.js';
+import { escapeHtml } from "./utils/sanitize.js";
 
 const userInput = '<script>alert("XSS")</script>';
 const safe = escapeHtml(userInput);
@@ -472,10 +472,10 @@ const safe = escapeHtml(userInput);
 Sanitizes URLs to prevent XSS via href/src attributes.
 
 ```javascript
-import { sanitizeUrl } from './utils/sanitize.js';
+import { sanitizeUrl } from "./utils/sanitize.js";
 
-const safe = sanitizeUrl('https://example.com'); // Allowed
-const blocked = sanitizeUrl('javascript:alert(1)'); // Returns ''
+const safe = sanitizeUrl("https://example.com"); // Allowed
+const blocked = sanitizeUrl("javascript:alert(1)"); // Returns ''
 ```
 
 **Allowed Protocols:** `https://`, `http://`, `mailto:`, `tel:`, `sms:`
@@ -485,15 +485,15 @@ const blocked = sanitizeUrl('javascript:alert(1)'); // Returns ''
 **File:** `src/js/security/csrf-protection.js`
 
 ```javascript
-import csrfProtection from './security/csrf-protection.js';
+import csrfProtection from "./security/csrf-protection.js";
 
 // Get token for API calls
 const headers = {
-  'Content-Type': 'application/json',
+  "Content-Type": "application/json",
   ...csrfProtection.getHeaders(),
 };
 
-fetch('/api/data', { method: 'POST', headers, body: JSON.stringify(data) });
+fetch("/api/data", { method: "POST", headers, body: JSON.stringify(data) });
 ```
 
 ### Cache Service
@@ -501,16 +501,16 @@ fetch('/api/data', { method: 'POST', headers, body: JSON.stringify(data) });
 **File:** `src/js/services/cache-service.js`
 
 ```javascript
-import cacheService from './services/cache-service.js';
-import { NETWORK } from './config/app-constants.js';
+import cacheService from "./services/cache-service.js";
+import { NETWORK } from "./config/app-constants.js";
 
 // Set with TTL
-cacheService.set('api_response', data, {
+cacheService.set("api_response", data, {
   ttl: NETWORK.CACHE_DURATION_SHORT, // 5 minutes
 });
 
 // Get (returns null if expired)
-const cached = cacheService.get('api_response');
+const cached = cacheService.get("api_response");
 
 // Invalidate pattern
 cacheService.invalidatePattern(/^user_/);
@@ -525,9 +525,9 @@ export const NETWORK = {
   API_TIMEOUT: 30000,
   MAX_RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
-  CACHE_DURATION_SHORT: 5 * 60 * 1000,   // 5 minutes
+  CACHE_DURATION_SHORT: 5 * 60 * 1000, // 5 minutes
   CACHE_DURATION_MEDIUM: 15 * 60 * 1000, // 15 minutes
-  CACHE_DURATION_LONG: 60 * 60 * 1000,   // 1 hour
+  CACHE_DURATION_LONG: 60 * 60 * 1000, // 1 hour
 };
 
 export const WELLNESS = {
@@ -546,42 +546,44 @@ export const WELLNESS = {
 
 ### Training & Load Management
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/training-stats` | GET | Training statistics |
-| `/api/training-stats-enhanced` | GET | Enhanced stats with ACWR |
-| `/api/load-management/acwr` | GET | ACWR calculation |
-| `/api/load-management/monotony` | GET | Training monotony |
-| `/api/load-management/tsb` | GET | Training stress balance |
-| `/api/load-management/injury-risk` | GET | Combined injury risk score |
-| `/api/calc-readiness` | GET | Readiness score |
+| Endpoint                           | Method | Description                |
+| ---------------------------------- | ------ | -------------------------- |
+| `/api/training-stats`              | GET    | Training statistics        |
+| `/api/training-stats-enhanced`     | GET    | Enhanced stats with ACWR   |
+| `/api/load-management/acwr`        | GET    | ACWR calculation           |
+| `/api/load-management/monotony`    | GET    | Training monotony          |
+| `/api/load-management/tsb`         | GET    | Training stress balance    |
+| `/api/load-management/injury-risk` | GET    | Combined injury risk score |
+| `/api/calc-readiness`              | GET    | Readiness score            |
 
 ### AI Coaching
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/ai/chat` | POST | Send message to AI coach |
-| `/api/ai/chat/session/:id` | GET | Load chat session |
-| `/api/ai/feedback` | POST | Submit AI feedback |
+| Endpoint                   | Method | Description              |
+| -------------------------- | ------ | ------------------------ |
+| `/api/ai/chat`             | POST   | Send message to AI coach |
+| `/api/ai/chat/session/:id` | GET    | Load chat session        |
+| `/api/ai/feedback`         | POST   | Submit AI feedback       |
 
 ### Smart Recommendations
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/smart-training-recommendations` | GET | AI-powered training plan |
-| `/api/training-plan` | GET | Periodized training plan |
+| Endpoint                              | Method | Description              |
+| ------------------------------------- | ------ | ------------------------ |
+| `/api/smart-training-recommendations` | GET    | AI-powered training plan |
+| `/api/training-plan`                  | GET    | Periodized training plan |
 
 ---
 
 ## Version History
 
 **2.0.0** (December 26, 2025)
+
 - Added ACWR safety integration to AI coaching
 - Updated documentation to reflect Angular 21 architecture
 - Added signal-based state management documentation
 - Documented ViewModel pattern
 
 **1.0.0** (November 2025)
+
 - Initial release
 - Legacy utilities documented
 

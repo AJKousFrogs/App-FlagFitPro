@@ -314,7 +314,7 @@ class AuthManager {
     const result = await TokenValidator.validateToken(
       this.token,
       () => auth.getCurrentUser(),
-      timeoutMs
+      timeoutMs,
     );
 
     if (result.success) {
@@ -552,7 +552,7 @@ class AuthManager {
         supabase,
         safeSupabaseQuery,
         provider,
-        role
+        role,
       );
 
       // User will be redirected to OAuth provider
@@ -1037,16 +1037,23 @@ class AuthManager {
     // 1. Running in development environment (localhost)
     // 2. ALLOW_UNAUTHENTICATED_DEV is explicitly set to "true"
     // 3. Hostname is localhost or 127.0.0.1 (prevents production bypass)
-    const isLocalhost = typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' ||
-       window.location.hostname === '127.0.0.1' ||
-       window.location.hostname === '0.0.0.0');
+    const isLocalhost =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "0.0.0.0");
 
-    if (config.ALLOW_UNAUTHENTICATED_DEV && isLocalhost && !(this.token && this.user)) {
+    if (
+      config.ALLOW_UNAUTHENTICATED_DEV &&
+      isLocalhost &&
+      !(this.token && this.user)
+    ) {
       logger.warn("⚠️ ==========================================");
       logger.warn("⚠️ DEV MODE ONLY: Bypassing authentication");
       logger.warn("⚠️ This is DISABLED in production");
-      logger.warn(`⚠️ Hostname check: ${  typeof window !== 'undefined' ? window.location.hostname : 'N/A'}`);
+      logger.warn(
+        `⚠️ Hostname check: ${typeof window !== "undefined" ? window.location.hostname : "N/A"}`,
+      );
       logger.warn("⚠️ Set ALLOW_UNAUTHENTICATED_DEV=false to test auth flow");
       logger.warn("⚠️ ==========================================");
       return true;
@@ -1054,7 +1061,9 @@ class AuthManager {
 
     // SECURITY: Log warning if bypass is attempted in production
     if (config.ALLOW_UNAUTHENTICATED_DEV && !isLocalhost) {
-      logger.error("🚨 SECURITY: Auth bypass attempted on non-localhost hostname. Denying access.");
+      logger.error(
+        "🚨 SECURITY: Auth bypass attempted on non-localhost hostname. Denying access.",
+      );
     }
 
     if (!(this.token && this.user)) {

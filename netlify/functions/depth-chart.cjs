@@ -47,7 +47,9 @@ const getTeamDepthCharts = async (userId, teamId) => {
     .eq("team_id", teamId)
     .order("chart_type");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -72,18 +74,22 @@ const getDepthChartWithEntries = async (userId, templateId) => {
 
   const { data: entries, error: entriesError } = await supabaseAdmin
     .from("depth_chart_entries")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (
         id,
         name
       )
-    `)
+    `,
+    )
     .eq("template_id", templateId)
     .order("position_name")
     .order("depth_order");
 
-  if (entriesError) {throw entriesError;}
+  if (entriesError) {
+    throw entriesError;
+  }
 
   // Transform entries to include player info
   const transformedEntries = (entries || []).map((entry) => ({
@@ -122,10 +128,13 @@ const createDepthChart = async (userId, chartData) => {
     .select()
     .single();
 
-  if (templateError) {throw templateError;}
+  if (templateError) {
+    throw templateError;
+  }
 
   // Create default positions if provided or use standard positions
-  const positionsToCreate = positions || FLAG_FOOTBALL_POSITIONS[chart_type] || [];
+  const positionsToCreate =
+    positions || FLAG_FOOTBALL_POSITIONS[chart_type] || [];
 
   if (positionsToCreate.length > 0) {
     const entries = positionsToCreate.map((pos) => ({
@@ -156,7 +165,10 @@ const updateDepthChart = async (userId, templateId, updates) => {
     throw new Error("Depth chart not found");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, template.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    template.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can update depth charts");
   }
@@ -176,7 +188,9 @@ const updateDepthChart = async (userId, templateId, updates) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -194,7 +208,10 @@ const deleteDepthChart = async (userId, templateId) => {
     throw new Error("Depth chart not found");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, template.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    template.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can delete depth charts");
   }
@@ -204,7 +221,9 @@ const deleteDepthChart = async (userId, templateId) => {
     .delete()
     .eq("id", templateId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -215,10 +234,12 @@ const updateEntry = async (userId, entryId, updates) => {
   // Get entry and template to verify access
   const { data: entry, error: entryError } = await supabaseAdmin
     .from("depth_chart_entries")
-    .select(`
+    .select(
+      `
       *,
       depth_chart_templates!inner (team_id)
-    `)
+    `,
+    )
     .eq("id", entryId)
     .single();
 
@@ -226,13 +247,19 @@ const updateEntry = async (userId, entryId, updates) => {
     throw new Error("Depth chart entry not found");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, entry.depth_chart_templates.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    entry.depth_chart_templates.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can update depth charts");
   }
 
   // Record history if player is changing
-  if (updates.player_id !== undefined && updates.player_id !== entry.player_id) {
+  if (
+    updates.player_id !== undefined &&
+    updates.player_id !== entry.player_id
+  ) {
     await supabaseAdmin.from("depth_chart_history").insert({
       template_id: entry.template_id,
       position_name: entry.position_name,
@@ -255,12 +282,18 @@ const updateEntry = async (userId, entryId, updates) => {
 
   const { data, error } = await supabaseAdmin
     .from("depth_chart_entries")
-    .update({ ...filteredUpdates, updated_by: userId, updated_at: new Date().toISOString() })
+    .update({
+      ...filteredUpdates,
+      updated_by: userId,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", entryId)
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -273,10 +306,12 @@ const swapPositions = async (userId, swapData) => {
   // Get both entries
   const { data: entries, error: entriesError } = await supabaseAdmin
     .from("depth_chart_entries")
-    .select(`
+    .select(
+      `
       *,
       depth_chart_templates!inner (team_id)
-    `)
+    `,
+    )
     .in("id", [entry_id_1, entry_id_2]);
 
   if (entriesError || !entries || entries.length !== 2) {
@@ -290,7 +325,10 @@ const swapPositions = async (userId, swapData) => {
     throw new Error("Cannot swap positions from different depth charts");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, entry1.depth_chart_templates.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    entry1.depth_chart_templates.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can modify depth charts");
   }
@@ -335,7 +373,8 @@ const swapPositions = async (userId, swapData) => {
 const addPosition = async (userId, positionData) => {
   checkEnvVars();
 
-  const { template_id, position_name, position_abbreviation, depth_order } = positionData;
+  const { template_id, position_name, position_abbreviation, depth_order } =
+    positionData;
 
   const { data: template, error: templateError } = await supabaseAdmin
     .from("depth_chart_templates")
@@ -347,7 +386,10 @@ const addPosition = async (userId, positionData) => {
     throw new Error("Depth chart not found");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, template.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    template.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can add positions");
   }
@@ -364,7 +406,9 @@ const addPosition = async (userId, positionData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -389,12 +433,14 @@ const getDepthChartHistory = async (userId, templateId, queryParams) => {
 
   let query = supabaseAdmin
     .from("depth_chart_history")
-    .select(`
+    .select(
+      `
       *,
       old_player:old_player_id (name),
       new_player:new_player_id (name),
       changed_by_user:changed_by (name)
-    `)
+    `,
+    )
     .eq("template_id", templateId)
     .order("changed_at", { ascending: false });
 
@@ -412,7 +458,9 @@ const getDepthChartHistory = async (userId, templateId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((record) => ({
     ...record,
@@ -433,17 +481,21 @@ const getUnassignedPlayers = async (userId, templateId, teamId) => {
   // Get all team members
   const { data: teamMembers, error: membersError } = await supabaseAdmin
     .from("team_members")
-    .select(`
+    .select(
+      `
       user_id,
       users:user_id (
         id,
         name
       )
-    `)
+    `,
+    )
     .eq("team_id", teamId)
     .eq("role", "player");
 
-  if (membersError) {throw membersError;}
+  if (membersError) {
+    throw membersError;
+  }
 
   // Get assigned players in this depth chart
   const { data: entries, error: entriesError } = await supabaseAdmin
@@ -452,7 +504,9 @@ const getUnassignedPlayers = async (userId, templateId, teamId) => {
     .eq("template_id", templateId)
     .not("player_id", "is", null);
 
-  if (entriesError) {throw entriesError;}
+  if (entriesError) {
+    throw entriesError;
+  }
 
   const assignedPlayerIds = new Set((entries || []).map((e) => e.player_id));
 
@@ -490,7 +544,9 @@ const initializeTeamDepthCharts = async (userId, teamId) => {
       .select()
       .single();
 
-    if (templateError) {throw templateError;}
+    if (templateError) {
+      throw templateError;
+    }
 
     const positions = FLAG_FOOTBALL_POSITIONS[chartType] || [];
     if (positions.length > 0) {
@@ -518,7 +574,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
     handler: async (event, _context, { userId }) => {
-      const path = event.path.replace(/^\/api\/depth-chart\/?/, "").replace(/^\/\.netlify\/functions\/depth-chart\/?/, "");
+      const path = event.path
+        .replace(/^\/api\/depth-chart\/?/, "")
+        .replace(/^\/\.netlify\/functions\/depth-chart\/?/, "");
       const queryParams = event.queryStringParameters || {};
 
       let body = {};
@@ -565,14 +623,22 @@ exports.handler = async (event, context) => {
         // History endpoint
         const historyMatch = path.match(/^templates\/([^/]+)\/history$/);
         if (historyMatch && event.httpMethod === "GET") {
-          const result = await getDepthChartHistory(userId, historyMatch[1], queryParams);
+          const result = await getDepthChartHistory(
+            userId,
+            historyMatch[1],
+            queryParams,
+          );
           return createSuccessResponse(result);
         }
 
         // Unassigned players endpoint
         const unassignedMatch = path.match(/^templates\/([^/]+)\/unassigned$/);
         if (unassignedMatch && event.httpMethod === "GET") {
-          const result = await getUnassignedPlayers(userId, unassignedMatch[1], queryParams.team_id);
+          const result = await getUnassignedPlayers(
+            userId,
+            unassignedMatch[1],
+            queryParams.team_id,
+          );
           return createSuccessResponse(result);
         }
 
@@ -604,7 +670,10 @@ exports.handler = async (event, context) => {
         if (error.message.includes("not found")) {
           return createErrorResponse(error.message, 404, "not_found");
         }
-        if (error.message.includes("authorized") || error.message.includes("permission")) {
+        if (
+          error.message.includes("authorized") ||
+          error.message.includes("permission")
+        ) {
           return createErrorResponse(error.message, 403, "forbidden");
         }
         throw error;

@@ -58,7 +58,8 @@ import { ToastService } from "../../../core/services/toast.service";
             <div class="header-text">
               <h3>{{ tournament()!.name }}</h3>
               <span class="day-indicator">
-                Day {{ tournament()!.currentDay }} of {{ tournament()!.totalDays }}
+                Day {{ tournament()!.currentDay }} of
+                {{ tournament()!.totalDays }}
               </span>
             </div>
           </div>
@@ -84,13 +85,13 @@ import { ToastService } from "../../../core/services/toast.service";
                 [class.upcoming]="game.status === 'upcoming'"
                 [pTooltip]="getGameTooltip(game)"
               >
-                @if (game.status === 'completed') {
+                @if (game.status === "completed") {
                   @if (game.result?.won) {
                     <i class="pi pi-check"></i>
                   } @else {
                     <i class="pi pi-times"></i>
                   }
-                } @else if (game.status === 'in_progress') {
+                } @else if (game.status === "in_progress") {
                   <i class="pi pi-play"></i>
                 } @else {
                   <span>{{ game.gameNumber }}</span>
@@ -110,7 +111,10 @@ import { ToastService } from "../../../core/services/toast.service";
           <div class="next-game-section">
             <div class="next-game-header">
               <span class="section-label">Next Game</span>
-              <span class="time-until" [class.urgent]="(stats()?.hoursUntilNextGame || 0) < 2">
+              <span
+                class="time-until"
+                [class.urgent]="(stats()?.hoursUntilNextGame || 0) < 2"
+              >
                 @if ((stats()?.hoursUntilNextGame || 0) < 1) {
                   {{ getMinutesUntilNextGame() }} min
                 } @else {
@@ -120,7 +124,9 @@ import { ToastService } from "../../../core/services/toast.service";
             </div>
             <div class="next-game-info">
               <span class="opponent">vs {{ nextGame()!.opponent }}</span>
-              <span class="time">{{ nextGame()!.scheduledTime | date: "shortTime" }}</span>
+              <span class="time">{{
+                nextGame()!.scheduledTime | date: "shortTime"
+              }}</span>
             </div>
           </div>
         }
@@ -150,7 +156,7 @@ import { ToastService } from "../../../core/services/toast.service";
             <span>{{ tournament()!.hydrationConsumed }}ml</span>
             <span class="target">/ {{ tournament()!.hydrationTarget }}ml</span>
           </div>
-          
+
           <!-- Quick Hydration Buttons -->
           <div class="quick-hydration">
             <button
@@ -184,7 +190,10 @@ import { ToastService } from "../../../core/services/toast.service";
         <div class="nutrition-suggestion">
           <div class="suggestion-header">
             <i class="pi pi-apple"></i>
-            <span class="phase-badge" [class]="'phase-' + nutritionSuggestion().phase">
+            <span
+              class="phase-badge"
+              [class]="'phase-' + nutritionSuggestion().phase"
+            >
               {{ nutritionSuggestion().phase | titlecase }}
             </span>
           </div>
@@ -641,7 +650,7 @@ export class TournamentModeWidgetComponent {
   nextGame = this.tournamentService.nextGame;
 
   nutritionSuggestion = computed(() =>
-    this.tournamentService.getNutritionSuggestion()
+    this.tournamentService.getNutritionSuggestion(),
   );
 
   getGameTooltip(game: {
@@ -678,7 +687,7 @@ export class TournamentModeWidgetComponent {
   confirmEndTournament(): void {
     if (
       confirm(
-        "Are you sure you want to end this tournament? This action cannot be undone."
+        "Are you sure you want to end this tournament? This action cannot be undone.",
       )
     ) {
       this.tournamentService.endTournament();

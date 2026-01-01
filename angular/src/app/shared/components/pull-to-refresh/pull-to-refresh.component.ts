@@ -21,7 +21,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
-    <div 
+    <div
       class="pull-to-refresh-container"
       #container
       (touchstart)="onTouchStart($event)"
@@ -29,7 +29,7 @@ import { CommonModule } from "@angular/common";
       (touchend)="onTouchEnd()"
     >
       <!-- Pull indicator -->
-      <div 
+      <div
         class="pull-indicator"
         [class.visible]="showIndicator()"
         [class.refreshing]="isRefreshing()"
@@ -51,73 +51,72 @@ import { CommonModule } from "@angular/common";
       </div>
 
       <!-- Content -->
-      <div 
-        class="pull-content"
-        [style.transform]="contentTransform()"
-      >
+      <div class="pull-content" [style.transform]="contentTransform()">
         <ng-content></ng-content>
       </div>
     </div>
   `,
-  styles: [`
-    .pull-to-refresh-container {
-      position: relative;
-      overflow-y: auto;
-      overflow-x: hidden;
-      height: 100%;
-      -webkit-overflow-scrolling: touch;
-    }
+  styles: [
+    `
+      .pull-to-refresh-container {
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        -webkit-overflow-scrolling: touch;
+      }
 
-    .pull-indicator {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 60px;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(-100%);
-      transition: opacity 0.2s ease;
-    }
+      .pull-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60px;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: opacity 0.2s ease;
+      }
 
-    .pull-indicator.visible {
-      opacity: 1;
-    }
+      .pull-indicator.visible {
+        opacity: 1;
+      }
 
-    .pull-indicator.refreshing {
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
+      .pull-indicator.refreshing {
+        transform: translateY(0) !important;
+        opacity: 1 !important;
+      }
 
-    .indicator-content {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-3) var(--space-4);
-      background: var(--surface-primary);
-      border-radius: 999px;
-      box-shadow: var(--shadow-md);
-      color: var(--color-brand-primary);
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
+      .indicator-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+        background: var(--surface-primary);
+        border-radius: 999px;
+        box-shadow: var(--shadow-md);
+        color: var(--color-brand-primary);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
 
-    .indicator-content i {
-      font-size: 1rem;
-    }
+      .indicator-content i {
+        font-size: 1rem;
+      }
 
-    .pull-content {
-      min-height: 100%;
-      transition: transform 0.2s ease;
-    }
+      .pull-content {
+        min-height: 100%;
+        transition: transform 0.2s ease;
+      }
 
-    .pull-indicator.refreshing + .pull-content {
-      transform: translateY(60px) !important;
-    }
-  `],
+      .pull-indicator.refreshing + .pull-content {
+        transform: translateY(60px) !important;
+      }
+    `,
+  ],
 })
 export class PullToRefreshComponent implements OnDestroy {
   private document = inject(DOCUMENT);
@@ -140,8 +139,12 @@ export class PullToRefreshComponent implements OnDestroy {
   private currentY = 0;
   private isPulling = false;
 
-  showIndicator = computed(() => this.pullDistance() > 10 || this.isRefreshing());
-  pullProgress = computed(() => Math.min(this.pullDistance() / this.threshold(), 1));
+  showIndicator = computed(
+    () => this.pullDistance() > 10 || this.isRefreshing(),
+  );
+  pullProgress = computed(() =>
+    Math.min(this.pullDistance() / this.threshold(), 1),
+  );
 
   indicatorTransform = computed(() => {
     if (this.isRefreshing()) return "translateY(0)";
@@ -168,7 +171,7 @@ export class PullToRefreshComponent implements OnDestroy {
         // Prevent default pull-to-refresh on mobile browsers
         this.document.body.style.overscrollBehavior = "contain";
       },
-      { injector: this.injector }
+      { injector: this.injector },
     );
   }
 

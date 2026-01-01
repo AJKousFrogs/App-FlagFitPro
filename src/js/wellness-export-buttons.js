@@ -1,6 +1,5 @@
-import { logger } from '../logger.js';
-import { setSafeContent } from './utils/shared.js';
-
+import { logger } from "../logger.js";
+import { setSafeContent } from "./utils/shared.js";
 
 /**
  * FlagFit Pro - Wellness Export Buttons
@@ -40,7 +39,9 @@ import { setSafeContent } from './utils/shared.js';
     const exportContainer = document.createElement("div");
     exportContainer.id = "wellness-export-buttons";
     exportContainer.className = "wellness-export-buttons";
-    setSafeContent(exportContainer, `
+    setSafeContent(
+      exportContainer,
+      `
       <div class="export-buttons-wrapper">
         <h3 class="export-title">📊 Export Your Data</h3>
         <p class="export-description">Download your wellness data for your records or to share with your coach</p>
@@ -67,7 +68,10 @@ import { setSafeContent } from './utils/shared.js';
           </button>
         </div>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     // Add styles
     const style = document.createElement("style");
@@ -194,7 +198,7 @@ import { setSafeContent } from './utils/shared.js';
     );
 
     if (wellnessHistory.length === 0) {
-      alert("No wellness data to export. Log some wellness check-ins first!");
+      alert("No wellness data to export. Log some wellness check-ins first!"); // eslint-disable-line no-alert
       return;
     }
 
@@ -213,7 +217,7 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>✅ PDF Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = '';
+          btn.textContent = "";
           while (originalContent.firstChild) {
             btn.appendChild(originalContent.firstChild.cloneNode(true));
           }
@@ -222,7 +226,7 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = '';
+          btn.textContent = "";
           while (originalContent.firstChild) {
             btn.appendChild(originalContent.firstChild.cloneNode(true));
           }
@@ -241,7 +245,7 @@ import { setSafeContent } from './utils/shared.js';
     );
 
     if (wellnessHistory.length === 0) {
-      alert("No wellness data to export. Log some wellness check-ins first!");
+      alert("No wellness data to export. Log some wellness check-ins first!"); // eslint-disable-line no-alert
       return;
     }
 
@@ -275,7 +279,7 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>✅ CSV Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = '';
+          btn.textContent = "";
           while (originalContent.firstChild) {
             btn.appendChild(originalContent.firstChild.cloneNode(true));
           }
@@ -284,7 +288,7 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = '';
+          btn.textContent = "";
           while (originalContent.firstChild) {
             btn.appendChild(originalContent.firstChild.cloneNode(true));
           }

@@ -48,16 +48,23 @@ export class PushNotificationService {
   readonly isSupported = this._isSupported.asReadonly();
   readonly isSubscribed = this._isSubscribed.asReadonly();
 
-  readonly canSubscribe = computed(() => 
-    this._isSupported() && this._permission() !== "denied" && !this._isSubscribed()
+  readonly canSubscribe = computed(
+    () =>
+      this._isSupported() &&
+      this._permission() !== "denied" &&
+      !this._isSubscribed(),
   );
 
-  readonly isEnabled = computed(() =>
-    this._isSupported() && this._permission() === "granted" && this._isSubscribed()
+  readonly isEnabled = computed(
+    () =>
+      this._isSupported() &&
+      this._permission() === "granted" &&
+      this._isSubscribed(),
   );
 
   // VAPID public key - In production, get this from environment variables
-  private readonly VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
+  private readonly VAPID_PUBLIC_KEY =
+    "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
 
   constructor() {
     this.initialize();
@@ -87,7 +94,9 @@ export class PushNotificationService {
     }
 
     this._isSupported.set(true);
-    this._permission.set(Notification.permission as NotificationPermissionState);
+    this._permission.set(
+      Notification.permission as NotificationPermissionState,
+    );
 
     // Check for existing subscription
     await this.checkExistingSubscription();
@@ -122,13 +131,13 @@ export class PushNotificationService {
     try {
       const permission = await Notification.requestPermission();
       this._permission.set(permission as NotificationPermissionState);
-      
+
       if (permission === "granted") {
         this.logger.info("Notification permission granted");
       } else if (permission === "denied") {
         this.logger.warn("Notification permission denied");
         this.toastService.warn(
-          "Notifications blocked. Enable them in your browser settings to receive updates."
+          "Notifications blocked. Enable them in your browser settings to receive updates.",
         );
       }
 
@@ -144,7 +153,9 @@ export class PushNotificationService {
    */
   async subscribe(): Promise<boolean> {
     if (!this._isSupported()) {
-      this.toastService.error("Push notifications are not supported in this browser");
+      this.toastService.error(
+        "Push notifications are not supported in this browser",
+      );
       return false;
     }
 
@@ -162,7 +173,9 @@ export class PushNotificationService {
       // Subscribe to push manager
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(this.VAPID_PUBLIC_KEY) as BufferSource,
+        applicationServerKey: this.urlBase64ToUint8Array(
+          this.VAPID_PUBLIC_KEY,
+        ) as BufferSource,
       });
 
       this._subscription.set(subscription);
@@ -177,7 +190,7 @@ export class PushNotificationService {
       return true;
     } catch (error) {
       this.logger.error("Push subscription failed:", error);
-      
+
       if (error instanceof DOMException && error.name === "NotAllowedError") {
         this.toastService.error("Notification permission was denied");
       } else {
@@ -193,7 +206,7 @@ export class PushNotificationService {
    */
   async unsubscribe(): Promise<boolean> {
     const subscription = this._subscription();
-    
+
     if (!subscription) {
       this._isSubscribed.set(false);
       return true;
@@ -201,7 +214,7 @@ export class PushNotificationService {
 
     try {
       await subscription.unsubscribe();
-      
+
       // Remove subscription from Supabase
       await this.removeSubscription(subscription);
 
@@ -236,7 +249,7 @@ export class PushNotificationService {
 
     try {
       const registration = await navigator.serviceWorker.ready;
-      
+
       // Note: 'actions' is only supported in service workers, not in showNotification
       await registration.showNotification(options.title, {
         body: options.body,
@@ -259,7 +272,9 @@ export class PushNotificationService {
   /**
    * Save subscription to Supabase
    */
-  private async saveSubscription(subscription: PushSubscription): Promise<void> {
+  private async saveSubscription(
+    subscription: PushSubscription,
+  ): Promise<void> {
     try {
       const user = this.supabase.getCurrentUser();
       if (!user) return;
@@ -271,8 +286,8 @@ export class PushNotificationService {
         .upsert({
           user_id: user.id,
           endpoint: subscriptionJson.endpoint,
-        p256dh: subscriptionJson.keys?.['p256dh'],
-        auth: subscriptionJson.keys?.['auth'],
+          p256dh: subscriptionJson.keys?.["p256dh"],
+          auth: subscriptionJson.keys?.["auth"],
           user_agent: navigator.userAgent,
           created_at: new Date().toISOString(),
         });
@@ -289,7 +304,9 @@ export class PushNotificationService {
   /**
    * Remove subscription from Supabase
    */
-  private async removeSubscription(subscription: PushSubscription): Promise<void> {
+  private async removeSubscription(
+    subscription: PushSubscription,
+  ): Promise<void> {
     try {
       const user = this.supabase.getCurrentUser();
       if (!user) return;
@@ -344,7 +361,10 @@ export class PushNotificationService {
   /**
    * Notify about training reminder
    */
-  async notifyTrainingReminder(workoutName: string, scheduledTime: string): Promise<void> {
+  async notifyTrainingReminder(
+    workoutName: string,
+    scheduledTime: string,
+  ): Promise<void> {
     await this.showNotification({
       title: "Training Reminder",
       body: `Time for ${workoutName}! Scheduled for ${scheduledTime}`,
@@ -389,7 +409,10 @@ export class PushNotificationService {
   /**
    * Notify about achievement
    */
-  async notifyAchievement(achievementName: string, description: string): Promise<void> {
+  async notifyAchievement(
+    achievementName: string,
+    description: string,
+  ): Promise<void> {
     await this.showNotification({
       title: "Achievement Unlocked!",
       body: `${achievementName}: ${description}`,

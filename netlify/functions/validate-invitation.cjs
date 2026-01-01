@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
           "Token is required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
             season,
             home_city
           )
-        `
+        `,
         )
         .eq("token", token)
         .single();
@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
           "This invitation has already been accepted",
           400,
           "invitation_accepted",
-          requestId
+          requestId,
         );
       }
 
@@ -80,7 +80,7 @@ exports.handler = async (event, context) => {
           "This invitation has expired",
           400,
           "invitation_expired",
-          requestId
+          requestId,
         );
       }
 
@@ -98,7 +98,7 @@ exports.handler = async (event, context) => {
           },
           message: "Invitation is valid",
         },
-        requestId
+        requestId,
       );
     },
   });

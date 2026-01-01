@@ -45,14 +45,14 @@ export interface User {
   updatedAt: Date;
 }
 
-export type UserRole = 'athlete' | 'coach' | 'admin' | 'guardian';
+export type UserRole = "athlete" | "coach" | "admin" | "guardian";
 
 export interface UserProfile {
   firstName: string;
   lastName: string;
   dateOfBirth?: Date;
   /** Aligned with DB constraint: male, female, other, undisclosed */
-  gender?: 'male' | 'female' | 'other' | 'undisclosed';
+  gender?: "male" | "female" | "other" | "undisclosed";
   avatar?: string;
   bio?: string;
   position?: string;
@@ -60,7 +60,7 @@ export interface UserProfile {
 }
 
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   language: string;
   timezone: string;
   notifications: NotificationPreferences;
@@ -71,27 +71,20 @@ export interface NotificationPreferences {
   email: boolean;
   push: boolean;
   sms: boolean;
-  frequency: 'realtime' | 'daily' | 'weekly';
+  frequency: "realtime" | "daily" | "weekly";
 }
 
 export interface UnitPreferences {
-  distance: 'metric' | 'imperial';
-  weight: 'metric' | 'imperial';
-  temperature: 'celsius' | 'fahrenheit';
+  distance: "metric" | "imperial";
+  weight: "metric" | "imperial";
+  temperature: "celsius" | "fahrenheit";
 }
 
 // ============================================================================
 // TIME RANGE TYPES
 // ============================================================================
 
-export type TimeFrame =
-  | '7d'
-  | '30d'
-  | '3m'
-  | '6m'
-  | '1y'
-  | 'all'
-  | 'custom';
+export type TimeFrame = "7d" | "30d" | "3m" | "6m" | "1y" | "all" | "custom";
 
 export interface DateRange {
   startDate: Date;
@@ -120,7 +113,7 @@ export interface ChartSeries {
   name: string;
   data: ChartDataPoint[];
   color?: string;
-  type?: 'line' | 'bar' | 'area';
+  type?: "line" | "bar" | "area";
 }
 
 export interface ChartConfig {
@@ -136,17 +129,21 @@ export interface ChartConfig {
 // STATUS/STATE TYPES
 // ============================================================================
 
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+export type LoadingState = "idle" | "loading" | "success" | "error";
 
-export type DataState = 'no_data' | 'insufficient_data' | 'demo_data' | 'real_data';
+export type DataState =
+  | "no_data"
+  | "insufficient_data"
+  | "demo_data"
+  | "real_data";
 
-export type TrendDirection = 'up' | 'down' | 'stable';
+export type TrendDirection = "up" | "down" | "stable";
 
 export interface StatusIndicator {
-  status: 'success' | 'warning' | 'error' | 'info';
+  status: "success" | "warning" | "error" | "info";
   message: string;
   icon?: string;
-  severity?: 'low' | 'medium' | 'high';
+  severity?: "low" | "medium" | "high";
 }
 
 // ============================================================================
@@ -185,7 +182,7 @@ export interface SearchParams {
 
 export interface SortOption {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface FilterOption {
@@ -201,7 +198,7 @@ export interface FilterOption {
 export interface FileUpload {
   file: File;
   progress: number;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: "pending" | "uploading" | "success" | "error";
   url?: string;
   error?: string;
 }
@@ -222,7 +219,7 @@ export interface AttachmentMetadata {
 
 export interface Notification {
   id: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   title: string;
   message: string;
   action?: NotificationAction;

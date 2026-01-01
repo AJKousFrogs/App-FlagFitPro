@@ -76,7 +76,7 @@ describe("Notification Flow Integration Tests", () => {
             if (Array.isArray(response.data)) {
               notifications = response.data;
             } else if (response.data.notifications) {
-              notifications = response.data.notifications;
+              ({ notifications } = response.data);
             }
           }
 

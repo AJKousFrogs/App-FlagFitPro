@@ -449,7 +449,7 @@ ${results.html
       audit.warnings.forEach((warning) => (content += `- ${warning}\n`));
     }
 
-    return `${content  }\n`;
+    return `${content}\n`;
   })
   .join("\n")}
 
@@ -483,7 +483,7 @@ ${results.css
       audit.warnings.forEach((warning) => (content += `- ${warning}\n`));
     }
 
-    return `${content  }\n`;
+    return `${content}\n`;
   })
   .join("\n")}
 `;

@@ -1,7 +1,7 @@
 /**
  * Roster Component (Refactored)
  * Container component that orchestrates roster sub-components
- * 
+ *
  * Refactored from 3,360 lines to ~800 lines by extracting:
  * - RosterService: Data operations and state management
  * - RosterPlayerCardComponent: Player card display
@@ -19,43 +19,43 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { DatePipe, TitleCasePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DialogModule } from 'primeng/dialog';
-import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
-import { BadgeModule } from 'primeng/badge';
-import { Select } from 'primeng/select';
+} from "@angular/core";
+import { DatePipe, TitleCasePipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { TagModule } from "primeng/tag";
+import { ButtonModule } from "primeng/button";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { DialogModule } from "primeng/dialog";
+import { TooltipModule } from "primeng/tooltip";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ConfirmationService } from "primeng/api";
+import { BadgeModule } from "primeng/badge";
+import { Select } from "primeng/select";
 
-import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { PageErrorStateComponent } from '../../shared/components/page-error-state/page-error-state.component';
-import { PageLoadingStateComponent } from '../../shared/components/page-loading-state/page-loading-state.component';
-import { ToastService } from '../../core/services/toast.service';
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { ToastService } from "../../core/services/toast.service";
 
-import { RosterService } from './roster.service';
-import { 
-  Player, 
+import { RosterService } from "./roster.service";
+import {
+  Player,
   PlayerStatus,
   TeamInvitation,
   PositionGroup,
   STATUS_OPTIONS,
   ROLE_OPTIONS,
-} from './roster.models';
-import { 
-  getPositionFullName, 
-  getPositionIcon, 
+} from "./roster.models";
+import {
+  getPositionFullName,
+  getPositionIcon,
   getJerseyColor,
   getStatusSeverity,
   getPlayerStats,
-} from './roster-utils';
+} from "./roster-utils";
 import {
   RosterPlayerCardComponent,
   RosterStaffCardComponent,
@@ -63,10 +63,10 @@ import {
   RosterFiltersComponent,
   RosterPlayerFormDialogComponent,
   PlayerFormData,
-} from './components';
+} from "./components";
 
 @Component({
-  selector: 'app-roster',
+  selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ConfirmationService],
@@ -136,7 +136,7 @@ import {
                   (onClick)="exportRoster()"
                   pTooltip="Export roster to CSV"
                 ></p-button>
-                
+
                 <p-button
                   label="Invitations"
                   icon="pi pi-envelope"
@@ -144,17 +144,21 @@ import {
                   severity="info"
                   (onClick)="openInvitationsDialog()"
                   pTooltip="Manage pending invitations"
-                  [badge]="rosterService.pendingInvitations().length > 0 ? rosterService.pendingInvitations().length.toString() : ''"
+                  [badge]="
+                    rosterService.pendingInvitations().length > 0
+                      ? rosterService.pendingInvitations().length.toString()
+                      : ''
+                  "
                   badgeSeverity="danger"
                 ></p-button>
-                
+
                 <p-button
                   label="Invite"
                   icon="pi pi-user-plus"
                   [outlined]="true"
                   (onClick)="openInviteDialog()"
                 ></p-button>
-                
+
                 <p-button
                   label="Add Player"
                   icon="pi pi-plus"
@@ -180,7 +184,7 @@ import {
           <!-- Loading State -->
           @if (rosterService.isLoading()) {
             <div class="loading-state">
-              <p-progressSpinner 
+              <p-progressSpinner
                 [style]="{ width: '50px', height: '50px' }"
                 strokeWidth="4"
               ></p-progressSpinner>
@@ -189,19 +193,35 @@ import {
           }
 
           <!-- Empty State -->
-          @if (!rosterService.isLoading() && filteredPlayers().length === 0 && !searchQuery() && !positionFilter && !statusFilter) {
+          @if (
+            !rosterService.isLoading() &&
+            filteredPlayers().length === 0 &&
+            !searchQuery() &&
+            !positionFilter &&
+            !statusFilter
+          ) {
             <app-empty-state
               title="No Players Found"
               message="Your roster is empty. Add players to get started."
               icon="pi-users"
-              [actionLabel]="rosterService.canManageRoster() ? 'Add First Player' : ''"
+              [actionLabel]="
+                rosterService.canManageRoster() ? 'Add First Player' : ''
+              "
               actionIcon="pi pi-plus"
-              [actionHandler]="rosterService.canManageRoster() ? openAddPlayer.bind(this) : null"
+              [actionHandler]="
+                rosterService.canManageRoster()
+                  ? openAddPlayer.bind(this)
+                  : null
+              "
             ></app-empty-state>
           }
 
           <!-- No Results State -->
-          @if (!rosterService.isLoading() && filteredPlayers().length === 0 && (searchQuery() || positionFilter || statusFilter)) {
+          @if (
+            !rosterService.isLoading() &&
+            filteredPlayers().length === 0 &&
+            (searchQuery() || positionFilter || statusFilter)
+          ) {
             <div class="no-results">
               <i class="pi pi-search"></i>
               <h3>No players match your filters</h3>
@@ -216,9 +236,15 @@ import {
           }
 
           <!-- Content -->
-          @if (!rosterService.isLoading() && (filteredPlayers().length > 0 || rosterService.coachingStaff().length > 0)) {
+          @if (
+            !rosterService.isLoading() &&
+            (filteredPlayers().length > 0 ||
+              rosterService.coachingStaff().length > 0)
+          ) {
             <!-- Team Overview Stats -->
-            <app-roster-overview [stats]="rosterService.teamStats()"></app-roster-overview>
+            <app-roster-overview
+              [stats]="rosterService.teamStats()"
+            ></app-roster-overview>
 
             <!-- Coaching Staff -->
             @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
@@ -226,11 +252,18 @@ import {
                 <h2 class="section-title">
                   <i class="pi pi-users"></i>
                   Coaching Staff
-                  <span class="position-count">({{ rosterService.coachingStaffByCategory().coaching.length }})</span>
+                  <span class="position-count"
+                    >({{
+                      rosterService.coachingStaffByCategory().coaching.length
+                    }})</span
+                  >
                 </h2>
                 <div class="roster-grid">
-                  @for (member of rosterService.coachingStaffByCategory().coaching; track member.id || member.name) {
-                    <app-roster-staff-card 
+                  @for (
+                    member of rosterService.coachingStaffByCategory().coaching;
+                    track member.id || member.name
+                  ) {
+                    <app-roster-staff-card
                       [member]="member"
                       [showEmail]="rosterService.canManageRoster()"
                     ></app-roster-staff-card>
@@ -245,11 +278,18 @@ import {
                 <h2 class="section-title">
                   <i class="pi pi-heart"></i>
                   Medical Staff
-                  <span class="position-count">({{ rosterService.coachingStaffByCategory().medical.length }})</span>
+                  <span class="position-count"
+                    >({{
+                      rosterService.coachingStaffByCategory().medical.length
+                    }})</span
+                  >
                 </h2>
                 <div class="roster-grid">
-                  @for (member of rosterService.coachingStaffByCategory().medical; track member.id || member.name) {
-                    <app-roster-staff-card 
+                  @for (
+                    member of rosterService.coachingStaffByCategory().medical;
+                    track member.id || member.name
+                  ) {
+                    <app-roster-staff-card
                       [member]="member"
                       [showEmail]="rosterService.canManageRoster()"
                     ></app-roster-staff-card>
@@ -259,16 +299,27 @@ import {
             }
 
             <!-- Performance Staff -->
-            @if (rosterService.coachingStaffByCategory().performance.length > 0) {
+            @if (
+              rosterService.coachingStaffByCategory().performance.length > 0
+            ) {
               <div class="position-section">
                 <h2 class="section-title">
                   <i class="pi pi-chart-line"></i>
                   Performance Staff
-                  <span class="position-count">({{ rosterService.coachingStaffByCategory().performance.length }})</span>
+                  <span class="position-count"
+                    >({{
+                      rosterService.coachingStaffByCategory().performance
+                        .length
+                    }})</span
+                  >
                 </h2>
                 <div class="roster-grid">
-                  @for (member of rosterService.coachingStaffByCategory().performance; track member.id || member.name) {
-                    <app-roster-staff-card 
+                  @for (
+                    member of rosterService.coachingStaffByCategory()
+                      .performance;
+                    track member.id || member.name
+                  ) {
+                    <app-roster-staff-card
                       [member]="member"
                       [showEmail]="rosterService.canManageRoster()"
                     ></app-roster-staff-card>
@@ -278,12 +329,17 @@ import {
             }
 
             <!-- Players by Position -->
-            @for (positionGroup of filteredPlayersByPosition(); track positionGroup.position) {
+            @for (
+              positionGroup of filteredPlayersByPosition();
+              track positionGroup.position
+            ) {
               <div class="position-section">
                 <h2 class="section-title">
                   <i [class]="getPositionIcon(positionGroup.position)"></i>
                   {{ positionGroup.position }}
-                  <span class="position-count">({{ positionGroup.players.length }})</span>
+                  <span class="position-count"
+                    >({{ positionGroup.players.length }})</span
+                  >
                 </h2>
                 <div class="roster-grid">
                   @for (player of positionGroup.players; track player.id) {
@@ -327,26 +383,32 @@ import {
           @if (selectedPlayer()) {
             <div class="player-details-modal">
               <div class="details-header">
-                <div 
+                <div
                   class="details-jersey"
-                  [style.background]="getJerseyColor(selectedPlayer()!.position)"
+                  [style.background]="
+                    getJerseyColor(selectedPlayer()!.position)
+                  "
                 >
                   {{ selectedPlayer()!.jersey }}
                 </div>
                 <div class="details-info">
                   <h2>{{ selectedPlayer()!.name }}</h2>
-                  <p class="details-position">{{ getPositionFullName(selectedPlayer()!.position) }}</p>
-                  <p-tag 
+                  <p class="details-position">
+                    {{ getPositionFullName(selectedPlayer()!.position) }}
+                  </p>
+                  <p-tag
                     [value]="selectedPlayer()!.status | titlecase"
                     [severity]="getStatusSeverity(selectedPlayer()!.status)"
                   ></p-tag>
                 </div>
               </div>
-              
+
               <div class="details-grid">
                 <div class="details-item">
                   <span class="details-label">Country</span>
-                  <span class="details-value">{{ selectedPlayer()!.country }}</span>
+                  <span class="details-value">{{
+                    selectedPlayer()!.country
+                  }}</span>
                 </div>
                 <div class="details-item">
                   <span class="details-label">Age</span>
@@ -354,31 +416,49 @@ import {
                 </div>
                 <div class="details-item">
                   <span class="details-label">Height</span>
-                  <span class="details-value">{{ selectedPlayer()!.height }}</span>
+                  <span class="details-value">{{
+                    selectedPlayer()!.height
+                  }}</span>
                 </div>
                 <div class="details-item">
                   <span class="details-label">Weight</span>
-                  <span class="details-value">{{ selectedPlayer()!.weight }}</span>
+                  <span class="details-value">{{
+                    selectedPlayer()!.weight
+                  }}</span>
                 </div>
-                @if (rosterService.canManageRoster() && selectedPlayer()!.email) {
+                @if (
+                  rosterService.canManageRoster() && selectedPlayer()!.email
+                ) {
                   <div class="details-item">
                     <span class="details-label">Email</span>
-                    <span class="details-value">{{ selectedPlayer()!.email }}</span>
+                    <span class="details-value">{{
+                      selectedPlayer()!.email
+                    }}</span>
                   </div>
                 }
-                @if (rosterService.canManageRoster() && selectedPlayer()!.phone) {
+                @if (
+                  rosterService.canManageRoster() && selectedPlayer()!.phone
+                ) {
                   <div class="details-item">
                     <span class="details-label">Phone</span>
-                    <span class="details-value">{{ selectedPlayer()!.phone }}</span>
+                    <span class="details-value">{{
+                      selectedPlayer()!.phone
+                    }}</span>
                   </div>
                 }
               </div>
-              
-              @if (selectedPlayer()!.stats && getPlayerStats(selectedPlayer()!).length > 0) {
+
+              @if (
+                selectedPlayer()!.stats &&
+                getPlayerStats(selectedPlayer()!).length > 0
+              ) {
                 <div class="details-stats">
                   <h3>Performance Stats</h3>
                   <div class="stats-chips">
-                    @for (stat of getPlayerStats(selectedPlayer()!); track stat.key) {
+                    @for (
+                      stat of getPlayerStats(selectedPlayer()!);
+                      track stat.key
+                    ) {
                       <p-tag
                         [value]="stat.label + ': ' + stat.value"
                         severity="info"
@@ -389,16 +469,16 @@ import {
               }
             </div>
           }
-          
+
           <ng-template pTemplate="footer">
-            <p-button 
-              label="Close" 
+            <p-button
+              label="Close"
               [text]="true"
               (onClick)="showDetailsDialog.set(false)"
             ></p-button>
             @if (rosterService.canManageRoster()) {
-              <p-button 
-                label="Edit Player" 
+              <p-button
+                label="Edit Player"
                 icon="pi pi-pencil"
                 (onClick)="editPlayerFromDetails()"
               ></p-button>
@@ -416,29 +496,36 @@ import {
           [closable]="true"
         >
           <div class="status-dialog-content">
-            <p>Select new status for <strong>{{ statusChangePlayer()?.name }}</strong>:</p>
+            <p>
+              Select new status for
+              <strong>{{ statusChangePlayer()?.name }}</strong
+              >:
+            </p>
             <div class="status-options">
               @for (option of statusOptions; track option.value) {
-                <div 
+                <div
                   class="status-option"
                   [class.selected]="newStatus() === option.value"
                   (click)="newStatus.set(option.value)"
                 >
-                  <div class="status-indicator" [class]="'status-' + option.value"></div>
+                  <div
+                    class="status-indicator"
+                    [class]="'status-' + option.value"
+                  ></div>
                   <span>{{ option.label }}</span>
                 </div>
               }
             </div>
           </div>
-          
+
           <ng-template pTemplate="footer">
-            <p-button 
-              label="Cancel" 
+            <p-button
+              label="Cancel"
               [text]="true"
               (onClick)="showStatusDialog.set(false)"
             ></p-button>
-            <p-button 
-              label="Update Status" 
+            <p-button
+              label="Update Status"
               icon="pi pi-check"
               (onClick)="updatePlayerStatus()"
               [loading]="isSaving()"
@@ -456,29 +543,35 @@ import {
           [closable]="true"
         >
           <div class="status-dialog-content">
-            <p>Update status for <strong>{{ selectedPlayerIds().size }} players</strong>:</p>
+            <p>
+              Update status for
+              <strong>{{ selectedPlayerIds().size }} players</strong>:
+            </p>
             <div class="status-options">
               @for (option of statusOptions; track option.value) {
-                <div 
+                <div
                   class="status-option"
                   [class.selected]="bulkStatus() === option.value"
                   (click)="bulkStatus.set(option.value)"
                 >
-                  <div class="status-indicator" [class]="'status-' + option.value"></div>
+                  <div
+                    class="status-indicator"
+                    [class]="'status-' + option.value"
+                  ></div>
                   <span>{{ option.label }}</span>
                 </div>
               }
             </div>
           </div>
-          
+
           <ng-template pTemplate="footer">
-            <p-button 
-              label="Cancel" 
+            <p-button
+              label="Cancel"
               [text]="true"
               (onClick)="showBulkStatusDialog.set(false)"
             ></p-button>
-            <p-button 
-              label="Update All" 
+            <p-button
+              label="Update All"
               icon="pi pi-check"
               (onClick)="updateBulkStatus()"
               [loading]="isSaving()"
@@ -498,18 +591,18 @@ import {
           <div class="invite-form">
             <div class="form-field">
               <label for="inviteEmail">Email Address *</label>
-              <input 
-                pInputText 
-                id="inviteEmail" 
+              <input
+                pInputText
+                id="inviteEmail"
                 [(ngModel)]="inviteEmail"
                 placeholder="player@email.com"
                 class="w-full"
               />
             </div>
-            
+
             <div class="form-field">
               <label for="inviteRole">Role</label>
-              <p-select 
+              <p-select
                 id="inviteRole"
                 [(ngModel)]="inviteRole"
                 [options]="roleOptions"
@@ -519,12 +612,12 @@ import {
                 styleClass="w-full"
               ></p-select>
             </div>
-            
+
             <div class="form-field">
               <label for="inviteMessage">Personal Message (Optional)</label>
-              <textarea 
-                pInputText 
-                id="inviteMessage" 
+              <textarea
+                pInputText
+                id="inviteMessage"
                 [(ngModel)]="inviteMessage"
                 placeholder="Add a personal message to the invitation..."
                 rows="3"
@@ -532,15 +625,15 @@ import {
               ></textarea>
             </div>
           </div>
-          
+
           <ng-template pTemplate="footer">
-            <p-button 
-              label="Cancel" 
+            <p-button
+              label="Cancel"
               [text]="true"
               (onClick)="showInviteDialog.set(false)"
             ></p-button>
-            <p-button 
-              label="Send Invitation" 
+            <p-button
+              label="Send Invitation"
               icon="pi pi-send"
               (onClick)="sendInvitation()"
               [disabled]="!inviteEmail || isSaving()"
@@ -566,34 +659,44 @@ import {
                 <p-button
                   label="Send New Invitation"
                   icon="pi pi-plus"
-                  (onClick)="showInvitationsDialog.set(false); openInviteDialog()"
+                  (onClick)="
+                    showInvitationsDialog.set(false); openInviteDialog()
+                  "
                 ></p-button>
               </div>
             } @else {
-              @for (invitation of rosterService.pendingInvitations(); track invitation.id) {
-                <div class="invitation-item" [class.expired]="invitation.isExpired">
+              @for (
+                invitation of rosterService.pendingInvitations();
+                track invitation.id
+              ) {
+                <div
+                  class="invitation-item"
+                  [class.expired]="invitation.isExpired"
+                >
                   <div class="invitation-info">
                     <div class="invitation-email">
                       <i class="pi pi-envelope"></i>
                       {{ invitation.email }}
                     </div>
                     <div class="invitation-meta">
-                      <p-tag 
-                        [value]="rosterService.getRoleDisplayName(invitation.role)"
+                      <p-tag
+                        [value]="
+                          rosterService.getRoleDisplayName(invitation.role)
+                        "
                         severity="info"
                       ></p-tag>
                       <span class="invited-by">
                         Invited by {{ invitation.invitedBy }}
                       </span>
                       <span class="invitation-date">
-                        {{ invitation.createdAt | date:'short' }}
+                        {{ invitation.createdAt | date: "short" }}
                       </span>
                     </div>
                     @if (invitation.isExpired) {
                       <p-tag value="Expired" severity="danger"></p-tag>
                     } @else {
                       <span class="expires-text">
-                        Expires {{ invitation.expiresAt | date:'short' }}
+                        Expires {{ invitation.expiresAt | date: "short" }}
                       </span>
                     }
                   </div>
@@ -619,15 +722,15 @@ import {
               }
             }
           </div>
-          
+
           <ng-template pTemplate="footer">
-            <p-button 
-              label="Close" 
+            <p-button
+              label="Close"
               [text]="true"
               (onClick)="showInvitationsDialog.set(false)"
             ></p-button>
-            <p-button 
-              label="Send New Invitation" 
+            <p-button
+              label="Send New Invitation"
               icon="pi pi-plus"
               (onClick)="showInvitationsDialog.set(false); openInviteDialog()"
             ></p-button>
@@ -639,450 +742,452 @@ import {
       }
     </app-main-layout>
   `,
-  styles: [`
-    .roster-page {
-      padding: var(--space-6);
-    }
-
-    .header-actions {
-      display: flex;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-    }
-
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-12);
-      min-height: 300px;
-    }
-
-    .loading-message {
-      margin-top: var(--space-4);
-      font-size: var(--font-body-md);
-      color: var(--text-secondary);
-    }
-
-    .no-results {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-12);
-      text-align: center;
-      color: var(--text-secondary);
-    }
-
-    .no-results i {
-      font-size: 3rem;
-      margin-bottom: var(--space-4);
-      opacity: 0.5;
-    }
-
-    .no-results h3 {
-      margin: 0 0 var(--space-2);
-      color: var(--text-primary);
-    }
-
-    .no-results p {
-      margin: 0 0 var(--space-4);
-    }
-
-    .position-section {
-      margin-bottom: var(--space-8);
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: var(--font-heading-lg);
-      font-weight: var(--font-weight-bold);
-      margin-bottom: var(--space-6);
-      color: var(--text-primary);
-    }
-
-    .section-title i {
-      color: var(--color-brand-primary);
-    }
-
-    .position-count {
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-normal);
-      color: var(--text-secondary);
-    }
-
-    .roster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: var(--space-6);
-    }
-
-    /* Player Details Modal */
-    .player-details-modal {
-      padding: var(--space-2);
-    }
-
-    .details-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-6);
-      margin-bottom: var(--space-6);
-      padding-bottom: var(--space-6);
-      border-bottom: 1px solid var(--p-surface-200);
-    }
-
-    .details-jersey {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: var(--font-weight-bold);
-      font-size: var(--font-heading-xl);
-      color: white;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .details-info h2 {
-      margin: 0 0 var(--space-2);
-      font-size: var(--font-heading-xl);
-    }
-
-    .details-position {
-      color: var(--text-secondary);
-      margin: 0 0 var(--space-2);
-    }
-
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-
-    .details-item {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .details-label {
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .details-value {
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-medium);
-      color: var(--text-primary);
-    }
-
-    .details-stats h3 {
-      font-size: var(--font-body-md);
-      margin: 0 0 var(--space-3);
-    }
-
-    .stats-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    /* Status Dialog */
-    .status-dialog-content p {
-      margin: 0 0 var(--space-4);
-    }
-
-    .status-options {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .status-option {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      border: 1px solid var(--p-surface-200);
-      border-radius: var(--p-border-radius);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .status-option:hover {
-      background: var(--p-surface-50);
-    }
-
-    .status-option.selected {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-primary-bg);
-    }
-
-    .status-indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .status-indicator.status-active {
-      background: var(--color-status-success);
-    }
-
-    .status-indicator.status-injured {
-      background: var(--color-status-error);
-    }
-
-    .status-indicator.status-inactive {
-      background: var(--text-secondary);
-    }
-
-    /* Invite Form */
-    .invite-form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .form-field label {
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .w-full {
-      width: 100%;
-    }
-
-    /* Invitations List */
-    .invitations-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .empty-invitations {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-8);
-      text-align: center;
-      color: var(--text-secondary);
-    }
-
-    .empty-invitations i {
-      font-size: 3rem;
-      margin-bottom: var(--space-4);
-      opacity: 0.5;
-    }
-
-    .empty-invitations p {
-      margin: 0 0 var(--space-4);
-    }
-
-    .invitation-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-4);
-      border: 1px solid var(--p-surface-200);
-      border-radius: var(--p-border-radius);
-      background: var(--p-surface-50);
-      transition: all 0.2s;
-    }
-
-    .invitation-item:hover {
-      border-color: var(--color-brand-primary);
-      background: white;
-    }
-
-    .invitation-item.expired {
-      opacity: 0.7;
-      background: var(--color-status-error-bg);
-      border-color: var(--color-status-error);
-    }
-
-    .invitation-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .invitation-email {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-weight: var(--font-weight-semibold);
-      color: var(--text-primary);
-    }
-
-    .invitation-meta {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .invited-by,
-    .invitation-date,
-    .expires-text {
-      font-size: var(--font-body-xs);
-      color: var(--text-tertiary);
-    }
-
-    .invitation-actions {
-      display: flex;
-      gap: var(--space-2);
-    }
-
-    /* Responsive */
-    @media (min-width: 1400px) {
-      .roster-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
-    @media (min-width: 1200px) and (max-width: 1399px) {
-      .roster-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (min-width: 1024px) and (max-width: 1199px) {
-      .roster-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
+  styles: [
+    `
       .roster-page {
-        padding: var(--space-4);
-      }
-
-      .roster-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
+        padding: var(--space-6);
       }
 
       .header-actions {
-        width: 100%;
-        justify-content: stretch;
-      }
-
-      .header-actions p-button {
-        flex: 1;
-      }
-
-      .details-header {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-title {
-        font-size: var(--font-heading-md);
-      }
-
-      .invitation-item {
-        flex-direction: column;
+        display: flex;
         gap: var(--space-3);
-        align-items: flex-start;
-      }
-
-      .invitation-actions {
-        width: 100%;
-        justify-content: flex-end;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .roster-page {
-        padding: var(--space-3);
-      }
-
-      .details-jersey {
-        width: 60px;
-        height: 60px;
-        font-size: var(--font-heading-lg);
-      }
-
-      .invitation-meta {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-1);
-      }
-
-      .invitations-list {
-        max-height: 300px;
-      }
-
-      .status-options {
-        gap: var(--space-1);
-      }
-
-      .status-option {
-        padding: var(--space-2) var(--space-3);
-      }
-    }
-
-    @media (max-width: 374px) {
-      .roster-page {
-        padding: var(--space-2);
-      }
-
-      .header-actions {
-        flex-direction: column;
-      }
-
-      .section-title {
-        font-size: var(--font-body-lg);
         flex-wrap: wrap;
       }
 
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-12);
+        min-height: 300px;
+      }
+
+      .loading-message {
+        margin-top: var(--space-4);
+        font-size: var(--font-body-md);
+        color: var(--text-secondary);
+      }
+
+      .no-results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-12);
+        text-align: center;
+        color: var(--text-secondary);
+      }
+
+      .no-results i {
+        font-size: 3rem;
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+      }
+
+      .no-results h3 {
+        margin: 0 0 var(--space-2);
+        color: var(--text-primary);
+      }
+
+      .no-results p {
+        margin: 0 0 var(--space-4);
+      }
+
+      .position-section {
+        margin-bottom: var(--space-8);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--space-6);
+        color: var(--text-primary);
+      }
+
+      .section-title i {
+        color: var(--color-brand-primary);
+      }
+
       .position-count {
-        width: 100%;
-      }
-    }
-
-    /* Touch devices */
-    @media (hover: none) and (pointer: coarse) {
-      .header-actions button {
-        min-height: 44px;
-        min-width: 44px;
-      }
-    }
-
-    /* Print */
-    @media print {
-      .header-actions {
-        display: none !important;
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-normal);
+        color: var(--text-secondary);
       }
 
       .roster-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--space-6);
+      }
+
+      /* Player Details Modal */
+      .player-details-modal {
+        padding: var(--space-2);
+      }
+
+      .details-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-6);
+        border-bottom: 1px solid var(--p-surface-200);
+      }
+
+      .details-jersey {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-heading-xl);
+        color: white;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .details-info h2 {
+        margin: 0 0 var(--space-2);
+        font-size: var(--font-heading-xl);
+      }
+
+      .details-position {
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-2);
+      }
+
+      .details-grid {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+      }
+
+      .details-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .details-label {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .details-value {
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+      }
+
+      .details-stats h3 {
+        font-size: var(--font-body-md);
+        margin: 0 0 var(--space-3);
+      }
+
+      .stats-chips {
+        display: flex;
+        flex-wrap: wrap;
         gap: var(--space-2);
       }
-    }
-  `],
+
+      /* Status Dialog */
+      .status-dialog-content p {
+        margin: 0 0 var(--space-4);
+      }
+
+      .status-options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .status-option {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--p-surface-200);
+        border-radius: var(--p-border-radius);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .status-option:hover {
+        background: var(--p-surface-50);
+      }
+
+      .status-option.selected {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary-bg);
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .status-indicator.status-active {
+        background: var(--color-status-success);
+      }
+
+      .status-indicator.status-injured {
+        background: var(--color-status-error);
+      }
+
+      .status-indicator.status-inactive {
+        background: var(--text-secondary);
+      }
+
+      /* Invite Form */
+      .invite-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .form-field label {
+        font-weight: var(--font-weight-medium);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      /* Invitations List */
+      .invitations-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .empty-invitations {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-8);
+        text-align: center;
+        color: var(--text-secondary);
+      }
+
+      .empty-invitations i {
+        font-size: 3rem;
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+      }
+
+      .empty-invitations p {
+        margin: 0 0 var(--space-4);
+      }
+
+      .invitation-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4);
+        border: 1px solid var(--p-surface-200);
+        border-radius: var(--p-border-radius);
+        background: var(--p-surface-50);
+        transition: all 0.2s;
+      }
+
+      .invitation-item:hover {
+        border-color: var(--color-brand-primary);
+        background: white;
+      }
+
+      .invitation-item.expired {
+        opacity: 0.7;
+        background: var(--color-status-error-bg);
+        border-color: var(--color-status-error);
+      }
+
+      .invitation-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .invitation-email {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      .invitation-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .invited-by,
+      .invitation-date,
+      .expires-text {
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+      }
+
+      .invitation-actions {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      /* Responsive */
+      @media (min-width: 1400px) {
+        .roster-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      @media (min-width: 1200px) and (max-width: 1399px) {
+        .roster-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (min-width: 1024px) and (max-width: 1199px) {
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .roster-page {
+          padding: var(--space-4);
+        }
+
+        .roster-grid {
+          grid-template-columns: 1fr;
+          gap: var(--space-4);
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: stretch;
+        }
+
+        .header-actions p-button {
+          flex: 1;
+        }
+
+        .details-header {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .details-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-title {
+          font-size: var(--font-heading-md);
+        }
+
+        .invitation-item {
+          flex-direction: column;
+          gap: var(--space-3);
+          align-items: flex-start;
+        }
+
+        .invitation-actions {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .roster-page {
+          padding: var(--space-3);
+        }
+
+        .details-jersey {
+          width: 60px;
+          height: 60px;
+          font-size: var(--font-heading-lg);
+        }
+
+        .invitation-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-1);
+        }
+
+        .invitations-list {
+          max-height: 300px;
+        }
+
+        .status-options {
+          gap: var(--space-1);
+        }
+
+        .status-option {
+          padding: var(--space-2) var(--space-3);
+        }
+      }
+
+      @media (max-width: 374px) {
+        .roster-page {
+          padding: var(--space-2);
+        }
+
+        .header-actions {
+          flex-direction: column;
+        }
+
+        .section-title {
+          font-size: var(--font-body-lg);
+          flex-wrap: wrap;
+        }
+
+        .position-count {
+          width: 100%;
+        }
+      }
+
+      /* Touch devices */
+      @media (hover: none) and (pointer: coarse) {
+        .header-actions button {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+
+      /* Print */
+      @media print {
+        .header-actions {
+          display: none !important;
+        }
+
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-2);
+        }
+      }
+    `,
+  ],
 })
 export class RosterComponent implements OnInit {
   // Services
@@ -1107,21 +1212,21 @@ export class RosterComponent implements OnInit {
   editingPlayer = signal<Player | null>(null);
   selectedPlayer = signal<Player | null>(null);
   statusChangePlayer = signal<Player | null>(null);
-  newStatus = signal<PlayerStatus>('active');
-  bulkStatus = signal<PlayerStatus>('active');
+  newStatus = signal<PlayerStatus>("active");
+  bulkStatus = signal<PlayerStatus>("active");
 
   // Selection
   selectedPlayerIds = signal<Set<string>>(new Set());
 
   // Filters
-  searchQuery = signal('');
+  searchQuery = signal("");
   positionFilter: string | null = null;
   statusFilter: string | null = null;
 
   // Invite form
-  inviteEmail = '';
-  inviteRole = 'player';
-  inviteMessage = '';
+  inviteEmail = "";
+  inviteRole = "player";
+  inviteMessage = "";
 
   // Options
   statusOptions = STATUS_OPTIONS;
@@ -1137,46 +1242,47 @@ export class RosterComponent implements OnInit {
   // Computed
   headerSubtitle = computed(() => {
     const stats = this.rosterService.teamStats();
-    if (stats.length === 0) return 'Manage your team';
-    const countryStat = stats.find(s => s.label === 'Countries');
+    if (stats.length === 0) return "Manage your team";
+    const countryStat = stats.find((s) => s.label === "Countries");
     return `Manage your team • ${countryStat?.value || 0} countries represented`;
   });
 
   filteredPlayers = computed(() => {
     let players = this.rosterService.allPlayers();
-    
+
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      players = players.filter(p => 
-        p.name.toLowerCase().includes(query) ||
-        p.position.toLowerCase().includes(query) ||
-        p.country.toLowerCase().includes(query)
+      players = players.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.position.toLowerCase().includes(query) ||
+          p.country.toLowerCase().includes(query),
       );
     }
-    
+
     if (this.positionFilter) {
-      players = players.filter(p => p.position === this.positionFilter);
+      players = players.filter((p) => p.position === this.positionFilter);
     }
-    
+
     if (this.statusFilter) {
-      players = players.filter(p => p.status === this.statusFilter);
+      players = players.filter((p) => p.status === this.statusFilter);
     }
-    
+
     return players;
   });
 
   filteredPlayersByPosition = computed<PositionGroup[]>(() => {
     const players = this.filteredPlayers();
     const positionMap = new Map<string, Player[]>();
-    
-    players.forEach(player => {
+
+    players.forEach((player) => {
       const positionName = getPositionFullName(player.position);
       if (!positionMap.has(positionName)) {
         positionMap.set(positionName, []);
       }
       positionMap.get(positionName)!.push(player);
     });
-    
+
     return Array.from(positionMap.entries()).map(([position, players]) => ({
       position,
       players,
@@ -1190,14 +1296,14 @@ export class RosterComponent implements OnInit {
   private async initializePage(): Promise<void> {
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
-    
+
     await this.rosterService.loadRosterData();
     await this.rosterService.loadPendingInvitations();
-    
+
     if (this.rosterService.error()) {
       this.hasPageError.set(true);
     }
-    
+
     this.isPageLoading.set(false);
   }
 
@@ -1220,22 +1326,29 @@ export class RosterComponent implements OnInit {
     // Validate jersey number
     const excludeId = this.editingPlayer()?.id;
     if (this.rosterService.isJerseyNumberTaken(formData.jersey, excludeId)) {
-      this.toastService.error(`Jersey number ${formData.jersey} is already taken`);
+      this.toastService.error(
+        `Jersey number ${formData.jersey} is already taken`,
+      );
       return;
     }
 
     this.isSaving.set(true);
-    
+
     const result = this.editingPlayer()
-      ? await this.rosterService.updatePlayer(this.editingPlayer()!.id, formData as Partial<Player>)
+      ? await this.rosterService.updatePlayer(
+          this.editingPlayer()!.id,
+          formData as Partial<Player>,
+        )
       : await this.rosterService.addPlayer(formData as Partial<Player>);
 
     if (result.success) {
-      this.toastService.success(this.editingPlayer() ? 'Player updated!' : 'Player added!');
+      this.toastService.success(
+        this.editingPlayer() ? "Player updated!" : "Player added!",
+      );
       this.showPlayerDialog.set(false);
       this.editingPlayer.set(null);
     } else {
-      this.toastService.error(result.error || 'Failed to save player');
+      this.toastService.error(result.error || "Failed to save player");
     }
 
     this.isSaving.set(false);
@@ -1244,15 +1357,15 @@ export class RosterComponent implements OnInit {
   confirmRemovePlayer(player: Player): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to remove ${player.name} from the team?`,
-      header: 'Confirm Removal',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      header: "Confirm Removal",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         const result = await this.rosterService.removePlayer(player.id);
         if (result.success) {
           this.toastService.success(`${player.name} has been removed`);
         } else {
-          this.toastService.error(result.error || 'Failed to remove player');
+          this.toastService.error(result.error || "Failed to remove player");
         }
       },
     });
@@ -1284,13 +1397,16 @@ export class RosterComponent implements OnInit {
     if (!player) return;
 
     this.isSaving.set(true);
-    const result = await this.rosterService.updatePlayerStatus(player.id, this.newStatus());
+    const result = await this.rosterService.updatePlayerStatus(
+      player.id,
+      this.newStatus(),
+    );
 
     if (result.success) {
       this.toastService.success(`${player.name}'s status updated`);
       this.showStatusDialog.set(false);
     } else {
-      this.toastService.error(result.error || 'Failed to update status');
+      this.toastService.error(result.error || "Failed to update status");
     }
 
     this.isSaving.set(false);
@@ -1300,13 +1416,13 @@ export class RosterComponent implements OnInit {
   togglePlayerSelection(playerId: string): void {
     const current = this.selectedPlayerIds();
     const newSet = new Set(current);
-    
+
     if (newSet.has(playerId)) {
       newSet.delete(playerId);
     } else {
       newSet.add(playerId);
     }
-    
+
     this.selectedPlayerIds.set(newSet);
   }
 
@@ -1319,7 +1435,7 @@ export class RosterComponent implements OnInit {
   }
 
   openBulkStatusDialog(): void {
-    this.bulkStatus.set('active');
+    this.bulkStatus.set("active");
     this.showBulkStatusDialog.set(true);
   }
 
@@ -1328,14 +1444,17 @@ export class RosterComponent implements OnInit {
     if (ids.length === 0) return;
 
     this.isSaving.set(true);
-    const result = await this.rosterService.bulkUpdateStatus(ids, this.bulkStatus());
+    const result = await this.rosterService.bulkUpdateStatus(
+      ids,
+      this.bulkStatus(),
+    );
 
     if (result.success) {
       this.toastService.success(`Updated status for ${ids.length} players`);
       this.showBulkStatusDialog.set(false);
       this.clearSelection();
     } else {
-      this.toastService.error(result.error || 'Failed to update status');
+      this.toastService.error(result.error || "Failed to update status");
     }
 
     this.isSaving.set(false);
@@ -1345,18 +1464,18 @@ export class RosterComponent implements OnInit {
     const count = this.selectedPlayerIds().size;
     this.confirmationService.confirm({
       message: `Are you sure you want to remove ${count} player(s)?`,
-      header: 'Confirm Bulk Removal',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      header: "Confirm Bulk Removal",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         const ids = Array.from(this.selectedPlayerIds());
         const result = await this.rosterService.bulkRemovePlayers(ids);
-        
+
         if (result.success) {
           this.toastService.success(`Removed ${count} players`);
           this.clearSelection();
         } else {
-          this.toastService.error(result.error || 'Failed to remove players');
+          this.toastService.error(result.error || "Failed to remove players");
         }
       },
     });
@@ -1364,7 +1483,7 @@ export class RosterComponent implements OnInit {
 
   // Filters
   clearFilters(): void {
-    this.searchQuery.set('');
+    this.searchQuery.set("");
     this.positionFilter = null;
     this.statusFilter = null;
   }
@@ -1373,49 +1492,52 @@ export class RosterComponent implements OnInit {
   exportRoster(): void {
     const csv = this.rosterService.exportRosterToCsv();
     if (!csv) {
-      this.toastService.warn('No players to export');
+      this.toastService.warn("No players to export");
       return;
     }
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `roster_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `roster_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    this.toastService.success('Roster exported successfully');
+    this.toastService.success("Roster exported successfully");
   }
 
   // Invitations
   openInviteDialog(): void {
-    this.inviteEmail = '';
-    this.inviteRole = 'player';
-    this.inviteMessage = '';
+    this.inviteEmail = "";
+    this.inviteRole = "player";
+    this.inviteMessage = "";
     this.showInviteDialog.set(true);
   }
 
   async sendInvitation(): Promise<void> {
     if (!this.inviteEmail) {
-      this.toastService.warn('Please enter an email address');
+      this.toastService.warn("Please enter an email address");
       return;
     }
 
     this.isSaving.set(true);
     const result = await this.rosterService.sendInvitation(
-      this.inviteEmail, 
-      this.inviteRole, 
-      this.inviteMessage
+      this.inviteEmail,
+      this.inviteRole,
+      this.inviteMessage,
     );
 
     if (result.success) {
       this.toastService.success(`Invitation sent to ${this.inviteEmail}`);
       this.showInviteDialog.set(false);
     } else {
-      this.toastService.error(result.error || 'Failed to send invitation');
+      this.toastService.error(result.error || "Failed to send invitation");
     }
 
     this.isSaving.set(false);
@@ -1431,24 +1553,26 @@ export class RosterComponent implements OnInit {
     if (result.success) {
       this.toastService.success(`Invitation resent to ${invitation.email}`);
     } else {
-      this.toastService.error(result.error || 'Failed to resend invitation');
+      this.toastService.error(result.error || "Failed to resend invitation");
     }
   }
 
   async cancelInvitation(invitation: TeamInvitation): Promise<void> {
     this.confirmationService.confirm({
       message: `Cancel invitation for ${invitation.email}?`,
-      header: 'Cancel Invitation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      header: "Cancel Invitation",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         const result = await this.rosterService.cancelInvitation(invitation.id);
         if (result.success) {
-          this.toastService.success('Invitation cancelled');
+          this.toastService.success("Invitation cancelled");
         } else {
-          this.toastService.error(result.error || 'Failed to cancel invitation');
+          this.toastService.error(
+            result.error || "Failed to cancel invitation",
+          );
         }
-      }
+      },
     });
   }
 }

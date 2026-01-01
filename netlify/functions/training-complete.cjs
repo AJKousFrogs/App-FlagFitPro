@@ -16,10 +16,12 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 async function awardTrainingPoints(userId, duration, intensity) {
   // Base points: 5 per 15 minutes + bonus for high intensity
   const basePoints = Math.floor(duration / 15) * 5;
-  const intensityBonus = intensity >= 7 ? 10 : (intensity >= 5 ? 5 : 0);
+  const intensityBonus = intensity >= 7 ? 10 : intensity >= 5 ? 5 : 0;
   const totalPoints = basePoints + intensityBonus;
 
-  if (totalPoints <= 0) {return { points: 0 };}
+  if (totalPoints <= 0) {
+    return { points: 0 };
+  }
 
   try {
     // Check if user has sponsor_rewards record
@@ -48,7 +50,9 @@ async function awardTrainingPoints(userId, duration, intensity) {
       });
     }
 
-    console.log(`[Training Complete] Awarded ${totalPoints} points to user ${userId}`);
+    console.log(
+      `[Training Complete] Awarded ${totalPoints} points to user ${userId}`,
+    );
     return { points: totalPoints };
   } catch (error) {
     console.warn("[Training Complete] Could not award points:", error.message);
@@ -61,9 +65,10 @@ async function awardTrainingPoints(userId, duration, intensity) {
  */
 async function createCompletionNotification(userId, sessionType, points) {
   try {
-    const message = points > 0
-      ? `🎉 Great job completing your ${sessionType || 'training'} session! You earned ${points} points.`
-      : `🎉 Great job completing your ${sessionType || 'training'} session!`;
+    const message =
+      points > 0
+        ? `🎉 Great job completing your ${sessionType || "training"} session! You earned ${points} points.`
+        : `🎉 Great job completing your ${sessionType || "training"} session!`;
 
     await supabaseAdmin.from("notifications").insert({
       user_id: userId,
@@ -72,7 +77,10 @@ async function createCompletionNotification(userId, sessionType, points) {
       priority: "medium",
     });
   } catch (error) {
-    console.warn("[Training Complete] Could not create notification:", error.message);
+    console.warn(
+      "[Training Complete] Could not create notification:",
+      error.message,
+    );
   }
 }
 
@@ -140,9 +148,13 @@ async function completeTrainingSession(userId, sessionId, completionData) {
 
     // Award points for completing the session
     const pointsResult = await awardTrainingPoints(userId, duration, intensity);
-    
+
     // Create completion notification
-    await createCompletionNotification(userId, session.workout_type, pointsResult.points);
+    await createCompletionNotification(
+      userId,
+      session.workout_type,
+      pointsResult.points,
+    );
 
     return {
       success: true,

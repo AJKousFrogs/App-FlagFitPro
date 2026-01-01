@@ -4,19 +4,19 @@
 
 ## ORGANIZATION IDENTITY & LEGAL INFORMATION
 
-| Field | Value |
-|-------|-------|
-| **Organization Name** | Športno društvo Žabe |
-| **Legal Form** | Sports Club (Športno društvo) - Non-Profit |
-| **Registration Number** | 4121503000 |
-| **VAT Number** | SI57486913 |
-| **Registered Address** | Štihova ulica 13, 1000 Ljubljana, Slovenia |
-| **Email** | merlin@ljubljanafrogs.si |
-| **Phone** | +386 69 685 482 |
-| **Governing Law** | Republic of Slovenia |
-| **Jurisdiction** | Courts of Ljubljana, Slovenia |
-| **Effective Date** | 29. December 2025 |
-| **Version** | 1.0 |
+| Field                   | Value                                      |
+| ----------------------- | ------------------------------------------ |
+| **Organization Name**   | Športno društvo Žabe                       |
+| **Legal Form**          | Sports Club (Športno društvo) - Non-Profit |
+| **Registration Number** | 4121503000                                 |
+| **VAT Number**          | SI57486913                                 |
+| **Registered Address**  | Štihova ulica 13, 1000 Ljubljana, Slovenia |
+| **Email**               | merlin@ljubljanafrogs.si                   |
+| **Phone**               | +386 69 685 482                            |
+| **Governing Law**       | Republic of Slovenia                       |
+| **Jurisdiction**        | Courts of Ljubljana, Slovenia              |
+| **Effective Date**      | 29. December 2025                          |
+| **Version**             | 1.0                                        |
 
 ---
 
@@ -87,6 +87,7 @@ The App provides:
 ### 4.2 Account Responsibility
 
 You are responsible for:
+
 - Keeping your login credentials secure
 - All activity under your account
 - Providing accurate information (garbage in = garbage out)
@@ -95,13 +96,13 @@ You are responsible for:
 
 ### 5.1 What We Collect and Why
 
-| Data | Why We Need It | What We Do With It |
-|------|----------------|-------------------|
-| **Name, Email** | So you can log in | Nothing else |
-| **Training Data** | To show you your progress | Help you train better |
-| **Wellness Data** | To estimate injury risk | Warn you when you might be overtraining |
-| **Nutrition Data** | To track your intake | Show you patterns |
-| **Team Data** | To enable team features | Share with coaches (only if you allow it) |
+| Data               | Why We Need It            | What We Do With It                        |
+| ------------------ | ------------------------- | ----------------------------------------- |
+| **Name, Email**    | So you can log in         | Nothing else                              |
+| **Training Data**  | To show you your progress | Help you train better                     |
+| **Wellness Data**  | To estimate injury risk   | Warn you when you might be overtraining   |
+| **Nutrition Data** | To track your intake      | Show you patterns                         |
+| **Team Data**      | To enable team features   | Share with coaches (only if you allow it) |
 
 ### 5.2 What We Do NOT Do With Your Data
 
@@ -118,6 +119,7 @@ Your data is stored on Supabase servers in the European Union. We chose EU hosti
 ### 5.4 Your Rights (GDPR)
 
 You can always:
+
 - **See your data** - Just ask
 - **Fix your data** - If something's wrong, tell us
 - **Delete your data** - We'll remove it within 30 days
@@ -158,6 +160,7 @@ The app's emergency features are a backup, not a replacement for real emergency 
 ### 7.1 How Our AI Works
 
 The app uses machine learning to:
+
 - Predict your performance trends
 - Estimate injury risk based on your data
 - Suggest training adjustments
@@ -271,6 +274,7 @@ Delete your account in Settings > Account > Delete Account. We'll remove your da
 ### 13.2 We Can Remove Accounts
 
 We may remove accounts that:
+
 - Violate these terms
 - Appear to be fake or fraudulent
 - Are inactive for extended periods
@@ -323,4 +327,4 @@ By using FlagFit Pro, you confirm that you:
 **EFFECTIVE DATE:** 29. December 2025
 **VERSION:** 1.0
 
-*Športno društvo Žabe - Athletes helping athletes since 2020*
+_Športno društvo Žabe - Athletes helping athletes since 2020_

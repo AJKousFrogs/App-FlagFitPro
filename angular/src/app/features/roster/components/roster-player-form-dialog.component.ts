@@ -10,14 +10,19 @@ import {
   OnChanges,
   SimpleChanges,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { ButtonModule } from 'primeng/button';
-import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from '../roster.models';
+} from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
+import { InputNumberModule } from "primeng/inputnumber";
+import { ButtonModule } from "primeng/button";
+import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 export interface PlayerFormData {
   name: string;
@@ -29,11 +34,11 @@ export interface PlayerFormData {
   weight: string;
   email: string;
   phone: string;
-  status: 'active' | 'injured' | 'inactive';
+  status: "active" | "injured" | "inactive";
 }
 
 @Component({
-  selector: 'app-roster-player-form-dialog',
+  selector: "app-roster-player-form-dialog",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -45,10 +50,10 @@ export interface PlayerFormData {
     ButtonModule,
   ],
   template: `
-    <p-dialog 
-      [visible]="visible()" 
+    <p-dialog
+      [visible]="visible()"
       (visibleChange)="visibleChange.emit($event)"
-      [modal]="true" 
+      [modal]="true"
       [header]="editingPlayer() ? 'Edit Player' : 'Add New Player'"
       [style]="{ width: '550px' }"
       [closable]="true"
@@ -56,21 +61,21 @@ export interface PlayerFormData {
       <form [formGroup]="playerForm" class="player-form">
         <div class="form-field">
           <label for="roster-player-name">Full Name *</label>
-          <input 
-            pInputText 
+          <input
+            pInputText
             id="roster-player-name"
             name="name"
-            formControlName="name" 
+            formControlName="name"
             placeholder="Enter player name"
             class="w-full"
             autocomplete="name"
           />
         </div>
-        
+
         <div class="form-row">
           <div class="form-field">
             <label for="roster-player-position">Position *</label>
-            <p-select 
+            <p-select
               inputId="roster-player-position"
               formControlName="position"
               [options]="positionOptions"
@@ -80,68 +85,68 @@ export interface PlayerFormData {
               styleClass="w-full"
             ></p-select>
           </div>
-          
+
           <div class="form-field">
             <label for="roster-player-jersey">Jersey # *</label>
-            <input 
-              pInputText 
+            <input
+              pInputText
               id="roster-player-jersey"
               name="jersey"
-              formControlName="jersey" 
+              formControlName="jersey"
               placeholder="00"
               class="w-full"
               autocomplete="off"
             />
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-field">
             <label for="roster-player-country">Country</label>
-            <input 
-              pInputText 
+            <input
+              pInputText
               id="roster-player-country"
               name="country"
-              formControlName="country" 
+              formControlName="country"
               placeholder="Country"
               class="w-full"
               autocomplete="country-name"
             />
           </div>
-          
+
           <div class="form-field">
             <label for="roster-player-age">Age</label>
-            <p-inputNumber 
+            <p-inputNumber
               inputId="roster-player-age"
-              formControlName="age" 
-              [min]="16" 
+              formControlName="age"
+              [min]="16"
               [max]="60"
               styleClass="w-full"
             ></p-inputNumber>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-field">
             <label for="roster-player-height">Height</label>
-            <input 
-              pInputText 
+            <input
+              pInputText
               id="roster-player-height"
               name="height"
-              formControlName="height" 
+              formControlName="height"
               placeholder="e.g., 6'2&quot;"
               class="w-full"
               autocomplete="off"
             />
           </div>
-          
+
           <div class="form-field">
             <label for="roster-player-weight">Weight</label>
-            <input 
-              pInputText 
+            <input
+              pInputText
               id="roster-player-weight"
               name="weight"
-              formControlName="weight" 
+              formControlName="weight"
               placeholder="e.g., 210 lbs"
               class="w-full"
               autocomplete="off"
@@ -153,24 +158,24 @@ export interface PlayerFormData {
           <div class="form-row">
             <div class="form-field">
               <label for="roster-player-email">Email</label>
-              <input 
-                pInputText 
+              <input
+                pInputText
                 id="roster-player-email"
                 name="email"
-                formControlName="email" 
+                formControlName="email"
                 placeholder="player@email.com"
                 class="w-full"
                 autocomplete="email"
               />
             </div>
-            
+
             <div class="form-field">
               <label for="roster-player-phone">Phone</label>
-              <input 
-                pInputText 
+              <input
+                pInputText
                 id="roster-player-phone"
                 name="phone"
-                formControlName="phone" 
+                formControlName="phone"
                 placeholder="+1 234 567 8900"
                 class="w-full"
                 autocomplete="tel"
@@ -180,7 +185,7 @@ export interface PlayerFormData {
 
           <div class="form-field">
             <label for="roster-player-status">Status</label>
-            <p-select 
+            <p-select
               inputId="roster-player-status"
               formControlName="status"
               [options]="statusOptions"
@@ -192,17 +197,17 @@ export interface PlayerFormData {
           </div>
         }
       </form>
-      
+
       <ng-template pTemplate="footer">
-        <p-button 
-          label="Cancel" 
-          icon="pi pi-times" 
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
           [text]="true"
           (onClick)="visibleChange.emit(false)"
         ></p-button>
-        <p-button 
-          [label]="editingPlayer() ? 'Save Changes' : 'Add Player'" 
-          icon="pi pi-check" 
+        <p-button
+          [label]="editingPlayer() ? 'Save Changes' : 'Add Player'"
+          icon="pi pi-check"
           (onClick)="onSave()"
           [disabled]="!playerForm.valid || isSaving()"
           [loading]="isSaving()"
@@ -210,41 +215,43 @@ export interface PlayerFormData {
       </ng-template>
     </p-dialog>
   `,
-  styles: [`
-    .player-form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      flex: 1;
-    }
-
-    .form-field label {
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .form-row {
-      display: flex;
-      gap: var(--space-4);
-    }
-
-    .w-full {
-      width: 100%;
-    }
-
-    @media (max-width: 768px) {
-      .form-row {
+  styles: [
+    `
+      .player-form {
+        display: flex;
         flex-direction: column;
+        gap: var(--space-4);
       }
-    }
-  `],
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        flex: 1;
+      }
+
+      .form-field label {
+        font-weight: var(--font-weight-medium);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .form-row {
+        display: flex;
+        gap: var(--space-4);
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          flex-direction: column;
+        }
+      }
+    `,
+  ],
 })
 export class RosterPlayerFormDialogComponent implements OnChanges {
   private fb = inject(FormBuilder);
@@ -261,16 +268,16 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
 
   // Form
   playerForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    position: ['', Validators.required],
-    jersey: ['', Validators.required],
-    country: [''],
+    name: ["", [Validators.required, Validators.minLength(2)]],
+    position: ["", Validators.required],
+    jersey: ["", Validators.required],
+    country: [""],
     age: [null],
-    height: [''],
-    weight: [''],
-    email: ['', Validators.email],
-    phone: [''],
-    status: ['active'],
+    height: [""],
+    weight: [""],
+    email: ["", Validators.email],
+    phone: [""],
+    status: ["active"],
   });
 
   // Options
@@ -278,7 +285,7 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
   statusOptions = STATUS_OPTIONS;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['editingPlayer'] || changes['visible']) {
+    if (changes["editingPlayer"] || changes["visible"]) {
       const player = this.editingPlayer();
       if (player && this.visible()) {
         this.playerForm.patchValue({
@@ -289,12 +296,12 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
           age: player.age,
           height: player.height,
           weight: player.weight,
-          email: player.email || '',
-          phone: player.phone || '',
+          email: player.email || "",
+          phone: player.phone || "",
           status: player.status,
         });
       } else if (this.visible() && !player) {
-        this.playerForm.reset({ status: 'active' });
+        this.playerForm.reset({ status: "active" });
       }
     }
   }
@@ -305,4 +312,3 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
     }
   }
 }
-

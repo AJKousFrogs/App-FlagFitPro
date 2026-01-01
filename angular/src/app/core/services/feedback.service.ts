@@ -83,7 +83,11 @@ export class FeedbackService {
   /**
    * Shows an error with a retry action.
    */
-  showErrorWithRetry(message: string, retryCallback: () => void, duration: number = 10000): void {
+  showErrorWithRetry(
+    message: string,
+    retryCallback: () => void,
+    duration: number = 10000,
+  ): void {
     this.addMessage(message, "error", duration, {
       label: "Retry",
       callback: retryCallback,
@@ -121,7 +125,10 @@ export class FeedbackService {
   /**
    * Maps an API error to a user-friendly message and shows it.
    */
-  handleApiError(error: any, context: string = ""): { error: boolean; message: string } {
+  handleApiError(
+    error: any,
+    context: string = "",
+  ): { error: boolean; message: string } {
     this.logger.error(`API Error ${context}:`, error);
 
     let message = "Something went wrong. Please try again.";
@@ -145,4 +152,3 @@ export class FeedbackService {
     return { error: true, message };
   }
 }
-

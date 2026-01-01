@@ -1,0 +1,933 @@
+/* ================================================================
+   FLAGFIT PRO - UNIFIED HOVER SYSTEM
+   Single source of truth for ALL hover states across the app
+   ================================================================
+   
+   Design System Color: var(--ds-primary-green) (Primary Green)
+   
+   HOVER RULES (STRICTLY ENFORCED):
+   1. Primary buttons: Green → Darker green on hover (var(--ds-primary-green) → #036d35)
+   2. Cards/Lists: Transparent → Light green tint on hover
+   3. Links: Green text → Underline + darker green on hover
+   4. Icons: Inherit → Scale + color change on hover
+   5. All transitions: Use cubic-bezier for premium feel
+   
+   USAGE:
+   @use './assets/styles/hover-system.scss' as *;
+   
+   Or apply utility classes directly:
+   - .hover-primary    - Primary button hover effect
+   - .hover-card       - Card hover lift + border glow
+   - .hover-list-item  - List item hover background
+   - .hover-link       - Link hover with underline
+   - .hover-icon       - Icon scale + color on hover
+   ================================================================ */
+
+/* ================================================================
+   HOVER CSS CUSTOM PROPERTIES
+   Centralized hover tokens - THE source of truth
+   ================================================================ */
+
+:root {
+  /* ================================
+     PRIMARY HOVER COLORS
+     Based on var(--ds-primary-green) green design system
+     ================================ */
+
+  /* Background colors on hover */
+  --hover-bg-primary: #036d35; /* Darkened green for solid buttons */
+  --hover-bg-primary-light: #07933f; /* Slightly darkened green */
+  --hover-bg-secondary: #f0f9f4; /* Light green tint for cards/lists */
+  --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
+  --hover-bg-ultra-light: rgba(
+    8,
+    153,
+    73,
+    0.05
+  ); /* Ultra subtle for large areas */
+
+  /* Border colors on hover */
+  --hover-border-primary: var(--ds-primary-green); /* Brand green border */
+  --hover-border-subtle: rgba(8, 153, 73, 0.3); /* Subtle green border */
+
+  /* Text colors on hover */
+  --hover-text-primary: #036d35; /* Darker green for links */
+  --hover-text-on-primary: #ffffff; /* White text on green hover */
+
+  /* Shadow on hover - green-tinted for brand consistency */
+  --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);
+  --hover-shadow-md: 0 4px 16px rgba(8, 153, 73, 0.15);
+  --hover-shadow-lg: 0 8px 24px rgba(8, 153, 73, 0.18);
+  --hover-shadow-xl: 0 12px 32px rgba(8, 153, 73, 0.22);
+
+  /* Transform values */
+  --hover-lift-subtle: translateY(-1px);
+  --hover-lift-normal: translateY(-2px);
+  --hover-lift-strong: translateY(-4px);
+  --hover-scale-subtle: scale(1.02);
+  --hover-scale-normal: scale(1.05);
+  --hover-scale-icon: scale(1.1);
+
+  /* Transition timing - Premium feel */
+  --hover-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --hover-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --hover-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --hover-transition-bounce: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Focus ring (accessibility) */
+  --hover-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.3);
+  --hover-focus-outline: 2px solid var(--ds-primary-green);
+}
+
+/* ================================================================
+   BASE HOVER TRANSITION MIXIN
+   Apply to any element that needs hover effects
+   ================================================================ */
+
+/* Base transition for all interactive elements */
+.hover-base,
+[class*="hover-"] {
+  transition:
+    background-color var(--hover-transition-normal),
+    border-color var(--hover-transition-normal),
+    color var(--hover-transition-normal),
+    box-shadow var(--hover-transition-normal),
+    transform var(--hover-transition-bounce);
+  will-change: transform, box-shadow;
+}
+
+/* ================================================================
+   PRIMARY BUTTON HOVER
+   Solid green buttons (var(--ds-primary-green) → #036d35)
+   ================================================================ */
+
+.hover-primary {
+  transition:
+    background-color var(--hover-transition-normal),
+    border-color var(--hover-transition-normal),
+    box-shadow var(--hover-transition-normal),
+    transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background: linear-gradient(
+        180deg,
+        var(--hover-bg-primary-light) 0%,
+        var(--hover-bg-primary) 100%
+      ) !important;
+      border-color: var(--hover-bg-primary) !important;
+      box-shadow: var(--hover-shadow-md) !important;
+      transform: var(--hover-lift-normal);
+    }
+  }
+
+  &:active:not(:disabled):not(.p-disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--hover-shadow-sm) !important;
+  }
+
+  &:focus-visible {
+    box-shadow: var(--hover-focus-ring) !important;
+    outline: var(--hover-focus-outline);
+    outline-offset: 2px;
+  }
+}
+
+/* ================================================================
+   CARD/CONTAINER HOVER
+   Subtle lift + border glow + shadow
+   ================================================================ */
+
+.hover-card {
+  transition:
+    transform var(--hover-transition-bounce),
+    box-shadow var(--hover-transition-normal),
+    border-color var(--hover-transition-normal);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-lift-strong);
+      box-shadow: var(--hover-shadow-lg);
+      border-color: var(--hover-border-subtle);
+    }
+  }
+
+  &:active {
+    transform: var(--hover-lift-subtle);
+  }
+
+  /* Touch device optimization */
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.99);
+      box-shadow: var(--hover-shadow-sm);
+    }
+  }
+}
+
+/* Subtle card hover - less dramatic */
+.hover-card-subtle {
+  transition:
+    transform var(--hover-transition-bounce),
+    box-shadow var(--hover-transition-normal),
+    border-color var(--hover-transition-normal);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-lift-normal);
+      box-shadow: var(--hover-shadow-md);
+      border-color: var(--hover-border-subtle);
+    }
+  }
+}
+
+/* ================================================================
+   LIST ITEM HOVER
+   Background tint + left border accent
+   ================================================================ */
+
+.hover-list-item {
+  position: relative;
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    padding-left var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-secondary) !important;
+      color: var(--ds-primary-green);
+    }
+
+    &:hover::before {
+      transform: scaleY(1);
+    }
+  }
+
+  /* Active state indicator */
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--ds-primary-green);
+    transform: scaleY(0);
+    transition: transform var(--hover-transition-fast);
+  }
+}
+
+/* Menu item hover - slide effect */
+.hover-menu-item {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    padding-left var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-tertiary) !important;
+      color: var(--ds-primary-green) !important;
+      padding-left: calc(var(--space-4, 1rem) + 4px);
+    }
+  }
+}
+
+/* ================================================================
+   LINK HOVER
+   Color change + underline animation
+   ================================================================ */
+
+.hover-link {
+  color: var(--ds-primary-green);
+  text-decoration: none;
+  position: relative;
+  transition: color var(--hover-transition-fast);
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: width var(--hover-transition-normal);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--hover-text-primary) !important;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--hover-focus-outline);
+    outline-offset: 2px;
+  }
+}
+
+/* Standard link hover without underline animation */
+.hover-link-simple {
+  transition: color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--hover-text-primary) !important;
+    }
+  }
+}
+
+/* ================================================================
+   ICON HOVER
+   Scale + color change
+   ================================================================ */
+
+.hover-icon {
+  transition:
+    transform var(--hover-transition-bounce),
+    color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-scale-icon);
+      color: var(--ds-primary-green) !important;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Icon button hover */
+.hover-icon-button {
+  transition:
+    background-color var(--hover-transition-fast),
+    transform var(--hover-transition-bounce),
+    box-shadow var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-tertiary) !important;
+      transform: var(--hover-scale-subtle);
+      box-shadow: var(--hover-shadow-sm);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ================================================================
+   SECONDARY/OUTLINED BUTTON HOVER
+   Transparent → Green tint + border emphasis
+   ================================================================ */
+
+.hover-secondary {
+  transition:
+    background-color var(--hover-transition-normal),
+    border-color var(--hover-transition-normal),
+    color var(--hover-transition-normal),
+    box-shadow var(--hover-transition-normal),
+    transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary) !important;
+      border-color: var(--hover-border-primary) !important;
+      color: var(--ds-primary-green) !important;
+      box-shadow: var(--hover-shadow-sm) !important;
+      transform: var(--hover-lift-subtle);
+    }
+  }
+
+  &:active:not(:disabled):not(.p-disabled) {
+    background-color: var(--hover-bg-secondary) !important;
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+/* ================================================================
+   TEXT/GHOST BUTTON HOVER
+   Minimal background tint
+   ================================================================ */
+
+.hover-ghost {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary) !important;
+      color: var(--hover-text-primary) !important;
+      transform: var(--hover-lift-subtle);
+    }
+  }
+
+  &:active:not(:disabled):not(.p-disabled) {
+    background-color: var(--hover-bg-secondary) !important;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================================
+   PRIMENG COMPONENT HOVER OVERRIDES
+   Ensure ALL PrimeNG components use the design system
+   ================================================================ */
+
+/* ================================
+   p-button - ALL button variants
+   ================================ */
+
+/* Primary buttons */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link) {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background: linear-gradient(
+        180deg,
+        var(--hover-bg-primary-light) 0%,
+        var(--hover-bg-primary) 100%
+      ) !important;
+      border-color: var(--hover-bg-primary) !important;
+      box-shadow: var(--hover-shadow-md) !important;
+      transform: var(--hover-lift-normal);
+    }
+  }
+
+  &:active:not(:disabled):not(.p-disabled) {
+    transform: translateY(0) scale(0.98) !important;
+    box-shadow: var(--hover-shadow-sm) !important;
+  }
+}
+
+/* Outlined buttons */
+.p-button.p-button-outlined {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary) !important;
+      border-color: var(--hover-border-primary) !important;
+      box-shadow: var(--hover-shadow-sm) !important;
+      transform: var(--hover-lift-subtle);
+    }
+  }
+}
+
+/* Text/Link buttons */
+.p-button.p-button-text,
+.p-button.p-button-link {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary) !important;
+      transform: var(--hover-lift-subtle);
+    }
+  }
+}
+
+/* Secondary buttons */
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(.p-disabled) {
+      background-color: var(--surface-tertiary, #e9ecef) !important;
+      border-color: var(--hover-border-primary) !important;
+      color: var(--ds-primary-green) !important;
+      box-shadow: var(--hover-shadow-sm) !important;
+      transform: var(--hover-lift-subtle);
+    }
+  }
+}
+
+/* ================================
+   p-card - Card hover effects
+   ================================ */
+
+.p-card {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-lift-strong) !important;
+      box-shadow: var(--hover-shadow-lg) !important;
+      border-color: var(--hover-border-subtle) !important;
+    }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.99) !important;
+    }
+  }
+}
+
+/* Clickable cards */
+.p-card[role="button"],
+.p-card.clickable,
+.p-card.interactive {
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-lift-strong) !important;
+      box-shadow: var(--hover-shadow-lg) !important;
+      border-color: var(--hover-border-primary) !important;
+    }
+  }
+}
+
+/* ================================
+   p-dropdown / p-select - Dropdown hovers
+   ================================ */
+
+.p-dropdown,
+.p-select {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.p-disabled) {
+      border-color: var(--hover-border-primary) !important;
+    }
+  }
+}
+
+/* Dropdown items */
+.p-dropdown-item,
+.p-select-option,
+.p-listbox-option {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.p-disabled):not(.p-highlight) {
+      background-color: var(--hover-bg-secondary) !important;
+      color: var(--ds-primary-green) !important;
+    }
+  }
+}
+
+/* Selected items */
+.p-dropdown-item.p-highlight,
+.p-select-option.p-highlight,
+.p-listbox-option.p-highlight {
+  background-color: var(--ds-primary-green) !important;
+  color: var(--hover-text-on-primary) !important;
+}
+
+/* ================================
+   p-checkbox - Checkbox hover
+   ================================ */
+
+.p-checkbox {
+  .p-checkbox-box {
+    transition:
+      border-color var(--hover-transition-fast),
+      background-color var(--hover-transition-fast),
+      transform var(--hover-transition-bounce);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(.p-disabled) {
+        border-color: var(--hover-border-primary) !important;
+        transform: var(--hover-scale-subtle);
+      }
+    }
+
+    &.p-highlight {
+      background-color: var(--ds-primary-green) !important;
+      border-color: var(--ds-primary-green) !important;
+    }
+  }
+}
+
+/* ================================
+   p-radiobutton - Radio button hover
+   ================================ */
+
+.p-radiobutton {
+  .p-radiobutton-box {
+    transition:
+      border-color var(--hover-transition-fast),
+      transform var(--hover-transition-bounce);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(.p-disabled) {
+        border-color: var(--hover-border-primary) !important;
+        transform: var(--hover-scale-subtle);
+      }
+    }
+
+    &.p-highlight {
+      border-color: var(--ds-primary-green) !important;
+
+      .p-radiobutton-icon {
+        background-color: var(--ds-primary-green) !important;
+      }
+    }
+  }
+}
+
+/* ================================
+   p-inputswitch - Toggle switch hover
+   ================================ */
+
+.p-inputswitch {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.p-disabled) .p-inputswitch-slider::before {
+      transform: scale(1.1);
+    }
+  }
+
+  &.p-inputswitch-checked .p-inputswitch-slider {
+    background-color: var(--ds-primary-green) !important;
+  }
+}
+
+/* ================================
+   p-menu / p-menuitem - Menu hover
+   ================================ */
+
+.p-menuitem-link {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    padding-left var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-tertiary) !important;
+      color: var(--ds-primary-green) !important;
+      padding-left: calc(var(--space-4, 1rem) + 4px) !important;
+
+      .p-menuitem-icon {
+        color: var(--ds-primary-green) !important;
+      }
+    }
+  }
+}
+
+/* ================================
+   p-tabview / p-tabs - Tab hover
+   ================================ */
+
+/* Legacy TabView */
+.p-tabview-nav-link {
+  transition:
+    color var(--hover-transition-fast),
+    border-color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.p-highlight):not(.p-disabled) {
+      color: var(--ds-primary-green) !important;
+      border-bottom-color: var(--hover-border-subtle) !important;
+    }
+  }
+
+  &.p-highlight {
+    color: var(--ds-primary-green) !important;
+    border-bottom-color: var(--ds-primary-green) !important;
+  }
+}
+
+/* Modern Tabs (PrimeNG 21+) */
+.p-tab {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    box-shadow var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
+        [data-p-active="true"]
+      ) {
+      background-color: rgba(255, 255, 255, 0.6) !important;
+      color: var(--color-text-primary, #374151) !important;
+
+      i,
+      .pi {
+        color: var(--ds-primary-green) !important;
+      }
+    }
+  }
+
+  &.p-tab-active,
+  &[aria-selected="true"],
+  &[data-p-active="true"] {
+    background-color: #ffffff !important;
+    color: var(--ds-primary-green) !important;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05) !important;
+
+    i,
+    .pi {
+      color: var(--ds-primary-green) !important;
+    }
+  }
+}
+
+/* ================================
+   p-datatable - Table row hover
+   ================================ */
+
+.p-datatable-tbody > tr {
+  transition:
+    background-color var(--hover-transition-fast),
+    transform var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-ultra-light) !important;
+      transform: translateX(4px);
+    }
+  }
+
+  &.p-highlight {
+    background-color: var(--hover-bg-tertiary) !important;
+    color: var(--ds-primary-green) !important;
+  }
+}
+
+/* Sortable column header hover */
+.p-datatable-thead > tr > th.p-sortable-column {
+  transition: background-color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--surface-tertiary, #e9ecef) !important;
+    }
+  }
+}
+
+/* ================================
+   p-accordion - Accordion header hover
+   ================================ */
+
+.p-accordion-header .p-accordion-header-link {
+  transition:
+    background-color var(--hover-transition-fast),
+    color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-tertiary) !important;
+      color: var(--ds-primary-green) !important;
+    }
+  }
+}
+
+/* ================================
+   p-chip - Chip hover
+   ================================ */
+
+.p-chip {
+  transition:
+    transform var(--hover-transition-bounce),
+    box-shadow var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-scale-subtle);
+      box-shadow: var(--hover-shadow-sm);
+    }
+  }
+}
+
+.p-chip-remove-icon {
+  transition:
+    color var(--hover-transition-fast),
+    transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--color-status-error, #ff003c) !important;
+      transform: scale(1.2);
+    }
+  }
+}
+
+/* ================================
+   p-avatar - Avatar hover
+   ================================ */
+
+.p-avatar {
+  transition: transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--hover-scale-icon);
+    }
+  }
+}
+
+.p-avatar-group .p-avatar {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: scale(1.15) translateY(-4px);
+      z-index: 10;
+    }
+  }
+}
+
+/* ================================
+   p-progressbar - Progress bar hover
+   ================================ */
+
+.p-progressbar-value {
+  transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Shine effect on hover */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    animation: progress-shine 2s infinite;
+  }
+}
+
+@keyframes progress-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ================================================================
+   GLOBAL LINK HOVER STYLES
+   All anchor tags use consistent hover
+   ================================================================ */
+
+a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
+  transition: color var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--hover-text-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+}
+
+/* ================================================================
+   INPUT FOCUS/HOVER STATES
+   Consistent focus rings across all inputs
+   ================================================================ */
+
+.p-inputtext,
+.p-textarea,
+.p-dropdown,
+.p-select,
+.p-multiselect,
+.p-autocomplete-input,
+.p-password input {
+  transition:
+    border-color var(--hover-transition-fast),
+    box-shadow var(--hover-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(:focus) {
+      border-color: var(--color-text-secondary, #6b7280) !important;
+    }
+  }
+
+  &:focus {
+    border-color: var(--ds-primary-green) !important;
+    box-shadow: var(--hover-focus-ring) !important;
+    outline: none !important;
+  }
+}
+
+/* ================================================================
+   CLOSE BUTTON HOVER
+   Consistent close button behavior
+   ================================================================ */
+
+.p-dialog-header-close,
+.p-sidebar-close,
+.p-panel-header-icon,
+.close-button,
+[class*="close-btn"] {
+  transition:
+    background-color var(--hover-transition-fast),
+    border-color var(--hover-transition-fast),
+    color var(--hover-transition-fast),
+    box-shadow var(--hover-transition-fast),
+    transform var(--hover-transition-bounce);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--hover-bg-tertiary) !important;
+      border-color: var(--hover-border-subtle) !important;
+      color: var(--ds-primary-green) !important;
+      box-shadow: var(--hover-shadow-sm) !important;
+
+      .pi,
+      .p-icon,
+      svg,
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &:active {
+    transform: scale(0.92);
+    background-color: var(--hover-bg-secondary) !important;
+  }
+}
+
+/* ================================================================
+   REDUCED MOTION SUPPORT
+   Respect user preferences
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+  .hover-card:hover,
+  .hover-primary:hover,
+  .hover-secondary:hover,
+  .p-button:hover,
+  .p-card:hover,
+  .p-avatar:hover {
+    transform: none !important;
+  }
+}
+
+/* ================================================================
+   DARK MODE HOVER ADJUSTMENTS
+   ================================================================ */
+
+[data-theme="dark"],
+.dark-theme {
+  --hover-bg-secondary: rgba(16, 201, 107, 0.15);
+  --hover-bg-tertiary: rgba(16, 201, 107, 0.1);
+  --hover-bg-ultra-light: rgba(16, 201, 107, 0.05);
+  --hover-border-subtle: rgba(16, 201, 107, 0.3);
+  --hover-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --hover-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --hover-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --hover-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ================================================================
+   END OF UNIFIED HOVER SYSTEM
+   ================================================================ */

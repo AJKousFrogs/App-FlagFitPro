@@ -144,7 +144,8 @@ export class AcwrAlertsService {
     const user = this.authService.getUser();
     const playerId = user?.id || "anonymous";
     const rawMetadata = (user as any)?.user_metadata || {};
-    const playerName = rawMetadata?.full_name || user?.email?.split("@")[0] || "Player";
+    const playerName =
+      rawMetadata?.full_name || user?.email?.split("@")[0] || "Player";
 
     const alert: LoadAlert = {
       id: this.generateAlertId(),
@@ -189,20 +190,18 @@ export class AcwrAlertsService {
     const user = this.authService.getUser();
     if (user?.id) {
       try {
-        await this.supabaseService.client
-          .from("notifications")
-          .insert({
-            user_id: user.id,
-            type: "acwr_alert",
-            title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
-            message: alert.message,
-            data: {
-              alertId: alert.id,
-              severity: alert.severity,
-              recommendation: alert.recommendation,
-              acwrValue: alert.acwrValue,
-            },
-          });
+        await this.supabaseService.client.from("notifications").insert({
+          user_id: user.id,
+          type: "acwr_alert",
+          title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
+          message: alert.message,
+          data: {
+            alertId: alert.id,
+            severity: alert.severity,
+            recommendation: alert.recommendation,
+            acwrValue: alert.acwrValue,
+          },
+        });
 
         // Refresh notification badge
         this.notificationService.refreshBadgeCount();

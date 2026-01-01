@@ -1,11 +1,11 @@
 /**
  * Focus Trap Directive
- * 
+ *
  * WCAG 2.1.2 No Keyboard Trap (Level A)
- * 
+ *
  * Traps focus within an element (modal, drawer, dialog)
  * and cycles through focusable elements. Press Escape to release.
- * 
+ *
  * Usage:
  * <div appFocusTrap [isActive]="isOpen">
  *   <!-- Modal content -->
@@ -20,10 +20,10 @@ import {
   OnDestroy,
   HostListener,
   inject,
-} from '@angular/core';
+} from "@angular/core";
 
 @Directive({
-  selector: '[appFocusTrap]',
+  selector: "[appFocusTrap]",
   standalone: true,
 })
 export class FocusTrapDirective implements OnDestroy {
@@ -60,13 +60,13 @@ export class FocusTrapDirective implements OnDestroy {
     this.deactivate();
   }
 
-  @HostListener('keydown', ['$event'])
+  @HostListener("keydown", ["$event"])
   handleKeydown(event: KeyboardEvent): void {
     if (!this.isActive()) return;
 
-    if (event.key === 'Tab') {
+    if (event.key === "Tab") {
       this.handleTabKey(event);
-    } else if (event.key === 'Escape') {
+    } else if (event.key === "Escape") {
       this.handleEscapeKey(event);
     }
   }
@@ -99,7 +99,7 @@ export class FocusTrapDirective implements OnDestroy {
 
   private updateFocusableElements(): void {
     const elements = this.el.nativeElement.querySelectorAll(
-      this.FOCUSABLE_SELECTOR
+      this.FOCUSABLE_SELECTOR,
     );
     this.focusableElements = Array.from(elements) as HTMLElement[];
   }
@@ -108,7 +108,8 @@ export class FocusTrapDirective implements OnDestroy {
     if (this.focusableElements.length === 0) return;
 
     const firstElement = this.focusableElements[0];
-    const lastElement = this.focusableElements[this.focusableElements.length - 1];
+    const lastElement =
+      this.focusableElements[this.focusableElements.length - 1];
     const currentElement = document.activeElement as HTMLElement;
 
     if (event.shiftKey) {
@@ -131,4 +132,3 @@ export class FocusTrapDirective implements OnDestroy {
     // This directive just manages focus cycling
   }
 }
-

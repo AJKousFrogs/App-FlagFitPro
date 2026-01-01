@@ -20,25 +20,30 @@ We use a **mobile-first** approach with these standard breakpoints:
 
 ```scss
 $breakpoints: (
-  xs: 374px,   // Extra small mobile (iPhone SE, small Android)
-  sm: 640px,   // Mobile phones (iPhone 12/13/14, standard Android)
-  md: 768px,   // Tablets portrait (iPad Mini, Galaxy Tab)
-  lg: 1024px,  // Tablets landscape / Small desktops
-  xl: 1280px,  // Desktop (laptop screens)
+  xs: 374px,
+  // Extra small mobile (iPhone SE, small Android)
+  sm: 640px,
+  // Mobile phones (iPhone 12/13/14, standard Android)
+  md: 768px,
+  // Tablets portrait (iPad Mini, Galaxy Tab)
+  lg: 1024px,
+  // Tablets landscape / Small desktops
+  xl: 1280px,
+  // Desktop (laptop screens)
   xxl: 1536px, // Large desktop (1080p+ monitors)
 );
 ```
 
 ### Breakpoint Usage Matrix
 
-| Breakpoint | Device Type | Viewport Width | Primary Use Case |
-|-----------|-------------|----------------|------------------|
-| **xs** | Extra small phones | < 374px | iPhone SE, older Android |
-| **sm** | Mobile phones | 375px - 639px | iPhone 12/13/14, most phones |
-| **md** | Tablets (portrait) | 640px - 767px | iPad Mini, small tablets |
-| **lg** | Tablets (landscape) | 768px - 1023px | iPad, Galaxy Tab |
-| **xl** | Desktop | 1024px - 1279px | Laptops, small monitors |
-| **xxl** | Large desktop | 1280px+ | 1080p+ monitors |
+| Breakpoint | Device Type         | Viewport Width  | Primary Use Case             |
+| ---------- | ------------------- | --------------- | ---------------------------- |
+| **xs**     | Extra small phones  | < 374px         | iPhone SE, older Android     |
+| **sm**     | Mobile phones       | 375px - 639px   | iPhone 12/13/14, most phones |
+| **md**     | Tablets (portrait)  | 640px - 767px   | iPad Mini, small tablets     |
+| **lg**     | Tablets (landscape) | 768px - 1023px  | iPad, Galaxy Tab             |
+| **xl**     | Desktop             | 1024px - 1279px | Laptops, small monitors      |
+| **xxl**    | Large desktop       | 1280px+         | 1080p+ monitors              |
 
 ---
 
@@ -47,8 +52,8 @@ $breakpoints: (
 ### In SCSS (Recommended)
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .component {
   // Desktop first (default)
@@ -79,22 +84,34 @@ $breakpoints: (
 
 ```scss
 // Max-width (mobile-first approach)
-@include respond-to(md) { /* max-width: 768px */ }
+@include respond-to(md) {
+  /* max-width: 768px */
+}
 
 // Min-width (desktop-first approach)
-@include respond-above(md) { /* min-width: 769px */ }
+@include respond-above(md) {
+  /* min-width: 769px */
+}
 
 // Between two breakpoints
-@include respond-between(md, lg) { /* 768px - 1024px */ }
+@include respond-between(md, lg) {
+  /* 768px - 1024px */
+}
 
 // Touch devices
-@include touch-device { /* (hover: none) and (pointer: coarse) */ }
+@include touch-device {
+  /* (hover: none) and (pointer: coarse) */
+}
 
 // Hover support
-@include hover-support { /* (hover: hover) and (pointer: fine) */ }
+@include hover-support {
+  /* (hover: hover) and (pointer: fine) */
+}
 
 // Landscape orientation
-@include landscape { /* orientation: landscape */ }
+@include landscape {
+  /* orientation: landscape */
+}
 ```
 
 ---
@@ -122,6 +139,7 @@ $breakpoints: (
 ```
 
 **Real Example:**
+
 ```scss
 // Dashboard metrics grid
 .metrics-row {
@@ -160,6 +178,7 @@ $breakpoints: (
 ```
 
 **Standard Spacing Scale:**
+
 ```scss
 space(3) = 12px  // Small mobile
 space(4) = 16px  // Mobile
@@ -351,7 +370,9 @@ space(6) = 32px  // Desktop
 }
 
 .form-field {
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     width: 100%;
     padding: space(3);
     font-size: get-font-size(base);
@@ -565,19 +586,28 @@ Test each component at these key widths:
 ### 1. Use Media Query Mixins
 
 **Good:**
+
 ```scss
-@include respond-to(md) { /* styles */ }
+@include respond-to(md) {
+  /* styles */
+}
 ```
 
 **Bad:**
+
 ```scss
-@media (max-width: 768px) { /* styles */ }
-@media (max-width: 767px) { /* duplicate */ }
+@media (max-width: 768px) {
+  /* styles */
+}
+@media (max-width: 767px) {
+  /* duplicate */
+}
 ```
 
 ### 2. Mobile-First CSS
 
 **Good:**
+
 ```scss
 .element {
   font-size: get-font-size(sm); // Mobile default
@@ -589,6 +619,7 @@ Test each component at these key widths:
 ```
 
 **Bad:**
+
 ```scss
 .element {
   font-size: get-font-size(base); // Desktop default
@@ -680,6 +711,7 @@ When migrating a component to responsive standards:
 ## Examples
 
 See these components for reference:
+
 - `athlete-dashboard.component.scss` - Full responsive dashboard
 - `modal.component.scss` - Responsive modal sizing
 - `main-layout.component.scss` - Responsive navigation
@@ -689,11 +721,13 @@ See these components for reference:
 ## Questions & Support
 
 **Found a responsive issue?**
+
 1. Document it with screenshots at each breakpoint
 2. Reference this standard for the fix
 3. Test fix at all breakpoints before committing
 
 **Adding a new breakpoint?**
+
 1. Update `_variables.scss`
 2. Update this document
 3. Notify the team

@@ -88,27 +88,27 @@ export class TournamentModeService {
     if (!tournament) return null;
 
     const completedGames = tournament.games.filter(
-      (g) => g.status === "completed"
+      (g) => g.status === "completed",
     );
     const wonGames = completedGames.filter((g) => g.result?.won);
     const upcomingGames = tournament.games.filter(
-      (g) => g.status === "upcoming"
+      (g) => g.status === "upcoming",
     );
 
     const nextGame = upcomingGames.sort(
-      (a, b) => a.scheduledTime.getTime() - b.scheduledTime.getTime()
+      (a, b) => a.scheduledTime.getTime() - b.scheduledTime.getTime(),
     )[0];
 
     const hoursUntilNextGame = nextGame
       ? Math.max(
           0,
-          (nextGame.scheduledTime.getTime() - Date.now()) / (1000 * 60 * 60)
+          (nextGame.scheduledTime.getTime() - Date.now()) / (1000 * 60 * 60),
         )
       : 0;
 
     const hydrationProgress = Math.min(
       100,
-      (tournament.hydrationConsumed / tournament.hydrationTarget) * 100
+      (tournament.hydrationConsumed / tournament.hydrationTarget) * 100,
     );
 
     return {
@@ -144,7 +144,7 @@ export class TournamentModeService {
     tournamentData: Omit<
       ActiveTournament,
       "id" | "status" | "nutritionLogs" | "hydrationConsumed" | "currentDay"
-    >
+    >,
   ): Promise<void> {
     this._isLoading.set(true);
 
@@ -205,7 +205,7 @@ export class TournamentModeService {
   async logGameResult(
     gameId: string,
     ourScore: number,
-    theirScore: number
+    theirScore: number,
   ): Promise<void> {
     const tournament = this._activeTournament();
     if (!tournament) return;
@@ -412,7 +412,7 @@ export class TournamentModeService {
   }
 
   private async saveTournamentToDatabase(
-    tournament: ActiveTournament
+    tournament: ActiveTournament,
   ): Promise<void> {
     try {
       const user = this.authService.getUser();
@@ -443,7 +443,7 @@ export class TournamentModeService {
       (endOfDay.getTime() - startOfDay.getTime()) / (1000 * 60);
     const elapsedMinutes = Math.max(
       0,
-      (now.getTime() - startOfDay.getTime()) / (1000 * 60)
+      (now.getTime() - startOfDay.getTime()) / (1000 * 60),
     );
 
     return Math.min(100, (elapsedMinutes / totalMinutes) * 100);

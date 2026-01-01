@@ -60,3 +60,6 @@ angular/dist/
 
 # Supabase types (auto-generated)
 supabase-types.ts
+
+# Reports
+consent-violations.json

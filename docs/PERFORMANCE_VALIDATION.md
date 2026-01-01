@@ -18,15 +18,15 @@ This document covers performance validation for consent-aware views, dashboard e
 
 ## Performance Targets
 
-| Operation | Target | Notes |
-|-----------|--------|-------|
-| Consent view read (single) | < 100ms | Single player lookup |
-| Dashboard load | < 500ms | Full coach dashboard |
-| Batch player read (20) | < 200ms | Team overview |
-| Batch player read (50) | < 500ms | Large team |
-| Batch player read (100) | < 1000ms | Very large team |
-| Deletion queue processing | < 1000ms | Batch of 100 |
-| Player own data read | < 50ms | No consent checks needed |
+| Operation                  | Target   | Notes                    |
+| -------------------------- | -------- | ------------------------ |
+| Consent view read (single) | < 100ms  | Single player lookup     |
+| Dashboard load             | < 500ms  | Full coach dashboard     |
+| Batch player read (20)     | < 200ms  | Team overview            |
+| Batch player read (50)     | < 500ms  | Large team               |
+| Batch player read (100)    | < 1000ms | Very large team          |
+| Deletion queue processing  | < 1000ms | Batch of 100             |
+| Player own data read       | < 50ms   | No consent checks needed |
 
 ### Why These Targets?
 
@@ -75,7 +75,7 @@ node scripts/performance-validation.cjs --ci
 
    Analyzing v_load_monitoring_consent...
    ✅ v_load_monitoring_consent: 45.23ms (target: 100ms)
-   
+
    Analyzing v_workout_logs_consent...
    ✅ v_workout_logs_consent: 38.15ms (target: 100ms)
 
@@ -101,8 +101,8 @@ node scripts/performance-validation.cjs --ci
 📋 RECOMMENDATIONS
 
    🔴 [HIGH] Add 1 missing indexes for consent join patterns
-   
-   CREATE INDEX idx_team_members_team_user_role_status 
+
+   CREATE INDEX idx_team_members_team_user_role_status
    ON team_members (team_id, user_id, role, status);
 ```
 
@@ -162,12 +162,12 @@ Seq Scan on load_monitoring
 
 ### Common Issues
 
-| Issue | Symptom | Fix |
-|-------|---------|-----|
-| Missing index | Seq Scan on large table | Add index on filter columns |
-| Wrong index | Index Scan but slow | Check index column order |
-| Nested loops | Nested Loop with high rows | Add composite index |
-| Sort operation | Sort with high cost | Add index with ORDER BY columns |
+| Issue          | Symptom                    | Fix                             |
+| -------------- | -------------------------- | ------------------------------- |
+| Missing index  | Seq Scan on large table    | Add index on filter columns     |
+| Wrong index    | Index Scan but slow        | Check index column order        |
+| Nested loops   | Nested Loop with high rows | Add composite index             |
+| Sort operation | Sort with high cost        | Add index with ORDER BY columns |
 
 ---
 
@@ -200,7 +200,7 @@ WHERE performance_sharing_enabled = true;
 -- Fast coach membership
 CREATE INDEX idx_team_members_active_coaches
 ON team_members (team_id, user_id)
-WHERE role IN ('coach', 'assistant_coach', 'head_coach', 'admin') 
+WHERE role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
 AND status = 'active';
 
 -- Fast player data queries
@@ -225,7 +225,7 @@ npm run migrate -- 074_consent_performance_indexes.sql
 SELECT * FROM verify_consent_indexes();
 
 -- Check index usage
-SELECT 
+SELECT
   schemaname,
   relname as table,
   indexrelname as index,
@@ -250,18 +250,18 @@ Simulates a coach loading their team dashboard:
 ```javascript
 // Query pattern
 const { data } = await supabase
-  .from('v_load_monitoring_consent')
-  .select('*')
-  .in('player_id', teamMemberIds)
-  .order('calculated_at', { ascending: false })
+  .from("v_load_monitoring_consent")
+  .select("*")
+  .in("player_id", teamMemberIds)
+  .order("calculated_at", { ascending: false })
   .limit(playerCount);
 ```
 
-| Players | Target | Typical |
-|---------|--------|---------|
-| 20 | 200ms | 100-150ms |
-| 50 | 500ms | 250-400ms |
-| 100 | 1000ms | 500-800ms |
+| Players | Target | Typical   |
+| ------- | ------ | --------- |
+| 20      | 200ms  | 100-150ms |
+| 50      | 500ms  | 250-400ms |
+| 100     | 1000ms | 500-800ms |
 
 #### 2. Player Dashboard Load
 
@@ -270,16 +270,16 @@ Simulates a player viewing their own data:
 ```javascript
 // Query pattern (no consent checks needed)
 const { data } = await supabase
-  .from('load_monitoring')
-  .select('*')
-  .eq('player_id', userId)
-  .order('calculated_at', { ascending: false })
+  .from("load_monitoring")
+  .select("*")
+  .eq("player_id", userId)
+  .order("calculated_at", { ascending: false })
   .limit(30);
 ```
 
 | Target | Typical |
-|--------|---------|
-| 100ms | 20-50ms |
+| ------ | ------- |
+| 100ms  | 20-50ms |
 
 #### 3. Deletion Queue Processing
 
@@ -288,15 +288,15 @@ Simulates batch deletion processing:
 ```javascript
 // Query pattern
 const { data } = await supabase
-  .from('account_deletion_requests')
-  .select('*')
-  .eq('status', 'pending')
-  .lt('grace_period_ends_at', new Date().toISOString())
+  .from("account_deletion_requests")
+  .select("*")
+  .eq("status", "pending")
+  .lt("grace_period_ends_at", new Date().toISOString())
   .limit(100);
 ```
 
-| Target | Typical |
-|--------|---------|
+| Target | Typical  |
+| ------ | -------- |
 | 1000ms | 50-200ms |
 
 ### Running Custom Load Tests
@@ -308,7 +308,7 @@ const times = [];
 
 for (let i = 0; i < iterations; i++) {
   const start = Date.now();
-  await supabase.from('v_load_monitoring_consent').select('*').limit(50);
+  await supabase.from("v_load_monitoring_consent").select("*").limit(50);
   times.push(Date.now() - start);
 }
 
@@ -326,7 +326,7 @@ console.log(`Average: ${avg}ms, P95: ${p95}ms`);
 
 ```sql
 -- Check slow queries in Supabase
-SELECT 
+SELECT
   query,
   calls,
   mean_time,
@@ -348,6 +348,7 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
 ### Step 3: Check for Missing Indexes
 
 Look for:
+
 - `Seq Scan` on large tables
 - `Nested Loop` with high row counts
 - `Sort` operations without index
@@ -356,7 +357,7 @@ Look for:
 
 ```sql
 -- Check if statistics are up to date
-SELECT 
+SELECT
   relname,
   last_vacuum,
   last_autovacuum,
@@ -378,25 +379,25 @@ ANALYZE team_sharing_settings;
 SELECT count(*) FROM pg_stat_activity WHERE state = 'active';
 
 -- Check for blocking queries
-SELECT 
+SELECT
   blocked_locks.pid AS blocked_pid,
   blocking_locks.pid AS blocking_pid,
   blocked_activity.query AS blocked_query
 FROM pg_catalog.pg_locks blocked_locks
-JOIN pg_catalog.pg_locks blocking_locks 
+JOIN pg_catalog.pg_locks blocking_locks
   ON blocking_locks.locktype = blocked_locks.locktype
 WHERE NOT blocked_locks.granted;
 ```
 
 ### Common Fixes
 
-| Problem | Solution |
-|---------|----------|
-| Missing index | Add index on filter/join columns |
-| Outdated stats | Run ANALYZE on affected tables |
-| Too many connections | Check connection pooling |
-| Lock contention | Review transaction isolation |
-| Large result sets | Add pagination/limits |
+| Problem              | Solution                         |
+| -------------------- | -------------------------------- |
+| Missing index        | Add index on filter/join columns |
+| Outdated stats       | Run ANALYZE on affected tables   |
+| Too many connections | Check connection pooling         |
+| Lock contention      | Review transaction isolation     |
+| Large result sets    | Add pagination/limits            |
 
 ---
 
@@ -419,7 +420,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.mean_time > 100 AND NEW.query LIKE '%consent%' THEN
     -- Log or alert
-    RAISE WARNING 'Slow consent query detected: % (mean: %ms)', 
+    RAISE WARNING 'Slow consent query detected: % (mean: %ms)',
       NEW.query, NEW.mean_time;
   END IF;
   RETURN NEW;
@@ -429,16 +430,17 @@ $$ LANGUAGE plpgsql;
 
 ### Key Metrics to Monitor
 
-| Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
-| Consent view P95 | < 100ms | > 200ms |
-| Dashboard P95 | < 500ms | > 1000ms |
-| Index hit ratio | > 99% | < 95% |
-| Cache hit ratio | > 95% | < 90% |
+| Metric           | Target  | Alert Threshold |
+| ---------------- | ------- | --------------- |
+| Consent view P95 | < 100ms | > 200ms         |
+| Dashboard P95    | < 500ms | > 1000ms        |
+| Index hit ratio  | > 99%   | < 95%           |
+| Cache hit ratio  | > 95%   | < 90%           |
 
 ### Grafana Dashboard (if available)
 
 Key panels:
+
 1. Query latency histogram
 2. Index scan vs seq scan ratio
 3. Active connections
@@ -454,6 +456,5 @@ Key panels:
 
 ---
 
-*Last updated: 29. December 2025*
-*Športno društvo Žabe - Athletes helping athletes since 2020*
-
+_Last updated: 29. December 2025_
+_Športno društvo Žabe - Athletes helping athletes since 2020_

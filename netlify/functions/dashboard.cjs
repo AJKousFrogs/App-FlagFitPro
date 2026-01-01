@@ -3,9 +3,7 @@
 
 const { db, supabaseAdmin } = require("./supabase-client.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
-const {
-  createSuccessResponse,
-} = require("./utils/error-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 // Note: authenticateRequest and applyRateLimit are now handled by baseHandler
 const { getTimeAgo } = require("./utils/date-utils.cjs");
 
@@ -242,7 +240,9 @@ const getTeamChemistry = async (userId) => {
     // Try to get team chemistry from database
     const { data: chemistryData, error: chemistryError } = await supabaseAdmin
       .from("team_chemistry")
-      .select("overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score")
+      .select(
+        "overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score",
+      )
       .eq("team_id", teamId)
       .order("created_at", { ascending: false })
       .limit(1);
@@ -323,7 +323,10 @@ exports.handler = async (event, context) => {
         return createSuccessResponse(data);
       }
 
-      if (path.includes("/team-chemistry") || path.endsWith("/team-chemistry")) {
+      if (
+        path.includes("/team-chemistry") ||
+        path.endsWith("/team-chemistry")
+      ) {
         const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:team-chemistry`;
         const data = await getOrFetch(
           cacheKey,

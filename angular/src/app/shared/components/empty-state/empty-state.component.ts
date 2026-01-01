@@ -130,7 +130,8 @@ import { ButtonModule } from "primeng/button";
         font-size: var(--icon-5xl);
         margin-bottom: var(--space-4);
         opacity: 0.5;
-        animation: empty-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        animation: empty-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s
+          both;
       }
 
       @keyframes empty-icon-bounce {
@@ -154,7 +155,8 @@ import { ButtonModule } from "primeng/button";
         font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
-        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s
+          both;
       }
 
       @keyframes empty-text-slide {
@@ -177,7 +179,8 @@ import { ButtonModule } from "primeng/button";
         color: var(--text-secondary);
         margin-bottom: var(--space-4);
         max-width: 500px;
-        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s
+          both;
       }
 
       .empty-state.compact .empty-message {
@@ -191,7 +194,8 @@ import { ButtonModule } from "primeng/button";
         margin: var(--space-4) 0;
         text-align: left;
         max-width: 400px;
-        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s
+          both;
       }
 
       .empty-benefits li {
@@ -215,7 +219,8 @@ import { ButtonModule } from "primeng/button";
         gap: var(--space-3);
         align-items: center;
         margin-top: var(--space-4);
-        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s
+          both;
       }
 
       @media (min-width: 640px) {
@@ -232,7 +237,8 @@ import { ButtonModule } from "primeng/button";
 
       .empty-help {
         margin-top: var(--space-4);
-        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s
+          both;
       }
 
       .empty-help-link {
@@ -309,7 +315,16 @@ export class EmptyStateComponent {
   actionIcon = input<string | null>(null);
   actionLink = input<string | null>(null); // NEW: RouterLink support
   actionHandler = input<(() => void) | null>(null);
-  actionSeverity = input<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'help' | 'contrast'>('primary');
+  actionSeverity = input<
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "help"
+    | "contrast"
+  >("primary");
 
   // Secondary action (NEW)
   secondaryActionLabel = input<string | null>(null);

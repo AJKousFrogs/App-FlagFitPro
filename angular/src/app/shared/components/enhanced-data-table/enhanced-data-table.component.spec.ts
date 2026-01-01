@@ -1,27 +1,45 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { TestBed, ComponentFixture } from "@angular/core/testing";
+import { signal } from "@angular/core";
 import {
   EnhancedDataTableComponent,
   EnhancedTableColumn,
-} from './enhanced-data-table.component';
+} from "./enhanced-data-table.component";
 
-describe('EnhancedDataTableComponent', () => {
+describe("EnhancedDataTableComponent", () => {
   let component: EnhancedDataTableComponent;
   let fixture: ComponentFixture<EnhancedDataTableComponent>;
   let localStorageMock: Map<string, string>;
 
   const mockColumns: EnhancedTableColumn[] = [
-    { field: 'name', header: 'Name', sortable: true, editable: true },
-    { field: 'email', header: 'Email', sortable: true, editable: true },
-    { field: 'role', header: 'Role', sortable: true, editable: false },
-    { field: 'status', header: 'Status', sortable: false, editable: false },
+    { field: "name", header: "Name", sortable: true, editable: true },
+    { field: "email", header: "Email", sortable: true, editable: true },
+    { field: "role", header: "Role", sortable: true, editable: false },
+    { field: "status", header: "Status", sortable: false, editable: false },
   ];
 
   const mockData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User', status: 'Inactive' },
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john@example.com",
+      role: "Admin",
+      status: "Active",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane@example.com",
+      role: "User",
+      status: "Active",
+    },
+    {
+      id: 3,
+      name: "Bob Johnson",
+      email: "bob@example.com",
+      role: "User",
+      status: "Inactive",
+    },
   ];
 
   beforeEach(async () => {
@@ -29,15 +47,19 @@ describe('EnhancedDataTableComponent', () => {
     localStorageMock = new Map();
     global.localStorage = {
       getItem: vi.fn((key: string) => localStorageMock.get(key) || null),
-      setItem: vi.fn((key: string, value: string) => localStorageMock.set(key, value)),
+      setItem: vi.fn((key: string, value: string) =>
+        localStorageMock.set(key, value),
+      ),
       removeItem: vi.fn((key: string) => localStorageMock.delete(key)),
       clear: vi.fn(() => localStorageMock.clear()),
-      key: vi.fn((index: number) => Array.from(localStorageMock.keys())[index] || null),
+      key: vi.fn(
+        (index: number) => Array.from(localStorageMock.keys())[index] || null,
+      ),
       length: 0,
     } as Storage;
 
     // Mock window.innerWidth
-    Object.defineProperty(window, 'innerWidth', {
+    Object.defineProperty(window, "innerWidth", {
       writable: true,
       configurable: true,
       value: 1024,
@@ -55,307 +77,328 @@ describe('EnhancedDataTableComponent', () => {
     localStorageMock.clear();
   });
 
-  describe('Component Initialization', () => {
-    it('should create the component', () => {
+  describe("Component Initialization", () => {
+    it("should create the component", () => {
       expect(component).toBeTruthy();
     });
 
-    it('should have default input values', () => {
+    it("should have default input values", () => {
       expect(component.selectable()).toBe(false);
       expect(component.resizableColumns()).toBe(true);
       expect(component.reorderableColumns()).toBe(true);
       expect(component.savePreferences()).toBe(true);
-      expect(component.preferencesKey()).toBe('enhanced-table');
+      expect(component.preferencesKey()).toBe("enhanced-table");
       expect(component.mobileBreakpoint()).toBe(768);
     });
 
-    it('should initialize with empty data', () => {
+    it("should initialize with empty data", () => {
       expect(component.data()).toEqual([]);
     });
 
-    it('should initialize with empty columns', () => {
+    it("should initialize with empty columns", () => {
       expect(component.columns()).toEqual([]);
     });
 
-    it('should initialize with no selected rows', () => {
+    it("should initialize with no selected rows", () => {
       expect(component.selectedRows()).toEqual([]);
       expect(component.selectAll()).toBe(false);
     });
 
-    it('should detect desktop view by default', () => {
+    it("should detect desktop view by default", () => {
       expect(component.isMobileView()).toBe(false);
     });
   });
 
-  describe('Column Visibility', () => {
+  describe("Column Visibility", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
+      fixture.componentRef.setInput("columns", mockColumns);
       fixture.detectChanges();
     });
 
-    it('should initialize with all visible columns', () => {
+    it("should initialize with all visible columns", () => {
       const visibleFields = component.visibleColumnFields();
-      expect(visibleFields).toContain('name');
-      expect(visibleFields).toContain('email');
-      expect(visibleFields).toContain('role');
-      expect(visibleFields).toContain('status');
+      expect(visibleFields).toContain("name");
+      expect(visibleFields).toContain("email");
+      expect(visibleFields).toContain("role");
+      expect(visibleFields).toContain("status");
     });
 
-    it('should respect initially hidden columns', () => {
+    it("should respect initially hidden columns", () => {
       const cols: EnhancedTableColumn[] = [
-        { field: 'name', header: 'Name', visible: true },
-        { field: 'email', header: 'Email', visible: false },
+        { field: "name", header: "Name", visible: true },
+        { field: "email", header: "Email", visible: false },
       ];
-      fixture.componentRef.setInput('columns', cols);
+      fixture.componentRef.setInput("columns", cols);
       fixture.detectChanges();
 
       const visibleFields = component.visibleColumnFields();
-      expect(visibleFields).toContain('name');
-      expect(visibleFields).not.toContain('email');
+      expect(visibleFields).toContain("name");
+      expect(visibleFields).not.toContain("email");
     });
 
-    it('should save column visibility to localStorage', () => {
-      component.visibleColumnFields.set(['name', 'email']);
+    it("should save column visibility to localStorage", () => {
+      component.visibleColumnFields.set(["name", "email"]);
       component.onColumnVisibilityChange();
 
       expect(localStorage.setItem).toHaveBeenCalled();
-      const saved = localStorageMock.get('enhanced-table');
+      const saved = localStorageMock.get("enhanced-table");
       expect(saved).toBeTruthy();
       const prefs = JSON.parse(saved!);
-      expect(prefs.visibleColumns).toEqual(['name', 'email']);
+      expect(prefs.visibleColumns).toEqual(["name", "email"]);
     });
 
-    it('should restore column visibility from localStorage', () => {
+    it("should restore column visibility from localStorage", () => {
       const savedPrefs = {
-        visibleColumns: ['name', 'role'],
+        visibleColumns: ["name", "role"],
         columnWidths: {},
         columnOrder: [],
       };
-      localStorageMock.set('enhanced-table', JSON.stringify(savedPrefs));
+      localStorageMock.set("enhanced-table", JSON.stringify(savedPrefs));
 
       (component as any).loadPreferences();
 
-      expect(component.visibleColumnFields()).toEqual(['name', 'role']);
+      expect(component.visibleColumnFields()).toEqual(["name", "role"]);
     });
 
-    it('should generate column options for visibility selector', () => {
+    it("should generate column options for visibility selector", () => {
       const options = component.columnOptions();
 
       expect(options).toHaveLength(4);
-      expect(options[0]).toEqual({ label: 'Name', value: 'name' });
-      expect(options[1]).toEqual({ label: 'Email', value: 'email' });
+      expect(options[0]).toEqual({ label: "Name", value: "name" });
+      expect(options[1]).toEqual({ label: "Email", value: "email" });
     });
 
-    it('should filter visible columns correctly', () => {
-      component.visibleColumnFields.set(['name', 'email']);
+    it("should filter visible columns correctly", () => {
+      component.visibleColumnFields.set(["name", "email"]);
 
       const visible = component.visibleColumns();
       expect(visible).toHaveLength(2);
-      expect(visible[0].field).toBe('name');
-      expect(visible[1].field).toBe('email');
+      expect(visible[0].field).toBe("name");
+      expect(visible[1].field).toBe("email");
     });
   });
 
-  describe('Column Resizing', () => {
+  describe("Column Resizing", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('resizableColumns', true);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("resizableColumns", true);
       fixture.detectChanges();
     });
 
-    it('should allow column resizing when enabled', () => {
+    it("should allow column resizing when enabled", () => {
       expect(component.resizableColumns()).toBe(true);
     });
 
-    it('should save column widths on resize', () => {
+    it("should save column widths on resize", () => {
       const event = {
         element: {
-          dataset: { field: 'name' },
-          style: { width: '200px' },
+          dataset: { field: "name" },
+          style: { width: "200px" },
         },
       };
 
       component.onColumnResize(event);
 
-      expect(component.columnWidths()['name']).toBe('200px');
+      expect(component.columnWidths()["name"]).toBe("200px");
       expect(localStorage.setItem).toHaveBeenCalled();
     });
 
-    it('should restore column widths from localStorage', () => {
+    it("should restore column widths from localStorage", () => {
       const savedPrefs = {
-        visibleColumns: ['name', 'email'],
-        columnWidths: { 'name': '250px', 'email': '300px' },
+        visibleColumns: ["name", "email"],
+        columnWidths: { name: "250px", email: "300px" },
         columnOrder: [],
       };
-      localStorageMock.set('enhanced-table', JSON.stringify(savedPrefs));
+      localStorageMock.set("enhanced-table", JSON.stringify(savedPrefs));
 
       (component as any).loadPreferences();
 
-      expect(component.columnWidths()).toEqual({ 'name': '250px', 'email': '300px' });
-    });
-
-    it('should get column width from saved widths', () => {
-      component.columnWidths.set({ 'name': '220px' });
-
-      const width = component.getColumnWidth({ field: 'name', header: 'Name' });
-      expect(width).toBe('220px');
-    });
-
-    it('should use default width when not in saved widths', () => {
-      const width = component.getColumnWidth({
-        field: 'email',
-        header: 'Email',
-        width: '180px'
+      expect(component.columnWidths()).toEqual({
+        name: "250px",
+        email: "300px",
       });
-      expect(width).toBe('180px');
     });
 
-    it('should use auto width when no saved or default width', () => {
-      const width = component.getColumnWidth({ field: 'status', header: 'Status' });
-      expect(width).toBe('auto');
+    it("should get column width from saved widths", () => {
+      component.columnWidths.set({ name: "220px" });
+
+      const width = component.getColumnWidth({ field: "name", header: "Name" });
+      expect(width).toBe("220px");
     });
 
-    it('should allow disabling column resizing', () => {
-      fixture.componentRef.setInput('resizableColumns', false);
+    it("should use default width when not in saved widths", () => {
+      const width = component.getColumnWidth({
+        field: "email",
+        header: "Email",
+        width: "180px",
+      });
+      expect(width).toBe("180px");
+    });
+
+    it("should use auto width when no saved or default width", () => {
+      const width = component.getColumnWidth({
+        field: "status",
+        header: "Status",
+      });
+      expect(width).toBe("auto");
+    });
+
+    it("should allow disabling column resizing", () => {
+      fixture.componentRef.setInput("resizableColumns", false);
       expect(component.resizableColumns()).toBe(false);
     });
   });
 
-  describe('Column Reordering', () => {
+  describe("Column Reordering", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('reorderableColumns', true);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("reorderableColumns", true);
       fixture.detectChanges();
     });
 
-    it('should allow column reordering when enabled', () => {
+    it("should allow column reordering when enabled", () => {
       expect(component.reorderableColumns()).toBe(true);
     });
 
-    it('should save column order on reorder', () => {
+    it("should save column order on reorder", () => {
       const event = {
         columns: [
-          { field: 'email' },
-          { field: 'name' },
-          { field: 'role' },
-          { field: 'status' },
+          { field: "email" },
+          { field: "name" },
+          { field: "role" },
+          { field: "status" },
         ],
       };
 
       component.onColumnReorder(event);
 
-      expect(component.columnOrderState()).toEqual(['email', 'name', 'role', 'status']);
+      expect(component.columnOrderState()).toEqual([
+        "email",
+        "name",
+        "role",
+        "status",
+      ]);
       expect(localStorage.setItem).toHaveBeenCalled();
     });
 
-    it('should restore column order from localStorage', () => {
+    it("should restore column order from localStorage", () => {
       const savedPrefs = {
-        visibleColumns: ['name', 'email', 'role'],
+        visibleColumns: ["name", "email", "role"],
         columnWidths: {},
-        columnOrder: ['role', 'email', 'name'],
+        columnOrder: ["role", "email", "name"],
       };
-      localStorageMock.set('enhanced-table', JSON.stringify(savedPrefs));
+      localStorageMock.set("enhanced-table", JSON.stringify(savedPrefs));
 
       (component as any).loadPreferences();
 
-      expect(component.columnOrderState()).toEqual(['role', 'email', 'name']);
+      expect(component.columnOrderState()).toEqual(["role", "email", "name"]);
     });
 
-    it('should apply custom order to visible columns', () => {
-      component.visibleColumnFields.set(['name', 'email', 'role']);
-      component.columnOrderState.set(['role', 'email', 'name']);
+    it("should apply custom order to visible columns", () => {
+      component.visibleColumnFields.set(["name", "email", "role"]);
+      component.columnOrderState.set(["role", "email", "name"]);
 
       const visible = component.visibleColumns();
-      expect(visible[0].field).toBe('role');
-      expect(visible[1].field).toBe('email');
-      expect(visible[2].field).toBe('name');
+      expect(visible[0].field).toBe("role");
+      expect(visible[1].field).toBe("email");
+      expect(visible[2].field).toBe("name");
     });
 
-    it('should allow disabling column reordering', () => {
-      fixture.componentRef.setInput('reorderableColumns', false);
+    it("should allow disabling column reordering", () => {
+      fixture.componentRef.setInput("reorderableColumns", false);
       expect(component.reorderableColumns()).toBe(false);
     });
   });
 
-  describe('Saved Preferences', () => {
+  describe("Saved Preferences", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('savePreferences', true);
-      fixture.componentRef.setInput('preferencesKey', 'test-table');
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("savePreferences", true);
+      fixture.componentRef.setInput("preferencesKey", "test-table");
       fixture.detectChanges();
     });
 
-    it('should use custom preferences key', () => {
-      expect(component.preferencesKey()).toBe('test-table');
+    it("should use custom preferences key", () => {
+      expect(component.preferencesKey()).toBe("test-table");
     });
 
-    it('should save preferences with custom key', () => {
-      component.visibleColumnFields.set(['name']);
+    it("should save preferences with custom key", () => {
+      component.visibleColumnFields.set(["name"]);
       (component as any).savePreferencesToStorage();
 
-      expect(localStorageMock.has('test-table')).toBe(true);
+      expect(localStorageMock.has("test-table")).toBe(true);
     });
 
-    it('should not save preferences when disabled', () => {
-      fixture.componentRef.setInput('savePreferences', false);
-      component.visibleColumnFields.set(['name']);
+    it("should not save preferences when disabled", () => {
+      fixture.componentRef.setInput("savePreferences", false);
+      component.visibleColumnFields.set(["name"]);
       (component as any).savePreferencesToStorage();
 
-      expect(localStorageMock.has('test-table')).toBe(false);
+      expect(localStorageMock.has("test-table")).toBe(false);
     });
 
-    it('should include all preferences in saved data', () => {
-      component.visibleColumnFields.set(['name', 'email']);
-      component.columnWidths.set({ 'name': '200px' });
-      component.columnOrderState.set(['email', 'name']);
+    it("should include all preferences in saved data", () => {
+      component.visibleColumnFields.set(["name", "email"]);
+      component.columnWidths.set({ name: "200px" });
+      component.columnOrderState.set(["email", "name"]);
 
       (component as any).savePreferencesToStorage();
 
-      const saved = localStorageMock.get('test-table');
+      const saved = localStorageMock.get("test-table");
       const prefs = JSON.parse(saved!);
 
-      expect(prefs.visibleColumns).toEqual(['name', 'email']);
-      expect(prefs.columnWidths).toEqual({ 'name': '200px' });
-      expect(prefs.columnOrder).toEqual(['email', 'name']);
+      expect(prefs.visibleColumns).toEqual(["name", "email"]);
+      expect(prefs.columnWidths).toEqual({ name: "200px" });
+      expect(prefs.columnOrder).toEqual(["email", "name"]);
     });
 
-    it('should handle malformed localStorage data gracefully', () => {
-      localStorageMock.set('test-table', 'invalid JSON');
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it("should handle malformed localStorage data gracefully", () => {
+      localStorageMock.set("test-table", "invalid JSON");
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       expect(() => (component as any).loadPreferences()).not.toThrow();
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to load table preferences', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Failed to load table preferences",
+        expect.any(Error),
+      );
 
       consoleSpy.mockRestore();
     });
 
-    it('should reset preferences correctly', () => {
-      component.visibleColumnFields.set(['name']);
-      component.columnWidths.set({ 'name': '200px' });
-      component.columnOrderState.set(['name', 'email']);
+    it("should reset preferences correctly", () => {
+      component.visibleColumnFields.set(["name"]);
+      component.columnWidths.set({ name: "200px" });
+      component.columnOrderState.set(["name", "email"]);
 
       component.resetPreferences();
 
-      expect(localStorage.removeItem).toHaveBeenCalledWith('test-table');
-      expect(component.visibleColumnFields()).toEqual(['name', 'email', 'role', 'status']);
+      expect(localStorage.removeItem).toHaveBeenCalledWith("test-table");
+      expect(component.visibleColumnFields()).toEqual([
+        "name",
+        "email",
+        "role",
+        "status",
+      ]);
       expect(component.columnWidths()).toEqual({});
       expect(component.columnOrderState()).toEqual([]);
     });
   });
 
-  describe('Bulk Selection', () => {
+  describe("Bulk Selection", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('selectable', true);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
+      fixture.componentRef.setInput("selectable", true);
       fixture.detectChanges();
     });
 
-    it('should allow bulk selection when enabled', () => {
+    it("should allow bulk selection when enabled", () => {
       expect(component.selectable()).toBe(true);
     });
 
-    it('should select all rows when selectAll is checked', () => {
+    it("should select all rows when selectAll is checked", () => {
       component.selectAll.set(true);
       component.toggleSelectAll();
 
@@ -365,7 +408,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.data()[2]._selected).toBe(true);
     });
 
-    it('should deselect all rows when selectAll is unchecked', () => {
+    it("should deselect all rows when selectAll is unchecked", () => {
       component.selectAll.set(true);
       component.toggleSelectAll();
 
@@ -378,7 +421,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.data()[2]._selected).toBe(false);
     });
 
-    it('should toggle individual row selection', () => {
+    it("should toggle individual row selection", () => {
       const row = component.data()[0];
       row._selected = true;
 
@@ -388,9 +431,9 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.selectedRows()[0]).toBe(row);
     });
 
-    it('should update selectAll when all rows manually selected', () => {
+    it("should update selectAll when all rows manually selected", () => {
       const data = component.data();
-      data.forEach(row => {
+      data.forEach((row) => {
         row._selected = true;
         component.onRowSelect(row);
       });
@@ -398,7 +441,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.selectAll()).toBe(true);
     });
 
-    it('should uncheck selectAll when any row deselected', () => {
+    it("should uncheck selectAll when any row deselected", () => {
       component.selectAll.set(true);
       component.toggleSelectAll();
 
@@ -409,14 +452,14 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.selectAll()).toBe(false);
     });
 
-    it('should check if row is selected', () => {
+    it("should check if row is selected", () => {
       const row = component.data()[0];
       row._selected = true;
 
       expect(component.isRowSelected(row)).toBe(true);
     });
 
-    it('should return false for unselected row', () => {
+    it("should return false for unselected row", () => {
       const row = component.data()[0];
       row._selected = false;
 
@@ -424,15 +467,15 @@ describe('EnhancedDataTableComponent', () => {
     });
   });
 
-  describe('Bulk Actions', () => {
+  describe("Bulk Actions", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('selectable', true);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
+      fixture.componentRef.setInput("selectable", true);
       fixture.detectChanges();
     });
 
-    it('should emit selected rows on bulk delete', () => {
+    it("should emit selected rows on bulk delete", () => {
       let emittedRows: any[] = [];
       component.onBulkDelete.subscribe((rows) => {
         emittedRows = rows;
@@ -450,7 +493,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(emittedRows[1].id).toBe(2);
     });
 
-    it('should emit selected rows on export when rows selected', () => {
+    it("should emit selected rows on export when rows selected", () => {
       let emittedRows: any[] = [];
       component.onExport.subscribe((rows) => {
         emittedRows = rows;
@@ -465,7 +508,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(emittedRows[0].id).toBe(1);
     });
 
-    it('should emit all rows on export when no rows selected', () => {
+    it("should emit all rows on export when no rows selected", () => {
       let emittedRows: any[] = [];
       component.onExport.subscribe((rows) => {
         emittedRows = rows;
@@ -476,7 +519,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(emittedRows).toHaveLength(3);
     });
 
-    it('should show selected count correctly', () => {
+    it("should show selected count correctly", () => {
       component.data()[0]._selected = true;
       component.data()[1]._selected = true;
       component.onRowSelect(component.data()[0]);
@@ -486,53 +529,53 @@ describe('EnhancedDataTableComponent', () => {
     });
   });
 
-  describe('Inline Editing', () => {
+  describe("Inline Editing", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
       fixture.detectChanges();
     });
 
-    it('should start editing on double-click for editable column', () => {
+    it("should start editing on double-click for editable column", () => {
       const row = component.data()[0];
-      const event = new Event('dblclick');
+      const event = new Event("dblclick");
 
-      component.startEdit(row, 'name', event);
+      component.startEdit(row, "name", event);
 
       expect(component.editingRow()).toBe(row);
-      expect(component.editingField()).toBe('name');
-      expect(component.editingValue()).toBe('John Doe');
+      expect(component.editingField()).toBe("name");
+      expect(component.editingValue()).toBe("John Doe");
     });
 
-    it('should not start editing for non-editable column', () => {
+    it("should not start editing for non-editable column", () => {
       const row = component.data()[0];
-      const event = new Event('dblclick');
+      const event = new Event("dblclick");
 
-      component.startEdit(row, 'role', event);
+      component.startEdit(row, "role", event);
 
       expect(component.editingRow()).toBeNull();
       expect(component.editingField()).toBeNull();
     });
 
-    it('should save edit on Enter key', () => {
+    it("should save edit on Enter key", () => {
       const row = component.data()[0];
       component.editingRow.set(row);
-      component.editingField.set('name');
-      component.editingValue.set('John Smith');
+      component.editingField.set("name");
+      component.editingValue.set("John Smith");
 
-      component.saveEdit(row, 'name');
+      component.saveEdit(row, "name");
 
-      expect(row.name).toBe('John Smith');
+      expect(row.name).toBe("John Smith");
       expect(component.editingRow()).toBeNull();
     });
 
-    it('should cancel edit on Escape key', () => {
+    it("should cancel edit on Escape key", () => {
       const row = component.data()[0];
       const originalName = row.name;
 
       component.editingRow.set(row);
-      component.editingField.set('name');
-      component.editingValue.set('New Name');
+      component.editingField.set("name");
+      component.editingValue.set("New Name");
 
       component.cancelEdit();
 
@@ -541,40 +584,40 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.editingField()).toBeNull();
     });
 
-    it('should check if cell is being edited', () => {
+    it("should check if cell is being edited", () => {
       const row = component.data()[0];
       component.editingRow.set(row);
-      component.editingField.set('name');
+      component.editingField.set("name");
 
-      expect(component.isEditing(row, 'name')).toBe(true);
-      expect(component.isEditing(row, 'email')).toBe(false);
+      expect(component.isEditing(row, "name")).toBe(true);
+      expect(component.isEditing(row, "email")).toBe(false);
     });
 
-    it('should get cell value from nested path', () => {
-      const row = { user: { profile: { name: 'John' } } };
-      const value = component.getCellValue(row, 'user.profile.name');
+    it("should get cell value from nested path", () => {
+      const row = { user: { profile: { name: "John" } } };
+      const value = component.getCellValue(row, "user.profile.name");
 
-      expect(value).toBe('John');
+      expect(value).toBe("John");
     });
 
-    it('should set cell value at nested path', () => {
-      const row = { user: { profile: { name: 'John' } } };
-      component.setCellValue(row, 'user.profile.name', 'Jane');
+    it("should set cell value at nested path", () => {
+      const row = { user: { profile: { name: "John" } } };
+      component.setCellValue(row, "user.profile.name", "Jane");
 
-      expect(row.user.profile.name).toBe('Jane');
+      expect(row.user.profile.name).toBe("Jane");
     });
   });
 
-  describe('Mobile Card View', () => {
+  describe("Mobile Card View", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('mobileBreakpoint', 768);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
+      fixture.componentRef.setInput("mobileBreakpoint", 768);
       fixture.detectChanges();
     });
 
-    it('should switch to card view below breakpoint', () => {
-      Object.defineProperty(window, 'innerWidth', {
+    it("should switch to card view below breakpoint", () => {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 600,
@@ -585,8 +628,8 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.isMobileView()).toBe(true);
     });
 
-    it('should stay in table view above breakpoint', () => {
-      Object.defineProperty(window, 'innerWidth', {
+    it("should stay in table view above breakpoint", () => {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 1024,
@@ -597,7 +640,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.isMobileView()).toBe(false);
     });
 
-    it('should toggle view manually', () => {
+    it("should toggle view manually", () => {
       component.isMobileView.set(false);
       component.toggleView();
       expect(component.isMobileView()).toBe(true);
@@ -606,10 +649,10 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.isMobileView()).toBe(false);
     });
 
-    it('should support mobile view with custom breakpoint', () => {
-      fixture.componentRef.setInput('mobileBreakpoint', 1024);
+    it("should support mobile view with custom breakpoint", () => {
+      fixture.componentRef.setInput("mobileBreakpoint", 1024);
 
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 900,
@@ -620,14 +663,14 @@ describe('EnhancedDataTableComponent', () => {
       expect(component.isMobileView()).toBe(true);
     });
 
-    it('should disable mobile view when breakpoint is 0', () => {
-      fixture.componentRef.setInput('mobileBreakpoint', 0);
+    it("should disable mobile view when breakpoint is 0", () => {
+      fixture.componentRef.setInput("mobileBreakpoint", 0);
 
       expect(component.supportsMobileView()).toBe(false);
     });
 
-    it('should check mobile view on window resize', () => {
-      const checkSpy = vi.spyOn(component as any, 'checkMobileView');
+    it("should check mobile view on window resize", () => {
+      const checkSpy = vi.spyOn(component as any, "checkMobileView");
 
       component.onResize();
 
@@ -635,26 +678,26 @@ describe('EnhancedDataTableComponent', () => {
     });
   });
 
-  describe('Actions', () => {
+  describe("Actions", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
       fixture.detectChanges();
     });
 
-    it('should show actions when onEdit is observed', () => {
+    it("should show actions when onEdit is observed", () => {
       component.onEdit.subscribe(() => {});
 
       expect(component.hasActions()).toBe(true);
     });
 
-    it('should show actions when onDelete is observed', () => {
+    it("should show actions when onDelete is observed", () => {
       component.onDelete.subscribe(() => {});
 
       expect(component.hasActions()).toBe(true);
     });
 
-    it('should emit row on edit action', () => {
+    it("should emit row on edit action", () => {
       let emittedRow: any = null;
       component.onEdit.subscribe((row) => {
         emittedRow = row;
@@ -666,7 +709,7 @@ describe('EnhancedDataTableComponent', () => {
       expect(emittedRow).toBe(row);
     });
 
-    it('should emit row on delete action', () => {
+    it("should emit row on delete action", () => {
       let emittedRow: any = null;
       component.onDelete.subscribe((row) => {
         emittedRow = row;
@@ -679,98 +722,98 @@ describe('EnhancedDataTableComponent', () => {
     });
   });
 
-  describe('Keyboard Accessibility', () => {
+  describe("Keyboard Accessibility", () => {
     beforeEach(() => {
-      fixture.componentRef.setInput('columns', mockColumns);
-      fixture.componentRef.setInput('data', mockData);
+      fixture.componentRef.setInput("columns", mockColumns);
+      fixture.componentRef.setInput("data", mockData);
       fixture.detectChanges();
     });
 
-    it('should support Enter key to save edit', () => {
+    it("should support Enter key to save edit", () => {
       const row = component.data()[0];
       component.editingRow.set(row);
-      component.editingField.set('name');
-      component.editingValue.set('New Name');
+      component.editingField.set("name");
+      component.editingValue.set("New Name");
 
-      component.saveEdit(row, 'name');
+      component.saveEdit(row, "name");
 
-      expect(row.name).toBe('New Name');
+      expect(row.name).toBe("New Name");
     });
 
-    it('should support Escape key to cancel edit', () => {
+    it("should support Escape key to cancel edit", () => {
       const row = component.data()[0];
       const originalName = row.name;
 
       component.editingRow.set(row);
-      component.editingField.set('name');
-      component.editingValue.set('New Name');
+      component.editingField.set("name");
+      component.editingValue.set("New Name");
 
       component.cancelEdit();
 
       expect(row.name).toBe(originalName);
     });
 
-    it('should auto-focus and select input on edit start', async () => {
+    it("should auto-focus and select input on edit start", async () => {
       const row = component.data()[0];
-      const mockInput = document.createElement('input');
-      const focusSpy = vi.spyOn(mockInput, 'focus');
-      const selectSpy = vi.spyOn(mockInput, 'select');
+      const mockInput = document.createElement("input");
+      const focusSpy = vi.spyOn(mockInput, "focus");
+      const selectSpy = vi.spyOn(mockInput, "select");
 
       component.editInput = { nativeElement: mockInput } as any;
 
-      component.startEdit(row, 'name', new Event('dblclick'));
+      component.startEdit(row, "name", new Event("dblclick"));
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       expect(focusSpy).toHaveBeenCalled();
       expect(selectSpy).toHaveBeenCalled();
     });
   });
 
-  describe('Edge Cases', () => {
-    it('should handle empty data gracefully', () => {
-      fixture.componentRef.setInput('data', []);
-      fixture.componentRef.setInput('columns', mockColumns);
+  describe("Edge Cases", () => {
+    it("should handle empty data gracefully", () => {
+      fixture.componentRef.setInput("data", []);
+      fixture.componentRef.setInput("columns", mockColumns);
       fixture.detectChanges();
 
       expect(() => component.toggleSelectAll()).not.toThrow();
       expect(component.selectedRows()).toHaveLength(0);
     });
 
-    it('should handle empty columns gracefully', () => {
-      fixture.componentRef.setInput('data', mockData);
-      fixture.componentRef.setInput('columns', []);
+    it("should handle empty columns gracefully", () => {
+      fixture.componentRef.setInput("data", mockData);
+      fixture.componentRef.setInput("columns", []);
       fixture.detectChanges();
 
       expect(component.visibleColumns()).toHaveLength(0);
       expect(component.columnOptions()).toHaveLength(0);
     });
 
-    it('should handle missing cell value path', () => {
-      const row = { name: 'John' };
-      const value = component.getCellValue(row, 'user.email');
+    it("should handle missing cell value path", () => {
+      const row = { name: "John" };
+      const value = component.getCellValue(row, "user.email");
 
       expect(value).toBeUndefined();
     });
 
-    it('should handle null/undefined row data', () => {
-      const value = component.getCellValue(null as any, 'name');
+    it("should handle null/undefined row data", () => {
+      const value = component.getCellValue(null as any, "name");
 
       expect(value).toBeUndefined();
     });
 
-    it('should handle saving edit for different row', () => {
+    it("should handle saving edit for different row", () => {
       const row1 = component.data()[0];
       const row2 = component.data()[1];
 
       component.editingRow.set(row1);
-      component.editingField.set('name');
-      component.editingValue.set('New Name');
+      component.editingField.set("name");
+      component.editingValue.set("New Name");
 
-      component.saveEdit(row2, 'name');
+      component.saveEdit(row2, "name");
 
       // Should not save since rows don't match
-      expect(row2.name).not.toBe('New Name');
+      expect(row2.name).not.toBe("New Name");
     });
   });
 });

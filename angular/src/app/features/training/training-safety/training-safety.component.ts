@@ -44,7 +44,10 @@ import { ReturnToPlayService } from "../../../core/services/return-to-play.servi
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
-import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/utils/privacy-ux-copy";
+import {
+  METRIC_INSUFFICIENT_DATA,
+  DATA_STATE_MESSAGES,
+} from "../../../shared/utils/privacy-ux-copy";
 
 @Component({
   selector: "app-training-safety",
@@ -104,7 +107,9 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                   <h4>{{ acwrInsufficientMessage.title }}</h4>
                   <p>{{ acwrInsufficientMessage.reason }}</p>
                   <p-button
-                    [label]="acwrInsufficientMessage.actionLabel || 'Log Training'"
+                    [label]="
+                      acwrInsufficientMessage.actionLabel || 'Log Training'
+                    "
                     icon="pi pi-plus"
                     [outlined]="true"
                     routerLink="/training/log"
@@ -112,17 +117,23 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                 </div>
               } @else {
                 <div class="metric-display">
-                  <span class="metric-value">{{ acwrValue() | number: "1.2-2" }}</span>
+                  <span class="metric-value">{{
+                    acwrValue() | number: "1.2-2"
+                  }}</span>
                   <span class="metric-label">Acute:Chronic Ratio</span>
                 </div>
                 <div class="metric-details">
                   <div class="detail-item">
                     <span class="detail-label">Acute Load (7d)</span>
-                    <span class="detail-value">{{ acuteLoad() | number: "1.0-0" }} AU</span>
+                    <span class="detail-value"
+                      >{{ acuteLoad() | number: "1.0-0" }} AU</span
+                    >
                   </div>
                   <div class="detail-item">
                     <span class="detail-label">Chronic Load (28d)</span>
-                    <span class="detail-value">{{ chronicLoad() | number: "1.0-0" }} AU</span>
+                    <span class="detail-value"
+                      >{{ chronicLoad() | number: "1.0-0" }} AU</span
+                    >
                   </div>
                 </div>
               }
@@ -140,7 +151,9 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                 ></p-tag>
               </div>
               <div class="metric-display">
-                <span class="metric-value">{{ recoveryMultiplier() | number: "1.1-1" }}x</span>
+                <span class="metric-value"
+                  >{{ recoveryMultiplier() | number: "1.1-1" }}x</span
+                >
                 <span class="metric-label">Recovery Time Multiplier</span>
               </div>
               <div class="metric-details">
@@ -149,7 +162,9 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                   <span class="detail-value">{{ maxSessionsPerWeek() }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Min Rest Between High-Intensity</span>
+                  <span class="detail-label"
+                    >Min Rest Between High-Intensity</span
+                  >
                   <span class="detail-value">{{ minRestDays() }} days</span>
                 </div>
               </div>
@@ -167,7 +182,9 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                 ></p-tag>
               </div>
               <div class="metric-display">
-                <span class="metric-value">{{ sleepDebtHours() | number: "1.1-1" }}h</span>
+                <span class="metric-value"
+                  >{{ sleepDebtHours() | number: "1.1-1" }}h</span
+                >
                 <span class="metric-label">Accumulated Debt</span>
               </div>
               <div class="sleep-impact">
@@ -219,13 +236,24 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
           <p-tabpanel header="Recommendations">
             <div class="recommendations-list">
               @for (rec of recommendations(); track rec.id) {
-                <div class="recommendation-item" [class]="'rec-' + rec.priority">
+                <div
+                  class="recommendation-item"
+                  [class]="'rec-' + rec.priority"
+                >
                   <div class="rec-icon">
                     @switch (rec.priority) {
-                      @case ('critical') { 🚨 }
-                      @case ('high') { ⚠️ }
-                      @case ('medium') { 💡 }
-                      @default { ℹ️ }
+                      @case ("critical") {
+                        🚨
+                      }
+                      @case ("high") {
+                        ⚠️
+                      }
+                      @case ("medium") {
+                        💡
+                      }
+                      @default {
+                        ℹ️
+                      }
                     }
                   </div>
                   <div class="rec-content">
@@ -241,8 +269,7 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                     }
                   </div>
                 </div>
-              }
-              @empty {
+              } @empty {
                 <div class="no-recommendations">
                   <i class="pi pi-check-circle"></i>
                   <p>No safety concerns at this time. Keep up the good work!</p>
@@ -257,10 +284,7 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
               <div class="rtp-protocol">
                 <div class="rtp-header">
                   <h3>Active Return-to-Play Protocol</h3>
-                  <p-tag
-                    [value]="rtpStage()"
-                    severity="info"
-                  ></p-tag>
+                  <p-tag [value]="rtpStage()" severity="info"></p-tag>
                 </div>
                 <div class="rtp-progress">
                   <p-progressBar
@@ -270,8 +294,13 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
                 </div>
                 <div class="rtp-details">
                   <p><strong>Injury Type:</strong> {{ rtpInjuryType() }}</p>
-                  <p><strong>Days in Protocol:</strong> {{ rtpDaysInProtocol() }}</p>
-                  <p><strong>Current Restrictions:</strong> {{ rtpRestrictions() }}</p>
+                  <p>
+                    <strong>Days in Protocol:</strong> {{ rtpDaysInProtocol() }}
+                  </p>
+                  <p>
+                    <strong>Current Restrictions:</strong>
+                    {{ rtpRestrictions() }}
+                  </p>
                 </div>
                 <div class="rtp-checkin">
                   <p-button
@@ -300,19 +329,27 @@ import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/u
             <div class="training-history">
               <div class="history-summary">
                 <div class="summary-item">
-                  <span class="summary-value">{{ totalSessionsThisWeek() }}</span>
+                  <span class="summary-value">{{
+                    totalSessionsThisWeek()
+                  }}</span>
                   <span class="summary-label">Sessions This Week</span>
                 </div>
                 <div class="summary-item">
-                  <span class="summary-value">{{ totalLoadThisWeek() | number: "1.0-0" }}</span>
+                  <span class="summary-value">{{
+                    totalLoadThisWeek() | number: "1.0-0"
+                  }}</span>
                   <span class="summary-label">Total Load (AU)</span>
                 </div>
                 <div class="summary-item">
-                  <span class="summary-value">{{ consecutiveTrainingDays() }}</span>
+                  <span class="summary-value">{{
+                    consecutiveTrainingDays()
+                  }}</span>
                   <span class="summary-label">Consecutive Days</span>
                 </div>
                 <div class="summary-item">
-                  <span class="summary-value">{{ weeklyLoadChange() | number: "1.0-0" }}%</span>
+                  <span class="summary-value"
+                    >{{ weeklyLoadChange() | number: "1.0-0" }}%</span
+                  >
                   <span class="summary-label">Week-over-Week Change</span>
                 </div>
               </div>
@@ -630,7 +667,9 @@ export class TrainingSafetyComponent implements OnInit {
   trainingCapacity = signal<number>(100);
 
   // Movement limits signals
-  movementLimits = signal<Array<{ type: string; current: number; max: number }>>([
+  movementLimits = signal<
+    Array<{ type: string; current: number; max: number }>
+  >([
     { type: "Sprints", current: 0, max: 100 },
     { type: "Cuts", current: 0, max: 200 },
     { type: "Throws", current: 0, max: 300 },
@@ -639,13 +678,15 @@ export class TrainingSafetyComponent implements OnInit {
   movementLimitStatus = signal<string>("Safe");
 
   // Recommendations
-  recommendations = signal<Array<{
-    id: string;
-    title: string;
-    message: string;
-    priority: string;
-    action?: { label: string; route: string };
-  }>>([]);
+  recommendations = signal<
+    Array<{
+      id: string;
+      title: string;
+      message: string;
+      priority: string;
+      action?: { label: string; route: string };
+    }>
+  >([]);
 
   // Return to play
   hasActiveRTP = signal<boolean>(false);
@@ -675,24 +716,23 @@ export class TrainingSafetyComponent implements OnInit {
     try {
       // Load age-adjusted recovery from user profile
       await this.loadAgeRecoveryData(user.id);
-      
+
       // Load sleep debt from wellness data
       await this.loadSleepDebtData(user.id);
-      
+
       // Load movement limits from training sessions
       await this.loadMovementLimits(user.id);
-      
+
       // Load training history for the week
       await this.loadTrainingHistory(user.id);
-      
+
       // Load return-to-play status if any
       await this.loadRTPStatus(user.id);
-      
+
       // Generate recommendations based on real data
       this.generateRecommendations();
-      
     } catch (error) {
-      this.logger.error('[TrainingSafety] Error loading safety data:', error);
+      this.logger.error("[TrainingSafety] Error loading safety data:", error);
       this.showEmptyState();
     }
   }
@@ -701,40 +741,42 @@ export class TrainingSafetyComponent implements OnInit {
     try {
       // Get user's date of birth from profile
       const { data: profile } = await this.supabaseService.client
-        .from('users')
-        .select('date_of_birth')
-        .eq('id', userId)
+        .from("users")
+        .select("date_of_birth")
+        .eq("id", userId)
         .single();
 
       if (profile?.date_of_birth) {
         const dob = new Date(profile.date_of_birth);
         const age = this.calculateAge(dob);
-        
+
         // Set age group and recovery parameters
         if (age < 18) {
-          this.ageGroup.set('Youth');
+          this.ageGroup.set("Youth");
           this.recoveryMultiplier.set(0.8);
           this.maxSessionsPerWeek.set(5);
           this.minRestDays.set(2);
         } else if (age < 25) {
-          this.ageGroup.set('Young Adult');
+          this.ageGroup.set("Young Adult");
           this.recoveryMultiplier.set(0.9);
           this.maxSessionsPerWeek.set(6);
           this.minRestDays.set(1);
         } else if (age < 35) {
-          this.ageGroup.set('Adult');
+          this.ageGroup.set("Adult");
           this.recoveryMultiplier.set(1.0);
           this.maxSessionsPerWeek.set(6);
           this.minRestDays.set(1);
         } else {
-          this.ageGroup.set('Masters');
+          this.ageGroup.set("Masters");
           this.recoveryMultiplier.set(1.2);
           this.maxSessionsPerWeek.set(5);
           this.minRestDays.set(2);
         }
       }
     } catch (error) {
-      this.logger.debug('[TrainingSafety] Could not load age data, using defaults');
+      this.logger.debug(
+        "[TrainingSafety] Could not load age data, using defaults",
+      );
     }
   }
 
@@ -755,17 +797,17 @@ export class TrainingSafetyComponent implements OnInit {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data: wellnessEntries } = await this.supabaseService.client
-        .from('wellness_entries')
-        .select('sleep_quality, date')
+        .from("wellness_entries")
+        .select("sleep_quality, date")
         .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
-        .gte('date', sevenDaysAgo.toISOString().split('T')[0])
-        .order('date', { ascending: false });
+        .gte("date", sevenDaysAgo.toISOString().split("T")[0])
+        .order("date", { ascending: false });
 
       if (wellnessEntries && wellnessEntries.length > 0) {
         // Calculate sleep debt (assuming 8 hours is optimal)
         const optimalSleep = 8;
         let totalDebt = 0;
-        
+
         wellnessEntries.forEach((entry: { sleep_quality?: number }) => {
           if (entry.sleep_quality) {
             // Convert 1-10 scale to hours (1=4h, 10=10h)
@@ -776,29 +818,29 @@ export class TrainingSafetyComponent implements OnInit {
         });
 
         this.sleepDebtHours.set(Math.round(totalDebt * 10) / 10);
-        
+
         // Determine sleep debt level
         if (totalDebt === 0) {
-          this.sleepDebtLevel.set('None');
+          this.sleepDebtLevel.set("None");
           this.trainingCapacity.set(100);
         } else if (totalDebt < 5) {
-          this.sleepDebtLevel.set('Mild');
+          this.sleepDebtLevel.set("Mild");
           this.trainingCapacity.set(90);
         } else if (totalDebt < 10) {
-          this.sleepDebtLevel.set('Moderate');
+          this.sleepDebtLevel.set("Moderate");
           this.trainingCapacity.set(75);
         } else {
-          this.sleepDebtLevel.set('Severe');
+          this.sleepDebtLevel.set("Severe");
           this.trainingCapacity.set(60);
         }
       } else {
         // No wellness data - show defaults
         this.sleepDebtHours.set(0);
-        this.sleepDebtLevel.set('Unknown');
+        this.sleepDebtLevel.set("Unknown");
         this.trainingCapacity.set(100);
       }
     } catch (error) {
-      this.logger.debug('[TrainingSafety] Could not load sleep data');
+      this.logger.debug("[TrainingSafety] Could not load sleep data");
     }
   }
 
@@ -809,56 +851,69 @@ export class TrainingSafetyComponent implements OnInit {
       weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of week (Sunday)
 
       const { data: workoutLogs } = await this.supabaseService.client
-        .from('workout_logs')
-        .select('notes, duration_minutes, rpe')
-        .eq('player_id', userId)
-        .gte('completed_at', weekStart.toISOString());
+        .from("workout_logs")
+        .select("notes, duration_minutes, rpe")
+        .eq("player_id", userId)
+        .gte("completed_at", weekStart.toISOString());
 
       // Count movement types from workout notes
-      let sprints = 0, cuts = 0, throws = 0, jumps = 0;
+      let sprints = 0,
+        cuts = 0,
+        throws = 0,
+        jumps = 0;
 
       if (workoutLogs) {
-        workoutLogs.forEach((log: { notes?: string; duration_minutes?: number }) => {
-          const notes = (log.notes || '').toLowerCase();
-          const duration = log.duration_minutes || 0;
-          
-          // Estimate movement counts based on session type
-          if (notes.includes('sprint') || notes.includes('speed')) {
-            sprints += Math.round(duration / 2); // ~30 sprints per hour
-          }
-          if (notes.includes('route') || notes.includes('agility') || notes.includes('cut')) {
-            cuts += Math.round(duration * 1.5); // ~90 cuts per hour
-          }
-          if (notes.includes('throw') || notes.includes('passing') || notes.includes('qb')) {
-            throws += Math.round(duration * 2); // ~120 throws per hour
-          }
-          if (notes.includes('jump') || notes.includes('plyometric')) {
-            jumps += Math.round(duration / 3); // ~20 jumps per hour
-          }
-        });
+        workoutLogs.forEach(
+          (log: { notes?: string; duration_minutes?: number }) => {
+            const notes = (log.notes || "").toLowerCase();
+            const duration = log.duration_minutes || 0;
+
+            // Estimate movement counts based on session type
+            if (notes.includes("sprint") || notes.includes("speed")) {
+              sprints += Math.round(duration / 2); // ~30 sprints per hour
+            }
+            if (
+              notes.includes("route") ||
+              notes.includes("agility") ||
+              notes.includes("cut")
+            ) {
+              cuts += Math.round(duration * 1.5); // ~90 cuts per hour
+            }
+            if (
+              notes.includes("throw") ||
+              notes.includes("passing") ||
+              notes.includes("qb")
+            ) {
+              throws += Math.round(duration * 2); // ~120 throws per hour
+            }
+            if (notes.includes("jump") || notes.includes("plyometric")) {
+              jumps += Math.round(duration / 3); // ~20 jumps per hour
+            }
+          },
+        );
       }
 
       this.movementLimits.set([
-        { type: 'Sprints', current: sprints, max: 100 },
-        { type: 'Cuts', current: cuts, max: 200 },
-        { type: 'Throws', current: throws, max: 300 },
-        { type: 'Jumps', current: jumps, max: 150 },
+        { type: "Sprints", current: sprints, max: 100 },
+        { type: "Cuts", current: cuts, max: 200 },
+        { type: "Throws", current: throws, max: 300 },
+        { type: "Jumps", current: jumps, max: 150 },
       ]);
 
       // Determine overall status
       const limits = this.movementLimits();
-      const anyOverLimit = limits.some(l => l.current > l.max);
-      const anyNearLimit = limits.some(l => l.current > l.max * 0.8);
-      
+      const anyOverLimit = limits.some((l) => l.current > l.max);
+      const anyNearLimit = limits.some((l) => l.current > l.max * 0.8);
+
       if (anyOverLimit) {
-        this.movementLimitStatus.set('Over Limit');
+        this.movementLimitStatus.set("Over Limit");
       } else if (anyNearLimit) {
-        this.movementLimitStatus.set('Caution');
+        this.movementLimitStatus.set("Caution");
       } else {
-        this.movementLimitStatus.set('Safe');
+        this.movementLimitStatus.set("Safe");
       }
     } catch (error) {
-      this.logger.debug('[TrainingSafety] Could not load movement limits');
+      this.logger.debug("[TrainingSafety] Could not load movement limits");
     }
   }
 
@@ -866,37 +921,41 @@ export class TrainingSafetyComponent implements OnInit {
     try {
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      
+
       const lastWeekStart = new Date(weekStart);
       lastWeekStart.setDate(lastWeekStart.getDate() - 7);
 
       // Get this week's sessions
       const { data: thisWeekSessions } = await this.supabaseService.client
-        .from('workout_logs')
-        .select('completed_at, rpe, duration_minutes')
-        .eq('player_id', userId)
-        .gte('completed_at', weekStart.toISOString());
+        .from("workout_logs")
+        .select("completed_at, rpe, duration_minutes")
+        .eq("player_id", userId)
+        .gte("completed_at", weekStart.toISOString());
 
       // Get last week's sessions for comparison
       const { data: lastWeekSessions } = await this.supabaseService.client
-        .from('workout_logs')
-        .select('rpe, duration_minutes')
-        .eq('player_id', userId)
-        .gte('completed_at', lastWeekStart.toISOString())
-        .lt('completed_at', weekStart.toISOString());
+        .from("workout_logs")
+        .select("rpe, duration_minutes")
+        .eq("player_id", userId)
+        .gte("completed_at", lastWeekStart.toISOString())
+        .lt("completed_at", weekStart.toISOString());
 
       if (thisWeekSessions) {
         this.totalSessionsThisWeek.set(thisWeekSessions.length);
-        
+
         // Calculate total load (RPE × duration)
-        const thisWeekLoad = thisWeekSessions.reduce((sum: number, s: { rpe?: number; duration_minutes?: number }) => 
-          sum + ((s.rpe || 5) * (s.duration_minutes || 60)), 0);
+        const thisWeekLoad = thisWeekSessions.reduce(
+          (sum: number, s: { rpe?: number; duration_minutes?: number }) =>
+            sum + (s.rpe || 5) * (s.duration_minutes || 60),
+          0,
+        );
         this.totalLoadThisWeek.set(thisWeekLoad);
 
         // Calculate consecutive training days
         const trainingDates = new Set(
-          thisWeekSessions.map((s: { completed_at: string }) => 
-            new Date(s.completed_at).toDateString())
+          thisWeekSessions.map((s: { completed_at: string }) =>
+            new Date(s.completed_at).toDateString(),
+          ),
         );
         let consecutive = 0;
         const today = new Date();
@@ -913,9 +972,12 @@ export class TrainingSafetyComponent implements OnInit {
 
         // Calculate week-over-week change
         if (lastWeekSessions && lastWeekSessions.length > 0) {
-          const lastWeekLoad = lastWeekSessions.reduce((sum: number, s: { rpe?: number; duration_minutes?: number }) => 
-            sum + ((s.rpe || 5) * (s.duration_minutes || 60)), 0);
-          
+          const lastWeekLoad = lastWeekSessions.reduce(
+            (sum: number, s: { rpe?: number; duration_minutes?: number }) =>
+              sum + (s.rpe || 5) * (s.duration_minutes || 60),
+            0,
+          );
+
           if (lastWeekLoad > 0) {
             const change = ((thisWeekLoad - lastWeekLoad) / lastWeekLoad) * 100;
             this.weeklyLoadChange.set(Math.round(change));
@@ -923,7 +985,7 @@ export class TrainingSafetyComponent implements OnInit {
         }
       }
     } catch (error) {
-      this.logger.debug('[TrainingSafety] Could not load training history');
+      this.logger.debug("[TrainingSafety] Could not load training history");
     }
   }
 
@@ -931,74 +993,81 @@ export class TrainingSafetyComponent implements OnInit {
     try {
       // Check for active return-to-play protocols
       const { data: rtpProtocol } = await this.supabaseService.client
-        .from('injury_tracking')
-        .select('*')
-        .eq('player_id', userId)
-        .eq('status', 'in_recovery')
-        .order('injury_date', { ascending: false })
+        .from("injury_tracking")
+        .select("*")
+        .eq("player_id", userId)
+        .eq("status", "in_recovery")
+        .order("injury_date", { ascending: false })
         .limit(1)
         .single();
 
       if (rtpProtocol) {
         this.hasActiveRTP.set(true);
-        this.rtpInjuryType.set(rtpProtocol.injury_type || 'Unknown');
-        
+        this.rtpInjuryType.set(rtpProtocol.injury_type || "Unknown");
+
         const injuryDate = new Date(rtpProtocol.injury_date);
-        const daysInProtocol = Math.floor((Date.now() - injuryDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysInProtocol = Math.floor(
+          (Date.now() - injuryDate.getTime()) / (1000 * 60 * 60 * 24),
+        );
         this.rtpDaysInProtocol.set(daysInProtocol);
-        
+
         // Estimate progress based on typical recovery times
         const typicalRecovery: Record<string, number> = {
-          'muscle_strain': 14,
-          'hamstring': 21,
-          'ankle_sprain': 14,
-          'knee': 28,
-          'concussion': 14,
-          'default': 21
+          muscle_strain: 14,
+          hamstring: 21,
+          ankle_sprain: 14,
+          knee: 28,
+          concussion: 14,
+          default: 21,
         };
-        const expectedDays = typicalRecovery[rtpProtocol.injury_type?.toLowerCase()] || typicalRecovery['default'];
-        const progress = Math.min(100, Math.round((daysInProtocol / expectedDays) * 100));
+        const expectedDays =
+          typicalRecovery[rtpProtocol.injury_type?.toLowerCase()] ||
+          typicalRecovery["default"];
+        const progress = Math.min(
+          100,
+          Math.round((daysInProtocol / expectedDays) * 100),
+        );
         this.rtpProgress.set(progress);
-        
+
         // Determine stage
         if (progress < 25) {
-          this.rtpStage.set('Phase 1: Rest');
-          this.rtpRestrictions.set('No training, focus on recovery');
+          this.rtpStage.set("Phase 1: Rest");
+          this.rtpRestrictions.set("No training, focus on recovery");
         } else if (progress < 50) {
-          this.rtpStage.set('Phase 2: Light Activity');
-          this.rtpRestrictions.set('Walking, light stretching only');
+          this.rtpStage.set("Phase 2: Light Activity");
+          this.rtpRestrictions.set("Walking, light stretching only");
         } else if (progress < 75) {
-          this.rtpStage.set('Phase 3: Sport-Specific');
-          this.rtpRestrictions.set('No contact, 50% intensity');
+          this.rtpStage.set("Phase 3: Sport-Specific");
+          this.rtpRestrictions.set("No contact, 50% intensity");
         } else {
-          this.rtpStage.set('Phase 4: Full Training');
-          this.rtpRestrictions.set('Full participation with monitoring');
+          this.rtpStage.set("Phase 4: Full Training");
+          this.rtpRestrictions.set("Full participation with monitoring");
         }
       } else {
         this.hasActiveRTP.set(false);
       }
     } catch (error) {
-      this.logger.debug('[TrainingSafety] Could not load RTP status');
+      this.logger.debug("[TrainingSafety] Could not load RTP status");
       this.hasActiveRTP.set(false);
     }
   }
 
   private showEmptyState(): void {
     // Set default values for empty state
-    this.ageGroup.set('Unknown');
+    this.ageGroup.set("Unknown");
     this.recoveryMultiplier.set(1.0);
     this.maxSessionsPerWeek.set(6);
     this.minRestDays.set(1);
     this.sleepDebtHours.set(0);
-    this.sleepDebtLevel.set('No Data');
+    this.sleepDebtLevel.set("No Data");
     this.trainingCapacity.set(100);
     this.movementLimits.set([
-      { type: 'Sprints', current: 0, max: 100 },
-      { type: 'Cuts', current: 0, max: 200 },
-      { type: 'Throws', current: 0, max: 300 },
-      { type: 'Jumps', current: 0, max: 150 },
+      { type: "Sprints", current: 0, max: 100 },
+      { type: "Cuts", current: 0, max: 200 },
+      { type: "Throws", current: 0, max: 300 },
+      { type: "Jumps", current: 0, max: 150 },
     ]);
-    this.movementLimitStatus.set('No Data');
+    this.movementLimitStatus.set("No Data");
     this.totalSessionsThisWeek.set(0);
     this.totalLoadThisWeek.set(0);
     this.consecutiveTrainingDays.set(0);
@@ -1020,7 +1089,8 @@ export class TrainingSafetyComponent implements OnInit {
       recs.push({
         id: "acwr-high",
         title: "High Injury Risk",
-        message: "Your ACWR is above 1.5. Consider reducing training load by 20-30%.",
+        message:
+          "Your ACWR is above 1.5. Consider reducing training load by 20-30%.",
         priority: "critical",
         action: { label: "View Training Plan", route: "/training" },
       });
@@ -1028,7 +1098,8 @@ export class TrainingSafetyComponent implements OnInit {
       recs.push({
         id: "acwr-elevated",
         title: "Elevated Risk Zone",
-        message: "Your ACWR is in the caution zone. Monitor closely and avoid high-intensity work.",
+        message:
+          "Your ACWR is in the caution zone. Monitor closely and avoid high-intensity work.",
         priority: "high",
       });
     }
@@ -1038,7 +1109,8 @@ export class TrainingSafetyComponent implements OnInit {
       recs.push({
         id: "sleep-debt",
         title: "Significant Sleep Debt",
-        message: "You have accumulated significant sleep debt. Prioritize sleep to reduce injury risk.",
+        message:
+          "You have accumulated significant sleep debt. Prioritize sleep to reduce injury risk.",
         priority: "high",
         action: { label: "Log Sleep", route: "/wellness" },
       });

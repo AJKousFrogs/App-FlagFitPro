@@ -15,6 +15,7 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ## Button Hierarchy
 
 ### **Primary Button** - Main Action
+
 - Use for the primary action on a page/form
 - Only ONE primary button per context
 - Examples: "Save", "Submit", "Create Account", "Log In"
@@ -29,6 +30,7 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ```
 
 ### **Secondary Button** - Alternative Action
+
 - Use for secondary actions
 - Multiple allowed per context
 - Examples: "Cancel", "Back", "Skip"
@@ -43,6 +45,7 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ```
 
 ### **Danger Button** - Destructive Action
+
 - Use for destructive/irreversible actions
 - Requires confirmation dialog
 - Examples: "Delete", "Remove", "Archive"
@@ -57,6 +60,7 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ```
 
 ### **Success Button** - Positive Completion
+
 - Use for positive confirmations
 - Examples: "Approve", "Confirm", "Accept"
 
@@ -69,18 +73,16 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ```
 
 ### **Text Button** - Tertiary Action
+
 - Use for less prominent actions
 - Examples: "Learn More", "View Details"
 
 ```html
-<p-button
-  label="Learn More"
-  icon="pi pi-arrow-right"
-  [text]="true"
-/>
+<p-button label="Learn More" icon="pi pi-arrow-right" [text]="true" />
 ```
 
 ### **Icon-Only Button** - Compact Action
+
 - Use when space is limited
 - MUST have aria-label for accessibility
 - Examples: Close, Edit, More options
@@ -100,11 +102,13 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ## Button States
 
 ### **Default State**
+
 ```html
 <p-button label="Click Me" />
 ```
 
 ### **Loading State**
+
 ```html
 <p-button
   label="Saving..."
@@ -114,37 +118,27 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ```
 
 ### **Disabled State**
+
 ```html
-<p-button
-  label="Submit"
-  [disabled]="!formValid()"
-/>
+<p-button label="Submit" [disabled]="!formValid()" />
 ```
 
 ### **Outlined Variant**
+
 ```html
-<p-button
-  label="Cancel"
-  severity="secondary"
-  [outlined]="true"
-/>
+<p-button label="Cancel" severity="secondary" [outlined]="true" />
 ```
 
 ### **Raised Variant** (with shadow)
+
 ```html
-<p-button
-  label="Call to Action"
-  [raised]="true"
-/>
+<p-button label="Call to Action" [raised]="true" />
 ```
 
 ### **Rounded Variant**
+
 ```html
-<p-button
-  icon="pi pi-plus"
-  [rounded]="true"
-  aria-label="Add item"
-/>
+<p-button icon="pi pi-plus" [rounded]="true" aria-label="Add item" />
 ```
 
 ---
@@ -152,24 +146,21 @@ This document establishes button standards for FlagFit Pro to ensure consistent 
 ## Button Sizes
 
 ### **Small** - Compact UI
+
 ```html
-<p-button
-  label="Small Button"
-  size="small"
-/>
+<p-button label="Small Button" size="small" />
 ```
 
 ### **Default** - Standard size
+
 ```html
 <p-button label="Default Button" />
 ```
 
 ### **Large** - Emphasis
+
 ```html
-<p-button
-  label="Large Button"
-  size="large"
-/>
+<p-button label="Large Button" size="large" />
 ```
 
 ---
@@ -323,10 +314,22 @@ async save(): Promise<void> {
 
 ```typescript
 saveOptions = [
-  { label: 'Save and Continue', icon: 'pi pi-arrow-right', command: () => this.saveAndContinue() },
-  { label: 'Save and Close', icon: 'pi pi-times', command: () => this.saveAndClose() },
+  {
+    label: "Save and Continue",
+    icon: "pi pi-arrow-right",
+    command: () => this.saveAndContinue(),
+  },
+  {
+    label: "Save and Close",
+    icon: "pi pi-times",
+    command: () => this.saveAndClose(),
+  },
   { separator: true },
-  { label: 'Save as Draft', icon: 'pi pi-file', command: () => this.saveDraft() }
+  {
+    label: "Save as Draft",
+    icon: "pi pi-file",
+    command: () => this.saveDraft(),
+  },
 ];
 ```
 
@@ -335,6 +338,7 @@ saveOptions = [
 ## Accessibility Requirements
 
 ### **1. ARIA Labels**
+
 All icon-only buttons MUST have aria-label:
 
 ```html
@@ -342,18 +346,17 @@ All icon-only buttons MUST have aria-label:
 <p-button icon="pi pi-trash" />
 
 <!-- ✅ GOOD: Has aria-label -->
-<p-button
-  icon="pi pi-trash"
-  aria-label="Delete item"
-/>
+<p-button icon="pi pi-trash" aria-label="Delete item" />
 ```
 
 ### **2. Keyboard Navigation**
+
 - **Tab** - Move between buttons
 - **Enter/Space** - Activate button
 - **Escape** - Cancel action (if in dialog/modal)
 
 ### **3. Focus Indicators**
+
 All buttons must have visible focus indicators (provided by PrimeNG):
 
 ```scss
@@ -365,6 +368,7 @@ All buttons must have visible focus indicators (provided by PrimeNG):
 ```
 
 ### **4. Loading State Announcements**
+
 ```html
 <p-button
   label="Saving..."
@@ -375,6 +379,7 @@ All buttons must have visible focus indicators (provided by PrimeNG):
 ```
 
 ### **5. Disabled State**
+
 Disabled buttons should not be focusable:
 
 ```html
@@ -494,7 +499,11 @@ Disabled buttons should not be focusable:
     font-weight: 600;
 
     &:hover {
-      background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+      background: linear-gradient(
+        135deg,
+        var(--primary-600),
+        var(--primary-800)
+      );
     }
   }
 }
@@ -613,6 +622,7 @@ Disabled buttons should not be focusable:
 ## Testing Checklist
 
 ### **Visual Tests**
+
 - [ ] Primary button stands out from secondary
 - [ ] Danger buttons clearly indicate risk
 - [ ] Loading state shows spinner
@@ -620,6 +630,7 @@ Disabled buttons should not be focusable:
 - [ ] Focus indicators are visible
 
 ### **Interaction Tests**
+
 - [ ] Buttons respond to click/tap
 - [ ] Loading state prevents double-submission
 - [ ] Disabled buttons don't respond to clicks
@@ -627,6 +638,7 @@ Disabled buttons should not be focusable:
 - [ ] Touch targets are 44x44px minimum on mobile
 
 ### **Accessibility Tests**
+
 - [ ] All icon buttons have aria-label
 - [ ] Focus indicators meet WCAG 2.1 AA
 - [ ] Screen reader announces button purpose
@@ -656,6 +668,7 @@ When updating existing buttons:
 ## Examples by Use Case
 
 ### **Login Button**
+
 ```html
 <p-button
   type="submit"
@@ -669,6 +682,7 @@ When updating existing buttons:
 ```
 
 ### **Create/Add Button**
+
 ```html
 <p-button
   label="Create Session"
@@ -679,6 +693,7 @@ When updating existing buttons:
 ```
 
 ### **Edit Button**
+
 ```html
 <p-button
   icon="pi pi-pencil"
@@ -692,6 +707,7 @@ When updating existing buttons:
 ```
 
 ### **Delete Button**
+
 ```html
 <p-button
   icon="pi pi-trash"
@@ -705,6 +721,7 @@ When updating existing buttons:
 ```
 
 ### **Filter/View Options Button**
+
 ```html
 <p-button
   icon="pi pi-filter"
@@ -717,6 +734,7 @@ When updating existing buttons:
 ```
 
 ### **Export Button**
+
 ```html
 <p-button
   label="Export Data"
@@ -733,6 +751,7 @@ When updating existing buttons:
 ## Don'ts
 
 ❌ **Don't use multiple primary buttons**
+
 ```html
 <!-- BAD: Two competing primary actions -->
 <p-button label="Save" severity="primary" />
@@ -740,6 +759,7 @@ When updating existing buttons:
 ```
 
 ✅ **Do use primary + secondary**
+
 ```html
 <!-- GOOD: Clear hierarchy -->
 <p-button label="Save Draft" severity="secondary" [outlined]="true" />
@@ -747,24 +767,28 @@ When updating existing buttons:
 ```
 
 ❌ **Don't use icon-only without aria-label**
+
 ```html
 <!-- BAD: No accessibility -->
 <p-button icon="pi pi-trash" />
 ```
 
 ✅ **Do add aria-label**
+
 ```html
 <!-- GOOD: Accessible -->
 <p-button icon="pi pi-trash" aria-label="Delete item" pTooltip="Delete" />
 ```
 
 ❌ **Don't forget loading states**
+
 ```html
 <!-- BAD: No feedback during save -->
 <p-button label="Save" (onClick)="save()" />
 ```
 
 ✅ **Do show loading states**
+
 ```html
 <!-- GOOD: Clear feedback -->
 <p-button

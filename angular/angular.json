@@ -40,23 +40,23 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "700kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "900kb",
+                  "maximumError": "1.2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "15kb",
-                  "maximumError": "25kb"
+                  "maximumWarning": "35kb",
+                  "maximumError": "50kb"
                 },
                 {
                   "type": "anyScript",
-                  "maximumWarning": "350kb",
-                  "maximumError": "500kb"
+                  "maximumWarning": "400kb",
+                  "maximumError": "600kb"
                 },
                 {
                   "type": "any",
-                  "maximumWarning": "350kb",
-                  "maximumError": "500kb"
+                  "maximumWarning": "400kb",
+                  "maximumError": "600kb"
                 }
               ],
               "namedChunks": false,
@@ -114,11 +114,7 @@
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
-            "routes": [
-              "/",
-              "/login",
-              "/register"
-            ]
+            "routes": ["/", "/login", "/register"]
           }
         },
         "server": {

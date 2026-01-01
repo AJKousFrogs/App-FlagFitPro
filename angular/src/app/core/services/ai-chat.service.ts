@@ -43,7 +43,11 @@ export interface ChatMessage {
   metadata?: {
     source?: string;
     model?: string;
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
   };
 }
 
@@ -81,7 +85,11 @@ interface ChatApiResponse {
   metadata?: {
     source?: string;
     model?: string;
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
   };
 }
 
@@ -127,7 +135,10 @@ export class AiChatService {
     this.addMessageToSession(userMessage);
 
     return this.apiService
-      .post<ChatApiResponse>(API_ENDPOINTS.aiChat?.send || "/api/ai/chat", request)
+      .post<ChatApiResponse>(
+        API_ENDPOINTS.aiChat?.send || "/api/ai/chat",
+        request,
+      )
       .pipe(
         map((response) => {
           if (!response.success || !response.data) {
@@ -173,7 +184,7 @@ export class AiChatService {
           this.addMessageToSession(fallbackMessage);
 
           return of(fallbackMessage);
-        })
+        }),
       );
   }
 
@@ -212,7 +223,7 @@ export class AiChatService {
           // Start fresh session if load fails
           this.startNewSession();
           return of(null);
-        })
+        }),
       );
   }
 
@@ -243,7 +254,7 @@ export class AiChatService {
   private addMessageToSession(message: ChatMessage): void {
     const session = this.currentSession();
     if (session) {
-      this.currentSession.update(current => ({
+      this.currentSession.update((current) => ({
         ...current!,
         messages: [...current!.messages, message],
       }));
@@ -263,11 +274,10 @@ export class AiChatService {
   private updateSessionId(sessionId: string): void {
     const session = this.currentSession();
     if (session && !session.id) {
-      this.currentSession.update(current => ({
+      this.currentSession.update((current) => ({
         ...current!,
         id: sessionId,
       }));
     }
   }
 }
-

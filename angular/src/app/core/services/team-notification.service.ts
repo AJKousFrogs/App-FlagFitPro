@@ -15,7 +15,10 @@ import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
-import { NotificationStateService, Notification as AppNotification } from "./notification-state.service";
+import {
+  NotificationStateService,
+  Notification as AppNotification,
+} from "./notification-state.service";
 import { ToastService } from "./toast.service";
 import {
   RealtimeChannel,
@@ -106,11 +109,11 @@ export class TeamNotificationService {
   readonly loading = computed(() => this._loading());
 
   readonly unreadActivityCount = computed(
-    () => this._activityFeed().filter((a) => !a.is_read).length
+    () => this._activityFeed().filter((a) => !a.is_read).length,
   );
 
   readonly hasUnreadAnnouncements = computed(
-    () => this._unreadAnnouncements().length > 0
+    () => this._unreadAnnouncements().length > 0,
   );
 
   // Group activities by date
@@ -188,7 +191,7 @@ export class TeamNotificationService {
         },
         (payload: RealtimePostgresChangesPayload<AppNotification>) => {
           this.handleNewNotification(payload.new as AppNotification);
-        }
+        },
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -235,7 +238,7 @@ export class TeamNotificationService {
           if (teamIds.includes(activity.team_id)) {
             this.handleNewActivity(activity);
           }
-        }
+        },
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -301,7 +304,9 @@ export class TeamNotificationService {
   /**
    * Show browser notification (if permitted)
    */
-  private async showBrowserNotification(notification: AppNotification): Promise<void> {
+  private async showBrowserNotification(
+    notification: AppNotification,
+  ): Promise<void> {
     if (!("Notification" in window)) return;
 
     // Use window.Notification to reference the browser's Notification API
@@ -360,10 +365,14 @@ export class TeamNotificationService {
         is_read: boolean;
         read_at: string | null;
         created_at: string;
-        player: { id: string; email: string; raw_user_meta_data: Record<string, unknown> } | null;
+        player: {
+          id: string;
+          email: string;
+          raw_user_meta_data: Record<string, unknown>;
+        } | null;
       }
 
-      const { data, error } = await this.supabase.client
+      const { data, error } = (await this.supabase.client
         .from("coach_activity_log")
         .select(
           `
@@ -371,12 +380,12 @@ export class TeamNotificationService {
           player:auth.users!coach_activity_log_player_id_fkey(
             id, email, raw_user_meta_data
           )
-        `
+        `,
         )
         .in("team_id", teamIds)
         .or(`coach_id.eq.${userId},coach_id.is.null`)
         .order("created_at", { ascending: false })
-        .limit(50) as { data: ActivityWithPlayer[] | null; error: unknown };
+        .limit(50)) as { data: ActivityWithPlayer[] | null; error: unknown };
 
       if (error) throw error;
 
@@ -384,7 +393,7 @@ export class TeamNotificationService {
         id: a.id,
         team_id: a.team_id,
         coach_id: a.coach_id,
-        player_id: a.player_id || '',
+        player_id: a.player_id || "",
         activity_type: a.activity_type as ActivityType,
         title: a.title,
         description: a.description,
@@ -397,9 +406,14 @@ export class TeamNotificationService {
               id: a.player.id,
               email: a.player.email,
               full_name:
-                (a.player.raw_user_meta_data?.['full_name'] as string) || a.player.email,
-              avatar_url: a.player.raw_user_meta_data?.['avatar_url'] as string | undefined,
-              position: a.player.raw_user_meta_data?.['position'] as string | undefined,
+                (a.player.raw_user_meta_data?.["full_name"] as string) ||
+                a.player.email,
+              avatar_url: a.player.raw_user_meta_data?.["avatar_url"] as
+                | string
+                | undefined,
+              position: a.player.raw_user_meta_data?.["position"] as
+                | string
+                | undefined,
             }
           : undefined,
       }));
@@ -452,7 +466,7 @@ export class TeamNotificationService {
         .eq("user_id", userId);
 
       const readMessageIds = new Set(
-        (readMessages || []).map((r) => r.message_id)
+        (readMessages || []).map((r) => r.message_id),
       );
 
       // Get unread announcements
@@ -464,7 +478,7 @@ export class TeamNotificationService {
           author:users!chat_messages_user_id_fkey(
             id, email, raw_user_meta_data
           )
-        `
+        `,
         )
         .in("channel_id", channelIds)
         .order("created_at", { ascending: false })
@@ -515,8 +529,8 @@ export class TeamNotificationService {
         feed.map((a) =>
           a.id === activityId
             ? { ...a, is_read: true, read_at: new Date().toISOString() }
-            : a
-        )
+            : a,
+        ),
       );
     } catch (error) {
       this.logger.error("Error marking activity read:", error);
@@ -552,7 +566,7 @@ export class TeamNotificationService {
           ...a,
           is_read: true,
           read_at: a.read_at || new Date().toISOString(),
-        }))
+        })),
       );
 
       this.toastService.success("All activity marked as read");
@@ -575,11 +589,11 @@ export class TeamNotificationService {
           user_id: userId,
           read_at: new Date().toISOString(),
         },
-        { onConflict: "message_id,user_id" }
+        { onConflict: "message_id,user_id" },
       );
 
       this._unreadAnnouncements.update((announcements) =>
-        announcements.filter((a) => a.id !== messageId)
+        announcements.filter((a) => a.id !== messageId),
       );
     } catch (error) {
       this.logger.error("Error marking announcement read:", error);
@@ -596,7 +610,7 @@ export class TeamNotificationService {
   async notifyStatsUploaded(
     gameId: string,
     playType: string,
-    yardsGained?: number
+    yardsGained?: number,
   ): Promise<void> {
     // The database trigger handles this automatically,
     // but this can be used for additional client-side notifications
@@ -613,13 +627,13 @@ export class TeamNotificationService {
   async notifyTrainingCompleted(
     sessionType: string,
     duration: number,
-    rpe?: number
+    rpe?: number,
   ): Promise<void> {
     // Database trigger handles coach notifications
     // This shows local confirmation
     this.toastService.success(
       `Training completed: ${sessionType} (${duration} min)`,
-      { life: 3000 }
+      { life: 3000 },
     );
   }
 
@@ -629,7 +643,7 @@ export class TeamNotificationService {
   async sendAnnouncement(
     channelId: string,
     message: string,
-    isImportant: boolean = false
+    isImportant: boolean = false,
   ): Promise<void> {
     try {
       const userId = this.authService.getUser()?.id;
@@ -650,7 +664,7 @@ export class TeamNotificationService {
       if (error) throw error;
 
       this.toastService.success(
-        isImportant ? "Important announcement sent!" : "Announcement posted"
+        isImportant ? "Important announcement sent!" : "Announcement posted",
       );
     } catch (error) {
       this.logger.error("Error sending announcement:", error);
@@ -712,7 +726,7 @@ export class TeamNotificationService {
    * Update notification preferences
    */
   async updatePreferences(
-    prefs: Partial<TeamNotificationPreferences>
+    prefs: Partial<TeamNotificationPreferences>,
   ): Promise<void> {
     try {
       const userId = this.authService.getUser()?.id;

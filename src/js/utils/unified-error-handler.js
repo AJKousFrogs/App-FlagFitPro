@@ -12,7 +12,7 @@ const loadSentry = async () => {
   if (!sentryService) {
     try {
       const module = await import("../services/sentry-service.js");
-      sentryService = module.sentryService;
+      ({ sentryService } = module);
     } catch (error) {
       logger.warn("[Error Handler] Sentry not available:", error);
     }
@@ -165,7 +165,8 @@ export class UnifiedErrorHandler {
       context = "Operation",
       showToUser = true,
       logLevel = "error",
-      fallbackMessage: _fallbackMessage = "An error occurred. Please try again.",
+      fallbackMessage:
+        _fallbackMessage = "An error occurred. Please try again.",
       onError = null,
       allowRetry = false,
       retryCallback = null,
@@ -328,7 +329,11 @@ export class UnifiedErrorHandler {
    * Show error with retry option - delegates to notification service
    */
   showErrorWithRetry(message, retryCallback, duration = 10000) {
-    return notificationService.showErrorWithRetry(message, retryCallback, duration);
+    return notificationService.showErrorWithRetry(
+      message,
+      retryCallback,
+      duration,
+    );
   }
 
   /**
@@ -380,7 +385,7 @@ export class UnifiedErrorHandler {
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        return await operation();
+        return await operation(); // eslint-disable-line no-await-in-loop
       } catch (error) {
         lastError = error;
 
@@ -402,7 +407,7 @@ export class UnifiedErrorHandler {
         );
 
         const delayMs = currentDelay;
-        await new Promise((resolve) => {
+        await new Promise((resolve) => { // eslint-disable-line no-await-in-loop
           setTimeout(resolve, delayMs);
         });
         currentDelay *= backoff;

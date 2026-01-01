@@ -1,0 +1,1062 @@
+<p-toast></p-toast>
+<app-main-layout>
+  <div class="settings-page">
+    <app-page-header
+      title="Settings"
+      subtitle="Manage your account and application preferences"
+      icon="pi-cog"
+    >
+      <p-button
+        label="Save Changes"
+        icon="pi pi-save"
+        [rounded]="true"
+        (onClick)="saveSettings()"
+      ></p-button>
+    </app-page-header>
+
+    <!-- Settings Grid -->
+    <div class="settings-grid">
+      <!-- Profile Settings -->
+      <p-card class="settings-section">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <div class="section-icon icon-profile">
+              <i class="pi pi-user"></i>
+            </div>
+            <h2 class="section-title">Profile Settings</h2>
+          </div>
+        </ng-template>
+        <form [formGroup]="profileForm">
+          <div class="p-field mb-4">
+            <label for="settings-displayName" class="p-label"
+              >Display Name</label
+            >
+            <input
+              id="settings-displayName"
+              name="displayName"
+              type="text"
+              pInputText
+              formControlName="displayName"
+              placeholder="Enter your display name"
+              autocomplete="name"
+            />
+          </div>
+          <div class="p-field mb-4">
+            <label for="settings-email" class="p-label">Email</label>
+            <input
+              id="settings-email"
+              name="email"
+              type="email"
+              pInputText
+              formControlName="email"
+              placeholder="Enter your email"
+              autocomplete="email"
+            />
+          </div>
+          <div class="form-row two-columns">
+            <div class="p-field">
+              <label for="settings-position" class="p-label">Position</label>
+              <p-select
+                inputId="settings-position"
+                formControlName="position"
+                [options]="positionOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select your position"
+                appendTo="body"
+              ></p-select>
+            </div>
+            <div class="p-field">
+              <label for="settings-jerseyNumber" class="p-label"
+                >Jersey Number</label
+              >
+              <input
+                id="settings-jerseyNumber"
+                name="jerseyNumber"
+                type="text"
+                pInputText
+                formControlName="jerseyNumber"
+                placeholder="#55"
+                maxlength="3"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div class="p-field mb-4">
+            <label for="settings-teamName" class="p-label">Team Name</label>
+            <input
+              id="settings-teamName"
+              name="teamName"
+              type="text"
+              pInputText
+              formControlName="teamName"
+              placeholder="e.g., Ljubljana Frogs"
+              autocomplete="organization"
+            />
+          </div>
+          <div class="p-field mb-4">
+            <label for="settings-phone" class="p-label">Phone Number</label>
+            <input
+              id="settings-phone"
+              name="phone"
+              type="tel"
+              pInputText
+              formControlName="phone"
+              placeholder="Enter your phone number"
+              autocomplete="tel"
+            />
+          </div>
+        </form>
+      </p-card>
+
+      <!-- Notification Settings -->
+      <p-card class="settings-section">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <div class="section-icon icon-notifications">
+              <i class="pi pi-bell"></i>
+            </div>
+            <h2 class="section-title">Notification Settings</h2>
+          </div>
+        </ng-template>
+        <form [formGroup]="notificationForm" class="notification-form">
+          <div class="notification-item">
+            <div class="notification-info">
+              <div class="notification-icon">
+                <i class="pi pi-envelope"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label">Email Notifications</span>
+                <span class="notification-desc"
+                  >Receive updates and alerts via email</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper">
+              <span
+                class="toggle-status"
+                [class.active]="
+                  notificationForm.get('emailNotifications')?.value
+                "
+              >
+                {{
+                  notificationForm.get("emailNotifications")?.value
+                    ? "ON"
+                    : "OFF"
+                }}
+              </span>
+              <p-toggleswitch
+                formControlName="emailNotifications"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item">
+            <div class="notification-info">
+              <div class="notification-icon">
+                <i class="pi pi-mobile"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label">Push Notifications</span>
+                <span class="notification-desc"
+                  >Get instant alerts on your device</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper">
+              <span
+                class="toggle-status"
+                [class.active]="
+                  notificationForm.get('pushNotifications')?.value
+                "
+              >
+                {{
+                  notificationForm.get("pushNotifications")?.value
+                    ? "ON"
+                    : "OFF"
+                }}
+              </span>
+              <p-toggleswitch
+                formControlName="pushNotifications"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item">
+            <div class="notification-info">
+              <div class="notification-icon">
+                <i class="pi pi-clock"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label">Training Reminders</span>
+                <span class="notification-desc"
+                  >Daily reminders for scheduled workouts</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper">
+              <span
+                class="toggle-status"
+                [class.active]="
+                  notificationForm.get('trainingReminders')?.value
+                "
+              >
+                {{
+                  notificationForm.get("trainingReminders")?.value
+                    ? "ON"
+                    : "OFF"
+                }}
+              </span>
+              <p-toggleswitch
+                formControlName="trainingReminders"
+              ></p-toggleswitch>
+            </div>
+          </div>
+        </form>
+      </p-card>
+
+      <!-- Privacy Settings -->
+      <p-card class="settings-section">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <div class="section-icon icon-privacy">
+              <i class="pi pi-lock"></i>
+            </div>
+            <h2 class="section-title">Privacy Settings</h2>
+          </div>
+        </ng-template>
+        <form [formGroup]="privacyForm">
+          <div class="p-field mb-4">
+            <label for="profileVisibility" class="p-label"
+              >Profile Visibility</label
+            >
+            <p-select
+              id="profileVisibility"
+              formControlName="profileVisibility"
+              [options]="visibilityOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select visibility"
+              appendTo="body"
+            >
+              <ng-template pTemplate="item" let-option>
+                <div class="visibility-option">
+                  <span class="visibility-label">{{ option.label }}</span>
+                  <span class="visibility-desc">{{ option.description }}</span>
+                </div>
+              </ng-template>
+            </p-select>
+          </div>
+          <div class="p-field-checkbox mb-4">
+            <label id="settings-showStats-label" class="p-label"
+              >Show Statistics Publicly</label
+            >
+            <div class="toggle-wrapper">
+              <span
+                class="toggle-status"
+                [class.active]="privacyForm.get('showStats')?.value"
+              >
+                {{ privacyForm.get("showStats")?.value ? "ON" : "OFF" }}
+              </span>
+              <p-toggleswitch
+                formControlName="showStats"
+                ariaLabelledBy="settings-showStats-label"
+              ></p-toggleswitch>
+            </div>
+          </div>
+        </form>
+        <p-divider></p-divider>
+        <div class="privacy-controls-link">
+          <div class="link-info">
+            <h4>Advanced Privacy Controls</h4>
+            <p>
+              Manage AI processing, team data sharing, research participation,
+              and more.
+            </p>
+          </div>
+          <p-button
+            label="Privacy Controls"
+            icon="pi pi-shield"
+            [outlined]="true"
+            [rounded]="true"
+            routerLink="/settings/privacy"
+          ></p-button>
+        </div>
+      </p-card>
+
+      <!-- App Preferences -->
+      <p-card class="settings-section">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <div class="section-icon icon-preferences">
+              <i class="pi pi-cog"></i>
+            </div>
+            <h2 class="section-title">App Preferences</h2>
+          </div>
+        </ng-template>
+        <form [formGroup]="preferencesForm">
+          <div class="p-field mb-4">
+            <span id="settings-theme-label" class="p-label">Theme</span>
+            <div
+              class="theme-selector"
+              role="radiogroup"
+              aria-labelledby="settings-theme-label"
+            >
+              @for (option of themeOptions; track option.value) {
+                <button
+                  type="button"
+                  class="theme-option"
+                  [class.active]="
+                    preferencesForm.get('theme')?.value === option.value
+                  "
+                  (click)="selectTheme(option.value)"
+                >
+                  <i [class]="option.icon"></i>
+                  <span>{{ option.label }}</span>
+                </button>
+              }
+            </div>
+            <small class="theme-hint">
+              @switch (preferencesForm.get("theme")?.value) {
+                @case ("light") {
+                  Always use light theme
+                }
+                @case ("dark") {
+                  Always use dark theme
+                }
+                @case ("auto") {
+                  Follows your system preference
+                }
+              }
+            </small>
+          </div>
+          <div class="p-field language-field">
+            <label for="language" class="p-label">Language</label>
+            <p-select
+              id="language"
+              formControlName="language"
+              [options]="languageOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select language"
+              styleClass="language-selector"
+              appendTo="body"
+              [showClear]="false"
+            >
+              <ng-template pTemplate="selectedItem" let-selected>
+                @if (selected) {
+                  <div class="lang-selected">
+                    <span class="lang-flag">{{ selected.flag }}</span>
+                    <span class="lang-label">{{ selected.label }}</span>
+                  </div>
+                }
+              </ng-template>
+              <ng-template pTemplate="item" let-lang>
+                <div class="lang-item">
+                  <span class="lang-flag">{{ lang.flag }}</span>
+                  <div class="lang-details">
+                    <span class="lang-label">{{ lang.label }}</span>
+                    <span class="lang-native">{{ lang.native }}</span>
+                  </div>
+                  <i class="pi pi-check lang-check"></i>
+                </div>
+              </ng-template>
+            </p-select>
+            <div class="language-hint-box">
+              <i class="pi pi-info-circle"></i>
+              <span
+                >Translation coming soon - your preference will be saved</span
+              >
+            </div>
+          </div>
+        </form>
+      </p-card>
+
+      <!-- Security Settings -->
+      <p-card class="settings-section">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <div class="section-icon icon-security">
+              <i class="pi pi-shield"></i>
+            </div>
+            <h2 class="section-title">Security</h2>
+          </div>
+        </ng-template>
+        <div class="security-actions">
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Change Password</h4>
+              <p>Update your account password</p>
+            </div>
+            <p-button
+              label="Change"
+              icon="pi pi-key"
+              [outlined]="true"
+              [rounded]="true"
+              (onClick)="showChangePasswordDialog = true"
+            ></p-button>
+          </div>
+          <p-divider></p-divider>
+
+          <!-- Two-Factor Authentication -->
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Two-Factor Authentication (2FA)</h4>
+              <p>
+                @if (is2FAEnabled()) {
+                  <span class="status-badge enabled">
+                    <i class="pi pi-shield"></i> Enabled
+                  </span>
+                } @else {
+                  Add an extra layer of security to your account
+                }
+              </p>
+            </div>
+            @if (is2FAEnabled()) {
+              <p-button
+                label="Disable"
+                icon="pi pi-times"
+                severity="secondary"
+                [outlined]="true"
+                [rounded]="true"
+                (onClick)="showDisable2FADialog = true"
+              ></p-button>
+            } @else {
+              <p-button
+                label="Enable"
+                icon="pi pi-shield"
+                [outlined]="true"
+                [rounded]="true"
+                (onClick)="startSetup2FA()"
+              ></p-button>
+            }
+          </div>
+          <p-divider></p-divider>
+
+          <!-- Active Sessions -->
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Active Sessions</h4>
+              <p>Manage your logged-in devices</p>
+            </div>
+            <p-button
+              label="View"
+              icon="pi pi-desktop"
+              [outlined]="true"
+              [rounded]="true"
+              (onClick)="showSessionsDialog = true"
+            ></p-button>
+          </div>
+          <p-divider></p-divider>
+
+          <div class="security-item danger">
+            <div class="security-info">
+              <h4>Delete Account</h4>
+              <p>Permanently delete your account and all data</p>
+            </div>
+            <p-button
+              label="Delete"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              [rounded]="true"
+              (onClick)="showDeleteAccountDialog = true"
+            ></p-button>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Change Password Dialog -->
+  <p-dialog
+    [(visible)]="showChangePasswordDialog"
+    [modal]="true"
+    [style]="{ width: '440px' }"
+    [closable]="true"
+    [showHeader]="false"
+    styleClass="password-dialog"
+  >
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header">
+        <div class="dialog-icon">
+          <i class="pi pi-lock"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Change Password</h2>
+          <p>Update your account password</p>
+        </div>
+        <p-button
+          icon="pi pi-times"
+          [text]="true"
+          severity="secondary"
+          styleClass="dialog-close-btn"
+          (onClick)="showChangePasswordDialog = false"
+        ></p-button>
+      </div>
+
+      <!-- Form Content -->
+      <form [formGroup]="passwordForm" class="password-form">
+        <div class="form-field">
+          <label for="settings-currentPassword">
+            <i class="pi pi-key"></i>
+            Current Password
+          </label>
+          <div class="input-wrapper">
+            <p-password
+              inputId="settings-currentPassword"
+              formControlName="currentPassword"
+              [feedback]="false"
+              [toggleMask]="true"
+              placeholder="Enter your current password"
+              styleClass="password-input"
+              autocomplete="current-password"
+            ></p-password>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="settings-newPassword">
+            <i class="pi pi-shield"></i>
+            New Password
+          </label>
+          <div class="input-wrapper">
+            <p-password
+              inputId="settings-newPassword"
+              formControlName="newPassword"
+              [toggleMask]="true"
+              placeholder="Create a strong password"
+              styleClass="password-input"
+              autocomplete="new-password"
+            ></p-password>
+          </div>
+          <div class="password-requirements">
+            <div
+              class="requirement"
+              [class.met]="passwordForm.get('newPassword')?.value?.length >= 8"
+            >
+              <i
+                class="pi"
+                [class.pi-check-circle]="
+                  passwordForm.get('newPassword')?.value?.length >= 8
+                "
+                [class.pi-circle]="
+                  !(passwordForm.get('newPassword')?.value?.length >= 8)
+                "
+              ></i>
+              <span>At least 8 characters</span>
+            </div>
+            <div class="requirement" [class.met]="hasUppercase()">
+              <i
+                class="pi"
+                [class.pi-check-circle]="hasUppercase()"
+                [class.pi-circle]="!hasUppercase()"
+              ></i>
+              <span>One uppercase letter</span>
+            </div>
+            <div class="requirement" [class.met]="hasNumber()">
+              <i
+                class="pi"
+                [class.pi-check-circle]="hasNumber()"
+                [class.pi-circle]="!hasNumber()"
+              ></i>
+              <span>One number</span>
+            </div>
+            <div class="requirement" [class.met]="hasSpecialChar()">
+              <i
+                class="pi"
+                [class.pi-check-circle]="hasSpecialChar()"
+                [class.pi-circle]="!hasSpecialChar()"
+              ></i>
+              <span>One special character</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="settings-confirmNewPassword">
+            <i class="pi pi-check-square"></i>
+            Confirm New Password
+          </label>
+          <div class="input-wrapper">
+            <p-password
+              inputId="settings-confirmNewPassword"
+              formControlName="confirmNewPassword"
+              [feedback]="false"
+              [toggleMask]="true"
+              placeholder="Confirm your new password"
+              styleClass="password-input"
+              autocomplete="new-password"
+            ></p-password>
+          </div>
+          @if (
+            passwordForm.errors?.["passwordMismatch"] &&
+            passwordForm.get("confirmNewPassword")?.touched
+          ) {
+            <div class="error-message">
+              <i class="pi pi-exclamation-circle"></i>
+              <span>Passwords do not match</span>
+            </div>
+          }
+          @if (
+            passwordsMatch() && passwordForm.get("confirmNewPassword")?.value
+          ) {
+            <div class="success-message">
+              <i class="pi pi-check-circle"></i>
+              <span>Passwords match</span>
+            </div>
+          }
+        </div>
+      </form>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        <p-button
+          label="Cancel"
+          [text]="true"
+          (onClick)="showChangePasswordDialog = false"
+        ></p-button>
+        <p-button
+          label="Update Password"
+          icon="pi pi-check"
+          [loading]="isChangingPassword()"
+          [disabled]="passwordForm.invalid"
+          (onClick)="changePassword()"
+        ></p-button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Delete Account Dialog -->
+  <p-dialog
+    [(visible)]="showDeleteAccountDialog"
+    [modal]="true"
+    [style]="{ width: '480px' }"
+    [closable]="true"
+    [showHeader]="false"
+    styleClass="delete-dialog"
+  >
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header danger-header">
+        <div class="dialog-icon danger-icon">
+          <i class="pi pi-trash"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Delete Account</h2>
+          <p>This action is permanent and irreversible</p>
+        </div>
+        <p-button
+          icon="pi pi-times"
+          [text]="true"
+          severity="secondary"
+          styleClass="dialog-close-btn"
+          (onClick)="showDeleteAccountDialog = false"
+        ></p-button>
+      </div>
+
+      <!-- Warning Content -->
+      <div class="delete-content">
+        <div class="warning-box">
+          <div class="warning-icon-large">
+            <i class="pi pi-exclamation-triangle"></i>
+          </div>
+          <div class="warning-text">
+            <h4>Are you absolutely sure?</h4>
+            <p>All your data will be permanently deleted, including:</p>
+            <ul class="delete-list">
+              <li>
+                <i class="pi pi-chart-line"></i> Training history & progress
+              </li>
+              <li>
+                <i class="pi pi-chart-bar"></i> Performance metrics & analytics
+              </li>
+              <li><i class="pi pi-cog"></i> Settings & preferences</li>
+              <li><i class="pi pi-user"></i> Profile information</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="confirm-field">
+          <label for="settings-deleteConfirm">
+            Type <strong>DELETE</strong> to confirm
+          </label>
+          <input
+            id="settings-deleteConfirm"
+            name="deleteConfirm"
+            type="text"
+            pInputText
+            [(ngModel)]="deleteConfirmText"
+            placeholder="Type DELETE"
+            class="delete-input"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        <p-button
+          label="Cancel"
+          [text]="true"
+          (onClick)="showDeleteAccountDialog = false"
+        ></p-button>
+        <p-button
+          label="Delete My Account"
+          icon="pi pi-trash"
+          severity="danger"
+          [loading]="isDeletingAccount()"
+          [disabled]="deleteConfirmText !== 'DELETE'"
+          (onClick)="deleteAccount()"
+        ></p-button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- 2FA Setup Dialog -->
+  <p-dialog
+    [(visible)]="show2FASetupDialog"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    [closable]="true"
+    [showHeader]="false"
+    styleClass="twofa-dialog"
+  >
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header">
+        <div class="dialog-icon">
+          <i class="pi pi-shield"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Two-Factor Authentication</h2>
+          <p>Step {{ twoFAStep() }} of 4 — Add extra security</p>
+        </div>
+        <p-button
+          icon="pi pi-times"
+          [text]="true"
+          severity="secondary"
+          styleClass="dialog-close-btn"
+          (onClick)="close2FASetup()"
+        ></p-button>
+      </div>
+
+      <!-- Step Progress -->
+      <div class="step-progress">
+        @for (step of [1, 2, 3, 4]; track step) {
+          <div
+            class="step-dot"
+            [class.active]="twoFAStep() >= step"
+            [class.current]="twoFAStep() === step"
+          ></div>
+        }
+      </div>
+
+      <!-- Step Content -->
+      <div class="twofa-content">
+        @switch (twoFAStep()) {
+          @case (1) {
+            <div class="step-section">
+              <h3>Install an Authenticator App</h3>
+              <p class="step-desc">
+                Download one of these apps on your mobile device:
+              </p>
+              <div class="app-list">
+                <div class="app-card">
+                  <div class="app-icon google">
+                    <i class="pi pi-google"></i>
+                  </div>
+                  <span>Google Authenticator</span>
+                </div>
+                <div class="app-card">
+                  <div class="app-icon microsoft">
+                    <i class="pi pi-microsoft"></i>
+                  </div>
+                  <span>Microsoft Authenticator</span>
+                </div>
+                <div class="app-card">
+                  <div class="app-icon authy">
+                    <i class="pi pi-lock"></i>
+                  </div>
+                  <span>Authy</span>
+                </div>
+              </div>
+            </div>
+          }
+          @case (2) {
+            <div class="step-section">
+              <h3>Scan QR Code</h3>
+              <p class="step-desc">
+                Open your authenticator app and scan this code:
+              </p>
+              <div class="qr-wrapper">
+                @if (qrCodeUrl()) {
+                  <img [src]="qrCodeUrl()" alt="2FA QR Code" class="qr-image" />
+                } @else {
+                  <div class="qr-loading">
+                    <i class="pi pi-spin pi-spinner"></i>
+                    <span>Generating...</span>
+                  </div>
+                }
+              </div>
+              <div class="manual-code">
+                <span class="manual-label">Can't scan? Enter manually:</span>
+                <div class="code-box">
+                  <code>{{ twoFASecret() }}</code>
+                  <button class="copy-btn" (click)="copySecret()">
+                    <i class="pi pi-copy"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+          @case (3) {
+            <div class="step-section">
+              <h3>Verify Setup</h3>
+              <p class="step-desc">Enter the 6-digit code from your app:</p>
+              <div class="code-input-wrapper">
+                <input
+                  id="settings-2fa-code"
+                  name="twoFACode"
+                  type="text"
+                  [(ngModel)]="twoFAVerificationCode"
+                  placeholder="000000"
+                  maxlength="6"
+                  class="verification-code-input"
+                  autocomplete="one-time-code"
+                  inputmode="numeric"
+                  (keyup.enter)="verify2FA()"
+                />
+              </div>
+              @if (twoFAError()) {
+                <div class="error-message">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <span>{{ twoFAError() }}</span>
+                </div>
+              }
+            </div>
+          }
+          @case (4) {
+            <div class="step-section success-section">
+              <div class="success-icon-wrapper">
+                <i class="pi pi-check"></i>
+              </div>
+              <h3>2FA Enabled!</h3>
+              <p class="step-desc">
+                Your account is now protected with two-factor authentication.
+              </p>
+              <div class="backup-section">
+                <div class="backup-header">
+                  <i class="pi pi-key"></i>
+                  <span>Backup Codes</span>
+                </div>
+                <p class="backup-desc">
+                  Save these codes securely. Use them if you lose access to your
+                  authenticator.
+                </p>
+                <div class="codes-grid">
+                  @for (code of backupCodes(); track code) {
+                    <code class="backup-code-item">{{ code }}</code>
+                  }
+                </div>
+                <button class="download-btn" (click)="downloadBackupCodes()">
+                  <i class="pi pi-download"></i>
+                  <span>Download Codes</span>
+                </button>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        @if (twoFAStep() < 4) {
+          <p-button
+            label="Cancel"
+            [text]="true"
+            (onClick)="close2FASetup()"
+          ></p-button>
+
+          @if (twoFAStep() === 1) {
+            <p-button
+              label="I have an app"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              (onClick)="twoFAStep.set(2)"
+            ></p-button>
+          } @else if (twoFAStep() === 2) {
+            <p-button
+              label="Next"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              (onClick)="twoFAStep.set(3)"
+            ></p-button>
+          } @else if (twoFAStep() === 3) {
+            <p-button
+              label="Verify & Enable"
+              icon="pi pi-shield"
+              [loading]="isEnabling2FA()"
+              [disabled]="twoFAVerificationCode.length !== 6"
+              (onClick)="verify2FA()"
+            ></p-button>
+          }
+        } @else {
+          <p-button
+            label="Done"
+            icon="pi pi-check"
+            styleClass="w-full"
+            (onClick)="close2FASetup()"
+          ></p-button>
+        }
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Disable 2FA Dialog -->
+  <p-dialog
+    header="Disable Two-Factor Authentication"
+    [(visible)]="showDisable2FADialog"
+    [modal]="true"
+    [style]="{ width: '400px' }"
+    [closable]="true"
+  >
+    <div class="disable-2fa">
+      <i class="pi pi-exclamation-triangle warning-icon"></i>
+      <p>Disabling 2FA will make your account less secure.</p>
+      <div class="p-field mt-4">
+        <label for="settings-disable2FACode" class="p-label"
+          >Enter your authenticator code to confirm:</label
+        >
+        <input
+          id="settings-disable2FACode"
+          name="disable2FACode"
+          type="text"
+          pInputText
+          [(ngModel)]="disable2FACode"
+          placeholder="000000"
+          maxlength="6"
+          class="code-input w-full"
+          autocomplete="one-time-code"
+          inputmode="numeric"
+        />
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        (onClick)="showDisable2FADialog = false"
+      ></p-button>
+      <p-button
+        label="Disable 2FA"
+        icon="pi pi-times"
+        severity="danger"
+        [rounded]="true"
+        [loading]="isDisabling2FA()"
+        [disabled]="disable2FACode.length !== 6"
+        (onClick)="disable2FA()"
+      ></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Active Sessions Dialog -->
+  <p-dialog
+    [(visible)]="showSessionsDialog"
+    [modal]="true"
+    [style]="{ width: '520px' }"
+    [closable]="true"
+    [showHeader]="false"
+    styleClass="sessions-dialog"
+  >
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header">
+        <div class="dialog-icon">
+          <i class="pi pi-desktop"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Active Sessions</h2>
+          <p>Manage your logged-in devices</p>
+        </div>
+        <p-button
+          icon="pi pi-times"
+          [text]="true"
+          severity="secondary"
+          styleClass="dialog-close-btn"
+          (onClick)="showSessionsDialog = false"
+        ></p-button>
+      </div>
+
+      <!-- Sessions Content -->
+      <div class="sessions-content">
+        @if (loadingSessions()) {
+          <div class="sessions-loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading sessions...</span>
+          </div>
+        } @else {
+          <div class="sessions-list-new">
+            @for (session of activeSessions(); track session.id) {
+              <div class="session-card" [class.current]="session.isCurrent">
+                <div
+                  class="session-device-icon"
+                  [class.mobile]="session.deviceType === 'mobile'"
+                  [class.tablet]="session.deviceType === 'tablet'"
+                >
+                  <i [class]="getDeviceIcon(session.deviceType)"></i>
+                </div>
+                <div class="session-details-new">
+                  <div class="session-name">
+                    {{ session.deviceName }}
+                    @if (session.isCurrent) {
+                      <span class="current-tag">This device</span>
+                    }
+                  </div>
+                  <div class="session-meta">
+                    <span
+                      ><i class="pi pi-map-marker"></i>
+                      {{ session.location }}</span
+                    >
+                    <span
+                      ><i class="pi pi-clock"></i>
+                      {{ session.lastActive }}</span
+                    >
+                  </div>
+                </div>
+                @if (!session.isCurrent) {
+                  <button
+                    class="revoke-btn"
+                    (click)="revokeSession(session.id)"
+                  >
+                    <i class="pi pi-sign-out"></i>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        <p-button
+          label="Close"
+          [text]="true"
+          (onClick)="showSessionsDialog = false"
+        ></p-button>
+        <p-button
+          label="Sign out all others"
+          icon="pi pi-sign-out"
+          severity="danger"
+          [outlined]="true"
+          [loading]="isRevokingAll()"
+          (onClick)="revokeAllSessions()"
+        ></p-button>
+      </div>
+    </div>
+  </p-dialog>
+</app-main-layout>

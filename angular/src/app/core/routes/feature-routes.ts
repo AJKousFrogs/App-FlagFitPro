@@ -7,8 +7,8 @@
 
 import { Routes } from "@angular/router";
 import { authGuard } from "../guards/auth.guard";
-import { superadminGuard } from "../guards/superadmin.guard";
 import { headerConfigGuard } from "../guards/header-config.guard";
+import { superadminGuard } from "../guards/superadmin.guard";
 import { analyticsPrefetchResolver } from "../resolvers/analytics-prefetch.resolver";
 import { gameTrackerPrefetchResolver } from "../resolvers/game-tracker-prefetch.resolver";
 
@@ -512,20 +512,28 @@ export const socialRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  // AI Coach Merlin - Main chat interface
   {
     path: "chat",
-    loadComponent: () =>
-      import("../../features/chat/chat.component").then((m) => m.ChatComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: "ai-coach",
     loadComponent: () =>
       import("../../features/ai-coach/ai-coach-chat.component").then(
         (m) => m.AiCoachChatComponent,
       ),
     canActivate: [authGuard],
     data: { preload: true, priority: "high" }, // AI Coach is frequently used
+  },
+  // Redirect old ai-coach path to new /chat
+  {
+    path: "ai-coach",
+    redirectTo: "chat",
+    pathMatch: "full",
+  },
+  // Team Channels - moved to /team-chat
+  {
+    path: "team-chat",
+    loadComponent: () =>
+      import("../../features/chat/chat.component").then((m) => m.ChatComponent),
+    canActivate: [authGuard],
   },
 ];
 

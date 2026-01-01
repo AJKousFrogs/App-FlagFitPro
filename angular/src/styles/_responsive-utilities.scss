@@ -8,8 +8,9 @@
  * @version 1.0.0
  */
 
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "sass:math";
+@use "variables" as *;
+@use "mixins" as *;
 
 // ================================
 // TABLET-SPECIFIC OPTIMIZATIONS
@@ -62,10 +63,10 @@ $touch-target-large: 56px;
 @mixin touch-target($size: $touch-target-min) {
   min-height: $size;
   min-width: $size;
-  
+
   // Add padding to ensure hit area
   @include touch-device {
-    padding: max(#{$size / 4}, space(3));
+    padding: max(#{math.div($size, 4)}, space(3));
   }
 }
 
@@ -77,7 +78,7 @@ $touch-target-large: 56px;
   display: inline-block;
   padding: space(2) space(3);
   margin: calc(-1 * space(2)) calc(-1 * space(3));
-  
+
   @include touch-device {
     min-height: $touch-target-min;
     display: inline-flex;
@@ -91,7 +92,7 @@ $touch-target-large: 56px;
 @mixin touch-list-item {
   min-height: $touch-target-comfortable;
   padding: space(3) space(4);
-  
+
   @include touch-device {
     padding: space(4);
   }
@@ -106,13 +107,13 @@ $touch-target-large: 56px;
   border-radius: get-radius(lg);
   cursor: pointer;
   transition: background-color get-transition(fast) get-easing(smooth);
-  
+
   @include hover-support {
     &:hover {
       background-color: var(--surface-secondary);
     }
   }
-  
+
   &:active {
     background-color: var(--surface-tertiary);
   }
@@ -129,12 +130,12 @@ $touch-target-large: 56px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   gap: $gap;
-  
+
   @include tablet-layout {
     grid-template-columns: repeat(2, 1fr);
     gap: space(3);
   }
-  
+
   @include respond-to(sm) {
     grid-template-columns: 1fr;
     gap: space(3);
@@ -148,11 +149,11 @@ $touch-target-large: 56px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: space(4);
-  
+
   @include tablet-layout {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @include respond-to(sm) {
     grid-template-columns: 1fr;
   }
@@ -165,11 +166,11 @@ $touch-target-large: 56px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: space(4);
-  
+
   @include tablet-layout {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   @include respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -184,11 +185,11 @@ $touch-target-large: 56px;
  */
 @mixin responsive-heading($desktop-size, $tablet-size, $mobile-size) {
   font-size: get-font-size($desktop-size);
-  
+
   @include tablet-layout {
     font-size: get-font-size($tablet-size);
   }
-  
+
   @include respond-to(sm) {
     font-size: get-font-size($mobile-size);
   }
@@ -208,13 +209,17 @@ $touch-target-large: 56px;
 /**
  * Responsive padding that reduces on smaller screens
  */
-@mixin responsive-padding($desktop: space(6), $tablet: space(4), $mobile: space(3)) {
+@mixin responsive-padding(
+  $desktop: space(6),
+  $tablet: space(4),
+  $mobile: space(3)
+) {
   padding: $desktop;
-  
+
   @include tablet-layout {
     padding: $tablet;
   }
-  
+
   @include respond-to(sm) {
     padding: $mobile;
   }
@@ -225,11 +230,11 @@ $touch-target-large: 56px;
  */
 @mixin responsive-section-margin {
   margin-bottom: space(8);
-  
+
   @include tablet-layout {
     margin-bottom: space(6);
   }
-  
+
   @include respond-to(sm) {
     margin-bottom: space(4);
   }
@@ -244,11 +249,11 @@ $touch-target-large: 56px;
  */
 @mixin responsive-card {
   @include card;
-  
+
   @include tablet-layout {
     padding: space(4);
   }
-  
+
   @include respond-to(sm) {
     padding: space(3);
     border-radius: get-radius(lg);
@@ -261,12 +266,12 @@ $touch-target-large: 56px;
 @mixin responsive-modal($max-width: 600px) {
   width: $max-width;
   max-width: 95vw;
-  
+
   @include tablet-layout {
     width: 90vw;
     max-height: 85vh;
   }
-  
+
   @include respond-to(sm) {
     width: 100%;
     max-width: 100%;
@@ -281,11 +286,11 @@ $touch-target-large: 56px;
  */
 @mixin responsive-sidebar($width: 280px) {
   width: $width;
-  
+
   @include tablet-layout {
     width: 240px;
   }
-  
+
   @include respond-to(lg) {
     position: fixed;
     left: 0;
@@ -294,7 +299,7 @@ $touch-target-large: 56px;
     z-index: get-z-index(fixed);
     transform: translateX(-100%);
     transition: transform get-transition(normal) get-easing(smooth);
-    
+
     &.is-open {
       transform: translateX(0);
     }
@@ -311,36 +316,37 @@ $touch-target-large: 56px;
 @mixin responsive-table {
   width: 100%;
   border-collapse: collapse;
-  
+
   // Desktop/Tablet: Regular table
   @include respond-above(md) {
-    th, td {
+    th,
+    td {
       padding: space(3) space(4);
       text-align: left;
       border-bottom: 1px solid var(--color-border-secondary);
     }
-    
+
     th {
       font-weight: get-font-weight(semibold);
       color: var(--color-text-secondary);
       background: var(--surface-secondary);
     }
   }
-  
+
   // Mobile: Card layout
   @include respond-to(md) {
     display: block;
-    
+
     thead {
       display: none;
     }
-    
+
     tbody {
       display: flex;
       flex-direction: column;
       gap: space(3);
     }
-    
+
     tr {
       display: block;
       background: var(--surface-card);
@@ -348,18 +354,18 @@ $touch-target-large: 56px;
       padding: space(4);
       box-shadow: get-shadow(sm);
     }
-    
+
     td {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: space(2) 0;
       border-bottom: 1px solid var(--color-border-secondary);
-      
+
       &:last-child {
         border-bottom: none;
       }
-      
+
       &::before {
         content: attr(data-label);
         font-weight: get-font-weight(semibold);
@@ -381,11 +387,11 @@ $touch-target-large: 56px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: space(4);
-  
+
   @include respond-to(md) {
     grid-template-columns: 1fr;
   }
-  
+
   .form-field-full {
     grid-column: 1 / -1;
   }
@@ -396,7 +402,7 @@ $touch-target-large: 56px;
  */
 @mixin touch-input {
   @include input-base;
-  
+
   @include touch-device {
     min-height: $touch-target-comfortable;
     font-size: 16px; // Prevent zoom on iOS
@@ -412,7 +418,7 @@ $touch-target-large: 56px;
  */
 @mixin bottom-nav {
   display: none;
-  
+
   @include respond-to(lg) {
     display: flex;
     position: fixed;
@@ -439,16 +445,16 @@ $touch-target-large: 56px;
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color get-transition(fast) get-easing(smooth);
-  
+
   &.active,
   &:active {
     color: var(--ds-primary-green);
   }
-  
+
   .nav-icon {
     font-size: var(--icon-lg);
   }
-  
+
   .nav-label {
     font-size: get-font-size(xs);
     font-weight: get-font-weight(medium);
@@ -511,7 +517,7 @@ $touch-target-large: 56px;
 
 .show-on-mobile {
   display: none !important;
-  
+
   @include respond-to(sm) {
     display: block !important;
   }
@@ -519,7 +525,7 @@ $touch-target-large: 56px;
 
 .show-on-tablet {
   display: none !important;
-  
+
   @include tablet-layout {
     display: block !important;
   }
@@ -527,7 +533,7 @@ $touch-target-large: 56px;
 
 .show-on-touch {
   display: none !important;
-  
+
   @include touch-device {
     display: block !important;
   }
@@ -552,4 +558,3 @@ $touch-target-large: 56px;
     flex-direction: column;
   }
 }
-

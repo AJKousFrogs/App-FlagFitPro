@@ -21,7 +21,7 @@ export class PerformanceUtils {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target;
-            const {src} = img.dataset;
+            const { src } = img.dataset;
 
             if (src) {
               img.src = src;
@@ -159,7 +159,7 @@ export class PerformanceUtils {
     }, 16); // ~60fps
 
     viewport.addEventListener("scroll", () => {
-      scrollTop = viewport.scrollTop;
+      ({ scrollTop } = viewport);
       render();
     });
 
@@ -266,7 +266,7 @@ export class PerformanceUtils {
   static setupWillChangeCleanup() {
     // Remove will-change after animation completes
     document.addEventListener("animationend", (e) => {
-      const {target} = e;
+      const { target } = e;
       if (
         target.classList.contains("u-animate-fade-in") ||
         target.classList.contains("u-animate-fade-out") ||
@@ -285,7 +285,7 @@ export class PerformanceUtils {
 
     // Remove will-change after transition completes
     document.addEventListener("transitionend", (e) => {
-      const {target} = e;
+      const { target } = e;
       if (target.classList.contains("u-transition-transform")) {
         target.style.willChange = "auto";
       }

@@ -84,7 +84,7 @@ export interface TrendsData {
 interface TrendValue {
   value: number;
   change?: number;
-  trend?: 'up' | 'down' | 'stable';
+  trend?: "up" | "down" | "stable";
 }
 
 interface TrendChanges {
@@ -118,7 +118,7 @@ interface DatabaseSupplement {
   dosage?: string;
   taken: boolean;
   date: string;
-  time_of_day?: Supplement['timeOfDay'];
+  time_of_day?: Supplement["timeOfDay"];
   notes?: string;
   created_at: string;
   [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
@@ -320,42 +320,48 @@ export class PerformanceDataService {
     );
 
     // Subscribe to supplement logs
-    this.realtimeService.subscribe<DatabaseSupplement>("supplement_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload) => {
-        const logDate = payload.new.date;
-        if (logDate === today) {
-          this.logger.info("[PerformanceData] New supplement log via realtime");
-          const supplement = this.transformSupplement(payload.new);
-          const current = this._todaysSupplements();
-          this._todaysSupplements.set([...current, supplement]);
-        }
-      },
-      onUpdate: (payload) => {
-        const logDate = payload.new.date;
-        if (logDate === today) {
-          this.logger.info(
-            "[PerformanceData] Supplement log updated via realtime",
-          );
-          const supplement = this.transformSupplement(payload.new);
-          const current = this._todaysSupplements();
-          const index = current.findIndex((s) => s.id === supplement.id);
-          if (index !== -1) {
-            const updated = [...current];
-            updated[index] = supplement;
-            this._todaysSupplements.set(updated);
+    this.realtimeService.subscribe<DatabaseSupplement>(
+      "supplement_logs",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (payload) => {
+          const logDate = payload.new.date;
+          if (logDate === today) {
+            this.logger.info(
+              "[PerformanceData] New supplement log via realtime",
+            );
+            const supplement = this.transformSupplement(payload.new);
+            const current = this._todaysSupplements();
+            this._todaysSupplements.set([...current, supplement]);
           }
-        }
+        },
+        onUpdate: (payload) => {
+          const logDate = payload.new.date;
+          if (logDate === today) {
+            this.logger.info(
+              "[PerformanceData] Supplement log updated via realtime",
+            );
+            const supplement = this.transformSupplement(payload.new);
+            const current = this._todaysSupplements();
+            const index = current.findIndex((s) => s.id === supplement.id);
+            if (index !== -1) {
+              const updated = [...current];
+              updated[index] = supplement;
+              this._todaysSupplements.set(updated);
+            }
+          }
+        },
+        onDelete: (payload) => {
+          this.logger.info(
+            "[PerformanceData] Supplement log deleted via realtime",
+          );
+          const current = this._todaysSupplements();
+          this._todaysSupplements.set(
+            current.filter((s) => s.id !== payload.old.id),
+          );
+        },
       },
-      onDelete: (payload) => {
-        this.logger.info(
-          "[PerformanceData] Supplement log deleted via realtime",
-        );
-        const current = this._todaysSupplements();
-        this._todaysSupplements.set(
-          current.filter((s) => s.id !== payload.old.id),
-        );
-      },
-    });
+    );
   }
 
   /**
@@ -595,17 +601,19 @@ export class PerformanceDataService {
           throw error;
         }
 
-        const supplements: Supplement[] = (data || []).map((s: DatabaseSupplement) => ({
-          id: s.id,
-          userId: s.user_id,
-          name: s.supplement_name,
-          dosage: s.dosage,
-          taken: s.taken,
-          date: s.date,
-          timeOfDay: s.time_of_day,
-          notes: s.notes,
-          timestamp: s.created_at,
-        }));
+        const supplements: Supplement[] = (data || []).map(
+          (s: DatabaseSupplement) => ({
+            id: s.id,
+            userId: s.user_id,
+            name: s.supplement_name,
+            dosage: s.dosage,
+            taken: s.taken,
+            date: s.date,
+            timeOfDay: s.time_of_day,
+            notes: s.notes,
+            timestamp: s.created_at,
+          }),
+        );
 
         // Calculate compliance
         const totalLogs = supplements.length;
@@ -723,15 +731,17 @@ export class PerformanceDataService {
           throw error;
         }
 
-        const tests: PerformanceTest[] = (data || []).map((t: DatabaseTest) => ({
-          id: t.id,
-          userId: t.user_id,
-          testType: t.test_type ?? t.test_name,
-          result: t.result_value,
-          target: t.target_value,
-          timestamp: t.test_date ?? t.performed_at,
-          conditions: t.conditions ?? t.test_conditions,
-        }));
+        const tests: PerformanceTest[] = (data || []).map(
+          (t: DatabaseTest) => ({
+            id: t.id,
+            userId: t.user_id,
+            testType: t.test_type ?? t.test_name,
+            result: t.result_value,
+            target: t.target_value,
+            timestamp: t.test_date ?? t.performed_at,
+            conditions: t.conditions ?? t.test_conditions,
+          }),
+        );
 
         // Calculate basic trends
         const trends: Record<string, TrendValue> = {};
@@ -854,26 +864,27 @@ export class PerformanceDataService {
       startDate.setMonth(startDate.getMonth() - months);
 
       // Fetch all performance data
-      const [trainingSessions, wellnessLogs, bodyMeasurements] = await Promise.all([
-        this.supabaseService.client
-          .from("training_sessions")
-          .select("*")
-          .eq("user_id", user.id)
-          .gte("created_at", startDate.toISOString())
-          .order("created_at", { ascending: true }),
-        this.supabaseService.client
-          .from("wellness_logs")
-          .select("*")
-          .eq("user_id", user.id)
-          .gte("created_at", startDate.toISOString())
-          .order("created_at", { ascending: true }),
-        this.supabaseService.client
-          .from("body_measurements")
-          .select("*")
-          .eq("user_id", user.id)
-          .gte("created_at", startDate.toISOString())
-          .order("created_at", { ascending: true }),
-      ]);
+      const [trainingSessions, wellnessLogs, bodyMeasurements] =
+        await Promise.all([
+          this.supabaseService.client
+            .from("training_sessions")
+            .select("*")
+            .eq("user_id", user.id)
+            .gte("created_at", startDate.toISOString())
+            .order("created_at", { ascending: true }),
+          this.supabaseService.client
+            .from("wellness_logs")
+            .select("*")
+            .eq("user_id", user.id)
+            .gte("created_at", startDate.toISOString())
+            .order("created_at", { ascending: true }),
+          this.supabaseService.client
+            .from("body_measurements")
+            .select("*")
+            .eq("user_id", user.id)
+            .gte("created_at", startDate.toISOString())
+            .order("created_at", { ascending: true }),
+        ]);
 
       const exportData = {
         exportedAt: new Date().toISOString(),
@@ -885,8 +896,13 @@ export class PerformanceDataService {
 
       if (format === "json") {
         // Download as JSON
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
-        this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.json`);
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+          type: "application/json",
+        });
+        this.downloadBlob(
+          blob,
+          `performance-data-${new Date().toISOString().split("T")[0]}.json`,
+        );
       } else {
         // Convert to CSV - extract only array data
         const csvData: Record<string, unknown[]> = {
@@ -896,10 +912,17 @@ export class PerformanceDataService {
         };
         const csvContent = this.convertToCSV(csvData);
         const blob = new Blob([csvContent], { type: "text/csv" });
-        this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.csv`);
+        this.downloadBlob(
+          blob,
+          `performance-data-${new Date().toISOString().split("T")[0]}.csv`,
+        );
       }
 
-      return { success: true, message: "Data exported successfully", data: exportData };
+      return {
+        success: true,
+        message: "Data exported successfully",
+        data: exportData,
+      };
     } catch (error) {
       this.logger.error("[Performance] Export failed:", error);
       return { success: false, message: "Failed to export data" };
@@ -921,19 +944,29 @@ export class PerformanceDataService {
     const lines: string[] = [];
 
     // Training Sessions
-    if (data["trainingSessions"] && Array.isArray(data["trainingSessions"]) && data["trainingSessions"].length > 0) {
+    if (
+      data["trainingSessions"] &&
+      Array.isArray(data["trainingSessions"]) &&
+      data["trainingSessions"].length > 0
+    ) {
       lines.push("# Training Sessions");
       const sessions = data["trainingSessions"] as Record<string, unknown>[];
       const headers = Object.keys(sessions[0]);
       lines.push(headers.join(","));
       sessions.forEach((session) => {
-        lines.push(headers.map((h) => JSON.stringify(session[h] ?? "")).join(","));
+        lines.push(
+          headers.map((h) => JSON.stringify(session[h] ?? "")).join(","),
+        );
       });
       lines.push("");
     }
 
     // Wellness Logs
-    if (data["wellnessLogs"] && Array.isArray(data["wellnessLogs"]) && data["wellnessLogs"].length > 0) {
+    if (
+      data["wellnessLogs"] &&
+      Array.isArray(data["wellnessLogs"]) &&
+      data["wellnessLogs"].length > 0
+    ) {
       lines.push("# Wellness Logs");
       const logs = data["wellnessLogs"] as Record<string, unknown>[];
       const headers = Object.keys(logs[0]);
@@ -945,9 +978,16 @@ export class PerformanceDataService {
     }
 
     // Body Measurements
-    if (data["bodyMeasurements"] && Array.isArray(data["bodyMeasurements"]) && data["bodyMeasurements"].length > 0) {
+    if (
+      data["bodyMeasurements"] &&
+      Array.isArray(data["bodyMeasurements"]) &&
+      data["bodyMeasurements"].length > 0
+    ) {
       lines.push("# Body Measurements");
-      const measurements = data["bodyMeasurements"] as Record<string, unknown>[];
+      const measurements = data["bodyMeasurements"] as Record<
+        string,
+        unknown
+      >[];
       const headers = Object.keys(measurements[0]);
       lines.push(headers.join(","));
       measurements.forEach((m) => {

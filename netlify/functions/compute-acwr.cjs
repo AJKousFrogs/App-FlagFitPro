@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
@@ -39,7 +39,7 @@ exports.handler = async (event, context) => {
           "athleteId is required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -54,7 +54,7 @@ exports.handler = async (event, context) => {
           `Failed to compute ACWR: ${error.message}`,
           500,
           "database_error",
-          requestId
+          requestId,
         );
       }
 

@@ -118,7 +118,9 @@ interface TeamWellnessSummary {
             [style]="{ height: '6px' }"
             [styleClass]="getCheckInClass()"
           ></p-progressBar>
-          <span class="card-label">{{ summary().checkInRate }}% compliance</span>
+          <span class="card-label"
+            >{{ summary().checkInRate }}% compliance</span
+          >
         </div>
 
         <!-- Team Wellness -->
@@ -150,15 +152,24 @@ interface TeamWellnessSummary {
             <span>ACWR Status</span>
           </div>
           <div class="acwr-distribution">
-            <div class="acwr-segment optimal" [pTooltip]="summary().athletesOptimal + ' optimal'">
+            <div
+              class="acwr-segment optimal"
+              [pTooltip]="summary().athletesOptimal + ' optimal'"
+            >
               <span class="count">{{ summary().athletesOptimal }}</span>
               <span class="label">Optimal</span>
             </div>
-            <div class="acwr-segment caution" [pTooltip]="summary().athletesCaution + ' caution'">
+            <div
+              class="acwr-segment caution"
+              [pTooltip]="summary().athletesCaution + ' caution'"
+            >
               <span class="count">{{ summary().athletesCaution }}</span>
               <span class="label">Caution</span>
             </div>
-            <div class="acwr-segment danger" [pTooltip]="summary().athletesAtRisk + ' at risk'">
+            <div
+              class="acwr-segment danger"
+              [pTooltip]="summary().athletesAtRisk + ' at risk'"
+            >
               <span class="count">{{ summary().athletesAtRisk }}</span>
               <span class="label">At Risk</span>
             </div>
@@ -173,7 +184,9 @@ interface TeamWellnessSummary {
             <h3>
               <i class="pi pi-exclamation-triangle"></i>
               Needs Attention
-              <p-badge [value]="athletesNeedingAttention().length.toString()"></p-badge>
+              <p-badge
+                [value]="athletesNeedingAttention().length.toString()"
+              ></p-badge>
             </h3>
             <p-button
               label="View All"
@@ -212,7 +225,10 @@ interface TeamWellnessSummary {
                 <div class="athlete-metrics">
                   <div class="metric">
                     <span class="metric-label">Wellness</span>
-                    <span class="metric-value" [class]="getScoreClass(athlete.wellnessScore)">
+                    <span
+                      class="metric-value"
+                      [class]="getScoreClass(athlete.wellnessScore)"
+                    >
                       {{ athlete.wellnessScore }}
                     </span>
                   </div>
@@ -334,17 +350,23 @@ interface TeamWellnessSummary {
                     <i class="pi pi-lock"></i>
                   </div>
                 } @else {
-                  <div class="status-indicator" [class]="athlete.acwrStatus"></div>
+                  <div
+                    class="status-indicator"
+                    [class]="athlete.acwrStatus"
+                  ></div>
                 }
               </div>
-              <span class="mini-name">{{ athlete.name.split(' ')[0] }}</span>
+              <span class="mini-name">{{ athlete.name.split(" ")[0] }}</span>
               @if (athlete.isConsentBlocked) {
                 <div class="mini-blocked-label">
                   <span>Private</span>
                 </div>
               } @else {
                 <div class="mini-metrics">
-                  <span class="mini-wellness" [class]="getScoreClass(athlete.wellnessScore)">
+                  <span
+                    class="mini-wellness"
+                    [class]="getScoreClass(athlete.wellnessScore)"
+                  >
                     {{ athlete.wellnessScore }}
                   </span>
                   <span class="mini-acwr" [class]="athlete.acwrStatus">
@@ -358,7 +380,10 @@ interface TeamWellnessSummary {
                 </div>
               }
               @if (athlete.isConsentBlocked) {
-                <div class="blocked-badge" pTooltip="Data not shared - ask athlete to enable">
+                <div
+                  class="blocked-badge"
+                  pTooltip="Data not shared - ask athlete to enable"
+                >
                   <i class="pi pi-lock"></i>
                 </div>
               }
@@ -995,7 +1020,7 @@ export class TeamWellnessOverviewComponent implements OnInit {
   filter = signal<"all" | "optimal" | "caution" | "danger">("all");
 
   athletes = signal<AthleteWellnessStatus[]>([]);
-  
+
   // Get partial data message from centralized privacy copy
   partialDataMessage = CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
 
@@ -1179,7 +1204,7 @@ export class TeamWellnessOverviewComponent implements OnInit {
    * Check if any athletes have blocked consent
    */
   hasBlockedAthletes(): boolean {
-    return this.athletes().some(a => a.isConsentBlocked);
+    return this.athletes().some((a) => a.isConsentBlocked);
   }
 
   /**
@@ -1187,7 +1212,7 @@ export class TeamWellnessOverviewComponent implements OnInit {
    */
   onBlockedAthleteClick(athlete: AthleteWellnessStatus): void {
     this.toastService.info(
-      `${athlete.name}'s data is private. Ask them to enable sharing in their Privacy Settings.`
+      `${athlete.name}'s data is private. Ask them to enable sharing in their Privacy Settings.`,
     );
   }
 
@@ -1198,7 +1223,9 @@ export class TeamWellnessOverviewComponent implements OnInit {
     if (athlete.isConsentBlocked) {
       this.onBlockedAthleteClick(athlete);
     } else {
-      this.router.navigate(['/roster'], { queryParams: { player: athlete.id } });
+      this.router.navigate(["/roster"], {
+        queryParams: { player: athlete.id },
+      });
     }
   }
 }

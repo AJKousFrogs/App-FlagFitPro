@@ -1,21 +1,21 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    DestroyRef,
-    effect,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-    AbstractControl,
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators,
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -28,9 +28,9 @@ import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-    getFormControlError,
-    isFormControlInvalid,
-    markFormGroupTouched,
+  getFormControlError,
+  isFormControlInvalid,
+  markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -104,15 +104,21 @@ import {
                 autocomplete="current-password"
                 aria-required="true"
                 [attr.aria-invalid]="passwordError() ? 'true' : null"
-                [attr.aria-describedby]="passwordError() ? 'password-error' : null"
+                [attr.aria-describedby]="
+                  passwordError() ? 'password-error' : null
+                "
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 class="password-toggle-btn"
                 (click)="togglePasswordVisibility()"
-                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+                [attr.aria-label]="
+                  showPassword() ? 'Hide password' : 'Show password'
+                "
               >
-                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                <i
+                  [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                ></i>
               </button>
             </div>
             @if (passwordError()) {
@@ -124,11 +130,7 @@ import {
 
           <div class="login-form-options">
             <label class="checkbox-wrapper">
-              <input 
-                type="checkbox" 
-                formControlName="remember"
-                id="remember"
-              />
+              <input type="checkbox" formControlName="remember" id="remember" />
               <span class="checkmark"></span>
               <span class="checkbox-label">Remember me</span>
             </label>
@@ -141,6 +143,7 @@ import {
             type="submit"
             label="Sign in"
             icon="pi pi-lock"
+            [rounded]="true"
             [loading]="isLoading()"
             [disabled]="!isFormValid()"
             styleClass="w-full login-submit-btn"
@@ -158,7 +161,7 @@ import {
       </p-card>
     </div>
   `,
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -174,11 +177,11 @@ export class LoginComponent {
   isDemoMode = signal(false);
   submitted = signal(false);
   showPassword = signal(false);
-  
+
   // Track form validity as a signal (updated on statusChanges)
   formValid = signal(false);
 
-  // Computed form state signals  
+  // Computed form state signals
   isFormValid = computed(() => this.formValid());
   emailError = computed(() => {
     const control = this.loginForm.get("email");
@@ -199,7 +202,7 @@ export class LoginComponent {
       password: ["", [Validators.required, Validators.minLength(8)]],
       remember: [false],
     });
-    
+
     // Track form status changes and update signal
     this.loginForm.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -247,7 +250,7 @@ export class LoginComponent {
   }
 
   togglePasswordVisibility(): void {
-    this.showPassword.update(v => !v);
+    this.showPassword.update((v) => !v);
   }
 
   onSubmit(): void {
@@ -272,12 +275,16 @@ export class LoginComponent {
             const returnUrl = this.route.snapshot.queryParams["returnUrl"];
             this.router.navigateByUrl(returnUrl || "/dashboard");
           } else {
-            this.toastService.error(response.error || "Invalid email or password");
+            this.toastService.error(
+              response.error || "Invalid email or password",
+            );
           }
           this.isLoading.set(false);
         },
         error: (error: Error) => {
-          this.toastService.error(error.message || "Login failed. Please try again.");
+          this.toastService.error(
+            error.message || "Login failed. Please try again.",
+          );
           this.isLoading.set(false);
         },
       });

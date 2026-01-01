@@ -17,18 +17,18 @@ All application data is now stored in and retrieved from **Supabase**. This is t
 
 ### Key Tables
 
-| Table | Purpose | Angular Service | API Endpoint |
-|-------|---------|-----------------|--------------|
-| `training_programs` | Training program metadata | `TrainingProgramService` | `/api/training-programs` |
-| `training_phases` | Periodization phases | `TrainingProgramService` | `/api/training-programs/phases` |
-| `training_weeks` | Weekly training structure | `TrainingProgramService` | `/api/training-programs/weeks` |
-| `session_templates` | Daily session templates | `TrainingProgramService` | `/api/training-programs/sessions` |
-| `exercises` | Master exercise library | `TrainingProgramService` | `/api/training-programs/exercises` |
-| `tournaments` | Tournament schedule | `TournamentService` | `/api/tournaments` |
-| `training_sessions` | User training sessions | `TrainingDataService` | `/api/training-sessions` |
-| `wellness_entries` | Wellness check-ins | `WellnessService` | `/api/wellness` |
-| `games` | Game records | `GamesService` | `/api/games` |
-| `player_game_stats` | Player statistics | `PlayerStatsService` | `/api/player-stats` |
+| Table               | Purpose                   | Angular Service          | API Endpoint                       |
+| ------------------- | ------------------------- | ------------------------ | ---------------------------------- |
+| `training_programs` | Training program metadata | `TrainingProgramService` | `/api/training-programs`           |
+| `training_phases`   | Periodization phases      | `TrainingProgramService` | `/api/training-programs/phases`    |
+| `training_weeks`    | Weekly training structure | `TrainingProgramService` | `/api/training-programs/weeks`     |
+| `session_templates` | Daily session templates   | `TrainingProgramService` | `/api/training-programs/sessions`  |
+| `exercises`         | Master exercise library   | `TrainingProgramService` | `/api/training-programs/exercises` |
+| `tournaments`       | Tournament schedule       | `TournamentService`      | `/api/tournaments`                 |
+| `training_sessions` | User training sessions    | `TrainingDataService`    | `/api/training-sessions`           |
+| `wellness_entries`  | Wellness check-ins        | `WellnessService`        | `/api/wellness`                    |
+| `games`             | Game records              | `GamesService`           | `/api/games`                       |
+| `player_game_stats` | Player statistics         | `PlayerStatsService`     | `/api/player-stats`                |
 
 ---
 
@@ -38,38 +38,38 @@ The following static JavaScript files are **DEPRECATED** and should NOT be used 
 
 ### `/src/data/training/` (DEPRECATED)
 
-| File | Status | Replacement |
-|------|--------|-------------|
+| File                         | Status        | Replacement                                    |
+| ---------------------------- | ------------- | ---------------------------------------------- |
 | `annual-training-program.js` | ⚠️ DEPRECATED | `training_programs` + `training_phases` tables |
-| `training-program.js` | ⚠️ DEPRECATED | `training_programs` table |
-| `weekly-schedules.js` | ⚠️ DEPRECATED | `training_weeks` + `session_templates` tables |
-| `exercise-library.js` | ⚠️ DEPRECATED | `exercises` table |
-| `performance-tests.js` | ⚠️ DEPRECATED | `performance_tests` table |
-| `index.js` | ⚠️ DEPRECATED | Use `TrainingProgramService` |
+| `training-program.js`        | ⚠️ DEPRECATED | `training_programs` table                      |
+| `weekly-schedules.js`        | ⚠️ DEPRECATED | `training_weeks` + `session_templates` tables  |
+| `exercise-library.js`        | ⚠️ DEPRECATED | `exercises` table                              |
+| `performance-tests.js`       | ⚠️ DEPRECATED | `performance_tests` table                      |
+| `index.js`                   | ⚠️ DEPRECATED | Use `TrainingProgramService`                   |
 
 ### `/src/data/qb-training/` (DEPRECATED)
 
-| File | Status | Replacement |
-|------|--------|-------------|
+| File                     | Status        | Replacement                       |
+| ------------------------ | ------------- | --------------------------------- |
 | `qb-training-program.js` | ⚠️ DEPRECATED | `training_programs` (QB position) |
-| `qb-exercise-library.js` | ⚠️ DEPRECATED | `exercises` table |
-| `qb-weekly-schedules.js` | ⚠️ DEPRECATED | `training_weeks` table |
-| `qb-assessments.js` | ⚠️ DEPRECATED | `performance_tests` table |
+| `qb-exercise-library.js` | ⚠️ DEPRECATED | `exercises` table                 |
+| `qb-weekly-schedules.js` | ⚠️ DEPRECATED | `training_weeks` table            |
+| `qb-assessments.js`      | ⚠️ DEPRECATED | `performance_tests` table         |
 
 ### `/src/js/data/` (DEPRECATED)
 
-| File | Status | Replacement |
-|------|--------|-------------|
-| `exercise-library.js` | ⚠️ DEPRECATED | `exercises` table |
+| File                     | Status        | Replacement       |
+| ------------------------ | ------------- | ----------------- |
+| `exercise-library.js`    | ⚠️ DEPRECATED | `exercises` table |
 | `qb-exercise-library.js` | ⚠️ DEPRECATED | `exercises` table |
 
 ### Other Deprecated Files
 
-| File | Status | Replacement |
-|------|--------|-------------|
-| `src/tournament-schedule.js` | ⚠️ DEPRECATED | `tournaments` table |
-| `src/training-program-engine.js` | ⚠️ DEPRECATED | `TrainingProgramService` |
-| `src/qb-training-engine.js` | ⚠️ DEPRECATED | `TrainingProgramService` |
+| File                                     | Status        | Replacement                    |
+| ---------------------------------------- | ------------- | ------------------------------ |
+| `src/tournament-schedule.js`             | ⚠️ DEPRECATED | `tournaments` table            |
+| `src/training-program-engine.js`         | ⚠️ DEPRECATED | `TrainingProgramService`       |
+| `src/qb-training-engine.js`              | ⚠️ DEPRECATED | `TrainingProgramService`       |
 | `src/js/services/aiTrainingScheduler.js` | ⚠️ DEPRECATED | `/api/smart-training` endpoint |
 
 ---
@@ -80,17 +80,17 @@ The following static JavaScript files are **DEPRECATED** and should NOT be used 
 
 ```typescript
 // Training Programs
-import { TrainingProgramService } from '@core/services/training-program.service';
+import { TrainingProgramService } from "@core/services/training-program.service";
 const programService = inject(TrainingProgramService);
 await programService.fetchLjubljanaFrogsProgram(true);
 
 // Tournaments
-import { TournamentService } from '@core/services/tournament.service';
+import { TournamentService } from "@core/services/tournament.service";
 const tournamentService = inject(TournamentService);
 await tournamentService.fetchTournaments();
 
 // Wellness
-import { WellnessService } from '@core/services/wellness.service';
+import { WellnessService } from "@core/services/wellness.service";
 const wellnessService = inject(WellnessService);
 await wellnessService.getWellnessData();
 ```
@@ -123,34 +123,35 @@ GET /api/smart-training-recommendations?athleteId={id}
 
 ```typescript
 // For complex queries not covered by services
-import { SupabaseService } from '@core/services/supabase.service';
+import { SupabaseService } from "@core/services/supabase.service";
 
 const supabase = inject(SupabaseService);
 const { data, error } = await supabase.client
-  .from('exercises')
-  .select('*')
-  .eq('category', 'Strength')
-  .order('name');
+  .from("exercises")
+  .select("*")
+  .eq("category", "Strength")
+  .order("name");
 ```
 
 ---
 
 ## 📅 Migration Timeline
 
-| Phase | Status | Date |
-|-------|--------|------|
-| Database schema created | ✅ Complete | Dec 2025 |
-| Seed data migrated | ✅ Complete | Dec 2025 |
-| API endpoints created | ✅ Complete | Dec 2025 |
-| Angular services created | ✅ Complete | Dec 2025 |
+| Phase                     | Status      | Date     |
+| ------------------------- | ----------- | -------- |
+| Database schema created   | ✅ Complete | Dec 2025 |
+| Seed data migrated        | ✅ Complete | Dec 2025 |
+| API endpoints created     | ✅ Complete | Dec 2025 |
+| Angular services created  | ✅ Complete | Dec 2025 |
 | Deprecation notices added | ✅ Complete | Dec 2025 |
-| Legacy files removal | 🔄 Planned | Q2 2026 |
+| Legacy files removal      | 🔄 Planned  | Q2 2026  |
 
 ---
 
 ## 🔧 Why This Migration?
 
 ### Problems with Static JS Files
+
 - ❌ Data duplication across files
 - ❌ Code changes required for data updates
 - ❌ No user customization possible
@@ -158,6 +159,7 @@ const { data, error } = await supabase.client
 - ❌ No real-time updates
 
 ### Benefits of Database Approach
+
 - ✅ Single source of truth
 - ✅ Easy updates without deployments
 - ✅ User-specific programs
@@ -173,4 +175,3 @@ const { data, error } = await supabase.client
 - See `/src/data/DEPRECATED.md` for migration guide
 - See `/src/data/qb-training/DEPRECATED.md` for QB-specific migration
 - Contact the development team for assistance
-

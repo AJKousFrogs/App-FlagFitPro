@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    input,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
 } from "@angular/core";
 
 /**
@@ -46,7 +46,11 @@ import {
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, var(--ds-primary-green-dark, #067a3b) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green) 0%,
+          var(--ds-primary-green-dark, #067a3b) 100%
+        );
         color: #ffffff;
         font-weight: 700;
         position: relative;
@@ -56,7 +60,9 @@ import {
         background-repeat: no-repeat;
         border: 2px solid rgba(255, 255, 255, 0.15);
         box-shadow: 0 2px 8px rgba(8, 153, 73, 0.25);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .avatar:hover {

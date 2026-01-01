@@ -7,7 +7,10 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { checkTeamMembership, getUserTeamId } = require("./utils/auth-helper.cjs");
+const {
+  checkTeamMembership,
+  getUserTeamId,
+} = require("./utils/auth-helper.cjs");
 
 // Get team events with optional filters
 const getTeamEvents = async (userId, queryParams) => {
@@ -49,7 +52,9 @@ const getTeamEvents = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -57,7 +62,16 @@ const getTeamEvents = async (userId, queryParams) => {
 const createEvent = async (userId, eventData) => {
   checkEnvVars();
 
-  const { team_id, event_type, title, description, location, start_time, end_time, is_mandatory } = eventData;
+  const {
+    team_id,
+    event_type,
+    title,
+    description,
+    location,
+    start_time,
+    end_time,
+    is_mandatory,
+  } = eventData;
 
   // Verify user has permission (coach/admin)
   const { authorized, role } = await checkTeamMembership(userId, team_id);
@@ -81,7 +95,9 @@ const createEvent = async (userId, eventData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -106,7 +122,15 @@ const updateEvent = async (userId, eventId, updates) => {
     throw new Error("Only coaches and admins can update events");
   }
 
-  const allowedFields = ["title", "description", "location", "start_time", "end_time", "is_mandatory", "event_type"];
+  const allowedFields = [
+    "title",
+    "description",
+    "location",
+    "start_time",
+    "end_time",
+    "is_mandatory",
+    "event_type",
+  ];
   const filteredUpdates = {};
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
@@ -121,7 +145,9 @@ const updateEvent = async (userId, eventId, updates) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -149,7 +175,9 @@ const deleteEvent = async (userId, eventId) => {
     .delete()
     .eq("id", eventId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -175,17 +203,21 @@ const getEventAttendance = async (userId, eventId) => {
 
   const { data, error } = await supabaseAdmin
     .from("attendance_records")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (
         id,
         name,
         avatar_url
       )
-    `)
+    `,
+    )
     .eq("event_id", eventId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Transform data to include player info
   return (data || []).map((record) => ({
@@ -231,15 +263,20 @@ const recordAttendance = async (userId, attendanceData) => {
         player_id,
         status,
         notes,
-        check_in_time: status === "present" || status === "late" ? new Date().toISOString() : null,
+        check_in_time:
+          status === "present" || status === "late"
+            ? new Date().toISOString()
+            : null,
         recorded_by: userId,
       },
-      { onConflict: "event_id,player_id" }
+      { onConflict: "event_id,player_id" },
     )
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Update player attendance stats
   await updatePlayerAttendanceStats(player_id, event.team_id);
@@ -273,7 +310,10 @@ const bulkRecordAttendance = async (userId, bulkData) => {
     player_id: record.player_id,
     status: record.status,
     notes: record.notes,
-    check_in_time: record.status === "present" || record.status === "late" ? new Date().toISOString() : null,
+    check_in_time:
+      record.status === "present" || record.status === "late"
+        ? new Date().toISOString()
+        : null,
     recorded_by: userId,
   }));
 
@@ -282,7 +322,9 @@ const bulkRecordAttendance = async (userId, bulkData) => {
     .upsert(attendanceRecords, { onConflict: "event_id,player_id" })
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Update stats for all affected players
   for (const record of records) {
@@ -297,10 +339,12 @@ const updatePlayerAttendanceStats = async (playerId, teamId) => {
   // Get all attendance records for this player in this team
   const { data: records, error: recordsError } = await supabaseAdmin
     .from("attendance_records")
-    .select(`
+    .select(
+      `
       status,
       team_events!inner (team_id)
-    `)
+    `,
+    )
     .eq("player_id", playerId)
     .eq("team_events.team_id", teamId);
 
@@ -317,22 +361,24 @@ const updatePlayerAttendanceStats = async (playerId, teamId) => {
     events_late: records.filter((r) => r.status === "late").length,
   };
 
-  stats.attendance_rate = stats.total_events > 0
-    ? Math.round(((stats.events_attended + stats.events_late) / stats.total_events) * 100)
-    : 0;
+  stats.attendance_rate =
+    stats.total_events > 0
+      ? Math.round(
+          ((stats.events_attended + stats.events_late) / stats.total_events) *
+            100,
+        )
+      : 0;
 
   // Upsert stats
-  await supabaseAdmin
-    .from("player_attendance_stats")
-    .upsert(
-      {
-        player_id: playerId,
-        team_id: teamId,
-        ...stats,
-        last_updated: new Date().toISOString(),
-      },
-      { onConflict: "player_id,team_id" }
-    );
+  await supabaseAdmin.from("player_attendance_stats").upsert(
+    {
+      player_id: playerId,
+      team_id: teamId,
+      ...stats,
+      last_updated: new Date().toISOString(),
+    },
+    { onConflict: "player_id,team_id" },
+  );
 };
 
 // Get player attendance stats
@@ -351,7 +397,9 @@ const getPlayerAttendanceStats = async (userId, playerId, teamId) => {
     .eq("team_id", teamId)
     .single();
 
-  if (error && error.code !== "PGRST116") {throw error;}
+  if (error && error.code !== "PGRST116") {
+    throw error;
+  }
   return data;
 };
 
@@ -366,18 +414,22 @@ const getTeamAttendanceStats = async (userId, teamId) => {
 
   const { data, error } = await supabaseAdmin
     .from("player_attendance_stats")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (
         id,
         name,
         avatar_url
       )
-    `)
+    `,
+    )
     .eq("team_id", teamId)
     .order("attendance_rate", { ascending: false });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -413,7 +465,9 @@ const submitAbsenceRequest = async (userId, requestData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -428,15 +482,19 @@ const getPendingAbsenceRequests = async (userId, teamId) => {
 
   const { data, error } = await supabaseAdmin
     .from("absence_requests")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (name),
       team_events!inner (team_id, title, start_time)
-    `)
+    `,
+    )
     .eq("team_events.team_id", teamId)
     .eq("status", "pending");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -447,10 +505,12 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
   // Get the request
   const { data: request, error: fetchError } = await supabaseAdmin
     .from("absence_requests")
-    .select(`
+    .select(
+      `
       *,
       team_events!inner (team_id)
-    `)
+    `,
+    )
     .eq("id", requestId)
     .single();
 
@@ -458,7 +518,10 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
     throw new Error("Absence request not found");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, request.team_events.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    request.team_events.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can review absence requests");
   }
@@ -474,24 +537,27 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // If approved, update attendance record
   if (status === "approved") {
-    await supabaseAdmin
-      .from("attendance_records")
-      .upsert(
-        {
-          event_id: request.event_id,
-          player_id: request.player_id,
-          status: "excused",
-          notes: `Absence request approved: ${request.reason}`,
-          recorded_by: userId,
-        },
-        { onConflict: "event_id,player_id" }
-      );
+    await supabaseAdmin.from("attendance_records").upsert(
+      {
+        event_id: request.event_id,
+        player_id: request.player_id,
+        status: "excused",
+        notes: `Absence request approved: ${request.reason}`,
+        recorded_by: userId,
+      },
+      { onConflict: "event_id,player_id" },
+    );
 
-    await updatePlayerAttendanceStats(request.player_id, request.team_events.team_id);
+    await updatePlayerAttendanceStats(
+      request.player_id,
+      request.team_events.team_id,
+    );
   }
 
   return data;
@@ -504,7 +570,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
     handler: async (event, _context, { userId }) => {
-      const path = event.path.replace(/^\/api\/attendance\/?/, "").replace(/^\/\.netlify\/functions\/attendance\/?/, "");
+      const path = event.path
+        .replace(/^\/api\/attendance\/?/, "")
+        .replace(/^\/\.netlify\/functions\/attendance\/?/, "");
       const queryParams = event.queryStringParameters || {};
 
       let body = {};
@@ -563,13 +631,20 @@ exports.handler = async (event, context) => {
         // Stats endpoints
         const playerStatsMatch = path.match(/^stats\/player\/([^/]+)$/);
         if (playerStatsMatch && event.httpMethod === "GET") {
-          const result = await getPlayerAttendanceStats(userId, playerStatsMatch[1], queryParams.team_id);
+          const result = await getPlayerAttendanceStats(
+            userId,
+            playerStatsMatch[1],
+            queryParams.team_id,
+          );
           return createSuccessResponse(result);
         }
 
         const teamStatsMatch = path.match(/^stats\/team\/([^/]+)$/);
         if (teamStatsMatch && event.httpMethod === "GET") {
-          const result = await getTeamAttendanceStats(userId, teamStatsMatch[1]);
+          const result = await getTeamAttendanceStats(
+            userId,
+            teamStatsMatch[1],
+          );
           return createSuccessResponse(result);
         }
 
@@ -580,13 +655,20 @@ exports.handler = async (event, context) => {
         }
 
         if (event.httpMethod === "GET" && path === "absence-requests") {
-          const result = await getPendingAbsenceRequests(userId, queryParams.team_id);
+          const result = await getPendingAbsenceRequests(
+            userId,
+            queryParams.team_id,
+          );
           return createSuccessResponse(result);
         }
 
         const absenceReviewMatch = path.match(/^absence-request\/([^/]+)$/);
         if (absenceReviewMatch && event.httpMethod === "PUT") {
-          const result = await reviewAbsenceRequest(userId, absenceReviewMatch[1], body.status);
+          const result = await reviewAbsenceRequest(
+            userId,
+            absenceReviewMatch[1],
+            body.status,
+          );
           return createSuccessResponse(result);
         }
 
@@ -595,7 +677,10 @@ exports.handler = async (event, context) => {
         if (error.message.includes("not found")) {
           return createErrorResponse(error.message, 404, "not_found");
         }
-        if (error.message.includes("authorized") || error.message.includes("permission")) {
+        if (
+          error.message.includes("authorized") ||
+          error.message.includes("permission")
+        ) {
           return createErrorResponse(error.message, 403, "forbidden");
         }
         throw error;

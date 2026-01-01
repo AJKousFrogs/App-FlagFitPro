@@ -25,19 +25,21 @@ function initializeWebPush() {
   if (!webpush) {
     return { initialized: false, reason: "web-push library not installed" };
   }
-  
+
   const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
   const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-  const vapidSubject = process.env.VAPID_SUBJECT || "mailto:notifications@flagfitpro.com";
-  
+  const vapidSubject =
+    process.env.VAPID_SUBJECT || "mailto:notifications@flagfitpro.com";
+
   if (!vapidPublicKey || !vapidPrivateKey) {
-    return { 
-      initialized: false, 
-      reason: "VAPID keys not configured. Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables.",
-      generateKeys: "Run: npx web-push generate-vapid-keys"
+    return {
+      initialized: false,
+      reason:
+        "VAPID keys not configured. Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables.",
+      generateKeys: "Run: npx web-push generate-vapid-keys",
     };
   }
-  
+
   try {
     webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
     return { initialized: true };
@@ -56,7 +58,7 @@ const registerToken = async (userId, tokenData) => {
   checkEnvVars();
 
   const { token, device_type, device_name, subscription } = tokenData;
-  
+
   // Use endpoint as the unique identifier if full subscription provided
   const tokenValue = subscription?.endpoint || token;
 
@@ -79,13 +81,15 @@ const registerToken = async (userId, tokenData) => {
         // Store full subscription data for web-push
         subscription_data: subscription || null,
       },
-      { onConflict: "user_id,token" }
+      { onConflict: "user_id,token" },
     )
     .select()
     .single();
 
-  if (error) {throw error;}
-  
+  if (error) {
+    throw error;
+  }
+
   return {
     ...data,
     vapidPublicKey: getVapidPublicKey(),
@@ -102,7 +106,9 @@ const unregisterToken = async (userId) => {
     .eq("user_id", userId)
     .eq("device_type", "web");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -116,22 +122,26 @@ const getPreferences = async (userId) => {
     .eq("user_id", userId)
     .single();
 
-  if (error && error.code !== "PGRST116") {throw error;}
+  if (error && error.code !== "PGRST116") {
+    throw error;
+  }
 
   // Return defaults if no preferences set
-  return data || {
-    push_enabled: true,
-    categories: {
-      team_announcements: true,
-      game_reminders: true,
-      practice_reminders: true,
-      stats_updates: true,
-      training_reminders: true,
-      chat_mentions: true,
-      coach_feedback: true,
-    },
-    quiet_hours: null,
-  };
+  return (
+    data || {
+      push_enabled: true,
+      categories: {
+        team_announcements: true,
+        game_reminders: true,
+        practice_reminders: true,
+        stats_updates: true,
+        training_reminders: true,
+        chat_mentions: true,
+        coach_feedback: true,
+      },
+      quiet_hours: null,
+    }
+  );
 };
 
 // Update user's notification preferences
@@ -146,12 +156,14 @@ const updatePreferences = async (userId, preferences) => {
         ...preferences,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "user_id" }
+      { onConflict: "user_id" },
     )
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -166,7 +178,9 @@ const getDevices = async (userId) => {
     .eq("is_active", true)
     .order("last_used_at", { ascending: false });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -180,7 +194,9 @@ const removeDevice = async (userId, tokenId) => {
     .eq("id", tokenId)
     .eq("user_id", userId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -192,16 +208,16 @@ const removeDevice = async (userId, tokenId) => {
  */
 const sendPushNotification = async (subscription, payload) => {
   const pushInit = initializeWebPush();
-  
+
   if (!pushInit.initialized) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: pushInit.reason,
       setupRequired: true,
       instructions: pushInit.generateKeys,
     };
   }
-  
+
   try {
     const result = await webpush.sendNotification(
       subscription,
@@ -210,9 +226,9 @@ const sendPushNotification = async (subscription, payload) => {
         TTL: 60 * 60 * 24, // 24 hours
         urgency: payload.urgency || "normal", // very-low, low, normal, high
         topic: payload.topic || undefined, // For notification replacement
-      }
+      },
     );
-    
+
     return { success: true, statusCode: result.statusCode };
   } catch (error) {
     // Handle specific web-push errors
@@ -235,7 +251,7 @@ const sendPushNotification = async (subscription, payload) => {
  */
 const sendNotificationToUser = async (userId, notification) => {
   checkEnvVars();
-  
+
   // Get user's active tokens with full subscription data
   const { data: tokens, error: fetchError } = await supabaseAdmin
     .from("user_notification_tokens")
@@ -243,8 +259,10 @@ const sendNotificationToUser = async (userId, notification) => {
     .eq("user_id", userId)
     .eq("is_active", true);
 
-  if (fetchError) {throw fetchError;}
-  
+  if (fetchError) {
+    throw fetchError;
+  }
+
   if (!tokens || tokens.length === 0) {
     throw new Error("No registered devices found");
   }
@@ -284,7 +302,7 @@ const sendNotificationToUser = async (userId, notification) => {
         // If we only have the token, we can't send via web-push
         // This is for backwards compatibility with older registrations
       };
-      
+
       if (!subscription.endpoint || !subscription.keys) {
         // Old-style token without full subscription data
         // Mark as needing re-registration
@@ -297,25 +315,26 @@ const sendNotificationToUser = async (userId, notification) => {
       }
 
       const sendResult = await sendPushNotification(subscription, payload);
-      
+
       if (sendResult.success) {
         results.sent++;
-        
+
         // Update last used timestamp
         await supabaseAdmin
           .from("user_notification_tokens")
           .update({ last_used_at: new Date().toISOString() })
           .eq("id", tokenRecord.id);
-          
       } else if (sendResult.expired) {
         results.expired++;
-        
+
         // Deactivate expired subscription
         await supabaseAdmin
           .from("user_notification_tokens")
-          .update({ is_active: false, deactivated_reason: "subscription_expired" })
+          .update({
+            is_active: false,
+            deactivated_reason: "subscription_expired",
+          })
           .eq("id", tokenRecord.id);
-          
       } else if (sendResult.setupRequired) {
         // Web push not configured - return setup instructions
         return {
@@ -371,7 +390,7 @@ const sendTestNotification = async (userId) => {
  */
 const _sendBulkNotification = async (userIds, notification) => {
   checkEnvVars();
-  
+
   const results = {
     totalUsers: userIds.length,
     usersNotified: 0,
@@ -383,18 +402,17 @@ const _sendBulkNotification = async (userIds, notification) => {
   for (const userId of userIds) {
     try {
       const userResult = await sendNotificationToUser(userId, notification);
-      
+
       if (userResult.setupRequired) {
         // Web push not configured - return immediately
         return userResult;
       }
-      
+
       if (userResult.sent > 0) {
         results.usersNotified++;
         results.devicesSent += userResult.sent;
       }
       results.devicesFailed += userResult.failed || 0;
-      
     } catch (error) {
       results.errors.push({ userId, error: error.message });
     }
@@ -414,7 +432,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
     handler: async (event, _context, { userId }) => {
-      const path = event.path.replace(/^\/api\/push\/?/, "").replace(/^\/\.netlify\/functions\/push\/?/, "");
+      const path = event.path
+        .replace(/^\/api\/push\/?/, "")
+        .replace(/^\/\.netlify\/functions\/push\/?/, "");
 
       let body = {};
       if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
@@ -479,19 +499,21 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === "GET" && path === "vapid-key") {
           const publicKey = getVapidPublicKey();
           const pushInit = initializeWebPush();
-          
+
           return createSuccessResponse({
             vapidPublicKey: publicKey,
             configured: pushInit.initialized,
-            message: pushInit.initialized 
+            message: pushInit.initialized
               ? "Web Push is configured and ready"
               : pushInit.reason,
-            setupInstructions: !pushInit.initialized ? [
-              "1. Generate VAPID keys: npx web-push generate-vapid-keys",
-              "2. Set VAPID_PUBLIC_KEY environment variable",
-              "3. Set VAPID_PRIVATE_KEY environment variable",
-              "4. Optionally set VAPID_SUBJECT (mailto: URL)",
-            ] : undefined,
+            setupInstructions: !pushInit.initialized
+              ? [
+                  "1. Generate VAPID keys: npx web-push generate-vapid-keys",
+                  "2. Set VAPID_PUBLIC_KEY environment variable",
+                  "3. Set VAPID_PRIVATE_KEY environment variable",
+                  "4. Optionally set VAPID_SUBJECT (mailto: URL)",
+                ]
+              : undefined,
           });
         }
 
@@ -500,10 +522,12 @@ exports.handler = async (event, context) => {
           const pushInit = initializeWebPush();
           const devices = await getDevices(userId);
           const preferences = await getPreferences(userId);
-          
+
           return createSuccessResponse({
             configured: pushInit.initialized,
-            configurationMessage: pushInit.initialized ? "Ready" : pushInit.reason,
+            configurationMessage: pushInit.initialized
+              ? "Ready"
+              : pushInit.reason,
             registeredDevices: devices.length,
             preferences: {
               enabled: preferences.push_enabled,

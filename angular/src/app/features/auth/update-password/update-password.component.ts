@@ -26,7 +26,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Update Password Component
- * 
+ *
  * This component handles the password reset callback flow.
  * When a user clicks the "Reset Password" link in their email,
  * Supabase redirects them to this page with recovery tokens.
@@ -55,15 +55,15 @@ import { LoggerService } from "../../../core/services/logger.service";
             <i class="pi pi-lock"></i>
           </div>
           <h1 class="update-password-title">Set New Password</h1>
-          <p class="update-password-subtitle">
-            Enter your new password below
-          </p>
+          <p class="update-password-subtitle">Enter your new password below</p>
         </ng-template>
 
         @if (isValidRecoverySession()) {
           <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
             <div class="p-field mb-4">
-              <label for="password" class="p-label required">New Password</label>
+              <label for="password" class="p-label required"
+                >New Password</label
+              >
               <p-password
                 id="password"
                 formControlName="password"
@@ -74,7 +74,9 @@ import { LoggerService } from "../../../core/services/logger.service";
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('password')"
                 ariaLabel="New password"
-                [attr.aria-describedby]="isFieldInvalid('password') ? 'password-error' : null"
+                [attr.aria-describedby]="
+                  isFieldInvalid('password') ? 'password-error' : null
+                "
               ></p-password>
               @if (isFieldInvalid("password")) {
                 <small id="password-error" class="p-error" role="alert">
@@ -84,7 +86,9 @@ import { LoggerService } from "../../../core/services/logger.service";
             </div>
 
             <div class="p-field mb-4">
-              <label for="confirmPassword" class="p-label required">Confirm Password</label>
+              <label for="confirmPassword" class="p-label required"
+                >Confirm Password</label
+              >
               <p-password
                 id="confirmPassword"
                 formControlName="confirmPassword"
@@ -95,7 +99,11 @@ import { LoggerService } from "../../../core/services/logger.service";
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('confirmPassword')"
                 ariaLabel="Confirm new password"
-                [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : null"
+                [attr.aria-describedby]="
+                  isFieldInvalid('confirmPassword')
+                    ? 'confirmPassword-error'
+                    : null
+                "
               ></p-password>
               @if (isFieldInvalid("confirmPassword")) {
                 <small id="confirmPassword-error" class="p-error" role="alert">
@@ -108,6 +116,7 @@ import { LoggerService } from "../../../core/services/logger.service";
               type="submit"
               label="Update Password"
               icon="pi pi-check"
+              [rounded]="true"
               [loading]="isLoading()"
               [disabled]="passwordForm.invalid"
               styleClass="w-full mb-4"
@@ -121,8 +130,8 @@ import { LoggerService } from "../../../core/services/logger.service";
           </div>
         } @else {
           <div class="invalid-session">
-            <p-message 
-              severity="error" 
+            <p-message
+              severity="error"
               text="This password reset link is invalid or has expired."
               styleClass="w-full mb-4"
             ></p-message>
@@ -282,7 +291,7 @@ export class UpdatePasswordComponent implements OnInit {
       },
       {
         validators: this.passwordMatchValidator,
-      }
+      },
     );
   }
 
@@ -297,7 +306,10 @@ export class UpdatePasswordComponent implements OnInit {
     try {
       // Supabase automatically handles the hash fragment and establishes a session
       // when the page loads with recovery tokens
-      const { data: { session }, error } = await this.supabaseService.client.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await this.supabaseService.client.auth.getSession();
 
       if (error) {
         this.logger.error("Error checking recovery session:", error);
@@ -309,12 +321,13 @@ export class UpdatePasswordComponent implements OnInit {
       if (session) {
         // Additional check: see if URL contains recovery type
         const hash = window.location.hash;
-        const isRecoveryFlow = hash.includes("type=recovery") || 
-                               hash.includes("type=password_recovery");
-        
+        const isRecoveryFlow =
+          hash.includes("type=recovery") ||
+          hash.includes("type=password_recovery");
+
         // If we have a session, we can proceed (either from recovery or existing session)
         this.isValidRecoverySession.set(true);
-        
+
         if (isRecoveryFlow) {
           this.toastService.info("Please enter your new password");
         }
@@ -324,10 +337,11 @@ export class UpdatePasswordComponent implements OnInit {
         if (hash.includes("access_token") && hash.includes("type=recovery")) {
           // Tokens present but session not established - might need to wait
           // Try getting session again after a short delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          const { data: { session: retrySession } } = 
-            await this.supabaseService.client.auth.getSession();
-          
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const {
+            data: { session: retrySession },
+          } = await this.supabaseService.client.auth.getSession();
+
           this.isValidRecoverySession.set(!!retrySession);
         } else {
           this.isValidRecoverySession.set(false);
@@ -342,7 +356,9 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   // Custom validator for password strength
-  private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+  private passwordStrengthValidator(
+    control: AbstractControl,
+  ): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
 
@@ -356,7 +372,9 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   // Validator to check if passwords match
-  private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+  private passwordMatchValidator(
+    group: AbstractControl,
+  ): ValidationErrors | null {
     const password = group.get("password")?.value;
     const confirmPassword = group.get("confirmPassword")?.value;
 
@@ -419,7 +437,7 @@ export class UpdatePasswordComponent implements OnInit {
       }
 
       this.toastService.success(
-        "Password updated successfully! Redirecting to login..."
+        "Password updated successfully! Redirecting to login...",
       );
 
       // Sign out and redirect to login

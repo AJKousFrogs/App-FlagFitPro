@@ -136,7 +136,9 @@ export class WearableParserService {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
       } catch (error) {
-        errors.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Row ${i + 1}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     }
 
@@ -206,7 +208,9 @@ export class WearableParserService {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
       } catch (error) {
-        errors.push(`Entry ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Entry ${i + 1}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     }
 
@@ -274,7 +278,9 @@ export class WearableParserService {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
       } catch (error) {
-        errors.push(`Sample ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Sample ${index + 1}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     });
 

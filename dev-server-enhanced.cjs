@@ -31,7 +31,7 @@ app.use(
 app.all("/.netlify/functions/:functionName", async (req, res) => {
   try {
     // Extract function name from route parameter
-    const {functionName} = req.params;
+    const { functionName } = req.params;
 
     if (!functionName) {
       console.error(`❌ No function name in request: ${req.path}`);
@@ -506,7 +506,7 @@ app.use((req, res, next) => {
     const originalSend = res.send;
     res.send = function (data) {
       if (typeof data === "string" && data.includes("</body>")) {
-        data = data.replace("</body>", `${hotReloadScript  }</body>`);
+        data = data.replace("</body>", `${hotReloadScript}</body>`);
       }
       originalSend.call(this, data);
     };

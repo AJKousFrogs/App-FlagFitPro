@@ -31,7 +31,12 @@ import { LoggerService } from "./logger.service";
 // INTERFACES
 // ============================================================================
 
-export type AgeGroup = "youth" | "young_adult" | "adult" | "masters" | "senior_masters";
+export type AgeGroup =
+  | "youth"
+  | "young_adult"
+  | "adult"
+  | "masters"
+  | "senior_masters";
 
 export interface AgeAdjustedRecoveryProfile {
   ageGroup: AgeGroup;
@@ -115,7 +120,8 @@ const AGE_RECOVERY_PROFILES: Record<AgeGroup, AgeAdjustedRecoveryProfile> = {
       maxSprintsPerSession: 25,
       maxThrowsPerSession: 50,
     },
-    evidenceBase: "Youth athletes recover faster but are at risk for overuse injuries during growth spurts",
+    evidenceBase:
+      "Youth athletes recover faster but are at risk for overuse injuries during growth spurts",
   },
 
   young_adult: {
@@ -214,7 +220,8 @@ const AGE_RECOVERY_PROFILES: Record<AgeGroup, AgeAdjustedRecoveryProfile> = {
       maxSprintsPerSession: 25,
       maxThrowsPerSession: 50,
     },
-    evidenceBase: "Fell & Williams (2008), Doering et al. (2016) - Recovery time increases ~30% in this age group",
+    evidenceBase:
+      "Fell & Williams (2008), Doering et al. (2016) - Recovery time increases ~30% in this age group",
   },
 
   senior_masters: {
@@ -252,7 +259,8 @@ const AGE_RECOVERY_PROFILES: Record<AgeGroup, AgeAdjustedRecoveryProfile> = {
       maxSprintsPerSession: 20,
       maxThrowsPerSession: 40,
     },
-    evidenceBase: "Tanaka & Seals (2008), Reaburn & Dascombe (2008) - Significant recovery adaptations needed",
+    evidenceBase:
+      "Tanaka & Seals (2008), Reaburn & Dascombe (2008) - Significant recovery adaptations needed",
   },
 };
 
@@ -266,9 +274,9 @@ const AGE_RECOVERY_PROFILES: Record<AgeGroup, AgeAdjustedRecoveryProfile> = {
  */
 const TRAINING_AGE_ADJUSTMENTS: Record<number, number> = {
   // Training years: Age group adjustment (negative = younger effective age group)
-  0: 0,   // Beginner - no adjustment
-  2: 0,   // Still building base
-  5: -2,  // Intermediate - 2 years younger effective age
+  0: 0, // Beginner - no adjustment
+  2: 0, // Still building base
+  5: -2, // Intermediate - 2 years younger effective age
   10: -3, // Experienced - 3 years younger
   15: -5, // Very experienced - 5 years younger
   20: -5, // Maximum adjustment
@@ -324,9 +332,15 @@ export class AgeAdjustedRecoveryService {
   /**
    * Get recovery profile for an athlete
    */
-  getRecoveryProfile(chronologicalAge: number, trainingAge: number = 0): AthleteAgeProfile {
+  getRecoveryProfile(
+    chronologicalAge: number,
+    trainingAge: number = 0,
+  ): AthleteAgeProfile {
     const ageGroup = this.getAgeGroup(chronologicalAge);
-    const adjustedAgeGroup = this.getAdjustedAgeGroup(chronologicalAge, trainingAge);
+    const adjustedAgeGroup = this.getAdjustedAgeGroup(
+      chronologicalAge,
+      trainingAge,
+    );
 
     const profile: AthleteAgeProfile = {
       chronologicalAge,
@@ -357,7 +371,10 @@ export class AgeAdjustedRecoveryService {
   /**
    * Calculate adjusted ACWR danger threshold for athlete's age
    */
-  getAdjustedACWRThreshold(chronologicalAge: number, trainingAge: number = 0): number {
+  getAdjustedACWRThreshold(
+    chronologicalAge: number,
+    trainingAge: number = 0,
+  ): number {
     const profile = this.getRecoveryProfile(chronologicalAge, trainingAge);
     const baseThreshold = 1.5; // Standard danger threshold
     return baseThreshold + profile.recoveryProfile.acwrThresholdAdjustment;
@@ -372,7 +389,7 @@ export class AgeAdjustedRecoveryService {
     lastHighIntensityDate: Date | null,
     plannedIntensity: "low" | "moderate" | "high",
     currentACWR: number,
-    sleepHoursLast7Days: number[]
+    sleepHoursLast7Days: number[],
   ): TrainingCapacityAssessment {
     const profile = this.getRecoveryProfile(chronologicalAge, trainingAge);
     const recoveryProfile = profile.recoveryProfile;
@@ -386,32 +403,39 @@ export class AgeAdjustedRecoveryService {
     // Check days since last high intensity
     if (lastHighIntensityDate && plannedIntensity === "high") {
       const daysSinceHighIntensity = Math.floor(
-        (Date.now() - lastHighIntensityDate.getTime()) / (1000 * 60 * 60 * 24)
+        (Date.now() - lastHighIntensityDate.getTime()) / (1000 * 60 * 60 * 24),
       );
 
-      if (daysSinceHighIntensity < recoveryProfile.minRestDaysBetweenHighIntensity) {
+      if (
+        daysSinceHighIntensity < recoveryProfile.minRestDaysBetweenHighIntensity
+      ) {
         restrictions.push(
-          `Need ${recoveryProfile.minRestDaysBetweenHighIntensity} days between high-intensity sessions (only ${daysSinceHighIntensity} days since last)`
+          `Need ${recoveryProfile.minRestDaysBetweenHighIntensity} days between high-intensity sessions (only ${daysSinceHighIntensity} days since last)`,
         );
         recommendedIntensity = 60; // Reduce to moderate
-        reasoning = "Insufficient recovery time since last high-intensity session";
+        reasoning =
+          "Insufficient recovery time since last high-intensity session";
       }
     }
 
     // Check ACWR
     const acwrThreshold = recoveryProfile.warningThresholds.acwrDanger;
     if (currentACWR > acwrThreshold) {
-      restrictions.push(`ACWR (${currentACWR.toFixed(2)}) exceeds age-adjusted threshold (${acwrThreshold})`);
+      restrictions.push(
+        `ACWR (${currentACWR.toFixed(2)}) exceeds age-adjusted threshold (${acwrThreshold})`,
+      );
       recommendedIntensity = Math.min(recommendedIntensity, 50);
       canTrain = currentACWR < acwrThreshold + 0.3; // Complete rest if very high
       reasoning += " High injury risk due to elevated ACWR.";
     }
 
     // Check sleep
-    const avgSleep = sleepHoursLast7Days.reduce((a, b) => a + b, 0) / sleepHoursLast7Days.length;
+    const avgSleep =
+      sleepHoursLast7Days.reduce((a, b) => a + b, 0) /
+      sleepHoursLast7Days.length;
     if (avgSleep < recoveryProfile.minSleepHours) {
       restrictions.push(
-        `Average sleep (${avgSleep.toFixed(1)}h) below minimum (${recoveryProfile.minSleepHours}h)`
+        `Average sleep (${avgSleep.toFixed(1)}h) below minimum (${recoveryProfile.minSleepHours}h)`,
       );
       recommendedIntensity = Math.min(recommendedIntensity, 70);
       reasoning += " Sleep deficit affecting recovery.";
@@ -437,16 +461,23 @@ export class AgeAdjustedRecoveryService {
     trainingAge: number,
     sessionIntensity: "low" | "moderate" | "high",
     sessionDuration: number, // minutes
-    sessionType: string
+    sessionType: string,
   ): RecoveryRecommendation {
     const profile = this.getRecoveryProfile(chronologicalAge, trainingAge);
     const recoveryProfile = profile.recoveryProfile;
 
     // Base recovery time in hours
-    let baseRecoveryHours = sessionIntensity === "high" ? 48 : sessionIntensity === "moderate" ? 24 : 12;
+    let baseRecoveryHours =
+      sessionIntensity === "high"
+        ? 48
+        : sessionIntensity === "moderate"
+          ? 24
+          : 12;
 
     // Adjust for age
-    baseRecoveryHours = Math.round(baseRecoveryHours * recoveryProfile.recoveryTimeMultiplier);
+    baseRecoveryHours = Math.round(
+      baseRecoveryHours * recoveryProfile.recoveryTimeMultiplier,
+    );
 
     // Adjust for duration
     if (sessionDuration > 90) {
@@ -466,9 +497,12 @@ export class AgeAdjustedRecoveryService {
         ...recoveryProfile.recoveryStrategies.slice(0, 3),
       ];
 
-      if (profile.ageGroup === "masters" || profile.ageGroup === "senior_masters") {
+      if (
+        profile.ageGroup === "masters" ||
+        profile.ageGroup === "senior_masters"
+      ) {
         warnings.push(
-          `As a ${recoveryProfile.ageRange} athlete, allow ${recoveryProfile.minRestDaysBetweenHighIntensity} full days before next high-intensity session`
+          `As a ${recoveryProfile.ageRange} athlete, allow ${recoveryProfile.minRestDaysBetweenHighIntensity} full days before next high-intensity session`,
         );
       }
     } else if (sessionIntensity === "moderate") {
@@ -495,7 +529,10 @@ export class AgeAdjustedRecoveryService {
   /**
    * Get maximum training limits for athlete's age
    */
-  getTrainingLimits(chronologicalAge: number, trainingAge: number = 0): AgeWarningThresholds & {
+  getTrainingLimits(
+    chronologicalAge: number,
+    trainingAge: number = 0,
+  ): AgeWarningThresholds & {
     maxSessionsPerWeek: number;
     maxHighIntensityPerWeek: number;
     nutritionEmphasis: string[];
@@ -517,7 +554,10 @@ export class AgeAdjustedRecoveryService {
   validateWeeklyPlan(
     chronologicalAge: number,
     trainingAge: number,
-    plannedSessions: Array<{ intensity: "low" | "moderate" | "high"; day: number }>
+    plannedSessions: Array<{
+      intensity: "low" | "moderate" | "high";
+      day: number;
+    }>,
   ): { valid: boolean; warnings: string[]; recommendations: string[] } {
     const profile = this.getRecoveryProfile(chronologicalAge, trainingAge);
     const limits = profile.recoveryProfile;
@@ -527,27 +567,31 @@ export class AgeAdjustedRecoveryService {
     // Check total sessions
     if (plannedSessions.length > limits.maxSessionsPerWeek) {
       warnings.push(
-        `Planned ${plannedSessions.length} sessions exceeds maximum ${limits.maxSessionsPerWeek} for ${limits.ageRange} athletes`
+        `Planned ${plannedSessions.length} sessions exceeds maximum ${limits.maxSessionsPerWeek} for ${limits.ageRange} athletes`,
       );
     }
 
     // Check high intensity count
-    const highIntensitySessions = plannedSessions.filter((s) => s.intensity === "high");
+    const highIntensitySessions = plannedSessions.filter(
+      (s) => s.intensity === "high",
+    );
     if (highIntensitySessions.length > limits.maxHighIntensityPerWeek) {
       warnings.push(
-        `Planned ${highIntensitySessions.length} high-intensity sessions exceeds maximum ${limits.maxHighIntensityPerWeek}`
+        `Planned ${highIntensitySessions.length} high-intensity sessions exceeds maximum ${limits.maxHighIntensityPerWeek}`,
       );
     }
 
     // Check consecutive high intensity days
-    const sortedHighIntensity = highIntensitySessions.map((s) => s.day).sort((a, b) => a - b);
+    const sortedHighIntensity = highIntensitySessions
+      .map((s) => s.day)
+      .sort((a, b) => a - b);
     let consecutiveCount = 1;
     for (let i = 1; i < sortedHighIntensity.length; i++) {
       if (sortedHighIntensity[i] - sortedHighIntensity[i - 1] === 1) {
         consecutiveCount++;
         if (consecutiveCount > limits.maxConsecutiveHighIntensityDays) {
           warnings.push(
-            `${consecutiveCount} consecutive high-intensity days exceeds maximum ${limits.maxConsecutiveHighIntensityDays}`
+            `${consecutiveCount} consecutive high-intensity days exceeds maximum ${limits.maxConsecutiveHighIntensityDays}`,
           );
           break;
         }
@@ -557,11 +601,14 @@ export class AgeAdjustedRecoveryService {
     }
 
     // Add recommendations
-    if (profile.ageGroup === "masters" || profile.ageGroup === "senior_masters") {
+    if (
+      profile.ageGroup === "masters" ||
+      profile.ageGroup === "senior_masters"
+    ) {
       recommendations.push(
         "Consider adding extra mobility work on rest days",
         "Prioritize sleep quality (7.5+ hours)",
-        ...limits.nutritionEmphasis.slice(0, 2)
+        ...limits.nutritionEmphasis.slice(0, 2),
       );
     }
 
@@ -632,7 +679,8 @@ export class AgeAdjustedRecoveryService {
           "Activation drills (5 min)",
           "Gradual intensity build-up (3 min)",
         ],
-        emphasis: "Comprehensive joint preparation and very gradual intensity increase",
+        emphasis:
+          "Comprehensive joint preparation and very gradual intensity increase",
       },
     };
 

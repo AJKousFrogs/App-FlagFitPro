@@ -35,13 +35,13 @@ The application will be available at `http://localhost:4200`
 
 ## 📊 Project Statistics
 
-| Metric | Count |
-|--------|-------|
-| **Core Services** | 45+ |
-| **Feature Components** | 25+ |
-| **Shared Components** | 15+ |
-| **Lines of Code (Services)** | 10,000+ |
-| **ACWR Service** | 1,273 lines |
+| Metric                       | Count       |
+| ---------------------------- | ----------- |
+| **Core Services**            | 45+         |
+| **Feature Components**       | 25+         |
+| **Shared Components**        | 15+         |
+| **Lines of Code (Services)** | 10,000+     |
+| **ACWR Service**             | 1,273 lines |
 
 ---
 
@@ -149,14 +149,14 @@ import { AcwrService } from '@core/services/acwr.service';
 @Component({...})
 export class MyComponent {
   private acwrService = inject(AcwrService);
-  
+
   // Reactive signals
   acwrRatio = this.acwrService.acwrRatio;
   riskZone = this.acwrService.riskZone;
   dataQuality = this.acwrService.dataQuality;
-  
+
   // Check if training is safe
-  canTrainHard = computed(() => 
+  canTrainHard = computed(() =>
     this.acwrRatio() <= 1.5 && this.riskZone().level !== 'danger-zone'
   );
 }
@@ -172,10 +172,10 @@ import { AiChatService } from '@core/services/ai-chat.service';
 @Component({...})
 export class ChatComponent {
   private chatService = inject(AiChatService);
-  
+
   loading = this.chatService.loading;
   messages = this.chatService.messages;
-  
+
   sendMessage(text: string) {
     this.chatService.sendMessage({ message: text })
       .subscribe(response => {
@@ -196,7 +196,7 @@ import { NotificationStateService } from '@core/services/notification-state.serv
 @Component({...})
 export class HeaderComponent {
   private notificationState = inject(NotificationStateService);
-  
+
   // Reactive signals
   unreadCount = this.notificationState.unreadCount;
   notifications = this.notificationState.notifications;
@@ -216,20 +216,20 @@ Located in `src/app/shared/models/design-tokens.ts`:
 export const DESIGN_TOKENS = {
   colors: {
     brand: {
-      primary: '#089949',
-      secondary: '#10c96b',
+      primary: "#089949",
+      secondary: "#10c96b",
     },
     status: {
-      success: '#22c55e',
-      warning: '#f59e0b',
-      error: '#ef4444',
+      success: "#22c55e",
+      warning: "#f59e0b",
+      error: "#ef4444",
     },
   },
   spacing: {
-    xs: '4px',
-    sm: '8px',
-    md: '16px',
-    lg: '24px',
+    xs: "4px",
+    sm: "8px",
+    md: "16px",
+    lg: "24px",
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
@@ -245,7 +245,7 @@ export const DESIGN_TOKENS = {
   --color-secondary: #10c96b;
   --spacing-8: 8px;
   --spacing-16: 16px;
-  --font-family: 'Poppins', sans-serif;
+  --font-family: "Poppins", sans-serif;
 }
 ```
 
@@ -257,7 +257,7 @@ export const DESIGN_TOKENS = {
 
 ```typescript
 // app.config.ts
-provideZonelessChangeDetection()
+provideZonelessChangeDetection();
 ```
 
 ### Signals Throughout
@@ -271,19 +271,17 @@ loading = signal(false);
 totalStats = computed(() => this.stats().reduce((sum, s) => sum + s.value, 0));
 
 // Effects
-effect(() => console.log('Stats changed:', this.stats()));
+effect(() => console.log("Stats changed:", this.stats()));
 ```
 
 ### Modern Control Flow
 
 ```html
 @if (loading()) {
-  <p-progressSpinner />
-} @else {
-  @for (item of items(); track item.id) {
-    <app-item [data]="item" />
-  }
-}
+<p-progressSpinner />
+} @else { @for (item of items(); track item.id) {
+<app-item [data]="item" />
+} }
 ```
 
 ### Standalone Components
@@ -357,45 +355,45 @@ ng generate service core/services/my-service
 ### Common Components
 
 ```typescript
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { ChartModule } from 'primeng/chart';
-import { ToastModule } from 'primeng/toast';
-import { DialogModule } from 'primeng/dialog';
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { TableModule } from "primeng/table";
+import { ChartModule } from "primeng/chart";
+import { ToastModule } from "primeng/toast";
+import { DialogModule } from "primeng/dialog";
 ```
 
 ---
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [STYLE_GUIDE.md](./STYLE_GUIDE.md) | Coding standards |
-| [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md) | DevTools setup |
-| [ACWR_IMPLEMENTATION_GUIDE.md](./ACWR_IMPLEMENTATION_GUIDE.md) | ACWR service docs |
-| [../ANGULAR_PRIMENG_GUIDE.md](../ANGULAR_PRIMENG_GUIDE.md) | Best practices |
-| [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | System architecture |
-| [../docs/UTILITIES.md](../docs/UTILITIES.md) | Services API |
+| Document                                                       | Description         |
+| -------------------------------------------------------------- | ------------------- |
+| [STYLE_GUIDE.md](./STYLE_GUIDE.md)                             | Coding standards    |
+| [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md)       | DevTools setup      |
+| [ACWR_IMPLEMENTATION_GUIDE.md](./ACWR_IMPLEMENTATION_GUIDE.md) | ACWR service docs   |
+| [../ANGULAR_PRIMENG_GUIDE.md](../ANGULAR_PRIMENG_GUIDE.md)     | Best practices      |
+| [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)             | System architecture |
+| [../docs/UTILITIES.md](../docs/UTILITIES.md)                   | Services API        |
 
 ---
 
 ## ✅ Feature Status
 
-| Feature | Status | Components |
-|---------|--------|------------|
-| **Authentication** | ✅ Complete | 4 components |
-| **Dashboard** | ✅ Complete | 3 variants |
-| **Training** | ✅ Complete | 10 components |
-| **ACWR Monitoring** | ✅ Complete | Dashboard + alerts |
-| **Analytics** | ✅ Complete | 2 components |
-| **Wellness** | ✅ Complete | 1 component |
-| **Game Tracker** | ✅ Complete | 2 components |
-| **AI Chat** | ✅ Complete | With safety tiers |
-| **Tournaments** | ✅ Complete | 1 component |
-| **Community** | ✅ Complete | 1 component |
-| **Profile/Settings** | ✅ Complete | 2 components |
-| **Coach Features** | ✅ Complete | 2 components |
+| Feature              | Status      | Components         |
+| -------------------- | ----------- | ------------------ |
+| **Authentication**   | ✅ Complete | 4 components       |
+| **Dashboard**        | ✅ Complete | 3 variants         |
+| **Training**         | ✅ Complete | 10 components      |
+| **ACWR Monitoring**  | ✅ Complete | Dashboard + alerts |
+| **Analytics**        | ✅ Complete | 2 components       |
+| **Wellness**         | ✅ Complete | 1 component        |
+| **Game Tracker**     | ✅ Complete | 2 components       |
+| **AI Chat**          | ✅ Complete | With safety tiers  |
+| **Tournaments**      | ✅ Complete | 1 component        |
+| **Community**        | ✅ Complete | 1 component        |
+| **Profile/Settings** | ✅ Complete | 2 components       |
+| **Coach Features**   | ✅ Complete | 2 components       |
 
 ---
 

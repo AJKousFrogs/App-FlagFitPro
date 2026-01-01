@@ -12,13 +12,10 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 async function checkDatabase() {
   try {
     const startTime = Date.now();
-    const { error } = await supabaseAdmin
-      .from("users")
-      .select("id")
-      .limit(1);
-    
+    const { error } = await supabaseAdmin.from("users").select("id").limit(1);
+
     const latency = Date.now() - startTime;
-    
+
     if (error) {
       return {
         status: "unhealthy",
@@ -26,7 +23,7 @@ async function checkDatabase() {
         error: error.message,
       };
     }
-    
+
     return {
       status: "healthy",
       latency,
@@ -46,7 +43,7 @@ async function checkAuth() {
     // Just verify the auth client is configured
     const isConfigured = !!supabaseAdmin.auth;
     const latency = Date.now() - startTime;
-    
+
     return {
       status: isConfigured ? "healthy" : "unhealthy",
       latency,
@@ -67,9 +64,9 @@ function getSystemInfo() {
     arch: process.arch,
     uptime: process.uptime(),
     memoryUsage: {
-      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)  }MB`,
-      heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)  }MB`,
-      rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)  }MB`,
+      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
+      heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`,
+      rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB`,
     },
     environment: process.env.NODE_ENV || "development",
   };
@@ -117,4 +114,3 @@ exports.handler = async (event, context) => {
     },
   });
 };
-

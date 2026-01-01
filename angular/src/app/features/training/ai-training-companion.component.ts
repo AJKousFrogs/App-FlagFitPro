@@ -147,191 +147,194 @@ declare global {
     }
 
     @if (aiEnabled()) {
-    <div
-      class="training-companion"
-      [class.active]="isActive()"
-      [class.minimized]="isMinimized()"
-    >
-      <!-- AI Avatar -->
-      <div class="ai-avatar" (click)="toggleCompanion()">
-        <div class="avatar-container">
-          <div class="pulse-ring" [class.animate]="isListening()"></div>
-          <div class="avatar-image">
-            <i class="pi pi-sparkles"></i>
+      <div
+        class="training-companion"
+        [class.active]="isActive()"
+        [class.minimized]="isMinimized()"
+      >
+        <!-- AI Avatar -->
+        <div class="ai-avatar" (click)="toggleCompanion()">
+          <div class="avatar-container">
+            <div class="pulse-ring" [class.animate]="isListening()"></div>
+            <div class="avatar-image">
+              <i class="pi pi-sparkles"></i>
+            </div>
+            <div class="status-indicator" [attr.data-status]="aiStatus()"></div>
           </div>
-          <div class="status-indicator" [attr.data-status]="aiStatus()"></div>
+
+          <!-- Speech bubble -->
+          @if (currentMessage()) {
+            <div class="speech-bubble" [@fadeInOut]>
+              <p>{{ currentMessage() }}</p>
+              @if (hasQuickActions()) {
+                <div class="bubble-actions">
+                  @for (action of quickActions(); track action.label) {
+                    <p-button
+                      [label]="action.label"
+                      size="small"
+                      [text]="true"
+                      (onClick)="executeAction(action)"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          }
         </div>
 
-        <!-- Speech bubble -->
-        @if (currentMessage()) {
-          <div class="speech-bubble" [@fadeInOut]>
-            <p>{{ currentMessage() }}</p>
-            @if (hasQuickActions()) {
-              <div class="bubble-actions">
-                @for (action of quickActions(); track action.label) {
-                  <p-button
-                    [label]="action.label"
-                    size="small"
-                    [text]="true"
-                    (onClick)="executeAction(action)"
-                  />
+        <!-- Expanded Interface -->
+        @if (isActive() && !isMinimized()) {
+          <div class="companion-interface">
+            <!-- Context-Aware Insights -->
+            <div class="insights-panel">
+              <h4>
+                <i class="pi pi-lightbulb"></i>
+                Training Insights
+              </h4>
+
+              <div class="insight-cards">
+                @for (insight of currentInsights(); track insight.id) {
+                  <div
+                    class="insight-card"
+                    [class.priority]="insight.priority === 'high'"
+                  >
+                    <div class="insight-header">
+                      <i [class]="insight.icon"></i>
+                      <span class="insight-type">{{ insight.type }}</span>
+                    </div>
+                    <p class="insight-text">{{ insight.message }}</p>
+                    @if (insight.actions) {
+                      <div class="insight-actions">
+                        @for (action of insight.actions; track action.label) {
+                          <p-button
+                            [label]="action.label"
+                            [icon]="action.icon"
+                            size="small"
+                            [severity]="action.severity"
+                            (onClick)="executeInsightAction(action)"
+                          />
+                        }
+                      </div>
+                    }
+                  </div>
                 }
+              </div>
+            </div>
+
+            <!-- Voice Commands -->
+            <div class="voice-controls">
+              <p-button
+                [icon]="
+                  isListening() ? 'pi pi-microphone' : 'pi pi-microphone-slash'
+                "
+                [label]="isListening() ? 'Listening...' : 'Voice Command'"
+                [severity]="isListening() ? 'success' : 'secondary'"
+                [loading]="processingVoice()"
+                (onClick)="toggleVoiceRecognition()"
+                class="voice-button"
+              />
+
+              @if (lastVoiceCommand()) {
+                <div class="voice-feedback">
+                  <small>Last command: "{{ lastVoiceCommand() }}"</small>
+                </div>
+              }
+            </div>
+
+            <!-- Smart Recommendations -->
+            <div class="recommendations-panel">
+              <h4>
+                <i class="pi pi-sparkles"></i>
+                Smart Recommendations
+              </h4>
+
+              <p-carousel
+                [value]="recommendations()"
+                [numVisible]="1"
+                [numScroll]="1"
+                [circular]="true"
+                [autoplayInterval]="8000"
+                class="recommendation-carousel"
+              >
+                <ng-template let-recommendation pTemplate="item">
+                  <div class="recommendation-card">
+                    <div class="recommendation-content">
+                      <h5>{{ recommendation.title }}</h5>
+                      <p>{{ recommendation.description }}</p>
+
+                      @if (recommendation.expectedImprovement) {
+                        <div class="recommendation-metrics">
+                          <div class="metric">
+                            <span class="metric-label"
+                              >Expected Improvement</span
+                            >
+                            <span class="metric-value"
+                              >+{{ recommendation.expectedImprovement }}%</span
+                            >
+                          </div>
+                          @if (recommendation.timeRequired) {
+                            <div class="metric">
+                              <span class="metric-label">Time Investment</span>
+                              <span class="metric-value">{{
+                                recommendation.timeRequired
+                              }}</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+
+                    <div class="recommendation-actions">
+                      <p-button
+                        label="Try It"
+                        icon="pi pi-play"
+                        (onClick)="applyRecommendation(recommendation)"
+                      />
+
+                      <p-button
+                        label="More Info"
+                        icon="pi pi-info-circle"
+                        [outlined]="true"
+                        (onClick)="showRecommendationDetails(recommendation)"
+                      />
+                    </div>
+                  </div>
+                </ng-template>
+              </p-carousel>
+            </div>
+
+            <!-- Performance Feedback -->
+            @if (realtimePerformance()) {
+              <div class="performance-feedback">
+                <h4>Real-time Feedback</h4>
+
+                <div class="feedback-meters">
+                  @for (metric of performanceMetrics(); track metric.name) {
+                    <div class="meter">
+                      <label>{{ metric.name }}</label>
+                      <p-knob
+                        [(ngModel)]="metric.value"
+                        [min]="0"
+                        [max]="100"
+                        [readonly]="true"
+                        [size]="80"
+                        [strokeWidth]="8"
+                        [valueColor]="getMetricColor(metric.value)"
+                      />
+                      <small class="metric-trend">
+                        <i [class]="metric.trend.icon"></i>
+                        {{ metric.trend.text }}
+                      </small>
+                    </div>
+                  }
+                </div>
               </div>
             }
           </div>
         }
       </div>
-
-      <!-- Expanded Interface -->
-      @if (isActive() && !isMinimized()) {
-        <div class="companion-interface">
-          <!-- Context-Aware Insights -->
-          <div class="insights-panel">
-            <h4>
-              <i class="pi pi-lightbulb"></i>
-              Training Insights
-            </h4>
-
-            <div class="insight-cards">
-              @for (insight of currentInsights(); track insight.id) {
-                <div
-                  class="insight-card"
-                  [class.priority]="insight.priority === 'high'"
-                >
-                  <div class="insight-header">
-                    <i [class]="insight.icon"></i>
-                    <span class="insight-type">{{ insight.type }}</span>
-                  </div>
-                  <p class="insight-text">{{ insight.message }}</p>
-                  @if (insight.actions) {
-                    <div class="insight-actions">
-                      @for (action of insight.actions; track action.label) {
-                        <p-button
-                          [label]="action.label"
-                          [icon]="action.icon"
-                          size="small"
-                          [severity]="action.severity"
-                          (onClick)="executeInsightAction(action)"
-                        />
-                      }
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- Voice Commands -->
-          <div class="voice-controls">
-            <p-button
-              [icon]="
-                isListening() ? 'pi pi-microphone' : 'pi pi-microphone-slash'
-              "
-              [label]="isListening() ? 'Listening...' : 'Voice Command'"
-              [severity]="isListening() ? 'success' : 'secondary'"
-              [loading]="processingVoice()"
-              (onClick)="toggleVoiceRecognition()"
-              class="voice-button"
-            />
-
-            @if (lastVoiceCommand()) {
-              <div class="voice-feedback">
-                <small>Last command: "{{ lastVoiceCommand() }}"</small>
-              </div>
-            }
-          </div>
-
-          <!-- Smart Recommendations -->
-          <div class="recommendations-panel">
-            <h4>
-              <i class="pi pi-sparkles"></i>
-              Smart Recommendations
-            </h4>
-
-            <p-carousel
-              [value]="recommendations()"
-              [numVisible]="1"
-              [numScroll]="1"
-              [circular]="true"
-              [autoplayInterval]="8000"
-              class="recommendation-carousel"
-            >
-              <ng-template let-recommendation pTemplate="item">
-                <div class="recommendation-card">
-                  <div class="recommendation-content">
-                    <h5>{{ recommendation.title }}</h5>
-                    <p>{{ recommendation.description }}</p>
-
-                    @if (recommendation.expectedImprovement) {
-                      <div class="recommendation-metrics">
-                        <div class="metric">
-                          <span class="metric-label">Expected Improvement</span>
-                          <span class="metric-value"
-                            >+{{ recommendation.expectedImprovement }}%</span
-                          >
-                        </div>
-                        @if (recommendation.timeRequired) {
-                          <div class="metric">
-                            <span class="metric-label">Time Investment</span>
-                            <span class="metric-value">{{
-                              recommendation.timeRequired
-                            }}</span>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-
-                  <div class="recommendation-actions">
-                    <p-button
-                      label="Try It"
-                      icon="pi pi-play"
-                      (onClick)="applyRecommendation(recommendation)"
-                    />
-
-                    <p-button
-                      label="More Info"
-                      icon="pi pi-info-circle"
-                      [outlined]="true"
-                      (onClick)="showRecommendationDetails(recommendation)"
-                    />
-                  </div>
-                </div>
-              </ng-template>
-            </p-carousel>
-          </div>
-
-          <!-- Performance Feedback -->
-          @if (realtimePerformance()) {
-            <div class="performance-feedback">
-              <h4>Real-time Feedback</h4>
-
-              <div class="feedback-meters">
-                @for (metric of performanceMetrics(); track metric.name) {
-                  <div class="meter">
-                    <label>{{ metric.name }}</label>
-                    <p-knob
-                      [(ngModel)]="metric.value"
-                      [min]="0"
-                      [max]="100"
-                      [readonly]="true"
-                      [size]="80"
-                      [strokeWidth]="8"
-                      [valueColor]="getMetricColor(metric.value)"
-                    />
-                    <small class="metric-trend">
-                      <i [class]="metric.trend.icon"></i>
-                      {{ metric.trend.text }}
-                    </small>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        </div>
-      }
-    </div>
-    } <!-- End of aiEnabled() check -->
+    }
+    <!-- End of aiEnabled() check -->
   `,
   styles: [
     `
@@ -353,7 +356,11 @@ declare global {
         width: 64px;
         height: 64px;
         border-radius: var(--radius-full);
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-primary-hover) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-primary-hover) 100%
+        );
         display: flex;
         align-items: center;
         justify-content: center;
@@ -956,7 +963,9 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
             ? insightObj["id"]
             : `insight-${Date.now()}`,
         type:
-          typeof insightObj["type"] === "string" ? insightObj["type"] : "General",
+          typeof insightObj["type"] === "string"
+            ? insightObj["type"]
+            : "General",
         message: insightObj["message"] as string,
         icon:
           typeof insightObj["icon"] === "string"

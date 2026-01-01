@@ -46,7 +46,7 @@ exports.handler = async (event, context) => {
               expires_in: 3600,
             },
           },
-          requestId
+          requestId,
         );
       }
 
@@ -61,7 +61,12 @@ exports.handler = async (event, context) => {
 
       if (error) {
         console.error("Supabase login error:", error.message);
-        return createErrorResponse(error.message, 401, "auth_failed", requestId);
+        return createErrorResponse(
+          error.message,
+          401,
+          "auth_failed",
+          requestId,
+        );
       }
 
       // Return success response with user and session data
@@ -79,7 +84,7 @@ exports.handler = async (event, context) => {
             expires_in: data.session.expires_in,
           },
         },
-        requestId
+        requestId,
       );
     },
   });

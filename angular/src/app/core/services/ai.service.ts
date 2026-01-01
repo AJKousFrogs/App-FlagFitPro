@@ -99,132 +99,27 @@ export class AIService {
               if (response.success && response.data) {
                 return response.data;
               }
-              // Fallback to mock suggestions
-              return this.generateMockSuggestions(params);
+              throw new Error("No training suggestions available");
             }),
-            catchError(() => {
-              // Fallback to mock suggestions on error
-              return of(this.generateMockSuggestions(params));
+            catchError((error) => {
+              this.logger.error(
+                "Error loading real training suggestions:",
+                error,
+              );
+              throw error;
             }),
           );
       }),
       catchError((error) => {
-        // If consent check fails, throw error (don't fallback to mock)
-        return throwError(() => new Error(error.message || 'AI processing consent required'));
-      })
+        // If consent check fails or API fails, throw error
+        return throwError(
+          () =>
+            new Error(
+              error.message || "AI processing failed or consent required",
+            ),
+        );
+      }),
     );
-  }
-
-  /**
-   * Generate mock suggestions based on user context
-   */
-  private generateMockSuggestions(
-    params: TrainingSuggestionParams,
-  ): TrainingSuggestion[] {
-    const suggestions: TrainingSuggestion[] = [];
-
-    // Analyze recent performance to suggest improvements
-    if (params.recentPerformance && params.recentPerformance.length > 0) {
-      // Check for speed training gaps
-      const hasSpeedTraining = params.recentPerformance.some(
-        (p) => p.type === "speed",
-      );
-      if (!hasSpeedTraining) {
-        suggestions.push({
-          id: "speed-1",
-          title: "Speed & Agility Focus",
-          description: "Based on your recent sessions, add speed training",
-          formData: {
-            sessionType: "speed",
-            duration: 45,
-            equipment: ["cones", "ladder"],
-            intensity: "high",
-            focus: ["acceleration", "agility"],
-          },
-          reason: "You haven't done speed training recently",
-          priority: "high",
-        });
-      }
-
-      // Check for strength training
-      const hasStrengthTraining = params.recentPerformance.some(
-        (p) => p.type === "strength",
-      );
-      if (!hasStrengthTraining) {
-        suggestions.push({
-          id: "strength-1",
-          title: "Strength & Power",
-          description: "Add strength training to improve power",
-          formData: {
-            sessionType: "strength",
-            duration: 60,
-            equipment: ["weights", "resistance_bands"],
-            intensity: "medium",
-            focus: ["power", "core"],
-          },
-          reason: "Strength training complements your speed work",
-          priority: "medium",
-        });
-      }
-    }
-
-    // Check for upcoming games
-    if (params.upcomingGames && params.upcomingGames.length > 0) {
-      const nextGame = params.upcomingGames[0];
-      const daysUntilGame = this.getDaysUntil(nextGame.date);
-
-      if (daysUntilGame <= 2) {
-        suggestions.push({
-          id: "recovery-1",
-          title: "Pre-Game Recovery",
-          description: "Light recovery session before your game",
-          formData: {
-            sessionType: "recovery",
-            duration: 30,
-            equipment: [],
-            intensity: "low",
-            focus: ["mobility", "stretching"],
-          },
-          reason: `Game in ${daysUntilGame} day(s) - focus on recovery`,
-          priority: "high",
-        });
-      } else if (daysUntilGame <= 5) {
-        suggestions.push({
-          id: "game-prep-1",
-          title: "Game Preparation",
-          description: "Game-specific drills and tactics",
-          formData: {
-            sessionType: "tactical",
-            duration: 60,
-            equipment: ["football", "cones"],
-            intensity: "medium",
-            focus: ["tactics", "positioning"],
-          },
-          reason: `Game in ${daysUntilGame} days - time to prepare`,
-          priority: "high",
-        });
-      }
-    }
-
-    // Default suggestions if none generated
-    if (suggestions.length === 0) {
-      suggestions.push({
-        id: "default-1",
-        title: "Balanced Training",
-        description: "A well-rounded training session",
-        formData: {
-          sessionType: "mixed",
-          duration: 45,
-          equipment: ["cones"],
-          intensity: "medium",
-          focus: ["endurance", "skills"],
-        },
-        reason: "Maintain your training consistency",
-        priority: "medium",
-      });
-    }
-
-    return suggestions.slice(0, 3); // Return max 3 suggestions
   }
 
   private getDaysUntil(date: string | Date): number {
@@ -345,7 +240,9 @@ export class AIService {
         return from(this.privacySettingsService.requireAiConsent()).pipe(
           switchMap(() => {
             return this.apiService
-              .post<CommandResponse>("/api/ai/process-command", { command: lowerCommand })
+              .post<CommandResponse>("/api/ai/process-command", {
+                command: lowerCommand,
+              })
               .pipe(
                 map((response): CommandResponse => {
                   if (response.success && response.data) {
@@ -355,7 +252,8 @@ export class AIService {
                     };
                   }
                   return {
-                    message: "I'm not sure I understand. Can you rephrase that?",
+                    message:
+                      "I'm not sure I understand. Can you rephrase that?",
                   };
                 }),
                 catchError(() => {
@@ -369,9 +267,10 @@ export class AIService {
           catchError((error) => {
             // Consent not given - provide helpful message
             return of({
-              message: "AI processing is disabled. Enable AI in Privacy Settings to use advanced features.",
+              message:
+                "AI processing is disabled. Enable AI in Privacy Settings to use advanced features.",
             });
-          })
+          }),
         );
     }
 
@@ -461,8 +360,10 @@ export class AIService {
       const recentAvg =
         context.previousPerformance
           .slice(-3)
-          .reduce((sum: number, p: RecentPerformance) => sum + (p.score || 0), 0) /
-        Math.min(3, context.previousPerformance.length);
+          .reduce(
+            (sum: number, p: RecentPerformance) => sum + (p.score || 0),
+            0,
+          ) / Math.min(3, context.previousPerformance.length);
 
       if (recentAvg > 85) {
         insights.push({
@@ -479,20 +380,22 @@ export class AIService {
     // Try API for advanced analysis (requires AI consent)
     return from(this.privacySettingsService.requireAiConsent()).pipe(
       switchMap(() => {
-        return this.apiService.post<ContextInsight[]>("/api/ai/analyze-context", context).pipe(
-          map((response) => {
-            if (response.success && response.data) {
-              return response.data;
-            }
-            return insights;
-          }),
-          catchError(() => of(insights)),
-        );
+        return this.apiService
+          .post<ContextInsight[]>("/api/ai/analyze-context", context)
+          .pipe(
+            map((response) => {
+              if (response.success && response.data) {
+                return response.data;
+              }
+              return insights;
+            }),
+            catchError(() => of(insights)),
+          );
       }),
       catchError(() => {
         // Consent not given - return basic insights only (no AI-enhanced analysis)
         return of(insights);
-      })
+      }),
     );
   }
 }

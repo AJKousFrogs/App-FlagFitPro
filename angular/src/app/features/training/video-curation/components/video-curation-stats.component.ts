@@ -122,4 +122,3 @@ export class VideoCurationStatsComponent {
   pendingCount = input.required<number>();
   playlistCount = input.required<number>();
 }
-

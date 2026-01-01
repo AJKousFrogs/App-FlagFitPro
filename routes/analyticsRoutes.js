@@ -9,7 +9,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import { supabase, pool, checkDatabaseHealth } from "./utils/database.js";
-import { safeQuery, safeParseInt, safeFormatDate } from "./utils/query-helper.js";
+import {
+  safeQuery,
+  safeParseInt,
+  safeFormatDate,
+} from "./utils/query-helper.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
   validateUserId,
@@ -133,7 +137,10 @@ router.get("/performance-trends", async (req, res) => {
 
     performanceData.forEach((row, index) => {
       weeksData.push(`Week ${index + 1}`);
-      const normalizedScore = Math.min(100, Math.max(0, (row.avg_score || 8.5) * 10));
+      const normalizedScore = Math.min(
+        100,
+        Math.max(0, (row.avg_score || 8.5) * 10),
+      );
       overallScores.push(Math.round(normalizedScore));
 
       const sessionEffectiveness = Math.min(
@@ -159,8 +166,14 @@ router.get("/performance-trends", async (req, res) => {
         const prevOverall = overallScores[weekIndex - 1] || 78;
         const prevTraining = trainingScores[weekIndex - 1] || 75;
 
-        const newOverall = Math.min(100, Math.max(0, prevOverall + (Math.random() * 6 - 2)));
-        const newTraining = Math.min(100, Math.max(0, prevTraining + (Math.random() * 5 - 1)));
+        const newOverall = Math.min(
+          100,
+          Math.max(0, prevOverall + (Math.random() * 6 - 2)),
+        );
+        const newTraining = Math.min(
+          100,
+          Math.max(0, prevTraining + (Math.random() * 5 - 1)),
+        );
 
         overallScores.push(Math.round(newOverall));
         trainingScores.push(Math.round(newTraining));
@@ -171,12 +184,24 @@ router.get("/performance-trends", async (req, res) => {
       weeks: weeksData,
       overallScores,
       trainingScores,
-      totalSessions: performanceData.reduce((sum, row) => sum + (row.sessions_count || 0), 0),
+      totalSessions: performanceData.reduce(
+        (sum, row) => sum + (row.sessions_count || 0),
+        0,
+      ),
       averageScore: Math.round(safeAverage(overallScores, 78)),
     });
   } catch (error) {
-    serverLogger.error(`${ROUTE_NAME.toUpperCase()} performance trends error:`, error);
-    return sendError(res, "Failed to fetch performance trends", "FETCH_ERROR", 500, error.message);
+    serverLogger.error(
+      `${ROUTE_NAME.toUpperCase()} performance trends error:`,
+      error,
+    );
+    return sendError(
+      res,
+      "Failed to fetch performance trends",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -196,16 +221,33 @@ router.get("/team-chemistry", async (req, res) => {
 
       const { data } = await supabase
         .from("team_chemistry_metrics")
-        .select("communication_score, coordination_score, trust_score, cohesion_score, overall_chemistry_score")
+        .select(
+          "communication_score, coordination_score, trust_score, cohesion_score, overall_chemistry_score",
+        )
         .gte("metric_date", startDate.toISOString());
 
       if (data?.length > 0) {
         chemistryData = {
-          avg_communication: safeAverage(data.map((d) => d.communication_score), 8.5),
-          avg_coordination: safeAverage(data.map((d) => d.coordination_score), 7.8),
-          avg_trust: safeAverage(data.map((d) => d.trust_score), 9.1),
-          avg_cohesion: safeAverage(data.map((d) => d.cohesion_score), 8.2),
-          avg_overall: safeAverage(data.map((d) => d.overall_chemistry_score), 8.4),
+          avg_communication: safeAverage(
+            data.map((d) => d.communication_score),
+            8.5,
+          ),
+          avg_coordination: safeAverage(
+            data.map((d) => d.coordination_score),
+            7.8,
+          ),
+          avg_trust: safeAverage(
+            data.map((d) => d.trust_score),
+            9.1,
+          ),
+          avg_cohesion: safeAverage(
+            data.map((d) => d.cohesion_score),
+            8.2,
+          ),
+          avg_overall: safeAverage(
+            data.map((d) => d.overall_chemistry_score),
+            8.4,
+          ),
         };
       }
     } else if (pool) {
@@ -263,7 +305,14 @@ router.get("/team-chemistry", async (req, res) => {
     });
 
     return sendSuccess(res, {
-      metrics: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
+      metrics: [
+        "Communication",
+        "Coordination",
+        "Trust",
+        "Cohesion",
+        "Leadership",
+        "Adaptability",
+      ],
       currentScores: currentScores.map((score) => Math.round(score * 10) / 10),
       targetScores: targetScores.map((score) => Math.round(score * 10) / 10),
       overallScore: Math.round((chemistryData.avg_overall || 8.4) * 10) / 10,
@@ -271,7 +320,13 @@ router.get("/team-chemistry", async (req, res) => {
     });
   } catch (error) {
     serverLogger.error("Team chemistry error:", error);
-    return sendError(res, "Failed to fetch team chemistry data", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch team chemistry data",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -357,16 +412,25 @@ router.get("/training-distribution", async (req, res) => {
     const avgPerformances = [];
 
     trainingData.forEach((row) => {
-      const displayName = trainingTypeMap[row.training_type] || row.training_type;
+      const displayName =
+        trainingTypeMap[row.training_type] || row.training_type;
       trainingTypes.push(displayName);
       sessionCounts.push(safeParseInt(row.session_count, 0));
       avgDurations.push(Math.round(safeParseFloat(row.avg_duration, 45)));
-      avgPerformances.push(Math.round(safeParseFloat(row.avg_performance, 8.5) * 10) / 10);
+      avgPerformances.push(
+        Math.round(safeParseFloat(row.avg_performance, 8.5) * 10) / 10,
+      );
     });
 
     // Fill with default data if not enough sessions
     if (trainingTypes.length < 5) {
-      const defaultTypes = ["Agility Training", "Speed Development", "Technical Skills", "Strength Training", "Recovery Sessions"];
+      const defaultTypes = [
+        "Agility Training",
+        "Speed Development",
+        "Technical Skills",
+        "Strength Training",
+        "Recovery Sessions",
+      ];
       const defaultCounts = [30, 25, 20, 15, 10];
 
       defaultTypes.forEach((type, index) => {
@@ -389,7 +453,13 @@ router.get("/training-distribution", async (req, res) => {
     });
   } catch (error) {
     serverLogger.error("Training distribution error:", error);
-    return sendError(res, "Failed to fetch training distribution", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch training distribution",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -425,8 +495,12 @@ router.get("/position-performance", async (req, res) => {
 
         if (analytics?.length > 0) {
           positionData = positionHistory.map((p) => ({
-            position_name: p.flag_football_positions?.position_name || "Unknown",
-            avg_performance: safeAverage(analytics.map((a) => a.performance_score), 8.5),
+            position_name:
+              p.flag_football_positions?.position_name || "Unknown",
+            avg_performance: safeAverage(
+              analytics.map((a) => a.performance_score),
+              8.5,
+            ),
           }));
         }
       }
@@ -452,7 +526,13 @@ router.get("/position-performance", async (req, res) => {
     }
 
     // Default positions if no data
-    const defaultPositions = ["Quarterback", "Wide Receiver", "Running Back", "Defensive Back", "Rusher"];
+    const defaultPositions = [
+      "Quarterback",
+      "Wide Receiver",
+      "Running Back",
+      "Defensive Back",
+      "Rusher",
+    ];
     const defaultScores = [87, 92, 89, 85, 78];
     const targetScores = [90, 95, 92, 88, 82];
 
@@ -463,7 +543,9 @@ router.get("/position-performance", async (req, res) => {
     if (positionData.length > 0) {
       positionData.forEach((row) => {
         positions.push(row.position_name);
-        const performance = Math.round(safeParseFloat(row.avg_performance, 8.5) * 10);
+        const performance = Math.round(
+          safeParseFloat(row.avg_performance, 8.5) * 10,
+        );
         currentScores.push(performance);
         targetScoresData.push(performance + 3);
       });
@@ -482,7 +564,13 @@ router.get("/position-performance", async (req, res) => {
     });
   } catch (error) {
     serverLogger.error("Position performance error:", error);
-    return sendError(res, "Failed to fetch position performance data", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch position performance data",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -508,8 +596,14 @@ router.get("/injury-risk", async (req, res) => {
 
       if (data?.length > 0) {
         riskData = {
-          avg_fatigue: safeAverage(data.map((d) => d.fatigue_score), 3),
-          avg_injury_risk: safeAverage(data.map((d) => d.injury_risk_score), 2),
+          avg_fatigue: safeAverage(
+            data.map((d) => d.fatigue_score),
+            3,
+          ),
+          avg_injury_risk: safeAverage(
+            data.map((d) => d.injury_risk_score),
+            2,
+          ),
           assessments_count: data.length,
         };
       }
@@ -570,7 +664,13 @@ router.get("/injury-risk", async (req, res) => {
     });
   } catch (error) {
     serverLogger.error("Injury risk error:", error);
-    return sendError(res, "Failed to fetch injury risk data", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch injury risk data",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -661,15 +761,22 @@ router.get("/speed-development", async (req, res) => {
       speedData.forEach((row) => {
         const weekStart = row.week_start || row.created_at;
         const weekIndex = Math.floor(
-          (Date.now() - new Date(weekStart).getTime()) / (7 * 24 * 60 * 60 * 1000),
+          (Date.now() - new Date(weekStart).getTime()) /
+            (7 * 24 * 60 * 60 * 1000),
         );
 
         if (weekIndex >= 0 && weekIndex < weeks) {
           if (!weeklyData[weekIndex]) {
-            weeklyData[weekIndex] = { "40-Yard Dash": [], "10-Yard Sprint": [] };
+            weeklyData[weekIndex] = {
+              "40-Yard Dash": [],
+              "10-Yard Sprint": [],
+            };
           }
 
-          const metricValue = safeParseFloat(row.avg_metric_value || row.metric_value, 0);
+          const metricValue = safeParseFloat(
+            row.avg_metric_value || row.metric_value,
+            0,
+          );
           const metricName = row.metric_name;
 
           if (metricValue > 0 && weeklyData[weekIndex][metricName]) {
@@ -705,11 +812,22 @@ router.get("/speed-development", async (req, res) => {
       bestFortyYard: Math.min(...fortyYardTimes),
       bestTenYard: Math.min(...tenYardTimes),
       totalImprovement:
-        Math.round((fortyYardTimes[0] - fortyYardTimes[fortyYardTimes.length - 1]) * 100) / 100,
+        Math.round(
+          (fortyYardTimes[0] - fortyYardTimes[fortyYardTimes.length - 1]) * 100,
+        ) / 100,
     });
   } catch (error) {
-    serverLogger.error(`${ROUTE_NAME.toUpperCase()} speed development error:`, error);
-    return sendError(res, "Failed to fetch speed development data", "FETCH_ERROR", 500, error.message);
+    serverLogger.error(
+      `${ROUTE_NAME.toUpperCase()} speed development error:`,
+      error,
+    );
+    return sendError(
+      res,
+      "Failed to fetch speed development data",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -734,7 +852,13 @@ router.get("/user-engagement", async (req, res) => {
       const { data } = await supabase
         .from("analytics_events")
         .select("event_type, user_id")
-        .in("event_type", ["page_view", "feature_usage", "goal_created", "training_started", "session_complete"])
+        .in("event_type", [
+          "page_view",
+          "feature_usage",
+          "goal_created",
+          "training_started",
+          "session_complete",
+        ])
         .gte("created_at", startDate.toISOString());
 
       if (data?.length > 0) {
@@ -779,7 +903,14 @@ router.get("/user-engagement", async (req, res) => {
       goal_created: "Goal Set",
     };
 
-    const stages = ["App Opens", "Dashboard Views", "Training Started", "Session Complete", "Goal Set", "Goal Achieved"];
+    const stages = [
+      "App Opens",
+      "Dashboard Views",
+      "Training Started",
+      "Session Complete",
+      "Goal Set",
+      "Goal Achieved",
+    ];
     const userCounts = [1000, 850, 720, 680, 450, 320];
 
     // Update with real data if available
@@ -788,7 +919,10 @@ router.get("/user-engagement", async (req, res) => {
       if (stageName) {
         const stageIndex = stages.indexOf(stageName);
         if (stageIndex !== -1) {
-          userCounts[stageIndex] = safeParseInt(row.unique_users, userCounts[stageIndex]);
+          userCounts[stageIndex] = safeParseInt(
+            row.unique_users,
+            userCounts[stageIndex],
+          );
         }
       }
     });
@@ -804,7 +938,9 @@ router.get("/user-engagement", async (req, res) => {
       stages,
       userCounts,
       conversionRates: stages.map((stage, index) => {
-        if (index === 0) {return 100;}
+        if (index === 0) {
+          return 100;
+        }
         return Math.round((userCounts[index] / userCounts[0]) * 100);
       }),
       period,
@@ -812,7 +948,13 @@ router.get("/user-engagement", async (req, res) => {
     });
   } catch (error) {
     serverLogger.error("User engagement error:", error);
-    return sendError(res, "Failed to fetch user engagement data", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch user engagement data",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -854,7 +996,10 @@ router.get("/summary", async (req, res) => {
         .gte("created_at", monthAgo.toISOString());
 
       if (performance?.length > 0) {
-        summary.avg_performance = safeAverage(performance.map((p) => p.performance_score), 8.5);
+        summary.avg_performance = safeAverage(
+          performance.map((p) => p.performance_score),
+          8.5,
+        );
       }
 
       // Get weekly active users
@@ -864,7 +1009,9 @@ router.get("/summary", async (req, res) => {
         .gte("created_at", weekAgo.toISOString());
 
       if (events?.length > 0) {
-        summary.weekly_active_users = new Set(events.map((e) => e.user_id)).size;
+        summary.weekly_active_users = new Set(
+          events.map((e) => e.user_id),
+        ).size;
       }
 
       // Get avg load time
@@ -874,7 +1021,10 @@ router.get("/summary", async (req, res) => {
         .gte("created_at", weekAgo.toISOString());
 
       if (metrics?.length > 0) {
-        summary.avg_load_time = safeAverage(metrics.map((m) => m.load_time), 1000);
+        summary.avg_load_time = safeAverage(
+          metrics.map((m) => m.load_time),
+          1000,
+        );
       }
     } else if (pool) {
       const summaryQuery = `
@@ -891,14 +1041,21 @@ router.get("/summary", async (req, res) => {
 
     return sendSuccess(res, {
       weeklySessions: safeParseInt(summary.weekly_sessions, 0),
-      averagePerformance: Math.round(safeParseFloat(summary.avg_performance, 8.5) * 10) / 10,
+      averagePerformance:
+        Math.round(safeParseFloat(summary.avg_performance, 8.5) * 10) / 10,
       weeklyActiveUsers: safeParseInt(summary.weekly_active_users, 0),
       averageLoadTime: Math.round(safeParseFloat(summary.avg_load_time, 1000)),
       lastUpdated: safeFormatDate(new Date()),
     });
   } catch (error) {
     serverLogger.error("Analytics summary error:", error);
-    return sendError(res, "Failed to fetch analytics summary", "FETCH_ERROR", 500, error.message);
+    return sendError(
+      res,
+      "Failed to fetch analytics summary",
+      "FETCH_ERROR",
+      500,
+      error.message,
+    );
   }
 });
 
@@ -912,8 +1069,12 @@ router.get("/health", async (req, res) => {
     const dbHealth = await checkDatabaseHealth();
 
     const healthStatus = {
-      success: dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
-      status: dbHealth.supabase === "connected" || dbHealth.postgres === "connected" ? "healthy" : "unhealthy",
+      success:
+        dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
+      status:
+        dbHealth.supabase === "connected" || dbHealth.postgres === "connected"
+          ? "healthy"
+          : "unhealthy",
       service: ROUTE_NAME,
       version: "2.1.0",
       timestamp: safeFormatDate(new Date()),
@@ -927,7 +1088,10 @@ router.get("/health", async (req, res) => {
     const statusCode = healthStatus.success ? 200 : 503;
     res.status(statusCode).json(healthStatus);
   } catch (error) {
-    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(
+      `${ROUTE_NAME.toUpperCase()} health check error:`,
+      error,
+    );
     res.status(503).json({
       success: false,
       status: "unhealthy",

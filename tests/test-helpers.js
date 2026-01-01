@@ -46,7 +46,7 @@ export const createMockApiResponse = (data, options = {}) => {
 export const createMockErrorResponse = (message, status = 500) => {
   return createMockApiResponse(
     { success: false, error: message },
-    { status, ok: false }
+    { status, ok: false },
   );
 };
 
@@ -60,7 +60,7 @@ export const createMockErrorResponse = (message, status = 500) => {
  * @returns {object} Mock user data
  */
 export const createMockUser = (overrides = {}) => ({
-  id: `user-${  Math.random().toString(36).substr(2, 9)}`,
+  id: `user-${Math.random().toString(36).substr(2, 9)}`,
   email: "athlete@flagfitpro.com",
   name: "Test Athlete",
   role: "player",
@@ -197,7 +197,7 @@ export const createMockTrainingSessions = (count = 5) => {
       date: new Date(Date.now() - index * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0],
-    })
+    }),
   );
 };
 
@@ -438,7 +438,7 @@ export const createMockNotifications = (count = 5) => {
       id: index + 1,
       type: types[index % types.length],
       read: index > 1, // First 2 unread
-    })
+    }),
   );
 };
 
@@ -478,7 +478,7 @@ export const createMockAIResponse = (query, overrides = {}) => ({
     "Should we adjust your training schedule?",
   ],
   timestamp: new Date().toISOString(),
-  sessionId: `ai-session-${  Math.random().toString(36).substr(2, 9)}`,
+  sessionId: `ai-session-${Math.random().toString(36).substr(2, 9)}`,
   ...overrides,
 });
 
@@ -564,7 +564,7 @@ export const createEnhancedLocalStorageMock = () => {
             key,
             newValue: value,
             oldValue: oldValue || null,
-          })
+          }),
         );
       }
     }),
@@ -577,7 +577,7 @@ export const createEnhancedLocalStorageMock = () => {
             key,
             newValue: null,
             oldValue,
-          })
+          }),
         );
       }
     }),
@@ -627,7 +627,10 @@ export const createLoadTestScenario = (userCount = 100, duration = 30) => ({
     {
       name: "analytics_view",
       weight: 20,
-      requests: ["GET /api/analytics/performance", "GET /api/analytics/summary"],
+      requests: [
+        "GET /api/analytics/performance",
+        "GET /api/analytics/summary",
+      ],
     },
   ],
   acceptanceCriteria: {
@@ -647,12 +650,12 @@ export const createLoadTestScenario = (userCount = 100, duration = 30) => ({
  */
 export const setupTestEnvironment = () => {
   // Mock window globals
-  global.window = global.window || {};
-  global.document = global.document || {};
-  global.navigator = global.navigator || { userAgent: "test" };
+  global.window ||= {};
+  global.document ||= {};
+  global.navigator ||= { userAgent: "test" };
 
   // Mock performance API
-  global.performance = global.performance || {
+  global.performance ||= {
     now: vi.fn(() => Date.now()),
     mark: vi.fn(),
     measure: vi.fn(),
@@ -701,19 +704,19 @@ export const validateTestData = (data, schema) => {
     if (key in data) {
       if (rules.type && typeof data[key] !== rules.type) {
         errors.push(
-          `Invalid type for ${key}: expected ${rules.type}, got ${typeof data[key]}`
+          `Invalid type for ${key}: expected ${rules.type}, got ${typeof data[key]}`,
         );
       }
 
       if (rules.min !== undefined && data[key] < rules.min) {
         errors.push(
-          `Value for ${key} below minimum: ${data[key]} < ${rules.min}`
+          `Value for ${key} below minimum: ${data[key]} < ${rules.min}`,
         );
       }
 
       if (rules.max !== undefined && data[key] > rules.max) {
         errors.push(
-          `Value for ${key} above maximum: ${data[key]} > ${rules.max}`
+          `Value for ${key} above maximum: ${data[key]} > ${rules.max}`,
         );
       }
 

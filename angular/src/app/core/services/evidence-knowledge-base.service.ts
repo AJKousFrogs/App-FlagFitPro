@@ -65,12 +65,12 @@ export type ResearchCategory =
   | "psychology";
 
 export type EvidenceLevel =
-  | "meta_analysis"      // Highest - systematic review of multiple studies
-  | "randomized_trial"   // High - randomized controlled trial
-  | "cohort_study"       // Moderate - prospective cohort study
-  | "case_control"       // Moderate - case-control study
-  | "expert_consensus"   // Lower - expert opinion/consensus
-  | "case_series";       // Lowest - case reports
+  | "meta_analysis" // Highest - systematic review of multiple studies
+  | "randomized_trial" // High - randomized controlled trial
+  | "cohort_study" // Moderate - prospective cohort study
+  | "case_control" // Moderate - case-control study
+  | "expert_consensus" // Lower - expert opinion/consensus
+  | "case_series"; // Lowest - case reports
 
 export interface TrainingGuideline {
   id: string;
@@ -103,7 +103,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "gabbett_2016",
     authors: "Gabbett, T.J.",
     year: 2016,
-    title: "The training—injury prevention paradox: should athletes be training smarter and harder?",
+    title:
+      "The training—injury prevention paradox: should athletes be training smarter and harder?",
     journal: "British Journal of Sports Medicine",
     volume: "50",
     pages: "273-280",
@@ -131,9 +132,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "hulin_2014",
-    authors: "Hulin, B.T., Gabbett, T.J., Blanch, P., Chapman, P., Bailey, D., & Orchard, J.W.",
+    authors:
+      "Hulin, B.T., Gabbett, T.J., Blanch, P., Chapman, P., Bailey, D., & Orchard, J.W.",
     year: 2014,
-    title: "Spikes in acute workload are associated with increased injury risk in elite cricket fast bowlers",
+    title:
+      "Spikes in acute workload are associated with increased injury risk in elite cricket fast bowlers",
     journal: "British Journal of Sports Medicine",
     volume: "48",
     pages: "708-712",
@@ -159,9 +162,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "hulin_2016",
-    authors: "Hulin, B.T., Gabbett, T.J., Lawson, D.W., Caputi, P., & Sampson, J.A.",
+    authors:
+      "Hulin, B.T., Gabbett, T.J., Lawson, D.W., Caputi, P., & Sampson, J.A.",
     year: 2016,
-    title: "The acute:chronic workload ratio predicts injury: high chronic workload may decrease injury risk in elite rugby league players",
+    title:
+      "The acute:chronic workload ratio predicts injury: high chronic workload may decrease injury risk in elite rugby league players",
     journal: "British Journal of Sports Medicine",
     volume: "50",
     pages: "231-236",
@@ -187,7 +192,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "foster_2001",
-    authors: "Foster, C., Florhaug, J.A., Franklin, J., Gottschall, L., Hrovatin, L.A., Parker, S., Doleshal, P., & Dodge, C.",
+    authors:
+      "Foster, C., Florhaug, J.A., Franklin, J., Gottschall, L., Hrovatin, L.A., Parker, S., Doleshal, P., & Dodge, C.",
     year: 2001,
     title: "A new approach to monitoring exercise training",
     journal: "Journal of Strength and Conditioning Research",
@@ -245,7 +251,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "haugen_2019",
     authors: "Haugen, T., Seiler, S., Sandbakk, Ø., & Tønnessen, E.",
     year: 2019,
-    title: "The Training and Development of Elite Sprint Performance: an Integration of Scientific and Best Practice Literature",
+    title:
+      "The Training and Development of Elite Sprint Performance: an Integration of Scientific and Best Practice Literature",
     journal: "Sports Medicine - Open",
     volume: "5",
     pages: "44",
@@ -273,7 +280,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "morin_samozino_2016",
     authors: "Morin, J.B., & Samozino, P.",
     year: 2016,
-    title: "Interpreting Power-Force-Velocity Profiles for Individualized and Specific Training",
+    title:
+      "Interpreting Power-Force-Velocity Profiles for Individualized and Specific Training",
     journal: "International Journal of Sports Physiology and Performance",
     volume: "11",
     pages: "267-272",
@@ -299,9 +307,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "seitz_2014",
-    authors: "Seitz, L.B., Reyes, A., Tran, T.T., de Villarreal, E.S., & Haff, G.G.",
+    authors:
+      "Seitz, L.B., Reyes, A., Tran, T.T., de Villarreal, E.S., & Haff, G.G.",
     year: 2014,
-    title: "Increases in Lower-Body Strength Transfer Positively to Sprint Performance: A Systematic Review with Meta-Analysis",
+    title:
+      "Increases in Lower-Body Strength Transfer Positively to Sprint Performance: A Systematic Review with Meta-Analysis",
     journal: "Sports Medicine",
     volume: "44",
     pages: "1693-1702",
@@ -359,7 +369,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "petrakos_2016",
     authors: "Petrakos, G., Morin, J.B., & Egan, B.",
     year: 2016,
-    title: "Resisted Sled Sprint Training to Improve Sprint Performance: A Systematic Review",
+    title:
+      "Resisted Sled Sprint Training to Improve Sprint Performance: A Systematic Review",
     journal: "Sports Medicine",
     volume: "46",
     pages: "381-400",
@@ -387,7 +398,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "kubo_2000",
     authors: "Kubo, K., Kanehisa, H., & Fukunaga, T.",
     year: 2000,
-    title: "Effect of stretching training on the viscoelastic properties of human tendon structures in vivo",
+    title:
+      "Effect of stretching training on the viscoelastic properties of human tendon structures in vivo",
     journal: "Journal of Applied Physiology",
     volume: "92",
     pages: "595-601",
@@ -411,7 +423,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "schache_2012",
-    authors: "Schache, A.G., Dorn, T.W., Blanch, P.D., Brown, N.A., & Pandy, M.G.",
+    authors:
+      "Schache, A.G., Dorn, T.W., Blanch, P.D., Brown, N.A., & Pandy, M.G.",
     year: 2012,
     title: "Mechanics of the Human Hamstring Muscles during Sprinting",
     journal: "Medicine & Science in Sports & Exercise",
@@ -438,7 +451,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "buchheit_2010",
-    authors: "Buchheit, M., Mendez-Villanueva, A., Simpson, B.M., & Bourdon, P.C.",
+    authors:
+      "Buchheit, M., Mendez-Villanueva, A., Simpson, B.M., & Bourdon, P.C.",
     year: 2010,
     title: "Repeated-Sprint Sequences During Youth Soccer Matches",
     journal: "International Journal of Sports Medicine",
@@ -470,9 +484,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   // ============================================================================
   {
     id: "al_attar_2017",
-    authors: "Al Attar, W.S., Soomro, N., Sinclair, P.J., Pappas, E., & Sanders, R.H.",
+    authors:
+      "Al Attar, W.S., Soomro, N., Sinclair, P.J., Pappas, E., & Sanders, R.H.",
     year: 2017,
-    title: "Effect of Injury Prevention Programs that Include the Nordic Hamstring Exercise on Hamstring Injury Rates in Soccer Players: A Systematic Review and Meta-Analysis",
+    title:
+      "Effect of Injury Prevention Programs that Include the Nordic Hamstring Exercise on Hamstring Injury Rates in Soccer Players: A Systematic Review and Meta-Analysis",
     journal: "Sports Medicine",
     volume: "47",
     pages: "907-916",
@@ -499,9 +515,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "haroy_2019",
-    authors: "Harøy, J., Clarsen, B., Wiger, E.G., Øyen, M.G., Serner, A., Thorborg, K., Hölmich, P., Andersen, T.E., & Bahr, R.",
+    authors:
+      "Harøy, J., Clarsen, B., Wiger, E.G., Øyen, M.G., Serner, A., Thorborg, K., Hölmich, P., Andersen, T.E., & Bahr, R.",
     year: 2019,
-    title: "The Adductor Strengthening Programme prevents groin problems among male football players: a cluster-randomised controlled trial",
+    title:
+      "The Adductor Strengthening Programme prevents groin problems among male football players: a cluster-randomised controlled trial",
     journal: "British Journal of Sports Medicine",
     volume: "53",
     pages: "150-157",
@@ -530,7 +548,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "lauersen_2014",
     authors: "Lauersen, J.B., Bertelsen, D.M., & Andersen, L.B.",
     year: 2014,
-    title: "The effectiveness of exercise interventions to prevent sports injuries: a systematic review and meta-analysis of randomised controlled trials",
+    title:
+      "The effectiveness of exercise interventions to prevent sports injuries: a systematic review and meta-analysis of randomised controlled trials",
     journal: "British Journal of Sports Medicine",
     volume: "48",
     pages: "871-877",
@@ -558,7 +577,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "brughelli_2008",
     authors: "Brughelli, M., Cronin, J., Levin, G., & Chaouachi, A.",
     year: 2008,
-    title: "Understanding Change of Direction Ability in Sport: A Review of Resistance Training Studies",
+    title:
+      "Understanding Change of Direction Ability in Sport: A Review of Resistance Training Studies",
     journal: "Sports Medicine",
     volume: "38",
     pages: "1045-1063",
@@ -583,9 +603,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "milewski_2014",
-    authors: "Milewski, M.D., Skaggs, D.L., Bishop, G.A., Pace, J.L., Ibrahim, D.A., Wren, T.A., & Barzdukas, A.",
+    authors:
+      "Milewski, M.D., Skaggs, D.L., Bishop, G.A., Pace, J.L., Ibrahim, D.A., Wren, T.A., & Barzdukas, A.",
     year: 2014,
-    title: "Chronic lack of sleep is associated with increased sports injuries in adolescent athletes",
+    title:
+      "Chronic lack of sleep is associated with increased sports injuries in adolescent athletes",
     journal: "Journal of Pediatric Orthopaedics",
     volume: "34",
     pages: "129-133",
@@ -618,7 +640,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "halson_2014",
     authors: "Halson, S.L.",
     year: 2014,
-    title: "Sleep in Elite Athletes and Nutritional Interventions to Enhance Sleep",
+    title:
+      "Sleep in Elite Athletes and Nutritional Interventions to Enhance Sleep",
     journal: "Sports Medicine",
     volume: "44",
     pages: "S13-S23",
@@ -642,9 +665,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "fullagar_2015",
-    authors: "Fullagar, H.H., Skorski, S., Duffield, R., Hammes, D., Coutts, A.J., & Meyer, T.",
+    authors:
+      "Fullagar, H.H., Skorski, S., Duffield, R., Hammes, D., Coutts, A.J., & Meyer, T.",
     year: 2015,
-    title: "Sleep and Athletic Performance: The Effects of Sleep Loss on Exercise Performance, and Physiological and Cognitive Responses to Exercise",
+    title:
+      "Sleep and Athletic Performance: The Effects of Sleep Loss on Exercise Performance, and Physiological and Cognitive Responses to Exercise",
     journal: "Sports Medicine",
     volume: "45",
     pages: "161-186",
@@ -671,7 +696,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "mah_2011",
     authors: "Mah, C.D., Mah, K.E., Kezirian, E.J., & Dement, W.C.",
     year: 2011,
-    title: "The Effects of Sleep Extension on the Athletic Performance of Collegiate Basketball Players",
+    title:
+      "The Effects of Sleep Extension on the Athletic Performance of Collegiate Basketball Players",
     journal: "Sleep",
     volume: "34",
     pages: "943-950",
@@ -699,7 +725,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "vitale_2019",
     authors: "Vitale, K.C., Owens, R., Hopkins, S.R., & Malhotra, A.",
     year: 2019,
-    title: "Sleep Hygiene for Optimizing Recovery in Athletes: Review and Recommendations",
+    title:
+      "Sleep Hygiene for Optimizing Recovery in Athletes: Review and Recommendations",
     journal: "International Journal of Sports Medicine",
     volume: "40",
     pages: "535-543",
@@ -724,7 +751,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "kellmann_2018",
-    authors: "Kellmann, M., Bertollo, M., Bosquet, L., Brink, M., Coutts, A.J., Duffield, R., Erlacher, D., Halson, S.L., Hecksteden, A., Heidari, J., Kallus, K.W., Meeusen, R., Mujika, I., Robazza, C., Skorski, S., Venter, R., & Beckmann, J.",
+    authors:
+      "Kellmann, M., Bertollo, M., Bosquet, L., Brink, M., Coutts, A.J., Duffield, R., Erlacher, D., Halson, S.L., Hecksteden, A., Heidari, J., Kallus, K.W., Meeusen, R., Mujika, I., Robazza, C., Skorski, S., Venter, R., & Beckmann, J.",
     year: 2018,
     title: "Recovery and Performance in Sport: Consensus Statement",
     journal: "International Journal of Sports Physiology and Performance",
@@ -756,7 +784,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "fell_williams_2008",
     authors: "Fell, J., & Williams, D.",
     year: 2008,
-    title: "The effect of aging on skeletal-muscle recovery from exercise: possible implications for aging athletes",
+    title:
+      "The effect of aging on skeletal-muscle recovery from exercise: possible implications for aging athletes",
     journal: "Journal of Aging and Physical Activity",
     volume: "16",
     pages: "97-115",
@@ -782,7 +811,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "tanaka_seals_2008",
     authors: "Tanaka, H., & Seals, D.R.",
     year: 2008,
-    title: "Endurance exercise performance in Masters athletes: age-associated changes and underlying physiological mechanisms",
+    title:
+      "Endurance exercise performance in Masters athletes: age-associated changes and underlying physiological mechanisms",
     journal: "Journal of Physiology",
     volume: "586",
     pages: "55-63",
@@ -809,7 +839,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "doering_2016",
     authors: "Doering, T.M., Reaburn, P.R., Phillips, S.M., & Jenkins, D.G.",
     year: 2016,
-    title: "Postexercise Dietary Protein Strategies to Maximize Skeletal Muscle Repair and Remodeling in Masters Endurance Athletes: A Review",
+    title:
+      "Postexercise Dietary Protein Strategies to Maximize Skeletal Muscle Repair and Remodeling in Masters Endurance Athletes: A Review",
     journal: "International Journal of Sport Nutrition and Exercise Metabolism",
     volume: "26",
     pages: "168-178",
@@ -861,9 +892,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "easthope_2010",
-    authors: "Easthope, C.S., Hausswirth, C., Louis, J., Lepers, R., Vercruyssen, F., & Brisswalter, J.",
+    authors:
+      "Easthope, C.S., Hausswirth, C., Louis, J., Lepers, R., Vercruyssen, F., & Brisswalter, J.",
     year: 2010,
-    title: "Effects of a trail running competition on muscular performance and efficiency in well-trained young and master athletes",
+    title:
+      "Effects of a trail running competition on muscular performance and efficiency in well-trained young and master athletes",
     journal: "European Journal of Applied Physiology",
     volume: "110",
     pages: "1107-1116",
@@ -921,7 +954,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "issurin_2010",
     authors: "Issurin, V.B.",
     year: 2010,
-    title: "New Horizons for the Methodology and Physiology of Training Periodization",
+    title:
+      "New Horizons for the Methodology and Physiology of Training Periodization",
     journal: "Sports Medicine",
     volume: "40",
     pages: "189-206",
@@ -1002,7 +1036,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "blanch_gabbett_2016",
     authors: "Blanch, P., & Gabbett, T.J.",
     year: 2016,
-    title: "Has the athlete trained enough to return to play safely? The acute:chronic workload ratio permits clinicians to quantify a player's risk of subsequent injury",
+    title:
+      "Has the athlete trained enough to return to play safely? The acute:chronic workload ratio permits clinicians to quantify a player's risk of subsequent injury",
     journal: "British Journal of Sports Medicine",
     volume: "50",
     pages: "471-475",
@@ -1026,9 +1061,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "ardern_2016",
-    authors: "Ardern, C.L., Glasgow, P., Schneiders, A., Witvrouw, E., Clarsen, B., Cools, A., Gojanovic, B., Griffin, S., Khan, K.M., Moksnes, H., Mutch, S.A., Phillips, N., Reurink, G., Sadber, R., Silbernagel, K.G., Thorborg, K., Wangensteen, A., Wilk, K.E., & Bizzini, M.",
+    authors:
+      "Ardern, C.L., Glasgow, P., Schneiders, A., Witvrouw, E., Clarsen, B., Cools, A., Gojanovic, B., Griffin, S., Khan, K.M., Moksnes, H., Mutch, S.A., Phillips, N., Reurink, G., Sadber, R., Silbernagel, K.G., Thorborg, K., Wangensteen, A., Wilk, K.E., & Bizzini, M.",
     year: 2016,
-    title: "2016 Consensus statement on return to sport from the First World Congress in Sports Physical Therapy, Bern",
+    title:
+      "2016 Consensus statement on return to sport from the First World Congress in Sports Physical Therapy, Bern",
     journal: "British Journal of Sports Medicine",
     volume: "50",
     pages: "853-864",
@@ -1052,7 +1089,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "creighton_2010",
-    authors: "Creighton, D.W., Shrier, I., Shultz, R., Meeuwisse, W.H., & Matheson, G.O.",
+    authors:
+      "Creighton, D.W., Shrier, I., Shultz, R., Meeuwisse, W.H., & Matheson, G.O.",
     year: 2010,
     title: "Return-to-play in sport: a decision-based model",
     journal: "Clinical Journal of Sport Medicine",
@@ -1080,7 +1118,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "taberner_cohen_2018",
     authors: "Taberner, M., & Cohen, D.D.",
     year: 2018,
-    title: "Physical preparation of the football player with an intramuscular hamstring tendon tear: clinical perspective with video demonstrations",
+    title:
+      "Physical preparation of the football player with an intramuscular hamstring tendon tear: clinical perspective with video demonstrations",
     journal: "British Journal of Sports Medicine",
     volume: "52",
     pages: "1275-1278",
@@ -1105,9 +1144,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   },
   {
     id: "mccrory_2017",
-    authors: "McCrory, P., Meeuwisse, W., Dvořák, J., Aubry, M., Bailes, J., Broglio, S., Cantu, R.C., Cassidy, D., Echemendia, R.J., Castellani, R.J., Davis, G.A., Ellenbogen, R., Emery, C., Engebretsen, L., Feddermann-Demont, N., Giza, C.C., Guskiewicz, K.M., Herring, S., Iverson, G.L., Johnston, K.M., Kissick, J., Kutcher, J., Leddy, J.J., Maddocks, D., Makdissi, M., Manley, G.T., McCrea, M., Meehan, W.P., Nagahiro, S., Patricios, J., Putukian, M., Schneider, K.J., Sills, A., Tator, C.H., Turner, M., & Vos, P.E.",
+    authors:
+      "McCrory, P., Meeuwisse, W., Dvořák, J., Aubry, M., Bailes, J., Broglio, S., Cantu, R.C., Cassidy, D., Echemendia, R.J., Castellani, R.J., Davis, G.A., Ellenbogen, R., Emery, C., Engebretsen, L., Feddermann-Demont, N., Giza, C.C., Guskiewicz, K.M., Herring, S., Iverson, G.L., Johnston, K.M., Kissick, J., Kutcher, J., Leddy, J.J., Maddocks, D., Makdissi, M., Manley, G.T., McCrea, M., Meehan, W.P., Nagahiro, S., Patricios, J., Putukian, M., Schneider, K.J., Sills, A., Tator, C.H., Turner, M., & Vos, P.E.",
     year: 2017,
-    title: "Consensus statement on concussion in sport—the 5th international conference on concussion in sport held in Berlin, October 2016",
+    title:
+      "Consensus statement on concussion in sport—the 5th international conference on concussion in sport held in Berlin, October 2016",
     journal: "British Journal of Sports Medicine",
     volume: "51",
     pages: "838-847",
@@ -1165,7 +1206,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "comfort_2014",
     authors: "Comfort, P., Haigh, A., & Matthews, M.J.",
     year: 2014,
-    title: "Are Changes in Maximal Squat Strength During Preseason Training Reflected in Changes in Sprint Performance in Rugby League Players?",
+    title:
+      "Are Changes in Maximal Squat Strength During Preseason Training Reflected in Changes in Sprint Performance in Rugby League Players?",
     journal: "Journal of Strength and Conditioning Research",
     volume: "28",
     pages: "772-776",
@@ -1193,9 +1235,11 @@ const RESEARCH_DATABASE: ResearchReference[] = [
   // ============================================================================
   {
     id: "kerksick_2017",
-    authors: "Kerksick, C.M., Arent, S., Schoenfeld, B.J., Stout, J.R., Campbell, B., Wilborn, C.D., Taylor, L., Kalman, D., Smith-Ryan, A.E., Kreider, R.B., Willoughby, D., Arciero, P.J., VanDusseldorp, T.A., Ormsbee, M.J., Wildman, R., Greenwood, M., Ziegenfuss, T.N., Aragon, A.A., & Antonio, J.",
+    authors:
+      "Kerksick, C.M., Arent, S., Schoenfeld, B.J., Stout, J.R., Campbell, B., Wilborn, C.D., Taylor, L., Kalman, D., Smith-Ryan, A.E., Kreider, R.B., Willoughby, D., Arciero, P.J., VanDusseldorp, T.A., Ormsbee, M.J., Wildman, R., Greenwood, M., Ziegenfuss, T.N., Aragon, A.A., & Antonio, J.",
     year: 2017,
-    title: "International society of sports nutrition position stand: nutrient timing",
+    title:
+      "International society of sports nutrition position stand: nutrient timing",
     journal: "Journal of the International Society of Sports Nutrition",
     volume: "14",
     pages: "33",
@@ -1221,7 +1265,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "thomas_2016",
     authors: "Thomas, D.T., Erdman, K.A., & Burke, L.M.",
     year: 2016,
-    title: "Position of the Academy of Nutrition and Dietetics, Dietitians of Canada, and the American College of Sports Medicine: Nutrition and Athletic Performance",
+    title:
+      "Position of the Academy of Nutrition and Dietetics, Dietitians of Canada, and the American College of Sports Medicine: Nutrition and Athletic Performance",
     journal: "Journal of the Academy of Nutrition and Dietetics",
     volume: "116",
     pages: "501-528",
@@ -1251,7 +1296,8 @@ const RESEARCH_DATABASE: ResearchReference[] = [
     id: "saw_2016",
     authors: "Saw, A.E., Main, L.C., & Gastin, P.B.",
     year: 2016,
-    title: "Monitoring the athlete training response: subjective self-reported measures trump commonly used objective measures: a systematic review",
+    title:
+      "Monitoring the athlete training response: subjective self-reported measures trump commonly used objective measures: a systematic review",
     journal: "British Journal of Sports Medicine",
     volume: "50",
     pages: "281-291",
@@ -1311,7 +1357,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "acwr_monitoring",
     topic: "ACWR Monitoring",
-    recommendation: "Monitor ACWR weekly and maintain between 0.8-1.3 for optimal injury prevention",
+    recommendation:
+      "Monitor ACWR weekly and maintain between 0.8-1.3 for optimal injury prevention",
     evidenceStrength: "strong",
     supportingResearch: ["gabbett_2016", "hulin_2014", "hulin_2016"],
     practicalImplementation: [
@@ -1329,7 +1376,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "load_progression",
     topic: "Weekly Load Progression",
-    recommendation: "Limit weekly load increases to 10% maximum to prevent injury",
+    recommendation:
+      "Limit weekly load increases to 10% maximum to prevent injury",
     evidenceStrength: "strong",
     supportingResearch: ["hulin_2014", "gabbett_2016"],
     practicalImplementation: [
@@ -1347,7 +1395,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "sprint_training",
     topic: "Sprint Training Volume",
-    recommendation: "Perform 300-600 maximal sprints annually with quality over quantity focus",
+    recommendation:
+      "Perform 300-600 maximal sprints annually with quality over quantity focus",
     evidenceStrength: "strong",
     supportingResearch: ["haugen_2019", "clark_2019", "petrakos_2016"],
     practicalImplementation: [
@@ -1365,7 +1414,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "hamstring_prevention",
     topic: "Hamstring Injury Prevention",
-    recommendation: "Include Nordic curls 2-3x per week year-round to reduce hamstring injuries by 51%",
+    recommendation:
+      "Include Nordic curls 2-3x per week year-round to reduce hamstring injuries by 51%",
     evidenceStrength: "strong",
     supportingResearch: ["al_attar_2017", "schache_2012"],
     practicalImplementation: [
@@ -1383,9 +1433,15 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "sleep_optimization",
     topic: "Sleep for Athletes",
-    recommendation: "Target 8-9 hours of sleep with consistent timing for optimal recovery and injury prevention",
+    recommendation:
+      "Target 8-9 hours of sleep with consistent timing for optimal recovery and injury prevention",
     evidenceStrength: "strong",
-    supportingResearch: ["milewski_2014", "halson_2014", "mah_2011", "fullagar_2015"],
+    supportingResearch: [
+      "milewski_2014",
+      "halson_2014",
+      "mah_2011",
+      "fullagar_2015",
+    ],
     practicalImplementation: [
       "8-9 hours per night",
       "Consistent bed/wake times (±30 min)",
@@ -1401,7 +1457,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "strength_foundation",
     topic: "Strength Training for Athletes",
-    recommendation: "Build relative squat strength to 2.0x bodyweight for optimal athletic performance",
+    recommendation:
+      "Build relative squat strength to 2.0x bodyweight for optimal athletic performance",
     evidenceStrength: "strong",
     supportingResearch: ["seitz_2014", "suchomel_2016", "comfort_2014"],
     practicalImplementation: [
@@ -1419,9 +1476,14 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "masters_recovery",
     topic: "Recovery for Masters Athletes",
-    recommendation: "Increase recovery time by 30-50% for athletes over 35 and prioritize sleep and nutrition",
+    recommendation:
+      "Increase recovery time by 30-50% for athletes over 35 and prioritize sleep and nutrition",
     evidenceStrength: "moderate",
-    supportingResearch: ["fell_williams_2008", "tanaka_seals_2008", "doering_2016"],
+    supportingResearch: [
+      "fell_williams_2008",
+      "tanaka_seals_2008",
+      "doering_2016",
+    ],
     practicalImplementation: [
       "2 days between high-intensity sessions (vs 1 for younger)",
       "Higher protein intake (1.6-2.2g/kg)",
@@ -1437,7 +1499,8 @@ const TRAINING_GUIDELINES: TrainingGuideline[] = [
   {
     id: "tapering",
     topic: "Pre-Competition Tapering",
-    recommendation: "Reduce volume by 40-60% while maintaining intensity for 1-2 weeks before major competition",
+    recommendation:
+      "Reduce volume by 40-60% while maintaining intensity for 1-2 weeks before major competition",
     evidenceStrength: "strong",
     supportingResearch: ["mujika_padilla_2003", "issurin_2010"],
     practicalImplementation: [
@@ -1488,7 +1551,7 @@ export class EvidenceKnowledgeBaseService {
    */
   getReferencesByTag(tag: string): ResearchReference[] {
     return RESEARCH_DATABASE.filter((r) =>
-      r.tags.some((t) => t.toLowerCase().includes(tag.toLowerCase()))
+      r.tags.some((t) => t.toLowerCase().includes(tag.toLowerCase())),
     );
   }
 
@@ -1509,7 +1572,7 @@ export class EvidenceKnowledgeBaseService {
         r.title.toLowerCase().includes(lowerKeyword) ||
         r.authors.toLowerCase().includes(lowerKeyword) ||
         r.keyFindings.some((f) => f.toLowerCase().includes(lowerKeyword)) ||
-        r.tags.some((t) => t.toLowerCase().includes(lowerKeyword))
+        r.tags.some((t) => t.toLowerCase().includes(lowerKeyword)),
     );
   }
 
@@ -1567,7 +1630,7 @@ export class EvidenceKnowledgeBaseService {
    */
   getCategoryBibliography(category: ResearchCategory): string[] {
     return this.getReferencesByCategory(category).map((r) =>
-      this.getAPACitation(r.id)
+      this.getAPACitation(r.id),
     );
   }
 
@@ -1588,7 +1651,9 @@ export class EvidenceKnowledgeBaseService {
   /**
    * Get key findings summary for a topic
    */
-  getKeyFindingsSummary(topic: string): { reference: string; finding: string }[] {
+  getKeyFindingsSummary(
+    topic: string,
+  ): { reference: string; finding: string }[] {
     const references = this.searchReferences(topic);
     const findings: { reference: string; finding: string }[] = [];
 
@@ -1614,7 +1679,10 @@ export class EvidenceKnowledgeBaseService {
         description: "Eccentric hamstring exercise for injury prevention",
         effectivenessRating: 9,
         references: ["al_attar_2017", "schache_2012"],
-        keyMetrics: ["51% reduction in hamstring injuries", "2-3x per week optimal"],
+        keyMetrics: [
+          "51% reduction in hamstring injuries",
+          "2-3x per week optimal",
+        ],
         implementationNotes: [
           "Progress from 3x6 to 3x10 over 8 weeks",
           "Can be assisted initially",
@@ -1625,7 +1693,12 @@ export class EvidenceKnowledgeBaseService {
         protocol: "ACWR Monitoring",
         description: "Acute:Chronic Workload Ratio for injury prevention",
         effectivenessRating: 9,
-        references: ["gabbett_2016", "hulin_2014", "hulin_2016", "williams_2017"],
+        references: [
+          "gabbett_2016",
+          "hulin_2014",
+          "hulin_2016",
+          "williams_2017",
+        ],
         keyMetrics: ["0.8-1.3 optimal zone", "2-4x injury risk when >1.5"],
         implementationNotes: [
           "Use EWMA calculation method",
@@ -1683,9 +1756,12 @@ export class EvidenceKnowledgeBaseService {
   /**
    * Get references by year range
    */
-  getReferencesByYearRange(startYear: number, endYear: number): ResearchReference[] {
+  getReferencesByYearRange(
+    startYear: number,
+    endYear: number,
+  ): ResearchReference[] {
     return RESEARCH_DATABASE.filter(
-      (r) => r.year >= startYear && r.year <= endYear
+      (r) => r.year >= startYear && r.year <= endYear,
     );
   }
 

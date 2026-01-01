@@ -66,6 +66,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
               <p-button
                 label="Try Again"
                 icon="pi pi-refresh"
+                [rounded]="true"
                 [routerLink]="['/login']"
                 styleClass="w-full mb-3"
               ></p-button>
@@ -73,6 +74,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
                 label="Go Home"
                 icon="pi pi-home"
                 [outlined]="true"
+                [rounded]="true"
                 [routerLink]="['/']"
                 styleClass="w-full"
               ></p-button>
@@ -178,7 +180,9 @@ export class AuthCallbackComponent implements OnInit {
         this.successMessage.set("You are already signed in!");
         setTimeout(() => this.router.navigate(["/dashboard"]), 1500);
       } else {
-        this.error.set("No authentication data found. Please try signing in again.");
+        this.error.set(
+          "No authentication data found. Please try signing in again.",
+        );
         this.isProcessing.set(false);
       }
       return;
@@ -195,7 +199,9 @@ export class AuthCallbackComponent implements OnInit {
     // Check for errors from Supabase
     if (errorDescription || errorCode) {
       this.error.set(
-        decodeURIComponent(errorDescription || errorCode || "Authentication failed"),
+        decodeURIComponent(
+          errorDescription || errorCode || "Authentication failed",
+        ),
       );
       this.isProcessing.set(false);
       return;
@@ -245,10 +251,12 @@ export class AuthCallbackComponent implements OnInit {
   ): Promise<void> {
     try {
       // Set the session using the tokens
-      const { data, error } = await this.supabaseService.client.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
+      const { data, error } = await this.supabaseService.client.auth.setSession(
+        {
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        },
+      );
 
       if (error) {
         throw error;

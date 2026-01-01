@@ -76,7 +76,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       expect(req.request.method).toBe("GET");
       req.flush(mockResponse);
@@ -130,11 +130,11 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       req.flush(
         { error: "Not found" },
-        { status: 404, statusText: "Not Found" }
+        { status: 404, statusText: "Not Found" },
       );
     });
   });
@@ -159,7 +159,7 @@ describe("ApiService", () => {
         });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       expect(req.request.method).toBe("POST");
       expect(req.request.body).toEqual(requestBody);
@@ -172,11 +172,13 @@ describe("ApiService", () => {
       service.post("/test-endpoint").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       expect(req.request.method).toBe("POST");
       // Body can be undefined or null when not provided
-      expect(req.request.body === undefined || req.request.body === null).toBe(true);
+      expect(req.request.body === undefined || req.request.body === null).toBe(
+        true,
+      );
       req.flush(mockResponse);
     });
 
@@ -188,11 +190,11 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       req.flush(
         { error: "Validation failed" },
-        { status: 400, statusText: "Bad Request" }
+        { status: 400, statusText: "Bad Request" },
       );
     });
   });
@@ -211,7 +213,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint/1")
+        request.url.includes("/test-endpoint/1"),
       );
       expect(req.request.method).toBe("PUT");
       expect(req.request.body).toEqual(requestBody);
@@ -226,7 +228,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint/1")
+        request.url.includes("/test-endpoint/1"),
       );
       req.flush({}, { status: 500, statusText: "Server Error" });
     });
@@ -246,7 +248,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint/1")
+        request.url.includes("/test-endpoint/1"),
       );
       expect(req.request.method).toBe("PATCH");
       expect(req.request.body).toEqual(partialUpdate);
@@ -267,7 +269,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint/1")
+        request.url.includes("/test-endpoint/1"),
       );
       expect(req.request.method).toBe("DELETE");
       req.flush(mockResponse);
@@ -281,7 +283,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint/999")
+        request.url.includes("/test-endpoint/999"),
       );
       req.flush({}, { status: 404, statusText: "Not Found" });
     });
@@ -300,11 +302,11 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       req.flush(
         { error: "Server error" },
-        { status: 500, statusText: "Internal Server Error" }
+        { status: 500, statusText: "Internal Server Error" },
       );
     });
 
@@ -316,11 +318,11 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       req.flush(
         { error: { error: "Custom error message" } },
-        { status: 400, statusText: "Bad Request" }
+        { status: 400, statusText: "Bad Request" },
       );
     });
 
@@ -332,7 +334,7 @@ describe("ApiService", () => {
       });
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/test-endpoint")
+        request.url.includes("/test-endpoint"),
       );
       req.error(new ProgressEvent("error"));
     });
@@ -349,7 +351,7 @@ describe("ApiService", () => {
       service.get("/api/dashboard/overview").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/api/dashboard/overview")
+        request.url.includes("/api/dashboard/overview"),
       );
       req.flush(mockResponse);
     });
@@ -360,7 +362,7 @@ describe("ApiService", () => {
       service.get("/auth-me").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/auth-me")
+        request.url.includes("/auth-me"),
       );
       req.flush(mockResponse);
     });
@@ -387,17 +389,17 @@ describe("ApiService", () => {
 
     it("should have analytics endpoints", () => {
       expect(API_ENDPOINTS.analytics.performanceTrends).toBe(
-        "/api/analytics/performance-trends"
+        "/api/analytics/performance-trends",
       );
       expect(API_ENDPOINTS.analytics.summary).toBe("/api/analytics/summary");
     });
 
     it("should have dynamic endpoint functions", () => {
       expect(API_ENDPOINTS.community.getComments("123")).toBe(
-        "/api/community/posts/123/comments"
+        "/api/community/posts/123/comments",
       );
       expect(API_ENDPOINTS.tournaments.details("456")).toBe(
-        "/api/tournaments/456"
+        "/api/tournaments/456",
       );
       expect(API_ENDPOINTS.games.stats("789")).toBe("/api/games/789/stats");
     });
@@ -405,14 +407,16 @@ describe("ApiService", () => {
     it("should have AI chat endpoints", () => {
       expect(API_ENDPOINTS.aiChat.send).toBe("/api/ai/chat");
       expect(API_ENDPOINTS.aiChat.session("session-123")).toBe(
-        "/api/ai/chat/session/session-123"
+        "/api/ai/chat/session/session-123",
       );
     });
 
     it("should have load management endpoints", () => {
-      expect(API_ENDPOINTS.loadManagement.acwr).toBe("/api/load-management/acwr");
+      expect(API_ENDPOINTS.loadManagement.acwr).toBe(
+        "/api/load-management/acwr",
+      );
       expect(API_ENDPOINTS.loadManagement.injuryRisk).toBe(
-        "/api/load-management/injury-risk"
+        "/api/load-management/injury-risk",
       );
     });
 
@@ -423,7 +427,7 @@ describe("ApiService", () => {
 
     it("should have nutrition endpoints", () => {
       expect(API_ENDPOINTS.nutrition.searchFoods).toBe(
-        "/api/nutrition/search-foods"
+        "/api/nutrition/search-foods",
       );
       expect(API_ENDPOINTS.nutrition.goals).toBe("/api/nutrition/goals");
     });
@@ -434,7 +438,9 @@ describe("ApiService", () => {
     });
 
     it("should have admin endpoints", () => {
-      expect(API_ENDPOINTS.admin.healthMetrics).toBe("/api/admin/health-metrics");
+      expect(API_ENDPOINTS.admin.healthMetrics).toBe(
+        "/api/admin/health-metrics",
+      );
       expect(API_ENDPOINTS.admin.syncUSDA).toBe("/api/admin/sync-usda");
     });
   });
@@ -516,4 +522,3 @@ describe("ApiService", () => {
     });
   });
 });
-

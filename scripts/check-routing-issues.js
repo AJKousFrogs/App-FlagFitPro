@@ -65,7 +65,7 @@ function checkImportPaths(filePath, content) {
     const resolvedPath = path.resolve(fileDir, importPath);
     const actualPath = resolvedPath.endsWith(".js")
       ? resolvedPath
-      : `${resolvedPath  }.js`;
+      : `${resolvedPath}.js`;
 
     // Check if file exists
     if (!fs.existsSync(actualPath)) {
@@ -119,7 +119,7 @@ function checkHrefLinks(filePath, content) {
       if (!fs.existsSync(resolvedPath)) {
         // Try with .html extension if not present
         if (!href.endsWith(".html")) {
-          const withHtml = `${resolvedPath  }.html`;
+          const withHtml = `${resolvedPath}.html`;
           if (!fs.existsSync(withHtml)) {
             issues.hrefLinks.push({
               file: relativePath,
@@ -230,7 +230,7 @@ function checkRedirects(filePath, content) {
 
       if (!fs.existsSync(resolvedPath)) {
         if (!redirect.endsWith(".html")) {
-          const withHtml = `${resolvedPath  }.html`;
+          const withHtml = `${resolvedPath}.html`;
           if (!fs.existsSync(withHtml)) {
             issues.redirects.push({
               file: relativePath,

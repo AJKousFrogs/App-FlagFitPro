@@ -4,6 +4,8 @@
 import { logger } from "./logger.js";
 import { API_BASE_URL } from "./api-config.js";
 
+import { secureStorage } from "./secure-storage.js";
+
 class DashboardAPI {
   constructor() {
     // Use environment variable or fallback to centralized config
@@ -30,7 +32,7 @@ class DashboardAPI {
       );
 
       // Get authentication token if available
-      const token = localStorage.getItem("flagfit_token");
+      const token = await secureStorage.getAuthToken();
       const headers = {
         "Content-Type": "application/json",
         ...options.headers,

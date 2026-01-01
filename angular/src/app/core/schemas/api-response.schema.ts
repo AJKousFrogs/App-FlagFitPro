@@ -38,14 +38,14 @@ type SchemaType<T> = {
 
 function createSchema<T>(
   validator: (data: unknown) => T,
-  typeName: string
+  typeName: string,
 ): SchemaType<T> {
   const schema: SchemaType<T> = {
     parse: (data: unknown): T => {
       const result = schema.safeParse(data);
       if (!result.success) {
         throw new Error(
-          `Validation failed: ${result.error.message} at ${result.error.path.join(".")}`
+          `Validation failed: ${result.error.message} at ${result.error.path.join(".")}`,
         );
       }
       return result.data;
@@ -70,13 +70,13 @@ function createSchema<T>(
     optional: () =>
       createSchema<T | undefined>(
         (data) => (data === undefined ? undefined : validator(data)),
-        `${typeName} | undefined`
+        `${typeName} | undefined`,
       ),
 
     nullable: () =>
       createSchema<T | null>(
         (data) => (data === null ? null : validator(data)),
-        `${typeName} | null`
+        `${typeName} | null`,
       ),
   };
 
@@ -161,12 +161,17 @@ export const z = {
     }, "object"),
 
   enum: <T extends string>(values: readonly T[]) =>
-    createSchema<T>((data) => {
-      if (typeof data !== "string" || !values.includes(data as T)) {
-        throw new Error(`Expected one of [${values.join(", ")}], got ${data}`);
-      }
-      return data as T;
-    }, `enum(${values.join("|")})`),
+    createSchema<T>(
+      (data) => {
+        if (typeof data !== "string" || !values.includes(data as T)) {
+          throw new Error(
+            `Expected one of [${values.join(", ")}], got ${data}`,
+          );
+        }
+        return data as T;
+      },
+      `enum(${values.join("|")})`,
+    ),
 
   literal: <T extends string | number | boolean>(value: T) =>
     createSchema<T>((data) => {
@@ -206,9 +211,7 @@ export const TrainingSessionSchema = z.object({
   status: z.enum(["planned", "in_progress", "completed", "cancelled"] as const),
 });
 
-export type TrainingSessionDTO = ReturnType<
-  typeof TrainingSessionSchema.parse
->;
+export type TrainingSessionDTO = ReturnType<typeof TrainingSessionSchema.parse>;
 
 // ============================================================================
 // ACWR Data Schema
@@ -251,14 +254,14 @@ export const AIChatResponseSchema = z.object({
       title: z.string(),
       url: z.string().optional(),
       evidence_grade: z.string().optional(),
-    })
+    }),
   ),
   suggested_actions: z.array(
     z.object({
       type: z.string(),
       reason: z.string(),
       label: z.string(),
-    })
+    }),
   ),
   chat_session_id: z.string(),
   message_id: z.string(),
@@ -345,7 +348,7 @@ export function createApiResponseSchema<T>(dataSchema: SchemaType<T>) {
  */
 export function validateApiResponse<T>(
   data: unknown,
-  schema: SchemaType<T>
+  schema: SchemaType<T>,
 ): ValidationResult<T> {
   return schema.safeParse(data);
 }
@@ -356,4 +359,3 @@ export function validateApiResponse<T>(
 export function parseApiResponse<T>(data: unknown, schema: SchemaType<T>): T {
   return schema.parse(data);
 }
-

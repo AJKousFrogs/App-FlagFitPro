@@ -27,7 +27,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Should be redirected to login
       await page.waitForURL(/\/login/);
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -40,7 +40,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Should be redirected to login
       await page.waitForURL(/\/login/);
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -102,7 +102,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Landing page should be accessible
       await page.waitForSelector("app-landing", { timeout: 10000 });
       await expect(page.locator("h1.hero-title")).toContainText(
-        "Elevate Your Flag Football Game"
+        "Elevate Your Flag Football Game",
       );
     });
 
@@ -112,7 +112,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Login page should be accessible
       await page.waitForSelector("app-login", { timeout: 10000 });
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -122,7 +122,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Register page should be accessible
       await page.waitForSelector("app-register", { timeout: 10000 });
       await expect(page.locator("h1.register-title")).toContainText(
-        "Create Your Account"
+        "Create Your Account",
       );
     });
 
@@ -210,7 +210,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
       // Verify hero section
       await expect(page.locator("h1.hero-title")).toBeVisible();
       await expect(page.locator("h1.hero-title")).toContainText(
-        "Elevate Your Flag Football Game"
+        "Elevate Your Flag Football Game",
       );
 
       // Verify CTA buttons exist
@@ -308,7 +308,9 @@ test.describe("Dashboard Navigation and Core Features", () => {
   });
 
   test.describe("Page Load Performance", () => {
-    test("should load landing page within acceptable time", async ({ page }) => {
+    test("should load landing page within acceptable time", async ({
+      page,
+    }) => {
       const startTime = Date.now();
 
       await page.goto("/");

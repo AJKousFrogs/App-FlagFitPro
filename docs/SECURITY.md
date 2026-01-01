@@ -30,11 +30,11 @@
 
 FlagFit Pro consists of three primary layers:
 
-| Layer | Technology | Security Responsibility |
-|-------|------------|------------------------|
-| **Frontend** | Angular 21 (standalone components, signals) | XSS prevention, input validation, auth state management |
-| **API** | Netlify Functions (Node.js) | Authentication enforcement, rate limiting, input validation |
-| **Database** | Supabase (PostgreSQL) | Row-Level Security (RLS), parameterized queries, session management |
+| Layer        | Technology                                  | Security Responsibility                                             |
+| ------------ | ------------------------------------------- | ------------------------------------------------------------------- |
+| **Frontend** | Angular 21 (standalone components, signals) | XSS prevention, input validation, auth state management             |
+| **API**      | Netlify Functions (Node.js)                 | Authentication enforcement, rate limiting, input validation         |
+| **Database** | Supabase (PostgreSQL)                       | Row-Level Security (RLS), parameterized queries, session management |
 
 ### Architecture Diagram
 
@@ -79,15 +79,15 @@ FlagFit Pro consists of three primary layers:
 
 ### Key Security Components
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| **Auth Interceptor** | `angular/src/app/core/interceptors/auth.interceptor.ts` | Attaches JWT to API requests |
+| Component             | Location                                                 | Purpose                                          |
+| --------------------- | -------------------------------------------------------- | ------------------------------------------------ |
+| **Auth Interceptor**  | `angular/src/app/core/interceptors/auth.interceptor.ts`  | Attaches JWT to API requests                     |
 | **Error Interceptor** | `angular/src/app/core/interceptors/error.interceptor.ts` | Handles 401/403, triggers logout on auth failure |
-| **Auth Guard** | `angular/src/app/core/guards/auth.guard.ts` | Protects routes requiring authentication |
-| **Auth Service** | `angular/src/app/core/services/auth.service.ts` | Supabase auth wrapper with reactive signals |
-| **Rate Limiter** | `netlify/functions/utils/rate-limiter.cjs` | IP-based API rate limiting |
-| **Base Handler** | `netlify/functions/utils/base-handler.cjs` | Centralized auth + rate limiting middleware |
-| **Security Headers** | `netlify.toml` | CSP, HSTS, X-Frame-Options, etc. |
+| **Auth Guard**        | `angular/src/app/core/guards/auth.guard.ts`              | Protects routes requiring authentication         |
+| **Auth Service**      | `angular/src/app/core/services/auth.service.ts`          | Supabase auth wrapper with reactive signals      |
+| **Rate Limiter**      | `netlify/functions/utils/rate-limiter.cjs`               | IP-based API rate limiting                       |
+| **Base Handler**      | `netlify/functions/utils/base-handler.cjs`               | Centralized auth + rate limiting middleware      |
+| **Security Headers**  | `netlify.toml`                                           | CSP, HSTS, X-Frame-Options, etc.                 |
 
 ---
 
@@ -101,15 +101,15 @@ FlagFit Pro consists of three primary layers:
 
 ### Threat Model (High-Level)
 
-| Threat | Mitigation |
-|--------|------------|
-| **XSS (Cross-Site Scripting)** | Angular auto-escaping, CSP headers, DomSanitizer for trusted content |
-| **CSRF (Cross-Site Request Forgery)** | Not applicable—see [CSRF Position](#csrf-position) below |
-| **SQL Injection** | Supabase SDK uses parameterized queries exclusively |
-| **Broken Authentication** | JWT tokens via Supabase, automatic refresh, server-side validation |
-| **Sensitive Data Exposure** | HTTPS everywhere, no secrets in frontend, error redaction |
-| **Rate Limiting/DoS** | Tiered rate limits on all API endpoints |
-| **Clickjacking** | `X-Frame-Options: DENY`, `frame-ancestors 'none'` in CSP |
+| Threat                                | Mitigation                                                           |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| **XSS (Cross-Site Scripting)**        | Angular auto-escaping, CSP headers, DomSanitizer for trusted content |
+| **CSRF (Cross-Site Request Forgery)** | Not applicable—see [CSRF Position](#csrf-position) below             |
+| **SQL Injection**                     | Supabase SDK uses parameterized queries exclusively                  |
+| **Broken Authentication**             | JWT tokens via Supabase, automatic refresh, server-side validation   |
+| **Sensitive Data Exposure**           | HTTPS everywhere, no secrets in frontend, error redaction            |
+| **Rate Limiting/DoS**                 | Tiered rate limits on all API endpoints                              |
+| **Clickjacking**                      | `X-Frame-Options: DENY`, `frame-ancestors 'none'` in CSP             |
 
 ---
 
@@ -132,11 +132,11 @@ FlagFit Pro uses **Supabase Auth** with JWT tokens. The frontend never handles p
 
 ### Where Tokens Live
 
-| Token | Storage | Managed By |
-|-------|---------|------------|
-| `access_token` (JWT) | localStorage | Supabase SDK |
-| `refresh_token` | localStorage | Supabase SDK |
-| Session metadata | Supabase SDK internal state | Supabase SDK |
+| Token                | Storage                     | Managed By   |
+| -------------------- | --------------------------- | ------------ |
+| `access_token` (JWT) | localStorage                | Supabase SDK |
+| `refresh_token`      | localStorage                | Supabase SDK |
+| Session metadata     | Supabase SDK internal state | Supabase SDK |
 
 **Note:** We do not use cookies for authentication. Tokens are stored in localStorage and sent via `Authorization` header.
 
@@ -180,8 +180,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 ```typescript
 // angular/src/app/app.config.ts
 provideHttpClient(
-  withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor])
-)
+  withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),
+);
 ```
 
 ---
@@ -193,6 +193,7 @@ provideHttpClient(
 **CSRF protection via tokens is not required for this architecture.**
 
 Rationale:
+
 1. **No cookie-based authentication:** Auth tokens are stored in localStorage, not cookies
 2. **Authorization header required:** All authenticated requests include `Authorization: Bearer <JWT>`
 3. **Same-Origin Policy:** Browsers prevent cross-origin JavaScript from reading responses
@@ -206,18 +207,19 @@ Rate limiting is implemented in `netlify/functions/utils/rate-limiter.cjs` and a
 
 #### Rate Limit Tiers
 
-| Tier | Max Requests | Window | Use Case |
-|------|-------------|--------|----------|
-| `AUTH` | 5 | 1 minute | Login, password reset |
-| `CREATE` | 50 | 1 minute | POST operations |
-| `READ` | 200 | 1 minute | GET operations |
-| `UPDATE` | 30 | 1 minute | PUT/PATCH operations |
-| `DELETE` | 10 | 1 minute | DELETE operations |
-| `DEFAULT` | 100 | 1 minute | Fallback |
+| Tier      | Max Requests | Window   | Use Case              |
+| --------- | ------------ | -------- | --------------------- |
+| `AUTH`    | 5            | 1 minute | Login, password reset |
+| `CREATE`  | 50           | 1 minute | POST operations       |
+| `READ`    | 200          | 1 minute | GET operations        |
+| `UPDATE`  | 30           | 1 minute | PUT/PATCH operations  |
+| `DELETE`  | 10           | 1 minute | DELETE operations     |
+| `DEFAULT` | 100          | 1 minute | Fallback              |
 
 #### Rate Limit Headers
 
 All responses include:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -228,6 +230,7 @@ Retry-After: 30  (only on 429)
 #### Configuration via Environment
 
 Override defaults in Netlify environment variables:
+
 ```
 RATE_LIMIT_AUTH_MAX=3
 RATE_LIMIT_AUTH_WINDOW=120000
@@ -237,6 +240,7 @@ RATE_LIMIT_READ_MAX=500
 ### Replay Protection
 
 **Not currently implemented.** JWT tokens are valid until expiry. Consider implementing:
+
 - JTI (JWT ID) tracking for high-security operations
 - Nonce-based request signing for sensitive mutations
 
@@ -265,7 +269,7 @@ Angular automatically sanitizes values bound to the DOM via its security context
 
 ```typescript
 // ❌ DANGEROUS: Bypassing sanitization
-element.innerHTML = userInput;  // Direct DOM manipulation
+element.innerHTML = userInput; // Direct DOM manipulation
 
 // ❌ DANGEROUS: Trusting user input
 this.sanitizer.bypassSecurityTrustHtml(userInput);
@@ -274,6 +278,7 @@ this.sanitizer.bypassSecurityTrustHtml(userInput);
 ### DomSanitizer Usage
 
 Only use `DomSanitizer.bypassSecurityTrust*` when:
+
 1. You control the content source
 2. You have sanitized the content first with an allowlist
 3. You have documented why bypass is necessary
@@ -284,10 +289,10 @@ Example from the codebase:
 // angular/src/app/shared/components/rich-text/rich-text.component.ts
 private sanitizeHtml(html: string): string {
   if (!html) return '';
-  
+
   const temp = document.createElement('div');
   temp.innerHTML = html;
-  
+
   // Remove dangerous elements
   const dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'];
   dangerousTags.forEach(tag => {
@@ -296,20 +301,20 @@ private sanitizeHtml(html: string): string {
       elements[0].parentNode?.removeChild(elements[0]);
     }
   });
-  
+
   // Remove event handlers
   const allElements = temp.getElementsByTagName('*');
   for (let i = 0; i < allElements.length; i++) {
     const el = allElements[i];
     const attrs = Array.from(el.attributes);
     attrs.forEach(attr => {
-      if (attr.name.startsWith('on') || 
+      if (attr.name.startsWith('on') ||
           (attr.name === 'href' && attr.value.startsWith('javascript:'))) {
         el.removeAttribute(attr.name);
       }
     });
   }
-  
+
   return temp.innerHTML;
 }
 ```
@@ -328,7 +333,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   const hasSession = !!supabaseService.session();
   const isAuthenticated = authService.isAuthenticated();
-  
+
   if (hasSession || isAuthenticated) {
     return true;
   }
@@ -345,8 +350,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
 export const environment = {
   production: false,
   supabase: {
-    url: getEnvValue('SUPABASE_URL', DEFAULTS.SUPABASE_URL),
-    anonKey: getEnvValue('SUPABASE_ANON_KEY', DEFAULTS.SUPABASE_ANON_KEY),
+    url: getEnvValue("SUPABASE_URL", DEFAULTS.SUPABASE_URL),
+    anonKey: getEnvValue("SUPABASE_ANON_KEY", DEFAULTS.SUPABASE_ANON_KEY),
   },
 };
 ```
@@ -406,15 +411,15 @@ async function baseHandler(event, context, options = {}) {
 // Example validation pattern
 function validateInput(body) {
   const { email, name } = body;
-  
+
   if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    throw new Error('Invalid email');
+    throw new Error("Invalid email");
   }
-  
+
   if (!name || name.length < 2 || name.length > 100) {
-    throw new Error('Name must be 2-100 characters');
+    throw new Error("Name must be 2-100 characters");
   }
-  
+
   return {
     email: email.toLowerCase().trim(),
     name: name.trim(),
@@ -429,9 +434,9 @@ Supabase uses parameterized queries by default:
 ```javascript
 // ✅ SAFE: Parameterized query
 const { data, error } = await supabase
-  .from('users')
-  .select('*')
-  .eq('id', userId);  // userId is parameterized
+  .from("users")
+  .select("*")
+  .eq("id", userId); // userId is parameterized
 
 // ❌ DANGEROUS: Never do this
 const query = `SELECT * FROM users WHERE id = '${userId}'`;
@@ -447,10 +452,10 @@ return {
   statusCode: 500,
   body: JSON.stringify({
     success: false,
-    error: 'An unexpected error occurred',
-    code: 'internal_error',
-    requestId  // For support correlation
-  })
+    error: "An unexpected error occurred",
+    code: "internal_error",
+    requestId, // For support correlation
+  }),
 };
 ```
 
@@ -468,22 +473,22 @@ All security headers are configured in `netlify.toml`:
   [headers.values]
     # Prevent clickjacking
     X-Frame-Options = "DENY"
-    
+
     # XSS filter (legacy browsers)
     X-XSS-Protection = "1; mode=block"
-    
+
     # Prevent MIME sniffing
     X-Content-Type-Options = "nosniff"
-    
+
     # Control referrer information
     Referrer-Policy = "strict-origin-when-cross-origin"
-    
+
     # Force HTTPS (HSTS) - 2 years, include subdomains, preload
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-    
+
     # Disable unnecessary browser features
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
-    
+
     # Cross-Origin isolation
     Cross-Origin-Embedder-Policy = "credentialless"
     Cross-Origin-Opener-Policy = "same-origin"
@@ -512,12 +517,12 @@ Content-Security-Policy = """
 
 #### CSP Notes
 
-| Directive | Current Value | Notes |
-|-----------|---------------|-------|
-| `script-src` | `'unsafe-inline'` | **Improvement opportunity:** Move to nonce-based CSP |
-| `style-src` | `'unsafe-inline'` | Required for Angular component styles |
-| `connect-src` | Supabase domains | Required for API and realtime |
-| `frame-src` | `'none'` | No iframes allowed |
+| Directive     | Current Value     | Notes                                                |
+| ------------- | ----------------- | ---------------------------------------------------- |
+| `script-src`  | `'unsafe-inline'` | **Improvement opportunity:** Move to nonce-based CSP |
+| `style-src`   | `'unsafe-inline'` | Required for Angular component styles                |
+| `connect-src` | Supabase domains  | Required for API and realtime                        |
+| `frame-src`   | `'none'`          | No iframes allowed                                   |
 
 ---
 
@@ -525,13 +530,13 @@ Content-Security-Policy = """
 
 ### What Goes Where
 
-| Secret | Location | Safe to Commit? |
-|--------|----------|-----------------|
-| `SUPABASE_URL` | Code + Netlify Env | ✅ Yes (public) |
-| `SUPABASE_ANON_KEY` | Code + Netlify Env | ✅ Yes (public, RLS-protected) |
-| `SUPABASE_SERVICE_KEY` | Netlify Env Only | ❌ **NEVER** |
-| `JWT_SECRET` | Supabase (managed) | ❌ **NEVER** |
-| `SENTRY_DSN` | Netlify Env Only | ⚠️ Keep private |
+| Secret                 | Location           | Safe to Commit?                |
+| ---------------------- | ------------------ | ------------------------------ |
+| `SUPABASE_URL`         | Code + Netlify Env | ✅ Yes (public)                |
+| `SUPABASE_ANON_KEY`    | Code + Netlify Env | ✅ Yes (public, RLS-protected) |
+| `SUPABASE_SERVICE_KEY` | Netlify Env Only   | ❌ **NEVER**                   |
+| `JWT_SECRET`           | Supabase (managed) | ❌ **NEVER**                   |
+| `SENTRY_DSN`           | Netlify Env Only   | ⚠️ Keep private                |
 
 ### Environment Variable Handling
 
@@ -552,7 +557,7 @@ Errors are tracked via Sentry (when enabled) with automatic PII redaction:
 captureError(error: Error, context?: ErrorContext): void {
   // Log locally (redacted)
   this.logger.error(`[ERROR]`, error.message, context);
-  
+
   // Send to Sentry (if enabled)
   if (this.Sentry && this.isInitialized) {
     this.Sentry.withScope((scope) => {
@@ -568,6 +573,7 @@ captureError(error: Error, context?: ErrorContext): void {
 ### Redaction Rules
 
 **Never log:**
+
 - Passwords or tokens
 - Full email addresses (use `u***@domain.com`)
 - Credit card numbers
@@ -575,6 +581,7 @@ captureError(error: Error, context?: ErrorContext): void {
 - Full stack traces to clients
 
 **Safe to log:**
+
 - User IDs (UUIDs)
 - Request paths
 - HTTP status codes
@@ -589,21 +596,21 @@ This section documents security features that are **intentionally not implemente
 
 ### Not Implemented (By Design)
 
-| Feature | Reason | Risk Level |
-|---------|--------|------------|
-| **CSRF Tokens** | Not needed with Authorization header auth | N/A |
-| **Nonce-based CSP** | Would require SSR; `'unsafe-inline'` is acceptable for this app | Low |
-| **Request Signing** | Overhead not justified for current threat model | Low |
-| **IP Allowlisting** | Would break mobile/dynamic IP users | N/A |
+| Feature             | Reason                                                          | Risk Level |
+| ------------------- | --------------------------------------------------------------- | ---------- |
+| **CSRF Tokens**     | Not needed with Authorization header auth                       | N/A        |
+| **Nonce-based CSP** | Would require SSR; `'unsafe-inline'` is acceptable for this app | Low        |
+| **Request Signing** | Overhead not justified for current threat model                 | Low        |
+| **IP Allowlisting** | Would break mobile/dynamic IP users                             | N/A        |
 
 ### Known Limitations
 
-| Limitation | Impact | Mitigation |
-|------------|--------|------------|
-| **Rate limiting is in-memory** | Resets on function cold start; not distributed | Acceptable for current scale; upgrade to Redis if needed |
-| **JWTs are not revocable** | Compromised token valid until expiry | Short expiry (1h), logout clears local storage |
-| **No request replay protection** | Same request can be replayed within token validity | Idempotent operations; consider JTI for sensitive ops |
-| **localStorage for tokens** | Vulnerable to XSS if XSS exists | Strong CSP, Angular auto-escaping, code review |
+| Limitation                       | Impact                                             | Mitigation                                               |
+| -------------------------------- | -------------------------------------------------- | -------------------------------------------------------- |
+| **Rate limiting is in-memory**   | Resets on function cold start; not distributed     | Acceptable for current scale; upgrade to Redis if needed |
+| **JWTs are not revocable**       | Compromised token valid until expiry               | Short expiry (1h), logout clears local storage           |
+| **No request replay protection** | Same request can be replayed within token validity | Idempotent operations; consider JTI for sensitive ops    |
+| **localStorage for tokens**      | Vulnerable to XSS if XSS exists                    | Strong CSP, Angular auto-escaping, code review           |
 
 ### Intentional Trade-offs
 
@@ -673,20 +680,23 @@ This section documents security features that are **intentionally not implemente
 **Solutions:**
 
 1. Check token expiration:
+
 ```typescript
 const session = await supabase.auth.getSession();
-console.log('Session expires:', session.data.session?.expires_at);
+console.log("Session expires:", session.data.session?.expires_at);
 ```
 
 2. Verify interceptor is registered:
+
 ```typescript
 // app.config.ts - authInterceptor should be first
 provideHttpClient(
-  withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor])
-)
+  withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),
+);
 ```
 
 3. Force token refresh:
+
 ```typescript
 await supabase.auth.refreshSession();
 ```

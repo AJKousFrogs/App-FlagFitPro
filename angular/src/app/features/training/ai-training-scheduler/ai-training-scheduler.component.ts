@@ -114,7 +114,10 @@ interface AthleteMetrics {
             <div class="metrics-grid">
               <div class="metric-item">
                 <span class="metric-label">ACWR</span>
-                <span class="metric-value" [class.warning]="athleteMetrics().acwr > 1.5">
+                <span
+                  class="metric-value"
+                  [class.warning]="athleteMetrics().acwr > 1.5"
+                >
                   {{ athleteMetrics().acwr.toFixed(2) }}
                 </span>
               </div>
@@ -128,11 +131,15 @@ interface AthleteMetrics {
               </div>
               <div class="metric-item">
                 <span class="metric-label">Sleep</span>
-                <span class="metric-value">{{ athleteMetrics().sleep_quality }}/10</span>
+                <span class="metric-value"
+                  >{{ athleteMetrics().sleep_quality }}/10</span
+                >
               </div>
               <div class="metric-item">
                 <span class="metric-label">Soreness</span>
-                <span class="metric-value">{{ athleteMetrics().soreness_level }}/10</span>
+                <span class="metric-value"
+                  >{{ athleteMetrics().soreness_level }}/10</span
+                >
               </div>
             </div>
           </p-card>
@@ -159,8 +166,16 @@ interface AthleteMetrics {
                   <div class="suggestion-item">
                     <div class="suggestion-content">
                       <p-skeleton width="80px" height="24px"></p-skeleton>
-                      <p-skeleton width="100%" height="40px" class="mt-2"></p-skeleton>
-                      <p-skeleton width="120px" height="14px" class="mt-2"></p-skeleton>
+                      <p-skeleton
+                        width="100%"
+                        height="40px"
+                        class="mt-2"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="120px"
+                        height="14px"
+                        class="mt-2"
+                      ></p-skeleton>
                     </div>
                   </div>
                 }
@@ -185,7 +200,7 @@ interface AthleteMetrics {
                           [value]="suggestion.type"
                           [severity]="getSuggestionSeverity(suggestion.type)"
                         ></p-tag>
-                        @if (suggestion.priority === 'high') {
+                        @if (suggestion.priority === "high") {
                           <p-tag value="Priority" severity="danger"></p-tag>
                         }
                       </div>
@@ -237,7 +252,7 @@ interface AthleteMetrics {
 
             <p-card class="sessions-card">
               <ng-template pTemplate="header">
-                <h3>Sessions for {{ selectedDate() | date: 'MMM d' }}</h3>
+                <h3>Sessions for {{ selectedDate() | date: "MMM d" }}</h3>
               </ng-template>
               @if (selectedDateSessions().length === 0) {
                 <div class="empty-sessions">
@@ -252,13 +267,23 @@ interface AthleteMetrics {
               } @else {
                 <div class="sessions-list">
                   @for (session of selectedDateSessions(); track session.id) {
-                    <div class="session-item" [class.ai-optimized]="session.ai_optimized">
+                    <div
+                      class="session-item"
+                      [class.ai-optimized]="session.ai_optimized"
+                    >
                       <div class="session-info">
                         <h4>{{ session.session_type }}</h4>
-                        <p>{{ session.duration_minutes }} min • {{ session.intensity }}</p>
+                        <p>
+                          {{ session.duration_minutes }} min •
+                          {{ session.intensity }}
+                        </p>
                       </div>
                       @if (session.ai_optimized) {
-                        <p-tag value="AI Optimized" severity="success" icon="pi pi-sparkles"></p-tag>
+                        <p-tag
+                          value="AI Optimized"
+                          severity="success"
+                          icon="pi pi-sparkles"
+                        ></p-tag>
                       }
                     </div>
                   }
@@ -282,7 +307,11 @@ interface AthleteMetrics {
       }
 
       .readiness-card {
-        background: linear-gradient(135deg, var(--p-surface-50), var(--p-surface-100));
+        background: linear-gradient(
+          135deg,
+          var(--p-surface-50),
+          var(--p-surface-100)
+        );
       }
 
       .readiness-header {
@@ -538,7 +567,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   applyingId = signal<string | null>(null);
 
   pendingSuggestions = computed(() =>
-    this.suggestions().filter((s) => !s.accepted && !s.dismissed)
+    this.suggestions().filter((s) => !s.accepted && !s.dismissed),
   );
 
   selectedDateSessions = computed(() => {
@@ -649,7 +678,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
             dismissed: s.dismissed || false,
             affected_session_id: s.affected_session_id,
             suggested_changes: s.suggested_changes,
-          }))
+          })),
         );
       } else {
         // Generate suggestions based on current metrics
@@ -698,7 +727,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
         type: "recovery",
         priority: "medium",
         message: "Focus on sleep recovery",
-        reason: "Poor sleep quality is affecting your recovery. Consider lighter training today.",
+        reason:
+          "Poor sleep quality is affecting your recovery. Consider lighter training today.",
         date: new Date(),
         accepted: false,
         dismissed: false,
@@ -711,7 +741,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
         type: "swap",
         priority: "medium",
         message: "Swap high-intensity session for mobility work",
-        reason: "High soreness levels suggest active recovery would be more beneficial.",
+        reason:
+          "High soreness levels suggest active recovery would be more beneficial.",
         date: new Date(),
         accepted: false,
         dismissed: false,
@@ -724,7 +755,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
         type: "increase",
         priority: "low",
         message: "Good opportunity for progressive overload",
-        reason: "Your metrics indicate you're well-recovered. Consider increasing intensity by 10%.",
+        reason:
+          "Your metrics indicate you're well-recovered. Consider increasing intensity by 10%.",
         date: new Date(),
         accepted: false,
         dismissed: false,
@@ -764,7 +796,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
           intensity: s.intensity || "moderate",
           status: s.status,
           ai_optimized: s.ai_optimized || false,
-        }))
+        })),
       );
     } catch (error) {
       this.logger.warn("Error loading sessions:", error);
@@ -818,8 +850,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
       // Update local state
       this.suggestions.update((suggestions) =>
         suggestions.map((s) =>
-          s.id === suggestion.id ? { ...s, accepted: true } : s
-        )
+          s.id === suggestion.id ? { ...s, accepted: true } : s,
+        ),
       );
 
       this.toastService.success("Suggestion applied to your schedule!");
@@ -854,7 +886,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
       // Update local state
       this.suggestions.update((suggestions) =>
-        suggestions.filter((s) => s.id !== suggestion.id)
+        suggestions.filter((s) => s.id !== suggestion.id),
       );
 
       this.toastService.info("Suggestion dismissed");
@@ -876,7 +908,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   }
 
   getSuggestionSeverity(
-    type: string
+    type: string,
   ):
     | "success"
     | "info"
@@ -904,4 +936,3 @@ export class AiTrainingSchedulerComponent implements OnInit {
     }
   }
 }
-

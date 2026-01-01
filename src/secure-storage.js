@@ -391,7 +391,7 @@ export class SecureStorage {
    * @returns {string|null} Cookie value
    */
   getCookie(name) {
-    const nameEQ = `${name  }=`;
+    const nameEQ = `${name}=`;
     const ca = document.cookie.split(";");
 
     for (let i = 0; i < ca.length; i++) {
@@ -411,7 +411,7 @@ export class SecureStorage {
    * @param {string} name - Cookie name
    */
   deleteCookie(name) {
-    document.cookie = `${name  }=; Max-Age=-99999999; path=/`;
+    document.cookie = `${name}=; Max-Age=-99999999; path=/`;
   }
 
   /**
@@ -740,7 +740,9 @@ export class SecureStorage {
 
       const isValid = storedHash === expectedHash;
       if (!isValid) {
-        logger.error("Token hash verification failed - possible tampering detected");
+        logger.error(
+          "Token hash verification failed - possible tampering detected",
+        );
       }
       return isValid;
     } catch (error) {

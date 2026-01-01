@@ -1,8 +1,8 @@
 /**
  * Coach Activity API Function
- * 
+ *
  * Provides activity feed for coaches showing player actions.
- * 
+ *
  * Endpoints:
  * - GET /api/coach-activity - Get activity feed
  * - POST /api/coach-activity/:id/read - Mark activity as read
@@ -41,7 +41,9 @@ async function getActivityFeed(userId, options = {}) {
     .eq("user_id", userId)
     .in("role", ["coach", "assistant_coach"]);
 
-  if (teamError) {throw teamError;}
+  if (teamError) {
+    throw teamError;
+  }
 
   if (!teams || teams.length === 0) {
     return [];
@@ -52,19 +54,24 @@ async function getActivityFeed(userId, options = {}) {
   // Get activity for these teams
   let query = supabase
     .from("coach_activity_log")
-    .select(`
+    .select(
+      `
       *,
       player:auth.users!coach_activity_log_player_id_fkey(
         id, email, raw_user_meta_data
       )
-    `)
+    `,
+    )
     .in("team_id", teamIds)
     .or(`coach_id.eq.${userId},coach_id.is.null`)
     .order("created_at", { ascending: false })
     .limit(options.limit || 50);
 
   if (options.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 50) - 1);
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 50) - 1,
+    );
   }
 
   if (options.unread_only) {
@@ -73,7 +80,9 @@ async function getActivityFeed(userId, options = {}) {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Format response
   return (data || []).map((a) => ({
@@ -116,7 +125,9 @@ async function getUnreadCount(userId) {
     .or(`coach_id.eq.${userId},coach_id.is.null`)
     .eq("is_read", false);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return count || 0;
 }
@@ -158,7 +169,9 @@ async function markActivityRead(userId, activityId) {
     })
     .eq("id", activityId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return { success: true };
 }
@@ -193,7 +206,9 @@ async function markAllActivityRead(userId) {
     .eq("is_read", false)
     .select("id");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return { success: true, updated: data?.length || 0 };
 }
@@ -233,8 +248,12 @@ async function getActivitySummary(userId) {
 
   const stats = {
     total_today: todayActivity?.length || 0,
-    stats_uploaded: todayActivity?.filter((a) => a.activity_type === "stats_uploaded").length || 0,
-    training_completed: todayActivity?.filter((a) => a.activity_type === "training_completed").length || 0,
+    stats_uploaded:
+      todayActivity?.filter((a) => a.activity_type === "stats_uploaded")
+        .length || 0,
+    training_completed:
+      todayActivity?.filter((a) => a.activity_type === "training_completed")
+        .length || 0,
     unread_count: await getUnreadCount(userId),
   };
 
@@ -301,7 +320,7 @@ exports.handler = async (event, context) => {
           error.message || "Internal error",
           error.message?.includes("denied") ? 403 : 500,
           "activity_error",
-          requestId
+          requestId,
         );
       }
     },

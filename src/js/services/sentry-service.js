@@ -46,7 +46,7 @@ class SentryService {
       let BrowserTracing;
       try {
         const tracingModule = await import("@sentry/tracing");
-        BrowserTracing = tracingModule.BrowserTracing;
+        ({ BrowserTracing } = tracingModule);
       } catch (_importError) {
         logger.warn(
           "[Sentry] Package @sentry/tracing not available, continuing without tracing",
@@ -163,7 +163,9 @@ class SentryService {
    * Update user context for error reports
    */
   updateUserContext(user = null) {
-    if (!this.initialized || !this.Sentry) {return;}
+    if (!this.initialized || !this.Sentry) {
+      return;
+    }
 
     try {
       if (user) {
@@ -176,7 +178,7 @@ class SentryService {
         logger.debug("[Sentry] User context updated");
       } else {
         // Try to get user from auth
-        const {authManager} = window;
+        const { authManager } = window;
         if (authManager && authManager.isAuthenticated()) {
           const currentUser = authManager.getCurrentUser();
           if (currentUser) {
@@ -198,7 +200,9 @@ class SentryService {
    * Clear user context (on logout)
    */
   clearUserContext() {
-    if (!this.initialized || !this.Sentry) {return;}
+    if (!this.initialized || !this.Sentry) {
+      return;
+    }
 
     try {
       this.Sentry.setUser(null);
@@ -255,7 +259,9 @@ class SentryService {
    * Add breadcrumb (for debugging context)
    */
   addBreadcrumb(breadcrumb) {
-    if (!this.initialized || !this.Sentry) {return;}
+    if (!this.initialized || !this.Sentry) {
+      return;
+    }
 
     try {
       this.Sentry.addBreadcrumb({
@@ -271,7 +277,9 @@ class SentryService {
    * Set custom context
    */
   setContext(name, context) {
-    if (!this.initialized || !this.Sentry) {return;}
+    if (!this.initialized || !this.Sentry) {
+      return;
+    }
 
     try {
       this.Sentry.setContext(name, context);
@@ -284,7 +292,9 @@ class SentryService {
    * Set tag
    */
   setTag(key, value) {
-    if (!this.initialized || !this.Sentry) {return;}
+    if (!this.initialized || !this.Sentry) {
+      return;
+    }
 
     try {
       this.Sentry.setTag(key, value);
@@ -297,7 +307,9 @@ class SentryService {
    * Start a transaction (for performance monitoring)
    */
   startTransaction(name, op = "navigation") {
-    if (!this.initialized || !this.Sentry) {return null;}
+    if (!this.initialized || !this.Sentry) {
+      return null;
+    }
 
     try {
       return this.Sentry.startTransaction({

@@ -34,41 +34,94 @@ const AUTO_FLAG_CRITERIA = {
   },
   // Sensitive topics - ALWAYS refer to professionals
   sensitiveTopics: {
-    description: "Topics requiring professional referral - NOT for AI to handle",
+    description:
+      "Topics requiring professional referral - NOT for AI to handle",
     keywords: [
       // Mental health - refer to psychologist/counselor
-      "suicide", "suicidal", "kill myself", "end my life", "don't want to live",
-      "self-harm", "cutting", "hurt myself",
-      "depression", "depressed", "hopeless", "worthless",
-      "anxiety", "panic attack", "can't cope",
-      "eating disorder", "anorexia", "bulimia", "binge",
-      "mental health", "therapy", "counselor",
-      "dark thoughts", "dark place",
-      
+      "suicide",
+      "suicidal",
+      "kill myself",
+      "end my life",
+      "don't want to live",
+      "self-harm",
+      "cutting",
+      "hurt myself",
+      "depression",
+      "depressed",
+      "hopeless",
+      "worthless",
+      "anxiety",
+      "panic attack",
+      "can't cope",
+      "eating disorder",
+      "anorexia",
+      "bulimia",
+      "binge",
+      "mental health",
+      "therapy",
+      "counselor",
+      "dark thoughts",
+      "dark place",
+
       // Physical injury - refer to doctor/physiotherapist
-      "injury", "injured", "hurt", "pain", "painful",
-      "broken", "fracture", "sprain", "strain", "torn",
-      "swelling", "swollen", "bruise",
-      "can't move", "can't walk", "limping",
-      "concussion", "head injury", "dizzy", "blacked out",
-      
+      "injury",
+      "injured",
+      "hurt",
+      "pain",
+      "painful",
+      "broken",
+      "fracture",
+      "sprain",
+      "strain",
+      "torn",
+      "swelling",
+      "swollen",
+      "bruise",
+      "can't move",
+      "can't walk",
+      "limping",
+      "concussion",
+      "head injury",
+      "dizzy",
+      "blacked out",
+
       // Medical - refer to doctor
-      "medical", "doctor", "hospital", "emergency",
-      "medication", "medicine", "prescription", "drug",
-      "supplement", "steroids", "performance enhancing",
-      "chest pain", "heart", "breathing problem",
-      "allergic", "allergy",
-      
+      "medical",
+      "doctor",
+      "hospital",
+      "emergency",
+      "medication",
+      "medicine",
+      "prescription",
+      "drug",
+      "supplement",
+      "steroids",
+      "performance enhancing",
+      "chest pain",
+      "heart",
+      "breathing problem",
+      "allergic",
+      "allergy",
+
       // Rehabilitation - refer to physiotherapist
-      "rehabilitation", "rehab", "physical therapy", "physiotherapy",
-      "recovery from surgery", "post-surgery",
+      "rehabilitation",
+      "rehab",
+      "physical therapy",
+      "physiotherapy",
+      "recovery from surgery",
+      "post-surgery",
     ],
     referralGuidance: {
-      mentalHealth: "Please speak with a licensed psychologist, counselor, or mental health professional.",
-      injury: "Please consult a doctor or sports medicine physician before continuing training.",
-      physiotherapy: "Please work with a licensed physiotherapist for proper rehabilitation.",
-      medical: "Please consult your doctor or healthcare professional for medical advice.",
-      emergency: "If this is an emergency, please call emergency services immediately.",
+      mentalHealth:
+        "Please speak with a licensed psychologist, counselor, or mental health professional.",
+      injury:
+        "Please consult a doctor or sports medicine physician before continuing training.",
+      physiotherapy:
+        "Please work with a licensed physiotherapist for proper rehabilitation.",
+      medical:
+        "Please consult your doctor or healthcare professional for medical advice.",
+      emergency:
+        "If this is an emergency, please call emergency services immediately.",
     },
   },
   // Minor users
@@ -124,10 +177,12 @@ const PRIORITY_LEVELS = {
  * Check if content contains sensitive keywords
  */
 function containsSensitiveKeywords(text) {
-  if (!text) {return false;}
+  if (!text) {
+    return false;
+  }
   const lowerText = text.toLowerCase();
-  return AUTO_FLAG_CRITERIA.sensitiveTopics.keywords.some(keyword => 
-    lowerText.includes(keyword)
+  return AUTO_FLAG_CRITERIA.sensitiveTopics.keywords.some((keyword) =>
+    lowerText.includes(keyword),
   );
 }
 
@@ -135,24 +190,28 @@ function containsSensitiveKeywords(text) {
  * Determine review priority based on context
  */
 function determinePriority(context) {
-  const { topic, isMinor, confidence, containsSensitive, impactLevel } = context;
-  
+  const { topic, isMinor, confidence, containsSensitive, impactLevel } =
+    context;
+
   // Critical: Health/safety concerns for minors
-  if (isMinor && (containsSensitive || topic === 'health' || topic === 'injury')) {
-    return 'critical';
+  if (
+    isMinor &&
+    (containsSensitive || topic === "health" || topic === "injury")
+  ) {
+    return "critical";
   }
-  
+
   // High: Any health-related or low confidence
-  if (containsSensitive || confidence < 0.5 || impactLevel === 'high') {
-    return 'high';
+  if (containsSensitive || confidence < 0.5 || impactLevel === "high") {
+    return "high";
   }
-  
+
   // Medium: Minor users or moderate impact
-  if (isMinor || impactLevel === 'medium' || confidence < 0.7) {
-    return 'medium';
+  if (isMinor || impactLevel === "medium" || confidence < 0.7) {
+    return "medium";
   }
-  
-  return 'low';
+
+  return "low";
 }
 
 /**
@@ -165,30 +224,30 @@ function shouldFlagForReview(decision) {
     topic,
     recommendation,
     confidence = 1.0,
-    impactLevel = 'low',
+    impactLevel = "low",
   } = decision;
-  
+
   const reasons = [];
   const isMinor = userAge && userAge < 18;
   const containsSensitive = containsSensitiveKeywords(recommendation);
-  
+
   // Check each criterion
   if (confidence < AUTO_FLAG_CRITERIA.uncertainty.threshold) {
     reasons.push(`Low confidence: ${(confidence * 100).toFixed(0)}%`);
   }
-  
+
   if (containsSensitive) {
-    reasons.push('Contains sensitive health/safety keywords');
+    reasons.push("Contains sensitive health/safety keywords");
   }
-  
+
   if (isMinor && AUTO_FLAG_CRITERIA.minorUsers.topics.includes(topic)) {
-    reasons.push('Sensitive topic for minor user');
+    reasons.push("Sensitive topic for minor user");
   }
-  
-  if (impactLevel === 'high') {
-    reasons.push('High-impact recommendation');
+
+  if (impactLevel === "high") {
+    reasons.push("High-impact recommendation");
   }
-  
+
   return {
     shouldFlag: reasons.length > 0,
     reasons,
@@ -221,20 +280,20 @@ async function createReviewRequest(data) {
     reasons,
     priority,
   } = data;
-  
+
   const slaHours = PRIORITY_LEVELS[priority]?.slaHours || 24;
   const dueAt = new Date(Date.now() + slaHours * 60 * 60 * 1000);
-  
+
   const { data: review, error } = await supabaseAdmin
     .from("ai_coach_interactions")
     .update({
       requires_review: true,
-      review_reason: reasons.join('; '),
+      review_reason: reasons.join("; "),
     })
     .eq("id", interactionId)
     .select()
     .single();
-  
+
   if (error && error.code !== "PGRST116") {
     // If interaction doesn't exist, create a review record separately
     const { data: newReview, error: insertError } = await supabaseAdmin
@@ -254,11 +313,13 @@ async function createReviewRequest(data) {
       })
       .select()
       .single();
-    
-    if (insertError) {throw insertError;}
+
+    if (insertError) {
+      throw insertError;
+    }
     return newReview;
   }
-  
+
   return review;
 }
 
@@ -266,23 +327,31 @@ async function createReviewRequest(data) {
  * Get pending reviews (for reviewers/admins)
  */
 async function getPendingReviews(filters = {}) {
-  const { priority: _priority, status: _status = 'pending', limit = 50 } = filters;
-  
+  const {
+    priority: _priority,
+    status: _status = "pending",
+    limit = 50,
+  } = filters;
+
   const query = supabaseAdmin
     .from("ai_coach_interactions")
-    .select(`
+    .select(
+      `
       *,
       users:user_id (id, first_name, last_name, email),
       ai_coaches:coach_id (id, name, personality_type)
-    `)
+    `,
+    )
     .eq("requires_review", true)
     .is("reviewed_at", null)
     .order("created_at", { ascending: true })
     .limit(limit);
-  
+
   const { data, error } = await query;
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -297,7 +366,7 @@ async function submitReview(reviewData) {
     reviewNotes,
     modifiedRecommendation,
   } = reviewData;
-  
+
   const { data, error } = await supabaseAdmin
     .from("ai_coach_interactions")
     .update({
@@ -310,9 +379,11 @@ async function submitReview(reviewData) {
     .eq("id", interactionId)
     .select()
     .single();
-  
-  if (error) {throw error;}
-  
+
+  if (error) {
+    throw error;
+  }
+
   // Log the review action
   await supabaseAdmin.from("privacy_audit_log").insert({
     user_id: reviewerId,
@@ -324,7 +395,7 @@ async function submitReview(reviewData) {
       has_modification: !!modifiedRecommendation,
     },
   });
-  
+
   return data;
 }
 
@@ -338,32 +409,32 @@ async function getReviewStats() {
     .select("id", { count: "exact", head: true })
     .eq("requires_review", true)
     .is("reviewed_at", null);
-  
+
   const { data: reviewedCount } = await supabaseAdmin
     .from("ai_coach_interactions")
     .select("id", { count: "exact", head: true })
     .eq("requires_review", true)
     .not("reviewed_at", "is", null);
-  
+
   // Get outcome breakdown
   const { data: outcomes } = await supabaseAdmin
     .from("ai_coach_interactions")
     .select("review_outcome")
     .eq("requires_review", true)
     .not("reviewed_at", "is", null);
-  
+
   const outcomeBreakdown = {
     approved: 0,
     modified: 0,
     rejected: 0,
   };
-  
-  outcomes?.forEach(o => {
+
+  outcomes?.forEach((o) => {
     if (o.review_outcome && Object.hasOwn(outcomeBreakdown, o.review_outcome)) {
       outcomeBreakdown[o.review_outcome]++;
     }
   });
-  
+
   return {
     pending: pendingCount || 0,
     reviewed: reviewedCount || 0,
@@ -379,7 +450,8 @@ async function getReviewStats() {
 async function getUserReviewHistory(userId, limit = 20) {
   const { data, error } = await supabaseAdmin
     .from("ai_coach_interactions")
-    .select(`
+    .select(
+      `
       id,
       interaction_type,
       topic,
@@ -389,13 +461,16 @@ async function getUserReviewHistory(userId, limit = 20) {
       reviewed_at,
       review_outcome,
       created_at
-    `)
+    `,
+    )
     .eq("user_id", userId)
     .eq("requires_review", true)
     .order("created_at", { ascending: false })
     .limit(limit);
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -412,9 +487,11 @@ async function flagInteractionForReview(interactionId, reason, flaggedBy) {
     .eq("id", interactionId)
     .select()
     .single();
-  
-  if (error) {throw error;}
-  
+
+  if (error) {
+    throw error;
+  }
+
   // Log the flagging action
   await supabaseAdmin.from("privacy_audit_log").insert({
     user_id: flaggedBy,
@@ -425,7 +502,7 @@ async function flagInteractionForReview(interactionId, reason, flaggedBy) {
       reason,
     },
   });
-  
+
   return data;
 }
 
@@ -434,11 +511,12 @@ async function flagInteractionForReview(interactionId, reason, flaggedBy) {
 // =============================================================================
 
 async function handleRequest(event, _context, { userId, user }) {
-  const path = event.path
-    .replace("/.netlify/functions/ai-review", "")
-    .replace(/^\/api\/ai-review\/?/, "")
-    .replace(/^\//, "") || "";
-  
+  const path =
+    event.path
+      .replace("/.netlify/functions/ai-review", "")
+      .replace(/^\/api\/ai-review\/?/, "")
+      .replace(/^\//, "") || "";
+
   let body = {};
   if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
     try {
@@ -449,8 +527,12 @@ async function handleRequest(event, _context, { userId, user }) {
   }
 
   // Check if user is admin/reviewer for certain endpoints
-  const isAdmin = user?.role === "admin" || user?.user_metadata?.role === "admin";
-  const isReviewer = user?.role === "reviewer" || user?.user_metadata?.role === "reviewer" || isAdmin;
+  const isAdmin =
+    user?.role === "admin" || user?.user_metadata?.role === "admin";
+  const isReviewer =
+    user?.role === "reviewer" ||
+    user?.user_metadata?.role === "reviewer" ||
+    isAdmin;
 
   try {
     // Check if decision should be flagged (public endpoint for AI system)
@@ -463,16 +545,28 @@ async function handleRequest(event, _context, { userId, user }) {
     if (event.httpMethod === "POST" && path === "flag") {
       const { interactionId, reason } = body;
       if (!interactionId) {
-        return createErrorResponse("Interaction ID required", 400, "missing_id");
+        return createErrorResponse(
+          "Interaction ID required",
+          400,
+          "missing_id",
+        );
       }
-      const flagged = await flagInteractionForReview(interactionId, reason, userId);
+      const flagged = await flagInteractionForReview(
+        interactionId,
+        reason,
+        userId,
+      );
       return createSuccessResponse(flagged);
     }
 
     // Get pending reviews (reviewers only)
     if (event.httpMethod === "GET" && path === "queue") {
       if (!isReviewer) {
-        return createErrorResponse("Reviewer access required", 403, "forbidden");
+        return createErrorResponse(
+          "Reviewer access required",
+          403,
+          "forbidden",
+        );
       }
       const params = event.queryStringParameters || {};
       const reviews = await getPendingReviews({
@@ -486,7 +580,11 @@ async function handleRequest(event, _context, { userId, user }) {
     // Submit a review (reviewers only)
     if (event.httpMethod === "POST" && path === "submit") {
       if (!isReviewer) {
-        return createErrorResponse("Reviewer access required", 403, "forbidden");
+        return createErrorResponse(
+          "Reviewer access required",
+          403,
+          "forbidden",
+        );
       }
       const review = await submitReview({
         ...body,
@@ -498,7 +596,11 @@ async function handleRequest(event, _context, { userId, user }) {
     // Get review statistics (reviewers only)
     if (event.httpMethod === "GET" && path === "stats") {
       if (!isReviewer) {
-        return createErrorResponse("Reviewer access required", 403, "forbidden");
+        return createErrorResponse(
+          "Reviewer access required",
+          403,
+          "forbidden",
+        );
       }
       const stats = await getReviewStats();
       return createSuccessResponse(stats);
@@ -507,7 +609,10 @@ async function handleRequest(event, _context, { userId, user }) {
     // Get user's own review history
     if (event.httpMethod === "GET" && path === "history") {
       const params = event.queryStringParameters || {};
-      const history = await getUserReviewHistory(userId, parseInt(params.limit) || 20);
+      const history = await getUserReviewHistory(
+        userId,
+        parseInt(params.limit) || 20,
+      );
       return createSuccessResponse(history);
     }
 
@@ -520,7 +625,6 @@ async function handleRequest(event, _context, { userId, user }) {
     }
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
-
   } catch (error) {
     console.error("AI Review API error:", error);
     throw error;
@@ -536,7 +640,8 @@ exports.handler = async (event, context) => {
     functionName: "ai-review",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "DEFAULT",
-    requireAuth: !event.path.includes("/criteria") && !event.path.includes("/check"),
+    requireAuth:
+      !event.path.includes("/criteria") && !event.path.includes("/check"),
     handler: handleRequest,
   });
 };
@@ -544,4 +649,3 @@ exports.handler = async (event, context) => {
 // Export for use in AI chat function
 exports.shouldFlagForReview = shouldFlagForReview;
 exports.createReviewRequest = createReviewRequest;
-

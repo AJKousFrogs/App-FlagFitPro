@@ -1,34 +1,39 @@
 import {
   ApplicationConfig,
-  provideZonelessChangeDetection,
-  isDevMode,
   ErrorHandler,
+  isDevMode,
+  provideZonelessChangeDetection,
 } from "@angular/core";
 import {
   provideRouter,
   withComponentInputBinding,
-  withViewTransitions,
-  withPreloading,
   withDebugTracing,
+  withPreloading,
+  withViewTransitions,
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
 // Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
-import { provideHttpClient, withInterceptors, withFetch } from "@angular/common/http";
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from "@angular/common/http";
 import { MessageService } from "primeng/api";
+import { providePrimeNG } from "primeng/config";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
-import { errorInterceptor } from "./core/interceptors/error.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
-import { AcwrService } from "./core/services/acwr.service";
-import { LoadMonitoringService } from "./core/services/load-monitoring.service";
+import { errorInterceptor } from "./core/interceptors/error.interceptor";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
+import { AcwrService } from "./core/services/acwr.service";
 import { CoreWebVitalsService } from "./core/services/core-web-vitals.service";
-import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 import {
   ErrorTrackingService,
   GlobalErrorHandler,
 } from "./core/services/error-tracking.service";
+import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { ResourceService } from "./core/services/resource.service";
+import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -54,9 +59,18 @@ export const appConfig: ApplicationConfig = {
     // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
-      withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor])
+      withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),
     ),
     MessageService,
+    providePrimeNG({
+      ripple: false, // Disable ripple effect (we use CSS transitions)
+      zIndex: {
+        modal: 1100,
+        overlay: 1000,
+        menu: 1000,
+        tooltip: 1100,
+      },
+    }),
     AcwrService,
     LoadMonitoringService,
     AcwrAlertsService,

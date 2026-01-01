@@ -1,15 +1,18 @@
 /**
  * Privacy Settings API
- * 
+ *
  * Manages user privacy preferences as defined in PRIVACY_POLICY.md:
  * - GET: Retrieve current privacy settings
  * - PUT: Update privacy settings
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 const { getSupabaseClient } = require("./supabase-client.cjs");
 
 exports.handler = async (event, context) => {
@@ -23,7 +26,7 @@ exports.handler = async (event, context) => {
       // GET - Retrieve privacy settings
       if (event.httpMethod === "GET") {
         // Get or create privacy settings
-        let { data: settings, error } = await supabase
+        let { data: settings, error } = await supabase // eslint-disable-line prefer-const
           .from("privacy_settings")
           .select("*")
           .eq("user_id", userId)
@@ -38,7 +41,11 @@ exports.handler = async (event, context) => {
             .single();
 
           if (insertError) {
-            return createErrorResponse(insertError.message, 500, "database_error");
+            return createErrorResponse(
+              insertError.message,
+              500,
+              "database_error",
+            );
           }
           settings = newSettings;
         } else if (error) {
@@ -48,7 +55,8 @@ exports.handler = async (event, context) => {
         // Also get team sharing settings
         const { data: teamSettings } = await supabase
           .from("team_sharing_settings")
-          .select(`
+          .select(
+            `
             id,
             team_id,
             performance_sharing_enabled,
@@ -56,7 +64,8 @@ exports.handler = async (event, context) => {
             allowed_metric_categories,
             updated_at,
             teams (id, name)
-          `)
+          `,
+          )
           .eq("user_id", userId);
 
         // Check parental consent status if applicable
@@ -71,7 +80,7 @@ exports.handler = async (event, context) => {
           const birthDate = new Date(user.date_of_birth);
           const today = new Date();
           const age = today.getFullYear() - birthDate.getFullYear();
-          
+
           if (age >= 13 && age < 18) {
             const { data: consent } = await supabase
               .from("parental_consent")
@@ -81,7 +90,7 @@ exports.handler = async (event, context) => {
               .order("created_at", { ascending: false })
               .limit(1)
               .single();
-            
+
             parentalConsent = consent;
           }
         }
@@ -89,7 +98,9 @@ exports.handler = async (event, context) => {
         return createSuccessResponse({
           settings: mapDbToSettings(settings),
           teamSettings: (teamSettings || []).map(mapDbToTeamSettings),
-          parentalConsent: parentalConsent ? mapDbToParentalConsent(parentalConsent) : null,
+          parentalConsent: parentalConsent
+            ? mapDbToParentalConsent(parentalConsent)
+            : null,
         });
       }
 
@@ -107,42 +118,44 @@ exports.handler = async (event, context) => {
         // Update main privacy settings
         if (newSettings) {
           const updateData = {};
-          
+
           if (newSettings.aiProcessingEnabled !== undefined) {
             updateData.ai_processing_enabled = newSettings.aiProcessingEnabled;
-            updateData.ai_processing_consent_date = newSettings.aiProcessingEnabled 
-              ? new Date().toISOString() 
-              : null;
+            updateData.ai_processing_consent_date =
+              newSettings.aiProcessingEnabled ? new Date().toISOString() : null;
           }
-          
+
           if (newSettings.researchOptIn !== undefined) {
             updateData.research_opt_in = newSettings.researchOptIn;
-            updateData.research_consent_date = newSettings.researchOptIn 
-              ? new Date().toISOString() 
+            updateData.research_consent_date = newSettings.researchOptIn
+              ? new Date().toISOString()
               : null;
           }
-          
+
           if (newSettings.emergencySharingLevel !== undefined) {
-            updateData.emergency_sharing_level = newSettings.emergencySharingLevel;
+            updateData.emergency_sharing_level =
+              newSettings.emergencySharingLevel;
           }
-          
+
           if (newSettings.emergencyContacts !== undefined) {
             updateData.emergency_contacts = newSettings.emergencyContacts;
           }
-          
+
           if (newSettings.marketingOptIn !== undefined) {
             updateData.marketing_opt_in = newSettings.marketingOptIn;
-            updateData.marketing_consent_date = newSettings.marketingOptIn 
-              ? new Date().toISOString() 
+            updateData.marketing_consent_date = newSettings.marketingOptIn
+              ? new Date().toISOString()
               : null;
           }
-          
+
           if (newSettings.performanceSharingDefault !== undefined) {
-            updateData.performance_sharing_default = newSettings.performanceSharingDefault;
+            updateData.performance_sharing_default =
+              newSettings.performanceSharingDefault;
           }
-          
+
           if (newSettings.healthSharingDefault !== undefined) {
-            updateData.health_sharing_default = newSettings.healthSharingDefault;
+            updateData.health_sharing_default =
+              newSettings.healthSharingDefault;
           }
 
           if (Object.keys(updateData).length > 0) {
@@ -165,15 +178,18 @@ exports.handler = async (event, context) => {
           };
 
           if (teamSettings.performanceSharingEnabled !== undefined) {
-            teamUpdateData.performance_sharing_enabled = teamSettings.performanceSharingEnabled;
+            teamUpdateData.performance_sharing_enabled =
+              teamSettings.performanceSharingEnabled;
           }
-          
+
           if (teamSettings.healthSharingEnabled !== undefined) {
-            teamUpdateData.health_sharing_enabled = teamSettings.healthSharingEnabled;
+            teamUpdateData.health_sharing_enabled =
+              teamSettings.healthSharingEnabled;
           }
-          
+
           if (teamSettings.allowedMetricCategories !== undefined) {
-            teamUpdateData.allowed_metric_categories = teamSettings.allowedMetricCategories;
+            teamUpdateData.allowed_metric_categories =
+              teamSettings.allowedMetricCategories;
           }
 
           const { error } = await supabase
@@ -188,16 +204,17 @@ exports.handler = async (event, context) => {
         }
 
         // Log the privacy change
-        await supabase
-          .from("privacy_audit_log")
-          .insert({
-            user_id: userId,
-            action: "settings_updated",
-            affected_table: teamId ? "team_sharing_settings" : "privacy_settings",
-            affected_data: body,
-          });
+        await supabase.from("privacy_audit_log").insert({
+          user_id: userId,
+          action: "settings_updated",
+          affected_table: teamId ? "team_sharing_settings" : "privacy_settings",
+          affected_data: body,
+        });
 
-        return createSuccessResponse({ success: true, message: "Privacy settings updated" });
+        return createSuccessResponse({
+          success: true,
+          message: "Privacy settings updated",
+        });
       }
     },
   });
@@ -251,7 +268,3 @@ function mapDbToParentalConsent(db) {
     expiresAt: db.expires_at,
   };
 }
-
-
-
-

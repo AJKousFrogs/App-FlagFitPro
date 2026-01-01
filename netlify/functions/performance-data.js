@@ -1181,7 +1181,7 @@ function calculateWellnessAverages(wellness) {
   const sums = {};
   const counts = {};
 
-  metrics.forEach(metric => {
+  metrics.forEach((metric) => {
     sums[metric] = 0;
     counts[metric] = 0;
   });
@@ -1197,9 +1197,8 @@ function calculateWellnessAverages(wellness) {
 
   const averages = {};
   metrics.forEach((metric) => {
-    averages[metric] = counts[metric] > 0
-      ? (sums[metric] / counts[metric]).toFixed(1)
-      : null;
+    averages[metric] =
+      counts[metric] > 0 ? (sums[metric] / counts[metric]).toFixed(1) : null;
   });
 
   return averages;

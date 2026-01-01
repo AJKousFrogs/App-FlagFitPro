@@ -37,14 +37,14 @@ export const successCheckmarkAnimation: AnimationTriggerMetadata = trigger(
       style({
         opacity: 0,
         transform: "scale(0.5)",
-      })
+      }),
     ),
     state(
       "success",
       style({
         opacity: 1,
         transform: "scale(1)",
-      })
+      }),
     ),
     transition("void => success", [
       animate(
@@ -54,13 +54,13 @@ export const successCheckmarkAnimation: AnimationTriggerMetadata = trigger(
           style({ opacity: 1, transform: "scale(1.2)", offset: 0.6 }),
           style({ opacity: 1, transform: "scale(0.9)", offset: 0.8 }),
           style({ opacity: 1, transform: "scale(1)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
     transition("success => void", [
       animate("200ms ease-out", style({ opacity: 0, transform: "scale(0.5)" })),
     ]),
-  ]
+  ],
 );
 
 /**
@@ -75,14 +75,14 @@ export const successCircleAnimation: AnimationTriggerMetadata = trigger(
       style({
         opacity: 0,
         transform: "scale(0)",
-      })
+      }),
     ),
     state(
       "success",
       style({
         opacity: 1,
         transform: "scale(1)",
-      })
+      }),
     ),
     transition("void => success", [
       animate(
@@ -91,10 +91,10 @@ export const successCircleAnimation: AnimationTriggerMetadata = trigger(
           style({ opacity: 0, transform: "scale(0)", offset: 0 }),
           style({ opacity: 0.3, transform: "scale(1.5)", offset: 0.5 }),
           style({ opacity: 0, transform: "scale(2)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -113,32 +113,30 @@ export const formSuccessAnimation: AnimationTriggerMetadata = trigger(
       style({
         opacity: 1,
         transform: "translateY(0)",
-      })
+      }),
     ),
     state(
       "submitting",
       style({
         opacity: 0.7,
         transform: "scale(0.98)",
-      })
+      }),
     ),
     state(
       "success",
       style({
         opacity: 1,
         transform: "translateY(0)",
-      })
+      }),
     ),
     state(
       "error",
       style({
         opacity: 1,
         transform: "translateX(0)",
-      })
+      }),
     ),
-    transition("idle => submitting", [
-      animate("200ms ease-out"),
-    ]),
+    transition("idle => submitting", [animate("200ms ease-out")]),
     transition("submitting => success", [
       animate(
         "400ms cubic-bezier(0.34, 1.56, 0.64, 1)",
@@ -146,7 +144,7 @@ export const formSuccessAnimation: AnimationTriggerMetadata = trigger(
           style({ opacity: 0.7, transform: "scale(0.98)", offset: 0 }),
           style({ opacity: 1, transform: "scale(1.02)", offset: 0.5 }),
           style({ opacity: 1, transform: "scale(1)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
     transition("submitting => error", [
@@ -159,13 +157,11 @@ export const formSuccessAnimation: AnimationTriggerMetadata = trigger(
           style({ transform: "translateX(-10px)", offset: 0.6 }),
           style({ transform: "translateX(5px)", offset: 0.8 }),
           style({ transform: "translateX(0)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
-    transition("* => idle", [
-      animate("200ms ease-out"),
-    ]),
-  ]
+    transition("* => idle", [animate("200ms ease-out")]),
+  ],
 );
 
 // ================================
@@ -183,19 +179,19 @@ export const buttonSuccessAnimation: AnimationTriggerMetadata = trigger(
       "idle",
       style({
         transform: "scale(1)",
-      })
+      }),
     ),
     state(
       "loading",
       style({
         transform: "scale(1)",
-      })
+      }),
     ),
     state(
       "success",
       style({
         transform: "scale(1)",
-      })
+      }),
     ),
     transition("loading => success", [
       animate(
@@ -205,13 +201,11 @@ export const buttonSuccessAnimation: AnimationTriggerMetadata = trigger(
           style({ transform: "scale(1.1)", offset: 0.3 }),
           style({ transform: "scale(0.95)", offset: 0.6 }),
           style({ transform: "scale(1)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
-    transition("success => idle", [
-      animate("300ms ease-out"),
-    ]),
-  ]
+    transition("success => idle", [animate("300ms ease-out")]),
+  ],
 );
 
 // ================================
@@ -231,7 +225,7 @@ export const achievementUnlockAnimation: AnimationTriggerMetadata = trigger(
         opacity: 0.5,
         transform: "scale(0.9)",
         filter: "grayscale(100%)",
-      })
+      }),
     ),
     state(
       "unlocked",
@@ -239,7 +233,7 @@ export const achievementUnlockAnimation: AnimationTriggerMetadata = trigger(
         opacity: 1,
         transform: "scale(1)",
         filter: "grayscale(0%)",
-      })
+      }),
     ),
     transition("locked => unlocked", [
       group([
@@ -270,11 +264,11 @@ export const achievementUnlockAnimation: AnimationTriggerMetadata = trigger(
               filter: "grayscale(0%)",
               offset: 1,
             }),
-          ])
+          ]),
         ),
       ]),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -298,7 +292,7 @@ export const toastSlideAnimation: AnimationTriggerMetadata = trigger(
         style({
           opacity: 1,
           transform: "translateX(0) scale(1)",
-        })
+        }),
       ),
     ]),
     transition(":leave", [
@@ -307,10 +301,10 @@ export const toastSlideAnimation: AnimationTriggerMetadata = trigger(
         style({
           opacity: 0,
           transform: "translateX(100%) scale(0.95)",
-        })
+        }),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -350,10 +344,10 @@ export const confettiParticleAnimation: AnimationTriggerMetadata = trigger(
               "translateY(200px) translateX({{ x3 }}px) rotate({{ rotation3 }}deg) scale(0.5)",
             offset: 1,
           }),
-        ])
+        ]),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -372,14 +366,14 @@ export const pulseSuccessAnimation: AnimationTriggerMetadata = trigger(
       style({
         transform: "scale(1)",
         boxShadow: "0 0 0 0 rgba(var(--ds-primary-green-rgb), 0)",
-      })
+      }),
     ),
     state(
       "active",
       style({
         transform: "scale(1)",
         boxShadow: "0 0 0 0 rgba(var(--ds-primary-green-rgb), 0)",
-      })
+      }),
     ),
     transition("inactive => active", [
       animate(
@@ -400,10 +394,10 @@ export const pulseSuccessAnimation: AnimationTriggerMetadata = trigger(
             boxShadow: "0 0 0 20px rgba(var(--ds-primary-green-rgb), 0)",
             offset: 1,
           }),
-        ])
+        ]),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -424,10 +418,10 @@ export const counterIncrementAnimation: AnimationTriggerMetadata = trigger(
           style({ transform: "translateY(0) scale(1)", offset: 0 }),
           style({ transform: "translateY(-5px) scale(1.1)", offset: 0.5 }),
           style({ transform: "translateY(0) scale(1)", offset: 1 }),
-        ])
+        ]),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -449,14 +443,14 @@ export const staggerSuccessAnimation: AnimationTriggerMetadata = trigger(
           stagger("50ms", [
             animate(
               "400ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-              style({ opacity: 1, transform: "translateY(0)" })
+              style({ opacity: 1, transform: "translateY(0)" }),
             ),
           ]),
         ],
-        { optional: true }
+        { optional: true },
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -475,4 +469,3 @@ export const SUCCESS_ANIMATIONS = [
   counterIncrementAnimation,
   staggerSuccessAnimation,
 ];
-

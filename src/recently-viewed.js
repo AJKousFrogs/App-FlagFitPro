@@ -1,8 +1,8 @@
 // Recently Viewed Tracker for FlagFit Pro
 // Tracks and displays recently viewed pages/items with enhanced UX
 
-import { SecureDOMUtils } from "./secure-dom-utils.js";
 import { storageService } from "./js/services/storage-service-unified.js";
+import { SecureDOMUtils } from "./secure-dom-utils.js";
 
 export class RecentlyViewed {
   constructor() {
@@ -181,7 +181,7 @@ export class RecentlyViewed {
     const clearBtn = widget.querySelector(".recently-viewed-clear");
     if (clearBtn) {
       clearBtn.addEventListener("click", () => {
-        if (confirm("Clear recently viewed history?")) {
+        if (confirm("Clear recently viewed history?")) { // eslint-disable-line no-alert
           this.clearHistory();
           const list = widget.querySelector(".recently-viewed-list");
           if (list) {
@@ -452,7 +452,7 @@ export class RecentlyViewed {
 
     SecureDOMUtils.setTextContent(
       playersLink,
-      `${playersLink.textContent  }View Top Players`,
+      `${playersLink.textContent}View Top Players`,
     );
 
     // Teams link
@@ -470,7 +470,7 @@ export class RecentlyViewed {
 
     SecureDOMUtils.setTextContent(
       teamsLink,
-      `${teamsLink.textContent  }Browse Teams`,
+      `${teamsLink.textContent}Browse Teams`,
     );
   }
 

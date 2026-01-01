@@ -138,7 +138,7 @@ interface TimezoneOption {
           </button>
         </div>
 
-        @if (travelType() === 'flight' && !hasActivePlan()) {
+        @if (travelType() === "flight" && !hasActivePlan()) {
           <!-- Flight Trip Planning Form -->
           <div class="planning-section">
             <!-- Olympic Quick Select -->
@@ -177,15 +177,21 @@ interface TimezoneOption {
               @if (selectedOlympicVenue && olympicImpact()) {
                 <div class="olympic-impact">
                   <div class="impact-stat">
-                    <span class="stat-value">{{ Math.abs(olympicImpact()!.timezonesDifference) }}</span>
+                    <span class="stat-value">{{
+                      Math.abs(olympicImpact()!.timezonesDifference)
+                    }}</span>
                     <span class="stat-label">Time Zones</span>
                   </div>
                   <div class="impact-stat">
-                    <span class="stat-value">{{ olympicImpact()!.direction }}</span>
+                    <span class="stat-value">{{
+                      olympicImpact()!.direction
+                    }}</span>
                     <span class="stat-label">Direction</span>
                   </div>
                   <div class="impact-stat">
-                    <span class="stat-value">{{ olympicImpact()!.estimatedRecoveryDays }}</span>
+                    <span class="stat-value">{{
+                      olympicImpact()!.estimatedRecoveryDays
+                    }}</span>
                     <span class="stat-label">Recovery Days</span>
                   </div>
                 </div>
@@ -304,16 +310,21 @@ interface TimezoneOption {
               </div>
             </p-card>
           </div>
-        } @else if (travelType() === 'flight' && hasActivePlan()) {
+        } @else if (travelType() === "flight" && hasActivePlan()) {
           <!-- Active Flight Plan Dashboard -->
           <div class="protocol-dashboard">
             <!-- Severity Overview -->
             <div class="severity-section">
-              <p-card styleClass="severity-card" [ngClass]="'severity-' + jetLagSeverity().level">
+              <p-card
+                styleClass="severity-card"
+                [ngClass]="'severity-' + jetLagSeverity().level"
+              >
                 <div class="severity-content">
                   <div class="severity-gauge">
                     <div class="gauge-circle">
-                      <span class="gauge-value">{{ jetLagSeverity().score }}</span>
+                      <span class="gauge-value">{{
+                        jetLagSeverity().score
+                      }}</span>
                       <span class="gauge-label">Jet Lag Score</span>
                     </div>
                   </div>
@@ -321,12 +332,21 @@ interface TimezoneOption {
                     <h2>{{ currentPlan()?.tripName }}</h2>
                     <div class="detail-chips">
                       <p-chip
-                        [label]="Math.abs(currentPlan()?.timezonesEast || 0) + ' Time Zones'"
+                        [label]="
+                          Math.abs(currentPlan()?.timezonesEast || 0) +
+                          ' Time Zones'
+                        "
                         icon="pi pi-clock"
                       ></p-chip>
                       <p-chip
-                        [label]="(currentPlan()?.travelDirection || 'none') | titlecase"
-                        [icon]="currentPlan()?.travelDirection === 'eastward' ? 'pi pi-arrow-right' : 'pi pi-arrow-left'"
+                        [label]="
+                          currentPlan()?.travelDirection || 'none' | titlecase
+                        "
+                        [icon]="
+                          currentPlan()?.travelDirection === 'eastward'
+                            ? 'pi pi-arrow-right'
+                            : 'pi pi-arrow-left'
+                        "
                       ></p-chip>
                       <p-tag
                         [value]}="jetLagSeverity().level | titlecase"
@@ -335,13 +355,25 @@ interface TimezoneOption {
                     </div>
                     <div class="recovery-estimate">
                       <i class="pi pi-calendar-plus"></i>
-                      <span>Estimated Recovery: <strong>{{ jetLagSeverity().estimatedRecoveryDays }} days</strong></span>
+                      <span
+                        >Estimated Recovery:
+                        <strong
+                          >{{
+                            jetLagSeverity().estimatedRecoveryDays
+                          }}
+                          days</strong
+                        ></span
+                      >
                     </div>
                     @if (daysUntilCompetition() !== null) {
-                      <div class="competition-countdown" [class.warning]="!isCompetitionReady()">
+                      <div
+                        class="competition-countdown"
+                        [class.warning]="!isCompetitionReady()"
+                      >
                         <i class="pi pi-flag"></i>
                         <span>
-                          Competition in <strong>{{ daysUntilCompetition() }} days</strong>
+                          Competition in
+                          <strong>{{ daysUntilCompetition() }} days</strong>
                           @if (!isCompetitionReady()) {
                             <span class="warning-text"> - Arrive earlier!</span>
                           }
@@ -355,7 +387,10 @@ interface TimezoneOption {
                   <div class="symptoms-section">
                     <h4>Expected Symptoms</h4>
                     <div class="symptoms-list">
-                      @for (symptom of jetLagSeverity().symptoms; track symptom) {
+                      @for (
+                        symptom of jetLagSeverity().symptoms;
+                        track symptom
+                      ) {
                         <span class="symptom-chip">{{ symptom }}</span>
                       }
                     </div>
@@ -380,7 +415,9 @@ interface TimezoneOption {
                       </div>
                     </div>
                     <div class="header-right">
-                      <span class="day-badge">Day {{ todayProtocol()!.day }}</span>
+                      <span class="day-badge"
+                        >Day {{ todayProtocol()!.day }}</span
+                      >
                     </div>
                   </div>
                 </ng-template>
@@ -392,12 +429,16 @@ interface TimezoneOption {
                     <div class="sleep-times">
                       <div class="time-block">
                         <span class="time-label">Bedtime</span>
-                        <span class="time-value">{{ todayProtocol()!.sleepWindow.bedTime }}</span>
+                        <span class="time-value">{{
+                          todayProtocol()!.sleepWindow.bedTime
+                        }}</span>
                       </div>
                       <i class="pi pi-arrow-right"></i>
                       <div class="time-block">
                         <span class="time-label">Wake Up</span>
-                        <span class="time-value">{{ todayProtocol()!.sleepWindow.wakeTime }}</span>
+                        <span class="time-value">{{
+                          todayProtocol()!.sleepWindow.wakeTime
+                        }}</span>
                       </div>
                     </div>
                   </div>
@@ -406,18 +447,26 @@ interface TimezoneOption {
                   <div class="protocol-section">
                     <h4><i class="pi pi-sun"></i> Light Exposure</h4>
                     <div class="light-windows">
-                      @for (light of todayProtocol()!.lightExposure; track light.startTime) {
+                      @for (
+                        light of todayProtocol()!.lightExposure;
+                        track light.startTime
+                      ) {
                         <div class="light-item" [class]="light.type">
                           <span class="light-icon">
-                            @if (light.type === 'seek') {
+                            @if (light.type === "seek") {
                               ☀️
                             } @else {
                               🕶️
                             }
                           </span>
                           <div class="light-details">
-                            <span class="light-action">{{ light.type === 'seek' ? 'Seek' : 'Avoid' }} {{ light.intensity }} light</span>
-                            <span class="light-time">{{ light.startTime }} - {{ light.endTime }}</span>
+                            <span class="light-action"
+                              >{{ light.type === "seek" ? "Seek" : "Avoid" }}
+                              {{ light.intensity }} light</span
+                            >
+                            <span class="light-time"
+                              >{{ light.startTime }} - {{ light.endTime }}</span
+                            >
                             <span class="light-reason">{{ light.reason }}</span>
                           </div>
                         </div>
@@ -430,25 +479,48 @@ interface TimezoneOption {
                     <h4><i class="pi pi-bolt"></i> Training</h4>
                     <div class="training-info">
                       <p-tag
-                        [value]="'Intensity: ' + (todayProtocol()!.trainingGuidelines.allowedIntensity | titlecase)"
-                        [severity]="getIntensityColor(todayProtocol()!.trainingGuidelines.allowedIntensity)"
+                        [value]="
+                          'Intensity: ' +
+                          (todayProtocol()!.trainingGuidelines.allowedIntensity
+                            | titlecase)
+                        "
+                        [severity]="
+                          getIntensityColor(
+                            todayProtocol()!.trainingGuidelines.allowedIntensity
+                          )
+                        "
                       ></p-tag>
-                      <span class="max-duration">Max {{ todayProtocol()!.trainingGuidelines.maxDuration }} min</span>
+                      <span class="max-duration"
+                        >Max
+                        {{ todayProtocol()!.trainingGuidelines.maxDuration }}
+                        min</span
+                      >
                     </div>
                     <div class="activity-lists">
                       <div class="activity-list recommended">
                         <span class="list-label">✅ Recommended</span>
                         <ul>
-                          @for (activity of todayProtocol()!.trainingGuidelines.recommendedActivities; track activity) {
+                          @for (
+                            activity of todayProtocol()!.trainingGuidelines
+                              .recommendedActivities;
+                            track activity
+                          ) {
                             <li>{{ activity }}</li>
                           }
                         </ul>
                       </div>
-                      @if (todayProtocol()!.trainingGuidelines.avoidActivities.length > 0) {
+                      @if (
+                        todayProtocol()!.trainingGuidelines.avoidActivities
+                          .length > 0
+                      ) {
                         <div class="activity-list avoid">
                           <span class="list-label">❌ Avoid</span>
                           <ul>
-                            @for (activity of todayProtocol()!.trainingGuidelines.avoidActivities; track activity) {
+                            @for (
+                              activity of todayProtocol()!.trainingGuidelines
+                                .avoidActivities;
+                              track activity
+                            ) {
                               <li>{{ activity }}</li>
                             }
                           </ul>
@@ -461,8 +533,15 @@ interface TimezoneOption {
                   <div class="protocol-section">
                     <h4><i class="pi pi-tint"></i> Hydration Target</h4>
                     <div class="hydration-target">
-                      <span class="hydration-value">{{ (todayProtocol()!.hydrationTarget / 1000) | number:'1.1-1' }}L</span>
-                      <span class="hydration-note">Stay well hydrated throughout the day</span>
+                      <span class="hydration-value"
+                        >{{
+                          todayProtocol()!.hydrationTarget / 1000
+                            | number: "1.1-1"
+                        }}L</span
+                      >
+                      <span class="hydration-note"
+                        >Stay well hydrated throughout the day</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -471,8 +550,14 @@ interface TimezoneOption {
                 <div class="recommendations-section">
                   <h4>Key Actions</h4>
                   <div class="recommendations-list">
-                    @for (rec of todayProtocol()!.recommendations; track rec.action) {
-                      <div class="recommendation-item" [class]="'importance-' + rec.importance">
+                    @for (
+                      rec of todayProtocol()!.recommendations;
+                      track rec.action
+                    ) {
+                      <div
+                        class="recommendation-item"
+                        [class]="'importance-' + rec.importance"
+                      >
                         <span class="rec-time">{{ rec.time }}</span>
                         <span class="rec-action">{{ rec.action }}</span>
                         <p-tag
@@ -490,14 +575,20 @@ interface TimezoneOption {
                   <div class="supplements-section">
                     <h4><i class="pi pi-heart"></i> Supplements</h4>
                     <div class="supplements-list">
-                      @for (supp of todayProtocol()!.supplements; track supp.name) {
+                      @for (
+                        supp of todayProtocol()!.supplements;
+                        track supp.name
+                      ) {
                         <div class="supplement-item">
                           <div class="supp-header">
                             <span class="supp-name">{{ supp.name }}</span>
                             <span class="supp-dosage">{{ supp.dosage }}</span>
                           </div>
                           <div class="supp-details">
-                            <span class="supp-timing"><i class="pi pi-clock"></i> {{ supp.timing }}</span>
+                            <span class="supp-timing"
+                              ><i class="pi pi-clock"></i>
+                              {{ supp.timing }}</span
+                            >
                             <span class="supp-purpose">{{ supp.purpose }}</span>
                           </div>
                           @if (supp.caution) {
@@ -537,7 +628,9 @@ interface TimezoneOption {
                             Day {{ protocol.day }}
                           }
                         </span>
-                        <span class="timeline-date">{{ protocol.date | date:'EEE, MMM d' }}</span>
+                        <span class="timeline-date">{{
+                          protocol.date | date: "EEE, MMM d"
+                        }}</span>
                         <p-tag
                           [value]="protocol.phase"
                           [severity]="getPhaseColor(protocol.phase)"
@@ -553,22 +646,46 @@ interface TimezoneOption {
                         <div class="timeline-summary">
                           <div class="summary-item">
                             <i class="pi pi-moon"></i>
-                            <span>Sleep: {{ protocol.sleepWindow.bedTime }} - {{ protocol.sleepWindow.wakeTime }}</span>
+                            <span
+                              >Sleep: {{ protocol.sleepWindow.bedTime }} -
+                              {{ protocol.sleepWindow.wakeTime }}</span
+                            >
                           </div>
                           <div class="summary-item">
                             <i class="pi pi-bolt"></i>
-                            <span>Training: {{ protocol.trainingGuidelines.allowedIntensity | titlecase }} ({{ protocol.trainingGuidelines.maxDuration }}min max)</span>
+                            <span
+                              >Training:
+                              {{
+                                protocol.trainingGuidelines.allowedIntensity
+                                  | titlecase
+                              }}
+                              ({{ protocol.trainingGuidelines.maxDuration }}min
+                              max)</span
+                            >
                           </div>
                           <div class="summary-item">
                             <i class="pi pi-tint"></i>
-                            <span>Hydration: {{ (protocol.hydrationTarget / 1000) | number:'1.1-1' }}L</span>
+                            <span
+                              >Hydration:
+                              {{
+                                protocol.hydrationTarget / 1000
+                                  | number: "1.1-1"
+                              }}L</span
+                            >
                           </div>
                         </div>
 
                         <div class="timeline-recommendations">
-                          @for (rec of protocol.recommendations.slice(0, 3); track rec.action) {
+                          @for (
+                            rec of protocol.recommendations.slice(0, 3);
+                            track rec.action
+                          ) {
                             <div class="mini-rec">
-                              <span class="rec-bullet" [class]="'importance-' + rec.importance">●</span>
+                              <span
+                                class="rec-bullet"
+                                [class]="'importance-' + rec.importance"
+                                >●</span
+                              >
                               {{ rec.action }}
                             </div>
                           }
@@ -592,35 +709,40 @@ interface TimezoneOption {
               <p-accordion>
                 @for (category of travelChecklist; track category.category) {
                   <p-accordion-panel [value]="category.category">
-                    <p-accordion-header>{{ category.category }}</p-accordion-header>
+                    <p-accordion-header>{{
+                      category.category
+                    }}</p-accordion-header>
                     <p-accordion-content>
                       <div class="checklist-items">
                         @for (item of category.items; track item.id) {
-                          <div class="checklist-item" [class.essential]="item.essential">
+                          <div
+                            class="checklist-item"
+                            [class.essential]="item.essential"
+                          >
                             <p-checkbox
                               [(ngModel)]="item.packed"
                               [binary]="true"
-                            [inputId]="item.id"
-                          ></p-checkbox>
-                          <label [for]="item.id" [class.packed]="item.packed">
-                            {{ item.item }}
-                            @if (item.essential) {
-                              <span class="essential-badge">Essential</span>
+                              [inputId]="item.id"
+                            ></p-checkbox>
+                            <label [for]="item.id" [class.packed]="item.packed">
+                              {{ item.item }}
+                              @if (item.essential) {
+                                <span class="essential-badge">Essential</span>
+                              }
+                            </label>
+                            @if (item.notes) {
+                              <span class="item-note">{{ item.notes }}</span>
                             }
-                          </label>
-                          @if (item.notes) {
-                            <span class="item-note">{{ item.notes }}</span>
-                          }
-                        </div>
-                      }
-                    </div>
+                          </div>
+                        }
+                      </div>
                     </p-accordion-content>
                   </p-accordion-panel>
                 }
               </p-accordion>
             </p-card>
           </div>
-        } @else if (travelType() === 'car') {
+        } @else if (travelType() === "car") {
           <!-- Car Travel Section -->
           <div class="car-travel-section">
             <!-- Car Trip Setup -->
@@ -631,7 +753,10 @@ interface TimezoneOption {
                     <i class="pi pi-car"></i>
                     <div>
                       <h3>Long Car Travel Protocol</h3>
-                      <p>Evidence-based blood circulation management for 6-12+ hour drives</p>
+                      <p>
+                        Evidence-based blood circulation management for 6-12+
+                        hour drives
+                      </p>
                     </div>
                   </div>
                 </ng-template>
@@ -694,7 +819,10 @@ interface TimezoneOption {
               @if (carTripForm.duration >= 4) {
                 <p-card styleClass="risk-preview-card">
                   <ng-template pTemplate="header">
-                    <div class="card-header" [class]="'risk-' + carTravelRisk().riskLevel">
+                    <div
+                      class="card-header"
+                      [class]="'risk-' + carTravelRisk().riskLevel"
+                    >
                       <i class="pi pi-exclamation-triangle"></i>
                       <h3>Circulation Risk Assessment</h3>
                     </div>
@@ -702,8 +830,13 @@ interface TimezoneOption {
 
                   <div class="risk-content">
                     <div class="risk-gauge">
-                      <div class="risk-circle" [class]="'risk-' + carTravelRisk().riskLevel">
-                        <span class="risk-score">{{ carTravelRisk().score }}</span>
+                      <div
+                        class="risk-circle"
+                        [class]="'risk-' + carTravelRisk().riskLevel"
+                      >
+                        <span class="risk-score">{{
+                          carTravelRisk().score
+                        }}</span>
                         <span class="risk-label">Risk Score</span>
                       </div>
                       <p-tag
@@ -716,7 +849,10 @@ interface TimezoneOption {
                       <h4>Risk Factors</h4>
                       <ul>
                         @for (factor of carTravelRisk().factors; track factor) {
-                          <li><i class="pi pi-exclamation-circle"></i> {{ factor }}</li>
+                          <li>
+                            <i class="pi pi-exclamation-circle"></i>
+                            {{ factor }}
+                          </li>
                         }
                       </ul>
                     </div>
@@ -724,7 +860,10 @@ interface TimezoneOption {
                     <div class="risk-recommendations">
                       <h4>Key Recommendations</h4>
                       <ul>
-                        @for (rec of carTravelRisk().recommendations; track rec) {
+                        @for (
+                          rec of carTravelRisk().recommendations;
+                          track rec
+                        ) {
                           <li><i class="pi pi-check-circle"></i> {{ rec }}</li>
                         }
                       </ul>
@@ -736,17 +875,36 @@ interface TimezoneOption {
               <!-- Active Car Travel Plan -->
               <div class="car-protocol-dashboard">
                 <!-- Risk Overview -->
-                <p-card styleClass="car-risk-card" [ngClass]="'risk-' + carTravelRisk().riskLevel">
+                <p-card
+                  styleClass="car-risk-card"
+                  [ngClass]="'risk-' + carTravelRisk().riskLevel"
+                >
                   <div class="car-risk-content">
                     <div class="risk-header">
                       <div class="risk-gauge-small">
-                        <span class="risk-score">{{ carTravelRisk().score }}</span>
+                        <span class="risk-score">{{
+                          carTravelRisk().score
+                        }}</span>
                       </div>
                       <div class="risk-info">
                         <h2>{{ activeCarPlan()?.tripName }}</h2>
                         <div class="detail-chips">
-                          <p-chip [label]="activeCarPlan()?.duration + ' Hour Drive'" icon="pi pi-clock"></p-chip>
-                          <p-chip [label]="activeCarPlan()?.isDriver ? 'Driving' : 'Passenger'" [icon]="activeCarPlan()?.isDriver ? 'pi pi-user' : 'pi pi-users'"></p-chip>
+                          <p-chip
+                            [label]="activeCarPlan()?.duration + ' Hour Drive'"
+                            icon="pi pi-clock"
+                          ></p-chip>
+                          <p-chip
+                            [label]="
+                              activeCarPlan()?.isDriver
+                                ? 'Driving'
+                                : 'Passenger'
+                            "
+                            [icon]="
+                              activeCarPlan()?.isDriver
+                                ? 'pi pi-user'
+                                : 'pi pi-users'
+                            "
+                          ></p-chip>
                           <p-tag
                             [value]="carTravelRisk().riskLevel + ' Risk'"
                             [severity]="getRiskColor(carTravelRisk().riskLevel)"
@@ -757,9 +915,15 @@ interface TimezoneOption {
 
                     <!-- Warning Symptoms -->
                     <div class="warning-symptoms">
-                      <h4><i class="pi pi-exclamation-triangle"></i> Stop & Seek Help If You Experience:</h4>
+                      <h4>
+                        <i class="pi pi-exclamation-triangle"></i> Stop & Seek
+                        Help If You Experience:
+                      </h4>
                       <div class="symptoms-grid">
-                        @for (symptom of carTravelRisk().warningSymptoms; track symptom) {
+                        @for (
+                          symptom of carTravelRisk().warningSymptoms;
+                          track symptom
+                        ) {
                           <span class="warning-symptom">{{ symptom }}</span>
                         }
                       </div>
@@ -781,8 +945,14 @@ interface TimezoneOption {
 
                   <div class="compression-content">
                     <div class="compression-type">
-                      <h4>Recommended: {{ compressionGuidelines().garmentType | titlecase }}</h4>
-                      <p-tag [value]="compressionGuidelines().pressureMmHg" severity="info"></p-tag>
+                      <h4>
+                        Recommended:
+                        {{ compressionGuidelines().garmentType | titlecase }}
+                      </h4>
+                      <p-tag
+                        [value]="compressionGuidelines().pressureMmHg"
+                        severity="info"
+                      ></p-tag>
                     </div>
 
                     <div class="compression-timing">
@@ -803,9 +973,14 @@ interface TimezoneOption {
                     </div>
 
                     <div class="compression-cautions">
-                      <h4><i class="pi pi-info-circle"></i> Important Cautions</h4>
+                      <h4>
+                        <i class="pi pi-info-circle"></i> Important Cautions
+                      </h4>
                       <ul>
-                        @for (caution of compressionGuidelines().cautions; track caution) {
+                        @for (
+                          caution of compressionGuidelines().cautions;
+                          track caution
+                        ) {
                           <li>{{ caution }}</li>
                         }
                       </ul>
@@ -831,25 +1006,44 @@ interface TimezoneOption {
                   </ng-template>
 
                   <p-accordion>
-                    @for (protocol of massageGunProtocols; track protocol.timing) {
+                    @for (
+                      protocol of massageGunProtocols;
+                      track protocol.timing
+                    ) {
                       <p-accordion-panel [value]="protocol.timing">
-                        <p-accordion-header>{{ getMassageTimingLabel(protocol.timing) }}</p-accordion-header>
+                        <p-accordion-header>{{
+                          getMassageTimingLabel(protocol.timing)
+                        }}</p-accordion-header>
                         <p-accordion-content>
                           <div class="massage-protocol">
                             <div class="protocol-summary">
-                              <p-tag [value]="protocol.totalDuration + ' min total'" severity="info"></p-tag>
-                              <span class="frequency">{{ protocol.frequency }}</span>
+                              <p-tag
+                                [value]="protocol.totalDuration + ' min total'"
+                                severity="info"
+                              ></p-tag>
+                              <span class="frequency">{{
+                                protocol.frequency
+                              }}</span>
                             </div>
 
                             <div class="muscle-targets">
-                              @for (muscle of protocol.targetMuscles; track muscle.muscle) {
+                              @for (
+                                muscle of protocol.targetMuscles;
+                                track muscle.muscle
+                              ) {
                                 <div class="muscle-item">
                                   <div class="muscle-header">
                                     <strong>{{ muscle.muscle }}</strong>
-                                    <span class="muscle-duration">{{ muscle.duration }}s</span>
+                                    <span class="muscle-duration"
+                                      >{{ muscle.duration }}s</span
+                                    >
                                   </div>
-                                  <p class="muscle-technique">{{ muscle.technique }}</p>
-                                  <p class="muscle-purpose">{{ muscle.purpose }}</p>
+                                  <p class="muscle-technique">
+                                    {{ muscle.technique }}
+                                  </p>
+                                  <p class="muscle-purpose">
+                                    {{ muscle.purpose }}
+                                  </p>
                                 </div>
                               }
                             </div>
@@ -857,7 +1051,10 @@ interface TimezoneOption {
                             <div class="massage-cautions">
                               <h5>⚠️ Cautions</h5>
                               <ul>
-                                @for (caution of protocol.cautions; track caution) {
+                                @for (
+                                  caution of protocol.cautions;
+                                  track caution
+                                ) {
                                   <li>{{ caution }}</li>
                                 }
                               </ul>
@@ -897,15 +1094,22 @@ interface TimezoneOption {
                             [rounded]="true"
                           ></p-tag>
                         </div>
-                        <p class="exercise-description">{{ exercise.description }}</p>
+                        <p class="exercise-description">
+                          {{ exercise.description }}
+                        </p>
                         <div class="exercise-details">
-                          <span>{{ exercise.sets }} sets × {{ exercise.reps }} reps</span>
+                          <span
+                            >{{ exercise.sets }} sets ×
+                            {{ exercise.reps }} reps</span
+                          >
                           @if (exercise.duration) {
                             <span>Hold {{ exercise.duration }}s</span>
                           }
                         </div>
                         @if (exercise.evidenceBase) {
-                          <small class="evidence">{{ exercise.evidenceBase }}</small>
+                          <small class="evidence">{{
+                            exercise.evidenceBase
+                          }}</small>
                         }
                       </div>
                     }
@@ -926,19 +1130,37 @@ interface TimezoneOption {
 
                   <div class="rest-stop-content">
                     <div class="rest-timeline">
-                      @for (protocol of carTravelProtocols; track protocol.hourMark) {
-                        @if (protocol.phase === 'rest-stop') {
+                      @for (
+                        protocol of carTravelProtocols;
+                        track protocol.hourMark
+                      ) {
+                        @if (protocol.phase === "rest-stop") {
                           <div class="rest-stop-item">
                             <div class="stop-marker">
-                              <span class="hour">Hour {{ protocol.hourMark }}</span>
+                              <span class="hour"
+                                >Hour {{ protocol.hourMark }}</span
+                              >
                             </div>
                             <div class="stop-actions">
-                              @for (rec of protocol.recommendations.slice(0, 4); track rec.action) {
-                                <div class="action-item" [class]="'importance-' + rec.importance">
-                                  <i class="pi" [ngClass]="getCategoryIcon(rec.category)"></i>
+                              @for (
+                                rec of protocol.recommendations.slice(0, 4);
+                                track rec.action
+                              ) {
+                                <div
+                                  class="action-item"
+                                  [class]="'importance-' + rec.importance"
+                                >
+                                  <i
+                                    class="pi"
+                                    [ngClass]="getCategoryIcon(rec.category)"
+                                  ></i>
                                   <span>{{ rec.action }}</span>
                                   @if (rec.duration) {
-                                    <p-tag [value]="rec.duration + ' min'" [rounded]="true" severity="secondary"></p-tag>
+                                    <p-tag
+                                      [value]="rec.duration + ' min'"
+                                      [rounded]="true"
+                                      severity="secondary"
+                                    ></p-tag>
                                   }
                                 </div>
                               }
@@ -965,20 +1187,30 @@ interface TimezoneOption {
                   <p-accordion>
                     @for (research of researchSummary; track research.topic) {
                       <p-accordion-panel [value]="research.topic">
-                        <p-accordion-header>{{ research.topic }}</p-accordion-header>
+                        <p-accordion-header>{{
+                          research.topic
+                        }}</p-accordion-header>
                         <p-accordion-content>
                           <div class="research-item">
                             <p class="finding">{{ research.finding }}</p>
                             <div class="source">
                               <strong>Source:</strong> {{ research.source }}
                               @if (research.pubmedId) {
-                                <a [href]="'https://pubmed.ncbi.nlm.nih.gov/' + research.pubmedId" target="_blank" class="pubmed-link">
+                                <a
+                                  [href]="
+                                    'https://pubmed.ncbi.nlm.nih.gov/' +
+                                    research.pubmedId
+                                  "
+                                  target="_blank"
+                                  class="pubmed-link"
+                                >
                                   PubMed: {{ research.pubmedId }}
                                 </a>
                               }
                             </div>
                             <div class="recommendation">
-                              <strong>Recommendation:</strong> {{ research.recommendation }}
+                              <strong>Recommendation:</strong>
+                              {{ research.recommendation }}
                             </div>
                           </div>
                         </p-accordion-content>
@@ -997,26 +1229,41 @@ interface TimezoneOption {
                   </ng-template>
 
                   <p-accordion>
-                    @for (category of carTravelChecklist; track category.category) {
+                    @for (
+                      category of carTravelChecklist;
+                      track category.category
+                    ) {
                       <p-accordion-panel [value]="category.category">
-                        <p-accordion-header>{{ category.category }}</p-accordion-header>
+                        <p-accordion-header>{{
+                          category.category
+                        }}</p-accordion-header>
                         <p-accordion-content>
                           <div class="checklist-items">
                             @for (item of category.items; track item.id) {
-                              <div class="checklist-item" [class.essential]="item.essential">
+                              <div
+                                class="checklist-item"
+                                [class.essential]="item.essential"
+                              >
                                 <p-checkbox
                                   [(ngModel)]="item.packed"
                                   [binary]="true"
                                   [inputId]="item.id"
                                 ></p-checkbox>
-                                <label [for]="item.id" [class.packed]="item.packed">
+                                <label
+                                  [for]="item.id"
+                                  [class.packed]="item.packed"
+                                >
                                   {{ item.item }}
                                   @if (item.essential) {
-                                    <span class="essential-badge">Essential</span>
+                                    <span class="essential-badge"
+                                      >Essential</span
+                                    >
                                   }
                                 </label>
                                 @if (item.notes) {
-                                  <span class="item-note">{{ item.notes }}</span>
+                                  <span class="item-note">{{
+                                    item.notes
+                                  }}</span>
                                 }
                               </div>
                             }
@@ -1033,1519 +1280,1548 @@ interface TimezoneOption {
       </div>
     </app-main-layout>
   `,
-  styles: [`
-    .travel-recovery-page {
-      padding: var(--space-6);
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    /* Planning Section */
-    .planning-section {
-      display: grid;
-      gap: var(--space-6);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-bottom: 1px solid var(--p-surface-200);
-    }
-
-    .card-header i {
-      font-size: 1.5rem;
-      color: var(--color-brand-primary);
-    }
-
-    .card-header h3 {
-      margin: 0;
-      font-size: var(--font-heading-sm);
-      color: var(--text-primary);
-    }
-
-    .card-header p {
-      margin: 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    /* Olympic Card */
-    .olympic-header {
-      background: linear-gradient(135deg, #0085c7 0%, #f4c300 25%, #000 50%, #009f3d 75%, #df0024 100%);
-      color: white;
-    }
-
-    .olympic-header h3,
-    .olympic-header p {
-      color: white;
-    }
-
-    .olympic-rings {
-      font-size: 2rem;
-    }
-
-    .olympic-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .olympic-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-4);
-      border: 2px solid var(--p-surface-200);
-      border-radius: var(--radius-lg);
-      background: var(--surface-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .olympic-btn:hover {
-      border-color: var(--color-brand-primary);
-      transform: translateY(-2px);
-    }
-
-    .olympic-btn.selected {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
-    }
-
-    .venue-flag {
-      font-size: 2rem;
-    }
-
-    .venue-name {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .venue-tz {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .olympic-impact {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-6);
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-lg);
-      margin: var(--space-4);
-    }
-
-    .impact-stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .impact-stat .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-    }
-
-    .impact-stat .stat-label {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    /* Form Grid */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .form-field label {
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      padding: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    /* Severity Card */
-    .severity-section {
-      margin-bottom: var(--space-6);
-    }
-
-    .severity-card {
-      overflow: hidden;
-    }
-
-    .severity-card.severity-none {
-      border-left: 4px solid var(--color-status-success);
-    }
-
-    .severity-card.severity-mild {
-      border-left: 4px solid var(--color-status-info);
-    }
-
-    .severity-card.severity-moderate {
-      border-left: 4px solid var(--color-status-warning);
-    }
-
-    .severity-card.severity-severe {
-      border-left: 4px solid var(--color-status-error);
-    }
-
-    .severity-content {
-      display: flex;
-      gap: var(--space-6);
-      padding: var(--space-4);
-    }
-
-    .severity-gauge {
-      flex-shrink: 0;
-    }
-
-    .gauge-circle {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: conic-gradient(
-        var(--color-brand-primary) calc(var(--score, 0) * 1%),
-        var(--p-surface-200) 0
-      );
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .gauge-circle::before {
-      content: '';
-      position: absolute;
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: var(--surface-primary);
-    }
-
-    .gauge-value {
-      position: relative;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .gauge-label {
-      position: relative;
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .severity-details {
-      flex: 1;
-    }
-
-    .severity-details h2 {
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-heading-md);
-      color: var(--text-primary);
-    }
-
-    .detail-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      margin-bottom: var(--space-3);
-    }
-
-    .recovery-estimate,
-    .competition-countdown {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-      margin-top: var(--space-2);
-    }
-
-    .competition-countdown.warning {
-      color: var(--color-status-warning);
-    }
-
-    .warning-text {
-      color: var(--color-status-error);
-    }
-
-    .symptoms-section {
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .symptoms-section h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .symptoms-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .symptom-chip {
-      padding: var(--space-1) var(--space-3);
-      background: var(--p-surface-100);
-      border-radius: var(--radius-full);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    /* Today's Protocol */
-    .today-card {
-      margin-bottom: var(--space-6);
-    }
-
-    .today-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .day-badge {
-      padding: var(--space-2) var(--space-3);
-      background: var(--color-brand-primary);
-      color: white;
-      border-radius: var(--radius-full);
-      font-weight: 600;
-    }
-
-    .protocol-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .protocol-section {
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-lg);
-    }
-
-    .protocol-section h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-body-md);
-      color: var(--text-primary);
-    }
-
-    .protocol-section h4 i {
-      color: var(--color-brand-primary);
-    }
-
-    /* Sleep Times */
-    .sleep-times {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-3);
-    }
-
-    .time-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .time-label {
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .time-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    /* Light Windows */
-    .light-windows {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .light-item {
-      display: flex;
-      gap: var(--space-3);
-      padding: var(--space-2);
-      border-radius: var(--radius-md);
-    }
-
-    .light-item.seek {
-      background: rgba(var(--color-status-warning-rgb), 0.1);
-    }
-
-    .light-item.avoid {
-      background: rgba(var(--color-status-info-rgb), 0.1);
-    }
-
-    .light-icon {
-      font-size: 1.5rem;
-    }
-
-    .light-details {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .light-action {
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .light-time {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .light-reason {
-      font-size: var(--font-body-xs);
-      color: var(--text-tertiary);
-    }
-
-    /* Training Info */
-    .training-info {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      margin-bottom: var(--space-3);
-    }
-
-    .max-duration {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .activity-lists {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .activity-list {
-      padding: var(--space-2);
-      border-radius: var(--radius-md);
-    }
-
-    .activity-list.recommended {
-      background: rgba(var(--color-status-success-rgb), 0.1);
-    }
-
-    .activity-list.avoid {
-      background: rgba(var(--color-status-error-rgb), 0.1);
-    }
-
-    .list-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
-    }
-
-    .activity-list ul {
-      margin: var(--space-1) 0 0 var(--space-4);
-      padding: 0;
-      font-size: var(--font-body-sm);
-    }
-
-    /* Hydration */
-    .hydration-target {
-      text-align: center;
-    }
-
-    .hydration-value {
-      display: block;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-    }
-
-    .hydration-note {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    /* Recommendations */
-    .recommendations-section {
-      padding: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .recommendations-section h4 {
-      margin: 0 0 var(--space-3) 0;
-    }
-
-    .recommendations-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .recommendation-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-2) var(--space-3);
-      border-radius: var(--radius-md);
-      background: var(--p-surface-50);
-    }
-
-    .recommendation-item.importance-critical {
-      border-left: 3px solid var(--color-status-error);
-    }
-
-    .recommendation-item.importance-high {
-      border-left: 3px solid var(--color-status-warning);
-    }
-
-    .recommendation-item.importance-medium {
-      border-left: 3px solid var(--color-status-info);
-    }
-
-    .rec-time {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-      min-width: 100px;
-    }
-
-    .rec-action {
-      flex: 1;
-      color: var(--text-primary);
-    }
-
-    /* Supplements */
-    .supplements-section {
-      padding: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .supplements-section h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-    }
-
-    .supplements-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-3);
-    }
-
-    .supplement-item {
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
-    }
-
-    .supp-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: var(--space-2);
-    }
-
-    .supp-name {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .supp-dosage {
-      font-size: var(--font-body-sm);
-      color: var(--color-brand-primary);
-    }
-
-    .supp-details {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .supp-caution {
-      margin-top: var(--space-2);
-      padding: var(--space-2);
-      background: rgba(var(--color-status-warning-rgb), 0.1);
-      border-radius: var(--radius-sm);
-      font-size: var(--font-body-xs);
-      color: var(--color-status-warning);
-    }
-
-    /* Timeline */
-    .timeline-card {
-      margin-bottom: var(--space-6);
-    }
-
-    .timeline-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      width: 100%;
-    }
-
-    .timeline-day {
-      font-weight: 600;
-      color: var(--text-primary);
-      min-width: 120px;
-    }
-
-    .timeline-date {
-      color: var(--text-secondary);
-      flex: 1;
-    }
-
-    .timeline-content {
-      padding: var(--space-3);
-    }
-
-    .timeline-summary {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-4);
-      margin-bottom: var(--space-3);
-    }
-
-    .summary-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .summary-item i {
-      color: var(--color-brand-primary);
-    }
-
-    .timeline-recommendations {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .mini-rec {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .rec-bullet {
-      font-size: 0.5rem;
-    }
-
-    .rec-bullet.importance-critical {
-      color: var(--color-status-error);
-    }
-
-    .rec-bullet.importance-high {
-      color: var(--color-status-warning);
-    }
-
-    .rec-bullet.importance-medium {
-      color: var(--color-status-info);
-    }
-
-    /* Checklist */
-    .checklist-items {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .checklist-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-2);
-    }
-
-    .checklist-item.essential {
-      background: rgba(var(--color-status-warning-rgb), 0.05);
-      border-radius: var(--radius-md);
-    }
-
-    .checklist-item label {
-      flex: 1;
-      cursor: pointer;
-    }
-
-    .checklist-item label.packed {
-      text-decoration: line-through;
-      color: var(--text-tertiary);
-    }
-
-    .essential-badge {
-      font-size: var(--font-body-xs);
-      padding: 2px 6px;
-      background: var(--color-status-warning);
-      color: white;
-      border-radius: var(--radius-sm);
-      margin-left: var(--space-2);
-    }
-
-    .item-note {
-      font-size: var(--font-body-xs);
-      color: var(--text-tertiary);
-    }
-
-    /* Travel Type Selector */
-    .travel-type-selector {
-      display: flex;
-      gap: var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-
-    .type-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-4);
-      border: 2px solid var(--p-surface-200);
-      border-radius: var(--radius-lg);
-      background: var(--surface-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .type-btn:hover {
-      border-color: var(--color-brand-primary);
-      transform: translateY(-2px);
-    }
-
-    .type-btn.active {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
-    }
-
-    .type-btn i {
-      font-size: 2rem;
-      color: var(--color-brand-primary);
-    }
-
-    .type-btn span {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .type-btn small {
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    /* Car Travel Section */
-    .car-travel-section {
-      display: grid;
-      gap: var(--space-6);
-    }
-
-    .car-header {
-      background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-      color: white;
-    }
-
-    .car-header h3,
-    .car-header p {
-      color: white;
-    }
-
-    /* Risk Assessment */
-    .risk-preview-card,
-    .car-risk-card {
-      overflow: hidden;
-    }
-
-    .risk-low { border-left: 4px solid var(--color-status-success); }
-    .risk-moderate { border-left: 4px solid var(--color-status-warning); }
-    .risk-high { border-left: 4px solid var(--color-status-error); }
-    .risk-very-high { border-left: 4px solid #8B0000; }
-
-    .risk-content {
-      display: grid;
-      grid-template-columns: auto 1fr 1fr;
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .risk-gauge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .risk-circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: var(--p-surface-100);
-    }
-
-    .risk-circle.risk-low { background: rgba(var(--color-status-success-rgb), 0.2); }
-    .risk-circle.risk-moderate { background: rgba(var(--color-status-warning-rgb), 0.2); }
-    .risk-circle.risk-high { background: rgba(var(--color-status-error-rgb), 0.2); }
-    .risk-circle.risk-very-high { background: rgba(139, 0, 0, 0.2); }
-
-    .risk-score {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .risk-label {
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .risk-factors,
-    .risk-recommendations {
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
-    }
-
-    .risk-factors h4,
-    .risk-recommendations h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-primary);
-    }
-
-    .risk-factors ul,
-    .risk-recommendations ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-
-    .risk-factors li {
-      color: var(--color-status-warning);
-    }
-
-    .risk-recommendations li {
-      color: var(--color-status-success);
-    }
-
-    /* Car Risk Card */
-    .car-risk-content {
-      padding: var(--space-4);
-    }
-
-    .risk-header {
-      display: flex;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-    }
-
-    .risk-gauge-small {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--p-surface-100);
-    }
-
-    .risk-info h2 {
-      margin: 0 0 var(--space-2) 0;
-    }
-
-    .warning-symptoms {
-      padding: var(--space-4);
-      background: rgba(var(--color-status-error-rgb), 0.1);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--color-status-error);
-    }
-
-    .warning-symptoms h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-      color: var(--color-status-error);
-    }
-
-    .symptoms-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .warning-symptom {
-      padding: var(--space-1) var(--space-3);
-      background: white;
-      border: 1px solid var(--color-status-error);
-      border-radius: var(--radius-full);
-      font-size: var(--font-body-sm);
-      color: var(--color-status-error);
-    }
-
-    /* Compression Card */
-    .compression-header {
-      background: linear-gradient(135deg, #4A90D9 0%, #67B26F 100%);
-      color: white;
-    }
-
-    .compression-header h3,
-    .compression-header p {
-      color: white;
-    }
-
-    .compression-icon,
-    .massage-icon,
-    .exercises-icon {
-      font-size: 2rem;
-    }
-
-    .compression-content {
-      padding: var(--space-4);
-    }
-
-    .compression-type {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
-    }
-
-    .compression-type h4 {
-      margin: 0;
-    }
-
-    .compression-timing {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-    }
-
-    .timing-item {
-      display: flex;
-      gap: var(--space-3);
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
-    }
-
-    .timing-item i {
-      font-size: 1.5rem;
-      color: var(--color-brand-primary);
-    }
-
-    .timing-item strong {
-      display: block;
-      margin-bottom: var(--space-1);
-    }
-
-    .timing-item p {
-      margin: 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .compression-cautions {
-      padding: var(--space-3);
-      background: rgba(var(--color-status-warning-rgb), 0.1);
-      border-radius: var(--radius-md);
-      margin-bottom: var(--space-3);
-    }
-
-    .compression-cautions h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-    }
-
-    .compression-cautions ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-
-    .evidence-note {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-2);
-      padding: var(--space-2);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-sm);
-      font-style: italic;
-    }
-
-    .evidence-note i {
-      color: var(--color-brand-primary);
-    }
-
-    /* Massage Gun Card */
-    .massage-header {
-      background: linear-gradient(135deg, #E94057 0%, #F27121 100%);
-      color: white;
-    }
-
-    .massage-header h3,
-    .massage-header p {
-      color: white;
-    }
-
-    .massage-protocol {
-      padding: var(--space-3);
-    }
-
-    .protocol-summary {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
-    }
-
-    .frequency {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .muscle-targets {
-      display: grid;
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
-    }
-
-    .muscle-item {
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
-    }
-
-    .muscle-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: var(--space-1);
-    }
-
-    .muscle-duration {
-      padding: 2px 8px;
-      background: var(--color-brand-primary);
-      color: white;
-      border-radius: var(--radius-full);
-      font-size: var(--font-body-xs);
-    }
-
-    .muscle-technique {
-      margin: 0 0 var(--space-1) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .muscle-purpose {
-      margin: 0;
-      font-size: var(--font-body-xs);
-      color: var(--text-tertiary);
-      font-style: italic;
-    }
-
-    .massage-cautions {
-      padding: var(--space-3);
-      background: rgba(var(--color-status-error-rgb), 0.1);
-      border-radius: var(--radius-md);
-      margin-bottom: var(--space-3);
-    }
-
-    .massage-cautions h5 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-    }
-
-    .massage-cautions ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-
-    /* Exercises Card */
-    .exercises-header {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: white;
-    }
-
-    .exercises-header h3,
-    .exercises-header p {
-      color: white;
-    }
-
-    .exercises-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .exercise-card {
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-lg);
-      border-left: 3px solid var(--color-brand-primary);
-    }
-
-    .exercise-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: var(--space-2);
-    }
-
-    .exercise-header h4 {
-      margin: 0;
-      font-size: var(--font-body-md);
-    }
-
-    .exercise-description {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .exercise-details {
-      display: flex;
-      gap: var(--space-3);
-      font-size: var(--font-body-sm);
-      font-weight: 500;
-      color: var(--color-brand-primary);
-    }
-
-    .exercise-card .evidence {
-      display: block;
-      margin-top: var(--space-2);
-      font-size: var(--font-body-xs);
-      color: var(--text-tertiary);
-      font-style: italic;
-    }
-
-    /* Rest Stop Card */
-    .rest-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .rest-header h3,
-    .rest-header p {
-      color: white;
-    }
-
-    .rest-stop-content {
-      padding: var(--space-4);
-    }
-
-    .rest-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .rest-stop-item {
-      display: flex;
-      gap: var(--space-4);
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-lg);
-    }
-
-    .stop-marker {
-      flex-shrink: 0;
-      width: 80px;
-      text-align: center;
-    }
-
-    .stop-marker .hour {
-      display: block;
-      padding: var(--space-2) var(--space-3);
-      background: var(--color-brand-primary);
-      color: white;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-    }
-
-    .stop-actions {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .action-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2);
-      border-radius: var(--radius-sm);
-    }
-
-    .action-item.importance-critical {
-      background: rgba(var(--color-status-error-rgb), 0.1);
-    }
-
-    .action-item.importance-high {
-      background: rgba(var(--color-status-warning-rgb), 0.1);
-    }
-
-    .action-item i {
-      color: var(--color-brand-primary);
-    }
-
-    /* Research Card */
-    .research-header {
-      background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
-      color: white;
-    }
-
-    .research-header h3,
-    .research-header p {
-      color: white;
-    }
-
-    .research-item {
-      padding: var(--space-3);
-    }
-
-    .research-item .finding {
-      margin: 0 0 var(--space-3) 0;
-      line-height: 1.6;
-    }
-
-    .research-item .source {
-      margin-bottom: var(--space-2);
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .pubmed-link {
-      display: inline-block;
-      margin-left: var(--space-2);
-      color: var(--color-brand-primary);
-      text-decoration: none;
-    }
-
-    .pubmed-link:hover {
-      text-decoration: underline;
-    }
-
-    .research-item .recommendation {
-      padding: var(--space-3);
-      background: var(--color-brand-light);
-      border-radius: var(--radius-md);
-      font-size: var(--font-body-sm);
-    }
-
-    /* ================================================================
-       RESPONSIVE BREAKPOINTS - Full Coverage
-       ================================================================ */
-    
-    /* Extra Large Screens (> 1400px) */
-    @media (min-width: 1400px) {
-      .protocol-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-      
-      .form-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .exercises-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    
-    /* Large Screens (1200px - 1399px) */
-    @media (min-width: 1200px) and (max-width: 1399px) {
-      .protocol-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .exercises-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    
-    /* Medium-Large Screens (1024px - 1199px) */
-    @media (min-width: 1024px) and (max-width: 1199px) {
-      .protocol-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .exercises-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    /* Tablet Landscape (769px - 1023px) */
-    @media (min-width: 769px) and (max-width: 1023px) {
-      .protocol-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .exercises-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .olympic-impact {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-    
-    /* Tablet Portrait (768px) */
-    @media (max-width: 768px) {
+  styles: [
+    `
       .travel-recovery-page {
+        padding: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Planning Section */
+      .planning-section {
+        display: grid;
+        gap: var(--space-6);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-bottom: 1px solid var(--p-surface-200);
+      }
+
+      .card-header i {
+        font-size: 1.5rem;
+        color: var(--color-brand-primary);
+      }
+
+      .card-header h3 {
+        margin: 0;
+        font-size: var(--font-heading-sm);
+        color: var(--text-primary);
+      }
+
+      .card-header p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      /* Olympic Card */
+      .olympic-header {
+        background: linear-gradient(
+          135deg,
+          #0085c7 0%,
+          #f4c300 25%,
+          #000 50%,
+          #009f3d 75%,
+          #df0024 100%
+        );
+        color: white;
+      }
+
+      .olympic-header h3,
+      .olympic-header p {
+        color: white;
+      }
+
+      .olympic-rings {
+        font-size: 2rem;
+      }
+
+      .olympic-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
         padding: var(--space-4);
       }
-      
-      .severity-content {
+
+      .olympic-btn {
+        display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
+        gap: var(--space-2);
+        padding: var(--space-4);
+        border: 2px solid var(--p-surface-200);
+        border-radius: var(--radius-lg);
+        background: var(--surface-primary);
+        cursor: pointer;
+        transition: all 0.2s ease;
       }
 
-      .protocol-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-3);
+      .olympic-btn:hover {
+        border-color: var(--color-brand-primary);
+        transform: translateY(-2px);
       }
 
-      .olympic-buttons {
-        grid-template-columns: 1fr;
+      .olympic-btn.selected {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-light);
       }
 
-      .travel-type-selector {
-        flex-direction: column;
+      .venue-flag {
+        font-size: 2rem;
       }
 
-      .risk-content {
-        grid-template-columns: 1fr;
+      .venue-name {
+        font-weight: 600;
+        color: var(--text-primary);
       }
 
-      .compression-timing {
-        grid-template-columns: 1fr;
-      }
-
-      .exercises-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .rest-stop-item {
-        flex-direction: column;
-      }
-
-      .stop-marker {
-        width: 100%;
-      }
-      
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .olympic-impact {
-        flex-direction: column;
-        gap: var(--space-3);
-      }
-      
-      .today-header {
-        flex-direction: column;
-        gap: var(--space-3);
-        text-align: center;
-      }
-      
-      .header-left {
-        flex-direction: column;
-      }
-    }
-    
-    /* Mobile Large (481px - 767px) */
-    @media (min-width: 481px) and (max-width: 767px) {
-      .olympic-buttons {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .compression-timing {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    /* Mobile Small (< 480px) */
-    @media (max-width: 480px) {
-      .travel-recovery-page {
-        padding: var(--space-3);
-      }
-      
-      .card-header {
-        padding: var(--space-3);
-      }
-      
-      .card-header h3 {
-        font-size: var(--font-body-lg);
-      }
-      
-      .gauge-circle {
-        width: 100px;
-        height: 100px;
-      }
-      
-      .gauge-circle::before {
-        width: 75px;
-        height: 75px;
-      }
-      
-      .gauge-value {
-        font-size: 1.5rem;
-      }
-      
-      .protocol-section {
-        padding: var(--space-3);
-      }
-      
-      .protocol-section h4 {
+      .venue-tz {
         font-size: var(--font-body-sm);
+        color: var(--text-secondary);
       }
-      
-      .sleep-times {
+
+      .olympic-impact {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-6);
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-lg);
+        margin: var(--space-4);
+      }
+
+      .impact-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .impact-stat .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+      }
+
+      .impact-stat .stat-label {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      /* Form Grid */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-4);
+        padding: var(--space-4);
+      }
+
+      .form-field {
+        display: flex;
         flex-direction: column;
         gap: var(--space-2);
       }
-      
-      .detail-chips {
+
+      .form-field label {
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      /* Severity Card */
+      .severity-section {
+        margin-bottom: var(--space-6);
+      }
+
+      .severity-card {
+        overflow: hidden;
+      }
+
+      .severity-card.severity-none {
+        border-left: 4px solid var(--color-status-success);
+      }
+
+      .severity-card.severity-mild {
+        border-left: 4px solid var(--color-status-info);
+      }
+
+      .severity-card.severity-moderate {
+        border-left: 4px solid var(--color-status-warning);
+      }
+
+      .severity-card.severity-severe {
+        border-left: 4px solid var(--color-status-error);
+      }
+
+      .severity-content {
+        display: flex;
+        gap: var(--space-6);
+        padding: var(--space-4);
+      }
+
+      .severity-gauge {
+        flex-shrink: 0;
+      }
+
+      .gauge-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--color-brand-primary) calc(var(--score, 0) * 1%),
+          var(--p-surface-200) 0
+        );
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
+        position: relative;
       }
-      
-      .symptom-chip {
+
+      .gauge-circle::before {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: var(--surface-primary);
+      }
+
+      .gauge-value {
+        position: relative;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .gauge-label {
+        position: relative;
         font-size: var(--font-body-xs);
+        color: var(--text-secondary);
       }
-      
-      .impact-stat .stat-value {
-        font-size: 1.25rem;
+
+      .severity-details {
+        flex: 1;
       }
-    }
-    
-    /* Extra Small Screens (< 375px) */
-    @media (max-width: 374px) {
-      .travel-recovery-page {
+
+      .severity-details h2 {
+        margin: 0 0 var(--space-3) 0;
+        font-size: var(--font-heading-md);
+        color: var(--text-primary);
+      }
+
+      .detail-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+      }
+
+      .recovery-estimate,
+      .competition-countdown {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        margin-top: var(--space-2);
+      }
+
+      .competition-countdown.warning {
+        color: var(--color-status-warning);
+      }
+
+      .warning-text {
+        color: var(--color-status-error);
+      }
+
+      .symptoms-section {
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .symptoms-section h4 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .symptoms-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .symptom-chip {
+        padding: var(--space-1) var(--space-3);
+        background: var(--p-surface-100);
+        border-radius: var(--radius-full);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      /* Today's Protocol */
+      .today-card {
+        margin-bottom: var(--space-6);
+      }
+
+      .today-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .day-badge {
+        padding: var(--space-2) var(--space-3);
+        background: var(--color-brand-primary);
+        color: white;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+      }
+
+      .protocol-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-4);
+        padding: var(--space-4);
+      }
+
+      .protocol-section {
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-lg);
+      }
+
+      .protocol-section h4 {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin: 0 0 var(--space-3) 0;
+        font-size: var(--font-body-md);
+        color: var(--text-primary);
+      }
+
+      .protocol-section h4 i {
+        color: var(--color-brand-primary);
+      }
+
+      /* Sleep Times */
+      .sleep-times {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+      }
+
+      .time-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .time-label {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      .time-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      /* Light Windows */
+      .light-windows {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .light-item {
+        display: flex;
+        gap: var(--space-3);
         padding: var(--space-2);
+        border-radius: var(--radius-md);
       }
-      
-      .olympic-btn {
-        padding: var(--space-3);
+
+      .light-item.seek {
+        background: rgba(var(--color-status-warning-rgb), 0.1);
       }
-      
-      .venue-flag {
+
+      .light-item.avoid {
+        background: rgba(var(--color-status-info-rgb), 0.1);
+      }
+
+      .light-icon {
         font-size: 1.5rem;
       }
-      
-      .day-badge {
-        padding: var(--space-1) var(--space-2);
+
+      .light-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .light-action {
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .light-time {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .light-reason {
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+      }
+
+      /* Training Info */
+      .training-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+      }
+
+      .max-duration {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .activity-lists {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .activity-list {
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+      }
+
+      .activity-list.recommended {
+        background: rgba(var(--color-status-success-rgb), 0.1);
+      }
+
+      .activity-list.avoid {
+        background: rgba(var(--color-status-error-rgb), 0.1);
+      }
+
+      .list-label {
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+      }
+
+      .activity-list ul {
+        margin: var(--space-1) 0 0 var(--space-4);
+        padding: 0;
         font-size: var(--font-body-sm);
       }
-    }
-    
-    /* Landscape Mode on Mobile */
-    @media (max-height: 500px) and (orientation: landscape) {
-      .travel-recovery-page {
+
+      /* Hydration */
+      .hydration-target {
+        text-align: center;
+      }
+
+      .hydration-value {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+      }
+
+      .hydration-note {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      /* Recommendations */
+      .recommendations-section {
+        padding: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .recommendations-section h4 {
+        margin: 0 0 var(--space-3) 0;
+      }
+
+      .recommendations-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .recommendation-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-md);
+        background: var(--p-surface-50);
+      }
+
+      .recommendation-item.importance-critical {
+        border-left: 3px solid var(--color-status-error);
+      }
+
+      .recommendation-item.importance-high {
+        border-left: 3px solid var(--color-status-warning);
+      }
+
+      .recommendation-item.importance-medium {
+        border-left: 3px solid var(--color-status-info);
+      }
+
+      .rec-time {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        min-width: 100px;
+      }
+
+      .rec-action {
+        flex: 1;
+        color: var(--text-primary);
+      }
+
+      /* Supplements */
+      .supplements-section {
+        padding: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .supplements-section h4 {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin: 0 0 var(--space-3) 0;
+      }
+
+      .supplements-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-3);
+      }
+
+      .supplement-item {
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-md);
+      }
+
+      .supp-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--space-2);
+      }
+
+      .supp-name {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .supp-dosage {
+        font-size: var(--font-body-sm);
+        color: var(--color-brand-primary);
+      }
+
+      .supp-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .supp-caution {
+        margin-top: var(--space-2);
+        padding: var(--space-2);
+        background: rgba(var(--color-status-warning-rgb), 0.1);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-body-xs);
+        color: var(--color-status-warning);
+      }
+
+      /* Timeline */
+      .timeline-card {
+        margin-bottom: var(--space-6);
+      }
+
+      .timeline-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        width: 100%;
+      }
+
+      .timeline-day {
+        font-weight: 600;
+        color: var(--text-primary);
+        min-width: 120px;
+      }
+
+      .timeline-date {
+        color: var(--text-secondary);
+        flex: 1;
+      }
+
+      .timeline-content {
         padding: var(--space-3);
       }
-      
-      .protocol-grid {
-        grid-template-columns: repeat(2, 1fr);
+
+      .timeline-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-bottom: var(--space-3);
       }
-      
-      .gauge-circle {
+
+      .summary-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .summary-item i {
+        color: var(--color-brand-primary);
+      }
+
+      .timeline-recommendations {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .mini-rec {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .rec-bullet {
+        font-size: 0.5rem;
+      }
+
+      .rec-bullet.importance-critical {
+        color: var(--color-status-error);
+      }
+
+      .rec-bullet.importance-high {
+        color: var(--color-status-warning);
+      }
+
+      .rec-bullet.importance-medium {
+        color: var(--color-status-info);
+      }
+
+      /* Checklist */
+      .checklist-items {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .checklist-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2);
+      }
+
+      .checklist-item.essential {
+        background: rgba(var(--color-status-warning-rgb), 0.05);
+        border-radius: var(--radius-md);
+      }
+
+      .checklist-item label {
+        flex: 1;
+        cursor: pointer;
+      }
+
+      .checklist-item label.packed {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+
+      .essential-badge {
+        font-size: var(--font-body-xs);
+        padding: 2px 6px;
+        background: var(--color-status-warning);
+        color: white;
+        border-radius: var(--radius-sm);
+        margin-left: var(--space-2);
+      }
+
+      .item-note {
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+      }
+
+      /* Travel Type Selector */
+      .travel-type-selector {
+        display: flex;
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+      }
+
+      .type-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-4);
+        border: 2px solid var(--p-surface-200);
+        border-radius: var(--radius-lg);
+        background: var(--surface-primary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .type-btn:hover {
+        border-color: var(--color-brand-primary);
+        transform: translateY(-2px);
+      }
+
+      .type-btn.active {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-light);
+      }
+
+      .type-btn i {
+        font-size: 2rem;
+        color: var(--color-brand-primary);
+      }
+
+      .type-btn span {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .type-btn small {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      /* Car Travel Section */
+      .car-travel-section {
+        display: grid;
+        gap: var(--space-6);
+      }
+
+      .car-header {
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
+        color: white;
+      }
+
+      .car-header h3,
+      .car-header p {
+        color: white;
+      }
+
+      /* Risk Assessment */
+      .risk-preview-card,
+      .car-risk-card {
+        overflow: hidden;
+      }
+
+      .risk-low {
+        border-left: 4px solid var(--color-status-success);
+      }
+      .risk-moderate {
+        border-left: 4px solid var(--color-status-warning);
+      }
+      .risk-high {
+        border-left: 4px solid var(--color-status-error);
+      }
+      .risk-very-high {
+        border-left: 4px solid #8b0000;
+      }
+
+      .risk-content {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr;
+        gap: var(--space-4);
+        padding: var(--space-4);
+      }
+
+      .risk-gauge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .risk-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--p-surface-100);
+      }
+
+      .risk-circle.risk-low {
+        background: rgba(var(--color-status-success-rgb), 0.2);
+      }
+      .risk-circle.risk-moderate {
+        background: rgba(var(--color-status-warning-rgb), 0.2);
+      }
+      .risk-circle.risk-high {
+        background: rgba(var(--color-status-error-rgb), 0.2);
+      }
+      .risk-circle.risk-very-high {
+        background: rgba(139, 0, 0, 0.2);
+      }
+
+      .risk-score {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .risk-label {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      .risk-factors,
+      .risk-recommendations {
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-md);
+      }
+
+      .risk-factors h4,
+      .risk-recommendations h4 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-primary);
+      }
+
+      .risk-factors ul,
+      .risk-recommendations ul {
+        margin: 0;
+        padding-left: var(--space-4);
+        font-size: var(--font-body-sm);
+      }
+
+      .risk-factors li {
+        color: var(--color-status-warning);
+      }
+
+      .risk-recommendations li {
+        color: var(--color-status-success);
+      }
+
+      /* Car Risk Card */
+      .car-risk-content {
+        padding: var(--space-4);
+      }
+
+      .risk-header {
+        display: flex;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      .risk-gauge-small {
         width: 80px;
         height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--p-surface-100);
       }
-      
-      .gauge-circle::before {
-        width: 60px;
-        height: 60px;
+
+      .risk-info h2 {
+        margin: 0 0 var(--space-2) 0;
       }
-    }
-    
-    /* Touch Device Optimizations */
-    @media (hover: none) and (pointer: coarse) {
-      .olympic-btn:hover {
-        transform: none;
+
+      .warning-symptoms {
+        padding: var(--space-4);
+        background: rgba(var(--color-status-error-rgb), 0.1);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-status-error);
       }
-      
-      .olympic-btn:active {
-        transform: scale(0.98);
+
+      .warning-symptoms h4 {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin: 0 0 var(--space-3) 0;
+        color: var(--color-status-error);
       }
-      
-      .checklist-item,
-      .exercise-card,
-      .protocol-section {
-        min-height: 44px;
+
+      .symptoms-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
       }
-    }
-    
-    /* Print Styles */
-    @media print {
-      .travel-type-selector,
-      .form-actions,
-      .olympic-buttons {
-        display: none !important;
+
+      .warning-symptom {
+        padding: var(--space-1) var(--space-3);
+        background: white;
+        border: 1px solid var(--color-status-error);
+        border-radius: var(--radius-full);
+        font-size: var(--font-body-sm);
+        color: var(--color-status-error);
       }
-      
-      .travel-recovery-page {
-        padding: 0;
-        max-width: 100%;
+
+      /* Compression Card */
+      .compression-header {
+        background: linear-gradient(135deg, #4a90d9 0%, #67b26f 100%);
+        color: white;
       }
-      
-      .protocol-grid {
-        grid-template-columns: repeat(2, 1fr);
+
+      .compression-header h3,
+      .compression-header p {
+        color: white;
       }
-    }
-  `],
+
+      .compression-icon,
+      .massage-icon,
+      .exercises-icon {
+        font-size: 2rem;
+      }
+
+      .compression-content {
+        padding: var(--space-4);
+      }
+
+      .compression-type {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .compression-type h4 {
+        margin: 0;
+      }
+
+      .compression-timing {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      .timing-item {
+        display: flex;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-md);
+      }
+
+      .timing-item i {
+        font-size: 1.5rem;
+        color: var(--color-brand-primary);
+      }
+
+      .timing-item strong {
+        display: block;
+        margin-bottom: var(--space-1);
+      }
+
+      .timing-item p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .compression-cautions {
+        padding: var(--space-3);
+        background: rgba(var(--color-status-warning-rgb), 0.1);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-3);
+      }
+
+      .compression-cautions h4 {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-sm);
+      }
+
+      .compression-cautions ul {
+        margin: 0;
+        padding-left: var(--space-4);
+        font-size: var(--font-body-sm);
+      }
+
+      .evidence-note {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        padding: var(--space-2);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-sm);
+        font-style: italic;
+      }
+
+      .evidence-note i {
+        color: var(--color-brand-primary);
+      }
+
+      /* Massage Gun Card */
+      .massage-header {
+        background: linear-gradient(135deg, #e94057 0%, #f27121 100%);
+        color: white;
+      }
+
+      .massage-header h3,
+      .massage-header p {
+        color: white;
+      }
+
+      .massage-protocol {
+        padding: var(--space-3);
+      }
+
+      .protocol-summary {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .frequency {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .muscle-targets {
+        display: grid;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .muscle-item {
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-md);
+      }
+
+      .muscle-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--space-1);
+      }
+
+      .muscle-duration {
+        padding: 2px 8px;
+        background: var(--color-brand-primary);
+        color: white;
+        border-radius: var(--radius-full);
+        font-size: var(--font-body-xs);
+      }
+
+      .muscle-technique {
+        margin: 0 0 var(--space-1) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .muscle-purpose {
+        margin: 0;
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+        font-style: italic;
+      }
+
+      .massage-cautions {
+        padding: var(--space-3);
+        background: rgba(var(--color-status-error-rgb), 0.1);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-3);
+      }
+
+      .massage-cautions h5 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-sm);
+      }
+
+      .massage-cautions ul {
+        margin: 0;
+        padding-left: var(--space-4);
+        font-size: var(--font-body-sm);
+      }
+
+      /* Exercises Card */
+      .exercises-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+      }
+
+      .exercises-header h3,
+      .exercises-header p {
+        color: white;
+      }
+
+      .exercises-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-4);
+        padding: var(--space-4);
+      }
+
+      .exercise-card {
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-lg);
+        border-left: 3px solid var(--color-brand-primary);
+      }
+
+      .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--space-2);
+      }
+
+      .exercise-header h4 {
+        margin: 0;
+        font-size: var(--font-body-md);
+      }
+
+      .exercise-description {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .exercise-details {
+        display: flex;
+        gap: var(--space-3);
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+        color: var(--color-brand-primary);
+      }
+
+      .exercise-card .evidence {
+        display: block;
+        margin-top: var(--space-2);
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+        font-style: italic;
+      }
+
+      /* Rest Stop Card */
+      .rest-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .rest-header h3,
+      .rest-header p {
+        color: white;
+      }
+
+      .rest-stop-content {
+        padding: var(--space-4);
+      }
+
+      .rest-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .rest-stop-item {
+        display: flex;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--radius-lg);
+      }
+
+      .stop-marker {
+        flex-shrink: 0;
+        width: 80px;
+        text-align: center;
+      }
+
+      .stop-marker .hour {
+        display: block;
+        padding: var(--space-2) var(--space-3);
+        background: var(--color-brand-primary);
+        color: white;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+      }
+
+      .stop-actions {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .action-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+
+      .action-item.importance-critical {
+        background: rgba(var(--color-status-error-rgb), 0.1);
+      }
+
+      .action-item.importance-high {
+        background: rgba(var(--color-status-warning-rgb), 0.1);
+      }
+
+      .action-item i {
+        color: var(--color-brand-primary);
+      }
+
+      /* Research Card */
+      .research-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+      }
+
+      .research-header h3,
+      .research-header p {
+        color: white;
+      }
+
+      .research-item {
+        padding: var(--space-3);
+      }
+
+      .research-item .finding {
+        margin: 0 0 var(--space-3) 0;
+        line-height: 1.6;
+      }
+
+      .research-item .source {
+        margin-bottom: var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .pubmed-link {
+        display: inline-block;
+        margin-left: var(--space-2);
+        color: var(--color-brand-primary);
+        text-decoration: none;
+      }
+
+      .pubmed-link:hover {
+        text-decoration: underline;
+      }
+
+      .research-item .recommendation {
+        padding: var(--space-3);
+        background: var(--color-brand-light);
+        border-radius: var(--radius-md);
+        font-size: var(--font-body-sm);
+      }
+
+      /* ================================================================
+       RESPONSIVE BREAKPOINTS - Full Coverage
+       ================================================================ */
+
+      /* Extra Large Screens (> 1400px) */
+      @media (min-width: 1400px) {
+        .protocol-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .exercises-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* Large Screens (1200px - 1399px) */
+      @media (min-width: 1200px) and (max-width: 1399px) {
+        .protocol-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .exercises-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* Medium-Large Screens (1024px - 1199px) */
+      @media (min-width: 1024px) and (max-width: 1199px) {
+        .protocol-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .exercises-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Tablet Landscape (769px - 1023px) */
+      @media (min-width: 769px) and (max-width: 1023px) {
+        .protocol-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .exercises-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .olympic-impact {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      /* Tablet Portrait (768px) */
+      @media (max-width: 768px) {
+        .travel-recovery-page {
+          padding: var(--space-4);
+        }
+
+        .severity-content {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .protocol-grid {
+          grid-template-columns: 1fr;
+          gap: var(--space-3);
+        }
+
+        .olympic-buttons {
+          grid-template-columns: 1fr;
+        }
+
+        .travel-type-selector {
+          flex-direction: column;
+        }
+
+        .risk-content {
+          grid-template-columns: 1fr;
+        }
+
+        .compression-timing {
+          grid-template-columns: 1fr;
+        }
+
+        .exercises-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rest-stop-item {
+          flex-direction: column;
+        }
+
+        .stop-marker {
+          width: 100%;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .olympic-impact {
+          flex-direction: column;
+          gap: var(--space-3);
+        }
+
+        .today-header {
+          flex-direction: column;
+          gap: var(--space-3);
+          text-align: center;
+        }
+
+        .header-left {
+          flex-direction: column;
+        }
+      }
+
+      /* Mobile Large (481px - 767px) */
+      @media (min-width: 481px) and (max-width: 767px) {
+        .olympic-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .compression-timing {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Mobile Small (< 480px) */
+      @media (max-width: 480px) {
+        .travel-recovery-page {
+          padding: var(--space-3);
+        }
+
+        .card-header {
+          padding: var(--space-3);
+        }
+
+        .card-header h3 {
+          font-size: var(--font-body-lg);
+        }
+
+        .gauge-circle {
+          width: 100px;
+          height: 100px;
+        }
+
+        .gauge-circle::before {
+          width: 75px;
+          height: 75px;
+        }
+
+        .gauge-value {
+          font-size: 1.5rem;
+        }
+
+        .protocol-section {
+          padding: var(--space-3);
+        }
+
+        .protocol-section h4 {
+          font-size: var(--font-body-sm);
+        }
+
+        .sleep-times {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+
+        .detail-chips {
+          justify-content: center;
+        }
+
+        .symptom-chip {
+          font-size: var(--font-body-xs);
+        }
+
+        .impact-stat .stat-value {
+          font-size: 1.25rem;
+        }
+      }
+
+      /* Extra Small Screens (< 375px) */
+      @media (max-width: 374px) {
+        .travel-recovery-page {
+          padding: var(--space-2);
+        }
+
+        .olympic-btn {
+          padding: var(--space-3);
+        }
+
+        .venue-flag {
+          font-size: 1.5rem;
+        }
+
+        .day-badge {
+          padding: var(--space-1) var(--space-2);
+          font-size: var(--font-body-sm);
+        }
+      }
+
+      /* Landscape Mode on Mobile */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .travel-recovery-page {
+          padding: var(--space-3);
+        }
+
+        .protocol-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .gauge-circle {
+          width: 80px;
+          height: 80px;
+        }
+
+        .gauge-circle::before {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      /* Touch Device Optimizations */
+      @media (hover: none) and (pointer: coarse) {
+        .olympic-btn:hover {
+          transform: none;
+        }
+
+        .olympic-btn:active {
+          transform: scale(0.98);
+        }
+
+        .checklist-item,
+        .exercise-card,
+        .protocol-section {
+          min-height: 44px;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        .travel-type-selector,
+        .form-actions,
+        .olympic-buttons {
+          display: none !important;
+        }
+
+        .travel-recovery-page {
+          padding: 0;
+          max-width: 100%;
+        }
+
+        .protocol-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    `,
+  ],
 })
 export class TravelRecoveryComponent implements OnInit {
   private travelService = inject(TravelRecoveryService);
@@ -2563,7 +2839,11 @@ export class TravelRecoveryComponent implements OnInit {
   // Local state
   timezones: TimezoneOption[] = [];
   selectedOlympicVenue: "LA28" | "BRISBANE32" | null = null;
-  olympicImpact = signal<{ timezonesDifference: number; direction: string; estimatedRecoveryDays: number } | null>(null);
+  olympicImpact = signal<{
+    timezonesDifference: number;
+    direction: string;
+    estimatedRecoveryDays: number;
+  } | null>(null);
   travelChecklist: TravelChecklist[] = [];
   minDate = new Date();
 
@@ -2571,12 +2851,23 @@ export class TravelRecoveryComponent implements OnInit {
   travelType = signal<"flight" | "car">("flight");
 
   // Car travel state
-  activeCarPlan = signal<{ tripName: string; duration: number; isDriver: boolean; competitionDate?: Date } | null>(null);
+  activeCarPlan = signal<{
+    tripName: string;
+    duration: number;
+    isDriver: boolean;
+    competitionDate?: Date;
+  } | null>(null);
   carTravelProtocols: CarTravelProtocol[] = [];
   seatedExercises: CirculationExercise[] = [];
   massageGunProtocols: MassageGunProtocol[] = [];
   carTravelChecklist: TravelChecklist[] = [];
-  researchSummary: Array<{ topic: string; finding: string; source: string; pubmedId?: string; recommendation: string }> = [];
+  researchSummary: Array<{
+    topic: string;
+    finding: string;
+    source: string;
+    pubmedId?: string;
+    recommendation: string;
+  }> = [];
 
   // Car trip form
   carTripForm = {
@@ -2623,8 +2914,10 @@ export class TravelRecoveryComponent implements OnInit {
 
   // Car travel risk calculation (reactive)
   carTravelRisk(): BloodCirculationRisk {
-    const duration = this.activeCarPlan()?.duration || this.carTripForm.duration;
-    const isDriver = this.activeCarPlan()?.isDriver ?? this.carTripForm.isDriver;
+    const duration =
+      this.activeCarPlan()?.duration || this.carTripForm.duration;
+    const isDriver =
+      this.activeCarPlan()?.isDriver ?? this.carTripForm.isDriver;
     return this.travelService.calculateCarTravelRisk(duration, isDriver);
   }
 
@@ -2634,7 +2927,9 @@ export class TravelRecoveryComponent implements OnInit {
   }
 
   canCreateCarPlan(): boolean {
-    return this.carTripForm.tripName.length > 0 && this.carTripForm.duration >= 2;
+    return (
+      this.carTripForm.tripName.length > 0 && this.carTripForm.duration >= 2
+    );
   }
 
   createCarPlan(): void {
@@ -2653,13 +2948,15 @@ export class TravelRecoveryComponent implements OnInit {
     // Generate protocols
     this.carTravelProtocols = this.travelService.generateCarTravelProtocol(
       this.carTripForm.duration,
-      this.carTripForm.isDriver
+      this.carTripForm.isDriver,
     );
 
     this.toastService.success("Car travel protocol generated!");
   }
 
-  getRiskColor(level: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getRiskColor(
+    level: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (level) {
       case "low":
         return "success";
@@ -2674,7 +2971,9 @@ export class TravelRecoveryComponent implements OnInit {
     }
   }
 
-  getTargetAreaColor(area: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getTargetAreaColor(
+    area: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (area) {
       case "calves":
         return "info";
@@ -2729,13 +3028,14 @@ export class TravelRecoveryComponent implements OnInit {
     // Auto-fill destination timezone
     const venueInfo = this.travelService.getOlympicVenueInfo(venue);
     this.tripForm.arrivalTimezone = venueInfo.timezone;
-    this.tripForm.tripName = venue === "LA28" ? "Los Angeles 2028 Olympics" : "Brisbane 2032 Olympics";
+    this.tripForm.tripName =
+      venue === "LA28" ? "Los Angeles 2028 Olympics" : "Brisbane 2032 Olympics";
 
     // Calculate impact if home timezone is set
     if (this.tripForm.departureTimezone) {
       const impact = this.travelService.calculateOlympicTravelImpact(
         this.tripForm.departureTimezone,
-        venue
+        venue,
       );
       this.olympicImpact.set(impact);
     }
@@ -2812,7 +3112,9 @@ export class TravelRecoveryComponent implements OnInit {
     );
   }
 
-  getSeverityColor(level: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getSeverityColor(
+    level: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (level) {
       case "none":
         return "success";
@@ -2827,7 +3129,9 @@ export class TravelRecoveryComponent implements OnInit {
     }
   }
 
-  getPhaseColor(phase: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getPhaseColor(
+    phase: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (phase) {
       case "pre-travel":
         return "info";
@@ -2842,7 +3146,9 @@ export class TravelRecoveryComponent implements OnInit {
     }
   }
 
-  getIntensityColor(intensity: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getIntensityColor(
+    intensity: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (intensity) {
       case "full":
         return "success";
@@ -2857,7 +3163,9 @@ export class TravelRecoveryComponent implements OnInit {
     }
   }
 
-  getImportanceColor(importance: string): "success" | "info" | "warn" | "danger" | "secondary" {
+  getImportanceColor(
+    importance: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (importance) {
       case "critical":
         return "danger";

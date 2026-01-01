@@ -14,8 +14,8 @@
  * @version 1.0.0
  */
 
-import { ErrorHandler, Injectable, inject, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { ErrorHandler, Injectable, inject, NgZone } from "@angular/core";
+import { Router } from "@angular/router";
 
 export interface RedactedError {
   timestamp: string;
@@ -28,7 +28,7 @@ export interface RedactedError {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class GlobalErrorHandlerService implements ErrorHandler {
   private zone = inject(NgZone);
@@ -57,13 +57,18 @@ export class GlobalErrorHandlerService implements ErrorHandler {
       this.logError(redactedError);
 
       // Log to console in development (redacted)
-      console.error('[GlobalErrorHandler] Caught error:', redactedError.message);
-      console.error('[GlobalErrorHandler] Type:', redactedError.errorType);
-      console.error('[GlobalErrorHandler] Route:', redactedError.route);
+      console.error(
+        "[GlobalErrorHandler] Caught error:",
+        redactedError.message,
+      );
+      console.error("[GlobalErrorHandler] Type:", redactedError.errorType);
+      console.error("[GlobalErrorHandler] Route:", redactedError.route);
 
       // Check if this is a critical error that should show recovery UI
       if (this.isCriticalError(error)) {
-        console.error('[GlobalErrorHandler] Critical error detected - recovery may be needed');
+        console.error(
+          "[GlobalErrorHandler] Critical error detected - recovery may be needed",
+        );
       }
     });
   }
@@ -73,25 +78,25 @@ export class GlobalErrorHandlerService implements ErrorHandler {
    */
   private createRedactedError(error: unknown): RedactedError {
     const now = new Date().toISOString();
-    const route = this.router.url || 'unknown';
+    const route = this.router.url || "unknown";
 
-    let errorType = 'Unknown';
-    let message = 'An unexpected error occurred';
+    let errorType = "Unknown";
+    let message = "An unexpected error occurred";
     let stackTrace: string | undefined;
 
     if (error instanceof Error) {
-      errorType = error.name || 'Error';
+      errorType = error.name || "Error";
       message = this.redactMessage(error.message);
-      stackTrace = this.redactMessage(error.stack || '');
-    } else if (typeof error === 'string') {
-      errorType = 'StringError';
+      stackTrace = this.redactMessage(error.stack || "");
+    } else if (typeof error === "string") {
+      errorType = "StringError";
       message = this.redactMessage(error);
-    } else if (error && typeof error === 'object') {
-      errorType = 'ObjectError';
+    } else if (error && typeof error === "object") {
+      errorType = "ObjectError";
       try {
         message = this.redactMessage(JSON.stringify(error));
       } catch {
-        message = 'Non-serializable error object';
+        message = "Non-serializable error object";
       }
     }
 
@@ -110,7 +115,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
   private redactMessage(message: string): string {
     let redacted = message;
     for (const pattern of this.REDACT_PATTERNS) {
-      redacted = redacted.replace(pattern, '[REDACTED]');
+      redacted = redacted.replace(pattern, "[REDACTED]");
     }
     return redacted;
   }
@@ -166,23 +171,31 @@ export class GlobalErrorHandlerService implements ErrorHandler {
   getUserFriendlyMessage(error: unknown): string {
     if (error instanceof Error) {
       // Network errors
-      if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
-        return 'Unable to connect to the server. Please check your internet connection.';
+      if (
+        error.message.includes("NetworkError") ||
+        error.message.includes("fetch")
+      ) {
+        return "Unable to connect to the server. Please check your internet connection.";
       }
       // Auth errors
-      if (error.message.includes('401') || error.message.includes('unauthorized')) {
-        return 'Your session has expired. Please log in again.';
+      if (
+        error.message.includes("401") ||
+        error.message.includes("unauthorized")
+      ) {
+        return "Your session has expired. Please log in again.";
       }
       // Not found
-      if (error.message.includes('404') || error.message.includes('not found')) {
-        return 'The requested data could not be found.';
+      if (
+        error.message.includes("404") ||
+        error.message.includes("not found")
+      ) {
+        return "The requested data could not be found.";
       }
       // Server errors
-      if (error.message.includes('500') || error.message.includes('server')) {
-        return 'The server encountered an error. Please try again later.';
+      if (error.message.includes("500") || error.message.includes("server")) {
+        return "The server encountered an error. Please try again later.";
       }
     }
-    return 'Something went wrong. Please try again.';
+    return "Something went wrong. Please try again.";
   }
 }
-

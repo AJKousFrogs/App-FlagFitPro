@@ -112,12 +112,18 @@ export class NotificationStateService {
       if (response && response.data) {
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (typeof response.data === 'object' && response.data !== null) {
+        } else if (
+          typeof response.data === "object" &&
+          response.data !== null
+        ) {
           const dataObj = response.data as Record<string, unknown>;
-          if ('notifications' in dataObj && Array.isArray(dataObj['notifications'])) {
-            notifications = dataObj['notifications'] as Notification[];
-          } else if ('data' in dataObj && Array.isArray(dataObj['data'])) {
-            notifications = dataObj['data'] as Notification[];
+          if (
+            "notifications" in dataObj &&
+            Array.isArray(dataObj["notifications"])
+          ) {
+            notifications = dataObj["notifications"] as Notification[];
+          } else if ("data" in dataObj && Array.isArray(dataObj["data"])) {
+            notifications = dataObj["data"] as Notification[];
           }
         }
       } else if (Array.isArray(response)) {
@@ -128,7 +134,8 @@ export class NotificationStateService {
       this.loading.set(false);
       return notifications;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to load notifications";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to load notifications";
       this.error.set(errorMessage);
       this.loading.set(false);
       this.logger.error("Error loading notifications:", error);
@@ -166,7 +173,9 @@ export class NotificationStateService {
       if (response.success === false || !response.data) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(response.error || "Failed to mark notification as read");
+        throw new Error(
+          response.error || "Failed to mark notification as read",
+        );
       }
 
       // Refresh badge count to ensure consistency
@@ -176,7 +185,9 @@ export class NotificationStateService {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to mark notification as read";
+        error instanceof Error
+          ? error.message
+          : "Failed to mark notification as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking notification as read:", error);
       throw error;
@@ -221,7 +232,9 @@ export class NotificationStateService {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to mark all notifications as read";
+        error instanceof Error
+          ? error.message
+          : "Failed to mark all notifications as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking all notifications as read:", error);
       throw error;
@@ -267,7 +280,9 @@ export class NotificationStateService {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to mark notifications as read";
+        error instanceof Error
+          ? error.message
+          : "Failed to mark notifications as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking notifications as read:", error);
       throw error;
@@ -288,17 +303,17 @@ export class NotificationStateService {
       let count = 0;
       if (response && response.data) {
         const dataObj = response.data as unknown as Record<string, unknown>;
-        if (typeof dataObj['unreadCount'] === 'number') {
-          count = dataObj['unreadCount'];
-        } else if (typeof dataObj['count'] === 'number') {
-          count = dataObj['count'];
+        if (typeof dataObj["unreadCount"] === "number") {
+          count = dataObj["unreadCount"];
+        } else if (typeof dataObj["count"] === "number") {
+          count = dataObj["count"];
         }
       } else if (typeof response === "number") {
         count = response;
-      } else if (typeof response === 'object' && response !== null) {
+      } else if (typeof response === "object" && response !== null) {
         const respObj = response as unknown as Record<string, unknown>;
-        if (typeof respObj['unreadCount'] === 'number') {
-          count = respObj['unreadCount'];
+        if (typeof respObj["unreadCount"] === "number") {
+          count = respObj["unreadCount"];
         }
       }
 

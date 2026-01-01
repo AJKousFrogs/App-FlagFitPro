@@ -4,40 +4,43 @@
  * Fix duplicate logger imports
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const srcDir = path.join(__dirname, '..', 'src');
+const srcDir = path.join(__dirname, "..", "src");
 
 function processFile(filePath) {
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, "utf8");
 
     // Find all logger imports
-    const importRegex = /import\s+\{\s*logger\s*\}\s+from\s+['"].*?logger\.js['"];?\s*\n?/g;
+    const importRegex =
+      /import\s+\{\s*logger\s*\}\s+from\s+['"].*?logger\.js['"];?\s*\n?/g;
     const matches = content.match(importRegex);
 
     if (matches && matches.length > 1) {
       // Keep only the first import, remove the rest
       const firstImport = matches[0];
-      content = content.replace(importRegex, '');
+      content = content.replace(importRegex, "");
 
       // Add back the first import at the top after other imports
-      const otherImports = content.match(/^import\s+.*?from\s+['"].*?['"];?\s*$/gm);
+      const otherImports = content.match(
+        /^import\s+.*?from\s+['"].*?['"];?\s*$/gm,
+      );
       if (otherImports && otherImports.length > 0) {
         const lastImport = otherImports[otherImports.length - 1];
         const lastImportIndex = content.lastIndexOf(lastImport);
         const insertIndex = lastImportIndex + lastImport.length;
-        content = `${content.slice(0, insertIndex)  }\n${  firstImport  }${content.slice(insertIndex)}`;
+        content = `${content.slice(0, insertIndex)}\n${firstImport}${content.slice(insertIndex)}`;
       } else {
         content = firstImport + content;
       }
 
-      fs.writeFileSync(filePath, content, 'utf8');
+      fs.writeFileSync(filePath, content, "utf8");
       console.log(`✓ Fixed ${path.relative(process.cwd(), filePath)}`);
       return true;
     }
@@ -58,7 +61,7 @@ function findJsFiles(dir) {
 
     if (entry.isDirectory()) {
       files.push(...findJsFiles(fullPath));
-    } else if (entry.isFile() && entry.name.endsWith('.js')) {
+    } else if (entry.isFile() && entry.name.endsWith(".js")) {
       files.push(fullPath);
     }
   }
@@ -66,7 +69,7 @@ function findJsFiles(dir) {
   return files;
 }
 
-console.log('🔧 Fixing duplicate logger imports...\n');
+console.log("🔧 Fixing duplicate logger imports...\n");
 
 const jsFiles = findJsFiles(srcDir);
 let fixed = 0;

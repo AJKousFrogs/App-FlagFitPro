@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
@@ -42,13 +42,13 @@ exports.handler = async (event, context) => {
           "preferences object is required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
       const updated = await db.notifications.updateUserPreferences(
         userId,
-        preferences
+        preferences,
       );
       return createSuccessResponse(updated, requestId);
     },

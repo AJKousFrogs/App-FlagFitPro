@@ -46,9 +46,15 @@ export class UnitManagerService {
   readonly units = this.unitsSignal.asReadonly();
 
   // Computed unit labels
-  readonly distanceLabel = computed(() => (this.units().distance === "metric" ? "cm" : "in"));
-  readonly weightLabel = computed(() => (this.units().weight === "metric" ? "kg" : "lbs"));
-  readonly heightLabel = computed(() => (this.units().height === "metric" ? "cm" : "in"));
+  readonly distanceLabel = computed(() =>
+    this.units().distance === "metric" ? "cm" : "in",
+  );
+  readonly weightLabel = computed(() =>
+    this.units().weight === "metric" ? "kg" : "lbs",
+  );
+  readonly heightLabel = computed(() =>
+    this.units().height === "metric" ? "cm" : "in",
+  );
 
   constructor() {
     this.logger.info("Unit Manager Service initialized");
@@ -70,7 +76,7 @@ export class UnitManagerService {
   private saveUnits(units: UnitSettings): void {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(units));
     this.unitsSignal.set(units);
-    
+
     // Sync with Supabase profile if authenticated
     const user = this.supabase.getCurrentUser();
     if (user) {
@@ -79,7 +85,8 @@ export class UnitManagerService {
         .update({ preferred_units: units.distance }) // The DB only has a single preference for now
         .eq("id", user.id)
         .then(({ error }) => {
-          if (error) this.logger.error("Failed to sync unit preferences to DB:", error);
+          if (error)
+            this.logger.error("Failed to sync unit preferences to DB:", error);
         });
     }
   }
@@ -100,7 +107,10 @@ export class UnitManagerService {
     this.saveUnits({ ...this.units(), time: unit });
   }
 
-  formatTime(value: number, preferredUnit: "minutes" | "seconds" | null = null): string {
+  formatTime(
+    value: number,
+    preferredUnit: "minutes" | "seconds" | null = null,
+  ): string {
     const unit = preferredUnit || this.units().time;
 
     if (unit === "seconds") {
@@ -115,7 +125,10 @@ export class UnitManagerService {
     }
   }
 
-  formatDistance(valueInMeters: number, preferredUnit: "metric" | "imperial" | null = null): string {
+  formatDistance(
+    valueInMeters: number,
+    preferredUnit: "metric" | "imperial" | null = null,
+  ): string {
     const unit = preferredUnit || this.units().distance;
 
     if (unit === "metric") {
@@ -144,7 +157,10 @@ export class UnitManagerService {
     }
   }
 
-  formatWeight(valueInLbs: number, preferredUnit: "metric" | "imperial" | null = null): string {
+  formatWeight(
+    valueInLbs: number,
+    preferredUnit: "metric" | "imperial" | null = null,
+  ): string {
     const unit = preferredUnit || this.units().weight;
 
     if (unit === "metric") {
@@ -154,7 +170,10 @@ export class UnitManagerService {
     }
   }
 
-  formatHeight(valueInInches: number, preferredUnit: "metric" | "imperial" | null = null): string {
+  formatHeight(
+    valueInInches: number,
+    preferredUnit: "metric" | "imperial" | null = null,
+  ): string {
     const unit = preferredUnit || this.units().height;
 
     if (unit === "metric") {
@@ -171,37 +190,77 @@ export class UnitManagerService {
 
     let meters: number;
     switch (fromUnit) {
-      case "yards": case "yds": meters = value * 0.9144; break;
-      case "feet": case "ft": meters = value * 0.3048; break;
-      case "inches": case "in": meters = value * 0.0254; break;
-      case "miles": case "mi": meters = value * 1609.34; break;
-      case "cm": meters = value * 0.01; break;
-      case "meters": case "m": meters = value; break;
-      default: meters = value;
+      case "yards":
+      case "yds":
+        meters = value * 0.9144;
+        break;
+      case "feet":
+      case "ft":
+        meters = value * 0.3048;
+        break;
+      case "inches":
+      case "in":
+        meters = value * 0.0254;
+        break;
+      case "miles":
+      case "mi":
+        meters = value * 1609.34;
+        break;
+      case "cm":
+        meters = value * 0.01;
+        break;
+      case "meters":
+      case "m":
+        meters = value;
+        break;
+      default:
+        meters = value;
     }
 
     switch (toUnit) {
-      case "yards": case "yds": return meters / 0.9144;
-      case "feet": case "ft": return meters / 0.3048;
-      case "inches": case "in": return meters / 0.0254;
-      case "miles": case "mi": return meters / 1609.34;
-      case "cm": return meters / 0.01;
-      case "meters": case "m": return meters;
-      default: return meters;
+      case "yards":
+      case "yds":
+        return meters / 0.9144;
+      case "feet":
+      case "ft":
+        return meters / 0.3048;
+      case "inches":
+      case "in":
+        return meters / 0.0254;
+      case "miles":
+      case "mi":
+        return meters / 1609.34;
+      case "cm":
+        return meters / 0.01;
+      case "meters":
+      case "m":
+        return meters;
+      default:
+        return meters;
     }
   }
 
-  convertWeight(value: number, fromUnit: "lbs" | "kg", toUnit: "lbs" | "kg"): number {
+  convertWeight(
+    value: number,
+    fromUnit: "lbs" | "kg",
+    toUnit: "lbs" | "kg",
+  ): number {
     if (fromUnit === toUnit) return value;
     if (fromUnit === "lbs" && toUnit === "kg") return value * 0.453592;
     if (fromUnit === "kg" && toUnit === "lbs") return value / 0.453592;
     return value;
   }
 
-  convertTemperature(value: number, fromUnit: "fahrenheit" | "celsius", toUnit: "fahrenheit" | "celsius"): number {
+  convertTemperature(
+    value: number,
+    fromUnit: "fahrenheit" | "celsius",
+    toUnit: "fahrenheit" | "celsius",
+  ): number {
     if (fromUnit === toUnit) return value;
-    if (fromUnit === "fahrenheit" && toUnit === "celsius") return ((value - 32) * 5) / 9;
-    if (fromUnit === "celsius" && toUnit === "fahrenheit") return (value * 9) / 5 + 32;
+    if (fromUnit === "fahrenheit" && toUnit === "celsius")
+      return ((value - 32) * 5) / 9;
+    if (fromUnit === "celsius" && toUnit === "fahrenheit")
+      return (value * 9) / 5 + 32;
     return value;
   }
 
@@ -273,4 +332,3 @@ export class UnitManagerService {
     };
   }
 }
-

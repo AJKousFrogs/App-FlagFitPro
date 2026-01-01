@@ -1,6 +1,6 @@
 /**
  * Input Validation Middleware
- * 
+ *
  * Provides centralized input validation for Netlify functions.
  * Helps prevent:
  * - SQL injection
@@ -38,7 +38,9 @@ const PATTERNS = {
  */
 const VALIDATORS = {
   string: (value, options = {}) => {
-    if (typeof value !== "string") {return "must be a string";}
+    if (typeof value !== "string") {
+      return "must be a string";
+    }
     if (options.minLength && value.length < options.minLength) {
       return `must be at least ${options.minLength} characters`;
     }
@@ -53,7 +55,9 @@ const VALIDATORS = {
 
   number: (value, options = {}) => {
     const num = typeof value === "string" ? parseFloat(value) : value;
-    if (typeof num !== "number" || isNaN(num)) {return "must be a number";}
+    if (typeof num !== "number" || isNaN(num)) {
+      return "must be a number";
+    }
     if (options.min !== undefined && num < options.min) {
       return `must be at least ${options.min}`;
     }
@@ -99,7 +103,9 @@ const VALIDATORS = {
   },
 
   datetime: (value) => {
-    if (typeof value !== "string") {return "must be a string";}
+    if (typeof value !== "string") {
+      return "must be a string";
+    }
     const date = new Date(value);
     if (isNaN(date.getTime())) {
       return "must be a valid datetime";
@@ -108,7 +114,9 @@ const VALIDATORS = {
   },
 
   array: (value, options = {}) => {
-    if (!Array.isArray(value)) {return "must be an array";}
+    if (!Array.isArray(value)) {
+      return "must be an array";
+    }
     if (options.minLength && value.length < options.minLength) {
       return `must have at least ${options.minLength} items`;
     }
@@ -135,11 +143,11 @@ const VALIDATORS = {
 
 /**
  * Validate input against a schema
- * 
+ *
  * @param {object} data - The data to validate
  * @param {object} schema - Validation schema
  * @returns {{ valid: boolean, errors: string[], cleaned: object }}
- * 
+ *
  * @example
  * const schema = {
  *   name: { type: 'string', required: true, minLength: 2, maxLength: 50 },
@@ -147,7 +155,7 @@ const VALIDATORS = {
  *   age: { type: 'number', min: 0, max: 150 },
  *   role: { type: 'enum', values: ['admin', 'user', 'guest'] }
  * };
- * 
+ *
  * const result = validateInput(data, schema);
  * if (!result.valid) {
  *   return handleValidationError(result.errors.join(', '));
@@ -169,7 +177,10 @@ function validateInput(data, schema) {
     const value = data[field];
 
     // Check required fields
-    if (rules.required && (value === undefined || value === null || value === "")) {
+    if (
+      rules.required &&
+      (value === undefined || value === null || value === "")
+    ) {
       errors.push(`${field} is required`);
       continue;
     }
@@ -216,7 +227,9 @@ function validateInput(data, schema) {
  * Sanitize a string to prevent XSS
  */
 function sanitizeString(str) {
-  if (typeof str !== "string") {return str;}
+  if (typeof str !== "string") {
+    return str;
+  }
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -247,7 +260,7 @@ function sanitizeObject(obj) {
 
 /**
  * Parse and validate JSON body from request
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {object} schema - Validation schema (optional)
  * @returns {{ valid: boolean, data: object, error: object|null }}
@@ -294,7 +307,7 @@ function parseAndValidateBody(event, schema = null) {
 
 /**
  * Validate query parameters
- * 
+ *
  * @param {object} params - Query parameters
  * @param {object} schema - Validation schema
  * @returns {{ valid: boolean, data: object, error: object|null }}
@@ -302,7 +315,7 @@ function parseAndValidateBody(event, schema = null) {
 function validateQueryParams(params, schema) {
   const queryParams = params || {};
   const validation = validateInput(queryParams, schema);
-  
+
   if (!validation.valid) {
     return {
       valid: false,
@@ -310,7 +323,7 @@ function validateQueryParams(params, schema) {
       error: handleValidationError(validation.errors.join(", ")),
     };
   }
-  
+
   return {
     valid: true,
     data: validation.cleaned,
@@ -345,4 +358,3 @@ module.exports = {
   VALIDATORS,
   COMMON_SCHEMAS,
 };
-

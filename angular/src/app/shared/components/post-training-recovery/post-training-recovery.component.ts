@@ -35,8 +35,6 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { Chip } from "primeng/chip";
-
 // Services
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -73,7 +71,6 @@ interface RecoveryRecommendation {
     CheckboxModule,
     TagModule,
     ProgressBarModule,
-    Chip,
   ],
   template: `
     <p-dialog
@@ -99,12 +96,20 @@ interface RecoveryRecommendation {
 
         <!-- Step Indicator -->
         <div class="step-indicator">
-          <div class="step" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1">
+          <div
+            class="step"
+            [class.active]="currentStep() >= 1"
+            [class.completed]="currentStep() > 1"
+          >
             <span class="step-number">1</span>
             <span class="step-label">RPE</span>
           </div>
           <div class="step-line" [class.active]="currentStep() > 1"></div>
-          <div class="step" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2">
+          <div
+            class="step"
+            [class.active]="currentStep() >= 2"
+            [class.completed]="currentStep() > 2"
+          >
             <span class="step-number">2</span>
             <span class="step-label">Soreness</span>
           </div>
@@ -199,11 +204,16 @@ interface RecoveryRecommendation {
         @if (currentStep() === 3) {
           <div class="step-content animate-fade-in">
             <h3>Your Recovery Plan</h3>
-            <p class="step-description">Based on your session and current state</p>
+            <p class="step-description">
+              Based on your session and current state
+            </p>
 
             <div class="recommendations-list">
               @for (rec of recoveryRecommendations(); track rec.title) {
-                <div class="recommendation-card" [class]="'priority-' + rec.priority">
+                <div
+                  class="recommendation-card"
+                  [class]="'priority-' + rec.priority"
+                >
                   <div class="rec-icon">
                     <i [class]="'pi ' + rec.icon"></i>
                   </div>
@@ -262,9 +272,7 @@ interface RecoveryRecommendation {
         </div>
 
         <!-- Skip Option -->
-        <button class="skip-btn" (click)="skipAndClose()">
-          Skip for now
-        </button>
+        <button class="skip-btn" (click)="skipAndClose()">Skip for now</button>
       </div>
     </p-dialog>
   `,
@@ -437,7 +445,11 @@ interface RecoveryRecommendation {
 
       .rpe-button.selected {
         border-color: var(--rpe-color, var(--color-brand-primary));
-        background: color-mix(in srgb, var(--rpe-color, var(--color-brand-primary)) 10%, white);
+        background: color-mix(
+          in srgb,
+          var(--rpe-color, var(--color-brand-primary)) 10%,
+          white
+        );
       }
 
       .rpe-value {
@@ -867,7 +879,7 @@ export class PostTrainingRecoveryComponent implements OnInit {
   }
 
   getPrioritySeverity(
-    priority: string
+    priority: string,
   ): "success" | "info" | "warn" | "danger" {
     switch (priority) {
       case "high":
@@ -896,9 +908,10 @@ export class PostTrainingRecoveryComponent implements OnInit {
         rpe: sessionData.rpe,
         duration_minutes: sessionData.duration,
         load: sessionData.load,
-        notes: sessionData.soreness.length > 0
-          ? `Soreness: ${sessionData.soreness.map((s) => s.label).join(", ")}`
-          : undefined,
+        notes:
+          sessionData.soreness.length > 0
+            ? `Soreness: ${sessionData.soreness.map((s) => s.label).join(", ")}`
+            : undefined,
       });
 
       this.saved.emit(sessionData);

@@ -137,9 +137,11 @@ export const FormValidators = {
    */
   phone: (value: string | null | undefined): string | null => {
     if (!value) return null;
-    const cleaned = value.replace(/[\s\-\(\)]/g, '');
+    const cleaned = value.replace(/[\s\-\(\)]/g, "");
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-    return phoneRegex.test(cleaned) ? null : "Please enter a valid phone number";
+    return phoneRegex.test(cleaned)
+      ? null
+      : "Please enter a valid phone number";
   },
 
   /**
@@ -237,7 +239,9 @@ export const FormValidators = {
       if (
         age < minAge ||
         (age === minAge && monthDiff < 0) ||
-        (age === minAge && monthDiff === 0 && today.getDate() < birthDate.getDate())
+        (age === minAge &&
+          monthDiff === 0 &&
+          today.getDate() < birthDate.getDate())
       ) {
         return `You must be at least ${minAge} years old`;
       }

@@ -2,7 +2,7 @@
 /**
  * Inject environment variables into Angular build output HTML
  * This runs AFTER `ng build` to inject runtime configuration
- * 
+ *
  * Required for Netlify deployment where env vars are only available at build time
  */
 
@@ -30,9 +30,13 @@ console.log(`   SUPABASE_URL: ${supabaseUrl ? "✓ Set" : "✗ Missing"}`);
 console.log(`   SUPABASE_ANON_KEY: ${supabaseAnonKey ? "✓ Set" : "✗ Missing"}`);
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn("⚠️  Warning: Supabase credentials not found in environment variables");
+  console.warn(
+    "⚠️  Warning: Supabase credentials not found in environment variables",
+  );
   console.warn("   The app will not be able to connect to the database.");
-  console.warn("   Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in Netlify.");
+  console.warn(
+    "   Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in Netlify.",
+  );
 }
 
 // Check if the build output exists

@@ -3,8 +3,8 @@
  * Migrated from inline styles to SCSS using design system
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 // ============================================================================
 // PAGE LAYOUT
@@ -15,7 +15,11 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: var(--space-4);
+  min-height: 100dvh; // Dynamic viewport height for mobile
+  width: 100%;
+  padding: var(--space-6);
+  box-sizing: border-box;
+  position: relative;
   background: linear-gradient(
     135deg,
     var(--surface-primary) 0%,
@@ -24,7 +28,7 @@
 
   // Subtle pattern overlay
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background-image: radial-gradient(
@@ -42,7 +46,8 @@
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
+  margin: 0 auto;
   background: var(--surface-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
@@ -52,7 +57,7 @@
 
   // Gradient top border
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -64,21 +69,27 @@
       var(--ds-secondary-gold) 100%
     );
   }
+}
 
-  // PrimeNG card overrides
-  :host ::ng-deep {
-    .p-card-header {
-      padding: var(--space-6) var(--space-6) 0;
-      text-align: center;
-    }
+// PrimeNG card overrides - must be at root level with ::ng-deep
+::ng-deep .login-card {
+  .p-card {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+  }
 
-    .p-card-body {
-      padding: var(--space-6);
-    }
+  .p-card-header {
+    padding: var(--space-10, 2.5rem) 2.5rem 0.75rem !important;
+    text-align: center !important;
+  }
 
-    .p-card-content {
-      padding: 0;
-    }
+  .p-card-body {
+    padding: var(--space-6, 1.5rem) 2.5rem 2.5rem !important;
+  }
+
+  .p-card-content {
+    padding: 0 !important;
   }
 }
 
@@ -87,17 +98,17 @@
 // ============================================================================
 
 .login-logo {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--space-4);
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--ds-primary-green-subtle);
-  border-radius: var(--radius-xl);
+  border-radius: 1rem;
   color: var(--ds-primary-green);
-  font-size: var(--icon-3xl);
-  transition: transform var(--transition-normal) var(--ease-bounce);
+  font-size: var(--font-heading-lg, 2rem);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   &:hover {
     transform: scale(1.05);
@@ -109,7 +120,8 @@
 }
 
 @keyframes pulse-subtle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -118,11 +130,12 @@
 }
 
 .login-title {
-  font-size: var(--font-heading-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: 1.75rem;
+  font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-6);
-  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.02em;
 }
 
 // ============================================================================
@@ -130,7 +143,7 @@
 // ============================================================================
 
 .form-field {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .form-label {
@@ -141,7 +154,7 @@
   margin-bottom: var(--space-2);
 
   &.required::after {
-    content: ' *';
+    content: " *";
     color: var(--color-status-error);
   }
 }
@@ -184,21 +197,21 @@
   }
 
   i {
-    font-size: 1rem;
+    font-size: var(--font-body-md, 1rem);
   }
 }
 
 // Input field styling
-:host ::ng-deep {
+::ng-deep {
   .p-inputtext {
     width: 100%;
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--font-body-md);
+    padding: var(--space-3, 0.75rem) 1rem;
+    font-size: var(--font-body-md, 1rem);
     border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-lg);
+    border-radius: 0.75rem;
     background: var(--surface-primary);
     color: var(--color-text-primary);
-    transition: all var(--transition-fast) var(--ease-smooth);
+    transition: all 0.15s ease;
 
     &:focus {
       outline: none;
@@ -232,15 +245,22 @@
   animation: shake 0.3s ease-in-out;
 
   &::before {
-    content: '⚠';
+    content: "⚠";
     font-size: var(--font-body-sm);
   }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 // ============================================================================
@@ -318,7 +338,7 @@
     justify-content: center;
 
     &::after {
-      content: '';
+      content: "";
       display: none;
       width: 5px;
       height: 10px;
@@ -343,38 +363,36 @@
 // SUBMIT BUTTON
 // ============================================================================
 
-:host ::ng-deep {
-  .p-button.w-full {
-    width: 100%;
-    justify-content: center;
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-    border-radius: var(--radius-lg);
-    background: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
-    transition: all var(--transition-fast) var(--ease-smooth);
+::ng-deep .login-submit-btn.p-button {
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-3, 0.75rem) 1.5rem;
+  font-size: var(--font-body-md, 1rem);
+  font-weight: 600;
+  border-radius: 0.75rem;
+  background: var(--ds-primary-green);
+  border-color: var(--ds-primary-green);
+  transition: all 0.15s ease;
 
-    &:not(:disabled):hover {
-      background: var(--ds-primary-green-hover);
-      border-color: var(--ds-primary-green-hover);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-primary);
-    }
+  &:not(:disabled):hover {
+    background: var(--ds-primary-green-hover);
+    border-color: var(--ds-primary-green-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
+  }
 
-    &:not(:disabled):active {
-      transform: translateY(0);
-    }
+  &:not(:disabled):active {
+    transform: translateY(0);
+  }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
-    &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
   }
 }
 
@@ -392,7 +410,7 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
     background: var(--color-border-secondary);
@@ -452,34 +470,36 @@
 
 @media (max-width: 480px) {
   .login-page {
-    padding: var(--space-3);
-  }
-
-  .login-card {
-    :host ::ng-deep {
-      .p-card-header {
-        padding: var(--space-5) var(--space-4) 0;
-      }
-
-      .p-card-body {
-        padding: var(--space-4);
-      }
-    }
+    padding: var(--space-4, 1rem);
+    align-items: flex-start;
+    padding-top: 2rem;
   }
 
   .login-logo {
-    width: 56px;
-    height: 56px;
-    font-size: var(--icon-2xl);
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
   }
 
   .login-title {
-    font-size: var(--font-heading-md);
+    font-size: 1.5rem;
   }
 
   .login-form-options {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep .login-card {
+    .p-card-header {
+      padding: var(--space-6, 1.5rem) 1.25rem 0.5rem !important;
+    }
+
+    .p-card-body {
+      padding: var(--space-5, 1.25rem) !important;
+    }
   }
 }
 
@@ -523,4 +543,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-

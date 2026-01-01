@@ -34,7 +34,7 @@ export interface EnhancedTableColumn {
   visible?: boolean;
   width?: string;
   minWidth?: number;
-  type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
+  type?: "text" | "number" | "date" | "boolean" | "custom";
   customTemplate?: any;
 }
 
@@ -199,7 +199,12 @@ export interface TablePreferences {
             </tr>
           </ng-template>
 
-          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+          <ng-template
+            pTemplate="body"
+            let-rowData
+            let-rowIndex="rowIndex"
+            let-columns="columns"
+          >
             <tr [class.selected]="isRowSelected(rowData)">
               @if (selectable()) {
                 <td>
@@ -259,7 +264,13 @@ export interface TablePreferences {
 
           <ng-template pTemplate="emptymessage" let-columns>
             <tr>
-              <td [attr.colspan]="columns.length + (selectable() ? 1 : 0) + (hasActions() ? 1 : 0)">
+              <td
+                [attr.colspan]="
+                  columns.length +
+                  (selectable() ? 1 : 0) +
+                  (hasActions() ? 1 : 0)
+                "
+              >
                 <div class="empty-message">
                   <i class="pi pi-inbox"></i>
                   <p>No data available</p>
@@ -326,173 +337,175 @@ export interface TablePreferences {
       }
     </div>
   `,
-  styles: [`
-    .enhanced-table-container {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-      background: var(--surface-primary);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
-    }
-
-    /* Toolbar */
-    .table-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3);
-      background: var(--surface-secondary);
-      border-radius: var(--radius-md);
-    }
-
-    .toolbar-left,
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    /* Column header */
-    .column-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-2);
-    }
-
-    /* Inline editing */
-    .cell-value.editable {
-      cursor: text;
-      padding: var(--space-1) var(--space-2);
-      border-radius: var(--radius-sm);
-      transition: background 150ms ease;
-    }
-
-    .cell-value.editable:hover {
-      background: var(--surface-secondary);
-    }
-
-    .inline-edit-input {
-      width: 100%;
-      padding: var(--space-1) var(--space-2);
-      border: 2px solid var(--color-brand-primary);
-      border-radius: var(--radius-sm);
-      font-size: var(--text-sm);
-      font-family: inherit;
-    }
-
-    .inline-edit-input:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.2);
-    }
-
-    /* Actions cell */
-    .actions-cell {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    /* Selected row */
-    :host ::ng-deep tr.selected {
-      background: var(--primary-50) !important;
-    }
-
-    /* Empty message */
-    .empty-message {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-8);
-      color: var(--color-text-secondary);
-      text-align: center;
-    }
-
-    .empty-message i {
-      font-size: 3rem;
-      margin-bottom: var(--space-3);
-      opacity: 0.5;
-    }
-
-    /* Mobile Card View */
-    .mobile-cards {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-    }
-
-    .mobile-card {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      transition: all 200ms ease;
-    }
-
-    .mobile-card.selected {
-      background: var(--primary-50);
-      border-color: var(--color-brand-primary);
-    }
-
-    .card-select {
-      margin-bottom: var(--space-3);
-      padding-bottom: var(--space-3);
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .card-content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-    }
-
-    .card-field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .field-label {
-      font-size: var(--text-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .field-value {
-      font-size: var(--text-sm);
-      color: var(--color-text-primary);
-    }
-
-    .card-actions {
-      display: flex;
-      gap: var(--space-2);
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--surface-border);
-    }
-
-    .card-actions :host ::ng-deep p-button {
-      flex: 1;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .table-toolbar {
+  styles: [
+    `
+      .enhanced-table-container {
+        display: flex;
         flex-direction: column;
-        align-items: stretch;
+        gap: var(--space-4);
+        background: var(--surface-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+      }
+
+      /* Toolbar */
+      .table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-md);
       }
 
       .toolbar-left,
       .toolbar-right {
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
       }
-    }
-  `],
+
+      /* Column header */
+      .column-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-2);
+      }
+
+      /* Inline editing */
+      .cell-value.editable {
+        cursor: text;
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        transition: background 150ms ease;
+      }
+
+      .cell-value.editable:hover {
+        background: var(--surface-secondary);
+      }
+
+      .inline-edit-input {
+        width: 100%;
+        padding: var(--space-1) var(--space-2);
+        border: 2px solid var(--color-brand-primary);
+        border-radius: var(--radius-sm);
+        font-size: var(--text-sm);
+        font-family: inherit;
+      }
+
+      .inline-edit-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.2);
+      }
+
+      /* Actions cell */
+      .actions-cell {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      /* Selected row */
+      :host ::ng-deep tr.selected {
+        background: var(--primary-50) !important;
+      }
+
+      /* Empty message */
+      .empty-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-8);
+        color: var(--color-text-secondary);
+        text-align: center;
+      }
+
+      .empty-message i {
+        font-size: 3rem;
+        margin-bottom: var(--space-3);
+        opacity: 0.5;
+      }
+
+      /* Mobile Card View */
+      .mobile-cards {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .mobile-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        transition: all 200ms ease;
+      }
+
+      .mobile-card.selected {
+        background: var(--primary-50);
+        border-color: var(--color-brand-primary);
+      }
+
+      .card-select {
+        margin-bottom: var(--space-3);
+        padding-bottom: var(--space-3);
+        border-bottom: 1px solid var(--surface-border);
+      }
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .card-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .field-label {
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .field-value {
+        font-size: var(--text-sm);
+        color: var(--color-text-primary);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--surface-border);
+      }
+
+      .card-actions :host ::ng-deep p-button {
+        flex: 1;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .table-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .toolbar-left,
+        .toolbar-right {
+          flex-wrap: wrap;
+        }
+      }
+    `,
+  ],
 })
 export class EnhancedDataTableComponent {
   // Inputs
@@ -502,7 +515,7 @@ export class EnhancedDataTableComponent {
   resizableColumns = input<boolean>(true);
   reorderableColumns = input<boolean>(true);
   savePreferences = input<boolean>(true);
-  preferencesKey = input<string>('enhanced-table');
+  preferencesKey = input<string>("enhanced-table");
   mobileBreakpoint = input<number>(768);
 
   // Outputs
@@ -511,7 +524,7 @@ export class EnhancedDataTableComponent {
   onBulkDelete = output<any[]>();
   onExport = output<any[]>();
 
-  @ViewChild('editInput') editInput?: ElementRef<HTMLInputElement>;
+  @ViewChild("editInput") editInput?: ElementRef<HTMLInputElement>;
 
   // State
   selectAll = signal<boolean>(false);
@@ -533,7 +546,7 @@ export class EnhancedDataTableComponent {
     const visibleFields = this.visibleColumnFields();
 
     // Filter visible columns
-    let visible = cols.filter(col => visibleFields.includes(col.field));
+    let visible = cols.filter((col) => visibleFields.includes(col.field));
 
     // Apply custom order if exists
     if (order.length > 0) {
@@ -550,7 +563,7 @@ export class EnhancedDataTableComponent {
   });
 
   columnOptions = computed(() => {
-    return this.columns().map(col => ({
+    return this.columns().map((col) => ({
       label: col.header,
       value: col.field,
     }));
@@ -562,7 +575,7 @@ export class EnhancedDataTableComponent {
       const cols = this.columns();
       if (cols.length > 0 && this.visibleColumnFields().length === 0) {
         this.visibleColumnFields.set(
-          cols.filter(c => c.visible !== false).map(c => c.field)
+          cols.filter((c) => c.visible !== false).map((c) => c.field),
         );
       }
     });
@@ -578,7 +591,7 @@ export class EnhancedDataTableComponent {
     this.checkMobileView();
   }
 
-  @HostListener('window:resize')
+  @HostListener("window:resize")
   onResize(): void {
     this.checkMobileView();
   }
@@ -592,23 +605,23 @@ export class EnhancedDataTableComponent {
   }
 
   toggleView(): void {
-    this.isMobileView.update(v => !v);
+    this.isMobileView.update((v) => !v);
   }
 
   // Selection
   toggleSelectAll(): void {
     const data = this.data();
     if (this.selectAll()) {
-      data.forEach(row => row._selected = true);
+      data.forEach((row) => (row._selected = true));
       this.selectedRows.set([...data]);
     } else {
-      data.forEach(row => row._selected = false);
+      data.forEach((row) => (row._selected = false));
       this.selectedRows.set([]);
     }
   }
 
   onRowSelect(row: any): void {
-    const selected = this.data().filter(r => r._selected);
+    const selected = this.data().filter((r) => r._selected);
     this.selectedRows.set(selected);
     this.selectAll.set(selected.length === this.data().length);
   }
@@ -636,12 +649,12 @@ export class EnhancedDataTableComponent {
   }
 
   getColumnWidth(col: EnhancedTableColumn): string {
-    return this.columnWidths()[col.field] || col.width || 'auto';
+    return this.columnWidths()[col.field] || col.width || "auto";
   }
 
   // Inline editing
   startEdit(row: any, field: string, event: Event): void {
-    const col = this.columns().find(c => c.field === field);
+    const col = this.columns().find((c) => c.field === field);
     if (!col?.editable) return;
 
     this.editingRow.set(row);
@@ -672,11 +685,11 @@ export class EnhancedDataTableComponent {
   }
 
   getCellValue(row: any, field: string): any {
-    return field.split('.').reduce((obj, key) => obj?.[key], row);
+    return field.split(".").reduce((obj, key) => obj?.[key], row);
   }
 
   setCellValue(row: any, field: string, value: any): void {
-    const keys = field.split('.');
+    const keys = field.split(".");
     const lastKey = keys.pop()!;
     const target = keys.reduce((obj, key) => obj[key], row);
     target[lastKey] = value;
@@ -722,7 +735,7 @@ export class EnhancedDataTableComponent {
         this.columnOrderState.set(prefs.columnOrder);
       }
     } catch (e) {
-      console.error('Failed to load table preferences', e);
+      console.error("Failed to load table preferences", e);
     }
   }
 
@@ -743,7 +756,9 @@ export class EnhancedDataTableComponent {
 
     // Reset to defaults
     this.visibleColumnFields.set(
-      this.columns().filter(c => c.visible !== false).map(c => c.field)
+      this.columns()
+        .filter((c) => c.visible !== false)
+        .map((c) => c.field),
     );
     this.columnWidths.set({});
     this.columnOrderState.set([]);

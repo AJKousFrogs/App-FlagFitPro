@@ -278,14 +278,19 @@ export class TeamCreateComponent {
         throw new Error("Failed to add you as team owner. Please try again.");
       }
 
-      this.toastService.success(`${formData.name} has been created successfully!`);
+      this.toastService.success(
+        `${formData.name} has been created successfully!`,
+      );
 
       // Redirect to roster page with the new team
       setTimeout(() => {
         this.router.navigate(["/roster"], { queryParams: { team: team.id } });
       }, 1000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to create team. Please try again.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to create team. Please try again.";
       this.toastService.error(message);
     } finally {
       this.isSubmitting.set(false);

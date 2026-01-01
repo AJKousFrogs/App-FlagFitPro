@@ -107,7 +107,12 @@ export interface SprintProgressionModel {
 }
 
 export interface SprintTechniqueCheckpoint {
-  phase: "start" | "acceleration" | "transition" | "max_velocity" | "deceleration";
+  phase:
+    | "start"
+    | "acceleration"
+    | "transition"
+    | "max_velocity"
+    | "deceleration";
   keyPoints: string[];
   commonErrors: string[];
   drills: string[];
@@ -150,7 +155,7 @@ export interface SprintSet {
 
 /**
  * Evidence-based sprint biomechanics requirements
- * 
+ *
  * Key muscle groups for sprint performance:
  * 1. Hip Flexors - Drive knee lift (Morin & Samozino, 2016)
  * 2. Glutes - Hip extension power (Clark et al., 2019)
@@ -170,7 +175,8 @@ export interface SprintBiomechanicsProfile {
 export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
   {
     muscleGroup: "Hip Flexors (Psoas, Iliacus, Rectus Femoris)",
-    function: "Drive knee lift during swing phase - determines stride frequency",
+    function:
+      "Drive knee lift during swing phase - determines stride frequency",
     exercises: [
       "Hip flexor marches (2x15 each leg)",
       "Hanging knee raises (3x10)",
@@ -181,12 +187,15 @@ export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
       "Mountain climbers (controlled)",
     ],
     frequency: "2-3x per week, 10-15 min per session",
-    evidenceBase: "Morin & Samozino (2016) - Hip flexor strength correlates with stride frequency and max velocity",
-    injuryRisk: "Weak hip flexors = compensatory patterns = hamstring strain risk",
+    evidenceBase:
+      "Morin & Samozino (2016) - Hip flexor strength correlates with stride frequency and max velocity",
+    injuryRisk:
+      "Weak hip flexors = compensatory patterns = hamstring strain risk",
   },
   {
     muscleGroup: "Gluteus Maximus",
-    function: "Primary hip extensor - generates horizontal force during acceleration",
+    function:
+      "Primary hip extensor - generates horizontal force during acceleration",
     exercises: [
       "Hip thrust (3x8-10)",
       "Glute bridge variations",
@@ -196,12 +205,14 @@ export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
       "Glute activation before sprints",
     ],
     frequency: "2-3x per week",
-    evidenceBase: "Morin & Samozino (2016) - Horizontal force application is key determinant of acceleration",
+    evidenceBase:
+      "Morin & Samozino (2016) - Horizontal force application is key determinant of acceleration",
     injuryRisk: "Weak glutes = overreliance on hamstrings = hamstring strain",
   },
   {
     muscleGroup: "Hamstrings (Biceps Femoris, Semimembranosus, Semitendinosus)",
-    function: "Hip extension + knee flexion during late swing phase - highest injury risk muscle",
+    function:
+      "Hip extension + knee flexion during late swing phase - highest injury risk muscle",
     exercises: [
       "Nordic curls (3x6-8) - CRITICAL",
       "Romanian deadlift (3x8)",
@@ -211,12 +222,14 @@ export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
       "Good mornings (light weight)",
     ],
     frequency: "2x per week MINIMUM (year-round)",
-    evidenceBase: "Al Attar et al. (2017) - Nordic curls reduce hamstring injuries by 51%",
+    evidenceBase:
+      "Al Attar et al. (2017) - Nordic curls reduce hamstring injuries by 51%",
     injuryRisk: "Most common sprint injury. Eccentric strength is protective.",
   },
   {
     muscleGroup: "Soleus & Achilles Tendon Complex",
-    function: "Ankle stiffness for efficient ground contact - 'spring' mechanism",
+    function:
+      "Ankle stiffness for efficient ground contact - 'spring' mechanism",
     exercises: [
       "Soleus raises (bent knee calf raises) - 3x15",
       "Straight leg calf raises - 3x15",
@@ -226,12 +239,15 @@ export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
       "Achilles tendon loading (slow eccentrics)",
     ],
     frequency: "Daily - 5-10 min (can be part of warm-up)",
-    evidenceBase: "Kubo et al. (2000) - Achilles tendon stiffness correlates with sprint performance",
-    injuryRisk: "Achilles tendinopathy common in sprinters. Gradual loading is key.",
+    evidenceBase:
+      "Kubo et al. (2000) - Achilles tendon stiffness correlates with sprint performance",
+    injuryRisk:
+      "Achilles tendinopathy common in sprinters. Gradual loading is key.",
   },
   {
     muscleGroup: "Core (Transverse Abdominis, Obliques, Erector Spinae)",
-    function: "Transfer force between upper and lower body - maintain sprint posture",
+    function:
+      "Transfer force between upper and lower body - maintain sprint posture",
     exercises: [
       "Dead bug (3x10 each side)",
       "Pallof press (3x10 each side)",
@@ -241,7 +257,8 @@ export const SPRINT_BIOMECHANICS: SprintBiomechanicsProfile[] = [
       "Anti-rotation holds",
     ],
     frequency: "3-4x per week, integrated into training",
-    evidenceBase: "Kibler et al. (2006) - Core stability essential for efficient force transfer",
+    evidenceBase:
+      "Kibler et al. (2006) - Core stability essential for efficient force transfer",
     injuryRisk: "Weak core = energy leakage = compensatory patterns",
   },
 ];
@@ -261,9 +278,9 @@ export interface PositionSprintProtocol {
 }
 
 export interface SprintDistanceBreakdown {
-  short: string;  // 0-10m
+  short: string; // 0-10m
   medium: string; // 10-20m
-  long: string;   // 20-40m
+  long: string; // 20-40m
   percentage: string;
 }
 
@@ -290,7 +307,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Sprint with deceleration to cut",
       "Flying 30m sprints",
     ],
-    rationale: "WRs run the most straight-line distance. Must be able to sprint 8x 40 yards in a row at near-max effort.",
+    rationale:
+      "WRs run the most straight-line distance. Must be able to sprint 8x 40 yards in a row at near-max effort.",
     uniqueConsiderations: [
       "Highest hamstring injury risk due to max velocity work",
       "Need excellent repeated sprint ability",
@@ -319,7 +337,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Acceleration from hip hinge",
       "Straight-line speed work",
     ],
-    rationale: "Modern centers are essentially WRs who snap. Must match WR sprint capacity.",
+    rationale:
+      "Modern centers are essentially WRs who snap. Must match WR sprint capacity.",
     uniqueConsiderations: [
       "Unique start position (bent over for snap)",
       "Need to accelerate from disadvantaged position",
@@ -349,7 +368,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Lateral shuffle with hip turn",
       "Backpedal to forward transition",
     ],
-    rationale: "Zone DBs sprint MORE backpedaling and laterally than forward. Train the actual movement patterns.",
+    rationale:
+      "Zone DBs sprint MORE backpedaling and laterally than forward. Train the actual movement patterns.",
     uniqueConsiderations: [
       "Backpedal mechanics are different from forward sprinting",
       "Hip flexors work differently in backpedal",
@@ -379,7 +399,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Reactive break on ball",
       "Recovery sprint drill",
     ],
-    rationale: "Man DBs need excellent hip fluidity and the ability to run with receivers at max speed.",
+    rationale:
+      "Man DBs need excellent hip fluidity and the ability to run with receivers at max speed.",
     uniqueConsiderations: [
       "Hip turn speed is critical",
       "Must match WR speed in straight line",
@@ -409,7 +430,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Closing speed drills",
       "Hand-fighting to sprint",
     ],
-    rationale: "Rushers need elite first-step quickness. Most sprints are <10m with direction changes.",
+    rationale:
+      "Rushers need elite first-step quickness. Most sprints are <10m with direction changes.",
     uniqueConsiderations: [
       "First step is everything - train it daily",
       "Reactive ability to QB movement",
@@ -439,7 +461,8 @@ export const POSITION_SPRINT_PROTOCOLS: PositionSprintProtocol[] = [
       "Lateral movement in pocket",
       "Sprint to throw drill",
     ],
-    rationale: "Modern flag QBs scramble on 40%+ of plays. Must be able to throw accurately while moving.",
+    rationale:
+      "Modern flag QBs scramble on 40%+ of plays. Must be able to throw accurately while moving.",
     uniqueConsiderations: [
       "Sprint training must include throwing",
       "Core stability while sprinting is critical",
@@ -471,7 +494,8 @@ export interface ReactiveExercise {
 
 export const REACTIVE_READINESS_PROTOCOL: ReactiveReadinessProtocol = {
   name: "On Toes, Locked and Ready",
-  description: "All flag football players must be able to explode in any direction instantly. This is the foundation of reactive athleticism.",
+  description:
+    "All flag football players must be able to explode in any direction instantly. This is the foundation of reactive athleticism.",
   exercises: [
     {
       name: "Athletic Stance Holds",
@@ -554,7 +578,8 @@ export const REACTIVE_READINESS_PROTOCOL: ReactiveReadinessProtocol = {
   ],
   frequency: "Every training session - 5-10 min activation",
   duration: "5-10 minutes as part of warm-up",
-  evidenceBase: "Reactive agility is trainable and transfers to sport performance (Sheppard & Young, 2006)",
+  evidenceBase:
+    "Reactive agility is trainable and transfers to sport performance (Sheppard & Young, 2006)",
 };
 
 // ============================================================================
@@ -572,7 +597,8 @@ export interface AnkleStiffnessProtocol {
 
 export const ANKLE_STIFFNESS_PROTOCOL: AnkleStiffnessProtocol = {
   name: "Ankle Complex Development",
-  description: "Ankle stiffness is critical for efficient ground contact during sprinting. The Achilles tendon acts as a spring.",
+  description:
+    "Ankle stiffness is critical for efficient ground contact during sprinting. The Achilles tendon acts as a spring.",
   exercises: [
     "Pogo jumps (3x20) - minimal knee bend, ankle-only",
     "Single-leg pogo jumps (3x10 each)",
@@ -584,7 +610,8 @@ export const ANKLE_STIFFNESS_PROTOCOL: AnkleStiffnessProtocol = {
     "Single-leg balance (30s each)",
   ],
   frequency: "Daily - 5-10 min (can be part of warm-up or cool-down)",
-  evidenceBase: "Kubo et al. (2000) - Achilles tendon stiffness correlates with sprint performance",
+  evidenceBase:
+    "Kubo et al. (2000) - Achilles tendon stiffness correlates with sprint performance",
   progressionModel: [
     "Week 1-2: Bilateral exercises only, low volume",
     "Week 3-4: Introduce single-leg work",
@@ -601,27 +628,33 @@ const SPRINT_RESEARCH: Record<string, SprintResearchReference> = {
   haugen_2019: {
     authors: "Haugen, T., Seiler, S., Sandbakk, Ø., & Tønnessen, E.",
     year: 2019,
-    title: "The Training and Development of Elite Sprint Performance: an Integration of Scientific and Best Practice Literature",
+    title:
+      "The Training and Development of Elite Sprint Performance: an Integration of Scientific and Best Practice Literature",
     journal: "Sports Medicine - Open",
-    keyFinding: "Elite sprinters perform 300-600 maximal sprints annually. Quality over quantity is paramount.",
+    keyFinding:
+      "Elite sprinters perform 300-600 maximal sprints annually. Quality over quantity is paramount.",
     effectSize: "Large improvements with structured periodization",
     sportContext: "Track & Field, Team Sports",
   },
   morin_samozino_2016: {
     authors: "Morin, J.B., & Samozino, P.",
     year: 2016,
-    title: "Interpreting Power-Force-Velocity Profiles for Individualized Training",
+    title:
+      "Interpreting Power-Force-Velocity Profiles for Individualized Training",
     journal: "International Journal of Sports Physiology and Performance",
-    keyFinding: "Hip flexor strength correlates with stride frequency. Horizontal force application is key for acceleration.",
+    keyFinding:
+      "Hip flexor strength correlates with stride frequency. Horizontal force application is key for acceleration.",
     effectSize: "r = 0.93 (horizontal force-acceleration)",
     sportContext: "All sprint sports",
   },
   kubo_2000: {
     authors: "Kubo, K., Kanehisa, H., & Fukunaga, T.",
     year: 2000,
-    title: "Effect of Stretching Training on the Viscoelastic Properties of Human Tendon Structures",
+    title:
+      "Effect of Stretching Training on the Viscoelastic Properties of Human Tendon Structures",
     journal: "Journal of Applied Physiology",
-    keyFinding: "Achilles tendon stiffness correlates with sprint performance. Stiffer tendons = more efficient energy return.",
+    keyFinding:
+      "Achilles tendon stiffness correlates with sprint performance. Stiffer tendons = more efficient energy return.",
     sportContext: "Sprinting, jumping",
   },
   schache_2012: {
@@ -629,50 +662,61 @@ const SPRINT_RESEARCH: Record<string, SprintResearchReference> = {
     year: 2012,
     title: "Mechanics of the Human Hamstring Muscles During Sprinting",
     journal: "Medicine & Science in Sports & Exercise",
-    keyFinding: "Hamstrings work hardest during late swing phase. Eccentric strength is protective.",
+    keyFinding:
+      "Hamstrings work hardest during late swing phase. Eccentric strength is protective.",
     sportContext: "Sprinting",
   },
   al_attar_2017: {
     authors: "Al Attar, W.S., et al.",
     year: 2017,
-    title: "How Effective are F-MARC Injury Prevention Programs for Soccer Players?",
+    title:
+      "How Effective are F-MARC Injury Prevention Programs for Soccer Players?",
     journal: "Sports Medicine",
     keyFinding: "Nordic curls reduce hamstring injuries by 51%",
     effectSize: "51% reduction in hamstring injuries",
     sportContext: "Soccer (applicable to all sprint sports)",
   },
   seitz_2014: {
-    authors: "Seitz, L.B., Reyes, A., Tran, T.T., de Villarreal, E.S., & Haff, G.G.",
+    authors:
+      "Seitz, L.B., Reyes, A., Tran, T.T., de Villarreal, E.S., & Haff, G.G.",
     year: 2014,
-    title: "Increases in Lower-Body Strength Transfer Positively to Sprint Performance",
+    title:
+      "Increases in Lower-Body Strength Transfer Positively to Sprint Performance",
     journal: "Journal of Strength and Conditioning Research",
-    keyFinding: "Every 1% increase in squat strength = 0.7% improvement in sprint times",
+    keyFinding:
+      "Every 1% increase in squat strength = 0.7% improvement in sprint times",
     effectSize: "r = 0.77 (strength-sprint correlation)",
     sampleSize: "510 participants across 15 studies",
   },
   morin_2016: {
     authors: "Morin, J.B., & Samozino, P.",
     year: 2016,
-    title: "Interpreting Power-Force-Velocity Profiles for Individualized Training",
+    title:
+      "Interpreting Power-Force-Velocity Profiles for Individualized Training",
     journal: "International Journal of Sports Physiology and Performance",
-    keyFinding: "Horizontal force application is the key determinant of acceleration performance",
+    keyFinding:
+      "Horizontal force application is the key determinant of acceleration performance",
     effectSize: "r = 0.93 (horizontal force-acceleration)",
     sportContext: "All sprint sports",
   },
   ross_2001: {
     authors: "Ross, A., Leveritt, M., & Riek, S.",
     year: 2001,
-    title: "Neural Influences on Sprint Running: Training Adaptations and Acute Responses",
+    title:
+      "Neural Influences on Sprint Running: Training Adaptations and Acute Responses",
     journal: "Sports Medicine",
-    keyFinding: "Sprint performance is primarily limited by neural factors, not muscular",
+    keyFinding:
+      "Sprint performance is primarily limited by neural factors, not muscular",
     sportContext: "Sprinting",
   },
   buchheit_2010: {
-    authors: "Buchheit, M., Mendez-Villanueva, A., Simpson, B.M., & Bourdon, P.C.",
+    authors:
+      "Buchheit, M., Mendez-Villanueva, A., Simpson, B.M., & Bourdon, P.C.",
     year: 2010,
     title: "Repeated-Sprint Sequences During Youth Soccer Matches",
     journal: "International Journal of Sports Medicine",
-    keyFinding: "Team sport athletes perform 20-40 sprints per game with incomplete recovery",
+    keyFinding:
+      "Team sport athletes perform 20-40 sprints per game with incomplete recovery",
     sampleSize: "Youth soccer players",
     sportContext: "Soccer (similar demands to flag football)",
   },
@@ -681,14 +725,17 @@ const SPRINT_RESEARCH: Record<string, SprintResearchReference> = {
     year: 2016,
     title: "Resisted Sled Sprint Training to Improve Sprint Performance",
     journal: "Sports Medicine",
-    keyFinding: "Light sled loads (10-20% BW) improve acceleration without altering mechanics",
+    keyFinding:
+      "Light sled loads (10-20% BW) improve acceleration without altering mechanics",
     effectSize: "2-3% improvement in 10m sprint times",
     sportContext: "Team sports",
   },
   lockie_2012: {
-    authors: "Lockie, R.G., Murphy, A.J., Schultz, A.B., Knight, T.J., & Janse de Jonge, X.A.",
+    authors:
+      "Lockie, R.G., Murphy, A.J., Schultz, A.B., Knight, T.J., & Janse de Jonge, X.A.",
     year: 2012,
-    title: "The Effects of Different Speed Training Protocols on Sprint Acceleration Kinematics",
+    title:
+      "The Effects of Different Speed Training Protocols on Sprint Acceleration Kinematics",
     journal: "Journal of Strength and Conditioning Research",
     keyFinding: "Resisted and assisted sprinting both improve acceleration",
     sportContext: "Field sport athletes",
@@ -696,9 +743,11 @@ const SPRINT_RESEARCH: Record<string, SprintResearchReference> = {
   rumpf_2016: {
     authors: "Rumpf, M.C., Lockie, R.G., Cronin, J.B., & Jalilvand, F.",
     year: 2016,
-    title: "Effect of Different Sprint Training Methods on Sprint Performance Over Various Distances",
+    title:
+      "Effect of Different Sprint Training Methods on Sprint Performance Over Various Distances",
     journal: "Journal of Strength and Conditioning Research",
-    keyFinding: "Training specificity matters - train the distances you compete at",
+    keyFinding:
+      "Training specificity matters - train the distances you compete at",
     sportContext: "Various sports",
   },
   clark_2019: {
@@ -706,7 +755,8 @@ const SPRINT_RESEARCH: Record<string, SprintResearchReference> = {
     year: 2019,
     title: "The NFL Combine 40-Yard Dash: How Important is Maximum Velocity?",
     journal: "Journal of Strength and Conditioning Research",
-    keyFinding: "Acceleration (0-10 yards) accounts for 60% of 40-yard dash variance",
+    keyFinding:
+      "Acceleration (0-10 yards) accounts for 60% of 40-yard dash variance",
     sportContext: "American Football (directly applicable to flag football)",
   },
 };
@@ -721,7 +771,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   short_acceleration: {
     name: "Short Acceleration Development",
-    description: "Pure acceleration work focusing on the first 10 meters. Critical for flag football where most plays involve quick bursts.",
+    description:
+      "Pure acceleration work focusing on the first 10 meters. Critical for flag football where most plays involve quick bursts.",
     targetQuality: "acceleration",
     distances: [5, 10],
     sets: 3,
@@ -731,7 +782,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:20+",
     intensity: "maximal",
     frequency: "2-3x per week",
-    progressionModel: "Increase reps before sets. Add resisted sprints after 4 weeks.",
+    progressionModel:
+      "Increase reps before sets. Add resisted sprints after 4 weeks.",
     contraindications: [
       "Acute hamstring injury",
       "Excessive fatigue (RPE > 8 from previous session)",
@@ -742,12 +794,14 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       SPRINT_RESEARCH["morin_2016"],
       SPRINT_RESEARCH["haugen_2019"],
     ],
-    flagFootballApplication: "The first 5-10m burst is used on every play - routes, rushes, scrambles. This is the most transferable sprint quality for flag football.",
+    flagFootballApplication:
+      "The first 5-10m burst is used on every play - routes, rushes, scrambles. This is the most transferable sprint quality for flag football.",
   },
 
   resisted_acceleration: {
     name: "Resisted Acceleration (Sled/Band)",
-    description: "Light resistance (10-20% BW) to overload horizontal force production during acceleration.",
+    description:
+      "Light resistance (10-20% BW) to overload horizontal force production during acceleration.",
     targetQuality: "acceleration",
     distances: [10, 15, 20],
     sets: 3,
@@ -757,7 +811,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:15-20",
     intensity: "maximal",
     frequency: "1-2x per week",
-    progressionModel: "Start at 10% BW, progress to 20% over 6 weeks. Never exceed 20% to maintain mechanics.",
+    progressionModel:
+      "Start at 10% BW, progress to 20% over 6 weeks. Never exceed 20% to maintain mechanics.",
     contraindications: [
       "Technical breakdown at any load",
       "In-season competition weeks",
@@ -767,7 +822,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       SPRINT_RESEARCH["petrakos_2016"],
       SPRINT_RESEARCH["lockie_2012"],
     ],
-    flagFootballApplication: "Develops the horizontal force needed to explode off the line. Especially valuable for WRs, rushers, and QBs escaping pressure.",
+    flagFootballApplication:
+      "Develops the horizontal force needed to explode off the line. Especially valuable for WRs, rushers, and QBs escaping pressure.",
   },
 
   // ========================================
@@ -775,7 +831,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   flying_sprints: {
     name: "Flying Sprints (Max Velocity)",
-    description: "Build-up sprints where athletes reach maximum velocity before a timed zone. Develops top-end speed.",
+    description:
+      "Build-up sprints where athletes reach maximum velocity before a timed zone. Develops top-end speed.",
     targetQuality: "max_velocity",
     distances: [20, 30], // Flying zone distance
     sets: 2,
@@ -785,7 +842,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:25-30",
     intensity: "maximal",
     frequency: "1-2x per week",
-    progressionModel: "Start with 20m flying zone, progress to 30m. Focus on relaxation at max velocity.",
+    progressionModel:
+      "Start with 20m flying zone, progress to 30m. Focus on relaxation at max velocity.",
     contraindications: [
       "Hamstring tightness",
       "Excessive CNS fatigue",
@@ -795,12 +853,14 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       SPRINT_RESEARCH["haugen_2019"],
       SPRINT_RESEARCH["ross_2001"],
     ],
-    flagFootballApplication: "Used for long routes (go routes, posts) and breakaway plays. While less frequent than acceleration, max velocity separates elite players.",
+    flagFootballApplication:
+      "Used for long routes (go routes, posts) and breakaway plays. While less frequent than acceleration, max velocity separates elite players.",
   },
 
   in_and_out_sprints: {
     name: "In-and-Out Sprints",
-    description: "Alternating between acceleration and max velocity zones. Teaches velocity maintenance and relaxation.",
+    description:
+      "Alternating between acceleration and max velocity zones. Teaches velocity maintenance and relaxation.",
     targetQuality: "max_velocity",
     distances: [60], // Total distance
     sets: 3,
@@ -810,13 +870,15 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:20",
     intensity: "near_maximal",
     frequency: "1x per week",
-    progressionModel: "Focus on smooth transitions. Increase intensity before volume.",
+    progressionModel:
+      "Focus on smooth transitions. Increase intensity before volume.",
     contraindications: [
       "High accumulated fatigue",
       "Competition within 72 hours",
     ],
     evidenceBase: [SPRINT_RESEARCH["haugen_2019"]],
-    flagFootballApplication: "Mimics route running where you accelerate, maintain, then accelerate again (e.g., double moves).",
+    flagFootballApplication:
+      "Mimics route running where you accelerate, maintain, then accelerate again (e.g., double moves).",
   },
 
   // ========================================
@@ -824,7 +886,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   repeated_sprint_ability: {
     name: "Repeated Sprint Ability (RSA)",
-    description: "Multiple sprints with incomplete recovery. Mimics game demands where you sprint, jog back, sprint again.",
+    description:
+      "Multiple sprints with incomplete recovery. Mimics game demands where you sprint, jog back, sprint again.",
     targetQuality: "repeated_sprint",
     distances: [20, 30],
     sets: 3,
@@ -834,13 +897,15 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:4-6",
     intensity: "near_maximal",
     frequency: "1-2x per week",
-    progressionModel: "Maintain quality across all reps. If times drop >10%, reduce reps.",
+    progressionModel:
+      "Maintain quality across all reps. If times drop >10%, reduce reps.",
     contraindications: [
       "Pre-competition (too fatiguing)",
       "Recovery-focused phases",
     ],
     evidenceBase: [SPRINT_RESEARCH["buchheit_2010"]],
-    flagFootballApplication: "Flag football involves 20-40 sprints per game with incomplete recovery. RSA training builds the capacity to maintain speed across an entire game and tournament.",
+    flagFootballApplication:
+      "Flag football involves 20-40 sprints per game with incomplete recovery. RSA training builds the capacity to maintain speed across an entire game and tournament.",
   },
 
   // ========================================
@@ -848,7 +913,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   deceleration_training: {
     name: "Deceleration & Braking",
-    description: "Controlled deceleration from sprint to stop. Critical for injury prevention and cutting preparation.",
+    description:
+      "Controlled deceleration from sprint to stop. Critical for injury prevention and cutting preparation.",
     targetQuality: "deceleration",
     distances: [20, 30],
     sets: 3,
@@ -858,13 +924,12 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:10",
     intensity: "near_maximal",
     frequency: "2-3x per week",
-    progressionModel: "Focus on technique first. Progress from planned to reactive stops.",
-    contraindications: [
-      "Knee pain or instability",
-      "Acute quadriceps strain",
-    ],
+    progressionModel:
+      "Focus on technique first. Progress from planned to reactive stops.",
+    contraindications: ["Knee pain or instability", "Acute quadriceps strain"],
     evidenceBase: [SPRINT_RESEARCH["rumpf_2016"]],
-    flagFootballApplication: "Every cut, route break, and defensive reaction requires rapid deceleration. Poor deceleration = ACL risk. This is non-negotiable training.",
+    flagFootballApplication:
+      "Every cut, route break, and defensive reaction requires rapid deceleration. Poor deceleration = ACL risk. This is non-negotiable training.",
   },
 
   // ========================================
@@ -872,7 +937,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   speed_endurance: {
     name: "Speed Endurance",
-    description: "Longer sprints (60-100m) at 90-95% intensity. Builds lactate tolerance and maintains speed under fatigue.",
+    description:
+      "Longer sprints (60-100m) at 90-95% intensity. Builds lactate tolerance and maintains speed under fatigue.",
     targetQuality: "speed_endurance",
     distances: [60, 80, 100],
     sets: 2,
@@ -882,14 +948,16 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:10-12",
     intensity: "near_maximal",
     frequency: "1x per week (off-season only)",
-    progressionModel: "Use sparingly. Quality is paramount - if form breaks down, stop.",
+    progressionModel:
+      "Use sparingly. Quality is paramount - if form breaks down, stop.",
     contraindications: [
       "In-season (too fatiguing)",
       "Within 7 days of competition",
       "Accumulated fatigue",
     ],
     evidenceBase: [SPRINT_RESEARCH["haugen_2019"]],
-    flagFootballApplication: "Builds the 'reserve tank' for late-game situations. Use in off-season and July reload phase only.",
+    flagFootballApplication:
+      "Builds the 'reserve tank' for late-game situations. Use in off-season and July reload phase only.",
   },
 
   // ========================================
@@ -897,7 +965,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
   // ========================================
   stair_sprints: {
     name: "Stair Sprints",
-    description: "High-intensity stair running that develops explosive power, hip flexor strength, and cardiovascular conditioning. ADVANCED protocol requiring proper training base.",
+    description:
+      "High-intensity stair running that develops explosive power, hip flexor strength, and cardiovascular conditioning. ADVANCED protocol requiring proper training base.",
     targetQuality: "acceleration",
     distances: [20, 30, 40], // Approximate stair count or meters
     sets: 3,
@@ -907,7 +976,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
     workToRestRatio: "1:15-20",
     intensity: "maximal",
     frequency: "1x per week maximum",
-    progressionModel: "Start with 2 sets of 3 reps. Progress to 3x4 over 4-6 weeks. Focus on single-step sprints before double-step.",
+    progressionModel:
+      "Start with 2 sets of 3 reps. Progress to 3x4 over 4-6 weeks. Focus on single-step sprints before double-step.",
     contraindications: [
       "ACWR below 0.8 - athlete not conditioned enough",
       "Knee pain or instability",
@@ -963,7 +1033,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       SPRINT_RESEARCH["morin_2016"],
       SPRINT_RESEARCH["clark_2019"],
     ],
-    flagFootballApplication: "Develops explosive hip flexor power critical for acceleration. The incline forces greater knee drive and horizontal force production. Reserve for well-conditioned athletes only.",
+    flagFootballApplication:
+      "Develops explosive hip flexor power critical for acceleration. The incline forces greater knee drive and horizontal force production. Reserve for well-conditioned athletes only.",
   },
 };
 
@@ -992,7 +1063,8 @@ const TECHNIQUE_CHECKPOINTS: SprintTechniqueCheckpoint[] = [
       "Push-up starts",
       "Block starts (if available)",
     ],
-    flagFootballSpecific: "The start position varies by position - WRs may use a 3-point stance, QBs start from under center. Train sport-specific starts.",
+    flagFootballSpecific:
+      "The start position varies by position - WRs may use a 3-point stance, QBs start from under center. Train sport-specific starts.",
   },
   {
     phase: "acceleration",
@@ -1014,7 +1086,8 @@ const TECHNIQUE_CHECKPOINTS: SprintTechniqueCheckpoint[] = [
       "Hill sprints (slight incline)",
       "A-skips progressing to sprints",
     ],
-    flagFootballSpecific: "Acceleration is king in flag football. Most plays are won or lost in the first 10 meters. Prioritize this phase.",
+    flagFootballSpecific:
+      "Acceleration is king in flag football. Most plays are won or lost in the first 10 meters. Prioritize this phase.",
   },
   {
     phase: "transition",
@@ -1030,12 +1103,9 @@ const TECHNIQUE_CHECKPOINTS: SprintTechniqueCheckpoint[] = [
       "Tension in shoulders/neck",
       "Inconsistent stride pattern",
     ],
-    drills: [
-      "Wicket runs",
-      "Gradual build-up sprints",
-      "Tempo runs at 85%",
-    ],
-    flagFootballSpecific: "The transition zone (10-20m) is where many athletes lose speed. Smooth transitions are key for route running.",
+    drills: ["Wicket runs", "Gradual build-up sprints", "Tempo runs at 85%"],
+    flagFootballSpecific:
+      "The transition zone (10-20m) is where many athletes lose speed. Smooth transitions are key for route running.",
   },
   {
     phase: "max_velocity",
@@ -1051,12 +1121,9 @@ const TECHNIQUE_CHECKPOINTS: SprintTechniqueCheckpoint[] = [
       "Excessive upper body rotation",
       "Tense facial muscles",
     ],
-    drills: [
-      "Flying sprints",
-      "Wicket runs at speed",
-      "In-and-out sprints",
-    ],
-    flagFootballSpecific: "Max velocity is reached on long routes and breakaway plays. While less common, it's the difference between a catch and a touchdown.",
+    drills: ["Flying sprints", "Wicket runs at speed", "In-and-out sprints"],
+    flagFootballSpecific:
+      "Max velocity is reached on long routes and breakaway plays. While less common, it's the difference between a catch and a touchdown.",
   },
   {
     phase: "deceleration",
@@ -1078,7 +1145,8 @@ const TECHNIQUE_CHECKPOINTS: SprintTechniqueCheckpoint[] = [
       "Drop landings",
       "Reactive deceleration drills",
     ],
-    flagFootballSpecific: "CRITICAL for flag football. Every cut, route break, and defensive reaction requires controlled deceleration. Poor deceleration = injury risk.",
+    flagFootballSpecific:
+      "CRITICAL for flag football. Every cut, route break, and defensive reaction requires controlled deceleration. Poor deceleration = injury risk.",
   },
 ];
 
@@ -1097,7 +1165,11 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
     flyingSprints: false,
     hillSprints: true,
     recommendedProtocols: ["short_acceleration", "deceleration_training"],
-    avoidProtocols: ["flying_sprints", "speed_endurance", "repeated_sprint_ability"],
+    avoidProtocols: [
+      "flying_sprints",
+      "speed_endurance",
+      "repeated_sprint_ability",
+    ],
     recoveryConsiderations: [
       "Focus on movement quality over intensity",
       "48-72 hours between sprint sessions",
@@ -1113,7 +1185,11 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
     resistedSprints: true,
     flyingSprints: false,
     hillSprints: true,
-    recommendedProtocols: ["short_acceleration", "resisted_acceleration", "deceleration_training"],
+    recommendedProtocols: [
+      "short_acceleration",
+      "resisted_acceleration",
+      "deceleration_training",
+    ],
     avoidProtocols: ["flying_sprints", "speed_endurance"],
     recoveryConsiderations: [
       "Heavy strength work may impact sprint quality",
@@ -1130,7 +1206,11 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
     resistedSprints: true,
     flyingSprints: true,
     hillSprints: false,
-    recommendedProtocols: ["short_acceleration", "resisted_acceleration", "flying_sprints"],
+    recommendedProtocols: [
+      "short_acceleration",
+      "resisted_acceleration",
+      "flying_sprints",
+    ],
     avoidProtocols: ["speed_endurance"],
     recoveryConsiderations: [
       "CNS demands are high - monitor fatigue",
@@ -1213,7 +1293,11 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
     flyingSprints: true,
     hillSprints: false,
     recommendedProtocols: ["short_acceleration", "flying_sprints"],
-    avoidProtocols: ["speed_endurance", "repeated_sprint_ability", "resisted_acceleration"],
+    avoidProtocols: [
+      "speed_endurance",
+      "repeated_sprint_ability",
+      "resisted_acceleration",
+    ],
     recoveryConsiderations: [
       "Reduce volume 40-60%, maintain intensity",
       "Sharpness and explosiveness focus",
@@ -1234,7 +1318,8 @@ export class SprintTrainingKnowledgeService {
 
   // State
   private readonly _selectedProtocol = signal<SprintProtocol | null>(null);
-  private readonly _currentPhaseGuidelines = signal<SprintPhaseGuidelines | null>(null);
+  private readonly _currentPhaseGuidelines =
+    signal<SprintPhaseGuidelines | null>(null);
 
   // Public signals
   readonly selectedProtocol = this._selectedProtocol.asReadonly();
@@ -1259,7 +1344,7 @@ export class SprintTrainingKnowledgeService {
    */
   getProtocolsByQuality(quality: SprintQuality): SprintProtocol[] {
     return Object.values(SPRINT_PROTOCOLS).filter(
-      (p) => p.targetQuality === quality
+      (p) => p.targetQuality === quality,
     );
   }
 
@@ -1288,7 +1373,7 @@ export class SprintTrainingKnowledgeService {
    * Get technique checkpoint by phase
    */
   getTechniqueCheckpointByPhase(
-    phase: SprintTechniqueCheckpoint["phase"]
+    phase: SprintTechniqueCheckpoint["phase"],
   ): SprintTechniqueCheckpoint | undefined {
     return TECHNIQUE_CHECKPOINTS.find((c) => c.phase === phase);
   }
@@ -1306,7 +1391,7 @@ export class SprintTrainingKnowledgeService {
   generateSprintWorkout(
     phase: string,
     primaryQuality: SprintQuality,
-    athleteLevel: "beginner" | "intermediate" | "advanced" = "intermediate"
+    athleteLevel: "beginner" | "intermediate" | "advanced" = "intermediate",
   ): SprintWorkout {
     const guidelines = this.getPhaseGuidelines(phase);
     const protocols = this.getProtocolsByQuality(primaryQuality);
@@ -1317,9 +1402,9 @@ export class SprintTrainingKnowledgeService {
       const recommended = protocols.find((p) =>
         guidelines.recommendedProtocols.includes(
           Object.keys(SPRINT_PROTOCOLS).find(
-            (key) => SPRINT_PROTOCOLS[key] === p
-          ) || ""
-        )
+            (key) => SPRINT_PROTOCOLS[key] === p,
+          ) || "",
+        ),
       );
       if (recommended) {
         selectedProtocol = recommended;
@@ -1328,7 +1413,11 @@ export class SprintTrainingKnowledgeService {
 
     // Adjust volume based on athlete level
     const volumeMultiplier =
-      athleteLevel === "beginner" ? 0.6 : athleteLevel === "intermediate" ? 0.8 : 1.0;
+      athleteLevel === "beginner"
+        ? 0.6
+        : athleteLevel === "intermediate"
+          ? 0.8
+          : 1.0;
 
     const warmup: WarmupProtocol = {
       duration: 15,
@@ -1429,7 +1518,7 @@ export class SprintTrainingKnowledgeService {
    */
   getSprintProgressionModel(
     phase: string,
-    startingVolume: number = 20
+    startingVolume: number = 20,
   ): SprintProgressionModel[] {
     const guidelines = this.getPhaseGuidelines(phase);
     const maxVolume = guidelines?.weeklySprintVolume[1] || 40;
@@ -1470,7 +1559,7 @@ export class SprintTrainingKnowledgeService {
    * Calculate weekly sprint load
    */
   calculateWeeklySprintLoad(
-    sprints: Array<{ distance: number; intensity: number }>
+    sprints: Array<{ distance: number; intensity: number }>,
   ): number {
     // Sprint load = Σ (distance × intensity factor)
     // Intensity factor: submaximal (0.7), near_maximal (0.85), maximal (1.0)
@@ -1485,11 +1574,14 @@ export class SprintTrainingKnowledgeService {
    */
   isVolumeAppropriate(
     phase: string,
-    weeklySprintCount: number
+    weeklySprintCount: number,
   ): { appropriate: boolean; message: string } {
     const guidelines = this.getPhaseGuidelines(phase);
     if (!guidelines) {
-      return { appropriate: true, message: "No guidelines available for this phase" };
+      return {
+        appropriate: true,
+        message: "No guidelines available for this phase",
+      };
     }
 
     const [min, max] = guidelines.weeklySprintVolume;
@@ -1547,18 +1639,22 @@ export class SprintTrainingKnowledgeService {
   /**
    * Get sprint biomechanics for a specific muscle group
    */
-  getSprintBiomechanicsForMuscle(muscleGroup: string): SprintBiomechanicsProfile | undefined {
-    return SPRINT_BIOMECHANICS.find(b => 
-      b.muscleGroup.toLowerCase().includes(muscleGroup.toLowerCase())
+  getSprintBiomechanicsForMuscle(
+    muscleGroup: string,
+  ): SprintBiomechanicsProfile | undefined {
+    return SPRINT_BIOMECHANICS.find((b) =>
+      b.muscleGroup.toLowerCase().includes(muscleGroup.toLowerCase()),
     );
   }
 
   /**
    * Get position-specific sprint protocol
    */
-  getPositionSprintProtocol(position: string): PositionSprintProtocol | undefined {
-    return POSITION_SPRINT_PROTOCOLS.find(p => 
-      p.position.toLowerCase().includes(position.toLowerCase())
+  getPositionSprintProtocol(
+    position: string,
+  ): PositionSprintProtocol | undefined {
+    return POSITION_SPRINT_PROTOCOLS.find((p) =>
+      p.position.toLowerCase().includes(position.toLowerCase()),
     );
   }
 
@@ -1572,22 +1668,31 @@ export class SprintTrainingKnowledgeService {
   /**
    * Compare sprint requirements between positions
    */
-  comparePositionSprintRequirements(position1: string, position2: string): {
+  comparePositionSprintRequirements(
+    position1: string,
+    position2: string,
+  ): {
     position1: PositionSprintProtocol | undefined;
     position2: PositionSprintProtocol | undefined;
     keyDifferences: string[];
   } {
     const p1 = this.getPositionSprintProtocol(position1);
     const p2 = this.getPositionSprintProtocol(position2);
-    
+
     const keyDifferences: string[] = [];
-    
+
     if (p1 && p2) {
-      keyDifferences.push(`Volume: ${p1.position} (${p1.weeklyVolume}) vs ${p2.position} (${p2.weeklyVolume})`);
-      keyDifferences.push(`Primary patterns: ${p1.primaryMovementPatterns[0]} vs ${p2.primaryMovementPatterns[0]}`);
-      keyDifferences.push(`Distance focus: ${p1.sprintDistances.percentage} vs ${p2.sprintDistances.percentage}`);
+      keyDifferences.push(
+        `Volume: ${p1.position} (${p1.weeklyVolume}) vs ${p2.position} (${p2.weeklyVolume})`,
+      );
+      keyDifferences.push(
+        `Primary patterns: ${p1.primaryMovementPatterns[0]} vs ${p2.primaryMovementPatterns[0]}`,
+      );
+      keyDifferences.push(
+        `Distance focus: ${p1.sprintDistances.percentage} vs ${p2.sprintDistances.percentage}`,
+      );
     }
-    
+
     return { position1: p1, position2: p2, keyDifferences };
   }
 
@@ -1608,7 +1713,10 @@ export class SprintTrainingKnowledgeService {
   /**
    * Get complete sprint training program for a position
    */
-  getCompleteSprintProgram(position: string, phase: string): {
+  getCompleteSprintProgram(
+    position: string,
+    phase: string,
+  ): {
     positionProtocol: PositionSprintProtocol | undefined;
     phaseGuidelines: SprintPhaseGuidelines | undefined;
     biomechanics: SprintBiomechanicsProfile[];
@@ -1618,18 +1726,18 @@ export class SprintTrainingKnowledgeService {
   } {
     const positionProtocol = this.getPositionSprintProtocol(position);
     const phaseGuidelines = this.getPhaseGuidelines(phase);
-    
+
     const recommendations: string[] = [];
-    
+
     if (positionProtocol) {
       recommendations.push(`Position: ${positionProtocol.rationale}`);
       recommendations.push(...positionProtocol.uniqueConsiderations);
     }
-    
+
     if (phaseGuidelines) {
       recommendations.push(...phaseGuidelines.recoveryConsiderations);
     }
-    
+
     return {
       positionProtocol,
       phaseGuidelines,
@@ -1644,12 +1752,17 @@ export class SprintTrainingKnowledgeService {
    * Get YouTube training resources
    * Reference: https://www.youtube.com/watch?v=JQTx5J8O7-o&list=PLImm55S4h6h71f0DH3llC9pMr9J7cprQs
    */
-  getTrainingVideoResources(): { name: string; url: string; description: string }[] {
+  getTrainingVideoResources(): {
+    name: string;
+    url: string;
+    description: string;
+  }[] {
     return [
       {
         name: "Position-Specific Training Playlist",
         url: "https://www.youtube.com/watch?v=JQTx5J8O7-o&list=PLImm55S4h6h71f0DH3llC9pMr9J7cprQs",
-        description: "Comprehensive playlist covering position-specific training drills for flag football athletes",
+        description:
+          "Comprehensive playlist covering position-specific training drills for flag football athletes",
       },
     ];
   }

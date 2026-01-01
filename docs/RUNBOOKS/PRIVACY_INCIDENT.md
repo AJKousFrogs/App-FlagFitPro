@@ -23,22 +23,22 @@
 
 ### Privacy Incident Types
 
-| Type | Severity | Examples | Response Time |
-|------|----------|----------|---------------|
-| **Data Breach** | SEV-1 | Unauthorized access to PII | < 15 min |
-| **Consent Violation** | SEV-2 | Data accessed without consent | < 1 hour |
-| **Retention Violation** | SEV-2 | Data not deleted when required | < 1 hour |
-| **AI Processing Violation** | SEV-3 | AI used on opted-out user | < 4 hours |
-| **Minor Data Exposure** | SEV-3 | Under-16 data accessed improperly | < 4 hours |
-| **Audit Trail Gap** | SEV-4 | Missing audit log entries | Next business day |
+| Type                        | Severity | Examples                          | Response Time     |
+| --------------------------- | -------- | --------------------------------- | ----------------- |
+| **Data Breach**             | SEV-1    | Unauthorized access to PII        | < 15 min          |
+| **Consent Violation**       | SEV-2    | Data accessed without consent     | < 1 hour          |
+| **Retention Violation**     | SEV-2    | Data not deleted when required    | < 1 hour          |
+| **AI Processing Violation** | SEV-3    | AI used on opted-out user         | < 4 hours         |
+| **Minor Data Exposure**     | SEV-3    | Under-16 data accessed improperly | < 4 hours         |
+| **Audit Trail Gap**         | SEV-4    | Missing audit log entries         | Next business day |
 
 ### GDPR Breach Classification
 
-| Category | Description | Notification Required |
-|----------|-------------|----------------------|
-| **High Risk** | Likely to result in harm to individuals | DPA within 72 hours + affected users |
-| **Medium Risk** | Possible impact on individuals | DPA within 72 hours |
-| **Low Risk** | Unlikely to impact individuals | Internal documentation only |
+| Category        | Description                             | Notification Required                |
+| --------------- | --------------------------------------- | ------------------------------------ |
+| **High Risk**   | Likely to result in harm to individuals | DPA within 72 hours + affected users |
+| **Medium Risk** | Possible impact on individuals          | DPA within 72 hours                  |
+| **Low Risk**    | Unlikely to impact individuals          | Internal documentation only          |
 
 ---
 
@@ -50,7 +50,7 @@
 
 ```sql
 -- Check consent blocked events (last 24 hours)
-SELECT 
+SELECT
     DATE_TRUNC('hour', accessed_at) as hour,
     COUNT(*) as blocked_count
 FROM consent_access_log
@@ -61,6 +61,7 @@ ORDER BY 1;
 ```
 
 **Thresholds:**
+
 - ⚠️ Warning: > 100 blocked events/hour
 - 🚨 Critical: > 500 blocked events/hour OR sudden 10x spike
 
@@ -83,7 +84,7 @@ AND acs.created_at > NOW() - INTERVAL '24 hours';
 
 ```sql
 -- Check for unusual access patterns
-SELECT 
+SELECT
     accessor_user_id,
     COUNT(DISTINCT target_user_id) as users_accessed,
     COUNT(*) as total_accesses
@@ -118,6 +119,7 @@ curl -s https://your-app.netlify.app/.netlify/functions/health | jq
 **If data breach suspected:**
 
 1. **Revoke compromised credentials immediately:**
+
    ```bash
    # Rotate API keys in Netlify
    # Rotate Supabase service role key
@@ -125,6 +127,7 @@ curl -s https://your-app.netlify.app/.netlify/functions/health | jq
    ```
 
 2. **Block suspicious access:**
+
    ```sql
    -- Temporarily block suspicious user
    UPDATE users SET is_active = false WHERE id = 'SUSPICIOUS_USER_ID';
@@ -139,6 +142,7 @@ curl -s https://your-app.netlify.app/.netlify/functions/health | jq
 ### Step 3: Notify Stakeholders
 
 **Template:**
+
 ```
 🚨 PRIVACY INCIDENT: [Brief description]
 Severity: SEV-[1/2/3]
@@ -174,7 +178,7 @@ AND accessed_at > 'INCIDENT_START_TIME';
 
 ```sql
 -- Full access timeline
-SELECT 
+SELECT
     accessed_at,
     resource_type,
     access_granted,
@@ -209,6 +213,7 @@ netlify logs --last 1000 | grep -i "SUSPICIOUS_ACCESSOR\|error\|unauthorized"
 ### Step 5: Determine Root Cause
 
 Common causes:
+
 - [ ] RLS policy misconfiguration
 - [ ] API endpoint missing auth check
 - [ ] Consent view not used correctly
@@ -228,13 +233,17 @@ Common causes:
 
 1. Identify affected endpoint
 2. Update to use consent views:
+
    ```javascript
    // Before (wrong)
-   const { data } = await supabase.from('load_monitoring').select('*');
-   
+   const { data } = await supabase.from("load_monitoring").select("*");
+
    // After (correct)
-   const { data } = await supabase.from('v_load_monitoring_consent').select('*');
+   const { data } = await supabase
+     .from("v_load_monitoring_consent")
+     .select("*");
    ```
+
 3. Deploy fix
 4. Audit all similar endpoints
 
@@ -245,10 +254,15 @@ Common causes:
 **Fix:**
 
 1. Verify consent check exists:
+
    ```javascript
    const aiEnabled = await checkAiProcessingConsent(userId);
    if (!aiEnabled) {
-     return createErrorResponse("AI processing disabled", 403, "ai_processing_disabled");
+     return createErrorResponse(
+       "AI processing disabled",
+       403,
+       "ai_processing_disabled",
+     );
    }
    ```
 
@@ -265,6 +279,7 @@ Common causes:
 **Fix:**
 
 1. Check parental consent status:
+
    ```sql
    SELECT * FROM parental_consent
    WHERE minor_user_id = 'MINOR_USER_ID'
@@ -285,6 +300,7 @@ Common causes:
 **Fix:**
 
 1. Identify missing policy:
+
    ```sql
    SELECT tablename, policyname, cmd, qual
    FROM pg_policies
@@ -308,11 +324,13 @@ Common causes:
 ### After Remediation
 
 1. **Verify fix is deployed:**
+
    ```bash
    curl -s https://your-app.netlify.app/.netlify/functions/health | jq
    ```
 
 2. **Test consent enforcement:**
+
    ```bash
    # Test that blocked access returns correct response
    curl -X GET "https://your-app.netlify.app/api/load-management/acwr?playerId=OTHER_USER" \
@@ -320,6 +338,7 @@ Common causes:
    ```
 
 3. **Verify no new violations:**
+
    ```sql
    SELECT COUNT(*) FROM consent_access_log
    WHERE access_granted = false
@@ -439,25 +458,24 @@ SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
 
 ### Key Contacts
 
-| Role | Contact | When to Notify |
-|------|---------|----------------|
-| Data Protection Officer | [Email] | All privacy incidents |
-| Security Team | [Email] | Data breaches |
-| Legal | [Email] | Regulatory notifications |
-| On-call Engineer | [Contact] | Technical response |
+| Role                    | Contact   | When to Notify           |
+| ----------------------- | --------- | ------------------------ |
+| Data Protection Officer | [Email]   | All privacy incidents    |
+| Security Team           | [Email]   | Data breaches            |
+| Legal                   | [Email]   | Regulatory notifications |
+| On-call Engineer        | [Contact] | Technical response       |
 
 ### Incident Classification Quick Guide
 
-| Question | Yes → | No → |
-|----------|-------|------|
-| Was PII accessed without authorization? | SEV-1/2 | Continue |
-| Were minors' data involved? | Escalate to SEV-2 | Continue |
-| Was consent explicitly violated? | SEV-2 | Continue |
-| Was AI used on opted-out user? | SEV-3 | Continue |
-| Is it a logging/audit gap? | SEV-4 | Not a privacy incident |
+| Question                                | Yes →             | No →                   |
+| --------------------------------------- | ----------------- | ---------------------- |
+| Was PII accessed without authorization? | SEV-1/2           | Continue               |
+| Were minors' data involved?             | Escalate to SEV-2 | Continue               |
+| Was consent explicitly violated?        | SEV-2             | Continue               |
+| Was AI used on opted-out user?          | SEV-3             | Continue               |
+| Is it a logging/audit gap?              | SEV-4             | Not a privacy incident |
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

@@ -1,11 +1,11 @@
 /**
  * Data State Utilities
- * 
+ *
  * Implements the "Data State" contract from PLAYER_DATA_SAFETY_GUIDE.md:
  * - Never show mock data as real data
  * - Don't compute metrics without enough data
  * - Clear API responses about data state
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
@@ -14,10 +14,10 @@
 // ============================================================================
 
 const DataState = {
-  NO_DATA: 'NO_DATA',
-  INSUFFICIENT_DATA: 'INSUFFICIENT_DATA',
-  DEMO_DATA: 'DEMO_DATA',
-  REAL_DATA: 'REAL_DATA',
+  NO_DATA: "NO_DATA",
+  INSUFFICIENT_DATA: "INSUFFICIENT_DATA",
+  DEMO_DATA: "DEMO_DATA",
+  REAL_DATA: "REAL_DATA",
 };
 
 // ============================================================================
@@ -28,43 +28,44 @@ const MINIMUM_DATA_REQUIREMENTS = {
   // ACWR requires 28 days of data for chronic load calculation
   acwr: {
     minimumDays: 28,
-    description: '28 days of training data required for reliable ACWR calculation',
-    source: 'Gabbett, T.J. (2016) - The training-injury prevention paradox',
+    description:
+      "28 days of training data required for reliable ACWR calculation",
+    source: "Gabbett, T.J. (2016) - The training-injury prevention paradox",
   },
-  
+
   // Acute load requires 7 days
   acuteLoad: {
     minimumDays: 7,
-    description: '7 days of training data required for acute load',
-    source: 'Standard rolling average calculation',
+    description: "7 days of training data required for acute load",
+    source: "Standard rolling average calculation",
   },
-  
+
   // Chronic load requires 28 days
   chronicLoad: {
     minimumDays: 28,
-    description: '28 days of training data required for chronic load',
-    source: 'Gabbett, T.J. (2016)',
+    description: "28 days of training data required for chronic load",
+    source: "Gabbett, T.J. (2016)",
   },
-  
+
   // Training monotony requires 7 days
   trainingMonotony: {
     minimumDays: 7,
-    description: '7 days of data required for monotony calculation',
-    source: 'Foster, C. (1998)',
+    description: "7 days of data required for monotony calculation",
+    source: "Foster, C. (1998)",
   },
-  
+
   // TSB requires 42 days (ATL + CTL)
   tsb: {
     minimumDays: 42,
-    description: '42 days of data for Training Stress Balance',
-    source: 'Bannister model',
+    description: "42 days of data for Training Stress Balance",
+    source: "Bannister model",
   },
-  
+
   // Injury risk requires 28 days
   injuryRisk: {
     minimumDays: 28,
-    description: '28 days of load data for injury risk assessment',
-    source: 'ACWR-based injury prediction models',
+    description: "28 days of load data for injury risk assessment",
+    source: "ACWR-based injury prediction models",
   },
 };
 
@@ -87,7 +88,9 @@ function evaluateDataState(currentDataPoints, metricType, isDemo = false) {
   const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
   if (!requirement) {
     // Unknown metric type, assume 7 days minimum
-    return currentDataPoints >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA;
+    return currentDataPoints >= 7
+      ? DataState.REAL_DATA
+      : DataState.INSUFFICIENT_DATA;
   }
 
   if (currentDataPoints < requirement.minimumDays) {
@@ -100,27 +103,37 @@ function evaluateDataState(currentDataPoints, metricType, isDemo = false) {
 /**
  * Create a data response with state information
  */
-function createDataResponse(value, currentDataPoints, metricType, options = {}) {
+function createDataResponse(
+  value,
+  currentDataPoints,
+  metricType,
+  options = {},
+) {
   const { isDemo = false, lastUpdated = null, metadata = {} } = options;
-  const requirement = MINIMUM_DATA_REQUIREMENTS[metricType] || { minimumDays: 7, description: 'Minimum data required' };
+  const requirement = MINIMUM_DATA_REQUIREMENTS[metricType] || {
+    minimumDays: 7,
+    description: "Minimum data required",
+  };
   const dataState = evaluateDataState(currentDataPoints, metricType, isDemo);
-  
+
   const warnings = [];
-  
+
   // Generate appropriate warnings
   switch (dataState) {
     case DataState.NO_DATA:
-      warnings.push('No data available yet. Start logging your training to see metrics.');
+      warnings.push(
+        "No data available yet. Start logging your training to see metrics.",
+      );
       break;
     case DataState.INSUFFICIENT_DATA: {
       const daysNeeded = requirement.minimumDays - currentDataPoints;
       warnings.push(
-        `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`
+        `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`,
       );
       break;
     }
     case DataState.DEMO_DATA:
-      warnings.push('This is demonstration data, not your actual metrics.');
+      warnings.push("This is demonstration data, not your actual metrics.");
       break;
   }
 
@@ -135,7 +148,7 @@ function createDataResponse(value, currentDataPoints, metricType, options = {}) 
     warnings,
     lastUpdated,
     metadata: {
-      source: requirement.source || 'Unknown',
+      source: requirement.source || "Unknown",
       ...metadata,
     },
   };
@@ -170,7 +183,9 @@ function isDataSafe(dataState) {
  */
 function canCalculate(currentDataPoints, metricType) {
   const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
-  if (!requirement) {return currentDataPoints >= 7;}
+  if (!requirement) {
+    return currentDataPoints >= 7;
+  }
   return currentDataPoints >= requirement.minimumDays;
 }
 
@@ -178,10 +193,10 @@ function canCalculate(currentDataPoints, metricType) {
  * Get data state from risk zone string (for backwards compatibility)
  */
 function getDataStateFromRiskZone(riskZone) {
-  if (riskZone === 'insufficient_data') {
+  if (riskZone === "insufficient_data") {
     return DataState.INSUFFICIENT_DATA;
   }
-  if (riskZone === 'unknown' || riskZone === 'no_data') {
+  if (riskZone === "unknown" || riskZone === "no_data") {
     return DataState.NO_DATA;
   }
   return DataState.REAL_DATA;
@@ -201,7 +216,3 @@ module.exports = {
   canCalculate,
   getDataStateFromRiskZone,
 };
-
-
-
-

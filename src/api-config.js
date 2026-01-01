@@ -24,7 +24,7 @@ const getApiBaseUrl = () => {
     window.location.hostname.includes("netlify.com")
   ) {
     // Use Netlify Functions for production
-    const netlifyUrl = `${window.location.origin  }/.netlify/functions`;
+    const netlifyUrl = `${window.location.origin}/.netlify/functions`;
     logger.debug("Using Netlify Functions:", netlifyUrl);
     return netlifyUrl;
   }
@@ -57,7 +57,7 @@ const getApiBaseUrl = () => {
   }
 
   // Default fallback to Netlify Functions using current origin
-  const defaultUrl = `${window.location.origin  }/.netlify/functions`;
+  const defaultUrl = `${window.location.origin}/.netlify/functions`;
   logger.debug("Using default Netlify Functions URL:", defaultUrl);
   return defaultUrl;
 };
@@ -290,7 +290,7 @@ export class ApiClient {
   async request(endpoint, options = {}) {
     // Create AbortController for cancellation
     const controller = new AbortController();
-    const {signal} = controller;
+    const { signal } = controller;
 
     // Store controller for cancellation
     if (!this.activeRequests) {

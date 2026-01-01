@@ -1,12 +1,12 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed } from "@angular/core";
 import {
   TrainingStatCard,
   WeeklyScheduleDay,
   Workout,
   Achievement,
   WellnessAlert,
-  ReadinessStatus
-} from '../models/training.models';
+  ReadinessStatus,
+} from "../models/training.models";
 
 /**
  * Training State Service
@@ -33,15 +33,14 @@ import {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TrainingStateService {
-
   // ============================================================================
   // SIGNALS - User State
   // ============================================================================
 
-  private readonly _userName = signal<string>('');
+  private readonly _userName = signal<string>("");
   readonly userName = this._userName.asReadonly();
 
   // ============================================================================
@@ -67,7 +66,7 @@ export class TrainingStateService {
   private readonly _swipingWorkoutId = signal<string | null>(null);
   readonly swipingWorkoutId = this._swipingWorkoutId.asReadonly();
 
-  private readonly _swipeDirection = signal<'left' | 'right' | null>(null);
+  private readonly _swipeDirection = signal<"left" | "right" | null>(null);
   readonly swipeDirection = this._swipeDirection.asReadonly();
 
   private readonly _isRefreshing = signal(false);
@@ -83,7 +82,7 @@ export class TrainingStateService {
   private readonly _readinessScore = signal(0);
   readonly readinessScore = this._readinessScore.asReadonly();
 
-  private readonly _readinessStatus = signal<ReadinessStatus>('good');
+  private readonly _readinessStatus = signal<ReadinessStatus>("good");
   readonly readinessStatus = this._readinessStatus.asReadonly();
 
   private readonly _wellnessAlertDismissed = signal(false);
@@ -107,21 +106,24 @@ export class TrainingStateService {
    * Whether there are scheduled sessions in the weekly schedule
    */
   readonly hasScheduledSessions = computed(() =>
-    this.weeklySchedule().some(day => day.sessions.length > 0)
+    this.weeklySchedule().some((day) => day.sessions.length > 0),
   );
 
   /**
    * Whether wellness alert should be displayed
    */
-  readonly shouldShowWellnessAlert = computed(() =>
-    this.wellnessAlert() !== null && !this.wellnessAlertDismissed()
+  readonly shouldShowWellnessAlert = computed(
+    () => this.wellnessAlert() !== null && !this.wellnessAlertDismissed(),
   );
 
   /**
    * Current week session count
    */
   readonly weeklySessionCount = computed(() =>
-    this.weeklySchedule().reduce((total, day) => total + day.sessions.length, 0)
+    this.weeklySchedule().reduce(
+      (total, day) => total + day.sessions.length,
+      0,
+    ),
   );
 
   /**
@@ -130,9 +132,9 @@ export class TrainingStateService {
   readonly workoutsByIntensity = computed(() => {
     const workouts = this.workouts();
     return {
-      low: workouts.filter(w => w.intensity === 'low').length,
-      medium: workouts.filter(w => w.intensity === 'medium').length,
-      high: workouts.filter(w => w.intensity === 'high').length,
+      low: workouts.filter((w) => w.intensity === "low").length,
+      medium: workouts.filter((w) => w.intensity === "medium").length,
+      high: workouts.filter((w) => w.intensity === "high").length,
     };
   });
 
@@ -153,7 +155,7 @@ export class TrainingStateService {
       score,
       color: this.getStatusColor(status),
       icon: this.getStatusIcon(status),
-      label: this.getStatusLabel(status)
+      label: this.getStatusLabel(status),
     };
   });
 
@@ -204,15 +206,17 @@ export class TrainingStateService {
    * Add a single workout to the list
    */
   addWorkout(workout: Workout): void {
-    this._workouts.update(current => [...current, workout]);
+    this._workouts.update((current) => [...current, workout]);
   }
 
   /**
    * Remove workout by title or ID
    */
   removeWorkout(workoutIdentifier: string): void {
-    this._workouts.update(current =>
-      current.filter(w => w.title !== workoutIdentifier && w.id !== workoutIdentifier)
+    this._workouts.update((current) =>
+      current.filter(
+        (w) => w.title !== workoutIdentifier && w.id !== workoutIdentifier,
+      ),
     );
   }
 
@@ -220,8 +224,8 @@ export class TrainingStateService {
    * Update a specific workout
    */
   updateWorkout(workoutId: string, updates: Partial<Workout>): void {
-    this._workouts.update(current =>
-      current.map(w => w.id === workoutId ? { ...w, ...updates } : w)
+    this._workouts.update((current) =>
+      current.map((w) => (w.id === workoutId ? { ...w, ...updates } : w)),
     );
   }
 
@@ -246,7 +250,10 @@ export class TrainingStateService {
   /**
    * Set swipe state for workout animation
    */
-  setSwipeState(workoutId: string | null, direction: 'left' | 'right' | null): void {
+  setSwipeState(
+    workoutId: string | null,
+    direction: "left" | "right" | null,
+  ): void {
     this._swipingWorkoutId.set(workoutId);
     this._swipeDirection.set(direction);
   }
@@ -306,7 +313,7 @@ export class TrainingStateService {
    * Useful for logout or data refresh
    */
   resetState(): void {
-    this._userName.set('');
+    this._userName.set("");
     this._trainingStats.set([]);
     this._weeklySchedule.set([]);
     this._workouts.set([]);
@@ -316,7 +323,7 @@ export class TrainingStateService {
     this._isRefreshing.set(false);
     this._wellnessAlert.set(null);
     this._readinessScore.set(0);
-    this._readinessStatus.set('good');
+    this._readinessStatus.set("good");
     this._wellnessAlertDismissed.set(false);
   }
 
@@ -353,30 +360,30 @@ export class TrainingStateService {
 
   private getStatusColor(status: ReadinessStatus): string {
     const colorMap: Record<ReadinessStatus, string> = {
-      excellent: '#10b981', // green-500
-      good: '#3b82f6',      // blue-500
-      caution: '#f59e0b',   // amber-500
-      rest: '#ef4444'       // red-500
+      excellent: "#10b981", // green-500
+      good: "#3b82f6", // blue-500
+      caution: "#f59e0b", // amber-500
+      rest: "#ef4444", // red-500
     };
     return colorMap[status] || colorMap.good;
   }
 
   private getStatusIcon(status: ReadinessStatus): string {
     const iconMap: Record<ReadinessStatus, string> = {
-      excellent: 'pi-check-circle',
-      good: 'pi-thumbs-up',
-      caution: 'pi-exclamation-triangle',
-      rest: 'pi-times-circle'
+      excellent: "pi-check-circle",
+      good: "pi-thumbs-up",
+      caution: "pi-exclamation-triangle",
+      rest: "pi-times-circle",
     };
     return iconMap[status] || iconMap.good;
   }
 
   private getStatusLabel(status: ReadinessStatus): string {
     const labelMap: Record<ReadinessStatus, string> = {
-      excellent: 'Excellent',
-      good: 'Ready to Train',
-      caution: 'Train with Caution',
-      rest: 'Rest Recommended'
+      excellent: "Excellent",
+      good: "Ready to Train",
+      caution: "Train with Caution",
+      rest: "Rest Recommended",
     };
     return labelMap[status] || labelMap.good;
   }

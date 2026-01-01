@@ -4,21 +4,21 @@
 
 ## ORGANIZATION IDENTITY & LEGAL INFORMATION
 
-| Field | Value |
-|-------|-------|
-| **Organization Name** | Športno društvo Žabe |
-| **Legal Form** | Sports Club (Športno društvo) - Non-Profit |
-| **Registration Number** | 4121503000 |
-| **VAT Number** | SI57486913 |
-| **Registered Address** | Štihova ulica 13, 1000 Ljubljana, Slovenia |
-| **Email** | merlin@ljubljanafrogs.si |
-| **Phone** | +386 69 685 482 |
-| **Supervisory Authority** | Information Commissioner of the Republic of Slovenia |
-| **Data Protection Officer** | Aljoša Kous |
-| **DPO Email** | merlin@ljubljanafrogs.si |
-| **Governing Law** | Republic of Slovenia / European Union (GDPR) |
-| **Effective Date** | 29. December 2025 |
-| **Version** | 1.0 |
+| Field                       | Value                                                |
+| --------------------------- | ---------------------------------------------------- |
+| **Organization Name**       | Športno društvo Žabe                                 |
+| **Legal Form**              | Sports Club (Športno društvo) - Non-Profit           |
+| **Registration Number**     | 4121503000                                           |
+| **VAT Number**              | SI57486913                                           |
+| **Registered Address**      | Štihova ulica 13, 1000 Ljubljana, Slovenia           |
+| **Email**                   | merlin@ljubljanafrogs.si                             |
+| **Phone**                   | +386 69 685 482                                      |
+| **Supervisory Authority**   | Information Commissioner of the Republic of Slovenia |
+| **Data Protection Officer** | Aljoša Kous                                          |
+| **DPO Email**               | merlin@ljubljanafrogs.si                             |
+| **Governing Law**           | Republic of Slovenia / European Union (GDPR)         |
+| **Effective Date**          | 29. December 2025                                    |
+| **Version**                 | 1.0                                                  |
 
 ---
 
@@ -28,16 +28,16 @@
 
 Before the legal language, here's what you actually need to know:
 
-| Question | Answer |
-|----------|--------|
-| **Who are you?** | Športno društvo Žabe - a volunteer sports club in Ljubljana |
-| **Do you sell my data?** | No. We have no one to sell it to and no interest in doing so. |
-| **Do you share my data with advertisers?** | No. We don't have advertisers. |
-| **Do you make money from my data?** | No. We operate with €0 budget. |
-| **Why do you collect data?** | To make the app work and help you train better. |
-| **Where is my data stored?** | EU servers (Supabase, Frankfurt region). |
-| **Can I delete my data?** | Yes. Anytime. Settings > Account > Delete. |
-| **Who can I contact?** | merlin@ljubljanafrogs.si |
+| Question                                   | Answer                                                        |
+| ------------------------------------------ | ------------------------------------------------------------- |
+| **Who are you?**                           | Športno društvo Žabe - a volunteer sports club in Ljubljana   |
+| **Do you sell my data?**                   | No. We have no one to sell it to and no interest in doing so. |
+| **Do you share my data with advertisers?** | No. We don't have advertisers.                                |
+| **Do you make money from my data?**        | No. We operate with €0 budget.                                |
+| **Why do you collect data?**               | To make the app work and help you train better.               |
+| **Where is my data stored?**               | EU servers (Supabase, Frankfurt region).                      |
+| **Can I delete my data?**                  | Yes. Anytime. Settings > Account > Delete.                    |
+| **Who can I contact?**                     | merlin@ljubljanafrogs.si                                      |
 
 **Now the detailed version for those who want it:**
 
@@ -50,12 +50,14 @@ Before the legal language, here's what you actually need to know:
 FlagFit Pro is developed and operated by **Športno društvo Žabe**, a registered non-profit sports club in Ljubljana, Slovenia.
 
 **We are:**
+
 - A volunteer-run sports association (društvo)
 - Athletes helping other athletes
 - Operating with zero budget
 - Not a corporation, startup, or commercial entity
 
 **We are NOT:**
+
 - A company trying to monetize your data
 - Backed by investors who want returns
 - Interested in selling anything to anyone
@@ -102,16 +104,16 @@ Website: https://www.ip-rs.si
 
 We only collect data that makes the app useful. Here's exactly what and why:
 
-| Data Category | What We Collect | Why | Legal Basis (GDPR) |
-|---------------|-----------------|-----|-------------------|
-| **Account Data** | Name, email, password | So you can log in and we can identify your data | Contract (Art. 6(1)(b)) |
-| **Profile Data** | Age, position, experience level | To personalize recommendations | Contract (Art. 6(1)(b)) |
-| **Training Data** | Workouts, exercises, duration, intensity | To track your progress and provide insights | Legitimate Interest (Art. 6(1)(f)) |
-| **Wellness Data** | Sleep, energy, mood, soreness | To estimate injury risk and recovery needs | Consent (Art. 6(1)(a)) |
-| **Health Data** | Injury history, pain reports | To help prevent re-injury | Explicit Consent (Art. 9(2)(a)) |
-| **Nutrition Data** | Food logs, meals | To track nutrition for performance | Legitimate Interest (Art. 6(1)(f)) |
-| **Team Data** | Team membership, coach relationships | To enable team features | Consent (Art. 6(1)(a)) |
-| **Technical Data** | Device type, app version, crash logs | To fix bugs and keep the app running | Legitimate Interest (Art. 6(1)(f)) |
+| Data Category      | What We Collect                          | Why                                             | Legal Basis (GDPR)                 |
+| ------------------ | ---------------------------------------- | ----------------------------------------------- | ---------------------------------- |
+| **Account Data**   | Name, email, password                    | So you can log in and we can identify your data | Contract (Art. 6(1)(b))            |
+| **Profile Data**   | Age, position, experience level          | To personalize recommendations                  | Contract (Art. 6(1)(b))            |
+| **Training Data**  | Workouts, exercises, duration, intensity | To track your progress and provide insights     | Legitimate Interest (Art. 6(1)(f)) |
+| **Wellness Data**  | Sleep, energy, mood, soreness            | To estimate injury risk and recovery needs      | Consent (Art. 6(1)(a))             |
+| **Health Data**    | Injury history, pain reports             | To help prevent re-injury                       | Explicit Consent (Art. 9(2)(a))    |
+| **Nutrition Data** | Food logs, meals                         | To track nutrition for performance              | Legitimate Interest (Art. 6(1)(f)) |
+| **Team Data**      | Team membership, coach relationships     | To enable team features                         | Consent (Art. 6(1)(a))             |
+| **Technical Data** | Device type, app version, crash logs     | To fix bugs and keep the app running            | Legitimate Interest (Art. 6(1)(f)) |
 
 ### 2.2 Special Category Data (Health/Biometric)
 
@@ -157,12 +159,14 @@ Some data we collect is considered "special category" under GDPR because it rela
 ### 3.3 AI Processing
 
 The app uses machine learning to:
+
 - Predict performance trends
 - Estimate injury risk
 - Suggest training adjustments
 - Analyze nutrition patterns
 
 **You have the right to:**
+
 - Turn off AI processing entirely (Settings > Privacy > AI Processing)
 - Get explanations of how AI decisions are made
 - Request human review of any AI-generated recommendation
@@ -177,12 +181,12 @@ Almost nobody.
 
 ### 4.2 The Detailed Answer
 
-| Recipient | What Data | Why | Your Control |
-|-----------|-----------|-----|--------------|
-| **Supabase (hosting)** | All app data | They host our database | Required for app to work |
-| **Your coaches** | Performance data | Team features | You choose what to share |
-| **Emergency contacts** | Emergency info | If you trigger emergency features | You set who |
-| **Nobody else** | Nothing | We have no other relationships | N/A |
+| Recipient              | What Data        | Why                               | Your Control             |
+| ---------------------- | ---------------- | --------------------------------- | ------------------------ |
+| **Supabase (hosting)** | All app data     | They host our database            | Required for app to work |
+| **Your coaches**       | Performance data | Team features                     | You choose what to share |
+| **Emergency contacts** | Emergency info   | If you trigger emergency features | You set who              |
+| **Nobody else**        | Nothing          | We have no other relationships    | N/A                      |
 
 ### 4.3 We Will NEVER Share Data With:
 
@@ -196,6 +200,7 @@ Almost nobody.
 ### 4.4 Legal Requirements
 
 We may be required to disclose data if:
+
 - Ordered by a Slovenian court
 - Required by Slovenian law
 - Necessary to prevent imminent harm
@@ -211,6 +216,7 @@ This has never happened and we hope it never will.
 Your data is stored on **Supabase servers in the European Union** (Frankfurt, Germany region).
 
 We specifically chose EU hosting to ensure:
+
 - GDPR compliance
 - Slovenian legal jurisdiction
 - No transfers to countries with weaker privacy laws
@@ -220,6 +226,7 @@ We specifically chose EU hosting to ensure:
 We do NOT transfer your data outside the EU/EEA. Period.
 
 If this ever changes (it won't), we would:
+
 - Notify you first
 - Get your consent
 - Use appropriate safeguards (SCCs, etc.)
@@ -228,13 +235,13 @@ If this ever changes (it won't), we would:
 
 ## 6. HOW LONG WE KEEP YOUR DATA
 
-| Data Type | Retention Period | Why |
-|-----------|------------------|-----|
-| **Account data** | Until you delete your account + 30 days | To process deletion |
-| **Training data** | Until you delete your account | You might want historical data |
-| **Health data** | Until you withdraw consent or delete account | Consent-based |
-| **Technical logs** | 1 year | To fix bugs |
-| **Anonymized analytics** | Indefinitely | Can't be traced back to you |
+| Data Type                | Retention Period                             | Why                            |
+| ------------------------ | -------------------------------------------- | ------------------------------ |
+| **Account data**         | Until you delete your account + 30 days      | To process deletion            |
+| **Training data**        | Until you delete your account                | You might want historical data |
+| **Health data**          | Until you withdraw consent or delete account | Consent-based                  |
+| **Technical logs**       | 1 year                                       | To fix bugs                    |
+| **Anonymized analytics** | Indefinitely                                 | Can't be traced back to you    |
 
 **After deletion:** We remove your personal data within 30 days. Some anonymized, aggregated data may remain (e.g., "X users completed Y workouts this month").
 
@@ -313,6 +320,7 @@ We'll respond within 30 days. If we need more time (complex requests), we'll tel
 ### 8.2 What We Can't Guarantee
 
 We're volunteers, not a security company. We do our best, but:
+
 - No system is 100% secure
 - We can't prevent all possible breaches
 - We have no budget for security audits
@@ -320,6 +328,7 @@ We're volunteers, not a security company. We do our best, but:
 ### 8.3 If Something Goes Wrong
 
 If we discover a data breach affecting you:
+
 1. We'll notify the Slovenian Information Commissioner within 72 hours
 2. We'll notify you without undue delay
 3. We'll tell you what happened and what we're doing about it
@@ -340,12 +349,14 @@ We do not knowingly collect personal data from anyone under 16 years of age. Dur
 ### 9.2 Age Verification
 
 When creating an account, users must:
+
 1. Confirm they are 16 years of age or older
 2. Accept our Terms of Service and Privacy Policy
 
 ### 9.3 If We Discover Underage Users
 
 If we discover that we have collected personal data from a user under 16:
+
 1. We will delete the account and all associated data
 2. We will notify the user (if contact information is available)
 3. We will take steps to prevent future underage registrations
@@ -360,11 +371,11 @@ If you believe we have inadvertently collected data from someone under 16, pleas
 
 ### 10.1 What We Use
 
-| Type | Purpose | Required? |
-|------|---------|-----------|
-| **Session cookies** | Keep you logged in | Yes |
-| **Preference cookies** | Remember your settings | Yes |
-| **Analytics** | Understand app usage (anonymized) | Optional |
+| Type                   | Purpose                           | Required? |
+| ---------------------- | --------------------------------- | --------- |
+| **Session cookies**    | Keep you logged in                | Yes       |
+| **Preference cookies** | Remember your settings            | Yes       |
+| **Analytics**          | Understand app usage (anonymized) | Optional  |
 
 ### 10.2 What We Don't Use
 
@@ -380,6 +391,7 @@ If you believe we have inadvertently collected data from someone under 16, pleas
 ### 11.1 How We'll Notify You
 
 If we make significant changes:
+
 1. Email notification 30 days before
 2. In-app notification
 3. Updated "Last Updated" date
@@ -387,6 +399,7 @@ If we make significant changes:
 ### 11.2 Your Options
 
 If you don't agree with changes:
+
 - Stop using the app
 - Delete your account
 - Your data will be removed
@@ -445,4 +458,4 @@ We're a small sports club trying to help our community train better. We have no 
 **EFFECTIVE DATE:** 29. December 2025
 **VERSION:** 1.0
 
-*Športno društvo Žabe - Athletes helping athletes since 2020*
+_Športno društvo Žabe - Athletes helping athletes since 2020_

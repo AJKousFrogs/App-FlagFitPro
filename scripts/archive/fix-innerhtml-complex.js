@@ -6,28 +6,29 @@
  * or where the HTML contains no dynamic user data
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const srcDir = path.join(__dirname, '..', 'src');
+const srcDir = path.join(__dirname, "..", "src");
 
 // Patterns for innerHTML assignments with template literals (complex HTML)
 // We'll add comments to guide manual review
 function processFile(filePath) {
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, "utf8");
     const originalContent = content;
     let changeCount = 0;
 
     // Check if file already imports setSafeContent
-    const hasSafeContentImport = content.includes('setSafeContent');
-    const hasSharedImport = content.includes('from "./utils/shared.js"') ||
-                           content.includes('from "../utils/shared.js"') ||
-                           content.includes('from "../../utils/shared.js"');
+    const hasSafeContentImport = content.includes("setSafeContent");
+    const hasSharedImport =
+      content.includes('from "./utils/shared.js"') ||
+      content.includes('from "../utils/shared.js"') ||
+      content.includes('from "../../utils/shared.js"');
 
     // Pattern 1: Simple template literals with NO variables (static HTML only)
     // Example: element.innerHTML = `<div>Static</div>`;
@@ -37,11 +38,11 @@ function processFile(filePath) {
 
     while ((match = staticHtmlRegex.exec(content)) !== null) {
       // Check if the template literal has NO ${} expressions
-      if (!match[2].includes('${')) {
+      if (!match[2].includes("${")) {
         matches.push({
           element: match[1],
           html: match[2],
-          fullMatch: match[0]
+          fullMatch: match[0],
         });
       }
     }
@@ -49,27 +50,31 @@ function processFile(filePath) {
     if (matches.length > 0 && !hasSafeContentImport && !hasSharedImport) {
       // Need to add import first
       const fileDir = path.dirname(filePath);
-      const sharedPath = path.join(srcDir, 'js', 'utils', 'shared.js');
+      const sharedPath = path.join(srcDir, "js", "utils", "shared.js");
       const relativePath = path.relative(fileDir, sharedPath);
-      const importPath = relativePath.split(path.sep).join('/');
-      const importStatement = `import { setSafeContent } from '${importPath.startsWith('.') ? importPath : `./${  importPath}`}';\n`;
+      const importPath = relativePath.split(path.sep).join("/");
+      const importStatement = `import { setSafeContent } from '${importPath.startsWith(".") ? importPath : `./${importPath}`}';\n`;
 
       // Find a good place to insert the import (after other imports or at the start)
       const lastImportMatch = content.match(/import\s+.*?;/g);
       if (lastImportMatch) {
         const lastImport = lastImportMatch[lastImportMatch.length - 1];
         const lastImportIndex = content.lastIndexOf(lastImport);
-        content = `${content.slice(0, lastImportIndex + lastImport.length)  }\n${  importStatement  }${content.slice(lastImportIndex + lastImport.length)}`;
+        content = `${content.slice(0, lastImportIndex + lastImport.length)}\n${importStatement}${content.slice(lastImportIndex + lastImport.length)}`;
       } else {
         content = importStatement + content;
       }
     }
 
     // Now replace static innerHTML with setSafeContent calls
-    for (const {element, html, fullMatch} of matches) {
+    for (const { element, html, fullMatch } of matches) {
       // Check if the HTML contains only safe tags and no scripts
       // eslint-disable-next-line no-script-url
-      if (!html.includes('<script') && !html.includes('javascript:') && !html.includes('onerror=')) {
+      if (
+        !html.includes("<script") &&
+        !html.includes("javascript:") &&
+        !html.includes("onerror=")
+      ) {
         const replacement = `setSafeContent(${element}, \`${html}\`, true, true)`;
         content = content.replace(fullMatch, replacement);
         changeCount++;
@@ -77,7 +82,7 @@ function processFile(filePath) {
     }
 
     if (content !== originalContent) {
-      fs.writeFileSync(filePath, content, 'utf8');
+      fs.writeFileSync(filePath, content, "utf8");
       return { modified: true, changes: changeCount };
     }
 
@@ -98,8 +103,12 @@ function findJsFiles(dir) {
 
       if (entry.isDirectory()) {
         files.push(...findJsFiles(fullPath));
-      } else if (entry.isFile() && entry.name.endsWith('.js') &&
-                 !entry.name.includes('.test.') && !entry.name.includes('.spec.')) {
+      } else if (
+        entry.isFile() &&
+        entry.name.endsWith(".js") &&
+        !entry.name.includes(".test.") &&
+        !entry.name.includes(".spec.")
+      ) {
         files.push(fullPath);
       }
     }
@@ -110,7 +119,7 @@ function findJsFiles(dir) {
   return files;
 }
 
-console.log('🔧 Fixing static innerHTML template literals...\\n');
+console.log("🔧 Fixing static innerHTML template literals...\\n");
 
 const jsFiles = findJsFiles(srcDir);
 let totalModified = 0;
@@ -126,6 +135,10 @@ for (const file of jsFiles) {
   }
 }
 
-console.log(`\\n✅ Auto-fixed ${totalChanges} static innerHTML assignments in ${totalModified} files`);
-console.log(`\\n⚠️  Remaining innerHTML with dynamic content needs manual review`);
+console.log(
+  `\\n✅ Auto-fixed ${totalChanges} static innerHTML assignments in ${totalModified} files`,
+);
+console.log(
+  `\\n⚠️  Remaining innerHTML with dynamic content needs manual review`,
+);
 console.log(`   Run 'npm run lint' to check remaining errors`);

@@ -1,5 +1,5 @@
-import { logger } from '../logger.js';
-import { setSafeContent } from './utils/shared.js';
+import { logger } from "../logger.js";
+import { setSafeContent } from "./utils/shared.js";
 
 /**
  * FlagFit Pro - Achievements Widget
@@ -22,9 +22,7 @@ import { setSafeContent } from './utils/shared.js';
 
     const container = document.getElementById(containerId);
     if (!container) {
-      logger.error(
-        `[Achievements Widget] Container #${containerId} not found`,
-      );
+      logger.error(`[Achievements Widget] Container #${containerId} not found`);
       return;
     }
 
@@ -37,7 +35,9 @@ import { setSafeContent } from './utils/shared.js';
     // Create widget HTML
     const widget = document.createElement("div");
     widget.className = "achievements-widget";
-    setSafeContent(widget, `
+    setSafeContent(
+      widget,
+      `
       <div class="achievements-header">
         <div class="achievements-title">
           <h3>🏆 Achievements</h3>
@@ -65,13 +65,16 @@ import { setSafeContent } from './utils/shared.js';
           View All Achievements
         </button>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     // Add styles
     addAchievementsStyles();
 
     // Clear and append
-    container.textContent = '';
+    container.textContent = "";
     container.appendChild(widget);
 
     logger.info("[Achievements Widget] Rendered successfully");
@@ -376,7 +379,9 @@ import { setSafeContent } from './utils/shared.js';
     // Create modal
     const modal = document.createElement("div");
     modal.className = "achievements-modal";
-    setSafeContent(modal, `
+    setSafeContent(
+      modal,
+      `
       <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
       <div class="achievements-modal-content">
         <div class="modal-header">
@@ -431,7 +436,10 @@ import { setSafeContent } from './utils/shared.js';
           })
           .join("")}
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     // Add modal styles
     const modalStyles = document.createElement("style");

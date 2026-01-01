@@ -25,7 +25,7 @@ vi.mock("../../src/js/security/csrf-protection.js", () => ({
   csrfProtection: {
     getHeaders: vi.fn().mockReturnValue({ "X-CSRF-Token": "test-csrf-token" }),
     requiresProtection: vi.fn((method) =>
-      ["POST", "PUT", "DELETE", "PATCH"].includes(method)
+      ["POST", "PUT", "DELETE", "PATCH"].includes(method),
     ),
   },
 }));
@@ -67,7 +67,7 @@ describe("API Configuration - Comprehensive Tests", () => {
     // Reset modules and import fresh
     vi.resetModules();
     const module = await import("../../src/api-config.js");
-    ApiClient = module.ApiClient;
+    ({ ApiClient } = module);
     apiClient = new ApiClient();
   });
 
@@ -93,9 +93,7 @@ describe("API Configuration - Comprehensive Tests", () => {
 
       apiClient.setAuthToken(token);
 
-      expect(apiClient.defaultHeaders["Authorization"]).toBe(
-        `Bearer ${token}`
-      );
+      expect(apiClient.defaultHeaders["Authorization"]).toBe(`Bearer ${token}`);
     });
 
     it("should clear authentication token when null is passed", () => {
@@ -107,9 +105,8 @@ describe("API Configuration - Comprehensive Tests", () => {
     });
 
     it("should get auth token from storage", async () => {
-      const { storageService } = await import(
-        "../../src/js/services/storage-service-unified.js"
-      );
+      const { storageService } =
+        await import("../../src/js/services/storage-service-unified.js");
       storageService.get.mockReturnValue("stored-token");
 
       const token = await apiClient.getAuthToken();
@@ -140,31 +137,33 @@ describe("API Configuration - Comprehensive Tests", () => {
 
         expect(global.fetch).toHaveBeenCalledWith(
           expect.stringContaining("userId=1"),
-          expect.any(Object)
+          expect.any(Object),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           expect.stringContaining("limit=10"),
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       it("should use cache for GET requests when enabled", async () => {
-        const { cacheService } = await import(
-          "../../src/js/services/cache-service.js"
-        );
+        const { cacheService } =
+          await import("../../src/js/services/cache-service.js");
         const cachedData = { data: "cached-data" };
         cacheService.get.mockReturnValue(cachedData);
 
-        const result = await apiClient.get("/cached-endpoint", {}, { useCache: true });
+        const result = await apiClient.get(
+          "/cached-endpoint",
+          {},
+          { useCache: true },
+        );
 
         expect(result).toEqual(cachedData);
         expect(global.fetch).not.toHaveBeenCalled();
       });
 
       it("should bypass cache when forceRefresh is true", async () => {
-        const { cacheService } = await import(
-          "../../src/js/services/cache-service.js"
-        );
+        const { cacheService } =
+          await import("../../src/js/services/cache-service.js");
         cacheService.get.mockReturnValue({ data: "old-cached-data" });
 
         const mockData = { data: "fresh-data" };
@@ -174,7 +173,7 @@ describe("API Configuration - Comprehensive Tests", () => {
         const result = await apiClient.get(
           "/test-endpoint",
           {},
-          { useCache: true, forceRefresh: true }
+          { useCache: true, forceRefresh: true },
         );
 
         expect(global.fetch).toHaveBeenCalled();
@@ -185,7 +184,10 @@ describe("API Configuration - Comprehensive Tests", () => {
     describe("POST Requests", () => {
       it("should make POST request with data", async () => {
         const postData = { name: "test", value: 123 };
-        const mockResponse = await createMockApiResponse({ id: 1, ...postData });
+        const mockResponse = await createMockApiResponse({
+          id: 1,
+          ...postData,
+        });
         global.fetch.mockResolvedValue(mockResponse);
 
         const result = await apiClient.post("/test-endpoint", postData);
@@ -195,15 +197,14 @@ describe("API Configuration - Comprehensive Tests", () => {
           expect.objectContaining({
             method: "POST",
             body: JSON.stringify(postData),
-          })
+          }),
         );
         expect(result.id).toBe(1);
       });
 
       it("should include CSRF token in POST requests", async () => {
-        const { csrfProtection } = await import(
-          "../../src/js/security/csrf-protection.js"
-        );
+        const { csrfProtection } =
+          await import("../../src/js/security/csrf-protection.js");
         const mockResponse = await createMockApiResponse({ success: true });
         global.fetch.mockResolvedValue(mockResponse);
 
@@ -214,9 +215,8 @@ describe("API Configuration - Comprehensive Tests", () => {
       });
 
       it("should invalidate cache after POST request", async () => {
-        const { cacheService } = await import(
-          "../../src/js/services/cache-service.js"
-        );
+        const { cacheService } =
+          await import("../../src/js/services/cache-service.js");
         const mockResponse = await createMockApiResponse({ success: true });
         global.fetch.mockResolvedValue(mockResponse);
 
@@ -239,7 +239,7 @@ describe("API Configuration - Comprehensive Tests", () => {
           expect.objectContaining({
             method: "PUT",
             body: JSON.stringify(updateData),
-          })
+          }),
         );
         expect(result).toEqual(updateData);
       });
@@ -261,7 +261,7 @@ describe("API Configuration - Comprehensive Tests", () => {
           expect.objectContaining({
             method: "PATCH",
             body: JSON.stringify(patchData),
-          })
+          }),
         );
         expect(result.name).toBe("patched-name");
       });
@@ -281,7 +281,7 @@ describe("API Configuration - Comprehensive Tests", () => {
           expect.any(String),
           expect.objectContaining({
             method: "DELETE",
-          })
+          }),
         );
         expect(result.deleted).toBe(true);
       });
@@ -401,26 +401,24 @@ describe("API Configuration - Comprehensive Tests", () => {
 
   describe("Cache Invalidation", () => {
     it("should invalidate cache for endpoint pattern", async () => {
-      const { cacheService } = await import(
-        "../../src/js/services/cache-service.js"
-      );
+      const { cacheService } =
+        await import("../../src/js/services/cache-service.js");
 
       apiClient.invalidateCache("/training/sessions/123");
 
       expect(cacheService.invalidatePattern).toHaveBeenCalledWith(
-        expect.stringContaining("api:/training/sessions")
+        expect.stringContaining("api:/training/sessions"),
       );
     });
 
     it("should strip query params when invalidating cache", async () => {
-      const { cacheService } = await import(
-        "../../src/js/services/cache-service.js"
-      );
+      const { cacheService } =
+        await import("../../src/js/services/cache-service.js");
 
       apiClient.invalidateCache("/training/sessions?userId=1&limit=10");
 
       expect(cacheService.invalidatePattern).toHaveBeenCalledWith(
-        "api:/training/sessions"
+        "api:/training/sessions",
       );
     });
   });

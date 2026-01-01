@@ -3,8 +3,8 @@
  * Responsive layout with sidebar, header, and content area
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 .dashboard-container {
   display: flex;

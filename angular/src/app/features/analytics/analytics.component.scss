@@ -3,8 +3,8 @@
  * Migrated from inline styles to SCSS using design system
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 // ============================================================================
 // PAGE LAYOUT
@@ -15,11 +15,11 @@
   min-height: 100vh;
   background: var(--surface-secondary);
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     padding: var(--space-4);
   }
 
-  @media (max-width: 480px) {
+  @include respond-to(sm) {
     padding: var(--space-3);
   }
 }
@@ -36,7 +36,7 @@
   flex-wrap: wrap;
   gap: var(--space-4);
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -81,11 +81,11 @@
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 
-  @media (max-width: 640px) {
+  @include respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 374px) {
+  @include respond-to(xs) {
     grid-template-columns: 1fr;
   }
 }
@@ -96,10 +96,11 @@
   padding: var(--space-5);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border-secondary);
-  transition: transform var(--transition-fast) var(--ease-smooth),
-              box-shadow var(--transition-fast) var(--ease-smooth);
+  transition:
+    transform var(--transition-fast) var(--ease-smooth),
+    box-shadow var(--transition-fast) var(--ease-smooth);
 
-  @media (hover: hover) {
+  @include hover-support {
     &:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
@@ -183,7 +184,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 
-  @media (max-width: 1024px) {
+  @include respond-to(lg) {
     grid-template-columns: 1fr;
   }
 }
@@ -225,7 +226,7 @@
   position: relative;
   min-height: 300px;
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     min-height: 250px;
   }
 }
@@ -377,7 +378,7 @@
   margin-bottom: var(--space-6);
   flex-wrap: wrap;
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     flex-direction: column;
   }
 }
@@ -490,4 +491,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-

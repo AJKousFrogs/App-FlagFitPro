@@ -132,10 +132,10 @@ const SLEEP_PROFILES: Record<string, OptimalSleepProfile> = {
 // ============================================================================
 
 const DEBT_THRESHOLDS = {
-  none: 0,      // No debt
-  mild: 3,      // Up to 3 hours debt
-  moderate: 7,  // 3-7 hours debt
-  severe: 14,   // 7-14 hours debt
+  none: 0, // No debt
+  mild: 3, // Up to 3 hours debt
+  moderate: 7, // 3-7 hours debt
+  severe: 14, // 7-14 hours debt
   critical: 21, // 14+ hours debt
 };
 
@@ -166,7 +166,9 @@ export class SleepDebtService {
 
   readonly isAtRisk = computed(() => {
     const analysis = this._currentAnalysis();
-    return analysis ? ["severe", "critical"].includes(analysis.debtLevel) : false;
+    return analysis
+      ? ["severe", "critical"].includes(analysis.debtLevel)
+      : false;
   });
 
   /**
@@ -181,7 +183,7 @@ export class SleepDebtService {
    */
   getSleepProfile(ageGroup?: string): OptimalSleepProfile {
     const group = ageGroup || this._ageGroup();
-    return SLEEP_PROFILES[group] || SLEEP_PROFILES['adult'];
+    return SLEEP_PROFILES[group] || SLEEP_PROFILES["adult"];
   }
 
   /**
@@ -231,7 +233,8 @@ export class SleepDebtService {
 
     const last14DaysAverage =
       last14Days.length > 0
-        ? last14Days.reduce((sum, e) => sum + e.hoursSlept, 0) / last14Days.length
+        ? last14Days.reduce((sum, e) => sum + e.hoursSlept, 0) /
+          last14Days.length
         : profile.optimalHours;
 
     const qualityAverage =
@@ -242,7 +245,7 @@ export class SleepDebtService {
     // Calculate cumulative debt
     const cumulativeDebt = Math.max(
       0,
-      (profile.optimalHours - last7DaysAverage) * 7
+      (profile.optimalHours - last7DaysAverage) * 7,
     );
 
     // Determine debt level
@@ -261,43 +264,56 @@ export class SleepDebtService {
     const consistencyScore = this.calculateConsistencyScore(last7Days);
 
     // Calculate impact multipliers
-    const trainingImpact = this.calculateTrainingImpact(last7DaysAverage, qualityAverage, profile);
-    const recoveryImpact = this.calculateRecoveryImpact(last7DaysAverage, qualityAverage, profile);
-    const injuryRiskMultiplier = this.calculateInjuryRisk(last7DaysAverage, profile);
+    const trainingImpact = this.calculateTrainingImpact(
+      last7DaysAverage,
+      qualityAverage,
+      profile,
+    );
+    const recoveryImpact = this.calculateRecoveryImpact(
+      last7DaysAverage,
+      qualityAverage,
+      profile,
+    );
+    const injuryRiskMultiplier = this.calculateInjuryRisk(
+      last7DaysAverage,
+      profile,
+    );
 
     // Generate recommendations
     if (cumulativeDebt > 0) {
       recommendations.push(
-        `Sleep debt of ${cumulativeDebt.toFixed(1)} hours detected - prioritize sleep recovery`
+        `Sleep debt of ${cumulativeDebt.toFixed(1)} hours detected - prioritize sleep recovery`,
       );
     }
 
     if (last7DaysAverage < profile.minimumHours) {
       recommendations.push(
-        `Average sleep (${last7DaysAverage.toFixed(1)}h) below minimum (${profile.minimumHours}h) - increase sleep duration`
+        `Average sleep (${last7DaysAverage.toFixed(1)}h) below minimum (${profile.minimumHours}h) - increase sleep duration`,
       );
     }
 
     if (qualityAverage < profile.qualityThreshold) {
       recommendations.push(
-        `Sleep quality (${qualityAverage.toFixed(1)}/10) below optimal - focus on sleep hygiene`
+        `Sleep quality (${qualityAverage.toFixed(1)}/10) below optimal - focus on sleep hygiene`,
       );
     }
 
     if (consistencyScore < 70) {
       recommendations.push(
-        "Inconsistent sleep schedule detected - try to maintain regular bed/wake times"
+        "Inconsistent sleep schedule detected - try to maintain regular bed/wake times",
       );
     }
 
     if (injuryRiskMultiplier > 1.3) {
       recommendations.push(
-        "⚠️ ELEVATED INJURY RISK due to sleep deficit - consider reducing training intensity"
+        "⚠️ ELEVATED INJURY RISK due to sleep deficit - consider reducing training intensity",
       );
     }
 
     if (recommendations.length === 0) {
-      recommendations.push("Sleep patterns are within healthy range - maintain current habits");
+      recommendations.push(
+        "Sleep patterns are within healthy range - maintain current habits",
+      );
     }
 
     const analysis: SleepDebtAnalysis = {
@@ -328,7 +344,8 @@ export class SleepDebtService {
     const durations = entries.map((e) => e.hoursSlept);
     const mean = durations.reduce((a, b) => a + b, 0) / durations.length;
     const variance =
-      durations.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / durations.length;
+      durations.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) /
+      durations.length;
     const stdDev = Math.sqrt(variance);
 
     // Lower variance = higher consistency
@@ -338,10 +355,13 @@ export class SleepDebtService {
     // If we have bed/wake times, factor those in
     const entriesWithTimes = entries.filter((e) => e.bedTime && e.wakeTime);
     if (entriesWithTimes.length >= 3) {
-      const bedTimes = entriesWithTimes.map((e) => this.timeToMinutes(e.bedTime!));
+      const bedTimes = entriesWithTimes.map((e) =>
+        this.timeToMinutes(e.bedTime!),
+      );
       const bedMean = bedTimes.reduce((a, b) => a + b, 0) / bedTimes.length;
       const bedVariance =
-        bedTimes.reduce((sum, t) => sum + Math.pow(t - bedMean, 2), 0) / bedTimes.length;
+        bedTimes.reduce((sum, t) => sum + Math.pow(t - bedMean, 2), 0) /
+        bedTimes.length;
       const bedStdDev = Math.sqrt(bedVariance);
 
       // stdDev of 30 min or less = good, 60+ min = poor
@@ -369,7 +389,7 @@ export class SleepDebtService {
   private calculateTrainingImpact(
     avgSleep: number,
     avgQuality: number,
-    profile: OptimalSleepProfile
+    profile: OptimalSleepProfile,
   ): number {
     // Base impact from duration
     let durationFactor = 1.0;
@@ -378,7 +398,11 @@ export class SleepDebtService {
       durationFactor = 0.5 + (avgSleep / profile.minimumHours) * 0.5;
     } else if (avgSleep < profile.optimalHours) {
       // Minor reduction below optimal
-      durationFactor = 0.85 + ((avgSleep - profile.minimumHours) / (profile.optimalHours - profile.minimumHours)) * 0.15;
+      durationFactor =
+        0.85 +
+        ((avgSleep - profile.minimumHours) /
+          (profile.optimalHours - profile.minimumHours)) *
+          0.15;
     }
 
     // Quality factor
@@ -394,14 +418,18 @@ export class SleepDebtService {
   private calculateRecoveryImpact(
     avgSleep: number,
     avgQuality: number,
-    profile: OptimalSleepProfile
+    profile: OptimalSleepProfile,
   ): number {
     // Recovery is more sensitive to sleep than training capacity
     let durationFactor = 1.0;
     if (avgSleep < profile.minimumHours) {
       durationFactor = 0.4 + (avgSleep / profile.minimumHours) * 0.4;
     } else if (avgSleep < profile.optimalHours) {
-      durationFactor = 0.8 + ((avgSleep - profile.minimumHours) / (profile.optimalHours - profile.minimumHours)) * 0.2;
+      durationFactor =
+        0.8 +
+        ((avgSleep - profile.minimumHours) /
+          (profile.optimalHours - profile.minimumHours)) *
+          0.2;
     }
 
     const qualityFactor = 0.6 + (avgQuality / 10) * 0.4;
@@ -413,12 +441,17 @@ export class SleepDebtService {
    * Calculate injury risk multiplier
    * Based on Milewski et al. (2014) - athletes sleeping <8h have 1.7x injury risk
    */
-  private calculateInjuryRisk(avgSleep: number, profile: OptimalSleepProfile): number {
+  private calculateInjuryRisk(
+    avgSleep: number,
+    profile: OptimalSleepProfile,
+  ): number {
     if (avgSleep >= profile.optimalHours) {
       return 1.0; // Baseline risk
     } else if (avgSleep >= profile.minimumHours) {
       // Linear increase from 1.0 to 1.3
-      const ratio = (profile.optimalHours - avgSleep) / (profile.optimalHours - profile.minimumHours);
+      const ratio =
+        (profile.optimalHours - avgSleep) /
+        (profile.optimalHours - profile.minimumHours);
       return 1.0 + ratio * 0.3;
     } else {
       // Below minimum - significant increase
@@ -436,12 +469,12 @@ export class SleepDebtService {
     const now = new Date();
 
     const thisWeek = history.filter(
-      (e) => e.date >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      (e) => e.date >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
     );
     const lastWeek = history.filter(
       (e) =>
         e.date >= new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000) &&
-        e.date < new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        e.date < new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
     );
 
     if (thisWeek.length < 3 || lastWeek.length < 3) {
@@ -453,12 +486,16 @@ export class SleepDebtService {
       };
     }
 
-    const thisWeekAvg = thisWeek.reduce((sum, e) => sum + e.hoursSlept, 0) / thisWeek.length;
-    const lastWeekAvg = lastWeek.reduce((sum, e) => sum + e.hoursSlept, 0) / lastWeek.length;
+    const thisWeekAvg =
+      thisWeek.reduce((sum, e) => sum + e.hoursSlept, 0) / thisWeek.length;
+    const lastWeekAvg =
+      lastWeek.reduce((sum, e) => sum + e.hoursSlept, 0) / lastWeek.length;
     const change = thisWeekAvg - lastWeekAvg;
 
-    const thisWeekQuality = thisWeek.reduce((sum, e) => sum + e.quality, 0) / thisWeek.length;
-    const lastWeekQuality = lastWeek.reduce((sum, e) => sum + e.quality, 0) / lastWeek.length;
+    const thisWeekQuality =
+      thisWeek.reduce((sum, e) => sum + e.quality, 0) / thisWeek.length;
+    const lastWeekQuality =
+      lastWeek.reduce((sum, e) => sum + e.quality, 0) / lastWeek.length;
     const qualityChange = thisWeekQuality - lastWeekQuality;
 
     let direction: SleepTrend["direction"] = "stable";
@@ -503,7 +540,8 @@ export class SleepDebtService {
         {
           priority: "medium",
           category: "duration",
-          recommendation: "Start tracking sleep to receive personalized recommendations",
+          recommendation:
+            "Start tracking sleep to receive personalized recommendations",
           evidenceBase: "Sleep tracking enables data-driven optimization",
         },
       ];
@@ -522,7 +560,8 @@ export class SleepDebtService {
         priority: "high",
         category: "duration",
         recommendation: `Aim for ${profile.optimalHours} hours per night for optimal recovery`,
-        evidenceBase: "Mah et al. (2011) - Sleep extension improves athletic performance",
+        evidenceBase:
+          "Mah et al. (2011) - Sleep extension improves athletic performance",
       });
     }
 
@@ -531,14 +570,17 @@ export class SleepDebtService {
       recommendations.push({
         priority: "critical",
         category: "quality",
-        recommendation: "Focus on sleep hygiene: dark room, cool temperature, no screens 1h before bed",
-        evidenceBase: "Vitale et al. (2019) - Sleep hygiene for optimizing recovery",
+        recommendation:
+          "Focus on sleep hygiene: dark room, cool temperature, no screens 1h before bed",
+        evidenceBase:
+          "Vitale et al. (2019) - Sleep hygiene for optimizing recovery",
       });
     } else if (analysis.qualityAverage < 7) {
       recommendations.push({
         priority: "high",
         category: "quality",
-        recommendation: "Consider sleep environment improvements and pre-sleep routine",
+        recommendation:
+          "Consider sleep environment improvements and pre-sleep routine",
         evidenceBase: "Halson (2014) - Sleep quality affects recovery markers",
       });
     }
@@ -548,15 +590,18 @@ export class SleepDebtService {
       recommendations.push({
         priority: "high",
         category: "consistency",
-        recommendation: "Maintain consistent bed and wake times (within 30 minutes daily)",
-        evidenceBase: "Circadian rhythm consistency improves sleep quality and recovery",
+        recommendation:
+          "Maintain consistent bed and wake times (within 30 minutes daily)",
+        evidenceBase:
+          "Circadian rhythm consistency improves sleep quality and recovery",
       });
     } else if (analysis.consistencyScore < 80) {
       recommendations.push({
         priority: "medium",
         category: "consistency",
         recommendation: "Try to improve sleep schedule consistency",
-        evidenceBase: "Regular sleep patterns optimize hormonal recovery cycles",
+        evidenceBase:
+          "Regular sleep patterns optimize hormonal recovery cycles",
       });
     }
 
@@ -566,13 +611,16 @@ export class SleepDebtService {
         priority: "critical",
         category: "duration",
         recommendation: `You have ${analysis.cumulativeDebt.toFixed(1)} hours of sleep debt - add 1-2 hours per night for the next week`,
-        evidenceBase: "Sleep debt accumulates and requires extended recovery periods",
+        evidenceBase:
+          "Sleep debt accumulates and requires extended recovery periods",
       });
     }
 
     // Sort by priority
     const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-    recommendations.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    recommendations.sort(
+      (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
+    );
 
     return recommendations;
   }
@@ -597,7 +645,9 @@ export class SleepDebtService {
     // Calculate recovery time
     // Can realistically add 1-1.5 hours per night without disrupting schedule
     const extraSleepPerNight = 1.0;
-    const daysToRecover = Math.ceil(analysis.cumulativeDebt / extraSleepPerNight);
+    const daysToRecover = Math.ceil(
+      analysis.cumulativeDebt / extraSleepPerNight,
+    );
     const targetSleep = profile.optimalHours + extraSleepPerNight;
 
     // Create weekly plan
@@ -621,8 +671,12 @@ export class SleepDebtService {
     const trainingAdjustments: string[] = [];
 
     if (analysis.debtLevel === "critical") {
-      trainingAdjustments.push("Reduce training intensity by 50% until debt is below 7 hours");
-      trainingAdjustments.push("No high-intensity sessions until sleep improves");
+      trainingAdjustments.push(
+        "Reduce training intensity by 50% until debt is below 7 hours",
+      );
+      trainingAdjustments.push(
+        "No high-intensity sessions until sleep improves",
+      );
       trainingAdjustments.push("Focus on technical work and recovery sessions");
     } else if (analysis.debtLevel === "severe") {
       trainingAdjustments.push("Reduce training intensity by 30%");
@@ -633,8 +687,12 @@ export class SleepDebtService {
       trainingAdjustments.push("Consider reducing volume by 20%");
       trainingAdjustments.push("Prioritize sleep over early morning training");
     } else {
-      trainingAdjustments.push("Minor adjustments - prioritize sleep this week");
-      trainingAdjustments.push("Avoid training that interferes with sleep schedule");
+      trainingAdjustments.push(
+        "Minor adjustments - prioritize sleep this week",
+      );
+      trainingAdjustments.push(
+        "Avoid training that interferes with sleep schedule",
+      );
     }
 
     return {

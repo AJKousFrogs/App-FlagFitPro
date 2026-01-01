@@ -32,17 +32,21 @@ import { InstagramVideo } from "../video-curation.models";
       [style]="{ width: '90vw', maxWidth: '800px' }"
     >
       @if (video(); as v) {
-      <div class="preview-content">
-        <div class="preview-embed" [innerHTML]="embedHtml()"></div>
-        <div class="preview-details">
-          <p>{{ v.description }}</p>
-          <div class="preview-meta">
-            <span><i class="pi pi-user"></i> {{ v.creator.displayName }}</span>
-            <span><i class="pi pi-star-fill"></i> {{ v.rating.toFixed(1) }}</span>
-            <span><i class="pi pi-calendar"></i> {{ v.addedDate }}</span>
+        <div class="preview-content">
+          <div class="preview-embed" [innerHTML]="embedHtml()"></div>
+          <div class="preview-details">
+            <p>{{ v.description }}</p>
+            <div class="preview-meta">
+              <span
+                ><i class="pi pi-user"></i> {{ v.creator.displayName }}</span
+              >
+              <span
+                ><i class="pi pi-star-fill"></i> {{ v.rating.toFixed(1) }}</span
+              >
+              <span><i class="pi pi-calendar"></i> {{ v.addedDate }}</span>
+            </div>
           </div>
         </div>
-      </div>
       }
     </p-dialog>
   `,
@@ -94,4 +98,3 @@ export class VideoCurationPreviewDialogComponent {
   embedHtml = input<string>("");
   visible = model<boolean>(false);
 }
-

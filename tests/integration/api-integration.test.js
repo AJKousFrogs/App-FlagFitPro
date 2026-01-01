@@ -190,10 +190,13 @@ describe("API Integration Tests", () => {
       const firstResponse = await global.fetch("/.netlify/functions/dashboard");
       expect(firstResponse.ok).toBe(false);
 
-      const refreshResult = await global.fetch("/.netlify/functions/auth-login", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken: "refresh-token" }),
-      });
+      const refreshResult = await global.fetch(
+        "/.netlify/functions/auth-login",
+        {
+          method: "POST",
+          body: JSON.stringify({ refreshToken: "refresh-token" }),
+        },
+      );
       expect(refreshResult.ok).toBe(true);
 
       const retryResult = await global.fetch("/.netlify/functions/dashboard");
@@ -214,20 +217,27 @@ describe("API Integration Tests", () => {
         headers: new Map([["content-type", "application/json"]]),
         json: vi.fn().mockResolvedValue({
           success: true,
-          data: { id: 123, ...trainingData, created_at: new Date().toISOString() },
+          data: {
+            id: 123,
+            ...trainingData,
+            created_at: new Date().toISOString(),
+          },
         }),
       };
 
       global.fetch.mockResolvedValueOnce(saveResponse);
 
-      const response = await global.fetch("/.netlify/functions/training-sessions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer test-token",
+      const response = await global.fetch(
+        "/.netlify/functions/training-sessions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test-token",
+          },
+          body: JSON.stringify(trainingData),
         },
-        body: JSON.stringify(trainingData),
-      });
+      );
 
       const result = await response.json();
 
@@ -258,7 +268,7 @@ describe("API Integration Tests", () => {
         "/.netlify/functions/training-sessions?limit=10",
         {
           headers: { Authorization: "Bearer test-token" },
-        }
+        },
       );
 
       const result = await response.json();
@@ -277,7 +287,11 @@ describe("API Integration Tests", () => {
         headers: new Map([["content-type", "application/json"]]),
         json: vi.fn().mockResolvedValue({
           success: true,
-          data: { id: 123, ...updateData, updated_at: new Date().toISOString() },
+          data: {
+            id: 123,
+            ...updateData,
+            updated_at: new Date().toISOString(),
+          },
         }),
       };
 
@@ -292,7 +306,7 @@ describe("API Integration Tests", () => {
             Authorization: "Bearer test-token",
           },
           body: JSON.stringify(updateData),
-        }
+        },
       );
 
       const result = await response.json();
@@ -333,14 +347,17 @@ describe("API Integration Tests", () => {
 
       global.fetch.mockResolvedValueOnce(completeResponse);
 
-      const response = await global.fetch("/.netlify/functions/training-complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer test-token",
+      const response = await global.fetch(
+        "/.netlify/functions/training-complete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test-token",
+          },
+          body: JSON.stringify(completionData),
         },
-        body: JSON.stringify(completionData),
-      });
+      );
 
       const result = await response.json();
 
@@ -415,7 +432,7 @@ describe("API Integration Tests", () => {
         "/.netlify/functions/nutrition?startDate=2025-01-14&endDate=2025-01-15",
         {
           headers: { Authorization: "Bearer test-token" },
-        }
+        },
       );
 
       const result = await response.json();
@@ -446,7 +463,7 @@ describe("API Integration Tests", () => {
         "/.netlify/functions/analytics?period=30_days",
         {
           headers: { Authorization: "Bearer test-token" },
-        }
+        },
       );
 
       const result = await response.json();
@@ -478,9 +495,12 @@ describe("API Integration Tests", () => {
 
       global.fetch.mockResolvedValueOnce(statsResponse);
 
-      const response = await global.fetch("/.netlify/functions/training-stats", {
-        headers: { Authorization: "Bearer test-token" },
-      });
+      const response = await global.fetch(
+        "/.netlify/functions/training-stats",
+        {
+          headers: { Authorization: "Bearer test-token" },
+        },
+      );
 
       const result = await response.json();
 
@@ -522,7 +542,10 @@ describe("API Integration Tests", () => {
                 description: "Build leg power for acceleration",
               },
             ],
-            sources: ["Sports Science Journal 2024", "NFL Combine Training Guide"],
+            sources: [
+              "Sports Science Journal 2024",
+              "NFL Combine Training Guide",
+            ],
           },
         }),
       };
@@ -654,7 +677,7 @@ describe("API Integration Tests", () => {
       global.fetch.mockRejectedValueOnce(new Error("Network error"));
 
       await expect(
-        global.fetch("/.netlify/functions/dashboard")
+        global.fetch("/.netlify/functions/dashboard"),
       ).rejects.toThrow("Network error");
     });
 

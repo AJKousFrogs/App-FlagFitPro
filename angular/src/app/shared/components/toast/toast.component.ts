@@ -42,7 +42,10 @@ import { ToastModule } from "primeng/toast";
     >
       <ng-template let-message pTemplate="message">
         <div class="toast-content">
-          <div class="toast-icon-wrapper" [class]="'toast-icon-' + message.severity">
+          <div
+            class="toast-icon-wrapper"
+            [class]="'toast-icon-' + message.severity"
+          >
             <i [class]="getIcon(message.severity)"></i>
           </div>
           <div class="toast-text">
@@ -71,7 +74,7 @@ import { ToastModule } from "primeng/toast";
 
       :host ::ng-deep .app-toast .p-toast-message {
         border-radius: var(--radius-xl);
-        box-shadow: 
+        box-shadow:
           0 10px 40px -10px rgba(0, 0, 0, 0.2),
           0 4px 15px -5px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -197,7 +200,7 @@ import { ToastModule } from "primeng/toast";
         height: 2rem;
         border-radius: var(--radius-md);
         color: var(--color-text-secondary);
-        transition: 
+        transition:
           background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -348,7 +351,9 @@ export class ToastComponent implements OnInit, OnDestroy {
   preventDuplicates = input<boolean>(true);
   showTransformOptions = input<string>("translateX(100%)");
   hideTransformOptions = input<string>("translateX(100%)");
-  showTransitionOptions = input<string>("300ms cubic-bezier(0.34, 1.56, 0.64, 1)");
+  showTransitionOptions = input<string>(
+    "300ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+  );
   hideTransitionOptions = input<string>("200ms cubic-bezier(0.4, 0, 1, 1)");
 
   ngOnInit(): void {

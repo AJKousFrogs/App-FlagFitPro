@@ -44,7 +44,14 @@ interface InvitationData {
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule, TitleCasePipe],
+  imports: [
+    RouterModule,
+    CardModule,
+    ButtonModule,
+    MessageModule,
+    ToastModule,
+    TitleCasePipe,
+  ],
   template: `
     <p-toast></p-toast>
     <div class="accept-invitation-page">
@@ -72,7 +79,9 @@ interface InvitationData {
             <p class="login-message">
               You need to be signed in to accept team invitations.
               @if (invitationData()) {
-                You've been invited to join <strong>{{ invitationData()?.teamName }}</strong>.
+                You've been invited to join
+                <strong>{{ invitationData()?.teamName }}</strong
+                >.
               }
             </p>
             <p-button
@@ -141,7 +150,8 @@ interface InvitationData {
               @if (invitationData()?.role) {
                 <p class="role-info">
                   <i class="pi pi-tag"></i>
-                  Role: <strong>{{ invitationData()?.role | titlecase }}</strong>
+                  Role:
+                  <strong>{{ invitationData()?.role | titlecase }}</strong>
                 </p>
               }
               @if (invitationData()?.position) {
@@ -399,7 +409,9 @@ export class AcceptInvitationComponent implements OnInit {
 
       // Extract team data safely - Supabase returns joined data as an array or object
       const teamsJoined = invitation.teams;
-      const teamData = Array.isArray(teamsJoined) ? teamsJoined[0] : teamsJoined;
+      const teamData = Array.isArray(teamsJoined)
+        ? teamsJoined[0]
+        : teamsJoined;
       const teamNameValue = teamData?.name || "Unknown Team";
 
       // Set invitation data

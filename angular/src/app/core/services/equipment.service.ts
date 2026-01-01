@@ -7,7 +7,15 @@ import { LoggerService } from "./logger.service";
 export interface EquipmentItem {
   id: string;
   team_id: string;
-  item_type: "jersey" | "shorts" | "flags" | "belt" | "cleats" | "ball" | "cones" | "other";
+  item_type:
+    | "jersey"
+    | "shorts"
+    | "flags"
+    | "belt"
+    | "cleats"
+    | "ball"
+    | "cones"
+    | "other";
   name: string;
   description?: string;
   size?: string;
@@ -65,7 +73,11 @@ export class EquipmentService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
 
-  readonly EQUIPMENT_TYPES: Array<{ value: EquipmentItem["item_type"]; label: string; icon: string }> = [
+  readonly EQUIPMENT_TYPES: Array<{
+    value: EquipmentItem["item_type"];
+    label: string;
+    icon: string;
+  }> = [
     { value: "jersey", label: "Jersey", icon: "pi-user" },
     { value: "shorts", label: "Shorts", icon: "pi-user" },
     { value: "flags", label: "Flags", icon: "pi-flag" },
@@ -76,12 +88,20 @@ export class EquipmentService {
     { value: "other", label: "Other", icon: "pi-box" },
   ];
 
-  readonly CONDITIONS: Array<{ value: EquipmentItem["condition"]; label: string; severity: string }> = [
+  readonly CONDITIONS: Array<{
+    value: EquipmentItem["condition"];
+    label: string;
+    severity: string;
+  }> = [
     { value: "new", label: "New", severity: "success" },
     { value: "good", label: "Good", severity: "success" },
     { value: "fair", label: "Fair", severity: "warning" },
     { value: "poor", label: "Poor", severity: "danger" },
-    { value: "needs_replacement", label: "Needs Replacement", severity: "danger" },
+    {
+      value: "needs_replacement",
+      label: "Needs Replacement",
+      severity: "danger",
+    },
   ];
 
   /**
@@ -93,48 +113,57 @@ export class EquipmentService {
       itemType?: EquipmentItem["item_type"];
       condition?: EquipmentItem["condition"];
       availableOnly?: boolean;
-    }
+    },
   ): Observable<EquipmentItem[]> {
     const params: Record<string, unknown> = { team_id: teamId };
     if (options?.itemType) params["item_type"] = options.itemType;
     if (options?.condition) params["condition"] = options.condition;
     if (options?.availableOnly) params["available_only"] = true;
 
-    return this.apiService.get<EquipmentItem[]>("/api/equipment/items", params).pipe(
-      map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<EquipmentItem[]>("/api/equipment/items", params)
+      .pipe(
+        map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Get a single equipment item
    */
   getEquipmentItem(itemId: string): Observable<EquipmentItem | null> {
-    return this.apiService.get<EquipmentItem>(`/api/equipment/items/${itemId}`).pipe(
-      map((response: ApiResponse<EquipmentItem>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment item:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .get<EquipmentItem>(`/api/equipment/items/${itemId}`)
+      .pipe(
+        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment item:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Create a new equipment item
    */
   createEquipmentItem(
-    item: Omit<EquipmentItem, "id" | "quantity_available" | "created_at" | "updated_at">
+    item: Omit<
+      EquipmentItem,
+      "id" | "quantity_available" | "created_at" | "updated_at"
+    >,
   ): Observable<EquipmentItem | null> {
-    return this.apiService.post<EquipmentItem>("/api/equipment/items", item).pipe(
-      map((response: ApiResponse<EquipmentItem>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to create equipment item:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .post<EquipmentItem>("/api/equipment/items", item)
+      .pipe(
+        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to create equipment item:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -142,15 +171,19 @@ export class EquipmentService {
    */
   updateEquipmentItem(
     itemId: string,
-    updates: Partial<Omit<EquipmentItem, "id" | "team_id" | "created_at" | "updated_at">>
+    updates: Partial<
+      Omit<EquipmentItem, "id" | "team_id" | "created_at" | "updated_at">
+    >,
   ): Observable<EquipmentItem | null> {
-    return this.apiService.put<EquipmentItem>(`/api/equipment/items/${itemId}`, updates).pipe(
-      map((response: ApiResponse<EquipmentItem>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update equipment item:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .put<EquipmentItem>(`/api/equipment/items/${itemId}`, updates)
+      .pipe(
+        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to update equipment item:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -162,7 +195,7 @@ export class EquipmentService {
       catchError((error) => {
         this.logger.error("Failed to delete equipment item:", error);
         return of(false);
-      })
+      }),
     );
   }
 
@@ -171,45 +204,61 @@ export class EquipmentService {
    */
   getTeamAssignments(
     teamId: string,
-    options?: { playerId?: string; activeOnly?: boolean }
+    options?: { playerId?: string; activeOnly?: boolean },
   ): Observable<EquipmentAssignment[]> {
     const params: Record<string, unknown> = { team_id: teamId };
     if (options?.playerId) params["player_id"] = options.playerId;
     if (options?.activeOnly) params["active_only"] = true;
 
-    return this.apiService.get<EquipmentAssignment[]>("/api/equipment/assignments", params).pipe(
-      map((response: ApiResponse<EquipmentAssignment[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment assignments:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<EquipmentAssignment[]>("/api/equipment/assignments", params)
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment assignments:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Get equipment assignments for a specific player
    */
   getPlayerEquipment(playerId: string): Observable<EquipmentAssignment[]> {
-    return this.apiService.get<EquipmentAssignment[]>(`/api/equipment/player/${playerId}/assignments`).pipe(
-      map((response: ApiResponse<EquipmentAssignment[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch player equipment:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<
+        EquipmentAssignment[]
+      >(`/api/equipment/player/${playerId}/assignments`)
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch player equipment:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Check out equipment to a player
    */
-  checkoutEquipment(checkout: EquipmentCheckout): Observable<EquipmentAssignment | null> {
-    return this.apiService.post<EquipmentAssignment>("/api/equipment/checkout", checkout).pipe(
-      map((response: ApiResponse<EquipmentAssignment>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to checkout equipment:", error);
-        return of(null);
-      })
-    );
+  checkoutEquipment(
+    checkout: EquipmentCheckout,
+  ): Observable<EquipmentAssignment | null> {
+    return this.apiService
+      .post<EquipmentAssignment>("/api/equipment/checkout", checkout)
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment>) => response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to checkout equipment:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -218,70 +267,88 @@ export class EquipmentService {
   bulkCheckout(
     equipmentId: string,
     playerIds: string[],
-    quantity: number = 1
+    quantity: number = 1,
   ): Observable<EquipmentAssignment[]> {
-    return this.apiService.post<EquipmentAssignment[]>("/api/equipment/checkout/bulk", {
-      equipment_id: equipmentId,
-      player_ids: playerIds,
-      quantity,
-    }).pipe(
-      map((response: ApiResponse<EquipmentAssignment[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to bulk checkout equipment:", error);
-        return of([]);
+    return this.apiService
+      .post<EquipmentAssignment[]>("/api/equipment/checkout/bulk", {
+        equipment_id: equipmentId,
+        player_ids: playerIds,
+        quantity,
       })
-    );
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to bulk checkout equipment:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Return equipment from a player
    */
-  returnEquipment(returnData: EquipmentReturn): Observable<EquipmentAssignment | null> {
-    return this.apiService.post<EquipmentAssignment>("/api/equipment/return", returnData).pipe(
-      map((response: ApiResponse<EquipmentAssignment>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to return equipment:", error);
-        return of(null);
-      })
-    );
+  returnEquipment(
+    returnData: EquipmentReturn,
+  ): Observable<EquipmentAssignment | null> {
+    return this.apiService
+      .post<EquipmentAssignment>("/api/equipment/return", returnData)
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment>) => response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to return equipment:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Get equipment inventory summary for a team
    */
   getEquipmentSummary(teamId: string): Observable<EquipmentSummary | null> {
-    return this.apiService.get<EquipmentSummary>(`/api/equipment/summary/${teamId}`).pipe(
-      map((response: ApiResponse<EquipmentSummary>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment summary:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .get<EquipmentSummary>(`/api/equipment/summary/${teamId}`)
+      .pipe(
+        map((response: ApiResponse<EquipmentSummary>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment summary:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Get equipment that needs attention (low stock, needs replacement)
    */
   getEquipmentAlerts(teamId: string): Observable<EquipmentItem[]> {
-    return this.apiService.get<EquipmentItem[]>(`/api/equipment/alerts/${teamId}`).pipe(
-      map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment alerts:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<EquipmentItem[]>(`/api/equipment/alerts/${teamId}`)
+      .pipe(
+        map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment alerts:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Get assignment history for an equipment item
    */
   getEquipmentHistory(equipmentId: string): Observable<EquipmentAssignment[]> {
-    return this.apiService.get<EquipmentAssignment[]>(`/api/equipment/items/${equipmentId}/history`).pipe(
-      map((response: ApiResponse<EquipmentAssignment[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch equipment history:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<EquipmentAssignment[]>(`/api/equipment/items/${equipmentId}/history`)
+      .pipe(
+        map(
+          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch equipment history:", error);
+          return of([]);
+        }),
+      );
   }
 }

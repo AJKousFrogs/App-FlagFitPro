@@ -89,7 +89,12 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
   // Only cache GET requests
   if (req.method !== "GET") {
     // Clear related cache on mutations
-    if (req.method === "POST" || req.method === "PUT" || req.method === "DELETE" || req.method === "PATCH") {
+    if (
+      req.method === "POST" ||
+      req.method === "PUT" ||
+      req.method === "DELETE" ||
+      req.method === "PATCH"
+    ) {
       const urlPattern = new RegExp(req.url.split("/").slice(0, -1).join("/"));
       cacheService.clearPattern(urlPattern);
     }
@@ -119,10 +124,9 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
           cacheService.set(req.url, event);
         }
       }
-    })
+    }),
   );
 };
 
 // Export service for manual cache management
 export { cacheService as HttpCacheService };
-

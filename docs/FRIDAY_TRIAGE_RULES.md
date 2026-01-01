@@ -7,6 +7,7 @@
 ---
 
 ## Table of Contents
+
 1. [Severity Definitions](#severity-definitions)
 2. [App-Specific Examples](#app-specific-examples)
 3. [Fix Now vs After Friday](#fix-now-vs-after-friday)
@@ -21,6 +22,7 @@
 **Definition:** Issue that prevents core functionality, violates user privacy/safety, or could cause legal/compliance issues. **Must be fixed before Friday testing can proceed.**
 
 **Characteristics:**
+
 - Data privacy or consent violations
 - Security vulnerabilities exposing user data
 - Safety-critical calculations showing incorrect/misleading values
@@ -39,6 +41,7 @@
 **Definition:** Issue that significantly impacts user experience or blocks a key workflow, but has a workaround or doesn't violate privacy/safety. **Should be fixed before Friday if time permits.**
 
 **Characteristics:**
+
 - Workflow dead-ends (user stuck, no way forward)
 - Incorrect but non-safety-critical data display
 - Broken navigation or routes
@@ -57,6 +60,7 @@
 **Definition:** Issue that causes inconvenience but doesn't block functionality. **Fix after Friday unless trivial (<5 min fix).**
 
 **Characteristics:**
+
 - Copy/text mismatches or typos
 - Small UI inconsistencies (spacing, alignment)
 - Non-critical styling issues
@@ -74,42 +78,42 @@
 
 ### 🚨 Blocker Examples (FlagFit Pro)
 
-| Issue | Why Blocker | Privacy/Safety Impact |
-|-------|-------------|----------------------|
-| **Coach sees player data without consent** | Violates GDPR/CCPA consent requirements | Player's health data exposed without permission |
-| **AI recommendations run when user opted out** | Ignores explicit user preference | Unauthorized data processing |
-| **Account deletion doesn't revoke data access** | Incomplete deletion violates privacy law | Deleted user's data still accessible |
-| **ACWR shows values when insufficient data (<21 days)** | Misleading injury risk assessment | Athlete could overtrain based on invalid metric |
-| **Readiness score displays without minimum wellness check-ins** | False confidence in recovery status | Could lead to training while fatigued |
-| **Player health data visible to unauthorized team members** | Role-based access control failure | HIPAA-adjacent violation |
-| **Training load recommendations ignore injury status** | Safety-critical oversight | Could worsen existing injury |
-| **White screen crash on dashboard load** | Complete app failure | User cannot access any features |
+| Issue                                                           | Why Blocker                              | Privacy/Safety Impact                           |
+| --------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------- |
+| **Coach sees player data without consent**                      | Violates GDPR/CCPA consent requirements  | Player's health data exposed without permission |
+| **AI recommendations run when user opted out**                  | Ignores explicit user preference         | Unauthorized data processing                    |
+| **Account deletion doesn't revoke data access**                 | Incomplete deletion violates privacy law | Deleted user's data still accessible            |
+| **ACWR shows values when insufficient data (<21 days)**         | Misleading injury risk assessment        | Athlete could overtrain based on invalid metric |
+| **Readiness score displays without minimum wellness check-ins** | False confidence in recovery status      | Could lead to training while fatigued           |
+| **Player health data visible to unauthorized team members**     | Role-based access control failure        | HIPAA-adjacent violation                        |
+| **Training load recommendations ignore injury status**          | Safety-critical oversight                | Could worsen existing injury                    |
+| **White screen crash on dashboard load**                        | Complete app failure                     | User cannot access any features                 |
 
 ### ⚠️ Major Examples (FlagFit Pro)
 
-| Issue | Why Major | Workaround |
-|-------|-----------|------------|
-| **Workflow dead-end: can't submit wellness check-in** | Blocks daily tracking routine | Manual entry via admin |
+| Issue                                                         | Why Major                      | Workaround                    |
+| ------------------------------------------------------------- | ------------------------------ | ----------------------------- |
+| **Workflow dead-end: can't submit wellness check-in**         | Blocks daily tracking routine  | Manual entry via admin        |
 | **Incorrect risk label (shows "Optimal" when "Danger Zone")** | Misleading but visible to user | User can check raw ACWR value |
-| **Broken route: /training/schedule returns 404** | Can't access training calendar | Use dashboard quick actions |
-| **Session status shows "scheduled" for completed sessions** | Confusing but data is saved | Check training log instead |
-| **Charts don't load on analytics page** | Reduced functionality | Data visible in tables |
-| **Team invitation email not sent** | Blocks team onboarding | Share invite link manually |
-| **Search returns no results for valid queries** | Impacts discoverability | Browse categories instead |
-| **Export report downloads empty file** | Feature fails completely | Screenshot as workaround |
+| **Broken route: /training/schedule returns 404**              | Can't access training calendar | Use dashboard quick actions   |
+| **Session status shows "scheduled" for completed sessions**   | Confusing but data is saved    | Check training log instead    |
+| **Charts don't load on analytics page**                       | Reduced functionality          | Data visible in tables        |
+| **Team invitation email not sent**                            | Blocks team onboarding         | Share invite link manually    |
+| **Search returns no results for valid queries**               | Impacts discoverability        | Browse categories instead     |
+| **Export report downloads empty file**                        | Feature fails completely       | Screenshot as workaround      |
 
 ### 📝 Minor Examples (FlagFit Pro)
 
-| Issue | Why Minor | Impact |
-|-------|-----------|--------|
-| **Copy mismatch: "Log Training" vs "Add Session"** | Inconsistent terminology | Slight confusion |
-| **Button alignment off by 4px on mobile** | Visual imperfection | No functional impact |
-| **Date format inconsistent (MM/DD vs DD/MM)** | Localization issue | Readable either way |
-| **Loading spinner appears briefly on cached data** | Unnecessary visual | Milliseconds of delay |
-| **Tooltip text truncated on small screens** | Information loss | Core info still visible |
-| **Empty state illustration missing** | Visual gap | Text message still shows |
-| **Dark mode color slightly off-brand** | Aesthetic issue | Fully functional |
-| **Placeholder text not italicized** | Style inconsistency | Clearly placeholder |
+| Issue                                              | Why Minor                | Impact                   |
+| -------------------------------------------------- | ------------------------ | ------------------------ |
+| **Copy mismatch: "Log Training" vs "Add Session"** | Inconsistent terminology | Slight confusion         |
+| **Button alignment off by 4px on mobile**          | Visual imperfection      | No functional impact     |
+| **Date format inconsistent (MM/DD vs DD/MM)**      | Localization issue       | Readable either way      |
+| **Loading spinner appears briefly on cached data** | Unnecessary visual       | Milliseconds of delay    |
+| **Tooltip text truncated on small screens**        | Information loss         | Core info still visible  |
+| **Empty state illustration missing**               | Visual gap               | Text message still shows |
+| **Dark mode color slightly off-brand**             | Aesthetic issue          | Fully functional         |
+| **Placeholder text not italicized**                | Style inconsistency      | Clearly placeholder      |
 
 ---
 
@@ -145,6 +149,7 @@ T   │               │   Friday      Friday      time         │
 ### Quick Decision Checklist
 
 **Fix NOW if ANY of these are true:**
+
 - [ ] User data exposed to unauthorized party
 - [ ] Consent preference ignored
 - [ ] Safety metric shows misleading value
@@ -153,12 +158,14 @@ T   │               │   Friday      Friday      time         │
 - [ ] Legal/compliance risk
 
 **Fix BEFORE Friday if time permits:**
+
 - [ ] User can complete task but with friction
 - [ ] Workaround exists and is documented
 - [ ] Affects >20% of expected test scenarios
 - [ ] Fix is <30 minutes and low risk
 
 **Fix AFTER Friday:**
+
 - [ ] Cosmetic/visual only
 - [ ] Affects edge cases (<5% of users)
 - [ ] Enhancement request, not bug
@@ -166,17 +173,18 @@ T   │               │   Friday      Friday      time         │
 
 ### Time Budget Rule
 
-| Severity | Max Time to Fix | If Exceeds Budget |
-|----------|-----------------|-------------------|
-| Blocker | No limit | Keep fixing |
-| Major | 2 hours | Document workaround, defer |
-| Minor | 30 minutes | Defer to backlog |
+| Severity | Max Time to Fix | If Exceeds Budget          |
+| -------- | --------------- | -------------------------- |
+| Blocker  | No limit        | Keep fixing                |
+| Major    | 2 hours         | Document workaround, defer |
+| Minor    | 30 minutes      | Defer to backlog           |
 
 ---
 
 ## 30-Minute Triage Meeting Agenda
 
 ### Pre-Meeting (5 min before)
+
 - [ ] Collect all reported issues in shared document
 - [ ] Remove duplicates
 - [ ] Add reproduction steps where missing
@@ -184,10 +192,12 @@ T   │               │   Friday      Friday      time         │
 ### Meeting Structure
 
 #### 1. Roll Call & Context (2 min)
+
 - Attendees: Tech Lead, QA Lead, Product Owner
 - State: "We have X issues to triage. Goal: classify all, identify blockers."
 
 #### 2. Blocker Review (10 min)
+
 - Review each potential blocker
 - For each issue:
   - Read title + reproduction steps (30 sec)
@@ -197,18 +207,21 @@ T   │               │   Friday      Friday      time         │
 - **Output:** List of confirmed blockers with owners
 
 #### 3. Major Review (10 min)
+
 - Same process for Major candidates
 - Focus question: "Is there a workaround?"
 - If workaround exists, document it
 - **Output:** List of Majors, with workarounds noted
 
 #### 4. Minor Batch (3 min)
+
 - Quick scan of remaining issues
 - Confirm all are truly Minor
 - Move to backlog
 - **Output:** Backlog updated
 
 #### 5. Action Items & Close (5 min)
+
 - Recap blockers and owners
 - Set next check-in time (if blockers exist)
 - Confirm communication plan for testers
@@ -220,31 +233,37 @@ T   │               │   Friday      Friday      time         │
 ## Friday Triage - [DATE]
 
 ### Attendees
-- [ ] Tech Lead: ___
-- [ ] QA Lead: ___
-- [ ] Product Owner: ___
+
+- [ ] Tech Lead: \_\_\_
+- [ ] QA Lead: \_\_\_
+- [ ] Product Owner: \_\_\_
 
 ### Issues Reviewed: X total
 
 ### Blockers (Fix Now)
-| ID | Title | Owner | ETA |
-|----|-------|-------|-----|
-|    |       |       |     |
+
+| ID  | Title | Owner | ETA |
+| --- | ----- | ----- | --- |
+|     |       |       |     |
 
 ### Majors (Fix If Time)
-| ID | Title | Workaround | Owner |
-|----|-------|------------|-------|
-|    |       |            |       |
+
+| ID  | Title | Workaround | Owner |
+| --- | ----- | ---------- | ----- |
+|     |       |            |       |
 
 ### Minors (After Friday)
+
 - Moved X issues to backlog
 
 ### Next Check-in
-- Time: ___
+
+- Time: \_\_\_
 - Condition: When blockers resolved OR 2 hours
 
 ### Notes
-- 
+
+-
 ```
 
 ---
@@ -253,12 +272,12 @@ T   │               │   Friday      Friday      time         │
 
 ### Severity at a Glance
 
-| | Blocker 🚨 | Major ⚠️ | Minor 📝 |
-|---|---|---|---|
-| **Privacy/Safety** | Violated | Not affected | Not affected |
-| **User Impact** | Can't proceed | Friction/workaround | Annoyance |
-| **Fix Timeline** | Now | Before Friday | After Friday |
-| **Escalation** | Immediate | Same day | Sprint |
+|                    | Blocker 🚨    | Major ⚠️            | Minor 📝     |
+| ------------------ | ------------- | ------------------- | ------------ |
+| **Privacy/Safety** | Violated      | Not affected        | Not affected |
+| **User Impact**    | Can't proceed | Friction/workaround | Annoyance    |
+| **Fix Timeline**   | Now           | Before Friday       | After Friday |
+| **Escalation**     | Immediate     | Same day            | Sprint       |
 
 ### FlagFit Pro Critical Paths (Must Work)
 
@@ -271,11 +290,11 @@ T   │               │   Friday      Friday      time         │
 
 ### Emergency Contacts
 
-| Role | Contact | When to Reach |
-|------|---------|---------------|
-| Tech Lead | [Name] | Blocker found |
-| QA Lead | [Name] | Triage needed |
-| Product Owner | [Name] | Scope decision |
+| Role          | Contact | When to Reach  |
+| ------------- | ------- | -------------- |
+| Tech Lead     | [Name]  | Blocker found  |
+| QA Lead       | [Name]  | Triage needed  |
+| Product Owner | [Name]  | Scope decision |
 
 ---
 
@@ -289,22 +308,21 @@ T   │               │   Friday      Friday      time         │
 **Title:** [Brief description]
 
 **Steps to Reproduce:**
-1. 
-2. 
-3. 
+
+1.
+2.
+3.
 
 **Expected Result:**
 
-
 **Actual Result:**
-
 
 **Screenshots/Video:**
 
-
 **Environment:**
-- Browser: 
-- Device: 
+
+- Browser:
+- Device:
 - User Role: [Athlete/Coach/Admin]
 
 **Privacy/Safety Impact:** [Yes/No - explain if Yes]
@@ -314,5 +332,4 @@ T   │               │   Friday      Friday      time         │
 
 ---
 
-*Document maintained by FlagFit Pro Team. For questions, contact Tech Lead.*
-
+_Document maintained by FlagFit Pro Team. For questions, contact Tech Lead._

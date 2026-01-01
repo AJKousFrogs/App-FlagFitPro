@@ -5,6 +5,8 @@ import { logger } from "./logger.js";
 import { API_BASE_URL } from "./api-config.js";
 import { CHART_MOCK_DATA } from "./js/config/chart-mock-data.js";
 
+import { secureStorage } from "./secure-storage.js";
+
 class AnalyticsDataService {
   constructor() {
     this.baseURL = API_BASE_URL;
@@ -33,7 +35,7 @@ class AnalyticsDataService {
     try {
       const url = `${this.baseURL}${endpoint}`;
 
-      const token = localStorage.getItem("flagfit_token");
+      const token = await secureStorage.getAuthToken();
       const headers = {
         "Content-Type": "application/json",
         ...options.headers,

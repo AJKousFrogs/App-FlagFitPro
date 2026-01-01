@@ -1,6 +1,9 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FeedbackService, FeedbackMessage } from "../../../core/services/feedback.service";
+import {
+  FeedbackService,
+  FeedbackMessage,
+} from "../../../core/services/feedback.service";
 
 /**
  * FeedbackToastComponent
@@ -169,4 +172,3 @@ export class FeedbackToastComponent {
     }
   }
 }
-

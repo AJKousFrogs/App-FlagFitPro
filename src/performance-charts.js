@@ -405,7 +405,7 @@ export class PerformanceCharts {
           label: metric.label,
           data,
           borderColor: metric.color,
-          backgroundColor: `${metric.color  }20`,
+          backgroundColor: `${metric.color}20`,
           borderWidth: 2,
           fill: false,
           tension: 0.1,
@@ -497,7 +497,7 @@ export class PerformanceCharts {
 
   // Add chart interactivity
   addChartInteractivity(chart, type) {
-    const {canvas} = chart;
+    const { canvas } = chart;
 
     // Add click events for data points
     canvas.addEventListener("click", (event) => {
@@ -510,8 +510,8 @@ export class PerformanceCharts {
 
       if (points.length > 0) {
         const point = points[0];
-        const {datasetIndex} = point;
-        const {index} = point;
+        const { datasetIndex } = point;
+        const { index } = point;
         const dataset = chart.data.datasets[datasetIndex];
         const value = dataset.data[index];
 
@@ -616,8 +616,7 @@ export class PerformanceCharts {
         const values = perf.data.map((d) => d.value);
         const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
         const variance =
-          values.reduce((sum, v) => sum + (v - mean)**2, 0) /
-          values.length;
+          values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / values.length;
         totalVariance += variance;
       }
     });

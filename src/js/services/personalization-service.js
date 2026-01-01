@@ -1,4 +1,5 @@
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
+import { secureStorage } from "../../secure-storage.js";
 
 // Personalization Service
 // Enriches chatbot questions with user profile data (body metrics, injuries, training schedule, position)
@@ -23,15 +24,16 @@ class PersonalizationService {
     }
 
     try {
-      const authToken = this.getAuthToken();
+      const authToken = await secureStorage.getAuthToken();
       if (!authToken) {
         logger.debug("No auth token available for profile fetch");
         return null;
       }
 
       const response = await fetch(
-        `/.netlify/functions/user-profile?userId=${ 
-          encodeURIComponent(this.userId)}`,
+        `/.netlify/functions/user-profile?userId=${encodeURIComponent(
+          this.userId,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -356,34 +358,6 @@ class PersonalizationService {
    */
   clearCache() {
     this.profileCache = null;
-  }
-
-  /**
-   * Get auth token from storage
-   */
-  getAuthToken() {
-    try {
-      const authData = localStorage.getItem("auth");
-      if (authData) {
-        const parsed = JSON.parse(authData);
-        return parsed.token || parsed.access_token || null;
-      }
-
-      const sessionAuth = sessionStorage.getItem("auth");
-      if (sessionAuth) {
-        const parsed = JSON.parse(sessionAuth);
-        return parsed.token || parsed.access_token || null;
-      }
-
-      if (window.auth && window.auth.token) {
-        return window.auth.token;
-      }
-
-      return null;
-    } catch (error) {
-      logger.debug("Error getting auth token:", error);
-      return null;
-    }
   }
 }
 

@@ -2,13 +2,16 @@
 // Handles backend connectivity for athlete performance tracking and trend analysis
 
 import { logger } from "./logger.js";
+import { secureStorage } from "./secure-storage.js";
+import { API_BASE_URL } from "./api-config.js";
+import { config as envConfig } from "./config/environment.js";
 
 export class PerformanceAPI {
   constructor() {
     // API disabled - using localStorage only until Supabase integration
     // External API calls were causing CSP violations
-    this.useLocalStorageOnly = true;
-    this.baseUrl = null;
+    this.useLocalStorageOnly = envConfig.USE_MOCK_DATA !== false;
+    this.baseUrl = API_BASE_URL;
     this.endpoints = {
       measurements: "/athlete/measurements",
       performanceTests: "/athlete/performance-tests",
@@ -22,23 +25,7 @@ export class PerformanceAPI {
   // Authentication header
   // Upgraded to use secureStorage API with AES-GCM encryption
   async getAuthHeaders() {
-    let token = null;
-
-    // First, try to use secureStorage API (preferred method)
-    if (
-      window.secureStorage &&
-      typeof window.secureStorage.getAuthToken === "function"
-    ) {
-      try {
-        token = await window.secureStorage.getAuthToken();
-      } catch (_error) {
-        // Fallback to legacy method if secureStorage fails
-        token = localStorage.getItem("authToken");
-      }
-    } else {
-      // Fallback: legacy localStorage method
-      token = localStorage.getItem("authToken");
-    }
+    const token = await secureStorage.getAuthToken();
 
     return {
       "Content-Type": "application/json",
@@ -607,7 +594,7 @@ export const TrendAnalyzer = {
 
   calculateVariance(values) {
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const squaredDiffs = values.map((val) => (val - mean)**2);
+    const squaredDiffs = values.map((val) => (val - mean) ** 2);
     return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
   },
 

@@ -19,7 +19,10 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
-import { DATA_STATE_MESSAGES, METRIC_INSUFFICIENT_DATA } from "../../../shared/utils/privacy-ux-copy";
+import {
+  DATA_STATE_MESSAGES,
+  METRIC_INSUFFICIENT_DATA,
+} from "../../../shared/utils/privacy-ux-copy";
 
 @Component({
   selector: "app-enhanced-analytics",
@@ -92,7 +95,9 @@ import { DATA_STATE_MESSAGES, METRIC_INSUFFICIENT_DATA } from "../../../shared/u
                   <h4>{{ injuryRiskInsufficientMessage.title }}</h4>
                   <p>{{ injuryRiskInsufficientMessage.reason }}</p>
                   <p-button
-                    [label]="injuryRiskInsufficientMessage.actionLabel || 'Learn More'"
+                    [label]="
+                      injuryRiskInsufficientMessage.actionLabel || 'Learn More'
+                    "
                     icon="pi pi-info-circle"
                     [outlined]="true"
                     [routerLink]="injuryRiskInsufficientMessage.helpLink"
@@ -263,7 +268,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
       if (sessions && sessions.length > 0) {
         this.sessionCount.set(sessions.length);
-        
+
         // Group by week and calculate performance scores
         const weeklyData = this.calculateWeeklyPerformance(sessions);
         this.performanceChartData.set(weeklyData);
@@ -285,7 +290,10 @@ export class EnhancedAnalyticsComponent implements OnInit {
   }
 
   private calculateWeeklyPerformance(sessions: any[]): any {
-    const weeks: Map<number, { completed: number; total: number; duration: number }> = new Map();
+    const weeks: Map<
+      number,
+      { completed: number; total: number; duration: number }
+    > = new Map();
 
     sessions.forEach((session) => {
       const date = new Date(session.scheduled_date);
@@ -307,12 +315,15 @@ export class EnhancedAnalyticsComponent implements OnInit {
     const data: number[] = [];
 
     // Get last 7 weeks
-    const sortedWeeks = Array.from(weeks.entries()).sort((a, b) => a[0] - b[0]).slice(-7);
+    const sortedWeeks = Array.from(weeks.entries())
+      .sort((a, b) => a[0] - b[0])
+      .slice(-7);
 
     sortedWeeks.forEach(([weekNum, stats], index) => {
       labels.push(`Week ${index + 1}`);
       // Performance score: completion rate * intensity factor
-      const completionRate = stats.total > 0 ? (stats.completed / stats.total) * 100 : 0;
+      const completionRate =
+        stats.total > 0 ? (stats.completed / stats.total) * 100 : 0;
       data.push(Math.round(completionRate));
     });
 
@@ -339,7 +350,9 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
   private getWeekNumber(date: Date): number {
     const startOfYear = new Date(date.getFullYear(), 0, 1);
-    const days = Math.floor((date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
+    const days = Math.floor(
+      (date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000),
+    );
     return Math.ceil((days + startOfYear.getDay() + 1) / 7);
   }
 
@@ -353,7 +366,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     });
 
     const highIntensityCount = recentSessions.filter(
-      (s) => s.intensity === "high" || s.intensity === "very_high"
+      (s) => s.intensity === "high" || s.intensity === "very_high",
     ).length;
 
     // Risk increases with high intensity sessions
@@ -369,15 +382,23 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
   getRiskLabel(): string {
     const risk = this.injuryRisk();
-    if (risk < 20) return 'Low Risk';
-    if (risk < 40) return 'Moderate Risk';
-    if (risk < 60) return 'Elevated Risk';
-    return 'High Risk';
+    if (risk < 20) return "Low Risk";
+    if (risk < 40) return "Moderate Risk";
+    if (risk < 60) return "Elevated Risk";
+    return "High Risk";
   }
 
   private setDefaultChartData(): void {
     this.performanceChartData.set({
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
+      labels: [
+        "Week 1",
+        "Week 2",
+        "Week 3",
+        "Week 4",
+        "Week 5",
+        "Week 6",
+        "Week 7",
+      ],
       datasets: [
         {
           label: "Performance Score",
@@ -403,8 +424,9 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
     const csvContent = [
       "Week,Performance Score",
-      ...chartData.labels.map((label: string, i: number) =>
-        `${label},${chartData.datasets[0].data[i]}`
+      ...chartData.labels.map(
+        (label: string, i: number) =>
+          `${label},${chartData.datasets[0].data[i]}`,
       ),
     ].join("\n");
 

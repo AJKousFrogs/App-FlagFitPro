@@ -1,13 +1,13 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { SupabaseService } from './supabase.service';
-import { AuthService } from './auth.service';
-import { from, Observable, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
-import { LoggerService } from './logger.service';
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { SupabaseService } from "./supabase.service";
+import { AuthService } from "./auth.service";
+import { from, Observable, of } from "rxjs";
+import { map, catchError, tap } from "rxjs/operators";
+import { LoggerService } from "./logger.service";
 
 export interface ApprovalRequest {
   id: string;
-  request_type: 'team_creation' | 'role_elevation' | 'team_reinstatement';
+  request_type: "team_creation" | "role_elevation" | "team_reinstatement";
   team_id: string | null;
   user_id: string | null;
   requested_role: string | null;
@@ -15,7 +15,7 @@ export interface ApprovalRequest {
   olympic_goals: string | null;
   experience_level: string | null;
   federation_affiliation: string | null;
-  status: 'pending' | 'approved' | 'rejected' | 'more_info_needed';
+  status: "pending" | "approved" | "rejected" | "more_info_needed";
   reviewed_by: string | null;
   reviewed_at: string | null;
   review_notes: string | null;
@@ -36,7 +36,7 @@ export interface TeamApproval {
   team_type: string;
   country_code: string;
   olympic_track: string | null;
-  approval_status: 'pending_approval' | 'approved' | 'rejected' | 'suspended';
+  approval_status: "pending_approval" | "approved" | "rejected" | "suspended";
   approved_at: string | null;
   rejection_reason: string | null;
   application_notes: string | null;
@@ -54,7 +54,7 @@ export interface SuperadminStats {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class SuperadminService {
   private supabaseService = inject(SupabaseService);
@@ -70,7 +70,7 @@ export class SuperadminService {
     pendingRoles: 0,
     approvedTeams: 0,
     totalUsers: 0,
-    activeTeams: 0
+    activeTeams: 0,
   });
 
   // Computed values
@@ -94,21 +94,21 @@ export class SuperadminService {
 
     try {
       const { data, error } = await this.supabaseService.client
-        .from('superadmins')
-        .select('id, is_active')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
+        .from("superadmins")
+        .select("id, is_active")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
         .single();
 
       const isSuperadmin = !error && !!data;
       this.isSuperadmin.set(isSuperadmin);
-      
+
       if (isSuperadmin) {
         // Load pending approvals if superadmin
         this.loadPendingApprovals();
         this.loadStats();
       }
-      
+
       return isSuperadmin;
     } catch {
       this.isSuperadmin.set(false);
@@ -121,11 +121,12 @@ export class SuperadminService {
    */
   async loadPendingApprovals(): Promise<void> {
     this.isLoading.set(true);
-    
+
     try {
       const { data, error } = await this.supabaseService.client
-        .from('approval_requests')
-        .select(`
+        .from("approval_requests")
+        .select(
+          `
           *,
           teams:team_id (
             name,
@@ -133,24 +134,35 @@ export class SuperadminService {
             country_code,
             olympic_track
           )
-        `)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: true });
+        `,
+        )
+        .eq("status", "pending")
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
 
       // Transform data
-      const approvals: ApprovalRequest[] = (data || []).map((item: Record<string, unknown>) => ({
-        ...item,
-        team_name: (item['teams'] as Record<string, unknown>)?.['name'] as string,
-        team_type: (item['teams'] as Record<string, unknown>)?.['team_type'] as string,
-        country_code: (item['teams'] as Record<string, unknown>)?.['country_code'] as string,
-        olympic_track: (item['teams'] as Record<string, unknown>)?.['olympic_track'] as string,
-      })) as ApprovalRequest[];
+      const approvals: ApprovalRequest[] = (data || []).map(
+        (item: Record<string, unknown>) => ({
+          ...item,
+          team_name: (item["teams"] as Record<string, unknown>)?.[
+            "name"
+          ] as string,
+          team_type: (item["teams"] as Record<string, unknown>)?.[
+            "team_type"
+          ] as string,
+          country_code: (item["teams"] as Record<string, unknown>)?.[
+            "country_code"
+          ] as string,
+          olympic_track: (item["teams"] as Record<string, unknown>)?.[
+            "olympic_track"
+          ] as string,
+        }),
+      ) as ApprovalRequest[];
 
       this.pendingApprovals.set(approvals);
     } catch (error) {
-      this.logger.error('Error loading pending approvals:', error);
+      this.logger.error("Error loading pending approvals:", error);
     } finally {
       this.isLoading.set(false);
     }
@@ -163,37 +175,37 @@ export class SuperadminService {
     try {
       // Get pending teams count
       const { count: pendingTeams } = await this.supabaseService.client
-        .from('teams')
-        .select('*', { count: 'exact', head: true })
-        .eq('approval_status', 'pending_approval');
+        .from("teams")
+        .select("*", { count: "exact", head: true })
+        .eq("approval_status", "pending_approval");
 
       // Get pending role approvals count
       const { count: pendingRoles } = await this.supabaseService.client
-        .from('team_members')
-        .select('*', { count: 'exact', head: true })
-        .eq('role_approval_status', 'pending_approval')
-        .in('role', ['admin', 'coach']);
+        .from("team_members")
+        .select("*", { count: "exact", head: true })
+        .eq("role_approval_status", "pending_approval")
+        .in("role", ["admin", "coach"]);
 
       // Get approved teams count
       const { count: approvedTeams } = await this.supabaseService.client
-        .from('teams')
-        .select('*', { count: 'exact', head: true })
-        .eq('approval_status', 'approved');
+        .from("teams")
+        .select("*", { count: "exact", head: true })
+        .eq("approval_status", "approved");
 
       // Get total users count
       const { count: totalUsers } = await this.supabaseService.client
-        .from('users')
-        .select('*', { count: 'exact', head: true });
+        .from("users")
+        .select("*", { count: "exact", head: true });
 
       this.stats.set({
         pendingTeams: pendingTeams || 0,
         pendingRoles: pendingRoles || 0,
         approvedTeams: approvedTeams || 0,
         totalUsers: totalUsers || 0,
-        activeTeams: approvedTeams || 0
+        activeTeams: approvedTeams || 0,
       });
     } catch (error) {
-      this.logger.error('Error loading stats:', error);
+      this.logger.error("Error loading stats:", error);
     }
   }
 
@@ -202,9 +214,9 @@ export class SuperadminService {
    */
   async getAllTeams(): Promise<TeamApproval[]> {
     const { data, error } = await this.supabaseService.client
-      .from('teams')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("teams")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data as TeamApproval[];
@@ -215,20 +227,20 @@ export class SuperadminService {
    */
   approveTeam(teamId: string, notes?: string): Observable<boolean> {
     return from(
-      this.supabaseService.client.rpc('approve_team', {
+      this.supabaseService.client.rpc("approve_team", {
         p_team_id: teamId,
-        p_notes: notes || null
-      })
+        p_notes: notes || null,
+      }),
     ).pipe(
       map(() => true),
       tap(() => {
         this.loadPendingApprovals();
         this.loadStats();
       }),
-      catchError(error => {
-        this.logger.error('Error approving team:', error);
+      catchError((error) => {
+        this.logger.error("Error approving team:", error);
         return of(false);
-      })
+      }),
     );
   }
 
@@ -237,43 +249,47 @@ export class SuperadminService {
    */
   rejectTeam(teamId: string, reason: string): Observable<boolean> {
     return from(
-      this.supabaseService.client.rpc('reject_team', {
+      this.supabaseService.client.rpc("reject_team", {
         p_team_id: teamId,
-        p_reason: reason
-      })
+        p_reason: reason,
+      }),
     ).pipe(
       map(() => true),
       tap(() => {
         this.loadPendingApprovals();
         this.loadStats();
       }),
-      catchError(error => {
-        this.logger.error('Error rejecting team:', error);
+      catchError((error) => {
+        this.logger.error("Error rejecting team:", error);
         return of(false);
-      })
+      }),
     );
   }
 
   /**
    * Approve an admin/coach role
    */
-  approveAdminRole(teamId: string, userId: string, notes?: string): Observable<boolean> {
+  approveAdminRole(
+    teamId: string,
+    userId: string,
+    notes?: string,
+  ): Observable<boolean> {
     return from(
-      this.supabaseService.client.rpc('approve_admin_role', {
+      this.supabaseService.client.rpc("approve_admin_role", {
         p_team_id: teamId,
         p_user_id: userId,
-        p_notes: notes || null
-      })
+        p_notes: notes || null,
+      }),
     ).pipe(
       map(() => true),
       tap(() => {
         this.loadPendingApprovals();
         this.loadStats();
       }),
-      catchError(error => {
-        this.logger.error('Error approving admin role:', error);
+      catchError((error) => {
+        this.logger.error("Error approving admin role:", error);
         return of(false);
-      })
+      }),
     );
   }
 
@@ -283,20 +299,20 @@ export class SuperadminService {
   async addSuperadmin(userId: string, notes?: string): Promise<boolean> {
     try {
       const currentUser = this.authService.currentUser();
-      
+
       const { error } = await this.supabaseService.client
-        .from('superadmins')
+        .from("superadmins")
         .insert({
           user_id: userId,
           granted_by: currentUser?.id,
           notes: notes || null,
-          is_active: true
+          is_active: true,
         });
 
       if (error) throw error;
       return true;
     } catch (error) {
-      this.logger.error('Error adding superadmin:', error);
+      this.logger.error("Error adding superadmin:", error);
       return false;
     }
   }
@@ -307,14 +323,14 @@ export class SuperadminService {
   async removeSuperadmin(userId: string): Promise<boolean> {
     try {
       const { error } = await this.supabaseService.client
-        .from('superadmins')
+        .from("superadmins")
         .update({ is_active: false })
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      this.logger.error('Error removing superadmin:', error);
+      this.logger.error("Error removing superadmin:", error);
       return false;
     }
   }
@@ -322,14 +338,20 @@ export class SuperadminService {
   /**
    * Get all superadmins
    */
-  async getSuperadmins(): Promise<{ user_id: string; granted_at: string; notes: string | null }[]> {
+  async getSuperadmins(): Promise<
+    { user_id: string; granted_at: string; notes: string | null }[]
+  > {
     const { data, error } = await this.supabaseService.client
-      .from('superadmins')
-      .select('user_id, granted_at, notes')
-      .eq('is_active', true);
+      .from("superadmins")
+      .select("user_id, granted_at, notes")
+      .eq("is_active", true);
 
     if (error) throw error;
-    return (data || []) as { user_id: string; granted_at: string; notes: string | null }[];
+    return (data || []) as {
+      user_id: string;
+      granted_at: string;
+      notes: string | null;
+    }[];
   }
 
   /**
@@ -338,18 +360,18 @@ export class SuperadminService {
   async suspendTeam(teamId: string, reason: string): Promise<boolean> {
     try {
       const { error } = await this.supabaseService.client
-        .from('teams')
+        .from("teams")
         .update({
-          approval_status: 'suspended',
-          rejection_reason: reason
+          approval_status: "suspended",
+          rejection_reason: reason,
         })
-        .eq('id', teamId);
+        .eq("id", teamId);
 
       if (error) throw error;
       this.loadStats();
       return true;
     } catch (error) {
-      this.logger.error('Error suspending team:', error);
+      this.logger.error("Error suspending team:", error);
       return false;
     }
   }
@@ -360,18 +382,18 @@ export class SuperadminService {
   async reinstateTeam(teamId: string): Promise<boolean> {
     try {
       const { error } = await this.supabaseService.client
-        .from('teams')
+        .from("teams")
         .update({
-          approval_status: 'approved',
-          rejection_reason: null
+          approval_status: "approved",
+          rejection_reason: null,
         })
-        .eq('id', teamId);
+        .eq("id", teamId);
 
       if (error) throw error;
       this.loadStats();
       return true;
     } catch (error) {
-      this.logger.error('Error reinstating team:', error);
+      this.logger.error("Error reinstating team:", error);
       return false;
     }
   }

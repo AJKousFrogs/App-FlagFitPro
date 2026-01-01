@@ -33,7 +33,15 @@ import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
 
-type ItemType = "jersey" | "shorts" | "flags" | "belt" | "cleats" | "ball" | "cones" | "other";
+type ItemType =
+  | "jersey"
+  | "shorts"
+  | "flags"
+  | "belt"
+  | "cleats"
+  | "ball"
+  | "cones"
+  | "other";
 type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
 @Component({
@@ -83,7 +91,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <div class="summary-content">
                   <i class="pi pi-box summary-icon"></i>
                   <div class="summary-info">
-                    <span class="summary-value">{{ summary()!.total_items }}</span>
+                    <span class="summary-value">{{
+                      summary()!.total_items
+                    }}</span>
                     <span class="summary-label">Total Items</span>
                   </div>
                 </div>
@@ -93,7 +103,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <div class="summary-content">
                   <i class="pi pi-check-circle summary-icon success"></i>
                   <div class="summary-info">
-                    <span class="summary-value">{{ summary()!.available_quantity }}</span>
+                    <span class="summary-value">{{
+                      summary()!.available_quantity
+                    }}</span>
                     <span class="summary-label">Available</span>
                   </div>
                 </div>
@@ -103,17 +115,26 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <div class="summary-content">
                   <i class="pi pi-users summary-icon info"></i>
                   <div class="summary-info">
-                    <span class="summary-value">{{ summary()!.assigned_quantity }}</span>
+                    <span class="summary-value">{{
+                      summary()!.assigned_quantity
+                    }}</span>
                     <span class="summary-label">Assigned</span>
                   </div>
                 </div>
               </p-card>
 
-              <p-card styleClass="summary-card" [class.alert]="summary()!.items_needing_replacement > 0">
+              <p-card
+                styleClass="summary-card"
+                [class.alert]="summary()!.items_needing_replacement > 0"
+              >
                 <div class="summary-content">
-                  <i class="pi pi-exclamation-triangle summary-icon warning"></i>
+                  <i
+                    class="pi pi-exclamation-triangle summary-icon warning"
+                  ></i>
                   <div class="summary-info">
-                    <span class="summary-value">{{ summary()!.items_needing_replacement }}</span>
+                    <span class="summary-value">{{
+                      summary()!.items_needing_replacement
+                    }}</span>
                     <span class="summary-label">Need Replacement</span>
                   </div>
                 </div>
@@ -169,17 +190,25 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                     </div>
                   </td>
                   <td>
-                    <p-tag [value]="getTypeLabel(item.item_type)" [severity]="'info'"></p-tag>
+                    <p-tag
+                      [value]="getTypeLabel(item.item_type)"
+                      [severity]="'info'"
+                    ></p-tag>
                   </td>
                   <td>
-                    <span>{{ item.size || '-' }}</span>
+                    <span>{{ item.size || "-" }}</span>
                     @if (item.color) {
-                      <span class="color-dot" [style.background-color]="item.color"></span>
+                      <span
+                        class="color-dot"
+                        [style.background-color]="item.color"
+                      ></span>
                     }
                   </td>
                   <td>
                     <div class="quantity-cell">
-                      <span class="available">{{ item.quantity_available }}</span>
+                      <span class="available">{{
+                        item.quantity_available
+                      }}</span>
                       <span class="separator">/</span>
                       <span class="total">{{ item.quantity_total }}</span>
                     </div>
@@ -237,7 +266,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               <ng-template pTemplate="header">
                 <div class="card-header">
                   <h3>Active Assignments</h3>
-                  <p-badge [value]="activeAssignments().length.toString()"></p-badge>
+                  <p-badge
+                    [value]="activeAssignments().length.toString()"
+                  ></p-badge>
                 </div>
               </ng-template>
 
@@ -267,7 +298,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                       <td>{{ assignment.player_name }}</td>
                       <td>{{ assignment.equipment_name }}</td>
                       <td>{{ assignment.quantity_assigned }}</td>
-                      <td>{{ assignment.assigned_at | date: 'shortDate' }}</td>
+                      <td>{{ assignment.assigned_at | date: "shortDate" }}</td>
                       <td>
                         <p-button
                           icon="pi pi-arrow-left"
@@ -295,7 +326,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           <div class="dialog-form">
             <div class="form-field">
               <label>Name *</label>
-              <input pInputText [(ngModel)]="newItem.name" placeholder="e.g., Home Jersey" />
+              <input
+                pInputText
+                [(ngModel)]="newItem.name"
+                placeholder="e.g., Home Jersey"
+              />
             </div>
 
             <div class="form-row">
@@ -322,28 +357,47 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             <div class="form-row">
               <div class="form-field">
                 <label>Size</label>
-                <input pInputText [(ngModel)]="newItem.size" placeholder="e.g., Large, 42" />
+                <input
+                  pInputText
+                  [(ngModel)]="newItem.size"
+                  placeholder="e.g., Large, 42"
+                />
               </div>
 
               <div class="form-field">
                 <label>Color</label>
-                <input pInputText [(ngModel)]="newItem.color" placeholder="e.g., Red" />
+                <input
+                  pInputText
+                  [(ngModel)]="newItem.color"
+                  placeholder="e.g., Red"
+                />
               </div>
             </div>
 
             <div class="form-field">
               <label>Total Quantity *</label>
-              <p-inputNumber [(ngModel)]="newItem.quantity_total" [min]="1"></p-inputNumber>
+              <p-inputNumber
+                [(ngModel)]="newItem.quantity_total"
+                [min]="1"
+              ></p-inputNumber>
             </div>
 
             <div class="form-field">
               <label>Description</label>
-              <input pInputText [(ngModel)]="newItem.description" placeholder="Optional notes..." />
+              <input
+                pInputText
+                [(ngModel)]="newItem.description"
+                placeholder="Optional notes..."
+              />
             </div>
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" (onClick)="showAddDialog = false"></p-button>
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showAddDialog = false"
+            ></p-button>
             <p-button
               [label]="editingItem ? 'Save Changes' : 'Add Equipment'"
               icon="pi pi-check"
@@ -392,13 +446,21 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
               <div class="form-field">
                 <label>Notes</label>
-                <input pInputText [(ngModel)]="checkoutData.notes" placeholder="Optional..." />
+                <input
+                  pInputText
+                  [(ngModel)]="checkoutData.notes"
+                  placeholder="Optional..."
+                />
               </div>
             </div>
           }
 
           <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" (onClick)="showCheckoutDialog = false"></p-button>
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showCheckoutDialog = false"
+            ></p-button>
             <p-button
               label="Checkout"
               icon="pi pi-check"
@@ -418,8 +480,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           @if (returnAssignment()) {
             <div class="dialog-form">
               <p class="return-info">
-                Returning: <strong>{{ returnAssignment()!.equipment_name }}</strong>
-                from {{ returnAssignment()!.player_name }}
+                Returning:
+                <strong>{{ returnAssignment()!.equipment_name }}</strong> from
+                {{ returnAssignment()!.player_name }}
               </p>
 
               <div class="form-field">
@@ -433,13 +496,21 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
               <div class="form-field">
                 <label>Notes</label>
-                <input pInputText [(ngModel)]="returnData.notes" placeholder="Any damage or issues..." />
+                <input
+                  pInputText
+                  [(ngModel)]="returnData.notes"
+                  placeholder="Any damage or issues..."
+                />
               </div>
             </div>
           }
 
           <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" (onClick)="showReturnDialog = false"></p-button>
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showReturnDialog = false"
+            ></p-button>
             <p-button
               label="Process Return"
               icon="pi pi-check"
@@ -483,9 +554,15 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         font-size: 2rem;
         color: var(--primary-color);
 
-        &.success { color: var(--green-500); }
-        &.info { color: var(--blue-500); }
-        &.warning { color: var(--orange-500); }
+        &.success {
+          color: var(--green-500);
+        }
+        &.info {
+          color: var(--blue-500);
+        }
+        &.warning {
+          color: var(--orange-500);
+        }
       }
 
       .summary-info {
@@ -514,7 +591,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         padding: var(--space-4);
         border-bottom: 1px solid var(--surface-border);
 
-        h3 { margin: 0; }
+        h3 {
+          margin: 0;
+        }
       }
 
       .item-cell {
@@ -575,7 +654,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         gap: var(--space-1);
       }
 
-      .empty-state, .empty-message {
+      .empty-state,
+      .empty-message {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -587,7 +667,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           margin-bottom: var(--space-2);
         }
 
-        p { margin: 0; }
+        p {
+          margin: 0;
+        }
       }
 
       .dialog-form {
@@ -613,7 +695,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         gap: var(--space-4);
       }
 
-      .checkout-info, .return-info {
+      .checkout-info,
+      .return-info {
         padding: var(--space-3);
         background: var(--surface-100);
         border-radius: var(--border-radius);
@@ -682,7 +765,10 @@ export class EquipmentComponent implements OnInit {
 
   isCoach(): boolean {
     const user = this.authService.getUser();
-    return user?.user_metadata?.role === "coach" || user?.user_metadata?.role === "admin";
+    return (
+      user?.user_metadata?.role === "coach" ||
+      user?.user_metadata?.role === "admin"
+    );
   }
 
   getEmptyItem() {
@@ -755,16 +841,22 @@ export class EquipmentComponent implements OnInit {
   }
 
   getTypeLabel(type: string): string {
-    const found = this.equipmentService.EQUIPMENT_TYPES.find((t) => t.value === type);
+    const found = this.equipmentService.EQUIPMENT_TYPES.find(
+      (t) => t.value === type,
+    );
     return found?.label || type;
   }
 
   getConditionLabel(condition: string): string {
-    const found = this.equipmentService.CONDITIONS.find((c) => c.value === condition);
+    const found = this.equipmentService.CONDITIONS.find(
+      (c) => c.value === condition,
+    );
     return found?.label || condition;
   }
 
-  getConditionSeverity(condition: string): "success" | "warn" | "danger" | "info" {
+  getConditionSeverity(
+    condition: string,
+  ): "success" | "warn" | "danger" | "info" {
     const severities: Record<string, "success" | "warn" | "danger" | "info"> = {
       new: "success",
       good: "success",
@@ -796,7 +888,11 @@ export class EquipmentComponent implements OnInit {
   }
 
   canSaveItem(): boolean {
-    return !!(this.newItem.name && this.newItem.item_type && this.newItem.quantity_total > 0);
+    return !!(
+      this.newItem.name &&
+      this.newItem.item_type &&
+      this.newItem.quantity_total > 0
+    );
   }
 
   saveItem(): void {

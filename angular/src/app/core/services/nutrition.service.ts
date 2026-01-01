@@ -1,9 +1,9 @@
-import { Injectable, inject, computed, signal, effect } from "@angular/core";
-import { Observable, of, from, forkJoin } from "rxjs";
-import { map, catchError } from "rxjs/operators";
-import { SupabaseService } from "./supabase.service";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
+import { Observable, forkJoin, from, of } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface NutritionGoal {
   nutrient: string;
@@ -199,32 +199,36 @@ export class NutritionService {
     const today = new Date().toISOString().split("T")[0];
 
     // Subscribe to nutrition logs
-    this.realtimeService.subscribe<DatabaseNutritionLog>("nutrition_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload) => {
-        const logData = payload.new;
-        const logDate =
-          logData.log_date ||
-          new Date(logData.logged_at).toISOString().split("T")[0];
-        if (logDate === today) {
-          this.logger.info("[Nutrition] New food logged via realtime");
+    this.realtimeService.subscribe<DatabaseNutritionLog>(
+      "nutrition_logs",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (payload) => {
+          const logData = payload.new;
+          const logDate =
+            logData.log_date ||
+            new Date(logData.logged_at).toISOString().split("T")[0];
+          if (logDate === today) {
+            this.logger.info("[Nutrition] New food logged via realtime");
+            this.refreshTodaysMeals();
+          }
+        },
+        onUpdate: (payload) => {
+          const logData = payload.new;
+          const logDate =
+            logData.log_date ||
+            new Date(logData.logged_at).toISOString().split("T")[0];
+          if (logDate === today) {
+            this.logger.info("[Nutrition] Food log updated via realtime");
+            this.refreshTodaysMeals();
+          }
+        },
+        onDelete: () => {
+          this.logger.info("[Nutrition] Food log deleted via realtime");
           this.refreshTodaysMeals();
-        }
+        },
       },
-      onUpdate: (payload) => {
-        const logData = payload.new;
-        const logDate =
-          logData.log_date ||
-          new Date(logData.logged_at).toISOString().split("T")[0];
-        if (logDate === today) {
-          this.logger.info("[Nutrition] Food log updated via realtime");
-          this.refreshTodaysMeals();
-        }
-      },
-      onDelete: () => {
-        this.logger.info("[Nutrition] Food log deleted via realtime");
-        this.refreshTodaysMeals();
-      },
-    });
+    );
 
     // Subscribe to nutrition goals
     this.realtimeService.subscribe("nutrition_goals", `user_id=eq.${userId}`, {
@@ -337,7 +341,19 @@ export class NutritionService {
    * Add food to current meal
    * Logs food intake to nutrition_logs table
    */
-  addFoodToCurrentMeal(food: USDAFood | { name?: string; calories?: number; protein?: number; carbs?: number; fat?: number; fiber?: number; [key: string]: unknown }): Observable<boolean> {
+  addFoodToCurrentMeal(
+    food:
+      | USDAFood
+      | {
+          name?: string;
+          calories?: number;
+          protein?: number;
+          carbs?: number;
+          fat?: number;
+          fiber?: number;
+          [key: string]: unknown;
+        },
+  ): Observable<boolean> {
     const userId = this.userId();
 
     if (!userId) {
@@ -346,11 +362,17 @@ export class NutritionService {
     }
 
     // Type-safe property access for both USDAFood and custom food objects
-    const isUSDAFood = 'fdcId' in food;
-    const foodName = isUSDAFood ? (food as USDAFood).description : (food as { name?: string }).name;
+    const isUSDAFood = "fdcId" in food;
+    const foodName = isUSDAFood
+      ? (food as USDAFood).description
+      : (food as { name?: string }).name;
     const foodId = isUSDAFood ? (food as USDAFood).fdcId : null;
-    const calories = isUSDAFood ? ((food as USDAFood).energy ?? 0) : ((food as { calories?: number }).calories ?? 0);
-    const carbs = isUSDAFood ? ((food as USDAFood).carbohydrates ?? 0) : ((food as { carbs?: number }).carbs ?? 0);
+    const calories = isUSDAFood
+      ? ((food as USDAFood).energy ?? 0)
+      : ((food as { calories?: number }).calories ?? 0);
+    const carbs = isUSDAFood
+      ? ((food as USDAFood).carbohydrates ?? 0)
+      : ((food as { carbs?: number }).carbs ?? 0);
 
     return from(
       this.supabaseService.client
@@ -463,9 +485,12 @@ export class NutritionService {
   /**
    * Get today's nutrition totals from logs
    */
-  private getTodaysNutritionTotals(
-    userId: string,
-  ): Observable<{ calories: number; protein: number; carbs: number; fat: number }> {
+  private getTodaysNutritionTotals(userId: string): Observable<{
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  }> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayStr = today.toISOString().split("T")[0];
@@ -473,7 +498,7 @@ export class NutritionService {
     return from(
       this.supabaseService.client
         .from("nutrition_logs")
-        .select("calories, protein, carbs, fat")
+        .select("calories, protein, carbohydrates, fat")
         .eq("user_id", userId)
         .gte("logged_at", `${todayStr}T00:00:00`)
         .lte("logged_at", `${todayStr}T23:59:59`),
@@ -483,12 +508,13 @@ export class NutritionService {
           return { calories: 0, protein: 0, carbs: 0, fat: 0 };
         }
 
-        // Sum up all entries for today
+        // Sum up all entries for today (use carbohydrates from DB, map to carbs for UI)
         return data.reduce(
           (totals, log) => ({
             calories: totals.calories + (log.calories || 0),
             protein: totals.protein + (log.protein || 0),
-            carbs: totals.carbs + (log.carbs || 0),
+            carbs:
+              totals.carbs + (log.carbohydrates || (log as any).carbs || 0),
             fat: totals.fat + (log.fat || 0),
           }),
           { calories: 0, protein: 0, carbs: 0, fat: 0 },
@@ -567,7 +593,10 @@ export class NutritionService {
 
         // Group by meal type
         const mealsByType: Record<string, DatabaseNutritionLog[]> = data.reduce(
-          (acc: Record<string, DatabaseNutritionLog[]>, log: DatabaseNutritionLog) => {
+          (
+            acc: Record<string, DatabaseNutritionLog[]>,
+            log: DatabaseNutritionLog,
+          ) => {
             const type = log.meal_type || "other";
             if (!acc[type]) {
               acc[type] = [];
@@ -575,44 +604,47 @@ export class NutritionService {
             acc[type].push(log);
             return acc;
           },
-          {} as Record<string, DatabaseNutritionLog[]>
+          {} as Record<string, DatabaseNutritionLog[]>,
         );
 
         // Convert to Meal[] format
-        return (Object.entries(mealsByType) as [string, DatabaseNutritionLog[]][]).map(
-          ([type, logs]) => ({
-            id: type,
-            type,
-            timestamp: new Date(logs[0].logged_at),
-            totalCalories: logs.reduce(
-              (sum: number, log: DatabaseNutritionLog) => sum + (log.calories || 0),
-              0,
-            ),
-            carbs: logs.reduce(
-              (sum: number, log: DatabaseNutritionLog) => sum + (log.carbohydrates || 0),
-              0,
-            ),
-            protein: logs.reduce(
-              (sum: number, log: DatabaseNutritionLog) => sum + (log.protein || 0),
-              0,
-            ),
-            fat: logs.reduce(
-              (sum: number, log: DatabaseNutritionLog) => sum + (log.fat || 0),
-              0,
-            ),
-            foods: logs.map((log: DatabaseNutritionLog) => ({
-              name: log.food_name,
-              amount: 1,
-              unit: "serving",
-              calories: log.calories || 0,
-              nutrients: {
-                protein: log.protein || 0,
-                carbohydrates: log.carbohydrates || 0,
-                fat: log.fat || 0,
-              },
-            })),
-          }),
-        );
+        return (
+          Object.entries(mealsByType) as [string, DatabaseNutritionLog[]][]
+        ).map(([type, logs]) => ({
+          id: type,
+          type,
+          timestamp: new Date(logs[0].logged_at),
+          totalCalories: logs.reduce(
+            (sum: number, log: DatabaseNutritionLog) =>
+              sum + (log.calories || 0),
+            0,
+          ),
+          carbs: logs.reduce(
+            (sum: number, log: DatabaseNutritionLog) =>
+              sum + (log.carbohydrates || 0),
+            0,
+          ),
+          protein: logs.reduce(
+            (sum: number, log: DatabaseNutritionLog) =>
+              sum + (log.protein || 0),
+            0,
+          ),
+          fat: logs.reduce(
+            (sum: number, log: DatabaseNutritionLog) => sum + (log.fat || 0),
+            0,
+          ),
+          foods: logs.map((log: DatabaseNutritionLog) => ({
+            name: log.food_name,
+            amount: 1,
+            unit: "serving",
+            calories: log.calories || 0,
+            nutrients: {
+              protein: log.protein || 0,
+              carbohydrates: log.carbohydrates || 0,
+              fat: log.fat || 0,
+            },
+          })),
+        }));
       }),
       catchError((error) => {
         this.logger.error("[Nutrition] Failed to fetch meals:", error);
@@ -629,7 +661,9 @@ export class NutritionService {
     return from(this.fetchAINutritionSuggestions());
   }
 
-  private async fetchAINutritionSuggestions(): Promise<AINutritionSuggestion[]> {
+  private async fetchAINutritionSuggestions(): Promise<
+    AINutritionSuggestion[]
+  > {
     const userId = this.userId();
     if (!userId) {
       return [];
@@ -637,15 +671,18 @@ export class NutritionService {
 
     try {
       // Try to call the AI nutrition edge function
-      const { data, error } = await this.supabaseService.client.functions.invoke(
-        "ai-nutrition-suggestions",
-        {
-          body: { userId },
-        },
-      );
+      const { data, error } =
+        await this.supabaseService.client.functions.invoke(
+          "ai-nutrition-suggestions",
+          {
+            body: { userId },
+          },
+        );
 
       if (error) {
-        this.logger.debug("[Nutrition] AI edge function not available, using rule-based suggestions");
+        this.logger.debug(
+          "[Nutrition] AI edge function not available, using rule-based suggestions",
+        );
         return this.generateRuleBasedSuggestions();
       }
 
@@ -656,7 +693,9 @@ export class NutritionService {
     }
   }
 
-  private async generateRuleBasedSuggestions(): Promise<AINutritionSuggestion[]> {
+  private async generateRuleBasedSuggestions(): Promise<
+    AINutritionSuggestion[]
+  > {
     const userId = this.userId();
     if (!userId) return [];
 
@@ -677,7 +716,8 @@ export class NutritionService {
         id: "start-tracking",
         type: "general",
         title: "Start Tracking Your Nutrition",
-        description: "Log your meals to get personalized nutrition recommendations.",
+        description:
+          "Log your meals to get personalized nutrition recommendations.",
         priority: "high",
         confidence: 1.0,
       });
@@ -685,7 +725,8 @@ export class NutritionService {
     }
 
     // Analyze protein intake
-    const avgProtein = logs.reduce((sum, l) => sum + (l.protein || 0), 0) / logs.length;
+    const avgProtein =
+      logs.reduce((sum, l) => sum + (l.protein || 0), 0) / logs.length;
     if (avgProtein < 100) {
       suggestions.push({
         id: "increase-protein",
@@ -703,7 +744,8 @@ export class NutritionService {
     }
 
     // Check hydration
-    const avgWater = logs.reduce((sum, l) => sum + (l.water_ml || 0), 0) / logs.length;
+    const avgWater =
+      logs.reduce((sum, l) => sum + (l.water_ml || 0), 0) / logs.length;
     if (avgWater < 2000) {
       suggestions.push({
         id: "hydration",
@@ -726,7 +768,8 @@ export class NutritionService {
         id: "consistency",
         type: "timing",
         title: "Maintain Consistent Meal Timing",
-        description: "Regular meal timing supports stable energy levels and recovery.",
+        description:
+          "Regular meal timing supports stable energy levels and recovery.",
         priority: "low",
         confidence: 0.7,
       });
@@ -766,11 +809,15 @@ export class NutritionService {
 
         // Calculate averages
         const avgCalories =
-          data.reduce((sum, log: DatabaseNutritionLog) => sum + (log.calories || 0), 0) /
-          data.length;
+          data.reduce(
+            (sum, log: DatabaseNutritionLog) => sum + (log.calories || 0),
+            0,
+          ) / data.length;
         const avgProtein =
-          data.reduce((sum, log: DatabaseNutritionLog) => sum + (log.protein || 0), 0) /
-          data.length;
+          data.reduce(
+            (sum, log: DatabaseNutritionLog) => sum + (log.protein || 0),
+            0,
+          ) / data.length;
 
         // Generate insights
         if (avgCalories < 2000) {

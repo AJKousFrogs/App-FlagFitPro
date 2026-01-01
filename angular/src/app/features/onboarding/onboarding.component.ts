@@ -5,7 +5,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -15,7 +15,6 @@ import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
 import { FileUploadModule } from "primeng/fileupload";
 import { InputTextModule } from "primeng/inputtext";
@@ -39,7 +38,7 @@ interface OnboardingStep {
 
 interface InjuryEntry {
   area: string;
-  severity: 'minor' | 'moderate' | 'severe';
+  severity: "minor" | "moderate" | "severe";
   notes: string;
 }
 
@@ -61,7 +60,6 @@ interface InjuryEntry {
     CheckboxModule,
     FileUploadModule,
     AvatarModule,
-    Chip,
     ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -79,7 +77,11 @@ interface InjuryEntry {
         <p-card class="onboarding-card">
           <!-- Progress bar -->
           <div class="progress-section">
-            <p-progressBar [value]="progress()" [showValue]="false" styleClass="onboarding-progress"></p-progressBar>
+            <p-progressBar
+              [value]="progress()"
+              [showValue]="false"
+              styleClass="onboarding-progress"
+            ></p-progressBar>
             <div class="progress-info">
               <span class="progress-text">{{ progress() }}% complete</span>
               @if (lastSaved()) {
@@ -94,7 +96,11 @@ interface InjuryEntry {
             </div>
           </div>
 
-          <p-steps [model]="steps()" [activeIndex]="currentStep()" [readonly]="false"></p-steps>
+          <p-steps
+            [model]="steps()"
+            [activeIndex]="currentStep()"
+            [readonly]="false"
+          ></p-steps>
 
           <div class="onboarding-content">
             @if (currentStep() === 0) {
@@ -107,10 +113,12 @@ interface InjuryEntry {
                     <p class="step-description">Let's start with the basics</p>
                   </div>
                 </div>
-                
+
                 <div class="form-grid">
                   <div class="form-group span-2">
-                    <label for="onboarding-name">Full Name <span class="required">*</span></label>
+                    <label for="onboarding-name"
+                      >Full Name <span class="required">*</span></label
+                    >
                     <input
                       id="onboarding-name"
                       name="name"
@@ -122,9 +130,11 @@ interface InjuryEntry {
                       autocomplete="name"
                     />
                   </div>
-                  
+
                   <div class="form-group">
-                    <label for="onboarding-dob">Date of Birth <span class="required">*</span></label>
+                    <label for="onboarding-dob"
+                      >Date of Birth <span class="required">*</span></label
+                    >
                     <p-datepicker
                       inputId="onboarding-dob"
                       [(ngModel)]="onboardingData.dateOfBirth"
@@ -136,10 +146,14 @@ interface InjuryEntry {
                       styleClass="w-full"
                     ></p-datepicker>
                     @if (calculatedAge()) {
-                      <small class="age-hint">Age: {{ calculatedAge() }} years ({{ getAgeGroup() }})</small>
+                      <small class="age-hint"
+                        >Age: {{ calculatedAge() }} years ({{
+                          getAgeGroup()
+                        }})</small
+                      >
                     }
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="onboarding-gender">Gender</label>
                     <p-select
@@ -150,9 +164,11 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group">
-                    <label for="onboarding-country">Country <span class="required">*</span></label>
+                    <label for="onboarding-country"
+                      >Country <span class="required">*</span></label
+                    >
                     <p-select
                       inputId="onboarding-country"
                       [options]="countryOptions"
@@ -163,9 +179,11 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group">
-                    <label for="onboarding-phone">Phone Number <small>(optional)</small></label>
+                    <label for="onboarding-phone"
+                      >Phone Number <small>(optional)</small></label
+                    >
                     <input
                       id="onboarding-phone"
                       name="phone"
@@ -186,13 +204,17 @@ interface InjuryEntry {
                   <i class="pi pi-users step-icon"></i>
                   <div>
                     <h3>Team & Position</h3>
-                    <p class="step-description">Tell us about your role on the field</p>
+                    <p class="step-description">
+                      Tell us about your role on the field
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="form-grid">
                   <div class="form-group">
-                    <label for="onboarding-team">Team <span class="required">*</span></label>
+                    <label for="onboarding-team"
+                      >Team <span class="required">*</span></label
+                    >
                     <p-select
                       inputId="onboarding-team"
                       [options]="teams"
@@ -202,7 +224,7 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group jersey-input">
                     <label for="onboarding-jerseyNumber">Jersey #</label>
                     <input
@@ -218,9 +240,11 @@ interface InjuryEntry {
                       autocomplete="off"
                     />
                   </div>
-                  
+
                   <div class="form-group">
-                    <label for="onboarding-position">Primary Position <span class="required">*</span></label>
+                    <label for="onboarding-position"
+                      >Primary Position <span class="required">*</span></label
+                    >
                     <p-select
                       inputId="onboarding-position"
                       [options]="positions"
@@ -229,9 +253,11 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group">
-                    <label for="onboarding-secondaryPosition">Secondary Position</label>
+                    <label for="onboarding-secondaryPosition"
+                      >Secondary Position</label
+                    >
                     <p-select
                       inputId="onboarding-secondaryPosition"
                       [options]="positions"
@@ -241,29 +267,54 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   @if (isQBSelected()) {
                     <div class="form-group span-2">
-                      <label for="throwingArm">Throwing Arm <span class="required">*</span></label>
-                      <div class="arm-toggle">
+                      <label id="throwingArm-label"
+                        >Throwing Arm <span class="required">*</span></label
+                      >
+                      <div
+                        class="arm-toggle"
+                        role="radiogroup"
+                        aria-labelledby="throwingArm-label"
+                      >
                         @for (arm of throwingArmOptions; track arm.value) {
-                          <div 
+                          <button
+                            type="button"
+                            role="radio"
                             class="arm-option"
-                            [class.selected]="onboardingData.throwingArm === arm.value"
+                            [class.selected]="
+                              onboardingData.throwingArm === arm.value
+                            "
+                            [attr.aria-checked]="
+                              onboardingData.throwingArm === arm.value
+                            "
+                            [attr.data-cy]="'throwing-arm-' + arm.value"
                             (click)="onboardingData.throwingArm = arm.value"
+                            (keydown.enter)="
+                              onboardingData.throwingArm = arm.value
+                            "
+                            (keydown.space)="
+                              onboardingData.throwingArm = arm.value;
+                              $event.preventDefault()
+                            "
                           >
-                            @if (onboardingData.throwingArm === arm.value) {
-                              <i class="pi pi-check"></i>
-                            }
-                            {{ arm.label }}
-                          </div>
+                            <span class="arm-radio">
+                              @if (onboardingData.throwingArm === arm.value) {
+                                <i class="pi pi-check"></i>
+                              }
+                            </span>
+                            <span class="arm-label">{{ arm.label }}</span>
+                          </button>
                         }
                       </div>
                     </div>
                   }
-                  
+
                   <div class="form-group span-2">
-                    <label for="onboarding-experience">Experience Level <span class="required">*</span></label>
+                    <label for="onboarding-experience"
+                      >Experience Level <span class="required">*</span></label
+                    >
                     <p-select
                       inputId="onboarding-experience"
                       [options]="experienceLevels"
@@ -281,38 +332,84 @@ interface InjuryEntry {
                   <i class="pi pi-heart step-icon"></i>
                   <div>
                     <h3>Physical Measurements</h3>
-                    <p class="step-description">Used for load calculations and benchmarks</p>
+                    <p class="step-description">
+                      Used for load calculations and benchmarks
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Preferred Units</label>
-                  <div class="unit-toggle">
-                    <div 
-                      class="unit-option" 
+                  <label id="unit-system-label">Preferred Units</label>
+                  <div
+                    class="unit-toggle"
+                    role="radiogroup"
+                    aria-labelledby="unit-system-label"
+                  >
+                    <button
+                      type="button"
+                      role="radio"
+                      class="unit-option"
                       [class.selected]="onboardingData.unitSystem === 'metric'"
+                      [attr.aria-checked]="
+                        onboardingData.unitSystem === 'metric'
+                      "
+                      data-cy="unit-metric"
                       (click)="onboardingData.unitSystem = 'metric'"
+                      (keydown.enter)="onboardingData.unitSystem = 'metric'"
+                      (keydown.space)="
+                        onboardingData.unitSystem = 'metric';
+                        $event.preventDefault()
+                      "
                     >
-                      <i class="pi pi-globe"></i>
-                      <span>Metric</span>
-                      <small>cm / kg</small>
-                    </div>
-                    <div 
-                      class="unit-option" 
-                      [class.selected]="onboardingData.unitSystem === 'imperial'"
+                      <span class="unit-radio">
+                        @if (onboardingData.unitSystem === "metric") {
+                          <i class="pi pi-check"></i>
+                        }
+                      </span>
+                      <span class="unit-content">
+                        <i class="pi pi-globe"></i>
+                        <span>Metric</span>
+                        <small>cm / kg</small>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      class="unit-option"
+                      [class.selected]="
+                        onboardingData.unitSystem === 'imperial'
+                      "
+                      [attr.aria-checked]="
+                        onboardingData.unitSystem === 'imperial'
+                      "
+                      data-cy="unit-imperial"
                       (click)="onboardingData.unitSystem = 'imperial'"
+                      (keydown.enter)="onboardingData.unitSystem = 'imperial'"
+                      (keydown.space)="
+                        onboardingData.unitSystem = 'imperial';
+                        $event.preventDefault()
+                      "
                     >
-                      <i class="pi pi-flag"></i>
-                      <span>Imperial</span>
-                      <small>ft-in / lbs</small>
-                    </div>
+                      <span class="unit-radio">
+                        @if (onboardingData.unitSystem === "imperial") {
+                          <i class="pi pi-check"></i>
+                        }
+                      </span>
+                      <span class="unit-content">
+                        <i class="pi pi-flag"></i>
+                        <span>Imperial</span>
+                        <small>ft-in / lbs</small>
+                      </span>
+                    </button>
                   </div>
                 </div>
-                
-                @if (onboardingData.unitSystem === 'metric') {
+
+                @if (onboardingData.unitSystem === "metric") {
                   <div class="form-grid">
                     <div class="form-group">
-                      <label for="onboarding-height">Height (cm) <span class="required">*</span></label>
+                      <label for="onboarding-height"
+                        >Height (cm) <span class="required">*</span></label
+                      >
                       <input
                         id="onboarding-height"
                         name="height"
@@ -327,7 +424,9 @@ interface InjuryEntry {
                       />
                     </div>
                     <div class="form-group">
-                      <label for="onboarding-weight">Weight (kg) <span class="required">*</span></label>
+                      <label for="onboarding-weight"
+                        >Weight (kg) <span class="required">*</span></label
+                      >
                       <input
                         id="onboarding-weight"
                         name="weight"
@@ -375,7 +474,9 @@ interface InjuryEntry {
                       />
                     </div>
                     <div class="form-group">
-                      <label for="onboarding-weightLbs">Weight (lbs) <span class="required">*</span></label>
+                      <label for="onboarding-weightLbs"
+                        >Weight (lbs) <span class="required">*</span></label
+                      >
                       <input
                         id="onboarding-weightLbs"
                         name="weightLbs"
@@ -391,10 +492,13 @@ interface InjuryEntry {
                     </div>
                   </div>
                 }
-                
+
                 <div class="info-box">
                   <i class="pi pi-info-circle"></i>
-                  <span>Your measurements help us calculate appropriate training loads and provide position-specific benchmarks.</span>
+                  <span
+                    >Your measurements help us calculate appropriate training
+                    loads and provide position-specific benchmarks.</span
+                  >
                 </div>
               </div>
             } @else if (currentStep() === 3) {
@@ -404,14 +508,19 @@ interface InjuryEntry {
                   <i class="pi pi-shield step-icon"></i>
                   <div>
                     <h3>Health & Injury History</h3>
-                    <p class="step-description">Helps us avoid recommending harmful exercises</p>
+                    <p class="step-description">
+                      Helps us avoid recommending harmful exercises
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label>Current Injuries or Pain Areas</label>
-                  <p class="field-hint">Add any areas where you're currently experiencing pain or recovering from injury</p>
-                  
+                  <p class="field-hint">
+                    Add any areas where you're currently experiencing pain or
+                    recovering from injury
+                  </p>
+
                   <div class="injury-input-row">
                     <p-select
                       [options]="injuryAreas"
@@ -420,51 +529,92 @@ interface InjuryEntry {
                       class="injury-area-select"
                     ></p-select>
                     <p-select
-                      [options]="[{label:'Minor',value:'minor'},{label:'Moderate',value:'moderate'},{label:'Severe',value:'severe'}]"
+                      [options]="[
+                        { label: 'Minor', value: 'minor' },
+                        { label: 'Moderate', value: 'moderate' },
+                        { label: 'Severe', value: 'severe' },
+                      ]"
                       [(ngModel)]="newInjury.severity"
                       placeholder="Severity"
                       class="injury-severity-select"
                     ></p-select>
-                    <p-button 
-                      icon="pi pi-plus" 
+                    <p-button
+                      icon="pi pi-plus"
                       [rounded]="true"
                       [disabled]="!newInjury.area"
                       (onClick)="addCurrentInjury()"
                     ></p-button>
                   </div>
-                  
+
                   @if (onboardingData.currentInjuries.length > 0) {
                     <div class="injury-list">
-                      @for (injury of onboardingData.currentInjuries; track $index) {
-                        <div class="injury-chip" [class]="'severity-' + injury.severity">
+                      @for (
+                        injury of onboardingData.currentInjuries;
+                        track $index
+                      ) {
+                        <div
+                          class="injury-chip"
+                          [class]="'severity-' + injury.severity"
+                        >
                           <span>{{ injury.area }} ({{ injury.severity }})</span>
-                          <i class="pi pi-times" (click)="removeCurrentInjury($index)"></i>
+                          <i
+                            class="pi pi-times"
+                            (click)="removeCurrentInjury($index)"
+                          ></i>
                         </div>
                       }
                     </div>
                   }
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Injury History</label>
-                  <p class="field-hint">Select any significant past injuries (select all that apply)</p>
-                  <div class="checkbox-grid">
+                  <label id="injury-history-label">Injury History</label>
+                  <p class="field-hint">
+                    Select any significant past injuries (select all that apply)
+                  </p>
+                  <div
+                    class="checkbox-grid"
+                    role="group"
+                    aria-labelledby="injury-history-label"
+                  >
                     @for (injury of injuryHistoryOptions; track injury.value) {
-                      <div
+                      <button
+                        type="button"
+                        role="checkbox"
                         class="checkbox-card"
-                        [class.selected]="onboardingData.injuryHistory.includes(injury.value)"
+                        [class.selected]="
+                          onboardingData.injuryHistory.includes(injury.value)
+                        "
                         [class.none-selected]="injury.value === 'none'"
+                        [attr.aria-checked]="
+                          onboardingData.injuryHistory.includes(injury.value)
+                        "
+                        [attr.data-cy]="'injury-' + injury.value"
                         (click)="toggleInjuryHistory(injury.value)"
+                        (keydown.enter)="toggleInjuryHistory(injury.value)"
+                        (keydown.space)="
+                          toggleInjuryHistory(injury.value);
+                          $event.preventDefault()
+                        "
                       >
-                        <i [class]="injury.icon"></i>
-                        <span>{{ injury.label }}</span>
-                      </div>
+                        <span class="checkbox-indicator">
+                          @if (
+                            onboardingData.injuryHistory.includes(injury.value)
+                          ) {
+                            <i class="pi pi-check"></i>
+                          }
+                        </span>
+                        <i [class]="injury.icon" class="checkbox-icon"></i>
+                        <span class="checkbox-label">{{ injury.label }}</span>
+                      </button>
                     }
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label for="medicalNotes">Additional Medical Notes <small>(optional)</small></label>
+                  <label for="medicalNotes"
+                    >Additional Medical Notes <small>(optional)</small></label
+                  >
                   <textarea
                     id="medicalNotes"
                     pInputText
@@ -482,30 +632,55 @@ interface InjuryEntry {
                   <i class="pi pi-box step-icon"></i>
                   <div>
                     <h3>Available Equipment</h3>
-                    <p class="step-description">What do you have access to for training?</p>
+                    <p class="step-description">
+                      What do you have access to for training?
+                    </p>
                   </div>
                 </div>
-                
-                <div class="equipment-grid">
+
+                <div
+                  class="equipment-grid"
+                  role="group"
+                  aria-label="Available equipment"
+                >
                   @for (item of equipmentOptions; track item.value) {
-                    <div
+                    <button
+                      type="button"
+                      role="checkbox"
                       class="equipment-card"
-                      [class.selected]="onboardingData.equipmentAvailable.includes(item.value)"
+                      [class.selected]="
+                        onboardingData.equipmentAvailable.includes(item.value)
+                      "
                       [class.none-card]="item.value === 'none'"
+                      [attr.aria-checked]="
+                        onboardingData.equipmentAvailable.includes(item.value)
+                      "
+                      [attr.data-cy]="'equipment-' + item.value"
                       (click)="toggleEquipment(item.value)"
+                      (keydown.enter)="toggleEquipment(item.value)"
+                      (keydown.space)="
+                        toggleEquipment(item.value); $event.preventDefault()
+                      "
                     >
-                      <i [class]="item.icon"></i>
-                      <span>{{ item.label }}</span>
-                      @if (onboardingData.equipmentAvailable.includes(item.value)) {
-                        <i class="pi pi-check check-icon"></i>
-                      }
-                    </div>
+                      <span class="equipment-check">
+                        @if (
+                          onboardingData.equipmentAvailable.includes(item.value)
+                        ) {
+                          <i class="pi pi-check"></i>
+                        }
+                      </span>
+                      <i [class]="item.icon" class="equipment-icon"></i>
+                      <span class="equipment-label">{{ item.label }}</span>
+                    </button>
                   }
                 </div>
-                
+
                 <div class="info-box success">
                   <i class="pi pi-lightbulb"></i>
-                  <span>We'll recommend exercises based on what you have available. Bodyweight exercises are always an option!</span>
+                  <span
+                    >We'll recommend exercises based on what you have available.
+                    Bodyweight exercises are always an option!</span
+                  >
                 </div>
               </div>
             } @else if (currentStep() === 5) {
@@ -515,23 +690,41 @@ interface InjuryEntry {
                   <i class="pi pi-flag step-icon"></i>
                   <div>
                     <h3>Training Goals</h3>
-                    <p class="step-description">What do you want to achieve? (select all that apply)</p>
+                    <p class="step-description">
+                      What do you want to achieve? (select all that apply)
+                    </p>
                   </div>
                 </div>
-                
-                <div class="goals-grid">
+
+                <div
+                  class="goals-grid"
+                  role="group"
+                  aria-label="Training goals"
+                >
                   @for (goal of goals; track goal.id) {
-                    <div
+                    <button
+                      type="button"
+                      role="checkbox"
                       class="goal-card"
                       [class.selected]="onboardingData.goals.includes(goal.id)"
+                      [attr.aria-checked]="
+                        onboardingData.goals.includes(goal.id)
+                      "
+                      [attr.data-cy]="'goal-' + goal.id"
                       (click)="toggleGoal(goal.id)"
+                      (keydown.enter)="toggleGoal(goal.id)"
+                      (keydown.space)="
+                        toggleGoal(goal.id); $event.preventDefault()
+                      "
                     >
-                      <i [class]="goal.icon"></i>
-                      <span>{{ goal.label }}</span>
-                      @if (onboardingData.goals.includes(goal.id)) {
-                        <i class="pi pi-check check-badge"></i>
-                      }
-                    </div>
+                      <span class="goal-check">
+                        @if (onboardingData.goals.includes(goal.id)) {
+                          <i class="pi pi-check"></i>
+                        }
+                      </span>
+                      <i [class]="goal.icon" class="goal-icon"></i>
+                      <span class="goal-label">{{ goal.label }}</span>
+                    </button>
                   }
                 </div>
               </div>
@@ -542,13 +735,17 @@ interface InjuryEntry {
                   <i class="pi pi-calendar step-icon"></i>
                   <div>
                     <h3>Your Schedule</h3>
-                    <p class="step-description">Help us recommend the best training times</p>
+                    <p class="step-description">
+                      Help us recommend the best training times
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="form-grid">
                   <div class="form-group span-2">
-                    <label for="scheduleType">Work Schedule Type <span class="required">*</span></label>
+                    <label for="scheduleType"
+                      >Work Schedule Type <span class="required">*</span></label
+                    >
                     <p-select
                       id="scheduleType"
                       [options]="scheduleTypes"
@@ -557,9 +754,11 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group span-2">
-                    <label for="practicesPerWeek">Team Practices Per Week</label>
+                    <label for="practicesPerWeek"
+                      >Team Practices Per Week</label
+                    >
                     <p-select
                       id="practicesPerWeek"
                       [options]="practiceFrequencies"
@@ -568,18 +767,43 @@ interface InjuryEntry {
                       class="w-full"
                     ></p-select>
                   </div>
-                  
+
                   <div class="form-group span-2">
-                    <label>Practice Days</label>
-                    <div class="days-grid">
+                    <label id="practice-days-label">Practice Days</label>
+                    <div
+                      class="days-grid"
+                      role="group"
+                      aria-labelledby="practice-days-label"
+                    >
                       @for (day of weekDays; track day.value) {
-                        <div
+                        <button
+                          type="button"
+                          role="checkbox"
                           class="day-chip"
-                          [class.selected]="onboardingData.practiceDays.includes(day.value)"
+                          [class.selected]="
+                            onboardingData.practiceDays.includes(day.value)
+                          "
+                          [attr.aria-checked]="
+                            onboardingData.practiceDays.includes(day.value)
+                          "
+                          [attr.aria-label]="day.value"
+                          [attr.data-cy]="'day-' + day.value.toLowerCase()"
                           (click)="togglePracticeDay(day.value)"
+                          (keydown.enter)="togglePracticeDay(day.value)"
+                          (keydown.space)="
+                            togglePracticeDay(day.value);
+                            $event.preventDefault()
+                          "
                         >
-                          {{ day.label }}
-                        </div>
+                          <span class="day-label">{{ day.label }}</span>
+                          @if (
+                            onboardingData.practiceDays.includes(day.value)
+                          ) {
+                            <span class="day-check"
+                              ><i class="pi pi-check"></i
+                            ></span>
+                          }
+                        </button>
                       }
                     </div>
                   </div>
@@ -592,71 +816,190 @@ interface InjuryEntry {
                   <i class="pi pi-refresh step-icon"></i>
                   <div>
                     <h3>Mobility & Recovery</h3>
-                    <p class="step-description">Set up your daily recovery routine</p>
+                    <p class="step-description">
+                      Set up your daily recovery routine
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Morning Mobility <small>(10 min wake-up routine)</small></label>
-                  <div class="preference-options compact">
+                  <label id="morning-mobility-label"
+                    >Morning Mobility
+                    <small>(10 min wake-up routine)</small></label
+                  >
+                  <div
+                    class="preference-options compact"
+                    role="radiogroup"
+                    aria-labelledby="morning-mobility-label"
+                  >
                     @for (option of mobilityTimeOptions; track option.value) {
-                      <div
+                      <button
+                        type="button"
+                        role="radio"
                         class="preference-card"
-                        [class.selected]="onboardingData.morningMobility === option.value"
+                        [class.selected]="
+                          onboardingData.morningMobility === option.value
+                        "
+                        [attr.aria-checked]="
+                          onboardingData.morningMobility === option.value
+                        "
+                        [attr.data-cy]="'morning-mobility-' + option.value"
                         (click)="onboardingData.morningMobility = option.value"
+                        (keydown.enter)="
+                          onboardingData.morningMobility = option.value
+                        "
+                        (keydown.space)="
+                          onboardingData.morningMobility = option.value;
+                          $event.preventDefault()
+                        "
                       >
-                        <i [class]="option.icon"></i>
+                        <span class="preference-radio">
+                          @if (
+                            onboardingData.morningMobility === option.value
+                          ) {
+                            <i class="pi pi-check"></i>
+                          }
+                        </span>
+                        <i [class]="option.icon" class="preference-icon"></i>
                         <span class="preference-label">{{ option.label }}</span>
-                      </div>
+                      </button>
                     }
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Evening Mobility <small>(15 min before bed)</small></label>
-                  <div class="preference-options compact">
+                  <label id="evening-mobility-label"
+                    >Evening Mobility <small>(15 min before bed)</small></label
+                  >
+                  <div
+                    class="preference-options compact"
+                    role="radiogroup"
+                    aria-labelledby="evening-mobility-label"
+                  >
                     @for (option of mobilityTimeOptions; track option.value) {
-                      <div
+                      <button
+                        type="button"
+                        role="radio"
                         class="preference-card"
-                        [class.selected]="onboardingData.eveningMobility === option.value"
+                        [class.selected]="
+                          onboardingData.eveningMobility === option.value
+                        "
+                        [attr.aria-checked]="
+                          onboardingData.eveningMobility === option.value
+                        "
+                        [attr.data-cy]="'evening-mobility-' + option.value"
                         (click)="onboardingData.eveningMobility = option.value"
+                        (keydown.enter)="
+                          onboardingData.eveningMobility = option.value
+                        "
+                        (keydown.space)="
+                          onboardingData.eveningMobility = option.value;
+                          $event.preventDefault()
+                        "
                       >
-                        <i [class]="option.icon"></i>
+                        <span class="preference-radio">
+                          @if (
+                            onboardingData.eveningMobility === option.value
+                          ) {
+                            <i class="pi pi-check"></i>
+                          }
+                        </span>
+                        <i [class]="option.icon" class="preference-icon"></i>
                         <span class="preference-label">{{ option.label }}</span>
-                      </div>
+                      </button>
                     }
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Foam Rolling Preference</label>
-                  <div class="preference-options compact">
+                  <label id="foam-rolling-label">Foam Rolling Preference</label>
+                  <div
+                    class="preference-options compact"
+                    role="radiogroup"
+                    aria-labelledby="foam-rolling-label"
+                  >
                     @for (option of foamRollingOptions; track option.value) {
-                      <div
+                      <button
+                        type="button"
+                        role="radio"
                         class="preference-card"
-                        [class.selected]="onboardingData.foamRollingTime === option.value"
+                        [class.selected]="
+                          onboardingData.foamRollingTime === option.value
+                        "
+                        [attr.aria-checked]="
+                          onboardingData.foamRollingTime === option.value
+                        "
+                        [attr.data-cy]="'foam-rolling-' + option.value"
                         (click)="onboardingData.foamRollingTime = option.value"
+                        (keydown.enter)="
+                          onboardingData.foamRollingTime = option.value
+                        "
+                        (keydown.space)="
+                          onboardingData.foamRollingTime = option.value;
+                          $event.preventDefault()
+                        "
                       >
-                        <i [class]="option.icon"></i>
+                        <span class="preference-radio">
+                          @if (
+                            onboardingData.foamRollingTime === option.value
+                          ) {
+                            <i class="pi pi-check"></i>
+                          }
+                        </span>
+                        <i [class]="option.icon" class="preference-icon"></i>
                         <span class="preference-label">{{ option.label }}</span>
-                      </div>
+                      </button>
                     }
                   </div>
                 </div>
-                
+
                 <div class="form-group">
-                  <label>Rest Day Recovery</label>
-                  <div class="preference-options">
+                  <label id="rest-day-label">Rest Day Recovery</label>
+                  <div
+                    class="preference-options"
+                    role="radiogroup"
+                    aria-labelledby="rest-day-label"
+                  >
                     @for (option of restDayOptions; track option.value) {
-                      <div
-                        class="preference-card"
-                        [class.selected]="onboardingData.restDayPreference === option.value"
-                        (click)="onboardingData.restDayPreference = option.value"
+                      <button
+                        type="button"
+                        role="radio"
+                        class="preference-card with-description"
+                        [class.selected]="
+                          onboardingData.restDayPreference === option.value
+                        "
+                        [attr.aria-checked]="
+                          onboardingData.restDayPreference === option.value
+                        "
+                        [attr.data-cy]="'rest-day-' + option.value"
+                        (click)="
+                          onboardingData.restDayPreference = option.value
+                        "
+                        (keydown.enter)="
+                          onboardingData.restDayPreference = option.value
+                        "
+                        (keydown.space)="
+                          onboardingData.restDayPreference = option.value;
+                          $event.preventDefault()
+                        "
                       >
-                        <i [class]="option.icon"></i>
-                        <span class="preference-label">{{ option.label }}</span>
-                        <span class="preference-desc">{{ option.description }}</span>
-                      </div>
+                        <span class="preference-radio">
+                          @if (
+                            onboardingData.restDayPreference === option.value
+                          ) {
+                            <i class="pi pi-check"></i>
+                          }
+                        </span>
+                        <div class="preference-content">
+                          <i [class]="option.icon" class="preference-icon"></i>
+                          <span class="preference-label">{{
+                            option.label
+                          }}</span>
+                          <span class="preference-desc">{{
+                            option.description
+                          }}</span>
+                        </div>
+                      </button>
                     }
                   </div>
                 </div>
@@ -668,10 +1011,12 @@ interface InjuryEntry {
                   <i class="pi pi-check-circle step-icon success"></i>
                   <div>
                     <h3>You're All Set!</h3>
-                    <p class="step-description">Review your profile and start training</p>
+                    <p class="step-description">
+                      Review your profile and start training
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="summary-grid">
                   <!-- Profile Card -->
                   <div class="summary-card">
@@ -679,48 +1024,66 @@ interface InjuryEntry {
                     <div class="summary-content">
                       <div class="summary-row">
                         <span class="label">Name</span>
-                        <span class="value">{{ onboardingData.name || 'Not set' }}</span>
+                        <span class="value">{{
+                          onboardingData.name || "Not set"
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Age</span>
-                        <span class="value">{{ calculatedAge() || '?' }} years ({{ getAgeGroup() }})</span>
+                        <span class="value"
+                          >{{ calculatedAge() || "?" }} years ({{
+                            getAgeGroup()
+                          }})</span
+                        >
                       </div>
                       <div class="summary-row">
                         <span class="label">Gender</span>
-                        <span class="value">{{ getGenderLabel(onboardingData.gender) }}</span>
+                        <span class="value">{{
+                          getGenderLabel(onboardingData.gender)
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Country</span>
-                        <span class="value">{{ onboardingData.country || 'Not selected' }}</span>
+                        <span class="value">{{
+                          onboardingData.country || "Not selected"
+                        }}</span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Team Card -->
                   <div class="summary-card">
                     <h4><i class="pi pi-users"></i> Team</h4>
                     <div class="summary-content">
                       <div class="summary-row">
                         <span class="label">Team</span>
-                        <span class="value">{{ getTeamLabel(onboardingData.team) }}</span>
+                        <span class="value">{{
+                          getTeamLabel(onboardingData.team)
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Jersey</span>
-                        <span class="value jersey-badge">#{{ onboardingData.jerseyNumber || '?' }}</span>
+                        <span class="value jersey-badge"
+                          >#{{ onboardingData.jerseyNumber || "?" }}</span
+                        >
                       </div>
                       <div class="summary-row">
                         <span class="label">Position</span>
-                        <span class="value">{{ getPositionLabel(onboardingData.position) }}</span>
+                        <span class="value">{{
+                          getPositionLabel(onboardingData.position)
+                        }}</span>
                       </div>
                       @if (isQBSelected()) {
                         <div class="summary-row">
                           <span class="label">Throwing Arm</span>
-                          <span class="value">{{ getThrowingArmLabel(onboardingData.throwingArm) }}</span>
+                          <span class="value">{{
+                            getThrowingArmLabel(onboardingData.throwingArm)
+                          }}</span>
                         </div>
                       }
                     </div>
                   </div>
-                  
+
                   <!-- Physical Card -->
                   <div class="summary-card">
                     <h4><i class="pi pi-heart"></i> Physical</h4>
@@ -735,11 +1098,13 @@ interface InjuryEntry {
                       </div>
                       <div class="summary-row">
                         <span class="label">Experience</span>
-                        <span class="value">{{ getExperienceLabel(onboardingData.experience) }}</span>
+                        <span class="value">{{
+                          getExperienceLabel(onboardingData.experience)
+                        }}</span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Health Card -->
                   <div class="summary-card">
                     <h4><i class="pi pi-shield"></i> Health</h4>
@@ -757,54 +1122,73 @@ interface InjuryEntry {
                       <div class="summary-row">
                         <span class="label">Injury History</span>
                         <span class="value">
-                          @if (onboardingData.injuryHistory.includes('none') || onboardingData.injuryHistory.length === 0) {
+                          @if (
+                            onboardingData.injuryHistory.includes("none") ||
+                            onboardingData.injuryHistory.length === 0
+                          ) {
                             None 👍
                           } @else {
-                            {{ onboardingData.injuryHistory.length }} past injury(s)
+                            {{ onboardingData.injuryHistory.length }} past
+                            injury(s)
                           }
                         </span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Schedule Card -->
                   <div class="summary-card">
                     <h4><i class="pi pi-calendar"></i> Schedule</h4>
                     <div class="summary-content">
                       <div class="summary-row">
                         <span class="label">Schedule Type</span>
-                        <span class="value">{{ getScheduleLabel(onboardingData.scheduleType) }}</span>
+                        <span class="value">{{
+                          getScheduleLabel(onboardingData.scheduleType)
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Practices/Week</span>
-                        <span class="value">{{ onboardingData.practicesPerWeek || 0 }}</span>
+                        <span class="value">{{
+                          onboardingData.practicesPerWeek || 0
+                        }}</span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Recovery Card -->
                   <div class="summary-card">
                     <h4><i class="pi pi-refresh"></i> Recovery</h4>
                     <div class="summary-content">
                       <div class="summary-row">
                         <span class="label">Morning Mobility</span>
-                        <span class="value">{{ getMobilityLabel(onboardingData.morningMobility) }}</span>
+                        <span class="value">{{
+                          getMobilityLabel(onboardingData.morningMobility)
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Foam Rolling</span>
-                        <span class="value">{{ getFoamRollingLabel(onboardingData.foamRollingTime) }}</span>
+                        <span class="value">{{
+                          getFoamRollingLabel(onboardingData.foamRollingTime)
+                        }}</span>
                       </div>
                       <div class="summary-row">
                         <span class="label">Rest Days</span>
-                        <span class="value">{{ getRestDayOptionLabel(onboardingData.restDayPreference) }}</span>
+                        <span class="value">{{
+                          getRestDayOptionLabel(
+                            onboardingData.restDayPreference
+                          )
+                        }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="summary-note success">
                   <i class="pi pi-check-circle"></i>
-                  <span>Your personalized training plan is ready! You can update these settings anytime in your profile.</span>
+                  <span
+                    >Your personalized training plan is ready! You can update
+                    these settings anytime in your profile.</span
+                  >
                 </div>
               </div>
             }
@@ -861,10 +1245,19 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Team options
   teams = [
-    { label: "Ljubljana Frogs - International", value: "ljubljana_frogs_international" },
+    {
+      label: "Ljubljana Frogs - International",
+      value: "ljubljana_frogs_international",
+    },
     { label: "Ljubljana Frogs - Domestic", value: "ljubljana_frogs_domestic" },
-    { label: "American Samoa National Team - Men", value: "american_samoa_men" },
-    { label: "American Samoa National Team - Women", value: "american_samoa_women" },
+    {
+      label: "American Samoa National Team - Men",
+      value: "american_samoa_men",
+    },
+    {
+      label: "American Samoa National Team - Women",
+      value: "american_samoa_women",
+    },
   ];
 
   // Position options - updated for flag football
@@ -923,85 +1316,85 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Mobility time preferences
   mobilityTimeOptions = [
-    { 
-      label: "Every Day", 
-      value: "daily", 
+    {
+      label: "Every Day",
+      value: "daily",
       icon: "pi pi-check-circle",
-      description: "Recommended for best results"
+      description: "Recommended for best results",
     },
-    { 
-      label: "Most Days", 
-      value: "most_days", 
+    {
+      label: "Most Days",
+      value: "most_days",
       icon: "pi pi-clock",
-      description: "5-6 days per week"
+      description: "5-6 days per week",
     },
-    { 
-      label: "When I Can", 
-      value: "flexible", 
+    {
+      label: "When I Can",
+      value: "flexible",
       icon: "pi pi-calendar",
-      description: "Flexible schedule"
+      description: "Flexible schedule",
     },
-    { 
-      label: "Skip This", 
-      value: "skip", 
+    {
+      label: "Skip This",
+      value: "skip",
       icon: "pi pi-times",
-      description: "Not for me right now"
+      description: "Not for me right now",
     },
   ];
 
   // Foam rolling preferences
   foamRollingOptions = [
-    { 
-      label: "After Practice", 
-      value: "after_practice", 
+    {
+      label: "After Practice",
+      value: "after_practice",
       icon: "pi pi-flag",
-      description: "Best for recovery"
+      description: "Best for recovery",
     },
-    { 
-      label: "Before Bed", 
-      value: "before_bed", 
+    {
+      label: "Before Bed",
+      value: "before_bed",
       icon: "pi pi-moon",
-      description: "Helps with sleep"
+      description: "Helps with sleep",
     },
-    { 
-      label: "Both", 
-      value: "both", 
+    {
+      label: "Both",
+      value: "both",
       icon: "pi pi-check-circle",
-      description: "Maximum recovery"
+      description: "Maximum recovery",
     },
-    { 
-      label: "When Sore", 
-      value: "when_needed", 
+    {
+      label: "When Sore",
+      value: "when_needed",
       icon: "pi pi-exclamation-circle",
-      description: "As needed basis"
+      description: "As needed basis",
     },
   ];
 
   // Rest day preferences
   restDayOptions = [
-    { 
-      label: "Full Recovery", 
-      value: "full", 
+    {
+      label: "Full Recovery",
+      value: "full",
       icon: "pi pi-heart",
-      description: "Stretching + Foam Rolling (35 min)"
+      description: "Stretching + Foam Rolling (35 min)",
     },
-    { 
-      label: "Light Stretching", 
-      value: "light", 
+    {
+      label: "Light Stretching",
+      value: "light",
       icon: "pi pi-minus",
-      description: "Just stretching (20 min)"
+      description: "Just stretching (20 min)",
     },
-    { 
-      label: "Active Recovery", 
-      value: "active", 
+    {
+      label: "Active Recovery",
+      value: "active",
       icon: "pi pi-refresh",
-      description: "Morning + Stretching + Evening (45 min)"
+      description: "Morning + Stretching + Evening (45 min)",
     },
-    { 
-      label: "Complete Rest", 
-      value: "none", 
+    {
+      label: "Complete Rest",
+      value: "none",
       icon: "pi pi-stop",
-      description: "No structured routine"
+      description: "No structured routine",
     },
   ];
 
@@ -1171,7 +1564,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "🇷🇼 Rwanda", value: "Rwanda" },
     { label: "🇰🇳 Saint Kitts and Nevis", value: "Saint Kitts and Nevis" },
     { label: "🇱🇨 Saint Lucia", value: "Saint Lucia" },
-    { label: "🇻🇨 Saint Vincent and the Grenadines", value: "Saint Vincent and the Grenadines" },
+    {
+      label: "🇻🇨 Saint Vincent and the Grenadines",
+      value: "Saint Vincent and the Grenadines",
+    },
     { label: "🇼🇸 Samoa", value: "Samoa" },
     { label: "🇸🇲 San Marino", value: "San Marino" },
     { label: "🇸🇹 São Tomé and Príncipe", value: "São Tomé and Príncipe" },
@@ -1241,14 +1637,42 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   // Injury history options
   injuryHistoryOptions = [
     { label: "ACL Tear", value: "acl", icon: "pi pi-exclamation-triangle" },
-    { label: "Hamstring Strain", value: "hamstring_strain", icon: "pi pi-exclamation-circle" },
-    { label: "Ankle Sprain", value: "ankle_sprain", icon: "pi pi-exclamation-circle" },
-    { label: "Shoulder Injury", value: "shoulder", icon: "pi pi-exclamation-circle" },
-    { label: "Concussion", value: "concussion", icon: "pi pi-exclamation-triangle" },
+    {
+      label: "Hamstring Strain",
+      value: "hamstring_strain",
+      icon: "pi pi-exclamation-circle",
+    },
+    {
+      label: "Ankle Sprain",
+      value: "ankle_sprain",
+      icon: "pi pi-exclamation-circle",
+    },
+    {
+      label: "Shoulder Injury",
+      value: "shoulder",
+      icon: "pi pi-exclamation-circle",
+    },
+    {
+      label: "Concussion",
+      value: "concussion",
+      icon: "pi pi-exclamation-triangle",
+    },
     { label: "Back Injury", value: "back", icon: "pi pi-exclamation-circle" },
-    { label: "Knee Injury (other)", value: "knee_other", icon: "pi pi-exclamation-circle" },
-    { label: "Muscle Tear", value: "muscle_tear", icon: "pi pi-exclamation-triangle" },
-    { label: "Stress Fracture", value: "stress_fracture", icon: "pi pi-exclamation-triangle" },
+    {
+      label: "Knee Injury (other)",
+      value: "knee_other",
+      icon: "pi pi-exclamation-circle",
+    },
+    {
+      label: "Muscle Tear",
+      value: "muscle_tear",
+      icon: "pi pi-exclamation-triangle",
+    },
+    {
+      label: "Stress Fracture",
+      value: "stress_fracture",
+      icon: "pi pi-exclamation-triangle",
+    },
     { label: "None", value: "none", icon: "pi pi-check-circle" },
   ];
 
@@ -1261,9 +1685,17 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "Pull-up Bar", value: "pullup_bar", icon: "pi pi-minus" },
     { label: "Jump Rope", value: "jump_rope", icon: "pi pi-sync" },
     { label: "Yoga Mat", value: "yoga_mat", icon: "pi pi-stop" },
-    { label: "Agility Ladder", value: "agility_ladder", icon: "pi pi-th-large" },
+    {
+      label: "Agility Ladder",
+      value: "agility_ladder",
+      icon: "pi pi-th-large",
+    },
     { label: "Cones / Markers", value: "cones", icon: "pi pi-map-marker" },
-    { label: "Medicine Ball", value: "medicine_ball", icon: "pi pi-circle-fill" },
+    {
+      label: "Medicine Ball",
+      value: "medicine_ball",
+      icon: "pi pi-circle-fill",
+    },
     { label: "Football", value: "football", icon: "pi pi-star" },
     { label: "Gym Access", value: "gym", icon: "pi pi-building" },
     { label: "None / Bodyweight Only", value: "none", icon: "pi pi-user" },
@@ -1274,7 +1706,11 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "Training Reminders", value: "training", icon: "pi pi-calendar" },
     { label: "Recovery Alerts", value: "recovery", icon: "pi pi-heart" },
     { label: "Team Updates", value: "team", icon: "pi pi-users" },
-    { label: "Performance Insights", value: "insights", icon: "pi pi-chart-line" },
+    {
+      label: "Performance Insights",
+      value: "insights",
+      icon: "pi pi-chart-line",
+    },
   ];
 
   // Current injury being added
@@ -1292,7 +1728,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     country: null as string | null,
     phone: "",
     profilePhotoUrl: null as string | null,
-    
+
     // Step 2: Team & Position
     jerseyNumber: null as number | null,
     team: null as string | null,
@@ -1300,7 +1736,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     secondaryPosition: null as string | null,
     throwingArm: null as string | null, // For QBs
     experience: null as string | null,
-    
+
     // Step 3: Physical
     unitSystem: "metric" as "metric" | "imperial",
     heightCm: null as number | null,
@@ -1308,29 +1744,29 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     heightFt: null as number | null,
     heightIn: null as number | null,
     weightLbs: null as number | null,
-    
+
     // Step 4: Health & Injuries
     currentInjuries: [] as InjuryEntry[],
     injuryHistory: [] as string[],
     medicalNotes: "",
-    
+
     // Step 5: Equipment
     equipmentAvailable: [] as string[],
-    
+
     // Step 6: Goals
     goals: [] as string[],
-    
+
     // Step 7: Schedule
     scheduleType: null as string | null,
     practicesPerWeek: null as number | null,
     practiceDays: [] as string[],
-    
+
     // Step 8: Mobility & Recovery
     morningMobility: "daily" as string,
     eveningMobility: "daily" as string,
     foamRollingTime: "after_practice" as string,
     restDayPreference: "full" as string,
-    
+
     // Step 9: Notifications
     enableReminders: true,
     reminderTime: "08:00" as string,
@@ -1351,7 +1787,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Computed progress percentage
   progress = computed(() => {
-    const completed = this.steps().filter(s => s.completed).length;
+    const completed = this.steps().filter((s) => s.completed).length;
     return Math.round((completed / this.steps().length) * 100);
   });
 
@@ -1362,7 +1798,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     const birth = new Date(this.onboardingData.dateOfBirth);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
     return age;
@@ -1370,8 +1809,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Check if QB position is selected
   isQBSelected = computed(() => {
-    return this.onboardingData.position === "QB" || 
-           this.onboardingData.secondaryPosition === "QB";
+    return (
+      this.onboardingData.position === "QB" ||
+      this.onboardingData.secondaryPosition === "QB"
+    );
   });
 
   async ngOnInit(): Promise<void> {
@@ -1384,7 +1825,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
     // Load saved draft first
     this.loadDraft();
-    
+
     // Then load user profile
     await this.loadUserProfile();
   }
@@ -1392,7 +1833,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Save draft when leaving
     this.saveDraft();
-    
+
     if (this.autoSaveSubscription) {
       this.autoSaveSubscription.unsubscribe();
     }
@@ -1427,14 +1868,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       if (saved) {
         const draft = JSON.parse(saved);
-        
+
         // Restore data
         Object.assign(this.onboardingData, draft.data);
-        
+
         // Restore current step
         if (draft.currentStep !== undefined) {
           this.currentStep.set(draft.currentStep);
-          
+
           // Mark previous steps as completed
           const steps = this.steps();
           for (let i = 0; i < draft.currentStep; i++) {
@@ -1442,14 +1883,19 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           }
           this.steps.set([...steps]);
         }
-        
+
         // Convert date strings back to Date objects
         if (this.onboardingData.dateOfBirth) {
-          this.onboardingData.dateOfBirth = new Date(this.onboardingData.dateOfBirth);
+          this.onboardingData.dateOfBirth = new Date(
+            this.onboardingData.dateOfBirth,
+          );
         }
-        
+
         this.lastSaved.set(new Date(draft.savedAt));
-        this.toastService.info("Your previous progress has been restored", "Welcome back!");
+        this.toastService.info(
+          "Your previous progress has been restored",
+          "Welcome back!",
+        );
       }
     } catch (error) {
       this.logger.error("Failed to load draft:", error);
@@ -1477,7 +1923,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         .single();
 
       if (data && !error) {
-        this.onboardingData.name = data.full_name || `${data.first_name || ""} ${data.last_name || ""}`.trim();
+        this.onboardingData.name =
+          data.full_name ||
+          `${data.first_name || ""} ${data.last_name || ""}`.trim();
         this.onboardingData.position = data.position;
         this.onboardingData.experience = data.experience_level;
       }
@@ -1516,7 +1964,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         this.onboardingData.equipmentAvailable = ["none"];
       } else {
         // Remove "none" if selecting other equipment
-        const noneIndex = this.onboardingData.equipmentAvailable.indexOf("none");
+        const noneIndex =
+          this.onboardingData.equipmentAvailable.indexOf("none");
         if (noneIndex > -1) {
           this.onboardingData.equipmentAvailable.splice(noneIndex, 1);
         }
@@ -1564,11 +2013,16 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   }
 
   getGenderLabel(value: string | null): string {
-    return this.genderOptions.find(g => g.value === value)?.label || "Not selected";
+    return (
+      this.genderOptions.find((g) => g.value === value)?.label || "Not selected"
+    );
   }
 
   getThrowingArmLabel(value: string | null): string {
-    return this.throwingArmOptions.find(a => a.value === value)?.label || "Not selected";
+    return (
+      this.throwingArmOptions.find((a) => a.value === value)?.label ||
+      "Not selected"
+    );
   }
 
   getAgeGroup(): string {
@@ -1585,7 +2039,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    */
   validateCurrentStep(): { valid: boolean; message?: string } {
     const step = this.currentStep();
-    
+
     switch (step) {
       case 0: // Personal Info
         if (!this.onboardingData.name?.trim()) {
@@ -1598,22 +2052,28 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           return { valid: false, message: "Please select your country" };
         }
         return { valid: true };
-        
+
       case 1: // Team & Position
         if (!this.onboardingData.team) {
           return { valid: false, message: "Please select your team" };
         }
         if (!this.onboardingData.position) {
-          return { valid: false, message: "Please select your primary position" };
+          return {
+            valid: false,
+            message: "Please select your primary position",
+          };
         }
         if (!this.onboardingData.experience) {
-          return { valid: false, message: "Please select your experience level" };
+          return {
+            valid: false,
+            message: "Please select your experience level",
+          };
         }
         if (this.isQBSelected() && !this.onboardingData.throwingArm) {
           return { valid: false, message: "Please select your throwing arm" };
         }
         return { valid: true };
-        
+
       case 2: // Physical Measurements
         if (this.onboardingData.unitSystem === "metric") {
           if (!this.onboardingData.heightCm) {
@@ -1631,19 +2091,22 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           }
         }
         return { valid: true };
-        
+
       case 5: // Goals
         if (this.onboardingData.goals.length === 0) {
-          return { valid: false, message: "Please select at least one training goal" };
+          return {
+            valid: false,
+            message: "Please select at least one training goal",
+          };
         }
         return { valid: true };
-        
+
       case 6: // Schedule
         if (!this.onboardingData.scheduleType) {
           return { valid: false, message: "Please select your schedule type" };
         }
         return { valid: true };
-        
+
       default:
         return { valid: true };
     }
@@ -1653,16 +2116,18 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     // Validate current step before advancing
     const validation = this.validateCurrentStep();
     if (!validation.valid) {
-      this.toastService.warn(validation.message || "Please complete all required fields");
+      this.toastService.warn(
+        validation.message || "Please complete all required fields",
+      );
       return;
     }
-    
+
     if (this.currentStep() < this.steps().length - 1) {
       const steps = this.steps();
       steps[this.currentStep()].completed = true;
       this.steps.set([...steps]);
       this.currentStep.set(this.currentStep() + 1);
-      
+
       // Auto-save on step change
       this.saveDraft();
     }
@@ -1671,7 +2136,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   previousStep(): void {
     if (this.currentStep() > 0) {
       this.currentStep.set(this.currentStep() - 1);
-      
+
       // Auto-save on step change
       this.saveDraft();
     }
@@ -1679,42 +2144,55 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Helper methods for summary display
   getTeamLabel(value: string | null): string {
-    return this.teams.find(t => t.value === value)?.label || "Not selected";
+    return this.teams.find((t) => t.value === value)?.label || "Not selected";
   }
 
   getPositionLabel(value: string | null): string {
-    return this.positions.find(p => p.value === value)?.label || "Not selected";
+    return (
+      this.positions.find((p) => p.value === value)?.label || "Not selected"
+    );
   }
 
   getExperienceLabel(value: string | null): string {
-    return this.experienceLevels.find(e => e.value === value)?.label || "Not selected";
+    return (
+      this.experienceLevels.find((e) => e.value === value)?.label ||
+      "Not selected"
+    );
   }
 
   getScheduleLabel(value: string | null): string {
-    return this.scheduleTypes.find(s => s.value === value)?.label || "Not selected";
+    return (
+      this.scheduleTypes.find((s) => s.value === value)?.label || "Not selected"
+    );
   }
 
   getMobilityLabel(value: string): string {
-    return this.mobilityTimeOptions.find(o => o.value === value)?.label || value;
+    return (
+      this.mobilityTimeOptions.find((o) => o.value === value)?.label || value
+    );
   }
 
   getFoamRollingLabel(value: string): string {
-    return this.foamRollingOptions.find(o => o.value === value)?.label || value;
+    return (
+      this.foamRollingOptions.find((o) => o.value === value)?.label || value
+    );
   }
 
   getRestDayLabel(value: string): string {
-    const option = this.restDayOptions.find(o => o.value === value);
+    const option = this.restDayOptions.find((o) => o.value === value);
     return option ? `${option.label} - ${option.description}` : value;
   }
 
   getRestDayOptionLabel(value: string): string {
-    const option = this.restDayOptions.find(o => o.value === value);
+    const option = this.restDayOptions.find((o) => o.value === value);
     return option?.label || value;
   }
 
   getHeightDisplay(): string {
     if (this.onboardingData.unitSystem === "metric") {
-      return this.onboardingData.heightCm ? `${this.onboardingData.heightCm} cm` : "?";
+      return this.onboardingData.heightCm
+        ? `${this.onboardingData.heightCm} cm`
+        : "?";
     } else {
       if (this.onboardingData.heightFt || this.onboardingData.heightIn) {
         return `${this.onboardingData.heightFt || 0}'${this.onboardingData.heightIn || 0}"`;
@@ -1725,9 +2203,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   getWeightDisplay(): string {
     if (this.onboardingData.unitSystem === "metric") {
-      return this.onboardingData.weightKg ? `${this.onboardingData.weightKg} kg` : "?";
+      return this.onboardingData.weightKg
+        ? `${this.onboardingData.weightKg} kg`
+        : "?";
     } else {
-      return this.onboardingData.weightLbs ? `${this.onboardingData.weightLbs} lbs` : "?";
+      return this.onboardingData.weightLbs
+        ? `${this.onboardingData.weightLbs} lbs`
+        : "?";
     }
   }
 
@@ -1737,7 +2219,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       return this.onboardingData.heightCm;
     } else {
       if (this.onboardingData.heightFt || this.onboardingData.heightIn) {
-        const totalInches = (this.onboardingData.heightFt || 0) * 12 + (this.onboardingData.heightIn || 0);
+        const totalInches =
+          (this.onboardingData.heightFt || 0) * 12 +
+          (this.onboardingData.heightIn || 0);
         return Math.round(totalInches * 2.54);
       }
       return null;
@@ -1777,7 +2261,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         full_name: this.onboardingData.name,
         first_name: firstName,
         last_name: lastName,
-        date_of_birth: this.onboardingData.dateOfBirth?.toISOString().split('T')[0],
+        date_of_birth: this.onboardingData.dateOfBirth
+          ?.toISOString()
+          .split("T")[0],
         gender: this.onboardingData.gender,
         country: this.onboardingData.country,
         phone: this.onboardingData.phone || null,
@@ -1819,12 +2305,17 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // Clear the draft after successful completion
       this.clearDraft();
-      
-      this.toastService.success("Your profile and training preferences have been set up!", "Welcome to FlagFit Pro!");
+
+      this.toastService.success(
+        "Your profile and training preferences have been set up!",
+        "Welcome to FlagFit Pro!",
+      );
 
       setTimeout(() => {
         // Check for post-onboarding redirect (e.g., team invitation)
-        const postOnboardingRedirect = sessionStorage.getItem("postOnboardingRedirect");
+        const postOnboardingRedirect = sessionStorage.getItem(
+          "postOnboardingRedirect",
+        );
         if (postOnboardingRedirect) {
           sessionStorage.removeItem("postOnboardingRedirect");
           this.router.navigateByUrl(postOnboardingRedirect);
@@ -1833,7 +2324,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
       }, 1000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to complete setup. Please try again.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to complete setup. Please try again.";
       this.toastService.error(message);
     } finally {
       this.isCompleting.set(false);
@@ -1868,7 +2362,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       if (error) {
         this.logger.info("Saving preferences to localStorage:", error.message);
-        localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
+        localStorage.setItem(
+          "flagfit_preferences",
+          JSON.stringify(preferences),
+        );
       }
     } catch (e) {
       const preferences = {

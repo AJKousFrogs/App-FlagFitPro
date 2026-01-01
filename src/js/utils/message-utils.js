@@ -1,4 +1,4 @@
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Message Display Utilities - FlagFit Pro
 // Shared functions for showing/hiding alert messages across pages

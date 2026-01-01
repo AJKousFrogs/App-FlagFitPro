@@ -1,9 +1,9 @@
 // Profile Completion Manager for FlagFit Pro
 // Handles profile completion flow after registration
 
-import { logger } from "./logger.js";
 import { storageService } from "./js/services/storage-service-unified.js";
 import { setSafeContent } from "./js/utils/shared.js";
+import { logger } from "./logger.js";
 
 export class ProfileCompletionManager {
   constructor() {
@@ -704,7 +704,7 @@ export class ProfileCompletionManager {
     if (typeof window !== "undefined" && window.authManager) {
       window.authManager.showSuccess(message);
     } else {
-      alert(message);
+      alert(message); // eslint-disable-line no-alert
     }
   }
 

@@ -157,7 +157,11 @@ function getVerificationEmailTemplate(name, verificationUrl, role = "player") {
 }
 
 // Parental consent email template
-function getParentalConsentEmailTemplate(guardianName, minorName, verificationUrl) {
+function getParentalConsentEmailTemplate(
+  guardianName,
+  minorName,
+  verificationUrl,
+) {
   const appUrl = getAppUrl();
   return `
 <!DOCTYPE html>
@@ -252,19 +256,18 @@ exports.handler = async (event, context) => {
         return createErrorResponse(
           "Email service not configured. Please set up email credentials in environment variables.",
           503,
-          "service_unavailable"
+          "service_unavailable",
         );
       }
 
-      const { type, to, name, verificationUrl, token, role, minorName } = JSON.parse(
-        event.body || "{}",
-      );
+      const { type, to, name, verificationUrl, token, role, minorName } =
+        JSON.parse(event.body || "{}");
 
       if (!type || !to) {
         return createErrorResponse(
           "Email type and recipient (to) are required",
           400,
-          "validation_error"
+          "validation_error",
         );
       }
 
@@ -277,12 +280,13 @@ exports.handler = async (event, context) => {
             return createErrorResponse(
               "Verification URL or token is required",
               400,
-              "validation_error"
+              "validation_error",
             );
           }
 
           const url =
-            verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
+            verificationUrl ||
+            `${getAppUrl()}/verify-email.html?token=${token}`;
           const userRole = role || "player"; // Default to player if not provided
           mailOptions = {
             from: {
@@ -302,7 +306,7 @@ exports.handler = async (event, context) => {
             return createErrorResponse(
               "Verification URL is required for parental consent emails",
               400,
-              "validation_error"
+              "validation_error",
             );
           }
           mailOptions = {
@@ -312,7 +316,11 @@ exports.handler = async (event, context) => {
             },
             to,
             subject: `Parental Consent Required for ${minorName || "your child"} - FlagFit Pro`,
-            html: getParentalConsentEmailTemplate(name || "Parent/Guardian", minorName || "your child", verificationUrl),
+            html: getParentalConsentEmailTemplate(
+              name || "Parent/Guardian",
+              minorName || "your child",
+              verificationUrl,
+            ),
             text: `Dear ${name || "Parent/Guardian"},\n\n${minorName || "Your child"} has requested to use FlagFit Pro. As they are under 18, we require your consent.\n\nPlease verify consent by clicking this link:\n${verificationUrl}\n\nThis link expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
           };
           break;
@@ -321,7 +329,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             `Unsupported email type: ${type}`,
             400,
-            "validation_error"
+            "validation_error",
           );
       }
 

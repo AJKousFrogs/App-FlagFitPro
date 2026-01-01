@@ -3,9 +3,7 @@
 // Endpoint: /api/performance/metrics
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const {
-  createSuccessResponse,
-} = require("./utils/error-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**

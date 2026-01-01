@@ -270,7 +270,7 @@ exports.handler = async (event, context) => {
             "Authentication required to create posts",
             401,
             "auth_required",
-            requestId
+            requestId,
           );
         }
       }
@@ -281,14 +281,17 @@ exports.handler = async (event, context) => {
       // Handle GET requests
       if (event.httpMethod === "GET") {
         if (feed === "true" || feed === true) {
-          const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
+          const feedData = await getCommunityFeed(
+            userId,
+            parseInt(limit) || 20,
+          );
           return createSuccessResponse({ posts: feedData }, requestId);
         }
 
         if (leaderboard === "true" || leaderboard === true) {
           const leaderboardData = await getCommunityLeaderboard(
             category || "overall",
-            parseInt(limit) || 10
+            parseInt(limit) || 10,
           );
           return createSuccessResponse(leaderboardData, requestId);
         }
@@ -308,15 +311,12 @@ exports.handler = async (event, context) => {
             "Authentication required to create posts",
             401,
             "auth_required",
-            requestId
+            requestId,
           );
         }
 
         if (like) {
-          return createSuccessResponse(
-            { message: "Post liked" },
-            requestId
-          );
+          return createSuccessResponse({ message: "Post liked" }, requestId);
         }
 
         let postData = {};
@@ -327,7 +327,7 @@ exports.handler = async (event, context) => {
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId
+            requestId,
           );
         }
 
@@ -335,7 +335,7 @@ exports.handler = async (event, context) => {
         return createSuccessResponse(
           { ...newPost, message: "Post created successfully" },
           requestId,
-          201
+          201,
         );
       }
 
@@ -343,7 +343,7 @@ exports.handler = async (event, context) => {
         "Method not allowed",
         405,
         "method_not_allowed",
-        requestId
+        requestId,
       );
     },
   });

@@ -126,17 +126,15 @@ export class ResponseEnhancer {
     const lowerTopic = topic.toLowerCase();
 
     if (lowerTopic.includes("supplement") || lowerTopic.includes("dosage")) {
-      return (
-        `${response 
-        }\n\n**⚠️ Disclaimer:** Always consult with a healthcare provider or sports nutritionist before starting any new supplement, especially if you have existing health conditions or take medications.`
-      );
+      return `${
+        response
+      }\n\n**⚠️ Disclaimer:** Always consult with a healthcare provider or sports nutritionist before starting any new supplement, especially if you have existing health conditions or take medications.`;
     }
 
     if (lowerTopic.includes("injury") || lowerTopic.includes("treatment")) {
-      return (
-        `${response 
-        }\n\n**⚠️ Disclaimer:** This information is for educational purposes only and is not a substitute for professional medical advice. If you have a serious injury, consult a healthcare professional immediately.`
-      );
+      return `${
+        response
+      }\n\n**⚠️ Disclaimer:** This information is for educational purposes only and is not a substitute for professional medical advice. If you have a serious injury, consult a healthcare professional immediately.`;
     }
 
     return response;
@@ -208,7 +206,15 @@ export class ResponseEnhancer {
     if (source_quality_score !== null && source_quality_score !== undefined) {
       const qualityPercent = Math.round(source_quality_score * 100);
       let qualityEmoji = "⚪";
-      if (qualityPercent >= 80) {qualityEmoji = "🟢";} else if (qualityPercent >= 60) {qualityEmoji = "🟡";} else if (qualityPercent >= 40) {qualityEmoji = "🟠";} else {qualityEmoji = "🔴";}
+      if (qualityPercent >= 80) {
+        qualityEmoji = "🟢";
+      } else if (qualityPercent >= 60) {
+        qualityEmoji = "🟡";
+      } else if (qualityPercent >= 40) {
+        qualityEmoji = "🟠";
+      } else {
+        qualityEmoji = "🔴";
+      }
 
       indicators += `${qualityEmoji} **Source Quality:** ${qualityPercent}%\n`;
     }

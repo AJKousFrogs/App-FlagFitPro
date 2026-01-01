@@ -98,7 +98,7 @@ describe("EvidenceConfigService", () => {
       if (presets.length > 0) {
         service.setActivePreset(presets[0].id);
         expect(mockLoggerService.info).toHaveBeenCalledWith(
-          expect.stringContaining("Preset changed to:")
+          expect.stringContaining("Preset changed to:"),
         );
       }
     });
@@ -260,7 +260,7 @@ describe("EvidenceConfigService", () => {
       if (presets.length > 1) {
         const originalAcwr = service.getACWRConfig();
         const newPreset = presets.find(
-          (p) => p.id !== service.getActivePreset().id
+          (p) => p.id !== service.getActivePreset().id,
         );
 
         if (newPreset) {
@@ -301,4 +301,3 @@ describe("EvidenceConfigService", () => {
     });
   });
 });
-

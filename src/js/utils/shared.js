@@ -72,52 +72,78 @@ export function initializeLucideIcons(container = document, options = {}) {
  * @param {boolean} isHTML - Whether content should be treated as HTML (default: false)
  * @param {boolean} allowRichText - Whether to allow rich text formatting (default: false)
  */
-export function setSafeContent(element, content, isHTML = false, allowRichText = false) {
-  if (!element) {return;}
+export function setSafeContent(
+  element,
+  content,
+  isHTML = false,
+  allowRichText = false,
+) {
+  if (!element) {
+    return;
+  }
 
   // Clear existing content
-  element.textContent = '';
+  element.textContent = "";
 
-  if (content === null || content === undefined) {return;}
+  if (content === null || content === undefined) {
+    return;
+  }
 
   if (isHTML && allowRichText) {
     // For trusted HTML content (e.g., from local config, NOT user input)
     // We still sanitize to be safe
     const parser = new DOMParser();
-    const doc = parser.parseFromString(content, 'text/html');
-    
+    const doc = parser.parseFromString(content, "text/html");
+
     // Only allow specific safe tags and attributes
-    const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'p', 'span', 'div', 'ul', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-    const allowedAttrs = ['style', 'class', 'id']; // Be careful with style
+    const allowedTags = [
+      "b",
+      "i",
+      "em",
+      "strong",
+      "br",
+      "p",
+      "span",
+      "div",
+      "ul",
+      "li",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+    ];
+    const allowedAttrs = ["style", "class", "id"]; // Be careful with style
 
     const sanitize = (node) => {
       const sanitizedNode = node.cloneNode(false);
-      
+
       if (node.nodeType === Node.ELEMENT_NODE) {
         const tag = node.tagName.toLowerCase();
         if (!allowedTags.includes(tag)) {
           return document.createTextNode(node.textContent);
         }
-        
+
         // Sanitize attributes
         if (sanitizedNode.attributes) {
-          Array.from(sanitizedNode.attributes).forEach(attr => {
+          Array.from(sanitizedNode.attributes).forEach((attr) => {
             if (!allowedAttrs.includes(attr.name.toLowerCase())) {
               sanitizedNode.removeAttribute(attr.name);
             }
           });
         }
       }
-      
-      Array.from(node.childNodes).forEach(child => {
+
+      Array.from(node.childNodes).forEach((child) => {
         sanitizedNode.appendChild(sanitize(child));
       });
-      
+
       return sanitizedNode;
     };
 
     const sanitizedBody = sanitize(doc.body);
-    Array.from(sanitizedBody.childNodes).forEach(child => {
+    Array.from(sanitizedBody.childNodes).forEach((child) => {
       element.appendChild(child.cloneNode(true));
     });
   } else if (isHTML) {
@@ -346,8 +372,7 @@ export function debounce(func, wait) {
 
 export function throttle(func, limit) {
   let inThrottle;
-  return function () {
-    const args = arguments;
+  return function (...args) {
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
@@ -366,12 +391,12 @@ export function showLoading(element, text = "Loading...") {
     return;
   }
   // Clear and build safely
-  element.textContent = '';
-  const icon = document.createElement('span');
-  icon.setAttribute('aria-hidden', 'true');
-  icon.textContent = '⏳';
+  element.textContent = "";
+  const icon = document.createElement("span");
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "⏳";
   element.appendChild(icon);
-  element.appendChild(document.createTextNode(` ${  text}`));
+  element.appendChild(document.createTextNode(` ${text}`));
   element.disabled = true;
 }
 
@@ -387,44 +412,44 @@ export function createModal(title, content, actions = []) {
   const modal = createElementWithClass("div", "modal");
 
   // Create overlay
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
   overlay.onclick = () => window.closeModal?.();
 
   // Create modal content container
-  const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content';
+  const modalContent = document.createElement("div");
+  modalContent.className = "modal-content";
 
   // Create header
-  const header = document.createElement('div');
-  header.className = 'modal-header';
-  const h2 = document.createElement('h2');
+  const header = document.createElement("div");
+  header.className = "modal-header";
+  const h2 = document.createElement("h2");
   h2.textContent = title;
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'modal-close';
-  closeBtn.setAttribute('aria-label', 'Close');
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "modal-close";
+  closeBtn.setAttribute("aria-label", "Close");
   closeBtn.onclick = () => window.closeModal?.();
-  const closeIcon = document.createElement('i');
-  closeIcon.setAttribute('data-lucide', 'x');
-  closeIcon.className = 'icon-18';
+  const closeIcon = document.createElement("i");
+  closeIcon.setAttribute("data-lucide", "x");
+  closeIcon.className = "icon-18";
   closeBtn.appendChild(closeIcon);
   header.appendChild(h2);
   header.appendChild(closeBtn);
 
   // Create body
-  const body = document.createElement('div');
-  body.className = 'modal-body';
+  const body = document.createElement("div");
+  body.className = "modal-body";
   setSafeContent(body, content, false);
 
   // Create actions
-  const actionsDiv = document.createElement('div');
-  actionsDiv.className = 'modal-actions';
-  actions.forEach(action => {
-    const btn = document.createElement('button');
+  const actionsDiv = document.createElement("div");
+  actionsDiv.className = "modal-actions";
+  actions.forEach((action) => {
+    const btn = document.createElement("button");
     btn.className = action.class;
     btn.textContent = action.text;
     btn.onclick = () => {
-      if (typeof action.onclick === 'function') {
+      if (typeof action.onclick === "function") {
         action.onclick();
       }
     };

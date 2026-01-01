@@ -185,7 +185,7 @@ export class DashboardComponent {
    * Shows for first-time users who haven't completed it
    */
   private checkWalkthroughStatus(): void {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof localStorage === "undefined") return;
 
     const hasCompleted = FeatureWalkthroughComponent.hasCompletedWalkthrough();
     const isFirstLogin = this.isFirstTimeUser();
@@ -194,7 +194,9 @@ export class DashboardComponent {
       // Delay showing walkthrough to let dashboard load first
       setTimeout(() => {
         this.showWalkthrough.set(true);
-        this.logger.info('[Dashboard] Showing feature walkthrough for first-time user');
+        this.logger.info(
+          "[Dashboard] Showing feature walkthrough for first-time user",
+        );
       }, 1500);
     }
   }
@@ -204,8 +206,8 @@ export class DashboardComponent {
    */
   private isFirstTimeUser(): boolean {
     // Check for onboarding completion flag
-    const onboardingComplete = localStorage.getItem('onboarding-complete');
-    const hasTrainingData = localStorage.getItem('has-training-data');
+    const onboardingComplete = localStorage.getItem("onboarding-complete");
+    const hasTrainingData = localStorage.getItem("has-training-data");
 
     // Show walkthrough if:
     // 1. User just completed onboarding (onboarding-complete is recent)
@@ -213,7 +215,8 @@ export class DashboardComponent {
     if (onboardingComplete) {
       const completedDate = new Date(onboardingComplete);
       const now = new Date();
-      const daysSinceOnboarding = (now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysSinceOnboarding =
+        (now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24);
 
       // If onboarding was completed within last 7 days, show walkthrough
       if (daysSinceOnboarding < 7) {
@@ -222,7 +225,7 @@ export class DashboardComponent {
     }
 
     // If no training data has been logged, consider them a first-time user
-    return hasTrainingData !== 'true';
+    return hasTrainingData !== "true";
   }
 
   /**
@@ -230,7 +233,7 @@ export class DashboardComponent {
    */
   onWalkthroughComplete(): void {
     this.showWalkthrough.set(false);
-    this.logger.info('[Dashboard] Feature walkthrough completed');
+    this.logger.info("[Dashboard] Feature walkthrough completed");
   }
 
   /**
@@ -238,6 +241,6 @@ export class DashboardComponent {
    */
   onWalkthroughSkipped(): void {
     this.showWalkthrough.set(false);
-    this.logger.info('[Dashboard] Feature walkthrough skipped');
+    this.logger.info("[Dashboard] Feature walkthrough skipped");
   }
 }

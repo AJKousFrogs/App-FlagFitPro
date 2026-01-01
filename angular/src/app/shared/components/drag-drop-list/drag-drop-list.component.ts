@@ -30,9 +30,15 @@ export interface DragDropItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DragDropModule, CardModule],
   template: `
-    <div class="drag-drop-container" role="application" aria-label="Drag and drop interface">
+    <div
+      class="drag-drop-container"
+      role="application"
+      aria-label="Drag and drop interface"
+    >
       <div class="list-section" role="region" [attr.aria-label]="listTitle()">
-        <h3 class="list-title" [id]="'list-title-' + listId">{{ listTitle() }}</h3>
+        <h3 class="list-title" [id]="'list-title-' + listId">
+          {{ listTitle() }}
+        </h3>
         <div
           cdkDropList
           [cdkDropListData]="items()"
@@ -44,7 +50,8 @@ export interface DragDropItem {
           [attr.aria-describedby]="'list-instructions-' + listId"
         >
           <span [id]="'list-instructions-' + listId" class="sr-only">
-            Use arrow keys to navigate items. Press Space or Enter to pick up an item, arrow keys to move it, and Space or Enter to drop it.
+            Use arrow keys to navigate items. Press Space or Enter to pick up an
+            item, arrow keys to move it, and Space or Enter to drop it.
           </span>
           @for (item of items(); track item.id; let i = $index) {
             <div
@@ -54,7 +61,14 @@ export interface DragDropItem {
               [class.dragging]="false"
               role="option"
               [attr.aria-selected]="false"
-              [attr.aria-label]="item.title + (item.description ? ', ' + item.description : '') + '. Item ' + (i + 1) + ' of ' + items().length"
+              [attr.aria-label]="
+                item.title +
+                (item.description ? ', ' + item.description : '') +
+                '. Item ' +
+                (i + 1) +
+                ' of ' +
+                items().length
+              "
               tabindex="0"
               (keydown)="onKeyDown($event, i, 'source')"
             >
@@ -73,8 +87,14 @@ export interface DragDropItem {
       </div>
 
       @if (showTargetList()) {
-        <div class="list-section" role="region" [attr.aria-label]="targetListTitle()">
-          <h3 class="list-title" [id]="'target-list-title-' + listId">{{ targetListTitle() }}</h3>
+        <div
+          class="list-section"
+          role="region"
+          [attr.aria-label]="targetListTitle()"
+        >
+          <h3 class="list-title" [id]="'target-list-title-' + listId">
+            {{ targetListTitle() }}
+          </h3>
           <div
             cdkDropList
             [cdkDropListData]="targetItems()"
@@ -85,13 +105,20 @@ export interface DragDropItem {
             [attr.aria-labelledby]="'target-list-title-' + listId"
           >
             @for (item of targetItems(); track item.id; let i = $index) {
-              <div 
-                cdkDrag 
-                [cdkDragDisabled]="disabled()" 
+              <div
+                cdkDrag
+                [cdkDragDisabled]="disabled()"
                 class="drag-item"
                 role="option"
                 [attr.aria-selected]="false"
-                [attr.aria-label]="item.title + (item.description ? ', ' + item.description : '') + '. Item ' + (i + 1) + ' of ' + targetItems().length"
+                [attr.aria-label]="
+                  item.title +
+                  (item.description ? ', ' + item.description : '') +
+                  '. Item ' +
+                  (i + 1) +
+                  ' of ' +
+                  targetItems().length
+                "
                 tabindex="0"
                 (keydown)="onKeyDown($event, i, 'target')"
               >
@@ -107,12 +134,14 @@ export interface DragDropItem {
               </div>
             }
             @if (targetItems().length === 0) {
-              <div class="empty-state" role="status" aria-live="polite">Drop items here</div>
+              <div class="empty-state" role="status" aria-live="polite">
+                Drop items here
+              </div>
             }
           </div>
         </div>
       }
-      
+
       <!-- Live region for screen reader announcements -->
       <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {{ announcement() }}
@@ -263,42 +292,51 @@ export class DragDropListComponent {
 
   // Unique ID for accessibility
   listId = Math.random().toString(36).substr(2, 9);
-  
+
   // Announcement for screen readers
-  announcement = signal<string>('');
+  announcement = signal<string>("");
 
   /**
    * Handle keyboard navigation for accessibility
    */
-  onKeyDown(event: KeyboardEvent, index: number, list: 'source' | 'target'): void {
-    const items = list === 'source' ? this.items() : this.targetItems();
-    
+  onKeyDown(
+    event: KeyboardEvent,
+    index: number,
+    list: "source" | "target",
+  ): void {
+    const items = list === "source" ? this.items() : this.targetItems();
+
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
         if (index > 0) {
           this.focusItem(list, index - 1);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         if (index < items.length - 1) {
           this.focusItem(list, index + 1);
         }
         break;
-      case ' ':
-      case 'Enter':
+      case " ":
+      case "Enter":
         event.preventDefault();
-        this.announcement.set(`${items[index].title} selected. Use arrow keys to move, then press Space or Enter to place.`);
+        this.announcement.set(
+          `${items[index].title} selected. Use arrow keys to move, then press Space or Enter to place.`,
+        );
         break;
     }
   }
 
-  private focusItem(list: 'source' | 'target', index: number): void {
-    const selector = list === 'source' ? '.drop-list:not(.target-list)' : '.drop-list.target-list';
+  private focusItem(list: "source" | "target", index: number): void {
+    const selector =
+      list === "source"
+        ? ".drop-list:not(.target-list)"
+        : ".drop-list.target-list";
     const listEl = document.querySelector(selector);
     if (listEl) {
-      const items = listEl.querySelectorAll('.drag-item');
+      const items = listEl.querySelectorAll(".drag-item");
       if (items[index]) {
         (items[index] as HTMLElement).focus();
       }

@@ -1,0 +1,535 @@
+/**
+ * ================================================================
+ * PRIMENG 21 THEME INTEGRATION
+ * Maps FlagFit Pro design tokens to PrimeNG CSS variables
+ * ================================================================
+ *
+ * PrimeNG 21 uses CSS variables for theming instead of SASS.
+ * This file creates a bridge between our custom design system
+ * and PrimeNG's expected variable structure.
+ *
+ * Key principles:
+ * 1. PrimeNG components read from --p-* CSS variables
+ * 2. We map our design tokens (--ds-*, --color-*) to PrimeNG vars
+ * 3. This eliminates the need for ::ng-deep and !important hacks
+ * 4. Color inheritance works properly through the cascade
+ */
+
+:root {
+  /* ================================================================
+     PRIMARY COLORS - Map to PrimeNG's primary color system
+     ================================================================ */
+
+  --p-primary-50: rgba(var(--ds-primary-green-rgb), 0.05);
+  --p-primary-100: rgba(var(--ds-primary-green-rgb), 0.1);
+  --p-primary-200: rgba(var(--ds-primary-green-rgb), 0.2);
+  --p-primary-300: rgba(var(--ds-primary-green-rgb), 0.3);
+  --p-primary-400: rgba(var(--ds-primary-green-rgb), 0.4);
+  --p-primary-500: var(--ds-primary-green); /* #089949 - Main brand color */
+  --p-primary-600: var(--color-brand-primary-dark, #077839);
+  --p-primary-700: #065f2e;
+  --p-primary-800: #054724;
+  --p-primary-900: #042f18;
+  --p-primary-950: #021710;
+
+  /* PrimeNG Primary Color - Main */
+  --p-primary-color: var(--ds-primary-green);
+  --p-primary-contrast-color: #ffffff; /* CRITICAL: White text on green */
+  --p-primary-hover-color: var(--color-brand-primary-dark, #077839);
+  --p-primary-active-color: #065f2e;
+
+  /* ================================================================
+     TEXT COLORS - CRITICAL FIX for black-on-green issue
+     ================================================================ */
+
+  /* Default text colors (light mode) */
+  --p-text-color: var(--color-text-primary, #0f172a);
+  --p-text-muted-color: var(--color-text-secondary, #64748b);
+  --p-text-hover-muted-color: var(--color-text-primary, #0f172a);
+
+  /* Text on colored backgrounds */
+  --p-highlight-text-color: #ffffff; /* White text on primary/success/etc */
+  --p-primary-text-color: var(--ds-primary-green);
+
+  /* ================================================================
+     SURFACE COLORS - Backgrounds, cards, panels
+     ================================================================ */
+
+  --p-surface-0: #ffffff;
+  --p-surface-50: var(--surface-secondary, #f8fafc);
+  --p-surface-100: var(--surface-tertiary, #f1f5f9);
+  --p-surface-200: #e2e8f0;
+  --p-surface-300: #cbd5e1;
+  --p-surface-400: #94a3b8;
+  --p-surface-500: #64748b;
+  --p-surface-600: #475569;
+  --p-surface-700: #334155;
+  --p-surface-800: #1e293b;
+  --p-surface-900: #0f172a;
+  --p-surface-950: #020617;
+
+  --p-content-background: var(--surface-card, #ffffff);
+  --p-card-background: var(--surface-card, #ffffff);
+  --p-surface-ground: var(--surface-ground, #f8fafc);
+  --p-surface-section: var(--surface-card, #ffffff);
+  --p-surface-card: var(--surface-card, #ffffff);
+  --p-surface-overlay: var(--surface-card, #ffffff);
+  --p-surface-border: var(--color-border-secondary, #e2e8f0);
+  --p-surface-hover: var(--surface-secondary, #f8fafc);
+
+  /* ================================================================
+     STATUS COLORS - Success, Warning, Danger, Info
+     ================================================================ */
+
+  /* Success (Green) */
+  --p-green-50: rgba(var(--ds-primary-green-rgb), 0.05);
+  --p-green-100: rgba(var(--ds-primary-green-rgb), 0.1);
+  --p-green-500: var(--ds-primary-green);
+  --p-green-600: var(--color-brand-primary-dark, #077839);
+  --p-green-700: #065f2e;
+
+  /* Warning (Yellow/Amber) */
+  --p-yellow-50: #fffbeb;
+  --p-yellow-100: #fef3c7;
+  --p-yellow-500: #f59e0b;
+  --p-yellow-600: #d97706;
+  --p-yellow-700: #b45309;
+
+  /* Danger (Red) */
+  --p-red-50: #fef2f2;
+  --p-red-100: #fee2e2;
+  --p-red-500: #ef4444;
+  --p-red-600: #dc2626;
+  --p-red-700: #b91c1c;
+
+  /* Info (Blue) */
+  --p-blue-50: #eff6ff;
+  --p-blue-100: #dbeafe;
+  --p-blue-500: #3b82f6;
+  --p-blue-600: #2563eb;
+  --p-blue-700: #1d4ed8;
+
+  /* ================================================================
+     COMPONENT-SPECIFIC VARIABLES
+     ================================================================ */
+
+  /* Button */
+  --p-button-primary-background: var(--ds-primary-green);
+  --p-button-primary-border-color: var(--ds-primary-green);
+  --p-button-primary-color: #ffffff; /* CRITICAL: White text */
+  --p-button-primary-hover-background: var(--color-brand-primary-dark, #077839);
+  --p-button-primary-hover-border-color: var(
+    --color-brand-primary-dark,
+    #077839
+  );
+  --p-button-primary-hover-color: #ffffff;
+  --p-button-primary-active-background: #065f2e;
+  --p-button-primary-active-border-color: #065f2e;
+  --p-button-primary-active-color: #ffffff;
+
+  --p-button-secondary-color: var(--ds-primary-green);
+  --p-button-secondary-border-color: var(--ds-primary-green);
+  --p-button-secondary-hover-background: rgba(
+    var(--ds-primary-green-rgb),
+    0.04
+  );
+
+  --p-button-text-primary-color: var(--ds-primary-green);
+  --p-button-text-primary-hover-background: rgba(
+    var(--ds-primary-green-rgb),
+    0.04
+  );
+
+  --p-button-padding-y: var(--space-3, 0.75rem);
+  --p-button-padding-x: var(--space-4, 1rem);
+  --p-button-border-radius: var(--radius-md, 0.375rem);
+  --p-button-font-weight: var(--font-weight-medium, 500);
+  --p-button-sm-font-size: var(--font-body-sm, 0.875rem);
+  --p-button-sm-padding-y: var(--space-2, 0.5rem);
+  --p-button-sm-padding-x: var(--space-3, 0.75rem);
+  --p-button-lg-font-size: var(--font-body-lg, 1.125rem);
+  --p-button-lg-padding-y: var(--space-4, 1rem);
+  --p-button-lg-padding-x: var(--space-5, 1.25rem);
+
+  /* Card */
+  --p-card-background: var(--surface-card, #ffffff);
+  --p-card-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-card-border-radius: var(--radius-xl, 0.75rem);
+  --p-card-body-padding: var(--space-5, 1.25rem);
+  --p-card-title-font-size: var(--font-heading-md, 1.25rem);
+  --p-card-title-font-weight: var(--font-weight-semibold, 600);
+  --p-card-subtitle-color: var(--color-text-secondary, #64748b);
+  --p-card-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1));
+
+  /* Input */
+  --p-input-border-color: var(--color-border-primary, #cbd5e1);
+  --p-input-hover-border-color: var(--ds-primary-green);
+  --p-input-focus-border-color: var(--ds-primary-green);
+  --p-input-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  --p-input-padding-y: var(--space-3, 0.75rem);
+  --p-input-padding-x: var(--space-4, 1rem);
+  --p-input-border-radius: var(--radius-md, 0.375rem);
+  --p-input-placeholder-color: var(--color-text-muted, #94a3b8);
+
+  /* Dropdown/Select */
+  --p-dropdown-background: var(--surface-card, #ffffff);
+  --p-dropdown-border-color: var(--color-border-primary, #cbd5e1);
+  --p-dropdown-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
+  --p-dropdown-focus-border-color: var(--ds-primary-green);
+
+  /* Checkbox/Radio */
+  --p-checkbox-border-color: var(--color-border-primary, #cbd5e1);
+  --p-checkbox-checked-background: var(--ds-primary-green);
+  --p-checkbox-checked-border-color: var(--ds-primary-green);
+  --p-checkbox-icon-checked-color: #ffffff;
+
+  /* Tag/Badge */
+  --p-tag-primary-background: var(--ds-primary-green);
+  --p-tag-primary-color: #ffffff;
+  --p-tag-success-background: var(--ds-primary-green);
+  --p-tag-success-color: #ffffff;
+  --p-tag-warning-background: #f59e0b;
+  --p-tag-warning-color: #78350f;
+  --p-tag-danger-background: #ef4444;
+  --p-tag-danger-color: #ffffff;
+  --p-tag-info-background: #3b82f6;
+  --p-tag-info-color: #ffffff;
+
+  /* Dialog/Modal */
+  --p-dialog-border-radius: var(--radius-xl, 0.75rem);
+  --p-dialog-header-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
+  --p-dialog-content-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
+  --p-dialog-footer-padding: var(--space-4, 1rem) var(--space-6, 1.5rem)
+    var(--space-5, 1.25rem);
+
+  /* Toast */
+  --p-toast-border-radius: var(--radius-lg, 0.5rem);
+  --p-toast-success-background: var(--ds-primary-green);
+  --p-toast-success-border-color: var(--ds-primary-green);
+  --p-toast-success-color: #ffffff;
+  --p-toast-warn-background: #f59e0b;
+  --p-toast-warn-color: #78350f;
+  --p-toast-error-background: #ef4444;
+  --p-toast-error-color: #ffffff;
+  --p-toast-info-background: #3b82f6;
+  --p-toast-info-color: #ffffff;
+
+  /* Menu */
+  --p-menu-background: var(--surface-card, #ffffff);
+  --p-menu-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-menu-border-radius: var(--radius-lg, 0.5rem);
+  --p-menu-item-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  --p-menu-item-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
+  --p-menu-item-active-background: rgba(var(--ds-primary-green-rgb), 0.1);
+  --p-menu-item-active-color: var(--ds-primary-green);
+
+  /* Datatable */
+  --p-datatable-header-background: var(--surface-secondary, #f8fafc);
+  --p-datatable-header-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-datatable-row-hover-background: var(--surface-secondary, #f8fafc);
+  --p-datatable-row-selected-background: rgba(var(--ds-primary-green-rgb), 0.1);
+  --p-datatable-row-selected-color: var(--color-text-primary, #0f172a);
+
+  /* Paginator */
+  --p-paginator-background: var(--surface-card, #ffffff);
+  --p-paginator-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-paginator-element-hover-background: rgba(
+    var(--ds-primary-green-rgb),
+    0.04
+  );
+  --p-paginator-element-active-background: var(--ds-primary-green);
+  --p-paginator-element-active-color: #ffffff;
+
+  /* Tabs */
+  --p-tabview-nav-background: transparent;
+  --p-tabview-nav-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-tabview-tab-active-border-color: var(--ds-primary-green);
+  --p-tabview-tab-active-color: var(--ds-primary-green);
+  --p-tabview-tab-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
+  --p-tabview-tab-hover-border-color: var(--ds-primary-green);
+
+  /* Panel */
+  --p-panel-header-background: var(--surface-secondary, #f8fafc);
+  --p-panel-header-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-panel-content-border-color: var(--color-border-secondary, #e2e8f0);
+
+  /* Progress Bar */
+  --p-progressbar-background: var(--surface-tertiary, #f1f5f9);
+  --p-progressbar-value-background: var(--ds-primary-green);
+  --p-progressbar-border-radius: var(--radius-full, 9999px);
+
+  /* Slider */
+  --p-slider-background: var(--surface-tertiary, #f1f5f9);
+  --p-slider-range-background: var(--ds-primary-green);
+  --p-slider-handle-background: var(--ds-primary-green);
+
+  /* ================================================================
+     TRANSITIONS & ANIMATIONS
+     ================================================================ */
+
+  --p-transition-duration: var(--transition-base, 200ms);
+  --p-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ================================================================
+     FOCUS STATES - Accessibility
+     ================================================================ */
+
+  --p-focus-ring-width: 2px;
+  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.5);
+  --p-focus-ring-offset: 2px;
+  --p-focus-ring-style: solid;
+
+  /* ================================================================
+     DISABLED STATES
+     ================================================================ */
+
+  --p-disabled-opacity: 0.6;
+  --p-disabled-background: var(--surface-tertiary, #f1f5f9);
+  --p-disabled-color: var(--color-text-muted, #94a3b8);
+}
+
+/* ================================================================
+   DARK MODE THEME OVERRIDES
+   ================================================================ */
+
+[data-theme="dark"] {
+  /* Primary colors (unchanged) */
+  --p-primary-color: var(--ds-primary-green);
+  --p-primary-contrast-color: #ffffff;
+
+  /* Text colors for dark mode */
+  --p-text-color: #f1f5f9;
+  --p-text-muted-color: #94a3b8;
+  --p-highlight-text-color: #ffffff;
+
+  /* Surface colors for dark mode */
+  --p-surface-0: #020617;
+  --p-surface-50: #0f172a;
+  --p-surface-100: #1e293b;
+  --p-surface-200: #334155;
+  --p-surface-300: #475569;
+  --p-surface-400: #64748b;
+  --p-surface-500: #94a3b8;
+  --p-surface-600: #cbd5e1;
+  --p-surface-700: #e2e8f0;
+  --p-surface-800: #f1f5f9;
+  --p-surface-900: #f8fafc;
+  --p-surface-950: #ffffff;
+
+  --p-content-background: var(--primitive-neutral-800, #1e293b);
+  --p-card-background: var(--primitive-neutral-800, #1e293b);
+  --p-surface-ground: var(--primitive-neutral-950, #020617);
+  --p-surface-card: var(--primitive-neutral-800, #1e293b);
+  --p-surface-border: var(--primitive-neutral-700, #334155);
+  --p-surface-hover: var(--primitive-neutral-700, #334155);
+
+  /* Component backgrounds */
+  --p-datatable-header-background: var(--primitive-neutral-900, #0f172a);
+  --p-panel-header-background: var(--primitive-neutral-900, #0f172a);
+  --p-menu-background: var(--primitive-neutral-800, #1e293b);
+  --p-paginator-background: var(--primitive-neutral-800, #1e293b);
+
+  /* Inputs in dark mode */
+  --p-input-border-color: var(--primitive-neutral-700, #334155);
+  --p-dropdown-background: var(--primitive-neutral-800, #1e293b);
+  --p-disabled-background: var(--primitive-neutral-900, #0f172a);
+}
+
+/* ================================================================
+   CRITICAL FIX: White text on green backgrounds
+   Applies to ALL PrimeNG components with primary/success styling
+   ================================================================ */
+
+/* PrimeNG Button Primary */
+.p-button-primary,
+.p-button.p-button-primary,
+p-button[severity="primary"] .p-button {
+  background: var(--ds-primary-green) !important;
+  border-color: var(--ds-primary-green) !important;
+  color: #ffffff !important;
+
+  .p-button-label,
+  .p-button-icon,
+  span,
+  i {
+    color: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    background: var(--color-brand-primary-dark, #077839) !important;
+    border-color: var(--color-brand-primary-dark, #077839) !important;
+    color: #ffffff !important;
+  }
+}
+
+/* PrimeNG Card with green background */
+.p-card {
+  &[style*="089949"],
+  &.bg-primary,
+  &.card-primary {
+    background: var(--ds-primary-green) !important;
+    color: #ffffff !important;
+
+    .p-card-title,
+    .p-card-subtitle,
+    .p-card-content,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    div {
+      color: #ffffff !important;
+    }
+  }
+}
+
+/* PrimeNG Tag/Badge Primary/Success */
+.p-tag-success,
+.p-tag-primary,
+.p-badge-success,
+.p-badge-primary {
+  background: var(--ds-primary-green) !important;
+  color: #ffffff !important;
+}
+
+/* PrimeNG Chip Primary */
+.p-chip-primary {
+  background: var(--ds-primary-green) !important;
+  color: #ffffff !important;
+
+  .p-chip-text {
+    color: #ffffff !important;
+  }
+}
+
+/* PrimeNG Progress Bar */
+.p-progressbar-value {
+  background: var(--ds-primary-green) !important;
+}
+
+/* PrimeNG Datatable Selected Row */
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+  background: rgba(var(--ds-primary-green-rgb), 0.1) !important;
+  color: var(--color-text-primary) !important;
+
+  td {
+    color: inherit !important;
+  }
+}
+
+/* PrimeNG Paginator Active Page */
+.p-paginator .p-paginator-page.p-highlight {
+  background: var(--ds-primary-green) !important;
+  border-color: var(--ds-primary-green) !important;
+  color: #ffffff !important;
+}
+
+/* PrimeNG Menu Item Active */
+.p-menu .p-menuitem.p-highlight {
+  background: rgba(var(--ds-primary-green-rgb), 0.1) !important;
+  color: var(--ds-primary-green) !important;
+
+  .p-menuitem-text,
+  .p-menuitem-icon {
+    color: var(--ds-primary-green) !important;
+  }
+}
+
+/* PrimeNG Tab Active */
+.p-tabview .p-tabview-nav .p-tabview-nav-link:not(.p-disabled):focus {
+  box-shadow: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.5) !important;
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  border-color: var(--ds-primary-green) !important;
+  color: var(--ds-primary-green) !important;
+}
+
+/* ================================================================
+   FOCUS RING - Accessibility
+   All interactive PrimeNG components get consistent focus styling
+   ================================================================ */
+
+.p-button:focus-visible,
+.p-inputtext:focus-visible,
+.p-dropdown:focus-visible,
+.p-checkbox:focus-visible,
+.p-radiobutton:focus-visible,
+.p-multiselect:focus-visible,
+.p-calendar:focus-visible,
+.p-inputswitch:focus-visible,
+.p-slider:focus-visible {
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
+    var(--p-focus-ring-color) !important;
+  outline-offset: var(--p-focus-ring-offset) !important;
+  box-shadow: 0 0 0 var(--p-focus-ring-offset)
+    rgba(var(--ds-primary-green-rgb), 0.2) !important;
+}
+
+/* ================================================================
+   COMPONENT STRUCTURE FIXES
+   Ensures proper padding and spacing using design system
+   ================================================================ */
+
+/* Card Body Padding */
+.p-card .p-card-body {
+  padding: var(--space-5) !important;
+}
+
+.p-card .p-card-content {
+  padding: 0 !important;
+}
+
+.p-card .p-card-header {
+  padding: var(--space-5) var(--space-5) 0 !important;
+}
+
+.p-card .p-card-footer {
+  padding: var(--space-4) var(--space-5) var(--space-5) !important;
+}
+
+/* Dialog Padding */
+.p-dialog .p-dialog-header {
+  padding: var(--space-5) var(--space-6) !important;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.p-dialog .p-dialog-content {
+  padding: var(--space-5) var(--space-6) !important;
+}
+
+.p-dialog .p-dialog-footer {
+  padding: var(--space-4) var(--space-6) var(--space-5) !important;
+  border-top: 1px solid var(--color-border-primary);
+}
+
+/* Button Sizing */
+.p-button {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+
+  &.p-button-sm {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-body-sm);
+  }
+
+  &.p-button-lg {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-body-lg);
+  }
+}
+
+/* Input Sizing */
+.p-inputtext,
+.p-dropdown,
+.p-multiselect {
+  padding: var(--space-3) var(--space-4) !important;
+  border-radius: var(--radius-md);
+  min-height: 44px; /* Touch target accessibility */
+}

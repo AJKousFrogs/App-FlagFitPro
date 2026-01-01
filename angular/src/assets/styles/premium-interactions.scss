@@ -11,6 +11,26 @@
    - Hover effects with proper touch device handling
    - Reduced motion support
    - Dark mode compatible
+   
+   STATE TERMINOLOGY (Industry Standard):
+   ┌─────────────────────────────────────────────────────────────┐
+   │ State          │ Trigger              │ CSS Selector        │
+   ├─────────────────────────────────────────────────────────────┤
+   │ Default/Rest   │ No interaction       │ (base styles)       │
+   │ Hover          │ Mouse over (desktop) │ :hover              │
+   │ Active/Pressed │ Mouse down / tap     │ :active             │
+   │ Focus          │ Keyboard navigation  │ :focus-visible      │
+   │ Disabled       │ Element inactive     │ :disabled, [aria-*] │
+   │ Loading        │ Async operation      │ .loading, [aria-*]  │
+   │ Selected       │ Item chosen          │ .selected, [aria-*] │
+   └─────────────────────────────────────────────────────────────┘
+   
+   BEST PRACTICES (Angular 21):
+   1. Use @media (hover: hover) for hover styles (prevents sticky on touch)
+   2. Use @media (hover: none) for touch-specific active states
+   3. Use :focus-visible instead of :focus (better UX)
+   4. Always provide :active state for immediate feedback
+   5. Respect prefers-reduced-motion
    ================================================================ */
 
 /* ================================================================
@@ -25,7 +45,7 @@
   --anim-slow: 300ms;
   --anim-slower: 400ms;
   --anim-slowest: 500ms;
-  
+
   /* Premium Easing Functions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -35,7 +55,7 @@
   --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-micro-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
-  
+
   /* Stagger Delays */
   --stagger-fast: 50ms;
   --stagger-normal: 75ms;
@@ -48,22 +68,23 @@
    ================================================================ */
 
 .hover-lift {
-  transition: transform var(--anim-normal) var(--ease-micro-bounce),
-              box-shadow var(--anim-normal) var(--ease-smooth);
+  transition:
+    transform var(--anim-normal) var(--ease-micro-bounce),
+    box-shadow var(--anim-normal) var(--ease-smooth);
   will-change: transform, box-shadow;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .hover-lift:hover {
     transform: translateY(-4px);
-    box-shadow: 
+    box-shadow:
       0 10px 40px -10px rgba(0, 0, 0, 0.15),
       0 4px 15px -5px rgba(0, 0, 0, 0.1);
   }
-  
+
   .hover-lift:active {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
       0 5px 20px -5px rgba(0, 0, 0, 0.12),
       0 2px 8px -3px rgba(0, 0, 0, 0.08);
   }
@@ -71,8 +92,9 @@
 
 /* Subtle lift variant */
 .hover-lift-subtle {
-  transition: transform var(--anim-fast) var(--ease-smooth),
-              box-shadow var(--anim-fast) var(--ease-smooth);
+  transition:
+    transform var(--anim-fast) var(--ease-smooth),
+    box-shadow var(--anim-fast) var(--ease-smooth);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -93,7 +115,7 @@
 }
 
 .hover-glow::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -138,7 +160,7 @@
   .hover-scale:hover {
     transform: scale(1.05);
   }
-  
+
   .hover-scale:active {
     transform: scale(0.98);
   }
@@ -166,7 +188,7 @@
 }
 
 .hover-shine::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -199,7 +221,7 @@
 }
 
 .hover-border::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border: 2px solid var(--ds-primary-green);
@@ -250,7 +272,7 @@
 }
 
 .ripple::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   padding-top: 100%;
@@ -320,7 +342,7 @@
 }
 
 .focus-ring::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -4px;
   border-radius: inherit;
@@ -369,7 +391,7 @@
 }
 
 .shimmer::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -410,7 +432,8 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -610,7 +633,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -624,7 +648,8 @@
 }
 
 @keyframes heartbeat {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   14% {
@@ -647,13 +672,21 @@
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
-  10%, 30%, 50%, 70%, 90% {
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translateX(-5px);
   }
-  20%, 40%, 60%, 80% {
+  20%,
+  40%,
+  60%,
+  80% {
     transform: translateX(5px);
   }
 }
@@ -664,7 +697,8 @@
 }
 
 @keyframes wiggle {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(0deg);
   }
   25% {
@@ -684,7 +718,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -702,7 +737,8 @@
     transform: scale(1);
     opacity: 1;
   }
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(2);
     opacity: 0;
   }
@@ -738,10 +774,12 @@
 }
 
 @keyframes highlight-success {
-  0%, 100% {
+  0%,
+  100% {
     background-color: transparent;
   }
-  30%, 70% {
+  30%,
+  70% {
     background-color: rgba(var(--primitive-success-500-rgb), 0.2);
   }
 }
@@ -752,10 +790,12 @@
 }
 
 @keyframes highlight-error {
-  0%, 100% {
+  0%,
+  100% {
     background-color: transparent;
   }
-  30%, 70% {
+  30%,
+  70% {
     background-color: rgba(var(--primitive-error-500-rgb), 0.2);
   }
 }
@@ -768,7 +808,7 @@
 /* Enhanced PrimeNG Button */
 :host ::ng-deep .p-button,
 .p-button {
-  transition: 
+  transition:
     transform var(--anim-fast) var(--ease-micro-bounce),
     box-shadow var(--anim-fast) var(--ease-smooth),
     background-color var(--anim-fast) var(--ease-smooth),
@@ -792,7 +832,7 @@
 /* Enhanced PrimeNG Card */
 :host ::ng-deep .p-card,
 .p-card {
-  transition: 
+  transition:
     transform var(--anim-normal) var(--ease-micro-bounce),
     box-shadow var(--anim-normal) var(--ease-smooth);
   will-change: transform, box-shadow;
@@ -875,7 +915,7 @@
 /* Enhanced PrimeNG Menu Items */
 :host ::ng-deep .p-menuitem-link,
 .p-menuitem-link {
-  transition: 
+  transition:
     background-color var(--anim-fast) var(--ease-smooth),
     color var(--anim-fast) var(--ease-smooth),
     padding-left var(--anim-fast) var(--ease-smooth);
@@ -926,7 +966,7 @@
 /* Enhanced PrimeNG DataTable Rows */
 :host ::ng-deep .p-datatable-tbody > tr,
 .p-datatable-tbody > tr {
-  transition: 
+  transition:
     background-color var(--anim-fast) var(--ease-smooth),
     transform var(--anim-fast) var(--ease-smooth);
 }
@@ -1013,14 +1053,14 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .hover-lift:hover,
   .hover-scale:hover,
   .hover-lift-subtle:hover,
   .hover-scale-subtle:hover {
     transform: none;
   }
-  
+
   .animate-pulse,
   .animate-heartbeat,
   .animate-bounce,
@@ -1052,28 +1092,64 @@
 }
 
 /* Animation delay utilities */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-600 { animation-delay: 600ms; }
-.delay-700 { animation-delay: 700ms; }
-.delay-800 { animation-delay: 800ms; }
-.delay-900 { animation-delay: 900ms; }
-.delay-1000 { animation-delay: 1000ms; }
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+.delay-600 {
+  animation-delay: 600ms;
+}
+.delay-700 {
+  animation-delay: 700ms;
+}
+.delay-800 {
+  animation-delay: 800ms;
+}
+.delay-900 {
+  animation-delay: 900ms;
+}
+.delay-1000 {
+  animation-delay: 1000ms;
+}
 
 /* Animation duration utilities */
-.duration-fast { animation-duration: var(--anim-fast) !important; }
-.duration-normal { animation-duration: var(--anim-normal) !important; }
-.duration-slow { animation-duration: var(--anim-slow) !important; }
-.duration-slower { animation-duration: var(--anim-slower) !important; }
+.duration-fast {
+  animation-duration: var(--anim-fast) !important;
+}
+.duration-normal {
+  animation-duration: var(--anim-normal) !important;
+}
+.duration-slow {
+  animation-duration: var(--anim-slow) !important;
+}
+.duration-slower {
+  animation-duration: var(--anim-slower) !important;
+}
 
 /* Transition duration utilities */
-.transition-fast { transition-duration: var(--anim-fast) !important; }
-.transition-normal { transition-duration: var(--anim-normal) !important; }
-.transition-slow { transition-duration: var(--anim-slow) !important; }
-.transition-slower { transition-duration: var(--anim-slower) !important; }
+.transition-fast {
+  transition-duration: var(--anim-fast) !important;
+}
+.transition-normal {
+  transition-duration: var(--anim-normal) !important;
+}
+.transition-slow {
+  transition-duration: var(--anim-slow) !important;
+}
+.transition-slower {
+  transition-duration: var(--anim-slower) !important;
+}
 
 /* ================================================================
    CROSS-BROWSER ANIMATION FIXES
@@ -1095,8 +1171,12 @@
 
 /* Safari animation flicker fix */
 @-webkit-keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fade-up {
@@ -1113,13 +1193,26 @@
 }
 
 @-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 
 @-webkit-keyframes pulse {
-  0%, 100% { -webkit-transform: scale(1); transform: scale(1); }
-  50% { -webkit-transform: scale(1.05); transform: scale(1.05); }
+  0%,
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+  }
 }
 
 /* Firefox animation performance */

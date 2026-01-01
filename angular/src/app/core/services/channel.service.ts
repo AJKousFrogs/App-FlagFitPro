@@ -73,13 +73,14 @@ export interface ChannelMember {
 
 export interface ChatMessage {
   id: string;
-  user_id: string;
+  sender_id: string;
+  recipient_id: string | null;
+  team_id: string | null;
   channel_id: string | null;
-  channel: string; // Legacy support
   message: string;
   message_type: string;
-  reply_to: string | null;
-  is_edited: boolean;
+  is_read: boolean;
+  read_at: string | null;
   is_pinned: boolean;
   pinned_by: string | null;
   pinned_at: string | null;
@@ -89,7 +90,6 @@ export interface ChatMessage {
   thread_id: string | null;
   reply_count: number;
   created_at: string;
-  updated_at: string;
   // Joined fields
   author?: {
     id: string;
@@ -125,8 +125,8 @@ export interface SendMessageRequest {
   is_important?: boolean;
   mentions?: string[];
   attachments?: Attachment[];
-  reply_to?: string;
   thread_id?: string;
+  team_id?: string;
 }
 
 export interface AnnouncementReadStatus {
@@ -143,6 +143,31 @@ export interface AnnouncementReadStatus {
     user_id: string;
     full_name: string;
   }[];
+}
+
+export interface ChannelMemberDetails {
+  user_id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string | null;
+  role: "coach" | "assistant_coach" | "player" | "member";
+  position: string | null;
+  jersey_number: number | null;
+  is_explicit_member: boolean;
+  can_post: boolean;
+  joined_at: string;
+  // Client-side additions
+  is_online?: boolean;
+  initials?: string;
+}
+
+export interface ChannelMembersResponse {
+  members: ChannelMemberDetails[];
+  coaches: ChannelMemberDetails[];
+  athletes: ChannelMemberDetails[];
+  total_count: number;
+  online_count: number;
+  visibility_description: string;
 }
 
 // ============================================================================
@@ -174,30 +199,31 @@ export class ChannelService {
 
   // Filtered channel lists
   readonly announcementChannels = computed(() =>
-    this._channels().filter((c) => c.channel_type === "announcements")
+    this._channels().filter((c) => c.channel_type === "announcements"),
   );
 
   readonly teamChannels = computed(() =>
     this._channels().filter(
       (c) =>
-        c.channel_type === "team_general" || c.channel_type === "position_group"
-    )
+        c.channel_type === "team_general" ||
+        c.channel_type === "position_group",
+    ),
   );
 
   readonly coachChannels = computed(() =>
-    this._channels().filter((c) => c.channel_type === "coaches_only")
+    this._channels().filter((c) => c.channel_type === "coaches_only"),
   );
 
   readonly dmChannels = computed(() =>
-    this._channels().filter((c) => c.channel_type === "direct_message")
+    this._channels().filter((c) => c.channel_type === "direct_message"),
   );
 
   readonly pinnedMessages = computed(() =>
-    this._messages().filter((m) => m.is_pinned)
+    this._messages().filter((m) => m.is_pinned),
   );
 
   readonly importantMessages = computed(() =>
-    this._messages().filter((m) => m.is_important)
+    this._messages().filter((m) => m.is_important),
   );
 
   // User role check
@@ -225,9 +251,9 @@ export class ChannelService {
           `
           *,
           last_message:chat_messages(
-            id, message, created_at, user_id
+            id, message, created_at, sender_id
           )
-        `
+        `,
         )
         .eq("is_archived", false)
         .order("created_at", { ascending: true });
@@ -318,7 +344,9 @@ export class ChannelService {
             })),
         ];
 
-        await this.supabase.client.from("channel_members").insert(memberInserts);
+        await this.supabase.client
+          .from("channel_members")
+          .insert(memberInserts);
       }
 
       // Update local state
@@ -350,7 +378,7 @@ export class ChannelService {
       if (error) throw error;
 
       this._channels.update((channels) =>
-        channels.filter((c) => c.id !== channelId)
+        channels.filter((c) => c.id !== channelId),
       );
 
       this.logger.success("Channel archived");
@@ -365,7 +393,7 @@ export class ChannelService {
    */
   async updateChannel(
     channelId: string,
-    updates: Partial<Pick<Channel, "name" | "description" | "allow_threads">>
+    updates: Partial<Pick<Channel, "name" | "description" | "allow_threads">>,
   ): Promise<Channel> {
     try {
       const { data, error } = await this.supabase.client
@@ -379,7 +407,7 @@ export class ChannelService {
 
       const channel = data as Channel;
       this._channels.update((channels) =>
-        channels.map((c) => (c.id === channelId ? channel : c))
+        channels.map((c) => (c.id === channelId ? channel : c)),
       );
 
       return channel;
@@ -398,21 +426,14 @@ export class ChannelService {
    */
   async loadMessages(
     channelId: string,
-    options: { limit?: number; before?: string } = {}
+    options: { limit?: number; before?: string } = {},
   ): Promise<ChatMessage[]> {
     this._loading.set(true);
 
     try {
       let query = this.supabase.client
         .from("chat_messages")
-        .select(
-          `
-          *,
-          author:users!chat_messages_user_id_fkey(
-            id, email, raw_user_meta_data
-          )
-        `
-        )
+        .select("*")
         .eq("channel_id", channelId)
         .is("thread_id", null) // Only top-level messages
         .order("created_at", { ascending: true })
@@ -426,17 +447,40 @@ export class ChannelService {
 
       if (error) throw error;
 
-      const messages = (data || []).map((m) => ({
-        ...m,
-        author: m.author
-          ? {
-              id: m.author.id,
-              email: m.author.email,
-              full_name: m.author.raw_user_meta_data?.full_name || m.author.email,
-              avatar_url: m.author.raw_user_meta_data?.avatar_url,
-            }
-          : undefined,
-      })) as ChatMessage[];
+      // Fetch user details separately for authors
+      const senderIds = [
+        ...new Set((data || []).map((m) => m.sender_id).filter(Boolean)),
+      ];
+      let usersMap = new Map<
+        string,
+        { id: string; email: string; full_name: string; avatar_url: string }
+      >();
+
+      if (senderIds.length > 0) {
+        const { data: usersData } = await this.supabase.client
+          .from("users")
+          .select("id, email, full_name, avatar_url")
+          .in("id", senderIds);
+
+        if (usersData) {
+          usersMap = new Map(usersData.map((u) => [u.id, u]));
+        }
+      }
+
+      const messages = (data || []).map((m) => {
+        const author = usersMap.get(m.sender_id);
+        return {
+          ...m,
+          author: author
+            ? {
+                id: author.id,
+                email: author.email,
+                full_name: author.full_name || author.email,
+                avatar_url: author.avatar_url,
+              }
+            : undefined,
+        };
+      }) as ChatMessage[];
 
       this._messages.set(messages);
       return messages;
@@ -466,38 +510,36 @@ export class ChannelService {
       const { data, error } = await this.supabase.client
         .from("chat_messages")
         .insert({
-          user_id: userId,
+          sender_id: userId,
           channel_id: request.channel_id,
-          channel: `channel-${request.channel_id}`, // Legacy support
+          team_id: request.team_id || null,
           message: request.message,
           message_type: request.message_type || "text",
           is_important: request.is_important || false,
           mentions: mentions,
           attachments: request.attachments || [],
-          reply_to: request.reply_to,
           thread_id: request.thread_id,
         })
-        .select(
-          `
-          *,
-          author:users!chat_messages_user_id_fkey(
-            id, email, raw_user_meta_data
-          )
-        `
-        )
+        .select("*")
         .single();
 
       if (error) throw error;
 
+      // Fetch author details
+      const { data: authorData } = await this.supabase.client
+        .from("users")
+        .select("id, email, full_name, avatar_url")
+        .eq("id", userId)
+        .single();
+
       const message = {
         ...data,
-        author: data.author
+        author: authorData
           ? {
-              id: data.author.id,
-              email: data.author.email,
-              full_name:
-                data.author.raw_user_meta_data?.full_name || data.author.email,
-              avatar_url: data.author.raw_user_meta_data?.avatar_url,
+              id: authorData.id,
+              email: authorData.email,
+              full_name: authorData.full_name || authorData.email,
+              avatar_url: authorData.avatar_url,
             }
           : undefined,
       } as ChatMessage;
@@ -553,8 +595,8 @@ export class ChannelService {
                 pinned_by: isPinned ? userId : null,
                 pinned_at: isPinned ? new Date().toISOString() : null,
               }
-            : m
-        )
+            : m,
+        ),
       );
 
       this.logger.success(isPinned ? "Message pinned" : "Message unpinned");
@@ -583,12 +625,12 @@ export class ChannelService {
 
       this._messages.update((messages) =>
         messages.map((m) =>
-          m.id === messageId ? { ...m, is_important: isImportant } : m
-        )
+          m.id === messageId ? { ...m, is_important: isImportant } : m,
+        ),
       );
 
       this.logger.success(
-        isImportant ? "Message marked as important" : "Message unmarked"
+        isImportant ? "Message marked as important" : "Message unmarked",
       );
     } catch (error) {
       this.logger.error("Error toggling importance:", error);
@@ -605,15 +647,13 @@ export class ChannelService {
       const message = this._messages().find((m) => m.id === messageId);
 
       if (!message) throw new Error("Message not found");
-      if (message.user_id !== userId)
+      if (message.sender_id !== userId)
         throw new Error("Can only edit own messages");
 
       const { error } = await this.supabase.client
         .from("chat_messages")
         .update({
           message: newContent,
-          is_edited: true,
-          updated_at: new Date().toISOString(),
         })
         .eq("id", messageId);
 
@@ -621,10 +661,8 @@ export class ChannelService {
 
       this._messages.update((messages) =>
         messages.map((m) =>
-          m.id === messageId
-            ? { ...m, message: newContent, is_edited: true }
-            : m
-        )
+          m.id === messageId ? { ...m, message: newContent } : m,
+        ),
       );
     } catch (error) {
       this.logger.error("Error editing message:", error);
@@ -645,7 +683,7 @@ export class ChannelService {
       if (error) throw error;
 
       this._messages.update((messages) =>
-        messages.filter((m) => m.id !== messageId)
+        messages.filter((m) => m.id !== messageId),
       );
     } catch (error) {
       this.logger.error("Error deleting message:", error);
@@ -671,7 +709,7 @@ export class ChannelService {
           user_id: userId,
           read_at: new Date().toISOString(),
         },
-        { onConflict: "message_id,user_id" }
+        { onConflict: "message_id,user_id" },
       );
     } catch (error) {
       this.logger.warn("Error marking message read:", error);
@@ -694,7 +732,7 @@ export class ChannelService {
           acknowledged: true,
           acknowledged_at: new Date().toISOString(),
         },
-        { onConflict: "message_id,user_id" }
+        { onConflict: "message_id,user_id" },
       );
 
       this.logger.success("Announcement acknowledged");
@@ -708,7 +746,7 @@ export class ChannelService {
    * Get read status for an announcement (coaches only)
    */
   async getAnnouncementReadStatus(
-    messageId: string
+    messageId: string,
   ): Promise<AnnouncementReadStatus> {
     try {
       // Get the message and its channel
@@ -732,18 +770,25 @@ export class ChannelService {
       // Get all team members - using type assertion due to Supabase's auth.users join limitation
       interface TeamMemberWithUser {
         user_id: string;
-        users: { id: string; email: string; raw_user_meta_data: Record<string, unknown> } | null;
+        users: {
+          id: string;
+          email: string;
+          raw_user_meta_data: Record<string, unknown>;
+        } | null;
       }
-      const { data: members } = await this.supabase.client
+      const { data: members } = (await this.supabase.client
         .from("team_members")
         .select(
           `
           user_id,
           users:auth.users(id, email, raw_user_meta_data)
-        `
+        `,
         )
         .eq("team_id", channel.team_id)
-        .eq("status", "active") as { data: TeamMemberWithUser[] | null; error: unknown };
+        .eq("status", "active")) as {
+        data: TeamMemberWithUser[] | null;
+        error: unknown;
+      };
 
       // Get read receipts
       const { data: reads } = await this.supabase.client
@@ -758,7 +803,7 @@ export class ChannelService {
         return {
           user_id: r.user_id,
           full_name:
-            (member?.users?.raw_user_meta_data?.['full_name'] as string) ||
+            (member?.users?.raw_user_meta_data?.["full_name"] as string) ||
             member?.users?.email ||
             "Unknown",
           read_at: r.read_at,
@@ -771,7 +816,7 @@ export class ChannelService {
         .map((m) => ({
           user_id: m.user_id,
           full_name:
-            (m.users?.raw_user_meta_data?.['full_name'] as string) ||
+            (m.users?.raw_user_meta_data?.["full_name"] as string) ||
             m.users?.email ||
             "Unknown",
         }));
@@ -818,7 +863,7 @@ export class ChannelService {
           user_id: userId,
           last_read_at: new Date().toISOString(),
         },
-        { onConflict: "channel_id,user_id" }
+        { onConflict: "channel_id,user_id" },
       );
     } catch (error) {
       this.logger.warn("Error updating last read:", error);
@@ -834,7 +879,7 @@ export class ChannelService {
    */
   subscribeToChannelMessages(
     channelId: string,
-    callback: RealtimeCallback
+    callback: RealtimeCallback,
   ): () => void {
     return this.realtimeService.subscribe(
       "chat_messages",
@@ -851,8 +896,8 @@ export class ChannelService {
           const updatedMessage = event.new as unknown as ChatMessage;
           this._messages.update((messages) =>
             messages.map((m) =>
-              m.id === updatedMessage.id ? updatedMessage : m
-            )
+              m.id === updatedMessage.id ? updatedMessage : m,
+            ),
           );
           callback(event);
         },
@@ -860,11 +905,11 @@ export class ChannelService {
           // Remove message from state
           const deletedMessage = event.old as unknown as ChatMessage;
           this._messages.update((messages) =>
-            messages.filter((m) => m.id !== deletedMessage.id)
+            messages.filter((m) => m.id !== deletedMessage.id),
           );
           callback(event);
         },
-      }
+      },
     );
   }
 
@@ -873,35 +918,31 @@ export class ChannelService {
    */
   subscribeToTeamChannels(
     teamId: string,
-    callback: RealtimeCallback
+    callback: RealtimeCallback,
   ): () => void {
-    return this.realtimeService.subscribe(
-      "channels",
-      `team_id=eq.${teamId}`,
-      {
-        onInsert: (event) => {
-          const newChannel = event.new as unknown as Channel;
-          this._channels.update((channels) => [...channels, newChannel]);
-          callback(event);
-        },
-        onUpdate: (event) => {
-          const updatedChannel = event.new as unknown as Channel;
-          this._channels.update((channels) =>
-            channels.map((c) =>
-              c.id === updatedChannel.id ? updatedChannel : c
-            )
-          );
-          callback(event);
-        },
-        onDelete: (event) => {
-          const deletedChannel = event.old as unknown as Channel;
-          this._channels.update((channels) =>
-            channels.filter((c) => c.id !== deletedChannel.id)
-          );
-          callback(event);
-        },
-      }
-    );
+    return this.realtimeService.subscribe("channels", `team_id=eq.${teamId}`, {
+      onInsert: (event) => {
+        const newChannel = event.new as unknown as Channel;
+        this._channels.update((channels) => [...channels, newChannel]);
+        callback(event);
+      },
+      onUpdate: (event) => {
+        const updatedChannel = event.new as unknown as Channel;
+        this._channels.update((channels) =>
+          channels.map((c) =>
+            c.id === updatedChannel.id ? updatedChannel : c,
+          ),
+        );
+        callback(event);
+      },
+      onDelete: (event) => {
+        const deletedChannel = event.old as unknown as Channel;
+        this._channels.update((channels) =>
+          channels.filter((c) => c.id !== deletedChannel.id),
+        );
+        callback(event);
+      },
+    });
   }
 
   // ============================================================================
@@ -929,7 +970,7 @@ export class ChannelService {
    * Get channel permissions for current user
    */
   async getChannelPermissions(
-    channelId: string
+    channelId: string,
   ): Promise<{ canPost: boolean; canPin: boolean; canDelete: boolean }> {
     const channel = this._channels().find((c) => c.id === channelId);
     if (!channel) {
@@ -990,7 +1031,7 @@ export class ChannelService {
    */
   async searchMessages(
     channelId: string,
-    query: string
+    query: string,
   ): Promise<ChatMessage[]> {
     try {
       const { data, error } = await this.supabase.client
@@ -1014,7 +1055,7 @@ export class ChannelService {
    */
   async createDirectMessage(
     otherUserId: string,
-    teamId: string
+    teamId: string,
   ): Promise<Channel> {
     const userId = this.authService.getUser()?.id;
     if (!userId) throw new Error("Not authenticated");
@@ -1067,5 +1108,168 @@ export class ChannelService {
     this._currentChannel.set(null);
     this._messages.set([]);
     this._error.set(null);
+  }
+
+  // ============================================================================
+  // CHANNEL MEMBERS
+  // ============================================================================
+
+  /**
+   * Get all members who can see a channel with their details
+   * Uses the database function get_channel_members() for rule-based membership
+   */
+  async getChannelMembers(channelId: string): Promise<ChannelMembersResponse> {
+    try {
+      const channel = this._channels().find((c) => c.id === channelId);
+
+      // Call the database function
+      const { data, error } = await this.supabase.client.rpc(
+        "get_channel_members",
+        { p_channel_id: channelId },
+      );
+
+      if (error) {
+        this.logger.error("Error fetching channel members:", error);
+        throw error;
+      }
+
+      const members = ((data as ChannelMemberDetails[]) || []).map((m) => ({
+        ...m,
+        full_name: m.full_name || m.email?.split("@")[0] || "Unknown",
+        initials: this.getInitials(m.full_name || m.email || "U"),
+        is_online: false, // Will be populated by presence system
+      }));
+
+      // Separate coaches and athletes
+      const coaches = members.filter((m) =>
+        ["coach", "assistant_coach"].includes(m.role),
+      );
+      const athletes = members.filter(
+        (m) => !["coach", "assistant_coach"].includes(m.role),
+      );
+
+      // Generate visibility description based on channel type
+      const visibilityDescription = this.getVisibilityDescription(
+        channel?.channel_type,
+      );
+
+      return {
+        members,
+        coaches,
+        athletes,
+        total_count: members.length,
+        online_count: 0, // Will be populated by presence system
+        visibility_description: visibilityDescription,
+      };
+    } catch (error) {
+      this.logger.error("Error in getChannelMembers:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get visibility description for a channel type
+   */
+  private getVisibilityDescription(
+    channelType: ChannelType | undefined,
+  ): string {
+    switch (channelType) {
+      case "announcements":
+        return "Visible to all team members • Only coaches can post";
+      case "team_general":
+        return "Visible to all team members";
+      case "coaches_only":
+        return "Visible to coaches only";
+      case "position_group":
+        return "Visible to coaches and players in this position group";
+      case "game_day":
+        return "Visible to all team members";
+      case "direct_message":
+        return "Private conversation";
+      default:
+        return "Team channel";
+    }
+  }
+
+  /**
+   * Get initials from a name
+   */
+  private getInitials(name: string): string {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  /**
+   * Search team members for @mentions
+   * Note: Uses separate query since Supabase client doesn't support auth.users join
+   */
+  async searchTeamMembers(
+    teamId: string,
+    query: string,
+  ): Promise<ChannelMemberDetails[]> {
+    try {
+      // First get team members
+      const { data: teamMembersData, error: teamError } =
+        await this.supabase.client
+          .from("team_members")
+          .select("user_id, role, position, jersey_number, joined_at")
+          .eq("team_id", teamId)
+          .eq("status", "active");
+
+      if (teamError) throw teamError;
+
+      if (!teamMembersData || teamMembersData.length === 0) {
+        return [];
+      }
+
+      // Get user details from users table (public profile data)
+      const userIds = teamMembersData.map((m) => m.user_id);
+      const { data: usersData, error: usersError } = await this.supabase.client
+        .from("users")
+        .select("id, email, full_name, avatar_url")
+        .in("id", userIds);
+
+      if (usersError) {
+        this.logger.warn("Error fetching user details:", usersError);
+      }
+
+      // Create a map for quick user lookup
+      const usersMap = new Map((usersData || []).map((u) => [u.id, u]));
+
+      // Combine and filter
+      const members = teamMembersData
+        .map((m) => {
+          const user = usersMap.get(m.user_id);
+          const fullName =
+            user?.full_name || user?.email?.split("@")[0] || "Unknown";
+          return {
+            user_id: m.user_id,
+            email: user?.email || "",
+            full_name: fullName,
+            avatar_url: user?.avatar_url || null,
+            role: m.role as ChannelMemberDetails["role"],
+            position: m.position,
+            jersey_number: m.jersey_number,
+            is_explicit_member: false,
+            can_post: true,
+            joined_at: m.joined_at,
+            initials: this.getInitials(fullName),
+          };
+        })
+        .filter(
+          (m) =>
+            m.full_name.toLowerCase().includes(query.toLowerCase()) ||
+            m.email.toLowerCase().includes(query.toLowerCase()),
+        );
+
+      return members;
+    } catch (error) {
+      this.logger.error("Error searching team members:", error);
+      return [];
+    }
   }
 }

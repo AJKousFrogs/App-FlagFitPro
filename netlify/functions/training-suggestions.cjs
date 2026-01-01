@@ -132,8 +132,7 @@ function categorizeSessionType(sessionType) {
  */
 function generateSuggestions(analysis, params = {}) {
   const suggestions = [];
-  const { totalDuration, totalSessions } =
-    analysis;
+  const { totalDuration, totalSessions } = analysis;
 
   // Check for missing training types
   const hasSpeedTraining = totalDuration.speed > 0;

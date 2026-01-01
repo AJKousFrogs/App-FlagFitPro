@@ -1,23 +1,23 @@
 /**
  * Sports Science Research Sync Function
- * 
+ *
  * Syncs research data from free scholarly APIs:
  * - PubMed/Entrez API (millions of biomedical studies)
  * - Europe PMC REST API (open access full-text papers)
  * - OpenAlex API (no-key scholarly graph)
- * 
+ *
  * API Documentation:
  * - PubMed: https://www.ncbi.nlm.nih.gov/books/NBK25501/
  * - Europe PMC: https://europepmc.org/RestfulWebService
  * - OpenAlex: https://docs.openalex.org/
  */
 
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 
 // API Base URLs (all free, no API key required for basic usage)
-const PUBMED_BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
-const EUROPE_PMC_BASE_URL = 'https://www.ebi.ac.uk/europepmc/webservices/rest';
-const OPENALEX_BASE_URL = 'https://api.openalex.org';
+const PUBMED_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+const EUROPE_PMC_BASE_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest";
+const OPENALEX_BASE_URL = "https://api.openalex.org";
 
 // Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -25,7 +25,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function getSupabaseAdmin() {
   if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Missing Supabase credentials');
+    throw new Error("Missing Supabase credentials");
   }
   return createClient(supabaseUrl, supabaseServiceKey);
 }
@@ -44,23 +44,23 @@ async function searchPubMed(query, maxResults = 20) {
     const searchUrl = `${PUBMED_BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmax=${maxResults}&retmode=json&sort=relevance`;
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
-    
+
     const pmids = searchData.esearchresult?.idlist || [];
     if (pmids.length === 0) {
       return [];
     }
-    
+
     // Step 2: Fetch article details
-    const fetchUrl = `${PUBMED_BASE_URL}/efetch.fcgi?db=pubmed&id=${pmids.join(',')}&retmode=xml`;
+    const fetchUrl = `${PUBMED_BASE_URL}/efetch.fcgi?db=pubmed&id=${pmids.join(",")}&retmode=xml`;
     const fetchResponse = await fetch(fetchUrl);
     const xmlText = await fetchResponse.text();
-    
+
     // Parse XML response (simplified parsing)
     const articles = parsePubMedXML(xmlText);
-    
+
     return articles;
   } catch (error) {
-    console.error('PubMed search error:', error);
+    console.error("PubMed search error:", error);
     return [];
   }
 }
@@ -71,32 +71,34 @@ async function searchPubMed(query, maxResults = 20) {
  */
 function parsePubMedXML(xmlText) {
   const articles = [];
-  
+
   // Simple regex-based parsing for key fields
-  const articleMatches = xmlText.match(/<PubmedArticle>[\s\S]*?<\/PubmedArticle>/g) || [];
-  
+  const articleMatches =
+    xmlText.match(/<PubmedArticle>[\s\S]*?<\/PubmedArticle>/g) || [];
+
   for (const articleXml of articleMatches) {
     try {
-      const pmid = extractXmlValue(articleXml, 'PMID');
-      const title = extractXmlValue(articleXml, 'ArticleTitle');
-      const abstractText = extractXmlValue(articleXml, 'AbstractText') || 
-                          extractAllAbstractText(articleXml);
-      const journal = extractXmlValue(articleXml, 'Title');
-      const year = extractXmlValue(articleXml, 'Year');
+      const pmid = extractXmlValue(articleXml, "PMID");
+      const title = extractXmlValue(articleXml, "ArticleTitle");
+      const abstractText =
+        extractXmlValue(articleXml, "AbstractText") ||
+        extractAllAbstractText(articleXml);
+      const journal = extractXmlValue(articleXml, "Title");
+      const year = extractXmlValue(articleXml, "Year");
       const doi = extractDOI(articleXml);
-      
+
       // Extract authors
       const authors = extractAuthors(articleXml);
-      
+
       // Extract MeSH terms
       const meshTerms = extractMeshTerms(articleXml);
-      
+
       // Extract keywords
       const keywords = extractKeywords(articleXml);
-      
+
       if (pmid && title) {
         articles.push({
-          source: 'pubmed',
+          source: "pubmed",
           external_id: pmid,
           doi,
           title: cleanText(title),
@@ -108,29 +110,33 @@ function parsePubMedXML(xmlText) {
           mesh_terms: meshTerms,
           keywords,
           full_text_url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,
-          is_open_access: articleXml.includes('pmc') || articleXml.includes('PMC'),
+          is_open_access:
+            articleXml.includes("pmc") || articleXml.includes("PMC"),
         });
       }
     } catch (e) {
-      console.error('Error parsing article:', e);
+      console.error("Error parsing article:", e);
     }
   }
-  
+
   return articles;
 }
 
 function extractXmlValue(xml, tag) {
-  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
   const match = xml.match(regex);
   return match ? match[1].trim() : null;
 }
 
 function extractAllAbstractText(xml) {
-  const matches = xml.match(/<AbstractText[^>]*>[\s\S]*?<\/AbstractText>/g) || [];
-  return matches.map(m => {
-    const text = m.replace(/<[^>]+>/g, '').trim();
-    return text;
-  }).join(' ');
+  const matches =
+    xml.match(/<AbstractText[^>]*>[\s\S]*?<\/AbstractText>/g) || [];
+  return matches
+    .map((m) => {
+      const text = m.replace(/<[^>]+>/g, "").trim();
+      return text;
+    })
+    .join(" ");
 }
 
 function extractDOI(xml) {
@@ -141,12 +147,13 @@ function extractDOI(xml) {
 function extractAuthors(xml) {
   const authors = [];
   const authorMatches = xml.match(/<Author[^>]*>[\s\S]*?<\/Author>/g) || [];
-  
-  for (const authorXml of authorMatches.slice(0, 10)) { // Limit to first 10 authors
-    const lastName = extractXmlValue(authorXml, 'LastName');
-    const foreName = extractXmlValue(authorXml, 'ForeName');
-    const affiliation = extractXmlValue(authorXml, 'Affiliation');
-    
+
+  for (const authorXml of authorMatches.slice(0, 10)) {
+    // Limit to first 10 authors
+    const lastName = extractXmlValue(authorXml, "LastName");
+    const foreName = extractXmlValue(authorXml, "ForeName");
+    const affiliation = extractXmlValue(authorXml, "Affiliation");
+
     if (lastName) {
       authors.push({
         name: foreName ? `${foreName} ${lastName}` : lastName,
@@ -154,43 +161,46 @@ function extractAuthors(xml) {
       });
     }
   }
-  
+
   return authors;
 }
 
 function extractMeshTerms(xml) {
   const terms = [];
-  const meshMatches = xml.match(/<DescriptorName[^>]*>([^<]+)<\/DescriptorName>/g) || [];
-  
+  const meshMatches =
+    xml.match(/<DescriptorName[^>]*>([^<]+)<\/DescriptorName>/g) || [];
+
   for (const match of meshMatches) {
-    const term = match.replace(/<[^>]+>/g, '').trim();
+    const term = match.replace(/<[^>]+>/g, "").trim();
     if (term && !terms.includes(term)) {
       terms.push(term);
     }
   }
-  
+
   return terms;
 }
 
 function extractKeywords(xml) {
   const keywords = [];
   const keywordMatches = xml.match(/<Keyword[^>]*>([^<]+)<\/Keyword>/g) || [];
-  
+
   for (const match of keywordMatches) {
-    const keyword = match.replace(/<[^>]+>/g, '').trim();
+    const keyword = match.replace(/<[^>]+>/g, "").trim();
     if (keyword && !keywords.includes(keyword)) {
       keywords.push(keyword);
     }
   }
-  
+
   return keywords;
 }
 
 function cleanText(text) {
-  if (!text) {return null;}
+  if (!text) {
+    return null;
+  }
   return text
-    .replace(/<[^>]+>/g, '') // Remove XML tags
-    .replace(/\s+/g, ' ')    // Normalize whitespace
+    .replace(/<[^>]+>/g, "") // Remove XML tags
+    .replace(/\s+/g, " ") // Normalize whitespace
     .trim();
 }
 
@@ -207,16 +217,16 @@ async function searchEuropePMC(query, maxResults = 20) {
     const searchUrl = `${EUROPE_PMC_BASE_URL}/search?query=${encodeURIComponent(query)}&resultType=core&pageSize=${maxResults}&format=json`;
     const response = await fetch(searchUrl);
     const data = await response.json();
-    
+
     const results = data.resultList?.result || [];
-    
-    return results.map(article => ({
-      source: 'europe_pmc',
+
+    return results.map((article) => ({
+      source: "europe_pmc",
       external_id: article.pmid || article.id,
       doi: article.doi,
       title: article.title,
       abstract: article.abstractText,
-      authors: (article.authorList?.author || []).map(a => ({
+      authors: (article.authorList?.author || []).map((a) => ({
         name: a.fullName,
         affiliation: a.affiliation,
       })),
@@ -225,11 +235,13 @@ async function searchEuropePMC(query, maxResults = 20) {
       publication_date: article.firstPublicationDate,
       keywords: article.keywordList?.keyword || [],
       full_text_url: article.fullTextUrlList?.fullTextUrl?.[0]?.url,
-      pdf_url: article.fullTextUrlList?.fullTextUrl?.find(u => u.documentStyle === 'pdf')?.url,
-      is_open_access: article.isOpenAccess === 'Y',
+      pdf_url: article.fullTextUrlList?.fullTextUrl?.find(
+        (u) => u.documentStyle === "pdf",
+      )?.url,
+      is_open_access: article.isOpenAccess === "Y",
     }));
   } catch (error) {
-    console.error('Europe PMC search error:', error);
+    console.error("Europe PMC search error:", error);
     return [];
   }
 }
@@ -247,34 +259,36 @@ async function searchOpenAlex(query, maxResults = 20) {
     const searchUrl = `${OPENALEX_BASE_URL}/works?search=${encodeURIComponent(query)}&per_page=${maxResults}&sort=relevance_score:desc`;
     const response = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'FrogsApp/1.0 (mailto:contact@frogsapp.com)', // Polite pool
+        "User-Agent": "FrogsApp/1.0 (mailto:contact@frogsapp.com)", // Polite pool
       },
     });
     const data = await response.json();
-    
+
     const results = data.results || [];
-    
-    return results.map(work => ({
-      source: 'openAlex',
-      external_id: work.id?.replace('https://openalex.org/', ''),
-      doi: work.doi?.replace('https://doi.org/', ''),
+
+    return results.map((work) => ({
+      source: "openAlex",
+      external_id: work.id?.replace("https://openalex.org/", ""),
+      doi: work.doi?.replace("https://doi.org/", ""),
       title: work.title,
-      abstract: work.abstract_inverted_index ? reconstructAbstract(work.abstract_inverted_index) : null,
-      authors: (work.authorships || []).slice(0, 10).map(a => ({
+      abstract: work.abstract_inverted_index
+        ? reconstructAbstract(work.abstract_inverted_index)
+        : null,
+      authors: (work.authorships || []).slice(0, 10).map((a) => ({
         name: a.author?.display_name,
         affiliation: a.institutions?.[0]?.display_name,
       })),
       journal: work.primary_location?.source?.display_name,
       publication_year: work.publication_year,
       publication_date: work.publication_date,
-      keywords: work.concepts?.slice(0, 10).map(c => c.display_name) || [],
+      keywords: work.concepts?.slice(0, 10).map((c) => c.display_name) || [],
       full_text_url: work.primary_location?.landing_page_url,
       pdf_url: work.primary_location?.pdf_url || work.open_access?.oa_url,
       is_open_access: work.open_access?.is_oa || false,
       study_type: work.type,
     }));
   } catch (error) {
-    console.error('OpenAlex search error:', error);
+    console.error("OpenAlex search error:", error);
     return [];
   }
 }
@@ -283,53 +297,59 @@ async function searchOpenAlex(query, maxResults = 20) {
  * Search OpenAlex by institution (e.g., Australian Institute of Sport)
  * Useful for finding research from specific sports science institutions
  */
-async function searchOpenAlexByInstitution(institutionQuery, topicQuery = null, maxResults = 20) {
+async function searchOpenAlexByInstitution(
+  institutionQuery,
+  topicQuery = null,
+  maxResults = 20,
+) {
   try {
     // First, find the institution ID
     const instSearchUrl = `${OPENALEX_BASE_URL}/institutions?search=${encodeURIComponent(institutionQuery)}&per_page=1`;
     const instResponse = await fetch(instSearchUrl, {
       headers: {
-        'User-Agent': 'FrogsApp/1.0 (mailto:contact@frogsapp.com)',
+        "User-Agent": "FrogsApp/1.0 (mailto:contact@frogsapp.com)",
       },
     });
     const instData = await instResponse.json();
-    
+
     const institution = instData.results?.[0];
     if (!institution) {
       console.log(`Institution not found: ${institutionQuery}`);
       return [];
     }
-    
+
     // Search for works from this institution
     let worksUrl = `${OPENALEX_BASE_URL}/works?filter=institutions.id:${institution.id}`;
     if (topicQuery) {
       worksUrl += `&search=${encodeURIComponent(topicQuery)}`;
     }
     worksUrl += `&per_page=${maxResults}&sort=publication_date:desc`;
-    
+
     const worksResponse = await fetch(worksUrl, {
       headers: {
-        'User-Agent': 'FrogsApp/1.0 (mailto:contact@frogsapp.com)',
+        "User-Agent": "FrogsApp/1.0 (mailto:contact@frogsapp.com)",
       },
     });
     const worksData = await worksResponse.json();
-    
+
     const results = worksData.results || [];
-    
-    return results.map(work => ({
-      source: 'openAlex',
-      external_id: work.id?.replace('https://openalex.org/', ''),
-      doi: work.doi?.replace('https://doi.org/', ''),
+
+    return results.map((work) => ({
+      source: "openAlex",
+      external_id: work.id?.replace("https://openalex.org/", ""),
+      doi: work.doi?.replace("https://doi.org/", ""),
       title: work.title,
-      abstract: work.abstract_inverted_index ? reconstructAbstract(work.abstract_inverted_index) : null,
-      authors: (work.authorships || []).slice(0, 10).map(a => ({
+      abstract: work.abstract_inverted_index
+        ? reconstructAbstract(work.abstract_inverted_index)
+        : null,
+      authors: (work.authorships || []).slice(0, 10).map((a) => ({
         name: a.author?.display_name,
         affiliation: a.institutions?.[0]?.display_name,
       })),
       journal: work.primary_location?.source?.display_name,
       publication_year: work.publication_year,
       publication_date: work.publication_date,
-      keywords: work.concepts?.slice(0, 10).map(c => c.display_name) || [],
+      keywords: work.concepts?.slice(0, 10).map((c) => c.display_name) || [],
       full_text_url: work.primary_location?.landing_page_url,
       pdf_url: work.primary_location?.pdf_url || work.open_access?.oa_url,
       is_open_access: work.open_access?.is_oa || false,
@@ -337,7 +357,7 @@ async function searchOpenAlexByInstitution(institutionQuery, topicQuery = null, 
       institution: institution.display_name,
     }));
   } catch (error) {
-    console.error('OpenAlex institution search error:', error);
+    console.error("OpenAlex institution search error:", error);
     return [];
   }
 }
@@ -345,38 +365,115 @@ async function searchOpenAlexByInstitution(institutionQuery, topicQuery = null, 
 // Key sports science institutions for research (Shanghai Ranking 2024 + AIS)
 const SPORTS_SCIENCE_INSTITUTIONS = [
   // Top 10 Shanghai Ranking
-  { name: 'Deakin University', country: 'Australia', focus: 'Nutrition, sprint protocols, recovery', rank: 1 },
-  { name: 'University of Southern Denmark', country: 'Denmark', focus: 'Plyometrics, isometrics, twitch research', rank: 2 },
-  { name: 'Norwegian School of Sport Sciences', country: 'Norway', focus: 'Elite performance, psychology', rank: 3 },
-  { name: 'University of Verona', country: 'Italy', focus: 'High-altitude training, endurance', rank: 4 },
-  { name: 'University of Copenhagen', country: 'Denmark', focus: 'Sports nutrition, supplements', rank: 5 },
-  { name: 'Victoria University Melbourne', country: 'Australia', focus: 'Flag football conditioning', rank: 6 },
-  { name: 'Vrije Universiteit Amsterdam', country: 'Netherlands', focus: 'Motor control, mental training', rank: 7 },
-  { name: 'Norwegian University of Science and Technology', country: 'Norway', focus: 'Sprint mechanics', rank: 8 },
-  { name: 'KU Leuven', country: 'Belgium', focus: 'Kinesiology, injury prevention', rank: 9 },
-  { name: 'University of Bath', country: 'UK', focus: 'Plyometrics, recovery protocols', rank: 10 },
+  {
+    name: "Deakin University",
+    country: "Australia",
+    focus: "Nutrition, sprint protocols, recovery",
+    rank: 1,
+  },
+  {
+    name: "University of Southern Denmark",
+    country: "Denmark",
+    focus: "Plyometrics, isometrics, twitch research",
+    rank: 2,
+  },
+  {
+    name: "Norwegian School of Sport Sciences",
+    country: "Norway",
+    focus: "Elite performance, psychology",
+    rank: 3,
+  },
+  {
+    name: "University of Verona",
+    country: "Italy",
+    focus: "High-altitude training, endurance",
+    rank: 4,
+  },
+  {
+    name: "University of Copenhagen",
+    country: "Denmark",
+    focus: "Sports nutrition, supplements",
+    rank: 5,
+  },
+  {
+    name: "Victoria University Melbourne",
+    country: "Australia",
+    focus: "Flag football conditioning",
+    rank: 6,
+  },
+  {
+    name: "Vrije Universiteit Amsterdam",
+    country: "Netherlands",
+    focus: "Motor control, mental training",
+    rank: 7,
+  },
+  {
+    name: "Norwegian University of Science and Technology",
+    country: "Norway",
+    focus: "Sprint mechanics",
+    rank: 8,
+  },
+  {
+    name: "KU Leuven",
+    country: "Belgium",
+    focus: "Kinesiology, injury prevention",
+    rank: 9,
+  },
+  {
+    name: "University of Bath",
+    country: "UK",
+    focus: "Plyometrics, recovery protocols",
+    rank: 10,
+  },
   // Additional key institutions
-  { name: 'Australian Institute of Sport', country: 'Australia', focus: 'High performance, ABCD framework', rank: null },
-  { name: 'United States Olympic Committee', country: 'USA', focus: 'Olympic athlete development', rank: null },
-  { name: 'English Institute of Sport', country: 'UK', focus: 'Elite athlete support', rank: null },
-  { name: 'National Strength and Conditioning Association', country: 'USA', focus: 'Strength & conditioning', rank: null },
-  { name: 'American College of Sports Medicine', country: 'USA', focus: 'Sports medicine research', rank: null },
+  {
+    name: "Australian Institute of Sport",
+    country: "Australia",
+    focus: "High performance, ABCD framework",
+    rank: null,
+  },
+  {
+    name: "United States Olympic Committee",
+    country: "USA",
+    focus: "Olympic athlete development",
+    rank: null,
+  },
+  {
+    name: "English Institute of Sport",
+    country: "UK",
+    focus: "Elite athlete support",
+    rank: null,
+  },
+  {
+    name: "National Strength and Conditioning Association",
+    country: "USA",
+    focus: "Strength & conditioning",
+    rank: null,
+  },
+  {
+    name: "American College of Sports Medicine",
+    country: "USA",
+    focus: "Sports medicine research",
+    rank: null,
+  },
 ];
 
 /**
  * Reconstruct abstract from OpenAlex inverted index format
  */
 function reconstructAbstract(invertedIndex) {
-  if (!invertedIndex) {return null;}
-  
+  if (!invertedIndex) {
+    return null;
+  }
+
   const words = [];
   for (const [word, positions] of Object.entries(invertedIndex)) {
     for (const pos of positions) {
       words[pos] = word;
     }
   }
-  
-  return words.filter(w => w).join(' ');
+
+  return words.filter((w) => w).join(" ");
 }
 
 // =============================================================================
@@ -388,46 +485,67 @@ function reconstructAbstract(invertedIndex) {
  */
 function calculateRelevanceScore(article) {
   let score = 0.5; // Base score
-  
+
   const relevantTerms = [
-    'flag football', 'football', 'sprint', 'agility', 'plyometric',
-    'recovery', 'nutrition', 'athlete', 'training', 'performance',
-    'speed', 'power', 'strength', 'conditioning', 'muscle',
-    'acceleration', 'change of direction', 'reactive', 'explosive'
+    "flag football",
+    "football",
+    "sprint",
+    "agility",
+    "plyometric",
+    "recovery",
+    "nutrition",
+    "athlete",
+    "training",
+    "performance",
+    "speed",
+    "power",
+    "strength",
+    "conditioning",
+    "muscle",
+    "acceleration",
+    "change of direction",
+    "reactive",
+    "explosive",
   ];
-  
+
   const highRelevanceTerms = [
-    'flag football', 'sprint training', 'agility training', 'plyometric training',
-    'athlete performance', 'sports nutrition', 'recovery protocol'
+    "flag football",
+    "sprint training",
+    "agility training",
+    "plyometric training",
+    "athlete performance",
+    "sports nutrition",
+    "recovery protocol",
   ];
-  
-  const textToSearch = `${article.title || ''} ${article.abstract || ''} ${(article.keywords || []).join(' ')}`.toLowerCase();
-  
+
+  const textToSearch =
+    `${article.title || ""} ${article.abstract || ""} ${(article.keywords || []).join(" ")}`.toLowerCase();
+
   // Check for relevant terms
   for (const term of relevantTerms) {
     if (textToSearch.includes(term.toLowerCase())) {
       score += 0.03;
     }
   }
-  
+
   // Bonus for high relevance terms
   for (const term of highRelevanceTerms) {
     if (textToSearch.includes(term.toLowerCase())) {
       score += 0.08;
     }
   }
-  
+
   // Bonus for open access
   if (article.is_open_access) {
     score += 0.05;
   }
-  
+
   // Bonus for recent publications (last 5 years)
   const currentYear = new Date().getFullYear();
   if (article.publication_year && article.publication_year >= currentYear - 5) {
     score += 0.05;
   }
-  
+
   // Cap at 1.0
   return Math.min(score, 1.0);
 }
@@ -437,20 +555,45 @@ function calculateRelevanceScore(article) {
  */
 function determineTopics(article) {
   const topics = [];
-  const textToSearch = `${article.title || ''} ${article.abstract || ''} ${(article.keywords || []).join(' ')}`.toLowerCase();
-  
+  const textToSearch =
+    `${article.title || ""} ${article.abstract || ""} ${(article.keywords || []).join(" ")}`.toLowerCase();
+
   const topicKeywords = {
-    'sprinting': ['sprint', 'sprinting', 'acceleration', 'velocity', 'speed'],
-    'plyometrics': ['plyometric', 'jump', 'reactive strength', 'ssc', 'stretch-shortening'],
-    'isometrics': ['isometric', 'static contraction', 'rfd', 'rate of force'],
-    'agility': ['agility', 'change of direction', 'cod', 'cutting'],
-    'recovery': ['recovery', 'regeneration', 'fatigue', 'overtraining'],
-    'sleep': ['sleep', 'circadian', 'rest', 'sleep quality'],
-    'muscle_fiber': ['muscle fiber', 'fiber type', 'fast twitch', 'slow twitch', 'type ii'],
-    'sports_psychology': ['psychology', 'mental', 'motivation', 'anxiety', 'confidence'],
-    'sports_nutrition': ['nutrition', 'diet', 'protein', 'carbohydrate', 'hydration'],
+    sprinting: ["sprint", "sprinting", "acceleration", "velocity", "speed"],
+    plyometrics: [
+      "plyometric",
+      "jump",
+      "reactive strength",
+      "ssc",
+      "stretch-shortening",
+    ],
+    isometrics: ["isometric", "static contraction", "rfd", "rate of force"],
+    agility: ["agility", "change of direction", "cod", "cutting"],
+    recovery: ["recovery", "regeneration", "fatigue", "overtraining"],
+    sleep: ["sleep", "circadian", "rest", "sleep quality"],
+    muscle_fiber: [
+      "muscle fiber",
+      "fiber type",
+      "fast twitch",
+      "slow twitch",
+      "type ii",
+    ],
+    sports_psychology: [
+      "psychology",
+      "mental",
+      "motivation",
+      "anxiety",
+      "confidence",
+    ],
+    sports_nutrition: [
+      "nutrition",
+      "diet",
+      "protein",
+      "carbohydrate",
+      "hydration",
+    ],
   };
-  
+
   for (const [topic, keywords] of Object.entries(topicKeywords)) {
     for (const keyword of keywords) {
       if (textToSearch.includes(keyword)) {
@@ -461,7 +604,7 @@ function determineTopics(article) {
       }
     }
   }
-  
+
   return topics;
 }
 
@@ -470,17 +613,18 @@ function determineTopics(article) {
  */
 function determineSports(article) {
   const sports = [];
-  const textToSearch = `${article.title || ''} ${article.abstract || ''} ${(article.keywords || []).join(' ')}`.toLowerCase();
-  
+  const textToSearch =
+    `${article.title || ""} ${article.abstract || ""} ${(article.keywords || []).join(" ")}`.toLowerCase();
+
   const sportKeywords = {
-    'flag_football': ['flag football', 'non-contact football'],
-    'football': ['football', 'american football', 'gridiron'],
-    'track': ['track', 'athletics', 'sprinter'],
-    'basketball': ['basketball'],
-    'soccer': ['soccer', 'football players'],
-    'general': ['athlete', 'sport', 'training'],
+    flag_football: ["flag football", "non-contact football"],
+    football: ["football", "american football", "gridiron"],
+    track: ["track", "athletics", "sprinter"],
+    basketball: ["basketball"],
+    soccer: ["soccer", "football players"],
+    general: ["athlete", "sport", "training"],
   };
-  
+
   for (const [sport, keywords] of Object.entries(sportKeywords)) {
     for (const keyword of keywords) {
       if (textToSearch.includes(keyword)) {
@@ -491,12 +635,12 @@ function determineSports(article) {
       }
     }
   }
-  
+
   // Default to general if no specific sport found
   if (sports.length === 0) {
-    sports.push('general');
+    sports.push("general");
   }
-  
+
   return sports;
 }
 
@@ -509,51 +653,54 @@ function determineSports(article) {
  */
 async function syncResearchForTopic(topic, _supabase) {
   console.log(`Syncing research for topic: ${topic.topic_name}`);
-  
+
   const allArticles = [];
-  
+
   // Search PubMed
   if (topic.pubmed_query) {
     const pubmedResults = await searchPubMed(topic.pubmed_query, 10);
     allArticles.push(...pubmedResults);
     // Rate limiting - wait 400ms between API calls
     // eslint-disable-next-line no-promise-executor-return
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 400));
   }
-  
+
   // Search Europe PMC
   if (topic.europe_pmc_query) {
     const europePmcResults = await searchEuropePMC(topic.europe_pmc_query, 10);
     allArticles.push(...europePmcResults);
     // eslint-disable-next-line no-promise-executor-return
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 400));
   }
-  
+
   // Search OpenAlex
-  const openAlexQuery = topic.keywords?.join(' ') || topic.topic_name;
+  const openAlexQuery = topic.keywords?.join(" ") || topic.topic_name;
   const openAlexResults = await searchOpenAlex(openAlexQuery, 10);
   allArticles.push(...openAlexResults);
-  
+
   // For AIS-related topics, also search by institution
-  if (topic.keywords?.includes('AIS') || topic.keywords?.includes('Australian Institute of Sport')) {
+  if (
+    topic.keywords?.includes("AIS") ||
+    topic.keywords?.includes("Australian Institute of Sport")
+  ) {
     // eslint-disable-next-line no-promise-executor-return
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     const aisResults = await searchOpenAlexByInstitution(
-      'Australian Institute of Sport',
-      topic.topic_name.replace('_', ' '),
-      5
+      "Australian Institute of Sport",
+      topic.topic_name.replace("_", " "),
+      5,
     );
     allArticles.push(...aisResults);
   }
-  
+
   // Process and enrich articles
-  const processedArticles = allArticles.map(article => ({
+  const processedArticles = allArticles.map((article) => ({
     ...article,
     topics: determineTopics(article),
     sports: determineSports(article),
     relevance_score: calculateRelevanceScore(article),
   }));
-  
+
   return processedArticles;
 }
 
@@ -563,34 +710,40 @@ async function syncResearchForTopic(topic, _supabase) {
 async function syncFromTopInstitutions(topic = null) {
   const startTime = Date.now();
   const supabase = getSupabaseAdmin();
-  
-  console.log('Syncing research from top institutions...');
-  
+
+  console.log("Syncing research from top institutions...");
+
   // Get top institutions from database
   const { data: institutions, error: instError } = await supabase
-    .from('research_institutions')
-    .select('*')
-    .eq('is_active', true)
-    .order('priority_score', { ascending: false })
+    .from("research_institutions")
+    .select("*")
+    .eq("is_active", true)
+    .order("priority_score", { ascending: false })
     .limit(10);
-  
+
   if (instError || !institutions) {
     throw new Error(`Failed to fetch institutions: ${instError?.message}`);
   }
-  
+
   let totalAdded = 0;
   let totalFailed = 0;
   const errors = [];
-  
+
   for (const institution of institutions) {
     try {
-      const searchName = institution.openalex_search_name || institution.institution_name;
-      const searchTopic = topic || institution.focus_areas?.[0]?.replace('_', ' ') || 'training';
-      
+      const searchName =
+        institution.openalex_search_name || institution.institution_name;
+      const searchTopic =
+        topic || institution.focus_areas?.[0]?.replace("_", " ") || "training";
+
       console.log(`Searching ${searchName} for: ${searchTopic}`);
-      
-      const articles = await searchOpenAlexByInstitution(searchName, searchTopic, 5);
-      
+
+      const articles = await searchOpenAlexByInstitution(
+        searchName,
+        searchTopic,
+        5,
+      );
+
       for (const article of articles) {
         try {
           const enrichedArticle = {
@@ -599,14 +752,14 @@ async function syncFromTopInstitutions(topic = null) {
             sports: determineSports(article),
             relevance_score: calculateRelevanceScore(article),
           };
-          
+
           const { error } = await supabase
-            .from('research_studies')
+            .from("research_studies")
             .upsert(enrichedArticle, {
-              onConflict: 'source,external_id',
+              onConflict: "source,external_id",
               ignoreDuplicates: false,
             });
-          
+
           if (error) {
             console.error(`Error upserting article: ${error.message}`);
             totalFailed++;
@@ -617,24 +770,28 @@ async function syncFromTopInstitutions(topic = null) {
           totalFailed++;
         }
       }
-      
+
       // Rate limiting
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (e) {
-      console.error(`Error syncing from ${institution.institution_name}: ${e.message}`);
-      errors.push({ institution: institution.institution_name, error: e.message });
+      console.error(
+        `Error syncing from ${institution.institution_name}: ${e.message}`,
+      );
+      errors.push({
+        institution: institution.institution_name,
+        error: e.message,
+      });
     }
   }
-  
+
   const duration = Date.now() - startTime;
-  
+
   // Log sync result
-  await supabase.from('sync_logs').insert({
-    source: 'top_institutions',
-    result: totalFailed === 0 ? 'success' : 'partial',
-    severity: totalFailed === 0 ? 'info' : 'warning',
+  await supabase.from("sync_logs").insert({
+    source: "top_institutions",
+    result: totalFailed === 0 ? "success" : "partial",
+    severity: totalFailed === 0 ? "info" : "warning",
     records_added: totalAdded,
     records_failed: totalFailed,
     duration_ms: duration,
@@ -644,7 +801,7 @@ async function syncFromTopInstitutions(topic = null) {
       errors,
     },
   });
-  
+
   return {
     success: true,
     message: `Synced research from ${institutions.length} top institutions`,
@@ -663,25 +820,32 @@ async function syncFromTopInstitutions(topic = null) {
  */
 async function getTopInstitutionResearch(topic, limitPerInstitution = 5) {
   const supabase = getSupabaseAdmin();
-  
+
   // Get top institutions
   const { data: institutions, error: instError } = await supabase
-    .from('research_institutions')
-    .select('institution_name, short_name, openalex_search_name, country, focus_areas, shanghai_rank')
-    .eq('is_active', true)
-    .order('priority_score', { ascending: false })
+    .from("research_institutions")
+    .select(
+      "institution_name, short_name, openalex_search_name, country, focus_areas, shanghai_rank",
+    )
+    .eq("is_active", true)
+    .order("priority_score", { ascending: false })
     .limit(5);
-  
+
   if (instError || !institutions) {
     throw new Error(`Failed to fetch institutions: ${instError?.message}`);
   }
-  
+
   const results = [];
-  
+
   for (const institution of institutions) {
-    const searchName = institution.openalex_search_name || institution.institution_name;
-    const articles = await searchOpenAlexByInstitution(searchName, topic, limitPerInstitution);
-    
+    const searchName =
+      institution.openalex_search_name || institution.institution_name;
+    const articles = await searchOpenAlexByInstitution(
+      searchName,
+      topic,
+      limitPerInstitution,
+    );
+
     results.push({
       institution: {
         name: institution.institution_name,
@@ -689,17 +853,17 @@ async function getTopInstitutionResearch(topic, limitPerInstitution = 5) {
         country: institution.country,
         rank: institution.shanghai_rank,
       },
-      articles: articles.map(a => ({
+      articles: articles.map((a) => ({
         ...a,
         relevance_score: calculateRelevanceScore(a),
       })),
     });
-    
+
     // Rate limiting
     // eslint-disable-next-line no-promise-executor-return
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
   }
-  
+
   return {
     topic,
     institutions: results,
@@ -713,39 +877,39 @@ async function getTopInstitutionResearch(topic, limitPerInstitution = 5) {
 async function syncAllResearch() {
   const startTime = Date.now();
   const supabase = getSupabaseAdmin();
-  
-  console.log('Starting research sync...');
-  
+
+  console.log("Starting research sync...");
+
   // Get all active research topics
   const { data: topics, error: topicsError } = await supabase
-    .from('research_topics')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order');
-  
+    .from("research_topics")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order");
+
   if (topicsError) {
     throw new Error(`Failed to fetch topics: ${topicsError.message}`);
   }
-  
+
   let totalAdded = 0;
   const totalUpdated = 0;
   let totalFailed = 0;
   const errors = [];
-  
+
   for (const topic of topics) {
     try {
       const articles = await syncResearchForTopic(topic, supabase);
-      
+
       for (const article of articles) {
         try {
           // Upsert article
           const { error } = await supabase
-            .from('research_studies')
+            .from("research_studies")
             .upsert(article, {
-              onConflict: 'source,external_id',
+              onConflict: "source,external_id",
               ignoreDuplicates: false,
             });
-          
+
           if (error) {
             console.error(`Error upserting article: ${error.message}`);
             totalFailed++;
@@ -757,24 +921,23 @@ async function syncAllResearch() {
           totalFailed++;
         }
       }
-      
+
       // Rate limiting between topics
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
       console.error(`Error syncing topic ${topic.topic_name}: ${e.message}`);
       errors.push({ topic: topic.topic_name, error: e.message });
     }
   }
-  
+
   const duration = Date.now() - startTime;
-  
+
   // Log sync result
-  await supabase.from('sync_logs').insert({
-    source: 'research_apis',
-    result: totalFailed === 0 ? 'success' : 'partial',
-    severity: totalFailed === 0 ? 'info' : 'warning',
+  await supabase.from("sync_logs").insert({
+    source: "research_apis",
+    result: totalFailed === 0 ? "success" : "partial",
+    severity: totalFailed === 0 ? "info" : "warning",
     records_added: totalAdded,
     records_updated: totalUpdated,
     records_failed: totalFailed,
@@ -784,7 +947,7 @@ async function syncAllResearch() {
       errors,
     },
   });
-  
+
   return {
     success: true,
     message: `Research sync completed`,
@@ -803,7 +966,7 @@ async function syncAllResearch() {
  */
 async function searchResearch(query, options = {}) {
   const supabase = getSupabaseAdmin();
-  
+
   const {
     topics = [],
     sports = [],
@@ -812,46 +975,48 @@ async function searchResearch(query, options = {}) {
     offset = 0,
     openAccessOnly = false,
   } = options;
-  
+
   let queryBuilder = supabase
-    .from('research_studies')
-    .select('*')
-    .eq('is_active', true)
-    .order('relevance_score', { ascending: false })
-    .order('publication_date', { ascending: false })
+    .from("research_studies")
+    .select("*")
+    .eq("is_active", true)
+    .order("relevance_score", { ascending: false })
+    .order("publication_date", { ascending: false })
     .range(offset, offset + limit - 1);
-  
+
   // Text search in title and abstract
   if (query) {
-    queryBuilder = queryBuilder.or(`title.ilike.%${query}%,abstract.ilike.%${query}%`);
+    queryBuilder = queryBuilder.or(
+      `title.ilike.%${query}%,abstract.ilike.%${query}%`,
+    );
   }
-  
+
   // Filter by topics
   if (topics.length > 0) {
-    queryBuilder = queryBuilder.overlaps('topics', topics);
+    queryBuilder = queryBuilder.overlaps("topics", topics);
   }
-  
+
   // Filter by sports
   if (sports.length > 0) {
-    queryBuilder = queryBuilder.overlaps('sports', sports);
+    queryBuilder = queryBuilder.overlaps("sports", sports);
   }
-  
+
   // Filter by source
   if (source) {
-    queryBuilder = queryBuilder.eq('source', source);
+    queryBuilder = queryBuilder.eq("source", source);
   }
-  
+
   // Filter open access only
   if (openAccessOnly) {
-    queryBuilder = queryBuilder.eq('is_open_access', true);
+    queryBuilder = queryBuilder.eq("is_open_access", true);
   }
-  
+
   const { data, error, count } = await queryBuilder;
-  
+
   if (error) {
     throw new Error(`Search failed: ${error.message}`);
   }
-  
+
   return {
     results: data,
     total: count,
@@ -865,19 +1030,19 @@ async function searchResearch(query, options = {}) {
  */
 async function getFeaturedResearch(limit = 10) {
   const supabase = getSupabaseAdmin();
-  
+
   const { data, error } = await supabase
-    .from('research_studies')
-    .select('*')
-    .eq('is_active', true)
-    .eq('is_featured', true)
-    .order('relevance_score', { ascending: false })
+    .from("research_studies")
+    .select("*")
+    .eq("is_active", true)
+    .eq("is_featured", true)
+    .order("relevance_score", { ascending: false })
     .limit(limit);
-  
+
   if (error) {
     throw new Error(`Failed to fetch featured research: ${error.message}`);
   }
-  
+
   return data;
 }
 
@@ -886,33 +1051,33 @@ async function getFeaturedResearch(limit = 10) {
  */
 async function getResearchTopics() {
   const supabase = getSupabaseAdmin();
-  
+
   const { data: topics, error } = await supabase
-    .from('research_topics')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order');
-  
+    .from("research_topics")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order");
+
   if (error) {
     throw new Error(`Failed to fetch topics: ${error.message}`);
   }
-  
+
   // Get counts for each topic
   const topicsWithCounts = await Promise.all(
     topics.map(async (topic) => {
       const { count } = await supabase
-        .from('research_studies')
-        .select('*', { count: 'exact', head: true })
-        .contains('topics', [topic.topic_name])
-        .eq('is_active', true);
-      
+        .from("research_studies")
+        .select("*", { count: "exact", head: true })
+        .contains("topics", [topic.topic_name])
+        .eq("is_active", true);
+
       return {
         ...topic,
         study_count: count || 0,
       };
-    })
+    }),
   );
-  
+
   return topicsWithCounts;
 }
 
@@ -921,27 +1086,29 @@ async function getResearchTopics() {
  */
 async function getTrainingProtocols(category = null, athleteLevel = null) {
   const supabase = getSupabaseAdmin();
-  
+
   let queryBuilder = supabase
-    .from('training_protocols')
-    .select('*')
-    .eq('is_active', true)
-    .order('is_featured', { ascending: false });
-  
+    .from("training_protocols")
+    .select("*")
+    .eq("is_active", true)
+    .order("is_featured", { ascending: false });
+
   if (category) {
-    queryBuilder = queryBuilder.eq('category', category);
+    queryBuilder = queryBuilder.eq("category", category);
   }
-  
+
   if (athleteLevel) {
-    queryBuilder = queryBuilder.or(`athlete_level.eq.${athleteLevel},athlete_level.eq.all`);
+    queryBuilder = queryBuilder.or(
+      `athlete_level.eq.${athleteLevel},athlete_level.eq.all`,
+    );
   }
-  
+
   const { data, error } = await queryBuilder;
-  
+
   if (error) {
     throw new Error(`Failed to fetch protocols: ${error.message}`);
   }
-  
+
   return data;
 }
 
@@ -951,125 +1118,149 @@ async function getTrainingProtocols(category = null, athleteLevel = null) {
 
 exports.handler = async (event, _context) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Content-Type": "application/json",
   };
-  
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers, body: '' };
+
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers, body: "" };
   }
-  
+
   try {
-    const path = event.path.replace(/^\/api\/research\/?/, '').replace(/^\.netlify\/functions\/research-sync\/?/, '');
-    const segments = path.split('/').filter(Boolean);
-    const endpoint = segments[0] || 'search';
-    
+    const path = event.path
+      .replace(/^\/api\/research\/?/, "")
+      .replace(/^\.netlify\/functions\/research-sync\/?/, "");
+    const segments = path.split("/").filter(Boolean);
+    const endpoint = segments[0] || "search";
+
     const params = event.queryStringParameters || {};
     const body = event.body ? JSON.parse(event.body) : {};
-    
+
     let result;
-    
+
     switch (endpoint) {
-      case 'sync':
+      case "sync":
         // Trigger full research sync (admin only)
         result = await syncAllResearch();
         break;
-        
-      case 'search':
+
+      case "search":
         // Search research studies
         result = await searchResearch(params.q || body.query, {
-          topics: params.topics?.split(',') || body.topics,
-          sports: params.sports?.split(',') || body.sports,
+          topics: params.topics?.split(",") || body.topics,
+          sports: params.sports?.split(",") || body.sports,
           source: params.source || body.source,
           limit: parseInt(params.limit) || 20,
           offset: parseInt(params.offset) || 0,
-          openAccessOnly: params.openAccess === 'true' || body.openAccessOnly,
+          openAccessOnly: params.openAccess === "true" || body.openAccessOnly,
         });
         break;
-        
-      case 'featured':
+
+      case "featured":
         // Get featured research
         result = await getFeaturedResearch(parseInt(params.limit) || 10);
         break;
-        
-      case 'topics':
+
+      case "topics":
         // Get research topics with counts
         result = await getResearchTopics();
         break;
-        
-      case 'protocols':
+
+      case "protocols":
         // Get training protocols
         result = await getTrainingProtocols(
           params.category || body.category,
-          params.level || body.athleteLevel
+          params.level || body.athleteLevel,
         );
         break;
-        
-      case 'pubmed':
+
+      case "pubmed":
         // Direct PubMed search (for testing)
-        result = await searchPubMed(params.q || body.query, parseInt(params.limit) || 10);
+        result = await searchPubMed(
+          params.q || body.query,
+          parseInt(params.limit) || 10,
+        );
         break;
-        
-      case 'europepmc':
+
+      case "europepmc":
         // Direct Europe PMC search (for testing)
-        result = await searchEuropePMC(params.q || body.query, parseInt(params.limit) || 10);
+        result = await searchEuropePMC(
+          params.q || body.query,
+          parseInt(params.limit) || 10,
+        );
         break;
-        
-      case 'openalex':
+
+      case "openalex":
         // Direct OpenAlex search (for testing)
-        result = await searchOpenAlex(params.q || body.query, parseInt(params.limit) || 10);
+        result = await searchOpenAlex(
+          params.q || body.query,
+          parseInt(params.limit) || 10,
+        );
         break;
-        
-      case 'institution': {
+
+      case "institution": {
         // Search by institution (e.g., AIS, USOC, EIS)
-        const institution = params.institution || body.institution || 'Australian Institute of Sport';
+        const institution =
+          params.institution ||
+          body.institution ||
+          "Australian Institute of Sport";
         const topic = params.topic || body.topic || null;
-        result = await searchOpenAlexByInstitution(institution, topic, parseInt(params.limit) || 20);
+        result = await searchOpenAlexByInstitution(
+          institution,
+          topic,
+          parseInt(params.limit) || 20,
+        );
         break;
       }
-        
-      case 'ais': {
+
+      case "ais": {
         // Shortcut for Australian Institute of Sport research
-        const aisTopic = params.topic || body.topic || 'training performance';
-        result = await searchOpenAlexByInstitution('Australian Institute of Sport', aisTopic, parseInt(params.limit) || 20);
+        const aisTopic = params.topic || body.topic || "training performance";
+        result = await searchOpenAlexByInstitution(
+          "Australian Institute of Sport",
+          aisTopic,
+          parseInt(params.limit) || 20,
+        );
         break;
       }
-        
-      case 'sync-institutions':
+
+      case "sync-institutions":
         // Sync research from top institutions (admin only)
         result = await syncFromTopInstitutions(params.topic || body.topic);
         break;
-        
-      case 'top-research': {
+
+      case "top-research": {
         // Get research from top-ranked institutions by topic
-        const topTopic = params.topic || body.topic || 'sprint training';
+        const topTopic = params.topic || body.topic || "sprint training";
         const topLimit = parseInt(params.limit) || 5;
         result = await getTopInstitutionResearch(topTopic, topLimit);
         break;
       }
-        
-      case 'institutions': {
+
+      case "institutions": {
         // List available sports science institutions from database
         const supabaseInst = getSupabaseAdmin();
         const { data: dbInstitutions, error: instError } = await supabaseInst
-          .from('research_institutions')
-          .select('*')
-          .eq('is_active', true)
-          .order('shanghai_rank', { ascending: true, nullsFirst: false })
-          .order('priority_score', { ascending: false });
-        
+          .from("research_institutions")
+          .select("*")
+          .eq("is_active", true)
+          .order("shanghai_rank", { ascending: true, nullsFirst: false })
+          .order("priority_score", { ascending: false });
+
         if (instError || !dbInstitutions || dbInstitutions.length === 0) {
           // Fallback to hardcoded list
           result = {
             institutions: SPORTS_SCIENCE_INSTITUTIONS,
-            description: 'Top sports science institutions (Shanghai Ranking 2024)',
-            example: '/api/research/institution?institution=Deakin University&topic=sprint',
+            description:
+              "Top sports science institutions (Shanghai Ranking 2024)",
+            example:
+              "/api/research/institution?institution=Deakin University&topic=sprint",
           };
         } else {
           result = {
-            institutions: dbInstitutions.map(inst => ({
+            institutions: dbInstitutions.map((inst) => ({
               name: inst.institution_name,
               shortName: inst.short_name,
               department: inst.department,
@@ -1082,13 +1273,15 @@ exports.handler = async (event, _context) => {
               searchName: inst.openalex_search_name,
             })),
             total: dbInstitutions.length,
-            description: 'Top sports science institutions (Shanghai Ranking 2024 + key research centers)',
-            example: '/api/research/institution?institution=Deakin University&topic=sprint',
+            description:
+              "Top sports science institutions (Shanghai Ranking 2024 + key research centers)",
+            example:
+              "/api/research/institution?institution=Deakin University&topic=sprint",
           };
         }
         break;
       }
-        
+
       default:
         return {
           statusCode: 404,
@@ -1096,15 +1289,14 @@ exports.handler = async (event, _context) => {
           body: JSON.stringify({ error: `Unknown endpoint: ${endpoint}` }),
         };
     }
-    
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify(result),
     };
-    
   } catch (error) {
-    console.error('Research sync error:', error);
+    console.error("Research sync error:", error);
     return {
       statusCode: 500,
       headers,
@@ -1121,4 +1313,3 @@ module.exports.syncAllResearch = syncAllResearch;
 module.exports.searchResearch = searchResearch;
 module.exports.getResearchTopics = getResearchTopics;
 module.exports.getTrainingProtocols = getTrainingProtocols;
-

@@ -16,12 +16,28 @@ export interface ConfirmDialogOptions {
   rejectLabel?: string;
   acceptIcon?: string;
   rejectIcon?: string;
-  acceptSeverity?: "primary" | "secondary" | "success" | "info" | "warn" | "danger" | "help" | "contrast";
-  rejectSeverity?: "primary" | "secondary" | "success" | "info" | "warn" | "danger" | "help" | "contrast";
+  acceptSeverity?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "help"
+    | "contrast";
+  rejectSeverity?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "help"
+    | "contrast";
   defaultFocus?: "accept" | "reject" | "close";
 }
 
-export type ConfirmationType = 
+export type ConfirmationType =
   | "delete"
   | "remove"
   | "archive"
@@ -110,8 +126,12 @@ export class ConfirmDialogService {
         rejectLabel: options.rejectLabel || "No",
         acceptIcon: options.acceptIcon,
         rejectIcon: options.rejectIcon,
-        acceptButtonStyleClass: this.getSeverityClass(options.acceptSeverity || "primary"),
-        rejectButtonStyleClass: this.getSeverityClass(options.rejectSeverity || "secondary") + " p-button-outlined",
+        acceptButtonStyleClass: this.getSeverityClass(
+          options.acceptSeverity || "primary",
+        ),
+        rejectButtonStyleClass:
+          this.getSeverityClass(options.rejectSeverity || "secondary") +
+          " p-button-outlined",
         defaultFocus: options.defaultFocus || "accept",
         accept: () => resolve(true),
         reject: () => resolve(false),
@@ -122,7 +142,11 @@ export class ConfirmDialogService {
   /**
    * Show a preset confirmation dialog
    */
-  confirmPreset(type: ConfirmationType, message: string, customOptions?: Partial<ConfirmDialogOptions>): Promise<boolean> {
+  confirmPreset(
+    type: ConfirmationType,
+    message: string,
+    customOptions?: Partial<ConfirmDialogOptions>,
+  ): Promise<boolean> {
     const preset = this.presets[type] || {};
     return this.confirm({
       ...preset,
@@ -137,7 +161,8 @@ export class ConfirmDialogService {
   confirmDelete(itemName: string, customMessage?: string): Promise<boolean> {
     return this.confirmPreset(
       "delete",
-      customMessage || `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
+      customMessage ||
+        `Are you sure you want to delete "${itemName}"? This action cannot be undone.`,
     );
   }
 
@@ -147,7 +172,7 @@ export class ConfirmDialogService {
   confirmRemove(itemName: string, customMessage?: string): Promise<boolean> {
     return this.confirmPreset(
       "remove",
-      customMessage || `Are you sure you want to remove "${itemName}"?`
+      customMessage || `Are you sure you want to remove "${itemName}"?`,
     );
   }
 
@@ -157,7 +182,8 @@ export class ConfirmDialogService {
   confirmArchive(itemName: string, customMessage?: string): Promise<boolean> {
     return this.confirmPreset(
       "archive",
-      customMessage || `Are you sure you want to archive "${itemName}"? You can restore it later.`
+      customMessage ||
+        `Are you sure you want to archive "${itemName}"? You can restore it later.`,
     );
   }
 
@@ -167,7 +193,7 @@ export class ConfirmDialogService {
   confirmLogout(): Promise<boolean> {
     return this.confirmPreset(
       "logout",
-      "Are you sure you want to log out? Any unsaved changes will be lost."
+      "Are you sure you want to log out? Any unsaved changes will be lost.",
     );
   }
 
@@ -175,7 +201,7 @@ export class ConfirmDialogService {
    * Confirm discarding unsaved changes
    */
   confirmDiscard(context?: string): Promise<boolean> {
-    const message = context 
+    const message = context
       ? `You have unsaved changes in ${context}. Are you sure you want to discard them?`
       : "You have unsaved changes. Are you sure you want to discard them?";
     return this.confirmPreset("discard", message);
@@ -197,14 +223,18 @@ export class ConfirmDialogService {
   confirmLeave(): Promise<boolean> {
     return this.confirmPreset(
       "leave",
-      "You have unsaved changes. Are you sure you want to leave this page?"
+      "You have unsaved changes. Are you sure you want to leave this page?",
     );
   }
 
   /**
    * Confirm bulk action
    */
-  confirmBulkAction(action: string, count: number, itemType: string): Promise<boolean> {
+  confirmBulkAction(
+    action: string,
+    count: number,
+    itemType: string,
+  ): Promise<boolean> {
     return this.confirm({
       title: `Confirm Bulk ${action}`,
       message: `Are you sure you want to ${action.toLowerCase()} ${count} ${itemType}${count > 1 ? "s" : ""}?`,
@@ -219,7 +249,11 @@ export class ConfirmDialogService {
   /**
    * Confirm status change
    */
-  confirmStatusChange(itemName: string, fromStatus: string, toStatus: string): Promise<boolean> {
+  confirmStatusChange(
+    itemName: string,
+    fromStatus: string,
+    toStatus: string,
+  ): Promise<boolean> {
     return this.confirm({
       title: "Confirm Status Change",
       message: `Are you sure you want to change "${itemName}" from ${fromStatus} to ${toStatus}?`,

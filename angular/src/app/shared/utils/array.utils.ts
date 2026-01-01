@@ -10,14 +10,17 @@
  * groupBy(players, 'team') // { A: [{...}, {...}] }
  */
 export function groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
-  return array.reduce((acc, item) => {
-    const groupKey = String(item[key]);
-    if (!acc[groupKey]) {
-      acc[groupKey] = [];
-    }
-    acc[groupKey].push(item);
-    return acc;
-  }, {} as Record<string, T[]>);
+  return array.reduce(
+    (acc, item) => {
+      const groupKey = String(item[key]);
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(item);
+      return acc;
+    },
+    {} as Record<string, T[]>,
+  );
 }
 
 /**
@@ -30,9 +33,9 @@ export function unique<T>(array: T[], key?: keyof T): T[] {
   if (!key) {
     return [...new Set(array)];
   }
-  
+
   const seen = new Set();
-  return array.filter(item => {
+  return array.filter((item) => {
     const k = item[key];
     if (seen.has(k)) {
       return false;
@@ -50,14 +53,14 @@ export function unique<T>(array: T[], key?: keyof T): T[] {
 export function sortBy<T>(
   array: T[],
   key: keyof T,
-  order: 'asc' | 'desc' = 'asc'
+  order: "asc" | "desc" = "asc",
 ): T[] {
   return [...array].sort((a, b) => {
     const aVal = a[key];
     const bVal = b[key];
-    
-    if (aVal < bVal) return order === 'asc' ? -1 : 1;
-    if (aVal > bVal) return order === 'asc' ? 1 : -1;
+
+    if (aVal < bVal) return order === "asc" ? -1 : 1;
+    if (aVal > bVal) return order === "asc" ? 1 : -1;
     return 0;
   });
 }
@@ -83,7 +86,7 @@ export function chunk<T>(array: T[], size: number): T[][] {
 export function sumBy<T>(array: T[], key: keyof T): number {
   return array.reduce((sum, item) => {
     const value = item[key];
-    return sum + (typeof value === 'number' ? value : 0);
+    return sum + (typeof value === "number" ? value : 0);
   }, 0);
 }
 
@@ -102,8 +105,12 @@ export function averageBy<T>(array: T[], key: keyof T): number {
  * @example
  * findBy(players, 'id', '123')
  */
-export function findBy<T>(array: T[], key: keyof T, value: unknown): T | undefined {
-  return array.find(item => item[key] === value);
+export function findBy<T>(
+  array: T[],
+  key: keyof T,
+  value: unknown,
+): T | undefined {
+  return array.find((item) => item[key] === value);
 }
 
 /**
@@ -133,4 +140,3 @@ export function last<T>(array: T[]): T | undefined {
 export function compact<T>(array: (T | null | undefined)[]): T[] {
   return array.filter((item): item is T => item != null);
 }
-

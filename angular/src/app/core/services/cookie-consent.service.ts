@@ -1,12 +1,12 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed } from "@angular/core";
 
 /**
  * Cookie Consent Service
- * 
+ *
  * Manages user cookie preferences in compliance with GDPR.
  * Stores consent in localStorage and provides reactive signals
  * for components to check consent status.
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
@@ -18,11 +18,11 @@ export interface CookiePreferences {
   consentVersion: string;
 }
 
-const CONSENT_STORAGE_KEY = 'flagfit_cookie_consent';
-const CONSENT_VERSION = '1.0';
+const CONSENT_STORAGE_KEY = "flagfit_cookie_consent";
+const CONSENT_VERSION = "1.0";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class CookieConsentService {
   private readonly defaultPreferences: CookiePreferences = {
@@ -30,7 +30,7 @@ export class CookieConsentService {
     analytics: false,
     functional: true,
     consentDate: null,
-    consentVersion: CONSENT_VERSION
+    consentVersion: CONSENT_VERSION,
   };
 
   // Reactive signals for consent state
@@ -42,7 +42,9 @@ export class CookieConsentService {
   readonly showBanner = this._showBanner.asReadonly();
 
   // Computed signals for individual consent checks
-  readonly hasConsented = computed(() => this._preferences().consentDate !== null);
+  readonly hasConsented = computed(
+    () => this._preferences().consentDate !== null,
+  );
   readonly analyticsEnabled = computed(() => this._preferences().analytics);
   readonly functionalEnabled = computed(() => this._preferences().functional);
 
@@ -64,7 +66,7 @@ export class CookieConsentService {
       analytics: true,
       functional: true,
       consentDate: new Date().toISOString(),
-      consentVersion: CONSENT_VERSION
+      consentVersion: CONSENT_VERSION,
     };
     this.savePreferences(preferences);
     this._preferences.set(preferences);
@@ -80,7 +82,7 @@ export class CookieConsentService {
       analytics: false,
       functional: true, // Functional is needed for preferences to work
       consentDate: new Date().toISOString(),
-      consentVersion: CONSENT_VERSION
+      consentVersion: CONSENT_VERSION,
     };
     this.savePreferences(preferences);
     this._preferences.set(preferences);
@@ -96,7 +98,7 @@ export class CookieConsentService {
       analytics,
       functional,
       consentDate: new Date().toISOString(),
-      consentVersion: CONSENT_VERSION
+      consentVersion: CONSENT_VERSION,
     };
     this.savePreferences(preferences);
     this._preferences.set(preferences);
@@ -124,7 +126,9 @@ export class CookieConsentService {
    */
   private hasValidConsent(): boolean {
     const prefs = this.loadPreferences();
-    return prefs.consentDate !== null && prefs.consentVersion === CONSENT_VERSION;
+    return (
+      prefs.consentDate !== null && prefs.consentVersion === CONSENT_VERSION
+    );
   }
 
   /**
@@ -150,8 +154,7 @@ export class CookieConsentService {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences));
     } catch {
       // localStorage not available (e.g., private browsing)
-      console.warn('Could not save cookie preferences to localStorage');
+      console.warn("Could not save cookie preferences to localStorage");
     }
   }
 }
-

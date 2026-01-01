@@ -306,8 +306,12 @@ export class PhaseLoadCalculatorService {
   readonly weeklyTarget = this._weeklyTarget.asReadonly();
 
   // Computed
-  readonly acuteLoad = computed(() => this.calculateAcuteLoad(this._trainingHistory()));
-  readonly chronicLoad = computed(() => this.calculateChronicLoad(this._trainingHistory()));
+  readonly acuteLoad = computed(() =>
+    this.calculateAcuteLoad(this._trainingHistory()),
+  );
+  readonly chronicLoad = computed(() =>
+    this.calculateChronicLoad(this._trainingHistory()),
+  );
   readonly acwr = computed(() => {
     const acute = this.acuteLoad();
     const chronic = this.chronicLoad();
@@ -334,7 +338,7 @@ export class PhaseLoadCalculatorService {
   calculatePhaseLoad(
     phase: string,
     athleteChronicLoad: number,
-    weekInPhase: number
+    weekInPhase: number,
   ): LoadRecommendation {
     const config = this.getPhaseConfig(phase);
     if (!config) {
@@ -351,18 +355,20 @@ export class PhaseLoadCalculatorService {
     // Adjust for athlete's chronic load capacity
     if (athleteChronicLoad > 0) {
       // Don't exceed 1.3x chronic load (ACWR guideline)
-      const maxSafeLoad = athleteChronicLoad * LOAD_CONSTANTS.acwr.optimalMax * 7;
+      const maxSafeLoad =
+        athleteChronicLoad * LOAD_CONSTANTS.acwr.optimalMax * 7;
       if (targetLoad > maxSafeLoad) {
         targetLoad = maxSafeLoad;
         adjustments.push(
-          `Load capped at ${Math.round(maxSafeLoad)} AU to maintain safe ACWR`
+          `Load capped at ${Math.round(maxSafeLoad)} AU to maintain safe ACWR`,
         );
       }
     }
 
     // Progressive overload within phase
     if (config.maxWeeklyIncrease > 0 && weekInPhase > 1) {
-      const progressionFactor = 1 + (config.maxWeeklyIncrease / 100) * (weekInPhase - 1);
+      const progressionFactor =
+        1 + (config.maxWeeklyIncrease / 100) * (weekInPhase - 1);
       targetLoad *= Math.min(progressionFactor, 1.3); // Cap at 30% increase
     }
 
@@ -376,7 +382,7 @@ export class PhaseLoadCalculatorService {
     if (athleteChronicLoad < LOAD_CONSTANTS.minChronicLoad) {
       warnings.push(
         `Chronic load (${Math.round(athleteChronicLoad)} AU) is below minimum threshold (${LOAD_CONSTANTS.minChronicLoad} AU). ` +
-        "Athlete may be underprepared - build gradually."
+          "Athlete may be underprepared - build gradually.",
       );
       evidenceBase.push("Gabbett 2016 - Minimum chronic load floor");
     }
@@ -388,12 +394,15 @@ export class PhaseLoadCalculatorService {
     ];
 
     // Generate session distribution
-    const sessionDistribution = this.generateSessionDistribution(config, targetLoad);
+    const sessionDistribution = this.generateSessionDistribution(
+      config,
+      targetLoad,
+    );
 
     evidenceBase.push(
       "Foster et al. 2001 - Session RPE method",
       "Gabbett 2016 - ACWR guidelines",
-      "Hulin et al. 2014 - Weekly load progression"
+      "Hulin et al. 2014 - Weekly load progression",
     );
 
     return {
@@ -411,10 +420,18 @@ export class PhaseLoadCalculatorService {
    */
   private generateSessionDistribution(
     config: PhaseLoadConfig,
-    totalLoad: number
+    totalLoad: number,
   ): SessionDistribution[] {
     const sessions: SessionDistribution[] = [];
-    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const daysOfWeek = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
 
     // Calculate load per emphasis area
     const strengthLoad = totalLoad * config.strengthEmphasis;
@@ -453,7 +470,10 @@ export class PhaseLoadCalculatorService {
       targetRPE: config.recoveryEmphasis > 0.3 ? 3 : 5,
       targetDuration: 30,
       targetLoad: Math.round(conditioningLoad / 3),
-      notes: config.recoveryEmphasis > 0.3 ? "Active recovery" : "Light conditioning",
+      notes:
+        config.recoveryEmphasis > 0.3
+          ? "Active recovery"
+          : "Light conditioning",
     });
 
     // Thursday - Secondary strength or agility
@@ -488,7 +508,10 @@ export class PhaseLoadCalculatorService {
     });
 
     // Saturday - Game or training
-    if (config.phase.includes("Season") || config.phase.includes("Competition")) {
+    if (
+      config.phase.includes("Season") ||
+      config.phase.includes("Competition")
+    ) {
       sessions.push({
         day: "Saturday",
         type: "game",
@@ -533,7 +556,7 @@ export class PhaseLoadCalculatorService {
     // Log deprecation warning
     this.logger.warn(
       "[DEPRECATED] PhaseLoadCalculatorService.calculateACWR() is deprecated. " +
-        "Use AcwrService.acwrData() for consistent ACWR calculations."
+        "Use AcwrService.acwrData() for consistent ACWR calculations.",
     );
 
     // Try to use AcwrService if data is available (single source of truth)
@@ -557,7 +580,7 @@ export class PhaseLoadCalculatorService {
     // Apply minimum chronic load floor
     const effectiveChronicLoad = Math.max(
       chronicLoad,
-      LOAD_CONSTANTS.minChronicLoad / 7
+      LOAD_CONSTANTS.minChronicLoad / 7,
     );
 
     const acwr = acuteLoad / effectiveChronicLoad;
@@ -565,20 +588,27 @@ export class PhaseLoadCalculatorService {
     let riskZone: "optimal" | "caution" | "danger";
     let recommendation: string;
 
-    if (acwr >= LOAD_CONSTANTS.acwr.optimalMin && acwr <= LOAD_CONSTANTS.acwr.optimalMax) {
+    if (
+      acwr >= LOAD_CONSTANTS.acwr.optimalMin &&
+      acwr <= LOAD_CONSTANTS.acwr.optimalMax
+    ) {
       riskZone = "optimal";
-      recommendation = "Training load is in the optimal zone. Continue current program.";
+      recommendation =
+        "Training load is in the optimal zone. Continue current program.";
     } else if (acwr > LOAD_CONSTANTS.acwr.dangerThreshold) {
       riskZone = "danger";
-      recommendation = `ACWR (${acwr.toFixed(2)}) exceeds danger threshold (1.5). ` +
+      recommendation =
+        `ACWR (${acwr.toFixed(2)}) exceeds danger threshold (1.5). ` +
         "Reduce training load immediately to prevent injury.";
     } else if (acwr > LOAD_CONSTANTS.acwr.optimalMax) {
       riskZone = "caution";
-      recommendation = `ACWR (${acwr.toFixed(2)}) is elevated. ` +
+      recommendation =
+        `ACWR (${acwr.toFixed(2)}) is elevated. ` +
         "Consider reducing volume or intensity next week.";
     } else {
       riskZone = "caution";
-      recommendation = `ACWR (${acwr.toFixed(2)}) is below optimal. ` +
+      recommendation =
+        `ACWR (${acwr.toFixed(2)}) is below optimal. ` +
         "Athlete may be underprepared. Consider gradual load increase.";
     }
 
@@ -620,7 +650,7 @@ export class PhaseLoadCalculatorService {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const recentLoads = trainingHistory.filter(
-      (t) => new Date(t.date) >= sevenDaysAgo
+      (t) => new Date(t.date) >= sevenDaysAgo,
     );
 
     const totalLoad = recentLoads.reduce((sum, t) => sum + t.load, 0);
@@ -635,7 +665,7 @@ export class PhaseLoadCalculatorService {
 
     // Sort by date
     const sorted = [...trainingHistory].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
     // EWMA decay factor for 28-day chronic load
@@ -672,9 +702,16 @@ export class PhaseLoadCalculatorService {
       minLoad: Math.round(targetLoad * 0.85),
       maxLoad: Math.round(targetLoad * 1.15),
       targetLoad: Math.round(targetLoad),
-      strengthSessions: config.strengthEmphasis > 0.2 ? 2 : config.strengthEmphasis > 0.1 ? 1 : 0,
-      speedSessions: config.speedEmphasis > 0.2 ? 2 : config.speedEmphasis > 0.1 ? 1 : 0,
-      agilitySessions: config.agilityEmphasis > 0.2 ? 2 : config.agilityEmphasis > 0.1 ? 1 : 0,
+      strengthSessions:
+        config.strengthEmphasis > 0.2
+          ? 2
+          : config.strengthEmphasis > 0.1
+            ? 1
+            : 0,
+      speedSessions:
+        config.speedEmphasis > 0.2 ? 2 : config.speedEmphasis > 0.1 ? 1 : 0,
+      agilitySessions:
+        config.agilityEmphasis > 0.2 ? 2 : config.agilityEmphasis > 0.1 ? 1 : 0,
       conditioningSessions: config.conditioningEmphasis > 0.1 ? 1 : 0,
       recoveryDays: config.recoveryEmphasis > 0.3 ? 2 : 1,
       gameDays: config.phase.includes("Season") ? 1 : 0,
@@ -686,7 +723,7 @@ export class PhaseLoadCalculatorService {
    */
   generateLoadProgression(
     phase: string,
-    startingLoad: number
+    startingLoad: number,
   ): LoadProgressionModel[] {
     const config = this.getPhaseConfig(phase);
     if (!config) {
@@ -736,7 +773,10 @@ export class PhaseLoadCalculatorService {
   /**
    * Check if weekly load change is safe
    */
-  isLoadChangeSafe(previousWeekLoad: number, currentWeekLoad: number): {
+  isLoadChangeSafe(
+    previousWeekLoad: number,
+    currentWeekLoad: number,
+  ): {
     safe: boolean;
     percentageChange: number;
     message: string;
@@ -756,7 +796,8 @@ export class PhaseLoadCalculatorService {
       return {
         safe: false,
         percentageChange: Math.round(percentageChange),
-        message: `Load spike detected (${Math.round(percentageChange)}% increase). ` +
+        message:
+          `Load spike detected (${Math.round(percentageChange)}% increase). ` +
           `Spikes >15% increase injury risk (Hulin et al. 2014). Consider reducing load.`,
       };
     }
@@ -765,7 +806,8 @@ export class PhaseLoadCalculatorService {
       return {
         safe: false,
         percentageChange: Math.round(percentageChange),
-        message: `Load increase (${Math.round(percentageChange)}%) exceeds recommended maximum (10%). ` +
+        message:
+          `Load increase (${Math.round(percentageChange)}%) exceeds recommended maximum (10%). ` +
           `Consider a more gradual progression.`,
       };
     }

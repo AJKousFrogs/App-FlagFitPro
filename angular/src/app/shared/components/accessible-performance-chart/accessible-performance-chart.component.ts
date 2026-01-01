@@ -223,7 +223,10 @@ export class AccessiblePerformanceChartComponent {
     labels?: (string | Date)[];
     datasets?: Array<{
       label?: string;
-      data: (number | { speed?: number; accuracy?: number; [key: string]: unknown })[];
+      data: (
+        | number
+        | { speed?: number; accuracy?: number; [key: string]: unknown }
+      )[];
       [key: string]: unknown;
     }>;
   }>();
@@ -246,17 +249,28 @@ export class AccessiblePerformanceChartComponent {
       return [];
     }
 
-    return data.datasets[0].data.map((value: number | { speed?: number; accuracy?: number; [key: string]: unknown }, index: number) => {
-      const date = data.labels?.[index] || new Date();
-      const speed = typeof value === "object" ? (value.speed ?? value as unknown as number) : value;
-      const accuracy = typeof value === "object" ? (value.accuracy ?? 0) : 100;
-      return {
-        date,
-        speed,
-        accuracy,
-        trendDescription: this.calculateTrend(value, index),
-      };
-    });
+    return data.datasets[0].data.map(
+      (
+        value:
+          | number
+          | { speed?: number; accuracy?: number; [key: string]: unknown },
+        index: number,
+      ) => {
+        const date = data.labels?.[index] || new Date();
+        const speed =
+          typeof value === "object"
+            ? (value.speed ?? (value as unknown as number))
+            : value;
+        const accuracy =
+          typeof value === "object" ? (value.accuracy ?? 0) : 100;
+        return {
+          date,
+          speed,
+          accuracy,
+          trendDescription: this.calculateTrend(value, index),
+        };
+      },
+    );
   });
 
   currentDataPointAnnouncement = computed(() => {
@@ -380,11 +394,11 @@ export class AccessiblePerformanceChartComponent {
     const lastItem = data[data.length - 1];
     const first =
       typeof firstItem === "object" && firstItem !== null
-        ? (firstItem as { speed?: number }).speed ?? 0
+        ? ((firstItem as { speed?: number }).speed ?? 0)
         : (firstItem as number);
     const last =
       typeof lastItem === "object" && lastItem !== null
-        ? (lastItem as { speed?: number }).speed ?? 0
+        ? ((lastItem as { speed?: number }).speed ?? 0)
         : (lastItem as number);
 
     if (last > first * 1.05) {
@@ -427,7 +441,12 @@ export class AccessiblePerformanceChartComponent {
     return Math.round((sum / data.length) * 10) / 10;
   }
 
-  private calculateTrend(value: number | { speed?: number; accuracy?: number; [key: string]: unknown }, index: number): string {
+  private calculateTrend(
+    value:
+      | number
+      | { speed?: number; accuracy?: number; [key: string]: unknown },
+    index: number,
+  ): string {
     const chartData = this.chartData();
     if (!chartData?.datasets?.[0]?.data || index === 0) {
       return "Baseline measurement";
@@ -435,14 +454,20 @@ export class AccessiblePerformanceChartComponent {
 
     const previousValue =
       typeof chartData.datasets[0].data[index - 1] === "object"
-        ? (chartData.datasets[0].data[index - 1] as { speed?: number; [key: string]: unknown }).speed ??
-          chartData.datasets[0].data[index - 1]
+        ? ((
+            chartData.datasets[0].data[index - 1] as {
+              speed?: number;
+              [key: string]: unknown;
+            }
+          ).speed ?? chartData.datasets[0].data[index - 1])
         : chartData.datasets[0].data[index - 1];
 
     const currentValue =
-      typeof value === "object" ? (value.speed ?? value) as number : value;
+      typeof value === "object" ? ((value.speed ?? value) as number) : value;
 
-    const change = ((currentValue - (previousValue as number)) / (previousValue as number)) * 100;
+    const change =
+      ((currentValue - (previousValue as number)) / (previousValue as number)) *
+      100;
 
     if (change > 5) {
       return `Significant improvement of ${change.toFixed(1)}%`;

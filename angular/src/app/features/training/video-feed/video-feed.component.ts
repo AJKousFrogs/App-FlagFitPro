@@ -19,53 +19,47 @@
  * @angular 21
  */
 
+import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
   OnDestroy,
+  OnInit,
+  afterNextRender,
+  computed,
   inject,
   signal,
-  computed,
-  ChangeDetectionStrategy,
-  ElementRef,
-  viewChild,
-  afterNextRender,
 } from "@angular/core";
-import { Router } from "@angular/router";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
 
 // PrimeNG Components
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { Chip } from "primeng/chip";
+import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { SkeletonModule } from "primeng/skeleton";
-import { TooltipModule } from "primeng/tooltip";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { Select } from "primeng/select";
-import { ToastModule } from "primeng/toast";
-import { AvatarModule } from "primeng/avatar";
-import { TagModule } from "primeng/tag";
 import { RippleModule } from "primeng/ripple";
+import { SkeletonModule } from "primeng/skeleton";
+import { TagModule } from "primeng/tag";
+import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
 
 // Services
+import { AuthService } from "../../../core/services/auth.service";
+import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import {
-  InstagramVideoService,
-  InstagramVideo,
   InstagramCreator,
-  InstagramVideoFilter,
+  InstagramVideo,
+  InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
 import {
   FlagPosition,
   TrainingFocus,
-  SkillLevel,
 } from "../../../core/services/training-video-database.service";
-import { ToastService } from "../../../core/services/toast.service";
-import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -87,13 +81,11 @@ interface FilterChip {
     FormsModule,
     CardModule,
     ButtonModule,
-    Chip,
     BadgeModule,
     SkeletonModule,
     TooltipModule,
     DialogModule,
     InputTextModule,
-    Select,
     ToastModule,
     AvatarModule,
     TagModule,
@@ -212,7 +204,11 @@ interface FilterChip {
             <div class="active-filters">
               <span class="active-label">Active:</span>
               @for (filter of activeFilterLabels(); track filter) {
-                <p-tag [value]="filter" [rounded]="true" severity="success"></p-tag>
+                <p-tag
+                  [value]="filter"
+                  [rounded]="true"
+                  severity="success"
+                ></p-tag>
               }
               <button
                 pButton
@@ -232,13 +228,25 @@ interface FilterChip {
             <div class="video-grid">
               @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                 <div class="video-card skeleton-card">
-                  <p-skeleton width="100%" height="280px" borderRadius="16px"></p-skeleton>
+                  <p-skeleton
+                    width="100%"
+                    height="280px"
+                    borderRadius="16px"
+                  ></p-skeleton>
                   <div class="skeleton-content">
                     <p-skeleton width="70%" height="1.2rem"></p-skeleton>
                     <p-skeleton width="100%" height="0.9rem"></p-skeleton>
                     <div class="skeleton-meta">
-                      <p-skeleton width="80px" height="24px" borderRadius="12px"></p-skeleton>
-                      <p-skeleton width="60px" height="24px" borderRadius="12px"></p-skeleton>
+                      <p-skeleton
+                        width="80px"
+                        height="24px"
+                        borderRadius="12px"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="60px"
+                        height="24px"
+                        borderRadius="12px"
+                      ></p-skeleton>
                     </div>
                   </div>
                 </div>
@@ -286,7 +294,13 @@ interface FilterChip {
                         (click)="toggleBookmark($event, video)"
                         pTooltip="Save for later"
                       >
-                        <i [class]="isBookmarked(video.id) ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"></i>
+                        <i
+                          [class]="
+                            isBookmarked(video.id)
+                              ? 'pi pi-bookmark-fill'
+                              : 'pi pi-bookmark'
+                          "
+                        ></i>
                       </button>
                       <button
                         class="overlay-btn share-btn"
@@ -321,20 +335,33 @@ interface FilterChip {
                         <span class="creator-name">
                           {{ video.creator.displayName }}
                           @if (video.creator.verified) {
-                            <i class="pi pi-verified verified-badge" pTooltip="Verified Creator"></i>
+                            <i
+                              class="pi pi-verified verified-badge"
+                              pTooltip="Verified Creator"
+                            ></i>
                           }
                         </span>
-                        <span class="creator-type">{{ formatCredibility(video.creator.credibility) }}</span>
+                        <span class="creator-type">{{
+                          formatCredibility(video.creator.credibility)
+                        }}</span>
                       </div>
                     </div>
 
                     <!-- Tags -->
                     <div class="video-tags">
-                      @for (position of video.positions.slice(0, 2); track position) {
+                      @for (
+                        position of video.positions.slice(0, 2);
+                        track position
+                      ) {
                         <span class="tag position-tag">{{ position }}</span>
                       }
-                      @for (focus of video.trainingFocus.slice(0, 2); track focus) {
-                        <span class="tag focus-tag">{{ formatFocus(focus) }}</span>
+                      @for (
+                        focus of video.trainingFocus.slice(0, 2);
+                        track focus
+                      ) {
+                        <span class="tag focus-tag">{{
+                          formatFocus(focus)
+                        }}</span>
                       }
                       <span class="tag skill-tag">{{ video.skillLevel }}</span>
                     </div>
@@ -371,10 +398,16 @@ interface FilterChip {
                       <i class="pi pi-verified"></i>
                     }
                   </span>
-                  <span class="creator-username">&#64;{{ creator.username }}</span>
-                  <span class="creator-specialty">{{ formatCredibility(creator.credibility) }}</span>
+                  <span class="creator-username"
+                    >&#64;{{ creator.username }}</span
+                  >
+                  <span class="creator-specialty">{{
+                    formatCredibility(creator.credibility)
+                  }}</span>
                   @if (creator.followers) {
-                    <span class="follower-count">{{ formatFollowers(creator.followers) }} followers</span>
+                    <span class="follower-count"
+                      >{{ formatFollowers(creator.followers) }} followers</span
+                    >
                   }
                 </div>
                 <div class="video-count">
@@ -434,8 +467,16 @@ interface FilterChip {
                   <button
                     pButton
                     [label]="isBookmarked(video.id) ? 'Saved' : 'Save'"
-                    [icon]="isBookmarked(video.id) ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
-                    [class]="isBookmarked(video.id) ? 'p-button-success' : 'p-button-outlined'"
+                    [icon]="
+                      isBookmarked(video.id)
+                        ? 'pi pi-bookmark-fill'
+                        : 'pi pi-bookmark'
+                    "
+                    [class]="
+                      isBookmarked(video.id)
+                        ? 'p-button-success'
+                        : 'p-button-outlined'
+                    "
                     (click)="toggleBookmark($event, video)"
                   ></button>
                   <button
@@ -462,26 +503,42 @@ interface FilterChip {
   `,
   styles: [
     `
+      @use "styles/animations" as *;
+
       /* ============================================
-         VIDEO FEED PAGE - GEN Z OPTIMIZED UX
+         VIDEO FEED PAGE - PREMIUM UX
          ============================================ */
 
       .video-feed-page {
         min-height: 100vh;
-        background: var(--surface-primary);
+        background: var(--surface-secondary);
       }
 
-      /* Header */
+      /* Header - Theme Aware */
       .feed-header {
+        background: var(--surface-card);
+        border-bottom: 1px solid var(--surface-border);
+        padding: var(--space-10) var(--space-6);
+        margin: calc(-1 * var(--space-6));
+        margin-bottom: var(--space-8);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInDown 600ms ease-out;
+      }
+
+      .feed-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: linear-gradient(
           135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
+          rgba(8, 153, 73, 0.08) 0%,
+          transparent 60%
         );
-        padding: var(--space-8) var(--space-6);
-        margin: calc(-1 * var(--space-6));
-        margin-bottom: var(--space-6);
-        color: var(--color-text-on-primary);
+        pointer-events: none;
       }
 
       .header-content {
@@ -491,26 +548,32 @@ interface FilterChip {
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: var(--space-4);
+        gap: var(--space-6);
+        position: relative;
+        z-index: 1;
       }
 
       .feed-title {
-        font-size: var(--font-heading-xl);
+        font-size: var(--font-heading-2xl);
         font-weight: var(--font-weight-bold);
         display: flex;
         align-items: center;
-        gap: var(--space-3);
+        gap: var(--space-4);
         margin: 0;
+        color: var(--ds-primary-green);
       }
 
       .feed-title i {
-        font-size: var(--icon-2xl);
+        font-size: 2.5rem;
+        color: var(--ds-primary-green);
+        filter: drop-shadow(0 2px 4px rgba(8, 153, 73, 0.2));
       }
 
       .feed-subtitle {
-        margin: var(--space-2) 0 0;
-        opacity: 0.9;
-        font-size: var(--font-body-md);
+        margin: var(--space-3) 0 0;
+        font-size: var(--font-body-lg);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-medium);
       }
 
       .header-actions {
@@ -526,37 +589,43 @@ interface FilterChip {
       }
 
       .suggest-btn {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: 2px solid rgba(255, 255, 255, 0.5) !important;
-        color: white !important;
-        font-weight: var(--font-weight-semibold) !important;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        transition: all 0.2s ease !important;
+        background: transparent !important;
+        border: 2px solid var(--ds-primary-green) !important;
+        color: var(--ds-primary-green) !important;
+        font-weight: var(--font-weight-bold) !important;
+        transition: all var(--transition-fast) !important;
+        font-size: var(--font-body-md) !important;
+        padding: var(--space-3) var(--space-6) !important;
       }
 
       .suggest-btn:hover {
-        background: rgba(255, 255, 255, 0.3) !important;
+        background: var(--ds-primary-green) !important;
+        color: white !important;
         transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(8, 153, 73, 0.3);
       }
 
       .stat-pill {
-        background: rgba(255, 255, 255, 0.2);
-        padding: var(--space-2) var(--space-4);
+        background: rgba(8, 153, 73, 0.1);
+        border: 1px solid rgba(8, 153, 73, 0.2);
+        padding: var(--space-2) var(--space-5);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: var(--font-body-sm);
-        font-weight: var(--font-weight-medium);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--ds-primary-green);
+      }
+
+      .stat-pill i {
+        color: var(--ds-primary-green);
       }
 
       /* Filter Section */
       .filter-section {
         padding: 0 var(--space-6);
-        margin-bottom: var(--space-6);
+        margin-bottom: var(--space-8);
         max-width: 1200px;
         margin-left: auto;
         margin-right: auto;
@@ -565,8 +634,8 @@ interface FilterChip {
       .search-container {
         display: flex;
         align-items: center;
-        gap: var(--space-2);
-        margin-bottom: var(--space-4);
+        gap: var(--space-3);
+        margin-bottom: var(--space-6);
       }
 
       .search-wrapper {
@@ -577,16 +646,33 @@ interface FilterChip {
       .search-input {
         width: 100%;
         border-radius: var(--radius-full) !important;
-        padding-left: 3rem !important;
-        height: 48px;
-        font-size: var(--font-body-md);
-        border: 2px solid var(--color-border-primary);
-        transition: all 0.2s ease;
+        padding-left: 3.5rem !important;
+        padding-right: var(--space-5) !important;
+        height: 56px;
+        font-size: var(--font-body-lg);
+        border: 2px solid var(--color-border-secondary);
+        transition: all var(--transition-fast);
+        background: var(--surface-card);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
       }
 
       .search-input:focus {
-        border-color: var(--color-brand-primary);
-        box-shadow: var(--shadow-focus);
+        border-color: var(--ds-primary-green);
+        box-shadow:
+          0 0 0 4px rgba(8, 153, 73, 0.1),
+          0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .search-input::placeholder {
+        color: var(--color-text-muted);
+        font-weight: var(--font-weight-normal);
+      }
+
+      :host ::ng-deep .search-wrapper .p-input-icon-left > i {
+        left: 1.25rem;
+        font-size: 1.25rem;
+        color: var(--ds-primary-green);
       }
 
       .clear-btn {
@@ -596,9 +682,9 @@ interface FilterChip {
 
       .filter-chips-container {
         display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        margin-bottom: var(--space-3);
+        align-items: flex-start;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
       }
 
       .filter-label {
@@ -606,75 +692,119 @@ interface FilterChip {
         align-items: center;
         gap: var(--space-2);
         font-size: var(--font-body-sm);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-bold);
         color: var(--color-text-secondary);
-        min-width: 80px;
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        min-width: 100px;
+        flex-shrink: 0;
+        padding-top: var(--space-2);
+      }
+
+      .filter-label i {
+        color: var(--ds-primary-green);
+        font-size: 1rem;
       }
 
       .filter-chips {
         display: flex;
-        gap: var(--space-2);
+        gap: var(--space-3);
         flex-wrap: wrap;
+        align-items: center;
+        flex: 1 1 auto;
+        min-width: 0;
       }
 
       .filter-chips.scrollable {
         overflow-x: auto;
         flex-wrap: nowrap;
-        padding-bottom: var(--space-2);
+        padding-bottom: var(--space-3);
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        flex-shrink: 0;
+        width: 100%;
       }
 
       .filter-chips.scrollable::-webkit-scrollbar {
-        height: 4px;
+        height: 6px;
       }
 
       .filter-chips.scrollable::-webkit-scrollbar-track {
-        background: var(--color-border-primary);
-        border-radius: 2px;
+        background: var(--surface-tertiary);
+        border-radius: var(--radius-sm);
       }
 
       .filter-chips.scrollable::-webkit-scrollbar-thumb {
-        background: var(--color-brand-primary);
-        border-radius: 2px;
+        background: var(--ds-primary-green);
+        border-radius: var(--radius-sm);
       }
 
       .filter-chip {
-        padding: var(--space-2) var(--space-4);
+        padding: var(--space-3) var(--space-5);
         border-radius: var(--radius-full);
-        border: 2px solid var(--color-border-primary);
-        background: var(--surface-primary);
-        color: var(--color-text-secondary);
-        font-size: var(--font-body-sm);
-        font-weight: var(--font-weight-medium);
+        border: 2px solid var(--color-border-secondary);
+        background: var(--surface-card);
+        color: var(--color-text-primary);
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--transition-fast);
         white-space: nowrap;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: var(--space-2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        position: relative;
+        min-height: 42px;
+        flex-shrink: 0;
+        flex-grow: 0;
+        width: auto;
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
+      .filter-chip::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--ds-primary-green);
+        opacity: 0;
+        transition: opacity var(--transition-fast);
+      }
+
+      .filter-chip span {
+        position: relative;
+        z-index: 1;
       }
 
       .filter-chip:hover {
-        border-color: var(--color-brand-primary);
-        color: var(--color-brand-primary);
-        transform: translateY(-1px);
+        border-color: var(--ds-primary-green);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(8, 153, 73, 0.15);
       }
 
       .filter-chip.active {
-        background: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: var(--color-text-on-primary);
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+        color: white;
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+      }
+
+      .filter-chip.active::before {
+        opacity: 1;
       }
 
       .active-filters {
         display: flex;
         align-items: center;
-        gap: var(--space-2);
+        gap: var(--space-3);
         flex-wrap: wrap;
-        padding: var(--space-3);
-        background: var(--surface-secondary);
+        padding: var(--space-4);
+        background: rgba(8, 153, 73, 0.05);
         border-radius: var(--radius-lg);
-        margin-top: var(--space-3);
+        margin-top: var(--space-4);
+        border: 1px solid rgba(8, 153, 73, 0.2);
       }
 
       .active-label {
@@ -691,33 +821,43 @@ interface FilterChip {
       .video-grid-section {
         padding: 0 var(--space-6);
         max-width: 1200px;
-        margin: 0 auto var(--space-8);
+        margin: 0 auto var(--space-10);
       }
 
       .video-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: var(--space-6);
+        gap: var(--space-8);
       }
 
       /* Video Card */
       .video-card {
-        background: var(--surface-primary);
+        background: var(--surface-card);
         border-radius: var(--radius-xl);
         overflow: hidden;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         position: relative;
+        animation: scaleIn 400ms ease-out backwards;
+      }
+
+      @for $i from 1 through 24 {
+        .video-card:nth-child(#{$i}) {
+          animation-delay: #{$i * 60}ms;
+        }
       }
 
       .video-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-xl);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow:
+          0 12px 32px rgba(8, 153, 73, 0.2),
+          0 4px 16px rgba(0, 0, 0, 0.1);
       }
 
       .video-card.bookmarked {
-        border: 2px solid var(--color-brand-primary);
+        border: 3px solid var(--ds-primary-green);
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.15);
       }
 
       .video-thumbnail {
@@ -742,15 +882,18 @@ interface FilterChip {
       }
 
       .play-icon {
-        font-size: 4rem;
-        color: var(--color-brand-primary);
-        opacity: 0.8;
-        transition: all 0.3s ease;
+        font-size: 5rem;
+        color: var(--ds-primary-green);
+        opacity: 0.9;
+        transition: all var(--transition-fast);
+        filter: drop-shadow(0 4px 12px rgba(8, 153, 73, 0.4));
+        animation: pulse 2s ease-in-out infinite;
       }
 
       .video-card:hover .play-icon {
-        transform: scale(1.1);
+        transform: scale(1.2);
         opacity: 1;
+        animation: pulse 1s ease-in-out infinite;
       }
 
       .reel-badge {
@@ -812,15 +955,22 @@ interface FilterChip {
         position: absolute;
         bottom: var(--space-3);
         right: var(--space-3);
-        background: rgba(0, 0, 0, 0.8);
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
         color: #ffd700;
-        padding: var(--space-1) var(--space-2);
-        border-radius: var(--radius-md);
-        font-size: var(--font-body-xs);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-body-sm);
         font-weight: var(--font-weight-bold);
         display: flex;
         align-items: center;
         gap: var(--space-1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+      }
+
+      .rating-badge i {
+        animation: pulse 2s ease-in-out infinite;
       }
 
       /* Video Info */
@@ -1175,19 +1325,58 @@ interface FilterChip {
         flex-wrap: wrap;
       }
 
-      /* Responsive */
+      /* ===== REDUCED MOTION ===== */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .play-icon,
+        .rating-badge i {
+          animation: none !important;
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 1024px) {
+        .video-grid {
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: var(--space-5);
+        }
+      }
+
       @media (max-width: 768px) {
         .feed-header {
-          padding: var(--space-6) var(--space-4);
+          padding: var(--space-8) var(--space-4);
         }
 
         .header-content {
           flex-direction: column;
           align-items: flex-start;
+          gap: var(--space-5);
         }
 
         .feed-title {
-          font-size: var(--font-heading-lg);
+          font-size: var(--font-heading-xl);
+        }
+
+        .feed-title i {
+          font-size: 2rem;
+        }
+
+        .header-actions {
+          width: 100%;
+          align-items: stretch;
+        }
+
+        .header-stats {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .suggest-btn {
+          width: 100% !important;
         }
 
         .filter-section,
@@ -1197,16 +1386,46 @@ interface FilterChip {
 
         .filter-chips-container {
           flex-direction: column;
-          align-items: flex-start;
+          align-items: stretch;
+          gap: var(--space-3);
         }
 
         .filter-label {
-          margin-bottom: var(--space-2);
+          margin-bottom: 0;
+          padding-top: 0;
+          min-width: auto;
+        }
+
+        .filter-chips {
+          gap: var(--space-2);
+        }
+
+        .filter-chips.scrollable {
+          flex-shrink: 0;
+          width: 100%;
+        }
+
+        .filter-chip {
+          padding: var(--space-2) var(--space-4);
+          font-size: var(--font-body-sm);
+          min-height: 38px;
+          flex-shrink: 0;
+          width: auto;
+          max-width: none;
+        }
+
+        .search-input {
+          height: 52px;
+          font-size: var(--font-body-md);
+        }
+
+        .search-container {
+          margin-bottom: var(--space-5);
         }
 
         .video-grid {
           grid-template-columns: 1fr;
-          gap: var(--space-4);
+          gap: var(--space-6);
         }
 
         .video-overlay {
@@ -1223,6 +1442,30 @@ interface FilterChip {
 
         .dialog-actions button {
           width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .feed-header {
+          padding: var(--space-6) var(--space-4);
+        }
+
+        .feed-title {
+          font-size: var(--font-heading-lg);
+        }
+
+        .stat-pill {
+          font-size: var(--font-body-sm);
+          padding: var(--space-1) var(--space-3);
+        }
+
+        .filter-chip {
+          padding: var(--space-2) var(--space-4);
+          font-size: var(--font-body-xs);
+        }
+
+        .play-icon {
+          font-size: 4rem;
         }
       }
     `,
@@ -1251,7 +1494,7 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
   totalVideos = computed(() => this.instagramService.totalVideos());
   totalCreators = computed(() => this.instagramService.creators().length);
   featuredCreators = computed(() =>
-    this.instagramService.getFeaturedCreators().slice(0, 10)
+    this.instagramService.getFeaturedCreators().slice(0, 10),
   );
 
   filteredVideos = computed(() => {
@@ -1267,21 +1510,21 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
           v.title.toLowerCase().includes(query) ||
           v.description.toLowerCase().includes(query) ||
           v.tags.some((t) => t.toLowerCase().includes(query)) ||
-          v.creator.displayName.toLowerCase().includes(query)
+          v.creator.displayName.toLowerCase().includes(query),
       );
     }
 
     // Position filter
     if (positions.size > 0) {
       videos = videos.filter((v) =>
-        v.positions.some((p) => positions.has(p) || p === "All")
+        v.positions.some((p) => positions.has(p) || p === "All"),
       );
     }
 
     // Focus filter
     if (focuses.size > 0) {
       videos = videos.filter((v) =>
-        v.trainingFocus.some((f) => focuses.has(f))
+        v.trainingFocus.some((f) => focuses.has(f)),
       );
     }
 
@@ -1301,7 +1544,7 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
     () =>
       this.activePositionFilters().size > 0 ||
       this.activeFocusFilters().size > 0 ||
-      this.searchQuery().length > 0
+      this.searchQuery().length > 0,
   );
 
   activeFilterLabels = computed(() => {
@@ -1315,7 +1558,13 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
   // Filter chips
   positionChips = signal<FilterChip[]>([
     { label: "All", value: "All", type: "position", active: false },
-    { label: "QB", value: "QB", type: "position", icon: "pi pi-star", active: false },
+    {
+      label: "QB",
+      value: "QB",
+      type: "position",
+      icon: "pi pi-star",
+      active: false,
+    },
     { label: "WR", value: "WR", type: "position", active: false },
     { label: "DB", value: "DB", type: "position", active: false },
     { label: "Rusher", value: "Rusher", type: "position", active: false },
@@ -1325,15 +1574,40 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
   focusChips = signal<FilterChip[]>([
     { label: "Speed", value: "speed", type: "focus", active: false },
     { label: "Agility", value: "agility", type: "focus", active: false },
-    { label: "Plyometrics", value: "plyometrics", type: "focus", active: false },
-    { label: "Deceleration", value: "deceleration", type: "focus", active: false },
-    { label: "Acceleration", value: "acceleration", type: "focus", active: false },
-    { label: "Route Running", value: "route_running", type: "focus", active: false },
+    {
+      label: "Plyometrics",
+      value: "plyometrics",
+      type: "focus",
+      active: false,
+    },
+    {
+      label: "Deceleration",
+      value: "deceleration",
+      type: "focus",
+      active: false,
+    },
+    {
+      label: "Acceleration",
+      value: "acceleration",
+      type: "focus",
+      active: false,
+    },
+    {
+      label: "Route Running",
+      value: "route_running",
+      type: "focus",
+      active: false,
+    },
     { label: "Coverage", value: "coverage", type: "focus", active: false },
     { label: "Throwing", value: "throwing", type: "focus", active: false },
     { label: "Recovery", value: "recovery", type: "focus", active: false },
     { label: "Strength", value: "strength", type: "focus", active: false },
-    { label: "Reactive Eccentrics", value: "reactive_eccentrics", type: "focus", active: false },
+    {
+      label: "Reactive Eccentric",
+      value: "reactive_eccentrics",
+      type: "focus",
+      active: false,
+    },
   ]);
 
   constructor() {
@@ -1394,14 +1668,14 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
       chips.map((c) => ({
         ...c,
         active: positions.has(c.value as FlagPosition),
-      }))
+      })),
     );
 
     this.focusChips.update((chips) =>
       chips.map((c) => ({
         ...c,
         active: focuses.has(c.value as TrainingFocus),
-      }))
+      })),
     );
   }
 

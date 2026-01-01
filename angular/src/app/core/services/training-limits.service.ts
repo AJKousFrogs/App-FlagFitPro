@@ -184,8 +184,16 @@ const AGE_ADJUSTED_LIMITS: Record<string, Partial<TrainingLimitsConfig>> = {
     maxWeeklyLoadIncreasePercent: 15,
     movementLimits: {
       ...DEFAULT_LIMITS.movementLimits,
-      sprints: { ...DEFAULT_LIMITS.movementLimits.sprints, maxPerSession: 25, maxPerWeek: 80 },
-      throws: { ...DEFAULT_LIMITS.movementLimits.throws, maxPerSession: 50, maxPerWeek: 200 },
+      sprints: {
+        ...DEFAULT_LIMITS.movementLimits.sprints,
+        maxPerSession: 25,
+        maxPerWeek: 80,
+      },
+      throws: {
+        ...DEFAULT_LIMITS.movementLimits.throws,
+        maxPerSession: 50,
+        maxPerWeek: 200,
+      },
     },
   },
   masters: {
@@ -195,9 +203,24 @@ const AGE_ADJUSTED_LIMITS: Record<string, Partial<TrainingLimitsConfig>> = {
     maxWeeklyLoadIncreasePercent: 8,
     movementLimits: {
       ...DEFAULT_LIMITS.movementLimits,
-      sprints: { ...DEFAULT_LIMITS.movementLimits.sprints, maxPerSession: 25, maxPerWeek: 80, maxConsecutiveDays: 1 },
-      throws: { ...DEFAULT_LIMITS.movementLimits.throws, maxPerSession: 50, maxPerWeek: 250, restBetweenHighVolumeDays: 72 },
-      jumps: { ...DEFAULT_LIMITS.movementLimits.jumps, maxPerSession: 30, maxPerWeek: 100, maxDropHeight: 45 },
+      sprints: {
+        ...DEFAULT_LIMITS.movementLimits.sprints,
+        maxPerSession: 25,
+        maxPerWeek: 80,
+        maxConsecutiveDays: 1,
+      },
+      throws: {
+        ...DEFAULT_LIMITS.movementLimits.throws,
+        maxPerSession: 50,
+        maxPerWeek: 250,
+        restBetweenHighVolumeDays: 72,
+      },
+      jumps: {
+        ...DEFAULT_LIMITS.movementLimits.jumps,
+        maxPerSession: 30,
+        maxPerWeek: 100,
+        maxDropHeight: 45,
+      },
     },
   },
   senior_masters: {
@@ -207,9 +230,24 @@ const AGE_ADJUSTED_LIMITS: Record<string, Partial<TrainingLimitsConfig>> = {
     maxWeeklyLoadIncreasePercent: 5,
     movementLimits: {
       ...DEFAULT_LIMITS.movementLimits,
-      sprints: { ...DEFAULT_LIMITS.movementLimits.sprints, maxPerSession: 20, maxPerWeek: 60, maxConsecutiveDays: 1 },
-      throws: { ...DEFAULT_LIMITS.movementLimits.throws, maxPerSession: 40, maxPerWeek: 200, restBetweenHighVolumeDays: 72 },
-      jumps: { ...DEFAULT_LIMITS.movementLimits.jumps, maxPerSession: 25, maxPerWeek: 80, maxDropHeight: 30 },
+      sprints: {
+        ...DEFAULT_LIMITS.movementLimits.sprints,
+        maxPerSession: 20,
+        maxPerWeek: 60,
+        maxConsecutiveDays: 1,
+      },
+      throws: {
+        ...DEFAULT_LIMITS.movementLimits.throws,
+        maxPerSession: 40,
+        maxPerWeek: 200,
+        restBetweenHighVolumeDays: 72,
+      },
+      jumps: {
+        ...DEFAULT_LIMITS.movementLimits.jumps,
+        maxPerSession: 25,
+        maxPerWeek: 80,
+        maxDropHeight: 30,
+      },
     },
   },
 };
@@ -292,7 +330,8 @@ export class TrainingLimitsService {
   private logger = inject(LoggerService);
 
   // State
-  private readonly _currentLimits = signal<TrainingLimitsConfig>(DEFAULT_LIMITS);
+  private readonly _currentLimits =
+    signal<TrainingLimitsConfig>(DEFAULT_LIMITS);
   private readonly _weeklyHistory = signal<TrainingSession[]>([]);
   private readonly _violations = signal<LimitViolation[]>([]);
 
@@ -304,7 +343,7 @@ export class TrainingLimitsService {
   // Computed
   readonly hasViolations = computed(() => this._violations().length > 0);
   readonly criticalViolations = computed(() =>
-    this._violations().filter((v) => v.severity === "critical")
+    this._violations().filter((v) => v.severity === "critical"),
   );
 
   /**
@@ -312,7 +351,7 @@ export class TrainingLimitsService {
    */
   getLimits(
     ageGroup?: "youth" | "adult" | "masters" | "senior_masters",
-    position?: string
+    position?: string,
   ): TrainingLimitsConfig {
     let limits = { ...DEFAULT_LIMITS };
 
@@ -345,7 +384,7 @@ export class TrainingLimitsService {
    */
   validateSession(
     session: TrainingSession,
-    limits: TrainingLimitsConfig = DEFAULT_LIMITS
+    limits: TrainingLimitsConfig = DEFAULT_LIMITS,
   ): LimitViolation[] {
     const violations: LimitViolation[] = [];
     const movements = session.movements;
@@ -355,16 +394,22 @@ export class TrainingLimitsService {
       if (movements.sprints > limits.movementLimits.sprints.maxPerSession) {
         violations.push({
           type: "movement",
-          severity: movements.sprints > limits.movementLimits.sprints.maxPerSession * 1.2 ? "danger" : "warning",
+          severity:
+            movements.sprints >
+            limits.movementLimits.sprints.maxPerSession * 1.2
+              ? "danger"
+              : "warning",
           metric: "sprints",
           currentValue: movements.sprints,
           limit: limits.movementLimits.sprints.maxPerSession,
           message: `Sprint count (${movements.sprints}) exceeds session limit (${limits.movementLimits.sprints.maxPerSession})`,
-          recommendation: "Reduce sprint volume to prevent hamstring injury risk",
+          recommendation:
+            "Reduce sprint volume to prevent hamstring injury risk",
         });
       } else if (
         movements.sprints >
-        limits.movementLimits.sprints.maxPerSession * (limits.movementLimits.sprints.warningThreshold / 100)
+        limits.movementLimits.sprints.maxPerSession *
+          (limits.movementLimits.sprints.warningThreshold / 100)
       ) {
         violations.push({
           type: "movement",
@@ -373,29 +418,43 @@ export class TrainingLimitsService {
           currentValue: movements.sprints,
           limit: limits.movementLimits.sprints.maxPerSession,
           message: `Sprint count (${movements.sprints}) approaching session limit (${limits.movementLimits.sprints.maxPerSession})`,
-          recommendation: "Monitor fatigue and consider reducing volume if fatigued",
+          recommendation:
+            "Monitor fatigue and consider reducing volume if fatigued",
         });
       }
     }
 
     // Check cutting limits
-    if (movements.cuts !== undefined && movements.cuts > limits.movementLimits.cuts.maxPerSession) {
+    if (
+      movements.cuts !== undefined &&
+      movements.cuts > limits.movementLimits.cuts.maxPerSession
+    ) {
       violations.push({
         type: "movement",
-        severity: movements.cuts > limits.movementLimits.cuts.maxPerSession * 1.2 ? "danger" : "warning",
+        severity:
+          movements.cuts > limits.movementLimits.cuts.maxPerSession * 1.2
+            ? "danger"
+            : "warning",
         metric: "cuts",
         currentValue: movements.cuts,
         limit: limits.movementLimits.cuts.maxPerSession,
         message: `Cutting movements (${movements.cuts}) exceed session limit (${limits.movementLimits.cuts.maxPerSession})`,
-        recommendation: "Reduce cutting volume to prevent knee and ankle injury risk",
+        recommendation:
+          "Reduce cutting volume to prevent knee and ankle injury risk",
       });
     }
 
     // Check throwing limits
-    if (movements.throws !== undefined && movements.throws > limits.movementLimits.throws.maxPerSession) {
+    if (
+      movements.throws !== undefined &&
+      movements.throws > limits.movementLimits.throws.maxPerSession
+    ) {
       violations.push({
         type: "movement",
-        severity: movements.throws > limits.movementLimits.throws.maxPerSession * 1.2 ? "danger" : "warning",
+        severity:
+          movements.throws > limits.movementLimits.throws.maxPerSession * 1.2
+            ? "danger"
+            : "warning",
         metric: "throws",
         currentValue: movements.throws,
         limit: limits.movementLimits.throws.maxPerSession,
@@ -405,7 +464,10 @@ export class TrainingLimitsService {
     }
 
     // Check jump limits
-    if (movements.jumps !== undefined && movements.jumps > limits.movementLimits.jumps.maxPerSession) {
+    if (
+      movements.jumps !== undefined &&
+      movements.jumps > limits.movementLimits.jumps.maxPerSession
+    ) {
       violations.push({
         type: "movement",
         severity: "warning",
@@ -426,7 +488,7 @@ export class TrainingLimitsService {
   validateWeeklyTraining(
     sessions: TrainingSession[],
     previousWeekLoad: number,
-    limits: TrainingLimitsConfig = DEFAULT_LIMITS
+    limits: TrainingLimitsConfig = DEFAULT_LIMITS,
   ): TrainingPlanValidation {
     const violations: LimitViolation[] = [];
     const warnings: string[] = [];
@@ -444,7 +506,8 @@ export class TrainingLimitsService {
         currentValue: summary.totalSessions,
         limit: limits.maxSessionsPerWeek,
         message: `Weekly sessions (${summary.totalSessions}) exceed limit (${limits.maxSessionsPerWeek})`,
-        recommendation: "Remove low-priority sessions to allow adequate recovery",
+        recommendation:
+          "Remove low-priority sessions to allow adequate recovery",
       });
     }
 
@@ -457,7 +520,8 @@ export class TrainingLimitsService {
         currentValue: summary.highIntensitySessions,
         limit: limits.maxHighIntensityPerWeek,
         message: `High-intensity sessions (${summary.highIntensitySessions}) exceed limit (${limits.maxHighIntensityPerWeek})`,
-        recommendation: "Convert some high-intensity sessions to moderate intensity",
+        recommendation:
+          "Convert some high-intensity sessions to moderate intensity",
       });
     }
 
@@ -470,7 +534,8 @@ export class TrainingLimitsService {
         currentValue: summary.restDays,
         limit: limits.minRestDaysPerWeek,
         message: `Rest days (${summary.restDays}) below minimum (${limits.minRestDaysPerWeek})`,
-        recommendation: "Add at least one complete rest day to prevent overtraining",
+        recommendation:
+          "Add at least one complete rest day to prevent overtraining",
       });
     }
 
@@ -489,22 +554,30 @@ export class TrainingLimitsService {
 
     // Check weekly load increase
     if (previousWeekLoad > 0) {
-      const loadIncrease = ((summary.totalLoad - previousWeekLoad) / previousWeekLoad) * 100;
+      const loadIncrease =
+        ((summary.totalLoad - previousWeekLoad) / previousWeekLoad) * 100;
       if (loadIncrease > limits.maxWeeklyLoadIncreasePercent) {
         violations.push({
           type: "load",
-          severity: loadIncrease > limits.maxWeeklyLoadIncreasePercent * 1.5 ? "critical" : "danger",
+          severity:
+            loadIncrease > limits.maxWeeklyLoadIncreasePercent * 1.5
+              ? "critical"
+              : "danger",
           metric: "weeklyLoadIncrease",
           currentValue: Math.round(loadIncrease),
           limit: limits.maxWeeklyLoadIncreasePercent,
           message: `Weekly load increase (${loadIncrease.toFixed(1)}%) exceeds safe limit (${limits.maxWeeklyLoadIncreasePercent}%)`,
-          recommendation: "Reduce planned load to stay within safe progression limits (Hulin et al. 2016)",
+          recommendation:
+            "Reduce planned load to stay within safe progression limits (Hulin et al. 2016)",
         });
       }
     }
 
     // Check weekly movement totals
-    if (summary.movements.sprints && summary.movements.sprints > limits.movementLimits.sprints.maxPerWeek) {
+    if (
+      summary.movements.sprints &&
+      summary.movements.sprints > limits.movementLimits.sprints.maxPerWeek
+    ) {
       violations.push({
         type: "movement",
         severity: "danger",
@@ -512,11 +585,15 @@ export class TrainingLimitsService {
         currentValue: summary.movements.sprints,
         limit: limits.movementLimits.sprints.maxPerWeek,
         message: `Weekly sprints (${summary.movements.sprints}) exceed limit (${limits.movementLimits.sprints.maxPerWeek})`,
-        recommendation: "Distribute sprint work more evenly or reduce total volume",
+        recommendation:
+          "Distribute sprint work more evenly or reduce total volume",
       });
     }
 
-    if (summary.movements.throws && summary.movements.throws > limits.movementLimits.throws.maxPerWeek) {
+    if (
+      summary.movements.throws &&
+      summary.movements.throws > limits.movementLimits.throws.maxPerWeek
+    ) {
       violations.push({
         type: "movement",
         severity: "danger",
@@ -524,18 +601,25 @@ export class TrainingLimitsService {
         currentValue: summary.movements.throws,
         limit: limits.movementLimits.throws.maxPerWeek,
         message: `Weekly throws (${summary.movements.throws}) exceed limit (${limits.movementLimits.throws.maxPerWeek})`,
-        recommendation: "Reduce throwing volume and ensure arm care protocol is followed",
+        recommendation:
+          "Reduce throwing volume and ensure arm care protocol is followed",
       });
     }
 
     // Add general recommendations
     if (violations.length > 0) {
-      recommendations.push("Review and adjust training plan to address violations");
-      recommendations.push("Consider consulting with a coach or sports scientist");
+      recommendations.push(
+        "Review and adjust training plan to address violations",
+      );
+      recommendations.push(
+        "Consider consulting with a coach or sports scientist",
+      );
     }
 
     if (summary.highIntensitySessions >= limits.maxHighIntensityPerWeek) {
-      recommendations.push("Ensure adequate recovery between high-intensity sessions");
+      recommendations.push(
+        "Ensure adequate recovery between high-intensity sessions",
+      );
     }
 
     this._violations.set(violations);
@@ -553,7 +637,9 @@ export class TrainingLimitsService {
    */
   calculateWeeklySummary(sessions: TrainingSession[]): WeeklyTrainingSummary {
     const totalSessions = sessions.length;
-    const highIntensitySessions = sessions.filter((s) => s.intensity === "high").length;
+    const highIntensitySessions = sessions.filter(
+      (s) => s.intensity === "high",
+    ).length;
     const totalLoad = sessions.reduce((sum, s) => sum + s.load, 0);
 
     // Calculate rest days (assuming 7-day week)
@@ -583,7 +669,10 @@ export class TrainingLimitsService {
       cuts: sessions.reduce((sum, s) => sum + (s.movements.cuts || 0), 0),
       throws: sessions.reduce((sum, s) => sum + (s.movements.throws || 0), 0),
       jumps: sessions.reduce((sum, s) => sum + (s.movements.jumps || 0), 0),
-      decelerations: sessions.reduce((sum, s) => sum + (s.movements.decelerations || 0), 0),
+      decelerations: sessions.reduce(
+        (sum, s) => sum + (s.movements.decelerations || 0),
+        0,
+      ),
     };
 
     return {
@@ -602,13 +691,14 @@ export class TrainingLimitsService {
   getSafeLoadProgression(
     currentWeekLoad: number,
     targetWeekLoad: number,
-    maxWeeklyIncrease: number = 10
+    maxWeeklyIncrease: number = 10,
   ): { weeks: number; weeklyLoads: number[]; recommendation: string } {
     if (targetWeekLoad <= currentWeekLoad) {
       return {
         weeks: 1,
         weeklyLoads: [targetWeekLoad],
-        recommendation: "Target load is at or below current load - safe to implement immediately",
+        recommendation:
+          "Target load is at or below current load - safe to implement immediately",
       };
     }
 
@@ -636,7 +726,7 @@ export class TrainingLimitsService {
   validateTournamentSchedule(
     gamesPerDay: number[],
     throwsPerGame: number,
-    position: string
+    position: string,
   ): { safe: boolean; warnings: string[]; recommendations: string[] } {
     const warnings: string[] = [];
     const recommendations: string[] = [];
@@ -646,9 +736,12 @@ export class TrainingLimitsService {
     const totalThrows = position === "QB" ? totalGames * throwsPerGame : 0;
 
     // Check QB throwing limits
-    if (position === "QB" && totalThrows > limits.movementLimits.throws.maxPerTournament) {
+    if (
+      position === "QB" &&
+      totalThrows > limits.movementLimits.throws.maxPerTournament
+    ) {
       warnings.push(
-        `Estimated throws (${totalThrows}) exceed tournament limit (${limits.movementLimits.throws.maxPerTournament})`
+        `Estimated throws (${totalThrows}) exceed tournament limit (${limits.movementLimits.throws.maxPerTournament})`,
       );
       recommendations.push("Consider rotating QBs or reducing throws per game");
       recommendations.push("Ensure ice and arm care between games");
@@ -657,7 +750,9 @@ export class TrainingLimitsService {
     // Check games per day
     const maxGamesPerDay = Math.max(...gamesPerDay);
     if (maxGamesPerDay > 4) {
-      warnings.push(`${maxGamesPerDay} games in one day is very high - injury risk elevated`);
+      warnings.push(
+        `${maxGamesPerDay} games in one day is very high - injury risk elevated`,
+      );
       recommendations.push("Ensure adequate rest between games");
       recommendations.push("Monitor fatigue closely");
     }
@@ -665,7 +760,9 @@ export class TrainingLimitsService {
     // Check consecutive high-load days
     const highLoadDays = gamesPerDay.filter((g) => g >= 3).length;
     if (highLoadDays > 2) {
-      warnings.push(`${highLoadDays} consecutive high-load days increases injury risk`);
+      warnings.push(
+        `${highLoadDays} consecutive high-load days increases injury risk`,
+      );
       recommendations.push("Consider lighter warm-ups on day 3+");
     }
 
@@ -683,7 +780,7 @@ export class TrainingLimitsService {
     weeklyLoads: number[], // Last 4 weeks
     sleepQuality: number[], // Last 7 days (1-10)
     moodScores: number[], // Last 7 days (1-10)
-    performanceDecline: boolean
+    performanceDecline: boolean,
   ): {
     riskLevel: "low" | "moderate" | "high" | "critical";
     indicators: string[];
@@ -697,37 +794,47 @@ export class TrainingLimitsService {
     if (weeklyLoads.length >= 4) {
       const mean = weeklyLoads.reduce((a, b) => a + b, 0) / weeklyLoads.length;
       const stdDev = Math.sqrt(
-        weeklyLoads.reduce((sum, load) => sum + Math.pow(load - mean, 2), 0) / weeklyLoads.length
+        weeklyLoads.reduce((sum, load) => sum + Math.pow(load - mean, 2), 0) /
+          weeklyLoads.length,
       );
       const monotony = mean / (stdDev || 1);
 
       if (monotony > 2.0) {
-        indicators.push(`High training monotony (${monotony.toFixed(1)}) - lack of variation`);
+        indicators.push(
+          `High training monotony (${monotony.toFixed(1)}) - lack of variation`,
+        );
         riskScore += 2;
       }
 
       // Check strain
       const strain = weeklyLoads[weeklyLoads.length - 1] * monotony;
       if (strain > 6000) {
-        indicators.push(`High training strain (${Math.round(strain)}) - accumulated fatigue`);
+        indicators.push(
+          `High training strain (${Math.round(strain)}) - accumulated fatigue`,
+        );
         riskScore += 2;
       }
     }
 
     // Check sleep quality
-    const avgSleep = sleepQuality.reduce((a, b) => a + b, 0) / sleepQuality.length;
+    const avgSleep =
+      sleepQuality.reduce((a, b) => a + b, 0) / sleepQuality.length;
     if (avgSleep < 6) {
       indicators.push(`Poor sleep quality (${avgSleep.toFixed(1)}/10)`);
       riskScore += 2;
     } else if (avgSleep < 7) {
-      indicators.push(`Below optimal sleep quality (${avgSleep.toFixed(1)}/10)`);
+      indicators.push(
+        `Below optimal sleep quality (${avgSleep.toFixed(1)}/10)`,
+      );
       riskScore += 1;
     }
 
     // Check mood
     const avgMood = moodScores.reduce((a, b) => a + b, 0) / moodScores.length;
     if (avgMood < 5) {
-      indicators.push(`Low mood scores (${avgMood.toFixed(1)}/10) - possible overreaching`);
+      indicators.push(
+        `Low mood scores (${avgMood.toFixed(1)}/10) - possible overreaching`,
+      );
       riskScore += 2;
     } else if (avgMood < 6) {
       indicators.push(`Below optimal mood (${avgMood.toFixed(1)}/10)`);

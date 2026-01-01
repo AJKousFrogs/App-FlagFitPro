@@ -334,7 +334,7 @@ export class VideoCurationComponent implements OnInit {
     return this.curationService.getFilteredVideos(
       this.videoSearch(),
       this.positionFilter(),
-      this.statusFilter()
+      this.statusFilter(),
     );
   });
 

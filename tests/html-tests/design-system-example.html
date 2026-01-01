@@ -1,21 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Design System Example - FlagFit Pro</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
-    >
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
       rel="stylesheet"
-    >
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <style>
       .icon-inline {
         width: 16px;
@@ -159,25 +159,43 @@
             </div>
             <div class="card-content">
               <div class="flex flex-wrap gap-3 mb-6">
-                <button type="button" class="btn btn-primary">Primary Button</button>
-                <button type="button" class="btn btn-secondary">Secondary Button</button>
-                <button type="button" class="btn btn-success">Success Button</button>
-                <button type="button" class="btn btn-danger">Danger Button</button>
-                <button type="button" class="btn btn-ghost">Ghost Button</button>
+                <button type="button" class="btn btn-primary">
+                  Primary Button
+                </button>
+                <button type="button" class="btn btn-secondary">
+                  Secondary Button
+                </button>
+                <button type="button" class="btn btn-success">
+                  Success Button
+                </button>
+                <button type="button" class="btn btn-danger">
+                  Danger Button
+                </button>
+                <button type="button" class="btn btn-ghost">
+                  Ghost Button
+                </button>
               </div>
 
               <div class="flex flex-wrap gap-3 mb-6">
-                <button type="button" class="btn btn-primary btn-sm">Small</button>
+                <button type="button" class="btn btn-primary btn-sm">
+                  Small
+                </button>
                 <button type="button" class="btn btn-primary">Normal</button>
-                <button type="button" class="btn btn-primary btn-lg">Large</button>
+                <button type="button" class="btn btn-primary btn-lg">
+                  Large
+                </button>
               </div>
 
               <div class="flex gap-3">
-                <button type="button" class="btn-icon" aria-label="Run">🏃</button>
+                <button type="button" class="btn-icon" aria-label="Run">
+                  🏃
+                </button>
                 <button type="button" class="btn-icon" aria-label="Settings">
                   <i data-lucide="settings" class="icon-inline"></i>
                 </button>
-                <button type="button" class="btn-icon" aria-label="Favorite">❤️</button>
+                <button type="button" class="btn-icon" aria-label="Favorite">
+                  ❤️
+                </button>
               </div>
             </div>
           </div>
@@ -211,7 +229,9 @@
             <div class="card hover-lift">
               <div class="card-header">
                 <h4 class="card-title">Team Ranking</h4>
-                <span class="text-2xl"><i data-lucide="trophy" class="icon-inline"></i></span>
+                <span class="text-2xl"
+                  ><i data-lucide="trophy" class="icon-inline"></i
+                ></span>
               </div>
               <div class="card-content">
                 <div class="text-3xl font-bold text-success mb-2">#3</div>
@@ -231,13 +251,15 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div class="form-group">
-                    <label class="form-label" for="player-name">Player Name</label>
+                    <label class="form-label" for="player-name"
+                      >Player Name</label
+                    >
                     <input
                       type="text"
                       id="player-name"
                       class="form-input"
                       placeholder="Enter your name"
-                    >
+                    />
                   </div>
 
                   <div class="form-group">
@@ -252,7 +274,9 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" for="training-goals">Training Goals</label>
+                    <label class="form-label" for="training-goals"
+                      >Training Goals</label
+                    >
                     <textarea
                       id="training-goals"
                       class="form-textarea"
@@ -263,29 +287,39 @@
 
                 <div>
                   <div class="form-group">
-                    <label class="form-label" for="email-error">Email (Error State)</label>
+                    <label class="form-label" for="email-error"
+                      >Email (Error State)</label
+                    >
                     <input
                       type="email"
                       id="email-error"
                       class="form-input error"
                       value="invalid-email"
+                    />
+                    <span class="form-error"
+                      >Please enter a valid email address</span
                     >
-                    <span class="form-error">Please enter a valid email address</span>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" for="password-success">Password (Success State)</label>
+                    <label class="form-label" for="password-success"
+                      >Password (Success State)</label
+                    >
                     <input
                       type="password"
                       id="password-success"
                       class="form-input success"
                       value="••••••••"
+                    />
+                    <span class="form-success"
+                      >Password meets all requirements</span
                     >
-                    <span class="form-success">Password meets all requirements</span>
                   </div>
 
                   <div class="flex gap-3 mt-6">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">
+                      Save Changes
+                    </button>
                     <button type="button" class="btn btn-ghost">Cancel</button>
                   </div>
                 </div>

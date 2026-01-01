@@ -1,16 +1,16 @@
 /**
  * Status Utility Functions
- * 
+ *
  * Centralized utilities for handling status-related operations across the application.
  * Provides consistent severity mapping for PrimeNG components (Tag, Badge, etc.).
- * 
+ *
  * @example
  * ```typescript
  * import { getStatusSeverity, statusSeverityMap } from '@shared/utils/status.utils';
- * 
+ *
  * // In template:
  * // <p-tag [value]="status" [severity]="getStatusSeverity(status)"></p-tag>
- * 
+ *
  * // In component:
  * readonly getStatusSeverity = getStatusSeverity;
  * ```
@@ -22,42 +22,42 @@
  */
 export const statusSeverityMap: Record<string, string> = {
   // Training/Session statuses
-  scheduled: 'info',
-  in_progress: 'warning',
-  active: 'success',
-  completed: 'success',
-  cancelled: 'danger',
-  missed: 'danger',
-  
+  scheduled: "info",
+  in_progress: "warning",
+  active: "success",
+  completed: "success",
+  cancelled: "danger",
+  missed: "danger",
+
   // General statuses
-  pending: 'info',
-  approved: 'success',
-  rejected: 'danger',
-  draft: 'secondary',
-  
+  pending: "info",
+  approved: "success",
+  rejected: "danger",
+  draft: "secondary",
+
   // User/Team statuses
-  invited: 'info',
-  accepted: 'success',
-  declined: 'danger',
-  inactive: 'secondary',
-  
+  invited: "info",
+  accepted: "success",
+  declined: "danger",
+  inactive: "secondary",
+
   // Health/Risk statuses
-  optimal: 'success',
-  elevated: 'warning',
-  danger: 'danger',
-  low: 'secondary',
-  moderate: 'info',
-  high: 'warning',
-  critical: 'danger',
-  
+  optimal: "success",
+  elevated: "warning",
+  danger: "danger",
+  low: "secondary",
+  moderate: "info",
+  high: "warning",
+  critical: "danger",
+
   // Recovery statuses
-  recovering: 'info',
-  recovered: 'success',
-  
+  recovering: "info",
+  recovered: "success",
+
   // ACWR Risk Zones
-  detraining: 'warning',
-  sweet_spot: 'success',
-  insufficient_data: 'secondary',
+  detraining: "warning",
+  sweet_spot: "success",
+  insufficient_data: "secondary",
 };
 
 /**
@@ -67,15 +67,15 @@ export const statusSeverityMap: Record<string, string> = {
  */
 export function getStatusSeverity(
   status: string,
-): 'success' | 'info' | 'warn' | 'warning' | 'danger' | 'secondary' {
+): "success" | "info" | "warn" | "warning" | "danger" | "secondary" {
   const severity = statusSeverityMap[status?.toLowerCase()];
-  return (severity as any) || 'info';
+  return (severity as any) || "info";
 }
 
 /**
  * Get human-readable label for a status
  * Converts snake_case or camelCase to Title Case
- * 
+ *
  * @example
  * ```typescript
  * getStatusLabel('in_progress') // Returns: "In Progress"
@@ -83,16 +83,16 @@ export function getStatusSeverity(
  * ```
  */
 export function getStatusLabel(status: string): string {
-  if (!status) return '';
-  
+  if (!status) return "";
+
   // Convert snake_case or camelCase to Title Case
   return status
-    .replace(/_/g, ' ')
-    .replace(/([A-Z])/g, ' $1')
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
     .trim()
-    .split(' ')
+    .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .join(" ");
 }
 
 /**
@@ -100,15 +100,15 @@ export function getStatusLabel(status: string): string {
  * Returns PrimeNG icon class
  */
 export const statusIconMap: Record<string, string> = {
-  scheduled: 'pi-calendar',
-  in_progress: 'pi-spin pi-spinner',
-  completed: 'pi-check-circle',
-  cancelled: 'pi-times-circle',
-  pending: 'pi-clock',
-  approved: 'pi-check',
-  rejected: 'pi-times',
-  active: 'pi-circle-fill',
-  inactive: 'pi-circle',
+  scheduled: "pi-calendar",
+  in_progress: "pi-spin pi-spinner",
+  completed: "pi-check-circle",
+  cancelled: "pi-times-circle",
+  pending: "pi-clock",
+  approved: "pi-check",
+  rejected: "pi-times",
+  active: "pi-circle-fill",
+  inactive: "pi-circle",
 };
 
 /**
@@ -117,7 +117,7 @@ export const statusIconMap: Record<string, string> = {
  * @returns PrimeNG icon class
  */
 export function getStatusIcon(status: string): string {
-  return statusIconMap[status?.toLowerCase()] || 'pi-info-circle';
+  return statusIconMap[status?.toLowerCase()] || "pi-info-circle";
 }
 
 /**
@@ -127,14 +127,14 @@ export function getStatusIcon(status: string): string {
  */
 export function isPositiveStatus(status: string): boolean {
   const positiveStatuses = [
-    'completed',
-    'approved',
-    'success',
-    'accepted',
-    'active',
-    'optimal',
-    'recovered',
-    'high',
+    "completed",
+    "approved",
+    "success",
+    "accepted",
+    "active",
+    "optimal",
+    "recovered",
+    "high",
   ];
   return positiveStatuses.includes(status?.toLowerCase());
 }
@@ -146,13 +146,13 @@ export function isPositiveStatus(status: string): boolean {
  */
 export function isNegativeStatus(status: string): boolean {
   const negativeStatuses = [
-    'cancelled',
-    'rejected',
-    'danger',
-    'declined',
-    'missed',
-    'critical',
-    'failed',
+    "cancelled",
+    "rejected",
+    "danger",
+    "declined",
+    "missed",
+    "critical",
+    "failed",
   ];
   return negativeStatuses.includes(status?.toLowerCase());
 }
@@ -164,12 +164,11 @@ export function isNegativeStatus(status: string): boolean {
  */
 export function isWarningStatus(status: string): boolean {
   const warningStatuses = [
-    'in_progress',
-    'elevated',
-    'warning',
-    'detraining',
-    'moderate',
+    "in_progress",
+    "elevated",
+    "warning",
+    "detraining",
+    "moderate",
   ];
   return warningStatuses.includes(status?.toLowerCase());
 }
-

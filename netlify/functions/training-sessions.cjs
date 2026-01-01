@@ -2,7 +2,10 @@
 // Handles creation and retrieval of training sessions for the Training Builder component
 // Endpoint: /api/training/sessions
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  checkEnvVars: _checkEnvVars,
+  supabaseAdmin,
+} = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -217,7 +220,11 @@ exports.handler = async (event, context) => {
       }
 
       // Method not allowed (shouldn't reach here due to allowedMethods)
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     },
   });
 };

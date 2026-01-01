@@ -22,22 +22,22 @@
 
 ### Log Sources
 
-| Source | Location | Retention | Contains PII |
-|--------|----------|-----------|--------------|
-| **Netlify Function Logs** | Netlify Dashboard / CLI | 7 days | Potentially |
-| **Supabase Postgres Logs** | Supabase Dashboard | 7 days | Potentially |
-| **Sentry Error Tracking** | Sentry Dashboard | 90 days | Redacted |
-| **Angular Frontend** | Browser console | Session | Potentially |
-| **Netlify Build Logs** | Netlify Dashboard | 30 days | No |
+| Source                     | Location                | Retention | Contains PII |
+| -------------------------- | ----------------------- | --------- | ------------ |
+| **Netlify Function Logs**  | Netlify Dashboard / CLI | 7 days    | Potentially  |
+| **Supabase Postgres Logs** | Supabase Dashboard      | 7 days    | Potentially  |
+| **Sentry Error Tracking**  | Sentry Dashboard        | 90 days   | Redacted     |
+| **Angular Frontend**       | Browser console         | Session   | Potentially  |
+| **Netlify Build Logs**     | Netlify Dashboard       | 30 days   | No           |
 
 ### Log Levels
 
-| Level | Angular (LoggerService) | Backend | When to Use |
-|-------|------------------------|---------|-------------|
-| `debug` | Dev only | Dev only | Detailed debugging |
-| `info` | Dev only | Always | Normal operations |
-| `warn` | Always | Always | Potential issues |
-| `error` | Always | Always | Errors and failures |
+| Level   | Angular (LoggerService) | Backend  | When to Use         |
+| ------- | ----------------------- | -------- | ------------------- |
+| `debug` | Dev only                | Dev only | Detailed debugging  |
+| `info`  | Dev only                | Always   | Normal operations   |
+| `warn`  | Always                  | Always   | Potential issues    |
+| `error` | Always                  | Always   | Errors and failures |
 
 ---
 
@@ -64,29 +64,29 @@
 
 ### Data That MUST Be Redacted
 
-| Data Type | Redaction Method | Example |
-|-----------|------------------|---------|
-| Passwords | Never log | - |
-| JWT tokens | Truncate | `eyJ...abc` → `eyJ***` |
-| API keys | Truncate | `sk_live_abc123` → `sk_***` |
-| Email addresses | Mask | `user@example.com` → `u***@example.com` |
-| Phone numbers | Mask | `+1-555-123-4567` → `+1-555-***-****` |
-| Credit cards | Never log | - |
-| SSN/Tax IDs | Never log | - |
-| Health data | Context only | "wellness check submitted" not values |
-| Full names | First name only | "John Doe" → "John D." |
+| Data Type       | Redaction Method | Example                                 |
+| --------------- | ---------------- | --------------------------------------- |
+| Passwords       | Never log        | -                                       |
+| JWT tokens      | Truncate         | `eyJ...abc` → `eyJ***`                  |
+| API keys        | Truncate         | `sk_live_abc123` → `sk_***`             |
+| Email addresses | Mask             | `user@example.com` → `u***@example.com` |
+| Phone numbers   | Mask             | `+1-555-123-4567` → `+1-555-***-****`   |
+| Credit cards    | Never log        | -                                       |
+| SSN/Tax IDs     | Never log        | -                                       |
+| Health data     | Context only     | "wellness check submitted" not values   |
+| Full names      | First name only  | "John Doe" → "John D."                  |
 
 ### Data That CAN Be Logged
 
-| Data Type | Notes |
-|-----------|-------|
-| User IDs (UUIDs) | Safe - not PII |
-| Request IDs | Required for tracing |
-| Timestamps | Required for debugging |
-| HTTP status codes | Required for debugging |
-| Error codes | Required for debugging |
-| Feature flags | Safe |
-| Performance metrics | Safe |
+| Data Type           | Notes                  |
+| ------------------- | ---------------------- |
+| User IDs (UUIDs)    | Safe - not PII         |
+| Request IDs         | Required for tracing   |
+| Timestamps          | Required for debugging |
+| HTTP status codes   | Required for debugging |
+| Error codes         | Required for debugging |
+| Feature flags       | Safe                   |
+| Performance metrics | Safe                   |
 
 ---
 
@@ -136,15 +136,15 @@ netlify logs --level error
 
 ```sql
 -- View recent errors (requires pg_stat_statements extension)
-SELECT * FROM pg_stat_activity 
-WHERE state = 'active' 
-ORDER BY query_start DESC 
+SELECT * FROM pg_stat_activity
+WHERE state = 'active'
+ORDER BY query_start DESC
 LIMIT 20;
 
 -- Check for slow queries
-SELECT query, calls, mean_time, max_time 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, calls, mean_time, max_time
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
@@ -180,15 +180,15 @@ Before adding any `console.log` or logging call, check:
 
 ```typescript
 // ❌ NEVER LOG
-console.log('Password:', password);
-console.log('Token:', token);
-console.log('User data:', userObject);  // May contain PII
+console.log("Password:", password);
+console.log("Token:", token);
+console.log("User data:", userObject); // May contain PII
 
 // ✅ SAFE TO LOG
-console.log('User ID:', userId);  // UUID is not PII
-console.log('Request ID:', requestId);
-console.log('Operation:', 'login_attempt');
-console.log('Status:', 'success');
+console.log("User ID:", userId); // UUID is not PII
+console.log("Request ID:", requestId);
+console.log("Operation:", "login_attempt");
+console.log("Status:", "success");
 ```
 
 ### Backend Logging Pattern
@@ -202,17 +202,17 @@ console.log(`[${requestId}] User ${userId} performed action: update_profile`);
 // ✅ CORRECT: Redact sensitive fields
 function logRequest(event, userId) {
   console.log({
-    requestId: event.headers['x-request-id'],
+    requestId: event.headers["x-request-id"],
     method: event.httpMethod,
     path: event.path,
-    userId: userId || 'anonymous',
+    userId: userId || "anonymous",
     timestamp: new Date().toISOString(),
     // DO NOT include: body, headers with auth, query params with tokens
   });
 }
 
 // ❌ WRONG: Logging full request body
-console.log('Request body:', JSON.parse(event.body));
+console.log("Request body:", JSON.parse(event.body));
 ```
 
 ### Frontend Logging Pattern
@@ -221,11 +221,11 @@ console.log('Request body:', JSON.parse(event.body));
 // angular/src/app/core/services/logger.service.ts
 
 // ✅ CORRECT: Use LoggerService with appropriate levels
-this.logger.info('Dashboard loaded', { userId: user.id });
-this.logger.error('API call failed', { endpoint: '/dashboard', status: 500 });
+this.logger.info("Dashboard loaded", { userId: user.id });
+this.logger.error("API call failed", { endpoint: "/dashboard", status: 500 });
 
 // ❌ WRONG: Logging user data
-this.logger.info('User logged in', { user: fullUserObject });
+this.logger.info("User logged in", { user: fullUserObject });
 ```
 
 ### Error Tracking Pattern
@@ -290,11 +290,13 @@ grep -rE "console\.(log|info|debug).*email" angular/src
 ### After Finding PII in Logs
 
 **Immediate:**
+
 1. Document what was found and where
 2. Assess exposure risk
 3. Notify security/compliance team
 
 **Remediation:**
+
 1. Fix the logging code
 2. Deploy the fix
 3. Request log deletion if possible:
@@ -303,6 +305,7 @@ grep -rE "console\.(log|info|debug).*email" angular/src
    - Sentry: Can delete events via API
 
 **Prevention:**
+
 1. Add redaction at the source
 2. Update code review checklist
 3. Add automated scanning for PII in logs
@@ -337,31 +340,31 @@ netlify logs:build
 ```javascript
 // Email redaction
 const redactEmail = (email) => {
-  const [user, domain] = email.split('@');
+  const [user, domain] = email.split("@");
   return `${user[0]}***@${domain}`;
 };
 
 // Token redaction
 const redactToken = (token) => {
-  if (!token || token.length < 10) return '***';
+  if (!token || token.length < 10) return "***";
   return `${token.substring(0, 3)}***`;
 };
 
 // Phone redaction
 const redactPhone = (phone) => {
-  return phone.replace(/\d(?=\d{4})/g, '*');
+  return phone.replace(/\d(?=\d{4})/g, "*");
 };
 ```
 
 ### Log Locations
 
-| Log Type | Access Method |
-|----------|---------------|
-| Function logs | `netlify logs:function NAME` |
-| Build logs | Netlify Dashboard → Deploys → Deploy |
-| Postgres logs | Supabase Dashboard → Logs → Postgres |
-| Auth logs | Supabase Dashboard → Logs → Auth |
-| Error tracking | Sentry Dashboard |
+| Log Type       | Access Method                        |
+| -------------- | ------------------------------------ |
+| Function logs  | `netlify logs:function NAME`         |
+| Build logs     | Netlify Dashboard → Deploys → Deploy |
+| Postgres logs  | Supabase Dashboard → Logs → Postgres |
+| Auth logs      | Supabase Dashboard → Logs → Auth     |
+| Error tracking | Sentry Dashboard                     |
 
 ### PII Checklist for Code Review
 
@@ -390,8 +393,8 @@ When reviewing code with logging:
 // Development: All levels
 
 // To change level at runtime:
-this.logger.setLevel('error');  // Production
-this.logger.setLevel('debug');  // Development
+this.logger.setLevel("error"); // Production
+this.logger.setLevel("debug"); // Development
 ```
 
 ### Backend Logging
@@ -404,7 +407,7 @@ console.log(`[PERFORMANCE] ${functionName} [${requestId}]: ${duration}ms`, {
   requestId,
   method: event.httpMethod,
   path: event.path,
-  userId: userId || "anonymous",  // ID only
+  userId: userId || "anonymous", // ID only
   duration,
   timestamp: new Date().toISOString(),
 });
@@ -416,21 +419,19 @@ console.log(`[PERFORMANCE] ${functionName} [${requestId}]: ${duration}ms`, {
 // angular/src/app/core/services/error-tracking.service.ts
 
 // Errors to ignore (not actionable)
-ignoreErrors: [
+ignoreErrors: ([
   "ResizeObserver loop",
   "Non-Error exception captured",
   "Network request failed",
   "Load failed",
   "ChunkLoadError",
 ],
-
-// User context (ID only)
-this.Sentry.setUser({ id: userId });  // ✅
-this.Sentry.setUser({ id, email });   // ❌
+  // User context (ID only)
+  this.Sentry.setUser({ id: userId })); // ✅
+this.Sentry.setUser({ id, email }); // ❌
 ```
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

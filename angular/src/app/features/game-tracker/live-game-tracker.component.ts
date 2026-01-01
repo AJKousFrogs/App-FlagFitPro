@@ -513,16 +513,18 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   ]);
 
   // Initialize yard lines at field declaration
-  yardLines = signal<YardLine[]>((() => {
-    const lines: YardLine[] = [];
-    for (let i = 0; i <= 10; i++) {
-      lines.push({
-        x: (i * 1200) / 10,
-        label: i === 0 || i === 10 ? "Goal" : `${i * 10}`,
-      });
-    }
-    return lines;
-  })());
+  yardLines = signal<YardLine[]>(
+    (() => {
+      const lines: YardLine[] = [];
+      for (let i = 0; i <= 10; i++) {
+        lines.push({
+          x: (i * 1200) / 10,
+          label: i === 0 || i === 10 ? "Goal" : `${i * 10}`,
+        });
+      }
+      return lines;
+    })(),
+  );
   activePlayers = signal<FieldPlayer[]>([]);
 
   private gameTimerSubscription?: Subscription;

@@ -157,9 +157,10 @@ export class AdminService {
     const statuses: SyncStatus[] = [];
 
     // Check supplements table
-    const { count: supplementCount, error: suppError } = await this.supabaseService.client
-      .from("supplements")
-      .select("*", { count: "exact", head: true });
+    const { count: supplementCount, error: suppError } =
+      await this.supabaseService.client
+        .from("supplements")
+        .select("*", { count: "exact", head: true });
 
     statuses.push({
       source: "Supplements Database",
@@ -170,9 +171,10 @@ export class AdminService {
     });
 
     // Check exercises table
-    const { count: exerciseCount, error: exError } = await this.supabaseService.client
-      .from("exercises")
-      .select("*", { count: "exact", head: true });
+    const { count: exerciseCount, error: exError } =
+      await this.supabaseService.client
+        .from("exercises")
+        .select("*", { count: "exact", head: true });
 
     statuses.push({
       source: "Exercise Library",
@@ -283,9 +285,15 @@ export class AdminService {
   private async createBackupInfo(): Promise<BackupInfo> {
     // Get approximate database size by counting records
     const counts = await Promise.all([
-      this.supabaseService.client.from("users").select("*", { count: "exact", head: true }),
-      this.supabaseService.client.from("training_sessions").select("*", { count: "exact", head: true }),
-      this.supabaseService.client.from("wellness_logs").select("*", { count: "exact", head: true }),
+      this.supabaseService.client
+        .from("users")
+        .select("*", { count: "exact", head: true }),
+      this.supabaseService.client
+        .from("training_sessions")
+        .select("*", { count: "exact", head: true }),
+      this.supabaseService.client
+        .from("wellness_logs")
+        .select("*", { count: "exact", head: true }),
     ]);
 
     const totalRecords = counts.reduce((sum, c) => sum + (c.count || 0), 0);

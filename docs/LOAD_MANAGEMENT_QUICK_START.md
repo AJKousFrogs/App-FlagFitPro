@@ -48,14 +48,14 @@ This single number drives all calculations:
 
 The load management system is accessed via these API endpoints:
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/load-management` | GET | Overview (ACWR, monotony, TSB) |
-| `/api/load-management/acwr` | GET | ACWR calculation |
-| `/api/load-management/monotony` | GET | Training monotony |
-| `/api/load-management/tsb` | GET | Training stress balance |
-| `/api/load-management/injury-risk` | GET | Composite injury risk |
-| `/api/load-management/training-loads` | GET | Training load history |
+| Endpoint                              | Method | Description                    |
+| ------------------------------------- | ------ | ------------------------------ |
+| `/api/load-management`                | GET    | Overview (ACWR, monotony, TSB) |
+| `/api/load-management/acwr`           | GET    | ACWR calculation               |
+| `/api/load-management/monotony`       | GET    | Training monotony              |
+| `/api/load-management/tsb`            | GET    | Training stress balance        |
+| `/api/load-management/injury-risk`    | GET    | Composite injury risk          |
+| `/api/load-management/training-loads` | GET    | Training load history          |
 
 ---
 
@@ -75,19 +75,19 @@ Record:
 
 ```javascript
 // POST /api/training/sessions
-const response = await fetch('/api/training/sessions', {
-  method: 'POST',
+const response = await fetch("/api/training/sessions", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    session_date: '2024-01-15',
+    session_date: "2024-01-15",
     rpe: 7,
     duration_minutes: 60,
-    session_type: 'practice',
-    status: 'completed'
-  })
+    session_type: "practice",
+    status: "completed",
+  }),
 });
 ```
 
@@ -95,14 +95,14 @@ const response = await fetch('/api/training/sessions', {
 
 ```javascript
 // GET /api/load-management/acwr
-const response = await fetch('/api/load-management/acwr', {
-  headers: { 'Authorization': `Bearer ${token}` }
+const response = await fetch("/api/load-management/acwr", {
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 const data = await response.json();
-console.log('ACWR:', data.data.acwr);
-console.log('Risk Zone:', data.data.riskZone);
-console.log('Recommendation:', data.data.recommendation);
+console.log("ACWR:", data.data.acwr);
+console.log("Risk Zone:", data.data.riskZone);
+console.log("Recommendation:", data.data.recommendation);
 ```
 
 **Example Response**:
@@ -128,13 +128,13 @@ console.log('Recommendation:', data.data.recommendation);
 
 ```javascript
 // GET /api/load-management/injury-risk
-const response = await fetch('/api/load-management/injury-risk', {
-  headers: { 'Authorization': `Bearer ${token}` }
+const response = await fetch("/api/load-management/injury-risk", {
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 const data = await response.json();
-console.log('Risk Level:', data.data.riskLevel);
-console.log('Overall Risk:', data.data.overallRisk);
+console.log("Risk Level:", data.data.riskLevel);
+console.log("Overall Risk:", data.data.overallRisk);
 ```
 
 **Example Response**:
@@ -149,12 +149,12 @@ console.log('Overall Risk:', data.data.overallRisk);
     "individualRisks": {
       "acwr": 0.15,
       "monotony": 0.25,
-      "tsb": 0.30
+      "tsb": 0.3
     },
     "weights": {
       "acwr": 0.45,
       "monotony": 0.25,
-      "tsb": 0.30
+      "tsb": 0.3
     }
   }
 }
@@ -167,17 +167,17 @@ console.log('Overall Risk:', data.data.overallRisk);
 If using the Angular frontend:
 
 ```typescript
-import { ApiService, API_ENDPOINTS } from '@core/services/api.service';
+import { ApiService, API_ENDPOINTS } from "@core/services/api.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class LoadManagementComponent {
   private api = inject(ApiService);
-  
+
   acwrData = signal<ACWRData | null>(null);
-  
+
   async loadACWR() {
     const response = await firstValueFrom(
-      this.api.get<ACWRData>('/api/load-management/acwr')
+      this.api.get<ACWRData>("/api/load-management/acwr"),
     );
     this.acwrData.set(response.data);
   }
@@ -210,13 +210,13 @@ Use this Modified Borg CR-10 Scale:
 
 ## Risk Zones (Gabbett 2016)
 
-| ACWR Range | Risk Zone | Injury Risk Multiplier | AI Behavior |
-|------------|-----------|------------------------|-------------|
-| < 0.80 | Detraining | 1.2x | Can recommend more training |
-| 0.80 - 1.30 | Safe (Sweet Spot) | 1.0x | All recommendations allowed |
-| 1.30 - 1.50 | Caution | 1.5x | Allowed with monitoring advice |
-| > 1.50 | Danger | 2.0x | **BLOCKS high-intensity** |
-| > 1.80 | Critical | 4.2x | **Recommends rest only** |
+| ACWR Range  | Risk Zone         | Injury Risk Multiplier | AI Behavior                    |
+| ----------- | ----------------- | ---------------------- | ------------------------------ |
+| < 0.80      | Detraining        | 1.2x                   | Can recommend more training    |
+| 0.80 - 1.30 | Safe (Sweet Spot) | 1.0x                   | All recommendations allowed    |
+| 1.30 - 1.50 | Caution           | 1.5x                   | Allowed with monitoring advice |
+| > 1.50      | Danger            | 2.0x                   | **BLOCKS high-intensity**      |
+| > 1.80      | Critical          | 4.2x                   | **Recommends rest only**       |
 
 ---
 
@@ -228,18 +228,18 @@ If you track recovery metrics, add them:
 
 ```javascript
 const sessionData = {
-  session_date: '2024-01-15',
+  session_date: "2024-01-15",
   rpe: 7,
   duration_minutes: 60,
-  session_type: 'practice',
-  status: 'completed',
-  
+  session_type: "practice",
+  status: "completed",
+
   // Optional subjective metrics (via wellness check-in)
   perceived_recovery: 6,
   muscle_soreness: 4,
   sleep_quality: 7,
   stress_level: 3,
-  mood_rating: 8
+  mood_rating: 8,
 };
 ```
 
@@ -250,11 +250,11 @@ Count manually if you want:
 ```javascript
 const flagFootballData = {
   ...sessionData,
-  
+
   // Manual counts (optional)
   routes_run: 25,
   cutting_movements: 15,
-  sprint_repetitions: 12
+  sprint_repetitions: 12,
 };
 ```
 
@@ -278,13 +278,16 @@ Sunday:   REST
 
 ```javascript
 // GET /api/load-management/monotony?weekStart=2024-01-08
-const response = await fetch('/api/load-management/monotony?weekStart=2024-01-08', {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
+const response = await fetch(
+  "/api/load-management/monotony?weekStart=2024-01-08",
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  },
+);
 
 const data = await response.json();
 if (data.data.monotony > 2.0) {
-  console.log('⚠️ High monotony - add variety next week');
+  console.log("⚠️ High monotony - add variety next week");
 }
 ```
 

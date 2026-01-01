@@ -11,7 +11,12 @@ import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Router } from "@angular/router";
 import { of, throwError, firstValueFrom } from "rxjs";
-import { AuthService, User, LoginCredentials, RegisterData } from "./auth.service";
+import {
+  AuthService,
+  User,
+  LoginCredentials,
+  RegisterData,
+} from "./auth.service";
 import { SupabaseService } from "./supabase.service";
 
 // Mock Supabase service - use 'as unknown as SupabaseService' to avoid strict type checking
@@ -41,7 +46,9 @@ vi.stubGlobal("sessionStorage", {
     delete mockSessionStorage[key];
   }),
   clear: vi.fn(() => {
-    Object.keys(mockSessionStorage).forEach((key) => delete mockSessionStorage[key]);
+    Object.keys(mockSessionStorage).forEach(
+      (key) => delete mockSessionStorage[key],
+    );
   }),
 });
 
@@ -60,7 +67,9 @@ describe("AuthService", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    Object.keys(mockSessionStorage).forEach((key) => delete mockSessionStorage[key]);
+    Object.keys(mockSessionStorage).forEach(
+      (key) => delete mockSessionStorage[key],
+    );
 
     TestBed.configureTestingModule({
       providers: [
@@ -131,7 +140,7 @@ describe("AuthService", () => {
       expect(response.data).toBeDefined();
       expect((mockSupabaseService as any).signIn).toHaveBeenCalledWith(
         validCredentials.email,
-        validCredentials.password
+        validCredentials.password,
       );
     });
 
@@ -155,18 +164,20 @@ describe("AuthService", () => {
         error: { message: "Invalid credentials" },
       });
 
-      await expect(firstValueFrom(service.login(validCredentials))).rejects.toThrow(
-        "Invalid credentials"
-      );
+      await expect(
+        firstValueFrom(service.login(validCredentials)),
+      ).rejects.toThrow("Invalid credentials");
       expect(service.isLoading()).toBe(false);
     });
 
     it("should handle network error during login", async () => {
-      (mockSupabaseService as any).signIn.mockRejectedValue(new Error("Network error"));
-
-      await expect(firstValueFrom(service.login(validCredentials))).rejects.toThrow(
-        "Network error"
+      (mockSupabaseService as any).signIn.mockRejectedValue(
+        new Error("Network error"),
       );
+
+      await expect(
+        firstValueFrom(service.login(validCredentials)),
+      ).rejects.toThrow("Network error");
       expect(service.isLoading()).toBe(false);
     });
   });
@@ -196,14 +207,16 @@ describe("AuthService", () => {
         error: null,
       });
 
-      const response = await firstValueFrom(service.register(validRegistration));
+      const response = await firstValueFrom(
+        service.register(validRegistration),
+      );
 
       expect(response.success).toBe(true);
       expect(response.message).toContain("verify");
       expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         validRegistration.email,
         validRegistration.password,
-        { name: validRegistration.name }
+        { name: validRegistration.name },
       );
     });
 
@@ -223,9 +236,9 @@ describe("AuthService", () => {
         error: { message: "Email already registered" },
       });
 
-      await expect(firstValueFrom(service.register(validRegistration))).rejects.toThrow(
-        "Email already registered"
-      );
+      await expect(
+        firstValueFrom(service.register(validRegistration)),
+      ).rejects.toThrow("Email already registered");
     });
 
     it("should pass additional metadata during registration", async () => {
@@ -245,7 +258,7 @@ describe("AuthService", () => {
       expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         registrationWithMetadata.email,
         registrationWithMetadata.password,
-        { name: "New User", role: "coach", teamId: "team-123" }
+        { name: "New User", role: "coach", teamId: "team-123" },
       );
     });
   });
@@ -267,7 +280,9 @@ describe("AuthService", () => {
     });
 
     it("should clear auth state even if logout fails", async () => {
-      (mockSupabaseService as any).signOut.mockRejectedValue(new Error("Network error"));
+      (mockSupabaseService as any).signOut.mockRejectedValue(
+        new Error("Network error"),
+      );
 
       await expect(firstValueFrom(service.logout())).rejects.toThrow();
 
@@ -429,7 +444,7 @@ describe("AuthService", () => {
       });
 
       await expect(
-        firstValueFrom(service.login({ email: "", password: "password" }))
+        firstValueFrom(service.login({ email: "", password: "password" })),
       ).rejects.toThrow("Email is required");
     });
 
@@ -440,7 +455,9 @@ describe("AuthService", () => {
       });
 
       await expect(
-        firstValueFrom(service.login({ email: "test@example.com", password: "" }))
+        firstValueFrom(
+          service.login({ email: "test@example.com", password: "" }),
+        ),
       ).rejects.toThrow("Password is required");
     });
 
@@ -451,7 +468,9 @@ describe("AuthService", () => {
         user_metadata: {},
       };
 
-      (mockSupabaseService as any).currentUser.mockReturnValue(userWithoutMetadata);
+      (mockSupabaseService as any).currentUser.mockReturnValue(
+        userWithoutMetadata,
+      );
 
       const response = await firstValueFrom(service.getCurrentUser());
 
@@ -468,7 +487,9 @@ describe("AuthService", () => {
         user_metadata: { name: "Test" },
       };
 
-      (mockSupabaseService as any).currentUser.mockReturnValue(userWithNullEmail);
+      (mockSupabaseService as any).currentUser.mockReturnValue(
+        userWithNullEmail,
+      );
 
       const response = await firstValueFrom(service.getCurrentUser());
 
@@ -478,4 +499,3 @@ describe("AuthService", () => {
     });
   });
 });
-

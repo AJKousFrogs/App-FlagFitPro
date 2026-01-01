@@ -827,7 +827,8 @@ export const SESSION_STRUCTURE = {
     {
       phase: "Warm-Up",
       duration: "20 min",
-      protocol: "Universal Warm-Up (all 4 phases: Jump rope, Resistance bands, Dynamic stretching, Movement prep)",
+      protocol:
+        "Universal Warm-Up (all 4 phases: Jump rope, Resistance bands, Dynamic stretching, Movement prep)",
       importance: "NON-NEGOTIABLE",
     },
     {

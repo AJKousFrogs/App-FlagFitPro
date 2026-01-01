@@ -427,15 +427,14 @@ export class TrainingDataService {
     // Sort sessions by date descending (most recent first)
     const sortedSessions = [...sessions].sort(
       (a, b) =>
-        new Date(b.session_date).getTime() -
-        new Date(a.session_date).getTime(),
+        new Date(b.session_date).getTime() - new Date(a.session_date).getTime(),
     );
 
     // Get unique dates (in case multiple sessions per day)
     const uniqueDates = [
       ...new Set(
-        sortedSessions.map((s) =>
-          new Date(s.session_date).toISOString().split("T")[0],
+        sortedSessions.map(
+          (s) => new Date(s.session_date).toISOString().split("T")[0],
         ),
       ),
     ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());

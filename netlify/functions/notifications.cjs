@@ -43,7 +43,8 @@ exports.handler = async (event, context) => {
         const isLastOpened =
           path.includes("/last-opened") ||
           event.queryStringParameters?.action === "last-opened" ||
-          (event.body && JSON.parse(event.body || "{}").action === "last-opened");
+          (event.body &&
+            JSON.parse(event.body || "{}").action === "last-opened");
 
         if (isLastOpened) {
           try {
@@ -126,7 +127,11 @@ exports.handler = async (event, context) => {
         return handleValidationError("notificationId or ids array is required");
       }
 
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     },
   });
 };

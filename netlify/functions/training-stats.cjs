@@ -184,7 +184,7 @@ const formatWorkoutName = (workoutType) => {
   };
   return (
     names[workoutType] ||
-    `${workoutType.charAt(0).toUpperCase() + workoutType.slice(1)  } Training`
+    `${workoutType.charAt(0).toUpperCase() + workoutType.slice(1)} Training`
   );
 };
 
@@ -211,7 +211,7 @@ exports.handler = async (event, context) => {
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId
+            requestId,
           );
         }
 
@@ -223,7 +223,7 @@ exports.handler = async (event, context) => {
             "Workout type and duration are required",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
 
@@ -236,9 +236,12 @@ exports.handler = async (event, context) => {
         });
 
         return createSuccessResponse(
-          { ...sessionData, message: "Training session completed successfully" },
+          {
+            ...sessionData,
+            message: "Training session completed successfully",
+          },
           requestId,
-          201
+          201,
         );
       }
 
@@ -246,7 +249,7 @@ exports.handler = async (event, context) => {
         "Method not allowed",
         405,
         "method_not_allowed",
-        requestId
+        requestId,
       );
     },
   });

@@ -239,7 +239,7 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 })
 export class RichTextComponent implements ControlValueAccessor {
   private sanitizer = inject(DomSanitizer);
-  
+
   contentEditable = viewChild<ElementRef<HTMLDivElement>>("contentEditable");
 
   // Configuration
@@ -270,33 +270,44 @@ export class RichTextComponent implements ControlValueAccessor {
    * Strips potentially dangerous elements like script, iframe, etc.
    */
   private sanitizeHtml(html: string): string {
-    if (!html) return '';
-    
+    if (!html) return "";
+
     // Create a temporary element to parse HTML
-    const temp = document.createElement('div');
+    const temp = document.createElement("div");
     temp.innerHTML = html;
-    
+
     // Remove potentially dangerous elements
-    const dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'];
-    dangerousTags.forEach(tag => {
+    const dangerousTags = [
+      "script",
+      "iframe",
+      "object",
+      "embed",
+      "form",
+      "input",
+      "button",
+    ];
+    dangerousTags.forEach((tag) => {
       const elements = temp.getElementsByTagName(tag);
       while (elements.length > 0) {
         elements[0].parentNode?.removeChild(elements[0]);
       }
     });
-    
+
     // Remove event handlers from all elements
-    const allElements = temp.getElementsByTagName('*');
+    const allElements = temp.getElementsByTagName("*");
     for (let i = 0; i < allElements.length; i++) {
       const el = allElements[i];
       const attrs = Array.from(el.attributes);
-      attrs.forEach(attr => {
-        if (attr.name.startsWith('on') || attr.name === 'href' && attr.value.startsWith('javascript:')) {
+      attrs.forEach((attr) => {
+        if (
+          attr.name.startsWith("on") ||
+          (attr.name === "href" && attr.value.startsWith("javascript:"))
+        ) {
           el.removeAttribute(attr.name);
         }
       });
     }
-    
+
     return temp.innerHTML;
   }
 

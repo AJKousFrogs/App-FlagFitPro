@@ -26,12 +26,14 @@ exercise_registry
 ```
 
 **Benefits:**
+
 - Single ID for logs, videos, and searches
 - Specialized tables retain rich detail
 - Easy to add new exercise types
 - Clean API queries
 
 **Usage:**
+
 ```sql
 -- Get all exercises with their details
 SELECT er.*, pe.instructions, pe.coaching_cues
@@ -69,12 +71,14 @@ program_status_enum: 'active' | 'paused' | 'completed' | 'archived'
 ```
 
 **Benefits:**
+
 - Database-level data validation
 - Type safety in queries
 - Self-documenting schema
 - Prevents ACWR calculation errors
 
 **Usage:**
+
 ```typescript
 // TypeScript types match database ENUMs
 type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Elite';
@@ -110,11 +114,12 @@ UNIQUE(program_id, phase_order) ON training_phases
 UNIQUE(session_id, exercise_order) ON session_exercises
 
 -- One active program per player
-CREATE UNIQUE INDEX player_programs_one_active_per_player 
+CREATE UNIQUE INDEX player_programs_one_active_per_player
 ON player_programs(player_id) WHERE status = 'active';
 ```
 
 **Benefits:**
+
 - Prevents duplicate ACWR calculations
 - Ensures program structure integrity
 - Enforces business rules at DB level
@@ -137,7 +142,7 @@ ALTER TABLE load_monitoring ADD COLUMN:
 -- View for current ACWR with baseline awareness
 CREATE VIEW v_load_monitoring AS
 SELECT lm.*,
-  CASE 
+  CASE
     WHEN baseline_days < 7 THEN 'Baseline_Building'
     WHEN baseline_days < 28 THEN 'Baseline_Low'
     WHEN acwr < 0.8 THEN 'Low'
@@ -149,22 +154,24 @@ FROM load_monitoring;
 ```
 
 **Benefits:**
+
 - Track when calculations were made
 - Recalculate when algorithm improves
 - Audit trail for safety decisions
 - Know which workouts contributed to ACWR
 
 **Usage:**
+
 ```sql
 -- Always query the view for current risk level
-SELECT * FROM v_load_monitoring 
-WHERE player_id = $1 
+SELECT * FROM v_load_monitoring
+WHERE player_id = $1
 ORDER BY date DESC LIMIT 28;
 
 -- Recalculate old records if algorithm updates
-UPDATE load_monitoring 
-SET calculation_version = 2 
-WHERE calculation_version = 1 
+UPDATE load_monitoring
+SET calculation_version = 2
+WHERE calculation_version = 1
   AND date >= CURRENT_DATE - INTERVAL '90 days';
 ```
 
@@ -182,7 +189,7 @@ ALTER TABLE player_programs DROP COLUMN compliance_rate;
 
 -- Created view
 CREATE VIEW v_player_program_compliance AS
-SELECT 
+SELECT
   pp.id,
   pp.player_id,
   pp.program_id,
@@ -200,15 +207,17 @@ GROUP BY pp.id, pp.player_id, pp.program_id;
 ```
 
 **Benefits:**
+
 - Always accurate
 - No manual updates needed
 - Self-documenting calculation
 - Easy to modify logic
 
 **Usage:**
+
 ```sql
 -- Query compliance rates
-SELECT * FROM v_player_program_compliance 
+SELECT * FROM v_player_program_compliance
 WHERE player_id = $1 AND compliance_rate < 80;
 
 -- Use in dashboards
@@ -257,12 +266,14 @@ CREATE TABLE metric_entries (
 ```
 
 **Seeded Metrics:**
+
 - **QB:** Throwing Volume, Completion Rate, Release Time, Pocket Mobility
 - **WR:** Route Completion, Separation Distance, Catch Rate
 - **DB:** Coverage Reps, Break Time, Hip Flip Speed
 - **General:** 40-Yard Dash, Vertical Jump, Pro Agility, Broad Jump
 
 **Benefits:**
+
 - Type-safe metric tracking
 - Validates min/max values
 - Defines aggregation method
@@ -270,6 +281,7 @@ CREATE TABLE metric_entries (
 - Easy to add new metrics
 
 **Usage:**
+
 ```sql
 -- Record QB throwing volume
 INSERT INTO metric_entries (player_id, workout_log_id, metric_definition_id, date, value)
@@ -278,12 +290,12 @@ FROM metric_definitions md
 WHERE md.code = 'qb_throwing_volume';
 
 -- Get weekly throwing volume for QB
-SELECT 
+SELECT
   date_trunc('week', date) AS week,
   SUM(value) AS weekly_throws
 FROM metric_entries me
 JOIN metric_definitions md ON me.metric_definition_id = md.id
-WHERE me.player_id = $player_id 
+WHERE me.player_id = $player_id
   AND md.code = 'qb_throwing_volume'
   AND date >= CURRENT_DATE - INTERVAL '12 weeks'
 GROUP BY week
@@ -315,12 +327,14 @@ ALTER TABLE exercise_logs ADD COLUMN:
 ```
 
 **Benefits:**
+
 - Track adherence vs. adaptation
 - Analyze substitution patterns
 - Coach can review modifications
 - Better load management
 
 **Usage:**
+
 ```sql
 -- Log a modified workout
 INSERT INTO workout_logs (player_id, program_session_id, workout_type, was_modified, modification_notes, ...)
@@ -328,10 +342,10 @@ VALUES ($player_id, $session_id, 'scheduled', TRUE, 'Skipped last 2 exercises du
 
 -- Log exercise substitution
 INSERT INTO exercise_logs (
-  workout_log_id, 
+  workout_log_id,
   prescribed_session_exercise_id,  -- What was planned
   actual_exercise_id,              -- What they actually did
-  is_substitution, 
+  is_substitution,
   substitution_reason
 ) VALUES (
   $workout_id,
@@ -342,7 +356,7 @@ INSERT INTO exercise_logs (
 );
 
 -- Query compliance vs. substitution rate
-SELECT 
+SELECT
   COUNT(*) AS total_exercises,
   COUNT(*) FILTER (WHERE is_substitution = TRUE) AS substituted,
   ROUND(COUNT(*) FILTER (WHERE is_substitution = TRUE)::DECIMAL / COUNT(*)::DECIMAL * 100, 2) AS substitution_rate
@@ -368,7 +382,7 @@ CREATE INDEX idx_workout_logs_completed_date ON workout_logs(DATE(completed_at))
 
 -- Load monitoring (ACWR calculations)
 CREATE INDEX idx_load_monitoring_player_date_desc ON load_monitoring(player_id, date DESC);
-CREATE INDEX idx_load_monitoring_date_recent ON load_monitoring(date DESC) 
+CREATE INDEX idx_load_monitoring_date_recent ON load_monitoring(date DESC)
   WHERE date >= CURRENT_DATE - INTERVAL '90 days'; -- Partial index
 
 -- Training structure (program navigation)
@@ -386,19 +400,21 @@ CREATE INDEX idx_metric_entries_definition ON metric_entries(metric_definition_i
 ```
 
 **Benefits:**
+
 - Fast workout history queries
 - Efficient ACWR calculations
 - Quick program navigation
 - JSONB queries don't table scan
 
 **Performance Impact:**
+
 ```sql
 -- Without index: ~500ms for 100K workouts
 -- With index: ~5ms
 EXPLAIN ANALYZE
-SELECT * FROM workout_logs 
-WHERE player_id = $player_id 
-ORDER BY completed_at DESC 
+SELECT * FROM workout_logs
+WHERE player_id = $player_id
+ORDER BY completed_at DESC
 LIMIT 30;
 ```
 
@@ -419,11 +435,12 @@ ALTER TABLE player_programs ADD COLUMN:
 - assigned_timezone VARCHAR(50)     -- For date calculations
 
 -- Enforce: only one active program per player
-CREATE UNIQUE INDEX player_programs_one_active_per_player 
+CREATE UNIQUE INDEX player_programs_one_active_per_player
 ON player_programs(player_id) WHERE status = 'active';
 ```
 
 **Benefits:**
+
 - Clear program lifecycle
 - Track position changes
 - Handle pauses properly
@@ -431,13 +448,14 @@ ON player_programs(player_id) WHERE status = 'active';
 - Enforce business rule
 
 **Usage:**
+
 ```sql
 -- Assign program with full context
 INSERT INTO player_programs (
-  player_id, 
-  program_id, 
-  assigned_position_id, 
-  status, 
+  player_id,
+  program_id,
+  assigned_position_id,
+  status,
   assigned_timezone
 ) VALUES (
   $player_id,
@@ -448,14 +466,14 @@ INSERT INTO player_programs (
 );
 
 -- Pause program
-UPDATE player_programs 
+UPDATE player_programs
 SET status = 'paused',
     paused_reason = 'Injury recovery',
     paused_at = NOW()
 WHERE player_id = $player_id AND status = 'active';
 
 -- Resume program
-UPDATE player_programs 
+UPDATE player_programs
 SET status = 'active',
     paused_reason = NULL,
     paused_at = NULL
@@ -488,6 +506,7 @@ ALTER TABLE training_videos ADD COLUMN:
 ```
 
 **Benefits:**
+
 - Track ownership
 - Manage licensing
 - Handle broken links
@@ -495,14 +514,15 @@ ALTER TABLE training_videos ADD COLUMN:
 - Prevent legal issues
 
 **Usage:**
+
 ```sql
 -- Upload coach's proprietary video
 INSERT INTO training_videos (
-  title, 
-  video_url, 
-  source_type, 
-  owner_user_id, 
-  license, 
+  title,
+  video_url,
+  source_type,
+  owner_user_id,
+  license,
   usage_rights,
   is_public,
   status
@@ -518,15 +538,15 @@ INSERT INTO training_videos (
 );
 
 -- Check for broken links
-UPDATE training_videos 
+UPDATE training_videos
 SET status = 'invalid',
     broken_link_checked_at = NOW()
-WHERE video_url LIKE '%deleted%' 
+WHERE video_url LIKE '%deleted%'
   OR video_url IN (SELECT url FROM broken_links_check());
 
 -- Public exercise library videos
-SELECT * FROM training_videos 
-WHERE is_public = TRUE 
+SELECT * FROM training_videos
+WHERE is_public = TRUE
   AND status = 'active'
   AND category = 'Exercise Demo'
 ORDER BY view_count DESC;
@@ -542,26 +562,26 @@ ORDER BY view_count DESC;
 
 ```sql
 -- Exercise Registry
-CREATE POLICY "Exercise registry viewable by everyone" 
-ON exercise_registry FOR SELECT 
+CREATE POLICY "Exercise registry viewable by everyone"
+ON exercise_registry FOR SELECT
 USING (is_public = TRUE OR auth.uid() IS NOT NULL);
 
-CREATE POLICY "Coaches can manage exercise registry" 
-ON exercise_registry FOR ALL 
+CREATE POLICY "Coaches can manage exercise registry"
+ON exercise_registry FOR ALL
 USING ((auth.jwt() ->> 'user_metadata')::jsonb ->> 'role' IN ('coach', 'admin'));
 
 -- Metric Definitions
-CREATE POLICY "Metric definitions viewable by authenticated users" 
-ON metric_definitions FOR SELECT 
+CREATE POLICY "Metric definitions viewable by authenticated users"
+ON metric_definitions FOR SELECT
 USING (auth.uid() IS NOT NULL);
 
 -- Metric Entries
-CREATE POLICY "Players can view own metric entries" 
-ON metric_entries FOR SELECT 
+CREATE POLICY "Players can view own metric entries"
+ON metric_entries FOR SELECT
 USING (player_id = auth.uid());
 
-CREATE POLICY "Coaches can view all metric entries" 
-ON metric_entries FOR SELECT 
+CREATE POLICY "Coaches can view all metric entries"
+ON metric_entries FOR SELECT
 USING ((auth.jwt() ->> 'user_metadata')::jsonb ->> 'role' IN ('coach', 'admin'));
 
 -- Workout Logs (already existed, but reinforced)
@@ -574,6 +594,7 @@ USING ((auth.jwt() ->> 'user_metadata')::jsonb ->> 'role' IN ('coach', 'admin'))
 ```
 
 **Benefits:**
+
 - Database-level authorization
 - Can't bypass API security
 - Supabase client respects RLS
@@ -597,6 +618,7 @@ SELECT * FROM verify_database_bootstrap();
 ```
 
 **Checks:**
+
 1. ✅ ACWR functions exist (4 functions)
 2. ✅ ACWR trigger exists
 3. ✅ Exercise tables exist (4 tables)
@@ -609,15 +631,17 @@ SELECT * FROM verify_database_bootstrap();
 10. ✅ RLS enabled (15+ tables)
 
 **Benefits:**
+
 - CI/CD can verify DB state
 - Catch missing migrations
 - Document requirements
 - Self-service debugging
 
 **Usage:**
+
 ```sql
 -- In CI/CD pipeline
-SELECT * FROM verify_database_bootstrap() 
+SELECT * FROM verify_database_bootstrap()
 WHERE status = 'FAIL';
 -- If returns rows, fail the build
 
@@ -631,6 +655,7 @@ SELECT * FROM verify_database_bootstrap();
 ## 🚀 Migration Steps
 
 ### 1. Backup Database
+
 ```bash
 # Supabase CLI
 supabase db dump -f backup_before_070.sql
@@ -639,6 +664,7 @@ supabase db dump -f backup_before_070.sql
 ```
 
 ### 2. Run Migration
+
 ```sql
 -- In Supabase SQL Editor
 \i database/migrations/070_comprehensive_database_refactor.sql
@@ -648,6 +674,7 @@ supabase migration up
 ```
 
 ### 3. Verify Bootstrap
+
 ```sql
 SELECT * FROM verify_database_bootstrap();
 
@@ -655,6 +682,7 @@ SELECT * FROM verify_database_bootstrap();
 ```
 
 ### 4. Populate Exercise Registry
+
 ```sql
 -- Option A: Automatic script (create this)
 SELECT populate_exercise_registry_from_existing();
@@ -676,47 +704,54 @@ FROM exercises;
 ### 5. Update Application Code
 
 **Before:**
+
 ```typescript
 // Old: Query multiple tables
-const plyoExercises = await supabase.from('plyometrics_exercises').select('*');
-const isoExercises = await supabase.from('isometrics_exercises').select('*');
+const plyoExercises = await supabase.from("plyometrics_exercises").select("*");
+const isoExercises = await supabase.from("isometrics_exercises").select("*");
 const exercises = [...plyoExercises.data, ...isoExercises.data];
 ```
 
 **After:**
+
 ```typescript
 // New: Query unified registry
 const { data: exercises } = await supabase
-  .from('exercise_registry')
-  .select('*, plyometric_details:plyometrics_exercises(*), isometric_details:isometrics_exercises(*)')
-  .eq('is_active', true);
+  .from("exercise_registry")
+  .select(
+    "*, plyometric_details:plyometrics_exercises(*), isometric_details:isometrics_exercises(*)",
+  )
+  .eq("is_active", true);
 ```
 
 ### 6. Use New Metric System
 
 **Tracking Metrics:**
+
 ```typescript
 // Record QB throwing volume
-await supabase.from('metric_entries').insert({
+await supabase.from("metric_entries").insert({
   player_id: playerId,
   workout_log_id: workoutId,
-  metric_definition_id: (await supabase
-    .from('metric_definitions')
-    .select('id')
-    .eq('code', 'qb_throwing_volume')
-    .single()).data.id,
-  date: new Date().toISOString().split('T')[0],
-  value: 150 // 150 throws
+  metric_definition_id: (
+    await supabase
+      .from("metric_definitions")
+      .select("id")
+      .eq("code", "qb_throwing_volume")
+      .single()
+  ).data.id,
+  date: new Date().toISOString().split("T")[0],
+  value: 150, // 150 throws
 });
 
 // Get weekly metrics for dashboard
 const { data: weeklyThrows } = await supabase
-  .from('metric_entries')
-  .select('date, value, metric_definitions(display_name, unit)')
-  .eq('player_id', playerId)
-  .eq('metric_definitions.code', 'qb_throwing_volume')
-  .gte('date', weekStartDate)
-  .order('date');
+  .from("metric_entries")
+  .select("date, value, metric_definitions(display_name, unit)")
+  .eq("player_id", playerId)
+  .eq("metric_definitions.code", "qb_throwing_volume")
+  .gte("date", weekStartDate)
+  .order("date");
 ```
 
 ---
@@ -724,47 +759,52 @@ const { data: weeklyThrows } = await supabase
 ## 📊 Queries Cheat Sheet
 
 ### Get Player's Current ACWR
+
 ```sql
-SELECT * FROM v_load_monitoring 
-WHERE player_id = $1 
-ORDER BY date DESC 
+SELECT * FROM v_load_monitoring
+WHERE player_id = $1
+ORDER BY date DESC
 LIMIT 1;
 ```
 
 ### Get Program Compliance Rate
+
 ```sql
-SELECT compliance_rate 
-FROM v_player_program_compliance 
+SELECT compliance_rate
+FROM v_player_program_compliance
 WHERE player_id = $1 AND program_id = $2;
 ```
 
 ### Find All Beginner Exercises
+
 ```sql
-SELECT * FROM exercise_registry 
-WHERE difficulty_level = 'Beginner' 
-  AND is_active = TRUE 
+SELECT * FROM exercise_registry
+WHERE difficulty_level = 'Beginner'
+  AND is_active = TRUE
   AND is_public = TRUE;
 ```
 
 ### Get Position-Specific Metrics for QB
+
 ```sql
 SELECT md.display_name, md.unit, me.value, me.date
 FROM metric_entries me
 JOIN metric_definitions md ON me.metric_definition_id = md.id
-WHERE me.player_id = $1 
+WHERE me.player_id = $1
   AND md.is_position_specific = TRUE
   AND md.position_id = (SELECT id FROM positions WHERE name = 'QB')
 ORDER BY me.date DESC;
 ```
 
 ### Check Workout Modifications
+
 ```sql
-SELECT wl.*, 
+SELECT wl.*,
   COUNT(el.id) FILTER (WHERE el.is_substitution = TRUE) AS substituted_exercises,
   COUNT(el.id) AS total_exercises
 FROM workout_logs wl
 LEFT JOIN exercise_logs el ON el.workout_log_id = wl.id
-WHERE wl.player_id = $1 
+WHERE wl.player_id = $1
   AND wl.was_modified = TRUE
 GROUP BY wl.id
 ORDER BY wl.completed_at DESC;
@@ -794,6 +834,7 @@ ORDER BY wl.completed_at DESC;
 ## 🔍 Troubleshooting
 
 ### Migration Fails on ENUM Creation
+
 ```sql
 -- ENUMs are wrapped in DO blocks to handle duplicates
 -- If it fails, check if ENUM already exists:
@@ -805,17 +846,19 @@ CREATE TYPE difficulty_level_enum AS ENUM (...);
 ```
 
 ### Unique Constraint Violations
+
 ```sql
 -- Find duplicates before adding constraint:
-SELECT phase_id, week_number, COUNT(*) 
-FROM training_weeks 
-GROUP BY phase_id, week_number 
+SELECT phase_id, week_number, COUNT(*)
+FROM training_weeks
+GROUP BY phase_id, week_number
 HAVING COUNT(*) > 1;
 
 -- Fix duplicates, then add constraint
 ```
 
 ### RLS Blocks Queries
+
 ```sql
 -- Check RLS status
 SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
@@ -829,12 +872,14 @@ SELECT * FROM exercise_registry; -- Should work for authenticated users
 ## 📈 Performance Benchmarks
 
 ### Before Migration
+
 - Exercise library query (all types): **~450ms** (3 separate queries + merge)
 - ACWR calculation: **Inconsistent** (sometimes not triggered)
 - Weekly compliance check: **~800ms** (computed on read every time)
 - Metric aggregation: **N/A** (string-based, no aggregation)
 
 ### After Migration
+
 - Exercise library query (unified): **~45ms** (single query with joins)
 - ACWR calculation: **Consistent** (triggered + versioned)
 - Weekly compliance check: **~120ms** (materialized view)
@@ -882,4 +927,3 @@ SELECT * FROM exercise_registry; -- Should work for authenticated users
 **Date:** 2025-12-29  
 **Version:** 070  
 **Status:** ✅ Ready for Testing
-

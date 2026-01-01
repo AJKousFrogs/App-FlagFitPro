@@ -292,10 +292,7 @@ describe("AcwrService", () => {
       service.addSessions(sessions);
 
       const progression = service.weeklyProgression();
-      if (
-        progression.previousWeek > 0 &&
-        progression.changePercent <= 10
-      ) {
+      if (progression.previousWeek > 0 && progression.changePercent <= 10) {
         expect(progression.isSafe).toBe(true);
       }
     });
@@ -436,11 +433,13 @@ describe("AcwrService", () => {
 
       const mods = service.getTrainingModification();
       const hasDataQualityWarning = mods.modifications.some((m) =>
-        m.includes("data quality")
+        m.includes("data quality"),
       );
 
       // Should warn about low data quality
-      expect(hasDataQualityWarning || mods.modifications.length >= 0).toBe(true);
+      expect(hasDataQualityWarning || mods.modifications.length >= 0).toBe(
+        true,
+      );
     });
   });
 
@@ -493,10 +492,7 @@ describe("AcwrService", () => {
       service.addSessions(recentSessions);
 
       // Old sessions should be pruned (only keep chronic window + 7 days)
-      const allSessions = service.getSessionsInRange(
-        new Date(0),
-        new Date()
-      );
+      const allSessions = service.getSessionsInRange(new Date(0), new Date());
       // Should not have sessions from 60 days ago
       expect(allSessions.length).toBeLessThanOrEqual(20);
     });
@@ -620,7 +616,7 @@ function createSession(date: Date, load: number): TrainingSession {
 function generateSessions(
   days: number,
   avgLoad: number,
-  daysAgo: number = 0
+  daysAgo: number = 0,
 ): TrainingSession[] {
   const sessions: TrainingSession[] = [];
 
@@ -640,7 +636,7 @@ function generateSessions(
 
 function generateSessionsForWeek(
   weeksAgo: number,
-  avgLoad: number
+  avgLoad: number,
 ): TrainingSession[] {
   const sessions: TrainingSession[] = [];
   const startDay = weeksAgo * 7;
@@ -657,7 +653,7 @@ function generateSessionsForWeek(
 
 function generateSessionsWithPattern(
   totalDays: number,
-  pattern: Array<{ days: number; load: number }>
+  pattern: Array<{ days: number; load: number }>,
 ): TrainingSession[] {
   const sessions: TrainingSession[] = [];
   let dayOffset = 0;
@@ -673,4 +669,3 @@ function generateSessionsWithPattern(
 
   return sessions;
 }
-

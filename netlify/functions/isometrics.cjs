@@ -7,7 +7,7 @@ const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
 const headers = {
@@ -32,8 +32,8 @@ exports.handler = async (event) => {
 
   try {
     const params = event.queryStringParameters || {};
-    const {difficulty} = params;
-    const {category} = params;
+    const { difficulty } = params;
+    const { category } = params;
     const limit = parseInt(params.limit) || 10;
 
     let query = supabase

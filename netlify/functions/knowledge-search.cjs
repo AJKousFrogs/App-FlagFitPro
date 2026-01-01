@@ -2,7 +2,7 @@
 // Searches the evidence-based knowledge database
 // Updated to work with actual knowledge_base_entries schema
 
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -11,11 +11,12 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 function getSupabase() {
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing Supabase credentials');
+    throw new Error("Missing Supabase credentials");
   }
   return createClient(supabaseUrl, supabaseKey);
 }
@@ -37,16 +38,33 @@ const ALLOWED_CATEGORIES = [
 // SECURITY: Whitelist of allowed subcategories
 const ALLOWED_SUBCATEGORIES = [
   // Nutrition
-  "meal_planning", "hydration", "tournament", "supplements", "pre-training",
-  "food_database", "macro_calculator",
+  "meal_planning",
+  "hydration",
+  "tournament",
+  "supplements",
+  "pre-training",
+  "food_database",
+  "macro_calculator",
   // Training
-  "speed", "power", "strength", "agility", "protocols", "skills", "warm-up", "research",
+  "speed",
+  "power",
+  "strength",
+  "agility",
+  "protocols",
+  "skills",
+  "warm-up",
+  "research",
   // Recovery
-  "sleep", "active_recovery", "protocols",
+  "sleep",
+  "active_recovery",
+  "protocols",
   // Psychology
-  "mental_preparation", "confidence", "focus",
+  "mental_preparation",
+  "confidence",
+  "focus",
   // Injury
-  "hamstring", "prevention",
+  "hamstring",
+  "prevention",
 ];
 
 exports.handler = async (event, context) => {
@@ -68,7 +86,7 @@ exports.handler = async (event, context) => {
               "Invalid JSON in request body",
               400,
               "invalid_json",
-              requestId
+              requestId,
             );
           }
 
@@ -79,7 +97,7 @@ exports.handler = async (event, context) => {
               "Query parameter is required and must be a string",
               400,
               "validation_error",
-              requestId
+              requestId,
             );
           }
 
@@ -88,16 +106,16 @@ exports.handler = async (event, context) => {
               "Query too long (max 500 characters)",
               400,
               "validation_error",
-              requestId
+              requestId,
             );
           }
 
           if (category && !ALLOWED_CATEGORIES.includes(category)) {
             return createErrorResponse(
-              `Invalid category. Allowed: ${  ALLOWED_CATEGORIES.join(", ")}`,
+              `Invalid category. Allowed: ${ALLOWED_CATEGORIES.join(", ")}`,
               400,
               "validation_error",
-              requestId
+              requestId,
             );
           }
 
@@ -106,46 +124,52 @@ exports.handler = async (event, context) => {
               "Invalid subcategory",
               400,
               "validation_error",
-              requestId
+              requestId,
             );
           }
 
-          const sanitizedLimit = Math.min(Math.max(parseInt(limit) || 10, 1), 50);
+          const sanitizedLimit = Math.min(
+            Math.max(parseInt(limit) || 10, 1),
+            50,
+          );
 
           // Build query
           let queryBuilder = supabase
-            .from('knowledge_base_entries')
-            .select('*')
-            .eq('is_active', true)
+            .from("knowledge_base_entries")
+            .select("*")
+            .eq("is_active", true)
             .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
-            .order('source_quality_score', { ascending: false, nullsFirst: false })
-            .order('evidence_grade', { ascending: true })
+            .order("source_quality_score", {
+              ascending: false,
+              nullsFirst: false,
+            })
+            .order("evidence_grade", { ascending: true })
             .limit(sanitizedLimit);
 
           // Apply category filter
           if (category) {
-            queryBuilder = queryBuilder.eq('category', category);
+            queryBuilder = queryBuilder.eq("category", category);
           }
 
           // Apply subcategory filter
           if (subcategory) {
-            queryBuilder = queryBuilder.eq('subcategory', subcategory);
+            queryBuilder = queryBuilder.eq("subcategory", subcategory);
           }
 
           const { data, error } = await queryBuilder;
 
           if (error) {
-            console.error('Knowledge search error:', error);
+            console.error("Knowledge search error:", error);
             return createErrorResponse(
               "Search failed",
               500,
               "database_error",
-              requestId
+              requestId,
             );
           }
 
           // Format results
-          const results = data.map(entry => ({
+          const results = data.map((entry) => ({
             id: entry.id,
             title: entry.title,
             content: entry.content,
@@ -160,34 +184,42 @@ exports.handler = async (event, context) => {
             qualityScore: entry.source_quality_score,
           }));
 
-          return createSuccessResponse({
-            query,
-            category: category || 'all',
-            results,
-            total: results.length,
-          }, requestId);
+          return createSuccessResponse(
+            {
+              query,
+              category: category || "all",
+              results,
+              total: results.length,
+            },
+            requestId,
+          );
         }
 
         if (event.httpMethod === "GET") {
           // Parse path for specific entry or category listing
-          const pathParts = event.path.replace(/^\/+|\/+$/g, '').split('/');
+          const pathParts = event.path.replace(/^\/+|\/+$/g, "").split("/");
           const endpoint = pathParts[pathParts.length - 1];
           const params = event.queryStringParameters || {};
 
           // GET /knowledge-search/categories - List all categories
-          if (endpoint === 'categories') {
+          if (endpoint === "categories") {
             const { data, error } = await supabase
-              .from('knowledge_base_entries')
-              .select('category, subcategory')
-              .eq('is_active', true);
+              .from("knowledge_base_entries")
+              .select("category, subcategory")
+              .eq("is_active", true);
 
             if (error) {
-              return createErrorResponse("Failed to fetch categories", 500, "database_error", requestId);
+              return createErrorResponse(
+                "Failed to fetch categories",
+                500,
+                "database_error",
+                requestId,
+              );
             }
 
             // Group by category
             const categories = {};
-            data.forEach(entry => {
+            data.forEach((entry) => {
               if (!categories[entry.category]) {
                 categories[entry.category] = new Set();
               }
@@ -196,34 +228,41 @@ exports.handler = async (event, context) => {
               }
             });
 
-            const result = Object.entries(categories).map(([category, subcategories]) => ({
-              category,
-              subcategories: Array.from(subcategories),
-            }));
+            const result = Object.entries(categories).map(
+              ([category, subcategories]) => ({
+                category,
+                subcategories: Array.from(subcategories),
+              }),
+            );
 
             return createSuccessResponse(result, requestId);
           }
 
           // GET /knowledge-search/entry/:id - Get specific entry
-          if (endpoint === 'entry' || params.id) {
+          if (endpoint === "entry" || params.id) {
             const entryId = params.id || pathParts[pathParts.length - 1];
-            
+
             const { data, error } = await supabase
-              .from('knowledge_base_entries')
-              .select('*')
-              .eq('id', entryId)
-              .eq('is_active', true)
+              .from("knowledge_base_entries")
+              .select("*")
+              .eq("id", entryId)
+              .eq("is_active", true)
               .single();
 
             if (error || !data) {
-              return createErrorResponse("Entry not found", 404, "not_found", requestId);
+              return createErrorResponse(
+                "Entry not found",
+                404,
+                "not_found",
+                requestId,
+              );
             }
 
             // Increment query count
             await supabase
-              .from('knowledge_base_entries')
+              .from("knowledge_base_entries")
               .update({ query_count: (data.query_count || 0) + 1 })
-              .eq('id', entryId);
+              .eq("id", entryId);
 
             return createSuccessResponse(data, requestId);
           }
@@ -235,68 +274,92 @@ exports.handler = async (event, context) => {
                 "Invalid category",
                 400,
                 "validation_error",
-                requestId
+                requestId,
               );
             }
 
             let queryBuilder = supabase
-              .from('knowledge_base_entries')
-              .select('id, title, category, subcategory, evidence_grade, source_quality_score')
-              .eq('is_active', true)
-              .eq('category', params.category)
-              .order('source_quality_score', { ascending: false, nullsFirst: false });
+              .from("knowledge_base_entries")
+              .select(
+                "id, title, category, subcategory, evidence_grade, source_quality_score",
+              )
+              .eq("is_active", true)
+              .eq("category", params.category)
+              .order("source_quality_score", {
+                ascending: false,
+                nullsFirst: false,
+              });
 
-            if (params.subcategory && ALLOWED_SUBCATEGORIES.includes(params.subcategory)) {
-              queryBuilder = queryBuilder.eq('subcategory', params.subcategory);
+            if (
+              params.subcategory &&
+              ALLOWED_SUBCATEGORIES.includes(params.subcategory)
+            ) {
+              queryBuilder = queryBuilder.eq("subcategory", params.subcategory);
             }
 
             const { data, error } = await queryBuilder;
 
             if (error) {
-              return createErrorResponse("Failed to fetch entries", 500, "database_error", requestId);
+              return createErrorResponse(
+                "Failed to fetch entries",
+                500,
+                "database_error",
+                requestId,
+              );
             }
 
-            return createSuccessResponse({
-              category: params.category,
-              subcategory: params.subcategory || 'all',
-              entries: data,
-              total: data.length,
-            }, requestId);
+            return createSuccessResponse(
+              {
+                category: params.category,
+                subcategory: params.subcategory || "all",
+                entries: data,
+                total: data.length,
+              },
+              requestId,
+            );
           }
 
           // GET /knowledge-search - List all entries (summary)
           const { data, error } = await supabase
-            .from('knowledge_base_entries')
-            .select('id, title, category, subcategory, evidence_grade')
-            .eq('is_active', true)
-            .order('category')
-            .order('subcategory')
+            .from("knowledge_base_entries")
+            .select("id, title, category, subcategory, evidence_grade")
+            .eq("is_active", true)
+            .order("category")
+            .order("subcategory")
             .limit(100);
 
           if (error) {
-            return createErrorResponse("Failed to fetch entries", 500, "database_error", requestId);
+            return createErrorResponse(
+              "Failed to fetch entries",
+              500,
+              "database_error",
+              requestId,
+            );
           }
 
-          return createSuccessResponse({
-            entries: data,
-            total: data.length,
-            hint: "Use POST with 'query' to search, or GET with 'category' to filter",
-          }, requestId);
+          return createSuccessResponse(
+            {
+              entries: data,
+              total: data.length,
+              hint: "Use POST with 'query' to search, or GET with 'category' to filter",
+            },
+            requestId,
+          );
         }
 
         return createErrorResponse(
           "Method not allowed",
           405,
           "method_not_allowed",
-          requestId
+          requestId,
         );
       } catch (error) {
-        console.error('Knowledge search error:', error);
+        console.error("Knowledge search error:", error);
         return createErrorResponse(
           error.message || "Internal server error",
           500,
           "internal_error",
-          requestId
+          requestId,
         );
       }
     },

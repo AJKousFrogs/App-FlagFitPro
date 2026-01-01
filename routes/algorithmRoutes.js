@@ -9,7 +9,11 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { supabase, pool as _pool, checkDatabaseHealth } from "./utils/database.js";
+import {
+  supabase,
+  pool as _pool,
+  checkDatabaseHealth,
+} from "./utils/database.js";
 import { safeFormatDate } from "./utils/query-helper.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
@@ -139,7 +143,8 @@ router.get("/health", async (req, res) => {
     const dbHealth = await checkDatabaseHealth();
 
     const healthStatus = {
-      success: dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
+      success:
+        dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
       message: "Algorithm API is healthy",
       service: ROUTE_NAME,
       version: "2.1.0",
@@ -162,7 +167,10 @@ router.get("/health", async (req, res) => {
     const statusCode = healthStatus.success ? 200 : 503;
     res.status(statusCode).json(healthStatus);
   } catch (error) {
-    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(
+      `${ROUTE_NAME.toUpperCase()} health check error:`,
+      error,
+    );
     res.status(500).json({
       success: false,
       error: "Health check failed",

@@ -1,11 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { LoggerService } from './logger.service';
+import { Injectable, inject } from "@angular/core";
+import { LoggerService } from "./logger.service";
 
 export interface CompressionOptions {
   maxWidth?: number;
   maxHeight?: number;
   quality?: number; // 0-1
-  outputFormat?: 'image/jpeg' | 'image/png' | 'image/webp';
+  outputFormat?: "image/jpeg" | "image/png" | "image/webp";
   preserveAspectRatio?: boolean;
 }
 
@@ -34,19 +34,19 @@ const DEFAULT_OPTIONS: CompressionOptions = {
   maxWidth: 1920,
   maxHeight: 1080,
   quality: 0.8,
-  outputFormat: 'image/webp',
+  outputFormat: "image/webp",
   preserveAspectRatio: true,
 };
 
 /**
  * Image Compression Service
- * 
+ *
  * Provides client-side image compression using browser-native APIs:
  * - Canvas API for resizing and format conversion
  * - createImageBitmap for efficient decoding
  * - WebP output for modern browsers (best compression)
  * - JPEG fallback for older browsers
- * 
+ *
  * Features:
  * - Automatic format detection and conversion
  * - Quality-based compression
@@ -55,7 +55,7 @@ const DEFAULT_OPTIONS: CompressionOptions = {
  * - Memory-efficient processing
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ImageCompressionService {
   private logger = inject(LoggerService);
@@ -74,10 +74,12 @@ export class ImageCompressionService {
     }
 
     try {
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = 1;
       canvas.height = 1;
-      this.supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
+      this.supportsWebP = canvas
+        .toDataURL("image/webp")
+        .startsWith("data:image/webp");
     } catch {
       this.supportsWebP = false;
     }
@@ -91,43 +93,46 @@ export class ImageCompressionService {
    */
   async compressImage(
     file: File | Blob,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<CompressionResult> {
     const opts = { ...DEFAULT_OPTIONS, ...options };
     const originalSize = file.size;
 
     try {
       // Check WebP support and fallback if needed
-      if (opts.outputFormat === 'image/webp' && !(await this.checkWebPSupport())) {
-        opts.outputFormat = 'image/jpeg';
-        this.logger.debug('WebP not supported, falling back to JPEG');
+      if (
+        opts.outputFormat === "image/webp" &&
+        !(await this.checkWebPSupport())
+      ) {
+        opts.outputFormat = "image/jpeg";
+        this.logger.debug("WebP not supported, falling back to JPEG");
       }
 
       // Create ImageBitmap for efficient processing
       const imageBitmap = await createImageBitmap(file);
-      
+
       // Calculate new dimensions
       const { width, height } = this.calculateDimensions(
         imageBitmap.width,
         imageBitmap.height,
         opts.maxWidth!,
         opts.maxHeight!,
-        opts.preserveAspectRatio!
+        opts.preserveAspectRatio!,
       );
 
       // Create canvas and draw resized image
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (!ctx) {
-        throw new Error('Could not get canvas context');
+        throw new Error("Could not get canvas context");
       }
 
       // Use high-quality image smoothing
       ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
+      ctx.imageSmoothingQuality = "high";
 
       // Draw the image
       ctx.drawImage(imageBitmap, 0, 0, width, height);
@@ -136,16 +141,21 @@ export class ImageCompressionService {
       imageBitmap.close();
 
       // Convert to blob
-      const blob = await this.canvasToBlob(canvas, opts.outputFormat!, opts.quality!);
+      const blob = await this.canvasToBlob(
+        canvas,
+        opts.outputFormat!,
+        opts.quality!,
+      );
       const dataUrl = canvas.toDataURL(opts.outputFormat!, opts.quality!);
 
       const compressedSize = blob.size;
-      const compressionRatio = originalSize > 0 
-        ? Number(((1 - compressedSize / originalSize) * 100).toFixed(1))
-        : 0;
+      const compressionRatio =
+        originalSize > 0
+          ? Number(((1 - compressedSize / originalSize) * 100).toFixed(1))
+          : 0;
 
       this.logger.debug(
-        `Image compressed: ${this.formatBytes(originalSize)} → ${this.formatBytes(compressedSize)} (${compressionRatio}% reduction)`
+        `Image compressed: ${this.formatBytes(originalSize)} → ${this.formatBytes(compressedSize)} (${compressionRatio}% reduction)`,
       );
 
       return {
@@ -159,7 +169,7 @@ export class ImageCompressionService {
         format: opts.outputFormat!,
       };
     } catch (error) {
-      this.logger.error('Image compression failed:', error);
+      this.logger.error("Image compression failed:", error);
       throw error;
     }
   }
@@ -169,7 +179,7 @@ export class ImageCompressionService {
    */
   async compressImages(
     files: (File | Blob)[],
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<BatchCompressionResult> {
     const results: CompressionResult[] = [];
     const errors: { index: number; error: string }[] = [];
@@ -185,14 +195,17 @@ export class ImageCompressionService {
       } catch (error) {
         errors.push({
           index: i,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
 
-    const overallCompressionRatio = totalOriginalSize > 0
-      ? Number(((1 - totalCompressedSize / totalOriginalSize) * 100).toFixed(1))
-      : 0;
+    const overallCompressionRatio =
+      totalOriginalSize > 0
+        ? Number(
+            ((1 - totalCompressedSize / totalOriginalSize) * 100).toFixed(1),
+          )
+        : 0;
 
     return {
       results,
@@ -210,7 +223,7 @@ export class ImageCompressionService {
    */
   async compressImageFromUrl(
     url: string,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<CompressionResult> {
     try {
       const response = await fetch(url);
@@ -220,7 +233,7 @@ export class ImageCompressionService {
       const blob = await response.blob();
       return this.compressImage(blob, options);
     } catch (error) {
-      this.logger.error('Failed to compress image from URL:', error);
+      this.logger.error("Failed to compress image from URL:", error);
       throw error;
     }
   }
@@ -230,14 +243,14 @@ export class ImageCompressionService {
    */
   async compressImageFromDataUrl(
     dataUrl: string,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<CompressionResult> {
     try {
       const response = await fetch(dataUrl);
       const blob = await response.blob();
       return this.compressImage(blob, options);
     } catch (error) {
-      this.logger.error('Failed to compress image from data URL:', error);
+      this.logger.error("Failed to compress image from data URL:", error);
       throw error;
     }
   }
@@ -245,35 +258,37 @@ export class ImageCompressionService {
   /**
    * Get optimal compression options based on use case
    */
-  getPresetOptions(preset: 'thumbnail' | 'profile' | 'post' | 'full'): CompressionOptions {
+  getPresetOptions(
+    preset: "thumbnail" | "profile" | "post" | "full",
+  ): CompressionOptions {
     switch (preset) {
-      case 'thumbnail':
+      case "thumbnail":
         return {
           maxWidth: 150,
           maxHeight: 150,
           quality: 0.7,
-          outputFormat: 'image/webp',
+          outputFormat: "image/webp",
         };
-      case 'profile':
+      case "profile":
         return {
           maxWidth: 400,
           maxHeight: 400,
           quality: 0.85,
-          outputFormat: 'image/webp',
+          outputFormat: "image/webp",
         };
-      case 'post':
+      case "post":
         return {
           maxWidth: 1200,
           maxHeight: 1200,
           quality: 0.8,
-          outputFormat: 'image/webp',
+          outputFormat: "image/webp",
         };
-      case 'full':
+      case "full":
         return {
           maxWidth: 1920,
           maxHeight: 1080,
           quality: 0.85,
-          outputFormat: 'image/webp',
+          outputFormat: "image/webp",
         };
       default:
         return DEFAULT_OPTIONS;
@@ -285,7 +300,7 @@ export class ImageCompressionService {
    */
   async shouldCompress(
     file: File | Blob,
-    maxSizeBytes: number = 500 * 1024 // 500KB default
+    maxSizeBytes: number = 500 * 1024, // 500KB default
   ): Promise<boolean> {
     // Check file size
     if (file.size > maxSizeBytes) {
@@ -295,8 +310,9 @@ export class ImageCompressionService {
     // Check dimensions
     try {
       const imageBitmap = await createImageBitmap(file);
-      const needsResize = imageBitmap.width > DEFAULT_OPTIONS.maxWidth! ||
-                          imageBitmap.height > DEFAULT_OPTIONS.maxHeight!;
+      const needsResize =
+        imageBitmap.width > DEFAULT_OPTIONS.maxWidth! ||
+        imageBitmap.height > DEFAULT_OPTIONS.maxHeight!;
       imageBitmap.close();
       return needsResize;
     } catch {
@@ -312,7 +328,7 @@ export class ImageCompressionService {
     originalHeight: number,
     maxWidth: number,
     maxHeight: number,
-    preserveAspectRatio: boolean
+    preserveAspectRatio: boolean,
   ): { width: number; height: number } {
     if (!preserveAspectRatio) {
       return {
@@ -344,7 +360,7 @@ export class ImageCompressionService {
   private canvasToBlob(
     canvas: HTMLCanvasElement,
     type: string,
-    quality: number
+    quality: number,
   ): Promise<Blob> {
     return new Promise((resolve, reject) => {
       canvas.toBlob(
@@ -352,11 +368,11 @@ export class ImageCompressionService {
           if (blob) {
             resolve(blob);
           } else {
-            reject(new Error('Canvas to blob conversion failed'));
+            reject(new Error("Canvas to blob conversion failed"));
           }
         },
         type,
-        quality
+        quality,
       );
     });
   }
@@ -365,24 +381,26 @@ export class ImageCompressionService {
    * Format bytes to human-readable string
    */
   private formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
   /**
    * Get image dimensions from file
    */
-  async getImageDimensions(file: File | Blob): Promise<{ width: number; height: number }> {
+  async getImageDimensions(
+    file: File | Blob,
+  ): Promise<{ width: number; height: number }> {
     try {
       const imageBitmap = await createImageBitmap(file);
       const { width, height } = imageBitmap;
       imageBitmap.close();
       return { width, height };
     } catch (error) {
-      this.logger.error('Failed to get image dimensions:', error);
+      this.logger.error("Failed to get image dimensions:", error);
       throw error;
     }
   }
@@ -395,22 +413,24 @@ export class ImageCompressionService {
     options: {
       maxSizeBytes?: number;
       allowedTypes?: string[];
-    } = {}
+    } = {},
   ): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
     const {
       maxSizeBytes = 10 * 1024 * 1024, // 10MB default
-      allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+      allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"],
     } = options;
 
     // Check file type
     if (!allowedTypes.includes(file.type)) {
-      errors.push(`Invalid file type. Allowed: ${allowedTypes.join(', ')}`);
+      errors.push(`Invalid file type. Allowed: ${allowedTypes.join(", ")}`);
     }
 
     // Check file size
     if (file.size > maxSizeBytes) {
-      errors.push(`File too large. Maximum size: ${this.formatBytes(maxSizeBytes)}`);
+      errors.push(
+        `File too large. Maximum size: ${this.formatBytes(maxSizeBytes)}`,
+      );
     }
 
     return {
@@ -419,4 +439,3 @@ export class ImageCompressionService {
     };
   }
 }
-

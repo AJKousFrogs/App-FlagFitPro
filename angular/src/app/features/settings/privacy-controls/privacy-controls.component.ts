@@ -5,37 +5,37 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { ToggleSwitch } from 'primeng/toggleswitch';
-import { Select } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { DialogModule } from 'primeng/dialog';
-import { DividerModule } from 'primeng/divider';
-import { TooltipModule } from 'primeng/tooltip';
-import { Chip } from 'primeng/chip';
-import { TagModule } from 'primeng/tag';
-import { AccordionModule } from 'primeng/accordion';
-import { MainLayoutComponent } from '../../../shared/components/layout/main-layout.component';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+} from "@angular/core";
+import { CommonModule, DatePipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { Select } from "primeng/select";
+import { InputTextModule } from "primeng/inputtext";
+import { ToastModule } from "primeng/toast";
+import { DialogModule } from "primeng/dialog";
+import { DividerModule } from "primeng/divider";
+import { TooltipModule } from "primeng/tooltip";
+import { Chip } from "primeng/chip";
+import { TagModule } from "primeng/tag";
+import { AccordionModule } from "primeng/accordion";
+import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import {
   PrivacySettingsService,
   EmergencySharingLevel,
   EmergencyContact,
   METRIC_CATEGORIES,
-} from '../../../core/services/privacy-settings.service';
-import { DataExportService } from '../../../core/services/data-export.service';
-import { AccountDeletionService } from '../../../core/services/account-deletion.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { ToastService } from '../../../core/services/toast.service';
+} from "../../../core/services/privacy-settings.service";
+import { DataExportService } from "../../../core/services/data-export.service";
+import { AccountDeletionService } from "../../../core/services/account-deletion.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
 
 /**
  * Privacy Controls Component
- * 
+ *
  * Implements the "Settings > Privacy Controls" page as referenced in PRIVACY_POLICY.md
  * Provides granular controls for:
  * - AI Processing opt-out (Article 22 GDPR)
@@ -43,12 +43,12 @@ import { ToastService } from '../../../core/services/toast.service';
  * - Emergency data sharing
  * - Team-specific data sharing
  * - Marketing communications
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
 @Component({
-  selector: 'app-privacy-controls',
+  selector: "app-privacy-controls",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -95,7 +95,6 @@ import { ToastService } from '../../../core/services/toast.service';
           </div>
         } @else {
           <div class="privacy-grid">
-            
             <!-- AI Processing Section -->
             <p-card class="privacy-section ai-section">
               <ng-template pTemplate="header">
@@ -105,17 +104,20 @@ import { ToastService } from '../../../core/services/toast.service';
                   </div>
                   <div class="section-title-group">
                     <h2 class="section-title">AI Processing</h2>
-                    <p class="section-subtitle">Article 22 GDPR - Automated Decision Making</p>
+                    <p class="section-subtitle">
+                      Article 22 GDPR - Automated Decision Making
+                    </p>
                   </div>
                 </div>
               </ng-template>
-              
+
               <div class="setting-item">
                 <div class="setting-info">
                   <h4>AI-Powered Recommendations</h4>
                   <p>
-                    Allow our AI to analyze your training data to provide personalized 
-                    recommendations, injury risk assessments, and performance insights.
+                    Allow our AI to analyze your training data to provide
+                    personalized recommendations, injury risk assessments, and
+                    performance insights.
                   </p>
                   <div class="setting-details">
                     <span class="detail-item">
@@ -144,9 +146,10 @@ import { ToastService } from '../../../core/services/toast.service';
                 <div class="warning-banner">
                   <i class="pi pi-info-circle"></i>
                   <span>
-                    With AI processing disabled, you won't receive personalized training 
-                    recommendations or automated injury risk assessments. All AI features 
-                    will show generic guidance instead.
+                    With AI processing disabled, you won't receive personalized
+                    training recommendations or automated injury risk
+                    assessments. All AI features will show generic guidance
+                    instead.
                   </span>
                 </div>
               }
@@ -156,18 +159,28 @@ import { ToastService } from '../../../core/services/toast.service';
                   <div class="consent-status-detail">
                     <div class="status-row">
                       <span class="status-label">Status:</span>
-                      <span class="status-value" [class.enabled]="aiConsentStatus()?.canProcess" [class.disabled]="!aiConsentStatus()?.canProcess">
-                        {{ aiConsentStatus()?.canProcess ? 'Enabled' : 'Disabled' }}
+                      <span
+                        class="status-value"
+                        [class.enabled]="aiConsentStatus()?.canProcess"
+                        [class.disabled]="!aiConsentStatus()?.canProcess"
+                      >
+                        {{
+                          aiConsentStatus()?.canProcess ? "Enabled" : "Disabled"
+                        }}
                       </span>
                     </div>
                     <div class="status-row">
                       <span class="status-label">Reason:</span>
-                      <span class="status-value">{{ aiConsentStatus()?.reason }}</span>
+                      <span class="status-value">{{
+                        aiConsentStatus()?.reason
+                      }}</span>
                     </div>
                     @if (aiConsentStatus()?.consentDate) {
                       <div class="status-row">
                         <span class="status-label">Consent Date:</span>
-                        <span class="status-value">{{ aiConsentStatus()?.consentDate | date:'medium' }}</span>
+                        <span class="status-value">{{
+                          aiConsentStatus()?.consentDate | date: "medium"
+                        }}</span>
                       </div>
                     }
                   </div>
@@ -203,10 +216,16 @@ import { ToastService } from '../../../core/services/toast.service';
                         <div class="team-header">
                           <span class="team-name">{{ team.teamName }}</span>
                           <div class="team-status">
-                            @if (team.performanceSharingEnabled || team.healthSharingEnabled) {
+                            @if (
+                              team.performanceSharingEnabled ||
+                              team.healthSharingEnabled
+                            ) {
                               <p-tag severity="success" value="Sharing"></p-tag>
                             } @else {
-                              <p-tag severity="secondary" value="Private"></p-tag>
+                              <p-tag
+                                severity="secondary"
+                                value="Private"
+                              ></p-tag>
                             }
                           </div>
                         </div>
@@ -216,14 +235,23 @@ import { ToastService } from '../../../core/services/toast.service';
                           <div class="team-toggle">
                             <div class="toggle-info">
                               <h5>Performance Data</h5>
-                              <p>Speed, agility, strength scores, training progress</p>
+                              <p>
+                                Speed, agility, strength scores, training
+                                progress
+                              </p>
                             </div>
                             <p-toggleswitch
                               [(ngModel)]="team.performanceSharingEnabled"
-                              (onChange)="onTeamSharingChange(team.teamId, 'performance', $event.checked)"
+                              (onChange)="
+                                onTeamSharingChange(
+                                  team.teamId,
+                                  'performance',
+                                  $event.checked
+                                )
+                              "
                             ></p-toggleswitch>
                           </div>
-                          
+
                           <div class="team-toggle">
                             <div class="toggle-info">
                               <h5>Health Data</h5>
@@ -231,20 +259,36 @@ import { ToastService } from '../../../core/services/toast.service';
                             </div>
                             <p-toggleswitch
                               [(ngModel)]="team.healthSharingEnabled"
-                              (onChange)="onTeamSharingChange(team.teamId, 'health', $event.checked)"
+                              (onChange)="
+                                onTeamSharingChange(
+                                  team.teamId,
+                                  'health',
+                                  $event.checked
+                                )
+                              "
                             ></p-toggleswitch>
                           </div>
 
-                          @if (team.performanceSharingEnabled || team.healthSharingEnabled) {
+                          @if (
+                            team.performanceSharingEnabled ||
+                            team.healthSharingEnabled
+                          ) {
                             <div class="metric-categories">
                               <h5>Specific Metrics</h5>
                               <p>Choose exactly which metrics to share:</p>
                               <div class="category-chips">
-                                @for (category of metricCategories; track category.value) {
+                                @for (
+                                  category of metricCategories;
+                                  track category.value
+                                ) {
                                   <p-chip
                                     [label]="category.label"
-                                    [class.selected]="isCategorySelected(team, category.value)"
-                                    (click)="toggleCategory(team, category.value)"
+                                    [class.selected]="
+                                      isCategorySelected(team, category.value)
+                                    "
+                                    (click)="
+                                      toggleCategory(team, category.value)
+                                    "
                                     [pTooltip]="category.description"
                                   ></p-chip>
                                 }
@@ -277,8 +321,9 @@ import { ToastService } from '../../../core/services/toast.service';
                 <div class="setting-info">
                   <h4>Emergency Sharing Level</h4>
                   <p>
-                    Choose what information can be shared with emergency services 
-                    or designated contacts in case of a medical emergency.
+                    Choose what information can be shared with emergency
+                    services or designated contacts in case of a medical
+                    emergency.
                   </p>
                 </div>
                 <div class="setting-control wide">
@@ -297,13 +342,18 @@ import { ToastService } from '../../../core/services/toast.service';
 
               <div class="emergency-contacts">
                 <h4>Emergency Contacts</h4>
-                <p>These people will be notified and may receive your medical data in an emergency.</p>
-                
+                <p>
+                  These people will be notified and may receive your medical
+                  data in an emergency.
+                </p>
+
                 @for (contact of emergencyContacts(); track $index) {
                   <div class="contact-item">
                     <div class="contact-info">
                       <span class="contact-name">{{ contact.name }}</span>
-                      <span class="contact-relationship">{{ contact.relationship }}</span>
+                      <span class="contact-relationship">{{
+                        contact.relationship
+                      }}</span>
                       <span class="contact-phone">{{ contact.phone }}</span>
                     </div>
                     <p-button
@@ -345,8 +395,8 @@ import { ToastService } from '../../../core/services/toast.service';
                 <div class="setting-info">
                   <h4>Research Participation</h4>
                   <p>
-                    Contribute anonymized data to sports science research. Your data 
-                    will be aggregated and de-identified before use.
+                    Contribute anonymized data to sports science research. Your
+                    data will be aggregated and de-identified before use.
                   </p>
                 </div>
                 <div class="setting-control">
@@ -363,7 +413,8 @@ import { ToastService } from '../../../core/services/toast.service';
                 <div class="setting-info">
                   <h4>Marketing Communications</h4>
                   <p>
-                    Receive updates about new features, training tips, and special offers.
+                    Receive updates about new features, training tips, and
+                    special offers.
                   </p>
                 </div>
                 <div class="setting-control">
@@ -400,7 +451,10 @@ import { ToastService } from '../../../core/services/toast.service';
                     <div class="export-progress">
                       <small>{{ exportStep() }}</small>
                       <div class="progress-bar">
-                        <div class="progress-fill" [style.width.%]="exportProgress()"></div>
+                        <div
+                          class="progress-fill"
+                          [style.width.%]="exportProgress()"
+                        ></div>
                       </div>
                     </div>
                   } @else {
@@ -412,7 +466,7 @@ import { ToastService } from '../../../core/services/toast.service';
                     ></p-button>
                   }
                 </div>
-                
+
                 <div class="right-item">
                   <i class="pi pi-trash"></i>
                   <h5>Delete Account</h5>
@@ -420,7 +474,8 @@ import { ToastService } from '../../../core/services/toast.service';
                     <div class="pending-deletion-warning">
                       <p class="warning-text">
                         <i class="pi pi-exclamation-triangle"></i>
-                        Deletion scheduled in {{ deletionStatus()?.daysUntilDeletion }} days
+                        Deletion scheduled in
+                        {{ deletionStatus()?.daysUntilDeletion }} days
                       </p>
                       <p-button
                         label="Cancel Deletion"
@@ -442,7 +497,7 @@ import { ToastService } from '../../../core/services/toast.service';
                     ></p-button>
                   }
                 </div>
-                
+
                 <div class="right-item">
                   <i class="pi pi-history"></i>
                   <h5>View Audit Log</h5>
@@ -527,13 +582,15 @@ import { ToastService } from '../../../core/services/toast.service';
           <i class="pi pi-exclamation-triangle"></i>
           <h4>This action cannot be undone</h4>
           <p>
-            Your account will be immediately deactivated. All personal data will be 
-            permanently deleted within 30 days as required by our privacy policy.
+            Your account will be immediately deactivated. All personal data will
+            be permanently deleted within 30 days as required by our privacy
+            policy.
           </p>
           <div class="retention-note">
             <i class="pi pi-info-circle"></i>
             <small>
-              Emergency medical records are retained for 7 years as required by law.
+              Emergency medical records are retained for 7 years as required by
+              law.
             </small>
           </div>
           <div class="cancellation-note">
@@ -580,561 +637,567 @@ import { ToastService } from '../../../core/services/toast.service';
       </p-dialog>
     </app-main-layout>
   `,
-  styles: [`
-    .privacy-controls-page {
-      padding: var(--space-6);
-    }
-
-    .loading-state {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-3);
-      padding: var(--space-12);
-      color: var(--text-secondary);
-    }
-
-    .privacy-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: var(--space-6);
-    }
-
-    .privacy-section {
-      height: fit-content;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-
-    .section-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .ai-icon {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .team-icon {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: white;
-    }
-
-    .emergency-icon {
-      background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-      color: white;
-    }
-
-    .research-icon {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      color: white;
-    }
-
-    .parental-icon {
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-      color: white;
-    }
-
-    .rights-icon {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      color: #333;
-    }
-
-    .section-title-group {
-      flex: 1;
-    }
-
-    .section-title {
-      font-size: var(--font-heading-sm);
-      font-weight: var(--font-weight-semibold);
-      margin: 0 0 var(--space-1) 0;
-      color: var(--text-primary);
-    }
-
-    .section-subtitle {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-      margin: 0;
-    }
-
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: var(--space-4);
-      padding: var(--space-3) 0;
-    }
-
-    .setting-info {
-      flex: 1;
-    }
-
-    .setting-info h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--text-primary);
-    }
-
-    .setting-info p {
-      margin: 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .setting-details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-      margin-top: var(--space-3);
-    }
-
-    .detail-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .detail-item i {
-      color: var(--color-status-success);
-    }
-
-    .setting-control {
-      flex-shrink: 0;
-    }
-
-    .setting-control.wide {
-      min-width: 200px;
-    }
-
-    .warning-banner {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      background: var(--p-yellow-50);
-      border: 1px solid var(--p-yellow-200);
-      border-radius: var(--p-border-radius);
-      margin-top: var(--space-4);
-    }
-
-    .warning-banner i {
-      color: var(--p-yellow-600);
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .warning-banner span {
-      font-size: var(--font-body-sm);
-      color: var(--p-yellow-800);
-    }
-
-    .consent-info {
-      margin-top: var(--space-3);
-      padding-top: var(--space-3);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .consent-info small {
-      color: var(--text-tertiary);
-    }
-
-    .consent-status-detail {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: var(--font-body-sm);
-    }
-
-    .status-label {
-      color: var(--text-secondary);
-      font-weight: var(--font-weight-medium);
-    }
-
-    .status-value {
-      color: var(--text-primary);
-    }
-
-    .status-value.enabled {
-      color: var(--color-status-success);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .status-value.disabled {
-      color: var(--color-status-error);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    /* Export Progress */
-    .export-progress {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      width: 100%;
-    }
-
-    .export-progress small {
-      color: var(--text-secondary);
-      font-size: var(--font-body-xs);
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 4px;
-      background: var(--p-surface-200);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary, var(--color-brand-primary)));
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    /* Team Settings */
-    .empty-state {
-      text-align: center;
-      padding: var(--space-8);
-      color: var(--text-secondary);
-    }
-
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: var(--space-4);
-      opacity: 0.5;
-    }
-
-    .team-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .team-name {
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .team-settings {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .team-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .toggle-info h5 {
-      margin: 0 0 var(--space-1) 0;
-      font-size: var(--font-body-sm);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .toggle-info p {
-      margin: 0;
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .metric-categories {
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .metric-categories h5 {
-      margin: 0 0 var(--space-1) 0;
-    }
-
-    .metric-categories p {
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .category-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .category-chips p-chip {
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .category-chips p-chip:hover {
-      transform: translateY(-2px);
-    }
-
-    .category-chips p-chip.selected :host ::ng-deep .p-chip {
-      background: var(--color-brand-primary);
-      color: white;
-    }
-
-    /* Emergency Contacts */
-    .emergency-contacts {
-      margin-top: var(--space-4);
-    }
-
-    .emergency-contacts h4 {
-      margin: 0 0 var(--space-2) 0;
-    }
-
-    .emergency-contacts > p {
-      margin: 0 0 var(--space-4) 0;
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    .contact-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-      margin-bottom: var(--space-2);
-    }
-
-    .contact-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .contact-name {
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .contact-relationship {
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    .contact-phone {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-    }
-
-    /* Parental Consent */
-    .consent-status {
-      text-align: center;
-      padding: var(--space-4);
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--p-border-radius);
-      font-weight: var(--font-weight-semibold);
-      margin-bottom: var(--space-3);
-    }
-
-    .status-badge.verified {
-      background: var(--color-status-success-bg);
-      color: var(--color-status-success);
-    }
-
-    .status-badge.pending {
-      background: var(--p-yellow-100);
-      color: var(--p-yellow-700);
-    }
-
-    .status-badge.revoked {
-      background: var(--color-status-error-bg);
-      color: var(--color-status-error);
-    }
-
-    .consent-details {
-      margin-top: var(--space-4);
-      text-align: left;
-    }
-
-    .consent-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      margin-top: var(--space-2);
-    }
-
-    .no-consent {
-      text-align: center;
-      padding: var(--space-6);
-    }
-
-    .no-consent i {
-      font-size: 2rem;
-      color: var(--p-yellow-500);
-      margin-bottom: var(--space-3);
-    }
-
-    /* Data Rights */
-    .rights-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-4);
-    }
-
-    .right-item {
-      text-align: center;
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .right-item i {
-      font-size: 2rem;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-3);
-    }
-
-    .right-item h5 {
-      margin: 0 0 var(--space-2) 0;
-    }
-
-    .right-item p {
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-body-xs);
-      color: var(--text-secondary);
-    }
-
-    /* Dialog Forms */
-    .contact-form,
-    .consent-form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .p-field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .p-field label {
-      font-size: var(--font-body-sm);
-      font-weight: var(--font-weight-medium);
-    }
-
-    /* Delete Warning */
-    .delete-warning {
-      text-align: center;
-      padding: var(--space-4);
-    }
-
-    .delete-warning > i {
-      font-size: 3rem;
-      color: var(--p-red-500);
-      margin-bottom: var(--space-4);
-    }
-
-    .delete-warning h4 {
-      color: var(--p-red-600);
-      margin: 0 0 var(--space-3) 0;
-    }
-
-    .delete-warning > p {
-      color: var(--text-secondary);
-      margin-bottom: var(--space-4);
-    }
-
-    .retention-note,
-    .cancellation-note {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-3);
-      background: var(--p-surface-100);
-      border-radius: var(--p-border-radius);
-      margin-bottom: var(--space-4);
-    }
-
-    .retention-note i,
-    .cancellation-note i {
-      color: var(--text-secondary);
-    }
-
-    .cancellation-note {
-      background: var(--color-status-success-bg);
-    }
-
-    .cancellation-note i {
-      color: var(--color-status-success);
-    }
-
-    .pending-deletion-warning {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .pending-deletion-warning .warning-text {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      color: var(--p-yellow-700);
-      font-weight: var(--font-weight-semibold);
-      margin: 0;
-    }
-
-    .pending-deletion-warning .warning-text i {
-      color: var(--p-yellow-600);
-    }
-
-    @media (max-width: 768px) {
-      .privacy-grid {
-        grid-template-columns: 1fr;
+  styles: [
+    `
+      .privacy-controls-page {
+        padding: var(--space-6);
       }
 
-      .rights-grid {
-        grid-template-columns: 1fr;
+      .loading-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        padding: var(--space-12);
+        color: var(--text-secondary);
+      }
+
+      .privacy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .privacy-section {
+        height: fit-content;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-4);
+      }
+
+      .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .ai-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .team-icon {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+      }
+
+      .emergency-icon {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        color: white;
+      }
+
+      .research-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+      }
+
+      .parental-icon {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        color: white;
+      }
+
+      .rights-icon {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        color: #333;
+      }
+
+      .section-title-group {
+        flex: 1;
+      }
+
+      .section-title {
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
+        margin: 0 0 var(--space-1) 0;
+        color: var(--text-primary);
+      }
+
+      .section-subtitle {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        margin: 0;
       }
 
       .setting-item {
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-3) 0;
+      }
+
+      .setting-info {
+        flex: 1;
+      }
+
+      .setting-info h4 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      .setting-info p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .setting-details {
+        display: flex;
+        flex-wrap: wrap;
         gap: var(--space-3);
+        margin-top: var(--space-3);
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      .detail-item i {
+        color: var(--color-status-success);
+      }
+
+      .setting-control {
+        flex-shrink: 0;
       }
 
       .setting-control.wide {
+        min-width: 200px;
+      }
+
+      .warning-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--p-yellow-50);
+        border: 1px solid var(--p-yellow-200);
+        border-radius: var(--p-border-radius);
+        margin-top: var(--space-4);
+      }
+
+      .warning-banner i {
+        color: var(--p-yellow-600);
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+
+      .warning-banner span {
+        font-size: var(--font-body-sm);
+        color: var(--p-yellow-800);
+      }
+
+      .consent-info {
+        margin-top: var(--space-3);
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .consent-info small {
+        color: var(--text-tertiary);
+      }
+
+      .consent-status-detail {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--font-body-sm);
+      }
+
+      .status-label {
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-medium);
+      }
+
+      .status-value {
+        color: var(--text-primary);
+      }
+
+      .status-value.enabled {
+        color: var(--color-status-success);
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .status-value.disabled {
+        color: var(--color-status-error);
+        font-weight: var(--font-weight-semibold);
+      }
+
+      /* Export Progress */
+      .export-progress {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
         width: 100%;
       }
-    }
-  `]
+
+      .export-progress small {
+        color: var(--text-secondary);
+        font-size: var(--font-body-xs);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: var(--p-surface-200);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--color-brand-primary),
+          var(--color-brand-secondary, var(--color-brand-primary))
+        );
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+
+      /* Team Settings */
+      .empty-state {
+        text-align: center;
+        padding: var(--space-8);
+        color: var(--text-secondary);
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+      }
+
+      .team-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .team-name {
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .team-settings {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .team-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .toggle-info h5 {
+        margin: 0 0 var(--space-1) 0;
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .toggle-info p {
+        margin: 0;
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      .metric-categories {
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .metric-categories h5 {
+        margin: 0 0 var(--space-1) 0;
+      }
+
+      .metric-categories p {
+        margin: 0 0 var(--space-3) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .category-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .category-chips p-chip {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .category-chips p-chip:hover {
+        transform: translateY(-2px);
+      }
+
+      .category-chips p-chip.selected :host ::ng-deep .p-chip {
+        background: var(--color-brand-primary);
+        color: white;
+      }
+
+      /* Emergency Contacts */
+      .emergency-contacts {
+        margin-top: var(--space-4);
+      }
+
+      .emergency-contacts h4 {
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .emergency-contacts > p {
+        margin: 0 0 var(--space-4) 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .contact-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+        margin-bottom: var(--space-2);
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .contact-name {
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .contact-relationship {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      .contact-phone {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      /* Parental Consent */
+      .consent-status {
+        text-align: center;
+        padding: var(--space-4);
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--p-border-radius);
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-3);
+      }
+
+      .status-badge.verified {
+        background: var(--color-status-success-bg);
+        color: var(--color-status-success);
+      }
+
+      .status-badge.pending {
+        background: var(--p-yellow-100);
+        color: var(--p-yellow-700);
+      }
+
+      .status-badge.revoked {
+        background: var(--color-status-error-bg);
+        color: var(--color-status-error);
+      }
+
+      .consent-details {
+        margin-top: var(--space-4);
+        text-align: left;
+      }
+
+      .consent-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-top: var(--space-2);
+      }
+
+      .no-consent {
+        text-align: center;
+        padding: var(--space-6);
+      }
+
+      .no-consent i {
+        font-size: 2rem;
+        color: var(--p-yellow-500);
+        margin-bottom: var(--space-3);
+      }
+
+      /* Data Rights */
+      .rights-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+      }
+
+      .right-item {
+        text-align: center;
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .right-item i {
+        font-size: 2rem;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-3);
+      }
+
+      .right-item h5 {
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .right-item p {
+        margin: 0 0 var(--space-3) 0;
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+      }
+
+      /* Dialog Forms */
+      .contact-form,
+      .consent-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .p-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .p-field label {
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-medium);
+      }
+
+      /* Delete Warning */
+      .delete-warning {
+        text-align: center;
+        padding: var(--space-4);
+      }
+
+      .delete-warning > i {
+        font-size: 3rem;
+        color: var(--p-red-500);
+        margin-bottom: var(--space-4);
+      }
+
+      .delete-warning h4 {
+        color: var(--p-red-600);
+        margin: 0 0 var(--space-3) 0;
+      }
+
+      .delete-warning > p {
+        color: var(--text-secondary);
+        margin-bottom: var(--space-4);
+      }
+
+      .retention-note,
+      .cancellation-note {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--p-surface-100);
+        border-radius: var(--p-border-radius);
+        margin-bottom: var(--space-4);
+      }
+
+      .retention-note i,
+      .cancellation-note i {
+        color: var(--text-secondary);
+      }
+
+      .cancellation-note {
+        background: var(--color-status-success-bg);
+      }
+
+      .cancellation-note i {
+        color: var(--color-status-success);
+      }
+
+      .pending-deletion-warning {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .pending-deletion-warning .warning-text {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--p-yellow-700);
+        font-weight: var(--font-weight-semibold);
+        margin: 0;
+      }
+
+      .pending-deletion-warning .warning-text i {
+        color: var(--p-yellow-600);
+      }
+
+      @media (max-width: 768px) {
+        .privacy-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rights-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .setting-item {
+          flex-direction: column;
+          gap: var(--space-3);
+        }
+
+        .setting-control.wide {
+          width: 100%;
+        }
+      }
+    `,
+  ],
 })
 export class PrivacyControlsComponent implements OnInit {
   private privacyService = inject(PrivacySettingsService);
@@ -1161,7 +1224,7 @@ export class PrivacyControlsComponent implements OnInit {
   aiProcessingEnabled = true;
   researchOptIn = false;
   marketingOptIn = false;
-  emergencyLevel: EmergencySharingLevel = 'medical_only';
+  emergencyLevel: EmergencySharingLevel = "medical_only";
   emergencyContacts = signal<EmergencyContact[]>([]);
 
   // Dialog visibility
@@ -1170,25 +1233,25 @@ export class PrivacyControlsComponent implements OnInit {
 
   // Form data
   newContact: Partial<EmergencyContact> = {};
-  deleteConfirmText = '';
+  deleteConfirmText = "";
 
   // Options
   metricCategories = METRIC_CATEGORIES;
 
   emergencyLevelOptions = [
-    { label: 'No sharing', value: 'none' },
-    { label: 'Medical data only', value: 'medical_only' },
-    { label: 'Medical + Location', value: 'medical_and_location' },
-    { label: 'Full emergency access', value: 'full' },
+    { label: "No sharing", value: "none" },
+    { label: "Medical data only", value: "medical_only" },
+    { label: "Medical + Location", value: "medical_and_location" },
+    { label: "Full emergency access", value: "full" },
   ];
 
   relationshipOptions = [
-    { label: 'Parent', value: 'Parent' },
-    { label: 'Spouse/Partner', value: 'Spouse/Partner' },
-    { label: 'Sibling', value: 'Sibling' },
-    { label: 'Coach', value: 'Coach' },
-    { label: 'Friend', value: 'Friend' },
-    { label: 'Other', value: 'Other' },
+    { label: "Parent", value: "Parent" },
+    { label: "Spouse/Partner", value: "Spouse/Partner" },
+    { label: "Sibling", value: "Sibling" },
+    { label: "Coach", value: "Coach" },
+    { label: "Friend", value: "Friend" },
+    { label: "Other", value: "Other" },
   ];
 
   // Note: isMinor() removed - App is 16+ only, no minors allowed
@@ -1240,13 +1303,14 @@ export class PrivacyControlsComponent implements OnInit {
 
   async onTeamSharingChange(
     teamId: string,
-    type: 'performance' | 'health',
-    enabled: boolean
+    type: "performance" | "health",
+    enabled: boolean,
   ): Promise<void> {
-    const settings = type === 'performance'
-      ? { performanceSharingEnabled: enabled }
-      : { healthSharingEnabled: enabled };
-    
+    const settings =
+      type === "performance"
+        ? { performanceSharingEnabled: enabled }
+        : { healthSharingEnabled: enabled };
+
     await this.privacyService.updateTeamSharing(teamId, settings);
   }
 
@@ -1254,17 +1318,20 @@ export class PrivacyControlsComponent implements OnInit {
   // METRIC CATEGORIES
   // ============================================================================
 
-  isCategorySelected(team: { allowedMetricCategories: string[] }, category: string): boolean {
+  isCategorySelected(
+    team: { allowedMetricCategories: string[] },
+    category: string,
+  ): boolean {
     return team.allowedMetricCategories.includes(category);
   }
 
   async toggleCategory(
     team: { teamId: string; allowedMetricCategories: string[] },
-    category: string
+    category: string,
   ): Promise<void> {
     const categories = [...team.allowedMetricCategories];
     const index = categories.indexOf(category);
-    
+
     if (index >= 0) {
       categories.splice(index, 1);
     } else {
@@ -1291,9 +1358,12 @@ export class PrivacyControlsComponent implements OnInit {
   async addEmergencyContact(): Promise<void> {
     if (!this.isContactValid()) return;
 
-    const contacts = [...this.emergencyContacts(), this.newContact as EmergencyContact];
+    const contacts = [
+      ...this.emergencyContacts(),
+      this.newContact as EmergencyContact,
+    ];
     const success = await this.privacyService.updateEmergencyContacts(contacts);
-    
+
     if (success) {
       this.emergencyContacts.set(contacts);
       this.newContact = {};
@@ -1304,7 +1374,7 @@ export class PrivacyControlsComponent implements OnInit {
   async removeEmergencyContact(index: number): Promise<void> {
     const contacts = this.emergencyContacts().filter((_, i) => i !== index);
     const success = await this.privacyService.updateEmergencyContacts(contacts);
-    
+
     if (success) {
       this.emergencyContacts.set(contacts);
     }
@@ -1322,17 +1392,17 @@ export class PrivacyControlsComponent implements OnInit {
   exportStep = this.dataExportService.currentStep;
 
   async exportData(): Promise<void> {
-    await this.dataExportService.exportAllData('json');
+    await this.dataExportService.exportAllData("json");
   }
 
   // Deletion state from service
   deletionStatus = this.deletionService.deletionStatus;
   hasPendingDeletion = this.deletionService.hasPendingDeletion;
   deletionLoading = this.deletionService.loading;
-  deletionReason = '';
+  deletionReason = "";
 
   async deleteAccount(): Promise<void> {
-    if (this.deleteConfirmText !== 'DELETE') return;
+    if (this.deleteConfirmText !== "DELETE") return;
 
     const success = await this.deletionService.requestDeletion({
       reason: this.deletionReason || undefined,
@@ -1341,8 +1411,8 @@ export class PrivacyControlsComponent implements OnInit {
 
     if (success) {
       this.showDeleteAccountDialog = false;
-      this.deleteConfirmText = '';
-      this.deletionReason = '';
+      this.deleteConfirmText = "";
+      this.deletionReason = "";
     }
   }
 
@@ -1352,7 +1422,6 @@ export class PrivacyControlsComponent implements OnInit {
 
   showAuditLog(): void {
     // TODO: Navigate to audit log page or show dialog
-    this.toastService.info('Audit log feature coming soon');
+    this.toastService.info("Audit log feature coming soon");
   }
 }
-

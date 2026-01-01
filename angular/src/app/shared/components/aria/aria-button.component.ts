@@ -208,7 +208,7 @@ export class AriaButtonComponent {
   ariaExpanded = input<boolean | null>(null);
   ariaPressed = input<boolean | null>(null);
   ariaHasPopup = input<"menu" | "listbox" | "dialog" | "grid" | "tree" | null>(
-    null
+    null,
   );
 
   // Outputs
@@ -249,4 +249,3 @@ export class AriaButtonComponent {
     this.elementRef.nativeElement.querySelector("button")?.focus();
   }
 }
-

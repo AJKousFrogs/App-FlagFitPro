@@ -145,7 +145,10 @@ interface TeamMember {
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-member>
-              <tr [attr.data-member-id]="member.id" [class.consent-blocked-row]="member.isConsentBlocked">
+              <tr
+                [attr.data-member-id]="member.id"
+                [class.consent-blocked-row]="member.isConsentBlocked"
+              >
                 <td>
                   <div class="member-name-cell">
                     {{ member.name }}
@@ -263,7 +266,9 @@ interface TeamMember {
             ></p-datepicker>
           </div>
           <div class="p-field mb-4">
-            <label for="sessionDuration" class="p-label">Duration (minutes)</label>
+            <label for="sessionDuration" class="p-label"
+              >Duration (minutes)</label
+            >
             <input
               id="sessionDuration"
               type="number"
@@ -508,10 +513,10 @@ export class CoachComponent implements OnInit {
   stats = signal<any[]>([]);
   teamChartData = signal<any>(null);
   teamMembers = signal<TeamMember[]>([]);
-  
+
   // Consent blocked players tracking
   consentInfo = signal<ConsentInfo>({ blockedPlayerIds: [] });
-  
+
   // Get partial data message from centralized privacy copy
   partialDataMessage = CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
 
@@ -519,21 +524,21 @@ export class CoachComponent implements OnInit {
   showCreateSessionDialog = false;
   isCreatingSession = signal(false);
   newSession = {
-    title: '',
-    type: '',
+    title: "",
+    type: "",
     date: new Date(),
     duration: 60,
-    location: '',
-    notes: '',
+    location: "",
+    notes: "",
   };
 
   sessionTypes = [
-    { label: 'Practice', value: 'practice' },
-    { label: 'Scrimmage', value: 'scrimmage' },
-    { label: 'Conditioning', value: 'conditioning' },
-    { label: 'Film Review', value: 'film_review' },
-    { label: 'Strength Training', value: 'strength' },
-    { label: 'Recovery', value: 'recovery' },
+    { label: "Practice", value: "practice" },
+    { label: "Scrimmage", value: "scrimmage" },
+    { label: "Conditioning", value: "conditioning" },
+    { label: "Film Review", value: "film_review" },
+    { label: "Strength Training", value: "strength" },
+    { label: "Recovery", value: "recovery" },
   ];
 
   chartOptions = DEFAULT_CHART_OPTIONS;
@@ -616,23 +621,27 @@ export class CoachComponent implements OnInit {
   openCreateSession(): void {
     // Reset form and open dialog
     this.newSession = {
-      title: '',
-      type: '',
+      title: "",
+      type: "",
       date: new Date(),
       duration: 60,
-      location: '',
-      notes: '',
+      location: "",
+      notes: "",
     };
     this.showCreateSessionDialog = true;
   }
 
   isSessionValid(): boolean {
-    return !!(this.newSession.title && this.newSession.type && this.newSession.date);
+    return !!(
+      this.newSession.title &&
+      this.newSession.type &&
+      this.newSession.date
+    );
   }
 
   async createSession(): Promise<void> {
     if (!this.isSessionValid()) {
-      this.toastService.warn('Please fill in all required fields');
+      this.toastService.warn("Please fill in all required fields");
       return;
     }
 
@@ -641,13 +650,13 @@ export class CoachComponent implements OnInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error('Please log in to create a session');
+        this.toastService.error("Please log in to create a session");
         return;
       }
 
       // Save to Supabase
       const { error } = await this.supabaseService.client
-        .from('training_sessions')
+        .from("training_sessions")
         .insert({
           coach_id: user.id,
           title: this.newSession.title,
@@ -656,7 +665,7 @@ export class CoachComponent implements OnInit {
           duration_minutes: this.newSession.duration,
           location: this.newSession.location,
           notes: this.newSession.notes,
-          status: 'scheduled',
+          status: "scheduled",
           created_at: new Date().toISOString(),
         });
 
@@ -664,18 +673,21 @@ export class CoachComponent implements OnInit {
         throw new Error(error.message);
       }
 
-      this.toastService.success('Training session created successfully!');
+      this.toastService.success("Training session created successfully!");
       this.showCreateSessionDialog = false;
 
       // Update stats
       const currentStats = this.stats();
-      const sessionsStat = currentStats.find(s => s.label === 'Active Sessions');
+      const sessionsStat = currentStats.find(
+        (s) => s.label === "Active Sessions",
+      );
       if (sessionsStat) {
         sessionsStat.value = String(parseInt(sessionsStat.value) + 1);
         this.stats.set([...currentStats]);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create session';
+      const message =
+        error instanceof Error ? error.message : "Failed to create session";
       this.toastService.error(message);
     } finally {
       this.isCreatingSession.set(false);
@@ -685,20 +697,22 @@ export class CoachComponent implements OnInit {
   viewMemberDetails(member: TeamMember): void {
     // Navigate to member profile or show details modal
     this.toastService.info(`Viewing ${member.name}'s profile`);
-    this.router.navigate(['/roster'], { queryParams: { member: member.id } });
+    this.router.navigate(["/roster"], { queryParams: { member: member.id } });
   }
 
   editMember(member: TeamMember): void {
     // Navigate to edit member page
     this.toastService.info(`Editing ${member.name}`);
-    this.router.navigate(['/roster'], { queryParams: { member: member.id, edit: true } });
+    this.router.navigate(["/roster"], {
+      queryParams: { member: member.id, edit: true },
+    });
   }
 
   /**
    * Check if any players have blocked consent
    */
   hasBlockedPlayers(): boolean {
-    return this.teamMembers().some(m => m.isConsentBlocked);
+    return this.teamMembers().some((m) => m.isConsentBlocked);
   }
 
   /**
@@ -706,8 +720,8 @@ export class CoachComponent implements OnInit {
    */
   requestDataSharing(member: TeamMember): void {
     this.toastService.info(`Sending data sharing request to ${member.name}...`);
-    this.router.navigate(['/settings/privacy'], { 
-      queryParams: { player: member.id, action: 'request' } 
+    this.router.navigate(["/settings/privacy"], {
+      queryParams: { player: member.id, action: "request" },
     });
   }
 

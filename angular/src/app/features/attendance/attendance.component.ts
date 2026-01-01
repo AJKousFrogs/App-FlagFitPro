@@ -34,7 +34,13 @@ import {
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 
-type EventType = "practice" | "game" | "meeting" | "film_session" | "conditioning" | "other";
+type EventType =
+  | "practice"
+  | "game"
+  | "meeting"
+  | "film_session"
+  | "conditioning"
+  | "other";
 type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
 @Component({
@@ -73,6 +79,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <p-button
                 label="Create Event"
                 icon="pi pi-plus"
+                [rounded]="true"
                 (onClick)="openCreateEventDialog()"
               ></p-button>
             }
@@ -147,7 +154,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                       <div class="event-meta">
                         <span>
                           <i class="pi pi-clock"></i>
-                          {{ event.start_time | date: 'MMM d, h:mm a' }}
+                          {{ event.start_time | date: "MMM d, h:mm a" }}
                         </span>
                         @if (event.location) {
                           <span>
@@ -166,15 +173,22 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                         <p-button
                           icon="pi pi-users"
                           [text]="true"
+                          [rounded]="true"
                           pTooltip="Take Attendance"
-                          (onClick)="openAttendanceDialog(event); $event.stopPropagation()"
+                          (onClick)="
+                            openAttendanceDialog(event);
+                            $event.stopPropagation()
+                          "
                         ></p-button>
                       } @else {
                         <p-button
                           icon="pi pi-check"
                           [text]="true"
+                          [rounded]="true"
                           pTooltip="Check In"
-                          (onClick)="quickCheckIn(event); $event.stopPropagation()"
+                          (onClick)="
+                            quickCheckIn(event); $event.stopPropagation()
+                          "
                         ></p-button>
                       }
                     </div>
@@ -221,20 +235,28 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                           shape="circle"
                           size="normal"
                         ></p-avatar>
-                        <span>{{ stat.player_name || 'Unknown' }}</span>
+                        <span>{{ stat.player_name || "Unknown" }}</span>
                       </div>
                     </td>
                     <td>
-                      <span class="stat-badge success">{{ stat.events_attended }}</span>
+                      <span class="stat-badge success">{{
+                        stat.events_attended
+                      }}</span>
                     </td>
                     <td>
-                      <span class="stat-badge danger">{{ stat.events_missed }}</span>
+                      <span class="stat-badge danger">{{
+                        stat.events_missed
+                      }}</span>
                     </td>
                     <td>
-                      <span class="stat-badge info">{{ stat.events_excused }}</span>
+                      <span class="stat-badge info">{{
+                        stat.events_excused
+                      }}</span>
                     </td>
                     <td>
-                      <span class="stat-badge warning">{{ stat.events_late }}</span>
+                      <span class="stat-badge warning">{{
+                        stat.events_late
+                      }}</span>
                     </td>
                     <td>
                       <div class="rate-cell">
@@ -247,7 +269,10 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                       </div>
                     </td>
                     <td>
-                      <span class="streak-badge" [class.active]="stat.current_streak > 0">
+                      <span
+                        class="streak-badge"
+                        [class.active]="stat.current_streak > 0"
+                      >
                         🔥 {{ stat.current_streak }}
                       </span>
                     </td>
@@ -349,11 +374,14 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <p-button
               label="Cancel"
               [text]="true"
+              [rounded]="true"
+              severity="secondary"
               (onClick)="showCreateEventDialog = false"
             ></p-button>
             <p-button
               label="Create Event"
               icon="pi pi-check"
+              [rounded]="true"
               (onClick)="createEvent()"
               [disabled]="!canCreateEvent()"
             ></p-button>
@@ -372,7 +400,12 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <div class="attendance-dialog">
               <div class="event-summary">
                 <h4>{{ selectedEvent()!.title }}</h4>
-                <p>{{ selectedEvent()!.start_time | date: 'EEEE, MMM d, y - h:mm a' }}</p>
+                <p>
+                  {{
+                    selectedEvent()!.start_time
+                      | date: "EEEE, MMM d, y - h:mm a"
+                  }}
+                </p>
               </div>
 
               <div class="attendance-list">
@@ -383,16 +416,23 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                         [label]="getInitials(record.player_name || 'U')"
                         shape="circle"
                       ></p-avatar>
-                      <span>{{ record.player_name || 'Unknown' }}</span>
+                      <span>{{ record.player_name || "Unknown" }}</span>
                     </div>
                     <div class="status-buttons">
                       @for (status of attendanceStatuses; track status.value) {
                         <p-button
                           [label]="status.label"
-                          [severity]="record.status === status.value ? status.severity : 'secondary'"
+                          [severity]="
+                            record.status === status.value
+                              ? status.severity
+                              : 'secondary'
+                          "
                           [outlined]="record.status !== status.value"
+                          [rounded]="true"
                           size="small"
-                          (onClick)="updateAttendanceStatus(record, status.value)"
+                          (onClick)="
+                            updateAttendanceStatus(record, status.value)
+                          "
                         ></p-button>
                       }
                     </div>
@@ -406,11 +446,14 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <p-button
               label="Close"
               [text]="true"
+              [rounded]="true"
+              severity="secondary"
               (onClick)="showAttendanceDialog = false"
             ></p-button>
             <p-button
               label="Save All"
               icon="pi pi-check"
+              [rounded]="true"
               (onClick)="saveAttendance()"
             ></p-button>
           </ng-template>
@@ -448,28 +491,29 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
       }
 
       .stat-icon {
-        font-size: 2rem;
-        color: var(--primary-color);
+        font-size: var(--icon-2xl); /* 2rem/32px */
+        color: var(--ds-primary-green);
 
         &.success {
-          color: var(--green-500);
+          color: var(--color-status-success);
         }
       }
 
       .stat-info {
         display: flex;
         flex-direction: column;
+        gap: var(--space-1);
       }
 
       .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-color);
+        font-size: var(--font-heading-lg); /* 1.5rem/24px */
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
       }
 
       .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-color-secondary);
+        font-size: var(--font-body-sm); /* 0.875rem/14px */
+        color: var(--color-text-secondary);
       }
 
       .card-header {
@@ -477,12 +521,12 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         justify-content: space-between;
         align-items: center;
         padding: var(--space-4);
-        border-bottom: 1px solid var(--surface-border);
+        border-bottom: 1px solid var(--color-border-primary);
 
         h3 {
           margin: 0;
-          font-size: 1.125rem;
-          font-weight: 600;
+          font-size: var(--font-heading-sm); /* 1.125rem/18px */
+          font-weight: var(--font-weight-semibold);
         }
       }
 
@@ -491,11 +535,12 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: var(--space-8);
-        color: var(--text-color-secondary);
+        padding: var(--space-10);
+        text-align: center;
+        color: var(--color-text-secondary);
 
         i {
-          font-size: 3rem;
+          font-size: var(--icon-3xl); /* 3rem/48px */
           margin-bottom: var(--space-4);
         }
       }
@@ -529,26 +574,29 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--primary-100);
-        border-radius: var(--border-radius);
-        color: var(--primary-color);
-        font-size: 1.25rem;
+        background-color: var(--ds-primary-green-subtle);
+        border-radius: var(--radius-lg);
+        color: var(--ds-primary-green);
+        font-size: var(--icon-lg); /* 1.25rem/20px */
       }
 
       .event-details {
         flex: 1;
+        min-width: 0;
       }
 
       .event-title {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-1);
+        color: var(--color-text-primary);
       }
 
       .event-meta {
         display: flex;
+        flex-wrap: wrap;
         gap: var(--space-4);
-        font-size: 0.875rem;
-        color: var(--text-color-secondary);
+        font-size: var(--font-body-sm); /* 0.875rem/14px */
+        color: var(--color-text-secondary);
 
         span {
           display: flex;
@@ -574,29 +622,29 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         align-items: center;
         justify-content: center;
         min-width: 28px;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-full);
+        font-size: var(--font-body-xs); /* 0.75rem/12px */
+        font-weight: var(--font-weight-semibold);
 
         &.success {
-          background-color: var(--green-100);
-          color: var(--green-700);
+          background-color: var(--color-status-success-light);
+          color: var(--color-status-success);
         }
 
         &.danger {
-          background-color: var(--red-100);
-          color: var(--red-700);
+          background-color: var(--color-status-error-light);
+          color: var(--color-status-error);
         }
 
         &.warning {
-          background-color: var(--yellow-100);
-          color: var(--yellow-700);
+          background-color: var(--color-status-warning-light);
+          color: var(--color-status-warning-text);
         }
 
         &.info {
-          background-color: var(--blue-100);
-          color: var(--blue-700);
+          background-color: var(--color-status-info-light);
+          color: var(--color-status-info);
         }
       }
 
@@ -608,18 +656,19 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         .rate-bar {
           width: 80px;
           height: 8px;
+          border-radius: var(--radius-sm);
         }
       }
 
       .streak-badge {
-        padding: 4px 8px;
-        border-radius: 12px;
-        background-color: var(--surface-100);
-        font-size: 0.875rem;
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-full);
+        background-color: var(--surface-secondary);
+        font-size: var(--font-body-sm);
 
         &.active {
-          background-color: var(--orange-100);
-          color: var(--orange-700);
+          background-color: var(--color-status-warning-light);
+          color: var(--color-status-warning-text);
         }
       }
 
@@ -635,8 +684,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         gap: var(--space-2);
 
         label {
-          font-weight: 500;
-          font-size: 0.875rem;
+          font-weight: var(--font-weight-medium);
+          font-size: var(--font-body-sm);
+          color: var(--color-text-primary);
         }
 
         &.checkbox-field {
@@ -659,17 +709,19 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
       .event-summary {
         padding: var(--space-4);
-        background-color: var(--surface-100);
-        border-radius: var(--border-radius);
+        background-color: var(--surface-secondary);
+        border-radius: var(--radius-lg);
 
         h4 {
           margin: 0 0 var(--space-1) 0;
+          font-size: var(--font-heading-sm);
+          font-weight: var(--font-weight-semibold);
         }
 
         p {
           margin: 0;
-          color: var(--text-color-secondary);
-          font-size: 0.875rem;
+          color: var(--color-text-secondary);
+          font-size: var(--font-body-sm);
         }
       }
 
@@ -741,7 +793,11 @@ export class AttendanceComponent implements OnInit {
     { label: "Other", value: "other" },
   ];
 
-  attendanceStatuses: Array<{ value: AttendanceStatus; label: string; severity: "success" | "danger" | "warn" | "info" }> = [
+  attendanceStatuses: Array<{
+    value: AttendanceStatus;
+    label: string;
+    severity: "success" | "danger" | "warn" | "info";
+  }> = [
     { value: "present", label: "Present", severity: "success" },
     { value: "late", label: "Late", severity: "warn" },
     { value: "excused", label: "Excused", severity: "info" },
@@ -778,7 +834,10 @@ export class AttendanceComponent implements OnInit {
 
   isCoach(): boolean {
     const user = this.authService.getUser();
-    return user?.user_metadata?.role === "coach" || user?.user_metadata?.role === "admin";
+    return (
+      user?.user_metadata?.role === "coach" ||
+      user?.user_metadata?.role === "admin"
+    );
   }
 
   loadEvents(): void {
@@ -803,7 +862,8 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (stats) => this.playerStats.set(stats),
-        error: (err) => this.toastService.error("Failed to load attendance stats"),
+        error: (err) =>
+          this.toastService.error("Failed to load attendance stats"),
       });
   }
 
@@ -850,7 +910,11 @@ export class AttendanceComponent implements OnInit {
   }
 
   canCreateEvent(): boolean {
-    return !!(this.newEvent.title && this.newEvent.event_type && this.newEvent.start_time);
+    return !!(
+      this.newEvent.title &&
+      this.newEvent.event_type &&
+      this.newEvent.start_time
+    );
   }
 
   createEvent(): void {
@@ -893,13 +957,19 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (records) => this.attendanceRecords.set(records),
-        error: () => this.toastService.error("Failed to load attendance records"),
+        error: () =>
+          this.toastService.error("Failed to load attendance records"),
       });
   }
 
-  updateAttendanceStatus(record: AttendanceRecord, status: AttendanceStatus): void {
+  updateAttendanceStatus(
+    record: AttendanceRecord,
+    status: AttendanceStatus,
+  ): void {
     this.attendanceRecords.update((records) =>
-      records.map((r) => (r.player_id === record.player_id ? { ...r, status } : r))
+      records.map((r) =>
+        r.player_id === record.player_id ? { ...r, status } : r,
+      ),
     );
   }
 

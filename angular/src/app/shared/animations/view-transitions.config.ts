@@ -53,28 +53,40 @@ export class ViewTransitionHelper {
    */
   static startTransitionWithOptions(
     callback: () => void,
-    options: ViewTransitionOptions = {}
+    options: ViewTransitionOptions = {},
   ): Promise<void> {
-    if (options.skipTransition || !this.isSupported() || this.prefersReducedMotion()) {
+    if (
+      options.skipTransition ||
+      !this.isSupported() ||
+      this.prefersReducedMotion()
+    ) {
       callback();
       return Promise.resolve();
     }
 
     // Set transition type attribute
     if (options.transitionType) {
-      document.documentElement.setAttribute("data-transition-type", options.transitionType);
+      document.documentElement.setAttribute(
+        "data-transition-type",
+        options.transitionType,
+      );
     }
 
     // Set transition name for specific element transitions
     if (options.transitionName) {
-      document.documentElement.setAttribute("data-transition-name", options.transitionName);
+      document.documentElement.setAttribute(
+        "data-transition-name",
+        options.transitionName,
+      );
     }
 
-    return (document as any).startViewTransition(callback).finished.finally(() => {
-      // Clean up attributes after transition
-      document.documentElement.removeAttribute("data-transition-type");
-      document.documentElement.removeAttribute("data-transition-name");
-    });
+    return (document as any)
+      .startViewTransition(callback)
+      .finished.finally(() => {
+        // Clean up attributes after transition
+        document.documentElement.removeAttribute("data-transition-type");
+        document.documentElement.removeAttribute("data-transition-name");
+      });
   }
 
   /**

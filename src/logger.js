@@ -17,9 +17,11 @@ const LogLevel = Object.freeze({
   NONE: 4,
 });
 
-const isDevelopment = typeof window !== "undefined" 
-  ? (window.location?.hostname === "localhost" || window.location?.hostname === "127.0.0.1")
-  : (typeof process !== "undefined" && process.env?.NODE_ENV !== "production");
+const isDevelopment =
+  typeof window !== "undefined"
+    ? window.location?.hostname === "localhost" ||
+      window.location?.hostname === "127.0.0.1"
+    : typeof process !== "undefined" && process.env?.NODE_ENV !== "production";
 
 // Current log level - can be adjusted at runtime
 let currentLogLevel = isDevelopment ? LogLevel.DEBUG : LogLevel.INFO;
@@ -39,10 +41,12 @@ const getTimestamp = () => new Date().toISOString();
 const createLogEntry = (level, args) => ({
   timestamp: getTimestamp(),
   level,
-  message: args.map(arg => 
-    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-  ).join(' '),
-  context: typeof window !== 'undefined' ? window.location?.pathname : 'server',
+  message: args
+    .map((arg) =>
+      typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg),
+    )
+    .join(" "),
+  context: typeof window !== "undefined" ? window.location?.pathname : "server",
 });
 
 const logger = {

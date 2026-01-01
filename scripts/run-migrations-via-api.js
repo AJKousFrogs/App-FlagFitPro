@@ -125,7 +125,7 @@ async function main() {
     }
   }
 
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 Migration Summary");
   console.log("=".repeat(60));
   console.log(`✅ Successful: ${successCount}`);

@@ -68,7 +68,9 @@ import {
               autocomplete="name"
               [class.ng-invalid]="isFieldInvalid('name')"
               [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('name') ? 'name-error' : null"
+              [attr.aria-describedby]="
+                isFieldInvalid('name') ? 'name-error' : null
+              "
             />
             @if (isFieldInvalid("name")) {
               <small id="name-error" class="p-error" role="alert">
@@ -90,7 +92,9 @@ import {
               autocomplete="email"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('email') ? 'register-email-error' : null"
+              [attr.aria-describedby]="
+                isFieldInvalid('email') ? 'register-email-error' : null
+              "
             />
             @if (isFieldInvalid("email")) {
               <small id="register-email-error" class="p-error" role="alert">
@@ -100,7 +104,9 @@ import {
           </div>
 
           <div class="p-field mb-4">
-            <label for="register-password" class="p-label required">Password</label>
+            <label for="register-password" class="p-label required"
+              >Password</label
+            >
             <input
               id="register-password"
               name="password"
@@ -112,7 +118,11 @@ import {
               autocomplete="new-password"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('password') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('password') ? 'register-password-error register-password-hint' : 'register-password-hint'"
+              [attr.aria-describedby]="
+                isFieldInvalid('password')
+                  ? 'register-password-error register-password-hint'
+                  : 'register-password-hint'
+              "
             />
             @if (isFieldInvalid("password")) {
               <small id="register-password-error" class="p-error" role="alert">
@@ -139,11 +149,21 @@ import {
               [class.ng-invalid]="isFieldInvalid('confirmPassword')"
               autocomplete="new-password"
               aria-required="true"
-              [attr.aria-invalid]="isFieldInvalid('confirmPassword') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'register-confirmPassword-error' : null"
+              [attr.aria-invalid]="
+                isFieldInvalid('confirmPassword') ? 'true' : null
+              "
+              [attr.aria-describedby]="
+                isFieldInvalid('confirmPassword')
+                  ? 'register-confirmPassword-error'
+                  : null
+              "
             />
             @if (isFieldInvalid("confirmPassword")) {
-              <small id="register-confirmPassword-error" class="p-error" role="alert">
+              <small
+                id="register-confirmPassword-error"
+                class="p-error"
+                role="alert"
+              >
                 {{ getFieldError("confirmPassword") }}
               </small>
             }
@@ -175,8 +195,9 @@ import {
                 inputId="termsAccepted"
               ></p-checkbox>
               <label for="termsAccepted" class="terms-label">
-                I agree to the <a href="/docs/terms" target="_blank">Terms of Service</a> 
-                and <a href="/docs/privacy" target="_blank">Privacy Policy</a>
+                I agree to the
+                <a href="/docs/terms" target="_blank">Terms of Service</a> and
+                <a href="/docs/privacy" target="_blank">Privacy Policy</a>
               </label>
             </div>
             @if (isFieldInvalid("termsAccepted")) {
@@ -190,6 +211,7 @@ import {
             type="submit"
             label="Create Account"
             icon="pi pi-user-plus"
+            [rounded]="true"
             [loading]="isLoading()"
             [disabled]="registerForm.invalid"
             styleClass="w-full mb-4"
@@ -414,7 +436,7 @@ export class RegisterComponent {
             this.toastService.error(
               result.message ||
                 "This password has been found in data breaches. Please choose a different password.",
-              "Password Security"
+              "Password Security",
             );
             return;
           }
@@ -457,7 +479,9 @@ export class RegisterComponent {
           this.isLoading.set(false);
         },
         error: (error) => {
-          this.toastService.error(error.message || "Registration failed. Please try again.");
+          this.toastService.error(
+            error.message || "Registration failed. Please try again.",
+          );
           this.isLoading.set(false);
         },
       });

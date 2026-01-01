@@ -63,17 +63,22 @@ import { SupabaseService } from "../../../core/services/supabase.service";
             <p-button
               label="Go to Dashboard"
               icon="pi pi-home"
+              [rounded]="true"
               [routerLink]="['/dashboard']"
               styleClass="w-full mt-4"
             ></p-button>
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
-            <p-message severity="error" [text]="verificationError()"></p-message>
+            <p-message
+              severity="error"
+              [text]="verificationError()"
+            ></p-message>
             <p-button
               label="Resend Verification Email"
               icon="pi pi-send"
               [outlined]="true"
+              [rounded]="true"
               (onClick)="resendVerification()"
               [loading]="isResending()"
               styleClass="w-full mt-4"
@@ -96,6 +101,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
               label="Resend Verification Email"
               icon="pi pi-send"
               [outlined]="true"
+              [rounded]="true"
               (onClick)="resendVerification()"
               [loading]="isResending()"
               styleClass="w-full mt-4"
@@ -243,10 +249,12 @@ export class VerifyEmailComponent implements OnInit {
 
     try {
       // Set the session using the tokens from the URL
-      const { data, error } = await this.supabaseService.client.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
+      const { data, error } = await this.supabaseService.client.auth.setSession(
+        {
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        },
+      );
 
       if (error) {
         throw error;

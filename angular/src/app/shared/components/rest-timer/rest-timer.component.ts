@@ -22,7 +22,7 @@ import { FormsModule } from "@angular/forms";
   template: `
     <!-- Floating Timer Button (when minimized) -->
     @if (isMinimized() && isRunning()) {
-      <button 
+      <button
         class="floating-timer"
         [class.warning]="remainingSeconds() <= 10"
         (click)="maximize()"
@@ -32,10 +32,7 @@ import { FormsModule } from "@angular/forms";
           <span class="floating-time">{{ formattedTime() }}</span>
         </div>
         <div class="floating-progress">
-          <div 
-            class="progress-fill" 
-            [style.width.%]="progressPercent()"
-          ></div>
+          <div class="progress-fill" [style.width.%]="progressPercent()"></div>
         </div>
       </button>
     }
@@ -80,7 +77,7 @@ import { FormsModule } from "@angular/forms";
 
       <div class="timer-body">
         <!-- Timer Display -->
-        <div 
+        <div
           class="timer-display"
           [class.running]="isRunning()"
           [class.warning]="remainingSeconds() <= 10 && isRunning()"
@@ -116,7 +113,7 @@ import { FormsModule } from "@angular/forms";
         @if (!isRunning()) {
           <div class="time-presets">
             @for (preset of presets; track preset) {
-              <button 
+              <button
                 class="preset-btn"
                 [class.active]="selectedDuration() === preset"
                 (click)="setDuration(preset)"
@@ -174,260 +171,267 @@ import { FormsModule } from "@angular/forms";
 
         <!-- Sound Toggle -->
         <div class="sound-toggle">
-          <button 
+          <button
             class="sound-btn"
             [class.muted]="isMuted()"
             (click)="toggleMute()"
           >
             <i [class]="isMuted() ? 'pi pi-volume-off' : 'pi pi-volume-up'"></i>
-            <span>{{ isMuted() ? 'Sound Off' : 'Sound On' }}</span>
+            <span>{{ isMuted() ? "Sound Off" : "Sound On" }}</span>
           </button>
         </div>
       </div>
     </p-dialog>
   `,
-  styles: [`
-    /* Floating Timer Button */
-    .floating-timer {
-      position: fixed;
-      bottom: 80px;
-      right: var(--space-4);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: var(--space-3);
-      background: var(--color-brand-primary);
-      color: white;
-      border: none;
-      border-radius: var(--p-border-radius);
-      cursor: pointer;
-      box-shadow: var(--shadow-lg);
-      min-width: 100px;
-      transition: all 0.2s ease;
-    }
-
-    .floating-timer:hover {
-      transform: scale(1.05);
-    }
-
-    .floating-timer.warning {
-      background: var(--color-status-warning);
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .floating-content {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .floating-time {
-      font-size: 1.25rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .floating-progress {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-      margin-top: var(--space-2);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: white;
-      transition: width 0.5s linear;
-    }
-
-    /* Timer Dialog */
-    :host ::ng-deep .rest-timer-dialog {
-      .p-dialog-header {
-        padding: var(--space-3);
-      }
-      
-      .p-dialog-content {
-        padding: 0 var(--space-4) var(--space-4);
-      }
-    }
-
-    .timer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .timer-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-weight: 600;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: var(--space-1);
-    }
-
-    .timer-body {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    /* Timer Display */
-    .timer-display {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 0 auto;
-    }
-
-    .progress-ring {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
-    }
-
-    .progress-ring-bg {
-      stroke: var(--p-surface-200);
-    }
-
-    .progress-ring-fill {
-      stroke: var(--color-brand-primary);
-      transition: stroke-dashoffset 0.5s linear;
-    }
-
-    .timer-display.warning .progress-ring-fill {
-      stroke: var(--color-status-warning);
-    }
-
-    .timer-display.finished .progress-ring-fill {
-      stroke: var(--color-status-success);
-    }
-
-    .timer-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .time-value {
-      font-size: 3rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: var(--text-primary);
-      line-height: 1;
-    }
-
-    .timer-display.warning .time-value {
-      color: var(--color-status-warning);
-    }
-
-    .timer-display.finished .time-value {
-      color: var(--color-status-success);
-    }
-
-    .time-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-top: var(--space-1);
-    }
-
-    /* Time Presets */
-    .time-presets {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-2);
-    }
-
-    .preset-btn {
-      padding: var(--space-2);
-      border: 1px solid var(--p-surface-300);
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .preset-btn:hover {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
-    }
-
-    .preset-btn.active {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-primary);
-      color: white;
-    }
-
-    /* Custom Duration */
-    .custom-duration {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .custom-duration label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    /* Controls */
-    .timer-controls {
-      display: flex;
-      gap: var(--space-2);
-      justify-content: center;
-    }
-
-    /* Sound Toggle */
-    .sound-toggle {
-      display: flex;
-      justify-content: center;
-    }
-
-    .sound-btn {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      cursor: pointer;
-      border-radius: var(--p-border-radius);
-      transition: all 0.2s ease;
-    }
-
-    .sound-btn:hover {
-      background: var(--p-surface-100);
-    }
-
-    .sound-btn.muted {
-      color: var(--color-status-error);
-    }
-
-    @media (max-width: 768px) {
+  styles: [
+    `
+      /* Floating Timer Button */
       .floating-timer {
-        bottom: 140px;
+        position: fixed;
+        bottom: 80px;
+        right: var(--space-4);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--space-3);
+        background: var(--color-brand-primary);
+        color: white;
+        border: none;
+        border-radius: var(--p-border-radius);
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        min-width: 100px;
+        transition: all 0.2s ease;
       }
-    }
-  `],
+
+      .floating-timer:hover {
+        transform: scale(1.05);
+      }
+
+      .floating-timer.warning {
+        background: var(--color-status-warning);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .floating-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .floating-time {
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .floating-progress {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        margin-top: var(--space-2);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: white;
+        transition: width 0.5s linear;
+      }
+
+      /* Timer Dialog */
+      :host ::ng-deep .rest-timer-dialog {
+        .p-dialog-header {
+          padding: var(--space-3);
+        }
+
+        .p-dialog-content {
+          padding: 0 var(--space-4) var(--space-4);
+        }
+      }
+
+      .timer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .timer-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-weight: 600;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: var(--space-1);
+      }
+
+      .timer-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      /* Timer Display */
+      .timer-display {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+      }
+
+      .progress-ring {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .progress-ring-bg {
+        stroke: var(--p-surface-200);
+      }
+
+      .progress-ring-fill {
+        stroke: var(--color-brand-primary);
+        transition: stroke-dashoffset 0.5s linear;
+      }
+
+      .timer-display.warning .progress-ring-fill {
+        stroke: var(--color-status-warning);
+      }
+
+      .timer-display.finished .progress-ring-fill {
+        stroke: var(--color-status-success);
+      }
+
+      .timer-text {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .time-value {
+        font-size: 3rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+
+      .timer-display.warning .time-value {
+        color: var(--color-status-warning);
+      }
+
+      .timer-display.finished .time-value {
+        color: var(--color-status-success);
+      }
+
+      .time-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: var(--space-1);
+      }
+
+      /* Time Presets */
+      .time-presets {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-2);
+      }
+
+      .preset-btn {
+        padding: var(--space-2);
+        border: 1px solid var(--p-surface-300);
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .preset-btn:hover {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-light);
+      }
+
+      .preset-btn.active {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary);
+        color: white;
+      }
+
+      /* Custom Duration */
+      .custom-duration {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .custom-duration label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      /* Controls */
+      .timer-controls {
+        display: flex;
+        gap: var(--space-2);
+        justify-content: center;
+      }
+
+      /* Sound Toggle */
+      .sound-toggle {
+        display: flex;
+        justify-content: center;
+      }
+
+      .sound-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        cursor: pointer;
+        border-radius: var(--p-border-radius);
+        transition: all 0.2s ease;
+      }
+
+      .sound-btn:hover {
+        background: var(--p-surface-100);
+      }
+
+      .sound-btn.muted {
+        color: var(--color-status-error);
+      }
+
+      @media (max-width: 768px) {
+        .floating-timer {
+          bottom: 140px;
+        }
+      }
+    `,
+  ],
 })
 export class RestTimerComponent implements OnDestroy {
   @Input() defaultDuration = 60; // seconds
@@ -494,7 +498,9 @@ export class RestTimerComponent implements OnDestroy {
     if (seconds < 60) return `${seconds}s`;
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return secs > 0 ? `${mins}:${secs.toString().padStart(2, "0")}` : `${mins}m`;
+    return secs > 0
+      ? `${mins}:${secs.toString().padStart(2, "0")}`
+      : `${mins}m`;
   }
 
   start(): void {
@@ -521,8 +527,8 @@ export class RestTimerComponent implements OnDestroy {
   }
 
   addTime(seconds: number): void {
-    this.remainingSeconds.update(v => v + seconds);
-    this.selectedDuration.update(v => v + seconds);
+    this.remainingSeconds.update((v) => v + seconds);
+    this.selectedDuration.update((v) => v + seconds);
   }
 
   minimize(): void {
@@ -542,24 +548,24 @@ export class RestTimerComponent implements OnDestroy {
   }
 
   toggleMute(): void {
-    this.isMuted.update(v => !v);
+    this.isMuted.update((v) => !v);
   }
 
   private startInterval(): void {
     this.clearInterval();
-    
+
     this.intervalId = setInterval(() => {
-      this.remainingSeconds.update(v => {
+      this.remainingSeconds.update((v) => {
         if (v <= 1) {
           this.onTimerComplete();
           return 0;
         }
-        
+
         // Play tick sound at 10 seconds
         if (v <= 11 && v > 1 && !this.isMuted()) {
           this.playTickSound();
         }
-        
+
         return v - 1;
       });
     }, 1000);
@@ -575,20 +581,24 @@ export class RestTimerComponent implements OnDestroy {
   private onTimerComplete(): void {
     this.clearInterval();
     this.isRunning.set(false);
-    
+
     if (!this.isMuted()) {
       this.playCompleteSound();
     }
-    
+
     // Vibrate if supported
     if (navigator.vibrate) {
       navigator.vibrate([200, 100, 200]);
     }
-    
+
     this.timerComplete.emit();
-    
+
     // Show notification if minimized
-    if (this.isMinimized() && "Notification" in window && Notification.permission === "granted") {
+    if (
+      this.isMinimized() &&
+      "Notification" in window &&
+      Notification.permission === "granted"
+    ) {
       new Notification("Rest Timer Complete", {
         body: "Time to get back to your workout!",
         icon: "/assets/icons/icon-192x192.png",
@@ -602,19 +612,22 @@ export class RestTimerComponent implements OnDestroy {
       if (!this.audioContext) {
         this.audioContext = new AudioContext();
       }
-      
+
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(this.audioContext.destination);
-      
+
       oscillator.frequency.value = 800;
       oscillator.type = "sine";
-      
+
       gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-      
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        this.audioContext.currentTime + 0.1,
+      );
+
       oscillator.start(this.audioContext.currentTime);
       oscillator.stop(this.audioContext.currentTime + 0.1);
     } catch {
@@ -627,36 +640,42 @@ export class RestTimerComponent implements OnDestroy {
       if (!this.audioContext) {
         this.audioContext = new AudioContext();
       }
-      
+
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(this.audioContext.destination);
-      
+
       oscillator.frequency.value = 523.25; // C5
       oscillator.type = "sine";
-      
+
       gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
-      
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        this.audioContext.currentTime + 0.5,
+      );
+
       oscillator.start(this.audioContext.currentTime);
       oscillator.stop(this.audioContext.currentTime + 0.5);
-      
+
       // Play second note
       setTimeout(() => {
         const osc2 = this.audioContext!.createOscillator();
         const gain2 = this.audioContext!.createGain();
-        
+
         osc2.connect(gain2);
         gain2.connect(this.audioContext!.destination);
-        
+
         osc2.frequency.value = 659.25; // E5
         osc2.type = "sine";
-        
+
         gain2.gain.setValueAtTime(0.3, this.audioContext!.currentTime);
-        gain2.gain.exponentialRampToValueAtTime(0.01, this.audioContext!.currentTime + 0.5);
-        
+        gain2.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext!.currentTime + 0.5,
+        );
+
         osc2.start(this.audioContext!.currentTime);
         osc2.stop(this.audioContext!.currentTime + 0.5);
       }, 150);

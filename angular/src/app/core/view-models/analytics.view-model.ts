@@ -6,19 +6,19 @@
  * Perfect for live analytics dashboards
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { interval } from "rxjs";
-import { switchMap, map, shareReplay, startWith } from "rxjs/operators";
+import { Injectable, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { ReactiveViewModel } from "./reactive.view-model";
+import { interval } from "rxjs";
+import { map, shareReplay, startWith, switchMap } from "rxjs/operators";
 import {
   AnalyticsDataService,
   PerformanceTrendsData,
   TeamChemistryData,
   TrainingDistributionData,
 } from "../services/data/analytics-data.service";
+import { ReactiveViewModel } from "./reactive.view-model";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class AnalyticsViewModel extends ReactiveViewModel {
   private analyticsDataService = inject(AnalyticsDataService);
 

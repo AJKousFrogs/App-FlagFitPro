@@ -99,6 +99,7 @@ npm run dev
 ```
 
 This will start:
+
 - **Frontend**: `http://localhost:8888`
 - **Functions**: `http://localhost:8888/.netlify/functions/*`
 - **API Routes**: `http://localhost:8888/api/*` (redirected to functions)
@@ -145,19 +146,22 @@ netlify/functions/
 All functions use a standardized `baseHandler`:
 
 ```javascript
-const { baseHandler } = require('./utils/base-handler.cjs');
-const { createSuccessResponse, createErrorResponse } = require('./utils/error-handler.cjs');
+const { baseHandler } = require("./utils/base-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['GET', 'POST'],
-    rateLimitType: 'READ',  // READ, CREATE, UPDATE, DELETE
+    functionName: "my-function",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "READ", // READ, CREATE, UPDATE, DELETE
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       // Your function logic here
-      return createSuccessResponse({ data: 'example' });
-    }
+      return createSuccessResponse({ data: "example" });
+    },
   });
 };
 ```
@@ -168,33 +172,33 @@ exports.handler = async (event, context) => {
 
 ### Core Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/health` | No | Health check |
-| GET | `/api/api-docs` | No | API documentation |
+| Method | Endpoint        | Auth | Description       |
+| ------ | --------------- | ---- | ----------------- |
+| GET    | `/api/health`   | No   | Health check      |
+| GET    | `/api/api-docs` | No   | API documentation |
 
 ### Authentication
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/login` | No | Login with credentials |
-| POST | `/api/auth/reset-password` | No | Request password reset |
-| GET | `/auth-me` | Yes | Verify token and get user |
+| Method | Endpoint                   | Auth | Description               |
+| ------ | -------------------------- | ---- | ------------------------- |
+| POST   | `/api/auth/login`          | No   | Login with credentials    |
+| POST   | `/api/auth/reset-password` | No   | Request password reset    |
+| GET    | `/auth-me`                 | Yes  | Verify token and get user |
 
 ### AI Coaching
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/ai/chat` | Yes | AI chat with safety tiers |
-| POST | `/api/ai/feedback` | Yes | Submit feedback on AI |
+| Method | Endpoint           | Auth | Description               |
+| ------ | ------------------ | ---- | ------------------------- |
+| POST   | `/api/ai/chat`     | Yes  | AI chat with safety tiers |
+| POST   | `/api/ai/feedback` | Yes  | Submit feedback on AI     |
 
 ### Load Management
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/load-management` | Yes | Overview (ACWR, monotony, TSB) |
-| GET | `/api/load-management/acwr` | Yes | ACWR calculation |
-| GET | `/api/load-management/injury-risk` | Yes | Composite injury risk |
+| Method | Endpoint                           | Auth | Description                    |
+| ------ | ---------------------------------- | ---- | ------------------------------ |
+| GET    | `/api/load-management`             | Yes  | Overview (ACWR, monotony, TSB) |
+| GET    | `/api/load-management/acwr`        | Yes  | ACWR calculation               |
+| GET    | `/api/load-management/injury-risk` | Yes  | Composite injury risk          |
 
 See [API.md](./API.md) for the complete API reference.
 
@@ -208,20 +212,23 @@ All protected endpoints verify JWT tokens from Supabase Auth:
 
 ```javascript
 // In base-handler.cjs
-const { data: { user }, error } = await supabase.auth.getUser(token);
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser(token);
 if (error || !user) {
-  return createErrorResponse('Unauthorized', 401, 'unauthorized');
+  return createErrorResponse("Unauthorized", 401, "unauthorized");
 }
 ```
 
 ### 2. Rate Limiting
 
-| Tier | Requests | Window | Endpoints |
-|------|----------|--------|-----------|
-| READ | 100 | 1 minute | GET requests |
-| CREATE | 20 | 1 minute | POST requests |
-| UPDATE | 30 | 1 minute | PUT/PATCH requests |
-| DELETE | 10 | 1 minute | DELETE requests |
+| Tier   | Requests | Window   | Endpoints          |
+| ------ | -------- | -------- | ------------------ |
+| READ   | 100      | 1 minute | GET requests       |
+| CREATE | 20       | 1 minute | POST requests      |
+| UPDATE | 30       | 1 minute | PUT/PATCH requests |
+| DELETE | 10       | 1 minute | DELETE requests    |
 
 ### 3. Row Level Security (RLS)
 
@@ -251,25 +258,25 @@ AI responses are classified into safety tiers:
 
 ```javascript
 // netlify/functions/my-function.cjs
-const { baseHandler } = require('./utils/base-handler.cjs');
-const { createSuccessResponse } = require('./utils/error-handler.cjs');
-const { supabaseAdmin } = require('./supabase-client.cjs');
+const { baseHandler } = require("./utils/base-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "my-function",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const { data, error } = await supabaseAdmin
-        .from('my_table')
-        .select('*')
-        .eq('user_id', userId);
-      
+        .from("my_table")
+        .select("*")
+        .eq("user_id", userId);
+
       if (error) throw error;
       return createSuccessResponse(data);
-    }
+    },
   });
 };
 ```

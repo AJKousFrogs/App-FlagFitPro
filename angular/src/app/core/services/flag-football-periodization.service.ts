@@ -203,18 +203,22 @@ const EVIDENCE_BASE: Record<string, EvidenceReference> = {
   gabbett_2016: {
     authors: "Gabbett, T.J.",
     year: 2016,
-    title: "The training—injury prevention paradox: should athletes be training smarter and harder?",
+    title:
+      "The training—injury prevention paradox: should athletes be training smarter and harder?",
     journal: "British Journal of Sports Medicine",
     keyFinding: "ACWR 0.8-1.3 is optimal; >1.5 increases injury risk 2-4x",
-    applicationToFlagFootball: "Monitor weekly load changes, never increase >10% per week",
+    applicationToFlagFootball:
+      "Monitor weekly load changes, never increase >10% per week",
   },
   haugen_2019: {
     authors: "Haugen, T., et al.",
     year: 2019,
     title: "Sprint interval training for elite team-sport athletes",
     journal: "International Journal of Sports Physiology and Performance",
-    keyFinding: "Short sprints (10-30m) with full recovery optimize acceleration",
-    applicationToFlagFootball: "Focus on 10-20m sprints with 1:12-20 work:rest ratio",
+    keyFinding:
+      "Short sprints (10-30m) with full recovery optimize acceleration",
+    applicationToFlagFootball:
+      "Focus on 10-20m sprints with 1:12-20 work:rest ratio",
   },
   asadi_2017: {
     authors: "Asadi, A., et al.",
@@ -222,23 +226,28 @@ const EVIDENCE_BASE: Record<string, EvidenceReference> = {
     title: "Effects of plyometric training on change-of-direction ability",
     journal: "Sports Medicine",
     keyFinding: "8-12 weeks of plyometrics improve COD by 4-8%",
-    applicationToFlagFootball: "Include lateral bounds, single-leg hops, depth jumps",
+    applicationToFlagFootball:
+      "Include lateral bounds, single-leg hops, depth jumps",
   },
   suchomel_2016: {
     authors: "Suchomel, T.J., et al.",
     year: 2016,
     title: "The importance of muscular strength in athletic performance",
     journal: "Sports Medicine",
-    keyFinding: "Relative strength (strength/bodyweight) correlates with sprint and COD",
-    applicationToFlagFootball: "Prioritize relative strength over absolute mass",
+    keyFinding:
+      "Relative strength (strength/bodyweight) correlates with sprint and COD",
+    applicationToFlagFootball:
+      "Prioritize relative strength over absolute mass",
   },
   comfort_2014: {
     authors: "Comfort, P., et al.",
     year: 2014,
     title: "Relationships between strength, sprint, and jump performance",
     journal: "Journal of Strength and Conditioning Research",
-    keyFinding: "Eccentric strength critical for deceleration and injury prevention",
-    applicationToFlagFootball: "Include Nordic curls, eccentric squats, landing drills",
+    keyFinding:
+      "Eccentric strength critical for deceleration and injury prevention",
+    applicationToFlagFootball:
+      "Include Nordic curls, eccentric squats, landing drills",
   },
   mujika_2003: {
     authors: "Mujika, I., Padilla, S.",
@@ -261,23 +270,28 @@ const EVIDENCE_BASE: Record<string, EvidenceReference> = {
     year: 2009,
     title: "Periodization: Theory and Methodology of Training",
     journal: "Human Kinetics (Book)",
-    keyFinding: "Block periodization allows concentrated loading of specific qualities",
-    applicationToFlagFootball: "Use accumulation-transmutation-realization blocks",
+    keyFinding:
+      "Block periodization allows concentrated loading of specific qualities",
+    applicationToFlagFootball:
+      "Use accumulation-transmutation-realization blocks",
   },
   issurin_2010: {
     authors: "Issurin, V.B.",
     year: 2010,
-    title: "New horizons for the methodology and physiology of training periodization",
+    title:
+      "New horizons for the methodology and physiology of training periodization",
     journal: "Sports Medicine",
     keyFinding: "Residual training effects: strength 30±5 days, speed 5±3 days",
-    applicationToFlagFootball: "Build strength base first, speed work closer to competition",
+    applicationToFlagFootball:
+      "Build strength base first, speed work closer to competition",
   },
   brughelli_2008: {
     authors: "Brughelli, M., et al.",
     year: 2008,
     title: "Understanding change of direction ability in sport",
     journal: "Sports Medicine",
-    keyFinding: "COD requires eccentric strength, reactive strength, and technique",
+    keyFinding:
+      "COD requires eccentric strength, reactive strength, and technique",
     applicationToFlagFootball: "Train all three components for elite agility",
   },
 };
@@ -305,7 +319,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Active Recovery",
     type: "off_season_rest",
     durationWeeks: 4,
-    description: "Mental and physical recovery after season. Address minor injuries. Maintain movement quality without structured training.",
+    description:
+      "Mental and physical recovery after season. Address minor injuries. Maintain movement quality without structured training.",
     primaryFocus: ["recovery", "mobility", "injury_prevention"],
     secondaryFocus: ["aerobic_base"],
     volumeMultiplier: 0.3,
@@ -361,7 +376,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Foundation Building",
     type: "foundation",
     durationWeeks: 4,
-    description: "Build aerobic base and movement quality. Establish strength foundation without adding bulk. Focus on eccentric strength for injury prevention.",
+    description:
+      "Build aerobic base and movement quality. Establish strength foundation without adding bulk. Focus on eccentric strength for injury prevention.",
     primaryFocus: ["aerobic_base", "strength_endurance", "mobility"],
     secondaryFocus: ["injury_prevention", "core"],
     volumeMultiplier: 0.6,
@@ -433,7 +449,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Strength Accumulation",
     type: "strength_accumulation",
     durationWeeks: 4,
-    description: "Build relative strength (strength/bodyweight ratio). Critical for sprint and COD performance. Avoid hypertrophy-focused training.",
+    description:
+      "Build relative strength (strength/bodyweight ratio). Critical for sprint and COD performance. Avoid hypertrophy-focused training.",
     primaryFocus: ["maximal_strength", "strength_endurance"],
     secondaryFocus: ["power", "core"],
     volumeMultiplier: 0.8,
@@ -507,7 +524,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Power Development",
     type: "power_development",
     durationWeeks: 4,
-    description: "Convert strength to power. Olympic lift variations, explosive movements. Introduce reactive agility. Build rate of force development.",
+    description:
+      "Convert strength to power. Olympic lift variations, explosive movements. Introduce reactive agility. Build rate of force development.",
     primaryFocus: ["power", "speed"],
     secondaryFocus: ["agility", "plyometrics"],
     volumeMultiplier: 0.9,
@@ -580,7 +598,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Speed & Explosive",
     type: "speed_development",
     durationWeeks: 4,
-    description: "Peak speed development. Maximum velocity work. Sport-specific agility. Final preparation before competition season.",
+    description:
+      "Peak speed development. Maximum velocity work. Sport-specific agility. Final preparation before competition season.",
     primaryFocus: ["speed", "agility"],
     secondaryFocus: ["power", "plyometrics"],
     volumeMultiplier: 1.0,
@@ -650,7 +669,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "In-Season Maintenance",
     type: "in_season_maintenance",
     durationWeeks: 12,
-    description: "Maintain fitness during competition. 2x/week strength minimum. Manage fatigue. Focus on recovery between games.",
+    description:
+      "Maintain fitness during competition. 2x/week strength minimum. Manage fatigue. Focus on recovery between games.",
     primaryFocus: ["injury_prevention", "recovery"],
     secondaryFocus: ["power", "speed"],
     volumeMultiplier: 0.6,
@@ -683,11 +703,7 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       maxContactsPerSession: 40,
       maxContactsPerWeek: 80,
       intensityLevel: "medium",
-      allowedExercises: [
-        "box jumps",
-        "bounds",
-        "reactive hops",
-      ],
+      allowedExercises: ["box jumps", "bounds", "reactive hops"],
       landingEmphasis: true,
       decelerationWork: false, // Games provide this
     },
@@ -720,7 +736,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Mid-Season Reload",
     type: "mid_season_reload",
     durationWeeks: 4,
-    description: "Strategic mid-season base building. Extra sprint work to build 'reserve'. Address minor injuries. Rebuild durability for second half of season.",
+    description:
+      "Strategic mid-season base building. Extra sprint work to build 'reserve'. Address minor injuries. Rebuild durability for second half of season.",
     primaryFocus: ["speed", "strength_endurance", "injury_prevention"],
     secondaryFocus: ["power", "aerobic_base"],
     volumeMultiplier: 0.8,
@@ -792,7 +809,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Championship Peak",
     type: "peak",
     durationWeeks: 4,
-    description: "Peak for major tournaments. Reduce volume, maintain intensity. Sharpen speed and agility. Taper final 2 weeks.",
+    description:
+      "Peak for major tournaments. Reduce volume, maintain intensity. Sharpen speed and agility. Taper final 2 weeks.",
     primaryFocus: ["speed", "power"],
     secondaryFocus: ["agility", "recovery"],
     volumeMultiplier: 0.7,
@@ -861,7 +879,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     name: "Late Season Competition",
     type: "in_season_maintenance",
     durationWeeks: 8,
-    description: "Final competition phase. Maintain fitness. Manage accumulated fatigue. Prepare for off-season.",
+    description:
+      "Final competition phase. Maintain fitness. Manage accumulated fatigue. Prepare for off-season.",
     primaryFocus: ["injury_prevention", "recovery"],
     secondaryFocus: ["power", "speed"],
     volumeMultiplier: 0.5,
@@ -880,11 +899,7 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       repsPerSet: [4, 6],
       intensityRange: [70, 80],
       restPeriodSeconds: [180, 240],
-      exerciseTypes: [
-        "maintenance lifts",
-        "injury prevention",
-        "core work",
-      ],
+      exerciseTypes: ["maintenance lifts", "injury prevention", "core work"],
       avoidBulking: true,
       focusOnPower: true,
     },
@@ -892,10 +907,7 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       maxContactsPerSession: 30,
       maxContactsPerWeek: 60,
       intensityLevel: "low",
-      allowedExercises: [
-        "box jumps",
-        "basic bounds",
-      ],
+      allowedExercises: ["box jumps", "basic bounds"],
       landingEmphasis: true,
       decelerationWork: false,
     },
@@ -914,10 +926,7 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Prepare body for off-season rest",
       "Address any issues before they worsen",
     ],
-    evidenceBase: [
-      EVIDENCE_BASE["turner_2014"],
-      EVIDENCE_BASE["gabbett_2016"],
-    ],
+    evidenceBase: [EVIDENCE_BASE["turner_2014"], EVIDENCE_BASE["gabbett_2016"]],
   },
 };
 
@@ -935,7 +944,9 @@ export class FlagFootballPeriodizationService {
   // Current phase
   private readonly _currentPhase = signal<PhaseConfig | null>(null);
   private readonly _currentWeek = signal<number>(1);
-  private readonly _weeklyTemplate = signal<WeeklyTrainingTemplate | null>(null);
+  private readonly _weeklyTemplate = signal<WeeklyTrainingTemplate | null>(
+    null,
+  );
 
   // Public signals
   readonly currentPhase = this._currentPhase.asReadonly();
@@ -944,7 +955,9 @@ export class FlagFootballPeriodizationService {
 
   // Computed
   readonly phaseName = computed(() => this._currentPhase()?.name || "Unknown");
-  readonly phaseType = computed(() => this._currentPhase()?.type || "foundation");
+  readonly phaseType = computed(
+    () => this._currentPhase()?.type || "foundation",
+  );
 
   /**
    * Get phase configuration for a given date
@@ -1022,7 +1035,7 @@ export class FlagFootballPeriodizationService {
    */
   private generateWeeklyTemplate(
     phase: PhaseConfig,
-    weekNum: number
+    weekNum: number,
   ): WeeklyTrainingTemplate {
     const days: DailyTrainingTemplate[] = [];
 
@@ -1070,7 +1083,9 @@ export class FlagFootballPeriodizationService {
       dayOfWeek: 4,
       dayName: "Thursday",
       sessionType: "training",
-      primaryFocus: phase.primaryFocus.includes("power") ? "power" : "maximal_strength",
+      primaryFocus: phase.primaryFocus.includes("power")
+        ? "power"
+        : "maximal_strength",
       exercises: this.generateStrengthSession(phase),
       estimatedDuration: 60,
       targetRPE: 7,
@@ -1099,7 +1114,10 @@ export class FlagFootballPeriodizationService {
       exercises: [],
       estimatedDuration: phase.type === "in_season_maintenance" ? 90 : 45,
       targetRPE: phase.type === "in_season_maintenance" ? 9 : 6,
-      notes: phase.type === "in_season_maintenance" ? "Game Day" : "Optional session",
+      notes:
+        phase.type === "in_season_maintenance"
+          ? "Game Day"
+          : "Optional session",
     });
 
     // Sunday - Rest
@@ -1121,10 +1139,12 @@ export class FlagFootballPeriodizationService {
       totalPlyoContacts: phase.plyometricConfig.maxContactsPerWeek,
       totalStrengthSets: phase.strengthConfig.setsPerExercise[1] * 6, // Approximate
       estimatedLoad: Math.round(
-        phase.volumeMultiplier * phase.intensityMultiplier * 1000
+        phase.volumeMultiplier * phase.intensityMultiplier * 1000,
       ),
       trainingDays: days.filter((d) => d.sessionType === "training").length,
-      restDays: days.filter((d) => d.sessionType === "rest" || d.sessionType === "recovery").length,
+      restDays: days.filter(
+        (d) => d.sessionType === "rest" || d.sessionType === "recovery",
+      ).length,
     };
 
     return {
@@ -1142,7 +1162,7 @@ export class FlagFootballPeriodizationService {
    */
   private generateExercisesForFocus(
     phase: PhaseConfig,
-    focus: TrainingFocus
+    focus: TrainingFocus,
   ): ExerciseTemplate[] {
     const exercises: ExerciseTemplate[] = [];
 
@@ -1176,7 +1196,7 @@ export class FlagFootballPeriodizationService {
             rest: 90,
             notes: "Eccentric focus - injury prevention",
             evidenceBase: "Comfort et al. 2014",
-          }
+          },
         );
         break;
 
@@ -1208,7 +1228,7 @@ export class FlagFootballPeriodizationService {
             reps: 8,
             rest: 60,
             notes: "Sport-specific power transfer",
-          }
+          },
         );
         break;
 
@@ -1239,7 +1259,7 @@ export class FlagFootballPeriodizationService {
             rest: 180,
             notes: "Maximum velocity work",
             evidenceBase: "Haugen et al. 2019",
-          }
+          },
         );
         break;
 
@@ -1270,7 +1290,7 @@ export class FlagFootballPeriodizationService {
             rest: 45,
             notes: "Coach calls direction",
             evidenceBase: "Asadi et al. 2017",
-          }
+          },
         );
         break;
 
@@ -1470,7 +1490,7 @@ export class FlagFootballPeriodizationService {
         "🔄 July is your 'reload' month - build extra sprint base for second half of season",
         "💪 Address any minor injuries accumulated during competition",
         "🏃 Increase sprint volume to build durability reserve",
-        "😴 Prioritize sleep and recovery while training volume is higher"
+        "😴 Prioritize sleep and recovery while training volume is higher",
       );
     }
 
@@ -1479,7 +1499,7 @@ export class FlagFootballPeriodizationService {
         "🎯 Reduce volume 40-60% but maintain intensity",
         "⚡ Focus on sharpness and explosiveness",
         "🧠 Mental preparation is key",
-        "💤 Sleep 9+ hours per night"
+        "💤 Sleep 9+ hours per night",
       );
     }
 
@@ -1488,7 +1508,7 @@ export class FlagFootballPeriodizationService {
         "⚖️ Balance training load with game demands",
         "🔧 Minimum 2x/week strength to maintain adaptations",
         "📊 Monitor ACWR weekly - stay in 0.8-1.3 range",
-        "🏥 Address injuries immediately"
+        "🏥 Address injuries immediately",
       );
     }
 
@@ -1505,13 +1525,13 @@ export class FlagFootballPeriodizationService {
       guidelines.push(
         "🍚 Higher carbohydrate intake to fuel training volume",
         "🥩 Protein: 1.6-2.2g/kg body weight for recovery",
-        "💧 Hydration: 3-4L water daily minimum"
+        "💧 Hydration: 3-4L water daily minimum",
       );
     } else {
       guidelines.push(
         "🥗 Moderate carbohydrate - match to training demands",
         "🥩 Protein: 1.4-1.8g/kg body weight",
-        "💧 Hydration: 2.5-3L water daily"
+        "💧 Hydration: 2.5-3L water daily",
       );
     }
 
@@ -1519,7 +1539,7 @@ export class FlagFootballPeriodizationService {
       guidelines.push(
         "🍝 Carb loading 2-3 days before competition",
         "🚫 Avoid new foods before competition",
-        "☕ Caffeine strategy for game day"
+        "☕ Caffeine strategy for game day",
       );
     }
 
@@ -1529,7 +1549,10 @@ export class FlagFootballPeriodizationService {
   /**
    * Get weekly recommendations
    */
-  private getWeeklyRecommendations(phase: PhaseConfig, weekNum: number): string[] {
+  private getWeeklyRecommendations(
+    phase: PhaseConfig,
+    weekNum: number,
+  ): string[] {
     const recs: string[] = [];
 
     if (weekNum === 4) {

@@ -99,7 +99,7 @@ async function buildJS() {
     } else {
       // One-time build
       const builds = jsFiles.map(async (entryPoint) => {
-        const relativePath = entryPoint.replace(`${srcDir  }/`, "");
+        const relativePath = entryPoint.replace(`${srcDir}/`, "");
         const outputPath = join(
           distDir,
           "js",
@@ -125,7 +125,7 @@ async function buildJS() {
         }
 
         console.log(
-          `✅ Built: ${relativePath} → ${outputPath.replace(`${rootDir  }/`, "")}`,
+          `✅ Built: ${relativePath} → ${outputPath.replace(`${rootDir}/`, "")}`,
         );
       });
 

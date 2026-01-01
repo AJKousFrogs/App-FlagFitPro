@@ -71,14 +71,14 @@ const mockSupabaseService = {
         or: vi.fn(() => ({
           gte: vi.fn(() => ({
             order: vi.fn(() =>
-              Promise.resolve({ data: MOCK_WELLNESS_ENTRIES, error: null })
+              Promise.resolve({ data: MOCK_WELLNESS_ENTRIES, error: null }),
             ),
           })),
         })),
         eq: vi.fn(() => ({
           gte: vi.fn(() => ({
             order: vi.fn(() =>
-              Promise.resolve({ data: MOCK_WELLNESS_ENTRIES, error: null })
+              Promise.resolve({ data: MOCK_WELLNESS_ENTRIES, error: null }),
             ),
           })),
         })),
@@ -86,7 +86,7 @@ const mockSupabaseService = {
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: MOCK_WELLNESS_ENTRY, error: null })
+            Promise.resolve({ data: MOCK_WELLNESS_ENTRY, error: null }),
           ),
         })),
       })),
@@ -281,9 +281,9 @@ describe("WellnessService", () => {
 
       const recommendations = service.getRecommendations(entry);
 
-      expect(recommendations.some((r) => r.toLowerCase().includes("sleep"))).toBe(
-        true
-      );
+      expect(
+        recommendations.some((r) => r.toLowerCase().includes("sleep")),
+      ).toBe(true);
     });
 
     it("should recommend rest for low energy", () => {
@@ -294,9 +294,9 @@ describe("WellnessService", () => {
 
       const recommendations = service.getRecommendations(entry);
 
-      expect(recommendations.some((r) => r.toLowerCase().includes("rest"))).toBe(
-        true
-      );
+      expect(
+        recommendations.some((r) => r.toLowerCase().includes("rest")),
+      ).toBe(true);
     });
 
     it("should recommend stress management for high stress", () => {
@@ -307,9 +307,9 @@ describe("WellnessService", () => {
 
       const recommendations = service.getRecommendations(entry);
 
-      expect(recommendations.some((r) => r.toLowerCase().includes("stress"))).toBe(
-        true
-      );
+      expect(
+        recommendations.some((r) => r.toLowerCase().includes("stress")),
+      ).toBe(true);
     });
 
     it("should recommend recovery for high soreness", () => {
@@ -321,7 +321,7 @@ describe("WellnessService", () => {
       const recommendations = service.getRecommendations(entry);
 
       expect(
-        recommendations.some((r) => r.toLowerCase().includes("recovery"))
+        recommendations.some((r) => r.toLowerCase().includes("recovery")),
       ).toBe(true);
     });
 
@@ -333,9 +333,9 @@ describe("WellnessService", () => {
 
       const recommendations = service.getRecommendations(entry);
 
-      expect(recommendations.some((r) => r.toLowerCase().includes("water"))).toBe(
-        true
-      );
+      expect(
+        recommendations.some((r) => r.toLowerCase().includes("water")),
+      ).toBe(true);
     });
 
     it("should recommend training variation for low motivation", () => {
@@ -347,7 +347,7 @@ describe("WellnessService", () => {
       const recommendations = service.getRecommendations(entry);
 
       expect(
-        recommendations.some((r) => r.toLowerCase().includes("training"))
+        recommendations.some((r) => r.toLowerCase().includes("training")),
       ).toBe(true);
     });
 
@@ -365,9 +365,9 @@ describe("WellnessService", () => {
 
       const recommendations = service.getRecommendations(entry);
 
-      expect(recommendations.some((r) => r.toLowerCase().includes("keep up"))).toBe(
-        true
-      );
+      expect(
+        recommendations.some((r) => r.toLowerCase().includes("keep up")),
+      ).toBe(true);
     });
   });
 
@@ -492,7 +492,7 @@ describe("WellnessService", () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: { id: 1 }, error: null })
+            Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
       }));
@@ -513,7 +513,7 @@ describe("WellnessService", () => {
           sleep: 8,
           energy: 7,
           stress: 3,
-        })
+        }),
       );
 
       expect(result.success).toBe(true);
@@ -525,7 +525,7 @@ describe("WellnessService", () => {
       const result = await firstValueFrom(
         service.logWellness({
           sleep: 8,
-        })
+        }),
       );
 
       expect(result.success).toBe(false);
@@ -544,7 +544,7 @@ describe("WellnessService", () => {
         return {
           select: vi.fn(() => ({
             single: vi.fn(() =>
-              Promise.resolve({ data: { id: 1, date: today }, error: null })
+              Promise.resolve({ data: { id: 1, date: today }, error: null }),
             ),
           })),
         };
@@ -576,7 +576,9 @@ describe("WellnessService", () => {
 
   describe("Averages Calculation", () => {
     it("should calculate averages correctly", () => {
-      const averages = (service as any).calculateAverages(MOCK_WELLNESS_ENTRIES);
+      const averages = (service as any).calculateAverages(
+        MOCK_WELLNESS_ENTRIES,
+      );
 
       expect(averages.sleep).toBeDefined();
       expect(averages.energy).toBeDefined();
@@ -684,4 +686,3 @@ describe("WellnessService", () => {
     });
   });
 });
-

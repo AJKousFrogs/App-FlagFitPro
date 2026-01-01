@@ -104,7 +104,9 @@ import { LoggerService } from "../../core/services/logger.service";
         <div class="empty-state">
           <i class="pi pi-inbox"></i>
           <p>No recent player activity</p>
-          <span>Activity will appear here when players log training or stats</span>
+          <span
+            >Activity will appear here when players log training or stats</span
+          >
         </div>
       }
 
@@ -127,15 +129,21 @@ import { LoggerService } from "../../core/services/logger.service";
                         [label]="getInitials(activity.player?.full_name || 'P')"
                         shape="circle"
                         [style]="{
-                          'background-color': getActivityColor(activity.activity_type),
-                          color: '#fff'
+                          'background-color': getActivityColor(
+                            activity.activity_type
+                          ),
+                          color: '#fff',
                         }"
                       ></p-avatar>
                       <div
                         class="activity-icon-badge"
-                        [style.background]="getActivityColor(activity.activity_type)"
+                        [style.background]="
+                          getActivityColor(activity.activity_type)
+                        "
                       >
-                        <i [class]="getActivityIcon(activity.activity_type)"></i>
+                        <i
+                          [class]="getActivityIcon(activity.activity_type)"
+                        ></i>
                       </div>
                     </div>
 
@@ -468,7 +476,7 @@ export class CoachActivityFeedComponent implements OnInit, OnDestroy {
     return this.activities().filter(
       (a) =>
         a.activity_type === "stats_uploaded" &&
-        new Date(a.created_at).toDateString() === today
+        new Date(a.created_at).toDateString() === today,
     ).length;
   });
 
@@ -477,7 +485,7 @@ export class CoachActivityFeedComponent implements OnInit, OnDestroy {
     return this.activities().filter(
       (a) =>
         a.activity_type === "training_completed" &&
-        new Date(a.created_at).toDateString() === today
+        new Date(a.created_at).toDateString() === today,
     ).length;
   });
 

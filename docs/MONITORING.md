@@ -31,13 +31,13 @@ This document defines the monitoring and alerting strategy for privacy and safet
 
 ### Monitoring Stack
 
-| Component | Tool | Purpose |
-|-----------|------|---------|
-| Application Errors | Sentry | Error tracking, user impact |
-| Function Logs | Netlify Logs | Request/response debugging |
-| Database Metrics | Supabase Dashboard | Query performance, connections |
-| Custom Metrics | Structured Logs + Queries | Privacy-specific metrics |
-| Alerting | Sentry / PagerDuty / Slack | Incident notification |
+| Component          | Tool                       | Purpose                        |
+| ------------------ | -------------------------- | ------------------------------ |
+| Application Errors | Sentry                     | Error tracking, user impact    |
+| Function Logs      | Netlify Logs               | Request/response debugging     |
+| Database Metrics   | Supabase Dashboard         | Query performance, connections |
+| Custom Metrics     | Structured Logs + Queries  | Privacy-specific metrics       |
+| Alerting           | Sentry / PagerDuty / Slack | Incident notification          |
 
 ---
 
@@ -45,13 +45,13 @@ This document defines the monitoring and alerting strategy for privacy and safet
 
 ### 1. Deletion Queue Metrics
 
-| Metric | Description | Collection Method |
-|--------|-------------|-------------------|
-| `deletion_queue_backlog` | Count of overdue deletions | SQL query |
-| `deletion_queue_pending` | Count of pending deletions | SQL query |
-| `deletion_processing_failures` | Count of failed deletions | SQL query |
-| `deletion_processing_time_avg` | Average time to process | Calculated |
-| `deletion_cancellation_rate` | % of deletions cancelled | Calculated |
+| Metric                         | Description                | Collection Method |
+| ------------------------------ | -------------------------- | ----------------- |
+| `deletion_queue_backlog`       | Count of overdue deletions | SQL query         |
+| `deletion_queue_pending`       | Count of pending deletions | SQL query         |
+| `deletion_processing_failures` | Count of failed deletions  | SQL query         |
+| `deletion_processing_time_avg` | Average time to process    | Calculated        |
+| `deletion_cancellation_rate`   | % of deletions cancelled   | Calculated        |
 
 **SQL Queries:**
 
@@ -76,12 +76,12 @@ AND updated_at > NOW() - INTERVAL '24 hours';
 
 ### 2. Consent Metrics
 
-| Metric | Description | Collection Method |
-|--------|-------------|-------------------|
-| `consent_blocked_events` | Access blocked due to no consent | SQL query |
-| `consent_blocked_rate` | % of accesses blocked | Calculated |
-| `consent_granted_rate` | % of users with consent enabled | SQL query |
-| `consent_changes` | Consent setting changes | Audit log |
+| Metric                   | Description                      | Collection Method |
+| ------------------------ | -------------------------------- | ----------------- |
+| `consent_blocked_events` | Access blocked due to no consent | SQL query         |
+| `consent_blocked_rate`   | % of accesses blocked            | Calculated        |
+| `consent_granted_rate`   | % of users with consent enabled  | SQL query         |
+| `consent_changes`        | Consent setting changes          | Audit log         |
 
 **SQL Queries:**
 
@@ -93,35 +93,35 @@ WHERE access_granted = false
 AND accessed_at > NOW() - INTERVAL '1 hour';
 
 -- Consent blocked rate
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE access_granted = false) * 100.0 / NULLIF(COUNT(*), 0) as consent_blocked_rate
 FROM consent_access_log
 WHERE accessed_at > NOW() - INTERVAL '1 hour';
 
 -- Users with performance sharing enabled
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE performance_sharing_default = true) * 100.0 / COUNT(*) as consent_granted_rate
 FROM privacy_settings;
 ```
 
 ### 3. AI Opt-Out Metrics
 
-| Metric | Description | Collection Method |
-|--------|-------------|-------------------|
-| `ai_optout_blocks` | AI requests blocked due to opt-out | API logs |
-| `ai_optout_rate` | % of users with AI disabled | SQL query |
-| `ai_remediation_visits` | Visits to privacy settings after block | Analytics |
+| Metric                  | Description                            | Collection Method |
+| ----------------------- | -------------------------------------- | ----------------- |
+| `ai_optout_blocks`      | AI requests blocked due to opt-out     | API logs          |
+| `ai_optout_rate`        | % of users with AI disabled            | SQL query         |
+| `ai_remediation_visits` | Visits to privacy settings after block | Analytics         |
 
 **SQL Queries:**
 
 ```sql
 -- AI opt-out rate
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE ai_processing_enabled = false) * 100.0 / COUNT(*) as ai_optout_rate
 FROM privacy_settings;
 
 -- AI processing consent distribution
-SELECT 
+SELECT
     ai_processing_enabled,
     COUNT(*) as user_count
 FROM privacy_settings
@@ -130,26 +130,26 @@ GROUP BY ai_processing_enabled;
 
 ### 4. Data State Metrics
 
-| Metric | Description | Collection Method |
-|--------|-------------|-------------------|
-| `data_state_no_data` | Users with NO_DATA state | API response analysis |
+| Metric                    | Description                  | Collection Method     |
+| ------------------------- | ---------------------------- | --------------------- |
+| `data_state_no_data`      | Users with NO_DATA state     | API response analysis |
 | `data_state_insufficient` | Users with INSUFFICIENT_DATA | API response analysis |
-| `data_state_real` | Users with REAL_DATA | API response analysis |
-| `data_state_distribution` | Distribution by feature | Aggregated |
+| `data_state_real`         | Users with REAL_DATA         | API response analysis |
+| `data_state_distribution` | Distribution by feature      | Aggregated            |
 
 **SQL Queries:**
 
 ```sql
 -- Users by training data availability (for ACWR)
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN session_count = 0 THEN 'NO_DATA'
         WHEN session_count < 28 THEN 'INSUFFICIENT_DATA'
         ELSE 'REAL_DATA'
     END as data_state,
     COUNT(*) as user_count
 FROM (
-    SELECT 
+    SELECT
         player_id,
         COUNT(DISTINCT DATE(completed_at)) as session_count
     FROM workout_logs
@@ -161,11 +161,11 @@ GROUP BY 1;
 
 ### 5. Retention Metrics
 
-| Metric | Description | Collection Method |
-|--------|-------------|-------------------|
-| `emergency_records_expired` | Records past retention | SQL query |
-| `emergency_records_expiring_soon` | Records expiring in 30 days | SQL query |
-| `retention_cleanup_count` | Records cleaned up | Audit log |
+| Metric                            | Description                 | Collection Method |
+| --------------------------------- | --------------------------- | ----------------- |
+| `emergency_records_expired`       | Records past retention      | SQL query         |
+| `emergency_records_expiring_soon` | Records expiring in 30 days | SQL query         |
+| `retention_cleanup_count`         | Records cleaned up          | Audit log         |
 
 **SQL Queries:**
 
@@ -187,36 +187,36 @@ WHERE retention_expires_at BETWEEN NOW() AND NOW() + INTERVAL '30 days';
 
 ### Critical Alerts (SEV-1) - Immediate Response
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| Deletion Backlog Critical | `deletion_queue_backlog > 50` | Page on-call |
-| RLS Disabled | Any privacy table RLS disabled | Page on-call |
-| Mass Consent Violation | `consent_blocked_rate > 50%` in 5 min | Page on-call |
-| Data Breach Indicators | Unusual access patterns | Page on-call + Security |
+| Alert                     | Condition                             | Action                  |
+| ------------------------- | ------------------------------------- | ----------------------- |
+| Deletion Backlog Critical | `deletion_queue_backlog > 50`         | Page on-call            |
+| RLS Disabled              | Any privacy table RLS disabled        | Page on-call            |
+| Mass Consent Violation    | `consent_blocked_rate > 50%` in 5 min | Page on-call            |
+| Data Breach Indicators    | Unusual access patterns               | Page on-call + Security |
 
 ### High Alerts (SEV-2) - Response within 1 hour
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| Deletion Backlog High | `deletion_queue_backlog > 10` | Slack alert |
-| Deletion Failures | `deletion_processing_failures > 5` | Slack alert |
-| Consent Block Spike | `consent_blocked_events` 10x normal | Slack alert |
-| AI Opt-Out Spike | `ai_optout_blocks` 10x normal | Slack alert |
+| Alert                 | Condition                           | Action      |
+| --------------------- | ----------------------------------- | ----------- |
+| Deletion Backlog High | `deletion_queue_backlog > 10`       | Slack alert |
+| Deletion Failures     | `deletion_processing_failures > 5`  | Slack alert |
+| Consent Block Spike   | `consent_blocked_events` 10x normal | Slack alert |
+| AI Opt-Out Spike      | `ai_optout_blocks` 10x normal       | Slack alert |
 
 ### Medium Alerts (SEV-3) - Response within 4 hours
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| Deletion Backlog Warning | `deletion_queue_backlog > 0` for 24h | Slack alert |
-| High Insufficient Data Rate | `data_state_insufficient > 80%` | Slack alert |
-| Expired Records Exist | `emergency_records_expired > 0` | Slack alert |
+| Alert                       | Condition                            | Action      |
+| --------------------------- | ------------------------------------ | ----------- |
+| Deletion Backlog Warning    | `deletion_queue_backlog > 0` for 24h | Slack alert |
+| High Insufficient Data Rate | `data_state_insufficient > 80%`      | Slack alert |
+| Expired Records Exist       | `emergency_records_expired > 0`      | Slack alert |
 
 ### Low Alerts (SEV-4) - Next business day
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| Consent Rate Declining | Week-over-week decline > 10% | Email |
-| AI Opt-Out Trending Up | Week-over-week increase > 20% | Email |
+| Alert                  | Condition                     | Action |
+| ---------------------- | ----------------------------- | ------ |
+| Consent Rate Declining | Week-over-week decline > 10%  | Email  |
+| AI Opt-Out Trending Up | Week-over-week increase > 20% | Email  |
 
 ---
 
@@ -244,19 +244,20 @@ All privacy-related logs should use this JSON structure:
 
 ### Required Log Events
 
-| Event | When to Log | Fields |
-|-------|-------------|--------|
-| `consent_check` | Every consent validation | userId, targetUserId, resource, granted |
-| `ai_consent_check` | AI endpoint access | userId, enabled, blocked |
-| `deletion_requested` | Deletion initiated | userId, requestId |
-| `deletion_processed` | Deletion completed | requestId, tablesDeleted |
-| `deletion_failed` | Deletion error | requestId, error |
-| `retention_cleanup` | Records cleaned | recordCount |
-| `privacy_setting_changed` | User changes settings | userId, setting, oldValue, newValue |
+| Event                     | When to Log              | Fields                                  |
+| ------------------------- | ------------------------ | --------------------------------------- |
+| `consent_check`           | Every consent validation | userId, targetUserId, resource, granted |
+| `ai_consent_check`        | AI endpoint access       | userId, enabled, blocked                |
+| `deletion_requested`      | Deletion initiated       | userId, requestId                       |
+| `deletion_processed`      | Deletion completed       | requestId, tablesDeleted                |
+| `deletion_failed`         | Deletion error           | requestId, error                        |
+| `retention_cleanup`       | Records cleaned          | recordCount                             |
+| `privacy_setting_changed` | User changes settings    | userId, setting, oldValue, newValue     |
 
 ### Redaction Rules
 
 **NEVER log:**
+
 - Passwords or tokens
 - Full email addresses (redact: `j***@example.com`)
 - Phone numbers (redact: `+1-***-***-1234`)
@@ -264,6 +265,7 @@ All privacy-related logs should use this JSON structure:
 - Full names (use first name + initial: `John D.`)
 
 **Safe to log:**
+
 - User IDs (UUIDs)
 - Request IDs
 - Timestamps
@@ -279,22 +281,22 @@ All privacy-related logs should use this JSON structure:
 const logPrivacyEvent = (event, details) => {
   const logEntry = {
     timestamp: new Date().toISOString(),
-    level: 'info',
-    service: process.env.FUNCTION_NAME || 'unknown',
+    level: "info",
+    service: process.env.FUNCTION_NAME || "unknown",
     requestId: details.requestId,
     userId: details.userId, // UUID only
     event: event,
     outcome: details.outcome,
-    details: redactSensitive(details.extra || {})
+    details: redactSensitive(details.extra || {}),
   };
-  
+
   console.log(JSON.stringify(logEntry));
 };
 
 const redactSensitive = (obj) => {
   const redacted = { ...obj };
   if (redacted.email) {
-    const [user, domain] = redacted.email.split('@');
+    const [user, domain] = redacted.email.split("@");
     redacted.email = `${user[0]}***@${domain}`;
   }
   delete redacted.password;
@@ -315,66 +317,66 @@ module.exports = { logPrivacyEvent };
 
 #### Section 1: Deletion Queue Health
 
-| Widget | Type | Data Source |
-|--------|------|-------------|
-| Backlog Count | Single Value | `deletion_queue_backlog` |
-| Pending Count | Single Value | `deletion_queue_pending` |
+| Widget         | Type         | Data Source                    |
+| -------------- | ------------ | ------------------------------ |
+| Backlog Count  | Single Value | `deletion_queue_backlog`       |
+| Pending Count  | Single Value | `deletion_queue_pending`       |
 | Failures (24h) | Single Value | `deletion_processing_failures` |
-| Queue Trend | Line Chart | Backlog over time |
+| Queue Trend    | Line Chart   | Backlog over time              |
 
 #### Section 2: Consent Metrics
 
-| Widget | Type | Data Source |
-|--------|------|-------------|
-| Blocked Events/Hour | Single Value | `consent_blocked_events` |
-| Block Rate % | Gauge | `consent_blocked_rate` |
-| Consent Distribution | Pie Chart | Performance/Health sharing rates |
-| Block Events Trend | Line Chart | Hourly blocked events |
+| Widget               | Type         | Data Source                      |
+| -------------------- | ------------ | -------------------------------- |
+| Blocked Events/Hour  | Single Value | `consent_blocked_events`         |
+| Block Rate %         | Gauge        | `consent_blocked_rate`           |
+| Consent Distribution | Pie Chart    | Performance/Health sharing rates |
+| Block Events Trend   | Line Chart   | Hourly blocked events            |
 
 #### Section 3: AI Opt-Out
 
-| Widget | Type | Data Source |
-|--------|------|-------------|
-| Opt-Out Rate % | Gauge | `ai_optout_rate` |
-| Blocks Today | Single Value | `ai_optout_blocks` |
-| Opt-Out Trend | Line Chart | Weekly opt-out rate |
+| Widget         | Type         | Data Source         |
+| -------------- | ------------ | ------------------- |
+| Opt-Out Rate % | Gauge        | `ai_optout_rate`    |
+| Blocks Today   | Single Value | `ai_optout_blocks`  |
+| Opt-Out Trend  | Line Chart   | Weekly opt-out rate |
 
 #### Section 4: Data State Distribution
 
-| Widget | Type | Data Source |
-|--------|------|-------------|
+| Widget       | Type        | Data Source                   |
+| ------------ | ----------- | ----------------------------- |
 | Distribution | Stacked Bar | NO_DATA / INSUFFICIENT / REAL |
-| By Feature | Table | Data state per feature |
+| By Feature   | Table       | Data state per feature        |
 
 #### Section 5: Retention Status
 
-| Widget | Type | Data Source |
-|--------|------|-------------|
-| Expired Records | Single Value (should be 0) | `emergency_records_expired` |
-| Expiring Soon | Single Value | `emergency_records_expiring_soon` |
-| Last Cleanup | Timestamp | Audit log |
+| Widget          | Type                       | Data Source                       |
+| --------------- | -------------------------- | --------------------------------- |
+| Expired Records | Single Value (should be 0) | `emergency_records_expired`       |
+| Expiring Soon   | Single Value               | `emergency_records_expiring_soon` |
+| Last Cleanup    | Timestamp                  | Audit log                         |
 
 ### Sample Dashboard Query (Supabase SQL)
 
 ```sql
 -- Combined privacy health query
-SELECT 
+SELECT
     -- Deletion metrics
-    (SELECT COUNT(*) FROM account_deletion_requests 
+    (SELECT COUNT(*) FROM account_deletion_requests
      WHERE status = 'pending' AND scheduled_hard_delete_at <= NOW()) as deletion_backlog,
-    (SELECT COUNT(*) FROM account_deletion_requests 
+    (SELECT COUNT(*) FROM account_deletion_requests
      WHERE status = 'failed' AND updated_at > NOW() - INTERVAL '24 hours') as deletion_failures,
-    
+
     -- Consent metrics
-    (SELECT COUNT(*) FROM consent_access_log 
+    (SELECT COUNT(*) FROM consent_access_log
      WHERE access_granted = false AND accessed_at > NOW() - INTERVAL '1 hour') as consent_blocked_hour,
-    
+
     -- AI metrics
-    (SELECT COUNT(*) FILTER (WHERE ai_processing_enabled = false) * 100.0 / COUNT(*) 
+    (SELECT COUNT(*) FILTER (WHERE ai_processing_enabled = false) * 100.0 / COUNT(*)
      FROM privacy_settings) as ai_optout_rate,
-    
+
     -- Retention metrics
-    (SELECT COUNT(*) FROM emergency_medical_records 
+    (SELECT COUNT(*) FROM emergency_medical_records
      WHERE retention_expires_at <= NOW()) as expired_records;
 ```
 
@@ -392,14 +394,14 @@ Add logging to privacy-critical endpoints:
 
 ```javascript
 // In ai-chat.cjs
-const { logPrivacyEvent } = require('./utils/privacy-logger.cjs');
+const { logPrivacyEvent } = require("./utils/privacy-logger.cjs");
 
 // After consent check
-logPrivacyEvent('ai_consent_check', {
+logPrivacyEvent("ai_consent_check", {
   requestId,
   userId,
-  outcome: aiProcessingEnabled ? 'allowed' : 'blocked',
-  extra: { consentStatus: aiProcessingEnabled }
+  outcome: aiProcessingEnabled ? "allowed" : "blocked",
+  extra: { consentStatus: aiProcessingEnabled },
 });
 ```
 
@@ -410,17 +412,17 @@ Add scheduled queries to collect metrics:
 ```sql
 -- Create a materialized view for dashboard (refresh every 5 min)
 CREATE MATERIALIZED VIEW IF NOT EXISTS privacy_health_metrics AS
-SELECT 
+SELECT
     NOW() as collected_at,
-    (SELECT COUNT(*) FROM account_deletion_requests 
+    (SELECT COUNT(*) FROM account_deletion_requests
      WHERE status = 'pending' AND scheduled_hard_delete_at <= NOW()) as deletion_backlog,
-    (SELECT COUNT(*) FROM consent_access_log 
+    (SELECT COUNT(*) FROM consent_access_log
      WHERE access_granted = false AND accessed_at > NOW() - INTERVAL '1 hour') as consent_blocked_hour,
-    (SELECT COUNT(*) FILTER (WHERE ai_processing_enabled = false) * 100.0 / NULLIF(COUNT(*), 0) 
+    (SELECT COUNT(*) FILTER (WHERE ai_processing_enabled = false) * 100.0 / NULLIF(COUNT(*), 0)
      FROM privacy_settings) as ai_optout_rate;
 
 -- Refresh schedule
-SELECT cron.schedule('refresh-privacy-metrics', '*/5 * * * *', 
+SELECT cron.schedule('refresh-privacy-metrics', '*/5 * * * *',
     'REFRESH MATERIALIZED VIEW privacy_health_metrics');
 ```
 
@@ -487,24 +489,23 @@ Examples:
 
 ### Key Metrics to Watch
 
-| Metric | Normal | Warning | Critical |
-|--------|--------|---------|----------|
-| Deletion Backlog | 0 | > 10 | > 50 |
-| Consent Block Rate | < 5% | > 20% | > 50% |
-| AI Opt-Out Rate | < 30% | > 50% | N/A |
-| Expired Records | 0 | > 0 | > 10 |
-| Deletion Failures | 0 | > 5 | > 20 |
+| Metric             | Normal | Warning | Critical |
+| ------------------ | ------ | ------- | -------- |
+| Deletion Backlog   | 0      | > 10    | > 50     |
+| Consent Block Rate | < 5%   | > 20%   | > 50%    |
+| AI Opt-Out Rate    | < 30%  | > 50%   | N/A      |
+| Expired Records    | 0      | > 0     | > 10     |
+| Deletion Failures  | 0      | > 5     | > 20     |
 
 ### Alert Response Contacts
 
-| Alert Type | Primary | Escalation |
-|------------|---------|------------|
-| Deletion Issues | On-call Engineer | Privacy Officer |
-| Consent Violations | On-call Engineer | Security Team |
-| Data Breach | Security Team | Legal + DPO |
+| Alert Type         | Primary          | Escalation      |
+| ------------------ | ---------------- | --------------- |
+| Deletion Issues    | On-call Engineer | Privacy Officer |
+| Consent Violations | On-call Engineer | Security Team   |
+| Data Breach        | Security Team    | Legal + DPO     |
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

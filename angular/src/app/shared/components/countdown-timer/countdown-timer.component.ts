@@ -75,17 +75,17 @@ import { ButtonModule } from "primeng/button";
           </span>
           <span class="timer-label">
             @if (isRunning()) {
-              {{ label() || 'remaining' }}
+              {{ label() || "remaining" }}
             } @else if (isComplete()) {
               Complete!
             } @else {
-              {{ label() || 'ready' }}
+              {{ label() || "ready" }}
             }
           </span>
         </div>
 
         <!-- Pulse animation when low -->
-        @if (status() === 'danger' && isRunning()) {
+        @if (status() === "danger" && isRunning()) {
           <div class="pulse-ring"></div>
         }
       </div>
@@ -150,203 +150,209 @@ import { ButtonModule } from "primeng/button";
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-
-    .countdown-timer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-4);
-    }
-
-    /* Ring */
-    .timer-ring {
-      position: relative;
-      width: 180px;
-      height: 180px;
-    }
-
-    .ring-svg {
-      position: absolute;
-      inset: 0;
-      transform: rotate(-90deg);
-    }
-
-    .ring-track {
-      stroke: var(--p-surface-200);
-    }
-
-    .ring-progress {
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
-    }
-
-    .ring-progress.status-success {
-      stroke: var(--color-status-success);
-    }
-
-    .ring-progress.status-warning {
-      stroke: var(--color-status-warning);
-    }
-
-    .ring-progress.status-danger {
-      stroke: var(--color-status-error);
-    }
-
-    .ring-progress.status-complete {
-      stroke: var(--color-brand-primary);
-    }
-
-    /* Timer display */
-    .timer-display {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timer-time {
-      font-size: 2.5rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      transition: color 0.3s ease;
-    }
-
-    .timer-time.status-success {
-      color: var(--color-status-success);
-    }
-
-    .timer-time.status-warning {
-      color: var(--color-status-warning);
-    }
-
-    .timer-time.status-danger {
-      color: var(--color-status-error);
-    }
-
-    .timer-time.status-complete {
-      color: var(--color-brand-primary);
-    }
-
-    .timer-label {
-      font-size: var(--font-body-sm);
-      color: var(--text-secondary);
-      margin-top: var(--space-2);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Pulse animation */
-    .pulse-ring {
-      position: absolute;
-      inset: -10px;
-      border: 3px solid var(--color-status-error);
-      border-radius: 50%;
-      animation: pulse-ring 1s ease-out infinite;
-    }
-
-    @keyframes pulse-ring {
-      0% {
-        transform: scale(1);
-        opacity: 0.5;
+  styles: [
+    `
+      :host {
+        display: block;
       }
-      100% {
-        transform: scale(1.15);
-        opacity: 0;
+
+      .countdown-timer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
       }
-    }
 
-    /* Controls */
-    .timer-controls {
-      display: flex;
-      gap: var(--space-3);
-    }
+      /* Ring */
+      .timer-ring {
+        position: relative;
+        width: 180px;
+        height: 180px;
+      }
 
-    /* Presets */
-    .timer-presets {
-      display: flex;
-      gap: var(--space-2);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+      .ring-svg {
+        position: absolute;
+        inset: 0;
+        transform: rotate(-90deg);
+      }
 
-    .preset-btn {
-      padding: var(--space-2) var(--space-3);
-      background: var(--surface-secondary);
-      border: 1px solid var(--p-surface-200);
-      border-radius: var(--radius-md);
-      font-size: var(--font-body-sm);
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+      .ring-track {
+        stroke: var(--p-surface-200);
+      }
 
-    .preset-btn:hover {
-      background: var(--surface-tertiary);
-      border-color: var(--color-brand-primary);
-      color: var(--color-brand-primary);
-    }
-
-    .preset-btn.active {
-      background: var(--color-brand-primary);
-      border-color: var(--color-brand-primary);
-      color: white;
-    }
-
-    /* Progress bar */
-    .progress-bar-container {
-      width: 100%;
-      max-width: 300px;
-      height: 8px;
-      background: var(--p-surface-200);
-      border-radius: var(--radius-full);
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      border-radius: var(--radius-full);
-      transition: width 0.3s linear, background-color 0.3s ease;
-    }
-
-    .progress-bar.status-success {
-      background: var(--color-status-success);
-    }
-
-    .progress-bar.status-warning {
-      background: var(--color-status-warning);
-    }
-
-    .progress-bar.status-danger {
-      background: var(--color-status-error);
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
       .ring-progress {
-        transition: none;
+        stroke-linecap: round;
+        transition:
+          stroke-dashoffset 0.3s linear,
+          stroke 0.3s ease;
       }
 
-      .pulse-ring {
-        animation: none;
+      .ring-progress.status-success {
+        stroke: var(--color-status-success);
+      }
+
+      .ring-progress.status-warning {
+        stroke: var(--color-status-warning);
+      }
+
+      .ring-progress.status-danger {
+        stroke: var(--color-status-error);
+      }
+
+      .ring-progress.status-complete {
+        stroke: var(--color-brand-primary);
+      }
+
+      /* Timer display */
+      .timer-display {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
 
       .timer-time {
-        transition: none;
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        transition: color 0.3s ease;
+      }
+
+      .timer-time.status-success {
+        color: var(--color-status-success);
+      }
+
+      .timer-time.status-warning {
+        color: var(--color-status-warning);
+      }
+
+      .timer-time.status-danger {
+        color: var(--color-status-error);
+      }
+
+      .timer-time.status-complete {
+        color: var(--color-brand-primary);
+      }
+
+      .timer-label {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        margin-top: var(--space-2);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Pulse animation */
+      .pulse-ring {
+        position: absolute;
+        inset: -10px;
+        border: 3px solid var(--color-status-error);
+        border-radius: 50%;
+        animation: pulse-ring 1s ease-out infinite;
+      }
+
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1.15);
+          opacity: 0;
+        }
+      }
+
+      /* Controls */
+      .timer-controls {
+        display: flex;
+        gap: var(--space-3);
+      }
+
+      /* Presets */
+      .timer-presets {
+        display: flex;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .preset-btn {
+        padding: var(--space-2) var(--space-3);
+        background: var(--surface-secondary);
+        border: 1px solid var(--p-surface-200);
+        border-radius: var(--radius-md);
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .preset-btn:hover {
+        background: var(--surface-tertiary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-brand-primary);
+      }
+
+      .preset-btn.active {
+        background: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: white;
+      }
+
+      /* Progress bar */
+      .progress-bar-container {
+        width: 100%;
+        max-width: 300px;
+        height: 8px;
+        background: var(--p-surface-200);
+        border-radius: var(--radius-full);
+        overflow: hidden;
       }
 
       .progress-bar {
-        transition: none;
+        height: 100%;
+        border-radius: var(--radius-full);
+        transition:
+          width 0.3s linear,
+          background-color 0.3s ease;
       }
-    }
-  `],
+
+      .progress-bar.status-success {
+        background: var(--color-status-success);
+      }
+
+      .progress-bar.status-warning {
+        background: var(--color-status-warning);
+      }
+
+      .progress-bar.status-danger {
+        background: var(--color-status-error);
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .ring-progress {
+          transition: none;
+        }
+
+        .pulse-ring {
+          animation: none;
+        }
+
+        .timer-time {
+          transition: none;
+        }
+
+        .progress-bar {
+          transition: none;
+        }
+      }
+    `,
+  ],
 })
 export class CountdownTimerComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);
@@ -493,7 +499,11 @@ export class CountdownTimerComponent implements OnDestroy {
 
   private playCompletionSound(): void {
     try {
-      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audioContext = new (
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext
+      )();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -503,7 +513,10 @@ export class CountdownTimerComponent implements OnDestroy {
       oscillator.frequency.value = 880;
       oscillator.type = "sine";
       gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.5,
+      );
 
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);

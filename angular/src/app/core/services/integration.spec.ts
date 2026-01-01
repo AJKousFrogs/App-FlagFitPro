@@ -57,12 +57,16 @@ const mockSupabaseService = {
       })),
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+          single: vi.fn(() =>
+            Promise.resolve({ data: { id: 1 }, error: null }),
+          ),
         })),
       })),
     })),
     functions: {
-      invoke: vi.fn(() => Promise.resolve({ data: { success: true }, error: null })),
+      invoke: vi.fn(() =>
+        Promise.resolve({ data: { success: true }, error: null }),
+      ),
     },
   },
 };
@@ -151,7 +155,7 @@ describe("Integration Tests", () => {
 
       // Login
       const loginResult = await firstValueFrom(
-        authService.login({ email: "test@example.com", password: "password" })
+        authService.login({ email: "test@example.com", password: "password" }),
       );
 
       expect(loginResult.success).toBe(true);
@@ -191,7 +195,7 @@ describe("Integration Tests", () => {
           email: "new@example.com",
           password: "securepass",
           name: "New User",
-        })
+        }),
       );
 
       expect(result.success).toBe(true);
@@ -214,7 +218,7 @@ describe("Integration Tests", () => {
         "technical",
         7,
         90,
-        "Great session"
+        "Great session",
       );
 
       expect(session.load).toBe(630); // 7 × 90
@@ -248,27 +252,25 @@ describe("Integration Tests", () => {
     it("should provide load recommendations based on ACWR", () => {
       const loadService = TestBed.inject(LoadMonitoringService);
 
-      const recentSessions = [
-        { load: 600 },
-        { load: 550 },
-        { load: 620 },
-      ].map((s) => ({
-        playerId: "user-123",
-        date: new Date(),
-        sessionType: "technical" as const,
-        metrics: {
-          type: "internal" as const,
-          internal: { sessionRPE: 7, duration: 90, workload: s.load },
-          calculatedLoad: s.load,
-        },
-        load: s.load,
-        completed: true,
-        modifiedFromPlan: false,
-      }));
+      const recentSessions = [{ load: 600 }, { load: 550 }, { load: 620 }].map(
+        (s) => ({
+          playerId: "user-123",
+          date: new Date(),
+          sessionType: "technical" as const,
+          metrics: {
+            type: "internal" as const,
+            internal: { sessionRPE: 7, duration: 90, workload: s.load },
+            calculatedLoad: s.load,
+          },
+          load: s.load,
+          completed: true,
+          modifiedFromPlan: false,
+        }),
+      );
 
       const recommendation = loadService.getLoadRecommendation(
         recentSessions,
-        1.0
+        1.0,
       );
 
       expect(recommendation.recommendedLoad).toBeGreaterThan(0);
@@ -360,7 +362,12 @@ describe("Integration Tests", () => {
             {
               fdcId: 1,
               description: "Chicken Breast",
-              nutrients: { calories: 165, protein: 31, carbohydrates: 0, fat: 3.6 },
+              nutrients: {
+                calories: 165,
+                protein: 31,
+                carbohydrates: 0,
+                fat: 3.6,
+              },
             },
           ],
         },
@@ -369,7 +376,7 @@ describe("Integration Tests", () => {
 
       // Search for food
       const searchResults = await firstValueFrom(
-        nutritionService.searchUSDAFoods("chicken")
+        nutritionService.searchUSDAFoods("chicken"),
       );
 
       expect(searchResults.length).toBeGreaterThan(0);
@@ -498,18 +505,18 @@ describe("Integration Tests", () => {
       const loadWithPoorWellness = loadService.calculateCombinedLoad(
         internal,
         undefined,
-        poorWellness
+        poorWellness,
       );
 
       const loadWithGoodWellness = loadService.calculateCombinedLoad(
         internal,
         undefined,
-        goodWellness
+        goodWellness,
       );
 
       // Poor wellness should increase perceived load
       expect(loadWithPoorWellness.calculatedLoad).toBeGreaterThan(
-        loadWithGoodWellness.calculatedLoad
+        loadWithGoodWellness.calculatedLoad,
       );
     });
 
@@ -554,4 +561,3 @@ describe("Integration Tests", () => {
     });
   });
 });
-

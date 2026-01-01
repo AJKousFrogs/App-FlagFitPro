@@ -279,12 +279,11 @@ export class AriaDialogComponent {
     // Focus dialog after render
     afterNextRender(
       () => {
-        const dialog = this.elementRef.nativeElement.querySelector(
-          "[role='dialog']"
-        );
+        const dialog =
+          this.elementRef.nativeElement.querySelector("[role='dialog']");
         dialog?.focus();
       },
-      { injector: this.injector }
+      { injector: this.injector },
     );
   }
 
@@ -327,13 +326,12 @@ export class AriaDialogComponent {
   }
 
   private handleTabKey(event: KeyboardEvent): void {
-    const dialog = this.elementRef.nativeElement.querySelector(
-      "[role='dialog']"
-    );
+    const dialog =
+      this.elementRef.nativeElement.querySelector("[role='dialog']");
     if (!dialog) return;
 
     const focusableElements = dialog.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
     const firstElement = focusableElements[0] as HTMLElement;
@@ -344,13 +342,9 @@ export class AriaDialogComponent {
     if (event.shiftKey && this.document.activeElement === firstElement) {
       event.preventDefault();
       lastElement?.focus();
-    } else if (
-      !event.shiftKey &&
-      this.document.activeElement === lastElement
-    ) {
+    } else if (!event.shiftKey && this.document.activeElement === lastElement) {
       event.preventDefault();
       firstElement?.focus();
     }
   }
 }
-

@@ -137,7 +137,19 @@ class StatisticsCalculationService {
 
     // Defensive grading
     let defensiveGrade;
-    if (rounded >= 90) {defensiveGrade = "A+ (Elite)";} else if (rounded >= 85) {defensiveGrade = "A (Excellent)";} else if (rounded >= 80) {defensiveGrade = "B (Very Good)";} else if (rounded >= 75) {defensiveGrade = "C (Good)";} else if (rounded >= 70) {defensiveGrade = "D (Adequate)";} else {defensiveGrade = "F (Needs Improvement)";}
+    if (rounded >= 90) {
+      defensiveGrade = "A+ (Elite)";
+    } else if (rounded >= 85) {
+      defensiveGrade = "A (Excellent)";
+    } else if (rounded >= 80) {
+      defensiveGrade = "B (Very Good)";
+    } else if (rounded >= 75) {
+      defensiveGrade = "C (Good)";
+    } else if (rounded >= 70) {
+      defensiveGrade = "D (Adequate)";
+    } else {
+      defensiveGrade = "F (Needs Improvement)";
+    }
 
     return {
       rate: rounded,
@@ -249,7 +261,9 @@ class StatisticsCalculationService {
     }
 
     // Final stretch
-    if (currentLength > longestStreak) {longestStreak = currentLength;}
+    if (currentLength > longestStreak) {
+      longestStreak = currentLength;
+    }
     if (stretchStart && currentLength >= 3) {
       stretchDates.push({
         start: new Date(workoutDates[workoutDates.length - 1]),
@@ -338,7 +352,7 @@ class StatisticsCalculationService {
     const variance =
       intensityPoints.length > 1
         ? intensityPoints.reduce(
-            (sum, intensity) => sum + (intensity - avgIntensity)**2,
+            (sum, intensity) => sum + (intensity - avgIntensity) ** 2,
             0,
           ) / intensityPoints.length
         : 0;
@@ -392,9 +406,15 @@ class StatisticsCalculationService {
 
     const base = baseScores[type] || 6;
 
-    if (intensity === "high") {return base;}
-    if (intensity === "medium") {return base * 0.7;}
-    if (intensity === "low") {return base * 0.5;}
+    if (intensity === "high") {
+      return base;
+    }
+    if (intensity === "medium") {
+      return base * 0.7;
+    }
+    if (intensity === "low") {
+      return base * 0.5;
+    }
 
     return base;
   }

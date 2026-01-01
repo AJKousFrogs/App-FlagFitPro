@@ -4,7 +4,7 @@
  * Reusable mixins for common styling patterns
  */
 
-@use 'variables' as *;
+@use "variables" as *;
 
 // ================================
 // RESPONSIVE BREAKPOINTS
@@ -298,7 +298,11 @@
 }
 
 // Custom scrollbar
-@mixin scrollbar($width: 8px, $track-color: var(--surface-secondary), $thumb-color: var(--color-border-primary)) {
+@mixin scrollbar(
+  $width: 8px,
+  $track-color: var(--surface-secondary),
+  $thumb-color: var(--color-border-primary)
+) {
   &::-webkit-scrollbar {
     width: $width;
     height: $width;
@@ -396,11 +400,115 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+// ================================
+// INTERACTION STATE MIXINS
+// Angular 21 Best Practices
+// ================================
+
+// Complete interactive element with all states
+// Usage: @include interactive-states($hover-bg, $active-bg);
+@mixin interactive-states(
+  $hover-bg: var(--surface-secondary),
+  $active-bg: var(--surface-tertiary)
+) {
+  transition: all var(--transition-base);
+  will-change: transform, box-shadow, background-color;
+
+  // Hover - Desktop only
+  @include hover-support {
+    &:hover:not(:disabled) {
+      background-color: $hover-bg;
+      transform: var(--transform-hover-lift-subtle);
+    }
+  }
+
+  // Active/Pressed - All devices
+  &:active:not(:disabled) {
+    background-color: $active-bg;
+    transform: var(--transform-active-press);
+  }
+
+  // Touch-specific active state
+  @include touch-device {
+    &:active:not(:disabled) {
+      transform: var(--transform-active-press-touch);
+    }
+  }
+
+  // Focus - Keyboard navigation
+  @include focus-visible;
+
+  // Disabled
+  &:disabled {
+    opacity: var(--state-disabled-opacity, 0.38);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Hover lift effect with shadow
+// Usage: @include hover-lift($lift-amount, $shadow);
+@mixin hover-lift($lift: -2px, $shadow: var(--shadow-md)) {
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+  will-change: transform, box-shadow;
+
+  @include hover-support {
+    &:hover:not(:disabled) {
+      transform: translateY($lift);
+      box-shadow: $shadow;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include touch-device {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// State layer overlay (Material Design 3 style)
+// Usage: @include state-layer(var(--ds-primary-green-rgb));
+@mixin state-layer($color-rgb) {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: transparent;
+    transition: background-color var(--transition-fast);
+    pointer-events: none;
+  }
+
+  @include hover-support {
+    &:hover::before {
+      background-color: rgba($color-rgb, var(--state-hover-opacity, 0.08));
+    }
+  }
+
+  &:active::before {
+    background-color: rgba($color-rgb, var(--state-active-opacity, 0.16));
+  }
+
+  &:focus-visible::before {
+    background-color: rgba($color-rgb, var(--state-focus-opacity, 0.12));
   }
 }
 
@@ -411,9 +519,13 @@
 // Focus visible (keyboard navigation)
 @mixin focus-visible {
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+    outline: var(--focus-outline-width, 2px) solid
+      var(--focus-ring-color, var(--ds-primary-green));
+    outline-offset: var(--focus-outline-offset, 2px);
+    box-shadow: var(
+      --focus-ring-shadow,
+      0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3)
+    );
   }
 
   &:focus:not(:focus-visible) {

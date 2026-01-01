@@ -224,17 +224,20 @@ export class ExerciseDBService {
     }
 
     return this.http
-      .get<ApiResponse<ExerciseDBExercise[]>>(`${this.baseUrl}/api/exercisedb`, {
-        params: httpParams,
-      })
+      .get<ApiResponse<ExerciseDBExercise[]>>(
+        `${this.baseUrl}/api/exercisedb`,
+        {
+          params: httpParams,
+        },
+      )
       .pipe(
         map((response) => response.exercises || []),
         tap(() => this.loadingSubject.next(false)),
         catchError((error) => {
           this.logger.error("Failed to fetch curated exercises", error);
           this.loadingSubject.next(false);
-          return of([]);
-        })
+          throw error;
+        }),
       );
   }
 
@@ -244,29 +247,19 @@ export class ExerciseDBService {
   getFilterOptions(): Observable<ExerciseDBFilters> {
     if (!this.filtersCache$) {
       this.filtersCache$ = this.http
-        .get<ApiResponse<ExerciseDBFilters>>(
-          `${this.baseUrl}/api/exercisedb/filters`
-        )
+        .get<
+          ApiResponse<ExerciseDBFilters>
+        >(`${this.baseUrl}/api/exercisedb/filters`)
         .pipe(
-          map(
-            (response) =>
-              response.filters || {
-                categories: this.FF_CATEGORIES,
-                bodyParts: [],
-                equipment: [],
-                positions: this.POSITIONS,
-              }
-          ),
+          map((response) => {
+            if (response.filters) return response.filters;
+            throw new Error("No filter options available");
+          }),
           shareReplay(1),
           catchError((error) => {
             this.logger.error("Failed to fetch filter options", error);
-            return of({
-              categories: this.FF_CATEGORIES,
-              bodyParts: [],
-              equipment: [],
-              positions: this.POSITIONS,
-            });
-          })
+            throw error;
+          }),
         );
     }
 
@@ -294,18 +287,17 @@ export class ExerciseDBService {
     });
 
     return this.http
-      .get<ApiResponse<ExerciseDBExercise[]>>(
-        `${this.baseUrl}/api/exercisedb/search`,
-        { params: httpParams }
-      )
+      .get<
+        ApiResponse<ExerciseDBExercise[]>
+      >(`${this.baseUrl}/api/exercisedb/search`, { params: httpParams })
       .pipe(
         map((response) => response.exercises || []),
         tap(() => this.loadingSubject.next(false)),
         catchError((error) => {
           this.logger.error("Failed to search ExerciseDB", error);
           this.loadingSubject.next(false);
-          return of([]);
-        })
+          throw error;
+        }),
       );
   }
 
@@ -320,7 +312,9 @@ export class ExerciseDBService {
     this.importingSubject.next(true);
 
     return this.http
-      .post<ApiResponse<ImportStats>>(`${this.baseUrl}/api/exercisedb/import`, params)
+      .post<
+        ApiResponse<ImportStats>
+      >(`${this.baseUrl}/api/exercisedb/import`, params)
       .pipe(
         map((response) => ({
           success: response.success,
@@ -338,7 +332,7 @@ export class ExerciseDBService {
             success: false,
             error: error.message || "Import failed",
           });
-        })
+        }),
       );
   }
 
@@ -347,13 +341,16 @@ export class ExerciseDBService {
    */
   approveExercise(
     exerciseId: string,
-    approvalData: ExerciseApprovalData
-  ): Observable<{ success: boolean; exercise?: ExerciseDBExercise; error?: string }> {
+    approvalData: ExerciseApprovalData,
+  ): Observable<{
+    success: boolean;
+    exercise?: ExerciseDBExercise;
+    error?: string;
+  }> {
     return this.http
-      .post<ApiResponse<ExerciseDBExercise>>(
-        `${this.baseUrl}/api/exercisedb/approve/${exerciseId}`,
-        approvalData
-      )
+      .post<
+        ApiResponse<ExerciseDBExercise>
+      >(`${this.baseUrl}/api/exercisedb/approve/${exerciseId}`, approvalData)
       .pipe(
         map((response) => ({
           success: response.success,
@@ -365,7 +362,7 @@ export class ExerciseDBService {
             success: false,
             error: error.message || "Approval failed",
           });
-        })
+        }),
       );
   }
 
@@ -380,7 +377,7 @@ export class ExerciseDBService {
         catchError((error) => {
           this.logger.error("Failed to fetch import logs", error);
           return of([]);
-        })
+        }),
       );
   }
 

@@ -107,7 +107,7 @@ export class KeyboardShortcutsService implements OnDestroy {
   isMac = computed(
     () =>
       typeof navigator !== "undefined" &&
-      navigator.platform.toUpperCase().indexOf("MAC") >= 0
+      navigator.platform.toUpperCase().indexOf("MAC") >= 0,
   );
   modifierKey = computed(() => (this.isMac() ? "⌘" : "Ctrl"));
 
@@ -313,7 +313,12 @@ export class KeyboardShortcutsService implements OnDestroy {
     // Handle special keys
     if (key === " ") {
       parts.push("space");
-    } else if (key !== "control" && key !== "meta" && key !== "alt" && key !== "shift") {
+    } else if (
+      key !== "control" &&
+      key !== "meta" &&
+      key !== "alt" &&
+      key !== "shift"
+    ) {
       parts.push(key);
     }
 
@@ -389,12 +394,15 @@ export class KeyboardShortcutsService implements OnDestroy {
   register(shortcut: KeyboardShortcut): void {
     this._shortcuts.update((shortcuts) => {
       const newMap = new Map(shortcuts);
-      newMap.set(shortcut.id, { ...shortcut, enabled: shortcut.enabled ?? true });
+      newMap.set(shortcut.id, {
+        ...shortcut,
+        enabled: shortcut.enabled ?? true,
+      });
       return newMap;
     });
 
     this.logger.debug(
-      `[KeyboardShortcuts] Registered: ${shortcut.id} (${shortcut.keys.join(", ")})`
+      `[KeyboardShortcuts] Registered: ${shortcut.id} (${shortcut.keys.join(", ")})`,
     );
   }
 
@@ -554,4 +562,3 @@ export class KeyboardShortcutsService implements OnDestroy {
     }
   }
 }
-

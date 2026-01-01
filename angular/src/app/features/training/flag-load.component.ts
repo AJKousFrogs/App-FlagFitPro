@@ -1,4 +1,11 @@
-import { Component, input, OnInit, inject, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  input,
+  OnInit,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ChartModule } from "primeng/chart";
 import { CardModule } from "primeng/card";

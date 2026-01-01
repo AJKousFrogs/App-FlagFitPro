@@ -210,10 +210,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Sport-specific drills (75%)",
           "Controlled scrimmage situations",
         ],
-        restrictions: [
-          "No full-speed sprinting",
-          "No full competition",
-        ],
+        restrictions: ["No full-speed sprinting", "No full competition"],
         progressionCriteria: [
           "Pain-free at 75% intensity",
           "No compensation patterns",
@@ -221,7 +218,11 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 60,
         intensityLimit: 75,
-        monitoringRequired: ["Movement symmetry", "Strength comparison", "Fatigue response"],
+        monitoringRequired: [
+          "Movement symmetry",
+          "Strength comparison",
+          "Fatigue response",
+        ],
       },
       {
         stage: "sport_specific_high",
@@ -244,7 +245,10 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 80,
         intensityLimit: 95,
-        monitoringRequired: ["Full practice tolerance", "Psychological readiness"],
+        monitoringRequired: [
+          "Full practice tolerance",
+          "Psychological readiness",
+        ],
       },
       {
         stage: "full_training",
@@ -255,9 +259,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Full practice participation",
           "Scrimmages",
         ],
-        restrictions: [
-          "Monitor for any symptom recurrence",
-        ],
+        restrictions: ["Monitor for any symptom recurrence"],
         progressionCriteria: [
           "3+ full practices without symptoms",
           "Coach/medical clearance for competition",
@@ -279,7 +281,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
       },
     ],
     totalMinimumDays: 24,
-    evidenceBase: "Blanch & Gabbett (2016) - Graduated return with chronic load building",
+    evidenceBase:
+      "Blanch & Gabbett (2016) - Graduated return with chronic load building",
     warnings: [
       "Hamstring strains have high re-injury rate - be conservative",
       "Don't progress if any pain during activity",
@@ -312,7 +315,11 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 0,
         intensityLimit: 0,
-        monitoringRequired: ["Swelling", "Joint stability", "Pain with weight bearing"],
+        monitoringRequired: [
+          "Swelling",
+          "Joint stability",
+          "Pain with weight bearing",
+        ],
       },
       {
         stage: "light_activity",
@@ -361,7 +368,10 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 40,
         intensityLimit: 60,
-        monitoringRequired: ["Hop test symmetry", "Lateral movement confidence"],
+        monitoringRequired: [
+          "Hop test symmetry",
+          "Lateral movement confidence",
+        ],
       },
       {
         stage: "sport_specific_moderate",
@@ -396,9 +406,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Practice participation",
           "Simulated game situations",
         ],
-        restrictions: [
-          "May continue taping/bracing for confidence",
-        ],
+        restrictions: ["May continue taping/bracing for confidence"],
         progressionCriteria: [
           "Full practice without symptoms",
           "Full confidence",
@@ -432,7 +440,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
       },
     ],
     totalMinimumDays: 36,
-    evidenceBase: "Ardern et al. (2016) - Consensus on return to sport after ACL",
+    evidenceBase:
+      "Ardern et al. (2016) - Consensus on return to sport after ACL",
     warnings: [
       "Ankle sprains have high recurrence rate - complete full protocol",
       "Continue proprioception training even after return",
@@ -464,7 +473,11 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 20,
         intensityLimit: 30,
-        monitoringRequired: ["Morning stiffness", "Pain levels", "24h response"],
+        monitoringRequired: [
+          "Morning stiffness",
+          "Pain levels",
+          "24h response",
+        ],
       },
       {
         stage: "light_activity",
@@ -488,7 +501,11 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 40,
         intensityLimit: 50,
-        monitoringRequired: ["Pain during exercise", "24h pain response", "Function"],
+        monitoringRequired: [
+          "Pain during exercise",
+          "24h pain response",
+          "Function",
+        ],
       },
       {
         stage: "sport_specific_low",
@@ -510,7 +527,11 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         ],
         loadPercentage: 60,
         intensityLimit: 70,
-        monitoringRequired: ["Plyometric tolerance", "Running response", "Morning stiffness"],
+        monitoringRequired: [
+          "Plyometric tolerance",
+          "Running response",
+          "Morning stiffness",
+        ],
       },
       {
         stage: "sport_specific_moderate",
@@ -626,9 +647,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "No heading (if applicable)",
           "Moderate intensity only",
         ],
-        progressionCriteria: [
-          "No symptoms during sport-specific exercise",
-        ],
+        progressionCriteria: ["No symptoms during sport-specific exercise"],
         loadPercentage: 40,
         intensityLimit: 60,
         monitoringRequired: ["Symptoms during activity"],
@@ -642,9 +661,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Resistance training",
           "Coordination exercises",
         ],
-        restrictions: [
-          "No contact",
-        ],
+        restrictions: ["No contact"],
         progressionCriteria: [
           "Tolerating full training intensity",
           "Normal cognitive function",
@@ -683,7 +700,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
       },
     ],
     totalMinimumDays: 6,
-    evidenceBase: "McCrory et al. (2017) - Consensus statement on concussion in sport",
+    evidenceBase:
+      "McCrory et al. (2017) - Consensus statement on concussion in sport",
     warnings: [
       "MUST have medical clearance before return to contact/competition",
       "Any symptom return = go back one stage",
@@ -772,10 +790,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Basic strength work",
           "Movement quality focus",
         ],
-        restrictions: [
-          "No high intensity",
-          "Limit volume",
-        ],
+        restrictions: ["No high intensity", "Limit volume"],
         progressionCriteria: [
           "Tolerating light training",
           "No excessive soreness",
@@ -788,16 +803,9 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         stage: "sport_specific_low",
         name: "Sport-Specific Rebuild",
         minimumDays: 7,
-        activities: [
-          "Sport-specific drills",
-          "Moderate intensity training",
-        ],
-        restrictions: [
-          "Gradual volume increase",
-        ],
-        progressionCriteria: [
-          "Tolerating sport-specific work",
-        ],
+        activities: ["Sport-specific drills", "Moderate intensity training"],
+        restrictions: ["Gradual volume increase"],
+        progressionCriteria: ["Tolerating sport-specific work"],
         loadPercentage: 60,
         intensityLimit: 75,
         monitoringRequired: ["Training tolerance"],
@@ -811,9 +819,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Building toward full practice",
         ],
         restrictions: [],
-        progressionCriteria: [
-          "Ready for full training",
-        ],
+        progressionCriteria: ["Ready for full training"],
         loadPercentage: 80,
         intensityLimit: 85,
         monitoringRequired: ["Load tolerance"],
@@ -842,7 +848,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
       },
     ],
     totalMinimumDays: 28,
-    evidenceBase: "Blanch & Gabbett (2016) - Building chronic load before competition",
+    evidenceBase:
+      "Blanch & Gabbett (2016) - Building chronic load before competition",
     warnings: [
       "Time away = loss of chronic load",
       "Build load gradually - don't jump back to previous levels",
@@ -862,10 +869,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Pool running",
           "Upper body training",
         ],
-        restrictions: [
-          "No impact activities",
-          "May require boot/crutches",
-        ],
+        restrictions: ["No impact activities", "May require boot/crutches"],
         progressionCriteria: [
           "Pain-free with daily activities",
           "Medical imaging clearance",
@@ -883,10 +887,7 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Stationary cycling",
           "Gradual weight bearing",
         ],
-        restrictions: [
-          "No running",
-          "No jumping",
-        ],
+        restrictions: ["No running", "No jumping"],
         progressionCriteria: [
           "Pain-free walking",
           "No symptoms with daily activities",
@@ -899,14 +900,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
         stage: "sport_specific_low",
         name: "Return to Running",
         minimumDays: 14,
-        activities: [
-          "Walk-jog progression",
-          "Gradual running build-up",
-        ],
-        restrictions: [
-          "Follow specific running progression",
-          "No sprinting",
-        ],
+        activities: ["Walk-jog progression", "Gradual running build-up"],
+        restrictions: ["Follow specific running progression", "No sprinting"],
         progressionCriteria: [
           "Pain-free jogging",
           "Completing running progression",
@@ -923,12 +918,8 @@ const RETURN_PROTOCOLS: Record<InjuryType, ReturnProtocol> = {
           "Sport-specific drills",
           "Gradual introduction of higher intensity",
         ],
-        restrictions: [
-          "Continue gradual progression",
-        ],
-        progressionCriteria: [
-          "Tolerating sport-specific work",
-        ],
+        restrictions: ["Continue gradual progression"],
+        progressionCriteria: ["Tolerating sport-specific work"],
         loadPercentage: 70,
         intensityLimit: 80,
         monitoringRequired: ["Bone stress symptoms"],
@@ -988,7 +979,7 @@ export class ReturnToPlayService {
   // Computed
   readonly hasActiveInjury = computed(() => this._activeInjuries().length > 0);
   readonly injuriesInReturn = computed(() =>
-    this._activeInjuries().filter((i) => i.currentStage !== "full_competition")
+    this._activeInjuries().filter((i) => i.currentStage !== "full_competition"),
   );
 
   /**
@@ -1012,7 +1003,7 @@ export class ReturnToPlayService {
     type: InjuryType,
     severity: InjuryRecord["severity"],
     location?: string,
-    notes?: string
+    notes?: string,
   ): InjuryRecord {
     const protocol = this.getProtocol(type);
 
@@ -1041,7 +1032,7 @@ export class ReturnToPlayService {
 
     const protocol = this.getProtocol(injury.type);
     const currentStageIndex = protocol.stages.findIndex(
-      (s) => s.stage === injury.currentStage
+      (s) => s.stage === injury.currentStage,
     );
     const currentStage = protocol.stages[currentStageIndex];
 
@@ -1049,7 +1040,7 @@ export class ReturnToPlayService {
     const lastTransition = injury.stageHistory[injury.stageHistory.length - 1];
     const stageStartDate = lastTransition?.date || injury.dateOccurred;
     const daysInCurrentStage = Math.floor(
-      (Date.now() - stageStartDate.getTime()) / (1000 * 60 * 60 * 24)
+      (Date.now() - stageStartDate.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     // Check if can progress
@@ -1058,7 +1049,7 @@ export class ReturnToPlayService {
 
     if (!canProgress) {
       progressionBlockers.push(
-        `Minimum ${currentStage.minimumDays} days required (${daysInCurrentStage} completed)`
+        `Minimum ${currentStage.minimumDays} days required (${daysInCurrentStage} completed)`,
       );
     }
 
@@ -1074,7 +1065,7 @@ export class ReturnToPlayService {
       if (i === currentStageIndex) {
         estimatedDaysRemaining += Math.max(
           0,
-          protocol.stages[i].minimumDays - daysInCurrentStage
+          protocol.stages[i].minimumDays - daysInCurrentStage,
         );
       } else {
         estimatedDaysRemaining += protocol.stages[i].minimumDays;
@@ -1088,7 +1079,7 @@ export class ReturnToPlayService {
     }
     completedDays += Math.min(daysInCurrentStage, currentStage.minimumDays);
     const overallProgress = Math.round(
-      (completedDays / protocol.totalMinimumDays) * 100
+      (completedDays / protocol.totalMinimumDays) * 100,
     );
 
     return {
@@ -1163,7 +1154,7 @@ export class ReturnToPlayService {
 
       if (avgConfidence < 7) {
         recommendations.push(
-          "Psychological readiness is important - build confidence gradually"
+          "Psychological readiness is important - build confidence gradually",
         );
         if (avgConfidence < 5) {
           riskLevel = "moderate";
@@ -1191,7 +1182,9 @@ export class ReturnToPlayService {
     // Add stage-specific recommendations
     if (nextStage) {
       recommendations.push(`Next stage: ${nextStage.name}`);
-      recommendations.push(`Activities: ${nextStage.activities.slice(0, 2).join(", ")}`);
+      recommendations.push(
+        `Activities: ${nextStage.activities.slice(0, 2).join(", ")}`,
+      );
     }
 
     return {
@@ -1209,7 +1202,7 @@ export class ReturnToPlayService {
   progressToNextStage(
     injuryId: string,
     clearedBy?: string,
-    notes?: string
+    notes?: string,
   ): boolean {
     const progress = this.getProgress(injuryId);
     if (!progress || !progress.nextStage) return false;
@@ -1236,7 +1229,7 @@ export class ReturnToPlayService {
           };
         }
         return injury;
-      })
+      }),
     );
 
     return true;
@@ -1250,7 +1243,7 @@ export class ReturnToPlayService {
     if (!progress) return false;
 
     const currentStageIndex = progress.protocol.stages.findIndex(
-      (s) => s.stage === progress.currentStage.stage
+      (s) => s.stage === progress.currentStage.stage,
     );
 
     if (currentStageIndex <= 0) return false;
@@ -1275,7 +1268,7 @@ export class ReturnToPlayService {
           };
         }
         return injury;
-      })
+      }),
     );
 
     return true;
@@ -1306,7 +1299,7 @@ export class ReturnToPlayService {
    */
   markRecovered(injuryId: string): void {
     this._activeInjuries.update((injuries) =>
-      injuries.filter((i) => i.id !== injuryId)
+      injuries.filter((i) => i.id !== injuryId),
     );
   }
 
@@ -1315,7 +1308,7 @@ export class ReturnToPlayService {
    */
   getInjuryHistory(): InjuryRecord[] {
     return this._activeInjuries().filter(
-      (i) => i.currentStage === "full_competition"
+      (i) => i.currentStage === "full_competition",
     );
   }
 }

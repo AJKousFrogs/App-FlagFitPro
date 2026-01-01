@@ -60,7 +60,7 @@ function determineAccessContext(requesterId, targetUserId, _teamId = null) {
 /**
  * Get training loads for a user within a date range
  * Uses consent-aware access for coach contexts
- * 
+ *
  * @param {string} requesterId - User making the request
  * @param {string} targetUserId - User whose data to fetch
  * @param {Date} startDate - Start of date range
@@ -69,7 +69,13 @@ function determineAccessContext(requesterId, targetUserId, _teamId = null) {
  * @param {string} options.teamId - Team ID for coach context
  * @returns {Promise<Object>} Training loads with consent info
  */
-async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, options = {}) {
+async function getTrainingLoads(
+  requesterId,
+  targetUserId,
+  startDate,
+  endDate,
+  options = {},
+) {
   if (!supabase) {
     console.warn("[load-management] No Supabase client, returning empty loads");
     return {
@@ -102,7 +108,10 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
       if (!result.success) {
         return {
           loads: [],
-          consentInfo: result.consentInfo || { blockedPlayerIds: [], accessibleCount: 0 },
+          consentInfo: result.consentInfo || {
+            blockedPlayerIds: [],
+            accessibleCount: 0,
+          },
           dataState: DataState.NO_DATA,
           error: result.error,
         };
@@ -110,10 +119,12 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
 
       // Transform to load format
       const loads = (result.data || [])
-        .filter(session => !session._consentBlocked)
+        .filter((session) => !session._consentBlocked)
         .map((session) => ({
           date: session.session_date,
-          load: session.workload || (session.rpe || 5) * (session.duration_minutes || 60),
+          load:
+            session.workload ||
+            (session.rpe || 5) * (session.duration_minutes || 60),
         }));
 
       return {
@@ -139,8 +150,12 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
           date: row.date,
           load: row.session_load || row.acute_load || 0,
         })),
-        consentInfo: { blockedPlayerIds: [], accessibleCount: metricsData.length },
-        dataState: metricsData.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
+        consentInfo: {
+          blockedPlayerIds: [],
+          accessibleCount: metricsData.length,
+        },
+        dataState:
+          metricsData.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
       };
     }
 
@@ -155,7 +170,10 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
       .order("session_date", { ascending: true });
 
     if (sessionsError) {
-      console.error("[load-management] Error fetching training sessions:", sessionsError);
+      console.error(
+        "[load-management] Error fetching training sessions:",
+        sessionsError,
+      );
       return {
         loads: [],
         consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -175,7 +193,9 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
     // Calculate session load (sRPE method: RPE * duration)
     const loads = sessionsData.map((session) => ({
       date: session.session_date,
-      load: session.workload || (session.rpe || 5) * (session.duration_minutes || 60),
+      load:
+        session.workload ||
+        (session.rpe || 5) * (session.duration_minutes || 60),
     }));
 
     return {
@@ -197,8 +217,20 @@ async function getTrainingLoads(requesterId, targetUserId, startDate, endDate, o
 /**
  * Get daily loads as an array of numbers for calculations
  */
-async function getDailyLoadsArray(requesterId, targetUserId, startDate, endDate, options = {}) {
-  const result = await getTrainingLoads(requesterId, targetUserId, startDate, endDate, options);
+async function getDailyLoadsArray(
+  requesterId,
+  targetUserId,
+  startDate,
+  endDate,
+  options = {},
+) {
+  const result = await getTrainingLoads(
+    requesterId,
+    targetUserId,
+    startDate,
+    endDate,
+    options,
+  );
   const loadsData = result.loads;
 
   // Create a map of date -> load
@@ -228,7 +260,7 @@ async function getDailyLoadsArray(requesterId, targetUserId, startDate, endDate,
 /**
  * Calculate ACWR (Acute:Chronic Workload Ratio)
  * Based on: Gabbett, T.J. (2016). The training-injury prevention paradox
- * 
+ *
  * @param {string} requesterId - User making the request
  * @param {string} targetUserId - User whose ACWR to calculate
  * @param {Date} date - Date to calculate ACWR for
@@ -241,8 +273,20 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
   const chronicStartDate = new Date(date);
   chronicStartDate.setDate(chronicStartDate.getDate() - 28);
 
-  const acuteResult = await getDailyLoadsArray(requesterId, targetUserId, acuteStartDate, endDate, options);
-  const chronicResult = await getDailyLoadsArray(requesterId, targetUserId, chronicStartDate, endDate, options);
+  const acuteResult = await getDailyLoadsArray(
+    requesterId,
+    targetUserId,
+    acuteStartDate,
+    endDate,
+    options,
+  );
+  const chronicResult = await getDailyLoadsArray(
+    requesterId,
+    targetUserId,
+    chronicStartDate,
+    endDate,
+    options,
+  );
 
   const acuteLoads = acuteResult.loads;
   const chronicLoads = chronicResult.loads;
@@ -257,7 +301,7 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     ],
     accessibleCount: Math.max(
       acuteResult.consentInfo?.accessibleCount || 0,
-      chronicResult.consentInfo?.accessibleCount || 0
+      chronicResult.consentInfo?.accessibleCount || 0,
     ),
   };
 
@@ -289,7 +333,8 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
       chronicAverage: 0,
       acuteLoads: 0,
       chronicLoads: 0,
-      message: "No training data found. Log training sessions to calculate ACWR.",
+      message:
+        "No training data found. Log training sessions to calculate ACWR.",
       consentInfo,
     };
   }
@@ -298,7 +343,8 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
   const chronicSum = chronicLoads.reduce((sum, load) => sum + load, 0);
 
   const acuteAverage = acuteLoads.length > 0 ? acuteSum / acuteLoads.length : 0;
-  const chronicAverage = chronicLoads.length > 0 ? chronicSum / chronicLoads.length : 0;
+  const chronicAverage =
+    chronicLoads.length > 0 ? chronicSum / chronicLoads.length : 0;
 
   if (chronicAverage === 0) {
     return {
@@ -323,11 +369,13 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
   if (acwr < 0.8) {
     riskZone = "detraining";
     injuryRiskMultiplier = 1.2;
-    recommendation = "Training load is too low. Consider increasing volume gradually.";
+    recommendation =
+      "Training load is too low. Consider increasing volume gradually.";
   } else if (acwr >= 0.8 && acwr <= 1.3) {
     riskZone = "safe";
     injuryRiskMultiplier = 1.0;
-    recommendation = "Training load is in the optimal 'sweet spot'. Maintain current progression.";
+    recommendation =
+      "Training load is in the optimal 'sweet spot'. Maintain current progression.";
   } else if (acwr > 1.3 && acwr <= 1.5) {
     riskZone = "caution";
     injuryRiskMultiplier = 1.5;
@@ -339,7 +387,8 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
   } else {
     riskZone = "critical";
     injuryRiskMultiplier = 4.2;
-    recommendation = "CRITICAL: Very high injury risk. Immediate load reduction recommended.";
+    recommendation =
+      "CRITICAL: Very high injury risk. Immediate load reduction recommended.";
   }
 
   return {
@@ -360,11 +409,22 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
  * Monotony = Mean daily load / Standard deviation
  * High monotony (>2.0) indicates repetitive training and increased injury risk
  */
-async function calculateMonotony(requesterId, targetUserId, weekStartDate, options = {}) {
+async function calculateMonotony(
+  requesterId,
+  targetUserId,
+  weekStartDate,
+  options = {},
+) {
   const weekEndDate = new Date(weekStartDate);
   weekEndDate.setDate(weekEndDate.getDate() + 6);
 
-  const result = await getDailyLoadsArray(requesterId, targetUserId, weekStartDate, weekEndDate, options);
+  const result = await getDailyLoadsArray(
+    requesterId,
+    targetUserId,
+    weekStartDate,
+    weekEndDate,
+    options,
+  );
   const weeklyLoads = result.loads;
   const nonZeroLoads = weeklyLoads.filter((load) => load > 0);
 
@@ -397,9 +457,11 @@ async function calculateMonotony(requesterId, targetUserId, weekStartDate, optio
     };
   }
 
-  const mean = nonZeroLoads.reduce((sum, load) => sum + load, 0) / nonZeroLoads.length;
+  const mean =
+    nonZeroLoads.reduce((sum, load) => sum + load, 0) / nonZeroLoads.length;
   const variance =
-    nonZeroLoads.reduce((sum, load) => sum + (load - mean)**2, 0) / nonZeroLoads.length;
+    nonZeroLoads.reduce((sum, load) => sum + (load - mean) ** 2, 0) /
+    nonZeroLoads.length;
   const stdDev = Math.sqrt(variance);
 
   if (stdDev === 0) {
@@ -411,7 +473,8 @@ async function calculateMonotony(requesterId, targetUserId, weekStartDate, optio
       loadVariation: 0,
       totalLoad: nonZeroLoads.reduce((sum, load) => sum + load, 0),
       trainingDays: nonZeroLoads.length,
-      message: "All sessions have identical load. Add variety to your training.",
+      message:
+        "All sessions have identical load. Add variety to your training.",
       consentInfo: result.consentInfo,
     };
   }
@@ -429,7 +492,8 @@ async function calculateMonotony(requesterId, targetUserId, weekStartDate, optio
     recommendation = "Consider adding more variety to training loads.";
   } else {
     monotonyRisk = "high";
-    recommendation = "Training is too monotonous. Vary intensity and volume between sessions.";
+    recommendation =
+      "Training is too monotonous. Vary intensity and volume between sessions.";
   }
 
   return {
@@ -455,7 +519,13 @@ async function calculateTSB(requesterId, targetUserId, date, options = {}) {
   const startDate = new Date(date);
   startDate.setDate(startDate.getDate() - 60);
 
-  const result = await getTrainingLoads(requesterId, targetUserId, startDate, endDate, options);
+  const result = await getTrainingLoads(
+    requesterId,
+    targetUserId,
+    startDate,
+    endDate,
+    options,
+  );
   const trainingHistory = result.loads;
 
   // Check for consent-blocked data
@@ -492,7 +562,8 @@ async function calculateTSB(requesterId, targetUserId, date, options = {}) {
   if (tsb > 10) {
     interpretation = "fresh";
     formScore = 0.7;
-    recommendation = "Well rested. Good time for high-intensity work or competition.";
+    recommendation =
+      "Well rested. Good time for high-intensity work or competition.";
   } else if (tsb >= 5 && tsb <= 10) {
     interpretation = "optimal";
     formScore = 1.0;
@@ -530,7 +601,9 @@ function calculateEWMA(trainingHistory, timeConstant) {
     return 0;
   }
 
-  const sorted = [...trainingHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sorted = [...trainingHistory].sort(
+    (a, b) => new Date(a.date) - new Date(b.date),
+  );
 
   const decayFactor = Math.exp(-1 / timeConstant);
   let ewma = 0;
@@ -538,7 +611,7 @@ function calculateEWMA(trainingHistory, timeConstant) {
 
   for (let i = sorted.length - 1; i >= 0; i--) {
     const daysAgo = sorted.length - 1 - i;
-    const weight = decayFactor**daysAgo;
+    const weight = decayFactor ** daysAgo;
     ewma += sorted[i].load * weight;
     weightSum += weight;
   }
@@ -550,31 +623,43 @@ function calculateEWMA(trainingHistory, timeConstant) {
  * Build DataState response wrapper
  */
 function buildDataStateResponse(result, metricType, currentDataPoints) {
-  const dataState = result.riskZone === "consent_blocked"
-    ? DataState.NO_DATA
-    : getDataStateFromRiskZone(result.riskZone || result.monotonyRisk || result.interpretation);
-  
-  const requirement = MINIMUM_DATA_REQUIREMENTS[metricType] || { minimumDays: 7 };
+  const dataState =
+    result.riskZone === "consent_blocked"
+      ? DataState.NO_DATA
+      : getDataStateFromRiskZone(
+          result.riskZone || result.monotonyRisk || result.interpretation,
+        );
+
+  const requirement = MINIMUM_DATA_REQUIREMENTS[metricType] || {
+    minimumDays: 7,
+  };
 
   // Build warnings array
   const warnings = [];
   if (dataState === DataState.NO_DATA) {
-    if (result.riskZone === "consent_blocked" || result.monotonyRisk === "consent_blocked") {
-      warnings.push("Player has not enabled performance data sharing for this team.");
+    if (
+      result.riskZone === "consent_blocked" ||
+      result.monotonyRisk === "consent_blocked"
+    ) {
+      warnings.push(
+        "Player has not enabled performance data sharing for this team.",
+      );
     } else {
-      warnings.push("No training data available. Start logging sessions to see metrics.");
+      warnings.push(
+        "No training data available. Start logging sessions to see metrics.",
+      );
     }
   } else if (dataState === DataState.INSUFFICIENT_DATA) {
     const daysNeeded = requirement.minimumDays - currentDataPoints;
     warnings.push(
-      `${requirement.description || `${requirement.minimumDays} days of data required`}. You have ${currentDataPoints} days, need ${daysNeeded} more.`
+      `${requirement.description || `${requirement.minimumDays} days of data required`}. You have ${currentDataPoints} days, need ${daysNeeded} more.`,
     );
   }
 
   // Add consent warnings
   if (result.consentInfo?.blockedPlayerIds?.length > 0) {
     warnings.push(
-      `${result.consentInfo.blockedPlayerIds.length} player(s) have not enabled data sharing.`
+      `${result.consentInfo.blockedPlayerIds.length} player(s) have not enabled data sharing.`,
     );
   }
 
@@ -599,11 +684,17 @@ async function handleACWR(method, requesterId, query) {
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
 
-  const result = await calculateACWR(requesterId, targetUserId, date, { teamId });
+  const result = await calculateACWR(requesterId, targetUserId, date, {
+    teamId,
+  });
 
   // Determine data state based on available data
   const currentDataPoints = result.chronicLoads || 0;
-  const dataStateInfo = buildDataStateResponse(result, "acwr", currentDataPoints);
+  const dataStateInfo = buildDataStateResponse(
+    result,
+    "acwr",
+    currentDataPoints,
+  );
 
   // Return response with data state metadata
   return createSuccessResponse(
@@ -613,8 +704,8 @@ async function handleACWR(method, requesterId, query) {
         calculatedFor: date.toISOString().split("T")[0],
         userId: targetUserId,
       },
-      dataStateInfo
-    )
+      dataStateInfo,
+    ),
   );
 }
 
@@ -626,15 +717,23 @@ async function handleMonotony(method, requesterId, query) {
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
-  const weekStart = query?.weekStart ? new Date(query.weekStart) : getWeekStart(new Date());
+  const weekStart = query?.weekStart
+    ? new Date(query.weekStart)
+    : getWeekStart(new Date());
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
 
-  const result = await calculateMonotony(requesterId, targetUserId, weekStart, { teamId });
+  const result = await calculateMonotony(requesterId, targetUserId, weekStart, {
+    teamId,
+  });
 
   // Build data state info
   const currentDataPoints = result.trainingDays || 0;
-  const dataStateInfo = buildDataStateResponse(result, "trainingMonotony", currentDataPoints);
+  const dataStateInfo = buildDataStateResponse(
+    result,
+    "trainingMonotony",
+    currentDataPoints,
+  );
 
   return createSuccessResponse(
     wrapWithDataState(
@@ -643,8 +742,8 @@ async function handleMonotony(method, requesterId, query) {
         weekStart: weekStart.toISOString().split("T")[0],
         userId: targetUserId,
       },
-      dataStateInfo
-    )
+      dataStateInfo,
+    ),
   );
 }
 
@@ -660,11 +759,17 @@ async function handleTSB(method, requesterId, query) {
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
 
-  const result = await calculateTSB(requesterId, targetUserId, date, { teamId });
+  const result = await calculateTSB(requesterId, targetUserId, date, {
+    teamId,
+  });
 
   // Build data state info - TSB needs 42 days
   const currentDataPoints = result.ctl !== null ? 42 : 0;
-  const dataStateInfo = buildDataStateResponse(result, "tsb", currentDataPoints);
+  const dataStateInfo = buildDataStateResponse(
+    result,
+    "tsb",
+    currentDataPoints,
+  );
 
   return createSuccessResponse(
     wrapWithDataState(
@@ -673,8 +778,8 @@ async function handleTSB(method, requesterId, query) {
         calculatedFor: date.toISOString().split("T")[0],
         userId: targetUserId,
       },
-      dataStateInfo
-    )
+      dataStateInfo,
+    ),
   );
 }
 
@@ -693,7 +798,9 @@ async function handleInjuryRisk(method, requesterId, query) {
   // Get all risk factors in parallel
   const [acwrData, monotonyData, tsbData] = await Promise.all([
     calculateACWR(requesterId, targetUserId, date, { teamId }),
-    calculateMonotony(requesterId, targetUserId, getWeekStart(date), { teamId }),
+    calculateMonotony(requesterId, targetUserId, getWeekStart(date), {
+      teamId,
+    }),
     calculateTSB(requesterId, targetUserId, date, { teamId }),
   ]);
 
@@ -717,7 +824,9 @@ async function handleInjuryRisk(method, requesterId, query) {
       dataState: DataState.NO_DATA,
       currentDataPoints: 0,
       minimumRequiredDataPoints: 28,
-      warnings: ["Player has not enabled performance data sharing for this team."],
+      warnings: [
+        "Player has not enabled performance data sharing for this team.",
+      ],
     };
 
     return createSuccessResponse(
@@ -731,8 +840,8 @@ async function handleInjuryRisk(method, requesterId, query) {
           monotonyData,
           tsbData,
         },
-        dataStateInfo
-      )
+        dataStateInfo,
+      ),
     );
   }
 
@@ -746,7 +855,9 @@ async function handleInjuryRisk(method, requesterId, query) {
       dataState: DataState.INSUFFICIENT_DATA,
       currentDataPoints: acwrData.chronicLoads || 0,
       minimumRequiredDataPoints: 28,
-      warnings: ["Insufficient training data. Log more sessions to calculate injury risk."],
+      warnings: [
+        "Insufficient training data. Log more sessions to calculate injury risk.",
+      ],
     };
 
     return createSuccessResponse(
@@ -754,14 +865,15 @@ async function handleInjuryRisk(method, requesterId, query) {
         {
           overallRisk: null,
           riskLevel: "unknown",
-          message: "Insufficient training data. Log more sessions to calculate injury risk.",
+          message:
+            "Insufficient training data. Log more sessions to calculate injury risk.",
           consentInfo,
           acwrData,
           monotonyData,
           tsbData,
         },
-        dataStateInfo
-      )
+        dataStateInfo,
+      ),
     );
   }
 
@@ -775,12 +887,16 @@ async function handleInjuryRisk(method, requesterId, query) {
       ? Math.min(1, (monotonyData.monotony - 2.0) / 2.0)
       : 0;
   const tsbRisk =
-    tsbData.formScore !== null && tsbData.formScore < 0.6 ? 1 - tsbData.formScore : 0;
+    tsbData.formScore !== null && tsbData.formScore < 0.6
+      ? 1 - tsbData.formScore
+      : 0;
 
   // Weighted composite score based on research
   const weights = { acwr: 0.45, monotony: 0.25, tsb: 0.3 };
   const compositeRisk =
-    acwrRisk * weights.acwr + monotonyRisk * weights.monotony + tsbRisk * weights.tsb;
+    acwrRisk * weights.acwr +
+    monotonyRisk * weights.monotony +
+    tsbRisk * weights.tsb;
 
   // Determine risk level
   let riskLevel, recommendation;
@@ -795,16 +911,20 @@ async function handleInjuryRisk(method, requesterId, query) {
     recommendation = "High injury risk. Consider reducing training load.";
   } else {
     riskLevel = "critical";
-    recommendation = "CRITICAL: Very high injury risk. Immediate load reduction required.";
+    recommendation =
+      "CRITICAL: Very high injury risk. Immediate load reduction required.";
   }
 
   const dataStateInfo = {
     dataState: DataState.REAL_DATA,
     currentDataPoints: acwrData.chronicLoads || 0,
     minimumRequiredDataPoints: 28,
-    warnings: consentInfo.blockedCount > 0
-      ? [`${consentInfo.blockedCount} player(s) have not enabled data sharing.`]
-      : [],
+    warnings:
+      consentInfo.blockedCount > 0
+        ? [
+            `${consentInfo.blockedCount} player(s) have not enabled data sharing.`,
+          ]
+        : [],
   };
 
   return createSuccessResponse(
@@ -825,8 +945,8 @@ async function handleInjuryRisk(method, requesterId, query) {
         tsbData,
         calculatedFor: date.toISOString().split("T")[0],
       },
-      dataStateInfo
-    )
+      dataStateInfo,
+    ),
   );
 }
 
@@ -845,7 +965,13 @@ async function handleTrainingLoads(method, requesterId, query) {
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
 
-  const result = await getTrainingLoads(requesterId, targetUserId, startDate, endDate, { teamId });
+  const result = await getTrainingLoads(
+    requesterId,
+    targetUserId,
+    startDate,
+    endDate,
+    { teamId },
+  );
 
   // Build data state info
   const currentDataPoints = result.loads.length;
@@ -857,7 +983,9 @@ async function handleTrainingLoads(method, requesterId, query) {
 
   const warnings = [];
   if (result.consentInfo?.blockedPlayerIds?.includes(targetUserId)) {
-    warnings.push("Player has not enabled performance data sharing for this team.");
+    warnings.push(
+      "Player has not enabled performance data sharing for this team.",
+    );
   } else if (currentDataPoints === 0) {
     warnings.push("No training data found for the specified date range.");
   }
@@ -879,8 +1007,8 @@ async function handleTrainingLoads(method, requesterId, query) {
         totalLoad: result.loads.reduce((sum, item) => sum + item.load, 0),
         consentInfo: result.consentInfo,
       },
-      dataStateInfo
-    )
+      dataStateInfo,
+    ),
   );
 }
 
@@ -926,7 +1054,9 @@ exports.handler = async (event, context) => {
 
           const [acwr, monotony, tsb] = await Promise.all([
             calculateACWR(userId, targetUserId, date, { teamId }),
-            calculateMonotony(userId, targetUserId, getWeekStart(date), { teamId }),
+            calculateMonotony(userId, targetUserId, getWeekStart(date), {
+              teamId,
+            }),
             calculateTSB(userId, targetUserId, date, { teamId }),
           ]);
 
@@ -948,14 +1078,23 @@ exports.handler = async (event, context) => {
           if (allBlockedPlayerIds.includes(targetUserId)) {
             warnings.push("Player has not enabled performance data sharing.");
           } else if (dataState === DataState.NO_DATA) {
-            warnings.push("No training data available. Start logging sessions.");
+            warnings.push(
+              "No training data available. Start logging sessions.",
+            );
           } else if (dataState === DataState.INSUFFICIENT_DATA) {
             const daysNeeded = 28 - currentDataPoints;
-            warnings.push(`Need ${daysNeeded} more days of data for reliable metrics.`);
+            warnings.push(
+              `Need ${daysNeeded} more days of data for reliable metrics.`,
+            );
           }
 
-          if (allBlockedPlayerIds.length > 0 && !allBlockedPlayerIds.includes(targetUserId)) {
-            warnings.push(`${allBlockedPlayerIds.length} player(s) have not enabled data sharing.`);
+          if (
+            allBlockedPlayerIds.length > 0 &&
+            !allBlockedPlayerIds.includes(targetUserId)
+          ) {
+            warnings.push(
+              `${allBlockedPlayerIds.length} player(s) have not enabled data sharing.`,
+            );
           }
 
           response = createSuccessResponse(
@@ -975,8 +1114,8 @@ exports.handler = async (event, context) => {
                 currentDataPoints,
                 minimumRequiredDataPoints: 28,
                 warnings,
-              }
-            )
+              },
+            ),
           );
           break;
         }
@@ -984,7 +1123,7 @@ exports.handler = async (event, context) => {
           response = createErrorResponse(
             `Endpoint not found: ${endpoint}. Available: acwr, monotony, tsb, injury-risk, training-loads`,
             404,
-            "not_found"
+            "not_found",
           );
       }
 

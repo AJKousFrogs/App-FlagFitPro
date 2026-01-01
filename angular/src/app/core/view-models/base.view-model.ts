@@ -125,18 +125,18 @@ export abstract class BaseViewModel {
    */
   protected handleError(error: unknown): void {
     let errorMessage = "An error occurred";
-    
+
     if (error instanceof Error) {
       errorMessage = error.message;
-    } else if (error && typeof error === 'object' && 'message' in error) {
+    } else if (error && typeof error === "object" && "message" in error) {
       errorMessage = String(error.message);
-    } else if (error && typeof error === 'object' && 'error' in error) {
+    } else if (error && typeof error === "object" && "error" in error) {
       const nestedError = (error as { error: { message?: string } }).error;
-      if (nestedError && typeof nestedError.message === 'string') {
+      if (nestedError && typeof nestedError.message === "string") {
         errorMessage = nestedError.message;
       }
     }
-    
+
     this.error.set(errorMessage);
     this.logger.error("[ViewModel Error]", error);
   }

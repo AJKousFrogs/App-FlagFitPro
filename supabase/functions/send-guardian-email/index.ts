@@ -9,7 +9,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -26,7 +27,7 @@ function getGuardianEmailTemplate(
   guardianName: string,
   minorName: string,
   verificationUrl: string,
-  appUrl: string
+  appUrl: string,
 ): string {
   return `
 <!DOCTYPE html>
@@ -138,7 +139,7 @@ function getGuardianEmailTemplate(
 function getGuardianEmailText(
   guardianName: string,
   minorName: string,
-  verificationUrl: string
+  verificationUrl: string,
 ): string {
   return `
 Dear ${guardianName || "Parent/Guardian"},
@@ -184,10 +185,10 @@ Deno.serve(async (req: Request) => {
   }
 
   if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -196,25 +197,42 @@ Deno.serve(async (req: Request) => {
     if (!authHeader) {
       return new Response(
         JSON.stringify({ error: "Missing authorization header" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
     // Parse request body
     const body: GuardianEmailRequest = await req.json();
-    const { guardianEmail, guardianName, minorName, verificationToken, consentId } = body;
+    const {
+      guardianEmail,
+      guardianName,
+      minorName,
+      verificationToken,
+      consentId,
+    } = body;
 
     if (!guardianEmail || !minorName || !verificationToken) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields: guardianEmail, minorName, verificationToken" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          error:
+            "Missing required fields: guardianEmail, minorName, verificationToken",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
     // Get environment variables
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const appUrl = Deno.env.get("APP_URL") || "https://webflagfootballfrogs.netlify.app";
-    const fromEmail = Deno.env.get("FROM_EMAIL") || "FlagFit Pro <noreply@flagfitpro.com>";
+    const appUrl =
+      Deno.env.get("APP_URL") || "https://webflagfootballfrogs.netlify.app";
+    const fromEmail =
+      Deno.env.get("FROM_EMAIL") || "FlagFit Pro <noreply@flagfitpro.com>";
 
     // Build verification URL
     const verificationUrl = `${appUrl}/consent/verify?token=${verificationToken}`;
@@ -224,15 +242,24 @@ Deno.serve(async (req: Request) => {
       const emailResponse = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${resendApiKey}`,
+          Authorization: `Bearer ${resendApiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           from: fromEmail,
           to: [guardianEmail],
           subject: `Parental Consent Required for ${minorName} - FlagFit Pro`,
-          html: getGuardianEmailTemplate(guardianName || "Parent/Guardian", minorName, verificationUrl, appUrl),
-          text: getGuardianEmailText(guardianName || "Parent/Guardian", minorName, verificationUrl),
+          html: getGuardianEmailTemplate(
+            guardianName || "Parent/Guardian",
+            minorName,
+            verificationUrl,
+            appUrl,
+          ),
+          text: getGuardianEmailText(
+            guardianName || "Parent/Guardian",
+            minorName,
+            verificationUrl,
+          ),
           tags: [
             { name: "type", value: "parental-consent" },
             { name: "consent_id", value: consentId },
@@ -269,7 +296,7 @@ Deno.serve(async (req: Request) => {
           message: "Guardian verification email sent successfully",
           emailId: result.id,
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -295,7 +322,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Consent request recorded. Email service requires configuration.",
+        message:
+          "Consent request recorded. Email service requires configuration.",
         verificationUrl, // Include for development/testing
         setupRequired: true,
         instructions: [
@@ -304,19 +332,23 @@ Deno.serve(async (req: Request) => {
           "Verification URL has been logged for manual sending if needed",
         ],
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-
   } catch (error) {
     console.error("Error sending guardian email:", error);
-    
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : "Failed to send guardian email",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to send guardian email",
       }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });
-

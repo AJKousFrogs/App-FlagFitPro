@@ -172,7 +172,7 @@ class YouTubeTrainingService {
     for (const keyword of categoryData.keywords.slice(0, 3)) {
       // Limit to 3 keywords to avoid rate limits
       try {
-        const videos = await this.searchVideos(
+        const videos = await this.searchVideos( // eslint-disable-line no-await-in-loop
           keyword,
           Math.ceil(maxResults / 3),
         );
@@ -391,7 +391,7 @@ class YouTubeTrainingService {
     const playlist = [];
 
     for (const category of categories) {
-      const videos = await this.getTrainingVideos(category, 2);
+      const videos = await this.getTrainingVideos(category, 2); // eslint-disable-line no-await-in-loop
       playlist.push({
         category,
         categoryName: this.getTrainingCategories()[category].name,

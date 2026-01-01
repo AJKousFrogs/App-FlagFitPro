@@ -8,13 +8,13 @@
  */
 export function getPositionFullName(position: string): string {
   const positionNames: Record<string, string> = {
-    QB: 'Quarterback',
-    WR: 'Wide Receiver',
-    RB: 'Running Back',
-    DB: 'Defensive Back',
-    C: 'Center',
-    LB: 'Linebacker',
-    Rusher: 'Rusher',
+    QB: "Quarterback",
+    WR: "Wide Receiver",
+    RB: "Running Back",
+    DB: "Defensive Back",
+    C: "Center",
+    LB: "Linebacker",
+    Rusher: "Rusher",
   };
   return positionNames[position] || position;
 }
@@ -24,15 +24,15 @@ export function getPositionFullName(position: string): string {
  */
 export function getPositionIcon(position: string): string {
   const icons: Record<string, string> = {
-    Quarterback: 'pi pi-user',
-    'Wide Receiver': 'pi pi-users',
-    'Running Back': 'pi pi-bolt',
-    'Defensive Back': 'pi pi-shield',
-    Rusher: 'pi pi-forward',
-    Center: 'pi pi-circle',
-    Linebacker: 'pi pi-shield',
+    Quarterback: "pi pi-user",
+    "Wide Receiver": "pi pi-users",
+    "Running Back": "pi pi-bolt",
+    "Defensive Back": "pi pi-shield",
+    Rusher: "pi pi-forward",
+    Center: "pi pi-circle",
+    Linebacker: "pi pi-shield",
   };
-  return icons[position] || 'pi pi-user';
+  return icons[position] || "pi pi-user";
 }
 
 /**
@@ -42,25 +42,30 @@ export function getPositionIcon(position: string): string {
 export function getJerseyColor(position: string): string {
   // These map to --color-position-* tokens in design-system-tokens.scss
   const colors: Record<string, string> = {
-    QB: 'var(--color-position-qb)',
-    WR: 'var(--color-position-wr)',
-    RB: 'var(--color-position-rb)',
-    DB: 'var(--color-position-db)',
-    Rusher: 'var(--color-position-rusher)',
-    C: 'var(--color-position-center)',
-    LB: 'var(--color-position-lb)',
+    QB: "var(--color-position-qb)",
+    WR: "var(--color-position-wr)",
+    RB: "var(--color-position-rb)",
+    DB: "var(--color-position-db)",
+    Rusher: "var(--color-position-rusher)",
+    C: "var(--color-position-center)",
+    LB: "var(--color-position-lb)",
   };
-  return colors[position] || 'var(--color-position-qb)';
+  return colors[position] || "var(--color-position-qb)";
 }
 
 /**
  * Get status severity for PrimeNG tags
  */
-export function getStatusSeverity(status: string): 'success' | 'danger' | 'secondary' {
+export function getStatusSeverity(
+  status: string,
+): "success" | "danger" | "secondary" {
   switch (status) {
-    case 'active': return 'success';
-    case 'injured': return 'danger';
-    default: return 'secondary';
+    case "active":
+      return "success";
+    case "injured":
+      return "danger";
+    default:
+      return "secondary";
   }
 }
 
@@ -69,9 +74,9 @@ export function getStatusSeverity(status: string): 'success' | 'danger' | 'secon
  */
 export function getInitials(name: string): string {
   return name
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .substring(0, 2)
     .toUpperCase();
 }
@@ -80,13 +85,15 @@ export function getInitials(name: string): string {
  * Extract years from experience string (e.g., "5 years" -> "5")
  */
 export function getYears(experience: string): string {
-  return experience.split(' ')[0];
+  return experience.split(" ")[0];
 }
 
 /**
  * Get player stats as array for display
  */
-export function getPlayerStats(player: { stats?: Record<string, number | string> }): Array<{ label: string; value: string | number; key: string }> {
+export function getPlayerStats(player: {
+  stats?: Record<string, number | string>;
+}): Array<{ label: string; value: string | number; key: string }> {
   if (!player.stats) return [];
   return Object.entries(player.stats).map(([key, value]) => ({
     label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -98,10 +105,12 @@ export function getPlayerStats(player: { stats?: Record<string, number | string>
 /**
  * Get invitation status severity
  */
-export function getInvitationStatusSeverity(invitation: { isExpired: boolean; status: string }): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
-  if (invitation.isExpired) return 'danger';
-  if (invitation.status === 'pending') return 'info';
-  if (invitation.status === 'accepted') return 'success';
-  return 'secondary';
+export function getInvitationStatusSeverity(invitation: {
+  isExpired: boolean;
+  status: string;
+}): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  if (invitation.isExpired) return "danger";
+  if (invitation.status === "pending") return "info";
+  if (invitation.status === "accepted") return "success";
+  return "secondary";
 }
-

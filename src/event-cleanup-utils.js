@@ -233,7 +233,7 @@ export class EventCleanupManager {
    */
   logMemoryUsage() {
     if (performance.memory) {
-      const {memory} = performance;
+      const { memory } = performance;
       logger.debug("Memory usage:", {
         used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
         total: `${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`,

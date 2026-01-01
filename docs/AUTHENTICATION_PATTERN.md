@@ -119,22 +119,25 @@ Use user.id for database queries
 async function authenticateRequest(event) {
   const authHeader = event.headers.authorization;
   const token = authHeader.substring(7); // Remove "Bearer "
-  
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+
   if (error || !user) {
-    return { success: false, error: 'Invalid or expired token' };
+    return { success: false, error: "Invalid or expired token" };
   }
-  
+
   return {
     success: true,
     user: {
       id: user.id,
       email: user.email,
-      role: user.user_metadata?.role || 'player',
+      role: user.user_metadata?.role || "player",
       name: user.user_metadata?.name || user.email,
-      emailVerified: user.email_confirmed_at !== null
-    }
+      emailVerified: user.email_confirmed_at !== null,
+    },
   };
 }
 ```
@@ -173,7 +176,7 @@ CREATE POLICY "Users can view own data" ON training_sessions
 CREATE POLICY "Coaches can view team data" ON training_sessions
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM team_members 
+      SELECT 1 FROM team_members
       WHERE team_members.team_id = training_sessions.team_id
       AND team_members.user_id = auth.uid()
       AND team_members.role IN ('coach', 'admin')
@@ -183,12 +186,12 @@ CREATE POLICY "Coaches can view team data" ON training_sessions
 
 ### 3. Rate Limiting
 
-| Tier | Requests | Window | Endpoints |
-|------|----------|--------|-----------|
-| READ | 100 | 1 minute | GET requests |
-| CREATE | 20 | 1 minute | POST requests |
-| UPDATE | 30 | 1 minute | PUT/PATCH requests |
-| DELETE | 10 | 1 minute | DELETE requests |
+| Tier   | Requests | Window   | Endpoints          |
+| ------ | -------- | -------- | ------------------ |
+| READ   | 100      | 1 minute | GET requests       |
+| CREATE | 20       | 1 minute | POST requests      |
+| UPDATE | 30       | 1 minute | PUT/PATCH requests |
+| DELETE | 10       | 1 minute | DELETE requests    |
 
 ### 4. Secure Token Storage (Frontend)
 
@@ -200,9 +203,9 @@ export class SecureStorageService {
     const key = await this.getEncryptionKey();
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
+      { name: "AES-GCM", iv },
       key,
-      encoder.encode(data)
+      encoder.encode(data),
     );
     // ... store encrypted data
   }
@@ -213,17 +216,17 @@ export class SecureStorageService {
 
 ## User Roles
 
-| Role | Permissions |
-|------|-------------|
+| Role     | Permissions                    |
+| -------- | ------------------------------ |
 | `player` | Own data only, team membership |
-| `coach` | Team data, player management |
-| `admin` | Full access, system management |
+| `coach`  | Team data, player management   |
+| `admin`  | Full access, system management |
 
 Roles are stored in `user_metadata`:
 
 ```typescript
 const { data } = await supabase.auth.updateUser({
-  data: { role: 'coach' }
+  data: { role: "coach" },
 });
 ```
 
@@ -233,13 +236,13 @@ const { data } = await supabase.auth.updateUser({
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/login` | No | Login (via Supabase) |
-| POST | `/api/auth/reset-password` | No | Request password reset |
-| GET | `/auth-me` | Yes | Verify token and get user |
-| POST | `/api/accept-invitation` | No | Accept team invitation |
-| GET | `/api/validate-invitation` | No | Validate invitation token |
+| Method | Endpoint                   | Auth | Description               |
+| ------ | -------------------------- | ---- | ------------------------- |
+| POST   | `/api/auth/login`          | No   | Login (via Supabase)      |
+| POST   | `/api/auth/reset-password` | No   | Request password reset    |
+| GET    | `/auth-me`                 | Yes  | Verify token and get user |
+| POST   | `/api/accept-invitation`   | No   | Accept team invitation    |
+| GET    | `/api/validate-invitation` | No   | Validate invitation token |
 
 ### Protected Endpoints
 
@@ -256,29 +259,29 @@ Authorization: Bearer <access_token>
 ### Angular AuthService
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AuthService {
   private supabase = inject(SupabaseService).client;
-  
+
   // Reactive auth state
   readonly user = signal<User | null>(null);
   readonly isAuthenticated = computed(() => !!this.user());
-  
+
   constructor() {
     // Listen for auth state changes
     this.supabase.auth.onAuthStateChange((event, session) => {
       this.user.set(session?.user ?? null);
     });
   }
-  
+
   async login(email: string, password: string) {
     return this.supabase.auth.signInWithPassword({ email, password });
   }
-  
+
   async logout() {
     return this.supabase.auth.signOut();
   }
-  
+
   async getSession() {
     return this.supabase.auth.getSession();
   }
@@ -291,14 +294,16 @@ export class AuthService {
 export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  
-  const { data: { session } } = await auth.getSession();
-  
+
+  const {
+    data: { session },
+  } = await auth.getSession();
+
   if (!session) {
-    router.navigate(['/login']);
+    router.navigate(["/login"]);
     return false;
   }
-  
+
   return true;
 };
 ```
@@ -309,13 +314,13 @@ export const authGuard: CanActivateFn = async () => {
 
 ### Common Authentication Errors
 
-| Error Code | Description | Solution |
-|------------|-------------|----------|
-| `401` | Invalid credentials | Check email/password |
-| `401` | Token expired | Refresh token or re-login |
-| `403` | Email not verified | Verify email address |
-| `429` | Rate limit exceeded | Wait before retrying |
-| `500` | Server error | Check logs |
+| Error Code | Description         | Solution                  |
+| ---------- | ------------------- | ------------------------- |
+| `401`      | Invalid credentials | Check email/password      |
+| `401`      | Token expired       | Refresh token or re-login |
+| `403`      | Email not verified  | Verify email address      |
+| `429`      | Rate limit exceeded | Wait before retrying      |
+| `500`      | Server error        | Check logs                |
 
 ### Error Response Format
 
@@ -346,7 +351,9 @@ export const authGuard: CanActivateFn = async () => {
 // Access via supabase.auth.getSession()
 
 // For custom storage (e.g., secure storage):
-const { data: { session } } = await supabase.auth.getSession();
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 await secureStorage.setAuthToken(session.access_token);
 ```
 

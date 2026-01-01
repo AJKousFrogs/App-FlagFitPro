@@ -34,7 +34,13 @@ async function getUserRole(userId) {
 
 // Check if user is coach/admin
 function isCoachOrAdmin(role) {
-  return ["coach", "head_coach", "assistant_coach", "manager", "admin"].includes(role);
+  return [
+    "coach",
+    "head_coach",
+    "assistant_coach",
+    "manager",
+    "admin",
+  ].includes(role);
 }
 
 // Check if coach has consent to view player's personal games
@@ -91,8 +97,11 @@ const createGame = async (userId, gameData) => {
         game_date: sanitizedData.gameDate,
         location: sanitizedData.location || null,
         home_away: sanitizedData.isHomeGame ? "home" : "away",
-        weather_conditions: sanitizedData.weather 
-          ? { condition: sanitizedData.weather, temperature: sanitizedData.temperature }
+        weather_conditions: sanitizedData.weather
+          ? {
+              condition: sanitizedData.weather,
+              temperature: sanitizedData.temperature,
+            }
           : null,
         game_type: sanitizedData.gameType || "regular_season",
         our_score: sanitizedData.teamScore || 0,
@@ -114,9 +123,10 @@ const createGame = async (userId, gameData) => {
     return {
       ...data,
       game_id: data.id,
-      message: visibilityScope === "personal" 
-        ? "Personal game created - visible only to you and coaches with consent"
-        : "Team game created - visible to all team members",
+      message:
+        visibilityScope === "personal"
+          ? "Personal game created - visible only to you and coaches with consent"
+          : "Team game created - visible to all team members",
     };
   } catch (error) {
     console.error("Error creating game:", error);
@@ -198,7 +208,10 @@ const getGames = async (userId, options = {}) => {
         }
         // Coaches can see if they have consent
         else if (isCoach && game.player_owner_id) {
-          const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
+          const hasConsent = await hasPlayerConsent(
+            userId,
+            game.player_owner_id,
+          );
           if (hasConsent) {
             filteredGames.push(game);
           }
@@ -207,7 +220,7 @@ const getGames = async (userId, options = {}) => {
     }
 
     // Transform to consistent format
-    return filteredGames.map(game => ({
+    return filteredGames.map((game) => ({
       ...game,
       game_id: game.id,
       opponent_team_name: game.opponent_name,
@@ -243,11 +256,15 @@ const getGameDetails = async (userId, gameId) => {
 
     // Check visibility permissions
     if (game.visibility_scope === "personal") {
-      const isOwner = game.player_owner_id === userId || game.created_by === userId;
-      
+      const isOwner =
+        game.player_owner_id === userId || game.created_by === userId;
+
       if (!isOwner) {
         if (isCoach && game.player_owner_id) {
-          const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
+          const hasConsent = await hasPlayerConsent(
+            userId,
+            game.player_owner_id,
+          );
           if (!hasConsent) {
             throw new Error("You don't have permission to view this game");
           }
@@ -290,8 +307,9 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // Permission check
-    const isOwner = game.player_owner_id === userId || game.created_by === userId;
-    
+    const isOwner =
+      game.player_owner_id === userId || game.created_by === userId;
+
     if (game.visibility_scope === "personal" && !isOwner) {
       throw new Error("You don't have permission to modify this game");
     }
@@ -310,15 +328,30 @@ const updateGame = async (userId, gameId, updates) => {
     };
 
     // Map fields
-    if (sanitizedUpdates.teamScore !== undefined) {updateObj.our_score = sanitizedUpdates.teamScore;}
-    if (sanitizedUpdates.opponentScore !== undefined) {updateObj.opponent_score = sanitizedUpdates.opponentScore;}
-    if (sanitizedUpdates.location !== undefined) {updateObj.location = sanitizedUpdates.location;}
-    if (sanitizedUpdates.notes !== undefined) {updateObj.notes = sanitizedUpdates.notes;}
-    if (sanitizedUpdates.status !== undefined) {updateObj.status = sanitizedUpdates.status;}
-    if (sanitizedUpdates.weather !== undefined || sanitizedUpdates.temperature !== undefined) {
+    if (sanitizedUpdates.teamScore !== undefined) {
+      updateObj.our_score = sanitizedUpdates.teamScore;
+    }
+    if (sanitizedUpdates.opponentScore !== undefined) {
+      updateObj.opponent_score = sanitizedUpdates.opponentScore;
+    }
+    if (sanitizedUpdates.location !== undefined) {
+      updateObj.location = sanitizedUpdates.location;
+    }
+    if (sanitizedUpdates.notes !== undefined) {
+      updateObj.notes = sanitizedUpdates.notes;
+    }
+    if (sanitizedUpdates.status !== undefined) {
+      updateObj.status = sanitizedUpdates.status;
+    }
+    if (
+      sanitizedUpdates.weather !== undefined ||
+      sanitizedUpdates.temperature !== undefined
+    ) {
       updateObj.weather_conditions = {
-        condition: sanitizedUpdates.weather || game.weather_conditions?.condition,
-        temperature: sanitizedUpdates.temperature || game.weather_conditions?.temperature,
+        condition:
+          sanitizedUpdates.weather || game.weather_conditions?.condition,
+        temperature:
+          sanitizedUpdates.temperature || game.weather_conditions?.temperature,
       };
     }
 
@@ -362,7 +395,8 @@ const savePlay = async (userId, gameId, playData) => {
     }
 
     // Check permission to add stats
-    const isOwner = game.player_owner_id === userId || game.created_by === userId;
+    const isOwner =
+      game.player_owner_id === userId || game.created_by === userId;
     const isCoach = isCoachOrAdmin(userRole);
 
     if (game.visibility_scope === "personal" && !isOwner && !isCoach) {
@@ -423,7 +457,8 @@ const getGameStats = async (userId, gameId) => {
       drops: events.filter((e) => e.event_type === "drop").length,
       flagPulls: events.filter((e) => e.event_type === "flag_pull").length,
       touchdowns: events.filter((e) => e.event_type === "touchdown").length,
-      interceptions: events.filter((e) => e.event_type === "interception").length,
+      interceptions: events.filter((e) => e.event_type === "interception")
+        .length,
       totalYards: events.reduce((sum, e) => sum + (e.yards || 0), 0),
     };
 
@@ -435,7 +470,11 @@ const getGameStats = async (userId, gameId) => {
 };
 
 // Get aggregated player stats across all games (for player profile)
-const getPlayerAggregatedStats = async (requestingUserId, playerId, options = {}) => {
+const getPlayerAggregatedStats = async (
+  requestingUserId,
+  playerId,
+  options = {},
+) => {
   try {
     checkEnvVars();
 
@@ -456,10 +495,12 @@ const getPlayerAggregatedStats = async (requestingUserId, playerId, options = {}
     // Get all game events for the player
     let query = supabaseAdmin
       .from("game_events")
-      .select(`
+      .select(
+        `
         *,
         games!inner(id, game_date, opponent_name, visibility_scope, player_owner_id, team_id)
-      `)
+      `,
+      )
       .eq("player_id", playerId);
 
     // Filter by year if specified
@@ -482,26 +523,37 @@ const getPlayerAggregatedStats = async (requestingUserId, playerId, options = {}
     let filteredEvents = events || [];
     if (!isSelf && isCoach) {
       // Coach can see team games and personal games they have consent for
-      filteredEvents = events.filter(e => 
-        e.games.visibility_scope === "team" || 
-        e.games.player_owner_id === playerId
+      filteredEvents = events.filter(
+        (e) =>
+          e.games.visibility_scope === "team" ||
+          e.games.player_owner_id === playerId,
       );
     }
 
     // Calculate aggregated statistics
     const stats = {
-      totalGames: new Set(filteredEvents.map(e => e.game_id)).size,
+      totalGames: new Set(filteredEvents.map((e) => e.game_id)).size,
       totalEvents: filteredEvents.length,
-      completions: filteredEvents.filter((e) => e.event_type === "completion").length,
-      receptions: filteredEvents.filter((e) => e.event_type === "reception").length,
+      completions: filteredEvents.filter((e) => e.event_type === "completion")
+        .length,
+      receptions: filteredEvents.filter((e) => e.event_type === "reception")
+        .length,
       drops: filteredEvents.filter((e) => e.event_type === "drop").length,
-      flagPulls: filteredEvents.filter((e) => e.event_type === "flag_pull").length,
-      touchdowns: filteredEvents.filter((e) => e.event_type === "touchdown").length,
-      interceptions: filteredEvents.filter((e) => e.event_type === "interception").length,
+      flagPulls: filteredEvents.filter((e) => e.event_type === "flag_pull")
+        .length,
+      touchdowns: filteredEvents.filter((e) => e.event_type === "touchdown")
+        .length,
+      interceptions: filteredEvents.filter(
+        (e) => e.event_type === "interception",
+      ).length,
       totalYards: filteredEvents.reduce((sum, e) => sum + (e.yards || 0), 0),
       // Breakdown by game type
-      teamGameStats: calculateEventStats(filteredEvents.filter(e => e.games.visibility_scope === "team")),
-      personalGameStats: calculateEventStats(filteredEvents.filter(e => e.games.visibility_scope === "personal")),
+      teamGameStats: calculateEventStats(
+        filteredEvents.filter((e) => e.games.visibility_scope === "team"),
+      ),
+      personalGameStats: calculateEventStats(
+        filteredEvents.filter((e) => e.games.visibility_scope === "personal"),
+      ),
     };
 
     return stats;
@@ -514,7 +566,7 @@ const getPlayerAggregatedStats = async (requestingUserId, playerId, options = {}
 // Helper to calculate stats from events
 function calculateEventStats(events) {
   return {
-    games: new Set(events.map(e => e.game_id)).size,
+    games: new Set(events.map((e) => e.game_id)).size,
     completions: events.filter((e) => e.event_type === "completion").length,
     receptions: events.filter((e) => e.event_type === "reception").length,
     drops: events.filter((e) => e.event_type === "drop").length,
@@ -532,28 +584,32 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
     if (action === "grant") {
       const { data, error } = await supabaseAdmin
         .from("player_stats_consent")
-        .upsert({
-          player_id: playerId,
-          coach_id: coachId,
-          consent_granted: true,
-          consent_type: options.consentType || "full",
-          can_view_personal_games: options.canViewPersonalGames !== false,
-          can_view_domestic_league: options.canViewDomesticLeague !== false,
-          can_view_detailed_stats: options.canViewDetailedStats !== false,
-          can_view_historical: options.canViewHistorical !== false,
-          granted_at: new Date().toISOString(),
-          revoked_at: null,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: "player_id,coach_id",
-        })
+        .upsert(
+          {
+            player_id: playerId,
+            coach_id: coachId,
+            consent_granted: true,
+            consent_type: options.consentType || "full",
+            can_view_personal_games: options.canViewPersonalGames !== false,
+            can_view_domestic_league: options.canViewDomesticLeague !== false,
+            can_view_detailed_stats: options.canViewDetailedStats !== false,
+            can_view_historical: options.canViewHistorical !== false,
+            granted_at: new Date().toISOString(),
+            revoked_at: null,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "player_id,coach_id",
+          },
+        )
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
       return { success: true, message: "Consent granted", data };
-    } 
-    else if (action === "revoke") {
+    } else if (action === "revoke") {
       const { data, error } = await supabaseAdmin
         .from("player_stats_consent")
         .update({
@@ -566,20 +622,25 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
       return { success: true, message: "Consent revoked", data };
-    }
-    else if (action === "list") {
+    } else if (action === "list") {
       // List all consents for a player
       const { data, error } = await supabaseAdmin
         .from("player_stats_consent")
-        .select(`
+        .select(
+          `
           *,
           coach:coach_id(id, full_name, email)
-        `)
+        `,
+        )
         .eq("player_id", playerId);
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
       return data || [];
     }
 
@@ -634,19 +695,32 @@ exports.handler = async (event, context) => {
           result = await updateGame(userId, path, body);
         }
         // Route: GET /:gameId/stats - Get game stats
-        else if (event.httpMethod === "GET" && path.match(/^([a-f0-9-]+)\/stats$/i)) {
+        else if (
+          event.httpMethod === "GET" &&
+          path.match(/^([a-f0-9-]+)\/stats$/i)
+        ) {
           const gameId = path.match(/^([a-f0-9-]+)\/stats$/i)[1];
           result = await getGameStats(userId, gameId);
         }
         // Route: POST /:gameId/events - Save event/play
-        else if (event.httpMethod === "POST" && path.match(/^([a-f0-9-]+)\/events$/i)) {
+        else if (
+          event.httpMethod === "POST" &&
+          path.match(/^([a-f0-9-]+)\/events$/i)
+        ) {
           const gameId = path.match(/^([a-f0-9-]+)\/events$/i)[1];
           result = await savePlay(userId, gameId, body);
         }
         // Route: GET /player/:playerId/stats - Get player aggregated stats
-        else if (event.httpMethod === "GET" && path.match(/^player\/([a-f0-9-]+)\/stats$/i)) {
+        else if (
+          event.httpMethod === "GET" &&
+          path.match(/^player\/([a-f0-9-]+)\/stats$/i)
+        ) {
           const playerId = path.match(/^player\/([a-f0-9-]+)\/stats$/i)[1];
-          result = await getPlayerAggregatedStats(userId, playerId, queryParams);
+          result = await getPlayerAggregatedStats(
+            userId,
+            playerId,
+            queryParams,
+          );
         }
         // Route: POST /consent - Manage consent
         else if (event.httpMethod === "POST" && path === "consent") {
@@ -656,8 +730,7 @@ exports.handler = async (event, context) => {
         // Route: GET /consent - List player's consents
         else if (event.httpMethod === "GET" && path === "consent") {
           result = await manageConsent(userId, null, "list");
-        }
-        else {
+        } else {
           return createErrorResponse("Endpoint not found", 404, "not_found");
         }
 
@@ -667,7 +740,11 @@ exports.handler = async (event, context) => {
           return handleNotFoundError(error.message);
         }
 
-        if (error.message && (error.message.includes("permission") || error.message.includes("consent"))) {
+        if (
+          error.message &&
+          (error.message.includes("permission") ||
+            error.message.includes("consent"))
+        ) {
           return handleAuthorizationError(error.message);
         }
 

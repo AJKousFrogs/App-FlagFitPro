@@ -27,7 +27,13 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-export type PulseStatus = "live" | "online" | "offline" | "connecting" | "warning" | "error";
+export type PulseStatus =
+  | "live"
+  | "online"
+  | "offline"
+  | "connecting"
+  | "warning"
+  | "error";
 
 @Component({
   selector: "app-pulse-indicator",
@@ -58,193 +64,196 @@ export type PulseStatus = "live" | "online" | "offline" | "connecting" | "warnin
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: inline-flex;
-    }
-
-    .pulse-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    /* Container */
-    .pulse-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Sizes */
-    .size-xs .pulse-container {
-      width: 8px;
-      height: 8px;
-    }
-
-    .size-sm .pulse-container {
-      width: 12px;
-      height: 12px;
-    }
-
-    .size-md .pulse-container {
-      width: 16px;
-      height: 16px;
-    }
-
-    .size-lg .pulse-container {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Core dot */
-    .pulse-dot {
-      position: relative;
-      z-index: 1;
-      border-radius: 50%;
-    }
-
-    .size-xs .pulse-dot {
-      width: 6px;
-      height: 6px;
-    }
-
-    .size-sm .pulse-dot {
-      width: 8px;
-      height: 8px;
-    }
-
-    .size-md .pulse-dot {
-      width: 10px;
-      height: 10px;
-    }
-
-    .size-lg .pulse-dot {
-      width: 12px;
-      height: 12px;
-    }
-
-    /* Pulse rings */
-    .pulse-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      opacity: 0;
-    }
-
-    .pulse-ring-1 {
-      animation: pulse-expand 2s ease-out infinite;
-    }
-
-    .pulse-ring-2 {
-      animation: pulse-expand 2s ease-out infinite 1s;
-    }
-
-    @keyframes pulse-expand {
-      0% {
-        transform: scale(0.8);
-        opacity: 0.8;
+  styles: [
+    `
+      :host {
+        display: inline-flex;
       }
-      100% {
-        transform: scale(2.5);
+
+      .pulse-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      /* Container */
+      .pulse-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Sizes */
+      .size-xs .pulse-container {
+        width: 8px;
+        height: 8px;
+      }
+
+      .size-sm .pulse-container {
+        width: 12px;
+        height: 12px;
+      }
+
+      .size-md .pulse-container {
+        width: 16px;
+        height: 16px;
+      }
+
+      .size-lg .pulse-container {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* Core dot */
+      .pulse-dot {
+        position: relative;
+        z-index: 1;
+        border-radius: 50%;
+      }
+
+      .size-xs .pulse-dot {
+        width: 6px;
+        height: 6px;
+      }
+
+      .size-sm .pulse-dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .size-md .pulse-dot {
+        width: 10px;
+        height: 10px;
+      }
+
+      .size-lg .pulse-dot {
+        width: 12px;
+        height: 12px;
+      }
+
+      /* Pulse rings */
+      .pulse-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
         opacity: 0;
       }
-    }
 
-    /* Status colors */
-    .status-live .pulse-dot,
-    .status-online .pulse-dot {
-      background: var(--color-status-success);
-      box-shadow: 0 0 8px var(--color-status-success);
-    }
-
-    .status-live .pulse-ring,
-    .status-online .pulse-ring {
-      background: var(--color-status-success);
-    }
-
-    .status-offline .pulse-dot {
-      background: var(--p-surface-400);
-    }
-
-    .status-connecting .pulse-dot {
-      background: var(--color-status-warning);
-      animation: blink 1s ease-in-out infinite;
-    }
-
-    .status-connecting .pulse-ring {
-      background: var(--color-status-warning);
-    }
-
-    .status-warning .pulse-dot {
-      background: var(--color-status-warning);
-      box-shadow: 0 0 8px var(--color-status-warning);
-    }
-
-    .status-warning .pulse-ring {
-      background: var(--color-status-warning);
-    }
-
-    .status-error .pulse-dot {
-      background: var(--color-status-error);
-      box-shadow: 0 0 8px var(--color-status-error);
-    }
-
-    .status-error .pulse-ring {
-      background: var(--color-status-error);
-    }
-
-    @keyframes blink {
-      0%, 100% {
-        opacity: 1;
+      .pulse-ring-1 {
+        animation: pulse-expand 2s ease-out infinite;
       }
-      50% {
-        opacity: 0.4;
+
+      .pulse-ring-2 {
+        animation: pulse-expand 2s ease-out infinite 1s;
       }
-    }
 
-    /* Label */
-    .pulse-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
-      color: var(--text-secondary);
-      white-space: nowrap;
-    }
+      @keyframes pulse-expand {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(2.5);
+          opacity: 0;
+        }
+      }
 
-    .size-xs .pulse-label {
-      font-size: var(--font-body-xs);
-    }
+      /* Status colors */
+      .status-live .pulse-dot,
+      .status-online .pulse-dot {
+        background: var(--color-status-success);
+        box-shadow: 0 0 8px var(--color-status-success);
+      }
 
-    .size-lg .pulse-label {
-      font-size: var(--font-body-md);
-    }
+      .status-live .pulse-ring,
+      .status-online .pulse-ring {
+        background: var(--color-status-success);
+      }
 
-    .status-live .pulse-label,
-    .status-online .pulse-label {
-      color: var(--color-status-success);
-    }
-
-    .status-warning .pulse-label {
-      color: var(--color-status-warning);
-    }
-
-    .status-error .pulse-label {
-      color: var(--color-status-error);
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .pulse-ring {
-        animation: none;
-        display: none;
+      .status-offline .pulse-dot {
+        background: var(--p-surface-400);
       }
 
       .status-connecting .pulse-dot {
-        animation: none;
+        background: var(--color-status-warning);
+        animation: blink 1s ease-in-out infinite;
       }
-    }
-  `],
+
+      .status-connecting .pulse-ring {
+        background: var(--color-status-warning);
+      }
+
+      .status-warning .pulse-dot {
+        background: var(--color-status-warning);
+        box-shadow: 0 0 8px var(--color-status-warning);
+      }
+
+      .status-warning .pulse-ring {
+        background: var(--color-status-warning);
+      }
+
+      .status-error .pulse-dot {
+        background: var(--color-status-error);
+        box-shadow: 0 0 8px var(--color-status-error);
+      }
+
+      .status-error .pulse-ring {
+        background: var(--color-status-error);
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      /* Label */
+      .pulse-label {
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+
+      .size-xs .pulse-label {
+        font-size: var(--font-body-xs);
+      }
+
+      .size-lg .pulse-label {
+        font-size: var(--font-body-md);
+      }
+
+      .status-live .pulse-label,
+      .status-online .pulse-label {
+        color: var(--color-status-success);
+      }
+
+      .status-warning .pulse-label {
+        color: var(--color-status-warning);
+      }
+
+      .status-error .pulse-label {
+        color: var(--color-status-error);
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .pulse-ring {
+          animation: none;
+          display: none;
+        }
+
+        .status-connecting .pulse-dot {
+          animation: none;
+        }
+      }
+    `,
+  ],
 })
 export class PulseIndicatorComponent {
   // Inputs
@@ -255,7 +264,13 @@ export class PulseIndicatorComponent {
   // Computed
   shouldPulse = computed(() => {
     const s = this.status();
-    return s === "live" || s === "online" || s === "connecting" || s === "warning" || s === "error";
+    return (
+      s === "live" ||
+      s === "online" ||
+      s === "connecting" ||
+      s === "warning" ||
+      s === "error"
+    );
   });
 
   ariaLabel = computed(() => {

@@ -152,9 +152,14 @@ interface FeedbackData {
           </div>
 
           <!-- Outcome Question (for helpful feedback) -->
-          @if (detailedFeedbackType === 'helpful' || detailedFeedbackType === 'thumbs_up') {
+          @if (
+            detailedFeedbackType === "helpful" ||
+            detailedFeedbackType === "thumbs_up"
+          ) {
             <div class="outcome-question">
-              <label class="section-label">Did this help you achieve your goal?</label>
+              <label class="section-label"
+                >Did this help you achieve your goal?</label
+              >
               <div class="outcome-options">
                 <button
                   class="outcome-btn"
@@ -370,11 +375,31 @@ export class AiFeedbackComponent {
 
   // Feedback type options
   feedbackTypes = [
-    { value: "not_helpful" as FeedbackType, label: "Not helpful", icon: "pi pi-thumbs-down" },
-    { value: "incorrect" as FeedbackType, label: "Incorrect information", icon: "pi pi-times-circle" },
-    { value: "unsafe" as FeedbackType, label: "Unsafe advice", icon: "pi pi-exclamation-triangle" },
-    { value: "irrelevant" as FeedbackType, label: "Not relevant to my question", icon: "pi pi-question-circle" },
-    { value: "helpful" as FeedbackType, label: "Actually helpful", icon: "pi pi-thumbs-up" },
+    {
+      value: "not_helpful" as FeedbackType,
+      label: "Not helpful",
+      icon: "pi pi-thumbs-down",
+    },
+    {
+      value: "incorrect" as FeedbackType,
+      label: "Incorrect information",
+      icon: "pi pi-times-circle",
+    },
+    {
+      value: "unsafe" as FeedbackType,
+      label: "Unsafe advice",
+      icon: "pi pi-exclamation-triangle",
+    },
+    {
+      value: "irrelevant" as FeedbackType,
+      label: "Not relevant to my question",
+      icon: "pi pi-question-circle",
+    },
+    {
+      value: "helpful" as FeedbackType,
+      label: "Actually helpful",
+      icon: "pi pi-thumbs-up",
+    },
   ];
 
   async submitQuickFeedback(type: FeedbackType): Promise<void> {
@@ -399,7 +424,7 @@ export class AiFeedbackComponent {
     await this.submitFeedback(
       this.detailedFeedbackType,
       this.feedbackComment,
-      this.outcomeAnswer
+      this.outcomeAnswer,
     );
 
     this.dialogVisible = false;
@@ -408,7 +433,7 @@ export class AiFeedbackComponent {
   private async submitFeedback(
     type: FeedbackType,
     reason?: string,
-    outcome?: string | null
+    outcome?: string | null,
   ): Promise<void> {
     const feedbackData: FeedbackData = {
       message_id: this.messageId(),
@@ -419,9 +444,7 @@ export class AiFeedbackComponent {
     };
 
     try {
-      await this.apiService
-        .post("/api/ai/feedback", feedbackData)
-        .toPromise();
+      await this.apiService.post("/api/ai/feedback", feedbackData).toPromise();
 
       this.selectedFeedback.set(type);
       this.submitted.set(true);
@@ -435,4 +458,3 @@ export class AiFeedbackComponent {
     }
   }
 }
-

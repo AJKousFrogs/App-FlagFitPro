@@ -22,62 +22,62 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 
 // Activity level multipliers for TDEE calculation
 const ACTIVITY_MULTIPLIERS = {
-  sedentary: 1.2,        // Little or no exercise
-  light: 1.375,          // Light exercise 1-3 days/week
-  moderate: 1.55,        // Moderate exercise 3-5 days/week
-  active: 1.725,         // Hard exercise 6-7 days/week
-  very_active: 1.9,      // Very hard exercise, physical job, or 2x training
-  athlete: 2.0,          // Professional athlete, intense daily training
+  sedentary: 1.2, // Little or no exercise
+  light: 1.375, // Light exercise 1-3 days/week
+  moderate: 1.55, // Moderate exercise 3-5 days/week
+  active: 1.725, // Hard exercise 6-7 days/week
+  very_active: 1.9, // Very hard exercise, physical job, or 2x training
+  athlete: 2.0, // Professional athlete, intense daily training
 };
 
 // Macro ratios by goal (as percentage of total calories)
 const MACRO_RATIOS = {
   performance: {
-    protein: 0.25,    // 25% - Support muscle recovery and performance
-    carbs: 0.50,      // 50% - Primary fuel for high-intensity activity
-    fat: 0.25,        // 25% - Hormone production and satiety
+    protein: 0.25, // 25% - Support muscle recovery and performance
+    carbs: 0.5, // 50% - Primary fuel for high-intensity activity
+    fat: 0.25, // 25% - Hormone production and satiety
   },
   cutting: {
-    protein: 0.35,    // 35% - Preserve muscle during deficit
-    carbs: 0.35,      // 35% - Maintain training performance
-    fat: 0.30,        // 30% - Satiety and hormone function
+    protein: 0.35, // 35% - Preserve muscle during deficit
+    carbs: 0.35, // 35% - Maintain training performance
+    fat: 0.3, // 30% - Satiety and hormone function
   },
   bulking: {
-    protein: 0.25,    // 25% - Support muscle growth
-    carbs: 0.55,      // 55% - Fuel intense training and recovery
-    fat: 0.20,        // 20% - Essential fats
+    protein: 0.25, // 25% - Support muscle growth
+    carbs: 0.55, // 55% - Fuel intense training and recovery
+    fat: 0.2, // 20% - Essential fats
   },
   maintenance: {
-    protein: 0.25,    // 25% - Standard athletic protein
-    carbs: 0.50,      // 50% - Energy for activity
-    fat: 0.25,        // 25% - Balanced fat intake
+    protein: 0.25, // 25% - Standard athletic protein
+    carbs: 0.5, // 50% - Energy for activity
+    fat: 0.25, // 25% - Balanced fat intake
   },
   endurance: {
-    protein: 0.20,    // 20% - Lower protein needs
-    carbs: 0.60,      // 60% - High carb for endurance
-    fat: 0.20,        // 20% - Essential fats
+    protein: 0.2, // 20% - Lower protein needs
+    carbs: 0.6, // 60% - High carb for endurance
+    fat: 0.2, // 20% - Essential fats
   },
 };
 
 // Calorie adjustments by goal
 const CALORIE_ADJUSTMENTS = {
-  performance: 0,       // Maintain current weight
-  cutting: -500,        // ~1 lb/week loss
+  performance: 0, // Maintain current weight
+  cutting: -500, // ~1 lb/week loss
   aggressive_cut: -750, // ~1.5 lb/week loss (not recommended long-term)
-  bulking: 300,         // Lean bulk
+  bulking: 300, // Lean bulk
   aggressive_bulk: 500, // Faster muscle gain (more fat gain risk)
-  maintenance: 0,       // No change
+  maintenance: 0, // No change
 };
 
 // Protein per kg body weight by goal
 const PROTEIN_PER_KG = {
-  sedentary: 0.8,       // RDA minimum
-  light: 1.2,           // Light activity
-  moderate: 1.4,        // Moderate activity
-  active: 1.6,          // Active individuals
-  athlete: 1.8,         // Athletes
-  cutting: 2.0,         // Higher protein when cutting
-  bulking: 1.8,         // Muscle building
+  sedentary: 0.8, // RDA minimum
+  light: 1.2, // Light activity
+  moderate: 1.4, // Moderate activity
+  active: 1.6, // Active individuals
+  athlete: 1.8, // Athletes
+  cutting: 2.0, // Higher protein when cutting
+  bulking: 1.8, // Muscle building
 };
 
 // =============================================================================
@@ -87,7 +87,7 @@ const PROTEIN_PER_KG = {
 /**
  * Calculate BMR using Mifflin-St Jeor equation
  * More accurate than Harris-Benedict for modern populations
- * 
+ *
  * @param {number} weightKg - Weight in kilograms
  * @param {number} heightCm - Height in centimeters
  * @param {number} age - Age in years
@@ -98,10 +98,10 @@ function calculateBMR(weightKg, heightCm, age, sex) {
   // Mifflin-St Jeor Equation
   // Men: BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age) + 5
   // Women: BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age) - 161
-  
-  const baseBMR = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
-  
-  if (sex === 'male') {
+
+  const baseBMR = 10 * weightKg + 6.25 * heightCm - 5 * age;
+
+  if (sex === "male") {
     return Math.round(baseBMR + 5);
   } else {
     return Math.round(baseBMR - 161);
@@ -110,19 +110,20 @@ function calculateBMR(weightKg, heightCm, age, sex) {
 
 /**
  * Calculate TDEE (Total Daily Energy Expenditure)
- * 
+ *
  * @param {number} bmr - Basal Metabolic Rate
  * @param {string} activityLevel - Activity level key
  * @returns {number} TDEE in calories/day
  */
 function calculateTDEE(bmr, activityLevel) {
-  const multiplier = ACTIVITY_MULTIPLIERS[activityLevel] || ACTIVITY_MULTIPLIERS.moderate;
+  const multiplier =
+    ACTIVITY_MULTIPLIERS[activityLevel] || ACTIVITY_MULTIPLIERS.moderate;
   return Math.round(bmr * multiplier);
 }
 
 /**
  * Calculate target calories based on goal
- * 
+ *
  * @param {number} tdee - Total Daily Energy Expenditure
  * @param {string} goal - Nutrition goal
  * @returns {number} Target calories/day
@@ -134,7 +135,7 @@ function calculateTargetCalories(tdee, goal) {
 
 /**
  * Calculate macro targets in grams
- * 
+ *
  * @param {number} targetCalories - Daily calorie target
  * @param {number} weightKg - Body weight in kg
  * @param {string} goal - Nutrition goal
@@ -143,32 +144,32 @@ function calculateTargetCalories(tdee, goal) {
  */
 function calculateMacros(targetCalories, weightKg, goal, activityLevel) {
   const ratios = MACRO_RATIOS[goal] || MACRO_RATIOS.maintenance;
-  
+
   // Calculate protein based on body weight (more accurate for athletes)
   let proteinPerKg = PROTEIN_PER_KG[activityLevel] || PROTEIN_PER_KG.moderate;
-  
+
   // Adjust protein for cutting (higher) or endurance (lower)
-  if (goal === 'cutting' || goal === 'aggressive_cut') {
+  if (goal === "cutting" || goal === "aggressive_cut") {
     proteinPerKg = Math.max(proteinPerKg, PROTEIN_PER_KG.cutting);
   }
-  
+
   // Calculate protein in grams
   const proteinGrams = Math.round(weightKg * proteinPerKg);
   const proteinCalories = proteinGrams * 4; // 4 cal/g
-  
+
   // Remaining calories split between carbs and fat
   const remainingCalories = targetCalories - proteinCalories;
-  
+
   // Adjust carb/fat ratio based on goal
   const carbRatio = ratios.carbs / (ratios.carbs + ratios.fat);
   const fatRatio = ratios.fat / (ratios.carbs + ratios.fat);
-  
+
   const carbCalories = remainingCalories * carbRatio;
   const fatCalories = remainingCalories * fatRatio;
-  
-  const carbGrams = Math.round(carbCalories / 4);  // 4 cal/g
-  const fatGrams = Math.round(fatCalories / 9);    // 9 cal/g
-  
+
+  const carbGrams = Math.round(carbCalories / 4); // 4 cal/g
+  const fatGrams = Math.round(fatCalories / 9); // 9 cal/g
+
   return {
     protein: {
       grams: proteinGrams,
@@ -187,7 +188,7 @@ function calculateMacros(targetCalories, weightKg, goal, activityLevel) {
     },
     fiber: {
       // Recommended fiber: 14g per 1000 calories
-      grams: Math.round(targetCalories / 1000 * 14),
+      grams: Math.round((targetCalories / 1000) * 14),
       note: "14g per 1000 calories",
     },
   };
@@ -195,7 +196,7 @@ function calculateMacros(targetCalories, weightKg, goal, activityLevel) {
 
 /**
  * Calculate hydration needs
- * 
+ *
  * @param {number} weightKg - Body weight in kg
  * @param {string} activityLevel - Activity level
  * @param {boolean} isTrainingDay - Whether it's a training day
@@ -204,7 +205,7 @@ function calculateMacros(targetCalories, weightKg, goal, activityLevel) {
 function calculateHydration(weightKg, activityLevel, isTrainingDay = false) {
   // Base: 30-35ml per kg body weight
   let baseWaterMl = weightKg * 33;
-  
+
   // Add for activity level
   const activityAddition = {
     sedentary: 0,
@@ -214,39 +215,48 @@ function calculateHydration(weightKg, activityLevel, isTrainingDay = false) {
     very_active: 1000,
     athlete: 1250,
   };
-  
+
   baseWaterMl += activityAddition[activityLevel] || 500;
-  
+
   // Add for training days
   if (isTrainingDay) {
     baseWaterMl += 500; // Extra 500ml on training days
   }
-  
+
   return {
     dailyWaterMl: Math.round(baseWaterMl),
     dailyWaterOz: Math.round(baseWaterMl / 29.5735),
     dailyWaterLiters: (baseWaterMl / 1000).toFixed(1),
     duringExercise: "150-250ml every 15-20 minutes",
     postExercise: "500-750ml per 0.5kg body weight lost",
-    electrolytes: activityLevel === 'athlete' || activityLevel === 'very_active'
-      ? "Consider electrolyte supplementation for sessions >60 minutes"
-      : "Water is sufficient for most activities",
+    electrolytes:
+      activityLevel === "athlete" || activityLevel === "very_active"
+        ? "Consider electrolyte supplementation for sessions >60 minutes"
+        : "Water is sufficient for most activities",
   };
 }
 
 /**
  * Generate meal timing recommendations for flag football
- * 
+ *
  * @param {number} targetCalories - Daily calorie target
  * @param {Object} macros - Macro targets
  * @param {string} trainingTime - Preferred training time (morning, afternoon, evening)
  * @returns {Object} Meal timing recommendations
  */
-function generateMealTiming(targetCalories, macros, trainingTime = 'afternoon') {
+function generateMealTiming(
+  targetCalories,
+  macros,
+  trainingTime = "afternoon",
+) {
   const mealDistribution = {
     morning: {
       breakfast: { percent: 25, timing: "7:00 AM" },
-      preworkout: { percent: 15, timing: "9:00 AM", note: "Light, carb-focused" },
+      preworkout: {
+        percent: 15,
+        timing: "9:00 AM",
+        note: "Light, carb-focused",
+      },
       postworkout: { percent: 20, timing: "11:30 AM", note: "Protein + carbs" },
       lunch: { percent: 20, timing: "1:00 PM" },
       dinner: { percent: 20, timing: "6:00 PM" },
@@ -266,9 +276,10 @@ function generateMealTiming(targetCalories, macros, trainingTime = 'afternoon') 
       snack: { percent: 10, timing: "9:30 PM", note: "Casein/slow protein" },
     },
   };
-  
-  const distribution = mealDistribution[trainingTime] || mealDistribution.afternoon;
-  
+
+  const distribution =
+    mealDistribution[trainingTime] || mealDistribution.afternoon;
+
   const meals = {};
   for (const [meal, data] of Object.entries(distribution)) {
     meals[meal] = {
@@ -279,7 +290,7 @@ function generateMealTiming(targetCalories, macros, trainingTime = 'afternoon') 
       fat: Math.round(macros.fat.grams * (data.percent / 100)),
     };
   }
-  
+
   return {
     meals,
     generalGuidelines: [
@@ -307,35 +318,35 @@ function calculateNutritionProfile(athleteData) {
     heightCm,
     age,
     sex,
-    activityLevel = 'moderate',
-    goal = 'performance',
-    trainingTime = 'afternoon',
+    activityLevel = "moderate",
+    goal = "performance",
+    trainingTime = "afternoon",
     isTrainingDay = true,
   } = athleteData;
-  
+
   // Validate required fields
   if (!weightKg || !heightCm || !age || !sex) {
     throw new Error("Missing required fields: weightKg, heightCm, age, sex");
   }
-  
+
   // Calculate BMR
   const bmr = calculateBMR(weightKg, heightCm, age, sex);
-  
+
   // Calculate TDEE
   const tdee = calculateTDEE(bmr, activityLevel);
-  
+
   // Calculate target calories
   const targetCalories = calculateTargetCalories(tdee, goal);
-  
+
   // Calculate macros
   const macros = calculateMacros(targetCalories, weightKg, goal, activityLevel);
-  
+
   // Calculate hydration
   const hydration = calculateHydration(weightKg, activityLevel, isTrainingDay);
-  
+
   // Generate meal timing
   const mealTiming = generateMealTiming(targetCalories, macros, trainingTime);
-  
+
   return {
     calculations: {
       bmr,
@@ -359,7 +370,8 @@ function calculateNutritionProfile(athleteData) {
       activityMultiplier: ACTIVITY_MULTIPLIERS[activityLevel],
       proteinPerKg: PROTEIN_PER_KG[activityLevel],
     },
-    disclaimer: "These calculations are estimates. Individual needs may vary. Consult a registered dietitian for personalized advice.",
+    disclaimer:
+      "These calculations are estimates. Individual needs may vary. Consult a registered dietitian for personalized advice.",
   };
 }
 
@@ -376,11 +388,11 @@ async function getAthleteNutritionProfile(userId) {
     .select("*")
     .eq("user_id", userId)
     .single();
-  
+
   if (error && error.code !== "PGRST116") {
     throw error;
   }
-  
+
   return data;
 }
 
@@ -390,15 +402,20 @@ async function getAthleteNutritionProfile(userId) {
 async function saveAthleteNutritionProfile(userId, profileData) {
   const { data, error } = await supabaseAdmin
     .from("athlete_nutrition_profiles")
-    .upsert({
-      user_id: userId,
-      ...profileData,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" })
+    .upsert(
+      {
+        user_id: userId,
+        ...profileData,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    )
     .select()
     .single();
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -414,11 +431,11 @@ async function getNutritionPlan(userId) {
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
-  
+
   if (error && error.code !== "PGRST116") {
     throw error;
   }
-  
+
   return data;
 }
 
@@ -431,7 +448,7 @@ async function saveNutritionPlan(userId, planData) {
     .from("nutrition_plans")
     .update({ is_active: false })
     .eq("user_id", userId);
-  
+
   const { data, error } = await supabaseAdmin
     .from("nutrition_plans")
     .insert({
@@ -442,8 +459,10 @@ async function saveNutritionPlan(userId, planData) {
     })
     .select()
     .single();
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -455,7 +474,7 @@ async function getMealTemplates(filters = {}) {
     .from("meal_templates")
     .select("*")
     .eq("is_active", true);
-  
+
   if (filters.category) {
     query = query.eq("category", filters.category);
   }
@@ -468,10 +487,12 @@ async function getMealTemplates(filters = {}) {
   if (filters.minProtein) {
     query = query.gte("protein_g", filters.minProtein);
   }
-  
+
   const { data, error } = await query.order("name");
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -481,11 +502,17 @@ async function getMealTemplates(filters = {}) {
 async function searchFoods(searchQuery, limit = 20) {
   const { data, error } = await supabaseAdmin
     .from("usda_foods")
-    .select("id, fdc_id, description, food_category, energy_kcal, protein_g, carbohydrates_g, fat_g, serving_size, serving_size_unit")
-    .or(`description.ilike.%${searchQuery}%,search_keywords.cs.{${searchQuery.toLowerCase()}}`)
+    .select(
+      "id, fdc_id, description, food_category, energy_kcal, protein_g, carbohydrates_g, fat_g, serving_size, serving_size_unit",
+    )
+    .or(
+      `description.ilike.%${searchQuery}%,search_keywords.cs.{${searchQuery.toLowerCase()}}`,
+    )
     .limit(limit);
-  
-  if (error) {throw error;}
+
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -494,11 +521,12 @@ async function searchFoods(searchQuery, limit = 20) {
 // =============================================================================
 
 async function handleRequest(event, _context, { userId }) {
-  const path = event.path
-    .replace("/.netlify/functions/nutrition", "")
-    .replace(/^\/api\/nutrition\/?/, "")
-    .replace(/^\//, "") || "";
-  
+  const path =
+    event.path
+      .replace("/.netlify/functions/nutrition", "")
+      .replace(/^\/api\/nutrition\/?/, "")
+      .replace(/^\//, "") || "";
+
   let body = {};
   if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
     try {
@@ -521,7 +549,8 @@ async function handleRequest(event, _context, { userId }) {
       if (!profile) {
         return createSuccessResponse({
           exists: false,
-          message: "No nutrition profile found. Create one with POST /nutrition/profile",
+          message:
+            "No nutrition profile found. Create one with POST /nutrition/profile",
         });
       }
       return createSuccessResponse(profile);
@@ -531,7 +560,7 @@ async function handleRequest(event, _context, { userId }) {
     if (event.httpMethod === "POST" && path === "profile") {
       // First calculate the full profile
       const calculatedProfile = calculateNutritionProfile(body);
-      
+
       // Save to database
       const saved = await saveAthleteNutritionProfile(userId, {
         weight_kg: body.weightKg,
@@ -549,11 +578,15 @@ async function handleRequest(event, _context, { userId }) {
         fat_g: calculatedProfile.macros.fat.grams,
         calculated_profile: calculatedProfile,
       });
-      
-      return createSuccessResponse({
-        saved,
-        profile: calculatedProfile,
-      }, null, 201);
+
+      return createSuccessResponse(
+        {
+          saved,
+          profile: calculatedProfile,
+        },
+        null,
+        201,
+      );
     }
 
     // Get nutrition plan
@@ -562,7 +595,8 @@ async function handleRequest(event, _context, { userId }) {
       if (!plan) {
         return createSuccessResponse({
           exists: false,
-          message: "No active nutrition plan. Create one with POST /nutrition/plan",
+          message:
+            "No active nutrition plan. Create one with POST /nutrition/plan",
         });
       }
       return createSuccessResponse(plan);
@@ -580,7 +614,9 @@ async function handleRequest(event, _context, { userId }) {
       const meals = await getMealTemplates({
         category: params.category,
         mealType: params.mealType,
-        maxCalories: params.maxCalories ? parseInt(params.maxCalories) : undefined,
+        maxCalories: params.maxCalories
+          ? parseInt(params.maxCalories)
+          : undefined,
         minProtein: params.minProtein ? parseInt(params.minProtein) : undefined,
       });
       return createSuccessResponse(meals);
@@ -590,7 +626,11 @@ async function handleRequest(event, _context, { userId }) {
     if (event.httpMethod === "GET" && path === "foods/search") {
       const params = event.queryStringParameters || {};
       if (!params.q) {
-        return createErrorResponse("Search query 'q' is required", 400, "missing_query");
+        return createErrorResponse(
+          "Search query 'q' is required",
+          400,
+          "missing_query",
+        );
       }
       const foods = await searchFoods(params.q, parseInt(params.limit) || 20);
       return createSuccessResponse(foods);
@@ -602,12 +642,20 @@ async function handleRequest(event, _context, { userId }) {
       const weightKg = parseFloat(params.weightKg);
       const activityLevel = params.activityLevel || "moderate";
       const isTrainingDay = params.trainingDay === "true";
-      
+
       if (!weightKg) {
-        return createErrorResponse("Weight in kg is required", 400, "missing_weight");
+        return createErrorResponse(
+          "Weight in kg is required",
+          400,
+          "missing_weight",
+        );
       }
-      
-      const hydration = calculateHydration(weightKg, activityLevel, isTrainingDay);
+
+      const hydration = calculateHydration(
+        weightKg,
+        activityLevel,
+        isTrainingDay,
+      );
       return createSuccessResponse(hydration);
     }
 
@@ -622,7 +670,6 @@ async function handleRequest(event, _context, { userId }) {
     }
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
-    
   } catch (error) {
     console.error("Nutrition API error:", error);
     throw error;
@@ -638,7 +685,9 @@ exports.handler = async (event, context) => {
     functionName: "nutrition",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "DEFAULT",
-    requireAuth: !event.path.includes("/calculate") && !event.path.includes("/macros/reference"),
+    requireAuth:
+      !event.path.includes("/calculate") &&
+      !event.path.includes("/macros/reference"),
     handler: handleRequest,
   });
 };

@@ -1,20 +1,23 @@
 /**
  * Parental Consent API
- * 
+ *
  * Implements parental consent workflow for minors (13-17) as required by:
  * - TERMS_OF_USE.md
  * - PRIVACY_POLICY.md
- * 
+ *
  * Endpoints:
  * - GET: Get current consent status
  * - POST: Request parental consent (minor initiates)
  * - PUT: Verify/update consent (guardian action)
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 const { getSupabaseClient, supabaseAdmin } = require("./supabase-client.cjs");
 const crypto = require("crypto");
 
@@ -54,7 +57,10 @@ exports.handler = async (event, context) => {
             isMinor: age < 18,
             requiresConsent: false,
             consent: null,
-            message: age < 13 ? "Users under 13 are not permitted" : "Adult user, no parental consent required",
+            message:
+              age < 13
+                ? "Users under 13 are not permitted"
+                : "Adult user, no parental consent required",
           });
         }
 
@@ -72,19 +78,21 @@ exports.handler = async (event, context) => {
           isMinor: true,
           requiresConsent: true,
           age,
-          consent: consent ? {
-            id: consent.id,
-            status: consent.consent_status,
-            guardianEmail: consent.guardian_email,
-            guardianName: consent.guardian_name,
-            healthDataConsent: consent.health_data_consent,
-            biometricsConsent: consent.biometrics_consent,
-            locationConsent: consent.location_consent,
-            researchConsent: consent.research_consent,
-            verifiedAt: consent.verified_at,
-            expiresAt: consent.expires_at,
-            createdAt: consent.created_at,
-          } : null,
+          consent: consent
+            ? {
+                id: consent.id,
+                status: consent.consent_status,
+                guardianEmail: consent.guardian_email,
+                guardianName: consent.guardian_name,
+                healthDataConsent: consent.health_data_consent,
+                biometricsConsent: consent.biometrics_consent,
+                locationConsent: consent.location_consent,
+                researchConsent: consent.research_consent,
+                verifiedAt: consent.verified_at,
+                expiresAt: consent.expires_at,
+                createdAt: consent.created_at,
+              }
+            : null,
           restrictedFeatures: getRestrictedFeatures(consent),
         });
       }
@@ -104,7 +112,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Valid guardian email is required",
             400,
-            "validation_error"
+            "validation_error",
           );
         }
 
@@ -119,7 +127,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Date of birth must be set before requesting parental consent",
             400,
-            "missing_dob"
+            "missing_dob",
           );
         }
 
@@ -131,7 +139,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Users under 13 are not permitted to use this service",
             403,
-            "age_restricted"
+            "age_restricted",
           );
         }
 
@@ -139,7 +147,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Parental consent is not required for users 18 and older",
             400,
-            "not_minor"
+            "not_minor",
           );
         }
 
@@ -155,13 +163,13 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "A consent request is already pending. Please wait for guardian response or request a new one.",
             409,
-            "request_pending"
+            "request_pending",
           );
         }
 
         // Generate verification token
         const verificationToken = crypto.randomBytes(32).toString("hex");
-        
+
         // Calculate expiration (when minor turns 18)
         const expiresAt = new Date(birthDate);
         expiresAt.setFullYear(expiresAt.getFullYear() + 18);
@@ -183,92 +191,111 @@ exports.handler = async (event, context) => {
           .single();
 
         if (insertError) {
-          return createErrorResponse(insertError.message, 500, "database_error");
+          return createErrorResponse(
+            insertError.message,
+            500,
+            "database_error",
+          );
         }
 
         // Send email to guardian with verification link
-        const minorName = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'A minor user';
-        
+        const minorName =
+          [user.first_name, user.last_name].filter(Boolean).join(" ") ||
+          "A minor user";
+
         try {
           // Try Edge Function first (preferred for Supabase projects)
-          const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-          const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-          
+          const supabaseUrl =
+            process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+          const supabaseAnonKey =
+            process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
           if (supabaseUrl && supabaseAnonKey) {
-            const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-guardian-email`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${supabaseAnonKey}`,
-                'Content-Type': 'application/json',
+            const emailResponse = await fetch(
+              `${supabaseUrl}/functions/v1/send-guardian-email`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${supabaseAnonKey}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  guardianEmail,
+                  guardianName: guardianName || null,
+                  minorName,
+                  verificationToken,
+                  consentId: consent.id,
+                }),
               },
-              body: JSON.stringify({
-                guardianEmail,
-                guardianName: guardianName || null,
-                minorName,
-                verificationToken,
-                consentId: consent.id,
-              }),
-            });
-            
+            );
+
             if (!emailResponse.ok) {
               const errorText = await emailResponse.text();
-              console.warn('Edge Function email failed, trying Netlify fallback:', errorText);
+              console.warn(
+                "Edge Function email failed, trying Netlify fallback:",
+                errorText,
+              );
               // Fall through to Netlify function
             } else {
               const emailResult = await emailResponse.json();
-              console.log('Guardian email sent via Edge Function:', emailResult);
+              console.log(
+                "Guardian email sent via Edge Function:",
+                emailResult,
+              );
             }
           }
-          
+
           // Fallback to Netlify send-email function if Edge Function not available
           if (!supabaseUrl || !supabaseAnonKey) {
-            const appUrl = process.env.APP_URL || process.env.URL || 'https://webflagfootballfrogs.netlify.app';
+            const appUrl =
+              process.env.APP_URL ||
+              process.env.URL ||
+              "https://webflagfootballfrogs.netlify.app";
             const verificationUrl = `${appUrl}/consent/verify?token=${verificationToken}`;
-            
+
             // Use internal Netlify function call
-            const { handler: _sendEmailHandler } = require('./send-email.cjs');
-            
+            const { handler: _sendEmailHandler } = require("./send-email.cjs");
+
             // Create a mock event for the send-email function
             const _emailEvent = {
-              httpMethod: 'POST',
+              httpMethod: "POST",
               body: JSON.stringify({
-                type: 'parental_consent',
+                type: "parental_consent",
                 to: guardianEmail,
-                name: guardianName || 'Parent/Guardian',
+                name: guardianName || "Parent/Guardian",
                 minorName,
                 verificationUrl,
                 consentId: consent.id,
               }),
               headers: {},
             };
-            
+
             // Note: This is a simplified approach - in production you might want to
             // call the send-email function directly or use a shared email utility
-            console.log('Guardian consent email queued for:', guardianEmail);
+            console.log("Guardian consent email queued for:", guardianEmail);
           }
         } catch (emailError) {
           // Log but don't fail the request - consent record was created
-          console.error('Failed to send guardian email:', emailError);
+          console.error("Failed to send guardian email:", emailError);
           // The consent request is still valid, guardian can be contacted manually
         }
 
         // Log the request
-        await supabaseAdmin
-          .from("privacy_audit_log")
-          .insert({
-            user_id: userId,
-            action: "parental_consent_requested",
-            affected_table: "parental_consent",
-            affected_data: {
-              consent_id: consent.id,
-              guardian_email: guardianEmail,
-            },
-          });
+        await supabaseAdmin.from("privacy_audit_log").insert({
+          user_id: userId,
+          action: "parental_consent_requested",
+          affected_table: "parental_consent",
+          affected_data: {
+            consent_id: consent.id,
+            guardian_email: guardianEmail,
+          },
+        });
 
         return createSuccessResponse({
           success: true,
           consentId: consent.id,
-          message: "Consent request sent to guardian. They will receive an email with verification instructions.",
+          message:
+            "Consent request sent to guardian. They will receive an email with verification instructions.",
           guardianEmail,
         });
       }
@@ -282,8 +309,8 @@ exports.handler = async (event, context) => {
           return createErrorResponse("Invalid JSON body", 400, "invalid_body");
         }
 
-        const { 
-          token, 
+        const {
+          token,
           action, // 'verify' or 'revoke'
           healthDataConsent,
           biometricsConsent,
@@ -292,7 +319,11 @@ exports.handler = async (event, context) => {
         } = body;
 
         if (!token) {
-          return createErrorResponse("Verification token is required", 400, "missing_token");
+          return createErrorResponse(
+            "Verification token is required",
+            400,
+            "missing_token",
+          );
         }
 
         // Find consent request by token
@@ -306,7 +337,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Invalid or expired verification token",
             404,
-            "invalid_token"
+            "invalid_token",
           );
         }
 
@@ -314,7 +345,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "This consent has already been verified",
             400,
-            "already_verified"
+            "already_verified",
           );
         }
 
@@ -322,13 +353,14 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "This consent has been revoked",
             400,
-            "consent_revoked"
+            "consent_revoked",
           );
         }
 
-        const clientIp = event.headers["x-forwarded-for"]?.split(",")[0] || 
-                         event.headers["client-ip"] || 
-                         "unknown";
+        const clientIp =
+          event.headers["x-forwarded-for"]?.split(",")[0] ||
+          event.headers["client-ip"] ||
+          "unknown";
 
         if (action === "revoke") {
           // Revoke consent
@@ -342,23 +374,26 @@ exports.handler = async (event, context) => {
             .eq("id", consent.id);
 
           if (revokeError) {
-            return createErrorResponse(revokeError.message, 500, "database_error");
+            return createErrorResponse(
+              revokeError.message,
+              500,
+              "database_error",
+            );
           }
 
           // Log revocation
-          await supabaseAdmin
-            .from("privacy_audit_log")
-            .insert({
-              user_id: consent.minor_user_id,
-              action: "parental_consent_revoked",
-              affected_table: "parental_consent",
-              affected_data: { consent_id: consent.id },
-              ip_address: clientIp,
-            });
+          await supabaseAdmin.from("privacy_audit_log").insert({
+            user_id: consent.minor_user_id,
+            action: "parental_consent_revoked",
+            affected_table: "parental_consent",
+            affected_data: { consent_id: consent.id },
+            ip_address: clientIp,
+          });
 
           return createSuccessResponse({
             success: true,
-            message: "Parental consent has been revoked. Restricted features will be disabled.",
+            message:
+              "Parental consent has been revoked. Restricted features will be disabled.",
           });
         }
 
@@ -378,29 +413,32 @@ exports.handler = async (event, context) => {
           .eq("id", consent.id);
 
         if (updateError) {
-          return createErrorResponse(updateError.message, 500, "database_error");
+          return createErrorResponse(
+            updateError.message,
+            500,
+            "database_error",
+          );
         }
 
         // Log verification
-        await supabaseAdmin
-          .from("privacy_audit_log")
-          .insert({
-            user_id: consent.minor_user_id,
-            action: "parental_consent_verified",
-            affected_table: "parental_consent",
-            affected_data: {
-              consent_id: consent.id,
-              health_data_consent: healthDataConsent,
-              biometrics_consent: biometricsConsent,
-              location_consent: locationConsent,
-              research_consent: researchConsent,
-            },
-            ip_address: clientIp,
-          });
+        await supabaseAdmin.from("privacy_audit_log").insert({
+          user_id: consent.minor_user_id,
+          action: "parental_consent_verified",
+          affected_table: "parental_consent",
+          affected_data: {
+            consent_id: consent.id,
+            health_data_consent: healthDataConsent,
+            biometrics_consent: biometricsConsent,
+            location_consent: locationConsent,
+            research_consent: researchConsent,
+          },
+          ip_address: clientIp,
+        });
 
         return createSuccessResponse({
           success: true,
-          message: "Parental consent verified successfully. The minor can now access approved features.",
+          message:
+            "Parental consent verified successfully. The minor can now access approved features.",
           approvedFeatures: {
             healthData: healthDataConsent ?? false,
             biometrics: biometricsConsent ?? false,
@@ -439,20 +477,27 @@ function getRestrictedFeatures(consent) {
   return {
     healthData: {
       restricted: !consent.health_data_consent,
-      reason: consent.health_data_consent ? null : "Guardian did not approve health data collection",
+      reason: consent.health_data_consent
+        ? null
+        : "Guardian did not approve health data collection",
     },
     biometrics: {
       restricted: !consent.biometrics_consent,
-      reason: consent.biometrics_consent ? null : "Guardian did not approve biometrics collection",
+      reason: consent.biometrics_consent
+        ? null
+        : "Guardian did not approve biometrics collection",
     },
     location: {
       restricted: !consent.location_consent,
-      reason: consent.location_consent ? null : "Guardian did not approve location tracking",
+      reason: consent.location_consent
+        ? null
+        : "Guardian did not approve location tracking",
     },
     research: {
       restricted: !consent.research_consent,
-      reason: consent.research_consent ? null : "Guardian did not approve research participation",
+      reason: consent.research_consent
+        ? null
+        : "Guardian did not approve research participation",
     },
   };
 }
-

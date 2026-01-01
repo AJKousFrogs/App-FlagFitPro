@@ -19,7 +19,7 @@ export function isEmail(email: string): boolean {
  */
 export function isPhone(phone: string): boolean {
   const phonePattern = /^\+?[\d\s\-()]+$/;
-  return phonePattern.test(phone) && phone.replace(/\D/g, '').length >= 10;
+  return phonePattern.test(phone) && phone.replace(/\D/g, "").length >= 10;
 }
 
 /**
@@ -55,7 +55,7 @@ export function isUrl(url: string): boolean {
  * Check if value is a valid number
  */
 export function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && !isNaN(value) && isFinite(value);
+  return typeof value === "number" && !isNaN(value) && isFinite(value);
 }
 
 /**
@@ -77,9 +77,9 @@ export function isAlphaNumeric(str: string): boolean {
  */
 export function isEmpty(value: unknown): boolean {
   if (value == null) return true;
-  if (typeof value === 'string') return value.trim().length === 0;
+  if (typeof value === "string") return value.trim().length === 0;
   if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === 'object') return Object.keys(value).length === 0;
+  if (typeof value === "object") return Object.keys(value).length === 0;
   return false;
 }
 
@@ -108,7 +108,7 @@ export function inRange(value: number, min: number, max: number): boolean {
  * Validate date is in the past
  */
 export function isPastDate(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === "string" ? new Date(date) : date;
   return dateObj < new Date();
 }
 
@@ -116,7 +116,7 @@ export function isPastDate(date: Date | string): boolean {
  * Validate date is in the future
  */
 export function isFutureDate(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === "string" ? new Date(date) : date;
   return dateObj > new Date();
 }
 
@@ -124,29 +124,29 @@ export function isFutureDate(date: Date | string): boolean {
  * Validate credit card number (Luhn algorithm)
  */
 export function isCreditCard(cardNumber: string): boolean {
-  const sanitized = cardNumber.replace(/\D/g, '');
-  
+  const sanitized = cardNumber.replace(/\D/g, "");
+
   if (sanitized.length < 13 || sanitized.length > 19) {
     return false;
   }
-  
+
   let sum = 0;
   let isEven = false;
-  
+
   for (let i = sanitized.length - 1; i >= 0; i--) {
     let digit = parseInt(sanitized[i], 10);
-    
+
     if (isEven) {
       digit *= 2;
       if (digit > 9) {
         digit -= 9;
       }
     }
-    
+
     sum += digit;
     isEven = !isEven;
   }
-  
+
   return sum % 10 === 0;
 }
 
@@ -163,4 +163,3 @@ export function isZipCode(zip: string): boolean {
 export function matchesPattern(value: string, pattern: RegExp): boolean {
   return pattern.test(value);
 }
-

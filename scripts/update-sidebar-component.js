@@ -69,7 +69,7 @@ function updateFile(fileName) {
     let sidebarReplaced = false;
     for (const pattern of sidebarPatterns) {
       if (pattern.test(content)) {
-        content = content.replace(pattern, `${sidebarContainerReplacement  }\n`);
+        content = content.replace(pattern, `${sidebarContainerReplacement}\n`);
         sidebarReplaced = true;
         console.log(`✓ Replaced sidebar markup in ${fileName}`);
         updated = true;

@@ -3,12 +3,17 @@
  * Shows real-time password strength with visual feedback
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  computed,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 export interface PasswordStrength {
   score: number; // 0-4
-  label: 'Very Weak' | 'Weak' | 'Fair' | 'Good' | 'Strong';
+  label: "Very Weak" | "Weak" | "Fair" | "Good" | "Strong";
   color: string;
   suggestions: string[];
   requirements: {
@@ -21,7 +26,7 @@ export interface PasswordStrength {
 }
 
 @Component({
-  selector: 'app-password-strength',
+  selector: "app-password-strength",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
@@ -34,7 +39,11 @@ export interface PasswordStrength {
             <div
               class="bar-segment"
               [class.filled]="segment <= strength().score"
-              [style.background-color]="segment <= strength().score ? strength().color : 'var(--surface-200)'"
+              [style.background-color]="
+                segment <= strength().score
+                  ? strength().color
+                  : 'var(--surface-200)'
+              "
             ></div>
           }
         </div>
@@ -48,24 +57,69 @@ export interface PasswordStrength {
         <!-- Requirements Checklist -->
         @if (showRequirements()) {
           <div class="requirements-list">
-            <div class="requirement" [class.met]="strength().requirements.length">
-              <i [class]="strength().requirements.length ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <div
+              class="requirement"
+              [class.met]="strength().requirements.length"
+            >
+              <i
+                [class]="
+                  strength().requirements.length
+                    ? 'pi pi-check-circle'
+                    : 'pi pi-circle'
+                "
+              ></i>
               <span>At least 8 characters</span>
             </div>
-            <div class="requirement" [class.met]="strength().requirements.uppercase">
-              <i [class]="strength().requirements.uppercase ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <div
+              class="requirement"
+              [class.met]="strength().requirements.uppercase"
+            >
+              <i
+                [class]="
+                  strength().requirements.uppercase
+                    ? 'pi pi-check-circle'
+                    : 'pi pi-circle'
+                "
+              ></i>
               <span>One uppercase letter</span>
             </div>
-            <div class="requirement" [class.met]="strength().requirements.lowercase">
-              <i [class]="strength().requirements.lowercase ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <div
+              class="requirement"
+              [class.met]="strength().requirements.lowercase"
+            >
+              <i
+                [class]="
+                  strength().requirements.lowercase
+                    ? 'pi pi-check-circle'
+                    : 'pi pi-circle'
+                "
+              ></i>
               <span>One lowercase letter</span>
             </div>
-            <div class="requirement" [class.met]="strength().requirements.number">
-              <i [class]="strength().requirements.number ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <div
+              class="requirement"
+              [class.met]="strength().requirements.number"
+            >
+              <i
+                [class]="
+                  strength().requirements.number
+                    ? 'pi pi-check-circle'
+                    : 'pi pi-circle'
+                "
+              ></i>
               <span>One number</span>
             </div>
-            <div class="requirement" [class.met]="strength().requirements.special">
-              <i [class]="strength().requirements.special ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <div
+              class="requirement"
+              [class.met]="strength().requirements.special"
+            >
+              <i
+                [class]="
+                  strength().requirements.special
+                    ? 'pi pi-check-circle'
+                    : 'pi pi-circle'
+                "
+              ></i>
               <span>One special character (@$!%*?&)</span>
             </div>
           </div>
@@ -85,104 +139,106 @@ export interface PasswordStrength {
       }
     </div>
   `,
-  styles: [`
-    .password-strength {
-      margin-top: 0.5rem;
-    }
+  styles: [
+    `
+      .password-strength {
+        margin-top: 0.5rem;
+      }
 
-    .strength-bar {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 0.5rem;
-    }
+      .strength-bar {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
 
-    .bar-segment {
-      flex: 1;
-      height: 4px;
-      background-color: var(--surface-200);
-      border-radius: 2px;
-      transition: background-color 0.3s ease;
-    }
+      .bar-segment {
+        flex: 1;
+        height: 4px;
+        background-color: var(--surface-200);
+        border-radius: 2px;
+        transition: background-color 0.3s ease;
+      }
 
-    .strength-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
+      .strength-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
 
-    .strength-label i {
-      font-size: 1rem;
-    }
+      .strength-label i {
+        font-size: 1rem;
+      }
 
-    .requirements-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      background: var(--surface-50);
-      border-radius: var(--border-radius);
-      margin-top: 0.75rem;
-    }
+      .requirements-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: var(--surface-50);
+        border-radius: var(--border-radius);
+        margin-top: 0.75rem;
+      }
 
-    .requirement {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      transition: color 0.2s ease;
-    }
+      .requirement {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+        transition: color 0.2s ease;
+      }
 
-    .requirement.met {
-      color: var(--green-600);
-    }
+      .requirement.met {
+        color: var(--green-600);
+      }
 
-    .requirement i {
-      font-size: 0.875rem;
-      color: var(--surface-400);
-      transition: color 0.2s ease;
-    }
+      .requirement i {
+        font-size: 0.875rem;
+        color: var(--surface-400);
+        transition: color 0.2s ease;
+      }
 
-    .requirement.met i {
-      color: var(--green-600);
-    }
+      .requirement.met i {
+        color: var(--green-600);
+      }
 
-    .suggestions {
-      margin-top: 0.75rem;
-      padding: 0.75rem;
-      background: var(--blue-50);
-      border-left: 3px solid var(--blue-500);
-      border-radius: var(--border-radius);
-      font-size: 0.8125rem;
-    }
+      .suggestions {
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+        background: var(--blue-50);
+        border-left: 3px solid var(--blue-500);
+        border-radius: var(--border-radius);
+        font-size: 0.8125rem;
+      }
 
-    .suggestions strong {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: var(--blue-700);
-    }
+      .suggestions strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--blue-700);
+      }
 
-    .suggestions ul {
-      margin: 0;
-      padding-left: 1.25rem;
-      color: var(--blue-900);
-    }
+      .suggestions ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: var(--blue-900);
+      }
 
-    .suggestions li {
-      margin-bottom: 0.25rem;
-    }
+      .suggestions li {
+        margin-bottom: 0.25rem;
+      }
 
-    .suggestions li:last-child {
-      margin-bottom: 0;
-    }
-  `],
+      .suggestions li:last-child {
+        margin-bottom: 0;
+      }
+    `,
+  ],
 })
 export class PasswordStrengthComponent {
   // Inputs
-  password = input<string>('');
+  password = input<string>("");
   showRequirements = input<boolean>(true);
   showSuggestions = input<boolean>(true);
 
@@ -199,9 +255,9 @@ export class PasswordStrengthComponent {
     if (!password) {
       return {
         score: 0,
-        label: 'Very Weak',
-        color: 'var(--red-500)',
-        suggestions: ['Enter a password to see strength'],
+        label: "Very Weak",
+        color: "var(--red-500)",
+        suggestions: ["Enter a password to see strength"],
         requirements: {
           length: false,
           uppercase: false,
@@ -238,34 +294,35 @@ export class PasswordStrengthComponent {
 
     // Generate suggestions
     const suggestions: string[] = [];
-    if (!requirements.length) suggestions.push('Use at least 8 characters');
-    if (!requirements.uppercase) suggestions.push('Add an uppercase letter');
-    if (!requirements.lowercase) suggestions.push('Add a lowercase letter');
-    if (!requirements.number) suggestions.push('Add a number');
-    if (!requirements.special) suggestions.push('Add a special character (@$!%*?&)');
-    if (password.length < 12 && Object.values(requirements).every(r => r)) {
-      suggestions.push('Consider using 12+ characters for maximum security');
+    if (!requirements.length) suggestions.push("Use at least 8 characters");
+    if (!requirements.uppercase) suggestions.push("Add an uppercase letter");
+    if (!requirements.lowercase) suggestions.push("Add a lowercase letter");
+    if (!requirements.number) suggestions.push("Add a number");
+    if (!requirements.special)
+      suggestions.push("Add a special character (@$!%*?&)");
+    if (password.length < 12 && Object.values(requirements).every((r) => r)) {
+      suggestions.push("Consider using 12+ characters for maximum security");
     }
 
     // Determine label and color
-    let label: PasswordStrength['label'];
+    let label: PasswordStrength["label"];
     let color: string;
 
     if (score === 0) {
-      label = 'Very Weak';
-      color = 'var(--red-600)';
+      label = "Very Weak";
+      color = "var(--red-600)";
     } else if (score === 1) {
-      label = 'Weak';
-      color = 'var(--orange-500)';
+      label = "Weak";
+      color = "var(--orange-500)";
     } else if (score === 2) {
-      label = 'Fair';
-      color = 'var(--yellow-500)';
+      label = "Fair";
+      color = "var(--yellow-500)";
     } else if (score === 3) {
-      label = 'Good';
-      color = 'var(--blue-500)';
+      label = "Good";
+      color = "var(--blue-500)";
     } else {
-      label = 'Strong';
-      color = 'var(--green-600)';
+      label = "Strong";
+      color = "var(--green-600)";
     }
 
     return {
@@ -282,10 +339,10 @@ export class PasswordStrengthComponent {
    */
   getStrengthIcon(): string {
     const score = this.strength().score;
-    if (score === 0) return 'pi pi-times-circle';
-    if (score === 1) return 'pi pi-exclamation-circle';
-    if (score === 2) return 'pi pi-minus-circle';
-    if (score === 3) return 'pi pi-check-circle';
-    return 'pi pi-shield';
+    if (score === 0) return "pi pi-times-circle";
+    if (score === 1) return "pi pi-exclamation-circle";
+    if (score === 2) return "pi pi-minus-circle";
+    if (score === 3) return "pi pi-check-circle";
+    return "pi pi-shield";
   }
 }

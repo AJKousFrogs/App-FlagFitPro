@@ -115,12 +115,22 @@ export class UxShowcaseComponent {
     { field: "performance", header: "Performance" },
   ]);
 
-  handleEdit = (row: { id: number; name: string; position: string; performance: string }) => {
+  handleEdit = (row: {
+    id: number;
+    name: string;
+    position: string;
+    performance: string;
+  }) => {
     this.logger.debug("Edit row:", row);
     // Implement edit logic
   };
 
-  handleDelete = (row: { id: number; name: string; position: string; performance: string }) => {
+  handleDelete = (row: {
+    id: number;
+    name: string;
+    position: string;
+    performance: string;
+  }) => {
     this.logger.debug("Delete row:", row);
     // Implement delete logic
   };

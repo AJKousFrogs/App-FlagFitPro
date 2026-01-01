@@ -129,11 +129,11 @@ export const getSupabase = () => {
 export const safeSupabaseQuery = async (query, context = "Query") => {
   try {
     const result = await query;
-    
+
     if (result.error) {
       logger.error(`[Supabase:${context}] Error:`, result.error.message);
     }
-    
+
     return result;
   } catch (error) {
     logger.error(`[Supabase:${context}] Exception:`, error);

@@ -50,7 +50,6 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-       
       console.log("🔍 [DEBUG]", ...args);
     }
   }
@@ -64,7 +63,6 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-       
       console.log("ℹ️ [INFO]", ...args);
     }
   }
@@ -77,7 +75,7 @@ class ServerLogger {
     if (!this.shouldLog("warn")) {
       return;
     }
-     
+
     console.warn("⚠️ [WARN]", ...args);
   }
 
@@ -89,7 +87,7 @@ class ServerLogger {
     if (!this.shouldLog("error")) {
       return;
     }
-     
+
     console.error("❌ [ERROR]", ...args);
 
     // In production, could send to error tracking service
@@ -108,7 +106,6 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-       
       console.log("✅ [SUCCESS]", ...args);
     }
   }
@@ -119,7 +116,3 @@ export const serverLogger = new ServerLogger();
 
 // Export class for custom instances
 export default ServerLogger;
-
-
-
-

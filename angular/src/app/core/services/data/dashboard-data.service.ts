@@ -100,7 +100,9 @@ export class DashboardDataService {
    */
   getRecentActivity(limit: number = 10): Observable<ActivityItem[]> {
     return this.apiService
-      .get<DashboardResponse>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
+      .get<DashboardResponse>(API_ENDPOINTS.dashboard.overview, {
+        activityLimit: limit,
+      })
       .pipe(
         map((response) => {
           if (response.success && response.data?.recentActivity) {
@@ -116,7 +118,9 @@ export class DashboardDataService {
    */
   getUpcomingSessions(limit: number = 5): Observable<UpcomingSession[]> {
     return this.apiService
-      .get<UpcomingSession[]>(API_ENDPOINTS.dashboard.trainingCalendar, { upcoming: true, limit })
+      .get<
+        UpcomingSession[]
+      >(API_ENDPOINTS.dashboard.trainingCalendar, { upcoming: true, limit })
       .pipe(
         map((response) => {
           if (response.success && response.data) {

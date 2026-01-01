@@ -483,7 +483,7 @@ export class HelpSystem {
     const message = form.querySelector("#contact-message").value;
 
     // In a real app, this would send to a backend
-    alert(
+    alert( // eslint-disable-line no-alert
       `Thank you! Your message has been sent.\n\nSubject: ${subject}\n\nMessage: ${message}\n\nWe'll get back to you soon.`,
     );
     form.reset();

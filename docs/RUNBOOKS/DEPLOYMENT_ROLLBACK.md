@@ -19,15 +19,15 @@
 
 ## Rollback Decision Matrix
 
-| Symptom | Rollback? | Alternative |
-|---------|-----------|-------------|
-| Site completely down | **Yes** | - |
-| Login broken for all users | **Yes** | - |
-| Critical data not saving | **Yes** | - |
-| Performance degraded 50%+ | Maybe | Investigate first |
-| Single feature broken | Maybe | Hotfix if quick |
-| UI/cosmetic issues | No | Hotfix |
-| Minor bugs | No | Hotfix |
+| Symptom                    | Rollback? | Alternative       |
+| -------------------------- | --------- | ----------------- |
+| Site completely down       | **Yes**   | -                 |
+| Login broken for all users | **Yes**   | -                 |
+| Critical data not saving   | **Yes**   | -                 |
+| Performance degraded 50%+  | Maybe     | Investigate first |
+| Single feature broken      | Maybe     | Hotfix if quick   |
+| UI/cosmetic issues         | No        | Hotfix            |
+| Minor bugs                 | No        | Hotfix            |
 
 ### Time-Based Decision
 
@@ -382,12 +382,12 @@ netlify status
 
 ### Key URLs
 
-| Resource | URL |
-|----------|-----|
-| Netlify Dashboard | https://app.netlify.com |
+| Resource           | URL                            |
+| ------------------ | ------------------------------ |
+| Netlify Dashboard  | https://app.netlify.com        |
 | Supabase Dashboard | https://supabase.com/dashboard |
-| Supabase Status | https://status.supabase.com |
-| Sentry | https://sentry.io |
+| Supabase Status    | https://status.supabase.com    |
+| Sentry             | https://sentry.io              |
 
 ---
 
@@ -401,22 +401,26 @@ netlify status
 **Reason:** [Brief description]
 
 ### Pre-Rollback
+
 - [ ] Issue confirmed
-- [ ] Current deploy ID noted: ___________
+- [ ] Current deploy ID noted: \***\*\_\_\_\*\***
 - [ ] Team notified
 
 ### Rollback
+
 - [ ] Rollback command executed
-- [ ] New deploy ID: ___________
+- [ ] New deploy ID: \***\*\_\_\_\*\***
 - [ ] Health check passed
 
 ### Validation
+
 - [ ] Frontend loads
 - [ ] API responds
 - [ ] Authentication works
 - [ ] Core features functional
 
 ### Post-Rollback
+
 - [ ] Incident channel updated
 - [ ] Root cause investigation started
 - [ ] Postmortem scheduled (if SEV-1/2)
@@ -426,4 +430,3 @@ netlify status
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

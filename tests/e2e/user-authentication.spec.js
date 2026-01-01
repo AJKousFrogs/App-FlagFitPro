@@ -19,7 +19,9 @@ test.describe("User Authentication Flow", () => {
   });
 
   test.describe("Registration Page", () => {
-    test("should display registration page with form fields", async ({ page }) => {
+    test("should display registration page with form fields", async ({
+      page,
+    }) => {
       await page.goto("/register");
 
       // Wait for Angular to load
@@ -27,7 +29,7 @@ test.describe("User Authentication Flow", () => {
 
       // Verify registration form is displayed
       await expect(page.locator("h1.register-title")).toContainText(
-        "Create Your Account"
+        "Create Your Account",
       );
 
       // Verify form fields exist
@@ -90,7 +92,9 @@ test.describe("User Authentication Flow", () => {
       await expect(mismatchError).toBeVisible();
     });
 
-    test("should navigate to login from registration page", async ({ page }) => {
+    test("should navigate to login from registration page", async ({
+      page,
+    }) => {
       await page.goto("/register");
       await page.waitForSelector("app-register", { timeout: 10000 });
 
@@ -100,7 +104,7 @@ test.describe("User Authentication Flow", () => {
       // Should navigate to login page
       await page.waitForURL(/\/login/);
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
   });
@@ -114,7 +118,7 @@ test.describe("User Authentication Flow", () => {
 
       // Verify login form is displayed
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
 
       // Verify form fields exist
@@ -163,7 +167,7 @@ test.describe("User Authentication Flow", () => {
       // Should navigate to register page
       await page.waitForURL(/\/register/);
       await expect(page.locator("h1.register-title")).toContainText(
-        "Create Your Account"
+        "Create Your Account",
       );
     });
 
@@ -244,7 +248,7 @@ test.describe("User Authentication Flow", () => {
       // Should be redirected to login
       await page.waitForURL(/\/login/);
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -301,7 +305,7 @@ test.describe("User Authentication Flow", () => {
       // Landing page should be accessible
       await page.waitForSelector("app-landing", { timeout: 10000 });
       await expect(page.locator("h1.hero-title")).toContainText(
-        "Elevate Your Flag Football Game"
+        "Elevate Your Flag Football Game",
       );
     });
 
@@ -311,7 +315,7 @@ test.describe("User Authentication Flow", () => {
       // Login page should be accessible
       await page.waitForSelector("app-login", { timeout: 10000 });
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -321,7 +325,7 @@ test.describe("User Authentication Flow", () => {
       // Register page should be accessible
       await page.waitForSelector("app-register", { timeout: 10000 });
       await expect(page.locator("h1.register-title")).toContainText(
-        "Create Your Account"
+        "Create Your Account",
       );
     });
 
@@ -343,7 +347,7 @@ test.describe("User Authentication Flow", () => {
         localStorage.setItem("authToken", "test-token");
         localStorage.setItem(
           "userData",
-          JSON.stringify({ id: 1, email: "test@flagfitpro.com" })
+          JSON.stringify({ id: 1, email: "test@flagfitpro.com" }),
         );
       });
 
@@ -358,7 +362,7 @@ test.describe("User Authentication Flow", () => {
 
       // Verify session is cleared
       const authToken = await page.evaluate(() =>
-        localStorage.getItem("authToken")
+        localStorage.getItem("authToken"),
       );
       expect(authToken).toBeNull();
     });

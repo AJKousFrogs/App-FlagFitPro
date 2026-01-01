@@ -19,7 +19,9 @@ export class LoadingService {
   // Get the most recent loader message
   public currentMessage = computed(() => {
     const loaders = this.activeLoaders();
-    return loaders.length > 0 ? loaders[loaders.length - 1].message : "Loading...";
+    return loaders.length > 0
+      ? loaders[loaders.length - 1].message
+      : "Loading...";
   });
 
   // Get current active loaders
@@ -28,12 +30,17 @@ export class LoadingService {
   /**
    * Show a loading indicator
    */
-  show(message: string = "Loading...", id: string | null = null, cancellable: boolean = false, onCancel?: () => void): string {
+  show(
+    message: string = "Loading...",
+    id: string | null = null,
+    cancellable: boolean = false,
+    onCancel?: () => void,
+  ): string {
     const loaderId = id || `loader-${Date.now()}`;
-    
-    this.activeLoaders.update(loaders => [
-      ...loaders.filter(l => l.id !== loaderId),
-      { id: loaderId, message, cancellable, onCancel }
+
+    this.activeLoaders.update((loaders) => [
+      ...loaders.filter((l) => l.id !== loaderId),
+      { id: loaderId, message, cancellable, onCancel },
     ]);
 
     return loaderId;
@@ -44,7 +51,9 @@ export class LoadingService {
    */
   hide(id: string | null = null): void {
     if (id) {
-      this.activeLoaders.update(loaders => loaders.filter(l => l.id !== id));
+      this.activeLoaders.update((loaders) =>
+        loaders.filter((l) => l.id !== id),
+      );
     } else {
       this.activeLoaders.set([]);
     }
@@ -53,7 +62,10 @@ export class LoadingService {
   /**
    * Utility to wrap a promise with loading state
    */
-  async useLoading<T>(promise: Promise<T>, message: string = "Loading..."): Promise<T> {
+  async useLoading<T>(
+    promise: Promise<T>,
+    message: string = "Loading...",
+  ): Promise<T> {
     const id = this.show(message);
     try {
       return await promise;
@@ -62,4 +74,3 @@ export class LoadingService {
     }
   }
 }
-

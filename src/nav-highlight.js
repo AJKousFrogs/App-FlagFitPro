@@ -79,11 +79,11 @@
     // Also check by href attribute as fallback
     if (!activeNav) {
       const navLinks = document.querySelectorAll(
-        `a.nav-item, a.sidebar-link, a[href*="${  currentPage  }"]`,
+        `a.nav-item, a.sidebar-link, a[href*="${currentPage}"]`,
       );
       navLinks.forEach((link) => {
         const href = link.getAttribute("href") || "";
-        if (href.includes(currentPage) || href === `/${  currentPage}`) {
+        if (href.includes(currentPage) || href === `/${currentPage}`) {
           link.classList.add("active");
         }
       });

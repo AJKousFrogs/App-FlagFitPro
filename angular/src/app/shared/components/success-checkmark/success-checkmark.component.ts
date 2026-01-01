@@ -49,7 +49,7 @@ export type SuccessVariant = "default" | "filled" | "outlined" | "minimal";
         [attr.width]="svgSize()"
         [attr.height]="svgSize()"
       >
-        @if (variant() === 'filled' || variant() === 'outlined') {
+        @if (variant() === "filled" || variant() === "outlined") {
           <circle
             class="checkmark-circle"
             cx="26"
@@ -121,7 +121,8 @@ export type SuccessVariant = "default" | "filled" | "outlined" | "minimal";
       }
 
       .animated .success-circle {
-        animation: circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        animation: circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1)
+          forwards;
       }
 
       .success-circle.pulse {
@@ -200,7 +201,8 @@ export type SuccessVariant = "default" | "filled" | "outlined" | "minimal";
       }
 
       .animated .checkmark-check {
-        animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms forwards;
+        animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms
+          forwards;
       }
 
       @keyframes check-draw {
@@ -430,4 +432,3 @@ export class SuccessCheckmarkComponent implements OnInit, OnDestroy {
     }, 50);
   }
 }
-

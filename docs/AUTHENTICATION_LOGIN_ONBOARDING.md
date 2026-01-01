@@ -867,7 +867,3 @@ Supabase automatically handles token refresh:
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
 - [JWT Best Practices](https://datatracker.ietf.org/doc/html/rfc8725)
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
-
-
-
-

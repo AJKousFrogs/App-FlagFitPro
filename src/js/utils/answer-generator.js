@@ -17,7 +17,7 @@ export class AnswerGenerator {
   }
 
   generateAnswer(parsedQuestion, knowledgeEntry, articles = []) {
-    const {intent} = parsedQuestion;
+    const { intent } = parsedQuestion;
     const generator = this.templates[intent] || this.templates.general;
 
     return generator({
@@ -79,7 +79,7 @@ export class AnswerGenerator {
 
       // Use knowledge answer if available and no body stats
       if (knowledge.answer && !bodyStats.weight && !bodyStats.height) {
-        answer = knowledge.answer;
+        ({ answer } = knowledge);
       }
 
       if (dosage.timing) {
@@ -153,7 +153,11 @@ export class AnswerGenerator {
     return answer;
   }
 
-  generateSafetyAnswer({ question: _question, knowledge, articles: _articles }) {
+  generateSafetyAnswer({
+    question: _question,
+    knowledge,
+    articles: _articles,
+  }) {
     let answer = "**Safety Information:**\n\n";
 
     if (knowledge && knowledge.safety_warnings) {
@@ -234,7 +238,7 @@ export class AnswerGenerator {
     let answer = "";
 
     if (knowledge && knowledge.summary) {
-      answer += `${knowledge.summary  }\n\n`;
+      answer += `${knowledge.summary}\n\n`;
     }
 
     if (knowledge && knowledge.answer) {
@@ -299,7 +303,7 @@ export class AnswerGenerator {
 
     // Prioritize knowledge base answer
     if (knowledge && knowledge.answer) {
-      answer = knowledge.answer;
+      ({ answer } = knowledge);
 
       // Enhance with summary if available
       if (knowledge.summary && !answer.includes(knowledge.summary)) {
@@ -413,7 +417,7 @@ export class AnswerGenerator {
   synthesizeDefinitionFromArticles(articles, topic) {
     const firstArticle = articles[0];
     if (firstArticle.abstract) {
-      return `${firstArticle.abstract.substring(0, 400)  }...`;
+      return `${firstArticle.abstract.substring(0, 400)}...`;
     }
     return (
       `Based on research, ${topic} is an important aspect of athletic performance. ` +

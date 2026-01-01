@@ -68,23 +68,33 @@ export const fadeRouteAnimation: AnimationTriggerMetadata = trigger(
             opacity: 1,
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
       query(":enter", [style({ opacity: 0 })], { optional: true }),
       group([
         query(
           ":leave",
-          [animate(`${DURATION_NORMAL} ${EASING_SMOOTH}`, style({ opacity: 0 }))],
-          { optional: true }
+          [
+            animate(
+              `${DURATION_NORMAL} ${EASING_SMOOTH}`,
+              style({ opacity: 0 }),
+            ),
+          ],
+          { optional: true },
         ),
         query(
           ":enter",
-          [animate(`${DURATION_NORMAL} ${EASING_SMOOTH}`, style({ opacity: 1 }))],
-          { optional: true }
+          [
+            animate(
+              `${DURATION_NORMAL} ${EASING_SMOOTH}`,
+              style({ opacity: 1 }),
+            ),
+          ],
+          { optional: true },
         ),
       ]),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -112,7 +122,7 @@ export const slideRouteAnimation: AnimationTriggerMetadata = trigger(
             height: "100%",
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
       query(":enter", [style({ transform: "translateX(100%)", opacity: 0 })], {
         optional: true,
@@ -123,20 +133,20 @@ export const slideRouteAnimation: AnimationTriggerMetadata = trigger(
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "translateX(-30%)", opacity: 0 })
+              style({ transform: "translateX(-30%)", opacity: 0 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
         query(
           ":enter",
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "translateX(0)", opacity: 1 })
+              style({ transform: "translateX(0)", opacity: 1 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
       ]),
     ]),
@@ -154,7 +164,7 @@ export const slideRouteAnimation: AnimationTriggerMetadata = trigger(
             height: "100%",
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
       query(":enter", [style({ transform: "translateX(-30%)", opacity: 0 })], {
         optional: true,
@@ -165,24 +175,24 @@ export const slideRouteAnimation: AnimationTriggerMetadata = trigger(
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "translateX(100%)", opacity: 0 })
+              style({ transform: "translateX(100%)", opacity: 0 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
         query(
           ":enter",
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "translateX(0)", opacity: 1 })
+              style({ transform: "translateX(0)", opacity: 1 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
       ]),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -210,37 +220,35 @@ export const scaleFadeRouteAnimation: AnimationTriggerMetadata = trigger(
             transform: "scale(1)",
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
-      query(
-        ":enter",
-        [style({ opacity: 0, transform: "scale(0.95)" })],
-        { optional: true }
-      ),
+      query(":enter", [style({ opacity: 0, transform: "scale(0.95)" })], {
+        optional: true,
+      }),
       group([
         query(
           ":leave",
           [
             animate(
               `${DURATION_NORMAL} ${EASING_ACCELERATE}`,
-              style({ opacity: 0, transform: "scale(1.02)" })
+              style({ opacity: 0, transform: "scale(1.02)" }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
         query(
           ":enter",
           [
             animate(
               `${DURATION_SLOW} ${EASING_BOUNCE}`,
-              style({ opacity: 1, transform: "scale(1)" })
+              style({ opacity: 1, transform: "scale(1)" }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
       ]),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -259,16 +267,16 @@ export const slideUpRouteAnimation: AnimationTriggerMetadata = trigger(
       style({ transform: "translateY(20px)", opacity: 0 }),
       animate(
         `${DURATION_SLOW} ${EASING_BOUNCE}`,
-        style({ transform: "translateY(0)", opacity: 1 })
+        style({ transform: "translateY(0)", opacity: 1 }),
       ),
     ]),
     transition(":leave", [
       animate(
         `${DURATION_FAST} ${EASING_ACCELERATE}`,
-        style({ transform: "translateY(-10px)", opacity: 0 })
+        style({ transform: "translateY(-10px)", opacity: 0 }),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -295,37 +303,35 @@ export const flipRouteAnimation: AnimationTriggerMetadata = trigger(
             backfaceVisibility: "hidden",
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
-      query(
-        ":enter",
-        [style({ transform: "rotateY(180deg)", opacity: 0 })],
-        { optional: true }
-      ),
+      query(":enter", [style({ transform: "rotateY(180deg)", opacity: 0 })], {
+        optional: true,
+      }),
       group([
         query(
           ":leave",
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "rotateY(-180deg)", opacity: 0 })
+              style({ transform: "rotateY(-180deg)", opacity: 0 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
         query(
           ":enter",
           [
             animate(
               `${DURATION_SLOW} ${EASING_SMOOTH}`,
-              style({ transform: "rotateY(0)", opacity: 1 })
+              style({ transform: "rotateY(0)", opacity: 1 }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
       ]),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -355,38 +361,36 @@ export const routeAnimations: AnimationTriggerMetadata = trigger(
             transform: "translateY(0)",
           }),
         ],
-        { optional: true }
+        { optional: true },
       ),
-      query(
-        ":enter",
-        [style({ opacity: 0, transform: "translateY(10px)" })],
-        { optional: true }
-      ),
+      query(":enter", [style({ opacity: 0, transform: "translateY(10px)" })], {
+        optional: true,
+      }),
       group([
         query(
           ":leave",
           [
             animate(
               `${DURATION_FAST} ${EASING_ACCELERATE}`,
-              style({ opacity: 0, transform: "translateY(-10px)" })
+              style({ opacity: 0, transform: "translateY(-10px)" }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
         query(
           ":enter",
           [
             animate(
               `${DURATION_NORMAL} ${EASING_DECELERATE}`,
-              style({ opacity: 1, transform: "translateY(0)" })
+              style({ opacity: 1, transform: "translateY(0)" }),
             ),
           ],
-          { optional: true }
+          { optional: true },
         ),
       ]),
       query("@*", animateChild(), { optional: true }),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -404,10 +408,10 @@ export const pageEnterAnimation: AnimationTriggerMetadata = trigger(
       style({ opacity: 0, transform: "translateY(20px)" }),
       animate(
         `${DURATION_SLOW} ${EASING_BOUNCE}`,
-        style({ opacity: 1, transform: "translateY(0)" })
+        style({ opacity: 1, transform: "translateY(0)" }),
       ),
     ]),
-  ]
+  ],
 );
 
 /**
@@ -420,10 +424,10 @@ export const pageLeaveAnimation: AnimationTriggerMetadata = trigger(
     transition(":leave", [
       animate(
         `${DURATION_FAST} ${EASING_ACCELERATE}`,
-        style({ opacity: 0, transform: "translateY(-10px)" })
+        style({ opacity: 0, transform: "translateY(-10px)" }),
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -445,13 +449,13 @@ export const staggerContentAnimation: AnimationTriggerMetadata = trigger(
           style({ opacity: 0, transform: "translateY(15px)" }),
           animate(
             `${DURATION_NORMAL} ${EASING_BOUNCE}`,
-            style({ opacity: 1, transform: "translateY(0)" })
+            style({ opacity: 1, transform: "translateY(0)" }),
           ),
         ],
-        { optional: true }
+        { optional: true },
       ),
     ]),
-  ]
+  ],
 );
 
 // ================================
@@ -462,7 +466,9 @@ export const staggerContentAnimation: AnimationTriggerMetadata = trigger(
  * Helper function to prepare route data for animations
  * Use in component: prepareRoute(outlet: RouterOutlet)
  */
-export function prepareRoute(outlet: { activatedRouteData: Record<string, unknown> }): string | number {
+export function prepareRoute(outlet: {
+  activatedRouteData: Record<string, unknown>;
+}): string | number {
   return (
     outlet?.activatedRouteData?.["animation"] ||
     outlet?.activatedRouteData?.["depth"] ||
@@ -485,4 +491,3 @@ export const ROUTE_ANIMATIONS = [
   pageLeaveAnimation,
   staggerContentAnimation,
 ];
-

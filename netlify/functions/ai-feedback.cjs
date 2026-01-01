@@ -42,7 +42,12 @@ exports.handler = async (event, context) => {
         return handleGetFeedback(event, userId, requestId);
       }
 
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed", requestId);
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+        requestId,
+      );
     },
   });
 };
@@ -72,7 +77,7 @@ async function handleCreateFeedback(event, userId, requestId) {
       "message_id is required",
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
@@ -81,7 +86,7 @@ async function handleCreateFeedback(event, userId, requestId) {
       `Invalid feedback_type. Must be one of: ${VALID_FEEDBACK_TYPES.join(", ")}`,
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
@@ -114,7 +119,7 @@ async function handleCreateFeedback(event, userId, requestId) {
           "Failed to update feedback",
           500,
           "database_error",
-          requestId
+          requestId,
         );
       }
 
@@ -123,7 +128,7 @@ async function handleCreateFeedback(event, userId, requestId) {
           id: updated.id,
           message: "Feedback updated successfully",
         },
-        requestId
+        requestId,
       );
     }
 
@@ -147,19 +152,21 @@ async function handleCreateFeedback(event, userId, requestId) {
         "Failed to save feedback",
         500,
         "database_error",
-        requestId
+        requestId,
       );
     }
 
     // Log for analytics
-    console.log(`[AI Feedback] New feedback: ${feedback_type} for message ${message_id}`);
+    console.log(
+      `[AI Feedback] New feedback: ${feedback_type} for message ${message_id}`,
+    );
 
     return createSuccessResponse(
       {
         id: feedback.id,
         message: "Feedback submitted successfully",
       },
-      requestId
+      requestId,
     );
   } catch (error) {
     console.error("[AI Feedback] Error:", error);
@@ -167,7 +174,7 @@ async function handleCreateFeedback(event, userId, requestId) {
       "Failed to process feedback",
       500,
       "internal_error",
-      requestId
+      requestId,
     );
   }
 }
@@ -198,19 +205,33 @@ async function handleGetFeedback(event, userId, requestId) {
             "Failed to fetch feedback stats",
             500,
             "database_error",
-            requestId
+            requestId,
           );
         }
 
         const stats = {
           total: allFeedback?.length || 0,
-          thumbs_up: allFeedback?.filter((f) => f.feedback_type === "thumbs_up").length || 0,
-          thumbs_down: allFeedback?.filter((f) => f.feedback_type === "thumbs_down").length || 0,
-          helpful: allFeedback?.filter((f) => f.feedback_type === "helpful").length || 0,
-          not_helpful: allFeedback?.filter((f) => f.feedback_type === "not_helpful").length || 0,
-          incorrect: allFeedback?.filter((f) => f.feedback_type === "incorrect").length || 0,
-          unsafe: allFeedback?.filter((f) => f.feedback_type === "unsafe").length || 0,
-          irrelevant: allFeedback?.filter((f) => f.feedback_type === "irrelevant").length || 0,
+          thumbs_up:
+            allFeedback?.filter((f) => f.feedback_type === "thumbs_up")
+              .length || 0,
+          thumbs_down:
+            allFeedback?.filter((f) => f.feedback_type === "thumbs_down")
+              .length || 0,
+          helpful:
+            allFeedback?.filter((f) => f.feedback_type === "helpful").length ||
+            0,
+          not_helpful:
+            allFeedback?.filter((f) => f.feedback_type === "not_helpful")
+              .length || 0,
+          incorrect:
+            allFeedback?.filter((f) => f.feedback_type === "incorrect")
+              .length || 0,
+          unsafe:
+            allFeedback?.filter((f) => f.feedback_type === "unsafe").length ||
+            0,
+          irrelevant:
+            allFeedback?.filter((f) => f.feedback_type === "irrelevant")
+              .length || 0,
         };
 
         return createSuccessResponse({ stats }, requestId);
@@ -233,7 +254,7 @@ async function handleGetFeedback(event, userId, requestId) {
           "Failed to fetch feedback",
           500,
           "database_error",
-          requestId
+          requestId,
         );
       }
 
@@ -254,7 +275,7 @@ async function handleGetFeedback(event, userId, requestId) {
           "Failed to fetch feedback",
           500,
           "database_error",
-          requestId
+          requestId,
         );
       }
 
@@ -274,7 +295,7 @@ async function handleGetFeedback(event, userId, requestId) {
         "Failed to fetch feedback",
         500,
         "database_error",
-        requestId
+        requestId,
       );
     }
 
@@ -285,8 +306,7 @@ async function handleGetFeedback(event, userId, requestId) {
       "Failed to process request",
       500,
       "internal_error",
-      requestId
+      requestId,
     );
   }
 }
-

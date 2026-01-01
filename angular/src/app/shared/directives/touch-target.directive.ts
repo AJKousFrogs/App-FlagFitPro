@@ -90,7 +90,9 @@ export class TouchTargetDirective implements OnInit, OnDestroy {
   private setupMediaQueryListener(): void {
     if (typeof window === "undefined") return;
 
-    this.mediaQueryList = window.matchMedia("(hover: none) and (pointer: coarse)");
+    this.mediaQueryList = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    );
     this.mediaQueryList.addEventListener("change", this.handleMediaChange);
 
     // Initial check
@@ -225,24 +227,28 @@ export class TouchTargetContainerDirective implements OnInit {
   ngOnInit(): void {
     if (typeof window === "undefined") return;
 
-    const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const isTouchDevice = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    ).matches;
 
     if (isTouchDevice) {
       this.applyToChildren();
     }
 
     // Listen for changes
-    window.matchMedia("(hover: none) and (pointer: coarse)").addEventListener("change", (e) => {
-      if (e.matches) {
-        this.applyToChildren();
-      }
-    });
+    window
+      .matchMedia("(hover: none) and (pointer: coarse)")
+      .addEventListener("change", (e) => {
+        if (e.matches) {
+          this.applyToChildren();
+        }
+      });
   }
 
   private applyToChildren(): void {
     const element = this.el.nativeElement;
     const interactiveElements = element.querySelectorAll(
-      "button, a, [role='button'], input[type='button'], input[type='submit']"
+      "button, a, [role='button'], input[type='button'], input[type='submit']",
     );
 
     interactiveElements.forEach((el: Element) => {
@@ -258,4 +264,3 @@ export class TouchTargetContainerDirective implements OnInit {
     });
   }
 }
-

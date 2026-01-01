@@ -78,7 +78,7 @@ const mockSupabaseService = {
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: MOCK_NUTRITION_LOG, error: null })
+            Promise.resolve({ data: MOCK_NUTRITION_LOG, error: null }),
           ),
         })),
       })),
@@ -160,7 +160,12 @@ describe("NutritionService", () => {
         {
           fdcId: 2,
           description: "Chicken Thigh",
-          nutrients: { calories: 209, protein: 26, carbohydrates: 0, fat: 10.9 },
+          nutrients: {
+            calories: 209,
+            protein: 26,
+            carbohydrates: 0,
+            fat: 10.9,
+          },
         },
       ];
 
@@ -204,7 +209,7 @@ describe("NutritionService", () => {
       });
 
       const results = await firstValueFrom(
-        service.searchUSDAFoods("xyznonexistent")
+        service.searchUSDAFoods("xyznonexistent"),
       );
       expect(results).toEqual([]);
     });
@@ -217,16 +222,15 @@ describe("NutritionService", () => {
 
       await firstValueFrom(service.searchUSDAFoods("chicken", 50, 2));
 
-      expect((mockSupabaseService as any).client.functions.invoke).toHaveBeenCalledWith(
-        "search-foods-edamam",
-        {
-          body: {
-            query: "chicken",
-            pageSize: 50,
-            pageNumber: 2,
-          },
-        }
-      );
+      expect(
+        (mockSupabaseService as any).client.functions.invoke,
+      ).toHaveBeenCalledWith("search-foods-edamam", {
+        body: {
+          query: "chicken",
+          pageSize: 50,
+          pageNumber: 2,
+        },
+      });
     });
   });
 
@@ -239,7 +243,7 @@ describe("NutritionService", () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: { id: 1 }, error: null })
+            Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
       }));
@@ -249,7 +253,7 @@ describe("NutritionService", () => {
       });
 
       const result = await firstValueFrom(
-        service.addFoodToCurrentMeal(MOCK_USDA_FOOD)
+        service.addFoodToCurrentMeal(MOCK_USDA_FOOD),
       );
 
       expect(result).toBe(true);
@@ -268,7 +272,7 @@ describe("NutritionService", () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: { id: 2 }, error: null })
+            Promise.resolve({ data: { id: 2 }, error: null }),
           ),
         })),
       }));
@@ -278,7 +282,7 @@ describe("NutritionService", () => {
       });
 
       const result = await firstValueFrom(
-        service.addFoodToCurrentMeal(customFood)
+        service.addFoodToCurrentMeal(customFood),
       );
 
       expect(result).toBe(true);
@@ -288,7 +292,7 @@ describe("NutritionService", () => {
       (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const result = await firstValueFrom(
-        service.addFoodToCurrentMeal(MOCK_USDA_FOOD)
+        service.addFoodToCurrentMeal(MOCK_USDA_FOOD),
       );
 
       expect(result).toBe(false);
@@ -300,14 +304,14 @@ describe("NutritionService", () => {
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
             single: vi.fn(() =>
-              Promise.resolve({ data: null, error: { message: "DB error" } })
+              Promise.resolve({ data: null, error: { message: "DB error" } }),
             ),
           })),
         })),
       });
 
       const result = await firstValueFrom(
-        service.addFoodToCurrentMeal(MOCK_USDA_FOOD)
+        service.addFoodToCurrentMeal(MOCK_USDA_FOOD),
       );
 
       expect(result).toBe(false);
@@ -603,7 +607,7 @@ describe("NutritionService", () => {
     it("should handle food with missing nutrients", async () => {
       // Reset userId mock to return valid user
       (mockSupabaseService as any).userId.mockReturnValue("user-123");
-      
+
       const incompleteFood: Partial<USDAFood> = {
         fdcId: 99999,
         description: "Unknown Food",
@@ -613,7 +617,7 @@ describe("NutritionService", () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: { id: 1 }, error: null })
+            Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
       }));
@@ -623,7 +627,7 @@ describe("NutritionService", () => {
       });
 
       const result = await firstValueFrom(
-        service.addFoodToCurrentMeal(incompleteFood as USDAFood)
+        service.addFoodToCurrentMeal(incompleteFood as USDAFood),
       );
 
       expect(result).toBe(true);
@@ -639,4 +643,3 @@ describe("NutritionService", () => {
     });
   });
 });
-

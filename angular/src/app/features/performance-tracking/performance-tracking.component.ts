@@ -76,196 +76,201 @@ interface PerformanceMetric {
 
       <!-- Content -->
       @else {
-      <div class="performance-page">
-        <app-page-header
-          title="Performance Tracking"
-          subtitle="Track and analyze your performance metrics over time"
-          icon="pi-bullseye"
+        <div class="performance-page">
+          <app-page-header
+            title="Performance Tracking"
+            subtitle="Track and analyze your performance metrics over time"
+            icon="pi-bullseye"
+          >
+            <p-button
+              label="Log Performance"
+              icon="pi pi-plus"
+              (onClick)="openLogDialog()"
+            ></p-button>
+          </app-page-header>
+
+          <!-- Performance Metrics -->
+          <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
+
+          <!-- Performance Charts -->
+          <div class="charts-grid">
+            @defer (on viewport) {
+              <p-card class="chart-card">
+                <ng-template pTemplate="header">
+                  <h3>Performance Over Time</h3>
+                </ng-template>
+                @if (performanceChartData()) {
+                  <p-chart
+                    type="line"
+                    [data]="performanceChartData()"
+                    [options]="chartOptions"
+                  ></p-chart>
+                }
+              </p-card>
+            } @placeholder {
+              <p-card class="chart-card">
+                <div class="loading-placeholder">
+                  Loading performance chart...
+                </div>
+              </p-card>
+            }
+
+            @defer (on viewport) {
+              <p-card class="chart-card">
+                <ng-template pTemplate="header">
+                  <h3>Speed Metrics</h3>
+                </ng-template>
+                @if (speedChartData()) {
+                  <p-chart
+                    type="bar"
+                    [data]="speedChartData()"
+                    [options]="chartOptions"
+                  ></p-chart>
+                }
+              </p-card>
+            } @placeholder {
+              <p-card class="chart-card">
+                <div class="loading-placeholder">Loading speed metrics...</div>
+              </p-card>
+            }
+          </div>
+
+          <!-- Performance History Table -->
+          <p-card class="table-card">
+            <ng-template pTemplate="header">
+              <h3>Performance History</h3>
+            </ng-template>
+            @if (performanceHistory().length === 0) {
+              <div class="empty-state">
+                <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
+                <h4>{{ noDataMessage.title }}</h4>
+                <p>{{ noDataMessage.reason }}</p>
+                <p-button
+                  [label]="noDataMessage.actionLabel"
+                  icon="pi pi-plus"
+                  (onClick)="openLogDialog()"
+                ></p-button>
+              </div>
+            } @else {
+              <p-table
+                [value]="performanceHistory()"
+                [paginator]="true"
+                [rows]="10"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Date</th>
+                    <th>40-Yard Dash</th>
+                    <th>Vertical Jump</th>
+                    <th>Broad Jump</th>
+                    <th>Bench Press</th>
+                    <th>Overall Score</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-record>
+                  <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.dash40 }}</td>
+                    <td>{{ record.vertical }}</td>
+                    <td>{{ record.broad }}</td>
+                    <td>{{ record.bench }}</td>
+                    <td>
+                      <p-tag
+                        [value]="record.score + '%'"
+                        [severity]="getScoreSeverity(record.score)"
+                      >
+                      </p-tag>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            }
+          </p-card>
+        </div>
+
+        <!-- Log Performance Dialog -->
+        <p-dialog
+          header="Log Performance"
+          [(visible)]="showLogDialog"
+          [modal]="true"
+          [style]="{ width: '500px' }"
+          [closable]="true"
         >
-          <p-button
-            label="Log Performance"
-            icon="pi pi-plus"
-            (onClick)="openLogDialog()"
-          ></p-button>
-        </app-page-header>
-
-        <!-- Performance Metrics -->
-        <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
-
-        <!-- Performance Charts -->
-        <div class="charts-grid">
-          @defer (on viewport) {
-            <p-card class="chart-card">
-              <ng-template pTemplate="header">
-                <h3>Performance Over Time</h3>
-              </ng-template>
-              @if (performanceChartData()) {
-                <p-chart
-                  type="line"
-                  [data]="performanceChartData()"
-                  [options]="chartOptions"
-                ></p-chart>
-              }
-            </p-card>
-          } @placeholder {
-            <p-card class="chart-card">
-              <div class="loading-placeholder">Loading performance chart...</div>
-            </p-card>
-          }
-
-          @defer (on viewport) {
-            <p-card class="chart-card">
-              <ng-template pTemplate="header">
-                <h3>Speed Metrics</h3>
-              </ng-template>
-              @if (speedChartData()) {
-                <p-chart
-                  type="bar"
-                  [data]="speedChartData()"
-                  [options]="chartOptions"
-                ></p-chart>
-              }
-            </p-card>
-          } @placeholder {
-            <p-card class="chart-card">
-              <div class="loading-placeholder">Loading speed metrics...</div>
-            </p-card>
-          }
-        </div>
-
-        <!-- Performance History Table -->
-        <p-card class="table-card">
-          <ng-template pTemplate="header">
-            <h3>Performance History</h3>
-          </ng-template>
-          @if (performanceHistory().length === 0) {
-            <div class="empty-state">
-              <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-              <h4>{{ noDataMessage.title }}</h4>
-              <p>{{ noDataMessage.reason }}</p>
-              <p-button 
-                [label]="noDataMessage.actionLabel"
-                icon="pi pi-plus"
-                (onClick)="openLogDialog()"
-              ></p-button>
+          <div class="log-form">
+            <div class="p-field mb-4">
+              <label for="dash40" class="p-label">40-Yard Dash (seconds)</label>
+              <p-inputNumber
+                id="dash40"
+                [(ngModel)]="newPerformance.dash40"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                mode="decimal"
+                placeholder="e.g., 4.45"
+                styleClass="w-full"
+              ></p-inputNumber>
             </div>
-          } @else {
-            <p-table
-              [value]="performanceHistory()"
-              [paginator]="true"
-              [rows]="10"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Date</th>
-                  <th>40-Yard Dash</th>
-                  <th>Vertical Jump</th>
-                  <th>Broad Jump</th>
-                  <th>Bench Press</th>
-                  <th>Overall Score</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-record>
-                <tr>
-                  <td>{{ record.date }}</td>
-                  <td>{{ record.dash40 }}</td>
-                  <td>{{ record.vertical }}</td>
-                  <td>{{ record.broad }}</td>
-                  <td>{{ record.bench }}</td>
-                  <td>
-                    <p-tag
-                      [value]="record.score + '%'"
-                      [severity]="getScoreSeverity(record.score)"
-                    >
-                    </p-tag>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          }
-        </p-card>
-      </div>
-
-      <!-- Log Performance Dialog -->
-      <p-dialog
-        header="Log Performance"
-        [(visible)]="showLogDialog"
-        [modal]="true"
-        [style]="{ width: '500px' }"
-        [closable]="true"
-      >
-        <div class="log-form">
-          <div class="p-field mb-4">
-            <label for="dash40" class="p-label">40-Yard Dash (seconds)</label>
-            <p-inputNumber
-              id="dash40"
-              [(ngModel)]="newPerformance.dash40"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-              mode="decimal"
-              placeholder="e.g., 4.45"
-              styleClass="w-full"
-            ></p-inputNumber>
+            <div class="p-field mb-4">
+              <label for="vertical" class="p-label"
+                >Vertical Jump (inches)</label
+              >
+              <p-inputNumber
+                id="vertical"
+                [(ngModel)]="newPerformance.vertical"
+                [minFractionDigits]="1"
+                mode="decimal"
+                placeholder="e.g., 38"
+                styleClass="w-full"
+              ></p-inputNumber>
+            </div>
+            <div class="p-field mb-4">
+              <label for="broad" class="p-label">Broad Jump (inches)</label>
+              <p-inputNumber
+                id="broad"
+                [(ngModel)]="newPerformance.broad"
+                [minFractionDigits]="1"
+                mode="decimal"
+                placeholder="e.g., 122"
+                styleClass="w-full"
+              ></p-inputNumber>
+            </div>
+            <div class="p-field mb-4">
+              <label for="bench" class="p-label">Bench Press (lbs)</label>
+              <p-inputNumber
+                id="bench"
+                [(ngModel)]="newPerformance.bench"
+                mode="decimal"
+                placeholder="e.g., 225"
+                styleClass="w-full"
+              ></p-inputNumber>
+            </div>
+            <div class="p-field mb-4">
+              <label for="notes" class="p-label">Notes (optional)</label>
+              <input
+                id="notes"
+                type="text"
+                pInputText
+                [(ngModel)]="newPerformance.notes"
+                placeholder="Any notes about this session"
+                class="w-full"
+              />
+            </div>
           </div>
-          <div class="p-field mb-4">
-            <label for="vertical" class="p-label">Vertical Jump (inches)</label>
-            <p-inputNumber
-              id="vertical"
-              [(ngModel)]="newPerformance.vertical"
-              [minFractionDigits]="1"
-              mode="decimal"
-              placeholder="e.g., 38"
-              styleClass="w-full"
-            ></p-inputNumber>
-          </div>
-          <div class="p-field mb-4">
-            <label for="broad" class="p-label">Broad Jump (inches)</label>
-            <p-inputNumber
-              id="broad"
-              [(ngModel)]="newPerformance.broad"
-              [minFractionDigits]="1"
-              mode="decimal"
-              placeholder="e.g., 122"
-              styleClass="w-full"
-            ></p-inputNumber>
-          </div>
-          <div class="p-field mb-4">
-            <label for="bench" class="p-label">Bench Press (lbs)</label>
-            <p-inputNumber
-              id="bench"
-              [(ngModel)]="newPerformance.bench"
-              mode="decimal"
-              placeholder="e.g., 225"
-              styleClass="w-full"
-            ></p-inputNumber>
-          </div>
-          <div class="p-field mb-4">
-            <label for="notes" class="p-label">Notes (optional)</label>
-            <input
-              id="notes"
-              type="text"
-              pInputText
-              [(ngModel)]="newPerformance.notes"
-              placeholder="Any notes about this session"
-              class="w-full"
-            />
-          </div>
-        </div>
-        <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="showLogDialog = false"
-          ></p-button>
-          <p-button
-            label="Save Performance"
-            icon="pi pi-check"
-            [loading]="isSaving()"
-            (onClick)="savePerformance()"
-          ></p-button>
-        </ng-template>
-      </p-dialog>
-      } <!-- End of @else for content -->
+          <ng-template pTemplate="footer">
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showLogDialog = false"
+            ></p-button>
+            <p-button
+              label="Save Performance"
+              icon="pi pi-check"
+              [loading]="isSaving()"
+              (onClick)="savePerformance()"
+            ></p-button>
+          </ng-template>
+        </p-dialog>
+      }
+      <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -353,7 +358,9 @@ export class PerformanceTrackingComponent implements OnInit {
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
   hasPageError = signal<boolean>(false);
-  pageErrorMessage = signal<string>('Something went wrong while loading performance data. Please try again.');
+  pageErrorMessage = signal<string>(
+    "Something went wrong while loading performance data. Please try again.",
+  );
 
   // Centralized UX copy for data states
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
@@ -363,7 +370,7 @@ export class PerformanceTrackingComponent implements OnInit {
   performanceChartData = signal<any>(null);
   speedChartData = signal<any>(null);
   performanceHistory = signal<any[]>([]);
-  
+
   // Dialog state
   showLogDialog = false;
   isSaving = signal(false);
@@ -372,7 +379,7 @@ export class PerformanceTrackingComponent implements OnInit {
     vertical: null as number | null,
     broad: null as number | null,
     bench: null as number | null,
-    notes: '',
+    notes: "",
   };
 
   chartOptions = DEFAULT_CHART_OPTIONS;
@@ -486,7 +493,7 @@ export class PerformanceTrackingComponent implements OnInit {
         score: 88,
       },
     ]);
-    
+
     // Mark page as loaded
     this.isPageLoading.set(false);
     this.hasPageError.set(false);
@@ -499,16 +506,20 @@ export class PerformanceTrackingComponent implements OnInit {
       vertical: null,
       broad: null,
       bench: null,
-      notes: '',
+      notes: "",
     };
     this.showLogDialog = true;
   }
 
   async savePerformance(): Promise<void> {
     // Validate at least one metric is entered
-    if (!this.newPerformance.dash40 && !this.newPerformance.vertical && 
-        !this.newPerformance.broad && !this.newPerformance.bench) {
-      this.toastService.warn('Please enter at least one performance metric');
+    if (
+      !this.newPerformance.dash40 &&
+      !this.newPerformance.vertical &&
+      !this.newPerformance.broad &&
+      !this.newPerformance.bench
+    ) {
+      this.toastService.warn("Please enter at least one performance metric");
       return;
     }
 
@@ -517,7 +528,7 @@ export class PerformanceTrackingComponent implements OnInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error('Please log in to save performance');
+        this.toastService.error("Please log in to save performance");
         return;
       }
 
@@ -526,7 +537,7 @@ export class PerformanceTrackingComponent implements OnInit {
 
       // Save to Supabase
       const { error } = await this.supabaseService.client
-        .from('performance_records')
+        .from("performance_records")
         .insert({
           user_id: user.id,
           dash_40: this.newPerformance.dash40,
@@ -544,20 +555,29 @@ export class PerformanceTrackingComponent implements OnInit {
 
       // Add to local history
       const newRecord = {
-        date: new Date().toISOString().split('T')[0],
-        dash40: this.newPerformance.dash40 ? `${this.newPerformance.dash40}s` : '-',
-        vertical: this.newPerformance.vertical ? `${this.newPerformance.vertical}"` : '-',
-        broad: this.newPerformance.broad ? `${Math.floor(this.newPerformance.broad / 12)}'${this.newPerformance.broad % 12}"` : '-',
-        bench: this.newPerformance.bench ? `${this.newPerformance.bench} lbs` : '-',
+        date: new Date().toISOString().split("T")[0],
+        dash40: this.newPerformance.dash40
+          ? `${this.newPerformance.dash40}s`
+          : "-",
+        vertical: this.newPerformance.vertical
+          ? `${this.newPerformance.vertical}"`
+          : "-",
+        broad: this.newPerformance.broad
+          ? `${Math.floor(this.newPerformance.broad / 12)}'${this.newPerformance.broad % 12}"`
+          : "-",
+        bench: this.newPerformance.bench
+          ? `${this.newPerformance.bench} lbs`
+          : "-",
         score: score,
       };
 
-      this.performanceHistory.update(history => [newRecord, ...history]);
+      this.performanceHistory.update((history) => [newRecord, ...history]);
 
-      this.toastService.success('Performance logged successfully!');
+      this.toastService.success("Performance logged successfully!");
       this.showLogDialog = false;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save performance';
+      const message =
+        error instanceof Error ? error.message : "Failed to save performance";
       this.toastService.error(message);
     } finally {
       this.isSaving.set(false);
@@ -571,28 +591,40 @@ export class PerformanceTrackingComponent implements OnInit {
 
     if (this.newPerformance.dash40) {
       // 4.4s = 100, 5.0s = 60
-      const dashScore = Math.max(0, Math.min(100, 100 - ((this.newPerformance.dash40 - 4.4) / 0.6) * 40));
+      const dashScore = Math.max(
+        0,
+        Math.min(100, 100 - ((this.newPerformance.dash40 - 4.4) / 0.6) * 40),
+      );
       totalPoints += dashScore;
       metrics++;
     }
 
     if (this.newPerformance.vertical) {
       // 40" = 100, 28" = 60
-      const vertScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.vertical - 28) / 12) * 40));
+      const vertScore = Math.max(
+        0,
+        Math.min(100, 60 + ((this.newPerformance.vertical - 28) / 12) * 40),
+      );
       totalPoints += vertScore;
       metrics++;
     }
 
     if (this.newPerformance.broad) {
       // 130" = 100, 100" = 60
-      const broadScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.broad - 100) / 30) * 40));
+      const broadScore = Math.max(
+        0,
+        Math.min(100, 60 + ((this.newPerformance.broad - 100) / 30) * 40),
+      );
       totalPoints += broadScore;
       metrics++;
     }
 
     if (this.newPerformance.bench) {
       // 250 = 100, 150 = 60
-      const benchScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.bench - 150) / 100) * 40));
+      const benchScore = Math.max(
+        0,
+        Math.min(100, 60 + ((this.newPerformance.bench - 150) / 100) * 40),
+      );
       totalPoints += benchScore;
       metrics++;
     }

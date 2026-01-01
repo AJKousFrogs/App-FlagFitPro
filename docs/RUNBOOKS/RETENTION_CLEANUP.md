@@ -22,13 +22,13 @@
 
 ### Retention Requirements
 
-| Data Type | Retention Period | Legal Basis | Cleanup Method |
-|-----------|------------------|-------------|----------------|
-| Emergency Medical Records | 7 years | Medical records law | `cleanup_expired_emergency_records()` |
-| Account Deletion Requests | 30 days (pending) | GDPR Article 17 | `process-deletions` Edge Function |
-| Audit Logs | 7 years | GDPR Article 30 | Manual/Scheduled |
-| Training Data | User-controlled | User consent | On deletion request |
-| AI Chat History | 90 days | Privacy policy | Scheduled cleanup |
+| Data Type                 | Retention Period  | Legal Basis         | Cleanup Method                        |
+| ------------------------- | ----------------- | ------------------- | ------------------------------------- |
+| Emergency Medical Records | 7 years           | Medical records law | `cleanup_expired_emergency_records()` |
+| Account Deletion Requests | 30 days (pending) | GDPR Article 17     | `process-deletions` Edge Function     |
+| Audit Logs                | 7 years           | GDPR Article 30     | Manual/Scheduled                      |
+| Training Data             | User-controlled   | User consent        | On deletion request                   |
+| AI Chat History           | 90 days           | Privacy policy      | Scheduled cleanup                     |
 
 ### Cleanup Pipeline
 
@@ -53,22 +53,26 @@ privacy_audit_log (record cleanup)
 ### Emergency Medical Records (7 Years)
 
 **Why 7 years?**
+
 - Medical records retention requirements
 - Statute of limitations for medical malpractice
 - Insurance claim periods
 
 **What's retained:**
+
 - Event type and date
 - Medical data (anonymized after user deletion)
 - Location data (if emergency occurred during activity)
 
 **What's NOT retained:**
+
 - User ID (set to NULL after user deletion)
 - Direct PII (replaced with email hash)
 
 ### Account Deletion Queue (30 Days)
 
 **Why 30 days?**
+
 - GDPR allows reasonable processing time
 - Gives users time to change their mind
 - Allows for data export requests
@@ -76,6 +80,7 @@ privacy_audit_log (record cleanup)
 ### Audit Logs (7 Years)
 
 **Why 7 years?**
+
 - GDPR Article 30 compliance
 - Legal hold requirements
 - Security incident investigation
@@ -96,6 +101,7 @@ WHERE retention_expires_at <= NOW();
 ```
 
 **Thresholds:**
+
 - ⚠️ Warning: > 0 expired records for > 24 hours
 - 🚨 Critical: > 100 expired records
 
@@ -130,8 +136,8 @@ WHERE retention_expires_at IS NULL;
 
 ```sql
 -- Overview of emergency records by retention status
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN retention_expires_at IS NULL THEN 'No retention set'
         WHEN retention_expires_at <= NOW() THEN 'Expired'
         WHEN retention_expires_at <= NOW() + INTERVAL '1 year' THEN 'Expiring within 1 year'
@@ -160,8 +166,8 @@ LIMIT 10;
 
 ```sql
 -- Verify function exists
-SELECT proname, prosrc 
-FROM pg_proc 
+SELECT proname, prosrc
+FROM pg_proc
 WHERE proname = 'cleanup_expired_emergency_records';
 
 -- Test run (dry run - just check what would be deleted)
@@ -187,7 +193,7 @@ supabase functions logs process-deletions --project-ref YOUR_PROJECT_REF | grep 
 SELECT * FROM cron.job WHERE jobname LIKE '%deletion%' OR jobname LIKE '%cleanup%';
 
 -- Check recent cron executions
-SELECT * FROM cron.job_run_details 
+SELECT * FROM cron.job_run_details
 WHERE jobid IN (SELECT jobid FROM cron.job WHERE jobname LIKE '%deletion%')
 ORDER BY start_time DESC
 LIMIT 20;
@@ -204,14 +210,18 @@ LIMIT 20;
 **Fix:**
 
 1. **Verify Edge Function includes cleanup:**
-   
+
    Check `supabase/functions/process-deletions/index.ts`:
+
    ```typescript
    // Should include:
-   const { data: cleanedCount } = await supabase.rpc("cleanup_expired_emergency_records");
+   const { data: cleanedCount } = await supabase.rpc(
+     "cleanup_expired_emergency_records",
+   );
    ```
 
 2. **Manual cleanup run:**
+
    ```sql
    SELECT cleanup_expired_emergency_records();
    ```
@@ -243,6 +253,7 @@ WHERE retention_expires_at IS NULL;
 **Cause:** Incorrect retention date calculation.
 
 **Diagnosis:**
+
 ```sql
 -- Check what would be deleted
 SELECT id, user_id, event_type, event_date, retention_expires_at,
@@ -254,6 +265,7 @@ ORDER BY retention_expires_at;
 ```
 
 **Fix (if dates are wrong):**
+
 ```sql
 -- Recalculate retention dates based on event_date
 UPDATE emergency_medical_records
@@ -266,14 +278,15 @@ WHERE retention_expires_at < event_date + INTERVAL '7 years';
 **Cause:** Permission issues or constraint violations.
 
 **Check permissions:**
+
 ```sql
 -- Verify function can delete
 SELECT has_table_privilege('authenticated', 'emergency_medical_records', 'DELETE');
 
 -- Check for foreign key constraints
-SELECT 
-    tc.constraint_name, 
-    tc.table_name, 
+SELECT
+    tc.constraint_name,
+    tc.table_name,
     kcu.column_name,
     ccu.table_name AS foreign_table_name,
     ccu.column_name AS foreign_column_name
@@ -293,6 +306,7 @@ AND tc.table_name = 'emergency_medical_records';
 ### After Cleanup Run
 
 1. **Verify no expired records remain:**
+
    ```sql
    SELECT COUNT(*) FROM emergency_medical_records
    WHERE retention_expires_at <= NOW();
@@ -300,6 +314,7 @@ AND tc.table_name = 'emergency_medical_records';
    ```
 
 2. **Verify audit log entry:**
+
    ```sql
    SELECT * FROM privacy_audit_log
    WHERE action = 'retention_cleanup'
@@ -316,13 +331,14 @@ AND tc.table_name = 'emergency_medical_records';
 ### After Manual Intervention
 
 1. **Run verification script:**
+
    ```bash
    npm run verify:db
    ```
 
 2. **Check retention date distribution:**
    ```sql
-   SELECT 
+   SELECT
        DATE_TRUNC('year', retention_expires_at) as expiration_year,
        COUNT(*) as record_count
    FROM emergency_medical_records
@@ -360,12 +376,12 @@ AND tc.table_name = 'emergency_medical_records';
 
 ```sql
 -- Verify deletion requests are processed within 30 days
-SELECT 
+SELECT
     id,
     requested_at,
     scheduled_hard_delete_at,
     status,
-    CASE 
+    CASE
         WHEN status = 'completed' AND hard_deleted_at <= scheduled_hard_delete_at THEN 'Compliant'
         WHEN status = 'pending' AND scheduled_hard_delete_at > NOW() THEN 'In Progress'
         WHEN status = 'pending' AND scheduled_hard_delete_at <= NOW() THEN 'OVERDUE'
@@ -379,8 +395,8 @@ WHERE requested_at > NOW() - INTERVAL '60 days';
 
 ```sql
 -- Verify all emergency records have valid retention
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN retention_expires_at IS NULL THEN 'Missing retention date'
         WHEN retention_expires_at < event_date + INTERVAL '7 years' THEN 'Retention too short'
         WHEN retention_expires_at > event_date + INTERVAL '7 years' + INTERVAL '1 day' THEN 'Retention too long'
@@ -405,8 +421,8 @@ SELECT cleanup_expired_emergency_records();
 SELECT COUNT(*) FROM emergency_medical_records WHERE retention_expires_at <= NOW();
 
 -- Fix missing retention dates
-UPDATE emergency_medical_records 
-SET retention_expires_at = event_date + INTERVAL '7 years' 
+UPDATE emergency_medical_records
+SET retention_expires_at = event_date + INTERVAL '7 years'
 WHERE retention_expires_at IS NULL;
 
 -- Check cleanup history
@@ -415,22 +431,21 @@ SELECT * FROM privacy_audit_log WHERE action = 'retention_cleanup' ORDER BY crea
 
 ### Key Functions
 
-| Function | Purpose | Returns |
-|----------|---------|---------|
+| Function                              | Purpose                       | Returns          |
+| ------------------------------------- | ----------------------------- | ---------------- |
 | `cleanup_expired_emergency_records()` | Delete records past retention | Count of deleted |
-| `create_emergency_medical_record()` | Create with 7-year retention | Record UUID |
+| `create_emergency_medical_record()`   | Create with 7-year retention  | Record UUID      |
 
 ### Retention Periods Summary
 
-| Data | Period | Auto-cleanup |
-|------|--------|--------------|
-| Emergency Medical | 7 years | Yes |
-| Deletion Requests | 30 days | Yes |
-| Audit Logs | 7 years | Manual |
-| Training Data | User-controlled | On deletion |
+| Data              | Period          | Auto-cleanup |
+| ----------------- | --------------- | ------------ |
+| Emergency Medical | 7 years         | Yes          |
+| Deletion Requests | 30 days         | Yes          |
+| Audit Logs        | 7 years         | Manual       |
+| Training Data     | User-controlled | On deletion  |
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

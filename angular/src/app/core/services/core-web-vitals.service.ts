@@ -59,7 +59,7 @@ export class CoreWebVitalsService {
         this.metrics.lcp = lastEntry.renderTime || lastEntry.loadTime || 0;
         this.logger.info(
           `[Web Vitals] LCP: ${this.metrics.lcp.toFixed(2)}ms`,
-          this.getStatus(this.metrics.lcp, 2500, 4000)
+          this.getStatus(this.metrics.lcp, 2500, 4000),
         );
       });
 
@@ -88,7 +88,7 @@ export class CoreWebVitalsService {
 
           this.logger.info(
             `[Web Vitals] FID: ${this.metrics.fid.toFixed(2)}ms`,
-            this.getStatus(this.metrics.fid, 100, 300)
+            this.getStatus(this.metrics.fid, 100, 300),
           );
         });
       });
@@ -109,8 +109,13 @@ export class CoreWebVitalsService {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          const layoutShiftEntry = entry as PerformanceEntry & { value?: number };
-          if (!(entry as PerformanceEntry & { hadRecentInput?: boolean }).hadRecentInput) {
+          const layoutShiftEntry = entry as PerformanceEntry & {
+            value?: number;
+          };
+          if (
+            !(entry as PerformanceEntry & { hadRecentInput?: boolean })
+              .hadRecentInput
+          ) {
             clsValue += layoutShiftEntry.value || 0;
           }
         });
@@ -118,7 +123,7 @@ export class CoreWebVitalsService {
         this.metrics.cls = clsValue;
         this.logger.info(
           `[Web Vitals] CLS: ${this.metrics.cls.toFixed(3)}`,
-          this.getStatus(this.metrics.cls * 1000, 100, 250)
+          this.getStatus(this.metrics.cls * 1000, 100, 250),
         );
       });
 
@@ -140,7 +145,7 @@ export class CoreWebVitalsService {
           this.metrics.fcp = entry.startTime;
           this.logger.info(
             `[Web Vitals] FCP: ${this.metrics.fcp.toFixed(2)}ms`,
-            this.getStatus(this.metrics.fcp, 1800, 3000)
+            this.getStatus(this.metrics.fcp, 1800, 3000),
           );
         });
       });
@@ -158,7 +163,7 @@ export class CoreWebVitalsService {
   private observeTTFB(): void {
     try {
       const navigationEntry = performance.getEntriesByType(
-        "navigation"
+        "navigation",
       )[0] as PerformanceNavigationTiming;
 
       if (navigationEntry) {
@@ -168,7 +173,7 @@ export class CoreWebVitalsService {
 
         this.logger.info(
           `[Web Vitals] TTFB: ${this.metrics.ttfb.toFixed(2)}ms`,
-          this.getStatus(this.metrics.ttfb, 600, 1500)
+          this.getStatus(this.metrics.ttfb, 600, 1500),
         );
       }
     } catch (error) {
@@ -186,7 +191,11 @@ export class CoreWebVitalsService {
   /**
    * Get status for a metric
    */
-  private getStatus(value: number, good: number, needsImprovement: number): string {
+  private getStatus(
+    value: number,
+    good: number,
+    needsImprovement: number,
+  ): string {
     if (value <= good) return "✅ Good";
     if (value <= needsImprovement) return "⚠️ Needs Improvement";
     return "❌ Poor";
@@ -199,20 +208,19 @@ export class CoreWebVitalsService {
     const metrics = this.getMetrics();
     this.logger.info("=== Core Web Vitals Summary ===");
     this.logger.info(
-      `LCP: ${metrics.lcp ? metrics.lcp.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.lcp || 0, 2500, 4000)}`
+      `LCP: ${metrics.lcp ? metrics.lcp.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.lcp || 0, 2500, 4000)}`,
     );
     this.logger.info(
-      `FID: ${metrics.fid ? metrics.fid.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.fid || 0, 100, 300)}`
+      `FID: ${metrics.fid ? metrics.fid.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.fid || 0, 100, 300)}`,
     );
     this.logger.info(
-      `CLS: ${metrics.cls ? metrics.cls.toFixed(3) : "N/A"} ${this.getStatus((metrics.cls || 0) * 1000, 100, 250)}`
+      `CLS: ${metrics.cls ? metrics.cls.toFixed(3) : "N/A"} ${this.getStatus((metrics.cls || 0) * 1000, 100, 250)}`,
     );
     this.logger.info(
-      `FCP: ${metrics.fcp ? metrics.fcp.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.fcp || 0, 1800, 3000)}`
+      `FCP: ${metrics.fcp ? metrics.fcp.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.fcp || 0, 1800, 3000)}`,
     );
     this.logger.info(
-      `TTFB: ${metrics.ttfb ? metrics.ttfb.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.ttfb || 0, 600, 1500)}`
+      `TTFB: ${metrics.ttfb ? metrics.ttfb.toFixed(2) + "ms" : "N/A"} ${this.getStatus(metrics.ttfb || 0, 600, 1500)}`,
     );
   }
 }
-

@@ -137,30 +137,32 @@ async function getHealthMetrics() {
 
 // USDA FoodData Central API Key (required)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
-const {USDA_API_KEY} = process.env;
-const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
+const { USDA_API_KEY } = process.env;
+const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1";
 
 if (!USDA_API_KEY) {
-  throw new Error('USDA_API_KEY environment variable is required. Get a free key at https://fdc.nal.usda.gov/api-key-signup.html');
+  throw new Error(
+    "USDA_API_KEY environment variable is required. Get a free key at https://fdc.nal.usda.gov/api-key-signup.html",
+  );
 }
 
 // Nutrient IDs from USDA FoodData Central
 const NUTRIENT_MAP = {
-  1008: 'energy_kcal',      // Energy (kcal)
-  1003: 'protein_g',        // Protein
-  1005: 'carbohydrates_g',  // Carbohydrate, by difference
-  1004: 'fat_g',            // Total lipid (fat)
-  1079: 'fiber_g',          // Fiber, total dietary
-  2000: 'sugars_g',         // Sugars, total
-  1093: 'sodium_mg',        // Sodium
-  1258: 'saturated_fat_g',  // Fatty acids, total saturated
-  1253: 'cholesterol_mg',   // Cholesterol
-  1087: 'calcium_mg',       // Calcium
-  1089: 'iron_mg',          // Iron
-  1092: 'potassium_mg',     // Potassium
-  1106: 'vitamin_a_mcg',    // Vitamin A, RAE
-  1162: 'vitamin_c_mg',     // Vitamin C
-  1114: 'vitamin_d_mcg',    // Vitamin D (D2 + D3)
+  1008: "energy_kcal", // Energy (kcal)
+  1003: "protein_g", // Protein
+  1005: "carbohydrates_g", // Carbohydrate, by difference
+  1004: "fat_g", // Total lipid (fat)
+  1079: "fiber_g", // Fiber, total dietary
+  2000: "sugars_g", // Sugars, total
+  1093: "sodium_mg", // Sodium
+  1258: "saturated_fat_g", // Fatty acids, total saturated
+  1253: "cholesterol_mg", // Cholesterol
+  1087: "calcium_mg", // Calcium
+  1089: "iron_mg", // Iron
+  1092: "potassium_mg", // Potassium
+  1106: "vitamin_a_mcg", // Vitamin A, RAE
+  1162: "vitamin_c_mg", // Vitamin C
+  1114: "vitamin_d_mcg", // Vitamin D (D2 + D3)
 };
 
 /**
@@ -169,17 +171,17 @@ const NUTRIENT_MAP = {
 function extractNutrients(foodNutrients) {
   const nutrients = {};
   const allNutrients = {};
-  
+
   if (!foodNutrients || !Array.isArray(foodNutrients)) {
     return { mapped: nutrients, all: allNutrients };
   }
-  
+
   for (const nutrient of foodNutrients) {
     const nutrientId = nutrient.nutrientId || nutrient.nutrient?.id;
     const value = nutrient.amount ?? nutrient.value;
     const name = nutrient.nutrientName || nutrient.nutrient?.name;
     const unit = nutrient.unitName || nutrient.nutrient?.unitName;
-    
+
     if (nutrientId && value !== undefined && value !== null) {
       const columnName = NUTRIENT_MAP[nutrientId];
       if (columnName) {
@@ -188,7 +190,7 @@ function extractNutrients(foodNutrients) {
       allNutrients[nutrientId] = { name, value: parseFloat(value) || 0, unit };
     }
   }
-  
+
   return { mapped: nutrients, all: allNutrients };
 }
 
@@ -198,9 +200,14 @@ function extractNutrients(foodNutrients) {
 function generateSearchKeywords(food) {
   const keywords = new Set();
   if (food.description) {
-    food.description.toLowerCase().split(/\s+/).forEach(word => {
-      if (word.length > 2) {keywords.add(word);}
-    });
+    food.description
+      .toLowerCase()
+      .split(/\s+/)
+      .forEach((word) => {
+        if (word.length > 2) {
+          keywords.add(word);
+        }
+      });
   }
   if (food.foodCategory?.description) {
     keywords.add(food.foodCategory.description.toLowerCase());
@@ -215,13 +222,17 @@ function generateSearchKeywords(food) {
  * Transform USDA food to our schema
  */
 function transformFood(usdaFood) {
-  const { mapped: nutrients, all: allNutrients } = extractNutrients(usdaFood.foodNutrients);
-  
+  const { mapped: nutrients, all: allNutrients } = extractNutrients(
+    usdaFood.foodNutrients,
+  );
+
   return {
     fdc_id: usdaFood.fdcId,
-    description: usdaFood.description || usdaFood.lowercaseDescription || 'Unknown',
+    description:
+      usdaFood.description || usdaFood.lowercaseDescription || "Unknown",
     data_type: usdaFood.dataType,
-    food_category: usdaFood.foodCategory?.description || usdaFood.foodCategory || null,
+    food_category:
+      usdaFood.foodCategory?.description || usdaFood.foodCategory || null,
     brand_owner: usdaFood.brandOwner || null,
     brand_name: usdaFood.brandName || null,
     ingredients: usdaFood.ingredients || null,
@@ -239,14 +250,14 @@ function transformFood(usdaFood) {
 
 /**
  * Sync USDA food data from FoodData Central API
- * 
+ *
  * Uses the USDA FoodData Central API to fetch nutritional data.
  * API Documentation: https://fdc.nal.usda.gov/api-guide.html
  */
 async function syncUSDAData(options = {}) {
   const startTime = Date.now();
   const { pageSize = 200, maxPages = 5, dataType = null } = options;
-  
+
   const syncDetails = {
     recordsAdded: 0,
     recordsUpdated: 0,
@@ -254,10 +265,10 @@ async function syncUSDAData(options = {}) {
     hasErrors: false,
     errorMessage: null,
   };
-  
+
   try {
     let foods = [];
-    
+
     // Fetch foods from USDA API with pagination
     for (let page = 1; page <= maxPages; page++) {
       const params = new URLSearchParams({
@@ -265,47 +276,47 @@ async function syncUSDAData(options = {}) {
         pageNumber: page.toString(),
         pageSize: pageSize.toString(),
       });
-      
+
       if (dataType) {
-        params.append('dataType', dataType);
+        params.append("dataType", dataType);
       }
-      
+
       const response = await fetch(`${USDA_BASE_URL}/foods/list?${params}`);
-      
+
       if (!response.ok) {
         const error = await response.text();
         throw new Error(`USDA API error: ${response.status} - ${error}`);
       }
-      
+
       const pageData = await response.json();
-      
+
       if (!pageData || pageData.length === 0) {
         break;
       }
-      
+
       foods = foods.concat(pageData);
-      
+
       // Rate limiting
       if (page < maxPages) {
         // eslint-disable-next-line no-promise-executor-return
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
-    
+
     // Process foods in batches
     const batchSize = 100;
     for (let i = 0; i < foods.length; i += batchSize) {
       const batch = foods.slice(i, i + batchSize);
       const transformedBatch = batch.map(transformFood);
-      
+
       const { data, error } = await supabaseAdmin
-        .from('usda_foods')
+        .from("usda_foods")
         .upsert(transformedBatch, {
-          onConflict: 'fdc_id',
+          onConflict: "fdc_id",
           ignoreDuplicates: false,
         })
-        .select('id');
-      
+        .select("id");
+
       if (error) {
         syncDetails.recordsFailed += batch.length;
         syncDetails.hasErrors = true;
@@ -314,14 +325,22 @@ async function syncUSDAData(options = {}) {
         syncDetails.recordsAdded += data?.length || 0;
       }
     }
-    
+
     const durationMs = Date.now() - startTime;
-    
+
     // Log sync operation
-    await supabaseAdmin.from('sync_logs').insert({
-      source: 'usda_foods',
-      result: syncDetails.hasErrors ? (syncDetails.recordsAdded > 0 ? 'partial' : 'failure') : 'success',
-      severity: syncDetails.hasErrors ? (syncDetails.recordsAdded > 0 ? 'warning' : 'error') : 'success',
+    await supabaseAdmin.from("sync_logs").insert({
+      source: "usda_foods",
+      result: syncDetails.hasErrors
+        ? syncDetails.recordsAdded > 0
+          ? "partial"
+          : "failure"
+        : "success",
+      severity: syncDetails.hasErrors
+        ? syncDetails.recordsAdded > 0
+          ? "warning"
+          : "error"
+        : "success",
       records_added: syncDetails.recordsAdded,
       records_updated: syncDetails.recordsUpdated,
       records_failed: syncDetails.recordsFailed,
@@ -329,12 +348,12 @@ async function syncUSDAData(options = {}) {
       duration_ms: durationMs,
       metadata: { pageSize, maxPages, dataType },
     });
-    
+
     // Get current total count
     const { count: totalFoods } = await supabaseAdmin
-      .from('usda_foods')
-      .select('*', { count: 'exact', head: true });
-    
+      .from("usda_foods")
+      .select("*", { count: "exact", head: true });
+
     return {
       success: !syncDetails.hasErrors,
       recordsProcessed: foods.length,
@@ -343,23 +362,23 @@ async function syncUSDAData(options = {}) {
       totalInDatabase: totalFoods || 0,
       durationMs,
       timestamp: new Date().toISOString(),
-      message: syncDetails.hasErrors 
+      message: syncDetails.hasErrors
         ? `USDA sync completed with errors: ${syncDetails.errorMessage}`
         : `USDA sync completed successfully - ${syncDetails.recordsAdded} records synced`,
     };
   } catch (error) {
     const durationMs = Date.now() - startTime;
-    
+
     // Log failed sync
-    await supabaseAdmin.from('sync_logs').insert({
-      source: 'usda_foods',
-      result: 'failure',
-      severity: 'error',
+    await supabaseAdmin.from("sync_logs").insert({
+      source: "usda_foods",
+      result: "failure",
+      severity: "error",
       records_failed: syncDetails.recordsFailed,
       error_message: error.message,
       duration_ms: durationMs,
     });
-    
+
     return {
       success: false,
       error: error.message,
@@ -370,7 +389,7 @@ async function syncUSDAData(options = {}) {
 }
 
 // Import research sync function
-const { syncAllResearch } = require('./research-sync.cjs');
+const { syncAllResearch } = require("./research-sync.cjs");
 
 /**
  * Sync research data from scholarly APIs
@@ -398,7 +417,7 @@ async function syncResearchData() {
       errors: result.errors,
     };
   } catch (error) {
-    console.error('Research sync error:', error);
+    console.error("Research sync error:", error);
     return {
       success: false,
       recordsUpdated: 0,
@@ -423,136 +442,147 @@ async function syncResearchData() {
  */
 async function createDatabaseBackup() {
   const startTime = Date.now();
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const backupId = `backup-${timestamp}`;
-  
+
   try {
     // Tables to backup (ordered by dependencies)
     const tablesToBackup = [
-      'users',
-      'teams',
-      'team_members',
-      'training_sessions',
-      'training_exercises',
-      'athlete_performance_metrics',
-      'posts',
-      'comments',
-      'tournaments',
-      'games',
-      'game_stats',
-      'usda_foods',
-      'research_studies',
-      'recovery_protocols',
-      'nutrition_plans',
-      'meal_templates',
-      'privacy_settings',
-      'parental_consent',
-      'sync_logs',
+      "users",
+      "teams",
+      "team_members",
+      "training_sessions",
+      "training_exercises",
+      "athlete_performance_metrics",
+      "posts",
+      "comments",
+      "tournaments",
+      "games",
+      "game_stats",
+      "usda_foods",
+      "research_studies",
+      "recovery_protocols",
+      "nutrition_plans",
+      "meal_templates",
+      "privacy_settings",
+      "parental_consent",
+      "sync_logs",
     ];
-    
+
     const backupResults = {
       tables: {},
       totalRecords: 0,
       errors: [],
     };
-    
+
     // Export each table
     for (const table of tablesToBackup) {
       try {
         // Get row count first
         const { count, error: countError } = await supabaseAdmin
           .from(table)
-          .select('*', { count: 'exact', head: true });
-        
+          .select("*", { count: "exact", head: true });
+
         if (countError) {
           // Table might not exist, skip it
-          backupResults.tables[table] = { status: 'skipped', reason: 'Table not found' };
+          backupResults.tables[table] = {
+            status: "skipped",
+            reason: "Table not found",
+          };
           continue;
         }
-        
+
         const recordCount = count || 0;
-        
+
         if (recordCount === 0) {
-          backupResults.tables[table] = { status: 'empty', records: 0 };
+          backupResults.tables[table] = { status: "empty", records: 0 };
           continue;
         }
-        
+
         // Fetch all data (in batches for large tables)
         let allData = [];
         const batchSize = 1000;
         let offset = 0;
-        
+
         while (offset < recordCount) {
           const { data, error } = await supabaseAdmin
             .from(table)
-            .select('*')
+            .select("*")
             .range(offset, offset + batchSize - 1);
-          
+
           if (error) {
             throw error;
           }
-          
+
           allData = allData.concat(data || []);
           offset += batchSize;
         }
-        
+
         // Store backup data in Supabase Storage
         const backupData = JSON.stringify(allData, null, 2);
         const filePath = `backups/${backupId}/${table}.json`;
-        
-        const { error: uploadError } = await supabaseAdmin
-          .storage
-          .from('database-backups')
+
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("database-backups")
           .upload(filePath, backupData, {
-            contentType: 'application/json',
+            contentType: "application/json",
             upsert: true,
           });
-        
+
         if (uploadError) {
           // If storage bucket doesn't exist, store metadata only
-          if (uploadError.message?.includes('Bucket not found') || uploadError.statusCode === '404') {
-            backupResults.tables[table] = { 
-              status: 'metadata_only', 
+          if (
+            uploadError.message?.includes("Bucket not found") ||
+            uploadError.statusCode === "404"
+          ) {
+            backupResults.tables[table] = {
+              status: "metadata_only",
               records: recordCount,
-              note: 'Storage bucket not configured - data counted but not stored'
+              note: "Storage bucket not configured - data counted but not stored",
             };
             backupResults.totalRecords += recordCount;
             continue;
           }
           throw uploadError;
         }
-        
-        backupResults.tables[table] = { 
-          status: 'success', 
+
+        backupResults.tables[table] = {
+          status: "success",
           records: recordCount,
           file: filePath,
           size: backupData.length,
         };
         backupResults.totalRecords += recordCount;
-        
       } catch (tableError) {
         backupResults.errors.push({
           table,
           error: tableError.message,
         });
-        backupResults.tables[table] = { 
-          status: 'error', 
-          error: tableError.message 
+        backupResults.tables[table] = {
+          status: "error",
+          error: tableError.message,
         };
       }
     }
-    
+
     const durationMs = Date.now() - startTime;
     const hasErrors = backupResults.errors.length > 0;
-    const successfulTables = Object.values(backupResults.tables)
-      .filter(t => t.status === 'success' || t.status === 'metadata_only' || t.status === 'empty')
-      .length;
-    
+    const successfulTables = Object.values(backupResults.tables).filter(
+      (t) =>
+        t.status === "success" ||
+        t.status === "metadata_only" ||
+        t.status === "empty",
+    ).length;
+
     // Log backup to database
-    await supabaseAdmin.from('sync_logs').insert({
-      source: 'database_backup',
-      result: hasErrors ? (successfulTables > 0 ? 'partial' : 'failure') : 'success',
-      severity: hasErrors ? 'warning' : 'success',
+    await supabaseAdmin.from("sync_logs").insert({
+      source: "database_backup",
+      result: hasErrors
+        ? successfulTables > 0
+          ? "partial"
+          : "failure"
+        : "success",
+      severity: hasErrors ? "warning" : "success",
       records_added: backupResults.totalRecords,
       duration_ms: durationMs,
       metadata: {
@@ -562,41 +592,46 @@ async function createDatabaseBackup() {
         errors: backupResults.errors,
       },
     });
-    
+
     return {
       backupId,
       filename: `${backupId}.zip`,
       timestamp: new Date().toISOString(),
-      status: hasErrors ? (successfulTables > 0 ? 'partial' : 'failed') : 'completed',
+      status: hasErrors
+        ? successfulTables > 0
+          ? "partial"
+          : "failed"
+        : "completed",
       tablesBackedUp: successfulTables,
       totalTables: tablesToBackup.length,
       totalRecords: backupResults.totalRecords,
       durationMs,
       details: backupResults.tables,
-      errors: backupResults.errors.length > 0 ? backupResults.errors : undefined,
-      message: hasErrors 
+      errors:
+        backupResults.errors.length > 0 ? backupResults.errors : undefined,
+      message: hasErrors
         ? `Backup completed with ${backupResults.errors.length} error(s). ${successfulTables}/${tablesToBackup.length} tables backed up.`
         : `Backup completed successfully. ${backupResults.totalRecords} records from ${successfulTables} tables.`,
       _isMock: false,
-      storageNote: 'For full schema backups, use Supabase Dashboard > Settings > Database > Backups',
+      storageNote:
+        "For full schema backups, use Supabase Dashboard > Settings > Database > Backups",
     };
-    
   } catch (error) {
     const durationMs = Date.now() - startTime;
-    
+
     // Log failed backup
-    await supabaseAdmin.from('sync_logs').insert({
-      source: 'database_backup',
-      result: 'failure',
-      severity: 'error',
+    await supabaseAdmin.from("sync_logs").insert({
+      source: "database_backup",
+      result: "failure",
+      severity: "error",
       error_message: error.message,
       duration_ms: durationMs,
     });
-    
+
     return {
       backupId,
       timestamp: new Date().toISOString(),
-      status: 'failed',
+      status: "failed",
       error: error.message,
       durationMs,
       message: `Backup failed: ${error.message}`,
@@ -647,34 +682,34 @@ async function getSyncStatus() {
 
   // Fallback to mock data if table doesn't exist or is empty
   return [
-      {
-        source: "USDA Foods",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        result: "pending",
-        severity: "warning",
-        recordsUpdated: 0,
-        _isMock: true,
-        _note: "Sync not yet implemented - create sync_logs table",
-      },
-      {
-        source: "Research Studies",
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        result: "pending",
-        severity: "warning",
-        recordsUpdated: 0,
-        _isMock: true,
-        _note: "Sync not yet implemented - create sync_logs table",
-      },
-      {
-        source: "Recovery Protocols",
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-        result: "pending",
-        severity: "warning",
-        recordsUpdated: 0,
-        _isMock: true,
-        _note: "Sync not yet implemented - create sync_logs table",
-      },
-    ];
+    {
+      source: "USDA Foods",
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      result: "pending",
+      severity: "warning",
+      recordsUpdated: 0,
+      _isMock: true,
+      _note: "Sync not yet implemented - create sync_logs table",
+    },
+    {
+      source: "Research Studies",
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      result: "pending",
+      severity: "warning",
+      recordsUpdated: 0,
+      _isMock: true,
+      _note: "Sync not yet implemented - create sync_logs table",
+    },
+    {
+      source: "Recovery Protocols",
+      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      result: "pending",
+      severity: "warning",
+      recordsUpdated: 0,
+      _isMock: true,
+      _note: "Sync not yet implemented - create sync_logs table",
+    },
+  ];
 }
 
 /**
@@ -760,7 +795,11 @@ async function getResearchDataStats() {
 /**
  * Main handler function
  */
-async function handleRequest(event, _context, { userId: _userId, user: _user }) {
+async function handleRequest(
+  event,
+  _context,
+  { userId: _userId, user: _user },
+) {
   // Extract endpoint from path
   const path = event.path.replace("/.netlify/functions/admin", "") || "/";
   const endpoint = path.split("?")[0]; // Remove query params

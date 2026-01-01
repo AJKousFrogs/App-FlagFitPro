@@ -57,9 +57,11 @@ export class ErrorHandlerUtil {
    * Extract error message from error object
    */
   static extractErrorMessage(error: unknown, defaultMessage: string): string {
-    if (error && typeof error === 'object') {
-      if ('message' in error && typeof error.message === 'string') return error.message;
-      if ('error' in error && typeof error.error === 'string') return error.error;
+    if (error && typeof error === "object") {
+      if ("message" in error && typeof error.message === "string")
+        return error.message;
+      if ("error" in error && typeof error.error === "string")
+        return error.error;
     }
     return defaultMessage;
   }

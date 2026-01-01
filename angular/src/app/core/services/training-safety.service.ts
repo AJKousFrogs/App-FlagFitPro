@@ -221,10 +221,12 @@ export class TrainingSafetyService {
 
   // Computed
   readonly hasAgeData = computed(() => this._athleteAge() !== null);
-  readonly ageGroup = computed(() => this._athleteProfile()?.ageGroup || "adult");
+  readonly ageGroup = computed(
+    () => this._athleteProfile()?.ageGroup || "adult",
+  );
   readonly warningCount = computed(() => this._activeWarnings().length);
   readonly hasCriticalWarnings = computed(() =>
-    this._activeWarnings().some((w) => w.severity === "critical")
+    this._activeWarnings().some((w) => w.severity === "critical"),
   );
 
   /**
@@ -281,7 +283,7 @@ export class TrainingSafetyService {
       this._athleteProfile.set(this.getAgeAdjustedProfile(age));
 
       this.logger.info(
-        `[TrainingSafety] Athlete age: ${age}, Group: ${this.getAgeGroup(age)}`
+        `[TrainingSafety] Athlete age: ${age}, Group: ${this.getAgeGroup(age)}`,
       );
 
       return age;
@@ -325,16 +327,16 @@ export class TrainingSafetyService {
       maxConsecutiveTrainingDays: profile.maxConsecutiveTrainingDays,
       // Reduce sprint/cut limits for older athletes
       maxSprintsPerSession: Math.round(
-        MOVEMENT_LIMITS.maxSprintsPerSession / profile.recoveryTimeMultiplier
+        MOVEMENT_LIMITS.maxSprintsPerSession / profile.recoveryTimeMultiplier,
       ),
       maxSprintsPerWeek: Math.round(
-        MOVEMENT_LIMITS.maxSprintsPerWeek / profile.recoveryTimeMultiplier
+        MOVEMENT_LIMITS.maxSprintsPerWeek / profile.recoveryTimeMultiplier,
       ),
       maxCutsPerSession: Math.round(
-        MOVEMENT_LIMITS.maxCutsPerSession / profile.recoveryTimeMultiplier
+        MOVEMENT_LIMITS.maxCutsPerSession / profile.recoveryTimeMultiplier,
       ),
       maxCutsPerWeek: Math.round(
-        MOVEMENT_LIMITS.maxCutsPerWeek / profile.recoveryTimeMultiplier
+        MOVEMENT_LIMITS.maxCutsPerWeek / profile.recoveryTimeMultiplier,
       ),
     };
   }
@@ -342,14 +344,17 @@ export class TrainingSafetyService {
   /**
    * Calculate sleep debt from recent entries
    */
-  calculateSleepDebt(sleepEntries: { hours: number; date: string }[]): SleepDebtAnalysis {
+  calculateSleepDebt(
+    sleepEntries: { hours: number; date: string }[],
+  ): SleepDebtAnalysis {
     if (sleepEntries.length === 0) {
       return {
         last7DaysAverage: 0,
         optimalSleep: SLEEP_THRESHOLDS.optimal,
         cumulativeDebt: 0,
         debtLevel: "none",
-        recoveryRecommendation: "No sleep data available. Log your sleep to track recovery.",
+        recoveryRecommendation:
+          "No sleep data available. Log your sleep to track recovery.",
         trainingImpact: 1.0,
         daysToRecover: 0,
       };
@@ -363,7 +368,7 @@ export class TrainingSafetyService {
     // Calculate cumulative debt (hours below optimal over 7 days)
     const debt = Math.max(
       0,
-      (SLEEP_THRESHOLDS.optimal - average) * last7Days.length
+      (SLEEP_THRESHOLDS.optimal - average) * last7Days.length,
     );
 
     // Determine debt level
@@ -500,7 +505,7 @@ export class TrainingSafetyService {
       const prevDate = new Date(sortedDates[i - 1]);
       const currDate = new Date(sortedDates[i]);
       const diffDays = Math.round(
-        (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24)
+        (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       if (diffDays === 1) {
@@ -536,7 +541,7 @@ export class TrainingSafetyService {
       throws?: number;
       jumps?: number;
     },
-    userId?: string
+    userId?: string,
   ): Promise<SafetyCheckResult> {
     const warnings: SafetyWarning[] = [];
     const recommendations: string[] = [];
@@ -605,7 +610,9 @@ export class TrainingSafetyService {
       }
 
       // Check consecutive training days
-      if (movements.consecutiveTrainingDays >= limits.maxConsecutiveTrainingDays) {
+      if (
+        movements.consecutiveTrainingDays >= limits.maxConsecutiveTrainingDays
+      ) {
         warnings.push({
           id: "consecutive_days",
           type: "recovery",
@@ -629,8 +636,7 @@ export class TrainingSafetyService {
           severity: "warning",
           title: "Insufficient Rest Days",
           message: `Only ${movements.restDays} rest day(s) this week. Minimum: ${limits.minRestDaysPerWeek}.`,
-          recommendation:
-            "Schedule at least one complete rest day per week.",
+          recommendation: "Schedule at least one complete rest day per week.",
           timestamp: new Date(),
         });
       }
@@ -725,12 +731,12 @@ export class TrainingSafetyService {
     // 5. Age-specific warnings
     if (profile && profile.ageGroup === "masters") {
       recommendations.push(
-        "As a masters athlete (35+), ensure 48+ hours between high-intensity sessions."
+        "As a masters athlete (35+), ensure 48+ hours between high-intensity sessions.",
       );
     }
     if (profile && profile.ageGroup === "senior") {
       recommendations.push(
-        "As a senior athlete (45+), prioritize recovery and consider reducing session frequency."
+        "As a senior athlete (45+), prioritize recovery and consider reducing session frequency.",
       );
     }
 
@@ -742,20 +748,18 @@ export class TrainingSafetyService {
       adjustedIntensity = 0.3;
       adjustedVolume = 0.3;
       recommendations.push(
-        "CRITICAL: Consider skipping this session or doing light recovery only."
+        "CRITICAL: Consider skipping this session or doing light recovery only.",
       );
     } else if (overallRisk === "high") {
       adjustedIntensity = 0.6;
       adjustedVolume = 0.7;
       recommendations.push(
-        "Reduce intensity and volume significantly for this session."
+        "Reduce intensity and volume significantly for this session.",
       );
     } else if (overallRisk === "moderate") {
       adjustedIntensity = 0.8;
       adjustedVolume = 0.85;
-      recommendations.push(
-        "Consider a lighter session today."
-      );
+      recommendations.push("Consider a lighter session today.");
     }
 
     // Apply sleep debt impact
@@ -782,7 +786,7 @@ export class TrainingSafetyService {
    */
   getRecoveryRecommendation(
     lastSessionIntensity: "low" | "medium" | "high",
-    lastSessionDate: Date
+    lastSessionDate: Date,
   ): {
     minRestHours: number;
     recommendedRestHours: number;
@@ -802,7 +806,7 @@ export class TrainingSafetyService {
     const recovery = baseRecovery[lastSessionIntensity];
     const minRestHours = Math.round(recovery.min * recoveryMultiplier);
     const recommendedRestHours = Math.round(
-      recovery.recommended * recoveryMultiplier
+      recovery.recommended * recoveryMultiplier,
     );
 
     // Calculate hours since last session

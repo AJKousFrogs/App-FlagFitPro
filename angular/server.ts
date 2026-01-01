@@ -29,7 +29,7 @@ app.get("*", async (req, res, next) => {
       response.headers.forEach((value, key) => {
         res.setHeader(key, value);
       });
-      
+
       // Stream the response body
       if (response.body) {
         const reader = response.body.getReader();

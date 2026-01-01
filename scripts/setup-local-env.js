@@ -47,7 +47,7 @@ if (fs.existsSync(envPath)) {
     console.log("✅ Supabase URL:", supabaseUrl);
     console.log(
       "✅ Supabase Anon Key:",
-      `${supabaseAnonKey.substring(0, 20)  }...\n`,
+      `${supabaseAnonKey.substring(0, 20)}...\n`,
     );
 
     // Create .env.local file

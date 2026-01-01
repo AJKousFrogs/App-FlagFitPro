@@ -93,21 +93,31 @@ interface TrainingSession {
                   icon="pi-calendar-times"
                   (retry)="loadSessions()"
                 ></app-page-error-state>
-              }
-              @else if (isLoading()) {
+              } @else if (isLoading()) {
                 @for (i of [1, 2, 3]; track i) {
                   <div class="session-item">
                     <div class="session-info">
                       <p-skeleton width="150px" height="20px"></p-skeleton>
-                      <p-skeleton width="200px" height="14px" class="mt-2"></p-skeleton>
-                      <p-skeleton width="100px" height="14px" class="mt-1"></p-skeleton>
+                      <p-skeleton
+                        width="200px"
+                        height="14px"
+                        class="mt-2"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="100px"
+                        height="14px"
+                        class="mt-1"
+                      ></p-skeleton>
                     </div>
                     <p-skeleton width="80px" height="24px"></p-skeleton>
                   </div>
                 }
               } @else if (filteredSessions().length === 0) {
                 <div class="empty-state">
-                  <i class="pi pi-calendar-times" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                  <i
+                    class="pi pi-calendar-times"
+                    style="font-size: 2rem; margin-bottom: 1rem;"
+                  ></i>
                   <p>
                     No training sessions scheduled. Click "New Session" to add
                     one.
@@ -130,7 +140,7 @@ interface TrainingSession {
                         [value]="session.status"
                         [severity]="getStatusSeverity(session.status)"
                       ></p-tag>
-                      @if (session.status === 'scheduled') {
+                      @if (session.status === "scheduled") {
                         <p-button
                           icon="pi pi-check"
                           [rounded]="true"
@@ -234,10 +244,12 @@ export class TrainingScheduleComponent implements OnInit {
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
   isLoading = signal<boolean>(false);
-  
+
   // Runtime guard signals - prevent white screen crashes
   hasError = signal<boolean>(false);
-  errorMessage = signal<string>('Failed to load training sessions. Please try again.');
+  errorMessage = signal<string>(
+    "Failed to load training sessions. Please try again.",
+  );
 
   // Filter sessions based on selected date
   filteredSessions = computed(() => {
@@ -279,7 +291,8 @@ export class TrainingScheduleComponent implements OnInit {
       // Fetch training sessions from Supabase
       const { data, error } = await this.supabaseService.client
         .from("training_sessions")
-        .select(`
+        .select(
+          `
           id,
           scheduled_date,
           session_type,
@@ -287,9 +300,13 @@ export class TrainingScheduleComponent implements OnInit {
           status,
           notes,
           created_at
-        `)
+        `,
+        )
         .eq("user_id", user.id)
-        .gte("scheduled_date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          "scheduled_date",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        )
         .order("scheduled_date", { ascending: true });
 
       if (error) {
@@ -309,15 +326,27 @@ export class TrainingScheduleComponent implements OnInit {
     } catch (error) {
       this.logger.error("Error loading sessions:", error);
       this.hasError.set(true);
-      
+
       // Set user-friendly error message based on error type
       if (error instanceof Error) {
-        if (error.message.includes('network') || error.message.includes('fetch')) {
-          this.errorMessage.set('Unable to connect to the server. Please check your internet connection.');
-        } else if (error.message.includes('permission') || error.message.includes('denied')) {
-          this.errorMessage.set('You don\'t have permission to view these sessions.');
+        if (
+          error.message.includes("network") ||
+          error.message.includes("fetch")
+        ) {
+          this.errorMessage.set(
+            "Unable to connect to the server. Please check your internet connection.",
+          );
+        } else if (
+          error.message.includes("permission") ||
+          error.message.includes("denied")
+        ) {
+          this.errorMessage.set(
+            "You don't have permission to view these sessions.",
+          );
         } else {
-          this.errorMessage.set('Failed to load training sessions. Please try again.');
+          this.errorMessage.set(
+            "Failed to load training sessions. Please try again.",
+          );
         }
       }
     } finally {
@@ -362,8 +391,8 @@ export class TrainingScheduleComponent implements OnInit {
       // Update local state
       this.sessions.update((sessions) =>
         sessions.map((s) =>
-          s.id === session.id ? { ...s, status: "completed" as const } : s
-        )
+          s.id === session.id ? { ...s, status: "completed" as const } : s,
+        ),
       );
 
       this.toastService.success("Session marked as complete!");
@@ -402,7 +431,7 @@ export class TrainingScheduleComponent implements OnInit {
    * UI expects: scheduled, completed, missed, in_progress
    */
   private mapDbStatusToUiStatus(
-    dbStatus: string | null | undefined
+    dbStatus: string | null | undefined,
   ): "scheduled" | "completed" | "missed" | "in_progress" {
     switch (dbStatus) {
       case "completed":

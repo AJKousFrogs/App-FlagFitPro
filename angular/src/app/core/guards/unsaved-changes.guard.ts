@@ -27,19 +27,24 @@ export interface CanComponentDeactivate {
 /**
  * Type guard to check if a component implements CanComponentDeactivate
  */
-function isCanComponentDeactivate(component: unknown): component is CanComponentDeactivate {
+function isCanComponentDeactivate(
+  component: unknown,
+): component is CanComponentDeactivate {
   return (
     component !== null &&
     typeof component === "object" &&
     "hasUnsavedChanges" in component &&
-    typeof (component as CanComponentDeactivate).hasUnsavedChanges === "function"
+    typeof (component as CanComponentDeactivate).hasUnsavedChanges ===
+      "function"
   );
 }
 
 /**
  * Functional guard that checks for unsaved changes before navigation
  */
-export const unsavedChangesGuard: CanDeactivateFn<unknown> = async (component) => {
+export const unsavedChangesGuard: CanDeactivateFn<unknown> = async (
+  component,
+) => {
   const confirmService = inject(ConfirmDialogService);
 
   // If component doesn't implement the interface, allow navigation
@@ -53,7 +58,8 @@ export const unsavedChangesGuard: CanDeactivateFn<unknown> = async (component) =
   }
 
   // Get custom message or use default
-  const message = component.getUnsavedChangesMessage?.() ||
+  const message =
+    component.getUnsavedChangesMessage?.() ||
     "You have unsaved changes. Are you sure you want to leave this page?";
 
   // Show confirmation dialog
@@ -70,12 +76,12 @@ export const unsavedChangesGuard: CanDeactivateFn<unknown> = async (component) =
 
 /**
  * Helper mixin for components that need unsaved changes tracking
- * 
+ *
  * Usage:
  * ```typescript
  * export class MyComponent implements CanComponentDeactivate {
  *   private formDirty = false;
- *   
+ *
  *   hasUnsavedChanges(): boolean {
  *     return this.formDirty;
  *   }

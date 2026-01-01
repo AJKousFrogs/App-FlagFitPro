@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
           "type and message are required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -56,7 +56,7 @@ exports.handler = async (event, context) => {
             muted: true,
             message: "Notification created but muted per user preferences",
           },
-          requestId
+          requestId,
         );
       }
 

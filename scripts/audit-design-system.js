@@ -276,7 +276,7 @@ ${results.audits
       });
     }
 
-    return `${content  }\n`;
+    return `${content}\n`;
   })
   .join("\n")}
 `;

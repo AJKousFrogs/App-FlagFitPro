@@ -29,31 +29,35 @@ export interface TrainingVideo {
 }
 
 export type TrainingCategory =
-  | 'speed'
-  | 'agility'
-  | 'strength'
-  | 'endurance'
-  | 'skills'
-  | 'recovery'
-  | 'warmup'
-  | 'cooldown'
-  | 'nutrition'
-  | 'mental';
+  | "speed"
+  | "agility"
+  | "strength"
+  | "endurance"
+  | "skills"
+  | "recovery"
+  | "warmup"
+  | "cooldown"
+  | "nutrition"
+  | "mental";
 
-export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'elite';
+export type DifficultyLevel =
+  | "beginner"
+  | "intermediate"
+  | "advanced"
+  | "elite";
 
 export type TrainingFocus =
-  | 'acceleration'
-  | 'top-speed'
-  | 'change-of-direction'
-  | 'plyometrics'
-  | 'route-running'
-  | 'catching'
-  | 'throwing'
-  | 'defense'
-  | 'core'
-  | 'flexibility'
-  | 'conditioning';
+  | "acceleration"
+  | "top-speed"
+  | "change-of-direction"
+  | "plyometrics"
+  | "route-running"
+  | "catching"
+  | "throwing"
+  | "defense"
+  | "core"
+  | "flexibility"
+  | "conditioning";
 
 // ============================================================================
 // TRAINING SESSION TYPES
@@ -79,16 +83,16 @@ export interface TrainingSession {
  * DB also accepts: conditioning, technique, team_practice, scrimmage
  */
 export type SessionType =
-  | 'speed'
-  | 'strength'
-  | 'skills'
-  | 'game'
-  | 'recovery'
-  | 'mixed'
-  | 'conditioning'
-  | 'technique'
-  | 'team_practice'
-  | 'scrimmage';
+  | "speed"
+  | "strength"
+  | "skills"
+  | "game"
+  | "recovery"
+  | "mixed"
+  | "conditioning"
+  | "technique"
+  | "team_practice"
+  | "scrimmage";
 
 export interface Exercise {
   id: string;
@@ -128,19 +132,19 @@ export interface TrainingPlan {
   updatedAt: Date;
 }
 
-export type PlanStatus = 'draft' | 'active' | 'completed' | 'cancelled';
+export type PlanStatus = "draft" | "active" | "completed" | "cancelled";
 
 /**
  * Training session status - aligned with DB enum training_session_status
  * DB values: planned, in_progress, completed, cancelled, scheduled
  * UI may map these to display-friendly values
  */
-export type TrainingSessionStatus = 
-  | 'planned' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
-  | 'scheduled';
+export type TrainingSessionStatus =
+  | "planned"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "scheduled";
 
 export interface WeeklyPlan {
   weekNumber: number;
@@ -171,7 +175,7 @@ export interface TrainingProgress {
   previous: number;
   change: number;
   changePercent: number;
-  trend: 'improving' | 'declining' | 'stable';
+  trend: "improving" | "declining" | "stable";
   history: ProgressDataPoint[];
 }
 
@@ -195,15 +199,15 @@ export interface ScheduledSession {
   time: string; // HH:MM format
   duration: number;
   type: SessionType;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   location?: string;
   coach?: string;
   notes?: string;
 }
 
 export interface ScheduleConflict {
-  type: 'overlap' | 'rest-day' | 'injury' | 'travel';
-  severity: 'warning' | 'error';
+  type: "overlap" | "rest-day" | "injury" | "travel";
+  severity: "warning" | "error";
   message: string;
   affectedSessions: string[];
 }
@@ -248,7 +252,7 @@ export interface TrainingStatCard {
   icon: string;
   color: string;
   trend: string;
-  trendType: 'positive' | 'negative' | 'neutral';
+  trendType: "positive" | "negative" | "neutral";
 }
 
 /**
@@ -276,7 +280,7 @@ export interface Workout {
   title: string;
   description: string;
   duration: string;
-  intensity: 'low' | 'medium' | 'high';
+  intensity: "low" | "medium" | "high";
   location: string;
   icon: string;
   iconBg: string;
@@ -293,15 +297,15 @@ export interface Achievement {
   title: string;
   description?: string;
   date: string;
-  category?: 'streak' | 'milestone' | 'performance' | 'consistency';
-  level?: 'bronze' | 'silver' | 'gold' | 'platinum';
+  category?: "streak" | "milestone" | "performance" | "consistency";
+  level?: "bronze" | "silver" | "gold" | "platinum";
 }
 
 /**
  * Wellness alert for training readiness
  */
 export interface WellnessAlert {
-  severity: 'info' | 'warning' | 'critical';
+  severity: "info" | "warning" | "critical";
   message: string;
   recommendations: string[];
   icon?: string;
@@ -312,7 +316,7 @@ export interface WellnessAlert {
 /**
  * Readiness status for training
  */
-export type ReadinessStatus = 'excellent' | 'good' | 'caution' | 'rest';
+export type ReadinessStatus = "excellent" | "good" | "caution" | "rest";
 
 /**
  * Wellness data integrated with training
@@ -359,7 +363,7 @@ export interface TrainingComponentState {
   readinessScore: number;
   readinessStatus: ReadinessStatus;
   swipingWorkoutId: string | null;
-  swipeDirection: 'left' | 'right' | null;
+  swipeDirection: "left" | "right" | null;
   isRefreshing: boolean;
   wellnessAlertDismissed: boolean;
 }
@@ -368,7 +372,7 @@ export interface TrainingComponentState {
  * Swipe event for workout actions
  */
 export interface SwipeEvent {
-  type: 'swipeleft' | 'swiperight';
+  type: "swipeleft" | "swiperight";
   deltaX: number;
   deltaY: number;
   velocity: number;

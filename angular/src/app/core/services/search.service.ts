@@ -160,7 +160,9 @@ export class SearchService {
       const { data, error } = await this.supabase.client
         .from("exercises")
         .select("id, name, category, description, difficulty_level")
-        .or(`name.ilike.%${query}%,category.ilike.%${query}%,description.ilike.%${query}%`)
+        .or(
+          `name.ilike.%${query}%,category.ilike.%${query}%,description.ilike.%${query}%`,
+        )
         .limit(10);
 
       if (error) {
@@ -192,7 +194,9 @@ export class SearchService {
       const { data, error } = await this.supabase.client
         .from("training_programs")
         .select("id, name, description, program_type, difficulty_level")
-        .or(`name.ilike.%${query}%,description.ilike.%${query}%,program_type.ilike.%${query}%`)
+        .or(
+          `name.ilike.%${query}%,description.ilike.%${query}%,program_type.ilike.%${query}%`,
+        )
         .limit(10);
 
       if (error) {
@@ -224,7 +228,9 @@ export class SearchService {
       const { data, error } = await this.supabase.client
         .from("users")
         .select("id, full_name, first_name, last_name, position, team")
-        .or(`full_name.ilike.%${query}%,first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
+        .or(
+          `full_name.ilike.%${query}%,first_name.ilike.%${query}%,last_name.ilike.%${query}%`,
+        )
         .limit(10);
 
       if (error) {
@@ -233,7 +239,8 @@ export class SearchService {
       }
 
       return (data || []).map((player) => {
-        const name = player.full_name || `${player.first_name} ${player.last_name}`;
+        const name =
+          player.full_name || `${player.first_name} ${player.last_name}`;
         return {
           id: player.id,
           type: "player" as const,
@@ -259,7 +266,9 @@ export class SearchService {
       const { data, error } = await this.supabase.client
         .from("training_videos")
         .select("id, title, description, category")
-        .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`)
+        .or(
+          `title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`,
+        )
         .eq("visibility_type", "public")
         .limit(10);
 
@@ -312,7 +321,9 @@ export class SearchService {
    */
   private addToRecentSearches(query: string): void {
     const recent = this._recentSearches();
-    const filtered = recent.filter((s) => s.toLowerCase() !== query.toLowerCase());
+    const filtered = recent.filter(
+      (s) => s.toLowerCase() !== query.toLowerCase(),
+    );
     const updated = [query, ...filtered].slice(0, 10);
     this._recentSearches.set(updated);
     this.saveRecentSearches();
@@ -351,7 +362,7 @@ export class SearchService {
     if (typeof localStorage !== "undefined") {
       localStorage.setItem(
         "recentSearches",
-        JSON.stringify(this._recentSearches())
+        JSON.stringify(this._recentSearches()),
       );
     }
   }
@@ -375,7 +386,7 @@ export class SearchService {
 
     // Add from recent searches that match
     const matchingRecent = this._recentSearches().filter((s) =>
-      s.toLowerCase().includes(partial.toLowerCase())
+      s.toLowerCase().includes(partial.toLowerCase()),
     );
     suggestions.push(...matchingRecent);
 
@@ -394,7 +405,7 @@ export class SearchService {
     ];
 
     const matchingCommon = commonTerms.filter((t) =>
-      t.toLowerCase().includes(partial.toLowerCase())
+      t.toLowerCase().includes(partial.toLowerCase()),
     );
     suggestions.push(...matchingCommon);
 

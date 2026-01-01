@@ -1,5 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -16,7 +24,7 @@ import { CardModule } from "primeng/card";
         <div class="hero-gradient-2"></div>
         <div class="hero-particles">
           @for (particle of particles; track particle.id) {
-            <div 
+            <div
               class="particle"
               [style.left.%]="particle.x"
               [style.top.%]="particle.y"
@@ -44,22 +52,30 @@ import { CardModule } from "primeng/card";
             </div>
             <div class="countdown-timer">
               <div class="countdown-segment countdown-days">
-                <span class="countdown-value">{{ olympicCountdown().days }}</span>
+                <span class="countdown-value">{{
+                  olympicCountdown().days
+                }}</span>
                 <span class="countdown-unit">DAYS</span>
               </div>
               <div class="countdown-separator">:</div>
               <div class="countdown-segment">
-                <span class="countdown-value">{{ olympicCountdown().hours | number:'2.0-0' }}</span>
+                <span class="countdown-value">{{
+                  olympicCountdown().hours | number: "2.0-0"
+                }}</span>
                 <span class="countdown-unit">HOURS</span>
               </div>
               <div class="countdown-separator">:</div>
               <div class="countdown-segment">
-                <span class="countdown-value">{{ olympicCountdown().minutes | number:'2.0-0' }}</span>
+                <span class="countdown-value">{{
+                  olympicCountdown().minutes | number: "2.0-0"
+                }}</span>
                 <span class="countdown-unit">MINS</span>
               </div>
               <div class="countdown-separator">:</div>
               <div class="countdown-segment">
-                <span class="countdown-value">{{ olympicCountdown().seconds | number:'2.0-0' }}</span>
+                <span class="countdown-value">{{
+                  olympicCountdown().seconds | number: "2.0-0"
+                }}</span>
                 <span class="countdown-unit">SEC</span>
               </div>
             </div>
@@ -82,15 +98,19 @@ import { CardModule } from "primeng/card";
               label="Get Started Free"
               icon="pi pi-arrow-right"
               iconPos="right"
+              [rounded]="true"
+              size="large"
               [routerLink]="['/register']"
-              styleClass="p-button-lg hero-btn-primary"
+              styleClass="hero-btn-primary"
             ></p-button>
             <p-button
               label="Sign In"
               icon="pi pi-sign-in"
-              [routerLink]="['/login']"
+              [rounded]="true"
               [outlined]="true"
-              styleClass="p-button-lg hero-btn-secondary"
+              size="large"
+              [routerLink]="['/login']"
+              styleClass="hero-btn-secondary"
             ></p-button>
           </div>
 
@@ -106,7 +126,11 @@ import { CardModule } from "primeng/card";
       </div>
 
       <!-- Scroll indicator -->
-      <div class="scroll-indicator animate-item" style="--delay: 6" [class.visible]="isLoaded()">
+      <div
+        class="scroll-indicator animate-item"
+        style="--delay: 6"
+        [class.visible]="isLoaded()"
+      >
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
@@ -139,7 +163,10 @@ import { CardModule } from "primeng/card";
               </ng-template>
               <h3 class="feature-card-title">{{ feature.title }}</h3>
               <p class="feature-card-description">{{ feature.description }}</p>
-              <div class="feature-card-link" (click)="navigateToFeature(feature.id)">
+              <div
+                class="feature-card-link"
+                (click)="navigateToFeature(feature.id)"
+              >
                 <span>Learn more</span>
                 <i class="pi pi-arrow-right"></i>
               </div>
@@ -160,7 +187,8 @@ import { CardModule } from "primeng/card";
               <span>FlagFit Pro</span>
             </div>
             <p class="footer-tagline">
-              The ultimate training and competition platform for flag football athletes.
+              The ultimate training and competition platform for flag football
+              athletes.
             </p>
           </div>
 
@@ -170,7 +198,11 @@ import { CardModule } from "primeng/card";
             <ul>
               <li><a routerLink="/login">Sign In</a></li>
               <li><a routerLink="/register">Get Started</a></li>
-              <li><a href="#features" (click)="scrollToFeatures($event)">Features</a></li>
+              <li>
+                <a href="#features" (click)="scrollToFeatures($event)"
+                  >Features</a
+                >
+              </li>
             </ul>
           </div>
 
@@ -179,7 +211,9 @@ import { CardModule } from "primeng/card";
             <h4>Resources</h4>
             <ul>
               <li><a routerLink="/settings/privacy">Privacy Settings</a></li>
-              <li><a href="mailto:support&#64;flagfitpro.com">Contact Support</a></li>
+              <li>
+                <a href="mailto:support&#64;flagfitpro.com">Contact Support</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -201,7 +235,11 @@ import { CardModule } from "primeng/card";
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--surface-primary) 0%,
+          var(--surface-secondary) 100%
+        );
       }
 
       .hero-background {
@@ -239,10 +277,19 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes float {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        25% { transform: translate(30px, -30px) scale(1.05); }
-        50% { transform: translate(-20px, 20px) scale(0.95); }
-        75% { transform: translate(20px, 10px) scale(1.02); }
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        25% {
+          transform: translate(30px, -30px) scale(1.05);
+        }
+        50% {
+          transform: translate(-20px, 20px) scale(0.95);
+        }
+        75% {
+          transform: translate(20px, 10px) scale(1.02);
+        }
       }
 
       /* Particle effects */
@@ -263,11 +310,12 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes particle-float {
-        0%, 100% { 
+        0%,
+        100% {
           transform: translateY(0) scale(1);
           opacity: 0.3;
         }
-        50% { 
+        50% {
           transform: translateY(-100px) scale(1.5);
           opacity: 0.6;
         }
@@ -289,8 +337,9 @@ import { CardModule } from "primeng/card";
       .animate-item {
         opacity: 0;
         transform: translateY(30px);
-        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition:
+          opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         transition-delay: calc(var(--delay, 0) * 0.15s);
       }
 
@@ -313,7 +362,11 @@ import { CardModule } from "primeng/card";
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green-light, #0ab85a) 0%,
+          var(--ds-primary-green) 100%
+        );
         border-radius: 50%;
         box-shadow: 0 20px 40px rgba(8, 153, 73, 0.3);
         animation: logo-pulse 3s ease-in-out infinite;
@@ -326,20 +379,28 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes logo-pulse {
-        0%, 100% { 
+        0%,
+        100% {
           transform: scale(1);
-          box-shadow: 0 20px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+          box-shadow: 0 20px 40px
+            rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
         }
-        50% { 
+        50% {
           transform: scale(1.05);
-          box-shadow: 0 25px 50px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.4);
+          box-shadow: 0 25px 50px
+            rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.4);
         }
       }
 
       .hero-badge {
         padding: var(--space-2) var(--space-5);
-        background: linear-gradient(135deg, rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) 0%, rgba(var(--color-brand-secondary-rgb, 139, 92, 246), 0.1) 100%);
-        border: 1px solid rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
+        background: linear-gradient(
+          135deg,
+          rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) 0%,
+          rgba(var(--color-brand-secondary-rgb, 139, 92, 246), 0.1) 100%
+        );
+        border: 1px solid
+          rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
         border-radius: 50px;
         font-size: var(--font-body-sm);
         font-weight: var(--font-weight-semibold);
@@ -349,8 +410,14 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes badge-glow {
-        0% { box-shadow: 0 0 20px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1); }
-        100% { box-shadow: 0 0 30px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2); }
+        0% {
+          box-shadow: 0 0 20px
+            rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1);
+        }
+        100% {
+          box-shadow: 0 0 30px
+            rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
+        }
       }
 
       /* ===== OLYMPIC COUNTDOWN ===== */
@@ -375,7 +442,7 @@ import { CardModule } from "primeng/card";
       }
 
       .countdown-label-text {
-        font-family: 'Poppins', system-ui, sans-serif;
+        font-family: "Poppins", system-ui, sans-serif;
         font-size: clamp(0.625rem, 1.5vw, 0.875rem);
         font-weight: 600;
         letter-spacing: 0.15em;
@@ -384,7 +451,7 @@ import { CardModule } from "primeng/card";
       }
 
       .countdown-label-event {
-        font-family: 'Poppins', system-ui, sans-serif;
+        font-family: "Poppins", system-ui, sans-serif;
         font-size: clamp(0.875rem, 2vw, 1.25rem);
         font-weight: 800;
         letter-spacing: 0.1em;
@@ -406,7 +473,8 @@ import { CardModule } from "primeng/card";
       }
 
       .countdown-value {
-        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+        font-family:
+          "JetBrains Mono", "SF Mono", "Fira Code", "Roboto Mono", monospace;
         font-size: clamp(2rem, 8vw, 4.5rem);
         font-weight: 900;
         line-height: 1;
@@ -422,7 +490,7 @@ import { CardModule } from "primeng/card";
       }
 
       .countdown-unit {
-        font-family: 'Poppins', system-ui, sans-serif;
+        font-family: "Poppins", system-ui, sans-serif;
         font-size: clamp(0.5rem, 1.5vw, 0.875rem);
         font-weight: 600;
         letter-spacing: 0.15em;
@@ -431,7 +499,7 @@ import { CardModule } from "primeng/card";
       }
 
       .countdown-separator {
-        font-family: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', monospace;
+        font-family: "JetBrains Mono", "SF Mono", "Roboto Mono", monospace;
         font-size: clamp(2rem, 8vw, 4.5rem);
         font-weight: 900;
         line-height: 1;
@@ -481,7 +549,11 @@ import { CardModule } from "primeng/card";
       }
 
       .hero-title-accent {
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -507,7 +579,11 @@ import { CardModule } from "primeng/card";
 
       /* Premium button styles - WHITE ON GREEN for primary (design system rule) */
       :host ::ng-deep .hero-btn-primary {
-        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green-light, #0ab85a) 0%,
+          var(--ds-primary-green) 100%
+        ) !important;
         border: none !important;
         border-radius: var(--radius-full, 9999px) !important;
         color: #ffffff !important; /* WHITE ON GREEN - design system rule */
@@ -528,26 +604,30 @@ import { CardModule } from "primeng/card";
       :host ::ng-deep .hero-btn-primary:hover {
         transform: translateY(-3px) !important;
         box-shadow: 0 15px 40px rgba(8, 153, 73, 0.45) !important;
-        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, var(--ds-primary-green-hover, #036d35) 100%) !important;
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green) 0%,
+          var(--ds-primary-green-hover, #036d35) 100%
+        ) !important;
       }
 
       /* GREEN ON WHITE for secondary/outlined button (design system rule) */
       :host ::ng-deep .hero-btn-secondary {
         background: transparent !important;
-        border: 2px solid var(--ds-primary-green, #089949) !important;
+        border: 2px solid var(--ds-primary-green) !important;
         border-radius: var(--radius-full, 9999px) !important;
-        color: var(--ds-primary-green, #089949) !important; /* GREEN ON WHITE */
+        color: var(--ds-primary-green) !important; /* GREEN ON WHITE */
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         padding: 0.875rem 2rem !important;
         font-weight: 600 !important;
       }
 
       :host ::ng-deep .hero-btn-secondary .p-button-label {
-        color: var(--ds-primary-green, #089949) !important;
+        color: var(--ds-primary-green) !important;
       }
 
       :host ::ng-deep .hero-btn-secondary .p-button-icon {
-        color: var(--ds-primary-green, #089949) !important;
+        color: var(--ds-primary-green) !important;
       }
 
       :host ::ng-deep .hero-btn-secondary:hover {
@@ -581,7 +661,11 @@ import { CardModule } from "primeng/card";
       .hero-stat-number {
         font-size: var(--font-display-sm);
         font-weight: var(--font-weight-bold);
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -613,8 +697,13 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes bounce {
-        0%, 100% { transform: translateX(-50%) translateY(0); }
-        50% { transform: translateX(-50%) translateY(10px); }
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(10px);
+        }
       }
 
       .scroll-mouse {
@@ -638,8 +727,15 @@ import { CardModule } from "primeng/card";
       }
 
       @keyframes scroll-wheel {
-        0%, 100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        50% { opacity: 0.3; transform: translateX(-50%) translateY(10px); }
+        0%,
+        100% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 0.3;
+          transform: translateX(-50%) translateY(10px);
+        }
       }
 
       .scroll-indicator span {
@@ -724,32 +820,56 @@ import { CardModule } from "primeng/card";
       }
 
       .feature-icon-analytics {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.1) 0%,
+          rgba(59, 130, 246, 0.2) 100%
+        );
         color: #3b82f6;
       }
 
       .feature-icon-tournament {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0.1) 0%,
+          rgba(245, 158, 11, 0.2) 100%
+        );
         color: #f59e0b;
       }
 
       .feature-icon-community {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.1) 0%,
+          rgba(16, 185, 129, 0.2) 100%
+        );
         color: #10b981;
       }
 
       .feature-icon-training {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(139, 92, 246, 0.1) 0%,
+          rgba(139, 92, 246, 0.2) 100%
+        );
         color: #8b5cf6;
       }
 
       .feature-icon-ai-coach {
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.1) 0%,
+          rgba(236, 72, 153, 0.2) 100%
+        );
         color: #ec4899;
       }
 
       .feature-icon-progress {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(6, 182, 212, 0.1) 0%,
+          rgba(6, 182, 212, 0.2) 100%
+        );
         color: #06b6d4;
       }
 
@@ -824,14 +944,22 @@ import { CardModule } from "primeng/card";
 
       .footer-logo i {
         font-size: 1.75rem;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
 
       .footer-logo span {
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -979,29 +1107,29 @@ import { CardModule } from "primeng/card";
 export class LandingComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
-  
+
   // Signals for reactive state
   isLoaded = signal(false);
-  
+
   // Olympic countdown - LA 2028 Opening Ceremony: July 14, 2028
   olympicCountdown = signal({
     days: 0,
     hours: 0,
     minutes: 0,
-    seconds: 0
+    seconds: 0,
   });
-  
+
   // LA 2028 Olympics Opening Ceremony date
-  private olympicDate = new Date('2028-07-14T20:00:00-07:00'); // Pacific Time
+  private olympicDate = new Date("2028-07-14T20:00:00-07:00"); // Pacific Time
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
-  
+
   currentYear = new Date().getFullYear();
 
   // Hero stats data - authentic messaging for Olympic-bound athletes
   heroStats = [
-    { value: 'LA28', label: 'Olympic Debut' },
-    { value: '5v5', label: 'Olympic Format' },
-    { value: '∞', label: 'Your Potential' },
+    { value: "LA28", label: "Olympic Debut" },
+    { value: "5v5", label: "Olympic Format" },
+    { value: "∞", label: "Your Potential" },
   ];
 
   // Particle data for background animation
@@ -1071,12 +1199,12 @@ export class LandingComponent implements OnInit {
   ngOnInit(): void {
     // Start countdown immediately
     this.updateCountdown();
-    
+
     // Update every second
     this.countdownInterval = setInterval(() => {
       this.updateCountdown();
     }, 1000);
-    
+
     // Cleanup on destroy
     this.destroyRef.onDestroy(() => {
       if (this.countdownInterval) {
@@ -1089,13 +1217,15 @@ export class LandingComponent implements OnInit {
     const now = new Date().getTime();
     const target = this.olympicDate.getTime();
     const difference = target - now;
-    
+
     if (difference > 0) {
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      );
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-      
+
       this.olympicCountdown.set({ days, hours, minutes, seconds });
     } else {
       // Olympic games have started!
@@ -1112,28 +1242,28 @@ export class LandingComponent implements OnInit {
 
   scrollToFeatures(event: Event): void {
     event.preventDefault();
-    const featuresSection = document.querySelector('.features-section');
+    const featuresSection = document.querySelector(".features-section");
     if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: 'smooth' });
+      featuresSection.scrollIntoView({ behavior: "smooth" });
     }
   }
 
   navigateToFeature(featureId: string): void {
     // Map feature IDs to their corresponding routes
     const featureRoutes: Record<string, string> = {
-      analytics: '/analytics',
-      tournament: '/tournaments',
-      community: '/community',
-      training: '/training',
-      'ai-coach': '/ai-coach',
-      progress: '/analytics',
+      analytics: "/analytics",
+      tournament: "/tournaments",
+      community: "/community",
+      training: "/training",
+      "ai-coach": "/ai-coach",
+      progress: "/analytics",
     };
 
     const route = featureRoutes[featureId];
     if (route) {
       // Navigate to register first (since these are protected routes)
-      this.router.navigate(['/register'], { 
-        queryParams: { redirect: route } 
+      this.router.navigate(["/register"], {
+        queryParams: { redirect: route },
       });
     }
   }

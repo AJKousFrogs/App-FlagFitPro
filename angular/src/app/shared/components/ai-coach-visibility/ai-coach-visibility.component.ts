@@ -147,7 +147,9 @@ interface CoachVisibilityRecord {
                 </div>
                 <div class="alert-content">
                   <div class="alert-header">
-                    <span class="player-name">{{ alert.player_name || 'Player' }}</span>
+                    <span class="player-name">{{
+                      alert.player_name || "Player"
+                    }}</span>
                     <p-tag
                       value="High Risk"
                       severity="danger"
@@ -155,7 +157,11 @@ interface CoachVisibilityRecord {
                     ></p-tag>
                   </div>
                   <p class="alert-message">
-                    {{ alert.message?.content || alert.recommendation?.reason || 'AI interaction flagged for review' }}
+                    {{
+                      alert.message?.content ||
+                        alert.recommendation?.reason ||
+                        "AI interaction flagged for review"
+                    }}
                   </p>
                   <div class="alert-meta">
                     <span class="alert-time">
@@ -223,7 +229,11 @@ interface CoachVisibilityRecord {
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[5, 10, 25]"
-            [globalFilterFields]="['player_name', 'recommendation_type', 'reason']"
+            [globalFilterFields]="[
+              'player_name',
+              'recommendation_type',
+              'reason',
+            ]"
             styleClass="p-datatable-sm"
           >
             <ng-template pTemplate="header">
@@ -243,7 +253,7 @@ interface CoachVisibilityRecord {
                     <span class="player-avatar">
                       {{ getInitials(rec.player_name) }}
                     </span>
-                    <span>{{ rec.player_name || 'Unknown' }}</span>
+                    <span>{{ rec.player_name || "Unknown" }}</span>
                   </div>
                 </td>
                 <td>
@@ -253,10 +263,7 @@ interface CoachVisibilityRecord {
                   ></p-tag>
                 </td>
                 <td class="reason-cell">
-                  <span
-                    [pTooltip]="rec.reason"
-                    tooltipPosition="top"
-                  >
+                  <span [pTooltip]="rec.reason" tooltipPosition="top">
                     {{ truncate(rec.reason, 50) }}
                   </span>
                 </td>
@@ -279,7 +286,7 @@ interface CoachVisibilityRecord {
                       pTooltip="View"
                       (onClick)="viewRecommendation(rec)"
                     ></p-button>
-                    @if (rec.status === 'pending') {
+                    @if (rec.status === "pending") {
                       <p-button
                         icon="pi pi-times"
                         [text]="true"
@@ -307,7 +314,8 @@ interface CoachVisibilityRecord {
       >
         <div class="dialog-content">
           <p class="dialog-context">
-            Adding note for: <strong>{{ selectedRecord()?.player_name || 'Player' }}</strong>
+            Adding note for:
+            <strong>{{ selectedRecord()?.player_name || "Player" }}</strong>
           </p>
           <textarea
             pInputTextarea
@@ -349,7 +357,8 @@ interface CoachVisibilityRecord {
             </p>
           </div>
           <p class="dialog-context">
-            Recommendation: <strong>{{ selectedRecommendation()?.reason }}</strong>
+            Recommendation:
+            <strong>{{ selectedRecommendation()?.reason }}</strong>
           </p>
           <label class="field-label">Override Reason</label>
           <textarea
@@ -686,13 +695,13 @@ export class AiCoachVisibilityComponent implements OnInit {
 
   // Computed
   highRiskCount = computed(
-    () => this.highRiskAlerts().filter((a) => !a.viewed_at).length
+    () => this.highRiskAlerts().filter((a) => !a.viewed_at).length,
   );
   pendingRecommendations = computed(
-    () => this.recommendations().filter((r) => r.status === "pending").length
+    () => this.recommendations().filter((r) => r.status === "pending").length,
   );
   totalInteractions = computed(
-    () => this.recommendations().length + this.highRiskAlerts().length
+    () => this.recommendations().length + this.highRiskAlerts().length,
   );
 
   // Dialog state
@@ -728,7 +737,8 @@ export class AiCoachVisibilityComponent implements OnInit {
       // Load AI recommendations from Supabase
       let query = this.supabaseService.client
         .from("ai_recommendations")
-        .select(`
+        .select(
+          `
           id,
           user_id,
           recommendation_type,
@@ -740,7 +750,8 @@ export class AiCoachVisibilityComponent implements OnInit {
           rejected_at,
           completed_at,
           outcome
-        `)
+        `,
+        )
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -772,7 +783,9 @@ export class AiCoachVisibilityComponent implements OnInit {
           .select("id, first_name, last_name")
           .in("id", userIds);
 
-        const userMap = new Map(users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || []);
+        const userMap = new Map(
+          users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || [],
+        );
 
         const enrichedData: AIRecommendation[] = data.map((r) => ({
           ...r,
@@ -798,7 +811,8 @@ export class AiCoachVisibilityComponent implements OnInit {
       // Load high-risk AI coach visibility records
       let query = this.supabaseService.client
         .from("ai_coach_visibility")
-        .select(`
+        .select(
+          `
           id,
           recommendation_id,
           message_id,
@@ -808,7 +822,8 @@ export class AiCoachVisibilityComponent implements OnInit {
           override_reason,
           viewed_at,
           created_at
-        `)
+        `,
+        )
         .eq("coach_id", user.id)
         .order("created_at", { ascending: false })
         .limit(20);
@@ -832,7 +847,9 @@ export class AiCoachVisibilityComponent implements OnInit {
           .select("id, first_name, last_name")
           .in("id", playerIds);
 
-        const userMap = new Map(users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || []);
+        const userMap = new Map(
+          users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || [],
+        );
 
         const enrichedData: CoachVisibilityRecord[] = data.map((r) => ({
           ...r,
@@ -927,16 +944,14 @@ export class AiCoachVisibilityComponent implements OnInit {
       // Create visibility record for the override
       const user = this.authService.getUser();
       if (user?.id) {
-        await this.supabaseService.client
-          .from("ai_coach_visibility")
-          .insert({
-            recommendation_id: rec.id,
-            coach_id: user.id,
-            player_id: rec.user_id,
-            team_id: this.teamId || null,
-            visibility_type: "override",
-            override_reason: this.overrideReason,
-          });
+        await this.supabaseService.client.from("ai_coach_visibility").insert({
+          recommendation_id: rec.id,
+          coach_id: user.id,
+          player_id: rec.user_id,
+          team_id: this.teamId || null,
+          visibility_type: "override",
+          override_reason: this.overrideReason,
+        });
       }
 
       // Update local state
@@ -969,7 +984,10 @@ export class AiCoachVisibilityComponent implements OnInit {
       const alerts = this.highRiskAlerts();
       const index = alerts.findIndex((a) => a.id === recordId);
       if (index !== -1) {
-        alerts[index] = { ...alerts[index], viewed_at: new Date().toISOString() };
+        alerts[index] = {
+          ...alerts[index],
+          viewed_at: new Date().toISOString(),
+        };
         this.highRiskAlerts.set([...alerts]);
       }
     } catch (error) {
@@ -1005,7 +1023,7 @@ export class AiCoachVisibilityComponent implements OnInit {
   }
 
   getRecTypeSeverity(
-    type: string
+    type: string,
   ): "success" | "info" | "warn" | "danger" | "secondary" {
     const severities: Record<
       string,
@@ -1022,7 +1040,7 @@ export class AiCoachVisibilityComponent implements OnInit {
   }
 
   getStatusSeverity(
-    status: string
+    status: string,
   ): "success" | "info" | "warn" | "danger" | "secondary" {
     const severities: Record<
       string,
@@ -1052,4 +1070,3 @@ export class AiCoachVisibilityComponent implements OnInit {
     return text.slice(0, length) + "...";
   }
 }
-

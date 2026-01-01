@@ -95,27 +95,35 @@ interface StatComparison {
             <ng-template pTemplate="selectedItem" let-selected>
               @if (selected) {
                 <div class="player-option">
-                  <p-avatar 
-                    [label]="getInitials(selected.name)" 
+                  <p-avatar
+                    [label]="getInitials(selected.name)"
                     [image]="selected.avatarUrl"
                     shape="circle"
                     size="small"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
-                  <p-tag [value]="selected.position" severity="secondary" [rounded]="true"></p-tag>
+                  <p-tag
+                    [value]="selected.position"
+                    severity="secondary"
+                    [rounded]="true"
+                  ></p-tag>
                 </div>
               }
             </ng-template>
             <ng-template pTemplate="item" let-player>
               <div class="player-option">
-                <p-avatar 
-                  [label]="getInitials(player.name)" 
+                <p-avatar
+                  [label]="getInitials(player.name)"
                   [image]="player.avatarUrl"
                   shape="circle"
                   size="small"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag [value]="player.position" severity="secondary" [rounded]="true"></p-tag>
+                <p-tag
+                  [value]="player.position"
+                  severity="secondary"
+                  [rounded]="true"
+                ></p-tag>
               </div>
             </ng-template>
           </p-select>
@@ -139,27 +147,35 @@ interface StatComparison {
             <ng-template pTemplate="selectedItem" let-selected>
               @if (selected) {
                 <div class="player-option">
-                  <p-avatar 
-                    [label]="getInitials(selected.name)" 
+                  <p-avatar
+                    [label]="getInitials(selected.name)"
                     [image]="selected.avatarUrl"
                     shape="circle"
                     size="small"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
-                  <p-tag [value]="selected.position" severity="secondary" [rounded]="true"></p-tag>
+                  <p-tag
+                    [value]="selected.position"
+                    severity="secondary"
+                    [rounded]="true"
+                  ></p-tag>
                 </div>
               }
             </ng-template>
             <ng-template pTemplate="item" let-player>
               <div class="player-option">
-                <p-avatar 
-                  [label]="getInitials(player.name)" 
+                <p-avatar
+                  [label]="getInitials(player.name)"
                   [image]="player.avatarUrl"
                   shape="circle"
                   size="small"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag [value]="player.position" severity="secondary" [rounded]="true"></p-tag>
+                <p-tag
+                  [value]="player.position"
+                  severity="secondary"
+                  [rounded]="true"
+                ></p-tag>
               </div>
             </ng-template>
           </p-select>
@@ -170,8 +186,8 @@ interface StatComparison {
         <!-- Player Headers -->
         <div class="comparison-header">
           <div class="player-header player1">
-            <p-avatar 
-              [label]="getInitials(player1()!.name)" 
+            <p-avatar
+              [label]="getInitials(player1()!.name)"
               [image]="player1()!.avatarUrl"
               shape="circle"
               size="xlarge"
@@ -180,7 +196,9 @@ interface StatComparison {
               <h3>{{ player1()!.name }}</h3>
               <p-tag [value]="player1()!.position" severity="info"></p-tag>
               @if (player1()!.jerseyNumber) {
-                <span class="jersey-number">#{{ player1()!.jerseyNumber }}</span>
+                <span class="jersey-number"
+                  >#{{ player1()!.jerseyNumber }}</span
+                >
               }
             </div>
             <div class="wins-badge">
@@ -198,11 +216,13 @@ interface StatComparison {
               <h3>{{ player2()!.name }}</h3>
               <p-tag [value]="player2()!.position" severity="info"></p-tag>
               @if (player2()!.jerseyNumber) {
-                <span class="jersey-number">#{{ player2()!.jerseyNumber }}</span>
+                <span class="jersey-number"
+                  >#{{ player2()!.jerseyNumber }}</span
+                >
               }
             </div>
-            <p-avatar 
-              [label]="getInitials(player2()!.name)" 
+            <p-avatar
+              [label]="getInitials(player2()!.name)"
               [image]="player2()!.avatarUrl"
               shape="circle"
               size="xlarge"
@@ -218,7 +238,11 @@ interface StatComparison {
             </div>
           </ng-template>
           <div class="chart-container">
-            <p-chart type="radar" [data]="radarChartData()" [options]="radarChartOptions"></p-chart>
+            <p-chart
+              type="radar"
+              [data]="radarChartData()"
+              [options]="radarChartOptions"
+            ></p-chart>
           </div>
         </p-card>
 
@@ -233,32 +257,49 @@ interface StatComparison {
                 </div>
               </ng-template>
               <div class="stats-list">
-                @for (stat of getStatsForCategory(category.key); track stat.key) {
-                  <div class="stat-row" [class.winner-player1]="stat.winner === 'player1'" [class.winner-player2]="stat.winner === 'player2'">
-                    <div class="stat-value player1" [class.winner]="stat.winner === 'player1'">
-                      <span class="value">{{ formatStatValue(stat.player1Value, stat.unit) }}</span>
-                      @if (stat.winner === 'player1') {
+                @for (
+                  stat of getStatsForCategory(category.key);
+                  track stat.key
+                ) {
+                  <div
+                    class="stat-row"
+                    [class.winner-player1]="stat.winner === 'player1'"
+                    [class.winner-player2]="stat.winner === 'player2'"
+                  >
+                    <div
+                      class="stat-value player1"
+                      [class.winner]="stat.winner === 'player1'"
+                    >
+                      <span class="value">{{
+                        formatStatValue(stat.player1Value, stat.unit)
+                      }}</span>
+                      @if (stat.winner === "player1") {
                         <i class="pi pi-crown winner-icon"></i>
                       }
                     </div>
                     <div class="stat-label">
                       <span>{{ stat.label }}</span>
                       <div class="comparison-bar">
-                        <div 
-                          class="bar player1-bar" 
+                        <div
+                          class="bar player1-bar"
                           [style.width.%]="getBarWidth(stat, 'player1')"
                         ></div>
-                        <div 
-                          class="bar player2-bar" 
+                        <div
+                          class="bar player2-bar"
                           [style.width.%]="getBarWidth(stat, 'player2')"
                         ></div>
                       </div>
                     </div>
-                    <div class="stat-value player2" [class.winner]="stat.winner === 'player2'">
-                      @if (stat.winner === 'player2') {
+                    <div
+                      class="stat-value player2"
+                      [class.winner]="stat.winner === 'player2'"
+                    >
+                      @if (stat.winner === "player2") {
                         <i class="pi pi-crown winner-icon"></i>
                       }
-                      <span class="value">{{ formatStatValue(stat.player2Value, stat.unit) }}</span>
+                      <span class="value">{{
+                        formatStatValue(stat.player2Value, stat.unit)
+                      }}</span>
                     </div>
                   </div>
                 }
@@ -271,10 +312,14 @@ interface StatComparison {
         <div class="comparison-summary">
           <div class="summary-item">
             <span class="summary-label">Overall Winner</span>
-            <span class="summary-value" [class.player1]="overallWinner() === 'player1'" [class.player2]="overallWinner() === 'player2'">
-              @if (overallWinner() === 'tie') {
+            <span
+              class="summary-value"
+              [class.player1]="overallWinner() === 'player1'"
+              [class.player2]="overallWinner() === 'player2'"
+            >
+              @if (overallWinner() === "tie") {
                 Tie!
-              } @else if (overallWinner() === 'player1') {
+              } @else if (overallWinner() === "player1") {
                 {{ player1()!.name }}
               } @else {
                 {{ player2()!.name }}
@@ -286,332 +331,340 @@ interface StatComparison {
         <div class="empty-state">
           <i class="pi pi-users"></i>
           <h3>Select Two Players to Compare</h3>
-          <p>Choose players from the dropdowns above to see a detailed comparison of their stats and performance.</p>
+          <p>
+            Choose players from the dropdowns above to see a detailed comparison
+            of their stats and performance.
+          </p>
         </div>
       }
     </div>
   `,
-  styles: [`
-    .player-comparison {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-6);
-    }
-
-    .selection-row {
-      display: flex;
-      align-items: flex-end;
-      gap: var(--space-4);
-    }
-
-    .player-select {
-      flex: 1;
-    }
-
-    .player-select label {
-      display: block;
-      margin-bottom: var(--space-2);
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .vs-badge {
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--color-brand-primary);
-      color: white;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 0.875rem;
-      flex-shrink: 0;
-    }
-
-    .player-option {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    /* Comparison Header */
-    .comparison-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-4);
-    }
-
-    .player-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-      padding: var(--space-4);
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-      border: 2px solid transparent;
-    }
-
-    .player-header.player1 {
-      border-color: var(--color-brand-primary);
-    }
-
-    .player-header.player2 {
-      flex-direction: row-reverse;
-      border-color: var(--p-purple-500);
-    }
-
-    .player-header.player2 .player-info {
-      text-align: right;
-    }
-
-    .player-info h3 {
-      margin: 0 0 var(--space-1) 0;
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
-
-    .jersey-number {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-left: var(--space-2);
-    }
-
-    .wins-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: var(--space-2) var(--space-3);
-      background: var(--p-surface-100);
-      border-radius: var(--p-border-radius);
-    }
-
-    .wins-count {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-    }
-
-    .wins-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    /* Chart Card */
-    .chart-card {
-      width: 100%;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-4);
-      border-bottom: 1px solid var(--p-surface-200);
-    }
-
-    .card-header h4 {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    .chart-container {
-      display: flex;
-      justify-content: center;
-      padding: var(--space-4);
-      max-height: 400px;
-    }
-
-    /* Stats Comparison */
-    .stats-comparison {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .category-card .card-header i {
-      color: var(--color-brand-primary);
-    }
-
-    .stats-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-    }
-
-    .stat-row {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: var(--space-3);
-      align-items: center;
-      padding: var(--space-2);
-      border-radius: var(--p-border-radius);
-      transition: background 0.2s ease;
-    }
-
-    .stat-row:hover {
-      background: var(--p-surface-50);
-    }
-
-    .stat-value {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    .stat-value.player1 {
-      justify-content: flex-end;
-    }
-
-    .stat-value.player2 {
-      justify-content: flex-start;
-    }
-
-    .stat-value .value {
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--text-primary);
-    }
-
-    .stat-value.winner .value {
-      color: var(--color-brand-primary);
-    }
-
-    .winner-icon {
-      color: var(--p-yellow-500);
-      font-size: 0.875rem;
-    }
-
-    .stat-label {
-      text-align: center;
-    }
-
-    .stat-label span {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .comparison-bar {
-      display: flex;
-      height: 6px;
-      background: var(--p-surface-200);
-      border-radius: 3px;
-      margin-top: var(--space-1);
-      overflow: hidden;
-    }
-
-    .bar {
-      height: 100%;
-      transition: width 0.3s ease;
-    }
-
-    .player1-bar {
-      background: var(--color-brand-primary);
-      border-radius: 3px 0 0 3px;
-    }
-
-    .player2-bar {
-      background: var(--p-purple-500);
-      border-radius: 0 3px 3px 0;
-      margin-left: auto;
-    }
-
-    /* Summary */
-    .comparison-summary {
-      display: flex;
-      justify-content: center;
-      padding: var(--space-4);
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-    }
-
-    .summary-item {
-      text-align: center;
-    }
-
-    .summary-label {
-      display: block;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-2);
-    }
-
-    .summary-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .summary-value.player1 {
-      color: var(--color-brand-primary);
-    }
-
-    .summary-value.player2 {
-      color: var(--p-purple-500);
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: var(--space-8);
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-      border: 2px dashed var(--p-surface-300);
-    }
-
-    .empty-state i {
-      font-size: 4rem;
-      color: var(--p-surface-400);
-      margin-bottom: var(--space-4);
-    }
-
-    .empty-state h3 {
-      margin: 0 0 var(--space-2) 0;
-      color: var(--text-primary);
-    }
-
-    .empty-state p {
-      margin: 0;
-      color: var(--text-secondary);
-    }
-
-    @media (max-width: 768px) {
-      .selection-row {
+  styles: [
+    `
+      .player-comparison {
+        display: flex;
         flex-direction: column;
+        gap: var(--space-6);
+      }
+
+      .selection-row {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--space-4);
+      }
+
+      .player-select {
+        flex: 1;
+      }
+
+      .player-select label {
+        display: block;
+        margin-bottom: var(--space-2);
+        font-weight: 500;
+        color: var(--text-secondary);
       }
 
       .vs-badge {
-        align-self: center;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-brand-primary);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.875rem;
+        flex-shrink: 0;
       }
 
+      .player-option {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      /* Comparison Header */
       .comparison-header {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+      }
+
+      .player-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+        border: 2px solid transparent;
+      }
+
+      .player-header.player1 {
+        border-color: var(--color-brand-primary);
       }
 
       .player-header.player2 {
-        flex-direction: row;
+        flex-direction: row-reverse;
+        border-color: var(--p-purple-500);
       }
 
       .player-header.player2 .player-info {
-        text-align: left;
+        text-align: right;
       }
 
+      .player-info h3 {
+        margin: 0 0 var(--space-1) 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .jersey-number {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-left: var(--space-2);
+      }
+
+      .wins-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--space-2) var(--space-3);
+        background: var(--p-surface-100);
+        border-radius: var(--p-border-radius);
+      }
+
+      .wins-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+      }
+
+      .wins-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      /* Chart Card */
+      .chart-card {
+        width: 100%;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--p-surface-200);
+      }
+
+      .card-header h4 {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .chart-container {
+        display: flex;
+        justify-content: center;
+        padding: var(--space-4);
+        max-height: 400px;
+      }
+
+      /* Stats Comparison */
       .stats-comparison {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--space-4);
+      }
+
+      .category-card .card-header i {
+        color: var(--color-brand-primary);
+      }
+
+      .stats-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
       }
 
       .stat-row {
-        grid-template-columns: 1fr 1.5fr 1fr;
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: var(--space-3);
+        align-items: center;
+        padding: var(--space-2);
+        border-radius: var(--p-border-radius);
+        transition: background 0.2s ease;
       }
-    }
-  `],
+
+      .stat-row:hover {
+        background: var(--p-surface-50);
+      }
+
+      .stat-value {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      .stat-value.player1 {
+        justify-content: flex-end;
+      }
+
+      .stat-value.player2 {
+        justify-content: flex-start;
+      }
+
+      .stat-value .value {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-primary);
+      }
+
+      .stat-value.winner .value {
+        color: var(--color-brand-primary);
+      }
+
+      .winner-icon {
+        color: var(--p-yellow-500);
+        font-size: 0.875rem;
+      }
+
+      .stat-label {
+        text-align: center;
+      }
+
+      .stat-label span {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .comparison-bar {
+        display: flex;
+        height: 6px;
+        background: var(--p-surface-200);
+        border-radius: 3px;
+        margin-top: var(--space-1);
+        overflow: hidden;
+      }
+
+      .bar {
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+
+      .player1-bar {
+        background: var(--color-brand-primary);
+        border-radius: 3px 0 0 3px;
+      }
+
+      .player2-bar {
+        background: var(--p-purple-500);
+        border-radius: 0 3px 3px 0;
+        margin-left: auto;
+      }
+
+      /* Summary */
+      .comparison-summary {
+        display: flex;
+        justify-content: center;
+        padding: var(--space-4);
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+      }
+
+      .summary-item {
+        text-align: center;
+      }
+
+      .summary-label {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-2);
+      }
+
+      .summary-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .summary-value.player1 {
+        color: var(--color-brand-primary);
+      }
+
+      .summary-value.player2 {
+        color: var(--p-purple-500);
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--space-8);
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+        border: 2px dashed var(--p-surface-300);
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        color: var(--p-surface-400);
+        margin-bottom: var(--space-4);
+      }
+
+      .empty-state h3 {
+        margin: 0 0 var(--space-2) 0;
+        color: var(--text-primary);
+      }
+
+      .empty-state p {
+        margin: 0;
+        color: var(--text-secondary);
+      }
+
+      @media (max-width: 768px) {
+        .selection-row {
+          flex-direction: column;
+        }
+
+        .vs-badge {
+          align-self: center;
+        }
+
+        .comparison-header {
+          grid-template-columns: 1fr;
+        }
+
+        .player-header.player2 {
+          flex-direction: row;
+        }
+
+        .player-header.player2 .player-info {
+          text-align: left;
+        }
+
+        .stats-comparison {
+          grid-template-columns: 1fr;
+        }
+
+        .stat-row {
+          grid-template-columns: 1fr 1.5fr 1fr;
+        }
+      }
+    `,
+  ],
 })
 export class PlayerComparisonComponent implements OnChanges {
   @Input() players: PlayerStats[] = [];
   @Input() initialPlayer1Id?: string;
   @Input() initialPlayer2Id?: string;
-  @Output() comparisonChanged = new EventEmitter<{ player1Id: string; player2Id: string }>();
+  @Output() comparisonChanged = new EventEmitter<{
+    player1Id: string;
+    player2Id: string;
+  }>();
 
   selectedPlayer1: string | null = null;
   selectedPlayer2: string | null = null;
@@ -635,21 +688,93 @@ export class PlayerComparisonComponent implements OnChanges {
     higherIsBetter: boolean;
   }> = [
     // Game stats
-    { key: "touchdowns", label: "Touchdowns", category: "game", higherIsBetter: true },
-    { key: "receptions", label: "Receptions", category: "game", higherIsBetter: true },
-    { key: "rushingYards", label: "Rushing Yards", category: "game", unit: "yds", higherIsBetter: true },
-    { key: "passingYards", label: "Passing Yards", category: "game", unit: "yds", higherIsBetter: true },
-    { key: "flagPulls", label: "Flag Pulls", category: "game", higherIsBetter: true },
-    { key: "interceptions", label: "Interceptions", category: "game", higherIsBetter: true },
-    { key: "completionRate", label: "Completion Rate", category: "game", unit: "%", higherIsBetter: true },
+    {
+      key: "touchdowns",
+      label: "Touchdowns",
+      category: "game",
+      higherIsBetter: true,
+    },
+    {
+      key: "receptions",
+      label: "Receptions",
+      category: "game",
+      higherIsBetter: true,
+    },
+    {
+      key: "rushingYards",
+      label: "Rushing Yards",
+      category: "game",
+      unit: "yds",
+      higherIsBetter: true,
+    },
+    {
+      key: "passingYards",
+      label: "Passing Yards",
+      category: "game",
+      unit: "yds",
+      higherIsBetter: true,
+    },
+    {
+      key: "flagPulls",
+      label: "Flag Pulls",
+      category: "game",
+      higherIsBetter: true,
+    },
+    {
+      key: "interceptions",
+      label: "Interceptions",
+      category: "game",
+      higherIsBetter: true,
+    },
+    {
+      key: "completionRate",
+      label: "Completion Rate",
+      category: "game",
+      unit: "%",
+      higherIsBetter: true,
+    },
     // Training stats
-    { key: "trainingHours", label: "Training Hours", category: "training", unit: "hrs", higherIsBetter: true },
-    { key: "workoutsCompleted", label: "Workouts Completed", category: "training", higherIsBetter: true },
-    { key: "attendanceRate", label: "Attendance Rate", category: "training", unit: "%", higherIsBetter: true },
+    {
+      key: "trainingHours",
+      label: "Training Hours",
+      category: "training",
+      unit: "hrs",
+      higherIsBetter: true,
+    },
+    {
+      key: "workoutsCompleted",
+      label: "Workouts Completed",
+      category: "training",
+      higherIsBetter: true,
+    },
+    {
+      key: "attendanceRate",
+      label: "Attendance Rate",
+      category: "training",
+      unit: "%",
+      higherIsBetter: true,
+    },
     // Physical stats
-    { key: "speed40yd", label: "40-Yard Dash", category: "physical", unit: "s", higherIsBetter: false },
-    { key: "verticalJump", label: "Vertical Jump", category: "physical", unit: "in", higherIsBetter: true },
-    { key: "agility", label: "Agility Score", category: "physical", higherIsBetter: true },
+    {
+      key: "speed40yd",
+      label: "40-Yard Dash",
+      category: "physical",
+      unit: "s",
+      higherIsBetter: false,
+    },
+    {
+      key: "verticalJump",
+      label: "Vertical Jump",
+      category: "physical",
+      unit: "in",
+      higherIsBetter: true,
+    },
+    {
+      key: "agility",
+      label: "Agility Score",
+      category: "physical",
+      higherIsBetter: true,
+    },
   ];
 
   radarChartOptions = {
@@ -676,8 +801,15 @@ export class PlayerComparisonComponent implements OnChanges {
       return { labels: [], datasets: [] };
     }
 
-    const labels = ["Touchdowns", "Receptions", "Flag Pulls", "Training", "Speed", "Agility"];
-    
+    const labels = [
+      "Touchdowns",
+      "Receptions",
+      "Flag Pulls",
+      "Training",
+      "Speed",
+      "Agility",
+    ];
+
     return {
       labels,
       datasets: [
@@ -715,12 +847,12 @@ export class PlayerComparisonComponent implements OnChanges {
 
   player1Wins = computed(() => {
     const comparisons = this.getAllComparisons();
-    return comparisons.filter(c => c.winner === "player1").length;
+    return comparisons.filter((c) => c.winner === "player1").length;
   });
 
   player2Wins = computed(() => {
     const comparisons = this.getAllComparisons();
-    return comparisons.filter(c => c.winner === "player2").length;
+    return comparisons.filter((c) => c.winner === "player2").length;
   });
 
   overallWinner = computed(() => {
@@ -761,19 +893,19 @@ export class PlayerComparisonComponent implements OnChanges {
   }
 
   private updatePlayer1(): void {
-    const player = this.players.find(p => p.id === this.selectedPlayer1);
+    const player = this.players.find((p) => p.id === this.selectedPlayer1);
     this.player1.set(player || null);
   }
 
   private updatePlayer2(): void {
-    const player = this.players.find(p => p.id === this.selectedPlayer2);
+    const player = this.players.find((p) => p.id === this.selectedPlayer2);
     this.player2.set(player || null);
   }
 
   getInitials(name: string): string {
     return name
       .split(" ")
-      .map(n => n[0])
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
@@ -786,8 +918,8 @@ export class PlayerComparisonComponent implements OnChanges {
     if (!p1 || !p2) return [];
 
     return this.statDefinitions
-      .filter(stat => stat.category === category)
-      .map(stat => {
+      .filter((stat) => stat.category === category)
+      .map((stat) => {
         const p1Value = this.getStatValue(p1, stat.key);
         const p2Value = this.getStatValue(p2, stat.key);
 
@@ -801,11 +933,15 @@ export class PlayerComparisonComponent implements OnChanges {
           higherIsBetter: stat.higherIsBetter,
         };
       })
-      .filter(stat => stat.player1Value !== null || stat.player2Value !== null);
+      .filter(
+        (stat) => stat.player1Value !== null || stat.player2Value !== null,
+      );
   }
 
   private getAllComparisons(): StatComparison[] {
-    return this.statCategories.flatMap(cat => this.getStatsForCategory(cat.key));
+    return this.statCategories.flatMap((cat) =>
+      this.getStatsForCategory(cat.key),
+    );
   }
 
   private getStatValue(player: PlayerStats, key: string): number | string {
@@ -823,13 +959,15 @@ export class PlayerComparisonComponent implements OnChanges {
   private determineWinner(
     value1: number | string,
     value2: number | string,
-    higherIsBetter: boolean
+    higherIsBetter: boolean,
   ): "player1" | "player2" | "tie" | null {
-    const num1 = typeof value1 === "number" ? value1 : parseFloat(value1 as string) || 0;
-    const num2 = typeof value2 === "number" ? value2 : parseFloat(value2 as string) || 0;
+    const num1 =
+      typeof value1 === "number" ? value1 : parseFloat(value1 as string) || 0;
+    const num2 =
+      typeof value2 === "number" ? value2 : parseFloat(value2 as string) || 0;
 
     if (num1 === num2) return "tie";
-    
+
     if (higherIsBetter) {
       return num1 > num2 ? "player1" : "player2";
     } else {
@@ -839,16 +977,24 @@ export class PlayerComparisonComponent implements OnChanges {
 
   formatStatValue(value: number | string, unit?: string): string {
     if (value === null || value === undefined) return "-";
-    const formatted = typeof value === "number" ? value.toFixed(value % 1 === 0 ? 0 : 1) : value;
+    const formatted =
+      typeof value === "number"
+        ? value.toFixed(value % 1 === 0 ? 0 : 1)
+        : value;
     return unit ? `${formatted}${unit}` : formatted.toString();
   }
 
   getBarWidth(stat: StatComparison, player: "player1" | "player2"): number {
     const value = player === "player1" ? stat.player1Value : stat.player2Value;
-    const otherValue = player === "player1" ? stat.player2Value : stat.player1Value;
+    const otherValue =
+      player === "player1" ? stat.player2Value : stat.player1Value;
 
-    const num = typeof value === "number" ? value : parseFloat(value as string) || 0;
-    const otherNum = typeof otherValue === "number" ? otherValue : parseFloat(otherValue as string) || 0;
+    const num =
+      typeof value === "number" ? value : parseFloat(value as string) || 0;
+    const otherNum =
+      typeof otherValue === "number"
+        ? otherValue
+        : parseFloat(otherValue as string) || 0;
 
     const total = num + otherNum;
     if (total === 0) return 50;
@@ -856,7 +1002,12 @@ export class PlayerComparisonComponent implements OnChanges {
     return (num / total) * 100;
   }
 
-  private normalizeValue(value: number, min: number, max: number, inverse = false): number {
+  private normalizeValue(
+    value: number,
+    min: number,
+    max: number,
+    inverse = false,
+  ): number {
     const normalized = ((value - min) / (max - min)) * 100;
     const clamped = Math.max(0, Math.min(100, normalized));
     return inverse ? 100 - clamped : clamped;

@@ -124,15 +124,16 @@ export class PlayerStatisticsService {
   ): Observable<PlayerGameStats> {
     // Use the games endpoint with player-stats sub-route
     return this.apiService
-      .get<ApiResponse<PlayerGameStatsApiResponse> | PlayerGameStatsApiResponse>(
-        `${API_ENDPOINTS.games.details(gameId)}/player-stats`,
-        { playerId }
-      )
+      .get<
+        ApiResponse<PlayerGameStatsApiResponse> | PlayerGameStatsApiResponse
+      >(`${API_ENDPOINTS.games.details(gameId)}/player-stats`, { playerId })
       .pipe(
         map((response): PlayerGameStats => {
           // Handle both ApiResponse wrapper and direct response
-          const apiResponse = response as ApiResponse<PlayerGameStatsApiResponse>;
-          const stats: PlayerGameStatsApiResponse = apiResponse.data ?? (response as PlayerGameStatsApiResponse);
+          const apiResponse =
+            response as ApiResponse<PlayerGameStatsApiResponse>;
+          const stats: PlayerGameStatsApiResponse =
+            apiResponse.data ?? (response as PlayerGameStatsApiResponse);
           return {
             gameId: stats.gameId || gameId,
             gameDate: stats.gameDate || "",
@@ -143,12 +144,12 @@ export class PlayerStatisticsService {
             passingYards: stats.passingYards || 0,
             touchdowns: stats.touchdowns || 0,
             interceptions: stats.interceptions || 0,
-            snapAccuracy: stats.snapAccuracy ?? this.calculateAverageAccuracy(
-              stats.snapAccuracies || [],
-            ),
-            throwAccuracy: stats.throwAccuracy ?? this.calculateAverageAccuracy(
-              stats.throwAccuracies || [],
-            ),
+            snapAccuracy:
+              stats.snapAccuracy ??
+              this.calculateAverageAccuracy(stats.snapAccuracies || []),
+            throwAccuracy:
+              stats.throwAccuracy ??
+              this.calculateAverageAccuracy(stats.throwAccuracies || []),
             targets: stats.targets || 0,
             receptions: stats.receptions || 0,
             receivingYards: stats.receivingYards || 0,
@@ -162,12 +163,12 @@ export class PlayerStatisticsService {
           };
         }),
         catchError((error) => {
-          this.logger.error('Error fetching player game stats:', error);
+          this.logger.error("Error fetching player game stats:", error);
           return of(this.getEmptyPlayerGameStats(gameId));
         }),
       );
   }
-  
+
   /**
    * Get empty stats structure for error fallback
    */
@@ -207,39 +208,46 @@ export class PlayerStatisticsService {
     return this.apiService.get<unknown>(API_ENDPOINTS.games.list).pipe(
       map((response): PlayerGameStats[] => {
         // Handle both ApiResponse wrapper and direct array
-        const apiResponse = response as ApiResponse<PlayerGameStatsApiResponse[]>;
-        const games: PlayerGameStatsApiResponse[] = apiResponse.data 
-          || (Array.isArray(response) ? response as PlayerGameStatsApiResponse[] : []);
-        return games.map((game): PlayerGameStats => ({
-          gameId: game.gameId || game.id || '',
-          gameDate: game.gameDate || game.date || '',
-          opponent: game.opponent || "",
-          present: game.present !== false && (game.hasStats || false), // Present only if stats were tracked
-          passAttempts: game.passAttempts || 0,
-          completions: game.completions || 0,
-          passingYards: game.passingYards || 0,
-          touchdowns: game.touchdowns || 0,
-          interceptions: game.interceptions || 0,
-          snapAccuracy: this.calculateAverageAccuracy(
-            game.snapAccuracies || [],
-          ),
-          throwAccuracy: this.calculateAverageAccuracy(
-            game.throwAccuracies || [],
-          ),
-          targets: game.targets || 0,
-          receptions: game.receptions || 0,
-          receivingYards: game.receivingYards || 0,
-          drops: game.drops || 0,
-          rushingAttempts: game.rushingAttempts || 0,
-          rushingYards: game.rushingYards || 0,
-          flagPullAttempts: game.flagPullAttempts || 0,
-          flagPulls: game.flagPulls || 0,
-          interceptionsDef: game.interceptionsDef || 0,
-          passDeflections: game.passDeflections || 0,
-        }));
+        const apiResponse = response as ApiResponse<
+          PlayerGameStatsApiResponse[]
+        >;
+        const games: PlayerGameStatsApiResponse[] =
+          apiResponse.data ||
+          (Array.isArray(response)
+            ? (response as PlayerGameStatsApiResponse[])
+            : []);
+        return games.map(
+          (game): PlayerGameStats => ({
+            gameId: game.gameId || game.id || "",
+            gameDate: game.gameDate || game.date || "",
+            opponent: game.opponent || "",
+            present: game.present !== false && (game.hasStats || false), // Present only if stats were tracked
+            passAttempts: game.passAttempts || 0,
+            completions: game.completions || 0,
+            passingYards: game.passingYards || 0,
+            touchdowns: game.touchdowns || 0,
+            interceptions: game.interceptions || 0,
+            snapAccuracy: this.calculateAverageAccuracy(
+              game.snapAccuracies || [],
+            ),
+            throwAccuracy: this.calculateAverageAccuracy(
+              game.throwAccuracies || [],
+            ),
+            targets: game.targets || 0,
+            receptions: game.receptions || 0,
+            receivingYards: game.receivingYards || 0,
+            drops: game.drops || 0,
+            rushingAttempts: game.rushingAttempts || 0,
+            rushingYards: game.rushingYards || 0,
+            flagPullAttempts: game.flagPullAttempts || 0,
+            flagPulls: game.flagPulls || 0,
+            interceptionsDef: game.interceptionsDef || 0,
+            passDeflections: game.passDeflections || 0,
+          }),
+        );
       }),
       catchError((error) => {
-        this.logger.error('Error fetching player games:', error);
+        this.logger.error("Error fetching player games:", error);
         return of([]);
       }),
     );
@@ -257,9 +265,9 @@ export class PlayerStatisticsService {
     // Use player-stats endpoint with tournament filter
     // The backend aggregates stats from game_events
     return this.apiService
-      .get<unknown>(API_ENDPOINTS.playerStats.aggregated, { 
-        playerId, 
-        tournamentId 
+      .get<unknown>(API_ENDPOINTS.playerStats.aggregated, {
+        playerId,
+        tournamentId,
       })
       .pipe(
         map((response) => {
@@ -280,8 +288,10 @@ export class PlayerStatisticsService {
             flagPullAttempts?: number;
             flagPulls?: number;
           }>;
-          const stats = apiResponse.data || (response as unknown as Record<string, number>);
-          const gamesPlayed = (stats as { gamesPlayed?: number }).gamesPlayed || 0;
+          const stats =
+            apiResponse.data || (response as unknown as Record<string, number>);
+          const gamesPlayed =
+            (stats as { gamesPlayed?: number }).gamesPlayed || 0;
           const totalGames = (stats as { totalGames?: number }).totalGames || 0;
 
           return {
@@ -295,25 +305,32 @@ export class PlayerStatisticsService {
             present: true,
             snapAccuracy: 0,
             throwAccuracy: 0,
-            passAttempts: (stats as { passAttempts?: number }).passAttempts || 0,
+            passAttempts:
+              (stats as { passAttempts?: number }).passAttempts || 0,
             completions: (stats as { completions?: number }).completions || 0,
-            passingYards: (stats as { passingYards?: number }).passingYards || 0,
+            passingYards:
+              (stats as { passingYards?: number }).passingYards || 0,
             touchdowns: (stats as { touchdowns?: number }).touchdowns || 0,
-            interceptions: (stats as { interceptions?: number }).interceptions || 0,
+            interceptions:
+              (stats as { interceptions?: number }).interceptions || 0,
             targets: (stats as { targets?: number }).targets || 0,
             receptions: (stats as { receptions?: number }).receptions || 0,
-            receivingYards: (stats as { receivingYards?: number }).receivingYards || 0,
+            receivingYards:
+              (stats as { receivingYards?: number }).receivingYards || 0,
             drops: (stats as { drops?: number }).drops || 0,
-            rushingAttempts: (stats as { rushingAttempts?: number }).rushingAttempts || 0,
-            rushingYards: (stats as { rushingYards?: number }).rushingYards || 0,
-            flagPullAttempts: (stats as { flagPullAttempts?: number }).flagPullAttempts || 0,
+            rushingAttempts:
+              (stats as { rushingAttempts?: number }).rushingAttempts || 0,
+            rushingYards:
+              (stats as { rushingYards?: number }).rushingYards || 0,
+            flagPullAttempts:
+              (stats as { flagPullAttempts?: number }).flagPullAttempts || 0,
             flagPulls: (stats as { flagPulls?: number }).flagPulls || 0,
             interceptionsDef: 0, // Not in aggregated stats
             passDeflections: 0, // Not in aggregated stats
           };
         }),
         catchError((error) => {
-          this.logger.error('Error fetching tournament stats:', error);
+          this.logger.error("Error fetching tournament stats:", error);
           return of({
             tournamentId,
             tournamentName: "",
@@ -335,9 +352,9 @@ export class PlayerStatisticsService {
   ): Observable<PlayerSeasonStats> {
     // Use player-stats endpoint with season filter
     return this.apiService
-      .get<unknown>(API_ENDPOINTS.playerStats.aggregated, { 
-        playerId, 
-        season 
+      .get<unknown>(API_ENDPOINTS.playerStats.aggregated, {
+        playerId,
+        season,
       })
       .pipe(
         map((response) => {
@@ -361,25 +378,36 @@ export class PlayerStatisticsService {
             dropRate?: number;
             flagPullSuccessRate?: number;
           }>;
-          const stats = apiResponse.data || (response as unknown as Record<string, number>);
-          
-          const gamesPlayed = (stats as { gamesPlayed?: number }).gamesPlayed || 0;
+          const stats =
+            apiResponse.data || (response as unknown as Record<string, number>);
+
+          const gamesPlayed =
+            (stats as { gamesPlayed?: number }).gamesPlayed || 0;
           const totalGames = (stats as { totalGames?: number }).totalGames || 0;
           const gamesMissed = totalGames - gamesPlayed;
-          const attendanceRate = totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0;
+          const attendanceRate =
+            totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0;
 
-          const passAttempts = (stats as { passAttempts?: number }).passAttempts || 0;
-          const completions = (stats as { completions?: number }).completions || 0;
-          const passingYards = (stats as { passingYards?: number }).passingYards || 0;
+          const passAttempts =
+            (stats as { passAttempts?: number }).passAttempts || 0;
+          const completions =
+            (stats as { completions?: number }).completions || 0;
+          const passingYards =
+            (stats as { passingYards?: number }).passingYards || 0;
           const touchdowns = (stats as { touchdowns?: number }).touchdowns || 0;
-          const interceptions = (stats as { interceptions?: number }).interceptions || 0;
+          const interceptions =
+            (stats as { interceptions?: number }).interceptions || 0;
           const targets = (stats as { targets?: number }).targets || 0;
           const receptions = (stats as { receptions?: number }).receptions || 0;
-          const receivingYards = (stats as { receivingYards?: number }).receivingYards || 0;
+          const receivingYards =
+            (stats as { receivingYards?: number }).receivingYards || 0;
           const drops = (stats as { drops?: number }).drops || 0;
-          const rushingAttempts = (stats as { rushingAttempts?: number }).rushingAttempts || 0;
-          const rushingYards = (stats as { rushingYards?: number }).rushingYards || 0;
-          const flagPullAttempts = (stats as { flagPullAttempts?: number }).flagPullAttempts || 0;
+          const rushingAttempts =
+            (stats as { rushingAttempts?: number }).rushingAttempts || 0;
+          const rushingYards =
+            (stats as { rushingYards?: number }).rushingYards || 0;
+          const flagPullAttempts =
+            (stats as { flagPullAttempts?: number }).flagPullAttempts || 0;
           const flagPulls = (stats as { flagPulls?: number }).flagPulls || 0;
 
           return {
@@ -404,23 +432,32 @@ export class PlayerStatisticsService {
             totalInterceptionsDef: 0, // Not in aggregated stats
             totalPassDeflections: 0, // Not in aggregated stats
             avgPassingYards: gamesPlayed > 0 ? passingYards / gamesPlayed : 0,
-            avgReceivingYards: gamesPlayed > 0 ? receivingYards / gamesPlayed : 0,
+            avgReceivingYards:
+              gamesPlayed > 0 ? receivingYards / gamesPlayed : 0,
             avgRushingYards: gamesPlayed > 0 ? rushingYards / gamesPlayed : 0,
-            completionPercentage: (stats as { completionPercentage?: number }).completionPercentage || 
-              (passAttempts > 0 ? this.calculateCompletionPercentage(completions, passAttempts) : 0),
-            dropRate: (stats as { dropRate?: number }).dropRate || 
+            completionPercentage:
+              (stats as { completionPercentage?: number })
+                .completionPercentage ||
+              (passAttempts > 0
+                ? this.calculateCompletionPercentage(completions, passAttempts)
+                : 0),
+            dropRate:
+              (stats as { dropRate?: number }).dropRate ||
               (targets > 0 ? this.calculateDropRate(drops, targets) : 0),
-            flagPullSuccessRate: (stats as { flagPullSuccessRate?: number }).flagPullSuccessRate || 
-              (flagPullAttempts > 0 ? this.calculateFlagPullSuccessRate(flagPulls, flagPullAttempts) : 0),
+            flagPullSuccessRate:
+              (stats as { flagPullSuccessRate?: number }).flagPullSuccessRate ||
+              (flagPullAttempts > 0
+                ? this.calculateFlagPullSuccessRate(flagPulls, flagPullAttempts)
+                : 0),
           };
         }),
         catchError((error) => {
-          this.logger.error('Error fetching season stats:', error);
+          this.logger.error("Error fetching season stats:", error);
           return of(this.getEmptySeasonStats(season));
         }),
       );
   }
-  
+
   /**
    * Get empty season stats structure for error fallback
    */
@@ -486,35 +523,49 @@ export class PlayerStatisticsService {
             flagPullAttempts?: number;
             flagPulls?: number;
           }>;
-          const stats = apiResponse.data || (response as unknown as Record<string, number>);
+          const stats =
+            apiResponse.data || (response as unknown as Record<string, number>);
 
           // For now, treat all stats as a single "career" season
           // Multi-season breakdown would require additional backend endpoint
-          const gamesPlayed = (stats as { gamesPlayed?: number }).gamesPlayed || 0;
+          const gamesPlayed =
+            (stats as { gamesPlayed?: number }).gamesPlayed || 0;
           const totalGames = (stats as { totalGames?: number }).totalGames || 0;
           const gamesMissed = totalGames - gamesPlayed;
-          
-          const careerPassAttempts = (stats as { passAttempts?: number }).passAttempts || 0;
-          const careerCompletions = (stats as { completions?: number }).completions || 0;
-          const careerPassingYards = (stats as { passingYards?: number }).passingYards || 0;
-          const careerTouchdowns = (stats as { touchdowns?: number }).touchdowns || 0;
-          const careerInterceptions = (stats as { interceptions?: number }).interceptions || 0;
+
+          const careerPassAttempts =
+            (stats as { passAttempts?: number }).passAttempts || 0;
+          const careerCompletions =
+            (stats as { completions?: number }).completions || 0;
+          const careerPassingYards =
+            (stats as { passingYards?: number }).passingYards || 0;
+          const careerTouchdowns =
+            (stats as { touchdowns?: number }).touchdowns || 0;
+          const careerInterceptions =
+            (stats as { interceptions?: number }).interceptions || 0;
           const careerTargets = (stats as { targets?: number }).targets || 0;
-          const careerReceptions = (stats as { receptions?: number }).receptions || 0;
-          const careerReceivingYards = (stats as { receivingYards?: number }).receivingYards || 0;
+          const careerReceptions =
+            (stats as { receptions?: number }).receptions || 0;
+          const careerReceivingYards =
+            (stats as { receivingYards?: number }).receivingYards || 0;
           const careerDrops = (stats as { drops?: number }).drops || 0;
-          const careerRushingAttempts = (stats as { rushingAttempts?: number }).rushingAttempts || 0;
-          const careerRushingYards = (stats as { rushingYards?: number }).rushingYards || 0;
-          const careerFlagPullAttempts = (stats as { flagPullAttempts?: number }).flagPullAttempts || 0;
-          const careerFlagPulls = (stats as { flagPulls?: number }).flagPulls || 0;
+          const careerRushingAttempts =
+            (stats as { rushingAttempts?: number }).rushingAttempts || 0;
+          const careerRushingYards =
+            (stats as { rushingYards?: number }).rushingYards || 0;
+          const careerFlagPullAttempts =
+            (stats as { flagPullAttempts?: number }).flagPullAttempts || 0;
+          const careerFlagPulls =
+            (stats as { flagPulls?: number }).flagPulls || 0;
 
           // Create a single season entry representing career totals
           const careerSeason: PlayerSeasonStats = {
-            season: 'Career',
+            season: "Career",
             gamesPlayed,
             gamesMissed,
             totalGames,
-            attendanceRate: totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0,
+            attendanceRate:
+              totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0,
             totalPassAttempts: careerPassAttempts,
             totalCompletions: careerCompletions,
             totalPassingYards: careerPassingYards,
@@ -530,25 +581,38 @@ export class PlayerStatisticsService {
             totalFlagPulls: careerFlagPulls,
             totalInterceptionsDef: 0,
             totalPassDeflections: 0,
-            avgPassingYards: gamesPlayed > 0 ? careerPassingYards / gamesPlayed : 0,
-            avgReceivingYards: gamesPlayed > 0 ? careerReceivingYards / gamesPlayed : 0,
-            avgRushingYards: gamesPlayed > 0 ? careerRushingYards / gamesPlayed : 0,
-            completionPercentage: careerPassAttempts > 0 
-              ? this.calculateCompletionPercentage(careerCompletions, careerPassAttempts) 
-              : 0,
-            dropRate: careerTargets > 0 
-              ? this.calculateDropRate(careerDrops, careerTargets) 
-              : 0,
-            flagPullSuccessRate: careerFlagPullAttempts > 0 
-              ? this.calculateFlagPullSuccessRate(careerFlagPulls, careerFlagPullAttempts) 
-              : 0,
+            avgPassingYards:
+              gamesPlayed > 0 ? careerPassingYards / gamesPlayed : 0,
+            avgReceivingYards:
+              gamesPlayed > 0 ? careerReceivingYards / gamesPlayed : 0,
+            avgRushingYards:
+              gamesPlayed > 0 ? careerRushingYards / gamesPlayed : 0,
+            completionPercentage:
+              careerPassAttempts > 0
+                ? this.calculateCompletionPercentage(
+                    careerCompletions,
+                    careerPassAttempts,
+                  )
+                : 0,
+            dropRate:
+              careerTargets > 0
+                ? this.calculateDropRate(careerDrops, careerTargets)
+                : 0,
+            flagPullSuccessRate:
+              careerFlagPullAttempts > 0
+                ? this.calculateFlagPullSuccessRate(
+                    careerFlagPulls,
+                    careerFlagPullAttempts,
+                  )
+                : 0,
           };
 
           return {
             totalSeasons: 1, // Career totals only for now
             totalGamesPlayed: gamesPlayed,
             totalGamesMissed: gamesMissed,
-            overallAttendanceRate: totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0,
+            overallAttendanceRate:
+              totalGames > 0 ? (gamesPlayed / totalGames) * 100 : 0,
             seasons: [careerSeason],
             careerPassAttempts,
             careerCompletions,
@@ -568,12 +632,12 @@ export class PlayerStatisticsService {
           };
         }),
         catchError((error) => {
-          this.logger.error('Error fetching multi-season stats:', error);
+          this.logger.error("Error fetching multi-season stats:", error);
           return of(this.getEmptyMultiSeasonStats());
         }),
       );
   }
-  
+
   /**
    * Get empty multi-season stats structure for error fallback
    */
@@ -602,7 +666,17 @@ export class PlayerStatisticsService {
     };
   }
 
-  private aggregateGameStats(games: Array<PlayerGameStats & { hasStats?: boolean }>): Omit<PlayerGameStats, 'gameId' | 'gameDate' | 'opponent' | 'present' | 'snapAccuracy' | 'throwAccuracy'> {
+  private aggregateGameStats(
+    games: Array<PlayerGameStats & { hasStats?: boolean }>,
+  ): Omit<
+    PlayerGameStats,
+    | "gameId"
+    | "gameDate"
+    | "opponent"
+    | "present"
+    | "snapAccuracy"
+    | "throwAccuracy"
+  > {
     return games.reduce(
       (acc, game) => {
         const gameWithStats = game as PlayerGameStats & { hasStats?: boolean };
@@ -616,14 +690,19 @@ export class PlayerStatisticsService {
           interceptions: acc.interceptions + (gameWithStats.interceptions || 0),
           targets: acc.targets + (gameWithStats.targets || 0),
           receptions: acc.receptions + (gameWithStats.receptions || 0),
-          receivingYards: acc.receivingYards + (gameWithStats.receivingYards || 0),
+          receivingYards:
+            acc.receivingYards + (gameWithStats.receivingYards || 0),
           drops: acc.drops + (gameWithStats.drops || 0),
-          rushingAttempts: acc.rushingAttempts + (gameWithStats.rushingAttempts || 0),
+          rushingAttempts:
+            acc.rushingAttempts + (gameWithStats.rushingAttempts || 0),
           rushingYards: acc.rushingYards + (gameWithStats.rushingYards || 0),
-          flagPullAttempts: acc.flagPullAttempts + (gameWithStats.flagPullAttempts || 0),
+          flagPullAttempts:
+            acc.flagPullAttempts + (gameWithStats.flagPullAttempts || 0),
           flagPulls: acc.flagPulls + (gameWithStats.flagPulls || 0),
-          interceptionsDef: acc.interceptionsDef + (gameWithStats.interceptionsDef || 0),
-          passDeflections: acc.passDeflections + (gameWithStats.passDeflections || 0),
+          interceptionsDef:
+            acc.interceptionsDef + (gameWithStats.interceptionsDef || 0),
+          passDeflections:
+            acc.passDeflections + (gameWithStats.passDeflections || 0),
         };
       },
       {
@@ -709,7 +788,7 @@ export class PlayerStatisticsService {
     };
 
     const sum = accuracies.reduce((total: number, acc) => {
-      if (typeof acc === 'number') {
+      if (typeof acc === "number") {
         return total + acc;
       }
       return total + (accuracyMap[String(acc).toLowerCase()] || 0);

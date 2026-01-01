@@ -352,7 +352,7 @@ export class OnboardingManager {
 
   skipOnboarding() {
     if (
-      confirm(
+      confirm( // eslint-disable-line no-alert
         "Skip the onboarding tour? You can always access help from the menu.",
       )
     ) {

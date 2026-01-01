@@ -407,9 +407,7 @@ export const rotate = trigger("rotate", [
  */
 export const spin = trigger("spin", [
   state("spinning", style({ transform: "rotate(360deg)" })),
-  transition("* => spinning", [
-    animate(`600ms linear`),
-  ]),
+  transition("* => spinning", [animate(`600ms linear`)]),
 ]);
 
 /**
@@ -513,7 +511,9 @@ export const routeTransition = trigger("routeTransition", [
     query(":enter, :leave", style({ position: "absolute", width: "100%" }), {
       optional: true,
     }),
-    query(":enter", [style({ opacity: 0, transform: "translateY(10px)" })], { optional: true }),
+    query(":enter", [style({ opacity: 0, transform: "translateY(10px)" })], {
+      optional: true,
+    }),
     group([
       query(
         ":leave",
@@ -690,8 +690,14 @@ export const flip = trigger("flip", [
  * Subtle lift effect on hover
  */
 export const hoverLift = trigger("hoverLift", [
-  state("default", style({ transform: "translateY(0)", boxShadow: "var(--shadow-sm)" })),
-  state("hover", style({ transform: "translateY(-4px)", boxShadow: "var(--shadow-lg)" })),
+  state(
+    "default",
+    style({ transform: "translateY(0)", boxShadow: "var(--shadow-sm)" }),
+  ),
+  state(
+    "hover",
+    style({ transform: "translateY(-4px)", boxShadow: "var(--shadow-lg)" }),
+  ),
   transition("default <=> hover", [
     animate(`${ANIMATION_TIMINGS.normal} ${ANIMATION_EASING.microSpring}`),
   ]),

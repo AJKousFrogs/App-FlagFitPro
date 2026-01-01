@@ -118,7 +118,7 @@ exports.handler = async (event, context) => {
         return createErrorResponse(
           `Failed to insert session: ${error.message}`,
           500,
-          "database_error"
+          "database_error",
         );
       }
 

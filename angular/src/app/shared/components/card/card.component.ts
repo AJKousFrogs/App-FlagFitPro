@@ -29,7 +29,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
-    <div 
+    <div
       [class]="cardClass()"
       [class.card-hovered]="isHovered()"
       [class.card-pressed]="isPressed()"
@@ -61,7 +61,10 @@ import { CommonModule } from "@angular/common";
         <div class="card-header" [class.card-header-compact]="compact()">
           <div class="card-header-content">
             @if (headerIcon()) {
-              <div class="card-header-icon" [class]="'icon-' + headerIconColor()">
+              <div
+                class="card-header-icon"
+                [class]="'icon-' + headerIconColor()"
+              >
                 <i [class]="'pi ' + headerIcon()"></i>
               </div>
             }
@@ -81,7 +84,11 @@ import { CommonModule } from "@angular/common";
       }
 
       <!-- Card body -->
-      <div class="card-body" [class.card-body-compact]="compact()" [class.card-body-flush]="flush()">
+      <div
+        class="card-body"
+        [class.card-body-compact]="compact()"
+        [class.card-body-flush]="flush()"
+      >
         <ng-content></ng-content>
       </div>
 
@@ -111,9 +118,9 @@ import { CommonModule } from "@angular/common";
         background: var(--surface-primary);
         border-radius: var(--radius-xl);
         overflow: hidden;
-        
+
         /* Premium transition */
-        transition: 
+        transition:
           transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
           box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
           border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -146,7 +153,7 @@ import { CommonModule } from "@angular/common";
       @media (hover: hover) and (pointer: fine) {
         .card-elevated:hover {
           transform: translateY(-4px);
-          box-shadow: 
+          box-shadow:
             0 12px 40px -10px rgba(0, 0, 0, 0.15),
             0 4px 15px -5px rgba(0, 0, 0, 0.1);
         }
@@ -175,7 +182,7 @@ import { CommonModule } from "@angular/common";
       @media (hover: hover) and (pointer: fine) {
         .card-interactive:hover {
           transform: translateY(-4px);
-          box-shadow: 
+          box-shadow:
             0 12px 40px -10px rgba(0, 0, 0, 0.15),
             0 4px 15px -5px rgba(0, 0, 0, 0.1);
           border-color: var(--ds-primary-green);
@@ -207,7 +214,7 @@ import { CommonModule } from "@angular/common";
         );
         color: var(--color-text-on-primary);
         border: none;
-        box-shadow: 
+        box-shadow:
           0 8px 30px rgba(var(--ds-primary-green-rgb), 0.3),
           0 4px 15px rgba(0, 0, 0, 0.1);
       }
@@ -230,7 +237,7 @@ import { CommonModule } from "@angular/common";
       @media (hover: hover) and (pointer: fine) {
         .card-gradient:hover {
           transform: translateY(-4px);
-          box-shadow: 
+          box-shadow:
             0 16px 50px rgba(var(--ds-primary-green-rgb), 0.4),
             0 6px 20px rgba(0, 0, 0, 0.15);
         }
@@ -245,7 +252,7 @@ import { CommonModule } from "@angular/common";
       @media (hover: hover) and (pointer: fine) {
         .card-session:hover {
           transform: translateY(-4px);
-          box-shadow: 
+          box-shadow:
             0 12px 40px rgba(var(--ds-primary-green-rgb), 0.15),
             0 4px 15px rgba(0, 0, 0, 0.1);
           border-color: var(--ds-primary-green);
@@ -525,12 +532,18 @@ import { CommonModule } from "@angular/common";
 })
 export class CardComponent {
   private elementRef = inject(ElementRef);
-  
+
   // Angular 21: Use input() signals instead of @Input()
   title = input<string>();
   subtitle = input<string>();
   variant = input<
-    "default" | "elevated" | "outlined" | "interactive" | "gradient" | "session" | "glass"
+    | "default"
+    | "elevated"
+    | "outlined"
+    | "interactive"
+    | "gradient"
+    | "session"
+    | "glass"
   >("default");
   hasFooter = input<boolean>(false);
   compact = input<boolean>(false);
@@ -540,8 +553,10 @@ export class CardComponent {
   showAccent = input<boolean>(false);
   accentColor = input<string>("primary");
   headerIcon = input<string>("");
-  headerIconColor = input<"primary" | "success" | "warning" | "error" | "info">("primary");
-  
+  headerIconColor = input<"primary" | "success" | "warning" | "error" | "info">(
+    "primary",
+  );
+
   // Events
   cardClick = output<MouseEvent>();
 
@@ -558,19 +573,24 @@ export class CardComponent {
 
   accentGradient = computed(() => {
     const colorMap: Record<string, string> = {
-      primary: "linear-gradient(90deg, var(--ds-primary-green) 0%, var(--ds-primary-green-light) 100%)",
-      success: "linear-gradient(90deg, var(--color-status-success) 0%, #84cc16 100%)",
-      warning: "linear-gradient(90deg, var(--color-status-warning) 0%, #fbbf24 100%)",
-      error: "linear-gradient(90deg, var(--color-status-error) 0%, #f87171 100%)",
+      primary:
+        "linear-gradient(90deg, var(--ds-primary-green) 0%, var(--ds-primary-green-light) 100%)",
+      success:
+        "linear-gradient(90deg, var(--color-status-success) 0%, #84cc16 100%)",
+      warning:
+        "linear-gradient(90deg, var(--color-status-warning) 0%, #fbbf24 100%)",
+      error:
+        "linear-gradient(90deg, var(--color-status-error) 0%, #f87171 100%)",
       info: "linear-gradient(90deg, var(--color-status-info) 0%, #38bdf8 100%)",
     };
-    return colorMap[this.accentColor()] || colorMap['primary'];
+    return colorMap[this.accentColor()] || colorMap["primary"];
   });
 
   constructor() {
     afterNextRender(() => {
       // Check if there's header action content
-      const headerActions = this.elementRef.nativeElement.querySelector('[header-actions]');
+      const headerActions =
+        this.elementRef.nativeElement.querySelector("[header-actions]");
       this.hasHeaderContent = !!headerActions?.childNodes.length;
     });
   }

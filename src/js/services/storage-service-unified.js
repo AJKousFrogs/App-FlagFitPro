@@ -358,12 +358,12 @@ class UnifiedStorageService {
   getSizeFormatted() {
     const bytes = this.getSize();
     if (bytes < 1024) {
-      return `${bytes  } B`;
+      return `${bytes} B`;
     }
     if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(2)  } KB`;
+      return `${(bytes / 1024).toFixed(2)} KB`;
     }
-    return `${(bytes / (1024 * 1024)).toFixed(2)  } MB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   }
 }
 
@@ -376,8 +376,11 @@ export { UnifiedStorageService };
  * @deprecated Use storageService.set() instead. This function will be removed in a future version.
  */
 export const saveToStorage = (key, data) => {
-  // eslint-disable-next-line no-console
-  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] saveToStorage() is deprecated. Use storageService.set() instead.');}
+  if (typeof logger !== "undefined" && logger.warn) {
+    logger.warn(
+      "[DEPRECATED] saveToStorage() is deprecated. Use storageService.set() instead.",
+    );
+  }
   return storageService.set(key, data);
 };
 
@@ -385,8 +388,11 @@ export const saveToStorage = (key, data) => {
  * @deprecated Use storageService.get() instead. This function will be removed in a future version.
  */
 export const getFromStorage = (key, defaultValue) => {
-  // eslint-disable-next-line no-console
-  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] getFromStorage() is deprecated. Use storageService.get() instead.');}
+  if (typeof logger !== "undefined" && logger.warn) {
+    logger.warn(
+      "[DEPRECATED] getFromStorage() is deprecated. Use storageService.get() instead.",
+    );
+  }
   return storageService.get(key, defaultValue);
 };
 
@@ -394,7 +400,10 @@ export const getFromStorage = (key, defaultValue) => {
  * @deprecated Use storageService.remove() instead. This function will be removed in a future version.
  */
 export const removeFromStorage = (key) => {
-  // eslint-disable-next-line no-console
-  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] removeFromStorage() is deprecated. Use storageService.remove() instead.');}
+  if (typeof logger !== "undefined" && logger.warn) {
+    logger.warn(
+      "[DEPRECATED] removeFromStorage() is deprecated. Use storageService.remove() instead.",
+    );
+  }
   return storageService.remove(key);
 };

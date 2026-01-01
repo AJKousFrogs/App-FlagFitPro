@@ -31,7 +31,7 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
   // Angular 21: Use input() signals instead of @Input()
   src = input.required<string>();
   placeholder = input<string>(
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f3f4f6' width='400' height='300'/%3E%3Ctext fill='%239ca3af' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='18'%3ELoading...%3C/text%3E%3C/svg%3E"
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f3f4f6' width='400' height='300'/%3E%3Ctext fill='%239ca3af' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='18'%3ELoading...%3C/text%3E%3C/svg%3E",
   );
 
   private observer?: IntersectionObserver;
@@ -41,7 +41,11 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Set placeholder immediately
-    this.renderer.setAttribute(this.el.nativeElement, "src", this.placeholder());
+    this.renderer.setAttribute(
+      this.el.nativeElement,
+      "src",
+      this.placeholder(),
+    );
     this.renderer.addClass(this.el.nativeElement, "lazy-loading");
 
     // Use native lazy loading as primary method
@@ -69,7 +73,7 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
       {
         rootMargin: "50px", // Start loading 50px before entering viewport
         threshold: 0.01,
-      }
+      },
     );
 
     this.observer.observe(this.el.nativeElement);
@@ -80,7 +84,7 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
 
     const img = new Image();
     const srcValue = this.src();
-    
+
     img.onload = () => {
       this.renderer.setAttribute(this.el.nativeElement, "src", srcValue);
       this.renderer.removeClass(this.el.nativeElement, "lazy-loading");
@@ -95,7 +99,7 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
       this.renderer.setAttribute(
         this.el.nativeElement,
         "src",
-        errorPlaceholder
+        errorPlaceholder,
       );
       this.renderer.removeClass(this.el.nativeElement, "lazy-loading");
       this.renderer.addClass(this.el.nativeElement, "lazy-error");
@@ -110,4 +114,3 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
     }
   }
 }
-

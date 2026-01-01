@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 /**
  * FlagFit Pro - Export Service
@@ -71,7 +71,7 @@ class ExportService {
                   value.includes('"') ||
                   value.includes("\n")
                 ) {
-                  value = `"${  value.replace(/"/g, '""')  }"`;
+                  value = `"${value.replace(/"/g, '""')}"`;
                 }
               }
 
@@ -106,7 +106,7 @@ class ExportService {
 
     if (!window.jspdf || !window.jspdf.jsPDF) {
       logger.error("[Export] jsPDF not available");
-      alert("PDF export is loading. Please try again in a moment.");
+      alert("PDF export is loading. Please try again in a moment."); // eslint-disable-line no-alert
       return false;
     }
 
@@ -244,7 +244,7 @@ class ExportService {
       return true;
     } catch (error) {
       logger.error("[Export] PDF export failed:", error);
-      alert("PDF export failed. Please try again.");
+      alert("PDF export failed. Please try again."); // eslint-disable-line no-alert
       return false;
     }
   }

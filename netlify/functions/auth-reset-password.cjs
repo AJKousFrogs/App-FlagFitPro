@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
           "Email is required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -40,7 +40,7 @@ exports.handler = async (event, context) => {
             "Unable to send reset email at this time. Please try again later.",
             503,
             "service_unavailable",
-            requestId
+            requestId,
           );
         }
       }
@@ -57,7 +57,7 @@ exports.handler = async (event, context) => {
               message: "Password reset link sent to your email",
               messageId: result.messageId,
             },
-            requestId
+            requestId,
           );
         } catch (emailError) {
           console.error("Email sending failed:", emailError);
@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
               message:
                 "If this email exists in our system, you will receive a password reset link",
             },
-            requestId
+            requestId,
           );
         }
       } else if (action === "verify") {
@@ -77,7 +77,7 @@ exports.handler = async (event, context) => {
             "Token is required",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
 
@@ -89,7 +89,7 @@ exports.handler = async (event, context) => {
             "Token and new password are required",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
 
@@ -100,7 +100,7 @@ exports.handler = async (event, context) => {
             verification.error,
             400,
             "invalid_token",
-            requestId
+            requestId,
           );
         }
 
@@ -113,14 +113,14 @@ exports.handler = async (event, context) => {
             message: "Password reset successful",
             email: verification.email,
           },
-          requestId
+          requestId,
         );
       } else {
         return createErrorResponse(
           "Invalid action",
           400,
           "invalid_action",
-          requestId
+          requestId,
         );
       }
     },

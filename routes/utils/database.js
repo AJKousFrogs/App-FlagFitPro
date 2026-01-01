@@ -71,7 +71,9 @@ if (connectionString) {
     pool.on("error", (err) => {
       serverLogger.error("PostgreSQL pool error:", err);
       if (err.code === "ECONNREFUSED" || err.code === "ETIMEDOUT") {
-        serverLogger.warn("Database connection lost - will retry on next query");
+        serverLogger.warn(
+          "Database connection lost - will retry on next query",
+        );
       }
     });
   } catch (error) {
@@ -142,7 +144,3 @@ export async function checkDatabaseHealth() {
 
 export { supabase, pool };
 export default { supabase, pool, checkDatabaseHealth };
-
-
-
-

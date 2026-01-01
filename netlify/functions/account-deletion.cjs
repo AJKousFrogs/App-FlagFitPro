@@ -1,16 +1,19 @@
 /**
  * Account Deletion API
- * 
+ *
  * Implements account deletion workflow as defined in PRIVACY_POLICY.md:
  * - POST: Request account deletion (30-day retention period)
  * - DELETE: Cancel pending deletion request
  * - GET: Get deletion request status
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 const { getSupabaseClient, supabaseAdmin } = require("./supabase-client.cjs");
 
 exports.handler = async (event, context) => {
@@ -52,9 +55,13 @@ exports.handler = async (event, context) => {
             softDeletedAt: request.soft_deleted_at,
             hardDeletedAt: request.hard_deleted_at,
             reason: request.reason,
-            daysRemaining: request.status === "pending" 
-              ? Math.ceil((new Date(request.scheduled_hard_delete_at) - new Date()) / (1000 * 60 * 60 * 24))
-              : null,
+            daysRemaining:
+              request.status === "pending"
+                ? Math.ceil(
+                    (new Date(request.scheduled_hard_delete_at) - new Date()) /
+                      (1000 * 60 * 60 * 24),
+                  )
+                : null,
           },
         });
       }
@@ -75,7 +82,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Account deletion must be explicitly confirmed. Set confirmDelete: true in request body.",
             400,
-            "confirmation_required"
+            "confirmation_required",
           );
         }
 
@@ -91,7 +98,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "You already have a pending deletion request. Cancel it first if you want to submit a new one.",
             409,
-            "request_exists"
+            "request_exists",
           );
         }
 
@@ -101,7 +108,7 @@ exports.handler = async (event, context) => {
           {
             p_user_id: userId,
             p_reason: reason || null,
-          }
+          },
         );
 
         if (error) {
@@ -117,9 +124,12 @@ exports.handler = async (event, context) => {
         return createSuccessResponse({
           success: true,
           requestId: result,
-          message: "Account deletion initiated. Your data will be permanently deleted in 30 days. " +
-                   "You can cancel this request by logging back in within that period.",
-          scheduledDeletionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          message:
+            "Account deletion initiated. Your data will be permanently deleted in 30 days. " +
+            "You can cancel this request by logging back in within that period.",
+          scheduledDeletionDate: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+          ).toISOString(),
           gracePeriodDays: 30,
         });
       }
@@ -138,7 +148,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "No pending deletion request found",
             404,
-            "not_found"
+            "not_found",
           );
         }
 
@@ -148,7 +158,7 @@ exports.handler = async (event, context) => {
           {
             p_request_id: pendingRequest.id,
             p_user_id: userId,
-          }
+          },
         );
 
         if (error) {
@@ -159,19 +169,16 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             "Could not cancel deletion request. It may have already been processed.",
             400,
-            "cancellation_failed"
+            "cancellation_failed",
           );
         }
 
         return createSuccessResponse({
           success: true,
-          message: "Account deletion cancelled. Your account has been reactivated.",
+          message:
+            "Account deletion cancelled. Your account has been reactivated.",
         });
       }
     },
   });
 };
-
-
-
-

@@ -1,9 +1,9 @@
 /**
  * Rate Limiter Middleware
- * 
+ *
  * Provides configurable rate limiting for Netlify functions.
  * Uses in-memory storage with automatic cleanup.
- * 
+ *
  * Features:
  * - Multiple rate limit tiers (AUTH, CREATE, READ, DELETE, DEFAULT)
  * - IP-based and user-based limiting
@@ -75,7 +75,7 @@ setInterval(() => {
 
 /**
  * Check if a request is within rate limits
- * 
+ *
  * @param {string} identifier - Unique identifier (IP, user ID, etc.)
  * @param {object} options - Rate limit options
  * @returns {{ allowed: boolean, remaining: number, resetAt?: number, retryAfter?: number }}
@@ -138,7 +138,7 @@ function checkRateLimit(identifier, options = RATE_LIMITS.DEFAULT) {
 /**
  * Apply rate limiting to a request
  * Returns a response if rate limited, null otherwise
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {string} limitType - Type of rate limit to apply
  * @param {string} userId - Optional user ID for user-based limiting
@@ -155,16 +155,16 @@ function applyRateLimit(event, limitType = "DEFAULT", userId = null) {
 
   // Create composite identifier (IP + optional userId for stricter limits)
   const identifier = userId ? `${ip}:${userId}` : ip;
-  
+
   // Get rate limit configuration
   const limit = RATE_LIMITS[limitType] || RATE_LIMITS.DEFAULT;
-  
+
   // Check rate limit
   const result = checkRateLimit(identifier, limit);
 
   if (!result.allowed) {
     console.warn(`[RATE LIMIT] Exceeded for ${identifier} (${limitType})`);
-    
+
     return {
       statusCode: 429,
       headers: {
@@ -193,7 +193,7 @@ function applyRateLimit(event, limitType = "DEFAULT", userId = null) {
 
 /**
  * Determine the appropriate rate limit type based on request
- * 
+ *
  * @param {string} method - HTTP method
  * @param {string} path - Request path
  * @returns {string} - Rate limit type
@@ -227,7 +227,7 @@ function getRateLimitType(method, path) {
 
 /**
  * Get rate limit headers for a response
- * 
+ *
  * @param {string} identifier - Rate limit identifier
  * @param {string} limitType - Type of rate limit
  * @returns {object} - Headers object
@@ -246,7 +246,9 @@ function getRateLimitHeaders(identifier, limitType = "DEFAULT") {
 
   return {
     "X-RateLimit-Limit": String(limit.maxRequests),
-    "X-RateLimit-Remaining": String(Math.max(0, limit.maxRequests - data.count)),
+    "X-RateLimit-Remaining": String(
+      Math.max(0, limit.maxRequests - data.count),
+    ),
     "X-RateLimit-Reset": String(Math.ceil(data.resetAt / 1000)),
   };
 }

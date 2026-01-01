@@ -25,7 +25,10 @@ import { InputTextModule } from "primeng/inputtext";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SearchService, SearchResult } from "../../../core/services/search.service";
+import {
+  SearchService,
+  SearchResult,
+} from "../../../core/services/search.service";
 
 @Component({
   selector: "app-search-panel",
@@ -92,7 +95,11 @@ import { SearchService, SearchResult } from "../../../core/services/search.servi
         <!-- Results -->
         @if (!searchService.loading() && searchService.hasResults()) {
           <div class="search-results">
-            @for (result of searchService.results(); track result.id; let i = $index) {
+            @for (
+              result of searchService.results();
+              track result.id;
+              let i = $index
+            ) {
               <div
                 class="search-result-item"
                 [class.selected]="selectedIndex() === i"
@@ -115,7 +122,9 @@ import { SearchService, SearchResult } from "../../../core/services/search.servi
         }
 
         <!-- No Results -->
-        @if (!searchService.loading() && searchQuery && !searchService.hasResults()) {
+        @if (
+          !searchService.loading() && searchQuery && !searchService.hasResults()
+        ) {
           <div class="no-results">
             <i class="pi pi-search"></i>
             <p>No results found for "{{ searchQuery }}"</p>
@@ -136,10 +145,7 @@ import { SearchService, SearchResult } from "../../../core/services/search.servi
               ></p-button>
             </div>
             @for (recent of searchService.recentSearches(); track recent) {
-              <div
-                class="recent-item"
-                (click)="searchFor(recent)"
-              >
+              <div class="recent-item" (click)="searchFor(recent)">
                 <i class="pi pi-history"></i>
                 <span>{{ recent }}</span>
               </div>

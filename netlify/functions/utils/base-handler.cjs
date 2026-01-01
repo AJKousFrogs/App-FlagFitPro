@@ -77,7 +77,7 @@ async function baseHandler(event, context, options = {}) {
 
   // Generate unique request ID for tracking
   const requestId = event.headers?.["x-request-id"] || generateRequestId();
-  
+
   // Performance monitoring - start timer
   const startTime = Date.now();
 
@@ -140,7 +140,7 @@ async function baseHandler(event, context, options = {}) {
 
     // Performance monitoring - calculate duration
     const duration = Date.now() - startTime;
-    
+
     // Log performance metrics with request ID
     console.log(`[PERFORMANCE] ${functionName} [${requestId}]: ${duration}ms`, {
       requestId,
@@ -157,7 +157,10 @@ async function baseHandler(event, context, options = {}) {
       event.headers?.["x-real-ip"] ||
       "unknown";
     const rateLimitIdentifier = userId ? `${clientIp}:${userId}` : clientIp;
-    const rateLimitHeaders = getRateLimitHeaders(rateLimitIdentifier, rateLimitType);
+    const rateLimitHeaders = getRateLimitHeaders(
+      rateLimitIdentifier,
+      rateLimitType,
+    );
 
     // Add performance, tracking, and rate limit headers to response
     if (response && response.headers) {
@@ -170,20 +173,25 @@ async function baseHandler(event, context, options = {}) {
 
     // Alert on slow responses (>1000ms)
     if (duration > 1000) {
-      console.warn(`[SLOW RESPONSE] ${functionName} [${requestId}] took ${duration}ms`);
+      console.warn(
+        `[SLOW RESPONSE] ${functionName} [${requestId}] took ${duration}ms`,
+      );
     }
 
     return response;
   } catch (error) {
     // Calculate duration even for errors
     const duration = Date.now() - startTime;
-    console.error(`[ERROR] ${functionName} [${requestId}] failed after ${duration}ms:`, {
-      requestId,
-      error: error.message,
-      stack: error.stack,
-      duration,
-    });
-    
+    console.error(
+      `[ERROR] ${functionName} [${requestId}] failed after ${duration}ms:`,
+      {
+        requestId,
+        error: error.message,
+        stack: error.stack,
+        duration,
+      },
+    );
+
     const errorResponse = handleServerError(error, functionName);
     // Add request ID to error response for debugging
     if (errorResponse && errorResponse.headers) {

@@ -145,7 +145,12 @@ export interface WarmupProtocol {
   protocol_type: string;
   duration_minutes: number;
   description: string;
-  steps: Array<{ exercise: string; duration?: string; reps?: string; notes?: string }>;
+  steps: Array<{
+    exercise: string;
+    duration?: string;
+    reps?: string;
+    notes?: string;
+  }>;
   equipment_needed: string[];
   notes: string;
 }
@@ -183,7 +188,7 @@ export class TrainingProgramService {
     const week = this.currentWeek();
     if (!program || !week || !program.training_phases) return null;
     return program.training_phases.find((p) =>
-      p.weeks?.some((w) => w.id === week.id)
+      p.weeks?.some((w) => w.id === week.id),
     );
   });
 
@@ -211,15 +216,16 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingProgram[]>>(
           "/api/training-programs",
-          { active_only: activeOnly ? "true" : "false" }
-        )
+          { active_only: activeOnly ? "true" : "false" },
+        ),
       );
 
       const programs = response?.data?.data || response?.data || [];
       this.programs.set(programs as TrainingProgram[]);
       return programs as TrainingProgram[];
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch programs";
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch programs";
       this.error.set(message);
       this.logger.error("Error fetching training programs:", err);
       return [];
@@ -239,8 +245,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingProgram>>(
           "/api/training-programs",
-          { id: programId }
-        )
+          { id: programId },
+        ),
       );
 
       const program = response?.data?.data || response?.data || null;
@@ -249,7 +255,8 @@ export class TrainingProgramService {
       }
       return program as TrainingProgram | null;
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch program";
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch program";
       this.error.set(message);
       this.logger.error("Error fetching training program:", err);
       return null;
@@ -269,8 +276,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingProgram>>(
           "/api/training-programs",
-          { id: programId, full: "true" }
-        )
+          { id: programId, full: "true" },
+        ),
       );
 
       const program = response?.data?.data || response?.data || null;
@@ -279,7 +286,8 @@ export class TrainingProgramService {
       }
       return program as TrainingProgram | null;
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch full program";
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch full program";
       this.error.set(message);
       this.logger.error("Error fetching full training program:", err);
       return null;
@@ -296,8 +304,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingPhase[]>>(
           "/api/training-programs/phases",
-          { programId }
-        )
+          { programId },
+        ),
       );
 
       // Handle both nested and direct response formats
@@ -320,8 +328,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingWeek[]>>(
           "/api/training-programs/weeks",
-          { phaseId }
-        )
+          { phaseId },
+        ),
       );
 
       // Handle both nested and direct response formats
@@ -344,8 +352,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<SessionTemplate[]>>(
           "/api/training-programs/sessions",
-          { weekId }
-        )
+          { weekId },
+        ),
       );
 
       // Handle both nested and direct response formats
@@ -368,8 +376,8 @@ export class TrainingProgramService {
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<SessionExercise[]>>(
           "/api/training-programs/exercises",
-          { sessionId }
-        )
+          { sessionId },
+        ),
       );
 
       // Handle both nested and direct response formats
@@ -387,18 +395,21 @@ export class TrainingProgramService {
   /**
    * Fetch current week based on today's date
    */
-  async fetchCurrentWeek(programId: string, date?: string): Promise<TrainingWeek | null> {
+  async fetchCurrentWeek(
+    programId: string,
+    date?: string,
+  ): Promise<TrainingWeek | null> {
     try {
       const params: Record<string, string> = { programId };
       if (date) {
-        params['date'] = date;
+        params["date"] = date;
       }
 
       const response = await firstValueFrom(
         this.apiService.get<ApiResponse<TrainingWeek>>(
           "/api/training-programs/current-week",
-          params
-        )
+          params,
+        ),
       );
 
       const week = response?.data?.data || response?.data || null;
@@ -415,7 +426,9 @@ export class TrainingProgramService {
   /**
    * Get program by position (e.g., "WR/DB", "QB")
    */
-  async fetchProgramByPosition(positionName: string): Promise<TrainingProgram | null> {
+  async fetchProgramByPosition(
+    positionName: string,
+  ): Promise<TrainingProgram | null> {
     const programs = await this.fetchPrograms(true);
     return programs.find((p) => p.positions?.name === positionName) || null;
   }
@@ -425,9 +438,10 @@ export class TrainingProgramService {
    */
   async fetchLjubljanaFrogsProgram(): Promise<TrainingProgram | null> {
     const programs = await this.fetchPrograms(true);
-    const program = programs.find((p) =>
-      p.name.toLowerCase().includes("ljubljana frogs") &&
-      p.name.toLowerCase().includes("wr/db")
+    const program = programs.find(
+      (p) =>
+        p.name.toLowerCase().includes("ljubljana frogs") &&
+        p.name.toLowerCase().includes("wr/db"),
     );
 
     if (program) {
@@ -450,7 +464,15 @@ export class TrainingProgramService {
    * Get day name from day number
    */
   getDayName(dayOfWeek: number): string {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     return days[dayOfWeek] || "Unknown";
   }
 
@@ -463,4 +485,3 @@ export class TrainingProgramService {
     this.error.set(null);
   }
 }
-

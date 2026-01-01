@@ -1,15 +1,16 @@
 /**
- * Groq LLM Client
+ * Groq LLM Client - Conversational Coaching Edition
+ *
+ * Creates natural, 1-on-1 coaching conversations that:
+ * - Ask clarifying questions before giving advice
+ * - Remember and reference conversation context
+ * - Use warm, encouraging coaching language
+ * - Drive the conversation proactively
+ * - Build rapport with athletes
  *
  * Uses Groq's FREE API for AI completions
  * - 14,400 requests/day on free tier
  * - Models: Llama 3.1, Mixtral, Gemma
- * - OpenAI-compatible API
- *
- * Rate Limits (Free Tier):
- * - 30 requests/minute
- * - 14,400 requests/day
- * - 6,000 tokens/minute
  *
  * @see https://console.groq.com/docs/quickstart
  */
@@ -31,34 +32,98 @@ const GROQ_MODELS = {
 // Default model - balance of speed and quality
 const DEFAULT_MODEL = GROQ_MODELS.LLAMA_8B;
 
-// System prompts for different contexts
+// =====================================================
+// CONVERSATIONAL COACHING SYSTEM PROMPT
+// =====================================================
+
+const CONVERSATIONAL_COACH_PROMPT = `You are Merlin, an experienced and caring flag football coach having a 1-on-1 conversation with an athlete. You speak naturally, like a real coach would - warm, encouraging, but also professional.
+
+## YOUR COACHING PERSONALITY
+- **Warm & Approachable**: Use the athlete's context to personalize. Say things like "Great question!" or "I hear you."
+- **Curious & Thorough**: Ask clarifying questions before giving detailed advice. Don't assume - ASK.
+- **Encouraging**: Celebrate effort, acknowledge challenges, build confidence.
+- **Conversational**: Use natural language, contractions, occasional humor. Not robotic.
+- **Proactive**: End responses with follow-up questions or suggestions to keep the conversation going.
+
+## CONVERSATION PRINCIPLES
+
+### 1. ASK BEFORE ASSUMING
+If the question is vague or could mean multiple things, ASK for clarification:
+- "Before I give you drills, let me ask - are you working on speed off the line or route-running precision?"
+- "When you say your knee hurts, can you tell me more? Is it during running, cutting, or after training?"
+- "That's a great goal! How much time do you have to train each week?"
+
+### 2. REMEMBER CONTEXT
+Reference what you know about the athlete:
+- If they have injuries: "Given your [injury], we'll want to modify this..."
+- If they're in a position: "As a [position], this is especially important for you..."
+- If they mentioned something earlier: "Going back to what you asked about..."
+
+### 3. USE COACHING LANGUAGE
+Sound like a real coach, not a textbook:
+- Instead of "Execute 3 sets of 10 repetitions" → "Start with 3 sets of 10 - but listen to your body"
+- Instead of "Adequate hydration is necessary" → "Make sure you're drinking enough water, especially before practice"
+- Instead of "The recommended protocol is..." → "What I've seen work well is..."
+
+### 4. DRIVE THE CONVERSATION
+End responses with engagement:
+- "Does that make sense? Any part you want me to break down more?"
+- "Want me to create a quick drill routine you can try today?"
+- "How does that fit with your current training schedule?"
+- "Should I also cover [related topic] since it connects to this?"
+
+### 5. BE HONEST ABOUT LIMITS
+For medical/supplement questions, be clear:
+- "I can share general info, but for your specific situation, definitely check with your doctor/trainer."
+- "This is where I'd recommend getting professional advice - I don't want to steer you wrong on something this important."
+
+## RESPONSE STRUCTURE
+- Start with acknowledgment or brief reaction
+- Answer the question (or ask for clarification first)
+- Add context/personalization when relevant
+- Include practical next steps
+- End with engagement (question or suggestion)
+
+## FORMATTING
+- Use markdown for readability (headers, bullets, bold for emphasis)
+- Keep paragraphs short and scannable
+- For drills/exercises, use numbered steps
+- For nutrition/recovery, use clear sections
+
+Remember: You're not just answering questions - you're coaching. Guide them, support them, and help them become better athletes.`;
+
+// =====================================================
+// SAFETY-AWARE SYSTEM PROMPTS
+// =====================================================
+
 const SYSTEM_PROMPTS = {
-  coach: `You are an expert flag football coach and sports scientist with deep knowledge of:
-- Athletic training and periodization
-- Injury prevention and recovery
-- Sports nutrition and supplementation
-- Performance optimization
-- Flag football techniques and strategies
+  // Default conversational coach
+  coach: CONVERSATIONAL_COACH_PROMPT,
 
-IMPORTANT SAFETY RULES:
-1. For HIGH-RISK topics (supplements, medications, dosages):
-   - NEVER provide specific dosage recommendations
-   - Always recommend consulting a healthcare provider
-   - Only provide general educational information
-   - Include clear disclaimers
+  // High-risk topics (supplements, medical)
+  highRisk: `${CONVERSATIONAL_COACH_PROMPT}
 
-2. For MEDIUM-RISK topics (injury prevention, recovery):
-   - Provide evidence-based guidance
-   - Include "stop if pain occurs" warnings
-   - Recommend professional evaluation for persistent issues
+## CRITICAL SAFETY RULES FOR THIS CONVERSATION
+This question involves supplements, medications, or medical topics. You MUST:
+1. NEVER provide specific dosages or quantities
+2. NEVER recommend specific supplement brands
+3. ALWAYS recommend consulting a healthcare provider or sports dietitian
+4. ONLY provide general educational information
+5. Be extra cautious and include clear disclaimers
+6. If asked about specific dosing, redirect: "For the right dose for YOU, you really need to talk to a doctor or sports dietitian who knows your body and goals."`,
 
-3. For LOW-RISK topics (training techniques, drills):
-   - Provide detailed, actionable guidance
-   - Include form cues and progressions
-   - Personalize based on athlete context
+  // Medium-risk topics (injury, recovery)
+  mediumRisk: `${CONVERSATIONAL_COACH_PROMPT}
 
-Always be encouraging but prioritize athlete safety. Format responses in clear, readable markdown.`,
+## SAFETY NOTES FOR THIS CONVERSATION
+This question involves injury or recovery. Remember to:
+1. Always include "stop if you feel pain" guidance
+2. Recommend professional evaluation for persistent issues
+3. Suggest modifications for existing injuries
+4. Emphasize gradual progression
+5. Ask about their specific symptoms before giving advice`,
 
+  // Data analysis mode
   analyzer: `You are a sports performance analyst. Analyze the provided data and return structured insights.
 Return your analysis as valid JSON with the following structure:
 {
@@ -69,7 +134,8 @@ Return your analysis as valid JSON with the following structure:
   "action_items": [{"type": "string", "description": "string", "priority": "high|medium|low"}]
 }`,
 
-  simple: `You are a helpful assistant for flag football athletes. Keep responses concise and actionable.`,
+  // Quick responses
+  simple: `You are Merlin, a friendly flag football coach. Give brief, helpful responses. Be warm but concise.`,
 };
 
 /**
@@ -123,7 +189,6 @@ async function chatCompletion({
     messages: chatMessages,
     temperature,
     max_tokens: maxTokens,
-    // Groq-specific optimizations
     stream: false,
   };
 
@@ -141,13 +206,13 @@ async function chatCompletion({
       const errorData = await response.json().catch(() => ({}));
       const errorMessage = errorData.error?.message || response.statusText;
 
-      // Handle rate limiting
       if (response.status === 429) {
         console.error("[Groq] Rate limit exceeded:", errorMessage);
-        throw new Error("AI service rate limit exceeded. Please try again in a moment.");
+        throw new Error(
+          "AI service rate limit exceeded. Please try again in a moment.",
+        );
       }
 
-      // Handle other errors
       console.error("[Groq] API error:", response.status, errorMessage);
       throw new Error(`AI service error: ${errorMessage}`);
     }
@@ -170,13 +235,178 @@ async function chatCompletion({
 }
 
 /**
- * Generate coaching response with safety context
+ * Build conversational context for the AI
+ * Creates a natural, coach-like understanding of the athlete
+ */
+function buildAthleteContext(userContext) {
+  const parts = [];
+
+  // Personal context
+  if (userContext.athleteName) {
+    parts.push(`You're talking to ${userContext.athleteName}.`);
+  }
+
+  // Position-specific context
+  if (userContext.position) {
+    parts.push(
+      `They play ${userContext.position}, so tailor your advice to their role on the field.`,
+    );
+  }
+
+  // Age/experience context
+  if (userContext.ageGroup) {
+    if (
+      userContext.ageGroup === "youth" ||
+      userContext.ageGroup === "u12" ||
+      userContext.ageGroup === "u14"
+    ) {
+      parts.push(
+        `They're a younger athlete, so keep explanations clear and age-appropriate. Emphasize fun and fundamentals.`,
+      );
+    } else if (userContext.ageGroup === "adult") {
+      parts.push(
+        `They're an adult athlete who can handle more detailed, technical advice.`,
+      );
+    }
+  }
+
+  // Injury context
+  if (userContext.injuries && userContext.injuries.length > 0) {
+    const injuryList = userContext.injuries
+      .map((i) => {
+        const type = i.type || i.body_part || "injury";
+        const severity = i.severity ? ` (${i.severity})` : "";
+        return `${type}${severity}`;
+      })
+      .join(", ");
+    parts.push(
+      `IMPORTANT: They're currently dealing with: ${injuryList}. Be mindful of this and suggest modifications.`,
+    );
+  }
+
+  // Training load context
+  if (userContext.recentLoad) {
+    const load = userContext.recentLoad;
+    if (load.acwr && load.acwr > 1.3) {
+      parts.push(
+        `Their training load is high right now (ACWR: ${load.acwr.toFixed(2)}). Be cautious about recommending additional intense work.`,
+      );
+    } else if (load.acwr && load.acwr < 0.8) {
+      parts.push(
+        `Their training load has been light recently. They may need to build back up gradually.`,
+      );
+    }
+  }
+
+  // Daily readiness
+  if (userContext.dailyState) {
+    const state = userContext.dailyState;
+    if (state.pain_level && state.pain_level > 5) {
+      parts.push(
+        `They reported elevated pain today (${state.pain_level}/10). Be extra careful with recommendations.`,
+      );
+    }
+    if (state.fatigue_level && state.fatigue_level > 7) {
+      parts.push(
+        `They're feeling fatigued today. Recovery-focused advice may be appropriate.`,
+      );
+    }
+    if (state.motivation_level && state.motivation_level < 4) {
+      parts.push(
+        `Their motivation seems low today. Some encouragement would help.`,
+      );
+    }
+  }
+
+  // Upcoming game
+  if (userContext.upcomingGame) {
+    const daysUntil = userContext.upcomingGame.daysUntil || "soon";
+    parts.push(
+      `They have a game coming up ${typeof daysUntil === "number" ? `in ${daysUntil} days` : daysUntil}. Consider game-prep advice.`,
+    );
+  }
+
+  // Conversation memory (Phase 4)
+  if (userContext.memoryPrompt) {
+    parts.push(userContext.memoryPrompt);
+  }
+
+  // Personalization preferences
+  if (userContext.preferences) {
+    const prefs = userContext.preferences;
+    if (prefs.preferred_detail_level === "detailed") {
+      parts.push(`They prefer detailed, in-depth explanations.`);
+    } else if (prefs.preferred_detail_level === "brief") {
+      parts.push(`They prefer concise, to-the-point answers.`);
+    }
+    if (prefs.preferred_tone === "motivational") {
+      parts.push(`They respond well to motivational, high-energy coaching.`);
+    }
+  }
+
+  // Personalization prompt from Phase 3
+  if (userContext.personalizationPrompt) {
+    parts.push(userContext.personalizationPrompt);
+  }
+
+  return parts.length > 0
+    ? `\n## ABOUT THIS ATHLETE\n${parts.join("\n")}\n`
+    : "";
+}
+
+/**
+ * Build knowledge context for the AI
+ * Formats knowledge base entries as reference material
+ */
+function buildKnowledgeContext(knowledgeSources) {
+  if (!knowledgeSources || knowledgeSources.length === 0) {
+    return "";
+  }
+
+  const sources = knowledgeSources
+    .slice(0, 3) // Top 3 most relevant
+    .map((source, i) => {
+      const title = source.topic || source.title || "Reference";
+      const content = source.content?.substring(0, 600) || "";
+      const grade = source.evidence_grade || source.evidenceGrade || "";
+      const gradeLabel = grade ? ` [Evidence: ${grade}]` : "";
+      return `${i + 1}. **${title}**${gradeLabel}\n${content}`;
+    })
+    .join("\n\n");
+
+  return `\n## REFERENCE INFORMATION\nUse this to inform your response (but speak naturally, don't just repeat it):\n\n${sources}\n`;
+}
+
+/**
+ * Build conversation history for context
+ */
+function buildConversationHistory(history) {
+  if (!history || history.length === 0) {
+    return "";
+  }
+
+  // Take last 4 messages for context
+  const recent = history.slice(-4);
+  const formatted = recent
+    .map((msg) => {
+      const role = msg.role === "user" ? "Athlete" : "You (Merlin)";
+      const content = msg.content?.substring(0, 300) || "";
+      return `${role}: ${content}${content.length >= 300 ? "..." : ""}`;
+    })
+    .join("\n");
+
+  return `\n## RECENT CONVERSATION\n${formatted}\n`;
+}
+
+/**
+ * Generate coaching response with full conversational context
  *
  * @param {Object} options - Request options
  * @param {string} options.query - User's question
  * @param {string} options.riskLevel - Risk classification (low/medium/high)
  * @param {Object} options.userContext - User context (injuries, load, etc.)
  * @param {Array} options.knowledgeSources - Relevant knowledge base entries
+ * @param {Array} [options.conversationHistory] - Recent messages for context
  * @returns {Promise<Object>} - Structured coaching response
  */
 async function generateCoachingResponse({
@@ -184,66 +414,43 @@ async function generateCoachingResponse({
   riskLevel,
   userContext = {},
   knowledgeSources = [],
+  conversationHistory = [],
 }) {
-  // Build context-aware prompt
-  let contextSection = "";
-
-  // Add user context
-  if (userContext.position) {
-    contextSection += `\nAthlete Position: ${userContext.position}`;
-  }
-  if (userContext.injuries && userContext.injuries.length > 0) {
-    const injuryList = userContext.injuries
-      .map((i) => `${i.type || i.body_part} (${i.severity || "unknown"} severity)`)
-      .join(", ");
-    contextSection += `\nActive Injuries/Conditions: ${injuryList}`;
-  }
-  if (userContext.recentLoad) {
-    contextSection += `\nRecent Training Load: ${userContext.recentLoad.weeklyLoad} (${userContext.recentLoad.sessionCount} sessions, avg RPE: ${userContext.recentLoad.avgRPE?.toFixed(1)})`;
-  }
-
-  // Add knowledge base context
-  let knowledgeSection = "";
-  if (knowledgeSources.length > 0) {
-    knowledgeSection = "\n\nRelevant Information from Knowledge Base:\n";
-    knowledgeSources.forEach((source, i) => {
-      knowledgeSection += `\n${i + 1}. ${source.topic || "Source"}: ${source.content?.substring(0, 500)}...`;
-    });
-  }
-
-  // Add risk-level instructions
-  let riskInstructions = "";
+  // Select appropriate system prompt based on risk
+  let systemPrompt;
   if (riskLevel === "high") {
-    riskInstructions = `
-CRITICAL: This is a HIGH-RISK query about supplements/medical topics.
-- DO NOT provide specific dosages
-- DO NOT recommend specific products
-- Focus on general education only
-- Strongly recommend consulting healthcare provider
-- Include clear medical disclaimer`;
+    systemPrompt = SYSTEM_PROMPTS.highRisk;
   } else if (riskLevel === "medium") {
-    riskInstructions = `
-NOTE: This is a MEDIUM-RISK query about injury/recovery.
-- Provide evidence-based guidance
-- Include appropriate warnings
-- Recommend professional evaluation if symptoms persist`;
+    systemPrompt = SYSTEM_PROMPTS.mediumRisk;
+  } else {
+    systemPrompt = SYSTEM_PROMPTS.coach;
   }
 
-  const fullPrompt = `${riskInstructions}
-${contextSection}
-${knowledgeSection}
+  // Build contextual information
+  const athleteContext = buildAthleteContext(userContext);
+  const knowledgeContext = buildKnowledgeContext(knowledgeSources);
+  const historyContext = buildConversationHistory(conversationHistory);
 
-Athlete's Question: ${query}
+  // Construct the full prompt
+  const fullPrompt = `${athleteContext}${historyContext}${knowledgeContext}
 
-Provide a helpful, safe, and personalized response. Use markdown formatting for readability.`;
+## ATHLETE'S MESSAGE
+"${query}"
+
+Respond as Merlin would - naturally, helpfully, and as a real coach would in a 1-on-1 conversation.`;
+
+  console.log(
+    "[Groq] Generating conversational response for:",
+    query.substring(0, 50),
+  );
 
   try {
     const response = await chatCompletion({
       prompt: fullPrompt,
-      systemPrompt: SYSTEM_PROMPTS.coach,
+      systemPrompt,
       model: riskLevel === "high" ? GROQ_MODELS.LLAMA_70B : DEFAULT_MODEL,
-      temperature: riskLevel === "high" ? 0.3 : 0.7, // More conservative for high-risk
-      maxTokens: riskLevel === "high" ? 800 : 1024,
+      temperature: riskLevel === "high" ? 0.4 : 0.75, // Slightly more creative for conversation
+      maxTokens: riskLevel === "high" ? 900 : 1200, // More room for conversational response
     });
 
     return {
@@ -254,6 +461,51 @@ Provide a helpful, safe, and personalized response. Use markdown formatting for 
     };
   } catch (error) {
     console.error("[Groq] Coaching response failed:", error);
+    throw error;
+  }
+}
+
+/**
+ * Generate a clarifying question when the query is ambiguous
+ *
+ * @param {string} query - The ambiguous query
+ * @param {string} intent - Detected intent
+ * @param {Object} userContext - User context
+ * @returns {Promise<Object>} - Clarifying question response
+ */
+async function generateClarifyingQuestion({
+  query,
+  intent: _intent,
+  userContext = {},
+}) {
+  const athleteContext = buildAthleteContext(userContext);
+
+  const prompt = `${athleteContext}
+
+The athlete asked: "${query}"
+
+This seems like it could mean a few different things. Instead of assuming, generate a friendly clarifying question to understand exactly what they need help with.
+
+Keep it brief and conversational - like a coach would ask in person.`;
+
+  try {
+    const response = await chatCompletion({
+      prompt,
+      systemPrompt: SYSTEM_PROMPTS.coach,
+      model: GROQ_MODELS.GEMMA, // Fast model for quick clarification
+      temperature: 0.8,
+      maxTokens: 200,
+    });
+
+    return {
+      answer: response.content,
+      isClarification: true,
+      originalQuery: query,
+      model: response.model,
+      source: "groq-ai",
+    };
+  } catch (error) {
+    console.error("[Groq] Clarifying question failed:", error);
     throw error;
   }
 }
@@ -280,11 +532,9 @@ Return your analysis as valid JSON.`;
       maxTokens: 800,
     });
 
-    // Try to parse JSON response
     try {
       return JSON.parse(response.content);
     } catch {
-      // If not valid JSON, return as structured object
       return {
         summary: response.content,
         insights: [],
@@ -309,7 +559,7 @@ async function quickSuggestion(context) {
     const response = await chatCompletion({
       prompt: context,
       systemPrompt: SYSTEM_PROMPTS.simple,
-      model: GROQ_MODELS.GEMMA, // Fastest model
+      model: GROQ_MODELS.GEMMA,
       temperature: 0.8,
       maxTokens: 256,
     });
@@ -321,13 +571,56 @@ async function quickSuggestion(context) {
   }
 }
 
+/**
+ * Generate follow-up suggestions after a response
+ *
+ * @param {string} query - Original query
+ * @param {string} response - AI response given
+ * @param {string} intent - Detected intent
+ * @returns {Promise<string[]>} - Array of follow-up suggestions
+ */
+async function generateFollowUpSuggestions({
+  query,
+  response: _response,
+  intent,
+}) {
+  const prompt = `Based on this conversation:
+Athlete asked: "${query.substring(0, 200)}"
+Coach answered about: ${intent}
+
+Generate 2-3 natural follow-up questions the athlete might want to ask next. Return as a JSON array of strings.
+Example: ["Can you show me a specific drill?", "How often should I practice this?"]`;
+
+  try {
+    const result = await chatCompletion({
+      prompt,
+      systemPrompt:
+        "Return only a JSON array of 2-3 follow-up question strings. No other text.",
+      model: GROQ_MODELS.GEMMA,
+      temperature: 0.8,
+      maxTokens: 150,
+    });
+
+    try {
+      const suggestions = JSON.parse(result.content);
+      return Array.isArray(suggestions) ? suggestions.slice(0, 3) : [];
+    } catch {
+      return [];
+    }
+  } catch (error) {
+    console.error("[Groq] Follow-up generation failed:", error);
+    return [];
+  }
+}
+
 module.exports = {
   isGroqConfigured,
   chatCompletion,
   generateCoachingResponse,
+  generateClarifyingQuestion,
   analyzeTrainingData,
   quickSuggestion,
+  generateFollowUpSuggestions,
   GROQ_MODELS,
   SYSTEM_PROMPTS,
 };
-

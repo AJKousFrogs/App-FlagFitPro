@@ -1,7 +1,7 @@
 # UX Workflow Map
 
 > **Purpose:** Document all critical user flows, identify dead ends, and ensure consistent UI behavior for privacy/safety states.
-> 
+>
 > **Last Updated:** 2025-12-30  
 > **Scope Freeze:** Friday Test
 
@@ -101,16 +101,18 @@
 ```
 
 **Required UI Elements (from `privacy-ux-copy.ts`):**
+
 ```typescript
 CONSENT_BLOCKED_MESSAGES.coachViewingPlayer = {
-  title: 'Data Not Shared',
-  reason: 'This player has not enabled performance data sharing with your team.',
-  action: 'The player can enable sharing in their Privacy Settings.',
-  actionLabel: 'Learn More',
-  helpLink: '/help/privacy-sharing',
-  icon: 'pi-lock',
-  severity: 'info'
-}
+  title: "Data Not Shared",
+  reason:
+    "This player has not enabled performance data sharing with your team.",
+  action: "The player can enable sharing in their Privacy Settings.",
+  actionLabel: "Learn More",
+  helpLink: "/help/privacy-sharing",
+  icon: "pi-lock",
+  severity: "info",
+};
 ```
 
 **Current Status:** ✅ Implemented with `isPlayerBlocked()` check
@@ -201,6 +203,7 @@ CONSENT_BLOCKED_MESSAGES.coachViewingPlayer = {
 ```
 
 **Validation Rules:**
+
 - `ageVerification: [false, [Validators.requiredTrue]]`
 - Error message: "You must be 16 or older to use this app"
 
@@ -308,21 +311,22 @@ CONSENT_BLOCKED_MESSAGES.coachViewingPlayer = {
 ```
 
 **Required Messages (from `privacy-ux-copy.ts`):**
+
 ```typescript
 DATA_STATE_MESSAGES.NO_DATA = {
-  title: 'No Data Yet',
-  reason: 'We don\'t have any training data for you yet.',
-  action: 'Start logging your training sessions to see metrics.',
-  actionLabel: 'Log Training',
-  helpLink: '/training/new'  // ⚠️ Should be /training/log
-}
+  title: "No Data Yet",
+  reason: "We don't have any training data for you yet.",
+  action: "Start logging your training sessions to see metrics.",
+  actionLabel: "Log Training",
+  helpLink: "/training/new", // ⚠️ Should be /training/log
+};
 
 DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
-  title: 'Building Your Profile',
-  reason: 'We need more training data to provide reliable metrics.',
-  action: 'Continue logging sessions. Most metrics need 2-4 weeks of data.',
-  helpLink: '/help/data-requirements'
-}
+  title: "Building Your Profile",
+  reason: "We need more training data to provide reliable metrics.",
+  action: "Continue logging sessions. Most metrics need 2-4 weeks of data.",
+  helpLink: "/help/data-requirements",
+};
 ```
 
 **Current Status:** ⚠️ Link in NO_DATA points to `/training/new` but route is `/training/log`
@@ -413,36 +417,36 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 
 ### 3.1 Consent Blocked States
 
-| Context | Component | Message Source | Required Action |
-|---------|-----------|----------------|-----------------|
-| Coach → Player (single) | `consent-blocked-message` | `CONSENT_BLOCKED_MESSAGES.coachViewingPlayer` | Link to `/help/privacy-sharing` |
-| Coach → Team (partial) | Partial data notice | `CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock` | Link to `/help/team-privacy` |
-| Player own data | Privacy settings | `CONSENT_BLOCKED_MESSAGES.playerDataNotShared` | Link to `/settings/privacy` |
+| Context                 | Component                 | Message Source                                   | Required Action                 |
+| ----------------------- | ------------------------- | ------------------------------------------------ | ------------------------------- |
+| Coach → Player (single) | `consent-blocked-message` | `CONSENT_BLOCKED_MESSAGES.coachViewingPlayer`    | Link to `/help/privacy-sharing` |
+| Coach → Team (partial)  | Partial data notice       | `CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock` | Link to `/help/team-privacy`    |
+| Player own data         | Privacy settings          | `CONSENT_BLOCKED_MESSAGES.playerDataNotShared`   | Link to `/settings/privacy`     |
 
 ### 3.2 AI Disabled States
 
-| Context | Component | Message Source | Required Action |
-|---------|-----------|----------------|-----------------|
-| AI Chat | `ai-consent-required` | `AI_PROCESSING_MESSAGES.disabled` | Button → `/settings/privacy#ai` |
-| AI Scheduler | `ai-consent-required` | `AI_PROCESSING_MESSAGES.disabled` | Button → `/settings/privacy#ai` |
-| Training recommendations | Inline message | `AI_PROCESSING_MESSAGES.disabled` | Link → `/settings/privacy#ai` |
+| Context                  | Component             | Message Source                    | Required Action                 |
+| ------------------------ | --------------------- | --------------------------------- | ------------------------------- |
+| AI Chat                  | `ai-consent-required` | `AI_PROCESSING_MESSAGES.disabled` | Button → `/settings/privacy#ai` |
+| AI Scheduler             | `ai-consent-required` | `AI_PROCESSING_MESSAGES.disabled` | Button → `/settings/privacy#ai` |
+| Training recommendations | Inline message        | `AI_PROCESSING_MESSAGES.disabled` | Link → `/settings/privacy#ai`   |
 
 ### 3.3 Data State Messages
 
-| State | Icon | Title | Action Link |
-|-------|------|-------|-------------|
-| `NO_DATA` | `pi-database` | "No Data Yet" | `/training/log` |
-| `INSUFFICIENT_DATA` | `pi-chart-line` | "Building Your Profile" | `/help/data-requirements` |
-| `DEMO_DATA` | `pi-eye` | "Demo Data" | `/training/log` |
-| `REAL_DATA` | `pi-check-circle` | "Your Data" | `/training/history` |
+| State               | Icon              | Title                   | Action Link               |
+| ------------------- | ----------------- | ----------------------- | ------------------------- |
+| `NO_DATA`           | `pi-database`     | "No Data Yet"           | `/training/log`           |
+| `INSUFFICIENT_DATA` | `pi-chart-line`   | "Building Your Profile" | `/help/data-requirements` |
+| `DEMO_DATA`         | `pi-eye`          | "Demo Data"             | `/training/log`           |
+| `REAL_DATA`         | `pi-check-circle` | "Your Data"             | `/training/history`       |
 
 ### 3.4 Deletion Pending States
 
-| State | Icon | Severity | Action |
-|-------|------|----------|--------|
-| `requested` | `pi-clock` | warning | Cancel button |
-| `pending` | `pi-hourglass` | warning | Cancel button + days remaining |
-| `canceled` | `pi-check-circle` | success | None |
+| State       | Icon              | Severity | Action                         |
+| ----------- | ----------------- | -------- | ------------------------------ |
+| `requested` | `pi-clock`        | warning  | Cancel button                  |
+| `pending`   | `pi-hourglass`    | warning  | Cancel button + days remaining |
+| `canceled`  | `pi-check-circle` | success  | None                           |
 
 ---
 
@@ -450,32 +454,32 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 
 ### 4.1 Identified Dead Ends
 
-| Location | Issue | Severity | Fix |
-|----------|-------|----------|-----|
-| `DATA_STATE_MESSAGES.NO_DATA.helpLink` | Points to `/training/new` but route is `/training/log` | 🔴 High | Update to `/training/log` |
-| `privacy-controls.component.ts` → Audit Log | `showAuditLog()` shows toast "coming soon" | 🟡 Medium | Disable button or implement |
-| Coach Dashboard → Analytics | `navigateToAnalytics()` goes to `/analytics` but no coach-specific view | 🟡 Medium | Add coach analytics route |
-| Coach Dashboard → Training | `adjustPlayerLoad()` navigates with query params but no handler | 🟡 Medium | Implement query param handling |
-| `/help/*` routes | All help links (`/help/privacy-sharing`, `/help/team-privacy`, etc.) have no routes | 🔴 High | Create help pages or redirect to docs |
+| Location                                    | Issue                                                                               | Severity  | Fix                                   |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- | --------- | ------------------------------------- |
+| `DATA_STATE_MESSAGES.NO_DATA.helpLink`      | Points to `/training/new` but route is `/training/log`                              | 🔴 High   | Update to `/training/log`             |
+| `privacy-controls.component.ts` → Audit Log | `showAuditLog()` shows toast "coming soon"                                          | 🟡 Medium | Disable button or implement           |
+| Coach Dashboard → Analytics                 | `navigateToAnalytics()` goes to `/analytics` but no coach-specific view             | 🟡 Medium | Add coach analytics route             |
+| Coach Dashboard → Training                  | `adjustPlayerLoad()` navigates with query params but no handler                     | 🟡 Medium | Implement query param handling        |
+| `/help/*` routes                            | All help links (`/help/privacy-sharing`, `/help/team-privacy`, etc.) have no routes | 🔴 High   | Create help pages or redirect to docs |
 
 ### 4.2 Missing Navigation Links
 
-| From | To | Missing Element |
-|------|-----|-----------------|
-| `/dashboard` | `/settings/privacy` | No direct link (only via Settings) |
-| `/acwr` | `/training/log` | No "Log Training" button when NO_DATA |
-| `/training` | `/acwr` | No link to view load metrics |
+| From               | To                   | Missing Element                       |
+| ------------------ | -------------------- | ------------------------------------- |
+| `/dashboard`       | `/settings/privacy`  | No direct link (only via Settings)    |
+| `/acwr`            | `/training/log`      | No "Log Training" button when NO_DATA |
+| `/training`        | `/acwr`              | No link to view load metrics          |
 | `/coach/dashboard` | `/training/schedule` | Quick action exists but route unclear |
 
 ### 4.3 Orphaned Routes
 
-| Route | Issue |
-|-------|-------|
-| `/training/ai-companion` | Exists but no navigation to it |
+| Route                     | Issue                          |
+| ------------------------- | ------------------------------ |
+| `/training/ai-companion`  | Exists but no navigation to it |
 | `/training/load-analysis` | Exists but no navigation to it |
-| `/training/goal-planner` | Exists but no navigation to it |
-| `/training/microcycle` | Exists but no navigation to it |
-| `/training/import` | Exists but no navigation to it |
+| `/training/goal-planner`  | Exists but no navigation to it |
+| `/training/microcycle`    | Exists but no navigation to it |
+| `/training/import`        | Exists but no navigation to it |
 
 ---
 
@@ -489,7 +493,7 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
    - **Impact:** Prevents dead end when user clicks "Log Training"
    - **Risk:** None (string change only)
 
-2. **Add /help/* redirect or placeholder**
+2. **Add /help/\* redirect or placeholder**
    - **Files:** `angular/src/app/core/routes/feature-routes.ts`
    - **Change:** Add redirect routes for `/help/*` to `/docs/*` or landing page
    - **Impact:** Prevents 404 on all help links
@@ -586,6 +590,7 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 ## Appendix: Route Reference
 
 ### Public Routes
+
 - `/` - Landing
 - `/login` - Login
 - `/register` - Registration (16+ verification)
@@ -594,6 +599,7 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 - `/accept-invitation` - Team invitation acceptance
 
 ### Player Routes (Auth Required)
+
 - `/dashboard` - Player dashboard
 - `/training` - Training hub
 - `/training/log` - Log workout
@@ -607,6 +613,7 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 - `/profile` - User profile
 
 ### Coach Routes (Auth Required)
+
 - `/coach/dashboard` - Coach dashboard
 - `/roster` - Team roster
 - `/team/create` - Create team
@@ -615,11 +622,11 @@ DATA_STATE_MESSAGES.INSUFFICIENT_DATA = {
 - `/game-tracker` - Game tracking
 
 ### AI Routes (Consent Required)
+
 - `/chat` - AI chat
 - `/training/ai-scheduler` - AI training scheduler
 - `/training/ai-companion` - AI training companion
 
 ---
 
-*Document generated for Friday Test Scope Freeze*
-
+_Document generated for Friday Test Scope Freeze_

@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 /**
  * Pre-Flight Script for Friday Test Sessions
- * 
+ *
  * Runs all critical validation checks before a test session.
  * Stops on first failure and provides exact remediation steps.
- * 
+ *
  * Checks (in order):
  * 1. verify:db - Database objects and RLS verification
  * 2. check:consent:ci - Consent violation detection
  * 3. test:privacy:ci - Privacy safety tests
  * 4. perf:validate:ci - Performance validation
- * 
+ *
  * Usage:
  *   npm run preflight:friday
  *   node scripts/preflight-friday.cjs
  *   node scripts/preflight-friday.cjs --skip-perf  # Skip performance tests
- * 
+ *
  * Exit codes:
  *   0 - All checks passed
  *   1 - One or more checks failed
- * 
+ *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
-const { spawn } = require('child_process');
-const _path = require('path');
+const { spawn } = require("child_process");
+const _path = require("path");
 
 // ============================================================================
 // CONFIGURATION
@@ -32,10 +32,11 @@ const _path = require('path');
 
 const CHECKS = [
   {
-    name: 'Database Objects & RLS',
-    command: 'npm',
-    args: ['run', 'verify:db'],
-    description: 'Verifies consent views, ACWR functions, triggers, and RLS policies exist',
+    name: "Database Objects & RLS",
+    command: "npm",
+    args: ["run", "verify:db"],
+    description:
+      "Verifies consent views, ACWR functions, triggers, and RLS policies exist",
     remediation: `
 REMEDIATION:
 1. Check that SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env
@@ -49,10 +50,11 @@ REMEDIATION:
 `,
   },
   {
-    name: 'Consent Violation Check',
-    command: 'npm',
-    args: ['run', 'check:consent', '--', '--ci', '--strict'],
-    description: 'Detects direct table access in coach-context code that bypasses consent views',
+    name: "Consent Violation Check",
+    command: "npm",
+    args: ["run", "check:consent", "--", "--ci", "--strict"],
+    description:
+      "Detects direct table access in coach-context code that bypasses consent views",
     remediation: `
 REMEDIATION:
 1. Review the violation list above
@@ -65,10 +67,10 @@ REMEDIATION:
 `,
   },
   {
-    name: 'Privacy Safety Tests',
-    command: 'npx',
-    args: ['vitest', 'run', 'tests/privacy-safety/', '--reporter=verbose'],
-    description: 'Runs privacy and consent test suite',
+    name: "Privacy Safety Tests",
+    command: "npx",
+    args: ["vitest", "run", "tests/privacy-safety/", "--reporter=verbose"],
+    description: "Runs privacy and consent test suite",
     remediation: `
 REMEDIATION:
 1. Review failing test output above
@@ -82,11 +84,11 @@ REMEDIATION:
 `,
   },
   {
-    name: 'Performance Validation',
-    command: 'npm',
-    args: ['run', 'perf:validate', '--', '--ci'],
-    description: 'Validates consent view performance and index coverage',
-    skipFlag: '--skip-perf',
+    name: "Performance Validation",
+    command: "npm",
+    args: ["run", "perf:validate", "--", "--ci"],
+    description: "Validates consent view performance and index coverage",
+    skipFlag: "--skip-perf",
     remediation: `
 REMEDIATION:
 1. If consent views are slow:
@@ -108,7 +110,7 @@ class PreflightRunner {
   constructor() {
     this.startTime = new Date();
     this.results = [];
-    this.skipPerf = process.argv.includes('--skip-perf');
+    this.skipPerf = process.argv.includes("--skip-perf");
   }
 
   async run() {
@@ -122,7 +124,7 @@ class PreflightRunner {
       }
 
       const passed = await this.runCheck(check);
-      
+
       if (!passed) {
         this.printFailure(check);
         this.printSummary(false);
@@ -136,12 +138,24 @@ class PreflightRunner {
 
   printHeader() {
     console.log();
-    console.log('╔══════════════════════════════════════════════════════════════════════╗');
-    console.log('║                    🚀 FRIDAY PRE-FLIGHT CHECK                         ║');
-    console.log('╠══════════════════════════════════════════════════════════════════════╣');
-    console.log('║  Running all critical validation checks before test session           ║');
-    console.log('║  Will stop on first failure with remediation steps                    ║');
-    console.log('╚══════════════════════════════════════════════════════════════════════╝');
+    console.log(
+      "╔══════════════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║                    🚀 FRIDAY PRE-FLIGHT CHECK                         ║",
+    );
+    console.log(
+      "╠══════════════════════════════════════════════════════════════════════╣",
+    );
+    console.log(
+      "║  Running all critical validation checks before test session           ║",
+    );
+    console.log(
+      "║  Will stop on first failure with remediation steps                    ║",
+    );
+    console.log(
+      "╚══════════════════════════════════════════════════════════════════════╝",
+    );
     console.log();
     console.log(`Started: ${this.startTime.toISOString()}`);
     console.log();
@@ -149,22 +163,24 @@ class PreflightRunner {
 
   async runCheck(check) {
     const checkStart = Date.now();
-    
-    console.log('─'.repeat(72));
-    console.log(`\n📋 CHECK ${this.results.length + 1}/${CHECKS.length}: ${check.name}\n`);
+
+    console.log("─".repeat(72));
+    console.log(
+      `\n📋 CHECK ${this.results.length + 1}/${CHECKS.length}: ${check.name}\n`,
+    );
     console.log(`   ${check.description}`);
-    console.log(`   Command: ${check.command} ${check.args.join(' ')}`);
+    console.log(`   Command: ${check.command} ${check.args.join(" ")}`);
     console.log();
 
     return new Promise((resolve) => {
       const proc = spawn(check.command, check.args, {
         cwd: process.cwd(),
-        stdio: 'inherit',
+        stdio: "inherit",
         shell: true,
         env: { ...process.env },
       });
 
-      proc.on('close', (code) => {
+      proc.on("close", (code) => {
         const duration = Date.now() - checkStart;
         const passed = code === 0;
 
@@ -184,7 +200,7 @@ class PreflightRunner {
         resolve(passed);
       });
 
-      proc.on('error', (err) => {
+      proc.on("error", (err) => {
         console.error(`   ❌ Failed to execute: ${err.message}`);
         this.results.push({
           name: check.name,
@@ -198,7 +214,7 @@ class PreflightRunner {
   }
 
   printSkipped(check) {
-    console.log('─'.repeat(72));
+    console.log("─".repeat(72));
     console.log(`\n⏭️  SKIPPED: ${check.name}\n`);
     console.log(`   Reason: ${check.skipFlag} flag provided`);
     console.log();
@@ -213,9 +229,15 @@ class PreflightRunner {
 
   printFailure(check) {
     console.log();
-    console.log('╔══════════════════════════════════════════════════════════════════════╗');
-    console.log('║                         ❌ CHECK FAILED                               ║');
-    console.log('╚══════════════════════════════════════════════════════════════════════╝');
+    console.log(
+      "╔══════════════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║                         ❌ CHECK FAILED                               ║",
+    );
+    console.log(
+      "╚══════════════════════════════════════════════════════════════════════╝",
+    );
     console.log();
     console.log(`Failed Check: ${check.name}`);
     console.log();
@@ -227,31 +249,39 @@ class PreflightRunner {
     const totalDuration = endTime - this.startTime;
 
     console.log();
-    console.log('═'.repeat(72));
+    console.log("═".repeat(72));
     console.log();
-    console.log('📊 PRE-FLIGHT SUMMARY');
+    console.log("📊 PRE-FLIGHT SUMMARY");
     console.log();
 
     // Results table
-    console.log('┌────────────────────────────────────┬──────────┬────────────┐');
-    console.log('│ Check                              │ Status   │ Duration   │');
-    console.log('├────────────────────────────────────┼──────────┼────────────┤');
+    console.log(
+      "┌────────────────────────────────────┬──────────┬────────────┐",
+    );
+    console.log(
+      "│ Check                              │ Status   │ Duration   │",
+    );
+    console.log(
+      "├────────────────────────────────────┼──────────┼────────────┤",
+    );
 
     for (const result of this.results) {
       const name = result.name.padEnd(34);
-      const status = result.skipped 
-        ? '⏭️  SKIP  ' 
-        : result.passed 
-          ? '✅ PASS  ' 
-          : '❌ FAIL  ';
-      const duration = result.skipped 
-        ? '—'.padStart(10) 
+      const status = result.skipped
+        ? "⏭️  SKIP  "
+        : result.passed
+          ? "✅ PASS  "
+          : "❌ FAIL  ";
+      const duration = result.skipped
+        ? "—".padStart(10)
         : this.formatDuration(result.duration).padStart(10);
-      
+
       console.log(`│ ${name} │ ${status} │ ${duration} │`);
     }
 
-    console.log('└────────────────────────────────────┴──────────┴────────────┘');
+    console.log(
+      "└────────────────────────────────────┴──────────┴────────────┘",
+    );
     console.log();
 
     // Timestamps
@@ -262,26 +292,64 @@ class PreflightRunner {
 
     // Final verdict
     if (allPassed) {
-      console.log('╔══════════════════════════════════════════════════════════════════════╗');
-      console.log('║                     ✅ ALL CHECKS PASSED                              ║');
-      console.log('║                                                                        ║');
-      console.log('║  Ready for Friday test session!                                        ║');
-      console.log('║                                                                        ║');
-      console.log('║  Next steps:                                                           ║');
-      console.log('║  1. Create test accounts (see TEST_PLAN_FRIDAY.md)                     ║');
-      console.log('║  2. Seed database with test data                                       ║');
-      console.log('║  3. Start the app: npm run dev                                         ║');
-      console.log('║  4. Begin 90-minute test session                                       ║');
-      console.log('╚══════════════════════════════════════════════════════════════════════╝');
+      console.log(
+        "╔══════════════════════════════════════════════════════════════════════╗",
+      );
+      console.log(
+        "║                     ✅ ALL CHECKS PASSED                              ║",
+      );
+      console.log(
+        "║                                                                        ║",
+      );
+      console.log(
+        "║  Ready for Friday test session!                                        ║",
+      );
+      console.log(
+        "║                                                                        ║",
+      );
+      console.log(
+        "║  Next steps:                                                           ║",
+      );
+      console.log(
+        "║  1. Create test accounts (see TEST_PLAN_FRIDAY.md)                     ║",
+      );
+      console.log(
+        "║  2. Seed database with test data                                       ║",
+      );
+      console.log(
+        "║  3. Start the app: npm run dev                                         ║",
+      );
+      console.log(
+        "║  4. Begin 90-minute test session                                       ║",
+      );
+      console.log(
+        "╚══════════════════════════════════════════════════════════════════════╝",
+      );
     } else {
-      console.log('╔══════════════════════════════════════════════════════════════════════╗');
-      console.log('║                     ❌ PRE-FLIGHT FAILED                              ║');
-      console.log('║                                                                        ║');
-      console.log('║  Fix the issues above before starting test session.                    ║');
-      console.log('║                                                                        ║');
-      console.log('║  Re-run after fixes:                                                   ║');
-      console.log('║    npm run preflight:friday                                            ║');
-      console.log('╚══════════════════════════════════════════════════════════════════════╝');
+      console.log(
+        "╔══════════════════════════════════════════════════════════════════════╗",
+      );
+      console.log(
+        "║                     ❌ PRE-FLIGHT FAILED                              ║",
+      );
+      console.log(
+        "║                                                                        ║",
+      );
+      console.log(
+        "║  Fix the issues above before starting test session.                    ║",
+      );
+      console.log(
+        "║                                                                        ║",
+      );
+      console.log(
+        "║  Re-run after fixes:                                                   ║",
+      );
+      console.log(
+        "║    npm run preflight:friday                                            ║",
+      );
+      console.log(
+        "╚══════════════════════════════════════════════════════════════════════╝",
+      );
     }
 
     console.log();
@@ -306,7 +374,6 @@ class PreflightRunner {
 
 const runner = new PreflightRunner();
 runner.run().catch((err) => {
-  console.error('Fatal error:', err);
+  console.error("Fatal error:", err);
   process.exit(1);
 });
-

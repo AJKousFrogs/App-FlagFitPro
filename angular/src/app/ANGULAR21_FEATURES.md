@@ -8,16 +8,16 @@ This document tracks the Angular 21 features implemented in FlagFit Pro.
 
 Added routes for 8 components that were implemented but not accessible:
 
-| Route | Component | Purpose |
-|-------|-----------|---------|
-| `/training/ai-companion` | `AITrainingCompanionComponent` | AI-powered training assistance |
-| `/training/load-analysis` | `FlagLoadComponent` | ACWR load analysis display |
-| `/training/goal-planner` | `GoalBasedPlannerComponent` | Goal-based training planning |
-| `/training/microcycle` | `MicrocyclePlannerComponent` | Weekly microcycle planning |
-| `/training/import` | `ImportDatasetComponent` | Training data import |
-| `/training/periodization` | `PeriodizationDashboardComponent` | Periodization management |
-| `/game-tracker/live` | `LiveGameTrackerComponent` | Real-time game tracking |
-| `/coach/activity` | `CoachActivityFeedComponent` | Coach activity feed |
+| Route                     | Component                         | Purpose                        |
+| ------------------------- | --------------------------------- | ------------------------------ |
+| `/training/ai-companion`  | `AITrainingCompanionComponent`    | AI-powered training assistance |
+| `/training/load-analysis` | `FlagLoadComponent`               | ACWR load analysis display     |
+| `/training/goal-planner`  | `GoalBasedPlannerComponent`       | Goal-based training planning   |
+| `/training/microcycle`    | `MicrocyclePlannerComponent`      | Weekly microcycle planning     |
+| `/training/import`        | `ImportDatasetComponent`          | Training data import           |
+| `/training/periodization` | `PeriodizationDashboardComponent` | Periodization management       |
+| `/game-tracker/live`      | `LiveGameTrackerComponent`        | Real-time game tracking        |
+| `/coach/activity`         | `CoachActivityFeedComponent`      | Coach activity feed            |
 
 ### 2. Angular Resource API (`ResourceService`)
 
@@ -41,6 +41,7 @@ const userResource = resourceService.createResource<User>(
 ```
 
 Features:
+
 - Automatic loading/error states
 - Signal-based reactivity
 - Built-in caching
@@ -53,18 +54,20 @@ Features:
 
 Accessibility-first headless UI components:
 
-| Component | Description |
-|-----------|-------------|
-| `AriaButtonComponent` | ARIA-compliant button with loading states |
+| Component             | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `AriaButtonComponent` | ARIA-compliant button with loading states        |
 | `AriaDialogComponent` | Modal dialog with focus trap and escape handling |
-| `AriaTabsComponent` | Tab interface with keyboard navigation |
+| `AriaTabsComponent`   | Tab interface with keyboard navigation           |
 
 Usage:
+
 ```html
-<aria-button 
-  variant="primary" 
+<aria-button
+  variant="primary"
   [loading]="isSubmitting()"
-  (clicked)="onSubmit()">
+  (clicked)="onSubmit()"
+>
   Submit
 </aria-button>
 
@@ -83,10 +86,12 @@ Usage:
 Migrated DOM-dependent `ngOnInit` code to `afterNextRender` for zoneless compatibility:
 
 **Updated Components:**
+
 - `YoutubePlayerComponent` - YouTube API script loading
 - `PullToRefreshComponent` - Document style modifications
 
 **Pattern:**
+
 ```typescript
 // Before (ngOnInit)
 ngOnInit(): void {
@@ -110,11 +115,11 @@ Comprehensive Signal Forms utilities:
 ```typescript
 // Create a form
 const form = createSignalFormGroup({
-  name: createSignalField('', [SignalValidators.required()]),
-  email: createSignalField('', [
+  name: createSignalField("", [SignalValidators.required()]),
+  email: createSignalField("", [
     SignalValidators.required(),
-    SignalValidators.email()
-  ])
+    SignalValidators.email(),
+  ]),
 });
 
 // Check validity
@@ -126,8 +131,8 @@ if (form.valid()) {
 const { submit, isSubmitting, canSubmit } = createFormSubmitHandler({
   form,
   onSubmit: async (data) => await api.save(data),
-  onSuccess: () => toast.success('Saved!'),
-  onError: (err) => toast.error(err.message)
+  onSuccess: () => toast.success("Saved!"),
+  onError: (err) => toast.error(err.message),
 });
 ```
 
@@ -143,13 +148,13 @@ const { submit, isSubmitting, canSubmit } = createFormSubmitHandler({
 
 ### From Reactive Forms to Signal Forms
 
-| Reactive Forms | Signal Forms |
-|----------------|--------------|
-| `FormControl` | `createSignalField()` |
-| `FormGroup` | `createSignalFormGroup()` |
-| `Validators.required` | `SignalValidators.required()` |
-| `formControlName="x"` | `[(ngModel)]="form.fields.x.value"` |
-| `form.get('x')?.invalid` | `!form.fields.x.valid()` |
+| Reactive Forms           | Signal Forms                        |
+| ------------------------ | ----------------------------------- |
+| `FormControl`            | `createSignalField()`               |
+| `FormGroup`              | `createSignalFormGroup()`           |
+| `Validators.required`    | `SignalValidators.required()`       |
+| `formControlName="x"`    | `[(ngModel)]="form.fields.x.value"` |
+| `form.get('x')?.invalid` | `!form.fields.x.valid()`            |
 
 ### From ngOnInit DOM to afterNextRender
 
@@ -167,13 +172,13 @@ constructor() {
 
 ## Status
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Zoneless Change Detection | ✅ Stable | Default in Angular 21 |
-| Signal Forms | ⚠️ Experimental | Use for new features |
-| Resource API | ✅ Stable | Recommended for data fetching |
-| Angular Aria | ⚠️ Developer Preview | Monitor for updates |
-| afterNextRender | ✅ Stable | Required for zoneless |
+| Feature                   | Status               | Notes                         |
+| ------------------------- | -------------------- | ----------------------------- |
+| Zoneless Change Detection | ✅ Stable            | Default in Angular 21         |
+| Signal Forms              | ⚠️ Experimental      | Use for new features          |
+| Resource API              | ✅ Stable            | Recommended for data fetching |
+| Angular Aria              | ⚠️ Developer Preview | Monitor for updates           |
+| afterNextRender           | ✅ Stable            | Required for zoneless         |
 
 ## Next Steps
 
@@ -181,4 +186,3 @@ constructor() {
 2. Adopt Angular Aria components for new UI elements
 3. Use Resource API for new data fetching needs
 4. Continue monitoring Angular 21.x releases for API stability
-

@@ -67,7 +67,7 @@ describe("InstagramVideoService", () => {
       expect(qbVideos.length).toBeGreaterThan(0);
       qbVideos.forEach((video) => {
         expect(
-          video.positions.includes("QB") || video.positions.includes("All")
+          video.positions.includes("QB") || video.positions.includes("All"),
         ).toBeTrue();
       });
     });
@@ -101,7 +101,7 @@ describe("InstagramVideoService", () => {
       });
       filtered.forEach((video) => {
         expect(
-          video.positions.includes("WR") || video.positions.includes("All")
+          video.positions.includes("WR") || video.positions.includes("All"),
         ).toBeTrue();
         expect(video.trainingFocus).toContain("route_running");
       });
@@ -143,21 +143,16 @@ describe("InstagramVideoService", () => {
         "QB",
         "in_season",
         "intermediate",
-        3
+        3,
       );
       expect(recommended.length).toBeLessThanOrEqual(3);
     });
 
     it("should return videos sorted by rating", () => {
-      const recommended = service.getRecommendedVideos(
-        "All",
-        "all",
-        "all",
-        10
-      );
+      const recommended = service.getRecommendedVideos("All", "all", "all", 10);
       for (let i = 1; i < recommended.length; i++) {
         expect(recommended[i - 1].rating).toBeGreaterThanOrEqual(
-          recommended[i].rating
+          recommended[i].rating,
         );
       }
     });
@@ -174,7 +169,7 @@ describe("InstagramVideoService", () => {
       if (featured) {
         expect(
           featured.positions.includes("QB") ||
-            featured.positions.includes("All")
+            featured.positions.includes("All"),
         ).toBeTrue();
       }
     });
@@ -183,21 +178,21 @@ describe("InstagramVideoService", () => {
   describe("extractShortcode", () => {
     it("should extract shortcode from reel URL", () => {
       const shortcode = service.extractShortcode(
-        "https://www.instagram.com/reel/ABC123xyz/"
+        "https://www.instagram.com/reel/ABC123xyz/",
       );
       expect(shortcode).toBe("ABC123xyz");
     });
 
     it("should extract shortcode from post URL", () => {
       const shortcode = service.extractShortcode(
-        "https://www.instagram.com/p/DEF456abc/"
+        "https://www.instagram.com/p/DEF456abc/",
       );
       expect(shortcode).toBe("DEF456abc");
     });
 
     it("should extract shortcode from TV URL", () => {
       const shortcode = service.extractShortcode(
-        "https://www.instagram.com/tv/GHI789def/"
+        "https://www.instagram.com/tv/GHI789def/",
       );
       expect(shortcode).toBe("GHI789def");
     });
@@ -275,11 +270,10 @@ describe("InstagramVideoService", () => {
 
   describe("playlist management", () => {
     it("should create custom playlist", () => {
-      const playlist = service.createPlaylist(
-        "My Playlist",
-        "Test playlist",
-        ["ig_qb_001", "ig_wr_001"]
-      );
+      const playlist = service.createPlaylist("My Playlist", "Test playlist", [
+        "ig_qb_001",
+        "ig_wr_001",
+      ]);
       expect(playlist.name).toBe("My Playlist");
       expect(playlist.videos.length).toBe(2);
     });

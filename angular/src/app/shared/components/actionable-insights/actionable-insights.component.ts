@@ -128,7 +128,7 @@ export interface Insight {
                       [severity]="getCategorySeverity(insight.category)"
                       size="small"
                     ></p-tag>
-                    @if (insight.impact === 'high') {
+                    @if (insight.impact === "high") {
                       <p-tag
                         value="High Impact"
                         severity="danger"
@@ -143,8 +143,13 @@ export interface Insight {
                 <!-- Metric -->
                 @if (insight.metric) {
                   <div class="insight-metric">
-                    <span class="metric-label">{{ insight.metric.label }}:</span>
-                    <span class="metric-value" [class]="getTrendClass(insight.metric.trend)">
+                    <span class="metric-label"
+                      >{{ insight.metric.label }}:</span
+                    >
+                    <span
+                      class="metric-value"
+                      [class]="getTrendClass(insight.metric.trend)"
+                    >
                       {{ insight.metric.value }}
                       @if (insight.metric.trend) {
                         <i [class]="getTrendIcon(insight.metric.trend)"></i>
@@ -552,7 +557,7 @@ export class ActionableInsightsComponent implements OnInit {
     return this.insights().filter(
       (i) =>
         i.impact === "high" &&
-        (i.type === "warning" || i.type === "opportunity")
+        (i.type === "warning" || i.type === "opportunity"),
     ).length;
   });
 
@@ -613,7 +618,7 @@ export class ActionableInsightsComponent implements OnInit {
   }
 
   getCategorySeverity(
-    category: string
+    category: string,
   ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (category) {
       case "training":

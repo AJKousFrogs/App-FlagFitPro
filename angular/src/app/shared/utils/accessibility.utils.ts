@@ -1,6 +1,6 @@
 /**
  * Accessibility Utilities
- * 
+ *
  * Collection of utility functions for accessibility features
  */
 
@@ -16,14 +16,14 @@ export function generateA11yId(prefix: string): string {
  */
 export function announceToScreenReader(
   message: string,
-  priority: 'polite' | 'assertive' = 'polite',
-  timeout: number = 1000
+  priority: "polite" | "assertive" = "polite",
+  timeout: number = 1000,
 ): void {
-  const announcement = document.createElement('div');
-  announcement.setAttribute('role', 'status');
-  announcement.setAttribute('aria-live', priority);
-  announcement.setAttribute('aria-atomic', 'true');
-  announcement.className = 'sr-only';
+  const announcement = document.createElement("div");
+  announcement.setAttribute("role", "status");
+  announcement.setAttribute("aria-live", priority);
+  announcement.setAttribute("aria-atomic", "true");
+  announcement.className = "sr-only";
   announcement.textContent = message;
 
   document.body.appendChild(announcement);
@@ -38,11 +38,11 @@ export function announceToScreenReader(
  */
 export function isFocusable(element: HTMLElement): boolean {
   const focusableSelectors = [
-    'a[href]',
-    'button:not([disabled])',
-    'textarea:not([disabled])',
-    'input:not([disabled])',
-    'select:not([disabled])',
+    "a[href]",
+    "button:not([disabled])",
+    "textarea:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
     '[tabindex]:not([tabindex="-1"])',
   ];
 
@@ -68,11 +68,8 @@ export function getFocusableElements(container: HTMLElement): HTMLElement[] {
 /**
  * Trap focus within element (for modals/dialogs)
  */
-export function trapFocus(
-  container: HTMLElement,
-  event: KeyboardEvent
-): void {
-  if (event.key !== 'Tab') return;
+export function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
+  if (event.key !== "Tab") return;
 
   const focusableElements = getFocusableElements(container);
   if (focusableElements.length === 0) return;
@@ -100,7 +97,7 @@ export function trapFocus(
  * Check if reduced motion is preferred
  */
 export function prefersReducedMotion(): boolean {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 /**
@@ -154,7 +151,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 export function meetsWCAGAA(
   foreground: string,
   background: string,
-  isLargeText: boolean = false
+  isLargeText: boolean = false,
 ): boolean {
   const ratio = getContrastRatio(foreground, background);
   const requiredRatio = isLargeText ? 3 : 4.5;
@@ -167,10 +164,9 @@ export function meetsWCAGAA(
 export function meetsWCAGAAA(
   foreground: string,
   background: string,
-  isLargeText: boolean = false
+  isLargeText: boolean = false,
 ): boolean {
   const ratio = getContrastRatio(foreground, background);
   const requiredRatio = isLargeText ? 4.5 : 7;
   return ratio >= requiredRatio;
 }
-

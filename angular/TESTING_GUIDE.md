@@ -59,11 +59,11 @@ src/
 ### Basic Component Test Template
 
 ```typescript
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { YourComponent } from './your.component';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { provideRouter } from "@angular/router";
+import { YourComponent } from "./your.component";
 
-describe('YourComponent', () => {
+describe("YourComponent", () => {
   let component: YourComponent;
   let fixture: ComponentFixture<YourComponent>;
   let compiled: HTMLElement;
@@ -82,22 +82,22 @@ describe('YourComponent', () => {
     compiled = fixture.nativeElement;
   });
 
-  describe('Component Initialization', () => {
-    it('should create', () => {
+  describe("Component Initialization", () => {
+    it("should create", () => {
       expect(component).toBeTruthy();
     });
   });
 
-  describe('Input Properties', () => {
-    it('should accept input values', () => {
-      fixture.componentRef.setInput('title', 'Test Title');
+  describe("Input Properties", () => {
+    it("should accept input values", () => {
+      fixture.componentRef.setInput("title", "Test Title");
       fixture.detectChanges();
-      expect(component.title()).toBe('Test Title');
+      expect(component.title()).toBe("Test Title");
     });
   });
 
-  describe('Output Events', () => {
-    it('should emit events', () => {
+  describe("Output Events", () => {
+    it("should emit events", () => {
       let emittedValue: any;
       component.onAction.subscribe((value: any) => {
         emittedValue = value;
@@ -108,12 +108,12 @@ describe('YourComponent', () => {
     });
   });
 
-  describe('DOM Rendering', () => {
-    it('should render title', () => {
-      fixture.componentRef.setInput('title', 'Test Title');
+  describe("DOM Rendering", () => {
+    it("should render title", () => {
+      fixture.componentRef.setInput("title", "Test Title");
       fixture.detectChanges();
-      const titleEl = compiled.querySelector('h1');
-      expect(titleEl?.textContent).toBe('Test Title');
+      const titleEl = compiled.querySelector("h1");
+      expect(titleEl?.textContent).toBe("Test Title");
     });
   });
 });
@@ -122,16 +122,16 @@ describe('YourComponent', () => {
 ### Testing Angular 21 Signals
 
 ```typescript
-describe('Signal Inputs', () => {
-  it('should update computed signal when input changes', () => {
-    fixture.componentRef.setInput('count', 5);
+describe("Signal Inputs", () => {
+  it("should update computed signal when input changes", () => {
+    fixture.componentRef.setInput("count", 5);
     fixture.detectChanges();
 
     expect(component.count()).toBe(5);
     expect(component.doubleCount()).toBe(10);
   });
 
-  it('should trigger effects when signal changes', () => {
+  it("should trigger effects when signal changes", () => {
     let effectRan = false;
 
     // Setup effect tracking
@@ -139,7 +139,7 @@ describe('Signal Inputs', () => {
       effectRan = true;
     });
 
-    fixture.componentRef.setInput('value', 'new value');
+    fixture.componentRef.setInput("value", "new value");
     fixture.detectChanges();
 
     expect(effectRan).toBe(true);
@@ -150,31 +150,27 @@ describe('Signal Inputs', () => {
 ### Testing PrimeNG Components
 
 ```typescript
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from "primeng/button";
+import { DialogModule } from "primeng/dialog";
 
-describe('Component with PrimeNG', () => {
+describe("Component with PrimeNG", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        YourComponent,
-        ButtonModule,
-        DialogModule,
-      ],
+      imports: [YourComponent, ButtonModule, DialogModule],
     }).compileComponents();
   });
 
-  it('should render PrimeNG button', () => {
+  it("should render PrimeNG button", () => {
     fixture.detectChanges();
-    const button = compiled.querySelector('p-button');
+    const button = compiled.querySelector("p-button");
     expect(button).toBeTruthy();
   });
 
-  it('should trigger button click', () => {
-    spyOn(component, 'handleClick');
+  it("should trigger button click", () => {
+    spyOn(component, "handleClick");
     fixture.detectChanges();
 
-    const button = compiled.querySelector('button');
+    const button = compiled.querySelector("button");
     button?.click();
 
     expect(component.handleClick).toHaveBeenCalled();
@@ -185,23 +181,26 @@ describe('Component with PrimeNG', () => {
 ### Mocking Services
 
 ```typescript
-describe('Component with Service Dependencies', () => {
+describe("Component with Service Dependencies", () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockToastService: jasmine.SpyObj<ToastService>;
 
   beforeEach(async () => {
-    mockAuthService = jasmine.createSpyObj('AuthService', [
-      'login',
-      'logout',
-      'getUser'
+    mockAuthService = jasmine.createSpyObj("AuthService", [
+      "login",
+      "logout",
+      "getUser",
     ]);
-    mockToastService = jasmine.createSpyObj('ToastService', [
-      'success',
-      'error'
+    mockToastService = jasmine.createSpyObj("ToastService", [
+      "success",
+      "error",
     ]);
 
     // Default return values
-    mockAuthService.getUser.and.returnValue({ id: '1', email: 'test@example.com' });
+    mockAuthService.getUser.and.returnValue({
+      id: "1",
+      email: "test@example.com",
+    });
     mockToastService.success.and.returnValue(undefined);
 
     await TestBed.configureTestingModule({
@@ -213,18 +212,18 @@ describe('Component with Service Dependencies', () => {
     }).compileComponents();
   });
 
-  it('should call service method', () => {
+  it("should call service method", () => {
     component.doSomething();
     expect(mockAuthService.login).toHaveBeenCalled();
   });
 
-  it('should handle service response', (done) => {
+  it("should handle service response", (done) => {
     mockAuthService.login.and.returnValue(of({ success: true }));
 
     component.login();
 
     setTimeout(() => {
-      expect(mockToastService.success).toHaveBeenCalledWith('Login successful');
+      expect(mockToastService.success).toHaveBeenCalledWith("Login successful");
       done();
     }, 100);
   });
@@ -234,9 +233,9 @@ describe('Component with Service Dependencies', () => {
 ### Testing Async Operations
 
 ```typescript
-describe('Async Operations', () => {
-  it('should handle observable data', (done) => {
-    const mockData = [{ id: 1, name: 'Test' }];
+describe("Async Operations", () => {
+  it("should handle observable data", (done) => {
+    const mockData = [{ id: 1, name: "Test" }];
     mockService.getData.and.returnValue(of(mockData));
 
     component.loadData();
@@ -248,16 +247,16 @@ describe('Async Operations', () => {
     }, 100);
   });
 
-  it('should handle errors', (done) => {
+  it("should handle errors", (done) => {
     mockService.getData.and.returnValue(
-      throwError(() => new Error('Network error'))
+      throwError(() => new Error("Network error")),
     );
 
     component.loadData();
 
     setTimeout(() => {
       expect(component.hasError()).toBe(true);
-      expect(component.errorMessage()).toBe('Network error');
+      expect(component.errorMessage()).toBe("Network error");
       done();
     }, 100);
   });
@@ -273,24 +272,24 @@ describe('Async Operations', () => {
 Use `describe` blocks to group related tests:
 
 ```typescript
-describe('ComponentName', () => {
-  describe('Component Initialization', () => {
+describe("ComponentName", () => {
+  describe("Component Initialization", () => {
     // Tests for component creation
   });
 
-  describe('Input Properties', () => {
+  describe("Input Properties", () => {
     // Tests for @Input properties
   });
 
-  describe('Output Events', () => {
+  describe("Output Events", () => {
     // Tests for @Output events
   });
 
-  describe('User Interactions', () => {
+  describe("User Interactions", () => {
     // Tests for click, input, etc.
   });
 
-  describe('Accessibility', () => {
+  describe("Accessibility", () => {
     // Tests for ARIA, keyboard nav, etc.
   });
 });
@@ -302,14 +301,14 @@ Use clear, descriptive test names:
 
 ```typescript
 // ✅ GOOD
-it('should display error message when email is invalid', () => {});
-it('should emit onSubmit event when form is valid', () => {});
-it('should disable submit button when loading', () => {});
+it("should display error message when email is invalid", () => {});
+it("should emit onSubmit event when form is valid", () => {});
+it("should disable submit button when loading", () => {});
 
 // ❌ BAD
-it('should work', () => {});
-it('test email', () => {});
-it('check button', () => {});
+it("should work", () => {});
+it("test email", () => {});
+it("check button", () => {});
 ```
 
 ### 3. Test Independence
@@ -318,16 +317,16 @@ Each test should be independent:
 
 ```typescript
 // ✅ GOOD
-it('should show error', () => {
-  component.error.set('Test error');
+it("should show error", () => {
+  component.error.set("Test error");
   fixture.detectChanges();
-  expect(compiled.querySelector('.error')).toBeTruthy();
+  expect(compiled.querySelector(".error")).toBeTruthy();
 });
 
 // ❌ BAD - depends on previous test state
-it('should show error', () => {
+it("should show error", () => {
   // Assumes error was set in previous test
-  expect(compiled.querySelector('.error')).toBeTruthy();
+  expect(compiled.querySelector(".error")).toBeTruthy();
 });
 ```
 
@@ -336,23 +335,23 @@ it('should show error', () => {
 Always include accessibility tests:
 
 ```typescript
-describe('Accessibility', () => {
-  it('should have proper ARIA labels', () => {
+describe("Accessibility", () => {
+  it("should have proper ARIA labels", () => {
     fixture.detectChanges();
-    const button = compiled.querySelector('button');
-    expect(button?.getAttribute('aria-label')).toBeTruthy();
+    const button = compiled.querySelector("button");
+    expect(button?.getAttribute("aria-label")).toBeTruthy();
   });
 
-  it('should be keyboard navigable', () => {
+  it("should be keyboard navigable", () => {
     fixture.detectChanges();
-    const inputs = compiled.querySelectorAll('input, button, a');
-    inputs.forEach(el => {
-      expect(el.getAttribute('tabindex')).not.toBe('-1');
+    const inputs = compiled.querySelectorAll("input, button, a");
+    inputs.forEach((el) => {
+      expect(el.getAttribute("tabindex")).not.toBe("-1");
     });
   });
 
-  it('should announce errors to screen readers', () => {
-    component.error.set('Error message');
+  it("should announce errors to screen readers", () => {
+    component.error.set("Error message");
     fixture.detectChanges();
     const errorEl = compiled.querySelector('[role="alert"]');
     expect(errorEl).toBeTruthy();
@@ -363,30 +362,30 @@ describe('Accessibility', () => {
 ### 5. Testing Loading States
 
 ```typescript
-describe('Loading States', () => {
-  it('should show loading indicator', () => {
+describe("Loading States", () => {
+  it("should show loading indicator", () => {
     component.isLoading.set(true);
     fixture.detectChanges();
-    const loader = compiled.querySelector('app-skeleton-loader');
+    const loader = compiled.querySelector("app-skeleton-loader");
     expect(loader).toBeTruthy();
   });
 
-  it('should hide content while loading', () => {
+  it("should hide content while loading", () => {
     component.isLoading.set(true);
     fixture.detectChanges();
-    const content = compiled.querySelector('.content');
+    const content = compiled.querySelector(".content");
     expect(content).toBeNull();
   });
 
-  it('should show content after loading', (done) => {
-    mockService.getData.and.returnValue(of({ data: 'test' }));
+  it("should show content after loading", (done) => {
+    mockService.getData.and.returnValue(of({ data: "test" }));
 
     component.loadData();
 
     setTimeout(() => {
       fixture.detectChanges();
       expect(component.isLoading()).toBe(false);
-      const content = compiled.querySelector('.content');
+      const content = compiled.querySelector(".content");
       expect(content).toBeTruthy();
       done();
     }, 100);
@@ -397,18 +396,18 @@ describe('Loading States', () => {
 ### 6. Testing Empty States
 
 ```typescript
-describe('Empty States', () => {
-  it('should show empty state when no data', () => {
+describe("Empty States", () => {
+  it("should show empty state when no data", () => {
     component.data.set([]);
     fixture.detectChanges();
-    const emptyState = compiled.querySelector('app-empty-state');
+    const emptyState = compiled.querySelector("app-empty-state");
     expect(emptyState).toBeTruthy();
   });
 
-  it('should not show empty state when data exists', () => {
+  it("should not show empty state when data exists", () => {
     component.data.set([{ id: 1 }]);
     fixture.detectChanges();
-    const emptyState = compiled.querySelector('app-empty-state');
+    const emptyState = compiled.querySelector("app-empty-state");
     expect(emptyState).toBeNull();
   });
 });
@@ -417,22 +416,22 @@ describe('Empty States', () => {
 ### 7. Testing Error States
 
 ```typescript
-describe('Error States', () => {
-  it('should display error message', () => {
+describe("Error States", () => {
+  it("should display error message", () => {
     component.hasError.set(true);
-    component.errorMessage.set('Something went wrong');
+    component.errorMessage.set("Something went wrong");
     fixture.detectChanges();
 
-    const errorEl = compiled.querySelector('.error-message');
-    expect(errorEl?.textContent).toContain('Something went wrong');
+    const errorEl = compiled.querySelector(".error-message");
+    expect(errorEl?.textContent).toContain("Something went wrong");
   });
 
-  it('should provide retry action', () => {
-    spyOn(component, 'retry');
+  it("should provide retry action", () => {
+    spyOn(component, "retry");
     component.hasError.set(true);
     fixture.detectChanges();
 
-    const retryBtn = compiled.querySelector('.retry-button') as HTMLElement;
+    const retryBtn = compiled.querySelector(".retry-button") as HTMLElement;
     retryBtn?.click();
 
     expect(component.retry).toHaveBeenCalled();
@@ -473,24 +472,24 @@ View report: `coverage/index.html`
 ### Pattern 1: Form Testing
 
 ```typescript
-describe('Form Validation', () => {
-  it('should validate required fields', () => {
-    const emailControl = component.form.get('email');
-    emailControl?.setValue('');
-    expect(emailControl?.hasError('required')).toBe(true);
+describe("Form Validation", () => {
+  it("should validate required fields", () => {
+    const emailControl = component.form.get("email");
+    emailControl?.setValue("");
+    expect(emailControl?.hasError("required")).toBe(true);
   });
 
-  it('should accept valid input', () => {
-    const emailControl = component.form.get('email');
-    emailControl?.setValue('test@example.com');
+  it("should accept valid input", () => {
+    const emailControl = component.form.get("email");
+    emailControl?.setValue("test@example.com");
     expect(emailControl?.valid).toBe(true);
   });
 
-  it('should disable submit when invalid', () => {
-    component.form.patchValue({ email: '' });
+  it("should disable submit when invalid", () => {
+    component.form.patchValue({ email: "" });
     fixture.detectChanges();
     const submitBtn = compiled.querySelector('[type="submit"]');
-    expect(submitBtn?.hasAttribute('disabled')).toBe(true);
+    expect(submitBtn?.hasAttribute("disabled")).toBe(true);
   });
 });
 ```
@@ -498,26 +497,26 @@ describe('Form Validation', () => {
 ### Pattern 2: Modal Testing
 
 ```typescript
-describe('Modal Component', () => {
-  it('should open modal', () => {
+describe("Modal Component", () => {
+  it("should open modal", () => {
     component.visible.set(true);
     fixture.detectChanges();
-    const modal = compiled.querySelector('.p-dialog');
+    const modal = compiled.querySelector(".p-dialog");
     expect(modal).toBeTruthy();
   });
 
-  it('should close on backdrop click', () => {
+  it("should close on backdrop click", () => {
     component.visible.set(true);
     component.dismissableMask.set(true);
     fixture.detectChanges();
 
-    const backdrop = compiled.querySelector('.p-dialog-mask') as HTMLElement;
+    const backdrop = compiled.querySelector(".p-dialog-mask") as HTMLElement;
     backdrop?.click();
 
     expect(component.visible()).toBe(false);
   });
 
-  it('should trap focus', () => {
+  it("should trap focus", () => {
     component.visible.set(true);
     fixture.detectChanges();
     // Test focus trap implementation
@@ -528,19 +527,19 @@ describe('Modal Component', () => {
 ### Pattern 3: Router Testing
 
 ```typescript
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 
-describe('Navigation', () => {
+describe("Navigation", () => {
   let router: Router;
 
   beforeEach(() => {
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate');
+    spyOn(router, "navigate");
   });
 
-  it('should navigate to dashboard', () => {
+  it("should navigate to dashboard", () => {
     component.goToDashboard();
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(router.navigate).toHaveBeenCalledWith(["/dashboard"]);
   });
 });
 ```
@@ -552,13 +551,13 @@ describe('Navigation', () => {
 ### Enable Debug Mode
 
 ```typescript
-it('should do something', () => {
-  console.log('Component state:', component.data());
-  console.log('DOM:', compiled.innerHTML);
+it("should do something", () => {
+  console.log("Component state:", component.data());
+  console.log("DOM:", compiled.innerHTML);
 
   fixture.detectChanges();
 
-  console.log('After change detection:', compiled.innerHTML);
+  console.log("After change detection:", compiled.innerHTML);
 });
 ```
 

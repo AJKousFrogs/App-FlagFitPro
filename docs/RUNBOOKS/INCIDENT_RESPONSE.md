@@ -20,12 +20,12 @@
 
 ## Incident Severity Levels
 
-| Severity | Description | Response Time | Examples |
-|----------|-------------|---------------|----------|
-| **SEV-1** | Complete service outage | < 15 min | Site down, database unreachable |
-| **SEV-2** | Major feature broken | < 1 hour | Login broken, data not saving |
-| **SEV-3** | Minor feature degraded | < 4 hours | Slow performance, UI glitches |
-| **SEV-4** | Cosmetic/low impact | Next business day | Typos, minor styling issues |
+| Severity  | Description             | Response Time     | Examples                        |
+| --------- | ----------------------- | ----------------- | ------------------------------- |
+| **SEV-1** | Complete service outage | < 15 min          | Site down, database unreachable |
+| **SEV-2** | Major feature broken    | < 1 hour          | Login broken, data not saving   |
+| **SEV-3** | Minor feature degraded  | < 4 hours         | Slow performance, UI glitches   |
+| **SEV-4** | Cosmetic/low impact     | Next business day | Typos, minor styling issues     |
 
 ---
 
@@ -63,23 +63,25 @@ curl -s https://your-app.netlify.app/.netlify/functions/health | jq
 
 ### Step 2: Assess Severity
 
-| Check | SEV-1 | SEV-2 | SEV-3 |
-|-------|-------|-------|-------|
-| Health endpoint returns 5xx | ✓ | | |
-| Health endpoint returns `degraded` | | ✓ | |
-| Users cannot log in | ✓ | | |
-| Data not saving | | ✓ | |
-| Slow page loads (> 5s) | | | ✓ |
-| Partial feature broken | | ✓ | |
+| Check                              | SEV-1 | SEV-2 | SEV-3 |
+| ---------------------------------- | ----- | ----- | ----- |
+| Health endpoint returns 5xx        | ✓     |       |       |
+| Health endpoint returns `degraded` |       | ✓     |       |
+| Users cannot log in                | ✓     |       |       |
+| Data not saving                    |       | ✓     |       |
+| Slow page loads (> 5s)             |       |       | ✓     |
+| Partial feature broken             |       | ✓     |       |
 
 ### Step 3: Notify Stakeholders
 
 **SEV-1/SEV-2:**
+
 1. Post in #incidents channel
 2. Page on-call engineer (if applicable)
 3. Update status page (if applicable)
 
 **Template:**
+
 ```
 🚨 INCIDENT: [Brief description]
 Severity: SEV-[1/2/3]
@@ -103,6 +105,7 @@ netlify logs --last 50
 ```
 
 **Or via Netlify Dashboard:**
+
 1. Go to https://app.netlify.com
 2. Select site → Functions → Select function → View logs
 
@@ -116,6 +119,7 @@ curl -s https://your-project.supabase.co/rest/v1/ \
 ```
 
 **Or via Supabase Dashboard:**
+
 1. Go to https://supabase.com/dashboard
 2. Select project → Database → Check connection status
 3. Check Logs → Postgres for errors
@@ -137,6 +141,7 @@ netlify deploys --json | jq '.[0:5]'
 ```
 
 **Questions to answer:**
+
 - Was there a deploy in the last 30 minutes?
 - Did the deploy succeed?
 - What changes were included?
@@ -177,10 +182,12 @@ If isolated to one feature:
 ### Option C: Scale/Restart Services
 
 **Netlify Functions:**
+
 - Functions are stateless; no restart needed
 - If persistent, redeploy: `netlify deploy --prod`
 
 **Supabase:**
+
 1. Dashboard → Settings → General → Restart project
 2. Or contact Supabase support for database issues
 
@@ -273,28 +280,35 @@ curl https://your-app.netlify.app/.netlify/functions/dashboard \
 **Lead:** [Name]
 
 ## Summary
+
 [1-2 sentence summary of what happened]
 
 ## Timeline
+
 - HH:MM - [Event]
 - HH:MM - [Event]
 
 ## Root Cause
+
 [What caused the incident]
 
 ## Impact
+
 - Users affected: [Number/percentage]
 - Features affected: [List]
 - Data affected: [If any]
 
 ## Resolution
+
 [What fixed it]
 
 ## Action Items
+
 - [ ] [Task] - Owner - Due date
 - [ ] [Task] - Owner - Due date
 
 ## Lessons Learned
+
 - What went well
 - What could be improved
 ```
@@ -305,18 +319,18 @@ curl https://your-app.netlify.app/.netlify/functions/dashboard \
 
 ### Health Check Endpoints
 
-| Endpoint | Purpose | Auth Required |
-|----------|---------|---------------|
-| `/.netlify/functions/health` | Overall system health | No |
-| `/.netlify/functions/dashboard?action=health` | Dashboard service | No |
-| `/.netlify/functions/coach?action=health` | Coach API | No |
+| Endpoint                                      | Purpose               | Auth Required |
+| --------------------------------------------- | --------------------- | ------------- |
+| `/.netlify/functions/health`                  | Overall system health | No            |
+| `/.netlify/functions/dashboard?action=health` | Dashboard service     | No            |
+| `/.netlify/functions/coach?action=health`     | Coach API             | No            |
 
 ### Key Contacts
 
-| Role | Contact |
-|------|---------|
-| On-call Engineer | [Contact method] |
-| Netlify Support | https://answers.netlify.com |
+| Role             | Contact                      |
+| ---------------- | ---------------------------- |
+| On-call Engineer | [Contact method]             |
+| Netlify Support  | https://answers.netlify.com  |
 | Supabase Support | https://supabase.com/support |
 
 ### Useful Commands
@@ -339,4 +353,3 @@ netlify deploy --prod
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

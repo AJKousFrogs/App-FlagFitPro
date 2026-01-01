@@ -71,7 +71,7 @@ function hasAccessibleName(element: HTMLElement): boolean {
  */
 function checkColorContrast(
   foreground: string,
-  background: string
+  background: string,
 ): { ratio: number; passes: boolean } {
   // Simplified contrast check - real implementation would calculate luminance
   // This is a placeholder that always passes for testing purposes
@@ -92,7 +92,7 @@ function getFocusableElements(container: HTMLElement): HTMLElement[] {
   ];
 
   return Array.from(
-    container.querySelectorAll<HTMLElement>(focusableSelectors.join(", "))
+    container.querySelectorAll<HTMLElement>(focusableSelectors.join(", ")),
   );
 }
 
@@ -246,7 +246,7 @@ describe("Accessibility Audit", () => {
 
       it("should have accessible names for icon buttons", () => {
         const iconButtons = fixture.debugElement.queryAll(
-          By.css("button:not(:has(span))")
+          By.css("button:not(:has(span))"),
         );
         iconButtons.forEach((button) => {
           const hasAccessibleName =
@@ -281,7 +281,7 @@ describe("Accessibility Audit", () => {
     describe("1.3.2 Meaningful Sequence", () => {
       it("should have logical heading order", () => {
         const headings = fixture.debugElement.queryAll(
-          By.css("h1, h2, h3, h4, h5, h6")
+          By.css("h1, h2, h3, h4, h5, h6"),
         );
         let lastLevel = 0;
         headings.forEach((heading) => {
@@ -298,7 +298,7 @@ describe("Accessibility Audit", () => {
     describe("2.1.1 Keyboard", () => {
       it("should have all interactive elements focusable", () => {
         const interactiveElements = fixture.debugElement.queryAll(
-          By.css("a, button, input, select, textarea")
+          By.css("a, button, input, select, textarea"),
         );
         interactiveElements.forEach((el) => {
           const tabIndex = el.nativeElement.getAttribute("tabindex");
@@ -309,7 +309,7 @@ describe("Accessibility Audit", () => {
 
       it("should have visible focus indicators", () => {
         const focusableElements = fixture.debugElement.queryAll(
-          By.css("a, button, input")
+          By.css("a, button, input"),
         );
         // This is a simplified check - real test would verify CSS
         expect(focusableElements.length).toBeGreaterThan(0);
@@ -319,10 +319,10 @@ describe("Accessibility Audit", () => {
     describe("2.4.1 Bypass Blocks", () => {
       it("should have skip navigation or landmarks", () => {
         const hasMain = fixture.debugElement.query(
-          By.css("main, [role='main']")
+          By.css("main, [role='main']"),
         );
         const hasNav = fixture.debugElement.query(
-          By.css("nav, [role='navigation']")
+          By.css("nav, [role='navigation']"),
         );
         expect(hasMain || hasNav).toBeTruthy();
       });
@@ -348,7 +348,7 @@ describe("Accessibility Audit", () => {
     describe("4.1.2 Name, Role, Value", () => {
       it("should have valid ARIA roles", () => {
         const elementsWithRole = fixture.debugElement.queryAll(
-          By.css("[role]")
+          By.css("[role]"),
         );
         const validRoles = [
           "main",
@@ -410,26 +410,28 @@ describe("Accessibility Audit", () => {
     describe("2.4.6 Headings and Labels", () => {
       it("should have descriptive headings", () => {
         const headings = fixture.debugElement.queryAll(
-          By.css("h1, h2, h3, h4, h5, h6")
+          By.css("h1, h2, h3, h4, h5, h6"),
         );
         headings.forEach((heading) => {
-          expect(heading.nativeElement.textContent.trim().length).toBeGreaterThan(0);
+          expect(
+            heading.nativeElement.textContent.trim().length,
+          ).toBeGreaterThan(0);
         });
       });
 
       it("should have descriptive labels", () => {
         const labels = fixture.debugElement.queryAll(By.css("label"));
         labels.forEach((label) => {
-          expect(label.nativeElement.textContent.trim().length).toBeGreaterThan(0);
+          expect(label.nativeElement.textContent.trim().length).toBeGreaterThan(
+            0,
+          );
         });
       });
     });
 
     describe("2.4.7 Focus Visible", () => {
       it("should have focus styles", () => {
-        const focusableElements = getFocusableElements(
-          fixture.nativeElement
-        );
+        const focusableElements = getFocusableElements(fixture.nativeElement);
         expect(focusableElements.length).toBeGreaterThan(0);
       });
     });
@@ -447,7 +449,7 @@ describe("Accessibility Audit", () => {
     describe("3.3.1 Error Identification", () => {
       it("should mark required fields", () => {
         const requiredInputs = fixture.debugElement.queryAll(
-          By.css("[aria-required='true'], [required]")
+          By.css("[aria-required='true'], [required]"),
         );
         requiredInputs.forEach((input) => {
           const hasRequiredIndicator =
@@ -479,7 +481,7 @@ describe("Accessibility Audit", () => {
     it("should pass full accessibility audit", () => {
       const violations = checkAccessibility(fixture.nativeElement);
       const criticalViolations = violations.filter(
-        (v) => v.impact === "critical" || v.impact === "serious"
+        (v) => v.impact === "critical" || v.impact === "serious",
       );
 
       if (criticalViolations.length > 0) {
@@ -492,7 +494,7 @@ describe("Accessibility Audit", () => {
     it("should have proper tab order", () => {
       const focusable = getFocusableElements(fixture.nativeElement);
       const tabIndices = focusable.map((el) =>
-        parseInt(el.getAttribute("tabindex") || "0")
+        parseInt(el.getAttribute("tabindex") || "0"),
       );
 
       // No positive tabindex (which breaks natural order)
@@ -527,13 +529,13 @@ describe("Accessibility Audit", () => {
     it("should use semantic elements instead of divs with roles", () => {
       // Prefer <button> over <div role="button">
       const divButtons = fixture.debugElement.queryAll(
-        By.css("div[role='button'], span[role='button']")
+        By.css("div[role='button'], span[role='button']"),
       );
       expect(divButtons.length).toBe(0);
 
       // Prefer <nav> over <div role="navigation">
       const divNavs = fixture.debugElement.queryAll(
-        By.css("div[role='navigation']")
+        By.css("div[role='navigation']"),
       );
       expect(divNavs.length).toBe(0);
     });
@@ -569,7 +571,7 @@ describe("Accessibility Audit", () => {
       focusable.forEach((el) => {
         const tabIndex = el.getAttribute("tabindex");
         expect(tabIndex === null || tabIndex === "0" || tabIndex === "-1").toBe(
-          true
+          true,
         );
       });
     });
@@ -603,7 +605,7 @@ describe("Accessibility Audit", () => {
     it("should announce dynamic content changes", () => {
       // Check for aria-live regions
       const liveRegions = fixture.debugElement.queryAll(
-        By.css("[aria-live], [role='alert'], [role='status']")
+        By.css("[aria-live], [role='alert'], [role='status']"),
       );
       // At minimum, forms should have error announcement regions
       // This is a basic check
@@ -654,4 +656,3 @@ describe("Component Accessibility Patterns", () => {
     });
   });
 });
-

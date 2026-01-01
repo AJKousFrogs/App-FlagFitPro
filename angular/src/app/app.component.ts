@@ -54,4 +54,3 @@ import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loa
   ],
 })
 export class AppComponent {}
-

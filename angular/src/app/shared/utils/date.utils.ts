@@ -29,7 +29,7 @@ import {
   differenceInMinutes,
   formatDistanceToNow,
   eachDayOfInterval,
-} from 'date-fns';
+} from "date-fns";
 
 /**
  * Format date with optional format string
@@ -37,12 +37,15 @@ import {
  * formatDate(new Date(), 'PPP') // "December 24, 2025"
  * formatDate('2025-12-24', 'yyyy-MM-dd') // "2025-12-24"
  */
-export function formatDate(date: Date | string, formatStr: string = 'PPP'): string {
+export function formatDate(
+  date: Date | string,
+  formatStr: string = "PPP",
+): string {
   try {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date;
+    const dateObj = typeof date === "string" ? parseISO(date) : date;
     return dateFnsFormat(dateObj, formatStr);
   } catch {
-    return 'Invalid date';
+    return "Invalid date";
   }
 }
 
@@ -50,7 +53,7 @@ export function formatDate(date: Date | string, formatStr: string = 'PPP'): stri
  * Check if date is today
  */
 export function isToday(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return dateFnsIsToday(dateObj);
 }
 
@@ -58,7 +61,7 @@ export function isToday(date: Date | string): boolean {
  * Check if date is yesterday
  */
 export function isYesterday(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return dateFnsIsYesterday(dateObj);
 }
 
@@ -66,7 +69,7 @@ export function isYesterday(date: Date | string): boolean {
  * Check if date is tomorrow
  */
 export function isTomorrow(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return dateFnsIsTomorrow(dateObj);
 }
 
@@ -106,7 +109,7 @@ export function daysFromNow(days: number): Date {
  * timeAgo(new Date('2025-12-24')) // "2 hours ago"
  */
 export function timeAgo(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return formatDistanceToNow(dateObj, { addSuffix: true });
 }
 
@@ -116,8 +119,8 @@ export function timeAgo(date: Date | string): string {
  * dateRange(startDate, endDate) // [date1, date2, date3...]
  */
 export function dateRange(start: Date | string, end: Date | string): Date[] {
-  const startDate = typeof start === 'string' ? parseISO(start) : start;
-  const endDate = typeof end === 'string' ? parseISO(end) : end;
+  const startDate = typeof start === "string" ? parseISO(start) : start;
+  const endDate = typeof end === "string" ? parseISO(end) : end;
   return eachDayOfInterval({ start: startDate, end: endDate });
 }
 
@@ -125,7 +128,7 @@ export function dateRange(start: Date | string, end: Date | string): Date[] {
  * Get start of day
  */
 export function getStartOfDay(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return startOfDay(dateObj);
 }
 
@@ -133,7 +136,7 @@ export function getStartOfDay(date: Date | string = new Date()): Date {
  * Get end of day
  */
 export function getEndOfDay(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return endOfDay(dateObj);
 }
 
@@ -141,7 +144,7 @@ export function getEndOfDay(date: Date | string = new Date()): Date {
  * Get start of week (Monday)
  */
 export function getStartOfWeek(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return startOfWeek(dateObj, { weekStartsOn: 1 });
 }
 
@@ -149,7 +152,7 @@ export function getStartOfWeek(date: Date | string = new Date()): Date {
  * Get end of week (Sunday)
  */
 export function getEndOfWeek(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return endOfWeek(dateObj, { weekStartsOn: 1 });
 }
 
@@ -157,7 +160,7 @@ export function getEndOfWeek(date: Date | string = new Date()): Date {
  * Get start of month
  */
 export function getStartOfMonth(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return startOfMonth(dateObj);
 }
 
@@ -165,34 +168,43 @@ export function getStartOfMonth(date: Date | string = new Date()): Date {
  * Get end of month
  */
 export function getEndOfMonth(date: Date | string = new Date()): Date {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return endOfMonth(dateObj);
 }
 
 /**
  * Get difference in days between two dates
  */
-export function daysBetween(date1: Date | string, date2: Date | string): number {
-  const d1 = typeof date1 === 'string' ? parseISO(date1) : date1;
-  const d2 = typeof date2 === 'string' ? parseISO(date2) : date2;
+export function daysBetween(
+  date1: Date | string,
+  date2: Date | string,
+): number {
+  const d1 = typeof date1 === "string" ? parseISO(date1) : date1;
+  const d2 = typeof date2 === "string" ? parseISO(date2) : date2;
   return Math.abs(differenceInDays(d1, d2));
 }
 
 /**
  * Get difference in hours between two dates
  */
-export function hoursBetween(date1: Date | string, date2: Date | string): number {
-  const d1 = typeof date1 === 'string' ? parseISO(date1) : date1;
-  const d2 = typeof date2 === 'string' ? parseISO(date2) : date2;
+export function hoursBetween(
+  date1: Date | string,
+  date2: Date | string,
+): number {
+  const d1 = typeof date1 === "string" ? parseISO(date1) : date1;
+  const d2 = typeof date2 === "string" ? parseISO(date2) : date2;
   return Math.abs(differenceInHours(d1, d2));
 }
 
 /**
  * Get difference in minutes between two dates
  */
-export function minutesBetween(date1: Date | string, date2: Date | string): number {
-  const d1 = typeof date1 === 'string' ? parseISO(date1) : date1;
-  const d2 = typeof date2 === 'string' ? parseISO(date2) : date2;
+export function minutesBetween(
+  date1: Date | string,
+  date2: Date | string,
+): number {
+  const d1 = typeof date1 === "string" ? parseISO(date1) : date1;
+  const d2 = typeof date2 === "string" ? parseISO(date2) : date2;
   return Math.abs(differenceInMinutes(d1, d2));
 }
 
@@ -200,7 +212,7 @@ export function minutesBetween(date1: Date | string, date2: Date | string): numb
  * Check if date is in current week
  */
 export function isCurrentWeek(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return isThisWeek(dateObj, { weekStartsOn: 1 });
 }
 
@@ -208,7 +220,7 @@ export function isCurrentWeek(date: Date | string): boolean {
  * Check if date is in current month
  */
 export function isCurrentMonth(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return isThisMonth(dateObj);
 }
 
@@ -216,7 +228,6 @@ export function isCurrentMonth(date: Date | string): boolean {
  * Check if date is in current year
  */
 export function isCurrentYear(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISO(date) : date;
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
   return isThisYear(dateObj);
 }
-

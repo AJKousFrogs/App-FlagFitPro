@@ -364,7 +364,7 @@ function sanitize(data) {
 function createValidationErrorResponse(errors, statusCode = 400) {
   // Use centralized CORS headers for consistency
   const { CORS_HEADERS } = require("./utils/error-handler.cjs");
-  
+
   return {
     statusCode,
     headers: CORS_HEADERS,

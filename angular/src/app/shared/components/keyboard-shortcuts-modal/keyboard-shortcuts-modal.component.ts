@@ -49,7 +49,10 @@ import {
           </div>
           <div class="header-text">
             <h2>Keyboard Shortcuts</h2>
-            <p>Press <kbd>{{ shortcutsService.modifierKey() }}</kbd> + <kbd>/</kbd> or <kbd>?</kbd> to toggle</p>
+            <p>
+              Press <kbd>{{ shortcutsService.modifierKey() }}</kbd> +
+              <kbd>/</kbd> or <kbd>?</kbd> to toggle
+            </p>
           </div>
         </div>
       </ng-template>
@@ -64,7 +67,9 @@ import {
           <div class="shortcut-list">
             @for (shortcut of navigationShortcuts(); track shortcut.id) {
               <div class="shortcut-item">
-                <span class="shortcut-description">{{ shortcut.description }}</span>
+                <span class="shortcut-description">{{
+                  shortcut.description
+                }}</span>
                 <div class="shortcut-keys">
                   @for (key of formatKeyParts(shortcut.keys[0]); track $index) {
                     <kbd>{{ key }}</kbd>
@@ -89,7 +94,9 @@ import {
           <div class="shortcut-list">
             @for (shortcut of actionShortcuts(); track shortcut.id) {
               <div class="shortcut-item">
-                <span class="shortcut-description">{{ shortcut.description }}</span>
+                <span class="shortcut-description">{{
+                  shortcut.description
+                }}</span>
                 <div class="shortcut-keys">
                   @for (key of formatKeyParts(shortcut.keys[0]); track $index) {
                     <kbd>{{ key }}</kbd>
@@ -114,7 +121,9 @@ import {
           <div class="shortcut-list">
             @for (shortcut of viewShortcuts(); track shortcut.id) {
               <div class="shortcut-item">
-                <span class="shortcut-description">{{ shortcut.description }}</span>
+                <span class="shortcut-description">{{
+                  shortcut.description
+                }}</span>
                 <div class="shortcut-keys">
                   @for (key of formatKeyParts(shortcut.keys[0]); track $index) {
                     <kbd>{{ key }}</kbd>
@@ -139,7 +148,9 @@ import {
           <div class="shortcut-list">
             @for (shortcut of helpShortcuts(); track shortcut.id) {
               <div class="shortcut-item">
-                <span class="shortcut-description">{{ shortcut.description }}</span>
+                <span class="shortcut-description">{{
+                  shortcut.description
+                }}</span>
                 <div class="shortcut-keys">
                   @for (key of formatKeyParts(shortcut.keys[0]); track $index) {
                     <kbd>{{ key }}</kbd>
@@ -162,11 +173,19 @@ import {
               Recently Used
             </h3>
             <div class="shortcut-list">
-              @for (shortcut of shortcutsService.recentlyUsed(); track shortcut.id) {
+              @for (
+                shortcut of shortcutsService.recentlyUsed();
+                track shortcut.id
+              ) {
                 <div class="shortcut-item">
-                  <span class="shortcut-description">{{ shortcut.description }}</span>
+                  <span class="shortcut-description">{{
+                    shortcut.description
+                  }}</span>
                   <div class="shortcut-keys">
-                    @for (key of formatKeyParts(shortcut.keys[0]); track $index) {
+                    @for (
+                      key of formatKeyParts(shortcut.keys[0]);
+                      track $index
+                    ) {
                       <kbd>{{ key }}</kbd>
                       @if (!$last) {
                         <span class="key-separator">+</span>
@@ -338,7 +357,8 @@ import {
         background: var(--surface-primary);
         border: 1px solid var(--color-border-primary);
         border-radius: var(--radius-sm);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05),
+        box-shadow:
+          0 1px 2px rgba(0, 0, 0, 0.05),
           inset 0 -1px 0 rgba(0, 0, 0, 0.1);
       }
 
@@ -426,32 +446,36 @@ export class KeyboardShortcutsModalComponent {
   shortcutsService = inject(KeyboardShortcutsService);
 
   // Computed shortcuts by category
-  navigationShortcuts = computed(() =>
-    this.shortcutsService
-      .shortcutsByCategory()
-      .get("navigation")
-      ?.filter((s) => s.enabled !== false) || []
+  navigationShortcuts = computed(
+    () =>
+      this.shortcutsService
+        .shortcutsByCategory()
+        .get("navigation")
+        ?.filter((s) => s.enabled !== false) || [],
   );
 
-  actionShortcuts = computed(() =>
-    this.shortcutsService
-      .shortcutsByCategory()
-      .get("actions")
-      ?.filter((s) => s.enabled !== false) || []
+  actionShortcuts = computed(
+    () =>
+      this.shortcutsService
+        .shortcutsByCategory()
+        .get("actions")
+        ?.filter((s) => s.enabled !== false) || [],
   );
 
-  viewShortcuts = computed(() =>
-    this.shortcutsService
-      .shortcutsByCategory()
-      .get("view")
-      ?.filter((s) => s.enabled !== false) || []
+  viewShortcuts = computed(
+    () =>
+      this.shortcutsService
+        .shortcutsByCategory()
+        .get("view")
+        ?.filter((s) => s.enabled !== false) || [],
   );
 
-  helpShortcuts = computed(() =>
-    this.shortcutsService
-      .shortcutsByCategory()
-      .get("help")
-      ?.filter((s) => s.enabled !== false) || []
+  helpShortcuts = computed(
+    () =>
+      this.shortcutsService
+        .shortcutsByCategory()
+        .get("help")
+        ?.filter((s) => s.enabled !== false) || [],
   );
 
   onVisibleChange(visible: boolean): void {
@@ -501,4 +525,3 @@ export class KeyboardShortcutsModalComponent {
     });
   }
 }
-

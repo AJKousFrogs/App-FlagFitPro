@@ -6,6 +6,8 @@ import {
   Session,
   AuthChangeEvent,
   UserAttributes,
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
@@ -116,14 +118,14 @@ export class SupabaseService {
    */
   async waitForInit(): Promise<void> {
     if (this._isInitialized()) return;
-    
+
     // Poll until initialized (max 5 seconds)
     const maxWait = 5000;
     const interval = 50;
     let waited = 0;
-    
+
     while (!this._isInitialized() && waited < maxWait) {
-      await new Promise(resolve => setTimeout(resolve, interval));
+      await new Promise((resolve) => setTimeout(resolve, interval));
       waited += interval;
     }
   }
@@ -199,5 +201,147 @@ export class SupabaseService {
   async getToken(): Promise<string | null> {
     const { data } = await this.supabase.auth.getSession();
     return data.session?.access_token ?? null;
+  }
+
+  // ==========================================================
+  // Phase 1: Realtime Subscriptions for Coach Inbox
+  // ==========================================================
+
+  /**
+   * Subscribe to coach inbox items (real-time updates)
+   * Returns a channel that can be used to unsubscribe
+   *
+   * @param coachId - Coach user ID to filter items
+   * @param onInsert - Callback for new inbox items
+   * @param onUpdate - Callback for updated inbox items
+   * @returns RealtimeChannel for cleanup
+   */
+  subscribeToCoachInbox(
+    coachId: string,
+    onInsert?: (
+      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+    ) => void,
+    onUpdate?: (
+      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+    ) => void,
+  ): RealtimeChannel {
+    const channelName = `coach-inbox:${coachId}`;
+
+    let channel = this.supabase.channel(channelName);
+
+    // Subscribe to INSERT events
+    if (onInsert) {
+      channel = channel.on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "coach_inbox_items",
+          filter: `coach_id=eq.${coachId}`,
+        },
+        onInsert,
+      );
+    }
+
+    // Subscribe to UPDATE events
+    if (onUpdate) {
+      channel = channel.on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "coach_inbox_items",
+          filter: `coach_id=eq.${coachId}`,
+        },
+        onUpdate,
+      );
+    }
+
+    channel.subscribe((status) => {
+      this.logger.debug(
+        `[SupabaseService] Coach inbox subscription status: ${status}`,
+      );
+    });
+
+    return channel;
+  }
+
+  /**
+   * Subscribe to athlete daily state changes (for coaches monitoring their team)
+   *
+   * @param teamPlayerIds - Array of player user IDs to monitor
+   * @param onInsert - Callback for new daily state entries
+   * @param onUpdate - Callback for updated daily state entries
+   * @returns RealtimeChannel for cleanup
+   */
+  subscribeToAthleteDailyState(
+    teamPlayerIds: string[],
+    onInsert?: (
+      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+    ) => void,
+    onUpdate?: (
+      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+    ) => void,
+  ): RealtimeChannel {
+    const channelName = `athlete-daily-state`;
+
+    // Note: Supabase doesn't support IN filters for realtime, so we subscribe to all
+    // and filter client-side. For performance, consider server-side filtering.
+    let channel = this.supabase.channel(channelName);
+
+    if (onInsert) {
+      channel = channel.on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "athlete_daily_state",
+        },
+        (payload) => {
+          // Client-side filter
+          const userId = (payload.new as { user_id?: string })?.user_id;
+          if (userId && teamPlayerIds.includes(userId)) {
+            onInsert(payload);
+          }
+        },
+      );
+    }
+
+    if (onUpdate) {
+      channel = channel.on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "athlete_daily_state",
+        },
+        (payload) => {
+          const userId = (payload.new as { user_id?: string })?.user_id;
+          if (userId && teamPlayerIds.includes(userId)) {
+            onUpdate(payload);
+          }
+        },
+      );
+    }
+
+    channel.subscribe((status) => {
+      this.logger.debug(
+        `[SupabaseService] Athlete daily state subscription status: ${status}`,
+      );
+    });
+
+    return channel;
+  }
+
+  /**
+   * Unsubscribe from a realtime channel
+   *
+   * @param channel - The channel to unsubscribe from
+   */
+  unsubscribe(channel: RealtimeChannel): void {
+    if (channel) {
+      this.supabase.removeChannel(channel);
+      this.logger.debug("[SupabaseService] Unsubscribed from realtime channel");
+    }
   }
 }

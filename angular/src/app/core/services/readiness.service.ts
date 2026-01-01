@@ -355,7 +355,7 @@ export class ReadinessService {
         authors: c.authors,
         year: c.year,
         title: c.title,
-        doi: c.doi || '',
+        doi: c.doi || "",
       })),
       scienceNotes: {
         weightings: readinessConfig.scienceNotes.weightings,

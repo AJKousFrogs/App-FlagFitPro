@@ -595,7 +595,7 @@ export class GameDayCountdownComponent implements OnInit, OnDestroy {
           items.map((item) => ({
             ...item,
             completed: completed.includes(item.id),
-          }))
+          })),
         );
       }
     } catch (error) {

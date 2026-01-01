@@ -6,7 +6,10 @@
  */
 
 import { execSync } from "child_process";
-import { readFileSync as _readFileSync, writeFileSync as _writeFileSync } from "fs";
+import {
+  readFileSync as _readFileSync,
+  writeFileSync as _writeFileSync,
+} from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 

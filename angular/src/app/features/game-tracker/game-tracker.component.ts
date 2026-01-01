@@ -1,19 +1,19 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -132,9 +132,9 @@ export class GameTrackerComponent implements OnInit {
   opponentScore = signal<number>(0);
   gameForm!: FormGroup;
   playForm!: FormGroup;
-  
+
   // Temperature unit preference (stored in localStorage)
-  temperatureUnit: 'F' | 'C' = 'F';
+  temperatureUnit: "F" | "C" = "F";
 
   // User role detection
   isCoachOrAdmin = signal(false);
@@ -142,8 +142,16 @@ export class GameTrackerComponent implements OnInit {
 
   // Game type options
   gameTypeOptions = [
-    { label: "Team Game", value: "team", description: "Visible to all team members" },
-    { label: "Personal/Domestic League", value: "personal", description: "Only visible to you and coaches with consent" },
+    {
+      label: "Team Game",
+      value: "team",
+      description: "Visible to all team members",
+    },
+    {
+      label: "Personal/Domestic League",
+      value: "personal",
+      description: "Only visible to you and coaches with consent",
+    },
   ];
 
   homeAwayOptions = [
@@ -250,8 +258,14 @@ export class GameTrackerComponent implements OnInit {
     const user = this.authService.getUser();
     if (user) {
       this.currentUserId.set(user.id);
-      const role = user.role || 'player';
-      const coachRoles = ['coach', 'head_coach', 'assistant_coach', 'manager', 'admin'];
+      const role = user.role || "player";
+      const coachRoles = [
+        "coach",
+        "head_coach",
+        "assistant_coach",
+        "manager",
+        "admin",
+      ];
       this.isCoachOrAdmin.set(coachRoles.includes(role));
     }
   }
@@ -260,14 +274,14 @@ export class GameTrackerComponent implements OnInit {
    * Get button label based on user role
    */
   getNewGameButtonLabel(): string {
-    return this.isCoachOrAdmin() ? 'New Team Game' : 'Log Game';
+    return this.isCoachOrAdmin() ? "New Team Game" : "Log Game";
   }
 
   /**
    * Get form title based on user role
    */
   getFormTitle(): string {
-    return this.isCoachOrAdmin() ? 'Create Team Game' : 'Log Personal Game';
+    return this.isCoachOrAdmin() ? "Create Team Game" : "Log Personal Game";
   }
 
   /**
@@ -275,17 +289,17 @@ export class GameTrackerComponent implements OnInit {
    */
   getFormDescription(): string {
     if (this.isCoachOrAdmin()) {
-      return 'This game will be visible to all team members and affect team statistics.';
+      return "This game will be visible to all team members and affect team statistics.";
     }
-    return 'Log a game from your domestic league or personal competition. Only you and coaches you\'ve given consent to can see this.';
+    return "Log a game from your domestic league or personal competition. Only you and coaches you've given consent to can see this.";
   }
 
   /**
    * Load temperature unit preference from localStorage
    */
   private loadTemperaturePreference(): void {
-    const savedUnit = localStorage.getItem('temperatureUnit');
-    if (savedUnit === 'C' || savedUnit === 'F') {
+    const savedUnit = localStorage.getItem("temperatureUnit");
+    if (savedUnit === "C" || savedUnit === "F") {
       this.temperatureUnit = savedUnit;
     }
   }
@@ -293,23 +307,23 @@ export class GameTrackerComponent implements OnInit {
   /**
    * Set temperature unit and save to localStorage
    */
-  setTemperatureUnit(unit: 'F' | 'C'): void {
+  setTemperatureUnit(unit: "F" | "C"): void {
     // Convert existing temperature value if there is one
-    const currentTemp = this.gameForm?.get('temperature')?.value;
+    const currentTemp = this.gameForm?.get("temperature")?.value;
     if (currentTemp !== null && currentTemp !== undefined) {
-      if (unit === 'C' && this.temperatureUnit === 'F') {
+      if (unit === "C" && this.temperatureUnit === "F") {
         // Convert F to C
-        const celsius = Math.round((currentTemp - 32) * 5 / 9);
+        const celsius = Math.round(((currentTemp - 32) * 5) / 9);
         this.gameForm.patchValue({ temperature: celsius });
-      } else if (unit === 'F' && this.temperatureUnit === 'C') {
+      } else if (unit === "F" && this.temperatureUnit === "C") {
         // Convert C to F
-        const fahrenheit = Math.round(currentTemp * 9 / 5 + 32);
+        const fahrenheit = Math.round((currentTemp * 9) / 5 + 32);
         this.gameForm.patchValue({ temperature: fahrenheit });
       }
     }
-    
+
     this.temperatureUnit = unit;
-    localStorage.setItem('temperatureUnit', unit);
+    localStorage.setItem("temperatureUnit", unit);
   }
 
   loadPlayers(): void {
@@ -320,10 +334,10 @@ export class GameTrackerComponent implements OnInit {
       .subscribe({
         next: (response: unknown) => {
           // Type guard for response structure
-          const isValidResponse = 
+          const isValidResponse =
             response &&
-            typeof response === 'object' &&
-            ('data' in response || Array.isArray(response));
+            typeof response === "object" &&
+            ("data" in response || Array.isArray(response));
 
           if (!isValidResponse) {
             this.loadDefaultPlayers();
@@ -331,36 +345,41 @@ export class GameTrackerComponent implements OnInit {
           }
 
           const responseObj = response as Record<string, unknown>;
-          const playersData = Array.isArray(responseObj['data']) 
-            ? responseObj['data'] 
-            : Array.isArray(response) 
-              ? response 
+          const playersData = Array.isArray(responseObj["data"])
+            ? responseObj["data"]
+            : Array.isArray(response)
+              ? response
               : [];
 
           this.players.set(
             playersData
-              .filter((p): p is Record<string, unknown> => 
-                p !== null && typeof p === 'object'
+              .filter(
+                (p): p is Record<string, unknown> =>
+                  p !== null && typeof p === "object",
               )
               .map((p) => {
-                const pId = p['id'];
-                const pPlayerId = p['playerId'];
-                const pName = p['name'];
-                const pFirstName = p['firstName'];
-                const pLastName = p['lastName'];
-                const pPosition = p['position'];
-                
+                const pId = p["id"];
+                const pPlayerId = p["playerId"];
+                const pName = p["name"];
+                const pFirstName = p["firstName"];
+                const pLastName = p["lastName"];
+                const pPosition = p["position"];
+
                 return {
-                  id: 
-                    typeof pId === 'string' ? pId :
-                    typeof pPlayerId === 'string' ? pPlayerId :
-                    `player-${Math.random()}`,
-                  name: 
-                    typeof pName === 'string' ? pName :
-                    (typeof pFirstName === 'string' && typeof pLastName === 'string')
-                      ? `${pFirstName} ${pLastName}`
-                      : 'Unknown Player',
-                  position: typeof pPosition === 'string' ? pPosition : "",
+                  id:
+                    typeof pId === "string"
+                      ? pId
+                      : typeof pPlayerId === "string"
+                        ? pPlayerId
+                        : `player-${Math.random()}`,
+                  name:
+                    typeof pName === "string"
+                      ? pName
+                      : typeof pFirstName === "string" &&
+                          typeof pLastName === "string"
+                        ? `${pFirstName} ${pLastName}`
+                        : "Unknown Player",
+                  position: typeof pPosition === "string" ? pPosition : "",
                 };
               }),
           );
@@ -385,8 +404,8 @@ export class GameTrackerComponent implements OnInit {
 
   initGameForm(): void {
     // Default visibility based on user role
-    const defaultVisibility = this.isCoachOrAdmin() ? 'team' : 'personal';
-    
+    const defaultVisibility = this.isCoachOrAdmin() ? "team" : "personal";
+
     this.gameForm = this.fb.group({
       gameDate: [new Date(), Validators.required],
       gameTime: [""],
@@ -509,21 +528,23 @@ export class GameTrackerComponent implements OnInit {
 
   loadGames(): void {
     this.apiService
-      .get<Array<{
-        game_id: string;
-        id: string;
-        game_date: string;
-        opponent_team_name: string;
-        opponent_name: string;
-        location: string;
-        team_score: number;
-        our_score: number;
-        opponent_score: number;
-        is_home_game: boolean;
-        visibility_scope: string;
-        owner_type: string;
-        player_owner_id: string;
-      }>>("/api/games")
+      .get<
+        Array<{
+          game_id: string;
+          id: string;
+          game_date: string;
+          opponent_team_name: string;
+          opponent_name: string;
+          location: string;
+          team_score: number;
+          our_score: number;
+          opponent_score: number;
+          is_home_game: boolean;
+          visibility_scope: string;
+          owner_type: string;
+          player_owner_id: string;
+        }>
+      >("/api/games")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -536,7 +557,7 @@ export class GameTrackerComponent implements OnInit {
             } else if (teamScore < opponentScore) {
               result = "loss";
             }
-            
+
             return {
               id: game.game_id || game.id,
               date: new Date(game.game_date).toLocaleDateString(),
@@ -552,7 +573,7 @@ export class GameTrackerComponent implements OnInit {
           this.games.set(games);
         },
         error: (err) => {
-          console.error('Error loading games:', err);
+          console.error("Error loading games:", err);
           // Set empty array on error
           this.games.set([]);
         },
@@ -573,28 +594,33 @@ export class GameTrackerComponent implements OnInit {
       this.gameForm.markAllAsTouched();
       // Show which fields are invalid
       const invalidFields = Object.keys(this.gameForm.controls)
-        .filter(key => this.gameForm.get(key)?.invalid)
-        .join(', ');
-      this.toastService.error(`Please fill required fields: ${invalidFields || 'unknown'}`);
+        .filter((key) => this.gameForm.get(key)?.invalid)
+        .join(", ");
+      this.toastService.error(
+        `Please fill required fields: ${invalidFields || "unknown"}`,
+      );
       return;
     }
 
     const formValue = this.gameForm.value;
-    
+
     // Map form data to API expected format
     const gameData = {
       opponentName: formValue.opponent,
-      gameDate: formValue.gameDate instanceof Date 
-        ? formValue.gameDate.toISOString() 
-        : formValue.gameDate,
+      gameDate:
+        formValue.gameDate instanceof Date
+          ? formValue.gameDate.toISOString()
+          : formValue.gameDate,
       gameTime: formValue.gameTime || null,
       location: formValue.location || null,
-      isHomeGame: formValue.homeAway === 'home',
+      isHomeGame: formValue.homeAway === "home",
       weather: formValue.weather || null,
       temperature: formValue.temperature,
       fieldConditions: formValue.fieldConditions || null,
-      gameType: formValue.gameType || 'regular_season',
-      visibilityScope: formValue.visibilityScope || (this.isCoachOrAdmin() ? 'team' : 'personal'),
+      gameType: formValue.gameType || "regular_season",
+      visibilityScope:
+        formValue.visibilityScope ||
+        (this.isCoachOrAdmin() ? "team" : "personal"),
       notes: formValue.notes || null,
     };
 
@@ -604,25 +630,25 @@ export class GameTrackerComponent implements OnInit {
       .subscribe({
         next: (response: unknown) => {
           let gameId = `game-${Date.now()}`;
-          if (response && typeof response === 'object') {
+          if (response && typeof response === "object") {
             const respObj = response as Record<string, unknown>;
-            const respId = respObj['id'];
-            const respGameId = respObj['game_id'];
-            if (typeof respId === 'string') {
+            const respId = respObj["id"];
+            const respGameId = respObj["game_id"];
+            if (typeof respId === "string") {
               gameId = respId;
-            } else if (typeof respGameId === 'string') {
+            } else if (typeof respGameId === "string") {
               gameId = respGameId;
             }
           }
-          this.toastService.success('Game created successfully!');
+          this.toastService.success("Game created successfully!");
           this.showGameForm.set(false);
           this.gameForm.reset();
           this.loadGames();
           this.startTrackingGame(gameId);
         },
         error: (err) => {
-          console.error('Error creating game:', err);
-          this.toastService.error('Failed to create game. Please try again.');
+          console.error("Error creating game:", err);
+          this.toastService.error("Failed to create game. Please try again.");
         },
       });
   }
@@ -654,7 +680,7 @@ export class GameTrackerComponent implements OnInit {
 
     const formValue = this.playForm.value;
 
-    const playData: Partial<Play> & { 
+    const playData: Partial<Play> & {
       gameId: string;
       id: string;
       recordedBy: string;
@@ -715,14 +741,14 @@ export class GameTrackerComponent implements OnInit {
    * The database trigger automatically notifies coaches
    */
   private showStatsUploadedFeedback(playData: Record<string, unknown>): void {
-    const playType = playData['playType'] as string;
-    const yardsGained = playData['yardsGained'] as number | undefined;
-    
+    const playType = playData["playType"] as string;
+    const yardsGained = playData["yardsGained"] as number | undefined;
+
     let message = `Play recorded: ${this.formatPlayType(playType)}`;
     if (yardsGained !== undefined) {
       message += ` (${yardsGained} yards)`;
     }
-    
+
     // Show success toast
     this.toastService.success(message, { life: 2000 });
   }
@@ -731,23 +757,23 @@ export class GameTrackerComponent implements OnInit {
     const playersInPlay: string[] = [];
 
     // Collect all player IDs involved in this play
-    const quarterbackId = playData['quarterbackId'];
-    const receiverId = playData['receiverId'];
-    const ballCarrierId = playData['ballCarrierId'];
-    const defenderId = playData['defenderId'];
-    const interceptorId = playData['interceptorId'];
-    const deflectedBy = playData['deflectedBy'];
-    
-    if (typeof quarterbackId === 'string') playersInPlay.push(quarterbackId);
-    if (typeof receiverId === 'string') playersInPlay.push(receiverId);
-    if (typeof ballCarrierId === 'string') playersInPlay.push(ballCarrierId);
-    if (typeof defenderId === 'string') playersInPlay.push(defenderId);
-    if (typeof interceptorId === 'string') playersInPlay.push(interceptorId);
-    if (typeof deflectedBy === 'string') playersInPlay.push(deflectedBy);
+    const quarterbackId = playData["quarterbackId"];
+    const receiverId = playData["receiverId"];
+    const ballCarrierId = playData["ballCarrierId"];
+    const defenderId = playData["defenderId"];
+    const interceptorId = playData["interceptorId"];
+    const deflectedBy = playData["deflectedBy"];
+
+    if (typeof quarterbackId === "string") playersInPlay.push(quarterbackId);
+    if (typeof receiverId === "string") playersInPlay.push(receiverId);
+    if (typeof ballCarrierId === "string") playersInPlay.push(ballCarrierId);
+    if (typeof defenderId === "string") playersInPlay.push(defenderId);
+    if (typeof interceptorId === "string") playersInPlay.push(interceptorId);
+    if (typeof deflectedBy === "string") playersInPlay.push(deflectedBy);
 
     // If a player is recording their own stats, mark them as present
     const currentUser = this.authService.getUser();
-    const recorderRole = playData['recorderRole'];
+    const recorderRole = playData["recorderRole"];
     if (currentUser && recorderRole === "player" && currentUser.id) {
       playersInPlay.push(currentUser.id);
     }
@@ -908,9 +934,9 @@ export class GameTrackerComponent implements OnInit {
   viewGameDetails(game: Game): void {
     // Load plays for this game and show details
     this.activeGameId.set(game.id);
-    this.teamScore.set(parseInt(game.score.split('-')[0]) || 0);
-    this.opponentScore.set(parseInt(game.score.split('-')[1]) || 0);
-    
+    this.teamScore.set(parseInt(game.score.split("-")[0]) || 0);
+    this.opponentScore.set(parseInt(game.score.split("-")[1]) || 0);
+
     // Load plays for this game
     this.apiService
       .get(`/api/games/${game.id}/plays`)
@@ -926,7 +952,7 @@ export class GameTrackerComponent implements OnInit {
           this.plays.set([]);
         },
       });
-    
+
     // Scroll to play tracker
     setTimeout(() => {
       const element = document.querySelector(".play-tracker-card");

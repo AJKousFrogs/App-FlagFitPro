@@ -117,7 +117,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
                 Weekly Training Plan - {{ getGoalLabel() }}
               </h3>
               <p-tag
-                [value]="(weeklyPlan()?.phase || '') | titlecase"
+                [value]="weeklyPlan()?.phase || '' | titlecase"
                 severity="info"
               ></p-tag>
             </div>
@@ -239,13 +239,15 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
                   <div
                     class="text-lg font-bold"
                     [class]="
-                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) > 0
+                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) >
+                      0
                         ? 'text-green-600'
                         : 'text-red-600'
                     "
                   >
                     {{
-                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) > 0
+                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) >
+                      0
                         ? "+"
                         : ""
                     }}{{ weeklyPlan()?.progressionRules?.volumeAdjustment }}%
@@ -409,7 +411,10 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "Maintain current load";
   }
 
-  getSessionCardClass(session: { sessionType?: string; intensity?: string }): string {
+  getSessionCardClass(session: {
+    sessionType?: string;
+    intensity?: string;
+  }): string {
     if (session.sessionType === "recovery" || session.sessionType === "game") {
       return "border-gray-300";
     }
@@ -418,21 +423,17 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "border-green-500 bg-green-50";
   }
 
-  getSessionTypeSeverity(
-    type: string,
-  ): "success" | "info" | "warn" | "danger" {
-    const severityMap: Record<
-      string,
-      "success" | "info" | "warn" | "danger"
-    > = {
-      speed: "danger",
-      agility: "warn",
-      strength: "info",
-      technique: "success",
-      conditioning: "warn",
-      recovery: "success",
-      game: "info",
-    };
+  getSessionTypeSeverity(type: string): "success" | "info" | "warn" | "danger" {
+    const severityMap: Record<string, "success" | "info" | "warn" | "danger"> =
+      {
+        speed: "danger",
+        agility: "warn",
+        strength: "info",
+        technique: "success",
+        conditioning: "warn",
+        recovery: "success",
+        game: "info",
+      };
     return severityMap[type] || "info";
   }
 

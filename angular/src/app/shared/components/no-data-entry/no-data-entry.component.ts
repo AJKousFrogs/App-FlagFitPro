@@ -132,7 +132,8 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
   generic: {
     icon: "pi-database",
     title: "No Data Available",
-    message: "Start logging data to see your personalized metrics and insights.",
+    message:
+      "Start logging data to see your personalized metrics and insights.",
     actionLabel: "Get Started",
     actionIcon: "pi pi-arrow-right",
     route: "/dashboard",
@@ -150,7 +151,11 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
   standalone: true,
   imports: [CommonModule, ButtonModule, CardModule, RouterModule],
   template: `
-    <div class="no-data-entry" [class.compact]="compact()" [class.inline]="inline()">
+    <div
+      class="no-data-entry"
+      [class.compact]="compact()"
+      [class.inline]="inline()"
+    >
       @if (!inline()) {
         <p-card [styleClass]="'no-data-card'">
           <ng-container *ngTemplateOutlet="content"></ng-container>

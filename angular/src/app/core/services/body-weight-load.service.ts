@@ -120,12 +120,35 @@ const WEIGHT_CHANGE_THRESHOLDS = {
 };
 
 // Position-specific weight considerations
-const POSITION_WEIGHT_PROFILES: Record<string, { minBMI: number; maxBMI: number; notes: string }> = {
-  QB: { minBMI: 22, maxBMI: 27, notes: "QBs benefit from moderate build for mobility and arm strength" },
-  WR: { minBMI: 20, maxBMI: 25, notes: "WRs typically lean for speed and agility" },
-  DB: { minBMI: 20, maxBMI: 25, notes: "DBs need to be lean for coverage speed" },
-  Rusher: { minBMI: 21, maxBMI: 26, notes: "Rushers need balance of power and speed" },
-  Center: { minBMI: 22, maxBMI: 27, notes: "Centers can carry slightly more mass" },
+const POSITION_WEIGHT_PROFILES: Record<
+  string,
+  { minBMI: number; maxBMI: number; notes: string }
+> = {
+  QB: {
+    minBMI: 22,
+    maxBMI: 27,
+    notes: "QBs benefit from moderate build for mobility and arm strength",
+  },
+  WR: {
+    minBMI: 20,
+    maxBMI: 25,
+    notes: "WRs typically lean for speed and agility",
+  },
+  DB: {
+    minBMI: 20,
+    maxBMI: 25,
+    notes: "DBs need to be lean for coverage speed",
+  },
+  Rusher: {
+    minBMI: 21,
+    maxBMI: 26,
+    notes: "Rushers need balance of power and speed",
+  },
+  Center: {
+    minBMI: 22,
+    maxBMI: 27,
+    notes: "Centers can carry slightly more mass",
+  },
 };
 
 // ============================================================================
@@ -140,7 +163,9 @@ export class BodyWeightLoadService {
 
   // State
   private readonly _weightHistory = signal<WeightEntry[]>([]);
-  private readonly _currentProfile = signal<BodyCompositionProfile | null>(null);
+  private readonly _currentProfile = signal<BodyCompositionProfile | null>(
+    null,
+  );
 
   // Public signals
   readonly weightHistory = this._weightHistory.asReadonly();
@@ -156,7 +181,8 @@ export class BodyWeightLoadService {
     const history = this._weightHistory();
     if (history.length === 0) return false;
     const lastEntry = history[history.length - 1];
-    const daysSinceEntry = (Date.now() - lastEntry.date.getTime()) / (1000 * 60 * 60 * 24);
+    const daysSinceEntry =
+      (Date.now() - lastEntry.date.getTime()) / (1000 * 60 * 60 * 24);
     return daysSinceEntry <= 7;
   });
 
@@ -169,14 +195,18 @@ export class BodyWeightLoadService {
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
     const filtered = history.filter((e) => e.date >= ninetyDaysAgo);
-    this._weightHistory.set(filtered.sort((a, b) => a.date.getTime() - b.date.getTime()));
+    this._weightHistory.set(
+      filtered.sort((a, b) => a.date.getTime() - b.date.getTime()),
+    );
   }
 
   /**
    * Set weight history (e.g., from database)
    */
   setWeightHistory(entries: WeightEntry[]): void {
-    this._weightHistory.set(entries.sort((a, b) => a.date.getTime() - b.date.getTime()));
+    this._weightHistory.set(
+      entries.sort((a, b) => a.date.getTime() - b.date.getTime()),
+    );
   }
 
   /**
@@ -201,7 +231,7 @@ export class BodyWeightLoadService {
   normalizeLoad(
     rawLoad: number,
     athleteWeight: number,
-    referenceWeight: number = REFERENCE_WEIGHT
+    referenceWeight: number = REFERENCE_WEIGHT,
   ): NormalizedLoad {
     // Weight factor: heavier = higher normalized load
     const weightFactor = athleteWeight / referenceWeight;
@@ -217,8 +247,8 @@ export class BodyWeightLoadService {
         weightFactor > 1
           ? `Load increased by ${((weightFactor - 1) * 100).toFixed(0)}% due to body weight above reference`
           : weightFactor < 1
-          ? `Load decreased by ${((1 - weightFactor) * 100).toFixed(0)}% due to body weight below reference`
-          : "No adjustment - athlete at reference weight",
+            ? `Load decreased by ${((1 - weightFactor) * 100).toFixed(0)}% due to body weight below reference`
+            : "No adjustment - athlete at reference weight",
     };
   }
 
@@ -229,7 +259,7 @@ export class BodyWeightLoadService {
     acuteLoad: number,
     chronicLoad: number,
     athleteWeight: number,
-    referenceWeight: number = REFERENCE_WEIGHT
+    referenceWeight: number = REFERENCE_WEIGHT,
   ): { rawACWR: number; normalizedACWR: number; recommendation: string } {
     const rawACWR = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
 
@@ -239,7 +269,8 @@ export class BodyWeightLoadService {
 
     // Adjust ACWR interpretation (not the calculation itself)
     // Heavier athletes should be more conservative
-    const thresholdAdjustment = weightFactor > 1.1 ? -0.05 : weightFactor < 0.9 ? 0.05 : 0;
+    const thresholdAdjustment =
+      weightFactor > 1.1 ? -0.05 : weightFactor < 0.9 ? 0.05 : 0;
 
     const adjustedDangerThreshold = 1.5 + thresholdAdjustment;
 
@@ -271,14 +302,17 @@ export class BodyWeightLoadService {
 
     if (history.length < 2) {
       return {
-        currentWeight: history.length > 0 ? history[history.length - 1].weight : 0,
+        currentWeight:
+          history.length > 0 ? history[history.length - 1].weight : 0,
         weeklyChange: 0,
         weeklyChangePercent: 0,
         monthlyChange: 0,
         monthlyChangePercent: 0,
         trend: "stable",
         alerts: [],
-        recommendations: ["Log weight regularly (at least weekly) to track trends"],
+        recommendations: [
+          "Log weight regularly (at least weekly) to track trends",
+        ],
       };
     }
 
@@ -308,14 +342,18 @@ export class BodyWeightLoadService {
         severity: "danger",
         type: "rapid_loss",
         message: `Rapid weight loss detected: ${weeklyChange.toFixed(1)}kg in past week`,
-        recommendation: "Check for dehydration, illness, or undereating. Consider reducing training intensity.",
+        recommendation:
+          "Check for dehydration, illness, or undereating. Consider reducing training intensity.",
       });
-    } else if (weeklyChangePercent < WEIGHT_CHANGE_THRESHOLDS.rapidLossPercent) {
+    } else if (
+      weeklyChangePercent < WEIGHT_CHANGE_THRESHOLDS.rapidLossPercent
+    ) {
       alerts.push({
         severity: "warning",
         type: "rapid_loss",
         message: `Significant weight loss: ${weeklyChangePercent.toFixed(1)}% in past week`,
-        recommendation: "Monitor hydration and nutrition. Ensure adequate caloric intake.",
+        recommendation:
+          "Monitor hydration and nutrition. Ensure adequate caloric intake.",
       });
     }
 
@@ -325,14 +363,16 @@ export class BodyWeightLoadService {
         severity: "warning",
         type: "rapid_gain",
         message: `Rapid weight gain: +${weeklyChange.toFixed(1)}kg in past week`,
-        recommendation: "Review nutrition. Rapid gain may indicate fluid retention or dietary changes.",
+        recommendation:
+          "Review nutrition. Rapid gain may indicate fluid retention or dietary changes.",
       });
     }
 
     // Check 24-hour change for dehydration
     if (history.length >= 2) {
       const yesterday = history[history.length - 2];
-      const daysSince = (now.getTime() - yesterday.date.getTime()) / (1000 * 60 * 60 * 24);
+      const daysSince =
+        (now.getTime() - yesterday.date.getTime()) / (1000 * 60 * 60 * 24);
       if (daysSince <= 2) {
         const dailyChange = currentWeight - yesterday.weight;
         if (dailyChange < WEIGHT_CHANGE_THRESHOLDS.dehydrationRisk) {
@@ -340,7 +380,8 @@ export class BodyWeightLoadService {
             severity: "warning",
             type: "dehydration_risk",
             message: `Possible dehydration: ${dailyChange.toFixed(1)}kg change since yesterday`,
-            recommendation: "Increase fluid intake. Check urine color (should be light yellow).",
+            recommendation:
+              "Increase fluid intake. Check urine color (should be light yellow).",
           });
         }
       }
@@ -348,11 +389,17 @@ export class BodyWeightLoadService {
 
     // Generate recommendations
     if (trend === "losing" && monthlyChange < -2) {
-      recommendations.push("Gradual weight loss detected - ensure this is intentional");
+      recommendations.push(
+        "Gradual weight loss detected - ensure this is intentional",
+      );
       recommendations.push("Monitor energy levels during training");
     } else if (trend === "gaining" && monthlyChange > 2) {
-      recommendations.push("Weight gain detected - review if aligned with training goals");
-      recommendations.push("Consider body composition testing to distinguish muscle vs fat gain");
+      recommendations.push(
+        "Weight gain detected - review if aligned with training goals",
+      );
+      recommendations.push(
+        "Consider body composition testing to distinguish muscle vs fat gain",
+      );
     } else {
       recommendations.push("Weight stable - continue current nutrition plan");
     }
@@ -375,7 +422,7 @@ export class BodyWeightLoadService {
   estimateJointStress(
     activity: string,
     bodyWeight: number,
-    repetitions: number = 1
+    repetitions: number = 1,
   ): JointStressEstimate {
     const multiplier = JOINT_STRESS_MULTIPLIERS[activity] || 3.0;
     const forceNewtons = bodyWeight * 9.81 * multiplier; // F = m * g * multiplier
@@ -387,18 +434,26 @@ export class BodyWeightLoadService {
     // Risk assessment based on total stress
     if (totalStress > 500000) {
       riskLevel = "high";
-      recommendations.push("High cumulative joint stress - ensure adequate recovery");
+      recommendations.push(
+        "High cumulative joint stress - ensure adequate recovery",
+      );
       recommendations.push("Consider reducing volume or intensity");
     } else if (totalStress > 200000) {
       riskLevel = "moderate";
-      recommendations.push("Moderate joint stress - monitor for any discomfort");
+      recommendations.push(
+        "Moderate joint stress - monitor for any discomfort",
+      );
     }
 
     // Weight-specific recommendations
     if (bodyWeight > 90) {
-      recommendations.push("Higher body weight increases landing forces - prioritize landing technique");
+      recommendations.push(
+        "Higher body weight increases landing forces - prioritize landing technique",
+      );
       if (activity.includes("jump") || activity.includes("landing")) {
-        recommendations.push("Consider reducing jump volume compared to lighter athletes");
+        recommendations.push(
+          "Consider reducing jump volume compared to lighter athletes",
+        );
       }
     }
 
@@ -418,7 +473,7 @@ export class BodyWeightLoadService {
   getPositionWeightRecommendations(
     position: string,
     currentWeight: number,
-    heightCm: number
+    heightCm: number,
   ): {
     currentBMI: number;
     optimalRange: { min: number; max: number };
@@ -426,9 +481,11 @@ export class BodyWeightLoadService {
     recommendation: string;
   } {
     const currentBMI = this.calculateBMI(currentWeight, heightCm);
-    const profile = POSITION_WEIGHT_PROFILES[position] || POSITION_WEIGHT_PROFILES["WR"];
+    const profile =
+      POSITION_WEIGHT_PROFILES[position] || POSITION_WEIGHT_PROFILES["WR"];
 
-    const inRange = currentBMI >= profile.minBMI && currentBMI <= profile.maxBMI;
+    const inRange =
+      currentBMI >= profile.minBMI && currentBMI <= profile.maxBMI;
 
     let recommendation = "";
     if (currentBMI < profile.minBMI) {
@@ -455,7 +512,7 @@ export class BodyWeightLoadService {
   calculateRelativeStrength(
     exercise: "squat" | "deadlift" | "bench",
     oneRepMax: number,
-    bodyWeight: number
+    bodyWeight: number,
   ): {
     relativeStrength: number;
     level: "beginner" | "intermediate" | "advanced" | "elite";
@@ -464,9 +521,22 @@ export class BodyWeightLoadService {
     const relativeStrength = oneRepMax / bodyWeight;
 
     // Benchmarks based on strength standards
-    const benchmarks: Record<string, { beginner: number; intermediate: number; advanced: number; elite: number }> = {
+    const benchmarks: Record<
+      string,
+      {
+        beginner: number;
+        intermediate: number;
+        advanced: number;
+        elite: number;
+      }
+    > = {
       squat: { beginner: 1.0, intermediate: 1.5, advanced: 2.0, elite: 2.5 },
-      deadlift: { beginner: 1.25, intermediate: 1.75, advanced: 2.25, elite: 2.75 },
+      deadlift: {
+        beginner: 1.25,
+        intermediate: 1.75,
+        advanced: 2.25,
+        elite: 2.75,
+      },
       bench: { beginner: 0.75, intermediate: 1.0, advanced: 1.5, elite: 2.0 },
     };
 
@@ -505,7 +575,7 @@ export class BodyWeightLoadService {
   getHydrationRecommendations(
     bodyWeight: number,
     activityDurationMinutes: number,
-    temperature: "cool" | "moderate" | "hot" = "moderate"
+    temperature: "cool" | "moderate" | "hot" = "moderate",
   ): {
     baselineFluidOz: number;
     activityFluidOz: number;
@@ -517,7 +587,8 @@ export class BodyWeightLoadService {
     const baselineFluidOz = weightLbs * 0.5;
 
     // Activity: 4-8oz per 15-20 minutes depending on temperature
-    const tempMultiplier = temperature === "hot" ? 1.5 : temperature === "cool" ? 0.75 : 1.0;
+    const tempMultiplier =
+      temperature === "hot" ? 1.5 : temperature === "cool" ? 0.75 : 1.0;
     const activityFluidOz = (activityDurationMinutes / 15) * 6 * tempMultiplier;
 
     const recommendations: string[] = [
@@ -528,7 +599,9 @@ export class BodyWeightLoadService {
     ];
 
     if (temperature === "hot") {
-      recommendations.push("Hot conditions - consider electrolyte supplementation");
+      recommendations.push(
+        "Hot conditions - consider electrolyte supplementation",
+      );
     }
 
     return {

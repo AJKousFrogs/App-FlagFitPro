@@ -59,7 +59,9 @@ import { LoggerService } from "../../../core/services/logger.service";
               autocomplete="email"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('email') ? 'reset-email-error' : null"
+              [attr.aria-describedby]="
+                isFieldInvalid('email') ? 'reset-email-error' : null
+              "
             />
             @if (isFieldInvalid("email")) {
               <small id="reset-email-error" class="p-error" role="alert">
@@ -72,6 +74,7 @@ import { LoggerService } from "../../../core/services/logger.service";
             type="submit"
             label="Send Reset Link"
             icon="pi pi-send"
+            [rounded]="true"
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
             styleClass="w-full mb-4"
@@ -204,21 +207,19 @@ export class ResetPasswordComponent {
       // Build the redirect URL for the update-password page
       const redirectTo = `${window.location.origin}/update-password`;
 
-      const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(
-        email,
-        {
+      const { error } =
+        await this.supabaseService.client.auth.resetPasswordForEmail(email, {
           redirectTo,
-        }
-      );
+        });
 
       if (error) {
         throw error;
       }
 
       this.toastService.success(
-        "Password reset link sent! Check your email inbox."
+        "Password reset link sent! Check your email inbox.",
       );
-      
+
       setTimeout(() => {
         this.router.navigate(["/login"]);
       }, 2000);
@@ -226,7 +227,7 @@ export class ResetPasswordComponent {
       this.logger.error("Password reset error:", error);
       // Don't reveal if email exists or not for security
       this.toastService.success(
-        "If an account exists with this email, you will receive a reset link."
+        "If an account exists with this email, you will receive a reset link.",
       );
     } finally {
       this.isLoading.set(false);

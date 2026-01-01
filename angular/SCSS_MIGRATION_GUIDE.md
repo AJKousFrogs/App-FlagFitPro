@@ -7,6 +7,7 @@ This guide provides patterns for migrating inline TypeScript styles to maintaina
 ## Why Migrate?
 
 **Current Problem (Inline Styles):**
+
 - 95%+ of styles inline in TypeScript `styles: []` arrays
 - Massive duplication across components
 - Hard to maintain consistency
@@ -14,6 +15,7 @@ This guide provides patterns for migrating inline TypeScript styles to maintaina
 - Large bundle size from duplication
 
 **Solution (SCSS Architecture):**
+
 - Centralized design tokens
 - Reusable mixins and utilities
 - Easier to maintain and update
@@ -41,13 +43,13 @@ src/styles/
 
 ```scss
 // my-component.component.scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .my-component {
-  padding: space(4);  // Use spacing scale
+  padding: space(4); // Use spacing scale
   border-radius: get-radius(md);
-  @include card;  // Use card mixin
+  @include card; // Use card mixin
 }
 ```
 
@@ -56,14 +58,14 @@ src/styles/
 ```scss
 // Before (inline CSS)
 .dashboard-content {
-  padding: 2rem;  // Hard-coded
-  margin-bottom: 24px;  // Hard-coded
+  padding: 2rem; // Hard-coded
+  margin-bottom: 24px; // Hard-coded
 }
 
 // After (SCSS with variables)
 .dashboard-content {
-  padding: space(6);  // 2rem from design system
-  margin-bottom: space(5);  // 24px from design system
+  padding: space(6); // 2rem from design system
+  margin-bottom: space(5); // 24px from design system
 }
 ```
 
@@ -75,13 +77,13 @@ src/styles/
   display: block;
 
   @include respond-to(md) {
-    display: none;  // Hide on tablet and below
+    display: none; // Hide on tablet and below
   }
 }
 
 // Flexbox layouts
 .header {
-  @include flex-between;  // display: flex + space-between + align center
+  @include flex-between; // display: flex + space-between + align center
 }
 
 // Card styling
@@ -91,7 +93,7 @@ src/styles/
 
 // Typography
 .title {
-  @include heading-2;  // Consistent heading style
+  @include heading-2; // Consistent heading style
 }
 ```
 
@@ -149,8 +151,8 @@ src/styles/
 
 ```scss
 // metric-card.component.scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .metric-card {
   @include card(space(5), get-radius(xl));
@@ -177,43 +179,47 @@ src/styles/
 
 ```typescript
 // athlete-dashboard.component.ts
-styles: [`
+styles: [
+  `
   .metrics-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
     margin-bottom: 32px;
   }
-`]
+`,
+];
 
 // coach-dashboard.component.ts (duplicate!)
-styles: [`
+styles: [
+  `
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 12px;  // Different gap!
   }
-`]
+`,
+];
 ```
 
 **AFTER (Consistent SCSS):**
 
 ```scss
 // athlete-dashboard.component.scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .metrics-row {
-  @include grid-responsive(250px, space(4));  // Consistent pattern
+  @include grid-responsive(250px, space(4)); // Consistent pattern
   margin-bottom: space(6);
 }
 
 // coach-dashboard.component.scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .stats-grid {
-  @include grid-responsive(200px, space(3));  // Clear, reusable
+  @include grid-responsive(200px, space(3)); // Clear, reusable
 }
 ```
 
@@ -224,31 +230,36 @@ styles: [`
 **BEFORE (Inconsistent breakpoints):**
 
 ```typescript
-styles: [`
+styles: [
+  `
   @media (max-width: 768px) { ... }  // Some use 768px
   @media (max-width: 640px) { ... }  // Others use 640px
   @media (min-width: 769px) and (max-width: 1024px) { ... }  // Complex
-`]
+`,
+];
 ```
 
 **AFTER (Standardized breakpoints):**
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .component {
   padding: space(6);
 
-  @include respond-to(md) {  // 768px
+  @include respond-to(md) {
+    // 768px
     padding: space(4);
   }
 
-  @include respond-to(sm) {  // 640px
+  @include respond-to(sm) {
+    // 640px
     padding: space(3);
   }
 
-  @include respond-between(md, lg) {  // Tablet only
+  @include respond-between(md, lg) {
+    // Tablet only
     // Tablet-specific styles
   }
 }
@@ -261,7 +272,8 @@ styles: [`
 **BEFORE:**
 
 ```typescript
-styles: [`
+styles: [
+  `
   .action-btn {
     display: inline-flex;
     align-items: center;
@@ -289,17 +301,18 @@ styles: [`
     opacity: 0.6;
     cursor: not-allowed;
   }
-`]
+`,
+];
 ```
 
 **AFTER:**
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .action-btn {
-  @include button-base;  // Handles all common button styles
+  @include button-base; // Handles all common button styles
   background: var(--ds-primary-green);
   color: white;
 }
@@ -312,7 +325,8 @@ styles: [`
 **BEFORE:**
 
 ```typescript
-styles: [`
+styles: [
+  `
   input {
     width: 100%;
     height: 44px;
@@ -338,17 +352,18 @@ styles: [`
   input.error {
     border-color: var(--color-status-error);
   }
-`]
+`,
+];
 ```
 
 **AFTER:**
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 input {
-  @include input-base;  // All input styles in one mixin
+  @include input-base; // All input styles in one mixin
 }
 ```
 
@@ -367,8 +382,8 @@ touch src/app/features/dashboard/athlete-dashboard.component.scss
 
 ```scss
 // athlete-dashboard.component.scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 // Paste inline styles here (temporarily)
 .dashboard-content {
@@ -390,10 +405,10 @@ touch src/app/features/dashboard/athlete-dashboard.component.scss
 
 // After
 .dashboard-content {
-  padding: space(6);  // 2rem → space(6)
-  margin-bottom: space(6);  // 32px → space(6)
-  border-radius: get-radius(xl);  // 16px → get-radius(xl)
-  box-shadow: get-shadow(sm);  // → get-shadow(sm)
+  padding: space(6); // 2rem → space(6)
+  margin-bottom: space(6); // 32px → space(6)
+  border-radius: get-radius(xl); // 16px → get-radius(xl)
+  box-shadow: get-shadow(sm); // → get-shadow(sm)
 }
 ```
 
@@ -415,7 +430,7 @@ touch src/app/features/dashboard/athlete-dashboard.component.scss
 
 // After
 .dashboard-content {
-  @include card(space(6), get-radius(xl));  // One line!
+  @include card(space(6), get-radius(xl)); // One line!
 }
 ```
 
@@ -489,41 +504,36 @@ get-breakpoint($size)    // Breakpoint value (xs, sm, md, lg, xl, xxl)
 
 ```scss
 // Responsive
-@include respond-to(md)      // Max-width media query
-@include respond-above(md)   // Min-width media query
-@include respond-between(md, lg)  // Range media query
-@include touch-device        // Touch device detection
-@include hover-support       // Hover support detection
-
-// Layout
-@include flex-center         // Flexbox center
-@include flex-between        // Flex space-between
-@include grid-responsive($min-width, $gap)  // Responsive grid
-@include container($size)    // Centered container
-
-// Components
-@include card($padding, $radius)  // Card styling
-@include button-base         // Button base styles
-@include input-base          // Input base styles
-@include modal-backdrop      // Modal backdrop
-
-// Typography
-@include heading-1           // H1 styles
-@include text-truncate       // Single line truncate
-@include line-clamp($lines)  // Multi-line truncate
-
-// Animations
-@include fade-in($duration)  // Fade in animation
-@include slide-up($duration) // Slide up animation
-@include scale-in($duration) // Scale in animation
-@include shimmer             // Shimmer loading
-@include pulse($duration)    // Pulse animation
-
-// Utilities
-@include visually-hidden     // Screen reader only
-@include focus-visible       // Focus styling
-@include scrollbar($width)   // Custom scrollbar
-@include respect-motion-preference  // Reduced motion
+@include respond-to(md) // Max-width media query
+  @include respond-above(md) // Min-width media query
+  @include respond-between(md, lg) // Range media query
+  @include touch-device // Touch device detection
+  @include hover-support // Hover support detection
+  // Layout
+  @include flex-center // Flexbox center
+  @include flex-between // Flex space-between
+  @include grid-responsive($min-width, $gap) // Responsive grid
+  @include container($size) // Centered container
+  // Components
+  @include card($padding, $radius) // Card styling
+  @include button-base // Button base styles
+  @include input-base // Input base styles
+  @include modal-backdrop // Modal backdrop
+  // Typography
+  @include heading-1 // H1 styles
+  @include text-truncate // Single line truncate
+  @include line-clamp($lines) // Multi-line truncate
+  // Animations
+  @include fade-in($duration) // Fade in animation
+  @include slide-up($duration) // Slide up animation
+  @include scale-in($duration) // Scale in animation
+  @include shimmer // Shimmer loading
+  @include pulse($duration) // Pulse animation
+  // Utilities
+  @include visually-hidden // Screen reader only
+  @include focus-visible // Focus styling
+  @include scrollbar($width) // Custom scrollbar
+  @include respect-motion-preference; // Reduced motion
 ```
 
 ---
@@ -533,8 +543,8 @@ get-breakpoint($size)    // Breakpoint value (xs, sm, md, lg, xl, xxl)
 **File: `athlete-dashboard.component.scss`**
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .dashboard {
   padding: space(6);
@@ -612,8 +622,8 @@ get-breakpoint($size)    // Breakpoint value (xs, sm, md, lg, xl, xxl)
 **Solution:** Ensure you're importing variables and mixins:
 
 ```scss
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 ```
 
 ### Issue: Build errors with SCSS
@@ -623,9 +633,7 @@ get-breakpoint($size)    // Breakpoint value (xs, sm, md, lg, xl, xxl)
 ```json
 {
   "stylePreprocessorOptions": {
-    "includePaths": [
-      "src/styles"
-    ]
+    "includePaths": ["src/styles"]
   }
 }
 ```
@@ -636,10 +644,10 @@ get-breakpoint($size)    // Breakpoint value (xs, sm, md, lg, xl, xxl)
 
 ```scss
 // Option 1: Relative path
-@import '../../styles/variables';
+@import "../../styles/variables";
 
 // Option 2: After configuring includePaths
-@import 'variables';
+@import "variables";
 ```
 
 ---

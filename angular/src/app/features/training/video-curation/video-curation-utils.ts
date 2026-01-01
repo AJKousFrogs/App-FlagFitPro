@@ -74,7 +74,7 @@ export function formatSuggestionDate(dateStr: string): string {
  * Get PrimeNG severity for video status
  */
 export function getStatusSeverity(
-  status: string
+  status: string,
 ): "warn" | "success" | "danger" | undefined {
   switch (status) {
     case "pending":
@@ -124,4 +124,3 @@ export const FOCUS_OPTIONS = [
   { label: "Recovery", value: "recovery" },
   { label: "Strength", value: "strength" },
 ];
-

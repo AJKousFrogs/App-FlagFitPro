@@ -267,7 +267,7 @@ export class AccessibilityUtils {
       document.querySelector("main") || document.querySelector(".main-content");
     if (main && !main.getAttribute("role")) {
       main.setAttribute("role", "main");
-      main.id = main.id || "main-content";
+      main.id ||= "main-content";
     }
 
     // Add navigation landmark
@@ -276,7 +276,7 @@ export class AccessibilityUtils {
     if (nav && !nav.getAttribute("role")) {
       nav.setAttribute("role", "navigation");
       nav.setAttribute("aria-label", "Main navigation");
-      nav.id = nav.id || "navigation";
+      nav.id ||= "navigation";
     }
 
     // Add banner landmark
@@ -425,7 +425,7 @@ export class AccessibilityUtils {
   // Enhanced tab navigation
   static enhanceTabNavigation(e) {
     // Skip hidden elements
-    const {target} = e;
+    const { target } = e;
     if (target && this.isHidden(target)) {
       e.preventDefault();
       const direction = e.shiftKey ? -1 : 1;
@@ -435,7 +435,7 @@ export class AccessibilityUtils {
 
   // Arrow key navigation for custom components
   static handleArrowKeyNavigation(e) {
-    const {target} = e;
+    const { target } = e;
 
     // Tab navigation with arrows
     if (target.getAttribute("role") === "tab") {
@@ -478,7 +478,7 @@ export class AccessibilityUtils {
 
   // Handle activation keys
   static handleActivationKeys(e) {
-    const {target} = e;
+    const { target } = e;
 
     // Activate custom buttons
     if (

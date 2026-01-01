@@ -3,9 +3,7 @@
 // Aggregates: users, injuries, training_sessions, wellness_checkins, supplements_logs
 
 const { baseHandler } = require("./utils/base-handler.cjs");
-const {
-  createSuccessResponse,
-} = require("./utils/error-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**

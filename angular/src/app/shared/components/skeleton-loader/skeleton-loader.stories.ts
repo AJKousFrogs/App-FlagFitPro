@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/angular";
-import { SkeletonLoaderComponent, SkeletonRepeatComponent } from "./skeleton-loader.component";
+import {
+  SkeletonLoaderComponent,
+  SkeletonRepeatComponent,
+} from "./skeleton-loader.component";
 
 /**
  * # Skeleton Loader Component
@@ -353,4 +356,3 @@ export const AllVariants: Story = {
     `,
   }),
 };
-

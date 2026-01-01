@@ -156,38 +156,82 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Lower back (rotational stress)",
     ],
     keyBenchmarks: [
-      { metric: "Pro Agility", elite: "<4.0s", good: "4.0-4.2s", average: "4.2-4.5s", unit: "seconds" },
-      { metric: "5-10-5 Shuttle", elite: "<4.3s", good: "4.3-4.5s", average: "4.5-4.8s", unit: "seconds" },
-      { metric: "Throwing Accuracy", elite: ">75%", good: "65-75%", average: "55-65%", unit: "completion %" },
-      { metric: "Scramble Speed", elite: ">15 mph", good: "13-15 mph", average: "11-13 mph", unit: "mph" },
+      {
+        metric: "Pro Agility",
+        elite: "<4.0s",
+        good: "4.0-4.2s",
+        average: "4.2-4.5s",
+        unit: "seconds",
+      },
+      {
+        metric: "5-10-5 Shuttle",
+        elite: "<4.3s",
+        good: "4.3-4.5s",
+        average: "4.5-4.8s",
+        unit: "seconds",
+      },
+      {
+        metric: "Throwing Accuracy",
+        elite: ">75%",
+        good: "65-75%",
+        average: "55-65%",
+        unit: "completion %",
+      },
+      {
+        metric: "Scramble Speed",
+        elite: ">15 mph",
+        good: "13-15 mph",
+        average: "11-13 mph",
+        unit: "mph",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "Shoulder durability & arm care",
         weeklyVolume: "Daily prehab + 2x strength",
-        keyExercises: ["Band pull-aparts", "External rotation", "Prone Y-T-W", "Sleeper stretch"],
+        keyExercises: [
+          "Band pull-aparts",
+          "External rotation",
+          "Prone Y-T-W",
+          "Sleeper stretch",
+        ],
         evidenceBasis: "MLB pitcher arm care research (Reinold et al., 2018)",
       },
       {
         priority: 2,
         focus: "Core & hip stability",
         weeklyVolume: "3-4x per week",
-        keyExercises: ["Pallof press", "Anti-rotation holds", "Hip 90/90", "Dead bugs"],
+        keyExercises: [
+          "Pallof press",
+          "Anti-rotation holds",
+          "Hip 90/90",
+          "Dead bugs",
+        ],
         evidenceBasis: "Core stability for throwing (Kibler et al., 2006)",
       },
       {
         priority: 3,
         focus: "Reactive agility",
         weeklyVolume: "2x per week",
-        keyExercises: ["Mirror drills", "Scramble reactions", "Cone escapes", "Random direction sprints"],
+        keyExercises: [
+          "Mirror drills",
+          "Scramble reactions",
+          "Cone escapes",
+          "Random direction sprints",
+        ],
         evidenceBasis: "Reactive agility research (Sheppard & Young, 2006)",
       },
       {
         priority: 4,
         focus: "Throwing on the run",
         weeklyVolume: "2-3x per week",
-        keyExercises: ["Rollout throws", "Bootleg throws", "Moving target practice", "Scramble + throw"],
+        keyExercises: [
+          "Rollout throws",
+          "Bootleg throws",
+          "Moving target practice",
+          "Scramble + throw",
+        ],
         evidenceBasis: "QB-specific movement patterns",
       },
     ],
@@ -229,38 +273,81 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Knee injuries (deceleration)",
     ],
     keyBenchmarks: [
-      { metric: "40-yard dash", elite: "<4.5s", good: "4.5-4.7s", average: "4.7-5.0s", unit: "seconds" },
-      { metric: "10-yard split", elite: "<1.5s", good: "1.5-1.6s", average: "1.6-1.8s", unit: "seconds" },
-      { metric: "Vertical Jump", elite: ">36\"", good: "32-36\"", average: "28-32\"", unit: "inches" },
-      { metric: "Pro Agility", elite: "<4.1s", good: "4.1-4.3s", average: "4.3-4.6s", unit: "seconds" },
+      {
+        metric: "40-yard dash",
+        elite: "<4.5s",
+        good: "4.5-4.7s",
+        average: "4.7-5.0s",
+        unit: "seconds",
+      },
+      {
+        metric: "10-yard split",
+        elite: "<1.5s",
+        good: "1.5-1.6s",
+        average: "1.6-1.8s",
+        unit: "seconds",
+      },
+      {
+        metric: "Vertical Jump",
+        elite: '>36"',
+        good: '32-36"',
+        average: '28-32"',
+        unit: "inches",
+      },
+      {
+        metric: "Pro Agility",
+        elite: "<4.1s",
+        good: "4.1-4.3s",
+        average: "4.3-4.6s",
+        unit: "seconds",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "Acceleration & first step",
         weeklyVolume: "2-3x per week, 15-25 sprints total",
-        keyExercises: ["10-yard sprints", "Sled sprints (10-15% BW)", "Falling starts", "Block starts"],
+        keyExercises: [
+          "10-yard sprints",
+          "Sled sprints (10-15% BW)",
+          "Falling starts",
+          "Block starts",
+        ],
         evidenceBasis: "Clark et al. (2019) - Acceleration in football",
       },
       {
         priority: 2,
         focus: "Hamstring injury prevention",
         weeklyVolume: "3x per week",
-        keyExercises: ["Nordic curls", "Romanian deadlifts", "Hip thrusts", "Single-leg deadlifts"],
+        keyExercises: [
+          "Nordic curls",
+          "Romanian deadlifts",
+          "Hip thrusts",
+          "Single-leg deadlifts",
+        ],
         evidenceBasis: "Al Attar et al. (2017) - 51% injury reduction",
       },
       {
         priority: 3,
         focus: "Repeated sprint ability",
         weeklyVolume: "1-2x per week",
-        keyExercises: ["8x40 yard sprints (30s rest)", "Shuttle repeats", "Game-simulation sprints"],
+        keyExercises: [
+          "8x40 yard sprints (30s rest)",
+          "Shuttle repeats",
+          "Game-simulation sprints",
+        ],
         evidenceBasis: "Buchheit et al. (2010) - RSA in team sports",
       },
       {
         priority: 4,
         focus: "Route running technique",
         weeklyVolume: "3-4x per week",
-        keyExercises: ["Cone drills", "Route trees", "Release drills", "Deceleration practice"],
+        keyExercises: [
+          "Cone drills",
+          "Route trees",
+          "Release drills",
+          "Deceleration practice",
+        ],
         evidenceBasis: "Sport-specific skill development",
       },
     ],
@@ -299,30 +386,61 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Ankle sprains",
     ],
     keyBenchmarks: [
-      { metric: "40-yard dash", elite: "<4.6s", good: "4.6-4.8s", average: "4.8-5.1s", unit: "seconds" },
-      { metric: "10-yard split", elite: "<1.55s", good: "1.55-1.7s", average: "1.7-1.85s", unit: "seconds" },
-      { metric: "Snap accuracy", elite: ">98%", good: "95-98%", average: "90-95%", unit: "percentage" },
+      {
+        metric: "40-yard dash",
+        elite: "<4.6s",
+        good: "4.6-4.8s",
+        average: "4.8-5.1s",
+        unit: "seconds",
+      },
+      {
+        metric: "10-yard split",
+        elite: "<1.55s",
+        good: "1.55-1.7s",
+        average: "1.7-1.85s",
+        unit: "seconds",
+      },
+      {
+        metric: "Snap accuracy",
+        elite: ">98%",
+        good: "95-98%",
+        average: "90-95%",
+        unit: "percentage",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "Acceleration from snap",
         weeklyVolume: "2-3x per week",
-        keyExercises: ["Snap + sprint drills", "Stance starts", "First-step explosiveness"],
+        keyExercises: [
+          "Snap + sprint drills",
+          "Stance starts",
+          "First-step explosiveness",
+        ],
         evidenceBasis: "Position-specific acceleration demands",
       },
       {
         priority: 2,
         focus: "Hamstring & hip flexor strength",
         weeklyVolume: "3x per week",
-        keyExercises: ["Nordic curls", "Hip flexor strengthening", "Single-leg work"],
+        keyExercises: [
+          "Nordic curls",
+          "Hip flexor strengthening",
+          "Single-leg work",
+        ],
         evidenceBasis: "Al Attar et al. (2017) - Hamstring prevention",
       },
       {
         priority: 3,
         focus: "Lower back stability",
         weeklyVolume: "Daily",
-        keyExercises: ["McGill Big 3", "Bird dogs", "Dead bugs", "Pallof press"],
+        keyExercises: [
+          "McGill Big 3",
+          "Bird dogs",
+          "Dead bugs",
+          "Pallof press",
+        ],
         evidenceBasis: "McGill (2015) - Spine stability",
       },
     ],
@@ -363,38 +481,81 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Knee injuries (lateral stress)",
     ],
     keyBenchmarks: [
-      { metric: "Pro Agility", elite: "<4.0s", good: "4.0-4.2s", average: "4.2-4.5s", unit: "seconds" },
-      { metric: "3-Cone Drill", elite: "<6.8s", good: "6.8-7.2s", average: "7.2-7.6s", unit: "seconds" },
-      { metric: "Backpedal 10yd", elite: "<2.0s", good: "2.0-2.2s", average: "2.2-2.5s", unit: "seconds" },
-      { metric: "40-yard dash", elite: "<4.5s", good: "4.5-4.7s", average: "4.7-5.0s", unit: "seconds" },
+      {
+        metric: "Pro Agility",
+        elite: "<4.0s",
+        good: "4.0-4.2s",
+        average: "4.2-4.5s",
+        unit: "seconds",
+      },
+      {
+        metric: "3-Cone Drill",
+        elite: "<6.8s",
+        good: "6.8-7.2s",
+        average: "7.2-7.6s",
+        unit: "seconds",
+      },
+      {
+        metric: "Backpedal 10yd",
+        elite: "<2.0s",
+        good: "2.0-2.2s",
+        average: "2.2-2.5s",
+        unit: "seconds",
+      },
+      {
+        metric: "40-yard dash",
+        elite: "<4.5s",
+        good: "4.5-4.7s",
+        average: "4.7-5.0s",
+        unit: "seconds",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "Backpedal mechanics & speed",
         weeklyVolume: "3-4x per week",
-        keyExercises: ["Backpedal drills", "Hip turn transitions", "Pedal + break", "Mirror drills"],
+        keyExercises: [
+          "Backpedal drills",
+          "Hip turn transitions",
+          "Pedal + break",
+          "Mirror drills",
+        ],
         evidenceBasis: "Position-specific movement patterns",
       },
       {
         priority: 2,
         focus: "Groin & hip strength",
         weeklyVolume: "3x per week",
-        keyExercises: ["Copenhagen adductors", "Lateral lunges", "Hip 90/90", "Side planks"],
+        keyExercises: [
+          "Copenhagen adductors",
+          "Lateral lunges",
+          "Hip 90/90",
+          "Side planks",
+        ],
         evidenceBasis: "Harøy et al. (2019) - 41% groin injury reduction",
       },
       {
         priority: 3,
         focus: "Reactive agility",
         weeklyVolume: "2-3x per week",
-        keyExercises: ["Ball tracking drills", "WR vs DB drills", "Random direction sprints"],
+        keyExercises: [
+          "Ball tracking drills",
+          "WR vs DB drills",
+          "Random direction sprints",
+        ],
         evidenceBasis: "Sheppard & Young (2006) - Reactive agility",
       },
       {
         priority: 4,
         focus: "Lateral movement capacity",
         weeklyVolume: "2x per week",
-        keyExercises: ["Lateral shuffles", "Carioca", "Crossover runs", "Zone drops"],
+        keyExercises: [
+          "Lateral shuffles",
+          "Carioca",
+          "Crossover runs",
+          "Zone drops",
+        ],
         evidenceBasis: "Brughelli et al. (2008) - COD ability",
       },
     ],
@@ -434,30 +595,62 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Hamstring strain (acceleration)",
     ],
     keyBenchmarks: [
-      { metric: "5-yard split", elite: "<1.0s", good: "1.0-1.1s", average: "1.1-1.2s", unit: "seconds" },
-      { metric: "Pro Agility", elite: "<4.1s", good: "4.1-4.3s", average: "4.3-4.6s", unit: "seconds" },
-      { metric: "10-yard dash", elite: "<1.55s", good: "1.55-1.65s", average: "1.65-1.8s", unit: "seconds" },
+      {
+        metric: "5-yard split",
+        elite: "<1.0s",
+        good: "1.0-1.1s",
+        average: "1.1-1.2s",
+        unit: "seconds",
+      },
+      {
+        metric: "Pro Agility",
+        elite: "<4.1s",
+        good: "4.1-4.3s",
+        average: "4.3-4.6s",
+        unit: "seconds",
+      },
+      {
+        metric: "10-yard dash",
+        elite: "<1.55s",
+        good: "1.55-1.65s",
+        average: "1.65-1.8s",
+        unit: "seconds",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "First-step explosiveness",
         weeklyVolume: "2-3x per week",
-        keyExercises: ["Stance starts", "5-yard bursts", "Reactive starts", "Power position holds"],
+        keyExercises: [
+          "Stance starts",
+          "5-yard bursts",
+          "Reactive starts",
+          "Power position holds",
+        ],
         evidenceBasis: "Clark et al. (2019) - Acceleration importance",
       },
       {
         priority: 2,
         focus: "Short-area quickness",
         weeklyVolume: "2-3x per week",
-        keyExercises: ["5-10-5 shuttle", "Rush move drills", "Cone weaves", "Mirror drills"],
+        keyExercises: [
+          "5-10-5 shuttle",
+          "Rush move drills",
+          "Cone weaves",
+          "Mirror drills",
+        ],
         evidenceBasis: "Sheppard & Young (2006) - Agility training",
       },
       {
         priority: 3,
         focus: "Ankle & hip stability",
         weeklyVolume: "3x per week",
-        keyExercises: ["Single-leg balance", "Copenhagen adductors", "Ankle strengthening"],
+        keyExercises: [
+          "Single-leg balance",
+          "Copenhagen adductors",
+          "Ankle strengthening",
+        ],
         evidenceBasis: "Lauersen et al. (2014) - Injury prevention",
       },
     ],
@@ -493,30 +686,63 @@ const POSITION_DEMAND_PROFILES: PositionDemandProfile[] = [
       "Fatigue-related injuries",
     ],
     keyBenchmarks: [
-      { metric: "40-yard dash", elite: "<4.6s", good: "4.6-4.8s", average: "4.8-5.1s", unit: "seconds" },
-      { metric: "Pro Agility", elite: "<4.1s", good: "4.1-4.3s", average: "4.3-4.6s", unit: "seconds" },
-      { metric: "Repeated Sprint Test", elite: ">95% maintenance", good: "90-95%", average: "85-90%", unit: "% of best" },
+      {
+        metric: "40-yard dash",
+        elite: "<4.6s",
+        good: "4.6-4.8s",
+        average: "4.8-5.1s",
+        unit: "seconds",
+      },
+      {
+        metric: "Pro Agility",
+        elite: "<4.1s",
+        good: "4.1-4.3s",
+        average: "4.3-4.6s",
+        unit: "seconds",
+      },
+      {
+        metric: "Repeated Sprint Test",
+        elite: ">95% maintenance",
+        good: "90-95%",
+        average: "85-90%",
+        unit: "% of best",
+      },
     ],
     trainingPriorities: [
       {
         priority: 1,
         focus: "Work capacity & endurance",
         weeklyVolume: "3-4x per week",
-        keyExercises: ["Repeated sprint training", "Tempo runs", "Circuit training", "Game simulation"],
+        keyExercises: [
+          "Repeated sprint training",
+          "Tempo runs",
+          "Circuit training",
+          "Game simulation",
+        ],
         evidenceBasis: "Buchheit et al. (2010) - RSA in team sports",
       },
       {
         priority: 2,
         focus: "Comprehensive injury prevention",
         weeklyVolume: "Daily prehab",
-        keyExercises: ["Nordic curls", "Copenhagen", "Ankle work", "Hip mobility"],
+        keyExercises: [
+          "Nordic curls",
+          "Copenhagen",
+          "Ankle work",
+          "Hip mobility",
+        ],
         evidenceBasis: "Lauersen et al. (2014) - Comprehensive prevention",
       },
       {
         priority: 3,
         focus: "Recovery optimization",
         weeklyVolume: "Daily focus",
-        keyExercises: ["Sleep optimization", "Nutrition timing", "Active recovery", "Mobility work"],
+        keyExercises: [
+          "Sleep optimization",
+          "Nutrition timing",
+          "Active recovery",
+          "Mobility work",
+        ],
         evidenceBasis: "Kellmann et al. (2018) - Recovery consensus",
       },
     ],
@@ -614,7 +840,12 @@ const TOURNAMENT_FATIGUE_PROTOCOLS: TournamentFatigueProtocol[] = [
       {
         phase: "Tournament nights",
         target: "9+ hours",
-        strategies: ["Early to bed", "Dark room", "No screens", "Relaxation routine"],
+        strategies: [
+          "Early to bed",
+          "Dark room",
+          "No screens",
+          "Relaxation routine",
+        ],
       },
       {
         phase: "Post-tournament",
@@ -703,7 +934,8 @@ const TOURNAMENT_FATIGUE_PROTOCOLS: TournamentFatigueProtocol[] = [
 
 const THROWING_LOAD_RESEARCH: ThrowingLoadResearch[] = [
   {
-    study: "Fleisig et al. (2011) - Risk of serious injury for young baseball pitchers",
+    study:
+      "Fleisig et al. (2011) - Risk of serious injury for young baseball pitchers",
     population: "Young baseball pitchers",
     keyFindings: [
       "Pitchers throwing >100 innings/year have 3.5x injury risk",
@@ -751,7 +983,8 @@ const THROWING_LOAD_RESEARCH: ThrowingLoadResearch[] = [
     ],
   },
   {
-    study: "Wilk et al. (2011) - Shoulder and elbow injuries in professional baseball pitchers",
+    study:
+      "Wilk et al. (2011) - Shoulder and elbow injuries in professional baseball pitchers",
     population: "Professional baseball pitchers",
     keyFindings: [
       "Decreased total rotation ROM increases injury risk",
@@ -791,7 +1024,8 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
       {
         muscle: "Hip Flexors (Iliopsoas)",
         function: "Rapid leg recovery, stride frequency",
-        trainingRecommendation: "Hip flexor marches, hanging knee raises, resisted hip flexion",
+        trainingRecommendation:
+          "Hip flexor marches, hanging knee raises, resisted hip flexion",
         benchmarkTest: "Hip flexor strength test (manual)",
       },
       {
@@ -801,7 +1035,11 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
         benchmarkTest: "Single-leg calf raise 25+ reps",
       },
     ],
-    injuryRiskAreas: ["Hamstring (late swing phase)", "Hip flexor (acceleration)", "Calf/Achilles"],
+    injuryRiskAreas: [
+      "Hamstring (late swing phase)",
+      "Hip flexor (acceleration)",
+      "Calf/Achilles",
+    ],
     preventionProtocol: [
       "Nordic curls 2-3x/week",
       "Hip flexor strengthening",
@@ -841,7 +1079,11 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
         benchmarkTest: "Reactive strength index >2.5",
       },
     ],
-    injuryRiskAreas: ["Hamstring (most common)", "Hip flexor", "Achilles tendon"],
+    injuryRiskAreas: [
+      "Hamstring (most common)",
+      "Hip flexor",
+      "Achilles tendon",
+    ],
     preventionProtocol: [
       "Nordic curls (51% hamstring injury reduction)",
       "Progressive sprint exposure",
@@ -859,25 +1101,29 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
       {
         muscle: "Adductors",
         function: "Lateral stability, push-off in cuts",
-        trainingRecommendation: "Copenhagen adductors, lateral lunges, side planks",
+        trainingRecommendation:
+          "Copenhagen adductors, lateral lunges, side planks",
         benchmarkTest: "Copenhagen hold 30+ seconds",
       },
       {
         muscle: "Gluteus Medius",
         function: "Hip stability during single-leg stance",
-        trainingRecommendation: "Side-lying hip abduction, monster walks, single-leg squats",
+        trainingRecommendation:
+          "Side-lying hip abduction, monster walks, single-leg squats",
         benchmarkTest: "Single-leg squat with good form",
       },
       {
         muscle: "Quadriceps (Eccentric)",
         function: "Deceleration before cut",
-        trainingRecommendation: "Eccentric squats, drop landings, deceleration drills",
+        trainingRecommendation:
+          "Eccentric squats, drop landings, deceleration drills",
         benchmarkTest: "Eccentric squat control",
       },
       {
         muscle: "Ankle Stabilizers",
         function: "Stability during rapid direction change",
-        trainingRecommendation: "Single-leg balance, wobble board, ankle strengthening",
+        trainingRecommendation:
+          "Single-leg balance, wobble board, ankle strengthening",
         benchmarkTest: "Single-leg balance 30+ seconds",
       },
     ],
@@ -921,7 +1167,11 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
         benchmarkTest: "Nordic curl competency",
       },
     ],
-    injuryRiskAreas: ["Hip flexor strain", "Hamstring (during hip turn)", "Groin"],
+    injuryRiskAreas: [
+      "Hip flexor strain",
+      "Hamstring (during hip turn)",
+      "Groin",
+    ],
     preventionProtocol: [
       "Hip flexor strengthening and mobility",
       "Gradual backpedal volume progression",
@@ -961,7 +1211,11 @@ const MOVEMENT_PATTERN_EVIDENCE: MovementPatternEvidence[] = [
         benchmarkTest: "Hip IR ROM 40+ degrees",
       },
     ],
-    injuryRiskAreas: ["Shoulder (rotator cuff, labrum)", "Elbow (UCL)", "Lower back"],
+    injuryRiskAreas: [
+      "Shoulder (rotator cuff, labrum)",
+      "Elbow (UCL)",
+      "Lower back",
+    ],
     preventionProtocol: [
       "Daily arm care routine",
       "Throw count monitoring",
@@ -994,14 +1248,18 @@ export class FlagFootballEvidenceService {
   /**
    * Get position profile by position
    */
-  getPositionProfile(position: FlagFootballPosition): PositionDemandProfile | undefined {
+  getPositionProfile(
+    position: FlagFootballPosition,
+  ): PositionDemandProfile | undefined {
     return POSITION_DEMAND_PROFILES.find((p) => p.position === position);
   }
 
   /**
    * Get sprint characteristics for a position
    */
-  getSprintCharacteristics(position: FlagFootballPosition): SprintCharacteristics | undefined {
+  getSprintCharacteristics(
+    position: FlagFootballPosition,
+  ): SprintCharacteristics | undefined {
     const profile = this.getPositionProfile(position);
     return profile?.sprintCharacteristics;
   }
@@ -1040,9 +1298,11 @@ export class FlagFootballEvidenceService {
   /**
    * Get tournament protocol by scenario
    */
-  getTournamentProtocol(scenario: string): TournamentFatigueProtocol | undefined {
+  getTournamentProtocol(
+    scenario: string,
+  ): TournamentFatigueProtocol | undefined {
     return TOURNAMENT_FATIGUE_PROTOCOLS.find((p) =>
-      p.scenario.toLowerCase().includes(scenario.toLowerCase())
+      p.scenario.toLowerCase().includes(scenario.toLowerCase()),
     );
   }
 
@@ -1065,7 +1325,7 @@ export class FlagFootballEvidenceService {
    */
   getMovementEvidence(pattern: string): MovementPatternEvidence | undefined {
     return MOVEMENT_PATTERN_EVIDENCE.find((m) =>
-      m.pattern.toLowerCase().includes(pattern.toLowerCase())
+      m.pattern.toLowerCase().includes(pattern.toLowerCase()),
     );
   }
 
@@ -1090,7 +1350,7 @@ export class FlagFootballEvidenceService {
    */
   comparePositions(
     position1: FlagFootballPosition,
-    position2: FlagFootballPosition
+    position2: FlagFootballPosition,
   ): {
     similarities: string[];
     differences: string[];
@@ -1106,11 +1366,16 @@ export class FlagFootballEvidenceService {
     const differences: string[] = [];
 
     // Compare sprint patterns
-    if (profile1.sprintCharacteristics.dominantPattern === profile2.sprintCharacteristics.dominantPattern) {
-      similarities.push(`Both positions primarily use ${profile1.sprintCharacteristics.dominantPattern} movement`);
+    if (
+      profile1.sprintCharacteristics.dominantPattern ===
+      profile2.sprintCharacteristics.dominantPattern
+    ) {
+      similarities.push(
+        `Both positions primarily use ${profile1.sprintCharacteristics.dominantPattern} movement`,
+      );
     } else {
       differences.push(
-        `${position1} uses ${profile1.sprintCharacteristics.dominantPattern}, ${position2} uses ${profile2.sprintCharacteristics.dominantPattern}`
+        `${position1} uses ${profile1.sprintCharacteristics.dominantPattern}, ${position2} uses ${profile2.sprintCharacteristics.dominantPattern}`,
       );
     }
 
@@ -1118,17 +1383,25 @@ export class FlagFootballEvidenceService {
     const vol1 = profile1.sprintCharacteristics.repetitionsPerGame;
     const vol2 = profile2.sprintCharacteristics.repetitionsPerGame;
     if (Math.abs(vol1 - vol2) < 10) {
-      similarities.push(`Similar sprint volume per game (~${Math.round((vol1 + vol2) / 2)} reps)`);
+      similarities.push(
+        `Similar sprint volume per game (~${Math.round((vol1 + vol2) / 2)} reps)`,
+      );
     } else {
-      differences.push(`${position1}: ${vol1} sprints/game vs ${position2}: ${vol2} sprints/game`);
+      differences.push(
+        `${position1}: ${vol1} sprints/game vs ${position2}: ${vol2} sprints/game`,
+      );
     }
 
     // Compare injury risks
     const commonRisks = profile1.injuryRiskFactors.filter((r) =>
-      profile2.injuryRiskFactors.some((r2) => r2.toLowerCase().includes(r.split(" ")[0].toLowerCase()))
+      profile2.injuryRiskFactors.some((r2) =>
+        r2.toLowerCase().includes(r.split(" ")[0].toLowerCase()),
+      ),
     );
     if (commonRisks.length > 0) {
-      similarities.push(`Shared injury risks: ${commonRisks.slice(0, 2).join(", ")}`);
+      similarities.push(
+        `Shared injury risks: ${commonRisks.slice(0, 2).join(", ")}`,
+      );
     }
 
     return { similarities, differences };
@@ -1150,7 +1423,11 @@ export class FlagFootballEvidenceService {
       { day: "Monday", focus: "Speed/Power", volume: "High" },
       { day: "Tuesday", focus: "Strength", volume: "Moderate-High" },
       { day: "Wednesday", focus: "Recovery/Skills", volume: "Low" },
-      { day: "Thursday", focus: "Agility/Position-Specific", volume: "Moderate" },
+      {
+        day: "Thursday",
+        focus: "Agility/Position-Specific",
+        volume: "Moderate",
+      },
       { day: "Friday", focus: "Strength", volume: "Moderate" },
       { day: "Saturday", focus: "Game/Scrimmage", volume: "High" },
       { day: "Sunday", focus: "Rest/Active Recovery", volume: "Very Low" },
@@ -1204,7 +1481,7 @@ export class FlagFootballEvidenceService {
    */
   estimateTournamentSprintVolume(
     position: FlagFootballPosition,
-    gamesExpected: number
+    gamesExpected: number,
   ): {
     totalSprints: number;
     linearSprints: number;
@@ -1255,11 +1532,14 @@ export class FlagFootballEvidenceService {
 
     let recommendation = "";
     if (totalSprints > 200) {
-      recommendation = "High volume expected - ensure adequate pre-tournament taper and recovery between games";
+      recommendation =
+        "High volume expected - ensure adequate pre-tournament taper and recovery between games";
     } else if (totalSprints > 100) {
-      recommendation = "Moderate volume - standard tournament preparation should be sufficient";
+      recommendation =
+        "Moderate volume - standard tournament preparation should be sufficient";
     } else {
-      recommendation = "Lower volume position - focus on position-specific skills and mental preparation";
+      recommendation =
+        "Lower volume position - focus on position-specific skills and mental preparation";
     }
 
     return {

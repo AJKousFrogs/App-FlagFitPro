@@ -41,7 +41,9 @@ const getTeamEquipment = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -71,7 +73,18 @@ const getEquipmentItem = async (userId, itemId) => {
 const createEquipmentItem = async (userId, itemData) => {
   checkEnvVars();
 
-  const { team_id, item_type, name, description, size, color, quantity_total, condition, purchase_date, notes } = itemData;
+  const {
+    team_id,
+    item_type,
+    name,
+    description,
+    size,
+    color,
+    quantity_total,
+    condition,
+    purchase_date,
+    notes,
+  } = itemData;
 
   const { authorized, role } = await checkTeamMembership(userId, team_id);
   if (!authorized || !["coach", "admin"].includes(role)) {
@@ -96,7 +109,9 @@ const createEquipmentItem = async (userId, itemData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -119,7 +134,17 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
     throw new Error("Only coaches and admins can update equipment");
   }
 
-  const allowedFields = ["name", "description", "size", "color", "quantity_total", "condition", "purchase_date", "notes", "item_type"];
+  const allowedFields = [
+    "name",
+    "description",
+    "size",
+    "color",
+    "quantity_total",
+    "condition",
+    "purchase_date",
+    "notes",
+    "item_type",
+  ];
   const filteredUpdates = {};
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
@@ -130,7 +155,10 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
   // If quantity_total changed, adjust quantity_available
   if (filteredUpdates.quantity_total !== undefined) {
     const diff = filteredUpdates.quantity_total - item.quantity_total;
-    filteredUpdates.quantity_available = Math.max(0, item.quantity_available + diff);
+    filteredUpdates.quantity_available = Math.max(
+      0,
+      item.quantity_available + diff,
+    );
   }
 
   const { data, error } = await supabaseAdmin
@@ -140,7 +168,9 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -168,7 +198,9 @@ const deleteEquipmentItem = async (userId, itemId) => {
     .delete()
     .eq("id", itemId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -185,11 +217,13 @@ const getTeamAssignments = async (userId, queryParams) => {
 
   let query = supabaseAdmin
     .from("equipment_assignments")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (id, name),
       equipment_items!inner (id, name, item_type, team_id)
-    `)
+    `,
+    )
     .eq("equipment_items.team_id", team_id)
     .order("assigned_at", { ascending: false });
 
@@ -203,7 +237,9 @@ const getTeamAssignments = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -219,15 +255,19 @@ const getPlayerEquipment = async (userId, playerId) => {
 
   const { data, error } = await supabaseAdmin
     .from("equipment_assignments")
-    .select(`
+    .select(
+      `
       *,
       equipment_items (id, name, item_type, size, color)
-    `)
+    `,
+    )
     .eq("player_id", playerId)
     .is("returned_at", null)
     .order("assigned_at", { ascending: false });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -261,7 +301,9 @@ const checkoutEquipment = async (userId, checkoutData) => {
   const checkoutQuantity = quantity || 1;
 
   if (item.quantity_available < checkoutQuantity) {
-    throw new Error(`Not enough available. Only ${item.quantity_available} available.`);
+    throw new Error(
+      `Not enough available. Only ${item.quantity_available} available.`,
+    );
   }
 
   // Create assignment
@@ -277,7 +319,9 @@ const checkoutEquipment = async (userId, checkoutData) => {
     .select()
     .single();
 
-  if (assignmentError) {throw assignmentError;}
+  if (assignmentError) {
+    throw assignmentError;
+  }
 
   // Update available quantity
   await supabaseAdmin
@@ -313,7 +357,9 @@ const bulkCheckout = async (userId, bulkData) => {
   const totalNeeded = checkoutQuantity * player_ids.length;
 
   if (item.quantity_available < totalNeeded) {
-    throw new Error(`Not enough available. Need ${totalNeeded}, only ${item.quantity_available} available.`);
+    throw new Error(
+      `Not enough available. Need ${totalNeeded}, only ${item.quantity_available} available.`,
+    );
   }
 
   const assignments = player_ids.map((playerId) => ({
@@ -328,7 +374,9 @@ const bulkCheckout = async (userId, bulkData) => {
     .insert(assignments)
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Update available quantity
   await supabaseAdmin
@@ -348,10 +396,12 @@ const returnEquipment = async (userId, returnData) => {
   // Get assignment
   const { data: assignment, error: assignmentError } = await supabaseAdmin
     .from("equipment_assignments")
-    .select(`
+    .select(
+      `
       *,
       equipment_items!inner (id, team_id, quantity_available, condition)
-    `)
+    `,
+    )
     .eq("id", assignment_id)
     .single();
 
@@ -363,7 +413,10 @@ const returnEquipment = async (userId, returnData) => {
     throw new Error("Equipment already returned");
   }
 
-  const { authorized, role } = await checkTeamMembership(userId, assignment.equipment_items.team_id);
+  const { authorized, role } = await checkTeamMembership(
+    userId,
+    assignment.equipment_items.team_id,
+  );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can process returns");
   }
@@ -380,16 +433,23 @@ const returnEquipment = async (userId, returnData) => {
     .select()
     .single();
 
-  if (updateError) {throw updateError;}
+  if (updateError) {
+    throw updateError;
+  }
 
   // Update equipment available quantity and condition
   const updateData = {
-    quantity_available: assignment.equipment_items.quantity_available + assignment.quantity_assigned,
+    quantity_available:
+      assignment.equipment_items.quantity_available +
+      assignment.quantity_assigned,
   };
 
   // If returned in worse condition, update equipment condition
   const conditionOrder = ["new", "good", "fair", "poor", "needs_replacement"];
-  if (conditionOrder.indexOf(condition_at_return) > conditionOrder.indexOf(assignment.equipment_items.condition)) {
+  if (
+    conditionOrder.indexOf(condition_at_return) >
+    conditionOrder.indexOf(assignment.equipment_items.condition)
+  ) {
     updateData.condition = condition_at_return;
   }
 
@@ -415,7 +475,9 @@ const getEquipmentSummary = async (userId, teamId) => {
     .select("*")
     .eq("team_id", teamId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   const summary = {
     total_items: items.length,
@@ -458,9 +520,13 @@ const getEquipmentAlerts = async (userId, teamId) => {
     .from("equipment_items")
     .select("*")
     .eq("team_id", teamId)
-    .or("condition.eq.needs_replacement,condition.eq.poor,quantity_available.eq.0");
+    .or(
+      "condition.eq.needs_replacement,condition.eq.poor,quantity_available.eq.0",
+    );
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -485,14 +551,18 @@ const getEquipmentHistory = async (userId, equipmentId) => {
 
   const { data, error } = await supabaseAdmin
     .from("equipment_assignments")
-    .select(`
+    .select(
+      `
       *,
       users:player_id (name)
-    `)
+    `,
+    )
     .eq("equipment_id", equipmentId)
     .order("assigned_at", { ascending: false });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -507,7 +577,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
     handler: async (event, _context, { userId }) => {
-      const path = event.path.replace(/^\/api\/equipment\/?/, "").replace(/^\/\.netlify\/functions\/equipment\/?/, "");
+      const path = event.path
+        .replace(/^\/api\/equipment\/?/, "")
+        .replace(/^\/\.netlify\/functions\/equipment\/?/, "");
       const queryParams = event.queryStringParameters || {};
 
       let body = {};
@@ -606,11 +678,18 @@ exports.handler = async (event, context) => {
         if (error.message.includes("not found")) {
           return createErrorResponse(error.message, 404, "not_found");
         }
-        if (error.message.includes("authorized") || error.message.includes("permission")) {
+        if (
+          error.message.includes("authorized") ||
+          error.message.includes("permission")
+        ) {
           return createErrorResponse(error.message, 403, "forbidden");
         }
         if (error.message.includes("Not enough")) {
-          return createErrorResponse(error.message, 400, "insufficient_quantity");
+          return createErrorResponse(
+            error.message,
+            400,
+            "insufficient_quantity",
+          );
         }
         throw error;
       }

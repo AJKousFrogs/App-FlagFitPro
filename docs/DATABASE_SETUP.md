@@ -16,6 +16,7 @@ This guide covers the database setup for FlagFit Pro on Supabase. The database c
 The FlagFit Pro database is organized into the following systems:
 
 ### 1. Core Training System (✅ Implemented)
+
 - **Training Programs**: `training_programs`, `training_phases`, `training_weeks`, `training_session_templates`
 - **Exercises**: `exercises` (21 exercises), `session_exercises` (15 entries)
 - **Plyometrics**: `plyometrics_exercises` (90 exercises), `plyometrics_training_programs`
@@ -24,21 +25,26 @@ The FlagFit Pro database is organized into the following systems:
 - **Workout Logging**: `workout_logs`, `exercise_logs`, `session_summaries`
 
 ### 2. Load Monitoring & ACWR (✅ Implemented)
+
 - **Load Tracking**: `load_monitoring`, `load_daily`, `training_load_metrics`
 - **Wellness**: `wellness_entries`, `wellness_logs`, `readiness_scores`
 - **Injury Tracking**: `injury_tracking`, `injury_details`, `athlete_injuries`
 
 ### 3. Nutrition System (✅ Fully Implemented)
+
 **Core Tracking Tables:**
+
 - `nutrition_logs` - Food intake logging with macronutrients
 - `nutrition_goals` - User-specific daily nutrition targets
 - `supplement_logs` - Supplement intake tracking
 
 **USDA Food Database (✅ Implemented Dec 2025):**
+
 - `usda_foods` - Synced USDA FoodData Central database
 - `sync_logs` - Data sync operation tracking
 
 **Frogs Playbook Integration (✅ Implemented Dec 2025):**
+
 - `athlete_nutrition_profiles` - Personalized nutrition profiles with body composition, goals, and calculated macro targets
 - `nutrition_plans` - Day-type specific nutrition plans (Easy/Moderate/Hard days using Athletes Plate Method)
 - `meal_templates` - Pre-built meal templates for different day types and timings (11 templates)
@@ -48,6 +54,7 @@ The FlagFit Pro database is organized into the following systems:
 - `supplement_calculations` - Calculated supplement dosages (caffeine, creatine, beta-alanine)
 
 **API Endpoints (in `nutrition.cjs`):**
+
 - `GET /api/nutrition/athletes-plate?dayType=moderate` - Athletes Plate recommendations
 - `POST /api/nutrition/calculate-targets` - Calculate personalized macro targets
 - `GET /api/nutrition/meal-templates?dayType=hard` - Get meal templates
@@ -59,7 +66,9 @@ The FlagFit Pro database is organized into the following systems:
 - `GET/POST /api/nutrition/profile` - Athlete nutrition profile
 
 ### 4. Recovery System (✅ Partially Implemented)
+
 **Implemented Tables:**
+
 - `recovery_sessions` - Recovery protocol session tracking
 - `sleep_optimization_protocols` (3 entries)
 - `sprint_recovery_protocols` (4 entries)
@@ -68,6 +77,7 @@ The FlagFit Pro database is organized into the following systems:
 - `injury_recovery_protocols` (6 entries)
 
 **NOT Implemented:**
+
 - ~~`recovery_protocols`~~ (generic)
 - ~~`cryotherapy_protocols`~~
 - ~~`compression_protocols`~~
@@ -76,7 +86,9 @@ The FlagFit Pro database is organized into the following systems:
 - ~~`athlete_recovery_profiles`~~
 
 ### 5. AI Coaching System (✅ Implemented)
+
 **Implemented Tables:**
+
 - `ai_chat_sessions` - AI chat sessions with context snapshots
 - `ai_messages` - Individual messages with risk classification
 - `ai_recommendations` - Actionable AI recommendations
@@ -86,6 +98,7 @@ The FlagFit Pro database is organized into the following systems:
 - `chatbot_user_context`, `chatbot_user_state`, `chatbot_response_filters`
 
 **Knowledge Base Categories (Updated Dec 2025):**
+
 - Nutrition: Athletes Plate Method, hydration, tournament nutrition, supplements (caffeine, creatine, beta-alanine), macro calculator, USDA food database guide
 - Training: Resisted sprints, plyometrics, isometrics, reactive agility, velocity-based training, research protocols
 - Recovery: Sleep optimization, active recovery protocols
@@ -93,6 +106,7 @@ The FlagFit Pro database is organized into the following systems:
 - API Guides: USDA search, research database, training protocols
 
 **NOT Implemented:**
+
 - ~~`ai_coaches`~~ (profiles)
 - ~~`coaching_specializations`~~
 - ~~`ai_coach_responses`~~
@@ -100,7 +114,9 @@ The FlagFit Pro database is organized into the following systems:
 - ~~`psychological_assessments`~~
 
 ### 6. Sports Science Research (✅ Fully Implemented Dec 2025)
+
 **Existing Research Tables:**
+
 - `hydration_research_studies` (2 entries)
 - `supplement_research` (3 entries)
 - `supplements` (8 entries)
@@ -111,36 +127,40 @@ The FlagFit Pro database is organized into the following systems:
 - `sleep_guidelines` (6 entries)
 
 **New Research API Integration (✅ Implemented Dec 2025):**
+
 - `research_studies` - Studies synced from PubMed, Europe PMC, OpenAlex APIs
 - `research_topics` - Predefined topics (sprinting, plyometrics, isometrics, agility, recovery, sleep, muscle fiber, sports psychology, nutrition) with optimized search queries (10 topics)
 - `training_protocols` - Evidence-based training protocols derived from research (5 protocols)
 - `user_saved_research` - User bookmarked studies
 
 **Data Sources (Free APIs - No Keys Required):**
+
 - **PubMed/Entrez API** - Millions of biomedical studies
 - **Europe PMC REST API** - Open access full-text papers
 - **OpenAlex API** - No-key scholarly graph with institution search
 
 **Top Sports Science Institutions (Shanghai Ranking 2024):**
+
 - `research_institutions` table with 11 world-leading institutions
 - Institution-specific searches via OpenAlex
 - Priority scoring for flag football relevance
 
-| Rank | Institution | Country | Focus Areas |
-|------|-------------|---------|-------------|
-| 1 | Deakin University (IPAN) | Australia | Nutrition, sprint protocols, recovery |
-| 2 | Univ. of Southern Denmark | Denmark | Plyometrics, isometrics, twitch research |
-| 3 | Norwegian School of Sport Sciences | Norway | Elite performance, psychology |
-| 4 | Univ. of Verona | Italy | High-altitude training, endurance |
-| 5 | Univ. of Copenhagen | Denmark | Sports nutrition, supplements |
-| 6 | Victoria University (IHES) | Australia | Flag football conditioning |
-| 7 | Vrije Universiteit Amsterdam | Netherlands | Motor control, mental training |
-| 8 | NTNU | Norway | Sprint mechanics, elite sports |
-| 9 | KU Leuven | Belgium | Kinesiology, injury prevention |
-| 10 | Univ. of Bath | UK | Plyometrics, recovery protocols |
-| - | Australian Institute of Sport | Australia | High performance, ABCD framework |
+| Rank | Institution                        | Country     | Focus Areas                              |
+| ---- | ---------------------------------- | ----------- | ---------------------------------------- |
+| 1    | Deakin University (IPAN)           | Australia   | Nutrition, sprint protocols, recovery    |
+| 2    | Univ. of Southern Denmark          | Denmark     | Plyometrics, isometrics, twitch research |
+| 3    | Norwegian School of Sport Sciences | Norway      | Elite performance, psychology            |
+| 4    | Univ. of Verona                    | Italy       | High-altitude training, endurance        |
+| 5    | Univ. of Copenhagen                | Denmark     | Sports nutrition, supplements            |
+| 6    | Victoria University (IHES)         | Australia   | Flag football conditioning               |
+| 7    | Vrije Universiteit Amsterdam       | Netherlands | Motor control, mental training           |
+| 8    | NTNU                               | Norway      | Sprint mechanics, elite sports           |
+| 9    | KU Leuven                          | Belgium     | Kinesiology, injury prevention           |
+| 10   | Univ. of Bath                      | UK          | Plyometrics, recovery protocols          |
+| -    | Australian Institute of Sport      | Australia   | High performance, ABCD framework         |
 
 **API Endpoints (in `research-sync.cjs`):**
+
 - `POST /api/research/sync` - Trigger full research sync from all APIs
 - `POST /api/research/sync-institutions` - Sync from top institutions
 - `GET /api/research/search?q=sprint` - Search research studies
@@ -156,6 +176,7 @@ The FlagFit Pro database is organized into the following systems:
 - `GET /api/research/top-research?topic=sprint` - Get research from top-ranked institutions
 
 ### 7. Team Management (✅ Implemented)
+
 - `teams`, `team_members`, `team_invitations`, `team_players`
 - `team_events`, `attendance_records`, `absence_requests`
 - `channels`, `channel_members`, `chat_messages`
@@ -164,11 +185,13 @@ The FlagFit Pro database is organized into the following systems:
 - `equipment_inventory`, `jersey_assignments`
 
 ### 8. Competition & Tournaments (✅ Implemented)
+
 - `tournaments`, `tournament_participation`, `tournament_budgets`
 - `games`, `game_events`, `game_plays`
 - `officials`, `official_availability`, `game_official_assignments`
 
 ### 9. User & Authentication (✅ Implemented)
+
 - `users` (8 users)
 - `user_preferences`, `user_achievements`, `user_notification_preferences`
 - `notification_preferences`, `push_notification_tokens`
@@ -177,6 +200,7 @@ The FlagFit Pro database is organized into the following systems:
 ## Prerequisites
 
 ### Database Requirements
+
 - Supabase PostgreSQL (production)
 - All tables have Row Level Security (RLS) enabled
 
@@ -233,7 +257,7 @@ node scripts/seedCompetitionProtocolsFinal.cjs
 
 ```sql
 -- Check core tables
-SELECT 
+SELECT
   'positions' as table_name, COUNT(*) as count FROM positions
 UNION ALL SELECT 'training_programs', COUNT(*) FROM training_programs
 UNION ALL SELECT 'plyometrics_exercises', COUNT(*) FROM plyometrics_exercises
@@ -258,25 +282,25 @@ UNION ALL SELECT 'supplements', COUNT(*) FROM supplements;
 
 ### Key Tables with Row Counts
 
-| Category | Table | Rows | RLS |
-|----------|-------|------|-----|
-| Training | `training_programs` | 1 | ✅ |
-| Training | `training_phases` | 10 | ✅ |
-| Training | `training_weeks` | 16 | ✅ |
-| Training | `training_session_templates` | 112 | ✅ |
-| Training | `session_exercises` | 15 | ✅ |
-| Exercises | `exercises` | 21 | ✅ |
-| Exercises | `plyometrics_exercises` | 90 | ✅ |
-| Exercises | `isometrics_exercises` | 23 | ✅ |
-| Positions | `positions` | 7 | ✅ |
-| Load | `workout_logs` | 3 | ✅ |
-| Load | `load_monitoring` | 0 | ✅ |
-| Wellness | `wellness_entries` | 1 | ✅ |
-| Wellness | `readiness_scores` | 1 | ✅ |
-| Users | `users` | 8 | ✅ |
-| Teams | `teams` | 0 | ✅ |
-| Research | `hydration_research_studies` | 2 | ✅ |
-| Research | `supplement_research` | 3 | ✅ |
+| Category  | Table                        | Rows | RLS |
+| --------- | ---------------------------- | ---- | --- |
+| Training  | `training_programs`          | 1    | ✅  |
+| Training  | `training_phases`            | 10   | ✅  |
+| Training  | `training_weeks`             | 16   | ✅  |
+| Training  | `training_session_templates` | 112  | ✅  |
+| Training  | `session_exercises`          | 15   | ✅  |
+| Exercises | `exercises`                  | 21   | ✅  |
+| Exercises | `plyometrics_exercises`      | 90   | ✅  |
+| Exercises | `isometrics_exercises`       | 23   | ✅  |
+| Positions | `positions`                  | 7    | ✅  |
+| Load      | `workout_logs`               | 3    | ✅  |
+| Load      | `load_monitoring`            | 0    | ✅  |
+| Wellness  | `wellness_entries`           | 1    | ✅  |
+| Wellness  | `readiness_scores`           | 1    | ✅  |
+| Users     | `users`                      | 8    | ✅  |
+| Teams     | `teams`                      | 0    | ✅  |
+| Research  | `hydration_research_studies` | 2    | ✅  |
+| Research  | `supplement_research`        | 3    | ✅  |
 
 ### RLS Policies
 
@@ -320,20 +344,21 @@ All tables have Row Level Security enabled. Key policies:
 
 ### Available Seeding Scripts
 
-| Script | Purpose |
-|--------|---------|
+| Script                                | Purpose                 |
+| ------------------------------------- | ----------------------- |
 | `seedPlyometricsResearchDatabase.cjs` | 90 plyometric exercises |
-| `seedIsometricsTrainingDatabase.cjs` | 23 isometric exercises |
-| `seedHydrationResearchDatabase.cjs` | Hydration protocols |
-| `seedSupplementResearchDatabase.cjs` | Supplement data |
-| `seedRecoverySystem.cjs` | Recovery protocols |
-| `seedNutritionSystem.cjs` | Nutrition data |
-| `seedCompetitionProtocolsFinal.cjs` | Competition protocols |
-| `seedDashboardData.js` | Dashboard sample data |
+| `seedIsometricsTrainingDatabase.cjs`  | 23 isometric exercises  |
+| `seedHydrationResearchDatabase.cjs`   | Hydration protocols     |
+| `seedSupplementResearchDatabase.cjs`  | Supplement data         |
+| `seedRecoverySystem.cjs`              | Recovery protocols      |
+| `seedNutritionSystem.cjs`             | Nutrition data          |
+| `seedCompetitionProtocolsFinal.cjs`   | Competition protocols   |
+| `seedDashboardData.js`                | Dashboard sample data   |
 
 ### Scripts That DON'T Exist
 
 The following scripts mentioned in previous documentation do NOT exist:
+
 - ~~`setupDatabase.js`~~
 - ~~`runMigrations.js`~~
 - ~~`seedComprehensiveNutritionDatabase.js`~~

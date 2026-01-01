@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, HostListener } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  HostListener,
+} from "@angular/core";
 
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
@@ -46,7 +51,7 @@ import { ThemeService } from "../../../core/services/theme.service";
     <!-- Keyboard Shortcuts Modal (Global) -->
     <app-keyboard-shortcuts-modal></app-keyboard-shortcuts-modal>
   `,
-  styleUrls: ['./main-layout.component.scss'],
+  styleUrls: ["./main-layout.component.scss"],
 })
 export class MainLayoutComponent {
   private themeService = inject(ThemeService);
@@ -54,16 +59,16 @@ export class MainLayoutComponent {
   /**
    * Listen for custom events from keyboard shortcuts service
    */
-  @HostListener('window:toggle-sidebar')
+  @HostListener("window:toggle-sidebar")
   onToggleSidebar(): void {
     // This will be handled by the sidebar component
     // We dispatch a custom event that the sidebar listens to
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('sidebar-toggle-request'));
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("sidebar-toggle-request"));
     }
   }
 
-  @HostListener('window:toggle-theme')
+  @HostListener("window:toggle-theme")
   onToggleTheme(): void {
     this.themeService.toggle();
   }

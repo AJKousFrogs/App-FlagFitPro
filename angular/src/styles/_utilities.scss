@@ -4,8 +4,8 @@
  * Utility classes for common styling patterns
  */
 
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "variables" as *;
+@use "mixins" as *;
 
 // ================================
 // SPACING UTILITIES
@@ -13,11 +13,21 @@
 
 // Margin utilities
 @each $key, $value in $spacing-scale {
-  .m-#{$key} { margin: $value; }
-  .mt-#{$key} { margin-top: $value; }
-  .mr-#{$key} { margin-right: $value; }
-  .mb-#{$key} { margin-bottom: $value; }
-  .ml-#{$key} { margin-left: $value; }
+  .m-#{$key} {
+    margin: $value;
+  }
+  .mt-#{$key} {
+    margin-top: $value;
+  }
+  .mr-#{$key} {
+    margin-right: $value;
+  }
+  .mb-#{$key} {
+    margin-bottom: $value;
+  }
+  .ml-#{$key} {
+    margin-left: $value;
+  }
   .mx-#{$key} {
     margin-left: $value;
     margin-right: $value;
@@ -30,11 +40,21 @@
 
 // Padding utilities
 @each $key, $value in $spacing-scale {
-  .p-#{$key} { padding: $value; }
-  .pt-#{$key} { padding-top: $value; }
-  .pr-#{$key} { padding-right: $value; }
-  .pb-#{$key} { padding-bottom: $value; }
-  .pl-#{$key} { padding-left: $value; }
+  .p-#{$key} {
+    padding: $value;
+  }
+  .pt-#{$key} {
+    padding-top: $value;
+  }
+  .pr-#{$key} {
+    padding-right: $value;
+  }
+  .pb-#{$key} {
+    padding-bottom: $value;
+  }
+  .pl-#{$key} {
+    padding-left: $value;
+  }
   .px-#{$key} {
     padding-left: $value;
     padding-right: $value;
@@ -47,102 +67,200 @@
 
 // Gap utilities (for flex/grid)
 @each $key, $value in $spacing-scale {
-  .gap-#{$key} { gap: $value; }
-  .gap-x-#{$key} { column-gap: $value; }
-  .gap-y-#{$key} { row-gap: $value; }
+  .gap-#{$key} {
+    gap: $value;
+  }
+  .gap-x-#{$key} {
+    column-gap: $value;
+  }
+  .gap-y-#{$key} {
+    row-gap: $value;
+  }
 }
 
 // ================================
 // DISPLAY UTILITIES
 // ================================
 
-.d-none { display: none; }
-.d-block { display: block; }
-.d-inline { display: inline; }
-.d-inline-block { display: inline-block; }
-.d-flex { display: flex; }
-.d-inline-flex { display: inline-flex; }
-.d-grid { display: grid; }
+.d-none {
+  display: none;
+}
+.d-block {
+  display: block;
+}
+.d-inline {
+  display: inline;
+}
+.d-inline-block {
+  display: inline-block;
+}
+.d-flex {
+  display: flex;
+}
+.d-inline-flex {
+  display: inline-flex;
+}
+.d-grid {
+  display: grid;
+}
 
 // ================================
 // FLEXBOX UTILITIES
 // ================================
 
-.flex-row { flex-direction: row; }
-.flex-column { flex-direction: column; }
-.flex-row-reverse { flex-direction: row-reverse; }
-.flex-column-reverse { flex-direction: column-reverse; }
+.flex-row {
+  flex-direction: row;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-row-reverse {
+  flex-direction: row-reverse;
+}
+.flex-column-reverse {
+  flex-direction: column-reverse;
+}
 
-.flex-wrap { flex-wrap: wrap; }
-.flex-nowrap { flex-wrap: nowrap; }
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
 
-.justify-start { justify-content: flex-start; }
-.justify-end { justify-content: flex-end; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.justify-around { justify-content: space-around; }
-.justify-evenly { justify-content: space-evenly; }
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-around {
+  justify-content: space-around;
+}
+.justify-evenly {
+  justify-content: space-evenly;
+}
 
-.align-start { align-items: flex-start; }
-.align-end { align-items: flex-end; }
-.align-center { align-items: center; }
-.align-baseline { align-items: baseline; }
-.align-stretch { align-items: stretch; }
+.align-start {
+  align-items: flex-start;
+}
+.align-end {
+  align-items: flex-end;
+}
+.align-center {
+  align-items: center;
+}
+.align-baseline {
+  align-items: baseline;
+}
+.align-stretch {
+  align-items: stretch;
+}
 
-.flex-1 { flex: 1 1 0%; }
-.flex-auto { flex: 1 1 auto; }
-.flex-none { flex: none; }
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-auto {
+  flex: 1 1 auto;
+}
+.flex-none {
+  flex: none;
+}
 
 // ================================
 // TEXT UTILITIES
 // ================================
 
-.text-left { text-align: left; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
 
 .text-truncate {
   @include text-truncate;
 }
 
-.line-clamp-1 { @include line-clamp(1); }
-.line-clamp-2 { @include line-clamp(2); }
-.line-clamp-3 { @include line-clamp(3); }
+.line-clamp-1 {
+  @include line-clamp(1);
+}
+.line-clamp-2 {
+  @include line-clamp(2);
+}
+.line-clamp-3 {
+  @include line-clamp(3);
+}
 
 // Font sizes
 @each $key, $value in $font-sizes {
-  .text-#{$key} { font-size: $value; }
+  .text-#{$key} {
+    font-size: $value;
+  }
 }
 
 // Font weights
 @each $key, $value in $font-weights {
-  .font-#{$key} { font-weight: $value; }
+  .font-#{$key} {
+    font-weight: $value;
+  }
 }
 
 // ================================
 // WIDTH & HEIGHT UTILITIES
 // ================================
 
-.w-full { width: 100%; }
-.w-screen { width: 100vw; }
-.w-auto { width: auto; }
+.w-full {
+  width: 100%;
+}
+.w-screen {
+  width: 100vw;
+}
+.w-auto {
+  width: auto;
+}
 
-.h-full { height: 100%; }
-.h-screen { height: 100vh; }
-.h-auto { height: auto; }
+.h-full {
+  height: 100%;
+}
+.h-screen {
+  height: 100vh;
+}
+.h-auto {
+  height: auto;
+}
 
-.min-w-0 { min-width: 0; }
-.min-h-0 { min-height: 0; }
+.min-w-0 {
+  min-width: 0;
+}
+.min-h-0 {
+  min-height: 0;
+}
 
-.max-w-full { max-width: 100%; }
-.max-h-full { max-height: 100%; }
+.max-w-full {
+  max-width: 100%;
+}
+.max-h-full {
+  max-height: 100%;
+}
 
 // ================================
 // BORDER RADIUS UTILITIES
 // ================================
 
 @each $key, $value in $radius {
-  .rounded-#{$key} { border-radius: $value; }
+  .rounded-#{$key} {
+    border-radius: $value;
+  }
 }
 
 // ================================
@@ -150,83 +268,147 @@
 // ================================
 
 @each $key, $value in $shadows {
-  .shadow-#{$key} { box-shadow: $value; }
+  .shadow-#{$key} {
+    box-shadow: $value;
+  }
 }
 
 // ================================
 // POSITIONING UTILITIES
 // ================================
 
-.relative { position: relative; }
-.absolute { position: absolute; }
-.fixed { position: fixed; }
-.sticky { position: sticky; }
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
+.sticky {
+  position: sticky;
+}
 
-.inset-0 { inset: 0; }
-.top-0 { top: 0; }
-.right-0 { right: 0; }
-.bottom-0 { bottom: 0; }
-.left-0 { left: 0; }
+.inset-0 {
+  inset: 0;
+}
+.top-0 {
+  top: 0;
+}
+.right-0 {
+  right: 0;
+}
+.bottom-0 {
+  bottom: 0;
+}
+.left-0 {
+  left: 0;
+}
 
 // ================================
 // OVERFLOW UTILITIES
 // ================================
 
-.overflow-auto { overflow: auto; }
-.overflow-hidden { overflow: hidden; }
-.overflow-visible { overflow: visible; }
-.overflow-scroll { overflow: scroll; }
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-visible {
+  overflow: visible;
+}
+.overflow-scroll {
+  overflow: scroll;
+}
 
-.overflow-x-auto { overflow-x: auto; }
-.overflow-y-auto { overflow-y: auto; }
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
 
 // ================================
 // Z-INDEX UTILITIES
 // ================================
 
 @each $key, $value in $z-index {
-  .z-#{$key} { z-index: $value; }
+  .z-#{$key} {
+    z-index: $value;
+  }
 }
 
 // ================================
 // OPACITY UTILITIES
 // ================================
 
-.opacity-0 { opacity: 0; }
-.opacity-25 { opacity: 0.25; }
-.opacity-50 { opacity: 0.5; }
-.opacity-75 { opacity: 0.75; }
-.opacity-100 { opacity: 1; }
+.opacity-0 {
+  opacity: 0;
+}
+.opacity-25 {
+  opacity: 0.25;
+}
+.opacity-50 {
+  opacity: 0.5;
+}
+.opacity-75 {
+  opacity: 0.75;
+}
+.opacity-100 {
+  opacity: 1;
+}
 
 // ================================
 // CURSOR UTILITIES
 // ================================
 
-.cursor-auto { cursor: auto; }
-.cursor-pointer { cursor: pointer; }
-.cursor-not-allowed { cursor: not-allowed; }
+.cursor-auto {
+  cursor: auto;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
 
 // ================================
 // USER SELECT UTILITIES
 // ================================
 
-.select-none { user-select: none; }
-.select-text { user-select: text; }
-.select-all { user-select: all; }
+.select-none {
+  user-select: none;
+}
+.select-text {
+  user-select: text;
+}
+.select-all {
+  user-select: all;
+}
 
 // ================================
 // POINTER EVENTS UTILITIES
 // ================================
 
-.pointer-events-none { pointer-events: none; }
-.pointer-events-auto { pointer-events: auto; }
+.pointer-events-none {
+  pointer-events: none;
+}
+.pointer-events-auto {
+  pointer-events: auto;
+}
 
 // ================================
 // VISIBILITY UTILITIES
 // ================================
 
-.visible { visibility: visible; }
-.invisible { visibility: hidden; }
+.visible {
+  visibility: visible;
+}
+.invisible {
+  visibility: hidden;
+}
 
 .sr-only {
   @include visually-hidden;
@@ -238,16 +420,28 @@
 
 @each $breakpoint in (xs, sm, md, lg, xl, xxl) {
   @include respond-to($breakpoint) {
-    .#{$breakpoint}\:d-none { display: none; }
-    .#{$breakpoint}\:d-block { display: block; }
-    .#{$breakpoint}\:d-flex { display: flex; }
-    .#{$breakpoint}\:d-grid { display: grid; }
+    .#{$breakpoint}\:d-none {
+      display: none;
+    }
+    .#{$breakpoint}\:d-block {
+      display: block;
+    }
+    .#{$breakpoint}\:d-flex {
+      display: flex;
+    }
+    .#{$breakpoint}\:d-grid {
+      display: grid;
+    }
 
-    .#{$breakpoint}\:hidden { display: none; }
+    .#{$breakpoint}\:hidden {
+      display: none;
+    }
   }
 
   @include respond-above($breakpoint) {
-    .#{$breakpoint}\:show { display: block; }
+    .#{$breakpoint}\:show {
+      display: block;
+    }
   }
 }
 

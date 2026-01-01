@@ -234,7 +234,7 @@ export class YoutubePlayerComponent implements OnDestroy {
       () => {
         this.loadYoutubeApi();
       },
-      { injector: this.injector }
+      { injector: this.injector },
     );
 
     // Watch for videoId changes and reload player

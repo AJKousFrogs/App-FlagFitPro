@@ -2,7 +2,7 @@
 
 **FlagFit Pro — Safe Extension Playbook**
 
-*Version 1.0 | 29. December 2025*
+_Version 1.0 | 29. December 2025_
 
 This document ensures that new features maintain FlagFit Pro's privacy and safety guarantees. Every new metric, dashboard, AI feature, or data source must pass through this checklist.
 
@@ -28,13 +28,13 @@ FlagFit Pro has robust privacy controls. But they only work if **every new featu
 
 ### What Can Go Wrong
 
-| Scenario | Consequence |
-|----------|-------------|
-| New metric added without consent check | Coach sees data player didn't share |
-| AI feature without opt-out check | Processing without consent (GDPR violation) |
-| Dashboard shows raw table data | Bypasses consent views |
-| New data not in deletion cascade | Data retained after account deletion |
-| Minor-specific feature without age check | COPPA violation |
+| Scenario                                 | Consequence                                 |
+| ---------------------------------------- | ------------------------------------------- |
+| New metric added without consent check   | Coach sees data player didn't share         |
+| AI feature without opt-out check         | Processing without consent (GDPR violation) |
+| Dashboard shows raw table data           | Bypasses consent views                      |
+| New data not in deletion cascade         | Data retained after account deletion        |
+| Minor-specific feature without age check | COPPA violation                             |
 
 ### The Golden Rule
 
@@ -175,11 +175,13 @@ Use this flowchart for every new feature:
 **Examples:** Personal dashboard, own training log, own metrics
 
 **Requirements:**
+
 - ✅ Can use raw tables (but views recommended)
 - ✅ Must return DataState
 - ✅ Must be in deletion cascade
 
 **Checklist subset:**
+
 - [ ] DataState returned
 - [ ] Deletion cascade updated
 - [ ] Input validation
@@ -191,11 +193,13 @@ Use this flowchart for every new feature:
 **Examples:** Team dashboard, player comparison, squad analytics
 
 **Requirements:**
+
 - ⚠️ MUST use consent views
 - ⚠️ MUST return consent_blocked flags
 - ⚠️ MUST show privacy messages for blocked players
 
 **Checklist subset:**
+
 - [ ] Uses `v_*_consent` views or `ConsentDataReader`
 - [ ] Returns `consent_blocked` per player
 - [ ] UI shows "Data Not Shared" message
@@ -209,11 +213,13 @@ Use this flowchart for every new feature:
 **Examples:** Training recommendations, injury predictions, chat assistant
 
 **Requirements:**
+
 - ⚠️ MUST check AI consent before processing
 - ⚠️ MUST fail fast if opted out
 - ⚠️ MUST NOT store AI results for opted-out users
 
 **Checklist subset:**
+
 - [ ] Calls `require_ai_consent()` or checks `ai_processing_enabled`
 - [ ] Returns `AI_CONSENT_REQUIRED` error if opted out
 - [ ] UI shows "AI Features Disabled" message
@@ -226,11 +232,13 @@ Use this flowchart for every new feature:
 **Examples:** Injury risk dashboard, wellness tracking, medical records
 
 **Requirements:**
+
 - ⚠️ MUST check health_sharing_enabled (separate from performance)
 - ⚠️ Higher audit logging requirements
 - ⚠️ May have longer retention (medical records: 7 years)
 
 **Checklist subset:**
+
 - [ ] Checks `health_sharing_enabled` separately
 - [ ] Enhanced audit logging
 - [ ] Retention policy documented
@@ -243,11 +251,13 @@ Use this flowchart for every new feature:
 **Examples:** Youth programs, under-16 features
 
 **Requirements:**
+
 - ⚠️ MUST verify parental consent
 - ⚠️ MUST restrict features until verified
 - ⚠️ COPPA compliance required
 
 **Checklist subset:**
+
 - [ ] Age check at feature entry
 - [ ] Parental consent verification
 - [ ] Age-appropriate content only
@@ -263,17 +273,17 @@ Use this flowchart for every new feature:
 // ❌ WRONG - Direct table access
 async function getNewMetric(coachId: string, teamId: string) {
   const { data } = await supabase
-    .from('new_metric_table')  // ❌ Direct access!
-    .select('*')
-    .in('player_id', teamMemberIds);
-  
-  return { metrics: data };  // ❌ No dataState!
+    .from("new_metric_table") // ❌ Direct access!
+    .select("*")
+    .in("player_id", teamMemberIds);
+
+  return { metrics: data }; // ❌ No dataState!
 }
 
 // ✅ CORRECT - Using ConsentDataReader
 async function getNewMetric(coachId: string, teamId: string) {
   const reader = new ConsentDataReader();
-  
+
   const result = await reader.readNewMetric({
     requesterId: coachId,
     teamId: teamId,
@@ -297,32 +307,32 @@ async function getNewMetric(coachId: string, teamId: string) {
 // ❌ WRONG - No consent check
 async function generateRecommendations(userId: string) {
   const userData = await getUserTrainingData(userId);
-  const recommendations = await aiModel.predict(userData);  // ❌ No consent!
+  const recommendations = await aiModel.predict(userData); // ❌ No consent!
   return recommendations;
 }
 
 // ✅ CORRECT - Fail-fast consent check
 async function generateRecommendations(userId: string) {
   // Check AI consent FIRST
-  const { error } = await supabase.rpc('require_ai_consent', { 
-    p_user_id: userId 
+  const { error } = await supabase.rpc("require_ai_consent", {
+    p_user_id: userId,
   });
-  
-  if (error?.message.includes('AI_CONSENT_REQUIRED')) {
-    return { 
-      error: 'AI processing disabled', 
-      code: 'AI_CONSENT_REQUIRED',
-      message: 'Enable AI processing in Privacy Settings to use this feature.'
+
+  if (error?.message.includes("AI_CONSENT_REQUIRED")) {
+    return {
+      error: "AI processing disabled",
+      code: "AI_CONSENT_REQUIRED",
+      message: "Enable AI processing in Privacy Settings to use this feature.",
     };
   }
 
   // Only process if consent given
   const userData = await getUserTrainingData(userId);
   const recommendations = await aiModel.predict(userData);
-  
+
   return {
     recommendations,
-    dataState: 'REAL_DATA',
+    dataState: "REAL_DATA",
     aiProcessed: true,
   };
 }
@@ -336,37 +346,41 @@ async function generateRecommendations(userId: string) {
 // ❌ WRONG - Using performance consent for health data
 async function getInjuryRisk(coachId: string, playerId: string) {
   const { data } = await supabase
-    .from('v_load_monitoring_consent')
-    .select('injury_risk_level')  // ❌ Health data needs separate consent!
-    .eq('player_id', playerId);
-  
+    .from("v_load_monitoring_consent")
+    .select("injury_risk_level") // ❌ Health data needs separate consent!
+    .eq("player_id", playerId);
+
   return data;
 }
 
 // ✅ CORRECT - Checking health consent separately
-async function getInjuryRisk(coachId: string, playerId: string, teamId: string) {
+async function getInjuryRisk(
+  coachId: string,
+  playerId: string,
+  teamId: string,
+) {
   // Check health sharing consent (separate from performance)
   const { data: consent } = await supabase
-    .from('team_consent_settings')
-    .select('health_sharing_enabled')
-    .eq('player_id', playerId)
-    .eq('team_id', teamId)
+    .from("team_consent_settings")
+    .select("health_sharing_enabled")
+    .eq("player_id", playerId)
+    .eq("team_id", teamId)
     .single();
 
   if (!consent?.health_sharing_enabled) {
     return {
       injuryRisk: null,
       consentBlocked: true,
-      blockReason: 'health_not_shared',
-      message: 'Health data requires separate consent from performance data.',
+      blockReason: "health_not_shared",
+      message: "Health data requires separate consent from performance data.",
     };
   }
 
   const { data } = await supabase
-    .from('v_load_monitoring_consent')
-    .select('injury_risk_level')
-    .eq('player_id', playerId);
-  
+    .from("v_load_monitoring_consent")
+    .select("injury_risk_level")
+    .eq("player_id", playerId);
+
   return {
     injuryRisk: data?.injury_risk_level,
     consentBlocked: false,
@@ -423,34 +437,34 @@ CREATE POLICY "coach_consented_data" ON new_feature_data
   template: `
     <div *ngFor="let player of players">
       <span>{{ player.name }}</span>
-      <span>{{ player.acwr }}</span>  <!-- Could be NULL! -->
+      <span>{{ player.acwr }}</span>
+      <!-- Could be NULL! -->
     </div>
-  `
+  `,
 })
 export class TeamDashboard {}
 
 // ✅ CORRECT - Handle consent blocked state
-import { getConsentBlockedMessage } from '@shared/utils/privacy-ux-copy';
+import { getConsentBlockedMessage } from "@shared/utils/privacy-ux-copy";
 
 @Component({
   template: `
     <div *ngFor="let player of players">
       <span>{{ player.name }}</span>
-      
+
       <ng-container *ngIf="!player.consentBlocked; else blocked">
         <span>{{ player.acwr }}</span>
       </ng-container>
-      
+
       <ng-template #blocked>
-        <app-privacy-message 
-          [message]="consentBlockedMessage">
+        <app-privacy-message [message]="consentBlockedMessage">
         </app-privacy-message>
       </ng-template>
     </div>
-  `
+  `,
 })
 export class TeamDashboard {
-  consentBlockedMessage = getConsentBlockedMessage('coach', 'single_player');
+  consentBlockedMessage = getConsentBlockedMessage("coach", "single_player");
 }
 ```
 
@@ -460,13 +474,13 @@ export class TeamDashboard {
 
 ### Required Reviewers
 
-| Feature Type | Required Reviewer |
-|--------------|-------------------|
-| Any coach-facing data | Privacy Champion |
-| AI features | AI Lead + Privacy Champion |
-| Health data | Privacy Champion + Security Lead |
-| Minor data | Privacy Champion + Legal |
-| New database tables | DBA + Privacy Champion |
+| Feature Type          | Required Reviewer                |
+| --------------------- | -------------------------------- |
+| Any coach-facing data | Privacy Champion                 |
+| AI features           | AI Lead + Privacy Champion       |
+| Health data           | Privacy Champion + Security Lead |
+| Minor data            | Privacy Champion + Legal         |
+| New database tables   | DBA + Privacy Champion           |
 
 ### Review Checklist for Reviewers
 
@@ -494,71 +508,79 @@ export class TeamDashboard {
 ```typescript
 // tests/privacy-safety/new-feature.test.js
 
-describe('New Feature Privacy', () => {
-  describe('Consent Enforcement', () => {
-    it('should return NULL for non-consented player data', async () => {
+describe("New Feature Privacy", () => {
+  describe("Consent Enforcement", () => {
+    it("should return NULL for non-consented player data", async () => {
       // Setup: Player has NOT consented
       const result = await getNewMetric(coachId, nonConsentedPlayerId);
-      
+
       expect(result.data.sensitiveField).toBeNull();
-      expect(result.consentInfo.blockedPlayerIds).toContain(nonConsentedPlayerId);
+      expect(result.consentInfo.blockedPlayerIds).toContain(
+        nonConsentedPlayerId,
+      );
     });
 
-    it('should return data for consented player', async () => {
+    it("should return data for consented player", async () => {
       // Setup: Player HAS consented
       const result = await getNewMetric(coachId, consentedPlayerId);
-      
+
       expect(result.data.sensitiveField).not.toBeNull();
-      expect(result.consentInfo.blockedPlayerIds).not.toContain(consentedPlayerId);
+      expect(result.consentInfo.blockedPlayerIds).not.toContain(
+        consentedPlayerId,
+      );
     });
 
-    it('should include consent_blocked flag in response', async () => {
+    it("should include consent_blocked flag in response", async () => {
       const result = await getNewMetric(coachId, teamId);
-      
-      result.data.forEach(player => {
-        expect(player).toHaveProperty('consent_blocked');
+
+      result.data.forEach((player) => {
+        expect(player).toHaveProperty("consent_blocked");
       });
     });
   });
 
-  describe('DataState Contract', () => {
-    it('should return dataState in response', async () => {
+  describe("DataState Contract", () => {
+    it("should return dataState in response", async () => {
       const result = await getNewMetric(coachId, teamId);
-      
-      expect(result).toHaveProperty('dataState');
-      expect(['REAL_DATA', 'NO_DATA', 'INSUFFICIENT_DATA', 'DEMO_DATA'])
-        .toContain(result.dataState);
+
+      expect(result).toHaveProperty("dataState");
+      expect([
+        "REAL_DATA",
+        "NO_DATA",
+        "INSUFFICIENT_DATA",
+        "DEMO_DATA",
+      ]).toContain(result.dataState);
     });
 
-    it('should return INSUFFICIENT_DATA when below threshold', async () => {
+    it("should return INSUFFICIENT_DATA when below threshold", async () => {
       // Setup: Only 5 days of data (need 28)
       const result = await getNewMetric(coachId, teamId);
-      
-      expect(result.dataState).toBe('INSUFFICIENT_DATA');
+
+      expect(result.dataState).toBe("INSUFFICIENT_DATA");
       expect(result.dataStateInfo.warnings).toContain(
-        expect.stringContaining('28 days')
+        expect.stringContaining("28 days"),
       );
     });
   });
 
-  describe('AI Consent (if applicable)', () => {
-    it('should fail fast when AI consent not given', async () => {
+  describe("AI Consent (if applicable)", () => {
+    it("should fail fast when AI consent not given", async () => {
       // Setup: User has ai_processing_enabled = false
       const result = await generateRecommendations(optedOutUserId);
-      
-      expect(result.error).toBe('AI processing disabled');
-      expect(result.code).toBe('AI_CONSENT_REQUIRED');
+
+      expect(result.error).toBe("AI processing disabled");
+      expect(result.code).toBe("AI_CONSENT_REQUIRED");
     });
   });
 
-  describe('Deletion Cascade', () => {
-    it('should delete new feature data when user deleted', async () => {
+  describe("Deletion Cascade", () => {
+    it("should delete new feature data when user deleted", async () => {
       // Setup: Create data for user
       await createNewFeatureData(userId);
-      
+
       // Delete user
       await deleteUser(userId);
-      
+
       // Verify cascade
       const remaining = await getNewFeatureData(userId);
       expect(remaining).toHaveLength(0);
@@ -596,15 +618,16 @@ privacy-check:
    - Note which consent views are used
 
 2. **Update privacy-ux-copy.ts** (if new UI states)
+
    ```typescript
    // Add to privacy-ux-copy.ts
    export const newFeatureMessages = {
      consentBlocked: {
-       title: 'Feature Data Not Shared',
-       reason: 'This player has not enabled sharing for this feature.',
-       action: 'The player can enable sharing in Privacy Settings.',
-       icon: 'pi-lock',
-       severity: 'info',
+       title: "Feature Data Not Shared",
+       reason: "This player has not enabled sharing for this feature.",
+       action: "The player can enable sharing in Privacy Settings.",
+       icon: "pi-lock",
+       severity: "info",
      },
    };
    ```
@@ -627,16 +650,16 @@ privacy-check:
 
 **Checklist:**
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Uses consent views | ✅ | Uses `v_workout_logs_consent` |
-| Returns DataState | ✅ | `REAL_DATA` or `INSUFFICIENT_DATA` |
-| Consent blocked UI | ✅ | Shows count of blocked players |
-| AI consent | N/A | No AI processing |
-| Health consent | N/A | Performance data only |
-| Deletion cascade | N/A | No new stored data |
-| RLS policy | N/A | Uses existing views |
-| Privacy tests | ✅ | Added to `weekly-summary.test.js` |
+| Check              | Status | Notes                              |
+| ------------------ | ------ | ---------------------------------- |
+| Uses consent views | ✅     | Uses `v_workout_logs_consent`      |
+| Returns DataState  | ✅     | `REAL_DATA` or `INSUFFICIENT_DATA` |
+| Consent blocked UI | ✅     | Shows count of blocked players     |
+| AI consent         | N/A    | No AI processing                   |
+| Health consent     | N/A    | Performance data only              |
+| Deletion cascade   | N/A    | No new stored data                 |
+| RLS policy         | N/A    | Uses existing views                |
+| Privacy tests      | ✅     | Added to `weekly-summary.test.js`  |
 
 ---
 
@@ -646,16 +669,16 @@ privacy-check:
 
 **Checklist:**
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Uses consent views | ✅ | Uses `v_load_monitoring_consent` |
-| Returns DataState | ✅ | Requires 28 days minimum |
-| AI consent | ✅ | Calls `require_ai_consent()` |
-| Health consent | ✅ | Separate check for `health_sharing_enabled` |
-| Consent blocked UI | ✅ | Shows "AI Disabled" or "Health Not Shared" |
-| Deletion cascade | ✅ | AI predictions deleted with user |
-| Audit logging | ✅ | Logs AI processing events |
-| Privacy tests | ✅ | Full test suite added |
+| Check              | Status | Notes                                       |
+| ------------------ | ------ | ------------------------------------------- |
+| Uses consent views | ✅     | Uses `v_load_monitoring_consent`            |
+| Returns DataState  | ✅     | Requires 28 days minimum                    |
+| AI consent         | ✅     | Calls `require_ai_consent()`                |
+| Health consent     | ✅     | Separate check for `health_sharing_enabled` |
+| Consent blocked UI | ✅     | Shows "AI Disabled" or "Health Not Shared"  |
+| Deletion cascade   | ✅     | AI predictions deleted with user            |
+| Audit logging      | ✅     | Logs AI processing events                   |
+| Privacy tests      | ✅     | Full test suite added                       |
 
 ---
 
@@ -665,14 +688,14 @@ privacy-check:
 
 **Checklist:**
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Age check | ✅ | Verifies user.birth_date |
-| Parental consent | ✅ | Requires `parental_consent.verified = true` |
-| Uses consent views | ✅ | Same as adult features |
-| Content appropriate | ✅ | No advanced analytics for minors |
-| Third-party sharing | ✅ | Disabled for minors |
-| Privacy tests | ✅ | Parental consent flow tested |
+| Check               | Status | Notes                                       |
+| ------------------- | ------ | ------------------------------------------- |
+| Age check           | ✅     | Verifies user.birth_date                    |
+| Parental consent    | ✅     | Requires `parental_consent.verified = true` |
+| Uses consent views  | ✅     | Same as adult features                      |
+| Content appropriate | ✅     | No advanced analytics for minors            |
+| Third-party sharing | ✅     | Disabled for minors                         |
+| Privacy tests       | ✅     | Parental consent flow tested                |
 
 ---
 
@@ -721,23 +744,22 @@ Print this and keep it visible:
 
 ## Related Documentation
 
-| Document | Purpose |
-|----------|---------|
-| [Safety Access Layer](./SAFETY_ACCESS_LAYER.md) | Consent enforcement patterns |
-| [UX Privacy Copy Standards](./UX_PRIVACY_SAFETY_COPY.md) | UI message standards |
-| [Threat Model](./THREAT_MODEL.md) | Security threat analysis |
-| [Developer Quick Reference](./DEVELOPER_QUICK_REFERENCE.md) | Database patterns |
-| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md) | If something goes wrong |
+| Document                                                    | Purpose                      |
+| ----------------------------------------------------------- | ---------------------------- |
+| [Safety Access Layer](./SAFETY_ACCESS_LAYER.md)             | Consent enforcement patterns |
+| [UX Privacy Copy Standards](./UX_PRIVACY_SAFETY_COPY.md)    | UI message standards         |
+| [Threat Model](./THREAT_MODEL.md)                           | Security threat analysis     |
+| [Developer Quick Reference](./DEVELOPER_QUICK_REFERENCE.md) | Database patterns            |
+| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)  | If something goes wrong      |
 
 ---
 
 ## Document History
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 29. December 2025 | Initial release | Security Team |
+| Version | Date              | Changes         | Author        |
+| ------- | ----------------- | --------------- | ------------- |
+| 1.0     | 29. December 2025 | Initial release | Security Team |
 
 ---
 
-*Športno društvo Žabe - Athletes helping athletes since 2020*
-
+_Športno društvo Žabe - Athletes helping athletes since 2020_

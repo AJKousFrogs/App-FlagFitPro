@@ -1,6 +1,6 @@
 /**
  * Seed Knowledge Base with Evidence-Based Content
- * 
+ *
  * Sources structured from peer-reviewed research and sports science literature.
  * Each entry includes evidence grade (A/B/C) based on study quality.
  */
@@ -10,7 +10,7 @@ require("dotenv").config({ path: ".env.local" });
 
 const supabase = createClient(
   process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
 const knowledgeEntries = [
@@ -67,7 +67,7 @@ The Session RPE method is a validated tool for monitoring internal training load
 - Use consistent timing for accuracy
 - Consider factors: sleep, stress, nutrition
 
-**Sources**: Foster C (1998) Med Sci Sports Exerc; Haddad M (2017) Front Neurosci`
+**Sources**: Foster C (1998) Med Sci Sports Exerc; Haddad M (2017) Front Neurosci`,
   },
 
   // =========================================================================
@@ -118,7 +118,7 @@ Flag football requires quick direction changes, acceleration, and deceleration.
 - Progress from simple to complex patterns
 - Combine with strength training for best results
 
-**Sources**: JHRLMC (2023); Dos Santos T (2023) J Strength Cond Res`
+**Sources**: JHRLMC (2023); Dos Santos T (2023) J Strength Cond Res`,
   },
   {
     title: "Plyometric Training for Explosive Power",
@@ -129,7 +129,7 @@ Flag football requires quick direction changes, acceleration, and deceleration.
     evidence_grade: "A",
     risk_level: "medium",
     requires_professional: false,
-    source_quality_score: 0.90,
+    source_quality_score: 0.9,
     is_active: true,
     content: `## Plyometric Training Guide
 
@@ -170,7 +170,7 @@ Plyometrics (jump training) develops explosive power through the stretch-shorten
 4. Progress gradually - master basics first
 5. Combine with strength for synergistic effect
 
-**Sources**: Wang J (2024) J Sports Sci; Ramirez-Campillo R (2023) Sports Med`
+**Sources**: Wang J (2024) J Sports Sci; Ramirez-Campillo R (2023) Sports Med`,
   },
 
   // =========================================================================
@@ -231,7 +231,7 @@ Perform 3-4x per week on non-consecutive days:
 - Monitor throw count (avoid overuse)
 - Include rest days between heavy throwing sessions
 
-**Sources**: Wilk KE (2011) J Orthop Sports Phys Ther; TrainHeroic (2024)`
+**Sources**: Wilk KE (2011) J Orthop Sports Phys Ther; TrainHeroic (2024)`,
   },
   {
     title: "Wide Receiver Route Running and Footwork",
@@ -287,7 +287,7 @@ Creating separation requires precise footwork and sharp route breaks.
 - Wednesday: Break point focus
 - Friday: 1-on-1 with DB, competitive reps
 
-**Sources**: Stack.com (2024); Glazier Clinics (2024)`
+**Sources**: Stack.com (2024); Glazier Clinics (2024)`,
   },
 
   // =========================================================================
@@ -347,7 +347,7 @@ Proper post-workout nutrition optimizes muscle repair and glycogen replenishment
 | 3-4 hours | Another protein-rich meal |
 | Before bed | Casein protein or cottage cheese |
 
-**Sources**: ACSM/AND/DC (2016) Med Sci Sports Exerc; Kerksick CM (2017) J Int Soc Sports Nutr`
+**Sources**: ACSM/AND/DC (2016) Med Sci Sports Exerc; Kerksick CM (2017) J Int Soc Sports Nutr`,
   },
   {
     title: "Hydration and Electrolytes for Athletes",
@@ -403,7 +403,7 @@ Proper hydration is critical for performance. Even 2% dehydration impairs functi
 - Exercise < 60 minutes
 - Moderate intensity
 
-**Sources**: GSSI (2023); Sawka MN (2007) Med Sci Sports Exerc`
+**Sources**: GSSI (2023); Sawka MN (2007) Med Sci Sports Exerc`,
   },
 
   // =========================================================================
@@ -465,7 +465,7 @@ Prevention programs can reduce ACL injury risk by 50-70%.
 - Strength & balance
 - Plyometrics
 
-**Sources**: Sugimoto D (2015) Br J Sports Med; Hewett TE (2005) Am J Sports Med`
+**Sources**: Sugimoto D (2015) Br J Sports Med; Hewett TE (2005) Am J Sports Med`,
   },
   {
     title: "Ankle Sprain Prevention and Recovery",
@@ -520,7 +520,7 @@ Prevention and proper rehab reduce recurrence by 50%.
 - Single-leg balance equal both sides
 - Sport-specific movements pain-free
 
-**Sources**: Doherty C (2017) J Athl Train; Hupperets MD (2009) BMJ`
+**Sources**: Doherty C (2017) J Athl Train; Hupperets MD (2009) BMJ`,
   },
 
   // =========================================================================
@@ -580,7 +580,7 @@ Sleep is when your body repairs, builds muscle, and consolidates skills.
 - Decreased motivation
 - Getting sick frequently
 
-**Sources**: Watson AM (2017) Curr Sports Med Rep; Mah CD (2011) Sleep`
+**Sources**: Watson AM (2017) Curr Sports Med Rep; Mah CD (2011) Sleep`,
   },
   {
     title: "Active Recovery and Rest Days",
@@ -638,7 +638,7 @@ Complete rest isn't always best. Active recovery can enhance adaptation.
 - Elevated resting heart rate
 - Mood disturbances
 
-**Sources**: Dupuy O (2018) Front Physiol; Peake JM (2017) Sports Med`
+**Sources**: Dupuy O (2018) Front Physiol; Peake JM (2017) Sports Med`,
   },
 
   // =========================================================================
@@ -653,7 +653,7 @@ Complete rest isn't always best. Active recovery can enhance adaptation.
     evidence_grade: "A",
     risk_level: "low",
     requires_professional: false,
-    source_quality_score: 0.90,
+    source_quality_score: 0.9,
     is_active: true,
     content: `## Evidence-Based Dynamic Warm-Up
 
@@ -695,7 +695,7 @@ Dynamic stretching before activity enhances performance better than static stret
 - Static stretching as primary method
 - Warming up too early (>20 min before start)
 
-**Sources**: Blazevich AJ (2018) Br J Sports Med; McCrary JM (2015) J Sports Sci`
+**Sources**: Blazevich AJ (2018) Br J Sports Med; McCrary JM (2015) J Sports Sci`,
   },
 
   // =========================================================================
@@ -756,7 +756,7 @@ Use all senses:
 **Receiver**: Run routes, feel break points, see catches
 **Defensive Back**: Read receiver's hips, break on ball
 
-**Sources**: Slimani M (2016) Int J Sport Exerc Psychol; Afrouzeh M (2024) Percept Mot Skills`
+**Sources**: Slimani M (2016) Int J Sport Exerc Psychol; Afrouzeh M (2024) Percept Mot Skills`,
   },
   {
     title: "Managing Performance Anxiety",
@@ -817,7 +817,7 @@ Change "I'm nervous" to "I'm excited"
 - Panic attacks
 - Can't control worry
 
-**Sources**: Brooks AW (2014) J Exp Psychol Gen; Hanton S (2008) J Sports Sci`
+**Sources**: Brooks AW (2014) J Exp Psychol Gen; Hanton S (2008) J Sports Sci`,
   },
 
   // =========================================================================
@@ -832,7 +832,7 @@ Change "I'm nervous" to "I'm excited"
     evidence_grade: "A",
     risk_level: "low",
     requires_professional: false,
-    source_quality_score: 0.90,
+    source_quality_score: 0.9,
     is_active: true,
     content: `## RPE (Rate of Perceived Exertion) Explained
 
@@ -874,7 +874,7 @@ Session Load = RPE × Duration (minutes)
 
 Example: 90-minute practice at RPE 6 = 540 AU
 
-**Source**: Foster C (2001) J Strength Cond Res`
+**Source**: Foster C (2001) J Strength Cond Res`,
   },
   {
     title: "How Much Water Should I Drink?",
@@ -929,8 +929,8 @@ Water needs vary by person, activity level, and environment.
 - Only drinking during exercise
 - Too much water without electrolytes
 
-**Source**: ACSM (2007) Med Sci Sports Exerc`
-  }
+**Source**: ACSM (2007) Med Sci Sports Exerc`,
+  },
 ];
 
 async function seedKnowledgeBase() {
@@ -955,11 +955,13 @@ async function seedKnowledgeBase() {
           .from("knowledge_base_entries")
           .update({
             ...entry,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("id", existing.id);
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
         updated++;
         console.log(`📝 Updated: ${entry.title}`);
       } else {
@@ -968,7 +970,9 @@ async function seedKnowledgeBase() {
           .from("knowledge_base_entries")
           .insert(entry);
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
         inserted++;
         console.log(`✅ Inserted: ${entry.title}`);
       }

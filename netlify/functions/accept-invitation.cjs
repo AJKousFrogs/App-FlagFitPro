@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
           "Token is required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
           "Could not determine user email",
           400,
           "user_error",
-          requestId
+          requestId,
         );
       }
 
@@ -88,7 +88,7 @@ exports.handler = async (event, context) => {
           "This invitation was sent to a different email address",
           403,
           "forbidden",
-          requestId
+          requestId,
         );
       }
 
@@ -97,7 +97,7 @@ exports.handler = async (event, context) => {
           "This invitation has already been accepted",
           400,
           "invitation_accepted",
-          requestId
+          requestId,
         );
       }
 
@@ -109,7 +109,7 @@ exports.handler = async (event, context) => {
           "This invitation has expired",
           400,
           "invitation_expired",
-          requestId
+          requestId,
         );
       }
 
@@ -134,7 +134,7 @@ exports.handler = async (event, context) => {
           "You are already a member of this team",
           400,
           "already_member",
-          requestId
+          requestId,
         );
       }
 
@@ -172,7 +172,7 @@ exports.handler = async (event, context) => {
           role: invitation.role,
           message: "Successfully joined the team",
         },
-        requestId
+        requestId,
       );
     },
   });

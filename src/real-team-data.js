@@ -458,13 +458,13 @@ export const getCountryStats = () => {
   const countries = {};
 
   allPlayers.forEach((player) => {
-    const {country} = player;
+    const { country } = player;
     countries[country] = (countries[country] || 0) + 1;
   });
 
   // Add staff countries
   Object.values(REAL_TEAM_DATA.staff).forEach((staff) => {
-    const {country} = staff;
+    const { country } = staff;
     countries[country] = (countries[country] || 0) + 1;
   });
 

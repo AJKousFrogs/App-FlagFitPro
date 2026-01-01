@@ -18,7 +18,7 @@ export class TokenValidator {
   static async validateToken(
     token,
     getCurrentUser,
-    timeoutMs = AUTH.TOKEN_VALIDATION_TIMEOUT
+    timeoutMs = AUTH.TOKEN_VALIDATION_TIMEOUT,
   ) {
     if (!token) {
       return { success: false, reason: "no_token" };
@@ -30,7 +30,7 @@ export class TokenValidator {
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(
           () => reject(new Error("Token validation timeout")),
-          timeoutMs
+          timeoutMs,
         );
       });
 
@@ -63,10 +63,12 @@ export class TokenValidator {
     // Handle timeout errors
     if (error.message === "Token validation timeout") {
       logger.warn(
-        "[TokenValidator] Token validation timed out - endpoint may be slow or unavailable"
+        "[TokenValidator] Token validation timed out - endpoint may be slow or unavailable",
       );
       // Assume token is valid to prevent redirect loops
-      logger.debug("[TokenValidator] Timeout during validation, assuming token valid");
+      logger.debug(
+        "[TokenValidator] Timeout during validation, assuming token valid",
+      );
       return {
         success: true,
         assumedValid: true,
@@ -78,11 +80,11 @@ export class TokenValidator {
     if (error.isHTMLResponse) {
       logger.warn(
         "[TokenValidator] Token validation endpoint returned HTML - endpoint may not be configured:",
-        error.message
+        error.message,
       );
       // Assume token is valid to prevent redirect loops, but log the issue
       logger.debug(
-        "[TokenValidator] HTML response during validation, assuming token valid (endpoint may be misconfigured)"
+        "[TokenValidator] HTML response during validation, assuming token valid (endpoint may be misconfigured)",
       );
       return {
         success: true,
@@ -102,7 +104,9 @@ export class TokenValidator {
 
     // For other errors (network errors, etc.), assume token is still valid to prevent redirect loops
     logger.error("[TokenValidator] Token validation network error:", error);
-    logger.debug("[TokenValidator] Network error during validation, assuming token valid");
+    logger.debug(
+      "[TokenValidator] Network error during validation, assuming token valid",
+    );
     return {
       success: true,
       assumedValid: true,
@@ -116,15 +120,21 @@ export class TokenValidator {
    * @returns {boolean} True if token appears expired
    */
   static isTokenExpired(token) {
-    if (!token) {return true;}
+    if (!token) {
+      return true;
+    }
 
     try {
       // Simple JWT expiration check (without full validation)
       const parts = token.split(".");
-      if (parts.length !== 3) {return true;}
+      if (parts.length !== 3) {
+        return true;
+      }
 
       const payload = JSON.parse(atob(parts[1]));
-      if (!payload.exp) {return false;} // No expiration claim
+      if (!payload.exp) {
+        return false;
+      } // No expiration claim
 
       const expirationTime = payload.exp * 1000; // Convert to milliseconds
       const currentTime = Date.now();
@@ -143,16 +153,23 @@ export class TokenValidator {
    * @returns {string|null} User ID or null
    */
   static extractUserId(token) {
-    if (!token) {return null;}
+    if (!token) {
+      return null;
+    }
 
     try {
       const parts = token.split(".");
-      if (parts.length !== 3) {return null;}
+      if (parts.length !== 3) {
+        return null;
+      }
 
       const payload = JSON.parse(atob(parts[1]));
       return payload.sub || payload.userId || payload.user_id || null;
     } catch (error) {
-      logger.warn("[TokenValidator] Error extracting user ID from token:", error);
+      logger.warn(
+        "[TokenValidator] Error extracting user ID from token:",
+        error,
+      );
       return null;
     }
   }
@@ -163,11 +180,15 @@ export class TokenValidator {
    * @returns {Object|null} Token payload or null
    */
   static extractPayload(token) {
-    if (!token) {return null;}
+    if (!token) {
+      return null;
+    }
 
     try {
       const parts = token.split(".");
-      if (parts.length !== 3) {return null;}
+      if (parts.length !== 3) {
+        return null;
+      }
 
       return JSON.parse(atob(parts[1]));
     } catch (error) {

@@ -1001,14 +1001,14 @@ export class TrainingPlanService {
   ): Promise<Date[]> {
     try {
       const response = await firstValueFrom(
-        this.apiService.get<FixtureResponse[]>(
-          "/api/fixtures",
-          { athleteId, days },
-        ),
+        this.apiService.get<FixtureResponse[]>("/api/fixtures", {
+          athleteId,
+          days,
+        }),
       );
 
-      return (response.data || []).map((f: FixtureResponse) =>
-        new Date(f.game_start),
+      return (response.data || []).map(
+        (f: FixtureResponse) => new Date(f.game_start),
       );
     } catch (error) {
       this.logger.error("Error fetching fixtures:", error);
@@ -1027,20 +1027,17 @@ export class TrainingPlanService {
     this.loading.set(true);
     try {
       const response = await firstValueFrom(
-        this.apiService.post<PlanSaveResponse>(
-          "/api/training/plan",
-          {
-            athleteId,
-            plan: {
-              ...plan,
-              // Convert dates to ISO strings for serialization
-              sessions: plan.sessions.map((s) => ({
-                ...s,
-                // Ensure all fields are serializable
-              })),
-            },
+        this.apiService.post<PlanSaveResponse>("/api/training/plan", {
+          athleteId,
+          plan: {
+            ...plan,
+            // Convert dates to ISO strings for serialization
+            sessions: plan.sessions.map((s) => ({
+              ...s,
+              // Ensure all fields are serializable
+            })),
           },
-        ),
+        }),
       );
 
       if (response && response.data && response.data.success !== false) {
@@ -1070,7 +1067,7 @@ export class TrainingPlanService {
     try {
       const params: Record<string, string | number> = { athleteId };
       if (weekNumber) {
-        params['weekNumber'] = weekNumber;
+        params["weekNumber"] = weekNumber;
       }
 
       const response = await firstValueFrom(

@@ -36,7 +36,7 @@ export interface PositionPerformanceData {
 }
 
 export interface InjuryRiskData {
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   factors: Array<{
     name: string;
     impact: number;
@@ -53,7 +53,7 @@ export interface SpeedDevelopmentData {
   }>;
   improvement: {
     percentChange: number;
-    trend: 'improving' | 'stable' | 'declining';
+    trend: "improving" | "stable" | "declining";
   };
 }
 

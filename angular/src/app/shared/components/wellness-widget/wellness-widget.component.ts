@@ -1,7 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { WellnessScoreDisplayComponent } from "../wellness-score-display/wellness-score-display.component";
 
 /**

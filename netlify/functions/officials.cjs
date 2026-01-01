@@ -12,10 +12,7 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 const getOfficials = async (queryParams) => {
   checkEnvVars();
 
-  let query = supabaseAdmin
-    .from("officials")
-    .select("*")
-    .order("name");
+  let query = supabaseAdmin.from("officials").select("*").order("name");
 
   if (queryParams.is_active !== undefined) {
     query = query.eq("is_active", queryParams.is_active === "true");
@@ -27,7 +24,9 @@ const getOfficials = async (queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -52,7 +51,16 @@ const getOfficial = async (officialId) => {
 const createOfficial = async (userId, officialData) => {
   checkEnvVars();
 
-  const { name, email, phone, certification_level, certifications, years_experience, notes, is_active } = officialData;
+  const {
+    name,
+    email,
+    phone,
+    certification_level,
+    certifications,
+    years_experience,
+    notes,
+    is_active,
+  } = officialData;
 
   const { data, error } = await supabaseAdmin
     .from("officials")
@@ -70,7 +78,9 @@ const createOfficial = async (userId, officialData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -78,7 +88,16 @@ const createOfficial = async (userId, officialData) => {
 const updateOfficial = async (officialId, updates) => {
   checkEnvVars();
 
-  const allowedFields = ["name", "email", "phone", "certification_level", "certifications", "years_experience", "notes", "is_active"];
+  const allowedFields = [
+    "name",
+    "email",
+    "phone",
+    "certification_level",
+    "certifications",
+    "years_experience",
+    "notes",
+    "is_active",
+  ];
   const filteredUpdates = {};
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
@@ -93,7 +112,9 @@ const updateOfficial = async (officialId, updates) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -108,7 +129,9 @@ const deleteOfficial = async (officialId) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -118,13 +141,17 @@ const getGameOfficials = async (gameId) => {
 
   const { data, error } = await supabaseAdmin
     .from("game_officials")
-    .select(`
+    .select(
+      `
       *,
       officials (id, name, email, phone, certification_level)
-    `)
+    `,
+    )
     .eq("game_id", gameId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -140,10 +167,12 @@ const getOfficialGames = async (officialId, queryParams) => {
 
   let query = supabaseAdmin
     .from("game_officials")
-    .select(`
+    .select(
+      `
       *,
       games (id, game_date, location, home_team_id, away_team_id)
-    `)
+    `,
+    )
     .eq("official_id", officialId)
     .order("created_at", { ascending: false });
 
@@ -161,7 +190,9 @@ const getOfficialGames = async (officialId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -202,7 +233,9 @@ const scheduleOfficial = async (scheduleData) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -210,7 +243,13 @@ const scheduleOfficial = async (scheduleData) => {
 const updateGameOfficial = async (assignmentId, updates) => {
   checkEnvVars();
 
-  const allowedFields = ["role", "status", "payment_amount", "payment_status", "notes"];
+  const allowedFields = [
+    "role",
+    "status",
+    "payment_amount",
+    "payment_status",
+    "notes",
+  ];
   const filteredUpdates = {};
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
@@ -225,7 +264,9 @@ const updateGameOfficial = async (assignmentId, updates) => {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -238,7 +279,9 @@ const removeGameOfficial = async (assignmentId) => {
     .delete()
     .eq("id", assignmentId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 };
 
@@ -254,7 +297,9 @@ const getOfficialAvailability = async (officialId, startDate, endDate) => {
     .lte("date", endDate)
     .order("date");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 };
 
@@ -275,12 +320,14 @@ const setOfficialAvailability = async (officialId, availabilityData) => {
         end_time,
         notes,
       },
-      { onConflict: "official_id,date" }
+      { onConflict: "official_id,date" },
     )
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -297,7 +344,9 @@ const getAvailableOfficials = async (queryParams) => {
     .select("official_id, is_available, start_time, end_time")
     .eq("date", date);
 
-  if (availError) {throw availError;}
+  if (availError) {
+    throw availError;
+  }
 
   // Get all active officials
   const { data: allOfficials, error: officialsError } = await supabaseAdmin
@@ -305,22 +354,32 @@ const getAvailableOfficials = async (queryParams) => {
     .select("*")
     .eq("is_active", true);
 
-  if (officialsError) {throw officialsError;}
+  if (officialsError) {
+    throw officialsError;
+  }
 
   // Check for scheduling conflicts
   const { data: scheduledGames, error: gamesError } = await supabaseAdmin
     .from("game_officials")
-    .select(`
+    .select(
+      `
       official_id,
       games!inner (game_date)
-    `)
+    `,
+    )
     .eq("games.game_date", date)
     .in("status", ["scheduled", "confirmed"]);
 
-  if (gamesError) {throw gamesError;}
+  if (gamesError) {
+    throw gamesError;
+  }
 
-  const scheduledOfficialIds = new Set((scheduledGames || []).map((g) => g.official_id));
-  const availabilityMap = new Map((availabilityRecords || []).map((a) => [a.official_id, a]));
+  const scheduledOfficialIds = new Set(
+    (scheduledGames || []).map((g) => g.official_id),
+  );
+  const availabilityMap = new Map(
+    (availabilityRecords || []).map((a) => [a.official_id, a]),
+  );
 
   // Filter officials
   return (allOfficials || []).filter((official) => {
@@ -337,10 +396,18 @@ const getAvailableOfficials = async (queryParams) => {
       }
 
       // Check time constraints if provided
-      if (start_time && availability.start_time && start_time < availability.start_time) {
+      if (
+        start_time &&
+        availability.start_time &&
+        start_time < availability.start_time
+      ) {
         return false;
       }
-      if (end_time && availability.end_time && end_time > availability.end_time) {
+      if (
+        end_time &&
+        availability.end_time &&
+        end_time > availability.end_time
+      ) {
         return false;
       }
     }
@@ -355,12 +422,14 @@ const getPaymentSummary = async (queryParams) => {
 
   let query = supabaseAdmin
     .from("game_officials")
-    .select(`
+    .select(
+      `
       official_id,
       payment_amount,
       payment_status,
       officials (name)
-    `)
+    `,
+    )
     .not("payment_amount", "is", null);
 
   if (queryParams.start_date) {
@@ -377,7 +446,9 @@ const getPaymentSummary = async (queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Aggregate by official
   const summaryMap = new Map();
@@ -416,7 +487,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
     handler: async (event, _context, { userId }) => {
-      const path = event.path.replace(/^\/api\/officials\/?/, "").replace(/^\/\.netlify\/functions\/officials\/?/, "");
+      const path = event.path
+        .replace(/^\/api\/officials\/?/, "")
+        .replace(/^\/\.netlify\/functions\/officials\/?/, "");
       const queryParams = event.queryStringParameters || {};
 
       let body = {};
@@ -460,7 +533,16 @@ exports.handler = async (event, context) => {
 
         // Single official
         const officialMatch = path.match(/^([^/]+)$/);
-        if (officialMatch && !["game", "assignments", "available", "schedule", "payments"].includes(officialMatch[1])) {
+        if (
+          officialMatch &&
+          ![
+            "game",
+            "assignments",
+            "available",
+            "schedule",
+            "payments",
+          ].includes(officialMatch[1])
+        ) {
           const officialId = officialMatch[1];
 
           if (event.httpMethod === "GET") {
@@ -482,7 +564,10 @@ exports.handler = async (event, context) => {
         // Official's games
         const officialGamesMatch = path.match(/^([^/]+)\/games$/);
         if (officialGamesMatch && event.httpMethod === "GET") {
-          const result = await getOfficialGames(officialGamesMatch[1], queryParams);
+          const result = await getOfficialGames(
+            officialGamesMatch[1],
+            queryParams,
+          );
           return createSuccessResponse(result);
         }
 
@@ -495,7 +580,7 @@ exports.handler = async (event, context) => {
             const result = await getOfficialAvailability(
               officialId,
               queryParams.start_date,
-              queryParams.end_date
+              queryParams.end_date,
             );
             return createSuccessResponse(result);
           }
@@ -534,7 +619,10 @@ exports.handler = async (event, context) => {
         if (notifyMatch && event.httpMethod === "POST") {
           // In a real implementation, this would send an email/SMS
           // For now, just return success
-          return createSuccessResponse({ success: true, message: "Notification sent" });
+          return createSuccessResponse({
+            success: true,
+            message: "Notification sent",
+          });
         }
 
         return createErrorResponse("Endpoint not found", 404, "not_found");

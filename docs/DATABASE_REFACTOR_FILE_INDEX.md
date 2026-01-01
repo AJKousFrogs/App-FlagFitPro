@@ -11,6 +11,7 @@ This document lists all files created or modified as part of the comprehensive d
 ### 1. Migration Files
 
 #### `/database/migrations/070_comprehensive_database_refactor.sql`
+
 - **Purpose:** Core database refactoring migration
 - **Size:** ~1,200 lines
 - **Contents:**
@@ -26,6 +27,7 @@ This document lists all files created or modified as part of the comprehensive d
 - **Run Order:** 1st
 
 #### `/database/migrations/071_populate_exercise_registry.sql`
+
 - **Purpose:** Populate exercise_registry from existing tables
 - **Size:** ~350 lines
 - **Contents:**
@@ -38,6 +40,7 @@ This document lists all files created or modified as part of the comprehensive d
 - **Run Order:** 2nd
 
 #### `/database/migrations/072_backfill_metric_entries.sql`
+
 - **Purpose:** Migrate position_specific_metrics to new metric system
 - **Size:** ~500 lines
 - **Contents:**
@@ -51,6 +54,7 @@ This document lists all files created or modified as part of the comprehensive d
 ### 2. Documentation Files
 
 #### `/docs/DATABASE_REFACTOR_GUIDE.md`
+
 - **Purpose:** Comprehensive guide to the refactor
 - **Size:** ~900 lines
 - **Contents:**
@@ -66,6 +70,7 @@ This document lists all files created or modified as part of the comprehensive d
 - **Audience:** All team members
 
 #### `/docs/DATABASE_REFACTOR_SUMMARY.md`
+
 - **Purpose:** Executive summary and implementation plan
 - **Size:** ~600 lines
 - **Contents:**
@@ -81,6 +86,7 @@ This document lists all files created or modified as part of the comprehensive d
 - **Audience:** Project managers, tech leads
 
 #### `/docs/DB_REFACTOR_QUICK_CARD.md`
+
 - **Purpose:** Quick reference for developers (execution-focused)
 - **Size:** ~500 lines
 - **Contents:**
@@ -123,16 +129,16 @@ app-new-flag/
 
 ### Database Schema Changes
 
-| Component | Before | After | Change |
-|-----------|--------|-------|--------|
-| **Tables** | 32 | 35 | +3 new tables |
-| **Views** | 4 | 7 | +3 new views |
-| **Indexes** | ~40 | ~60 | +20 performance indexes |
-| **Constraints** | ~15 | ~31 | +16 constraints |
-| **ENUMs** | 0 | 6 | +6 domain types |
-| **Functions** | 5 | 6 | +1 verification function |
-| **Triggers** | 1 | ~15 | +14 updated_at triggers |
-| **RLS Policies** | ~30 | ~40 | +10 policies |
+| Component        | Before | After | Change                   |
+| ---------------- | ------ | ----- | ------------------------ |
+| **Tables**       | 32     | 35    | +3 new tables            |
+| **Views**        | 4      | 7     | +3 new views             |
+| **Indexes**      | ~40    | ~60   | +20 performance indexes  |
+| **Constraints**  | ~15    | ~31   | +16 constraints          |
+| **ENUMs**        | 0      | 6     | +6 domain types          |
+| **Functions**    | 5      | 6     | +1 verification function |
+| **Triggers**     | 1      | ~15   | +14 updated_at triggers  |
+| **RLS Policies** | ~30    | ~40   | +10 policies             |
 
 ### Tables Modified
 
@@ -215,22 +221,22 @@ app-new-flag/
 
 1. **Read first:**
    - `/docs/DATABASE_REFACTOR_SUMMARY.md` (overview)
-   
 2. **Then review:**
    - `/database/migrations/070_comprehensive_database_refactor.sql`
    - `/database/migrations/071_populate_exercise_registry.sql`
    - `/database/migrations/072_backfill_metric_entries.sql`
 
 3. **Execute:**
+
    ```bash
    # Backup first!
    supabase db dump -f backup.sql
-   
+
    # Apply migrations
    psql -f database/migrations/070_comprehensive_database_refactor.sql
    psql -f database/migrations/071_populate_exercise_registry.sql
    psql -f database/migrations/072_backfill_metric_entries.sql
-   
+
    # Verify
    psql -c "SELECT * FROM verify_database_bootstrap();"
    ```
@@ -284,12 +290,14 @@ app-new-flag/
 ## 📋 Pre-Deployment Checklist
 
 ### Review Phase
+
 - [ ] Read DATABASE_REFACTOR_SUMMARY.md
 - [ ] Read DB_REFACTOR_QUICK_CARD.md
 - [ ] Review all 3 migration files
 - [ ] Understand breaking changes
 
 ### Testing Phase
+
 - [ ] Test migrations on staging database
 - [ ] Run verify_database_bootstrap()
 - [ ] Verify exercise registry population
@@ -297,6 +305,7 @@ app-new-flag/
 - [ ] Test all verification queries
 
 ### Code Update Phase
+
 - [ ] Update TypeScript types
 - [ ] Update exercise-related queries
 - [ ] Update metric-related queries
@@ -306,6 +315,7 @@ app-new-flag/
 - [ ] Run tests
 
 ### Deployment Phase
+
 - [ ] Backup production database
 - [ ] Schedule maintenance window
 - [ ] Apply migration 070
@@ -318,6 +328,7 @@ app-new-flag/
 - [ ] Monitor for errors
 
 ### Post-Deployment Phase
+
 - [ ] Test critical user flows
 - [ ] Monitor performance
 - [ ] Check error logs
@@ -331,32 +342,40 @@ app-new-flag/
 ## 🎯 Key Changes by User Story
 
 ### As a Coach, I want to assign exercises consistently
+
 **Before:** Multiple exercise tables, inconsistent IDs  
 **After:** Single exercise_registry, universal IDs  
 **Files to Review:**
+
 - Migration 070 (exercise_registry creation)
 - Migration 071 (population script)
 - DB_REFACTOR_QUICK_CARD.md (exercise queries)
 
 ### As a Player, I want to track my metrics reliably
+
 **Before:** String-based metrics, no validation  
 **After:** Typed metric system with definitions  
 **Files to Review:**
+
 - Migration 070 (metric system)
 - Migration 072 (backfill script)
 - DATABASE_REFACTOR_GUIDE.md (section 6)
 
 ### As a Coach, I want to see accurate compliance rates
+
 **Before:** Stored column, often stale  
 **After:** Real-time calculated view  
 **Files to Review:**
+
 - Migration 070 (v_player_program_compliance)
 - DB_REFACTOR_QUICK_CARD.md (compliance queries)
 
 ### As a Player, I want my injury risk calculated correctly
+
 **Before:** ACWR sometimes not triggered  
 **After:** Always triggered, versioned, baseline-aware  
 **Files to Review:**
+
 - Migration 070 (load_monitoring enhancements)
 - DATABASE_REFACTOR_GUIDE.md (section 4)
 
@@ -365,16 +384,19 @@ app-new-flag/
 ## 🐛 Known Issues
 
 ### 1. Metric Definition Inference
+
 **File:** `072_backfill_metric_entries.sql`  
 **Issue:** Inferred metric definitions may need manual correction  
 **Resolution:** Review metric_definitions after migration
 
 ### 2. Exercise Details Completeness
+
 **File:** `071_populate_exercise_registry.sql`  
 **Issue:** Some exercises may have missing equipment/difficulty  
 **Resolution:** Manual review and data entry
 
 ### 3. Historical ACWR Version
+
 **File:** Migration 070 doesn't update existing records  
 **Resolution:** Decide if recalculation or marking as version 1 is needed
 
@@ -385,22 +407,27 @@ app-new-flag/
 ### Questions About...
 
 **Database Schema:**
+
 - Read: `/docs/DATABASE_REFACTOR_GUIDE.md`
 - Review: Migration 070
 
 **Deployment Process:**
+
 - Read: `/docs/DATABASE_REFACTOR_SUMMARY.md` (Section 4)
 - Review: Deployment checklist above
 
 **Code Changes:**
+
 - Read: `/docs/DB_REFACTOR_QUICK_CARD.md`
 - Review: Common patterns section
 
 **Performance:**
+
 - Read: `/docs/DATABASE_REFACTOR_GUIDE.md` (Section 8)
 - Review: `/docs/DATABASE_REFACTOR_SUMMARY.md` (Performance section)
 
 **Specific Issues:**
+
 - Search all docs for error message
 - Check troubleshooting section in REFACTOR_GUIDE.md
 - Create GitHub issue with details
@@ -422,12 +449,14 @@ app-new-flag/
 ## 📚 Additional Resources
 
 ### Related Documentation
+
 - `/database/schema.sql` - Full database schema
 - `/database/create-training-schema.sql` - Training system
 - `/docs/ARCHITECTURE.md` - Overall architecture
 - `/docs/DATABASE_SETUP.md` - Database setup guide
 
 ### Related Migrations
+
 - `065_plyometrics_isometrics_exercises.sql` - Exercise library
 - `046_fix_acwr_baseline_checks.sql` - Previous ACWR fixes
 - `041_player_stats_aggregation_view.sql` - Statistics views
@@ -452,4 +481,3 @@ app-new-flag/
 
 **Last Updated:** 29. December 2025  
 **Status:** ✅ Complete and Ready for Deployment
-

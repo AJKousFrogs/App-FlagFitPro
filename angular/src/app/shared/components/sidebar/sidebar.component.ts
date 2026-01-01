@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
 import { filter, Subscription } from "rxjs";
@@ -28,14 +36,14 @@ interface NavItem {
       aria-label="Main navigation"
     >
       <!-- Close button for mobile -->
-      <button 
+      <button
         class="sidebar-close-btn"
         (click)="closeSidebar()"
         aria-label="Close navigation"
       >
         <i class="pi pi-times"></i>
       </button>
-      
+
       <a
         class="sidebar-logo"
         routerLink="/dashboard"
@@ -62,16 +70,25 @@ interface NavItem {
       <nav class="nav-section" aria-label="Main navigation">
         @for (group of navGroups; track group.id) {
           @if (getGroupItems(group.id).length > 0) {
-            <div class="nav-group" role="group" [attr.aria-label]="group.label + ' navigation'">
+            <div
+              class="nav-group"
+              role="group"
+              [attr.aria-label]="group.label + ' navigation'"
+            >
               <div class="nav-group-header">
                 <i [class]="'pi ' + group.icon" aria-hidden="true"></i>
                 <span class="nav-group-label">{{ group.label }}</span>
               </div>
-              @for (item of getGroupItems(group.id); track trackByRoute($index, item)) {
+              @for (
+                item of getGroupItems(group.id);
+                track trackByRoute($index, item)
+              ) {
                 <a
                   [routerLink]="item.route"
                   routerLinkActive="active"
-                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                  [routerLinkActiveOptions]="{
+                    exact: item.route === '/dashboard',
+                  }"
                   class="nav-item"
                   [attr.aria-label]="item.ariaLabel"
                   [id]="'nav-' + item.route.replace('/', '')"
@@ -80,7 +97,11 @@ interface NavItem {
                   <span class="nav-item-icon">
                     <i [class]="'pi ' + item.icon"></i>
                     @if (item.badge && item.badge > 0) {
-                      <p-badge [value]="item.badge.toString()" severity="danger" class="nav-badge"></p-badge>
+                      <p-badge
+                        [value]="item.badge.toString()"
+                        severity="danger"
+                        class="nav-badge"
+                      ></p-badge>
                     }
                   </span>
                   <span class="nav-item-label">{{ item.label }}</span>
@@ -90,7 +111,7 @@ interface NavItem {
           }
         }
       </nav>
-      
+
       <!-- Bottom Section -->
       <div class="sidebar-footer">
         <a
@@ -414,8 +435,12 @@ interface NavItem {
         }
 
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
       }
 
@@ -469,19 +494,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private notificationState = inject(NotificationStateService);
   private routerSub?: Subscription;
-  
+
   isOpen = signal(false);
 
   /**
    * Navigation groups for better organization and cognitive load reduction
    */
   navGroups = [
-    { id: 'primary', label: 'Daily', icon: 'pi-home' },
-    { id: 'wellness', label: 'Wellness', icon: 'pi-heart' },
-    { id: 'competition', label: 'Competition', icon: 'pi-flag-fill' },
-    { id: 'team', label: 'Team', icon: 'pi-users' },
-    { id: 'resources', label: 'Resources', icon: 'pi-book' },
-    { id: 'community', label: 'Community', icon: 'pi-comments' },
+    { id: "primary", label: "Daily", icon: "pi-home" },
+    { id: "wellness", label: "Wellness", icon: "pi-heart" },
+    { id: "competition", label: "Competition", icon: "pi-flag-fill" },
+    { id: "team", label: "Team", icon: "pi-users" },
+    { id: "resources", label: "Resources", icon: "pi-book" },
+    { id: "community", label: "Community", icon: "pi-comments" },
   ];
 
   /**
@@ -600,17 +625,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
     },
     // === COMMUNITY ===
     {
-      label: "Community",
-      route: "/community",
-      icon: "pi-comments",
-      ariaLabel: "Community",
+      label: "AI Coach",
+      route: "/chat",
+      icon: "pi-sparkles",
+      ariaLabel: "AI Coach Merlin",
       group: "community",
     },
     {
-      label: "Chat",
-      route: "/chat",
-      icon: "pi-inbox",
-      ariaLabel: "Team Chat",
+      label: "Team Chat",
+      route: "/team-chat",
+      icon: "pi-comments",
+      ariaLabel: "Team Chat Channels",
+      group: "community",
+    },
+    {
+      label: "Community",
+      route: "/community",
+      icon: "pi-users",
+      ariaLabel: "Community Hub",
       group: "community",
     },
   ];
@@ -618,12 +650,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   visibleNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
-    
+
     return this.baseNavItems
-      .filter(item => !item.roles || item.roles.includes(userRole))
-      .map(item => ({
+      .filter((item) => !item.roles || item.roles.includes(userRole))
+      .map((item) => ({
         ...item,
-        badge: item.route === "/chat" ? unreadCount : undefined
+        badge: item.route === "/chat" ? unreadCount : undefined,
       }));
   });
 
@@ -636,7 +668,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const name = this.userName();
     return name
       .split(" ")
-      .map(n => n[0])
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
@@ -651,7 +683,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Close sidebar on navigation (mobile)
     this.routerSub = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         if (window.innerWidth <= 768) {
           this.closeSidebar();
@@ -680,7 +712,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(["/login"]);
     this.closeSidebar();
   }
 
@@ -692,6 +724,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * Get navigation items for a specific group
    */
   getGroupItems(groupId: string): NavItem[] {
-    return this.visibleNavItems().filter(item => item.group === groupId);
+    return this.visibleNavItems().filter((item) => item.group === groupId);
   }
 }

@@ -125,179 +125,186 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .swipeable-cards {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-    }
+      .swipeable-cards {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+      }
 
-    .swipeable-cards.show-overflow {
-      overflow: visible;
-    }
+      .swipeable-cards.show-overflow {
+        overflow: visible;
+      }
 
-    /* Cards container */
-    .cards-container {
-      display: flex;
-      transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-      cursor: grab;
-      user-select: none;
-    }
+      /* Cards container */
+      .cards-container {
+        display: flex;
+        transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        cursor: grab;
+        user-select: none;
+      }
 
-    .cards-container.is-dragging {
-      transition: none;
-      cursor: grabbing;
-    }
+      .cards-container.is-dragging {
+        transition: none;
+        cursor: grabbing;
+      }
 
-    /* Card slide */
-    .card-slide {
-      flex-shrink: 0;
-      padding: 0 var(--space-2);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
+      /* Card slide */
+      .card-slide {
+        flex-shrink: 0;
+        padding: 0 var(--space-2);
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+      }
 
-    .card-slide.active {
-      transform: scale(1);
-      opacity: 1;
-    }
+      .card-slide.active {
+        transform: scale(1);
+        opacity: 1;
+      }
 
-    .card-slide:not(.active) {
-      transform: scale(0.95);
-      opacity: 0.7;
-    }
+      .card-slide:not(.active) {
+        transform: scale(0.95);
+        opacity: 0.7;
+      }
 
-    /* Navigation arrows */
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--surface-primary);
-      border: 1px solid var(--p-surface-200);
-      color: var(--text-primary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      box-shadow: var(--shadow-md);
-      transition: all 0.2s ease;
-      z-index: 10;
-    }
-
-    .nav-arrow:hover:not(:disabled) {
-      background: var(--color-brand-primary);
-      color: white;
-      border-color: var(--color-brand-primary);
-    }
-
-    .nav-arrow:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .nav-prev {
-      left: var(--space-2);
-    }
-
-    .nav-next {
-      right: var(--space-2);
-    }
-
-    /* Dot indicators */
-    .dots-container {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-2);
-      margin-top: var(--space-4);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--p-surface-300);
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      transition: all 0.2s ease;
-    }
-
-    .dot:hover {
-      background: var(--p-surface-400);
-    }
-
-    .dot.active {
-      background: var(--color-brand-primary);
-      width: 24px;
-      border-radius: var(--radius-full);
-    }
-
-    /* Progress bar */
-    .progress-container {
-      width: 100%;
-      height: 3px;
-      background: var(--p-surface-200);
-      border-radius: var(--radius-full);
-      margin-top: var(--space-4);
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: var(--color-brand-primary);
-      border-radius: var(--radius-full);
-      transition: width 0.3s ease;
-    }
-
-    /* Touch feedback */
-    @media (hover: none) and (pointer: coarse) {
+      /* Navigation arrows */
       .nav-arrow {
-        width: 44px;
-        height: 44px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--surface-primary);
+        border: 1px solid var(--p-surface-200);
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        box-shadow: var(--shadow-md);
+        transition: all 0.2s ease;
+        z-index: 10;
+      }
+
+      .nav-arrow:hover:not(:disabled) {
+        background: var(--color-brand-primary);
+        color: white;
+        border-color: var(--color-brand-primary);
+      }
+
+      .nav-arrow:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .nav-prev {
+        left: var(--space-2);
+      }
+
+      .nav-next {
+        right: var(--space-2);
+      }
+
+      /* Dot indicators */
+      .dots-container {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-2);
+        margin-top: var(--space-4);
       }
 
       .dot {
-        width: 12px;
-        height: 12px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--p-surface-300);
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.2s ease;
+      }
+
+      .dot:hover {
+        background: var(--p-surface-400);
       }
 
       .dot.active {
-        width: 32px;
-      }
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .cards-container {
-        transition: none;
+        background: var(--color-brand-primary);
+        width: 24px;
+        border-radius: var(--radius-full);
       }
 
-      .card-slide {
-        transition: none;
-      }
-
-      .dot {
-        transition: none;
+      /* Progress bar */
+      .progress-container {
+        width: 100%;
+        height: 3px;
+        background: var(--p-surface-200);
+        border-radius: var(--radius-full);
+        margin-top: var(--space-4);
+        overflow: hidden;
       }
 
       .progress-bar {
-        transition: none;
+        height: 100%;
+        background: var(--color-brand-primary);
+        border-radius: var(--radius-full);
+        transition: width 0.3s ease;
       }
-    }
-  `],
+
+      /* Touch feedback */
+      @media (hover: none) and (pointer: coarse) {
+        .nav-arrow {
+          width: 44px;
+          height: 44px;
+        }
+
+        .dot {
+          width: 12px;
+          height: 12px;
+        }
+
+        .dot.active {
+          width: 32px;
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .cards-container {
+          transition: none;
+        }
+
+        .card-slide {
+          transition: none;
+        }
+
+        .dot {
+          transition: none;
+        }
+
+        .progress-bar {
+          transition: none;
+        }
+      }
+    `,
+  ],
 })
 export class SwipeableCardsComponent<T> implements OnDestroy {
   private elementRef = inject(ElementRef);
 
   // Content
-  @ContentChild(TemplateRef) cardTemplate!: TemplateRef<{ $implicit: T; index: number }>;
+  @ContentChild(TemplateRef) cardTemplate!: TemplateRef<{
+    $implicit: T;
+    index: number;
+  }>;
 
   // Inputs
   cards = input<T[]>([]);
@@ -427,7 +434,7 @@ export class SwipeableCardsComponent<T> implements OnDestroy {
   // Mouse handlers
   onMouseDown(event: MouseEvent): void {
     this.startDrag(event.clientX);
-    
+
     const onMouseMove = (e: MouseEvent) => this.moveDrag(e.clientX);
     const onMouseUp = () => {
       this.endDrag();
@@ -478,7 +485,8 @@ export class SwipeableCardsComponent<T> implements OnDestroy {
   }
 
   private updateCardWidth(): void {
-    const container = this.elementRef.nativeElement.querySelector(".swipeable-cards");
+    const container =
+      this.elementRef.nativeElement.querySelector(".swipeable-cards");
     if (container) {
       this.cardWidth.set(container.offsetWidth);
     }

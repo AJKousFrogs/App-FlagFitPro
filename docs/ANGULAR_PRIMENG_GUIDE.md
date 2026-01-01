@@ -43,14 +43,14 @@ This guide consolidates all Angular 21 and PrimeNG 21 best practices implemented
 
 ### Key Features Used
 
-| Feature | Angular Version | Status |
-|---------|-----------------|--------|
-| Signals | 17+ | ✅ Throughout |
-| Standalone Components | 14+ | ✅ All components |
-| Zoneless Change Detection | 21 | ✅ Enabled |
-| `inject()` function | 14+ | ✅ All services |
-| Control Flow (`@if`, `@for`) | 17+ | ✅ All templates |
-| Signal-based Forms | 21 | ✅ Available |
+| Feature                      | Angular Version | Status            |
+| ---------------------------- | --------------- | ----------------- |
+| Signals                      | 17+             | ✅ Throughout     |
+| Standalone Components        | 14+             | ✅ All components |
+| Zoneless Change Detection    | 21              | ✅ Enabled        |
+| `inject()` function          | 14+             | ✅ All services   |
+| Control Flow (`@if`, `@for`) | 17+             | ✅ All templates  |
+| Signal-based Forms           | 21              | ✅ Available      |
 
 ---
 
@@ -61,7 +61,7 @@ This guide consolidates all Angular 21 and PrimeNG 21 best practices implemented
 **Configuration** (`app.config.ts`):
 
 ```typescript
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from "@angular/core";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -73,6 +73,7 @@ export const appConfig: ApplicationConfig = {
 ```
 
 **Benefits:**
+
 - Smaller bundle (no zone.js)
 - Better performance
 - Predictable change detection with signals
@@ -83,28 +84,28 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 @Component({
-  selector: 'app-dashboard',
+  selector: "app-dashboard",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private dashboardService = inject(DashboardDataService);
-  
+
   // State signals
   stats = signal<Stat[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   // Computed signals (derived state)
-  totalStats = computed(() => 
-    this.stats().reduce((sum, s) => sum + s.value, 0)
+  totalStats = computed(() =>
+    this.stats().reduce((sum, s) => sum + s.value, 0),
   );
-  
+
   // Effects (side effects)
   constructor() {
     effect(() => {
       if (this.error()) {
-        console.error('Dashboard error:', this.error());
+        console.error("Dashboard error:", this.error());
       }
     });
   }
@@ -118,32 +119,28 @@ export class DashboardComponent {
 ```html
 <!-- @if instead of *ngIf -->
 @if (loading()) {
-  <p-progressSpinner />
+<p-progressSpinner />
 } @else if (error()) {
-  <p-message severity="error" [text]="error()" />
+<p-message severity="error" [text]="error()" />
 } @else {
-  <div class="content">
-    <!-- @for instead of *ngFor -->
-    @for (stat of stats(); track stat.id) {
-      <app-stat-card [stat]="stat" />
-    } @empty {
-      <p>No statistics available</p>
-    }
-  </div>
+<div class="content">
+  <!-- @for instead of *ngFor -->
+  @for (stat of stats(); track stat.id) {
+  <app-stat-card [stat]="stat" />
+  } @empty {
+  <p>No statistics available</p>
+  }
+</div>
 }
 
 <!-- @switch instead of *ngSwitch -->
-@switch (riskZone().level) {
-  @case ('sweet-spot') {
-    <span class="badge success">Optimal</span>
-  }
-  @case ('danger-zone') {
-    <span class="badge danger">High Risk</span>
-  }
-  @default {
-    <span class="badge">Unknown</span>
-  }
-}
+@switch (riskZone().level) { @case ('sweet-spot') {
+<span class="badge success">Optimal</span>
+} @case ('danger-zone') {
+<span class="badge danger">High Risk</span>
+} @default {
+<span class="badge">Unknown</span>
+} }
 ```
 
 ### 4. Functional Dependency Injection
@@ -160,7 +157,7 @@ export class MyComponent {
 export class MyComponent {
   constructor(
     private service: MyService,
-    private router: Router
+    private router: Router,
   ) {}
 }
 ```
@@ -172,14 +169,14 @@ export class MyComponent {
 ```typescript
 export const routes: Routes = [
   {
-    path: 'user/:id',
+    path: "user/:id",
     component: UserComponent,
     // Enables route params as component inputs
   },
 ];
 
 // app.config.ts
-provideRouter(routes, withComponentInputBinding())
+provideRouter(routes, withComponentInputBinding());
 ```
 
 **Component:**
@@ -189,7 +186,7 @@ provideRouter(routes, withComponentInputBinding())
 export class UserComponent {
   // Route param automatically bound
   id = input.required<string>();
-  
+
   // Query params
   tab = input<string>('overview');
 }
@@ -224,9 +221,9 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 // ✅ Correct: Individual imports
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableModule } from "primeng/table";
 
 @Component({
   imports: [ButtonModule, CardModule, TableModule],
@@ -234,24 +231,24 @@ import { TableModule } from 'primeng/table';
 export class MyComponent {}
 
 // ❌ Wrong: Barrel imports (not tree-shakeable)
-import { ButtonModule, CardModule } from 'primeng';
+import { ButtonModule, CardModule } from "primeng";
 ```
 
 ### Common PrimeNG Components Used
 
-| Component | Import | Usage |
-|-----------|--------|-------|
-| Button | `ButtonModule` | Actions, navigation |
-| Card | `CardModule` | Content containers |
-| Table | `TableModule` | Data display |
-| Chart | `ChartModule` | Visualizations |
-| Toast | `ToastModule` | Notifications |
-| Dialog | `DialogModule` | Modals |
-| InputText | `InputTextModule` | Form inputs |
-| Dropdown | `DropdownModule` | Select inputs |
-| ProgressSpinner | `ProgressSpinnerModule` | Loading states |
-| Message | `MessageModule` | Inline messages |
-| Tag | `TagModule` | Status badges |
+| Component       | Import                  | Usage               |
+| --------------- | ----------------------- | ------------------- |
+| Button          | `ButtonModule`          | Actions, navigation |
+| Card            | `CardModule`            | Content containers  |
+| Table           | `TableModule`           | Data display        |
+| Chart           | `ChartModule`           | Visualizations      |
+| Toast           | `ToastModule`           | Notifications       |
+| Dialog          | `DialogModule`          | Modals              |
+| InputText       | `InputTextModule`       | Form inputs         |
+| Dropdown        | `DropdownModule`        | Select inputs       |
+| ProgressSpinner | `ProgressSpinnerModule` | Loading states      |
+| Message         | `MessageModule`         | Inline messages     |
+| Tag             | `TagModule`             | Status badges       |
 
 ### Toast Service Pattern
 
@@ -260,7 +257,7 @@ import { ButtonModule, CardModule } from 'primeng';
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   private messageService = inject(MessageService);
-  
+
   success(message: string, title = 'Success') {
     this.messageService.add({
       severity: 'success',
@@ -269,7 +266,7 @@ export class ToastService {
       life: 3000,
     });
   }
-  
+
   error(message: string, title = 'Error') {
     this.messageService.add({
       severity: 'error',
@@ -300,29 +297,29 @@ FlagFit Pro uses **Angular Signals** instead of NgRx because:
 ### Service State Pattern
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class NotificationStateService {
   private apiService = inject(ApiService);
-  
+
   // Private writable signals
   private readonly _notifications = signal<Notification[]>([]);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
-  
+
   // Public readonly signals
   readonly notifications = this._notifications.asReadonly();
   readonly loading = this._loading.asReadonly();
   readonly error = this._error.asReadonly();
-  
+
   // Computed signals (derived state)
-  readonly unreadCount = computed(() => 
-    this._notifications().filter(n => !n.read).length
+  readonly unreadCount = computed(
+    () => this._notifications().filter((n) => !n.read).length,
   );
-  
+
   readonly unreadNotifications = computed(() =>
-    this._notifications().filter(n => !n.read)
+    this._notifications().filter((n) => !n.read),
   );
-  
+
   // Combined state for components
   readonly state = computed<NotificationState>(() => ({
     notifications: this._notifications(),
@@ -330,29 +327,27 @@ export class NotificationStateService {
     loading: this._loading(),
     error: this._error(),
   }));
-  
+
   // Actions
   async loadNotifications() {
     this._loading.set(true);
     this._error.set(null);
-    
+
     try {
       const response = await firstValueFrom(
-        this.apiService.get<Notification[]>('/api/notifications')
+        this.apiService.get<Notification[]>("/api/notifications"),
       );
       this._notifications.set(response.data ?? []);
     } catch (error) {
-      this._error.set('Failed to load notifications');
+      this._error.set("Failed to load notifications");
     } finally {
       this._loading.set(false);
     }
   }
-  
+
   markAsRead(id: string) {
-    this._notifications.update(notifications =>
-      notifications.map(n => 
-        n.id === id ? { ...n, read: true } : n
-      )
+    this._notifications.update((notifications) =>
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   }
 }
@@ -367,11 +362,11 @@ For complex components, use ViewModels:
 export abstract class BaseViewModel {
   protected destroyRef = inject(DestroyRef);
   protected logger = inject(LoggerService);
-  
+
   // Common state
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   // RxJS → Signal bridge
   protected subscribe<T>(
     observable: Observable<T>,
@@ -379,27 +374,30 @@ export abstract class BaseViewModel {
       next?: (value: T) => void;
       error?: (error: unknown) => void;
       complete?: () => void;
-    } = {}
+    } = {},
   ): void {
     this.loading.set(true);
-    
-    observable.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: callbacks.next,
-      error: (err) => {
-        this.handleError(err);
-        callbacks.error?.(err);
-      },
-      complete: callbacks.complete,
-    });
+
+    observable
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: callbacks.next,
+        error: (err) => {
+          this.handleError(err);
+          callbacks.error?.(err);
+        },
+        complete: callbacks.complete,
+      });
   }
-  
+
   protected handleError(error: unknown): void {
-    const message = error instanceof Error ? error.message : 'An error occurred';
+    const message =
+      error instanceof Error ? error.message : "An error occurred";
     this.error.set(message);
-    this.logger.error('[ViewModel Error]', error);
+    this.logger.error("[ViewModel Error]", error);
   }
 }
 
@@ -407,16 +405,13 @@ export abstract class BaseViewModel {
 @Injectable()
 export class DashboardViewModel extends BaseViewModel {
   private dashboardService = inject(DashboardDataService);
-  
+
   stats = signal<Stat[]>([]);
-  
+
   loadDashboard() {
-    this.subscribe(
-      this.dashboardService.getDashboard(),
-      {
-        next: (data) => this.stats.set(data.stats),
-      }
-    );
+    this.subscribe(this.dashboardService.getDashboard(), {
+      next: (data) => this.stats.set(data.stats),
+    });
   }
 }
 ```
@@ -428,10 +423,16 @@ export class DashboardViewModel extends BaseViewModel {
 ### Standard Component Structure
 
 ```typescript
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
 
 interface ComponentData {
   id: string;
@@ -439,7 +440,7 @@ interface ComponentData {
 }
 
 @Component({
-  selector: 'app-my-feature',
+  selector: "app-my-feature",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, ButtonModule],
@@ -452,29 +453,31 @@ interface ComponentData {
           <div class="item">{{ item.name }}</div>
         }
       }
-      
+
       <ng-template pTemplate="footer">
         <p-button label="Action" (onClick)="handleAction()" />
       </ng-template>
     </p-card>
   `,
-  styles: [`
-    .item {
-      padding: var(--spacing-8);
-      border-bottom: 1px solid var(--border-color);
-    }
-  `]
+  styles: [
+    `
+      .item {
+        padding: var(--spacing-8);
+        border-bottom: 1px solid var(--border-color);
+      }
+    `,
+  ],
 })
 export class MyFeatureComponent {
   private myService = inject(MyService);
-  
+
   // State
   items = signal<ComponentData[]>([]);
   loading = signal(false);
-  
+
   // Computed
   itemCount = computed(() => this.items().length);
-  
+
   // Methods
   handleAction() {
     // Implementation
@@ -486,7 +489,7 @@ export class MyFeatureComponent {
 
 ```typescript
 @Component({
-  selector: 'app-my-form',
+  selector: "app-my-form",
   standalone: true,
   imports: [ReactiveFormsModule, InputTextModule, ButtonModule],
   template: `
@@ -494,40 +497,42 @@ export class MyFeatureComponent {
       <div class="field">
         <label for="name">Name</label>
         <input pInputText id="name" formControlName="name" />
-        @if (form.controls.name.errors?.['required'] && form.controls.name.touched) {
+        @if (
+          form.controls.name.errors?.["required"] && form.controls.name.touched
+        ) {
           <small class="p-error">Name is required</small>
         }
       </div>
-      
-      <p-button 
-        type="submit" 
-        label="Submit" 
+
+      <p-button
+        type="submit"
+        label="Submit"
         [loading]="submitting()"
-        [disabled]="form.invalid" 
+        [disabled]="form.invalid"
       />
     </form>
-  `
+  `,
 })
 export class MyFormComponent {
   private fb = inject(FormBuilder);
   private toastService = inject(ToastService);
-  
+
   submitting = signal(false);
-  
+
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
+    name: ["", [Validators.required, Validators.minLength(2)]],
+    email: ["", [Validators.required, Validators.email]],
   });
-  
+
   async onSubmit() {
     if (this.form.invalid) return;
-    
+
     this.submitting.set(true);
     try {
       await this.submitData(this.form.value);
-      this.toastService.success('Saved successfully');
+      this.toastService.success("Saved successfully");
     } catch (error) {
-      this.toastService.error('Failed to save');
+      this.toastService.error("Failed to save");
     } finally {
       this.submitting.set(false);
     }
@@ -547,51 +552,51 @@ Located in `angular/src/app/shared/models/design-tokens.ts`:
 export const DESIGN_TOKENS = {
   colors: {
     brand: {
-      primary: '#089949',
-      secondary: '#10c96b',
-      accent: '#FFD700',
+      primary: "#089949",
+      secondary: "#10c96b",
+      accent: "#FFD700",
     },
     status: {
-      success: '#22c55e',
-      warning: '#f59e0b',
-      error: '#ef4444',
-      info: '#3b82f6',
+      success: "#22c55e",
+      warning: "#f59e0b",
+      error: "#ef4444",
+      info: "#3b82f6",
     },
     text: {
-      primary: '#1a1a1a',
-      secondary: '#6b7280',
-      muted: '#9ca3af',
+      primary: "#1a1a1a",
+      secondary: "#6b7280",
+      muted: "#9ca3af",
     },
     surface: {
-      background: '#ffffff',
-      card: '#f9fafb',
-      elevated: '#ffffff',
+      background: "#ffffff",
+      card: "#f9fafb",
+      elevated: "#ffffff",
     },
   },
   spacing: {
-    xs: '4px',
-    sm: '8px',
-    md: '16px',
-    lg: '24px',
-    xl: '32px',
+    xs: "4px",
+    sm: "8px",
+    md: "16px",
+    lg: "24px",
+    xl: "32px",
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
     sizes: {
-      xs: '0.75rem',
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
-      '2xl': '1.5rem',
-      '3xl': '1.875rem',
+      xs: "0.75rem",
+      sm: "0.875rem",
+      base: "1rem",
+      lg: "1.125rem",
+      xl: "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
     },
   },
   borderRadius: {
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-    full: '9999px',
+    sm: "4px",
+    md: "8px",
+    lg: "12px",
+    full: "9999px",
   },
 };
 ```
@@ -607,20 +612,20 @@ export const DESIGN_TOKENS = {
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  
+
   // Text
   --text-primary: #1a1a1a;
   --text-secondary: #6b7280;
-  
+
   // Spacing
   --spacing-4: 4px;
   --spacing-8: 8px;
   --spacing-16: 16px;
   --spacing-24: 24px;
-  
+
   // Typography
-  --font-family: 'Poppins', sans-serif;
-  
+  --font-family: "Poppins", sans-serif;
+
   // Borders
   --border-color: #e5e7eb;
   --border-radius: 8px;
@@ -635,18 +640,22 @@ export const DESIGN_TOKENS = {
 
 ```typescript
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'login', component: LoginComponent },
+  { path: "", component: LandingComponent },
+  { path: "login", component: LoginComponent },
   {
-    path: 'dashboard',
-    loadComponent: () => import('./features/dashboard/dashboard.component')
-      .then(m => m.DashboardComponent),
+    path: "dashboard",
+    loadComponent: () =>
+      import("./features/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
+      ),
     canActivate: [authGuard],
   },
   {
-    path: 'training',
-    loadChildren: () => import('./features/training/training.routes')
-      .then(m => m.TRAINING_ROUTES),
+    path: "training",
+    loadChildren: () =>
+      import("./features/training/training.routes").then(
+        (m) => m.TRAINING_ROUTES,
+      ),
   },
 ];
 ```
@@ -665,7 +674,7 @@ All components use `OnPush`:
 
 ```html
 @for (item of items(); track item.id) {
-  <app-item [data]="item" />
+<app-item [data]="item" />
 }
 ```
 
@@ -751,4 +760,3 @@ Configured in `angular.json`:
 ---
 
 **Last Updated:** 29. December 2025
-

@@ -22,15 +22,15 @@ import {
   inject,
   ErrorHandler,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { GlobalErrorHandlerService } from '../../../core/services/global-error-handler.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
 
 @Component({
-  selector: 'app-error-boundary',
+  selector: "app-error-boundary",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonModule, CardModule],
@@ -148,7 +148,9 @@ export class ErrorBoundaryComponent {
   private errorHandler = inject(GlobalErrorHandlerService);
 
   hasError = signal(false);
-  errorMessage = signal('An unexpected error occurred while loading this component.');
+  errorMessage = signal(
+    "An unexpected error occurred while loading this component.",
+  );
 
   /**
    * Called by parent components when they catch an error
@@ -164,10 +166,12 @@ export class ErrorBoundaryComponent {
    */
   retry(): void {
     this.hasError.set(false);
-    this.errorMessage.set('An unexpected error occurred while loading this component.');
+    this.errorMessage.set(
+      "An unexpected error occurred while loading this component.",
+    );
     // Force a re-render by navigating to the same route
     const currentUrl = this.router.url;
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    this.router.navigateByUrl("/", { skipLocationChange: true }).then(() => {
       this.router.navigateByUrl(currentUrl);
     });
   }
@@ -177,7 +181,6 @@ export class ErrorBoundaryComponent {
    */
   goToDashboard(): void {
     this.hasError.set(false);
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(["/dashboard"]);
   }
 }
-

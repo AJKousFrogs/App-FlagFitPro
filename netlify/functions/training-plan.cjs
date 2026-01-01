@@ -2,7 +2,10 @@
 // Generates evidence-based training plans using real data up to and including today
 // Respects periodization phases, ACWR, and domestic vs international schedules
 
-const { checkEnvVars: _checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  checkEnvVars: _checkEnvVars,
+  supabaseAdmin,
+} = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -878,7 +881,7 @@ exports.handler = async (event, context) => {
             "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
       }

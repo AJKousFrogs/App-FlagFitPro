@@ -162,7 +162,11 @@ import { LoggerService } from "../../../core/services/logger.service";
             styleClass="submit-btn"
           ></p-button>
 
-          <a routerLink="/wellness" class="full-checkin-link" (click)="visible = false">
+          <a
+            routerLink="/wellness"
+            class="full-checkin-link"
+            (click)="visible = false"
+          >
             Need full check-in? →
           </a>
         </div>
@@ -482,7 +486,10 @@ export class QuickWellnessCheckinComponent {
         mood: this.overallFeeling,
         stress: Math.max(1, 11 - this.overallFeeling), // Inverse
         soreness: this.hasPain ? 6 : 2,
-        notes: this.hasPain && this.painNotes ? `Pain: ${this.painNotes}` : undefined,
+        notes:
+          this.hasPain && this.painNotes
+            ? `Pain: ${this.painNotes}`
+            : undefined,
         date: new Date().toISOString().split("T")[0],
       };
 
@@ -563,7 +570,7 @@ export class QuickWellnessCheckinComponent {
         JSON.stringify({
           count: this.currentStreak,
           lastDate: today,
-        })
+        }),
       );
     } catch (error) {
       this.logger.error("Error updating streak:", error);

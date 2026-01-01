@@ -47,32 +47,62 @@ This document establishes navigation and breadcrumb standards for FlagFit Pro to
 ```typescript
 const navGroups = [
   {
-    id: 'main',
-    label: 'Main',
-    icon: 'pi-home',
+    id: "main",
+    label: "Main",
+    icon: "pi-home",
     items: [
-      { label: 'Dashboard', route: '/dashboard', icon: 'pi-home', ariaLabel: 'Go to dashboard' },
-      { label: 'Calendar', route: '/calendar', icon: 'pi-calendar', ariaLabel: 'View calendar' }
-    ]
+      {
+        label: "Dashboard",
+        route: "/dashboard",
+        icon: "pi-home",
+        ariaLabel: "Go to dashboard",
+      },
+      {
+        label: "Calendar",
+        route: "/calendar",
+        icon: "pi-calendar",
+        ariaLabel: "View calendar",
+      },
+    ],
   },
   {
-    id: 'training',
-    label: 'Training',
-    icon: 'pi-bolt',
+    id: "training",
+    label: "Training",
+    icon: "pi-bolt",
     items: [
-      { label: 'Training Plans', route: '/training', icon: 'pi-list', ariaLabel: 'View training plans' },
-      { label: 'Exercises', route: '/exercises', icon: 'pi-video', ariaLabel: 'View exercises' }
-    ]
+      {
+        label: "Training Plans",
+        route: "/training",
+        icon: "pi-list",
+        ariaLabel: "View training plans",
+      },
+      {
+        label: "Exercises",
+        route: "/exercises",
+        icon: "pi-video",
+        ariaLabel: "View exercises",
+      },
+    ],
   },
   {
-    id: 'performance',
-    label: 'Performance',
-    icon: 'pi-chart-line',
+    id: "performance",
+    label: "Performance",
+    icon: "pi-chart-line",
     items: [
-      { label: 'Analytics', route: '/analytics', icon: 'pi-chart-bar', ariaLabel: 'View analytics' },
-      { label: 'Reports', route: '/reports', icon: 'pi-file', ariaLabel: 'View reports' }
-    ]
-  }
+      {
+        label: "Analytics",
+        route: "/analytics",
+        icon: "pi-chart-bar",
+        ariaLabel: "View analytics",
+      },
+      {
+        label: "Reports",
+        route: "/reports",
+        icon: "pi-file",
+        ariaLabel: "View reports",
+      },
+    ],
+  },
 ];
 ```
 
@@ -89,7 +119,7 @@ const navGroups = [
 
     // Active indicator bar
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 0;
@@ -108,11 +138,11 @@ const navGroups = [
   <span class="nav-item-icon">
     <i class="pi pi-envelope"></i>
     @if (unreadMessages() > 0) {
-      <p-badge
-        [value]="unreadMessages().toString()"
-        severity="danger"
-        class="nav-badge"
-      />
+    <p-badge
+      [value]="unreadMessages().toString()"
+      severity="danger"
+      class="nav-badge"
+    />
     }
   </span>
   <span class="nav-item-label">Messages</span>
@@ -317,7 +347,6 @@ enhanceWithContext(items: BreadcrumbItem[]): BreadcrumbItem[] {
 ```html
 <!-- Navigation container -->
 <nav aria-label="Main navigation" role="navigation">
-
   <!-- Navigation groups -->
   <div role="group" aria-label="Training navigation">
     <a
@@ -385,17 +414,27 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', route: '/dashboard', icon: 'pi-home' }, // All roles
-  { label: 'Team Management', route: '/team', icon: 'pi-users', roles: ['coach', 'admin'] },
-  { label: 'Training Plans', route: '/training', icon: 'pi-list', roles: ['athlete', 'coach'] },
-  { label: 'Admin Panel', route: '/admin', icon: 'pi-cog', roles: ['admin'] }
+  { label: "Dashboard", route: "/dashboard", icon: "pi-home" }, // All roles
+  {
+    label: "Team Management",
+    route: "/team",
+    icon: "pi-users",
+    roles: ["coach", "admin"],
+  },
+  {
+    label: "Training Plans",
+    route: "/training",
+    icon: "pi-list",
+    roles: ["athlete", "coach"],
+  },
+  { label: "Admin Panel", route: "/admin", icon: "pi-cog", roles: ["admin"] },
 ];
 
 // Filter based on user role
 filteredNavItems = computed(() => {
   const userRole = this.authService.getUserRole();
-  return this.navItems.filter(item =>
-    !item.roles || item.roles.includes(userRole)
+  return this.navItems.filter(
+    (item) => !item.roles || item.roles.includes(userRole),
   );
 });
 ```
@@ -454,10 +493,10 @@ Home > Team Management > Roster > John Doe (Player Profile)
 
 ```typescript
 breadcrumbItems = [
-  { label: 'Home', route: '/dashboard', icon: 'pi-home' },
-  { label: 'Team Management', route: '/team', icon: 'pi-users' },
-  { label: 'Roster', route: '/roster', icon: 'pi-list' },
-  { label: 'John Doe', route: '/roster/player/123', current: true }
+  { label: "Home", route: "/dashboard", icon: "pi-home" },
+  { label: "Team Management", route: "/team", icon: "pi-users" },
+  { label: "Roster", route: "/roster", icon: "pi-list" },
+  { label: "John Doe", route: "/roster/player/123", current: true },
 ];
 ```
 
@@ -469,14 +508,14 @@ Home > Messages > Inbox (3 unread)
 
 ```typescript
 breadcrumbItems = [
-  { label: 'Home', route: '/dashboard', icon: 'pi-home' },
-  { label: 'Messages', route: '/messages', icon: 'pi-envelope' },
+  { label: "Home", route: "/dashboard", icon: "pi-home" },
+  { label: "Messages", route: "/messages", icon: "pi-envelope" },
   {
-    label: 'Inbox',
-    route: '/messages/inbox',
+    label: "Inbox",
+    route: "/messages/inbox",
     current: true,
-    badge: { text: '3', severity: 'danger' }
-  }
+    badge: { text: "3", severity: "danger" },
+  },
 ];
 ```
 
@@ -546,6 +585,7 @@ onScroll(event: any) {
 ## Testing Checklist
 
 ### **Navigation Tests**
+
 - [ ] Active state highlights current route
 - [ ] Badges update dynamically
 - [ ] Role-based filtering works
@@ -556,6 +596,7 @@ onScroll(event: any) {
 - [ ] Focus indicators visible
 
 ### **Breadcrumb Tests**
+
 - [ ] Breadcrumbs generate correctly from route
 - [ ] Context enhancement adds dynamic data
 - [ ] Current page is not clickable
@@ -564,6 +605,7 @@ onScroll(event: any) {
 - [ ] ARIA labels present
 
 ### **Accessibility Tests**
+
 - [ ] Screen reader announces navigation
 - [ ] Keyboard shortcuts work
 - [ ] Focus management correct
@@ -602,10 +644,7 @@ onScroll(event: any) {
   <span class="nav-item-icon">
     <i class="pi pi-list"></i>
     @if (newTrainingPlans() > 0) {
-      <p-badge
-        [value]="newTrainingPlans().toString()"
-        severity="info"
-      />
+    <p-badge [value]="newTrainingPlans().toString()" severity="info" />
     }
   </span>
   <span class="nav-item-label">Training Plans</span>
@@ -641,14 +680,18 @@ quickActions = computed(() => {
   const page = this.getCurrentPage();
 
   const actionsMap: Record<string, QuickAction[]> = {
-    'roster': [
-      { label: 'Add Player', icon: 'pi-plus', action: () => this.addPlayer() },
-      { label: 'Import CSV', icon: 'pi-upload', action: () => this.importCSV() }
+    roster: [
+      { label: "Add Player", icon: "pi-plus", action: () => this.addPlayer() },
+      {
+        label: "Import CSV",
+        icon: "pi-upload",
+        action: () => this.importCSV(),
+      },
     ],
-    'training': [
-      { label: 'New Plan', icon: 'pi-plus', action: () => this.createPlan() },
-      { label: 'Templates', icon: 'pi-file', route: '/training/templates' }
-    ]
+    training: [
+      { label: "New Plan", icon: "pi-plus", action: () => this.createPlan() },
+      { label: "Templates", icon: "pi-file", route: "/training/templates" },
+    ],
   };
 
   return actionsMap[page] || [];

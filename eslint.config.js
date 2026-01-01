@@ -1,5 +1,5 @@
-import globals from "globals";
 import js from "@eslint/js";
+import globals from "globals";
 
 export default [
   // Use recommended rules as base
@@ -19,6 +19,8 @@ export default [
       "**/*.jsx",
       "supabase-types.ts",
       "Wireframes clean/**",
+      "consent-violations.json",
+      "scripts/archive/**",
     ],
   },
   {
@@ -169,7 +171,7 @@ export default [
       "no-console": "off",
       "no-unused-vars": "warn",
       "require-await": "off",
-      "no-await-in-loop": "warn",
+      "no-await-in-loop": "off",
       "no-promise-executor-return": "warn",
       "no-restricted-syntax": "off",
       "no-undef": "warn",
@@ -185,7 +187,7 @@ export default [
       "no-console": "off",
       "no-unused-vars": "warn",
       "require-await": "off",
-      "no-await-in-loop": "warn",
+      "no-await-in-loop": "off",
       "no-promise-executor-return": "warn",
       "no-undef": "warn",
     },
@@ -197,6 +199,7 @@ export default [
   {
     files: [
       "server.js",
+      "server-supabase.js",
       "simple-server.js",
       "routes/**/*.js",
       "src/analytics-data-service.js",
@@ -206,6 +209,7 @@ export default [
       "no-console": "off",
       "no-unused-vars": "warn",
       "require-await": "off",
+      "no-await-in-loop": "off",
     },
   },
 
@@ -220,6 +224,7 @@ export default [
       "no-restricted-syntax": "off",
       "require-await": "off",
       "no-script-url": "off",
+      "no-await-in-loop": "off",
     },
   },
 

@@ -1,0 +1,466 @@
+/* ================================================================
+   FLAGFIT PRO - SPACING SYSTEM
+   Consistent spacing across all components
+   ================================================================
+   
+   SPACING SCALE (8-point grid):
+   - space-1: 0.25rem (4px)  - Tight spacing
+   - space-2: 0.5rem  (8px)  - Small spacing
+   - space-3: 0.75rem (12px) - Medium-small
+   - space-4: 1rem    (16px) - Default spacing
+   - space-5: 1.25rem (20px) - Medium
+   - space-6: 1.5rem  (24px) - Medium-large
+   - space-8: 2rem    (32px) - Large spacing
+   - space-10: 2.5rem (40px) - Extra large
+   - space-12: 3rem   (48px) - Section spacing
+   
+   COMPONENT SPACING GUIDELINES:
+   - Form field gap: space-4 (16px)
+   - Card padding: space-5 to space-6 (20-24px)
+   - Section margin: space-6 to space-8 (24-32px)
+   - Dialog padding: space-5 to space-6 (20-24px)
+   - Button padding: space-3 vertical, space-6 horizontal
+   - Input padding: space-3 to space-4 (12-16px)
+   ================================================================ */
+
+@use "./design-system-tokens.scss" as *;
+
+/* ================================================================
+   CARD & PANEL SPACING
+   ================================================================ */
+
+/* Standard Card Padding */
+.p-card .p-card-body {
+  padding: var(--space-5) !important; /* 20px */
+}
+
+.p-card .p-card-content {
+  padding: 0 !important;
+}
+
+.p-card .p-card-header {
+  padding: var(--space-5) var(--space-5) 0 !important;
+}
+
+.p-card .p-card-footer {
+  padding: var(--space-4) var(--space-5) var(--space-5) !important;
+}
+
+/* Compact Card Variant */
+.card-compact .p-card-body {
+  padding: var(--space-4) !important;
+}
+
+.card-compact .p-card-header {
+  padding: var(--space-4) var(--space-4) 0 !important;
+}
+
+/* ================================================================
+   DIALOG SPACING
+   ================================================================ */
+
+.p-dialog .p-dialog-header {
+  padding: var(--space-5) var(--space-6) !important;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.p-dialog .p-dialog-content {
+  padding: var(--space-5) var(--space-6) !important;
+}
+
+.p-dialog .p-dialog-footer {
+  padding: var(--space-4) var(--space-6) var(--space-5) !important;
+  border-top: 1px solid var(--color-border-primary);
+  gap: var(--space-3);
+}
+
+/* Compact Dialog */
+.dialog-compact .p-dialog-header {
+  padding: var(--space-4) var(--space-5) !important;
+}
+
+.dialog-compact .p-dialog-content {
+  padding: var(--space-4) var(--space-5) !important;
+}
+
+.dialog-compact .p-dialog-footer {
+  padding: var(--space-3) var(--space-5) var(--space-4) !important;
+}
+
+/* ================================================================
+   FORM SPACING
+   ================================================================ */
+
+/* Form Field Group */
+.form-field,
+.p-field {
+  margin-bottom: var(--space-4);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Form Field Label */
+.form-field label,
+.p-field label {
+  margin-bottom: var(--space-2);
+}
+
+/* Form Row (multiple fields) */
+.form-row {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Form Actions (buttons at bottom) */
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-primary);
+
+  &.form-actions-end {
+    justify-content: flex-end;
+  }
+
+  &.form-actions-between {
+    justify-content: space-between;
+  }
+}
+
+/* ================================================================
+   INPUT SPACING
+   ================================================================ */
+
+/* Text Inputs */
+.p-inputtext,
+.p-select,
+.p-multiselect,
+.p-textarea {
+  padding: var(--space-3) var(--space-4) !important; /* 12px 16px */
+  min-height: 44px; /* Touch target minimum */
+}
+
+/* Small Inputs */
+.p-inputtext-sm,
+input.input-sm {
+  padding: var(--space-2) var(--space-3) !important; /* 8px 12px */
+  min-height: 36px;
+}
+
+/* Large Inputs */
+.p-inputtext-lg,
+input.input-lg {
+  padding: var(--space-4) var(--space-5) !important; /* 16px 20px */
+  min-height: 52px;
+}
+
+/* Input Groups */
+.p-inputgroup {
+  gap: 0;
+
+  .p-inputgroup-addon {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* ================================================================
+   LIST & TABLE SPACING
+   ================================================================ */
+
+/* List Items */
+.list-item,
+.item {
+  padding: var(--space-4);
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+}
+
+/* Compact List Items */
+.list-item-compact {
+  padding: var(--space-3);
+}
+
+/* Table Cells */
+.p-datatable .p-datatable-thead > tr > th {
+  padding: var(--space-3) var(--space-4) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: var(--space-3) var(--space-4) !important;
+}
+
+/* Compact Table */
+.table-compact .p-datatable-thead > tr > th,
+.table-compact .p-datatable-tbody > tr > td {
+  padding: var(--space-2) var(--space-3) !important;
+}
+
+/* ================================================================
+   SECTION SPACING
+   ================================================================ */
+
+/* Page Section */
+.section {
+  margin-bottom: var(--space-8);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: var(--space-4);
+}
+
+/* Section Content */
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Compact Section */
+.section-compact {
+  margin-bottom: var(--space-6);
+
+  .section-header {
+    margin-bottom: var(--space-3);
+  }
+}
+
+/* ================================================================
+   STAT/METRIC CARD SPACING
+   ================================================================ */
+
+.stat-card {
+  padding: var(--space-5);
+
+  .stat-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+/* Compact Stat Card */
+.stat-card-compact {
+  padding: var(--space-4);
+
+  .stat-content {
+    gap: var(--space-3);
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ================================================================
+   EMPTY STATE SPACING
+   ================================================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  text-align: center;
+
+  .empty-icon {
+    margin-bottom: var(--space-4);
+  }
+
+  .empty-title {
+    margin-bottom: var(--space-2);
+  }
+
+  .empty-description {
+    margin-bottom: var(--space-6);
+  }
+}
+
+/* Compact Empty State */
+.empty-state-compact {
+  padding: var(--space-6);
+
+  .empty-icon {
+    margin-bottom: var(--space-3);
+  }
+
+  .empty-description {
+    margin-bottom: var(--space-4);
+  }
+}
+
+/* ================================================================
+   GRID GAPS
+   ================================================================ */
+
+.grid-gap-xs {
+  gap: var(--space-2);
+}
+.grid-gap-sm {
+  gap: var(--space-3);
+}
+.grid-gap-md {
+  gap: var(--space-4);
+}
+.grid-gap-lg {
+  gap: var(--space-6);
+}
+.grid-gap-xl {
+  gap: var(--space-8);
+}
+
+/* ================================================================
+   STACK (Vertical Spacing)
+   ================================================================ */
+
+.stack-xs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ================================================================
+   CLUSTER (Horizontal Spacing)
+   ================================================================ */
+
+.cluster-xs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.cluster-sm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.cluster-md {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.cluster-lg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+/* ================================================================
+   RESPONSIVE SPACING ADJUSTMENTS
+   ================================================================ */
+
+@media (max-width: 768px) {
+  /* Reduce card padding on mobile */
+  .p-card .p-card-body {
+    padding: var(--space-4) !important;
+  }
+
+  .p-card .p-card-header {
+    padding: var(--space-4) var(--space-4) 0 !important;
+  }
+
+  /* Reduce dialog padding on mobile */
+  .p-dialog .p-dialog-header {
+    padding: var(--space-4) var(--space-5) !important;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding: var(--space-4) var(--space-5) !important;
+  }
+
+  .p-dialog .p-dialog-footer {
+    padding: var(--space-3) var(--space-5) var(--space-4) !important;
+  }
+
+  /* Reduce section spacing */
+  .section {
+    margin-bottom: var(--space-6);
+  }
+
+  /* Reduce stat card padding */
+  .stat-card {
+    padding: var(--space-4);
+  }
+
+  /* Reduce empty state padding */
+  .empty-state {
+    padding: var(--space-8);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further reduce on small screens */
+  .p-card .p-card-body {
+    padding: var(--space-3) !important;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding: var(--space-3) var(--space-4) !important;
+  }
+
+  .section {
+    margin-bottom: var(--space-5);
+  }
+
+  .form-field {
+    margin-bottom: var(--space-3);
+  }
+
+  .empty-state {
+    padding: var(--space-6);
+  }
+}
+
+/* ================================================================
+   END OF SPACING SYSTEM
+   ================================================================ */

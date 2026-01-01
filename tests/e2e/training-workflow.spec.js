@@ -21,7 +21,7 @@ test.describe("Training Workflow", () => {
           email: "test@flagfitpro.com",
           name: "Test Athlete",
           role: "player",
-        })
+        }),
       );
     });
   }
@@ -44,7 +44,7 @@ test.describe("Training Workflow", () => {
       // Should be redirected to login
       await page.waitForURL(/\/login/);
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -107,7 +107,7 @@ test.describe("Training Workflow", () => {
       expect(
         pageContent.toLowerCase().includes("training") ||
           pageContent.toLowerCase().includes("workout") ||
-          pageContent.toLowerCase().includes("exercise")
+          pageContent.toLowerCase().includes("exercise"),
       ).toBe(true);
     });
   });
@@ -123,7 +123,7 @@ test.describe("Training Workflow", () => {
       expect(
         pageContent.toLowerCase().includes("ai") ||
           pageContent.toLowerCase().includes("coach") ||
-          pageContent.toLowerCase().includes("intelligent")
+          pageContent.toLowerCase().includes("intelligent"),
       ).toBe(true);
     });
 
@@ -139,7 +139,7 @@ test.describe("Training Workflow", () => {
       expect(
         pageContent.toLowerCase().includes("performance") ||
           pageContent.toLowerCase().includes("analytics") ||
-          pageContent.toLowerCase().includes("track")
+          pageContent.toLowerCase().includes("track"),
       ).toBe(true);
     });
   });

@@ -98,7 +98,7 @@ export interface SignalFormGroup<T extends Record<string, unknown>> {
  */
 export function createSignalField<T>(
   initialValue: T,
-  validators: ValidationFn<T>[] = []
+  validators: ValidationFn<T>[] = [],
 ): SignalFormField<T> {
   const value = signal(initialValue);
   const touched = signal(false);
@@ -171,9 +171,9 @@ export function createSignalField<T>(
  *   // submit data
  * }
  */
-export function createSignalFormGroup<T extends Record<string, unknown>>(
-  fields: { [K in keyof T]: SignalFormField<T[K]> }
-): SignalFormGroup<T> {
+export function createSignalFormGroup<
+  T extends Record<string, unknown>,
+>(fields: { [K in keyof T]: SignalFormField<T[K]> }): SignalFormGroup<T> {
   const fieldKeys = Object.keys(fields) as (keyof T)[];
 
   // Computed: form validity
@@ -184,7 +184,7 @@ export function createSignalFormGroup<T extends Record<string, unknown>>(
 
   // Computed: form touched state
   const touched = computed(() =>
-    fieldKeys.every((key) => fields[key].touched())
+    fieldKeys.every((key) => fields[key].touched()),
   );
 
   // Computed: form values
@@ -358,9 +358,7 @@ export function createFormSubmitHandler<
     submit,
     isSubmitting: isSubmitting.asReadonly(),
     submitError: submitError.asReadonly(),
-    canSubmit: computed(
-      () => options.form.valid() && !isSubmitting()
-    ),
+    canSubmit: computed(() => options.form.valid() && !isSubmitting()),
   };
 }
 
@@ -412,4 +410,3 @@ export const SignalFormsMigrationGuide = {
   recommendation:
     "Signal Forms are experimental. Use for new features, migrate existing forms gradually.",
 };
-

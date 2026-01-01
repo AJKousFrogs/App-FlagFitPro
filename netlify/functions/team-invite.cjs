@@ -174,18 +174,19 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
-      const { teamId, email, role, position, jerseyNumber, coachMessage } = body;
+      const { teamId, email, role, position, jerseyNumber, coachMessage } =
+        body;
 
       if (!teamId || !email) {
         return createErrorResponse(
           "teamId and email are required",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -195,7 +196,7 @@ exports.handler = async (event, context) => {
           "Invalid email format",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -217,7 +218,7 @@ exports.handler = async (event, context) => {
           "Only the team coach can send invitations",
           403,
           "forbidden",
-          requestId
+          requestId,
         );
       }
 
@@ -235,7 +236,7 @@ exports.handler = async (event, context) => {
           "An invitation has already been sent to this email",
           400,
           "duplicate_invitation",
-          requestId
+          requestId,
         );
       }
 
@@ -271,19 +272,19 @@ exports.handler = async (event, context) => {
           "Email service not configured",
           503,
           "service_unavailable",
-          requestId
+          requestId,
         );
       }
 
       const invitationUrl = `${getAppUrl()}/accept-invitation.html?token=${invToken}`;
-      
+
       // Get user info for inviter name
       const { data: userData } = await supabase
         .from("users")
         .select("name, email")
         .eq("id", userId)
         .single();
-      
+
       const inviterName = userData?.name || userData?.email || "A coach";
 
       const mailOptions = {
@@ -295,7 +296,7 @@ exports.handler = async (event, context) => {
           team.name,
           invitationUrl,
           role || "player",
-          coachMessage
+          coachMessage,
         ),
         text: `Hi there,\n\n${inviterName} has invited you to join ${team.name} on FlagFit Pro.\n\nClick here to accept: ${invitationUrl}\n\nThis invitation expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
       };
@@ -312,7 +313,7 @@ exports.handler = async (event, context) => {
           expiresAt: expiresAt.toISOString(),
           message: "Invitation sent successfully",
         },
-        requestId
+        requestId,
       );
     },
   });

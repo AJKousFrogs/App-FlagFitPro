@@ -45,8 +45,7 @@ export class LoadingStateDirective {
 
   @Input()
   set appLoadingState(condition: boolean | Signal<boolean>) {
-    const isLoading =
-      typeof condition === "function" ? condition() : condition;
+    const isLoading = typeof condition === "function" ? condition() : condition;
 
     if (isLoading && !this.skeletonRef) {
       // Show skeleton
@@ -54,10 +53,10 @@ export class LoadingStateDirective {
       this.hasView = false;
 
       this.skeletonRef = this.viewContainer.createComponent(
-        SkeletonLoaderComponent
+        SkeletonLoaderComponent,
       );
       // Use setInput for signal inputs
-      this.skeletonRef.setInput('variant', this.appLoadingStateSkeleton);
+      this.skeletonRef.setInput("variant", this.appLoadingStateSkeleton);
     } else if (!isLoading && !this.hasView) {
       // Show content
       if (this.skeletonRef) {

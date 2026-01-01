@@ -96,7 +96,7 @@ export class ResourceService {
    */
   createResource<T>(
     urlFn: () => string,
-    options: ResourceOptions<T> = {}
+    options: ResourceOptions<T> = {},
   ): ResourceRef<T | undefined> {
     const { cacheKey, initialValue } = options;
 
@@ -108,7 +108,7 @@ export class ResourceService {
     const resourceRef = resource<T, string>({
       params: urlFn,
       loader: async (loaderParams) => {
-        const url = loaderParams.params ?? '';
+        const url = loaderParams.params ?? "";
         // const abortSignal = loaderParams.abortSignal; // Available for cancellation
         this.logger.debug(`[Resource] Fetching: ${url}`);
 
@@ -116,7 +116,7 @@ export class ResourceService {
           const response = await firstValueFrom(
             this.http.get<T>(url, {
               // Note: AbortSignal integration requires custom handling
-            })
+            }),
           );
           this.logger.debug(`[Resource] Success: ${url}`);
           return response;
@@ -140,7 +140,7 @@ export class ResourceService {
    */
   createMutationResource<TInput, TOutput>(
     urlFn: () => string,
-    method: "POST" | "PUT" | "PATCH" | "DELETE" = "POST"
+    method: "POST" | "PUT" | "PATCH" | "DELETE" = "POST",
   ): {
     mutate: (data: TInput) => Promise<TOutput>;
     isLoading: () => boolean;
@@ -165,7 +165,9 @@ export class ResourceService {
             response = await firstValueFrom(this.http.put<TOutput>(url, data));
             break;
           case "PATCH":
-            response = await firstValueFrom(this.http.patch<TOutput>(url, data));
+            response = await firstValueFrom(
+              this.http.patch<TOutput>(url, data),
+            );
             break;
           case "DELETE":
             response = await firstValueFrom(this.http.delete<TOutput>(url));
@@ -195,7 +197,7 @@ export class ResourceService {
    */
   createPaginatedResource<T>(
     baseUrlFn: () => string,
-    pageSize: number = 20
+    pageSize: number = 20,
   ): {
     resource: ResourceRef<PaginatedResponse<T> | undefined>;
     page: ReturnType<typeof signal<number>>;
@@ -212,7 +214,7 @@ export class ResourceService {
         return `${baseUrl}${separator}page=${page()}&pageSize=${pageSize}`;
       },
       loader: async (loaderParams) => {
-        const url = loaderParams.params ?? '';
+        const url = loaderParams.params ?? "";
         this.logger.debug(`[PaginatedResource] Fetching: ${url}`);
         return firstValueFrom(this.http.get<PaginatedResponse<T>>(url));
       },
@@ -236,9 +238,7 @@ export class ResourceService {
     } else {
       this.resourceCache.clear();
     }
-    this.logger.debug(
-      `[Resource] Cache cleared: ${cacheKey || "all"}`
-    );
+    this.logger.debug(`[Resource] Cache cleared: ${cacheKey || "all"}`);
   }
 
   /**
@@ -266,7 +266,7 @@ export class ResourceService {
  */
 export function createEditableResource<T>(
   resourceRef: ResourceRef<T>,
-  defaultValue: T
+  defaultValue: T,
 ): ReturnType<typeof linkedSignal<T | undefined, T>> {
   return linkedSignal<T | undefined, T>({
     source: () => resourceRef.value(),
@@ -290,7 +290,6 @@ export function combineResourceErrors(
   ...resources: ResourceRef<unknown>[]
 ): () => unknown[] {
   return computed(() =>
-    resources.map((r) => r.error()).filter((e) => e !== null)
+    resources.map((r) => r.error()).filter((e) => e !== null),
   );
 }
-

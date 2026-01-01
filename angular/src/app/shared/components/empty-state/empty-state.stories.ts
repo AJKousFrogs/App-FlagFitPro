@@ -133,7 +133,8 @@ export const WithBenefits: Story = {
 export const WithSecondaryAction: Story = {
   args: {
     title: "No team members",
-    message: "Invite athletes to join your team and start tracking their progress.",
+    message:
+      "Invite athletes to join your team and start tracking their progress.",
     icon: "pi-users",
     actionLabel: "Invite Athletes",
     actionIcon: "pi-user-plus",
@@ -191,7 +192,8 @@ export const NoWorkouts: Story = {
 export const NoTeamMembers: Story = {
   args: {
     title: "Your Team is Empty",
-    message: "Add athletes to start managing your team's training and performance.",
+    message:
+      "Add athletes to start managing your team's training and performance.",
     icon: "pi-users",
     iconColor: "var(--color-status-info)",
     actionLabel: "Add Athlete",
@@ -218,7 +220,8 @@ export const NoMessages: Story = {
 export const NoSearchResults: Story = {
   args: {
     title: "No Results Found",
-    message: "We couldn't find anything matching your search. Try different keywords.",
+    message:
+      "We couldn't find anything matching your search. Try different keywords.",
     icon: "pi-search",
     compact: true,
   },
@@ -279,4 +282,3 @@ export const AllVariants: Story = {
     `,
   }),
 };
-

@@ -8,23 +8,19 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { SkeletonModule } from 'primeng/skeleton';
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SkeletonModule } from "primeng/skeleton";
 
 @Component({
-  selector: 'app-page-loading-state',
+  selector: "app-page-loading-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ProgressSpinnerModule, SkeletonModule],
   template: `
     <div class="loading-state-container" role="status" aria-live="polite">
-      @if (variant === 'spinner') {
+      @if (variant === "spinner") {
         <p-progressSpinner
           [style]="{ width: '50px', height: '50px' }"
           strokeWidth="4"
@@ -37,7 +33,11 @@ import { SkeletonModule } from 'primeng/skeleton';
           @if (showHeader) {
             <div class="skeleton-header">
               <p-skeleton width="200px" height="32px"></p-skeleton>
-              <p-skeleton width="300px" height="20px" styleClass="mt-2"></p-skeleton>
+              <p-skeleton
+                width="300px"
+                height="20px"
+                styleClass="mt-2"
+              ></p-skeleton>
             </div>
           }
           @if (showCards) {
@@ -107,10 +107,9 @@ import { SkeletonModule } from 'primeng/skeleton';
   ],
 })
 export class PageLoadingStateComponent {
-  @Input() message = 'Loading...';
-  @Input() variant: 'spinner' | 'skeleton' = 'spinner';
+  @Input() message = "Loading...";
+  @Input() variant: "spinner" | "skeleton" = "spinner";
   @Input() showHeader = true;
   @Input() showCards = true;
   @Input() showContent = true;
 }
-

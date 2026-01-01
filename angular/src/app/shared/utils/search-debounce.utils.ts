@@ -28,7 +28,7 @@ import { Subject, debounceTime, distinctUntilChanged } from "rxjs";
  */
 export function debounceSearch<T = string>(
   delay: number = 300,
-  callback: (value: T) => void
+  callback: (value: T) => void,
 ): (value: T) => void {
   const subject = new Subject<T>();
 
@@ -46,7 +46,7 @@ export function debounceSearch<T = string>(
  */
 export function throttle<T extends (...args: unknown[]) => void>(
   delay: number = 300,
-  callback: T
+  callback: T,
 ): (...args: Parameters<T>) => void {
   let lastCall = 0;
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -63,11 +63,14 @@ export function throttle<T extends (...args: unknown[]) => void>(
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      timeoutId = setTimeout(() => {
-        lastCall = Date.now();
-        callback.apply(this, args);
-        timeoutId = null;
-      }, delay - (now - lastCall));
+      timeoutId = setTimeout(
+        () => {
+          lastCall = Date.now();
+          callback.apply(this, args);
+          timeoutId = null;
+        },
+        delay - (now - lastCall),
+      );
     }
   };
 }
@@ -93,4 +96,3 @@ export function createDebouncedSignal<T>(initialValue: T, delay: number = 300) {
     next: (value: T) => subject.next(value),
   };
 }
-

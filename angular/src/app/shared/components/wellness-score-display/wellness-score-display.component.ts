@@ -37,7 +37,12 @@ import { SkeletonModule } from "primeng/skeleton";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
-export type WellnessDisplayVariant = "ring" | "bar" | "compact" | "full" | "mini";
+export type WellnessDisplayVariant =
+  | "ring"
+  | "bar"
+  | "compact"
+  | "full"
+  | "mini";
 
 export interface WellnessMetric {
   icon: string;
@@ -64,16 +69,23 @@ export interface WellnessMetric {
     <!-- Loading State -->
     @if (loading()) {
       <div class="wellness-loading" [class]="'variant-' + variant()">
-        @if (variant() === 'ring' || variant() === 'full') {
-          <p-skeleton shape="circle" [size]="variant() === 'mini' ? '60px' : '120px'"></p-skeleton>
+        @if (variant() === "ring" || variant() === "full") {
+          <p-skeleton
+            shape="circle"
+            [size]="variant() === 'mini' ? '60px' : '120px'"
+          ></p-skeleton>
         } @else {
           <p-skeleton width="100%" height="40px"></p-skeleton>
         }
       </div>
     } @else {
       <!-- Ring Variant -->
-      @if (variant() === 'ring') {
-        <div class="wellness-ring" [class.clickable]="clickable()" (click)="handleClick()">
+      @if (variant() === "ring") {
+        <div
+          class="wellness-ring"
+          [class.clickable]="clickable()"
+          (click)="handleClick()"
+        >
           <div class="ring-outer" [style.border-color]="statusColor()">
             <div class="ring-inner">
               <span class="score-value">{{ overallScore() }}</span>
@@ -84,7 +96,10 @@ export interface WellnessMetric {
             <div class="ring-details">
               @for (metric of metrics(); track metric.label) {
                 <div class="metric-pill" [pTooltip]="metric.label">
-                  <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
+                  <i
+                    [class]="'pi ' + metric.icon"
+                    [style.color]="metric.color"
+                  ></i>
                   <span>{{ metric.value }}</span>
                 </div>
               }
@@ -94,8 +109,12 @@ export interface WellnessMetric {
       }
 
       <!-- Bar Variant -->
-      @if (variant() === 'bar') {
-        <div class="wellness-bar" [class.clickable]="clickable()" (click)="handleClick()">
+      @if (variant() === "bar") {
+        <div
+          class="wellness-bar"
+          [class.clickable]="clickable()"
+          (click)="handleClick()"
+        >
           <div class="bar-header">
             <div class="bar-title">
               <i class="pi pi-heart" [style.color]="statusColor()"></i>
@@ -119,7 +138,10 @@ export interface WellnessMetric {
               <div class="metrics-inline">
                 @for (metric of metrics().slice(0, 3); track metric.label) {
                   <span class="metric-inline" [pTooltip]="metric.label">
-                    <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
+                    <i
+                      [class]="'pi ' + metric.icon"
+                      [style.color]="metric.color"
+                    ></i>
                     {{ metric.value }}
                   </span>
                 }
@@ -130,7 +152,7 @@ export interface WellnessMetric {
       }
 
       <!-- Compact Variant -->
-      @if (variant() === 'compact') {
+      @if (variant() === "compact") {
         <div
           class="wellness-compact"
           [class.clickable]="clickable()"
@@ -145,12 +167,14 @@ export interface WellnessMetric {
       }
 
       <!-- Mini Variant -->
-      @if (variant() === 'mini') {
+      @if (variant() === "mini") {
         <div
           class="wellness-mini"
           [class.clickable]="clickable()"
           (click)="handleClick()"
-          [pTooltip]="'Wellness Score: ' + overallScore() + '/100 (' + statusLabel() + ')'"
+          [pTooltip]="
+            'Wellness Score: ' + overallScore() + '/100 (' + statusLabel() + ')'
+          "
         >
           <div class="mini-ring" [style.border-color]="statusColor()">
             <span>{{ overallScore() }}</span>
@@ -159,7 +183,7 @@ export interface WellnessMetric {
       }
 
       <!-- Full Variant -->
-      @if (variant() === 'full') {
+      @if (variant() === "full") {
         <p-card class="wellness-full" [class.clickable]="clickable()">
           <ng-template pTemplate="header">
             <div class="full-header">
@@ -204,7 +228,10 @@ export interface WellnessMetric {
               <div class="metrics-grid">
                 @for (metric of metrics(); track metric.label) {
                   <div class="metric-item">
-                    <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
+                    <i
+                      [class]="'pi ' + metric.icon"
+                      [style.color]="metric.color"
+                    ></i>
                     <div class="metric-info">
                       <span class="metric-label">{{ metric.label }}</span>
                       <span class="metric-value">{{ metric.value }}</span>
@@ -532,7 +559,9 @@ export interface WellnessMetric {
       /* Clickable State */
       .clickable {
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .clickable:hover {
@@ -600,14 +629,16 @@ export class WellnessScoreDisplayComponent implements OnInit {
     return "status-poor";
   });
 
-  tagSeverity = computed((): "success" | "info" | "warn" | "danger" | "secondary" => {
-    const score = this.overallScore();
-    if (score >= 80) return "success";
-    if (score >= 60) return "info";
-    if (score >= 40) return "warn";
-    if (score > 0) return "danger";
-    return "secondary";
-  });
+  tagSeverity = computed(
+    (): "success" | "info" | "warn" | "danger" | "secondary" => {
+      const score = this.overallScore();
+      if (score >= 80) return "success";
+      if (score >= 60) return "info";
+      if (score >= 40) return "warn";
+      if (score > 0) return "danger";
+      return "secondary";
+    },
+  );
 
   ngOnInit(): void {
     this.loadWellnessData();

@@ -74,7 +74,7 @@ class PerformanceTestRunner {
           }
         }
         // Await all requests for this scenario step (needs sequential processing per scenario)
-        // eslint-disable-next-line no-await-in-loop
+         
         await Promise.all(requests);
       }
     } catch (error) {
@@ -462,7 +462,7 @@ describe("Performance and Load Testing", () => {
 
       // Need to run tests sequentially to detect breaking point
       for (const userCount of userCounts) {
-        // eslint-disable-next-line no-await-in-loop
+         
         const result = await runTest(userCount);
         results.push(result);
 

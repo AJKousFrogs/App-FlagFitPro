@@ -34,7 +34,7 @@ export class ThemeService {
 
   // Public computed signals
   mode = this._mode.asReadonly();
-  
+
   resolvedTheme = computed<"light" | "dark">(() => {
     const mode = this._mode();
     if (mode === "auto") {
@@ -54,16 +54,16 @@ export class ThemeService {
     if (typeof window !== "undefined") {
       // Disable transitions during initial load
       document.documentElement.classList.add("no-transitions");
-      
+
       this.initializeSystemPreference();
       this.loadSavedPreference();
-      
+
       // Apply theme on changes
       effect(() => {
         const theme = this.resolvedTheme();
         this.applyTheme(theme);
       });
-      
+
       // Re-enable transitions after initial load
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -112,8 +112,12 @@ export class ThemeService {
     if (typeof window === "undefined") {
       return "";
     }
-    const name = variableName.startsWith("--") ? variableName : `--${variableName}`;
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const name = variableName.startsWith("--")
+      ? variableName
+      : `--${variableName}`;
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
   }
 
   /**
@@ -153,7 +157,9 @@ export class ThemeService {
     // Listen for system preference changes
     const handler = (e: MediaQueryListEvent) => {
       this._systemPreference.set(e.matches ? "dark" : "light");
-      this.logger.debug(`[ThemeService] System preference changed to: ${e.matches ? "dark" : "light"}`);
+      this.logger.debug(
+        `[ThemeService] System preference changed to: ${e.matches ? "dark" : "light"}`,
+      );
     };
 
     // Use addEventListener for modern browsers
@@ -186,7 +192,7 @@ export class ThemeService {
   private savePreference(mode: ThemeMode): void {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, mode);
-      
+
       // Also save to Supabase if user is authenticated
       this.saveToSupabase(mode);
     } catch (error) {
@@ -202,18 +208,22 @@ export class ThemeService {
       const user = this.supabase.currentUser();
       if (!user) return;
 
-      const { error } = await this.supabase.client
-        .from("user_settings")
-        .upsert({
+      const { error } = await this.supabase.client.from("user_settings").upsert(
+        {
           user_id: user.id,
           theme: mode,
           updated_at: new Date().toISOString(),
-        }, {
+        },
+        {
           onConflict: "user_id",
-        });
+        },
+      );
 
       if (error) {
-        this.logger.debug("[ThemeService] Could not save theme to Supabase:", error.message);
+        this.logger.debug(
+          "[ThemeService] Could not save theme to Supabase:",
+          error.message,
+        );
       }
     } catch (error) {
       // Silently fail - localStorage is the primary storage
@@ -237,7 +247,9 @@ export class ThemeService {
       if (data?.theme && ["light", "dark", "auto"].includes(data.theme)) {
         this._mode.set(data.theme as ThemeMode);
         localStorage.setItem(THEME_STORAGE_KEY, data.theme);
-        this.logger.debug(`[ThemeService] Loaded theme from Supabase: ${data.theme}`);
+        this.logger.debug(
+          `[ThemeService] Loaded theme from Supabase: ${data.theme}`,
+        );
       }
     } catch (error) {
       // Silently fail - localStorage preference is used
@@ -278,7 +290,7 @@ export class ThemeService {
     if (metaThemeColor) {
       metaThemeColor.setAttribute(
         "content",
-        theme === "dark" ? THEME_META_COLOR_DARK : THEME_META_COLOR_LIGHT
+        theme === "dark" ? THEME_META_COLOR_DARK : THEME_META_COLOR_LIGHT,
       );
     }
   }
@@ -290,7 +302,7 @@ export class ThemeService {
     // PrimeNG 21 uses CSS variables, so the data-theme attribute should handle it
     // But we can also update specific PrimeNG surface variables if needed
     const root = document.documentElement;
-    
+
     if (theme === "dark") {
       root.style.setProperty("--p-surface-0", "#171717");
       root.style.setProperty("--p-surface-50", "#1f1f1f");

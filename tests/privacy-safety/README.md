@@ -8,30 +8,30 @@
 
 ## Test Matrix
 
-| Scenario | Expected Result | Test File | Priority |
-|----------|-----------------|-----------|----------|
-| **Consent Gating** | | | |
-| Coach queries player data without consent | NULL values + `consent_blocked=true` | `consent-gating.test.js` | CRITICAL |
-| Coach queries player data with consent | Full data visible | `consent-gating.test.js` | CRITICAL |
-| Player queries own data | Full data visible (always) | `consent-gating.test.js` | CRITICAL |
-| Coach queries via consent-aware view | Correct filtering applied | `consent-gating.test.js` | HIGH |
-| **AI Opt-Out** | | | |
-| AI chat with `ai_processing_enabled=false` | HTTP 403 + remediation message | `ai-opt-out.test.js` | CRITICAL |
-| AI chat with `ai_processing_enabled=true` | Normal processing | `ai-opt-out.test.js` | CRITICAL |
-| DB function `require_ai_consent()` fails fast | Exception with clear message | `ai-opt-out.test.js` | HIGH |
-| **Deletion Lifecycle** | | | |
-| Deletion requested | Access revoked immediately | `deletion-lifecycle.test.js` | CRITICAL |
-| Deletion cancelled | Access restored | `deletion-lifecycle.test.js` | CRITICAL |
-| Deletion processed | PII deleted, audit log records | `deletion-lifecycle.test.js` | CRITICAL |
-| Emergency records NOT deleted before 7 years | Records preserved | `deletion-lifecycle.test.js` | CRITICAL |
-| **Data State Contract** | | | |
-| < 28 days ACWR data | `metricValue=null` + `INSUFFICIENT_DATA` | `data-state.test.js` | HIGH |
-| >= 28 days ACWR data | `REAL_DATA` + valid values | `data-state.test.js` | HIGH |
-| No data at all | `NO_DATA` state | `data-state.test.js` | HIGH |
-| **16+ Age Gating** | | | |
-| User under 16 without parental consent | Features blocked server-side | `age-gating.test.js` | CRITICAL |
-| User under 16 with parental consent | Features enabled | `age-gating.test.js` | HIGH |
-| User 16+ | Full access | `age-gating.test.js` | HIGH |
+| Scenario                                      | Expected Result                          | Test File                    | Priority |
+| --------------------------------------------- | ---------------------------------------- | ---------------------------- | -------- |
+| **Consent Gating**                            |                                          |                              |          |
+| Coach queries player data without consent     | NULL values + `consent_blocked=true`     | `consent-gating.test.js`     | CRITICAL |
+| Coach queries player data with consent        | Full data visible                        | `consent-gating.test.js`     | CRITICAL |
+| Player queries own data                       | Full data visible (always)               | `consent-gating.test.js`     | CRITICAL |
+| Coach queries via consent-aware view          | Correct filtering applied                | `consent-gating.test.js`     | HIGH     |
+| **AI Opt-Out**                                |                                          |                              |          |
+| AI chat with `ai_processing_enabled=false`    | HTTP 403 + remediation message           | `ai-opt-out.test.js`         | CRITICAL |
+| AI chat with `ai_processing_enabled=true`     | Normal processing                        | `ai-opt-out.test.js`         | CRITICAL |
+| DB function `require_ai_consent()` fails fast | Exception with clear message             | `ai-opt-out.test.js`         | HIGH     |
+| **Deletion Lifecycle**                        |                                          |                              |          |
+| Deletion requested                            | Access revoked immediately               | `deletion-lifecycle.test.js` | CRITICAL |
+| Deletion cancelled                            | Access restored                          | `deletion-lifecycle.test.js` | CRITICAL |
+| Deletion processed                            | PII deleted, audit log records           | `deletion-lifecycle.test.js` | CRITICAL |
+| Emergency records NOT deleted before 7 years  | Records preserved                        | `deletion-lifecycle.test.js` | CRITICAL |
+| **Data State Contract**                       |                                          |                              |          |
+| < 28 days ACWR data                           | `metricValue=null` + `INSUFFICIENT_DATA` | `data-state.test.js`         | HIGH     |
+| >= 28 days ACWR data                          | `REAL_DATA` + valid values               | `data-state.test.js`         | HIGH     |
+| No data at all                                | `NO_DATA` state                          | `data-state.test.js`         | HIGH     |
+| **16+ Age Gating**                            |                                          |                              |          |
+| User under 16 without parental consent        | Features blocked server-side             | `age-gating.test.js`         | CRITICAL |
+| User under 16 with parental consent           | Features enabled                         | `age-gating.test.js`         | HIGH     |
+| User 16+                                      | Full access                              | `age-gating.test.js`         | HIGH     |
 
 ---
 
@@ -135,4 +135,3 @@ All test data is cleaned up after tests complete.
 ---
 
 **Document Version:** 1.0.0
-

@@ -823,7 +823,7 @@ async function runTests() {
   // Detect server
   console.log(`${colors.blue}Detecting server...${colors.reset}`);
   const detectedServer = await detectServer();
-  CONFIG.baseUrl = CONFIG.baseUrl || detectedServer.url;
+  CONFIG.baseUrl ||= detectedServer.url;
 
   console.log(`${colors.blue}Configuration:${colors.reset}`);
   console.log(`  Server: ${detectedServer.name}`);

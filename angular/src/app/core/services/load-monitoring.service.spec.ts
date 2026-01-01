@@ -28,7 +28,7 @@ const mockSupabaseService = {
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() =>
-            Promise.resolve({ data: { id: 1 }, error: null })
+            Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
       })),
@@ -88,22 +88,22 @@ describe("LoadMonitoringService", () => {
 
     it("should throw error for invalid RPE (< 1)", () => {
       expect(() => service.calculateInternalLoad(0, 100)).toThrow(
-        "Session RPE must be between 1 and 10"
+        "Session RPE must be between 1 and 10",
       );
     });
 
     it("should throw error for invalid RPE (> 10)", () => {
       expect(() => service.calculateInternalLoad(11, 100)).toThrow(
-        "Session RPE must be between 1 and 10"
+        "Session RPE must be between 1 and 10",
       );
     });
 
     it("should throw error for non-positive duration", () => {
       expect(() => service.calculateInternalLoad(5, 0)).toThrow(
-        "Duration must be positive"
+        "Duration must be positive",
       );
       expect(() => service.calculateInternalLoad(5, -10)).toThrow(
-        "Duration must be positive"
+        "Duration must be positive",
       );
     });
 
@@ -412,13 +412,13 @@ describe("LoadMonitoringService", () => {
       const metricsWithWellness = service.calculateCombinedLoad(
         internal,
         undefined,
-        poorWellness
+        poorWellness,
       );
       const metricsWithoutWellness = service.calculateCombinedLoad(internal);
 
       // Poor wellness should increase perceived load
       expect(metricsWithWellness.calculatedLoad).toBeGreaterThan(
-        metricsWithoutWellness.calculatedLoad
+        metricsWithoutWellness.calculatedLoad,
       );
     });
   });
@@ -433,7 +433,7 @@ describe("LoadMonitoringService", () => {
         "player-123",
         "technical",
         7,
-        90
+        90,
       );
 
       expect(session.playerId).toBe("player-123");
@@ -448,7 +448,7 @@ describe("LoadMonitoringService", () => {
         "conditioning",
         8,
         60,
-        "Felt strong today"
+        "Felt strong today",
       );
 
       expect(session.notes).toBe("Felt strong today");
@@ -468,7 +468,7 @@ describe("LoadMonitoringService", () => {
         "player-123",
         "game",
         internal,
-        external
+        external,
       );
 
       expect(session.metrics.type).toBe("combined");
@@ -908,4 +908,3 @@ function createMockSession(load: number): TrainingSession {
     modifiedFromPlan: false,
   };
 }
-

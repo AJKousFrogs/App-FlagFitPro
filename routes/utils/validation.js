@@ -190,7 +190,13 @@ export function createSuccessResponse(data, message = null) {
  * @param {number} statusCode - HTTP status code
  * @param {string} details - Additional error details
  */
-export function sendError(res, message, code, statusCode = 500, details = null) {
+export function sendError(
+  res,
+  message,
+  code,
+  statusCode = 500,
+  details = null,
+) {
   const { statusCode: status, response } = createErrorResponse(
     message,
     code,
@@ -258,9 +264,7 @@ export function safeAverage(values, defaultValue = 0) {
     return defaultValue;
   }
 
-  const validValues = values
-    .map((v) => parseFloat(v))
-    .filter((v) => !isNaN(v));
+  const validValues = values.map((v) => parseFloat(v)).filter((v) => !isNaN(v));
 
   if (validValues.length === 0) {
     return defaultValue;
@@ -282,7 +286,3 @@ export default {
   safePercentage,
   safeAverage,
 };
-
-
-
-

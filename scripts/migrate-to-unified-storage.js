@@ -40,7 +40,7 @@ function getStorageServiceImportPath(filePath) {
   const relativePath = path.relative(fileDir, path.join(rootDir, targetPath));
 
   // Ensure it starts with ./
-  return relativePath.startsWith(".") ? relativePath : `./${  relativePath}`;
+  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
 }
 
 /**

@@ -13,12 +13,12 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 
@@ -90,7 +90,10 @@ interface WalkthroughStep {
         </div>
 
         <!-- Current Step Content -->
-        <div class="step-content animate-fade-in" [attr.data-step]="currentStep().id">
+        <div
+          class="step-content animate-fade-in"
+          [attr.data-step]="currentStep().id"
+        >
           <!-- Icon -->
           <div
             class="step-icon"
@@ -379,21 +382,35 @@ interface WalkthroughStep {
       }
 
       /* Primary button (Next) */
-      :host ::ng-deep .nav-buttons .p-button:not(.p-button-outlined):not(.p-button-success) {
-        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+      :host
+        ::ng-deep
+        .nav-buttons
+        .p-button:not(.p-button-outlined):not(.p-button-success) {
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green-light, #0ab85a) 0%,
+          var(--ds-primary-green, #089949) 100%
+        ) !important;
         border: none !important;
         color: #ffffff !important;
         box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
       }
 
-      :host ::ng-deep .nav-buttons .p-button:not(.p-button-outlined):not(.p-button-success):hover {
+      :host
+        ::ng-deep
+        .nav-buttons
+        .p-button:not(.p-button-outlined):not(.p-button-success):hover {
         box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
         transform: translateY(-1px);
       }
 
       /* Success button (Get Started) */
       :host ::ng-deep .nav-buttons .p-button-success {
-        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green-light, #0ab85a) 0%,
+          var(--ds-primary-green, #089949) 100%
+        ) !important;
         border: none !important;
         color: #ffffff !important;
         box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
@@ -615,10 +632,7 @@ export class FeatureWalkthroughComponent {
 
   private markTourAsSeen(): void {
     localStorage.setItem("feature-walkthrough-completed", "true");
-    localStorage.setItem(
-      "feature-walkthrough-date",
-      new Date().toISOString()
-    );
+    localStorage.setItem("feature-walkthrough-date", new Date().toISOString());
     this.logger.info("Feature walkthrough completed");
   }
 

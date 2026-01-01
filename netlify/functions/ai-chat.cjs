@@ -28,17 +28,40 @@ const {
 } = require("./utils/error-handler.cjs");
 const {
   classifyRiskLevel,
+  classifyIntent: _classifyIntent,
   generateSafeResponse,
   filterContent,
   filterSourcesByEvidence,
   // getDisclaimer - available but not currently used
   RISK_LEVELS,
+  INTENT_TYPES,
+  // Phase 3: Enhanced classification
+  classifyWithConfidence,
+  applyYouthRestrictions: _applyYouthRestrictions,
+  generateBlockedYouthResponse,
+  AGE_GROUPS: _AGE_GROUPS,
+  YOUTH_RESTRICTED_TOPICS: _YOUTH_RESTRICTED_TOPICS,
 } = require("./utils/ai-safety-classifier.cjs");
 const {
   isGroqConfigured,
   generateCoachingResponse,
+  generateClarifyingQuestion: _generateClarifyingQuestion,
   // GROQ_MODELS - available but not currently used
 } = require("./utils/groq-client.cjs");
+const {
+  processSmartQuery,
+  searchKnowledgeHybrid,
+  recordFeedbackWithLearning: _recordFeedbackWithLearning,
+  getLearnedPreferences: _getLearnedPreferences,
+  getPendingCheckins: _getPendingCheckins,
+  updateCheckinStatus,
+  buildCheckinMessage,
+  summarizeConversation: _summarizeConversation,
+  ROUTING_ACTIONS,
+} = require("./utils/smart-ai-service.cjs");
+const {
+  isEmbeddingServiceAvailable,
+} = require("./utils/embedding-service.cjs");
 
 // =====================================================
 // CONSTANTS
@@ -50,20 +73,39 @@ const MAX_QUERY_LENGTH = 1000;
 
 // ACWR Safety Thresholds (Gabbett 2016)
 const ACWR_THRESHOLDS = {
-  SWEET_SPOT_LOW: 0.8,   // Below this = detraining risk
-  SWEET_SPOT_HIGH: 1.3,  // Optimal zone upper bound
-  CAUTION: 1.5,          // Elevated risk - monitor closely
-  DANGER: 1.5,           // High injury risk - block high-intensity
-  CRITICAL: 1.8,         // Very high risk - immediate load reduction
+  SWEET_SPOT_LOW: 0.8, // Below this = detraining risk
+  SWEET_SPOT_HIGH: 1.3, // Optimal zone upper bound
+  CAUTION: 1.5, // Elevated risk - monitor closely
+  DANGER: 1.5, // High injury risk - block high-intensity
+  CRITICAL: 1.8, // Very high risk - immediate load reduction
 };
 
 // Keywords that indicate high-intensity training requests
 const HIGH_INTENSITY_KEYWORDS = [
-  "sprint", "explosive", "plyometric", "max effort", "maximum",
-  "high intensity", "hiit", "tabata", "power", "speed work",
-  "all out", "100%", "full speed", "intense", "hard workout",
-  "heavy", "max weight", "1rm", "pr attempt", "personal record",
-  "competition", "game day", "match prep", "peak performance",
+  "sprint",
+  "explosive",
+  "plyometric",
+  "max effort",
+  "maximum",
+  "high intensity",
+  "hiit",
+  "tabata",
+  "power",
+  "speed work",
+  "all out",
+  "100%",
+  "full speed",
+  "intense",
+  "hard workout",
+  "heavy",
+  "max weight",
+  "1rm",
+  "pr attempt",
+  "personal record",
+  "competition",
+  "game day",
+  "match prep",
+  "peak performance",
 ];
 
 // =====================================================
@@ -109,7 +151,7 @@ async function getOrCreateSession(userId, sessionId = null) {
 /**
  * Calculate ACWR (Acute:Chronic Workload Ratio) for a user
  * Based on Gabbett (2016) - The training-injury prevention paradox
- * 
+ *
  * @param {string} userId - User ID
  * @returns {Object} ACWR data with ratio, risk zone, and recommendations
  */
@@ -142,7 +184,7 @@ async function calculateUserACWR(userId) {
     }
 
     // Calculate session loads (RPE × duration)
-    const sessionsWithLoad = sessions.map(s => ({
+    const sessionsWithLoad = sessions.map((s) => ({
       ...s,
       load: (s.duration_minutes || 60) * (s.rpe || s.intensity_level || 5),
       date: new Date(s.session_date),
@@ -150,7 +192,7 @@ async function calculateUserACWR(userId) {
 
     // Split into acute (7 days) and chronic (28 days)
     const acuteSessions = sessionsWithLoad.filter(
-      s => s.date >= acuteStartDate && s.date <= today
+      (s) => s.date >= acuteStartDate && s.date <= today,
     );
     const chronicSessions = sessionsWithLoad; // All sessions in 28-day window
 
@@ -168,9 +210,10 @@ async function calculateUserACWR(userId) {
         riskZone: acuteLoad > 0 ? "danger" : "insufficient_data",
         acuteLoad,
         chronicLoad: 0,
-        message: acuteLoad > 0 
-          ? "No chronic baseline - training spike detected."
-          : "No training data available.",
+        message:
+          acuteLoad > 0
+            ? "No chronic baseline - training spike detected."
+            : "No training data available.",
         canRecommendHighIntensity: false,
       };
     }
@@ -179,7 +222,7 @@ async function calculateUserACWR(userId) {
 
     // Determine risk zone and recommendation capability
     let riskZone, message, canRecommendHighIntensity;
-    
+
     if (acwr < ACWR_THRESHOLDS.SWEET_SPOT_LOW) {
       riskZone = "detraining";
       message = `ACWR ${acwr.toFixed(2)} - Training load too low, consider gradual increase.`;
@@ -229,7 +272,9 @@ async function calculateUserACWR(userId) {
  */
 function isHighIntensityQuery(query) {
   const lowerQuery = query.toLowerCase();
-  return HIGH_INTENSITY_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
+  return HIGH_INTENSITY_KEYWORDS.some((keyword) =>
+    lowerQuery.includes(keyword),
+  );
 }
 
 /**
@@ -296,7 +341,7 @@ async function getUserContext(userId) {
 
     if (teamMembership) {
       context.teamId = teamMembership.team_id;
-      context.role = context.role || teamMembership.role;
+      context.role ||= teamMembership.role;
     }
   } catch (error) {
     console.error("Error fetching user context:", error);
@@ -306,18 +351,1115 @@ async function getUserContext(userId) {
   return context;
 }
 
+// =====================================================
+// PHASE 4: CONVERSATION CONTEXT & FOLLOW-UP TRACKING
+// =====================================================
+
+/**
+ * Get active conversation contexts for a user
+ * Used to provide cross-session memory to the AI
+ *
+ * @param {string} userId - User ID
+ * @param {number} limit - Max contexts to retrieve
+ * @returns {Array} Active conversation contexts
+ */
+async function getActiveConversationContexts(userId, limit = 5) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("conversation_context")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+      .order("last_referenced_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("[AI Chat] Error fetching conversation contexts:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("[AI Chat] Error in getActiveConversationContexts:", error);
+    return [];
+  }
+}
+
+/**
+ * Save or update a conversation context
+ * Creates cross-session memory for important topics
+ *
+ * @param {string} userId - User ID
+ * @param {Object} contextData - Context to save
+ * @returns {Object} Saved context
+ */
+async function saveConversationContext(userId, contextData) {
+  try {
+    const {
+      contextType,
+      contextKey,
+      contextSummary,
+      contextDetails = {},
+      sessionId,
+      messageId,
+      expiresInDays = null,
+    } = contextData;
+
+    const expiresAt = expiresInDays
+      ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+
+    const { data, error } = await supabaseAdmin
+      .from("conversation_context")
+      .upsert(
+        {
+          user_id: userId,
+          context_type: contextType,
+          context_key: contextKey,
+          context_summary: contextSummary,
+          context_data: contextDetails,
+          source_session_id: sessionId,
+          source_message_ids: messageId ? [messageId] : [],
+          expires_at: expiresAt,
+          is_active: true,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,context_type,context_key",
+        },
+      )
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[AI Chat] Error saving conversation context:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("[AI Chat] Error in saveConversationContext:", error);
+    return null;
+  }
+}
+
+/**
+ * Mark a context as referenced (updates last_referenced_at)
+ *
+ * @param {string} contextId - Context ID
+ */
+async function markContextReferenced(contextId) {
+  try {
+    await supabaseAdmin
+      .from("conversation_context")
+      .update({
+        last_referenced_at: new Date().toISOString(),
+        reference_count: supabaseAdmin.rpc("increment_context_reference", {
+          context_id: contextId,
+        }),
+      })
+      .eq("id", contextId);
+  } catch (error) {
+    // Non-critical, just log
+    console.log(
+      "[AI Chat] Could not mark context as referenced:",
+      error.message,
+    );
+  }
+}
+
+/**
+ * Get pending follow-ups for a user
+ *
+ * @param {string} userId - User ID
+ * @returns {Array} Pending follow-ups
+ */
+async function getPendingFollowups(userId) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("ai_followups")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .lte("scheduled_for", new Date().toISOString())
+      .order("scheduled_for", { ascending: true })
+      .limit(3);
+
+    if (error) {
+      console.error("[AI Chat] Error fetching follow-ups:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("[AI Chat] Error in getPendingFollowups:", error);
+    return [];
+  }
+}
+
+/**
+ * Create a follow-up for later
+ *
+ * @param {string} userId - User ID
+ * @param {Object} followupData - Follow-up details
+ * @returns {Object} Created follow-up
+ */
+async function createFollowup(userId, followupData) {
+  try {
+    const {
+      followupType,
+      followupPrompt,
+      context = {},
+      scheduledFor,
+      sourceType = null,
+      sourceId = null,
+    } = followupData;
+
+    const { data, error } = await supabaseAdmin
+      .from("ai_followups")
+      .insert({
+        user_id: userId,
+        followup_type: followupType,
+        followup_prompt: followupPrompt,
+        context,
+        scheduled_for: scheduledFor,
+        source_type: sourceType,
+        source_id: sourceId,
+        status: "pending",
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[AI Chat] Error creating follow-up:", error);
+      return null;
+    }
+
+    console.log(
+      `[AI Chat] Created follow-up for user ${userId}: ${followupType}`,
+    );
+    return data;
+  } catch (error) {
+    console.error("[AI Chat] Error in createFollowup:", error);
+    return null;
+  }
+}
+
+/**
+ * Mark a follow-up as triggered
+ *
+ * @param {string} followupId - Follow-up ID
+ */
+async function markFollowupTriggered(followupId) {
+  try {
+    await supabaseAdmin
+      .from("ai_followups")
+      .update({
+        status: "triggered",
+        triggered_at: new Date().toISOString(),
+      })
+      .eq("id", followupId);
+  } catch (error) {
+    console.error("[AI Chat] Error marking follow-up triggered:", error);
+  }
+}
+
+/**
+ * Complete a follow-up with response
+ *
+ * @param {string} followupId - Follow-up ID
+ * @param {string} messageId - Response message ID
+ * @param {string} responseSummary - Summary of user's response
+ */
+async function _completeFollowup(followupId, messageId, responseSummary) {
+  try {
+    await supabaseAdmin
+      .from("ai_followups")
+      .update({
+        status: "completed",
+        response_message_id: messageId,
+        response_summary: responseSummary,
+      })
+      .eq("id", followupId);
+  } catch (error) {
+    console.error("[AI Chat] Error completing follow-up:", error);
+  }
+}
+
+/**
+ * Build conversation memory prompt from active contexts
+ *
+ * @param {Array} contexts - Active conversation contexts
+ * @param {Array} followups - Pending follow-ups
+ * @returns {string} Memory prompt for AI
+ */
+function buildConversationMemoryPrompt(contexts, followups) {
+  const parts = [];
+
+  if (contexts.length > 0) {
+    parts.push("## Conversation Memory");
+    parts.push("Remember these ongoing topics from previous conversations:");
+
+    for (const ctx of contexts) {
+      const typeLabel =
+        {
+          injury_followup: "🩹 Injury",
+          goal_tracking: "🎯 Goal",
+          program_progress: "📋 Program",
+          technique_focus: "⚡ Technique",
+          recovery_protocol: "💚 Recovery",
+          general_context: "💬 Context",
+        }[ctx.context_type] || "📝 Note";
+
+      parts.push(`- ${typeLabel}: ${ctx.context_summary}`);
+    }
+    parts.push("");
+  }
+
+  if (followups.length > 0) {
+    parts.push("## Pending Check-ins");
+    parts.push("The athlete has these pending follow-ups to address:");
+
+    for (const followup of followups) {
+      parts.push(`- ${followup.followup_prompt}`);
+    }
+    parts.push("");
+    parts.push(
+      "Consider naturally incorporating these check-ins into your response if relevant.",
+    );
+  }
+
+  return parts.join("\n");
+}
+
+/**
+ * Determine if the query should create a conversation context
+ *
+ * @param {string} query - User query
+ * @param {Object} classification - Classification result
+ * @param {Object} userContext - User context
+ * @returns {Object|null} Context to create, or null
+ */
+function determineContextToCreate(query, classification, userContext) {
+  const { intent } = classification;
+  const lowerQuery = query.toLowerCase();
+
+  // Injury-related context
+  if (
+    intent === "pain_injury" ||
+    classification.entities?.injuries?.length > 0 ||
+    classification.entities?.bodyParts?.length > 0
+  ) {
+    const bodyPart = classification.entities?.bodyParts?.[0] || "general";
+    const injury = classification.entities?.injuries?.[0] || "discomfort";
+
+    return {
+      contextType: "injury_followup",
+      contextKey: `${bodyPart}_${injury}_${Date.now()}`,
+      contextSummary: `Reported ${injury} in ${bodyPart}`,
+      contextDetails: {
+        bodyPart,
+        injury,
+        reportedAt: new Date().toISOString(),
+        originalQuery: query.substring(0, 200),
+      },
+      expiresInDays: 14, // Injury contexts expire after 2 weeks
+      createFollowup: {
+        type: "injury_check",
+        prompt: `How's your ${bodyPart} feeling today? Any improvement since you mentioned the ${injury}?`,
+        delayDays: 2,
+      },
+    };
+  }
+
+  // Technique focus context
+  if (intent === "technique_correction") {
+    const technique =
+      lowerQuery.match(/(?:my|the)\s+(\w+(?:\s+\w+)?)/)?.[1] || "technique";
+
+    return {
+      contextType: "technique_focus",
+      contextKey: `technique_${technique.replace(/\s+/g, "_")}_${Date.now()}`,
+      contextSummary: `Working on improving ${technique}`,
+      contextDetails: {
+        technique,
+        startedAt: new Date().toISOString(),
+      },
+      expiresInDays: 30,
+    };
+  }
+
+  // Recovery readiness context
+  if (
+    intent === "recovery_readiness" &&
+    userContext.dailyState?.pain_level >= 5
+  ) {
+    return {
+      contextType: "recovery_protocol",
+      contextKey: `recovery_${Date.now()}`,
+      contextSummary: `Monitoring recovery - pain level ${userContext.dailyState.pain_level}/10`,
+      contextDetails: {
+        painLevel: userContext.dailyState.pain_level,
+        fatigueLevel: userContext.dailyState.fatigue_level,
+        checkedAt: new Date().toISOString(),
+      },
+      expiresInDays: 7,
+      createFollowup: {
+        type: "recovery_check",
+        prompt: "How are you feeling today? Is the pain or fatigue any better?",
+        delayDays: 1,
+      },
+    };
+  }
+
+  // Plan request context
+  if (intent === "plan_request") {
+    return {
+      contextType: "program_progress",
+      contextKey: `program_${Date.now()}`,
+      contextSummary: "Started a new training program",
+      contextDetails: {
+        requestedAt: new Date().toISOString(),
+        originalQuery: query.substring(0, 200),
+      },
+      expiresInDays: 30,
+      createFollowup: {
+        type: "goal_checkin",
+        prompt:
+          "How's the training program going? Any exercises working well or causing issues?",
+        delayDays: 7,
+      },
+    };
+  }
+
+  return null;
+}
+
+// =====================================================
+// PHASE 3: USER PREFERENCE LEARNING
+// =====================================================
+
+/**
+ * Get or create user AI preferences
+ *
+ * @param {string} userId - User ID
+ * @returns {Object} User preferences
+ */
+async function getUserAIPreferences(userId) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("user_ai_preferences")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("[AI Chat] Error fetching user preferences:", error);
+    }
+
+    if (data) {
+      return data;
+    }
+
+    // Create default preferences if none exist
+    const defaultPreferences = {
+      user_id: userId,
+      preferred_detail_level: "moderate",
+      preferred_tone: "supportive",
+      include_citations: true,
+      include_warnings: true,
+      favorite_topics: [],
+      avoided_topics: [],
+      total_interactions: 0,
+      helpful_responses: 0,
+      dismissed_responses: 0,
+      completed_sessions: 0,
+    };
+
+    const { data: newPrefs } = await supabaseAdmin
+      .from("user_ai_preferences")
+      .insert(defaultPreferences)
+      .select()
+      .single();
+
+    return newPrefs || defaultPreferences;
+  } catch (error) {
+    console.error("[AI Chat] Error in getUserAIPreferences:", error);
+    return null;
+  }
+}
+
+/**
+ * Update user preferences based on interaction
+ * Learns from user behavior to improve future responses
+ *
+ * @param {string} userId - User ID
+ * @param {Object} interaction - Interaction data
+ */
+async function updateUserPreferences(userId, interaction) {
+  try {
+    const {
+      intent,
+      topic,
+      wasHelpful,
+      wasDismissed,
+      sessionCompleted,
+      position,
+    } = interaction;
+
+    // Get current preferences
+    const prefs = await getUserAIPreferences(userId);
+    if (!prefs) {
+      return;
+    }
+
+    const updates = {
+      total_interactions: (prefs.total_interactions || 0) + 1,
+      last_topic: topic || intent,
+      last_interaction_at: new Date().toISOString(),
+    };
+
+    // Track helpful/dismissed responses
+    if (wasHelpful === true) {
+      updates.helpful_responses = (prefs.helpful_responses || 0) + 1;
+    }
+    if (wasDismissed === true) {
+      updates.dismissed_responses = (prefs.dismissed_responses || 0) + 1;
+    }
+    if (sessionCompleted === true) {
+      updates.completed_sessions = (prefs.completed_sessions || 0) + 1;
+    }
+
+    // Update favorite topics (track frequency)
+    if (topic && !wasDismissed) {
+      const currentFavorites = prefs.favorite_topics || [];
+      if (!currentFavorites.includes(topic) && currentFavorites.length < 10) {
+        updates.favorite_topics = [...currentFavorites, topic];
+      }
+    }
+
+    // Track avoided topics (dismissed multiple times)
+    if (topic && wasDismissed) {
+      const currentAvoided = prefs.avoided_topics || [];
+      if (!currentAvoided.includes(topic) && currentAvoided.length < 10) {
+        updates.avoided_topics = [...currentAvoided, topic];
+      }
+    }
+
+    // Update position if provided and not already set
+    if (position && !prefs.primary_position) {
+      updates.primary_position = position;
+    }
+
+    await supabaseAdmin
+      .from("user_ai_preferences")
+      .update(updates)
+      .eq("user_id", userId);
+  } catch (error) {
+    console.error("[AI Chat] Error updating user preferences:", error);
+  }
+}
+
+/**
+ * Get position-specific focus areas for personalized recommendations
+ *
+ * @param {string} position - User's position
+ * @returns {Object} Position-specific focus areas
+ */
+function getPositionFocusAreas(position) {
+  const focusAreas = {
+    QB: {
+      primary: [
+        "arm_care",
+        "footwork",
+        "pocket_presence",
+        "throwing_mechanics",
+      ],
+      secondary: ["decision_making", "leadership", "field_vision"],
+      recovery: ["arm_recovery", "hip_mobility", "shoulder_stability"],
+    },
+    WR: {
+      primary: ["route_running", "catching", "acceleration", "separation"],
+      secondary: ["blocking", "field_awareness", "contested_catches"],
+      recovery: ["hip_flexibility", "ankle_stability", "hamstring_care"],
+    },
+    RB: {
+      primary: ["agility", "vision", "cutting", "ball_security"],
+      secondary: ["receiving", "pass_protection", "endurance"],
+      recovery: ["knee_stability", "hip_mobility", "core_strength"],
+    },
+    TE: {
+      primary: ["blocking", "receiving", "route_running", "strength"],
+      secondary: ["field_awareness", "versatility"],
+      recovery: ["shoulder_stability", "hip_mobility", "back_care"],
+    },
+    OL: {
+      primary: ["blocking", "footwork", "hand_placement", "strength"],
+      secondary: ["communication", "endurance"],
+      recovery: ["hip_mobility", "knee_stability", "shoulder_care"],
+    },
+    DL: {
+      primary: ["pass_rush", "run_stopping", "hand_fighting", "explosiveness"],
+      secondary: ["conditioning", "technique_variety"],
+      recovery: ["shoulder_stability", "back_care", "hip_mobility"],
+    },
+    LB: {
+      primary: ["tackling", "coverage", "blitzing", "field_reading"],
+      secondary: ["leadership", "versatility"],
+      recovery: ["knee_stability", "hip_mobility", "shoulder_care"],
+    },
+    DB: {
+      primary: ["coverage", "ball_skills", "tackling", "speed"],
+      secondary: ["film_study", "communication", "return_game"],
+      recovery: ["hip_flexibility", "hamstring_care", "ankle_stability"],
+    },
+    K: {
+      primary: ["kicking_mechanics", "consistency", "mental_focus"],
+      secondary: ["leg_strength", "flexibility"],
+      recovery: ["hip_flexibility", "leg_recovery", "back_care"],
+    },
+    P: {
+      primary: ["punting_mechanics", "hang_time", "directional_punting"],
+      secondary: ["leg_strength", "consistency"],
+      recovery: ["hip_flexibility", "leg_recovery", "core_stability"],
+    },
+  };
+
+  // Default for general/unknown positions
+  const defaultFocus = {
+    primary: ["speed", "agility", "conditioning", "technique"],
+    secondary: ["strength", "flexibility", "mental_focus"],
+    recovery: ["full_body_mobility", "sleep", "nutrition"],
+  };
+
+  return focusAreas[position?.toUpperCase()] || defaultFocus;
+}
+
+/**
+ * Build personalized prompt additions based on user preferences
+ *
+ * @param {Object} preferences - User AI preferences
+ * @param {Object} userContext - User context
+ * @returns {string} Personalization prompt addition
+ */
+function buildPersonalizationPrompt(preferences, userContext) {
+  const additions = [];
+
+  if (!preferences) {
+    return "";
+  }
+
+  // Adjust detail level
+  if (preferences.preferred_detail_level === "brief") {
+    additions.push("Keep responses concise and to the point.");
+  } else if (preferences.preferred_detail_level === "detailed") {
+    additions.push("Provide comprehensive, detailed explanations.");
+  }
+
+  // Adjust tone
+  if (preferences.preferred_tone === "professional") {
+    additions.push("Use a professional, technical tone.");
+  } else if (preferences.preferred_tone === "casual") {
+    additions.push("Use a friendly, casual tone.");
+  }
+
+  // Position-specific focus
+  if (userContext.position) {
+    const focus = getPositionFocusAreas(userContext.position);
+    additions.push(
+      `Consider position-specific needs for ${userContext.position}: focus on ${focus.primary.slice(0, 2).join(", ")}.`,
+    );
+  }
+
+  // Consider favorite topics
+  if (preferences.favorite_topics?.length > 0) {
+    additions.push(
+      `User frequently asks about: ${preferences.favorite_topics.slice(0, 3).join(", ")}.`,
+    );
+  }
+
+  // Consider avoided topics
+  if (preferences.avoided_topics?.length > 0) {
+    additions.push(
+      `User has shown less interest in: ${preferences.avoided_topics.slice(0, 3).join(", ")}.`,
+    );
+  }
+
+  return additions.length > 0
+    ? `\n\nPersonalization notes:\n${additions.map((a) => `- ${a}`).join("\n")}`
+    : "";
+}
+
+// =====================================================
+// PHASE 1: ENHANCED STATE GATING
+// =====================================================
+
+/**
+ * Build comprehensive athlete state gates for safety decisions
+ * Combines ACWR, injuries, age, daily state, and upcoming games
+ *
+ * @param {string} userId - User ID
+ * @returns {Object} State gates with risk escalation level
+ */
+async function buildAthleteStateGates(userId) {
+  const gates = {
+    acwr: null,
+    injuries: [],
+    ageGroup: "adult",
+    ageYears: null,
+    dailyState: null,
+    upcomingGame: null,
+    position: null,
+    userName: null, // Athlete's first name for personalization
+    riskEscalation: 0, // 0-3 levels to add to base risk
+    escalationReasons: [],
+  };
+
+  try {
+    // 1. ACWR (existing calculation)
+    gates.acwr = await calculateUserACWR(userId);
+
+    // 2. Recent injuries (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const { data: injuries } = await supabaseAdmin
+      .from("injuries")
+      .select("id, type, severity, body_part, status, start_date")
+      .eq("user_id", userId)
+      .in("status", ["active", "recovering", "monitoring"])
+      .gte("start_date", thirtyDaysAgo.toISOString().split("T")[0])
+      .order("severity", { ascending: false });
+    gates.injuries = injuries || [];
+
+    // 3. Age group from view
+    const { data: ageData } = await supabaseAdmin
+      .from("user_age_groups")
+      .select("age_group, age_years")
+      .eq("user_id", userId)
+      .single();
+
+    if (ageData) {
+      gates.ageGroup = ageData.age_group || "adult";
+      gates.ageYears = ageData.age_years;
+    }
+
+    // 4. Today's daily state (readiness check)
+    const today = new Date().toISOString().split("T")[0];
+    const { data: dailyState } = await supabaseAdmin
+      .from("athlete_daily_state")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("state_date", today)
+      .single();
+    gates.dailyState = dailyState;
+
+    // 5. Upcoming game (next 48 hours)
+    const twoDaysFromNow = new Date();
+    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
+
+    const { data: upcomingGame } = await supabaseAdmin
+      .from("games")
+      .select("game_id, game_date, opponent_team_name, game_time")
+      .gte("game_date", today)
+      .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+      .order("game_date", { ascending: true })
+      .limit(1)
+      .single();
+    gates.upcomingGame = upcomingGame;
+
+    // 6. Get user position and name
+    const { data: userProfile } = await supabaseAdmin
+      .from("users")
+      .select("position, name")
+      .eq("id", userId)
+      .single();
+    gates.position = userProfile?.position;
+    // Extract first name for personalized conversation
+    if (userProfile?.name) {
+      gates.userName = userProfile.name.split(" ")[0];
+    }
+
+    // Calculate risk escalation (0-3 levels)
+    // Each factor can add to the escalation
+
+    // ACWR in danger/critical zone
+    if (
+      gates.acwr?.riskZone === "danger" ||
+      gates.acwr?.riskZone === "critical"
+    ) {
+      gates.riskEscalation += 1;
+      gates.escalationReasons.push(
+        `ACWR ${gates.acwr.acwr} (${gates.acwr.riskZone} zone)`,
+      );
+    }
+
+    // Severe injury (7+ severity)
+    if (gates.injuries.some((i) => i.severity >= 7)) {
+      gates.riskEscalation += 1;
+      const severeInjury = gates.injuries.find((i) => i.severity >= 7);
+      gates.escalationReasons.push(
+        `Severe injury: ${severeInjury.type || severeInjury.body_part} (severity ${severeInjury.severity})`,
+      );
+    }
+
+    // High pain reported today (7+)
+    if (gates.dailyState?.pain_level >= 7) {
+      gates.riskEscalation += 1;
+      gates.escalationReasons.push(
+        `High pain level today: ${gates.dailyState.pain_level}/10`,
+      );
+    }
+
+    // Youth athletes always get extra caution
+    if (gates.ageGroup === "youth") {
+      gates.riskEscalation += 1;
+      gates.escalationReasons.push(
+        `Youth athlete (age ${gates.ageYears || "<16"})`,
+      );
+    }
+
+    console.log(`[AI Chat] State gates built for user ${userId}:`, {
+      ageGroup: gates.ageGroup,
+      acwrZone: gates.acwr?.riskZone,
+      injuryCount: gates.injuries.length,
+      dailyPain: gates.dailyState?.pain_level,
+      riskEscalation: gates.riskEscalation,
+      escalationReasons: gates.escalationReasons,
+    });
+  } catch (error) {
+    console.error("[AI Chat] Error building state gates:", error);
+    // Return partial gates, don't block on error
+  }
+
+  return gates;
+}
+
+// =====================================================
+// PHASE 3: YOUTH HELPER FUNCTIONS
+// =====================================================
+
+/**
+ * Get youth-specific settings for a user
+ *
+ * @param {string} userId - User ID
+ * @returns {Object|null} Youth settings or null if not found
+ */
+async function getYouthSettings(userId) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("youth_athlete_settings")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("[AI Chat] Error fetching youth settings:", error);
+    }
+
+    return data || null;
+  } catch (error) {
+    console.error("[AI Chat] Error in getYouthSettings:", error);
+    return null;
+  }
+}
+
+/**
+ * Get conversation history for pattern analysis
+ *
+ * @param {string} sessionId - Chat session ID
+ * @param {number} limit - Max messages to retrieve
+ * @returns {Array} Conversation history
+ */
+async function getConversationHistory(sessionId, limit = 10) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("ai_messages")
+      .select("role, content, created_at, intent_type, risk_level")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("[AI Chat] Error fetching conversation history:", error);
+      return [];
+    }
+
+    // Return in chronological order
+    return (data || []).reverse();
+  } catch (error) {
+    console.error("[AI Chat] Error in getConversationHistory:", error);
+    return [];
+  }
+}
+
+/**
+ * Create parent notification for youth athlete interactions
+ *
+ * @param {string} youthId - Youth user ID
+ * @param {string} notificationType - Type of notification
+ * @param {string} title - Notification title
+ * @param {string} summary - Notification summary
+ * @param {string} sourceId - Source message/item ID
+ */
+async function createYouthParentNotification(
+  youthId,
+  notificationType,
+  title,
+  summary,
+  sourceId = null,
+) {
+  try {
+    // Get verified parents for this youth
+    const { data: parents, error: parentsError } = await supabaseAdmin
+      .from("parent_guardian_links")
+      .select(
+        "parent_id, can_view_ai_chats, alert_on_high_risk, alert_on_supplement_topics, alert_on_injury_topics",
+      )
+      .eq("youth_id", youthId)
+      .eq("status", "verified");
+
+    if (parentsError || !parents || parents.length === 0) {
+      console.log("[AI Chat] No verified parents found for youth notification");
+      return;
+    }
+
+    // Determine priority based on notification type
+    let priority = "medium";
+    if (
+      notificationType === "blocked_topic" ||
+      notificationType === "high_risk_query"
+    ) {
+      priority = "high";
+    } else if (notificationType === "safety_concern") {
+      priority = "urgent";
+    }
+
+    // Create notification for each eligible parent
+    const notifications = [];
+    for (const parent of parents) {
+      // Check if parent wants this type of notification
+      if (
+        notificationType === "high_risk_query" &&
+        !parent.alert_on_high_risk
+      ) {
+        continue;
+      }
+      if (
+        notificationType === "supplement_topic" &&
+        !parent.alert_on_supplement_topics
+      ) {
+        continue;
+      }
+      if (
+        notificationType === "injury_topic" &&
+        !parent.alert_on_injury_topics
+      ) {
+        continue;
+      }
+      if (!parent.can_view_ai_chats) {
+        continue;
+      }
+
+      notifications.push({
+        parent_id: parent.parent_id,
+        youth_id: youthId,
+        notification_type: notificationType,
+        priority,
+        title,
+        summary,
+        source_type: sourceId ? "ai_message" : null,
+        source_id: sourceId,
+        details: {
+          timestamp: new Date().toISOString(),
+        },
+        status: "unread",
+        delivery_method: "in_app",
+        delivery_status: "delivered",
+        delivered_at: new Date().toISOString(),
+      });
+    }
+
+    if (notifications.length > 0) {
+      const { error: insertError } = await supabaseAdmin
+        .from("parent_notifications")
+        .insert(notifications);
+
+      if (insertError) {
+        console.error(
+          "[AI Chat] Error creating parent notifications:",
+          insertError,
+        );
+      } else {
+        console.log(
+          `[AI Chat] Created ${notifications.length} parent notification(s) for youth ${youthId}`,
+        );
+      }
+    }
+  } catch (error) {
+    console.error("[AI Chat] Error in createYouthParentNotification:", error);
+  }
+}
+
+/**
+ * Save classification history for learning and analysis
+ *
+ * @param {string} messageId - AI message ID
+ * @param {string} userId - User ID
+ * @param {string} sessionId - Session ID
+ * @param {string} query - User query
+ * @param {Object} classification - Enhanced classification result
+ */
+async function saveClassificationHistory(
+  messageId,
+  userId,
+  sessionId,
+  query,
+  classification,
+) {
+  try {
+    const historyRecord = {
+      message_id: messageId,
+      user_id: userId,
+      session_id: sessionId,
+      query_text: query,
+      query_length: query.length,
+      detected_intent: classification.intent,
+      intent_confidence: classification.signals?.keyword?.confidence || null,
+      detected_tier:
+        classification.riskLevel === RISK_LEVELS.HIGH
+          ? 3
+          : classification.riskLevel === RISK_LEVELS.MEDIUM
+            ? 2
+            : 1,
+      tier_confidence: classification.confidence,
+      keyword_signals: classification.signals?.keyword || {},
+      context_signals: classification.signals?.context || {},
+      pattern_signals: classification.signals?.pattern || {},
+      final_risk_level: classification.riskLevel,
+      escalation_applied: classification.escalated || false,
+      escalation_reasons: classification.escalationReasons || [],
+      is_youth_user: classification.isYouthUser || false,
+      youth_restrictions_applied:
+        classification.youthRestrictions?.restrictionsApplied || [],
+      parent_notification_triggered:
+        classification.youthRestrictions?.notifyParent || false,
+      processing_time_ms: classification.processingTimeMs,
+      model_version: "v3.0",
+    };
+
+    const { error } = await supabaseAdmin
+      .from("classification_history")
+      .insert(historyRecord);
+
+    if (error) {
+      console.error("[AI Chat] Error saving classification history:", error);
+    }
+  } catch (error) {
+    console.error("[AI Chat] Error in saveClassificationHistory:", error);
+  }
+}
+
+// =====================================================
+// STATE GATE ESCALATION
+// =====================================================
+
+/**
+ * Apply state gate escalation to base classification
+ * Escalates risk level based on athlete's current state
+ *
+ * @param {Object} baseClassification - Original risk classification
+ * @param {Object} stateGates - Athlete state gates
+ * @returns {Object} Modified classification with escalation applied
+ */
+function applyStateGateEscalation(baseClassification, stateGates) {
+  let escalatedRisk = baseClassification.riskLevel;
+  const escalationReasons = [...(stateGates.escalationReasons || [])];
+
+  // Escalate based on cumulative risk factors
+  if (stateGates.riskEscalation >= 2 && escalatedRisk === RISK_LEVELS.LOW) {
+    escalatedRisk = RISK_LEVELS.MEDIUM;
+    escalationReasons.push("Elevated to MEDIUM due to multiple risk factors");
+  }
+  if (stateGates.riskEscalation >= 3 && escalatedRisk === RISK_LEVELS.MEDIUM) {
+    escalatedRisk = RISK_LEVELS.HIGH;
+    escalationReasons.push("Elevated to HIGH due to critical risk state");
+  }
+
+  // Youth-specific escalations
+  if (stateGates.ageGroup === "youth") {
+    // Supplement/medical topics always HIGH for youth
+    if (
+      baseClassification.intent === INTENT_TYPES.DOSAGE ||
+      baseClassification.intent === "supplement_medical"
+    ) {
+      escalatedRisk = RISK_LEVELS.HIGH;
+      escalationReasons.push(
+        "Youth athlete - supplement/dosage topics require guardian/coach approval",
+      );
+    }
+
+    // Pain/injury topics elevated for youth
+    if (
+      baseClassification.intent === "pain_injury" &&
+      escalatedRisk === RISK_LEVELS.LOW
+    ) {
+      escalatedRisk = RISK_LEVELS.MEDIUM;
+      escalationReasons.push(
+        "Youth athlete - injury topics require extra caution",
+      );
+    }
+  }
+
+  // Game day proximity warning
+  if (stateGates.upcomingGame) {
+    const gameDate = new Date(stateGates.upcomingGame.game_date);
+    const today = new Date();
+    const daysUntilGame = Math.ceil((gameDate - today) / (1000 * 60 * 60 * 24));
+
+    if (daysUntilGame <= 1 && stateGates.dailyState?.pain_level >= 5) {
+      if (escalatedRisk === RISK_LEVELS.LOW) {
+        escalatedRisk = RISK_LEVELS.MEDIUM;
+      }
+      escalationReasons.push(
+        `Game in ${daysUntilGame} day(s) with pain level ${stateGates.dailyState.pain_level}`,
+      );
+    }
+  }
+
+  const wasEscalated = escalatedRisk !== baseClassification.riskLevel;
+
+  if (wasEscalated) {
+    console.log(
+      `[AI Chat] Risk escalated from ${baseClassification.riskLevel} to ${escalatedRisk}:`,
+      escalationReasons,
+    );
+  }
+
+  return {
+    ...baseClassification,
+    riskLevel: escalatedRisk,
+    originalRiskLevel: baseClassification.riskLevel,
+    stateGateEscalation: wasEscalated,
+    escalationReasons,
+    stateGates,
+  };
+}
+
 /**
  * Apply ACWR safety override to classification
  * Escalates risk level if athlete is in danger zone and asking about high-intensity training
- * 
+ *
  * @param {Object} classification - Original risk classification
  * @param {Object} userContext - User context with ACWR data
  * @param {string} query - Original user query
  * @returns {Object} Modified classification with ACWR override if applicable
  */
 function applyACWRSafetyOverride(classification, userContext, query) {
-  const {acwr} = userContext;
-  
+  const { acwr } = userContext;
+
   // No override needed if:
   // - No ACWR data available
   // - ACWR allows high-intensity recommendations
@@ -331,7 +1473,9 @@ function applyACWRSafetyOverride(classification, userContext, query) {
   }
 
   // ACWR SAFETY OVERRIDE: Block high-intensity recommendations
-  console.log(`[AI Chat] ACWR SAFETY OVERRIDE: Athlete ACWR is ${acwr.acwr} (${acwr.riskZone}), blocking high-intensity recommendation`);
+  console.log(
+    `[AI Chat] ACWR SAFETY OVERRIDE: Athlete ACWR is ${acwr.acwr} (${acwr.riskZone}), blocking high-intensity recommendation`,
+  );
 
   return {
     ...classification,
@@ -345,14 +1489,107 @@ function applyACWRSafetyOverride(classification, userContext, query) {
 }
 
 /**
+ * Extract meaningful search keywords from a query
+ * Handles nutrition topics, supplements, minerals, etc.
+ */
+function extractSearchKeywords(query) {
+  const lowerQuery = query.toLowerCase();
+
+  // Nutrition/supplement keywords mapping
+  const nutritionKeywords = {
+    iron: ["iron", "mineral", "nutrition", "supplement", "anemia", "ferrous"],
+    vitamin: ["vitamin", "nutrition", "supplement"],
+    protein: ["protein", "nutrition", "muscle", "recovery"],
+    creatine: ["creatine", "supplement", "performance"],
+    caffeine: ["caffeine", "supplement", "energy", "pre-workout"],
+    carb: ["carbohydrate", "nutrition", "energy", "fuel"],
+    hydrat: ["hydration", "water", "electrolyte", "fluid"],
+    calcium: ["calcium", "mineral", "bone", "nutrition"],
+    magnesium: ["magnesium", "mineral", "recovery", "nutrition"],
+    zinc: ["zinc", "mineral", "immune", "nutrition"],
+    omega: ["omega", "fish oil", "fat", "nutrition"],
+    "pre-game": ["pre-game", "nutrition", "meal", "eating"],
+    "post-game": ["post-game", "recovery", "nutrition", "refuel"],
+    eat: ["nutrition", "meal", "diet", "eating"],
+    food: ["nutrition", "meal", "diet", "eating"],
+    diet: ["nutrition", "meal", "diet", "eating"],
+    supplement: ["supplement", "nutrition", "vitamin", "mineral"],
+  };
+
+  // Check for nutrition-related terms
+  const expandedKeywords = new Set();
+  for (const [keyword, expansions] of Object.entries(nutritionKeywords)) {
+    if (lowerQuery.includes(keyword)) {
+      expansions.forEach((exp) => expandedKeywords.add(exp));
+    }
+  }
+
+  // If we found nutrition keywords, return them
+  if (expandedKeywords.size > 0) {
+    return Array.from(expandedKeywords);
+  }
+
+  // Otherwise extract significant words (3+ chars, not common words)
+  const stopWords = new Set([
+    "the",
+    "and",
+    "for",
+    "with",
+    "how",
+    "what",
+    "can",
+    "should",
+    "would",
+    "could",
+    "this",
+    "that",
+    "have",
+    "are",
+    "was",
+    "were",
+    "been",
+    "being",
+    "will",
+    "does",
+    "did",
+    "about",
+    "need",
+    "want",
+    "know",
+    "take",
+    "taking",
+  ]);
+  const words = lowerQuery
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length >= 3 && !stopWords.has(w));
+
+  return words.length > 0 ? words : [query];
+}
+
+/**
  * Search knowledge base for relevant content
  */
-async function searchKnowledgeBase(query, riskLevel, limit = 5) {
+async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
   try {
+    // Extract meaningful keywords from the query
+    const keywords = extractSearchKeywords(query);
+    console.log("[Knowledge Search] Query:", query, "Keywords:", keywords);
+
+    // Build OR conditions for each keyword
+    const searchConditions = keywords
+      .slice(0, 5) // Limit to 5 keywords
+      .map(
+        (kw) =>
+          `title.ilike.%${kw}%,content.ilike.%${kw}%,category.ilike.%${kw}%,subcategory.ilike.%${kw}%`,
+      )
+      .join(",");
+
     // Search curated knowledge base using correct column names
     const { data: entries, error } = await supabaseAdmin
       .from("knowledge_base_entries")
-      .select(`
+      .select(
+        `
         id,
         title,
         content,
@@ -362,20 +1599,52 @@ async function searchKnowledgeBase(query, riskLevel, limit = 5) {
         evidence_grade,
         risk_level,
         requires_professional,
-        source_quality_score
-      `)
-      .or(`title.ilike.%${query}%,content.ilike.%${query}%,category.ilike.%${query}%`)
+        source_quality_score,
+        source_url
+      `,
+      )
+      .or(searchConditions)
       .eq("is_active", true)
       .order("source_quality_score", { ascending: false, nullsFirst: false })
-      .limit(limit * 2); // Get more, then filter by evidence
+      .limit(limit * 3); // Get more, then filter and rank
 
     if (error) {
       console.error("Knowledge base search error:", error);
       return [];
     }
 
+    console.log("[Knowledge Search] Found entries:", entries?.length || 0);
+
+    // Score entries by relevance (how many keywords match)
+    const scoredEntries = (entries || []).map((e) => {
+      const text =
+        `${e.title} ${e.content} ${e.category} ${e.subcategory}`.toLowerCase();
+      let matchScore = 0;
+      for (const kw of keywords) {
+        if (text.includes(kw.toLowerCase())) {
+          // Title matches are worth more
+          if (e.title?.toLowerCase().includes(kw.toLowerCase())) {
+            matchScore += 3;
+          } else if (e.category?.toLowerCase().includes(kw.toLowerCase())) {
+            matchScore += 2;
+          } else {
+            matchScore += 1;
+          }
+        }
+      }
+      return { ...e, matchScore };
+    });
+
+    // Sort by match score first, then by quality score
+    scoredEntries.sort((a, b) => {
+      if (b.matchScore !== a.matchScore) {
+        return b.matchScore - a.matchScore;
+      }
+      return (b.source_quality_score || 0) - (a.source_quality_score || 0);
+    });
+
     // Transform to standard format
-    const sources = (entries || []).map((e) => ({
+    const sources = scoredEntries.map((e) => ({
       id: e.id,
       content: e.content,
       topic: e.title,
@@ -386,6 +1655,8 @@ async function searchKnowledgeBase(query, riskLevel, limit = 5) {
       evidence_grade: e.evidence_grade || "C",
       risk_level: e.risk_level,
       requires_professional: e.requires_professional,
+      url: e.source_url, // Include URL for citations
+      source_url: e.source_url,
     }));
 
     // Filter by evidence grade based on risk level
@@ -422,18 +1693,36 @@ void mapEvidenceStrength;
 /**
  * Generate AI response using Groq LLM (FREE tier: 14,400 requests/day)
  * Falls back to knowledge base synthesis if Groq is not configured
+ *
+ * @param {string} query - User's question
+ * @param {Array} knowledge - Knowledge base entries
+ * @param {Object} userContext - Full user context including conversation history
+ * @param {string} riskLevel - Risk classification
+ * @returns {Promise<Object>} - AI response with answer and metadata
  */
 async function generateAIResponse(query, knowledge, userContext, riskLevel) {
   // Check if Groq is configured
   if (isGroqConfigured()) {
     try {
-      console.log("[AI Chat] Using Groq LLM for response generation");
-      
+      console.log("[AI Chat] Using Groq LLM for conversational response");
+
+      // Extract conversation history from context if available
+      const conversationHistory = userContext.conversationHistory || [];
+
       const groqResponse = await generateCoachingResponse({
         query,
         riskLevel,
-        userContext,
+        userContext: {
+          ...userContext,
+          // Include athlete's name if available
+          athleteName: userContext.userName || null,
+          // Include daily state for readiness context
+          dailyState: userContext.dailyState || null,
+          // Include upcoming game info
+          upcomingGame: userContext.upcomingGame || null,
+        },
         knowledgeSources: knowledge,
+        conversationHistory,
       });
 
       // Filter content based on risk level (additional safety layer)
@@ -446,38 +1735,64 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
         usage: groqResponse.usage,
       };
     } catch (error) {
-      console.error("[AI Chat] Groq API error, falling back to knowledge base:", error.message);
+      console.error(
+        "[AI Chat] Groq API error, falling back to knowledge base:",
+        error.message,
+      );
       // Fall through to knowledge base fallback
     }
   } else {
-    console.log("[AI Chat] Groq not configured, using knowledge base synthesis");
+    console.log(
+      "[AI Chat] Groq not configured, using knowledge base synthesis",
+    );
   }
 
-  // Fallback: Synthesize from knowledge base
+  // Fallback: Synthesize from knowledge base with conversational tone
   if (knowledge.length === 0) {
     return {
       answer:
-        "I don't have specific information about this topic in my knowledge base. " +
-        "For personalized advice, please consult with your coach or a qualified professional.",
+        "Hey, that's a great question! I don't have specific info on this in my playbook right now. " +
+        "I'd recommend checking with your coach or a sports medicine professional who can give you personalized guidance. " +
+        "\n\nIs there something else I can help you with in the meantime?",
       source: "fallback",
     };
   }
 
-  // Use the most relevant knowledge entry
+  // Use the most relevant knowledge entry with conversational wrapper
   const primarySource = knowledge[0];
-  let answer = primarySource.content;
+  let answer = "";
+
+  // Add conversational opening
+  const openings = [
+    "Great question! ",
+    "Good thinking! ",
+    "I'm glad you asked! ",
+    "Let me help you with that. ",
+  ];
+  answer += openings[Math.floor(Math.random() * openings.length)];
+
+  // Add the content
+  answer += primarySource.content;
 
   // Add personalization based on context
   if (userContext.position && riskLevel === RISK_LEVELS.LOW) {
-    answer += `\n\nAs a ${userContext.position}, you may want to focus on position-specific applications of this advice.`;
+    answer += `\n\nAs a ${userContext.position}, you'll want to pay extra attention to how this applies to your role on the field.`;
   }
 
-  if (userContext.injuries.length > 0 && riskLevel !== RISK_LEVELS.HIGH) {
+  if (
+    userContext.injuries &&
+    userContext.injuries.length > 0 &&
+    riskLevel !== RISK_LEVELS.HIGH
+  ) {
     const injuryNote = userContext.injuries
       .map((i) => i.type || i.body_part)
       .join(", ");
-    answer += `\n\n⚠️ Note: Given your current condition (${injuryNote}), please modify exercises as needed and consult your healthcare provider if symptoms persist.`;
+    answer += `\n\n⚠️ **Heads up:** Since you're dealing with ${injuryNote}, make sure to modify as needed. If anything doesn't feel right, ease off and check with your trainer.`;
   }
+
+  // Add conversational closing
+  answer +=
+    "\n\nDoes that help? Let me know if you want me to go deeper on any part of this!";
 
   // Filter content based on risk level
   answer = filterContent(answer, riskLevel);
@@ -488,66 +1803,183 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
   };
 }
 
+// =====================================================
+// EVIDENCE GRADE EXPLANATIONS (Phase 1)
+// =====================================================
+
+const EVIDENCE_GRADE_EXPLANATIONS = {
+  A: "Systematic review or meta-analysis of high-quality studies",
+  B: "Well-designed study with moderate sample size",
+  C: "Coaching best practice or limited research",
+  D: "Expert opinion or extrapolated evidence",
+};
+
+/**
+ * Add evidence grade explanation to response
+ * @param {Object} response - Response object with citations
+ * @returns {Object} Response with evidenceGradeExplanation added
+ */
+function addEvidenceExplanation(response) {
+  if (response.citations && response.citations.length > 0) {
+    const primaryGrade =
+      response.citations[0].evidence_grade ||
+      response.citations[0].evidenceGrade ||
+      "C";
+    response.evidenceGradeExplanation =
+      EVIDENCE_GRADE_EXPLANATIONS[primaryGrade] ||
+      EVIDENCE_GRADE_EXPLANATIONS["C"];
+  }
+  return response;
+}
+
+// =====================================================
+// SWAP PLAN RESPONSE (Phase 1)
+// =====================================================
+
+/**
+ * Generate swap plan response when ACWR blocks high-intensity
+ * Fetches recovery alternatives from knowledge base
+ *
+ * @param {string} query - Original user query
+ * @param {Object} classification - Classification with ACWR override data
+ * @param {Object} userContext - User context with stateGates
+ * @returns {Object} Supportive swap plan response with KB-sourced alternatives
+ */
+async function generateSwapPlanResponse(query, classification, userContext) {
+  const acwr = classification.acwrData;
+  const riskZone = acwr?.riskZone || "danger";
+  const position = userContext.position || "ALL";
+
+  // Fetch recovery alternatives from knowledge base
+  let alternatives = [];
+  try {
+    const { data: kbAlternatives } = await supabaseAdmin
+      .from("knowledge_base_entries")
+      .select(
+        "id, title, content, category, evidence_grade, source_type, intensity_level, position_relevance",
+      )
+      .eq("is_recovery_alternative", true)
+      .eq("is_active", true)
+      .order("source_quality_score", { ascending: false })
+      .limit(10);
+
+    if (kbAlternatives && kbAlternatives.length > 0) {
+      // Filter by position relevance if available
+      alternatives = kbAlternatives
+        .filter((a) => {
+          if (!a.position_relevance || a.position_relevance.length === 0) {
+            return true;
+          }
+          return (
+            a.position_relevance.includes(position) ||
+            a.position_relevance.includes("ALL")
+          );
+        })
+        .slice(0, 5);
+    }
+  } catch (error) {
+    console.error("[AI Chat] Error fetching recovery alternatives:", error);
+  }
+
+  // Build the swap plan response
+  let answer = `## Training Load Alert\n\n`;
+  answer += `Your current ACWR is **${acwr?.acwr || "elevated"}** (${riskZone} zone). `;
+  answer += `I need to prioritize your safety.\n\n`;
+
+  // What we can do today
+  answer += `### What we can do today\n`;
+  if (alternatives.length > 0) {
+    const lowIntensityAlts = alternatives
+      .filter(
+        (a) => a.intensity_level === "low" || a.intensity_level === "rest",
+      )
+      .slice(0, 3);
+
+    if (lowIntensityAlts.length > 0) {
+      for (const alt of lowIntensityAlts) {
+        const contentPreview = alt.content.substring(0, 80).replace(/\n/g, " ");
+        answer += `- **${alt.title}**: ${contentPreview}...\n`;
+      }
+    } else {
+      // Fallback if no low-intensity alternatives found
+      answer += `- **Low-intensity technique drills** (50-60% effort)\n`;
+      answer += `- **Mobility and flexibility work**\n`;
+      answer += `- **Recovery activities** (foam rolling, light stretching)\n`;
+    }
+  } else {
+    // Fallback when KB has no alternatives
+    answer += `- **Low-intensity technique drills** (50-60% effort)\n`;
+    answer += `- **Mobility and flexibility work**\n`;
+    answer += `- **Recovery activities** (foam rolling, light stretching)\n`;
+    answer += `- **Mental training** (film study, visualization)\n`;
+  }
+  answer += `\n`;
+
+  // What to avoid
+  answer += `### What to avoid today\n`;
+  answer += `High-intensity work including: sprints, plyometrics, max-effort drills, and competitive scrimmages.\n\n`;
+
+  // What to monitor
+  answer += `### What to monitor\n`;
+  answer += `- Pain levels (report if > 5/10)\n`;
+  answer += `- Fatigue and sleep quality\n`;
+  answer += `- Any new soreness\n\n`;
+
+  // Position-specific recovery
+  if (position && position !== "ALL") {
+    answer += `### Position-Specific Recovery (${position})\n`;
+    answer += `${getPositionSpecificRecovery(position)}\n\n`;
+  }
+
+  // When you can return
+  answer += `### When you can return to intensity\n`;
+  answer += `Once your ACWR returns to 0.8-1.3 range (typically 3-7 days with proper load management).\n\n`;
+
+  // Build citations from alternatives
+  const citations = alternatives.map((a) => ({
+    id: a.id,
+    title: a.title,
+    source_type: a.source_type || "curated",
+    evidence_grade: a.evidence_grade || "C",
+  }));
+
+  // Add evidence grade explanation
+  const primaryGrade = citations[0]?.evidence_grade || "C";
+  const evidenceGradeExplanation = EVIDENCE_GRADE_EXPLANATIONS[primaryGrade];
+
+  return {
+    answer,
+    citations,
+    evidenceGradeExplanation,
+    suggestedActions: [
+      {
+        type: "log_recovery",
+        label: "Log Recovery Session",
+        reason: "Track your low-intensity work today",
+      },
+      {
+        type: "check_tomorrow",
+        label: "Check Again Tomorrow",
+        reason: "ACWR updates daily based on your load",
+      },
+    ],
+    isSwapPlan: true,
+    source: "swap-plan",
+  };
+}
+
 /**
  * Generate response when ACWR safety override blocks high-intensity recommendations
- * Provides alternative low-intensity suggestions and explains the safety rationale
- * 
+ * Now uses generateSwapPlanResponse for KB-sourced alternatives
+ *
  * @param {string} query - Original user query
  * @param {Object} classification - Classification with ACWR override data
  * @param {Object} userContext - User context
  * @returns {Object} Safe response with recovery-focused alternatives
  */
-function generateACWRBlockedResponse(query, classification, userContext) {
-  const acwr = classification.acwrData;
-  const riskZone = acwr?.riskZone || "danger";
-  
-  // Build personalized safety message
-  let answer = `## ⚠️ Training Load Alert\n\n`;
-  answer += `I understand you're asking about high-intensity training, but I need to prioritize your safety.\n\n`;
-  answer += `**Your current ACWR is ${acwr?.acwr || "elevated"} (${riskZone} zone)**\n\n`;
-  answer += `Based on sports science research (Gabbett 2016), athletes with ACWR above 1.5 have significantly increased injury risk. `;
-  answer += `The optimal "sweet spot" is between 0.8 and 1.3.\n\n`;
-
-  // Add specific recommendations based on risk zone
-  if (riskZone === "critical") {
-    answer += `### 🚨 Immediate Action Required\n`;
-    answer += `Your workload ratio is critically elevated. I strongly recommend:\n`;
-    answer += `- **Complete rest** for 1-2 days\n`;
-    answer += `- **Active recovery only** (walking, light stretching)\n`;
-    answer += `- **Consult your coach** about adjusting your training plan\n\n`;
-  } else {
-    answer += `### 🔄 Recommended Alternatives\n`;
-    answer += `Instead of high-intensity work, consider:\n`;
-    answer += `- **Low-intensity technique drills** (50-60% effort)\n`;
-    answer += `- **Mobility and flexibility work**\n`;
-    answer += `- **Recovery activities** (foam rolling, light swimming)\n`;
-    answer += `- **Mental training** (film study, visualization)\n\n`;
-  }
-
-  // Add position-specific recovery if available
-  if (userContext.position) {
-    answer += `### Position-Specific Recovery (${userContext.position})\n`;
-    const positionRecovery = getPositionSpecificRecovery(userContext.position);
-    answer += `${positionRecovery  }\n\n`;
-  }
-
-  // Add timeline estimate
-  answer += `### 📅 When Can You Train Hard Again?\n`;
-  answer += `Once your ACWR returns to the 0.8-1.3 range (typically 3-7 days with proper load management), `;
-  answer += `you can safely resume high-intensity training. I'll be happy to help with your workout then!\n\n`;
-
-  // Add injury context if relevant
-  if (userContext.injuries && userContext.injuries.length > 0) {
-    answer += `### ⚕️ Note About Your Current Condition\n`;
-    answer += `You have ${userContext.injuries.length} active/recovering injury(ies). `;
-    answer += `This makes load management even more critical. Please prioritize recovery.\n\n`;
-  }
-
-  return {
-    answer,
-    source: "acwr-safety-override",
-    acwrBlocked: true,
-  };
+async function generateACWRBlockedResponse(query, classification, userContext) {
+  // Use the new swap plan response that fetches from KB
+  return generateSwapPlanResponse(query, classification, userContext);
 }
 
 /**
@@ -557,21 +1989,27 @@ function generateACWRBlockedResponse(query, classification, userContext) {
  */
 function getPositionSpecificRecovery(position) {
   const positionLower = (position || "").toLowerCase();
-  
+
   const recommendations = {
     qb: "Focus on arm care (light band work), footwork drills at low intensity, and film study of defensive coverages.",
-    quarterback: "Focus on arm care (light band work), footwork drills at low intensity, and film study of defensive coverages.",
+    quarterback:
+      "Focus on arm care (light band work), footwork drills at low intensity, and film study of defensive coverages.",
     wr: "Work on route visualization, light cone drills, and hand-eye coordination exercises.",
-    receiver: "Work on route visualization, light cone drills, and hand-eye coordination exercises.",
+    receiver:
+      "Work on route visualization, light cone drills, and hand-eye coordination exercises.",
     rb: "Light agility ladder work, vision drills, and hip mobility exercises.",
-    running: "Light agility ladder work, vision drills, and hip mobility exercises.",
+    running:
+      "Light agility ladder work, vision drills, and hip mobility exercises.",
     db: "Backpedal technique at low intensity, hip mobility, and coverage film study.",
-    defensive: "Backpedal technique at low intensity, hip mobility, and coverage film study.",
+    defensive:
+      "Backpedal technique at low intensity, hip mobility, and coverage film study.",
     lb: "Light movement patterns, reaction drills at reduced speed, and tackling technique review.",
-    linebacker: "Light movement patterns, reaction drills at reduced speed, and tackling technique review.",
+    linebacker:
+      "Light movement patterns, reaction drills at reduced speed, and tackling technique review.",
     ol: "Stance work, hand placement drills, and lower body mobility.",
     line: "Stance work, hand placement drills, and lower body mobility.",
-    center: "Snap technique practice, stance mobility, and blocking angle visualization.",
+    center:
+      "Snap technique practice, stance mobility, and blocking angle visualization.",
   };
 
   // Find matching position
@@ -586,46 +2024,300 @@ function getPositionSpecificRecovery(position) {
 
 /**
  * Generate suggested actions based on response
+ * Phase 2: Returns micro-session structured objects with time/equipment/steps
  */
-function generateSuggestedActions(query, answer, userContext, riskLevel) {
+function generateSuggestedActions(
+  query,
+  answer,
+  userContext,
+  riskLevel,
+  intent,
+) {
   const actions = [];
+  const position = userContext.position || "ALL";
 
-  // High-risk: always suggest professional consultation
+  // High-risk: always suggest professional consultation (not a micro-session)
   if (riskLevel === RISK_LEVELS.HIGH) {
     actions.push({
       type: "ask_coach",
       reason: "High-risk topic requires professional guidance",
       label: "Consult Healthcare Provider",
+      isMicroSession: false,
     });
   }
 
-  // Medium-risk with injuries: suggest recovery exercises
-  if (riskLevel === RISK_LEVELS.MEDIUM && userContext.injuries.length > 0) {
+  // Medium-risk with injuries: suggest recovery micro-session
+  if (
+    riskLevel === RISK_LEVELS.MEDIUM &&
+    userContext.injuries &&
+    userContext.injuries.length > 0
+  ) {
+    const injuryType =
+      userContext.injuries[0]?.type ||
+      userContext.injuries[0]?.body_part ||
+      "general";
     actions.push({
-      type: "add_exercise",
-      reason: "Add injury prevention exercises to your routine",
-      label: "View Recovery Exercises",
-      data: {
-        injuryType: userContext.injuries[0]?.type,
+      type: "micro_session",
+      reason: "Targeted recovery for your current condition",
+      label: "Start Recovery Session",
+      isMicroSession: true,
+      microSession: {
+        title: `${injuryType.charAt(0).toUpperCase() + injuryType.slice(1)} Recovery Protocol`,
+        description: `Gentle exercises to support recovery from ${injuryType}`,
+        session_type: "recovery",
+        estimated_duration_minutes: 8,
+        equipment_needed: ["foam roller", "resistance band"],
+        intensity_level: "low",
+        position_relevance: [position],
+        steps: [
+          {
+            order: 1,
+            instruction:
+              "Light foam rolling on affected area (avoid direct pressure on injury)",
+            duration_seconds: 120,
+          },
+          {
+            order: 2,
+            instruction: "Gentle range of motion exercises",
+            duration_seconds: 90,
+          },
+          {
+            order: 3,
+            instruction: "Isometric holds (low intensity)",
+            duration_seconds: 90,
+          },
+          { order: 4, instruction: "Light stretching", duration_seconds: 90 },
+        ],
+        coaching_cues: [
+          "Keep movements slow and controlled",
+          "Stop if pain increases",
+          "Focus on quality over intensity",
+        ],
+        safety_notes:
+          "Stop immediately if pain exceeds 5/10. Do not push through sharp or sudden pain.",
+        follow_up_prompt:
+          "How does the affected area feel now? (0-10, where 10 is worst pain)",
       },
     });
   }
 
-  // High load detected: suggest recovery
+  // High load detected: suggest active recovery micro-session
   if (userContext.recentLoad && userContext.recentLoad.avgRPE > 7) {
     actions.push({
-      type: "create_session",
-      reason: "High recent training load - recovery recommended",
-      label: "Schedule Recovery Session",
+      type: "micro_session",
+      reason: "Your training load is elevated - active recovery recommended",
+      label: "Active Recovery Session",
+      isMicroSession: true,
+      microSession: {
+        title: "Active Recovery Flow",
+        description:
+          "Light movement to promote recovery without adding training stress",
+        session_type: "recovery",
+        estimated_duration_minutes: 10,
+        equipment_needed: ["none"],
+        intensity_level: "rest",
+        position_relevance: [position],
+        steps: [
+          {
+            order: 1,
+            instruction: "Light walking or slow jogging in place (2 min)",
+            duration_seconds: 120,
+          },
+          {
+            order: 2,
+            instruction: "Dynamic stretching - leg swings, arm circles",
+            duration_seconds: 90,
+          },
+          {
+            order: 3,
+            instruction: "Hip mobility flow - 90/90, hip circles",
+            duration_seconds: 120,
+          },
+          {
+            order: 4,
+            instruction: "Spine mobility - cat-cow, thoracic rotations",
+            duration_seconds: 90,
+          },
+          {
+            order: 5,
+            instruction: "Deep breathing and relaxation",
+            duration_seconds: 90,
+          },
+        ],
+        coaching_cues: [
+          "Keep heart rate low",
+          "Focus on relaxation",
+          "Breathe deeply",
+        ],
+        safety_notes: null,
+        follow_up_prompt:
+          "How do you feel after this recovery session? (0-10, where 10 is fully recovered)",
+      },
     });
   }
 
-  // General training query: suggest related content
-  if (riskLevel === RISK_LEVELS.LOW) {
+  // Pain reported in daily state: suggest pain management micro-session
+  if (userContext.stateGates?.dailyState?.pain_level >= 5) {
     actions.push({
-      type: "read_article",
-      reason: "Learn more about this topic",
-      label: "View Related Articles",
+      type: "micro_session",
+      reason: "Help manage today's reported pain",
+      label: "Pain Relief Routine",
+      isMicroSession: true,
+      microSession: {
+        title: "Gentle Pain Relief Routine",
+        description: "Low-impact movements to help manage discomfort",
+        session_type: "recovery",
+        estimated_duration_minutes: 6,
+        equipment_needed: ["none"],
+        intensity_level: "rest",
+        position_relevance: ["ALL"],
+        steps: [
+          {
+            order: 1,
+            instruction: "Diaphragmatic breathing - 4 counts in, 6 counts out",
+            duration_seconds: 90,
+          },
+          {
+            order: 2,
+            instruction: "Gentle neck rolls and shoulder shrugs",
+            duration_seconds: 60,
+          },
+          {
+            order: 3,
+            instruction: "Seated spinal twists (hold 30 sec each side)",
+            duration_seconds: 60,
+          },
+          {
+            order: 4,
+            instruction: "Supine figure-4 stretch (hold 45 sec each side)",
+            duration_seconds: 90,
+          },
+          {
+            order: 5,
+            instruction: "Progressive muscle relaxation",
+            duration_seconds: 60,
+          },
+        ],
+        coaching_cues: [
+          "Never push into pain",
+          "Move slowly and mindfully",
+          "Listen to your body",
+        ],
+        safety_notes:
+          "Skip any movement that increases pain. Consult a professional if pain persists.",
+        follow_up_prompt: "Has your pain level changed? (0-10)",
+      },
+    });
+  }
+
+  // Technique correction intent: suggest technique drill
+  if (
+    intent === "technique_correction" ||
+    intent === INTENT_TYPES.TECHNIQUE_CORRECTION
+  ) {
+    actions.push({
+      type: "micro_session",
+      reason: "Practice the technique we discussed",
+      label: "Technique Drill",
+      isMicroSession: true,
+      microSession: {
+        title: "Technique Focus Session",
+        description:
+          "Deliberate practice at low intensity to refine movement patterns",
+        session_type: "technique",
+        estimated_duration_minutes: 8,
+        equipment_needed: ["none"],
+        intensity_level: "low",
+        position_relevance: [position],
+        steps: [
+          {
+            order: 1,
+            instruction: "Mental rehearsal - visualize the correct movement",
+            duration_seconds: 60,
+          },
+          {
+            order: 2,
+            instruction: "Slow-motion practice (25% speed)",
+            duration_seconds: 120,
+          },
+          {
+            order: 3,
+            instruction: "Moderate speed practice (50% speed)",
+            duration_seconds: 120,
+          },
+          {
+            order: 4,
+            instruction: "Full speed practice (75% speed, focus on form)",
+            duration_seconds: 120,
+          },
+          {
+            order: 5,
+            instruction: "Review - what felt different?",
+            duration_seconds: 60,
+          },
+        ],
+        coaching_cues: [
+          "Quality over speed",
+          "Feel the difference",
+          "One cue at a time",
+        ],
+        safety_notes: null,
+        follow_up_prompt:
+          "Did you notice improvement in your technique? (0-10)",
+      },
+    });
+  }
+
+  // General training query: suggest related content and simple warm-up
+  if (riskLevel === RISK_LEVELS.LOW && actions.length < 2) {
+    actions.push({
+      type: "micro_session",
+      reason: "Quick warm-up before practice",
+      label: "5-Min Warm-Up",
+      isMicroSession: true,
+      microSession: {
+        title: "Quick Dynamic Warm-Up",
+        description:
+          "Get your body ready for training with this efficient warm-up",
+        session_type: "warm_up",
+        estimated_duration_minutes: 5,
+        equipment_needed: ["none"],
+        intensity_level: "low",
+        position_relevance: ["ALL"],
+        steps: [
+          {
+            order: 1,
+            instruction: "Light jogging in place",
+            duration_seconds: 60,
+          },
+          {
+            order: 2,
+            instruction: "High knees and butt kicks",
+            duration_seconds: 45,
+          },
+          {
+            order: 3,
+            instruction: "Leg swings (forward/back, side/side)",
+            duration_seconds: 45,
+          },
+          {
+            order: 4,
+            instruction: "Arm circles and trunk rotations",
+            duration_seconds: 45,
+          },
+          {
+            order: 5,
+            instruction: "A-skips and carioca",
+            duration_seconds: 45,
+          },
+        ],
+        coaching_cues: [
+          "Gradually increase intensity",
+          "Stay light on your feet",
+        ],
+        safety_notes: null,
+        follow_up_prompt: "Do you feel warmed up and ready? (0-10)",
+      },
     });
   }
 
@@ -634,21 +2326,63 @@ function generateSuggestedActions(query, answer, userContext, riskLevel) {
 
 /**
  * Save chat message to database
+ * Phase 1: intent_type and user_state_snapshot
+ * Phase 3: youth interaction flags, classification confidence, parent notifications
  */
-async function saveChatMessage(sessionId, userId, message, response, classification) {
+async function saveChatMessage(
+  sessionId,
+  userId,
+  message,
+  response,
+  classification,
+) {
   try {
-    // Save user message
+    // Build user state snapshot for context preservation
+    const userStateSnapshot = classification.stateGates
+      ? {
+          acwr: classification.stateGates.acwr?.acwr,
+          acwrZone: classification.stateGates.acwr?.riskZone,
+          ageGroup: classification.stateGates.ageGroup,
+          injuryCount: classification.stateGates.injuries?.length || 0,
+          dailyPain: classification.stateGates.dailyState?.pain_level,
+          dailyFatigue: classification.stateGates.dailyState?.fatigue_level,
+          readinessScore: classification.stateGates.dailyState?.readiness_score,
+          riskEscalation: classification.stateGates.riskEscalation,
+          upcomingGame: classification.stateGates.upcomingGame ? true : false,
+        }
+      : {};
+
+    // Phase 3: Determine youth-specific fields
+    const isYouthInteraction = classification.isYouthUser || false;
+    const youthRestrictionsApplied =
+      classification.youthRestrictions?.restrictionsApplied || [];
+    const requiresApproval =
+      classification.youthRestrictions?.requiresParentApproval || false;
+
+    // Save user message with intent and state
     await supabaseAdmin.from("ai_messages").insert({
       session_id: sessionId,
       user_id: userId,
       role: "user",
       content: message,
+      intent_type: classification.intent,
+      user_state_snapshot: userStateSnapshot,
+      risk_level: classification.riskLevel,
+      // Phase 3 fields
+      is_youth_interaction: isYouthInteraction,
+      youth_restrictions_applied: youthRestrictionsApplied,
+      classification_confidence: classification.confidence || null,
+      requires_approval: requiresApproval,
       metadata: {
-        classification,
+        classification: {
+          ...classification,
+          stateGates: undefined, // Don't duplicate in metadata
+          signals: undefined, // Too verbose for metadata
+        },
       },
     });
 
-    // Save assistant response
+    // Save assistant response with evidence explanation
     const { data: assistantMessage } = await supabaseAdmin
       .from("ai_messages")
       .insert({
@@ -656,16 +2390,63 @@ async function saveChatMessage(sessionId, userId, message, response, classificat
         user_id: userId,
         role: "assistant",
         content: response.answer,
+        risk_level: response.riskLevel,
+        intent_type: classification.intent,
+        user_state_snapshot: userStateSnapshot,
+        evidence_grade_explanation: response.evidenceGradeExplanation || null,
+        // Phase 3 fields
+        is_youth_interaction: isYouthInteraction,
+        youth_restrictions_applied: youthRestrictionsApplied,
+        classification_confidence: classification.confidence || null,
         metadata: {
           riskLevel: response.riskLevel,
           citations: response.citations,
           suggestedActions: response.suggestedActions,
+          stateGateEscalation: classification.stateGateEscalation,
+          escalationReasons: classification.escalationReasons,
+          // Phase 3: confidence details
+          confidenceLevel: classification.confidenceLevel,
         },
       })
       .select()
       .single();
 
-    return assistantMessage?.id;
+    const messageId = assistantMessage?.id;
+
+    // Phase 3: Save classification history for learning
+    if (messageId) {
+      await saveClassificationHistory(
+        messageId,
+        userId,
+        sessionId,
+        message,
+        classification,
+      );
+    }
+
+    // Phase 3: Create parent notification if youth and requires notification
+    if (isYouthInteraction && classification.youthRestrictions?.notifyParent) {
+      await createYouthParentNotification(
+        userId,
+        classification.riskLevel === RISK_LEVELS.HIGH
+          ? "high_risk_query"
+          : classification.youthRestrictions?.restrictionsApplied?.some((r) =>
+                r.includes("injury"),
+              )
+            ? "injury_topic"
+            : classification.youthRestrictions?.restrictionsApplied?.some((r) =>
+                  r.includes("supplement"),
+                )
+              ? "supplement_topic"
+              : "safety_concern",
+        `AI Coach interaction: ${classification.intent}`,
+        classification.youthRestrictions.notificationReason ||
+          `Youth athlete query: ${message.substring(0, 100)}...`,
+        messageId,
+      );
+    }
+
+    return messageId;
   } catch (error) {
     console.error("Error saving chat message:", error);
     // Don't fail the request if saving fails
@@ -688,6 +2469,219 @@ async function logRecommendation(userId, sessionId, recommendation) {
     });
   } catch (error) {
     console.error("Error logging recommendation:", error);
+  }
+}
+
+// =====================================================
+// PHASE 1: COACH INBOX ITEM CREATION
+// =====================================================
+
+/**
+ * Determine if a message needs coach review and what type
+ * @param {Object} classification - Risk classification with state gates
+ * @param {Object} stateGates - Athlete state gates
+ * @returns {Object|null} - { needsReview, inboxType, priority } or null
+ */
+function determineCoachReviewNeed(classification, stateGates) {
+  const { riskLevel, intent, acwrOverride, stateGateEscalation } =
+    classification;
+
+  // Safety alerts: HIGH risk, ACWR override, high pain with injury intent
+  if (riskLevel === RISK_LEVELS.HIGH || acwrOverride) {
+    return {
+      needsReview: true,
+      inboxType: "safety_alert",
+      priority: "critical",
+    };
+  }
+
+  // Safety alerts: Pain/injury intent with elevated state
+  if (intent === INTENT_TYPES.PAIN_INJURY || intent === "pain_injury") {
+    if (
+      stateGates.dailyState?.pain_level >= 7 ||
+      stateGates.injuries?.length > 0
+    ) {
+      return {
+        needsReview: true,
+        inboxType: "safety_alert",
+        priority: "high",
+      };
+    }
+  }
+
+  // Review needed: MEDIUM risk or state gate escalation
+  if (riskLevel === RISK_LEVELS.MEDIUM || stateGateEscalation) {
+    return {
+      needsReview: true,
+      inboxType: "review_needed",
+      priority: stateGates.dailyState?.pain_level >= 5 ? "high" : "medium",
+    };
+  }
+
+  // Review needed: Recovery readiness questions
+  if (
+    intent === INTENT_TYPES.RECOVERY_READINESS ||
+    intent === "recovery_readiness"
+  ) {
+    return {
+      needsReview: true,
+      inboxType: "review_needed",
+      priority: "medium",
+    };
+  }
+
+  // Review needed: Plan requests (coach may want to customize)
+  if (intent === INTENT_TYPES.PLAN_REQUEST || intent === "plan_request") {
+    return {
+      needsReview: true,
+      inboxType: "review_needed",
+      priority: "low",
+    };
+  }
+
+  // Youth athletes: supplement topics always need review
+  if (
+    stateGates.ageGroup === "youth" &&
+    (intent === INTENT_TYPES.SUPPLEMENT_MEDICAL ||
+      intent === "supplement_medical")
+  ) {
+    return {
+      needsReview: true,
+      inboxType: "safety_alert",
+      priority: "high",
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Create coach inbox items for relevant athlete queries
+ * Notifies all coaches on the athlete's teams in real-time
+ *
+ * @param {string} messageId - The saved message ID
+ * @param {string} userId - Athlete user ID
+ * @param {string} message - Original message content
+ * @param {Object} classification - Risk classification
+ * @param {Object} stateGates - Athlete state gates
+ */
+async function createCoachInboxItem(
+  messageId,
+  userId,
+  message,
+  classification,
+  stateGates,
+) {
+  // Determine if this needs coach review
+  const reviewNeed = determineCoachReviewNeed(classification, stateGates);
+
+  if (!reviewNeed || !reviewNeed.needsReview) {
+    return; // No coach review needed
+  }
+
+  try {
+    // Find athlete's active team memberships
+    const { data: teamMemberships } = await supabaseAdmin
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", userId)
+      .eq("status", "active");
+
+    if (!teamMemberships || teamMemberships.length === 0) {
+      console.log(
+        `[AI Chat] Athlete ${userId} not on any teams, skipping inbox creation`,
+      );
+      return;
+    }
+
+    const teamIds = teamMemberships.map((t) => t.team_id);
+
+    // Find all coaches for these teams
+    const { data: coaches } = await supabaseAdmin
+      .from("team_members")
+      .select("user_id, team_id, role")
+      .in("team_id", teamIds)
+      .in("role", ["coach", "assistant_coach"])
+      .eq("status", "active");
+
+    if (!coaches || coaches.length === 0) {
+      console.log(`[AI Chat] No coaches found for athlete's teams`);
+      return;
+    }
+
+    // Build athlete context snapshot
+    const athleteContext = {
+      injuries: (stateGates.injuries || []).map((i) => ({
+        type: i.type,
+        severity: i.severity,
+        body_part: i.body_part,
+      })),
+      daily_pain: stateGates.dailyState?.pain_level,
+      daily_fatigue: stateGates.dailyState?.fatigue_level,
+      readiness_score: stateGates.dailyState?.readiness_score,
+      age_group: stateGates.ageGroup,
+      acwr: stateGates.acwr?.acwr,
+      acwr_zone: stateGates.acwr?.riskZone,
+      position: stateGates.position,
+    };
+
+    // Format title based on intent and risk
+    const intentLabels = {
+      [INTENT_TYPES.PAIN_INJURY]: "Pain/Injury",
+      [INTENT_TYPES.RECOVERY_READINESS]: "Recovery Check",
+      [INTENT_TYPES.PLAN_REQUEST]: "Training Plan",
+      [INTENT_TYPES.SUPPLEMENT_MEDICAL]: "Supplement",
+      [INTENT_TYPES.TECHNIQUE_CORRECTION]: "Technique",
+      pain_injury: "Pain/Injury",
+      recovery_readiness: "Recovery Check",
+      plan_request: "Training Plan",
+      supplement_medical: "Supplement",
+      technique_correction: "Technique",
+    };
+
+    const intentLabel = intentLabels[classification.intent] || "Query";
+    const riskLabel = classification.riskLevel.toUpperCase();
+    const title = `${intentLabel} - ${riskLabel} risk`;
+
+    // Create summary (truncate message)
+    const summary =
+      message.length > 200 ? `${message.substring(0, 200)}...` : message;
+
+    // Create inbox item for each coach
+    const inboxItems = coaches.map((coach) => ({
+      coach_id: coach.user_id,
+      team_id: coach.team_id,
+      player_id: userId,
+      inbox_type: reviewNeed.inboxType,
+      priority: reviewNeed.priority,
+      source_type: "ai_message",
+      source_id: messageId,
+      title,
+      summary,
+      risk_level: classification.riskLevel,
+      acwr_value: stateGates.acwr?.acwr,
+      acwr_zone: stateGates.acwr?.riskZone,
+      intent_type: classification.intent,
+      athlete_context: athleteContext,
+      status: "pending",
+      is_new: true,
+    }));
+
+    // Insert all inbox items
+    const { error } = await supabaseAdmin
+      .from("coach_inbox_items")
+      .insert(inboxItems);
+
+    if (error) {
+      console.error("[AI Chat] Error creating coach inbox items:", error);
+    } else {
+      console.log(
+        `[AI Chat] Created ${inboxItems.length} coach inbox items (${reviewNeed.inboxType}, ${reviewNeed.priority})`,
+      );
+    }
+  } catch (error) {
+    console.error("[AI Chat] Error in createCoachInboxItem:", error);
+    // Don't fail the request if inbox creation fails
   }
 }
 
@@ -732,7 +2726,8 @@ async function analyzeContext(context, userContext) {
     insights.push({
       id: "duration-long",
       type: "Recovery",
-      message: "You've been training for over an hour. Great work! Consider recovery.",
+      message:
+        "You've been training for over an hour. Great work! Consider recovery.",
       icon: "pi pi-clock",
       priority: "medium",
     });
@@ -743,7 +2738,8 @@ async function analyzeContext(context, userContext) {
     insights.push({
       id: "fatigue-high",
       type: "Recovery",
-      message: "You're showing signs of fatigue. Rest is important for performance.",
+      message:
+        "You're showing signs of fatigue. Rest is important for performance.",
       icon: "pi pi-exclamation-triangle",
       priority: "high",
     });
@@ -751,7 +2747,7 @@ async function analyzeContext(context, userContext) {
 
   // Analyze ACWR if available
   if (userContext && userContext.acwr) {
-    const {acwr} = userContext;
+    const { acwr } = userContext;
     if (acwr.riskZone === "danger" || acwr.riskZone === "critical") {
       insights.push({
         id: "acwr-danger",
@@ -773,7 +2769,9 @@ async function analyzeContext(context, userContext) {
 
   // Analyze injuries
   if (userContext && userContext.injuries && userContext.injuries.length > 0) {
-    const activeInjuries = userContext.injuries.filter(i => i.status === "active");
+    const activeInjuries = userContext.injuries.filter(
+      (i) => i.status === "active",
+    );
     if (activeInjuries.length > 0) {
       insights.push({
         id: "injury-warning",
@@ -789,17 +2787,19 @@ async function analyzeContext(context, userContext) {
   if (context.previousPerformance && context.previousPerformance.length > 0) {
     const recentScores = context.previousPerformance
       .slice(-3)
-      .filter(p => p.score !== undefined)
-      .map(p => p.score);
-    
+      .filter((p) => p.score !== undefined)
+      .map((p) => p.score);
+
     if (recentScores.length > 0) {
-      const recentAvg = recentScores.reduce((sum, s) => sum + s, 0) / recentScores.length;
+      const recentAvg =
+        recentScores.reduce((sum, s) => sum + s, 0) / recentScores.length;
 
       if (recentAvg > 85) {
         insights.push({
           id: "performance-excellent",
           type: "Motivation",
-          message: "Your recent performance has been excellent! Keep up the great work!",
+          message:
+            "Your recent performance has been excellent! Keep up the great work!",
           icon: "pi pi-star",
           priority: "low",
         });
@@ -807,7 +2807,8 @@ async function analyzeContext(context, userContext) {
         insights.push({
           id: "performance-struggling",
           type: "Support",
-          message: "Your recent performance suggests you might need extra recovery or support.",
+          message:
+            "Your recent performance suggests you might need extra recovery or support.",
           icon: "pi pi-heart",
           priority: "medium",
         });
@@ -822,7 +2823,8 @@ async function analyzeContext(context, userContext) {
       insights.push({
         id: "heat-warning",
         type: "Safety",
-        message: "High temperature detected. Stay hydrated and take more breaks.",
+        message:
+          "High temperature detected. Stay hydrated and take more breaks.",
         icon: "pi pi-sun",
         priority: "high",
       });
@@ -830,7 +2832,8 @@ async function analyzeContext(context, userContext) {
       insights.push({
         id: "cold-warning",
         type: "Safety",
-        message: "Cold conditions. Ensure proper warm-up before intense activity.",
+        message:
+          "Cold conditions. Ensure proper warm-up before intense activity.",
         icon: "pi pi-cloud",
         priority: "medium",
       });
@@ -854,7 +2857,7 @@ async function checkAiProcessingConsent(userId) {
     .select("ai_processing_enabled")
     .eq("user_id", userId)
     .single();
-  
+
   // Default to enabled if no settings exist
   return settings?.ai_processing_enabled ?? true;
 }
@@ -862,7 +2865,9 @@ async function checkAiProcessingConsent(userId) {
 exports.handler = async (event, context) => {
   // Extract sub-path to determine which endpoint is being called
   const path = event.path.replace("/.netlify/functions/ai-chat", "");
-  const isAnalyzeContext = path.includes("/analyze-context") || event.path.includes("/api/ai/analyze-context");
+  const isAnalyzeContext =
+    path.includes("/analyze-context") ||
+    event.path.includes("/api/ai/analyze-context");
 
   return baseHandler(event, context, {
     functionName: "ai-chat",
@@ -879,10 +2884,10 @@ exports.handler = async (event, context) => {
         if (!aiProcessingEnabled) {
           return createErrorResponse(
             "AI processing is disabled in your privacy settings. " +
-            "To use AI features, please enable AI processing in Settings > Privacy Controls.",
+              "To use AI features, please enable AI processing in Settings > Privacy Controls.",
             403,
             "ai_processing_disabled",
-            requestId
+            requestId,
           );
         }
 
@@ -895,28 +2900,25 @@ exports.handler = async (event, context) => {
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId
+            requestId,
           );
         }
 
         try {
           // Get user context for enhanced analysis
           const userContext = await getUserContext(userId);
-          
+
           // Analyze context and generate insights
           const insights = await analyzeContext(analysisContext, userContext);
 
-          return createSuccessResponse(
-            insights,
-            requestId
-          );
+          return createSuccessResponse(insights, requestId);
         } catch (error) {
           console.error("[AI Chat] Error analyzing context:", error);
           return createErrorResponse(
             "Failed to analyze context",
             500,
             "internal_error",
-            requestId
+            requestId,
           );
         }
       }
@@ -926,10 +2928,10 @@ exports.handler = async (event, context) => {
       if (!aiProcessingEnabled) {
         return createErrorResponse(
           "AI processing is disabled in your privacy settings. " +
-          "To use AI features, please enable AI processing in Settings > Privacy Controls.",
+            "To use AI features, please enable AI processing in Settings > Privacy Controls.",
           403,
           "ai_processing_disabled",
-          requestId
+          requestId,
         );
       }
 
@@ -942,7 +2944,7 @@ exports.handler = async (event, context) => {
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId
+          requestId,
         );
       }
 
@@ -955,7 +2957,7 @@ exports.handler = async (event, context) => {
           "Message is required and must be a string",
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
@@ -964,63 +2966,405 @@ exports.handler = async (event, context) => {
           `Message too long (max ${MAX_QUERY_LENGTH} characters)`,
           400,
           "validation_error",
-          requestId
+          requestId,
         );
       }
 
       try {
-        // 1. Classify intent and risk level (keyword-based)
-        const baseClassification = classifyRiskLevel(message);
-        console.log(`[AI Chat] Query classified as ${baseClassification.riskLevel} risk`, {
-          intent: baseClassification.intent,
-          requestId,
-        });
-
-        // 2. Get or create chat session
+        // 1. Get or create chat session first (needed for conversation history)
         const session = await getOrCreateSession(userId, session_id);
 
-        // 3. Build user context (includes ACWR calculation)
-        const userContext = await getUserContext(userId);
-        if (team_id) {userContext.teamId = team_id;}
+        // 2. Build comprehensive state gates (ACWR, injuries, age, daily state, games)
+        const stateGates = await buildAthleteStateGates(userId);
 
-        // 4. Apply ACWR safety override if athlete is in danger zone
-        const classification = applyACWRSafetyOverride(baseClassification, userContext, message);
-        
-        if (classification.acwrOverride) {
-          console.log(`[AI Chat] ACWR Override applied - escalated from ${classification.originalRiskLevel} to ${classification.riskLevel}`, {
-            acwr: classification.acwrData?.acwr,
-            riskZone: classification.acwrData?.riskZone,
-            requestId,
-          });
+        // 3. Build user context for personalization
+        const userContext = await getUserContext(userId);
+        if (team_id) {
+          userContext.teamId = team_id;
+        }
+        userContext.stateGates = stateGates;
+        userContext.position = stateGates.position || userContext.position;
+        userContext.ageGroup = stateGates.ageGroup;
+
+        // 4. Phase 3: Get youth settings if applicable
+        let youthSettings = null;
+        const isYouthUser =
+          stateGates.ageGroup && stateGates.ageGroup !== "adult";
+        if (isYouthUser) {
+          youthSettings = await getYouthSettings(userId);
         }
 
-        // 5. Search knowledge base with evidence filtering
-        const knowledge = await searchKnowledgeBase(
-          message,
-          classification.riskLevel,
-          5
+        // 5. Phase 3: Get conversation history for pattern analysis
+        const conversationHistory = await getConversationHistory(
+          session.id,
+          10,
         );
 
-        // 6. Generate AI response (modified if ACWR blocked)
-        let aiResponse;
-        if (classification.acwrOverride) {
-          // Generate safety-first response for ACWR-blocked queries
-          aiResponse = generateACWRBlockedResponse(message, classification, userContext);
-        } else {
-          aiResponse = await generateAIResponse(
+        // 5b. Phase 4: Get conversation contexts and pending follow-ups for memory
+        const [conversationContexts, pendingFollowups] = await Promise.all([
+          getActiveConversationContexts(userId, 5),
+          getPendingFollowups(userId),
+        ]);
+
+        // Build conversation memory prompt
+        const memoryPrompt = buildConversationMemoryPrompt(
+          conversationContexts,
+          pendingFollowups,
+        );
+        userContext.memoryPrompt = memoryPrompt;
+        userContext.hasMemory =
+          conversationContexts.length > 0 || pendingFollowups.length > 0;
+
+        console.log(
+          `[AI Chat] Phase 4: Loaded ${conversationContexts.length} contexts, ${pendingFollowups.length} follow-ups`,
+          { requestId },
+        );
+
+        // 6. Phase 3: Enhanced multi-signal classification with confidence scoring
+        const enhancedClassification = classifyWithConfidence(
+          message,
+          {
+            acwr: stateGates.acwr,
+            injuries: stateGates.injuries,
+            dailyState: stateGates.dailyState,
+            ageGroup: stateGates.ageGroup,
+            upcomingGame: stateGates.upcomingGame,
+          },
+          conversationHistory,
+          youthSettings,
+        );
+
+        console.log(
+          `[AI Chat] Phase 3 Classification: ${enhancedClassification.riskLevel} risk (confidence: ${enhancedClassification.confidence})`,
+          {
+            intent: enhancedClassification.intent,
+            isYouthUser: enhancedClassification.isYouthUser,
+            escalated: enhancedClassification.escalated,
+            requestId,
+          },
+        );
+
+        // 7. Phase 3: Check for blocked youth topics
+        if (enhancedClassification.youthRestrictions?.isBlocked) {
+          console.log(
+            `[AI Chat] Youth topic blocked: ${enhancedClassification.youthRestrictions.blockedReason}`,
+            {
+              requestId,
+            },
+          );
+
+          // Generate blocked response
+          const blockedResponse = generateBlockedYouthResponse(
+            enhancedClassification.youthRestrictions.blockedReason,
+            enhancedClassification.entities,
+          );
+
+          // Save the blocked interaction
+          const savedMessage = await saveChatMessage(
+            session.id,
+            userId,
             message,
-            knowledge,
-            userContext,
-            classification.riskLevel
+            blockedResponse,
+            enhancedClassification,
+          );
+
+          // Create parent notification for blocked topic
+          if (isYouthUser) {
+            await createYouthParentNotification(
+              userId,
+              "blocked_topic",
+              `Blocked query: ${message.substring(0, 50)}...`,
+              enhancedClassification.youthRestrictions.blockedReason,
+              savedMessage?.id,
+            );
+          }
+
+          return createSuccessResponse(
+            {
+              session_id: session.id,
+              answer_markdown: blockedResponse.answer,
+              risk_level: RISK_LEVELS.HIGH,
+              citations: [],
+              suggested_actions: blockedResponse.suggestedActions,
+              is_blocked: true,
+              blocked_reason:
+                enhancedClassification.youthRestrictions.blockedReason,
+            },
+            requestId,
           );
         }
 
-        // 7. Generate suggested actions
+        // 8. Build classification object for backward compatibility
+        const baseClassification = classifyRiskLevel(message);
+        baseClassification.intent = enhancedClassification.intent;
+
+        // Apply state gate escalation
+        const stateEscalatedClassification = applyStateGateEscalation(
+          baseClassification,
+          stateGates,
+        );
+
+        // Apply ACWR safety override
+        const classification = applyACWRSafetyOverride(
+          stateEscalatedClassification,
+          userContext,
+          message,
+        );
+
+        // Phase 3: Merge enhanced classification data
+        classification.confidence = enhancedClassification.confidence;
+        classification.confidenceLevel = enhancedClassification.confidenceLevel;
+        classification.isYouthUser = enhancedClassification.isYouthUser;
+        classification.youthRestrictions =
+          enhancedClassification.youthRestrictions;
+        classification.signals = enhancedClassification.signals;
+        classification.processingTimeMs =
+          enhancedClassification.processingTimeMs;
+
+        // Escalate risk level if enhanced classification detected higher risk
+        if (
+          enhancedClassification.riskLevel === RISK_LEVELS.HIGH &&
+          classification.riskLevel !== RISK_LEVELS.HIGH
+        ) {
+          classification.riskLevel = RISK_LEVELS.HIGH;
+          classification.escalationReasons = [
+            ...(classification.escalationReasons || []),
+            ...(enhancedClassification.escalationReasons || []),
+          ];
+        }
+
+        if (classification.acwrOverride) {
+          console.log(
+            `[AI Chat] ACWR Override applied - escalated from ${classification.originalRiskLevel} to ${classification.riskLevel}`,
+            {
+              acwr: classification.acwrData?.acwr,
+              riskZone: classification.acwrData?.riskZone,
+              requestId,
+            },
+          );
+        }
+
+        // 9. Phase 3: Get user preferences for personalization
+        const userPreferences = await getUserAIPreferences(userId);
+        userContext.preferences = userPreferences;
+
+        // Build personalization prompt if preferences exist
+        const personalizationPrompt = buildPersonalizationPrompt(
+          userPreferences,
+          userContext,
+        );
+
+        // 10. SMART AI: Process query through intelligent pipeline
+        const smartResult = await processSmartQuery({
+          query: message,
+          userId,
+          classification,
+          userContext,
+          conversationHistory,
+        });
+
+        console.log(
+          `[AI Chat] Smart AI: Routing=${smartResult.routingAction}, Confidence=${smartResult.confidence?.toFixed(2)}, Memory=${smartResult.memory?.hasMemory}`,
+          { requestId },
+        );
+
+        // 10a. SMART AI: Handle clarification requests
+        if (smartResult.shouldAskClarification) {
+          console.log(
+            `[AI Chat] Smart AI: Asking clarification - ${smartResult.ambiguityReasons?.join(", ")}`,
+            { requestId },
+          );
+
+          const clarificationResponse = {
+            answer: smartResult.clarificationQuestion,
+            source: "clarification",
+            isClarification: true,
+          };
+
+          // Save as a clarification message
+          const messageId = await saveChatMessage(
+            session.id,
+            userId,
+            message,
+            {
+              answer: clarificationResponse.answer,
+              citations: [],
+              riskLevel: "low",
+            },
+            { ...classification, isClarification: true },
+          );
+
+          return createSuccessResponse(
+            {
+              answer_markdown: clarificationResponse.answer,
+              citations: [],
+              risk_level: "low",
+              disclaimer: null,
+              suggested_actions: [],
+              chat_session_id: session.id,
+              message_id: messageId,
+              is_clarification: true,
+              clarification_reasons: smartResult.ambiguityReasons,
+              metadata: {
+                routingAction: smartResult.routingAction,
+                confidence: smartResult.confidence,
+              },
+            },
+            requestId,
+          );
+        }
+
+        // 10b. Use smart hybrid search (semantic + keyword) for knowledge
+        const knowledge =
+          smartResult.knowledge ||
+          (await searchKnowledgeHybrid(message, {
+            limit: 5,
+            semanticWeight: isEmbeddingServiceAvailable() ? 0.7 : 0,
+          }));
+
+        // 10c. Add learned preferences and memory to context
+        userContext.learnedPreferences = smartResult.learnedPreferences;
+        userContext.conversationMemory = smartResult.memory;
+        userContext.memoryPrompt = smartResult.memoryPrompt;
+
+        // 11. Generate AI response (modified if ACWR blocked or youth restricted)
+        let aiResponse;
+        if (classification.acwrOverride) {
+          // Generate safety-first swap plan response for ACWR-blocked queries
+          aiResponse = await generateACWRBlockedResponse(
+            message,
+            classification,
+            userContext,
+          );
+        } else {
+          // Include full context for conversational AI with smart features
+          const enhancedContext = {
+            ...userContext,
+            personalizationPrompt,
+            // Add conversation history for context continuity
+            conversationHistory: conversationHistory.map((h) => ({
+              role: h.role,
+              content: h.content,
+            })),
+            // Add user name for personalization
+            userName: stateGates.userName || null,
+            // Add daily state for readiness-aware responses
+            dailyState: stateGates.dailyState || null,
+            // Add upcoming game for time-sensitive advice
+            upcomingGame: stateGates.upcomingGame || null,
+            // Smart AI: Add memory prompt
+            memoryPrompt: smartResult.memoryPrompt || "",
+            // Smart AI: Add learned preferences
+            learnedPreferences: smartResult.learnedPreferences || {},
+            // Smart AI: Routing action for response style
+            routingAction: smartResult.routingAction,
+          };
+
+          aiResponse = await generateAIResponse(
+            message,
+            knowledge,
+            enhancedContext,
+            classification.riskLevel,
+          );
+
+          // Add evidence grade explanation to non-swap responses
+          aiResponse = addEvidenceExplanation(aiResponse);
+
+          // Smart AI: Add confirmation if medium confidence
+          if (
+            smartResult.routingAction === ROUTING_ACTIONS.ANSWER_WITH_CONFIRM
+          ) {
+            aiResponse.answer +=
+              "\n\n*Did I understand your question correctly? Let me know if you meant something different!*";
+          }
+        }
+
+        // 11a. Smart AI: Handle proactive check-ins
+        if (
+          smartResult.pendingCheckins?.length > 0 &&
+          !classification.acwrOverride
+        ) {
+          const checkin = smartResult.pendingCheckins[0];
+          const checkinMessage = buildCheckinMessage(checkin);
+
+          // Prepend check-in to response
+          aiResponse.answer = `💬 **Quick check-in:** ${checkinMessage}\n\n---\n\n${aiResponse.answer}`;
+
+          // Mark check-in as sent
+          updateCheckinStatus(checkin.id, "sent").catch((err) =>
+            console.error("[AI Chat] Error updating checkin:", err),
+          );
+        }
+
+        // 12. Phase 3: Update user preferences based on interaction
+        updateUserPreferences(userId, {
+          intent: classification.intent,
+          topic:
+            enhancedClassification.signals?.keyword?.categories?.[0] ||
+            classification.intent,
+          position: userContext.position,
+        }).catch((err) =>
+          console.error("[AI Chat] Error updating preferences:", err),
+        );
+
+        // 13. Phase 4: Create conversation context if applicable
+        const contextToCreate = determineContextToCreate(
+          message,
+          classification,
+          userContext,
+        );
+        if (contextToCreate) {
+          // Save the conversation context
+          saveConversationContext(userId, {
+            contextType: contextToCreate.contextType,
+            contextKey: contextToCreate.contextKey,
+            contextSummary: contextToCreate.contextSummary,
+            contextDetails: contextToCreate.contextDetails,
+            sessionId: session.id,
+            expiresInDays: contextToCreate.expiresInDays,
+          }).catch((err) =>
+            console.error("[AI Chat] Error saving context:", err),
+          );
+
+          // Create follow-up if specified
+          if (contextToCreate.createFollowup) {
+            const scheduledFor = new Date();
+            scheduledFor.setDate(
+              scheduledFor.getDate() + contextToCreate.createFollowup.delayDays,
+            );
+
+            createFollowup(userId, {
+              followupType: contextToCreate.createFollowup.type,
+              followupPrompt: contextToCreate.createFollowup.prompt,
+              context: contextToCreate.contextDetails,
+              scheduledFor: scheduledFor.toISOString(),
+              sourceType: "ai_message",
+            }).catch((err) =>
+              console.error("[AI Chat] Error creating follow-up:", err),
+            );
+          }
+        }
+
+        // 14. Phase 4: Mark any triggered follow-ups
+        if (pendingFollowups.length > 0) {
+          // Mark first pending follow-up as triggered since we're responding
+          markFollowupTriggered(pendingFollowups[0].id).catch((err) =>
+            console.error("[AI Chat] Error marking follow-up:", err),
+          );
+        }
+
+        // 15. Phase 4: Mark referenced contexts
+        for (const ctx of conversationContexts) {
+          markContextReferenced(ctx.id);
+        }
+
+        // 16. Generate suggested actions (Phase 2: micro-session structured)
         const suggestedActions = generateSuggestedActions(
           message,
           aiResponse.answer,
           userContext,
-          classification.riskLevel
+          classification.riskLevel,
+          classification.intent,
         );
 
         // Add ACWR-specific actions if in danger zone
@@ -1029,6 +3373,7 @@ exports.handler = async (event, context) => {
             type: "reduce_load",
             reason: classification.acwrBlockReason,
             label: "View Recovery Plan",
+            isMicroSession: false,
             data: {
               currentACWR: classification.acwrData?.acwr,
               targetACWR: 1.0,
@@ -1047,7 +3392,7 @@ exports.handler = async (event, context) => {
             evidenceLevel: knowledge[0]?.evidence_grade || "limited",
             acwrOverride: classification.acwrOverride,
             acwrData: classification.acwrData,
-          }
+          },
         );
 
         // Add suggested actions to response
@@ -1056,21 +3401,32 @@ exports.handler = async (event, context) => {
           ...suggestedActions,
         ];
 
-        // 8. Save message and response
+        // 9. Save message and response
         const messageId = await saveChatMessage(
           session.id,
           userId,
           message,
           response,
-          classification
+          classification,
         );
 
-        // 9. Log recommendations for tracking
+        // 10. Create coach inbox items for safety alerts and review needs
+        if (messageId) {
+          await createCoachInboxItem(
+            messageId,
+            userId,
+            message,
+            classification,
+            stateGates,
+          );
+        }
+
+        // 11. Log recommendations for tracking
         for (const action of response.suggestedActions) {
           await logRecommendation(userId, session.id, action);
         }
 
-        // 11. Return response
+        // 12. Return response with all enhancements
         return createSuccessResponse(
           {
             answer_markdown: response.answer,
@@ -1080,27 +3436,72 @@ exports.handler = async (event, context) => {
             suggested_actions: response.suggestedActions,
             chat_session_id: session.id,
             message_id: messageId,
+            // Phase 1: Evidence grade explanation
+            evidence_grade_explanation:
+              aiResponse.evidenceGradeExplanation ||
+              response.evidenceGradeExplanation ||
+              null,
+            // Phase 1: Intent classification
+            intent: classification.intent,
+            // Phase 1: Swap plan indicator
+            is_swap_plan: aiResponse.isSwapPlan || false,
             // ACWR safety information
-            acwr_safety: classification.acwrOverride ? {
-              blocked: true,
-              reason: classification.acwrBlockReason,
-              current_acwr: classification.acwrData?.acwr,
-              risk_zone: classification.acwrData?.riskZone,
-              original_risk_level: classification.originalRiskLevel,
-            } : null,
+            acwr_safety: classification.acwrOverride
+              ? {
+                  blocked: true,
+                  reason: classification.acwrBlockReason,
+                  current_acwr: classification.acwrData?.acwr,
+                  risk_zone: classification.acwrData?.riskZone,
+                  original_risk_level: classification.originalRiskLevel,
+                }
+              : null,
+            // Phase 1: State gate escalation info
+            state_gate_escalation: classification.stateGateEscalation
+              ? {
+                  escalated: true,
+                  original_risk: classification.originalRiskLevel,
+                  escalated_risk: classification.riskLevel,
+                  reasons: classification.escalationReasons,
+                }
+              : null,
+            // Smart AI: Intelligence metadata
+            smart_ai: {
+              routing_action: smartResult.routingAction,
+              confidence: smartResult.confidence,
+              has_memory: smartResult.memory?.hasMemory || false,
+              semantic_search_used: isEmbeddingServiceAvailable(),
+              knowledge_sources_count: knowledge.length,
+              proactive_checkin_included:
+                smartResult.pendingCheckins?.length > 0,
+              processing_time_ms: smartResult.processingTimeMs,
+            },
             metadata: {
               ...response.metadata,
               source: aiResponse.source,
               model: aiResponse.model || null,
               usage: aiResponse.usage || null,
-              acwr: classification.acwrData ? {
-                ratio: classification.acwrData.acwr,
-                riskZone: classification.acwrData.riskZone,
-                canRecommendHighIntensity: classification.acwrData.canRecommendHighIntensity,
-              } : null,
+              acwr: classification.acwrData
+                ? {
+                    ratio: classification.acwrData.acwr,
+                    riskZone: classification.acwrData.riskZone,
+                    canRecommendHighIntensity:
+                      classification.acwrData.canRecommendHighIntensity,
+                  }
+                : null,
+              // Phase 1: Include state gates summary in metadata
+              stateGates: stateGates
+                ? {
+                    ageGroup: stateGates.ageGroup,
+                    injuryCount: stateGates.injuries?.length || 0,
+                    dailyPain: stateGates.dailyState?.pain_level,
+                    readinessScore: stateGates.dailyState?.readiness_score,
+                    upcomingGame: stateGates.upcomingGame ? true : false,
+                    riskEscalation: stateGates.riskEscalation,
+                  }
+                : null,
             },
           },
-          requestId
+          requestId,
         );
       } catch (error) {
         console.error("[AI Chat] Error processing request:", error);
@@ -1108,10 +3509,9 @@ exports.handler = async (event, context) => {
           "Failed to process chat request",
           500,
           "internal_error",
-          requestId
+          requestId,
         );
       }
     },
   });
 };
-

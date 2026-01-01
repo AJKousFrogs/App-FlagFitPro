@@ -23,7 +23,13 @@ export interface GameOfficial {
   id: string;
   game_id: string;
   official_id: string;
-  role: "head_referee" | "line_judge" | "field_judge" | "back_judge" | "scorekeeper" | "timekeeper";
+  role:
+    | "head_referee"
+    | "line_judge"
+    | "field_judge"
+    | "back_judge"
+    | "scorekeeper"
+    | "timekeeper";
   status: "scheduled" | "confirmed" | "declined" | "no_show";
   payment_amount?: number;
   payment_status?: "pending" | "paid";
@@ -63,7 +69,10 @@ export class OfficialsService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
 
-  readonly OFFICIAL_ROLES: Array<{ value: GameOfficial["role"]; label: string }> = [
+  readonly OFFICIAL_ROLES: Array<{
+    value: GameOfficial["role"];
+    label: string;
+  }> = [
     { value: "head_referee", label: "Head Referee" },
     { value: "line_judge", label: "Line Judge" },
     { value: "field_judge", label: "Field Judge" },
@@ -72,7 +81,10 @@ export class OfficialsService {
     { value: "timekeeper", label: "Timekeeper" },
   ];
 
-  readonly CERTIFICATION_LEVELS: Array<{ value: Official["certification_level"]; label: string }> = [
+  readonly CERTIFICATION_LEVELS: Array<{
+    value: Official["certification_level"];
+    label: string;
+  }> = [
     { value: "youth", label: "Youth" },
     { value: "high_school", label: "High School" },
     { value: "college", label: "College" },
@@ -88,14 +100,15 @@ export class OfficialsService {
   }): Observable<Official[]> {
     const params: Record<string, unknown> = {};
     if (options?.isActive !== undefined) params["is_active"] = options.isActive;
-    if (options?.certificationLevel) params["certification_level"] = options.certificationLevel;
+    if (options?.certificationLevel)
+      params["certification_level"] = options.certificationLevel;
 
     return this.apiService.get<Official[]>("/api/officials", params).pipe(
       map((response: ApiResponse<Official[]>) => response.data || []),
       catchError((error) => {
         this.logger.error("Failed to fetch officials:", error);
         return of([]);
-      })
+      }),
     );
   }
 
@@ -108,7 +121,7 @@ export class OfficialsService {
       catchError((error) => {
         this.logger.error("Failed to fetch official:", error);
         return of(null);
-      })
+      }),
     );
   }
 
@@ -116,14 +129,14 @@ export class OfficialsService {
    * Create a new official
    */
   createOfficial(
-    official: Omit<Official, "id" | "created_by" | "created_at" | "updated_at">
+    official: Omit<Official, "id" | "created_by" | "created_at" | "updated_at">,
   ): Observable<Official | null> {
     return this.apiService.post<Official>("/api/officials", official).pipe(
       map((response: ApiResponse<Official>) => response.data || null),
       catchError((error) => {
         this.logger.error("Failed to create official:", error);
         return of(null);
-      })
+      }),
     );
   }
 
@@ -132,15 +145,19 @@ export class OfficialsService {
    */
   updateOfficial(
     officialId: string,
-    updates: Partial<Omit<Official, "id" | "created_by" | "created_at" | "updated_at">>
+    updates: Partial<
+      Omit<Official, "id" | "created_by" | "created_at" | "updated_at">
+    >,
   ): Observable<Official | null> {
-    return this.apiService.put<Official>(`/api/officials/${officialId}`, updates).pipe(
-      map((response: ApiResponse<Official>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update official:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .put<Official>(`/api/officials/${officialId}`, updates)
+      .pipe(
+        map((response: ApiResponse<Official>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to update official:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -152,7 +169,7 @@ export class OfficialsService {
       catchError((error) => {
         this.logger.error("Failed to delete official:", error);
         return of(false);
-      })
+      }),
     );
   }
 
@@ -160,13 +177,15 @@ export class OfficialsService {
    * Get officials scheduled for a specific game
    */
   getGameOfficials(gameId: string): Observable<GameOfficial[]> {
-    return this.apiService.get<GameOfficial[]>(`/api/officials/game/${gameId}`).pipe(
-      map((response: ApiResponse<GameOfficial[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch game officials:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<GameOfficial[]>(`/api/officials/game/${gameId}`)
+      .pipe(
+        map((response: ApiResponse<GameOfficial[]>) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch game officials:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
@@ -174,33 +193,43 @@ export class OfficialsService {
    */
   getOfficialGames(
     officialId: string,
-    options?: { startDate?: string; endDate?: string; status?: GameOfficial["status"] }
+    options?: {
+      startDate?: string;
+      endDate?: string;
+      status?: GameOfficial["status"];
+    },
   ): Observable<GameOfficial[]> {
     const params: Record<string, unknown> = {};
     if (options?.startDate) params["start_date"] = options.startDate;
     if (options?.endDate) params["end_date"] = options.endDate;
     if (options?.status) params["status"] = options.status;
 
-    return this.apiService.get<GameOfficial[]>(`/api/officials/${officialId}/games`, params).pipe(
-      map((response: ApiResponse<GameOfficial[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch official games:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<GameOfficial[]>(`/api/officials/${officialId}/games`, params)
+      .pipe(
+        map((response: ApiResponse<GameOfficial[]>) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch official games:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Schedule an official for a game
    */
-  scheduleOfficial(request: OfficialScheduleRequest): Observable<GameOfficial | null> {
-    return this.apiService.post<GameOfficial>("/api/officials/schedule", request).pipe(
-      map((response: ApiResponse<GameOfficial>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to schedule official:", error);
-        return of(null);
-      })
-    );
+  scheduleOfficial(
+    request: OfficialScheduleRequest,
+  ): Observable<GameOfficial | null> {
+    return this.apiService
+      .post<GameOfficial>("/api/officials/schedule", request)
+      .pipe(
+        map((response: ApiResponse<GameOfficial>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to schedule official:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -208,28 +237,37 @@ export class OfficialsService {
    */
   updateGameOfficial(
     assignmentId: string,
-    updates: Partial<Pick<GameOfficial, "role" | "status" | "payment_amount" | "payment_status" | "notes">>
+    updates: Partial<
+      Pick<
+        GameOfficial,
+        "role" | "status" | "payment_amount" | "payment_status" | "notes"
+      >
+    >,
   ): Observable<GameOfficial | null> {
-    return this.apiService.put<GameOfficial>(`/api/officials/assignments/${assignmentId}`, updates).pipe(
-      map((response: ApiResponse<GameOfficial>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update game official:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .put<GameOfficial>(`/api/officials/assignments/${assignmentId}`, updates)
+      .pipe(
+        map((response: ApiResponse<GameOfficial>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to update game official:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Remove an official from a game
    */
   removeGameOfficial(assignmentId: string): Observable<boolean> {
-    return this.apiService.delete(`/api/officials/assignments/${assignmentId}`).pipe(
-      map(() => true),
-      catchError((error) => {
-        this.logger.error("Failed to remove game official:", error);
-        return of(false);
-      })
-    );
+    return this.apiService
+      .delete(`/api/officials/assignments/${assignmentId}`)
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          this.logger.error("Failed to remove game official:", error);
+          return of(false);
+        }),
+      );
   }
 
   /**
@@ -238,18 +276,26 @@ export class OfficialsService {
   getOfficialAvailability(
     officialId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Observable<OfficialAvailability[]> {
-    return this.apiService.get<OfficialAvailability[]>(`/api/officials/${officialId}/availability`, {
-      start_date: startDate,
-      end_date: endDate,
-    }).pipe(
-      map((response: ApiResponse<OfficialAvailability[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch official availability:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<OfficialAvailability[]>(
+        `/api/officials/${officialId}/availability`,
+        {
+          start_date: startDate,
+          end_date: endDate,
+        },
+      )
+      .pipe(
+        map(
+          (response: ApiResponse<OfficialAvailability[]>) =>
+            response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch official availability:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
@@ -257,47 +303,63 @@ export class OfficialsService {
    */
   setOfficialAvailability(
     officialId: string,
-    availability: Omit<OfficialAvailability, "id" | "official_id">
+    availability: Omit<OfficialAvailability, "id" | "official_id">,
   ): Observable<OfficialAvailability | null> {
-    return this.apiService.post<OfficialAvailability>(`/api/officials/${officialId}/availability`, availability).pipe(
-      map((response: ApiResponse<OfficialAvailability>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to set official availability:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .post<OfficialAvailability>(
+        `/api/officials/${officialId}/availability`,
+        availability,
+      )
+      .pipe(
+        map(
+          (response: ApiResponse<OfficialAvailability>) =>
+            response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to set official availability:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Get available officials for a specific date/time
    */
-  getAvailableOfficials(date: string, startTime?: string, endTime?: string): Observable<Official[]> {
+  getAvailableOfficials(
+    date: string,
+    startTime?: string,
+    endTime?: string,
+  ): Observable<Official[]> {
     const params: Record<string, unknown> = { date };
     if (startTime) params["start_time"] = startTime;
     if (endTime) params["end_time"] = endTime;
 
-    return this.apiService.get<Official[]>("/api/officials/available", params).pipe(
-      map((response: ApiResponse<Official[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch available officials:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<Official[]>("/api/officials/available", params)
+      .pipe(
+        map((response: ApiResponse<Official[]>) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch available officials:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Send notification to official about assignment
    */
   notifyOfficial(assignmentId: string, message?: string): Observable<boolean> {
-    return this.apiService.post(`/api/officials/assignments/${assignmentId}/notify`, {
-      message,
-    }).pipe(
-      map(() => true),
-      catchError((error) => {
-        this.logger.error("Failed to notify official:", error);
-        return of(false);
+    return this.apiService
+      .post(`/api/officials/assignments/${assignmentId}/notify`, {
+        message,
       })
-    );
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          this.logger.error("Failed to notify official:", error);
+          return of(false);
+        }),
+      );
   }
 
   /**
@@ -307,21 +369,38 @@ export class OfficialsService {
     startDate?: string;
     endDate?: string;
     officialId?: string;
-  }): Observable<Array<{ official_id: string; official_name: string; total_games: number; total_payment: number; paid: number; pending: number }>> {
+  }): Observable<
+    Array<{
+      official_id: string;
+      official_name: string;
+      total_games: number;
+      total_payment: number;
+      paid: number;
+      pending: number;
+    }>
+  > {
     const params: Record<string, unknown> = {};
     if (options?.startDate) params["start_date"] = options.startDate;
     if (options?.endDate) params["end_date"] = options.endDate;
     if (options?.officialId) params["official_id"] = options.officialId;
 
-    return this.apiService.get<Array<{ official_id: string; official_name: string; total_games: number; total_payment: number; paid: number; pending: number }>>(
-      "/api/officials/payments/summary",
-      params
-    ).pipe(
-      map((response) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch payment summary:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<
+        Array<{
+          official_id: string;
+          official_name: string;
+          total_games: number;
+          total_payment: number;
+          paid: number;
+          pending: number;
+        }>
+      >("/api/officials/payments/summary", params)
+      .pipe(
+        map((response) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Failed to fetch payment summary:", error);
+          return of([]);
+        }),
+      );
   }
 }

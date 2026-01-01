@@ -1,4 +1,9 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -23,7 +28,7 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
     MessageModule,
     ToastModule,
   ],
-  
+
   template: `
     <p-toast></p-toast>
     <div
@@ -412,9 +417,7 @@ export class ImportDatasetComponent {
     const athleteId = this.athleteId();
     const jsonText = this.jsonText();
     if (!athleteId || !jsonText.trim()) {
-      this.toastService.warn(
-        "Please fill in both Athlete ID and Dataset JSON"
-      );
+      this.toastService.warn("Please fill in both Athlete ID and Dataset JSON");
       return;
     }
 

@@ -114,8 +114,8 @@ export class VideoCurationService {
       .slice(0, 5);
   });
 
-  readonly playerSuggestionsCount = computed(() =>
-    this.playerSuggestions().filter((s) => s.status === "pending").length
+  readonly playerSuggestionsCount = computed(
+    () => this.playerSuggestions().filter((s) => s.status === "pending").length,
   );
 
   // Methods
@@ -126,7 +126,7 @@ export class VideoCurationService {
   getFilteredVideos(
     search: string,
     position: FlagPosition | null,
-    status: string | null
+    status: string | null,
   ): InstagramVideo[] {
     let videos = this.instagramService.getAllVideos();
     const searchLower = search.toLowerCase();
@@ -135,7 +135,7 @@ export class VideoCurationService {
       videos = videos.filter(
         (v) =>
           v.title.toLowerCase().includes(searchLower) ||
-          v.creator.displayName.toLowerCase().includes(searchLower)
+          v.creator.displayName.toLowerCase().includes(searchLower),
       );
     }
 
@@ -156,7 +156,7 @@ export class VideoCurationService {
 
   generateEmbedHtml(
     video: InstagramVideo,
-    options: { width: number; maxWidth: string }
+    options: { width: number; maxWidth: string },
   ): string {
     return this.instagramService.generateEmbedHtml(video, options);
   }
@@ -191,7 +191,7 @@ export class VideoCurationService {
       form.name,
       form.description,
       form.videoIds,
-      options
+      options,
     );
 
     this.playlists.update((p) => [...p, playlist]);
@@ -228,11 +228,11 @@ export class VideoCurationService {
 
       this.playerSuggestions.update((suggestions) =>
         suggestions.map((s) =>
-          s.id === suggestion.id ? { ...s, status: "approved" as const } : s
-        )
+          s.id === suggestion.id ? { ...s, status: "approved" as const } : s,
+        ),
       );
       this.toastService.success(
-        `"${suggestion.title}" approved and added to library`
+        `"${suggestion.title}" approved and added to library`,
       );
     } catch (error) {
       console.error("Failed to approve suggestion:", error);
@@ -257,8 +257,8 @@ export class VideoCurationService {
 
       this.playerSuggestions.update((suggestions) =>
         suggestions.map((s) =>
-          s.id === suggestion.id ? { ...s, status: "rejected" as const } : s
-        )
+          s.id === suggestion.id ? { ...s, status: "rejected" as const } : s,
+        ),
       );
       this.toastService.info(`"${suggestion.title}" rejected`);
     } catch (error) {
@@ -331,7 +331,7 @@ export class VideoCurationService {
   // Private methods
   private async saveVideoStatus(
     videoId: string,
-    status: "approved" | "rejected"
+    status: "approved" | "rejected",
   ): Promise<void> {
     try {
       const user = this.authService.getUser();
@@ -354,4 +354,3 @@ export class VideoCurationService {
     localStorage.setItem("flagfit_playlists", JSON.stringify(all));
   }
 }
-

@@ -229,7 +229,7 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             `Unknown trend type: ${trendType}. Supported: change-of-direction, sprint-volume, game-performance`,
             400,
-            "invalid_trend_type"
+            "invalid_trend_type",
           );
       }
 

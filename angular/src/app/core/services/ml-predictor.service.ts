@@ -343,7 +343,10 @@ export class MlPredictorService {
   /**
    * Enhanced decision making prediction for QBs and DBs
    */
-  predictDecisionMaking(playerData: any, position: string): DecisionPredictionResult {
+  predictDecisionMaking(
+    playerData: any,
+    position: string,
+  ): DecisionPredictionResult {
     try {
       const model = this.models.get("decisions")!;
       const features = this.extractDecisionFeatures(playerData, position);
@@ -423,7 +426,10 @@ export class MlPredictorService {
     };
   }
 
-  private applyFlagFootballOptimization(prediction: number, athleteData: any): any {
+  private applyFlagFootballOptimization(
+    prediction: number,
+    athleteData: any,
+  ): any {
     const agilityWeight = 0.3;
     const accelerationWeight = 0.4;
     const topSpeedWeight = 0.3;
@@ -489,7 +495,11 @@ export class MlPredictorService {
     return recommendations;
   }
 
-  private computeLinearRegression(features: any, weights: number[], bias: number): number {
+  private computeLinearRegression(
+    features: any,
+    weights: number[],
+    bias: number,
+  ): number {
     let prediction = bias;
     const featureValues = Object.values(features) as number[];
 
@@ -504,7 +514,11 @@ export class MlPredictorService {
 
   private computeSkillClassification(features: any, model: ModelConfig): any {
     // Simplified classification logic
-    const score = this.computeLinearRegression(features, model.weights || [], model.bias || 0);
+    const score = this.computeLinearRegression(
+      features,
+      model.weights || [],
+      model.bias || 0,
+    );
     return {
       current: score,
       projected: score * 1.15,
@@ -531,24 +545,32 @@ export class MlPredictorService {
     };
   }
 
-  private calculateOverallProgression(predictions: Record<string, RouteSkillLevel>): number {
+  private calculateOverallProgression(
+    predictions: Record<string, RouteSkillLevel>,
+  ): number {
     const values = Object.values(predictions);
     return values.reduce((sum, p) => sum + p.projectedLevel, 0) / values.length;
   }
 
-  private identifyFocusAreas(predictions: Record<string, RouteSkillLevel>): string[] {
+  private identifyFocusAreas(
+    predictions: Record<string, RouteSkillLevel>,
+  ): string[] {
     return Object.entries(predictions)
       .sort(([, a], [, b]) => a.currentLevel - b.currentLevel)
       .slice(0, 2)
       .map(([type]) => `Improve ${type} route precision`);
   }
 
-  private calculateDecisionAccuracy(predictions: Record<string, DecisionMetrics>): number {
+  private calculateDecisionAccuracy(
+    predictions: Record<string, DecisionMetrics>,
+  ): number {
     const values = Object.values(predictions);
     return values.reduce((sum, p) => sum + p.successRate, 0) / values.length;
   }
 
-  private assessCognitiveLoad(features: any): DecisionPredictionResult["cognitiveLoad"] {
+  private assessCognitiveLoad(
+    features: any,
+  ): DecisionPredictionResult["cognitiveLoad"] {
     const baseLoad =
       (features.field_vision +
         features.pressure_handling +
@@ -569,7 +591,9 @@ export class MlPredictorService {
     };
   }
 
-  private rankTrainingPriorities(predictions: Record<string, DecisionMetrics>): string[] {
+  private rankTrainingPriorities(
+    predictions: Record<string, DecisionMetrics>,
+  ): string[] {
     return Object.entries(predictions)
       .sort(([, a], [, b]) => a.successRate - b.successRate)
       .map(([scenario]) => scenario.replace(/_/g, " "));
@@ -596,10 +620,15 @@ export class MlPredictorService {
 
   private generateTrainingRecommendations(features: any): string[] {
     const recommendations: string[] = [];
-    if (features.reaction_time > 0.4) recommendations.push("Reaction time drills");
-    if (features.field_vision < 0.7) recommendations.push("Film study and recognition drills");
-    if (features.pressure_handling < 0.6) recommendations.push("Pressure simulation training");
-    return recommendations.length > 0 ? recommendations : ["Maintain current training"];
+    if (features.reaction_time > 0.4)
+      recommendations.push("Reaction time drills");
+    if (features.field_vision < 0.7)
+      recommendations.push("Film study and recognition drills");
+    if (features.pressure_handling < 0.6)
+      recommendations.push("Pressure simulation training");
+    return recommendations.length > 0
+      ? recommendations
+      : ["Maintain current training"];
   }
 
   async savePredictionData(
@@ -652,7 +681,9 @@ export class MlPredictorService {
     return predicted === actual ? 1 : 0;
   }
 
-  private getFallbackSprintPrediction(_athleteData: any): SprintPredictionResult {
+  private getFallbackSprintPrediction(
+    _athleteData: any,
+  ): SprintPredictionResult {
     return {
       predictedTime: 4.8,
       improvement: 0.05,
@@ -686,7 +717,9 @@ export class MlPredictorService {
     };
   }
 
-  private getFallbackDecisionPrediction(position: string): DecisionPredictionResult {
+  private getFallbackDecisionPrediction(
+    position: string,
+  ): DecisionPredictionResult {
     return {
       position,
       decisionPredictions: {},
@@ -702,4 +735,3 @@ export class MlPredictorService {
     };
   }
 }
-

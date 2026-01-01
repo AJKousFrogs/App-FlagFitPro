@@ -32,8 +32,13 @@ async function logRecommendation(userId, data) {
     if (!recommendation) {
       throw new Error("recommendation is required");
     }
-    if (!recommendation.type || !["deload", "maintain", "push"].includes(recommendation.type)) {
-      throw new Error("recommendation.type must be 'deload', 'maintain', or 'push'");
+    if (
+      !recommendation.type ||
+      !["deload", "maintain", "push"].includes(recommendation.type)
+    ) {
+      throw new Error(
+        "recommendation.type must be 'deload', 'maintain', or 'push'",
+      );
     }
 
     // Insert calibration log entry
@@ -229,31 +234,40 @@ async function getAthleteStats(athleteId) {
 
     // Calculate injury rates and average performance ratings
     const injuryRate = {
-      deload: recommendationsByType.deload > 0 
-        ? (injuriesByType.deload / recommendationsByType.deload) * 100 
-        : 0,
-      maintain: recommendationsByType.maintain > 0 
-        ? (injuriesByType.maintain / recommendationsByType.maintain) * 100 
-        : 0,
-      push: recommendationsByType.push > 0 
-        ? (injuriesByType.push / recommendationsByType.push) * 100 
-        : 0,
+      deload:
+        recommendationsByType.deload > 0
+          ? (injuriesByType.deload / recommendationsByType.deload) * 100
+          : 0,
+      maintain:
+        recommendationsByType.maintain > 0
+          ? (injuriesByType.maintain / recommendationsByType.maintain) * 100
+          : 0,
+      push:
+        recommendationsByType.push > 0
+          ? (injuriesByType.push / recommendationsByType.push) * 100
+          : 0,
     };
 
     const averagePerformanceRating = {
-      deload: performanceRatingsByType.deload.length > 0
-        ? performanceRatingsByType.deload.reduce((a, b) => a + b, 0) / performanceRatingsByType.deload.length
-        : 0,
-      maintain: performanceRatingsByType.maintain.length > 0
-        ? performanceRatingsByType.maintain.reduce((a, b) => a + b, 0) / performanceRatingsByType.maintain.length
-        : 0,
-      push: performanceRatingsByType.push.length > 0
-        ? performanceRatingsByType.push.reduce((a, b) => a + b, 0) / performanceRatingsByType.push.length
-        : 0,
+      deload:
+        performanceRatingsByType.deload.length > 0
+          ? performanceRatingsByType.deload.reduce((a, b) => a + b, 0) /
+            performanceRatingsByType.deload.length
+          : 0,
+      maintain:
+        performanceRatingsByType.maintain.length > 0
+          ? performanceRatingsByType.maintain.reduce((a, b) => a + b, 0) /
+            performanceRatingsByType.maintain.length
+          : 0,
+      push:
+        performanceRatingsByType.push.length > 0
+          ? performanceRatingsByType.push.reduce((a, b) => a + b, 0) /
+            performanceRatingsByType.push.length
+          : 0,
     };
 
     return {
-      totalRecommendations: logs.filter(l => l.recommendation_type).length,
+      totalRecommendations: logs.filter((l) => l.recommendation_type).length,
       recommendationsByType,
       outcomesRecorded,
       injuryRate,
@@ -299,7 +313,7 @@ async function getPresetStats(presetId) {
     // Calculate threshold effectiveness
     // Assume low readiness threshold is 40 (can be adjusted)
     const lowThreshold = 40;
-    
+
     let belowThresholdCount = 0;
     let belowThresholdInjuries = 0;
     let aboveThresholdCount = 0;
@@ -321,12 +335,14 @@ async function getPresetStats(presetId) {
       }
     }
 
-    const injuryRateBelowThreshold = belowThresholdCount > 0
-      ? (belowThresholdInjuries / belowThresholdCount) * 100
-      : 0;
-    const injuryRateAboveThreshold = aboveThresholdCount > 0
-      ? (aboveThresholdInjuries / aboveThresholdCount) * 100
-      : 0;
+    const injuryRateBelowThreshold =
+      belowThresholdCount > 0
+        ? (belowThresholdInjuries / belowThresholdCount) * 100
+        : 0;
+    const injuryRateAboveThreshold =
+      aboveThresholdCount > 0
+        ? (aboveThresholdInjuries / aboveThresholdCount) * 100
+        : 0;
 
     // Determine recommendation based on injury rates
     let recommendation = "optimal";
@@ -338,11 +354,15 @@ async function getPresetStats(presetId) {
 
     return {
       presetId,
-      totalRecommendations: logs.filter(l => l.recommendation_type).length,
+      totalRecommendations: logs.filter((l) => l.recommendation_type).length,
       thresholdEffectiveness: {
         lowReadinessThreshold: lowThreshold,
-        injuryRateBelowThreshold: parseFloat(injuryRateBelowThreshold.toFixed(2)),
-        injuryRateAboveThreshold: parseFloat(injuryRateAboveThreshold.toFixed(2)),
+        injuryRateBelowThreshold: parseFloat(
+          injuryRateBelowThreshold.toFixed(2),
+        ),
+        injuryRateAboveThreshold: parseFloat(
+          injuryRateAboveThreshold.toFixed(2),
+        ),
         recommendation,
       },
     };
@@ -372,7 +392,7 @@ exports.handler = async (event, context) => {
               "Invalid JSON in request body",
               400,
               "invalid_json",
-              requestId
+              requestId,
             );
           }
 
@@ -380,7 +400,7 @@ exports.handler = async (event, context) => {
           return createSuccessResponse(
             result,
             requestId,
-            "Outcome logged successfully"
+            "Outcome logged successfully",
           );
         }
 
@@ -393,7 +413,7 @@ exports.handler = async (event, context) => {
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId
+            requestId,
           );
         }
 
@@ -401,7 +421,7 @@ exports.handler = async (event, context) => {
         return createSuccessResponse(
           result,
           requestId,
-          "Recommendation logged successfully"
+          "Recommendation logged successfully",
         );
       }
 
@@ -414,7 +434,7 @@ exports.handler = async (event, context) => {
             "athleteId is required",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
         const result = await getAthleteStats(athleteId);
@@ -429,7 +449,7 @@ exports.handler = async (event, context) => {
             "presetId is required",
             400,
             "validation_error",
-            requestId
+            requestId,
           );
         }
         const result = await getPresetStats(presetId);
@@ -440,9 +460,8 @@ exports.handler = async (event, context) => {
         "Endpoint not found",
         404,
         "not_found",
-        requestId
+        requestId,
       );
     },
   });
 };
-

@@ -5,29 +5,43 @@
  * These SCSS variables complement the CSS custom properties defined in styles.css
  */
 
+@use "sass:map";
+@use "sass:math";
+
 // ================================
 // SPACING SCALE
 // ================================
 
 $spacing-scale: (
   0: 0,
-  1: 0.25rem,  // 4px
-  2: 0.5rem,   // 8px
-  3: 0.75rem,  // 12px
-  4: 1rem,     // 16px
-  5: 1.5rem,   // 24px
-  6: 2rem,     // 32px
-  7: 2.5rem,   // 40px
-  8: 3rem,     // 48px
-  9: 3.5rem,   // 56px
-  10: 4rem,    // 64px
-  11: 4.5rem,  // 72px
-  12: 5rem,    // 80px
+  1: 0.25rem,
+  // 4px
+  2: 0.5rem,
+  // 8px
+  3: 0.75rem,
+  // 12px
+  4: 1rem,
+  // 16px
+  5: 1.5rem,
+  // 24px
+  6: 2rem,
+  // 32px
+  7: 2.5rem,
+  // 40px
+  8: 3rem,
+  // 48px
+  9: 3.5rem,
+  // 56px
+  10: 4rem,
+  // 64px
+  11: 4.5rem,
+  // 72px
+  12: 5rem, // 80px
 );
 
 // Spacing function
 @function space($key) {
-  @return map-get($spacing-scale, $key);
+  @return map.get($spacing-scale, $key);
 }
 
 // ================================
@@ -35,16 +49,25 @@ $spacing-scale: (
 // ================================
 
 $font-sizes: (
-  xs: 0.75rem,     // 12px
-  sm: 0.875rem,    // 14px
-  base: 1rem,      // 16px
-  md: 1rem,        // 16px
-  lg: 1.125rem,    // 18px
-  xl: 1.25rem,     // 20px
-  2xl: 1.5rem,     // 24px
-  3xl: 1.875rem,   // 30px
-  4xl: 2.25rem,    // 36px
-  5xl: 3rem,       // 48px
+  xs: 0.75rem,
+  // 12px
+  sm: 0.875rem,
+  // 14px
+  base: 1rem,
+  // 16px
+  md: 1rem,
+  // 16px
+  lg: 1.125rem,
+  // 18px
+  xl: 1.25rem,
+  // 20px
+  2xl: 1.5rem,
+  // 24px
+  3xl: 1.875rem,
+  // 30px
+  4xl: 2.25rem,
+  // 36px
+  5xl: 3rem, // 48px
 );
 
 $font-weights: (
@@ -70,11 +93,16 @@ $line-heights: (
 // ================================
 
 $breakpoints: (
-  xs: 374px,   // Extra small mobile
-  sm: 640px,   // Mobile
-  md: 768px,   // Tablet
-  lg: 1024px,  // Desktop
-  xl: 1280px,  // Large desktop
+  xs: 374px,
+  // Extra small mobile
+  sm: 640px,
+  // Mobile
+  md: 768px,
+  // Tablet
+  lg: 1024px,
+  // Desktop
+  xl: 1280px,
+  // Large desktop
   xxl: 1536px, // Extra large desktop
 );
 
@@ -84,11 +112,16 @@ $breakpoints: (
 
 $radius: (
   none: 0,
-  sm: 0.25rem,   // 4px
-  md: 0.5rem,    // 8px
-  lg: 0.75rem,   // 12px
-  xl: 1rem,      // 16px
-  2xl: 1.5rem,   // 24px
+  sm: 0.25rem,
+  // 4px
+  md: 0.5rem,
+  // 8px
+  lg: 0.75rem,
+  // 12px
+  xl: 1rem,
+  // 16px
+  2xl: 1.5rem,
+  // 24px
   full: 9999px,
 );
 
@@ -178,7 +211,7 @@ $input-border-width: 1px;
 
 // Cards
 $card-padding: space(5);
-$card-border-radius: map-get($radius, xl);
+$card-border-radius: map.get($radius, xl);
 
 // Modals
 $modal-padding: space(5);
@@ -194,37 +227,37 @@ $modal-widths: (
 // ================================
 
 @function get-font-size($size) {
-  @return map-get($font-sizes, $size);
+  @return map.get($font-sizes, $size);
 }
 
 @function get-font-weight($weight) {
-  @return map-get($font-weights, $weight);
+  @return map.get($font-weights, $weight);
 }
 
 @function get-line-height($height) {
-  @return map-get($line-heights, $height);
+  @return map.get($line-heights, $height);
 }
 
 @function get-radius($size) {
-  @return map-get($radius, $size);
+  @return map.get($radius, $size);
 }
 
 @function get-shadow($size) {
-  @return map-get($shadows, $size);
+  @return map.get($shadows, $size);
 }
 
 @function get-z-index($layer) {
-  @return map-get($z-index, $layer);
+  @return map.get($z-index, $layer);
 }
 
 @function get-transition($speed) {
-  @return map-get($transitions, $speed);
+  @return map.get($transitions, $speed);
 }
 
 @function get-easing($type) {
-  @return map-get($easing, $type);
+  @return map.get($easing, $type);
 }
 
 @function get-breakpoint($size) {
-  @return map-get($breakpoints, $size);
+  @return map.get($breakpoints, $size);
 }

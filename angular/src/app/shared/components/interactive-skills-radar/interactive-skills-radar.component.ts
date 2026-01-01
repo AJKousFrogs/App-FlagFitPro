@@ -242,7 +242,10 @@ export class InteractiveSkillsRadarComponent {
       ...DEFAULT_CHART_OPTIONS,
       responsive: true,
       maintainAspectRatio: true,
-      onClick: (evt: MouseEvent | PointerEvent, elements: Array<{ index: number }>) => {
+      onClick: (
+        evt: MouseEvent | PointerEvent,
+        elements: Array<{ index: number }>,
+      ) => {
         if (elements.length > 0) {
           const elementIndex = elements[0].index;
           this.onSkillSelect(elementIndex);
@@ -255,7 +258,10 @@ export class InteractiveSkillsRadarComponent {
         },
         tooltip: {
           callbacks: {
-            label: (context: { dataset: { label?: string }; parsed: { r: number } }) => {
+            label: (context: {
+              dataset: { label?: string };
+              parsed: { r: number };
+            }) => {
               return `${context.dataset.label}: ${context.parsed.r}/100`;
             },
           },
@@ -292,17 +298,17 @@ export class InteractiveSkillsRadarComponent {
     // Map skill names to exercise categories/types
     const skillToCategory: Record<string, string> = {
       "Route Running": "agility",
-      "Catching": "catching",
-      "Blocking": "strength",
+      Catching: "catching",
+      Blocking: "strength",
       "Throwing Accuracy": "throwing",
       "Arm Strength": "throwing",
       "Decision Making": "mental",
       "Field Vision": "mental",
-      "Speed": "speed",
-      "Agility": "agility",
-      "Endurance": "conditioning",
-      "Tackling": "defense",
-      "Coverage": "defense",
+      Speed: "speed",
+      Agility: "agility",
+      Endurance: "conditioning",
+      Tackling: "defense",
+      Coverage: "defense",
     };
 
     const category = skillToCategory[subSkill.name] || "general";

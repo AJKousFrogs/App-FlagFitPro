@@ -1,24 +1,28 @@
+import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
-import { TooltipModule } from "primeng/tooltip";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { LiveIndicatorComponent } from "../../shared/components/live-indicator/live-indicator.component";
+import { NoDataEntryComponent } from "../../shared/components/no-data-entry/no-data-entry.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { ReadinessWidgetComponent } from "../../shared/components/readiness-widget/readiness-widget.component";
 import {
   TrafficLightIndicatorComponent,
   TrafficLightStatus,
@@ -27,27 +31,26 @@ import {
   TrendCardComponent,
   TrendData,
 } from "../../shared/components/trend-card/trend-card.component";
-import { ReadinessWidgetComponent } from "../../shared/components/readiness-widget/readiness-widget.component";
-import { LiveIndicatorComponent } from "../../shared/components/live-indicator/live-indicator.component";
-import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
-import { NoDataEntryComponent } from "../../shared/components/no-data-entry/no-data-entry.component";
 // New UX Components
-import { MorningBriefingComponent } from "../../shared/components/morning-briefing/morning-briefing.component";
-import { TournamentModeWidgetComponent } from "../../shared/components/tournament-mode-widget/tournament-mode-widget.component";
+import { AcwrService } from "../../core/services/acwr.service";
+import { ApiService } from "../../core/services/api.service";
+import { AuthService } from "../../core/services/auth.service";
+import {
+  DATA_REQUIREMENTS,
+  DataSourceService,
+} from "../../core/services/data-source.service";
+import { HeaderService } from "../../core/services/header.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { ReadinessService } from "../../core/services/readiness.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { TournamentModeService } from "../../core/services/tournament-mode.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
+import { TrendsService } from "../../core/services/trends.service";
 import { ActionableInsightsComponent } from "../../shared/components/actionable-insights/actionable-insights.component";
 import { GameDayCountdownComponent } from "../../shared/components/game-day-countdown/game-day-countdown.component";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
-import { AcwrService } from "../../core/services/acwr.service";
-import { ReadinessService } from "../../core/services/readiness.service";
-import { TrendsService } from "../../core/services/trends.service";
-import { HeaderService } from "../../core/services/header.service";
-import { TrainingDataService } from "../../core/services/training-data.service";
-import { DataSourceService, DATA_REQUIREMENTS } from "../../core/services/data-source.service";
-import { TournamentModeService } from "../../core/services/tournament-mode.service";
+import { MorningBriefingComponent } from "../../shared/components/morning-briefing/morning-briefing.component";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
-import { LoggerService } from "../../core/services/logger.service";
-import { SupabaseService } from "../../core/services/supabase.service";
+import { TournamentModeWidgetComponent } from "../../shared/components/tournament-mode-widget/tournament-mode-widget.component";
 
 // Type for training session data
 interface TrainingSession {
@@ -111,177 +114,185 @@ interface TrainingSession {
 
       <!-- Content -->
       @else {
-      <div class="dashboard-content">
-        <app-page-header
-          title="Athlete Dashboard"
-          subtitle="Your performance overview for today"
-        >
-          <div class="flex items-center gap-3">
-            @if (hasUpcomingGame()) {
+        <div class="dashboard-content">
+          <app-page-header
+            title="Athlete Dashboard"
+            subtitle="Your performance overview for today"
+          >
+            <div class="flex items-center gap-3">
+              @if (hasUpcomingGame()) {
+                <p-button
+                  label="Game Day Check-in"
+                  icon="pi pi-flag"
+                  [rounded]="true"
+                  severity="warn"
+                  routerLink="/game/readiness"
+                  pTooltip="Pre-competition readiness check"
+                ></p-button>
+                <p-button
+                  label="Tournament Fuel"
+                  icon="pi pi-heart"
+                  [rounded]="true"
+                  [outlined]="true"
+                  routerLink="/game/nutrition"
+                  pTooltip="Nutrition & hydration plan"
+                ></p-button>
+              }
               <p-button
-                label="Game Day Check-in"
-                icon="pi pi-flag"
-                routerLink="/game/readiness"
-                styleClass="p-button-warning"
-                pTooltip="Pre-competition readiness check"
-              ></p-button>
-              <p-button
-                label="Tournament Fuel"
-                icon="pi pi-heart"
-                routerLink="/game/nutrition"
+                label="Travel Recovery"
+                icon="pi pi-globe"
+                [rounded]="true"
                 [outlined]="true"
-                pTooltip="Nutrition & hydration plan"
+                routerLink="/travel/recovery"
+                pTooltip="Jet lag & travel recovery protocols for away tournaments"
               ></p-button>
-            }
-            <p-button
-              label="Travel Recovery"
-              icon="pi pi-globe"
-              routerLink="/travel/recovery"
-              [outlined]="true"
-              pTooltip="Jet lag & travel recovery protocols for away tournaments"
-            ></p-button>
-            <p-button
-              label="Today's Practice"
-              icon="pi pi-play"
-              routerLink="/training/daily"
-              styleClass="p-button-success"
-            ></p-button>
-            <app-live-indicator
-              [isLive]="realtimeService.isConnected()"
-            ></app-live-indicator>
-          </div>
-        </app-page-header>
-
-        <!-- Morning Briefing - Streamlined daily check-in -->
-        <app-morning-briefing></app-morning-briefing>
-
-        <!-- Tournament Mode Widget - Shows when in active tournament -->
-        <app-tournament-mode-widget></app-tournament-mode-widget>
-
-        <!-- Game Day Countdown - Shows when game is within 48 hours -->
-        @if (upcomingGame()) {
-          <app-game-day-countdown [game]="upcomingGame()"></app-game-day-countdown>
-        }
-
-        <!-- Data Source Warning Banner - CRITICAL FOR ATHLETE SAFETY -->
-        <app-data-source-banner
-          actionRoute="/training/log"
-          actionLabel="Log Training"
-        ></app-data-source-banner>
-
-        <!-- Show No Data Entry state if first-time user -->
-        @if (isFirstTimeUser()) {
-          <app-no-data-entry
-            context="training"
-            [showMinimumInfo]="true"
-            [minimumEntries]="28"
-            metricName="ACWR"
-          ></app-no-data-entry>
-        } @else {
-        <!-- Key Metrics Row -->
-        <div class="metrics-row">
-          <!-- Today's Workload -->
-          <p-card class="metric-card">
-            <div class="metric-content">
-              <div class="metric-header">
-                <h3>Today's Workload</h3>
-                <i class="pi pi-calendar"></i>
-              </div>
-              <div class="metric-value">{{ todayWorkload() }} AU</div>
-              <div class="metric-subtitle">Session-RPE × Duration</div>
+              <p-button
+                label="Today's Practice"
+                icon="pi pi-play"
+                [rounded]="true"
+                severity="success"
+                routerLink="/training/daily"
+              ></p-button>
+              <app-live-indicator
+                [isLive]="realtimeService.isConnected()"
+              ></app-live-indicator>
             </div>
-          </p-card>
+          </app-page-header>
 
-          <!-- ACWR with Traffic Light -->
-          <p-card class="metric-card">
-            <div class="metric-content">
-              <div class="metric-header">
-                <h3>ACWR</h3>
-                <app-traffic-light-indicator
-                  [status]="acwrStatus()"
-                  [showLabel]="true"
-                ></app-traffic-light-indicator>
-              </div>
-              <div class="metric-value">
-                {{ acwrValue() | number: "1.2-2" }}
-              </div>
-              <div class="metric-subtitle">{{ acwrRiskZone() }}</div>
+          <!-- Morning Briefing - Streamlined daily check-in -->
+          <app-morning-briefing></app-morning-briefing>
+
+          <!-- Tournament Mode Widget - Shows when in active tournament -->
+          <app-tournament-mode-widget></app-tournament-mode-widget>
+
+          <!-- Game Day Countdown - Shows when game is within 48 hours -->
+          @if (upcomingGame()) {
+            <app-game-day-countdown
+              [game]="upcomingGame()"
+            ></app-game-day-countdown>
+          }
+
+          <!-- Data Source Warning Banner - CRITICAL FOR ATHLETE SAFETY -->
+          <app-data-source-banner
+            actionRoute="/training/log"
+            actionLabel="Log Training"
+          ></app-data-source-banner>
+
+          <!-- Show No Data Entry state if first-time user -->
+          @if (isFirstTimeUser()) {
+            <app-no-data-entry
+              context="training"
+              [showMinimumInfo]="true"
+              [minimumEntries]="28"
+              metricName="ACWR"
+            ></app-no-data-entry>
+          } @else {
+            <!-- Key Metrics Row -->
+            <div class="metrics-row">
+              <!-- Today's Workload -->
+              <p-card class="metric-card">
+                <div class="metric-content">
+                  <div class="metric-header">
+                    <h3>Today's Workload</h3>
+                    <i class="pi pi-calendar"></i>
+                  </div>
+                  <div class="metric-value">{{ todayWorkload() }} AU</div>
+                  <div class="metric-subtitle">Session-RPE × Duration</div>
+                </div>
+              </p-card>
+
+              <!-- ACWR with Traffic Light -->
+              <p-card class="metric-card">
+                <div class="metric-content">
+                  <div class="metric-header">
+                    <h3>ACWR</h3>
+                    <app-traffic-light-indicator
+                      [status]="acwrStatus()"
+                      [showLabel]="true"
+                    ></app-traffic-light-indicator>
+                  </div>
+                  <div class="metric-value">
+                    {{ acwrValue() | number: "1.2-2" }}
+                  </div>
+                  <div class="metric-subtitle">{{ acwrRiskZone() }}</div>
+                </div>
+              </p-card>
+
+              <!-- Readiness with Traffic Light -->
+              <p-card class="metric-card">
+                <div class="metric-content">
+                  <div class="metric-header">
+                    <h3>Readiness</h3>
+                    <app-traffic-light-indicator
+                      [status]="readinessStatus()"
+                      [showLabel]="true"
+                    ></app-traffic-light-indicator>
+                  </div>
+                  <div class="metric-value">{{ readinessScore() }}/100</div>
+                  <div class="metric-subtitle">{{ readinessLevel() }}</div>
+                </div>
+              </p-card>
+
+              <!-- Next Session -->
+              <p-card class="metric-card">
+                <div class="metric-content">
+                  <div class="metric-header">
+                    <h3>Next Session</h3>
+                    <i class="pi pi-clock"></i>
+                  </div>
+                  @if (nextSession()) {
+                    <div class="metric-value">{{ nextSession()?.title }}</div>
+                    <div class="metric-subtitle">
+                      {{ nextSession()?.date | date: "short" }}
+                    </div>
+                  } @else {
+                    <div class="metric-value">No sessions</div>
+                    <div class="metric-subtitle">Scheduled</div>
+                  }
+                </div>
+              </p-card>
             </div>
-          </p-card>
 
-          <!-- Readiness with Traffic Light -->
-          <p-card class="metric-card">
-            <div class="metric-content">
-              <div class="metric-header">
-                <h3>Readiness</h3>
-                <app-traffic-light-indicator
-                  [status]="readinessStatus()"
-                  [showLabel]="true"
-                ></app-traffic-light-indicator>
-              </div>
-              <div class="metric-value">{{ readinessScore() }}/100</div>
-              <div class="metric-subtitle">{{ readinessLevel() }}</div>
+            <!-- Readiness Widget -->
+            <div class="readiness-section">
+              @if (athleteId()) {
+                <app-readiness-widget
+                  [athleteId]="athleteId()!"
+                ></app-readiness-widget>
+              }
             </div>
-          </p-card>
 
-          <!-- Next Session -->
-          <p-card class="metric-card">
-            <div class="metric-content">
-              <div class="metric-header">
-                <h3>Next Session</h3>
-                <i class="pi pi-clock"></i>
-              </div>
-              @if (nextSession()) {
-                <div class="metric-value">{{ nextSession()?.title }}</div>
-                <div class="metric-subtitle">
-                  {{ nextSession()?.date | date: "short" }}
+            <!-- Actionable Insights - AI-powered recommendations -->
+            <div class="insights-section">
+              <app-actionable-insights></app-actionable-insights>
+            </div>
+
+            <!-- Trend Cards -->
+            <div class="trends-section">
+              <h2 class="section-title">Performance Trends</h2>
+              @if (hasTrendData()) {
+                <div class="trends-grid">
+                  @for (trend of trendCards(); track trend.title) {
+                    <app-trend-card [data]="trend"></app-trend-card>
+                  }
                 </div>
               } @else {
-                <div class="metric-value">No sessions</div>
-                <div class="metric-subtitle">Scheduled</div>
+                <app-no-data-entry
+                  context="performance"
+                  [compact]="true"
+                  [inline]="true"
+                  [showBenefits]="false"
+                ></app-no-data-entry>
               }
             </div>
-          </p-card>
-        </div>
-
-        <!-- Readiness Widget -->
-        <div class="readiness-section">
-          @if (athleteId()) {
-            <app-readiness-widget
-              [athleteId]="athleteId()!"
-            ></app-readiness-widget>
           }
+          <!-- End of @else for isFirstTimeUser -->
         </div>
-
-        <!-- Actionable Insights - AI-powered recommendations -->
-        <div class="insights-section">
-          <app-actionable-insights></app-actionable-insights>
-        </div>
-
-        <!-- Trend Cards -->
-        <div class="trends-section">
-          <h2 class="section-title">Performance Trends</h2>
-          @if (hasTrendData()) {
-            <div class="trends-grid">
-              @for (trend of trendCards(); track trend.title) {
-                <app-trend-card [data]="trend"></app-trend-card>
-              }
-            </div>
-          } @else {
-            <app-no-data-entry
-              context="performance"
-              [compact]="true"
-              [inline]="true"
-              [showBenefits]="false"
-            ></app-no-data-entry>
-          }
-        </div>
-        } <!-- End of @else for isFirstTimeUser -->
-      </div>
-      } <!-- End of @else for content -->
+      }
+      <!-- End of @else for content -->
     </app-main-layout>
   `,
-  styleUrls: ['./athlete-dashboard.component.scss'],
+  styleUrls: ["./athlete-dashboard.component.scss"],
 })
 export class AthleteDashboardComponent
   extends RealtimeBaseComponent
@@ -303,17 +314,19 @@ export class AthleteDashboardComponent
   // Runtime guard signals - prevent white screen crashes
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);
-  errorTitle = signal<string>('Unable to load dashboard');
-  errorMessage = signal<string>('Something went wrong while loading your dashboard. Please try again.');
+  errorTitle = signal<string>("Unable to load dashboard");
+  errorMessage = signal<string>(
+    "Something went wrong while loading your dashboard. Please try again.",
+  );
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
   nextSession = signal<{ title: string; date: Date } | null>(null);
   trendCards = signal<TrendData[]>([]);
-  
+
   // Game day detection - show Game Day Check-in button when game is within 2 days
   hasUpcomingGame = signal<boolean>(false);
-  
+
   // Upcoming game data for countdown widget
   upcomingGame = signal<{
     id: string;
@@ -323,11 +336,13 @@ export class AthleteDashboardComponent
     location: string;
     isHome: boolean;
   } | null>(null);
-  
+
   // Data source tracking - CRITICAL FOR ATHLETE SAFETY
   totalTrainingSessions = signal<number>(0);
   isFirstTimeUser = computed(() => this.dataSourceService.isFirstTimeUser());
-  hasTrendData = computed(() => this.trendCards().length > 0 && !this.isFirstTimeUser());
+  hasTrendData = computed(
+    () => this.trendCards().length > 0 && !this.isFirstTimeUser(),
+  );
 
   acwrValue = computed(() => this.acwrService.acwrRatio());
   acwrRiskZone = computed(() => this.acwrService.riskZone().label);
@@ -370,7 +385,7 @@ export class AthleteDashboardComponent
       this.setupRealtimeSubscriptions();
       this.checkDataSource();
       this.checkForUpcomingGame();
-      
+
       // Set loading to false after initial data load attempt
       // Individual data loads handle their own errors gracefully
       setTimeout(() => this.isLoading.set(false), 500);
@@ -385,19 +400,29 @@ export class AthleteDashboardComponent
   private handleInitError(error: unknown): void {
     this.isLoading.set(false);
     this.hasError.set(true);
-    this.errorTitle.set('Unable to load dashboard');
-    
+    this.errorTitle.set("Unable to load dashboard");
+
     if (error instanceof Error) {
-      this.logger.error('[AthleteDashboard] Init error:', error.message);
-      if (error.message.includes('network') || error.message.includes('fetch')) {
-        this.errorMessage.set('Unable to connect to the server. Please check your internet connection.');
-      } else if (error.message.includes('auth') || error.message.includes('401')) {
-        this.errorMessage.set('Your session has expired. Please log in again.');
+      this.logger.error("[AthleteDashboard] Init error:", error.message);
+      if (
+        error.message.includes("network") ||
+        error.message.includes("fetch")
+      ) {
+        this.errorMessage.set(
+          "Unable to connect to the server. Please check your internet connection.",
+        );
+      } else if (
+        error.message.includes("auth") ||
+        error.message.includes("401")
+      ) {
+        this.errorMessage.set("Your session has expired. Please log in again.");
       } else {
-        this.errorMessage.set('Something went wrong while loading your dashboard. Please try again.');
+        this.errorMessage.set(
+          "Something went wrong while loading your dashboard. Please try again.",
+        );
       }
     } else {
-      this.errorMessage.set('An unexpected error occurred. Please try again.');
+      this.errorMessage.set("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -422,12 +447,13 @@ export class AthleteDashboardComponent
       const twoDaysFromNow = new Date();
       twoDaysFromNow.setDate(today.getDate() + 2);
 
+      // Use correct column names: opponent_name instead of opponent, home_away instead of is_home
       const { data: games } = await this.supabaseService.client
-        .from('games')
-        .select('id, game_date, opponent, location, game_time, is_home')
-        .gte('game_date', today.toISOString().split('T')[0])
-        .lte('game_date', twoDaysFromNow.toISOString().split('T')[0])
-        .order('game_date', { ascending: true })
+        .from("games")
+        .select("id, game_date, opponent_name, location, status, home_away")
+        .gte("game_date", today.toISOString().split("T")[0])
+        .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+        .order("game_date", { ascending: true })
         .limit(1);
 
       if (games && games.length > 0) {
@@ -435,29 +461,32 @@ export class AthleteDashboardComponent
         const game = games[0];
         this.upcomingGame.set({
           id: game.id,
-          opponent: game.opponent || 'TBD',
+          opponent: game.opponent_name || "TBD",
           date: new Date(game.game_date),
-          time: game.game_time || '12:00 PM',
-          location: game.location || 'TBD',
-          isHome: game.is_home ?? true,
+          time: "12:00 PM", // game_time column doesn't exist
+          location: game.location || "TBD",
+          isHome: game.home_away === "home",
         });
-        this.logger.info('[Dashboard] Upcoming game detected - showing Game Day Check-in');
+        this.logger.info(
+          "[Dashboard] Upcoming game detected - showing Game Day Check-in",
+        );
       } else {
         // Also check team_members for tournament availability
         const { data: teamMember } = await this.supabaseService.client
-          .from('team_members')
-          .select('team_id')
-          .eq('user_id', userId)
+          .from("team_members")
+          .select("team_id")
+          .eq("user_id", userId)
           .single();
 
         if (teamMember?.team_id) {
+          // Use 'games' table with team_id filter (team_games doesn't exist)
           const { data: teamGames } = await this.supabaseService.client
-            .from('team_games')
-            .select('id, game_date, opponent, location, game_time, is_home')
-            .eq('team_id', teamMember.team_id)
-            .gte('game_date', today.toISOString().split('T')[0])
-            .lte('game_date', twoDaysFromNow.toISOString().split('T')[0])
-            .order('game_date', { ascending: true })
+            .from("games")
+            .select("id, game_date, opponent_name, location, home_away")
+            .eq("team_id", teamMember.team_id)
+            .gte("game_date", today.toISOString().split("T")[0])
+            .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+            .order("game_date", { ascending: true })
             .limit(1);
 
           if (teamGames && teamGames.length > 0) {
@@ -465,11 +494,11 @@ export class AthleteDashboardComponent
             const game = teamGames[0];
             this.upcomingGame.set({
               id: game.id,
-              opponent: game.opponent || 'TBD',
+              opponent: game.opponent_name || "TBD",
               date: new Date(game.game_date),
-              time: game.game_time || '12:00 PM',
-              location: game.location || 'TBD',
-              isHome: game.is_home ?? true,
+              time: "12:00 PM", // game_time column doesn't exist
+              location: game.location || "TBD",
+              isHome: game.home_away === "home",
             });
           }
         }
@@ -484,11 +513,11 @@ export class AthleteDashboardComponent
         const gameDate = new Date();
         if (dayOfWeek === 5) gameDate.setDate(gameDate.getDate() + 1); // Saturday
         this.upcomingGame.set({
-          id: 'demo-game',
-          opponent: 'Eagles',
+          id: "demo-game",
+          opponent: "Eagles",
           date: gameDate,
-          time: '2:00 PM',
-          location: 'Home Field',
+          time: "2:00 PM",
+          location: "Home Field",
           isHome: true,
         });
       }
@@ -511,29 +540,31 @@ export class AthleteDashboardComponent
         next: (sessions) => {
           const count = sessions?.length || 0;
           this.totalTrainingSessions.set(count);
-          
+
           // Update global data source service
           this.dataSourceService.checkUserHasRealData(count);
-          
+
           // Register ACWR metric requirements
           this.dataSourceService.registerMetric(
-            'acwr',
+            "acwr",
             DATA_REQUIREMENTS.acwr.name,
             count,
             DATA_REQUIREMENTS.acwr.minimumDataPoints,
-            count > 0 ? 'real' : 'unknown'
+            count > 0 ? "real" : "unknown",
           );
-          
+
           // Register readiness metric requirements
           this.dataSourceService.registerMetric(
-            'readiness',
+            "readiness",
             DATA_REQUIREMENTS.readiness.name,
             count,
             DATA_REQUIREMENTS.readiness.minimumDataPoints,
-            count > 0 ? 'real' : 'unknown'
+            count > 0 ? "real" : "unknown",
           );
 
-          this.logger.info(`[Dashboard] User has ${count} training sessions logged`);
+          this.logger.info(
+            `[Dashboard] User has ${count} training sessions logged`,
+          );
         },
         error: () => {
           this.dataSourceService.checkUserHasRealData(0);
@@ -626,11 +657,15 @@ export class AthleteDashboardComponent
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (sessions: TrainingSession[]) => {
-          const workload = sessions.reduce((sum: number, session: TrainingSession) => {
-            const rpe = session.rpe || session.intensity_level || 0;
-            const duration = session.duration_minutes || session.duration || 0;
-            return sum + rpe * duration;
-          }, 0);
+          const workload = sessions.reduce(
+            (sum: number, session: TrainingSession) => {
+              const rpe = session.rpe || session.intensity_level || 0;
+              const duration =
+                session.duration_minutes || session.duration || 0;
+              return sum + rpe * duration;
+            },
+            0,
+          );
           this.todayWorkload.set(workload);
         },
         error: () => {

@@ -1,8 +1,8 @@
 /**
  * Chat API Function
- * 
+ *
  * Handles channel and message operations for the team chat system.
- * 
+ *
  * Endpoints:
  * - GET /api/chat/channels - Get user's channels
  * - POST /api/chat/channels - Create a new channel
@@ -49,11 +49,13 @@ async function getChannels(userId) {
     .eq("user_id", userId)
     .eq("status", "active");
 
-  if (memberError) {throw memberError;}
+  if (memberError) {
+    throw memberError;
+  }
 
   const teamIds = memberships?.map((m) => m.team_id) || [];
   const isCoach = memberships?.some((m) =>
-    ["coach", "assistant_coach"].includes(m.role)
+    ["coach", "assistant_coach"].includes(m.role),
   );
 
   if (teamIds.length === 0) {
@@ -63,12 +65,14 @@ async function getChannels(userId) {
   // Build query based on user role
   let query = supabase
     .from("channels")
-    .select(`
+    .select(
+      `
       *,
       last_message:chat_messages(
         id, message, created_at, user_id
       )
-    `)
+    `,
+    )
     .in("team_id", teamIds)
     .eq("is_archived", false)
     .order("created_at", { ascending: true });
@@ -80,7 +84,9 @@ async function getChannels(userId) {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Get unread counts for each channel
   const channelsWithUnread = await Promise.all(
@@ -93,7 +99,7 @@ async function getChannels(userId) {
           : channel.last_message,
         unread_count: unreadCount,
       };
-    })
+    }),
   );
 
   return channelsWithUnread;
@@ -114,7 +120,10 @@ async function createChannel(userId, channelData) {
       .eq("team_id", channelData.team_id)
       .single();
 
-    if (!membership || !["coach", "assistant_coach"].includes(membership.role)) {
+    if (
+      !membership ||
+      !["coach", "assistant_coach"].includes(membership.role)
+    ) {
       throw new Error("Only coaches can create team channels");
     }
   }
@@ -136,7 +145,9 @@ async function createChannel(userId, channelData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Add members for DMs
   if (
@@ -178,12 +189,14 @@ async function getMessages(userId, channelId, options = {}) {
 
   let query = supabase
     .from("chat_messages")
-    .select(`
+    .select(
+      `
       *,
       author:users!chat_messages_user_id_fkey(
         id, email, raw_user_meta_data
       )
-    `)
+    `,
+    )
     .eq("channel_id", channelId)
     .is("thread_id", null)
     .order("created_at", { ascending: true })
@@ -195,7 +208,9 @@ async function getMessages(userId, channelId, options = {}) {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Format author data
   return (data || []).map((m) => ({
@@ -237,15 +252,19 @@ async function sendMessage(userId, channelId, messageData) {
       reply_to: messageData.reply_to,
       thread_id: messageData.thread_id,
     })
-    .select(`
+    .select(
+      `
       *,
       author:users!chat_messages_user_id_fkey(
         id, email, raw_user_meta_data
       )
-    `)
+    `,
+    )
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return {
     ...data,
@@ -253,7 +272,8 @@ async function sendMessage(userId, channelId, messageData) {
       ? {
           id: data.author.id,
           email: data.author.email,
-          full_name: data.author.raw_user_meta_data?.full_name || data.author.email,
+          full_name:
+            data.author.raw_user_meta_data?.full_name || data.author.email,
           avatar_url: data.author.raw_user_meta_data?.avatar_url,
         }
       : null,
@@ -287,7 +307,10 @@ async function updateMessage(userId, messageId, updates) {
   }
 
   // Only coaches can pin/mark important
-  if ((updates.is_pinned !== undefined || updates.is_important !== undefined) && !isCoach) {
+  if (
+    (updates.is_pinned !== undefined || updates.is_important !== undefined) &&
+    !isCoach
+  ) {
     throw new Error("Only coaches can pin or mark messages as important");
   }
 
@@ -317,7 +340,9 @@ async function updateMessage(userId, messageId, updates) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return data;
 }
@@ -352,7 +377,9 @@ async function deleteMessage(userId, messageId) {
     .delete()
     .eq("id", messageId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return { success: true };
 }
@@ -369,10 +396,12 @@ async function markChannelRead(userId, channelId) {
       user_id: userId,
       last_read_at: new Date().toISOString(),
     },
-    { onConflict: "channel_id,user_id" }
+    { onConflict: "channel_id,user_id" },
   );
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return { success: true };
 }
@@ -391,7 +420,9 @@ async function verifyChannelAccess(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) {return false;}
+  if (!channel) {
+    return false;
+  }
 
   // For DMs, check channel_members
   if (channel.channel_type === "direct_message") {
@@ -414,7 +445,9 @@ async function verifyChannelAccess(userId, channelId) {
     .eq("status", "active")
     .single();
 
-  if (!teamMember) {return false;}
+  if (!teamMember) {
+    return false;
+  }
 
   // Coaches-only channels
   if (channel.channel_type === "coaches_only") {
@@ -433,7 +466,9 @@ async function verifyCanPost(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) {return false;}
+  if (!channel) {
+    return false;
+  }
 
   // For announcements and coaches-only, must be coach
   if (["announcements", "coaches_only"].includes(channel.channel_type)) {
@@ -465,7 +500,9 @@ async function verifyIsCoach(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) {return false;}
+  if (!channel) {
+    return false;
+  }
 
   const { data: member } = await supabase
     .from("team_members")
@@ -510,7 +547,9 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      const path = event.path.replace(/^\/\.netlify\/functions\/chat\/?/, "").replace(/^\/api\/chat\/?/, "");
+      const path = event.path
+        .replace(/^\/\.netlify\/functions\/chat\/?/, "")
+        .replace(/^\/api\/chat\/?/, "");
       const method = event.httpMethod;
 
       let body = {};
@@ -518,7 +557,12 @@ exports.handler = async (event, context) => {
         try {
           body = JSON.parse(event.body);
         } catch {
-          return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
+          return createErrorResponse(
+            "Invalid JSON",
+            400,
+            "invalid_json",
+            requestId,
+          );
         }
       }
 
@@ -579,9 +623,11 @@ exports.handler = async (event, context) => {
         console.error("Chat API error:", error);
         return createErrorResponse(
           error.message || "Internal error",
-          error.message?.includes("denied") || error.message?.includes("cannot") ? 403 : 500,
+          error.message?.includes("denied") || error.message?.includes("cannot")
+            ? 403
+            : 500,
           "chat_error",
-          requestId
+          requestId,
         );
       }
     },

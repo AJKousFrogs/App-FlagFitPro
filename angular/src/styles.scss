@@ -6,8 +6,14 @@
 /* Design System Tokens - Single source of truth */
 @use "./assets/styles/design-system-tokens.scss" as *;
 
+/* Typography System - Consistent H1-H6, body text, and labels */
+@use "./assets/styles/typography-system.scss" as *;
+
+/* Spacing System - Consistent padding, margins, and gaps */
+@use "./assets/styles/spacing-system.scss" as *;
+
 /* Standardized Design Tokens - CSS Custom Properties */
-@use "./assets/styles/design-tokens-standardized.scss" as *;
+@use "./assets/styles/design-system-tokens.scss" as *;
 
 /* Standardized Components - All components use same variants */
 @use "./assets/styles/standardized-components.scss" as *;
@@ -18,7 +24,13 @@
 /* Premium Interactions - Advanced animations and hover effects */
 @use "./assets/styles/premium-interactions.scss" as *;
 
-/* PrimeNG Theme - Premium component styling */
+/* Unified Hover System - Single source of truth for ALL hover states */
+@use "./assets/styles/hover-system.scss" as *;
+
+/* PrimeNG Integration - Maps design tokens to PrimeNG CSS variables */
+@use "./assets/styles/primeng-integration.scss" as *;
+
+/* PrimeNG Theme - Premium component styling (legacy overrides) */
 @use "./assets/styles/primeng-theme.scss" as *;
 
 /* Color Contrast Fixes - WCAG 2.1 AA Compliance */
@@ -142,7 +154,7 @@ textarea {
   .btn-ghost {
     border: 2px solid currentColor;
   }
-  
+
   .card {
     border: 1px solid currentColor;
   }
@@ -150,7 +162,7 @@ textarea {
 
 :root {
   font-family: var(--font-family-sans);
-  font-size: 16px;
+  font-size: var(--font-body-md, 1rem);
   line-height: var(--line-height-normal);
   color: var(--color-text-primary);
   background-color: var(--surface-primary);
@@ -159,7 +171,9 @@ textarea {
 
 html {
   /* Smooth theme transitions */
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 body {
@@ -168,7 +182,9 @@ body {
   min-height: 100vh;
   background-color: var(--surface-primary);
   color: var(--color-text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Theme transition for major elements */
@@ -178,10 +194,11 @@ body {
 .p-dialog,
 .p-menu,
 .p-toast {
-  transition: background-color 0.3s ease, 
-              border-color 0.3s ease, 
-              color 0.3s ease,
-              box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* Disable transitions during initial load to prevent flash */
@@ -292,14 +309,30 @@ html.no-transitions * {
 }
 
 /* View Transition Name Utilities */
-.vt-hero { view-transition-name: hero-image; }
-.vt-card { view-transition-name: card; }
-.vt-header { view-transition-name: header; }
-.vt-sidebar { view-transition-name: sidebar; }
-.vt-main { view-transition-name: main-content; }
-.vt-title { view-transition-name: page-title; }
-.vt-avatar { view-transition-name: avatar; }
-.vt-none { view-transition-name: none; }
+.vt-hero {
+  view-transition-name: hero-image;
+}
+.vt-card {
+  view-transition-name: card;
+}
+.vt-header {
+  view-transition-name: header;
+}
+.vt-sidebar {
+  view-transition-name: sidebar;
+}
+.vt-main {
+  view-transition-name: main-content;
+}
+.vt-title {
+  view-transition-name: page-title;
+}
+.vt-avatar {
+  view-transition-name: avatar;
+}
+.vt-none {
+  view-transition-name: none;
+}
 
 /* Reduced Motion Support for View Transitions */
 @media (prefers-reduced-motion: reduce) {
@@ -338,7 +371,7 @@ p-button > .p-button {
   max-width: 1rem !important;
   min-height: 1rem !important;
   max-height: 1rem !important;
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -367,7 +400,7 @@ p-button > .p-button {
   max-width: 1rem !important;
   min-height: 1rem !important;
   max-height: 1rem !important;
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
   line-height: 1 !important;
   display: inline-block !important;
   text-align: center !important;
@@ -382,7 +415,7 @@ p-button > .p-button {
 
 /* Specific fix for icons that render smaller */
 .p-button .pi-key {
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
 }
 
 /* Icon-only buttons should be circles */
@@ -392,33 +425,64 @@ p-button > .p-button {
 }
 
 /* Primary buttons - GREEN background, WHITE text (light & dark mode) */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
-  background: linear-gradient(180deg, #0ab85a 0%, #089949 100%) !important;
-  border: 2px solid #089949 !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(8, 153, 73, 0.3) !important;
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+    .p-button-success
+  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
+  background: linear-gradient(
+    180deg,
+    var(--ds-primary-green-light) 0%,
+    var(--ds-primary-green) 100%
+  ) !important;
+  border: 2px solid var(--ds-primary-green) !important;
+  color: var(--color-text-on-primary) !important;
+  box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.3) !important;
   padding: 0.875rem 1.75rem !important;
   gap: 0.625rem !important;
 }
 
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) .p-button-label,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) .p-button-icon,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) span {
-  color: #ffffff !important;
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+    .p-button-success
+  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+  .p-button-label,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+    .p-button-success
+  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+  .p-button-icon,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+    .p-button-success
+  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+  span {
+  color: var(--color-text-on-primary) !important;
 }
 
 /* Hover state for primary buttons */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
-  background: linear-gradient(180deg, #089949 0%, #067a3a 100%) !important;
-  box-shadow: 0 6px 20px rgba(8, 153, 73, 0.4) !important;
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+    .p-button-success
+  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
+  background: linear-gradient(
+    180deg,
+    var(--ds-primary-green) 0%,
+    var(--primitive-primary-800) 100%
+  ) !important;
+  box-shadow: 0 6px 20px rgba(var(--ds-primary-green-rgb), 0.4) !important;
   transform: translateY(-2px);
 }
 
 /* Outlined buttons - transparent background, GREEN border & text */
 .p-button.p-button-outlined {
   background: transparent !important;
-  border: 2px solid #089949 !important;
-  color: #089949 !important;
+  border: 2px solid var(--ds-primary-green) !important;
+  color: var(--ds-primary-green) !important;
   padding: 0.75rem 1.5rem !important;
   min-width: 120px !important;
   justify-content: center !important;
@@ -426,7 +490,7 @@ p-button > .p-button {
 
 .p-button.p-button-outlined .p-button-label,
 .p-button.p-button-outlined .p-button-icon {
-  color: #089949 !important;
+  color: var(--ds-primary-green) !important;
 }
 
 /* Consistent icon sizing for outlined buttons */
@@ -436,7 +500,7 @@ p-button > .p-button {
   height: 1rem !important;
   min-width: 1rem !important;
   max-width: 1rem !important;
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -448,43 +512,51 @@ p-button > .p-button {
 }
 
 .p-button.p-button-outlined:hover {
-  background: rgba(8, 153, 73, 0.1) !important;
+  background: var(--ds-primary-green-subtle) !important;
 }
 
 /* Text buttons */
 .p-button.p-button-text {
   background: transparent !important;
   border-color: transparent !important;
-  color: #089949 !important;
+  color: var(--ds-primary-green) !important;
 }
 
 .p-button.p-button-text .p-button-label,
 .p-button.p-button-text .p-button-icon {
-  color: #089949 !important;
+  color: var(--ds-primary-green) !important;
 }
 
 /* Secondary buttons - subtle background */
 .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  background: var(--surface-secondary, #f5f5f5) !important;
-  border: 2px solid var(--color-border-primary, #e5e5e5) !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  background: var(--surface-secondary) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) .p-button-label,
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
-  color: var(--color-text-primary, #1a1a1a) !important;
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
+  .p-button-label,
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
+  .p-button-icon {
+  color: var(--color-text-primary) !important;
 }
 
 /* Danger buttons */
 .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) {
-  background: linear-gradient(180deg, #ff4d6a 0%, #ff003c 100%) !important;
-  border: 2px solid #ff003c !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    180deg,
+    var(--primitive-error-400) 0%,
+    var(--color-status-error) 100%
+  ) !important;
+  border: 2px solid var(--color-status-error) !important;
+  color: var(--color-text-on-primary) !important;
 }
 
-.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-label,
-.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
-  color: #ffffff !important;
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
+  .p-button-label,
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
+  .p-button-icon {
+  color: var(--color-text-on-primary) !important;
 }
 
 /* ================================================================
@@ -517,31 +589,31 @@ p-button > .p-button {
 
 /* Base Select Input Styling */
 .p-select {
-  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  border: 1px solid var(--color-border-primary) !important;
   border-radius: 12px !important;
-  background: var(--surface-primary, #ffffff) !important;
+  background: var(--surface-primary) !important;
   transition: all 0.2s ease !important;
 }
 
 .p-select:hover {
-  border-color: var(--ds-primary-green, #089949) !important;
+  border-color: var(--ds-primary-green) !important;
 }
 
 .p-select.p-focus,
 .p-select:focus {
-  border-color: var(--ds-primary-green, #089949) !important;
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.1) !important;
+  border-color: var(--ds-primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1) !important;
 }
 
 .p-select .p-select-label {
   padding: 0.875rem 1rem !important;
   font-size: 0.9375rem !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary) !important;
 }
 
 .p-select .p-select-dropdown {
   padding: 0 1rem !important;
-  color: var(--color-text-secondary, #6b7280) !important;
+  color: var(--color-text-secondary) !important;
   transition: transform 0.2s ease !important;
 }
 
@@ -552,10 +624,10 @@ p-button > .p-button {
 /* Dropdown Overlay Panel - THE KEY FIX */
 .p-select-overlay,
 .p-select-overlay.p-component {
-  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  border: 1px solid var(--color-border-primary) !important;
   border-radius: 16px !important;
-  background: var(--surface-primary, #ffffff) !important;
-  box-shadow: 
+  background: var(--surface-primary) !important;
+  box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.12),
     0 8px 20px rgba(0, 0, 0, 0.08),
     0 2px 6px rgba(0, 0, 0, 0.04) !important;
@@ -602,7 +674,7 @@ p-button > .p-button {
   cursor: pointer !important;
   font-size: 0.9375rem !important;
   font-weight: 500 !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary) !important;
   background: transparent !important;
   transition: all 0.15s ease !important;
   display: flex !important;
@@ -622,7 +694,7 @@ p-button > .p-button {
 .p-select-overlay .p-select-item:hover,
 .p-select-overlay .p-listbox-option:hover,
 .p-select-overlay li:hover {
-  background: var(--surface-secondary, #f8f9fa) !important;
+  background: var(--surface-secondary) !important;
 }
 
 /* Selected/Highlighted state */
@@ -631,8 +703,8 @@ p-button > .p-button {
 .p-select-overlay .p-select-item.p-highlight,
 .p-select-overlay .p-listbox-option.p-highlight,
 .p-select-overlay li.p-highlight {
-  background: rgba(8, 153, 73, 0.1) !important;
-  color: var(--ds-primary-green, #089949) !important;
+  background: var(--ds-primary-green-subtle) !important;
+  color: var(--ds-primary-green) !important;
 }
 
 /* Focus state */
@@ -640,7 +712,7 @@ p-button > .p-button {
 .p-select-overlay .p-select-item.p-focus,
 .p-select-overlay .p-listbox-option.p-focus,
 .p-select-overlay li.p-focus {
-  background: var(--surface-secondary, #f8f9fa) !important;
+  background: var(--surface-secondary) !important;
   outline: none !important;
   box-shadow: none !important;
 }
@@ -650,11 +722,11 @@ p-button > .p-button {
 .p-select-overlay .p-select-option.p-highlight::after,
 .p-select-overlay .p-listbox-option.p-highlight::after,
 .p-select-overlay li.p-highlight::after {
-  content: '\e909'; /* pi-check */
-  font-family: 'primeicons';
+  content: "\e909"; /* pi-check */
+  font-family: "primeicons";
   margin-left: auto;
   font-size: 0.875rem;
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
   opacity: 1;
 }
 
@@ -668,12 +740,12 @@ p-button > .p-button {
 }
 
 .p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb {
-  background: var(--color-border-primary, #e0e0e0);
+  background: var(--color-border-primary);
   border-radius: 3px;
 }
 
 .p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted, #9ca3af);
+  background: var(--color-text-muted);
 }
 
 /* Language selector specific - item with flag and details */
@@ -701,22 +773,24 @@ p-button > .p-button {
 
 .lang-label {
   font-weight: 600 !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary) !important;
   font-size: 0.9375rem !important;
   line-height: 1.3 !important;
 }
 
 .lang-native {
   font-size: 0.8125rem !important;
-  color: var(--color-text-tertiary, #9ca3af) !important;
+  color: var(--color-text-tertiary) !important;
   line-height: 1.2 !important;
 }
 
 .lang-check {
   opacity: 0 !important;
-  color: var(--ds-primary-green, #089949) !important;
-  font-size: 1rem !important;
-  transition: opacity 0.2s ease, transform 0.2s ease !important;
+  color: var(--ds-primary-green) !important;
+  font-size: var(--font-body-md, 1rem) !important;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease !important;
   transform: scale(0.8) !important;
   margin-left: auto !important;
 }
@@ -731,12 +805,12 @@ p-button > .p-button {
 /* Selected state text colors for language */
 .p-select-option.p-highlight .lang-label,
 .p-select-option.p-select-option-selected .lang-label {
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green) !important;
 }
 
 .p-select-option.p-highlight .lang-native,
 .p-select-option.p-select-option-selected .lang-native {
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green) !important;
   opacity: 0.7 !important;
 }
 
@@ -762,7 +836,7 @@ p-button > .p-button {
   margin-bottom: 0.75rem !important;
   border-radius: 16px !important;
   overflow: hidden !important;
-  box-shadow: 
+  box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.15),
     0 8px 20px rgba(0, 0, 0, 0.1),
     0 2px 6px rgba(0, 0, 0, 0.05) !important;
@@ -814,7 +888,7 @@ p-button > .p-button {
 .p-toast-summary,
 .p-toast .p-toast-summary {
   font-weight: 700 !important;
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
   line-height: 1.4 !important;
   margin: 0 !important;
 }
@@ -859,49 +933,65 @@ p-button > .p-button {
 /* Success Toast - Green */
 .p-toast-message-success,
 .p-toast .p-toast-message-success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    135deg,
+    var(--primitive-primary-500) 0%,
+    var(--ds-primary-green) 100%
+  ) !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .p-toast-message-success .p-toast-icon-close,
 .p-toast .p-toast-message-success .p-toast-icon-close {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* Error Toast - Red */
 .p-toast-message-error,
 .p-toast .p-toast-message-error {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    135deg,
+    var(--primitive-error-500) 0%,
+    var(--primitive-error-600) 100%
+  ) !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .p-toast-message-error .p-toast-icon-close,
 .p-toast .p-toast-message-error .p-toast-icon-close {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* Warning Toast - Amber */
 .p-toast-message-warn,
 .p-toast .p-toast-message-warn {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    135deg,
+    var(--primitive-warning-500) 0%,
+    var(--primitive-warning-600) 100%
+  ) !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .p-toast-message-warn .p-toast-icon-close,
 .p-toast .p-toast-message-warn .p-toast-icon-close {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* Info Toast - Blue */
 .p-toast-message-info,
 .p-toast .p-toast-message-info {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    135deg,
+    var(--color-status-info) 0%,
+    var(--primitive-foundation-600, #2563eb) 100%
+  ) !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .p-toast-message-info .p-toast-icon-close,
 .p-toast .p-toast-message-info .p-toast-icon-close {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* Responsive toast */
@@ -946,22 +1036,28 @@ p-button > .p-button {
 .p-password .p-inputtext {
   width: 100% !important;
   padding: 1rem 3.5rem 1rem 1.25rem !important;
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-size: 1rem !important;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  font-size: var(--font-body-md, 1rem) !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
-  background: var(--surface-primary, #ffffff) !important;
-  border: 2px solid var(--color-border-primary, #e0e0e0) !important;
+  color: var(--color-text-primary) !important;
+  background: var(--surface-primary, var(--color-text-on-primary)) !important;
+  border: 2px solid var(--color-border-primary) !important;
   border-radius: 14px !important;
   min-height: 56px !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease !important;
 }
 
 .p-password input:focus,
 .p-password .p-password-input:focus,
 .p-password .p-inputtext:focus {
-  border-color: var(--ds-primary-green, #089949) !important;
+  border-color: var(--ds-primary-green, var(--ds-primary-green)) !important;
   box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.12) !important;
   outline: none !important;
 }
@@ -969,7 +1065,7 @@ p-button > .p-button {
 .p-password input::placeholder,
 .p-password .p-password-input::placeholder,
 .p-password .p-inputtext::placeholder {
-  color: var(--color-text-tertiary, #9ca3af) !important;
+  color: var(--color-text-tertiary) !important;
   font-size: 0.9375rem !important;
   opacity: 1 !important;
 }
@@ -999,7 +1095,7 @@ p-button > .p-button {
 .p-password svg.p-icon {
   width: 1.375rem !important;
   height: 1.375rem !important;
-  color: var(--color-text-secondary, #6b7280) !important;
+  color: var(--color-text-secondary) !important;
   transition: color 0.2s ease !important;
 }
 
@@ -1007,7 +1103,7 @@ p-button > .p-button {
 .p-password .p-password-unmask-icon:hover svg,
 .p-password .p-icon:hover,
 .p-password:hover svg.p-icon {
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green, var(--ds-primary-green)) !important;
 }
 
 /* Password strength meter styling */
@@ -1015,22 +1111,85 @@ p-button > .p-button {
   margin-top: 0.75rem !important;
   height: 6px !important;
   border-radius: 3px !important;
-  background: var(--surface-secondary, #f0f0f0) !important;
+  background: var(--surface-secondary) !important;
   overflow: hidden !important;
 }
 
 .p-password-meter-label {
   margin-top: 0.5rem !important;
   font-size: 0.8125rem !important;
-  color: var(--color-text-secondary, #6b7280) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* ================================================================
+   PRIMENG TOOLTIP - GLOBAL DESIGN SYSTEM OVERRIDE
+   Premium white tooltip with green accent border
+   THIS MUST BE OUTSIDE @layer FOR HIGHEST SPECIFICITY
+   ================================================================ */
+
+.p-tooltip,
+.p-tooltip.p-component {
+  z-index: 99999 !important;
+}
+
+.p-tooltip .p-tooltip-text,
+.p-tooltip-text {
+  background: var(--color-text-on-primary) !important;
+  color: #1a1a1a !important;
+  border: 1px solid var(--ds-primary-green) !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  box-shadow:
+    0 8px 24px rgba(8, 153, 73, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  max-width: 280px !important;
+  animation: tooltipEnter 200ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+@keyframes tooltipEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Tooltip Arrows - Position-specific */
+.p-tooltip .p-tooltip-arrow,
+.p-tooltip-arrow {
+  display: none !important; /* Hide default arrow, use border instead */
+}
+
+/* Dark Mode Tooltips */
+[data-theme="dark"] .p-tooltip .p-tooltip-text,
+.dark-theme .p-tooltip .p-tooltip-text,
+[data-theme="dark"] .p-tooltip-text,
+.dark-theme .p-tooltip-text {
+  background: #262626 !important;
+  color: var(--color-text-on-primary) !important;
+  border-color: #10c96b !important;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(16, 201, 107, 0.15) !important;
 }
 
 /* Password panel (strength indicator dropdown) */
 .p-password-panel {
   margin-top: 0.5rem !important;
   padding: 1rem !important;
-  background: var(--surface-primary, #ffffff) !important;
-  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  background: var(--surface-primary, var(--color-text-on-primary)) !important;
+  border: 1px solid var(--color-border-primary) !important;
   border-radius: 12px !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
 }

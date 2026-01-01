@@ -31,14 +31,14 @@ User Request → Soft Delete (immediate) → 30-day Queue → Hard Delete → Au
 
 ### Components
 
-| Component | Purpose | Location |
-|-----------|---------|----------|
-| `account-deletion.cjs` | API endpoint for user requests | `netlify/functions/` |
-| `process-deletions` | Edge function for queue processing | `supabase/functions/` |
-| `initiate_account_deletion()` | DB function for soft delete | Database |
-| `process_hard_deletion()` | DB function for PII removal | Database |
-| `account_deletion_requests` | Queue table | Database |
-| `privacy_audit_log` | Audit trail | Database |
+| Component                     | Purpose                            | Location              |
+| ----------------------------- | ---------------------------------- | --------------------- |
+| `account-deletion.cjs`        | API endpoint for user requests     | `netlify/functions/`  |
+| `process-deletions`           | Edge function for queue processing | `supabase/functions/` |
+| `initiate_account_deletion()` | DB function for soft delete        | Database              |
+| `process_hard_deletion()`     | DB function for PII removal        | Database              |
+| `account_deletion_requests`   | Queue table                        | Database              |
+| `privacy_audit_log`           | Audit trail                        | Database              |
 
 ---
 
@@ -57,6 +57,7 @@ AND scheduled_hard_delete_at <= NOW();
 ```
 
 **Thresholds:**
+
 - ⚠️ Warning: > 10 overdue deletions
 - 🚨 Critical: > 50 overdue deletions
 
@@ -78,6 +79,7 @@ LIMIT 20;
 **Trigger:** `process-deletions` function returning errors or timing out.
 
 Check Supabase Edge Function logs:
+
 ```bash
 # Via Supabase CLI
 supabase functions logs process-deletions --project-ref YOUR_PROJECT_REF
@@ -91,7 +93,7 @@ supabase functions logs process-deletions --project-ref YOUR_PROJECT_REF
 
 ```sql
 -- Overall queue health
-SELECT 
+SELECT
     status,
     COUNT(*) as count,
     MIN(scheduled_hard_delete_at) as oldest_scheduled,
@@ -105,7 +107,7 @@ ORDER BY status;
 
 ```sql
 -- Last 24 hours of activity
-SELECT 
+SELECT
     action,
     COUNT(*) as count,
     MAX(created_at) as last_occurrence
@@ -129,7 +131,7 @@ supabase functions logs process-deletions --project-ref YOUR_PROJECT_REF --limit
 
 ```sql
 -- Check specific deletion request
-SELECT 
+SELECT
     adr.*,
     (SELECT COUNT(*) FROM privacy_audit_log WHERE user_id = adr.user_id) as audit_entries
 FROM account_deletion_requests adr
@@ -140,11 +142,11 @@ WHERE adr.id = 'REQUEST_UUID_HERE';
 
 ```sql
 -- Check required functions
-SELECT proname 
-FROM pg_proc 
+SELECT proname
+FROM pg_proc
 WHERE proname IN (
     'initiate_account_deletion',
-    'cancel_account_deletion', 
+    'cancel_account_deletion',
     'process_hard_deletion',
     'get_deletions_ready_for_processing'
 );
@@ -161,11 +163,13 @@ WHERE proname IN (
 **Fix:**
 
 1. Verify function is deployed:
+
    ```bash
    supabase functions deploy process-deletions --project-ref YOUR_PROJECT_REF
    ```
 
 2. Manually trigger processing:
+
    ```bash
    curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/process-deletions \
      -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY" \
@@ -193,6 +197,7 @@ WHERE proname IN (
 **Fix:**
 
 1. Check error message:
+
    ```sql
    SELECT id, user_id, error_message, updated_at
    FROM account_deletion_requests
@@ -201,6 +206,7 @@ WHERE proname IN (
    ```
 
 2. Reset to pending for retry:
+
    ```sql
    UPDATE account_deletion_requests
    SET status = 'pending', error_message = NULL, updated_at = NOW()
@@ -218,12 +224,14 @@ WHERE proname IN (
 **Cause:** User changed mind but deletion is in progress.
 
 **Check if cancellable:**
+
 ```sql
 SELECT id, status, can_cancel
 FROM get_deletion_status('USER_UUID');
 ```
 
 **If `status = 'processing'`:**
+
 - Deletion may already be partially complete
 - Check what data remains
 - Contact user about data recovery options
@@ -233,10 +241,11 @@ FROM get_deletion_status('USER_UUID');
 **Cause:** `process_hard_deletion()` succeeded but auth.users deletion failed.
 
 **Fix:**
+
 ```javascript
 // Via Supabase Admin API
-const { error } = await supabase.auth.admin.deleteUser('USER_UUID');
-if (error) console.error('Auth deletion failed:', error);
+const { error } = await supabase.auth.admin.deleteUser("USER_UUID");
+if (error) console.error("Auth deletion failed:", error);
 ```
 
 ---
@@ -246,6 +255,7 @@ if (error) console.error('Auth deletion failed:', error);
 ### After Processing Deletions
 
 1. **Verify queue is clear:**
+
    ```sql
    SELECT COUNT(*) FROM account_deletion_requests
    WHERE status = 'pending' AND scheduled_hard_delete_at <= NOW();
@@ -253,6 +263,7 @@ if (error) console.error('Auth deletion failed:', error);
    ```
 
 2. **Verify audit logs exist:**
+
    ```sql
    SELECT * FROM privacy_audit_log
    WHERE action = 'deletion_completed'
@@ -260,6 +271,7 @@ if (error) console.error('Auth deletion failed:', error);
    ```
 
 3. **Verify PII is removed (without exposing PII):**
+
    ```sql
    -- Count remaining records for deleted users (should be 0)
    SELECT 'users' as table_name, COUNT(*) as remaining
@@ -285,6 +297,7 @@ if (error) console.error('Auth deletion failed:', error);
 ### After Manual Intervention
 
 1. Run the verification script:
+
    ```bash
    npm run verify:db
    ```
@@ -414,22 +427,21 @@ SELECT process_hard_deletion('REQUEST_UUID');
 
 ### Key API Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/account-deletion` | GET | Check deletion status |
-| `/api/account-deletion` | POST | Request deletion |
-| `/api/account-deletion` | DELETE | Cancel deletion |
+| Endpoint                | Method | Purpose               |
+| ----------------------- | ------ | --------------------- |
+| `/api/account-deletion` | GET    | Check deletion status |
+| `/api/account-deletion` | POST   | Request deletion      |
+| `/api/account-deletion` | DELETE | Cancel deletion       |
 
 ### Contacts
 
-| Role | Contact |
-|------|---------|
-| Database Admin | [Contact] |
-| Privacy Officer | [Contact] |
+| Role             | Contact   |
+| ---------------- | --------- |
+| Database Admin   | [Contact] |
+| Privacy Officer  | [Contact] |
 | On-call Engineer | [Contact] |
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

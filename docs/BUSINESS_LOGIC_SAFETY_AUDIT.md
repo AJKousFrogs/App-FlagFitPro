@@ -23,6 +23,7 @@ thresholds: {
 ```
 
 **Strengths:**
+
 - ✅ EWMA (Exponentially Weighted Moving Average) model
 - ✅ Minimum chronic load floor (prevents inflated ratios)
 - ✅ Data quality flags for sparse data
@@ -38,6 +39,7 @@ const trainingLoad = sessionRPE * durationMinutes;
 ```
 
 **Strengths:**
+
 - ✅ Foster et al. (2001) session-RPE method
 - ✅ Works without GPS (important for flag football)
 - ✅ Consistent across all services
@@ -53,6 +55,7 @@ const trainingLoad = sessionRPE * durationMinutes;
 ```
 
 **Strengths:**
+
 - ✅ Multi-factor approach
 - ✅ Evidence-based weightings
 - ✅ Game proximity consideration
@@ -67,6 +70,7 @@ training_strain DECIMAL(8,2),   -- total_load × monotony
 ```
 
 **Strengths:**
+
 - ✅ Monotony tracking (variety indicator)
 - ✅ Strain calculation
 - ✅ Risk thresholds based on research
@@ -83,6 +87,7 @@ taper: {
 ```
 
 **Strengths:**
+
 - ✅ Mujika & Padilla (2003) taper principles
 - ✅ Maintains intensity, reduces volume
 - ✅ Event importance-based adjustments
@@ -109,6 +114,7 @@ getAgeFactor(age) {
 ```
 
 **What's Missing:**
+
 - Age-adjusted minimum rest days between high-intensity sessions
 - Age-adjusted ACWR thresholds
 - Recovery time multipliers based on age
@@ -121,6 +127,7 @@ getAgeFactor(age) {
 **Current State:** Weekly volume is tracked but no maximum session limits enforced.
 
 **What's Missing:**
+
 - Maximum sessions per week by age group
 - Consecutive high-intensity day limits
 - Minimum rest day requirements
@@ -133,6 +140,7 @@ getAgeFactor(age) {
 **Current State:** Body weight is stored but NOT used in load calculations.
 
 **What's Missing:**
+
 - Load normalization by body weight
 - BMI-adjusted intensity recommendations
 - Weight change alerts (rapid loss = injury risk)
@@ -144,6 +152,7 @@ getAgeFactor(age) {
 **Current State:** Only birth date is used for age calculations.
 
 **What's Missing:**
+
 - Training age tracking (years of structured training)
 - Beginner/intermediate/advanced load progressions
 - Sport-specific experience consideration
@@ -162,6 +171,7 @@ sprint_repetitions: sessionData.sprints || null,
 ```
 
 **What's Missing:**
+
 - Maximum sprint reps per session (typically 20-40)
 - Maximum cutting movements per week
 - Throwing volume limits for QBs
@@ -174,6 +184,7 @@ sprint_repetitions: sessionData.sprints || null,
 **Current State:** Only single-day sleep quality tracked.
 
 **What's Missing:**
+
 - 7-day rolling sleep average
 - Sleep debt calculation
 - Cumulative fatigue index
@@ -186,6 +197,7 @@ sprint_repetitions: sessionData.sprints || null,
 **Current State:** Minimum chronic load floor exists but no formal return-to-play protocol.
 
 **What's Missing:**
+
 - Graduated return-to-play progression
 - Load restrictions during return phase
 - Clearance requirements before full training
@@ -200,7 +212,7 @@ sprint_repetitions: sessionData.sprints || null,
 ```typescript
 // Recommended: age-recovery.service.ts
 interface AgeAdjustedRecovery {
-  ageGroup: 'youth' | 'adult' | 'masters';
+  ageGroup: "youth" | "adult" | "masters";
   minRestDaysBetweenHighIntensity: number;
   acwrThresholdAdjustment: number;
   recoveryTimeMultiplier: number;
@@ -209,28 +221,32 @@ interface AgeAdjustedRecovery {
 }
 
 const AGE_RECOVERY_PROFILES: Record<string, AgeAdjustedRecovery> = {
-  'youth': {      // Under 18
+  youth: {
+    // Under 18
     minRestDaysBetweenHighIntensity: 1,
     acwrThresholdAdjustment: 0,
     recoveryTimeMultiplier: 0.9,
     maxSessionsPerWeek: 6,
     maxConsecutiveHighIntensityDays: 2,
   },
-  'adult': {      // 18-34
+  adult: {
+    // 18-34
     minRestDaysBetweenHighIntensity: 1,
     acwrThresholdAdjustment: 0,
     recoveryTimeMultiplier: 1.0,
     maxSessionsPerWeek: 7,
     maxConsecutiveHighIntensityDays: 3,
   },
-  'masters': {    // 35+
+  masters: {
+    // 35+
     minRestDaysBetweenHighIntensity: 2,
     acwrThresholdAdjustment: -0.1, // Lower danger threshold
     recoveryTimeMultiplier: 1.3,
     maxSessionsPerWeek: 5,
     maxConsecutiveHighIntensityDays: 2,
   },
-  'senior': {     // 45+
+  senior: {
+    // 45+
     minRestDaysBetweenHighIntensity: 2,
     acwrThresholdAdjustment: -0.2,
     recoveryTimeMultiplier: 1.5,
@@ -271,7 +287,7 @@ interface SleepDebtAnalysis {
   last7DaysAverage: number;
   optimalSleep: number; // Usually 7-9 hours
   cumulativeDebt: number; // Hours below optimal
-  debtLevel: 'none' | 'mild' | 'moderate' | 'severe';
+  debtLevel: "none" | "mild" | "moderate" | "severe";
   recoveryRecommendation: string;
   trainingImpact: number; // 0-1 multiplier
 }
@@ -281,14 +297,15 @@ function calculateSleepDebt(sleepEntries: SleepEntry[]): SleepDebtAnalysis {
   const last7Days = sleepEntries.slice(0, 7);
   const average = last7Days.reduce((sum, e) => sum + e.hours, 0) / 7;
   const debt = Math.max(0, (optimal - average) * 7);
-  
+
   return {
     last7DaysAverage: average,
     optimalSleep: optimal,
     cumulativeDebt: debt,
-    debtLevel: debt < 3 ? 'none' : debt < 7 ? 'mild' : debt < 14 ? 'moderate' : 'severe',
+    debtLevel:
+      debt < 3 ? "none" : debt < 7 ? "mild" : debt < 14 ? "moderate" : "severe",
     recoveryRecommendation: getRecoveryRecommendation(debt),
-    trainingImpact: Math.max(0.5, 1 - (debt * 0.03)), // 3% reduction per hour of debt
+    trainingImpact: Math.max(0.5, 1 - debt * 0.03), // 3% reduction per hour of debt
   };
 }
 ```
@@ -300,7 +317,7 @@ function calculateSleepDebt(sleepEntries: SleepEntry[]): SleepDebtAnalysis {
 function normalizeLoadByBodyWeight(
   rawLoad: number,
   athleteWeight: number,
-  referenceWeight: number = 80 // kg
+  referenceWeight: number = 80, // kg
 ): number {
   // Heavier athletes experience more absolute stress
   const weightFactor = athleteWeight / referenceWeight;
@@ -317,42 +334,43 @@ const normalizedLoad = normalizeLoadByBodyWeight(sessionLoad, athlete.weight);
 // Recommended: movement-limits.service.ts
 interface MovementLimits {
   sprints: {
-    maxPerSession: 30,
-    maxPerWeek: 100,
-    restBetweenSets: 120, // seconds
-  },
+    maxPerSession: 30;
+    maxPerWeek: 100;
+    restBetweenSets: 120; // seconds
+  };
   cuts: {
-    maxPerSession: 50,
-    maxPerWeek: 200,
-    restBetweenDrills: 60,
-  },
-  throws: { // For QBs
-    maxPerSession: 60,
-    maxPerWeek: 250,
-    armCareRequired: true,
-  },
+    maxPerSession: 50;
+    maxPerWeek: 200;
+    restBetweenDrills: 60;
+  };
+  throws: {
+    // For QBs
+    maxPerSession: 60;
+    maxPerWeek: 250;
+    armCareRequired: true;
+  };
   jumps: {
-    maxPerSession: 40,
-    maxPerWeek: 150,
-    landingStressTracking: true,
-  },
+    maxPerSession: 40;
+    maxPerWeek: 150;
+    landingStressTracking: true;
+  };
 }
 
 function checkMovementLimits(
   session: TrainingSession,
-  weeklyTotals: WeeklyMovementTotals
+  weeklyTotals: WeeklyMovementTotals,
 ): MovementWarning[] {
   const warnings: MovementWarning[] = [];
-  
+
   if (session.sprints > LIMITS.sprints.maxPerSession) {
     warnings.push({
-      type: 'sprint_overload',
-      severity: 'high',
+      type: "sprint_overload",
+      severity: "high",
       message: `Sprint count (${session.sprints}) exceeds safe limit (${LIMITS.sprints.maxPerSession})`,
-      recommendation: 'Reduce sprint volume to prevent hamstring injury risk',
+      recommendation: "Reduce sprint volume to prevent hamstring injury risk",
     });
   }
-  
+
   // Similar checks for other movements...
   return warnings;
 }
@@ -362,15 +380,15 @@ function checkMovementLimits(
 
 ## 🎯 Implementation Priority
 
-| Priority | Feature | Injury Risk Impact | Effort |
-|----------|---------|-------------------|--------|
-| 1 | Age-Adjusted Recovery | HIGH | Medium |
-| 2 | Training Frequency Limits | HIGH | Low |
-| 3 | Sleep Debt Tracking | MEDIUM | Medium |
-| 4 | Movement Volume Limits | HIGH | Medium |
-| 5 | Body Weight Normalization | MEDIUM | Low |
-| 6 | Training Age Tracking | LOW | Medium |
-| 7 | Return-to-Play Protocol | HIGH | High |
+| Priority | Feature                   | Injury Risk Impact | Effort |
+| -------- | ------------------------- | ------------------ | ------ |
+| 1        | Age-Adjusted Recovery     | HIGH               | Medium |
+| 2        | Training Frequency Limits | HIGH               | Low    |
+| 3        | Sleep Debt Tracking       | MEDIUM             | Medium |
+| 4        | Movement Volume Limits    | HIGH               | Medium |
+| 5        | Body Weight Normalization | MEDIUM             | Low    |
+| 6        | Training Age Tracking     | LOW                | Medium |
+| 7        | Return-to-Play Protocol   | HIGH               | High   |
 
 ---
 
@@ -417,6 +435,7 @@ Alert if weight changes more than 3% in a week (dehydration or rapid loss risk).
 ## ✅ Recent Improvements (December 2024)
 
 ### Position-Specific Training
+
 - ✅ **WR/Center**: Straight-line sprint focus (8x 40 yards capacity)
 - ✅ **DB Zone**: Backpedal and lateral movement emphasis
 - ✅ **DB Man**: Hip turn and mirroring focus
@@ -424,17 +443,20 @@ Alert if weight changes more than 3% in a week (dehydration or rapid loss risk).
 - ✅ **QB Dual-Threat**: Scrambling and throwing on the run
 
 ### QB-Specific Additions
+
 - ✅ **Throwing on the Run**: Rollout left, rollout right, scramble throws
 - ✅ **QB Subtypes**: Pocket passer, dual-threat, double-QB schemes
 - ✅ **Fatigue Management**: 320+ throws/tournament protocol
 - ✅ **Arm Care**: Pre/post throw, daily maintenance, weekly strengthening
 
 ### Sprint Biomechanics
+
 - ✅ **Hip Flexor Training**: Exercises and frequency guidelines
 - ✅ **Soleus/Achilles Complex**: Daily ankle stiffness protocol
 - ✅ **Core Stability**: Force transfer exercises
 
 ### Reactive Readiness
+
 - ✅ **"On Toes, Locked and Ready"**: Universal training for all positions
 - ✅ **Exercises**: Athletic stance, reactive starts, mirror drills
 
@@ -443,9 +465,11 @@ Alert if weight changes more than 3% in a week (dehydration or rapid loss risk).
 ## ✅ Advanced Safety Services (December 2024)
 
 ### 1. Age-Adjusted Recovery Service ✅ IMPLEMENTED
+
 **File:** `age-adjusted-recovery.service.ts`
 
 Features:
+
 - Age groups: Youth, Young Adult, Adult, Masters (35-44), Senior Masters (45+)
 - Age-adjusted ACWR thresholds (lower for older athletes)
 - Recovery time multipliers (30% longer for masters, 50% for senior masters)
@@ -454,9 +478,11 @@ Features:
 - Warm-up duration recommendations by age
 
 ### 2. Training Limits Service ✅ IMPLEMENTED
+
 **File:** `training-limits.service.ts`
 
 Features:
+
 - Maximum sessions per week (age and position adjusted)
 - Maximum high-intensity sessions per week
 - Consecutive training day limits
@@ -470,9 +496,11 @@ Features:
 - Tournament schedule validation
 
 ### 3. Sleep Debt Service ✅ IMPLEMENTED
+
 **File:** `sleep-debt.service.ts`
 
 Features:
+
 - 7-day and 14-day sleep averages
 - Cumulative sleep debt calculation
 - Debt levels: None, Mild, Moderate, Severe, Critical
@@ -484,9 +512,11 @@ Features:
 - Age-specific optimal sleep (9h youth, 7h senior masters)
 
 ### 4. Body Weight Load Service ✅ IMPLEMENTED
+
 **File:** `body-weight-load.service.ts`
 
 Features:
+
 - Load normalization by body weight
 - ACWR threshold adjustment for heavier athletes
 - Weight change monitoring (rapid loss = injury risk)
@@ -496,9 +526,11 @@ Features:
 - Hydration recommendations
 
 ### 5. Return-to-Play Service ✅ IMPLEMENTED
+
 **File:** `return-to-play.service.ts`
 
 Features:
+
 - Graduated return protocols for:
   - Muscle strains (24+ days)
   - Ligament sprains (36+ days)
@@ -521,6 +553,7 @@ Features:
 Your app now has a **FULLY COMPREHENSIVE** safety system with evidence-based:
 
 ### Core Training Science
+
 - ✅ ACWR and load management
 - ✅ Position-specific sprint training
 - ✅ QB throwing on the run protocols
@@ -528,6 +561,7 @@ Your app now has a **FULLY COMPREHENSIVE** safety system with evidence-based:
 - ✅ Reactive readiness training
 
 ### Advanced Safety Features
+
 - ✅ **Age-adjusted recovery** - Masters athletes get appropriate limits
 - ✅ **Training frequency limits** - Prevents overtraining
 - ✅ **Sleep debt tracking** - Monitors cumulative fatigue
@@ -536,6 +570,7 @@ Your app now has a **FULLY COMPREHENSIVE** safety system with evidence-based:
 - ✅ **Return-to-play protocols** - Safe injury recovery
 
 ### Evidence Knowledge Base (NEW - December 2025)
+
 - ✅ **50+ peer-reviewed research references** integrated into application
 - ✅ **Searchable research database** by category, tag, evidence level
 - ✅ **Training guidelines** with supporting research citations
@@ -547,6 +582,7 @@ Your app now has a **FULLY COMPREHENSIVE** safety system with evidence-based:
 - ✅ **QB throwing load research** adapted from MLB/NFL studies
 
 ### All Services Located At:
+
 ```
 angular/src/app/core/services/
 ├── evidence-knowledge-base.service.ts    # 50+ research references
@@ -560,6 +596,7 @@ angular/src/app/core/services/
 ```
 
 ### Training Video Database (NEW - December 2024)
+
 - ✅ **50+ curated training videos** from YouTube
 - ✅ **Position-specific playlists** (QB, WR, DB, Rusher, Center)
 - ✅ **Pre-built training sessions** (15, 30, 45, 60 minute options)
@@ -574,46 +611,51 @@ angular/src/app/core/services/
 - ✅ **Day type logic** (practice/training/rest/tournament)
 
 #### Video Categories:
-| Category | Videos | Focus |
-|----------|--------|-------|
-| Daily Mobility, Foam Rolling & Stretching | 9 | Morning, evening, foam rolling, rest day stretching, targeted areas |
-| Speed & Acceleration | 4 | First step, hip flexors, sled training |
-| Agility & COD | 4 | Pro agility, deceleration, reactive |
-| QB-Specific | 5 | Throwing, arm care, footwork, rollouts |
-| WR-Specific | 4 | Routes, releases, catching, speed |
-| DB-Specific | 4 | Backpedal, hip turns, zone coverage |
-| Rusher-Specific | 3 | Get-off, rush moves, pursuit |
-| Strength & Power | 5 | Lower body, Nordic, Copenhagen, plyo |
-| General Mobility & Recovery | 4 | Hip mobility, ankle, warm-up, recovery |
-| Conditioning | 2 | RSA, tournament prep |
-| Mental | 1 | Pre-game preparation |
+
+| Category                                  | Videos | Focus                                                               |
+| ----------------------------------------- | ------ | ------------------------------------------------------------------- |
+| Daily Mobility, Foam Rolling & Stretching | 9      | Morning, evening, foam rolling, rest day stretching, targeted areas |
+| Speed & Acceleration                      | 4      | First step, hip flexors, sled training                              |
+| Agility & COD                             | 4      | Pro agility, deceleration, reactive                                 |
+| QB-Specific                               | 5      | Throwing, arm care, footwork, rollouts                              |
+| WR-Specific                               | 4      | Routes, releases, catching, speed                                   |
+| DB-Specific                               | 4      | Backpedal, hip turns, zone coverage                                 |
+| Rusher-Specific                           | 3      | Get-off, rush moves, pursuit                                        |
+| Strength & Power                          | 5      | Lower body, Nordic, Copenhagen, plyo                                |
+| General Mobility & Recovery               | 4      | Hip mobility, ankle, warm-up, recovery                              |
+| Conditioning                              | 2      | RSA, tournament prep                                                |
+| Mental                                    | 1      | Pre-game preparation                                                |
 
 #### Schedule-Adaptive Mobility System:
-| Schedule Type | Description | Morning | Evening |
-|---------------|-------------|---------|---------|
-| Early Bird | Work starts ~6am | ❌ | Mobility or Foam Rolling |
-| Standard | Work starts ~9am | ✅ Mobility | Foam Rolling |
-| Late Starter | Work starts afternoon | ✅ Extended | ❌ |
-| Shift Worker | Variable shifts | Flexible | Before sleep |
-| Student | Flexible schedule | ✅ | Extended |
-| Remote Worker | Work from home | ✅ | Foam Rolling |
+
+| Schedule Type | Description           | Morning     | Evening                  |
+| ------------- | --------------------- | ----------- | ------------------------ |
+| Early Bird    | Work starts ~6am      | ❌          | Mobility or Foam Rolling |
+| Standard      | Work starts ~9am      | ✅ Mobility | Foam Rolling             |
+| Late Starter  | Work starts afternoon | ✅ Extended | ❌                       |
+| Shift Worker  | Variable shifts       | Flexible    | Before sleep             |
+| Student       | Flexible schedule     | ✅          | Extended                 |
+| Remote Worker | Work from home        | ✅          | Foam Rolling             |
 
 #### Day Type Logic:
-| Day Type | Morning | Main Activity | Evening |
-|----------|---------|---------------|---------|
-| Practice Day | Mobility | Team Practice | Foam Rolling |
-| Training Day | Mobility | Individual Training | Foam Rolling |
-| Rest Day | Mobility | Rest Day Stretching | Foam Rolling |
-| Tournament | Light Mobility | Games | Recovery after |
+
+| Day Type     | Morning        | Main Activity       | Evening        |
+| ------------ | -------------- | ------------------- | -------------- |
+| Practice Day | Mobility       | Team Practice       | Foam Rolling   |
+| Training Day | Mobility       | Individual Training | Foam Rolling   |
+| Rest Day     | Mobility       | Rest Day Stretching | Foam Rolling   |
+| Tournament   | Light Mobility | Games               | Recovery after |
 
 #### Rest Day Recovery Options:
-| Level | Duration | When to Use |
-|-------|----------|-------------|
-| Light | 20 min | Stretching only - very sore |
-| Moderate | 35 min | Stretching + Foam Rolling - standard |
-| Full | 45 min | Morning + Stretching + Foam Rolling - after tournaments |
+
+| Level    | Duration | When to Use                                             |
+| -------- | -------- | ------------------------------------------------------- |
+| Light    | 20 min   | Stretching only - very sore                             |
+| Moderate | 35 min   | Stretching + Foam Rolling - standard                    |
+| Full     | 45 min   | Morning + Stretching + Foam Rolling - after tournaments |
 
 ### Enhanced Onboarding Flow (NEW - December 2024)
+
 - ✅ **6-step onboarding process** capturing all training preferences
 - ✅ **Schedule type selection** (Early Bird, Standard, Late Starter, Shift Worker, Student, Remote Worker)
 - ✅ **Practice frequency and days** for personalized weekly plans
@@ -625,75 +667,82 @@ angular/src/app/core/services/
 - ✅ **Database storage** in `user_preferences` table with localStorage fallback
 
 #### Onboarding Steps (9-Step Modern UX Flow):
-| Step | Content | Fields |
-|------|---------|--------|
-| 1. Personal | Basic info | Name, DOB, Gender, Phone |
-| 2. Team | Team & position | Team, Jersey #, Position, Secondary Position, Throwing Arm (QB), Experience |
-| 3. Physical | Measurements | Unit System, Height, Weight |
-| 4. Health | Injuries | Current Injuries, Injury History, Medical Notes |
-| 5. Equipment | Available gear | Equipment checklist (13 options) |
-| 6. Goals | Training goals | Speed, Strength, Agility, Endurance, Technique, Injury Prevention |
-| 7. Schedule | Availability | Work Schedule Type, Practices/Week, Practice Days |
-| 8. Recovery | Mobility prefs | Morning/Evening Mobility, Foam Rolling, Rest Day Recovery |
-| 9. Summary | Review all | Profile overview, confirm settings |
+
+| Step         | Content         | Fields                                                                      |
+| ------------ | --------------- | --------------------------------------------------------------------------- |
+| 1. Personal  | Basic info      | Name, DOB, Gender, Phone                                                    |
+| 2. Team      | Team & position | Team, Jersey #, Position, Secondary Position, Throwing Arm (QB), Experience |
+| 3. Physical  | Measurements    | Unit System, Height, Weight                                                 |
+| 4. Health    | Injuries        | Current Injuries, Injury History, Medical Notes                             |
+| 5. Equipment | Available gear  | Equipment checklist (13 options)                                            |
+| 6. Goals     | Training goals  | Speed, Strength, Agility, Endurance, Technique, Injury Prevention           |
+| 7. Schedule  | Availability    | Work Schedule Type, Practices/Week, Practice Days                           |
+| 8. Recovery  | Mobility prefs  | Morning/Evening Mobility, Foam Rolling, Rest Day Recovery                   |
+| 9. Summary   | Review all      | Profile overview, confirm settings                                          |
 
 #### Unit System Support:
-| System | Height | Weight |
-|--------|--------|--------|
-| **Metric** | cm (e.g., 180 cm) | kg (e.g., 75 kg) |
+
+| System       | Height              | Weight              |
+| ------------ | ------------------- | ------------------- |
+| **Metric**   | cm (e.g., 180 cm)   | kg (e.g., 75 kg)    |
 | **Imperial** | ft-in (e.g., 5'10") | lbs (e.g., 165 lbs) |
 
-*Note: Database always stores in metric (cm/kg). Imperial values are converted automatically.*
+_Note: Database always stores in metric (cm/kg). Imperial values are converted automatically._
 
 #### Health & Safety Fields:
-| Field | Purpose |
-|-------|---------|
-| **Date of Birth** | Age-adjusted recovery calculations |
-| **Current Injuries** | Avoid recommending harmful exercises |
-| **Injury History** | Prehab focus areas (ACL, hamstring, ankle, etc.) |
-| **Throwing Arm** | QB-specific training recommendations |
-| **Equipment Available** | Recommend appropriate exercises |
+
+| Field                   | Purpose                                          |
+| ----------------------- | ------------------------------------------------ |
+| **Date of Birth**       | Age-adjusted recovery calculations               |
+| **Current Injuries**    | Avoid recommending harmful exercises             |
+| **Injury History**      | Prehab focus areas (ACL, hamstring, ankle, etc.) |
+| **Throwing Arm**        | QB-specific training recommendations             |
+| **Equipment Available** | Recommend appropriate exercises                  |
 
 #### Equipment Options (13):
+
 Foam Roller, Resistance Bands, Dumbbells, Kettlebell, Pull-up Bar, Jump Rope, Yoga Mat, Agility Ladder, Cones/Markers, Medicine Ball, Football, Gym Access, None/Bodyweight Only
 
 #### Available Teams:
-| Team | Value |
-|------|-------|
-| Ljubljana Frogs - International | `ljubljana_frogs_international` |
-| Ljubljana Frogs - Domestic | `ljubljana_frogs_domestic` |
-| American Samoa National Team - Men | `american_samoa_men` |
-| American Samoa National Team - Women | `american_samoa_women` |
+
+| Team                                 | Value                           |
+| ------------------------------------ | ------------------------------- |
+| Ljubljana Frogs - International      | `ljubljana_frogs_international` |
+| Ljubljana Frogs - Domestic           | `ljubljana_frogs_domestic`      |
+| American Samoa National Team - Men   | `american_samoa_men`            |
+| American Samoa National Team - Women | `american_samoa_women`          |
 
 #### Weekly Plans for Limited Practice:
-| Plan | Practices/Week | Additional Sessions | Total Weekly Minutes |
-|------|----------------|---------------------|---------------------|
-| General (1 practice) | 1 | 4 | 215 min |
-| General (2 practices) | 2 | 3 | 260 min |
-| QB-Specific (1 practice) | 1 | 4 | 200 min |
-| WR-Specific (1 practice) | 1 | 4 | 200 min |
-| DB-Specific (1 practice) | 1 | 4 | 200 min |
-| Tournament Prep | 1 | 2 | 105 min |
+
+| Plan                     | Practices/Week | Additional Sessions | Total Weekly Minutes |
+| ------------------------ | -------------- | ------------------- | -------------------- |
+| General (1 practice)     | 1              | 4                   | 215 min              |
+| General (2 practices)    | 2              | 3                   | 260 min              |
+| QB-Specific (1 practice) | 1              | 4                   | 200 min              |
+| WR-Specific (1 practice) | 1              | 4                   | 200 min              |
+| DB-Specific (1 practice) | 1              | 4                   | 200 min              |
+| Tournament Prep          | 1              | 2                   | 105 min              |
 
 ### Research Categories Covered:
-| Category | References | Key Topics |
-|----------|------------|------------|
-| Load Management | 5 | ACWR, EWMA, session-RPE |
-| Sprint Training | 8 | Acceleration, RSA, biomechanics |
-| Injury Prevention | 5 | Nordic curls, Copenhagen, sleep |
-| Recovery & Sleep | 5 | Sleep extension, hygiene |
-| Age Adaptations | 5 | Masters athletes, protein needs |
-| Periodization | 4 | Tapering, block periodization |
-| Return to Play | 5 | ACWR-guided, concussion protocol |
-| Strength & Power | 2 | Relative strength, transfer |
-| Nutrition | 2 | Timing, protein requirements |
-| Psychology | 2 | Wellness monitoring, agility |
-| QB Throwing | 5 | Arm care, workload, GIRD |
+
+| Category          | References | Key Topics                       |
+| ----------------- | ---------- | -------------------------------- |
+| Load Management   | 5          | ACWR, EWMA, session-RPE          |
+| Sprint Training   | 8          | Acceleration, RSA, biomechanics  |
+| Injury Prevention | 5          | Nordic curls, Copenhagen, sleep  |
+| Recovery & Sleep  | 5          | Sleep extension, hygiene         |
+| Age Adaptations   | 5          | Masters athletes, protein needs  |
+| Periodization     | 4          | Tapering, block periodization    |
+| Return to Play    | 5          | ACWR-guided, concussion protocol |
+| Strength & Power  | 2          | Relative strength, transfer      |
+| Nutrition         | 2          | Timing, protein requirements     |
+| Psychology        | 2          | Wellness monitoring, agility     |
+| QB Throwing       | 5          | Arm care, workload, GIRD         |
 
 **The app is now MORE COMPREHENSIVE than most professional sports team systems for athlete safety and training management, with a scientific evidence base comparable to elite sports science departments.**
 
 ---
 
-*Last Updated: 29. December 2025
-*
-*Version: 3.0.0*
+\*Last Updated: 29. December 2025
+
+- _Version: 3.0.0_

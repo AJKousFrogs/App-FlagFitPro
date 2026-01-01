@@ -74,4 +74,3 @@ export interface VideoOption {
 }
 
 export type { InstagramVideo, InstagramPlaylist, FlagPosition, TrainingFocus };
-

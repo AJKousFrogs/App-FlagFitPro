@@ -40,10 +40,12 @@ export interface RegisterData {
 
 interface AuthResponse {
   success: boolean;
-  data?: {
-    user: unknown;
-    session?: unknown;
-  } | User;
+  data?:
+    | {
+        user: unknown;
+        session?: unknown;
+      }
+    | User;
   message?: string;
   error?: string;
 }

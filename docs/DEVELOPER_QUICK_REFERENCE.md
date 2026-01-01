@@ -5,13 +5,15 @@
 ## 🚀 For Developers: What Changed & What to Do
 
 ### 📌 TL;DR
+
 Your database schema just got a major upgrade. Exercise library is unified, metrics are typed, and ACWR is now versioned. Update your queries or use the compatibility views provided.
 
 ### ⚠️ Why This Refactor Matters for Safety
+
 This refactor isn't just about performance - it directly improves **data safety and injury prevention**:
 
 - **Typed metrics** → Eliminates garbage data that corrupts ACWR calculations
-- **Baseline-aware risk levels** → Prevents false alarms during ramp-up periods  
+- **Baseline-aware risk levels** → Prevents false alarms during ramp-up periods
 - **Views enforce calculations** → Impossible to compute compliance or ACWR incorrectly
 - **Versioned ACWR** → Audit trail for safety-critical decisions
 - **Domain constraints** → Database rejects invalid RPE, negative durations, etc.
@@ -25,35 +27,36 @@ This refactor isn't just about performance - it directly improves **data safety 
 ### 1. Exercise Queries
 
 #### ❌ OLD WAY (Deprecated)
+
 ```typescript
 // Multiple queries for different exercise types
-const plyoExercises = await supabase
-  .from('plyometrics_exercises')
-  .select('*');
+const plyoExercises = await supabase.from("plyometrics_exercises").select("*");
 
-const isoExercises = await supabase
-  .from('isometrics_exercises')
-  .select('*');
+const isoExercises = await supabase.from("isometrics_exercises").select("*");
 
 const allExercises = [...plyoExercises.data, ...isoExercises.data];
 ```
 
 #### ✅ NEW WAY (Recommended)
+
 ```typescript
 // Single query with unified ID space
 const { data: exercises } = await supabase
-  .from('exercise_registry')
-  .select(`
+  .from("exercise_registry")
+  .select(
+    `
     *,
     plyometric_details:plyometrics_exercises(*),
     isometric_details:isometrics_exercises(*),
     general_details:exercises(*)
-  `)
-  .eq('is_active', true)
-  .eq('is_public', true);
+  `,
+  )
+  .eq("is_active", true)
+  .eq("is_public", true);
 ```
 
 #### 🔧 BACKWARD COMPATIBLE
+
 ```typescript
 // Old tables still exist and work
 // But use exercise_registry for new code
@@ -64,22 +67,24 @@ const { data: exercises } = await supabase
 ### 2. Compliance Rate Queries
 
 #### ❌ OLD WAY (Broken)
+
 ```typescript
 const { data } = await supabase
-  .from('player_programs')
-  .select('compliance_rate')
-  .eq('player_id', playerId)
+  .from("player_programs")
+  .select("compliance_rate")
+  .eq("player_id", playerId)
   .single();
 
 // Column 'compliance_rate' no longer exists!
 ```
 
 #### ✅ NEW WAY (Required)
+
 ```typescript
 const { data } = await supabase
-  .from('v_player_program_compliance')
-  .select('compliance_rate, total_planned_sessions, completed_sessions')
-  .eq('player_id', playerId)
+  .from("v_player_program_compliance")
+  .select("compliance_rate, total_planned_sessions, completed_sessions")
+  .eq("player_id", playerId)
   .single();
 
 // Real-time calculation, always accurate
@@ -90,45 +95,44 @@ const { data } = await supabase
 ### 3. Metric Tracking
 
 #### ❌ OLD WAY (Deprecated)
+
 ```typescript
-await supabase
-  .from('position_specific_metrics')
-  .insert({
-    player_id: playerId,
-    metric_name: 'Throwing Volume',
-    metric_value: 150,
-    metric_unit: 'Throws',
-    date: new Date()
-  });
+await supabase.from("position_specific_metrics").insert({
+  player_id: playerId,
+  metric_name: "Throwing Volume",
+  metric_value: 150,
+  metric_unit: "Throws",
+  date: new Date(),
+});
 ```
 
 #### ✅ NEW WAY (Type-safe)
+
 ```typescript
 // Step 1: Get metric definition ID (cache this!)
 const { data: metricDef } = await supabase
-  .from('metric_definitions')
-  .select('id')
-  .eq('code', 'qb_throwing_volume')
+  .from("metric_definitions")
+  .select("id")
+  .eq("code", "qb_throwing_volume")
   .single();
 
 // Step 2: Insert metric entry
-await supabase
-  .from('metric_entries')
-  .insert({
-    player_id: playerId,
-    metric_definition_id: metricDef.id,
-    value: 150,
-    date: new Date().toISOString().split('T')[0]
-  });
+await supabase.from("metric_entries").insert({
+  player_id: playerId,
+  metric_definition_id: metricDef.id,
+  value: 150,
+  date: new Date().toISOString().split("T")[0],
+});
 ```
 
 #### 🔧 BACKWARD COMPATIBLE (View)
+
 ```typescript
 // For gradual migration, use legacy view
 const { data } = await supabase
-  .from('v_position_specific_metrics_legacy')
-  .select('*')
-  .eq('player_id', playerId);
+  .from("v_position_specific_metrics_legacy")
+  .select("*")
+  .eq("player_id", playerId);
 
 // Works like old table, but reads from new system
 ```
@@ -138,13 +142,14 @@ const { data } = await supabase
 ### 4. ACWR and Risk Level
 
 #### ⚠️ IMPORTANT CHANGE
+
 ```typescript
 // Risk level is now computed in a view
 const { data } = await supabase
-  .from('v_load_monitoring')
-  .select('acwr, computed_risk_level, baseline_days')
-  .eq('player_id', playerId)
-  .order('date', { ascending: false })
+  .from("v_load_monitoring")
+  .select("acwr, computed_risk_level, baseline_days")
+  .eq("player_id", playerId)
+  .order("date", { ascending: false })
   .limit(1);
 
 // computed_risk_level accounts for baseline days
@@ -161,38 +166,38 @@ const { data } = await supabase
 
 ```typescript
 // New ENUMs to add
-export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Elite';
+export type DifficultyLevel =
+  | "Beginner"
+  | "Intermediate"
+  | "Advanced"
+  | "Elite";
 
-export type SessionType = 
-  | 'Strength' 
-  | 'Speed' 
-  | 'Skill' 
-  | 'Recovery' 
-  | 'Mobility' 
-  | 'Conditioning' 
-  | 'Position-Specific';
+export type SessionType =
+  | "Strength"
+  | "Speed"
+  | "Skill"
+  | "Recovery"
+  | "Mobility"
+  | "Conditioning"
+  | "Position-Specific";
 
-export type RiskLevel = 
-  | 'Low' 
-  | 'Optimal' 
-  | 'Moderate' 
-  | 'High' 
-  | 'Critical' 
-  | 'Baseline_Building' 
-  | 'Baseline_Low';
+export type RiskLevel =
+  | "Low"
+  | "Optimal"
+  | "Moderate"
+  | "High"
+  | "Critical"
+  | "Baseline_Building"
+  | "Baseline_Low";
 
-export type ExerciseType = 
-  | 'plyometric' 
-  | 'isometric' 
-  | 'strength' 
-  | 'skill' 
-  | 'mobility';
+export type ExerciseType =
+  | "plyometric"
+  | "isometric"
+  | "strength"
+  | "skill"
+  | "mobility";
 
-export type ProgramStatus = 
-  | 'active' 
-  | 'paused' 
-  | 'completed' 
-  | 'archived';
+export type ProgramStatus = "active" | "paused" | "completed" | "archived";
 
 // New table interfaces
 export interface ExerciseRegistry {
@@ -212,11 +217,11 @@ export interface MetricDefinition {
   id: string;
   code: string;
   display_name: string;
-  value_type: 'integer' | 'decimal' | 'percent' | 'time' | 'boolean';
+  value_type: "integer" | "decimal" | "percent" | "time" | "boolean";
   unit?: string;
   min_value?: number;
   max_value?: number;
-  aggregation_method?: 'sum' | 'avg' | 'max' | 'min' | 'count';
+  aggregation_method?: "sum" | "avg" | "max" | "min" | "count";
   position_id?: string;
   is_position_specific: boolean;
 }
@@ -245,8 +250,9 @@ async function loadExerciseLibrary(filters: {
   category?: string;
 }) {
   let query = supabase
-    .from('exercise_registry')
-    .select(`
+    .from("exercise_registry")
+    .select(
+      `
       id,
       name,
       exercise_type,
@@ -264,12 +270,14 @@ async function loadExerciseLibrary(filters: {
         sets,
         reps
       )
-    `)
-    .eq('is_active', true);
+    `,
+    )
+    .eq("is_active", true);
 
-  if (filters.type) query = query.eq('exercise_type', filters.type);
-  if (filters.difficulty) query = query.eq('difficulty_level', filters.difficulty);
-  if (filters.category) query = query.eq('category', filters.category);
+  if (filters.type) query = query.eq("exercise_type", filters.type);
+  if (filters.difficulty)
+    query = query.eq("difficulty_level", filters.difficulty);
+  if (filters.category) query = query.eq("category", filters.category);
 
   const { data, error } = await query;
   return { exercises: data, error };
@@ -283,13 +291,13 @@ async function trackMetric(
   playerId: string,
   metricCode: string,
   value: number,
-  workoutLogId?: string
+  workoutLogId?: string,
 ) {
   // Get metric definition (cache this in production!)
   const { data: metricDef } = await supabase
-    .from('metric_definitions')
-    .select('id, min_value, max_value')
-    .eq('code', metricCode)
+    .from("metric_definitions")
+    .select("id, min_value, max_value")
+    .eq("code", metricCode)
     .single();
 
   if (!metricDef) {
@@ -305,15 +313,13 @@ async function trackMetric(
   }
 
   // Insert metric entry
-  const { data, error } = await supabase
-    .from('metric_entries')
-    .insert({
-      player_id: playerId,
-      metric_definition_id: metricDef.id,
-      value,
-      date: new Date().toISOString().split('T')[0],
-      workout_log_id: workoutLogId
-    });
+  const { data, error } = await supabase.from("metric_entries").insert({
+    player_id: playerId,
+    metric_definition_id: metricDef.id,
+    value,
+    date: new Date().toISOString().split("T")[0],
+    workout_log_id: workoutLogId,
+  });
 
   return { data, error };
 }
@@ -324,17 +330,17 @@ async function trackMetric(
 ```typescript
 async function getPlayerCompliance(playerId: string, programId: string) {
   const { data, error } = await supabase
-    .from('v_player_program_compliance')
-    .select('*')
-    .eq('player_id', playerId)
-    .eq('program_id', programId)
+    .from("v_player_program_compliance")
+    .select("*")
+    .eq("player_id", playerId)
+    .eq("program_id", programId)
     .single();
 
   return {
     complianceRate: data?.compliance_rate || 0,
     plannedSessions: data?.total_planned_sessions || 0,
     completedSessions: data?.completed_sessions || 0,
-    calculatedAt: data?.calculated_at
+    calculatedAt: data?.calculated_at,
   };
 }
 ```
@@ -344,45 +350,45 @@ async function getPlayerCompliance(playerId: string, programId: string) {
 ```typescript
 async function checkACWRStatus(playerId: string) {
   const { data, error } = await supabase
-    .from('v_load_monitoring')
-    .select('*')
-    .eq('player_id', playerId)
-    .order('date', { ascending: false })
+    .from("v_load_monitoring")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("date", { ascending: false })
     .limit(1)
     .single();
 
   if (!data) {
     return {
-      status: 'no_data',
-      message: 'No training data yet'
+      status: "no_data",
+      message: "No training data yet",
     };
   }
 
   // Handle baseline building
   if (data.baseline_days < 7) {
     return {
-      status: 'baseline_building',
+      status: "baseline_building",
       message: `Building baseline (${data.baseline_days}/28 days)`,
-      acwr: null
+      acwr: null,
     };
   }
 
   if (data.baseline_days < 28) {
     return {
-      status: 'baseline_low',
+      status: "baseline_low",
       message: `Partial baseline (${data.baseline_days}/28 days)`,
       acwr: data.acwr,
-      riskLevel: data.computed_risk_level
+      riskLevel: data.computed_risk_level,
     };
   }
 
   // Full ACWR available
   return {
-    status: 'ready',
+    status: "ready",
     acwr: data.acwr,
     riskLevel: data.computed_risk_level,
     acute: data.acute_load,
-    chronic: data.chronic_load
+    chronic: data.chronic_load,
   };
 }
 ```
@@ -392,33 +398,36 @@ async function checkACWRStatus(playerId: string) {
 ## 🔍 Debugging
 
 ### Check Bootstrap Status
+
 ```sql
 SELECT * FROM verify_database_bootstrap();
 ```
 
 ### Verify Exercise Registry
+
 ```sql
 -- Count by type
-SELECT exercise_type, COUNT(*) 
-FROM exercise_registry 
+SELECT exercise_type, COUNT(*)
+FROM exercise_registry
 GROUP BY exercise_type;
 
 -- Find exercises without details (should be 0)
 SELECT * FROM exercise_registry
-WHERE plyometric_details_id IS NULL 
-  AND isometric_details_id IS NULL 
+WHERE plyometric_details_id IS NULL
+  AND isometric_details_id IS NULL
   AND general_exercise_id IS NULL;
 ```
 
 ### Verify Metric System
+
 ```sql
 -- Available metrics
-SELECT code, display_name, value_type, unit 
-FROM metric_definitions 
+SELECT code, display_name, value_type, unit
+FROM metric_definitions
 WHERE is_active = TRUE;
 
 -- Recent metric entries
-SELECT 
+SELECT
   me.date,
   md.display_name,
   me.value,
@@ -431,8 +440,9 @@ LIMIT 10;
 ```
 
 ### Verify Compliance View
+
 ```sql
-SELECT * FROM v_player_program_compliance 
+SELECT * FROM v_player_program_compliance
 WHERE player_id = 'your-player-id';
 ```
 
@@ -441,15 +451,19 @@ WHERE player_id = 'your-player-id';
 ## ⚠️ Common Errors & Fixes
 
 ### Error: "column 'compliance_rate' does not exist"
+
 **Fix:** Use `v_player_program_compliance` view instead of `player_programs`
 
 ### Error: "relation 'position_specific_metrics' does not exist"
+
 **Fix:** Use `metric_entries` or `v_position_specific_metrics_legacy` view
 
 ### Error: "invalid input value for enum difficulty_level_enum"
+
 **Fix:** Use exact ENUM values: 'Beginner', 'Intermediate', 'Advanced', 'Elite'
 
 ### Error: "duplicate key value violates unique constraint"
+
 **Fix:** Check for existing entry before insert, or use `ON CONFLICT`
 
 ---
@@ -459,6 +473,7 @@ WHERE player_id = 'your-player-id';
 These rules **must** be followed after migration. Violations will cause data corruption or incorrect safety calculations:
 
 ### 1. ❌ Do NOT Write Directly to Legacy Tables
+
 ```typescript
 // ❌ FORBIDDEN - legacy table, will be deprecated
 await supabase.from('position_specific_metrics').insert({...});
@@ -470,78 +485,83 @@ await supabase.from('metric_entries').insert({...});
 **Why:** Legacy tables may be read-only or removed in future migrations. New system has validation.
 
 ### 2. ❌ Do NOT Compute Compliance Client-Side
+
 ```typescript
 // ❌ FORBIDDEN - your calculation may differ from DB
 const compliance = (completed / planned) * 100;
 
 // ✅ REQUIRED - use authoritative view
 const { compliance_rate } = await supabase
-  .from('v_player_program_compliance')
-  .select('compliance_rate')
+  .from("v_player_program_compliance")
+  .select("compliance_rate")
   .single();
 ```
 
 **Why:** Compliance logic is complex (date ranges, active programs, etc.). View is source of truth.
 
 ### 3. ❌ Do NOT Derive Risk Level Outside v_load_monitoring
+
 ```typescript
 // ❌ FORBIDDEN - ignores baseline awareness
-const risk = acwr > 1.5 ? 'High' : 'Optimal';
+const risk = acwr > 1.5 ? "High" : "Optimal";
 
 // ✅ REQUIRED - use view's computed_risk_level
 const { computed_risk_level } = await supabase
-  .from('v_load_monitoring')
-  .select('computed_risk_level')
+  .from("v_load_monitoring")
+  .select("computed_risk_level")
   .single();
 ```
 
 **Why:** Risk calculation accounts for baseline days. Incorrect risk = potential injury.
 
 ### 4. ❌ Do NOT Introduce New Metrics Without Definitions
+
 ```typescript
 // ❌ FORBIDDEN - no validation, no aggregation logic
-await supabase.from('metric_entries').insert({
+await supabase.from("metric_entries").insert({
   metric_definition_id: null, // or made-up ID
-  value: 999
+  value: 999,
 });
 
 // ✅ REQUIRED - create definition first
 const { data: metricDef } = await supabase
-  .from('metric_definitions')
+  .from("metric_definitions")
   .insert({
-    code: 'new_metric_code',
-    display_name: 'New Metric',
-    value_type: 'integer',
+    code: "new_metric_code",
+    display_name: "New Metric",
+    value_type: "integer",
     // ... full definition
   })
-  .select('id')
+  .select("id")
   .single();
 
 // Then use it
-await supabase.from('metric_entries').insert({
+await supabase.from("metric_entries").insert({
   metric_definition_id: metricDef.id,
-  value: 150
+  value: 150,
 });
 ```
 
 **Why:** Metrics without definitions have no validation, units, or aggregation rules.
 
 ### 5. ❌ Do NOT Bypass exercise_registry for Exercise Selection
+
 ```typescript
 // ❌ FORBIDDEN - inconsistent IDs, missing exercises
-const exercises = await supabase.from('plyometrics_exercises').select('*');
+const exercises = await supabase.from("plyometrics_exercises").select("*");
 
 // ✅ REQUIRED - unified registry is source of truth
-const exercises = await supabase.from('exercise_registry').select('*');
+const exercises = await supabase.from("exercise_registry").select("*");
 ```
 
 **Why:** Registry is the only complete catalog. Logs reference registry IDs.
 
 ### 6. ❌ Do NOT Store Computed Values (compliance_rate, risk_level, etc.)
+
 ```typescript
 // ❌ FORBIDDEN - will become stale
-await supabase.from('player_programs').update({
-  compliance_rate: calculatedValue
+await supabase.from("player_programs").update({
+  compliance_rate: calculatedValue,
 });
 
 // ✅ REQUIRED - always read from views (computed in real-time)
@@ -551,6 +571,7 @@ await supabase.from('player_programs').update({
 **Why:** Stored computed values go stale. Views compute in real-time from source data.
 
 ### Enforcement
+
 - **DB Level:** Constraints, foreign keys, and RLS policies enforce these rules
 - **Code Review:** Flag violations in PR reviews
 - **CI/CD:** Consider adding lint rules for direct legacy table access
@@ -585,6 +606,7 @@ await supabase.from('player_programs').update({
 ---
 
 **Need Help?**
+
 - Check the comprehensive guide: `/docs/DATABASE_REFACTOR_GUIDE.md`
 - Review example queries above
 - Search for "TODO: Update after migration 070" in codebase
@@ -595,4 +617,3 @@ await supabase.from('player_programs').update({
 **Last Updated:** 29. December 2025  
 **Migration Version:** 070, 071, 072  
 **Status:** ✅ Complete
-

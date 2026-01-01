@@ -103,7 +103,9 @@ interface SessionType {
               @for (type of sessionTypes; track type.value) {
                 <div
                   class="session-type-card"
-                  [class.selected]="sessionForm.get('sessionType')?.value === type.value"
+                  [class.selected]="
+                    sessionForm.get('sessionType')?.value === type.value
+                  "
                   (click)="selectSessionType(type.value)"
                 >
                   <i class="type-icon pi" [ngClass]="type.icon"></i>
@@ -140,8 +142,8 @@ interface SessionType {
                 <label for="rpe">
                   Session RPE (1-10)
                   <span class="rpe-help">
-                    @if (sessionForm.get('rpe')?.value) {
-                      - {{ getRpeDescription(sessionForm.get('rpe')?.value) }}
+                    @if (sessionForm.get("rpe")?.value) {
+                      - {{ getRpeDescription(sessionForm.get("rpe")?.value) }}
                     }
                   </span>
                 </label>
@@ -165,8 +167,8 @@ interface SessionType {
               <div class="load-label">Estimated Training Load</div>
               <div class="load-value">{{ calculatedLoad() }} AU</div>
               <div class="load-formula">
-                {{ sessionForm.get('durationMinutes')?.value || 0 }} min ×
-                {{ sessionForm.get('rpe')?.value || 0 }} RPE
+                {{ sessionForm.get("durationMinutes")?.value || 0 }} min ×
+                {{ sessionForm.get("rpe")?.value || 0 }} RPE
               </div>
             </div>
           </p-card>
@@ -474,7 +476,10 @@ export class TrainingLogComponent implements OnInit {
 
   sessionForm: FormGroup = this.fb.group({
     sessionType: ["practice", Validators.required],
-    durationMinutes: [60, [Validators.required, Validators.min(1), Validators.max(300)]],
+    durationMinutes: [
+      60,
+      [Validators.required, Validators.min(1), Validators.max(300)],
+    ],
     rpe: [5, [Validators.required, Validators.min(1), Validators.max(10)]],
     sprintReps: [0],
     cuttingMovements: [0],
@@ -544,22 +549,24 @@ export class TrainingLogComponent implements OnInit {
       };
 
       // Save to database via service
-      await this.trainingDataService.createTrainingSession({
-        user_id: user?.id || '',
-        session_date: sessionData.session_date,
-        session_type: sessionData.session_type,
-        duration_minutes: sessionData.duration_minutes,
-        rpe: sessionData.rpe,
-        notes: sessionData.notes,
-      }).toPromise();
+      await this.trainingDataService
+        .createTrainingSession({
+          user_id: user?.id || "",
+          session_date: sessionData.session_date,
+          session_type: sessionData.session_type,
+          duration_minutes: sessionData.duration_minutes,
+          rpe: sessionData.rpe,
+          notes: sessionData.notes,
+        })
+        .toPromise();
 
       // Update ACWR calculations
       this.acwrService.addSession({
-        playerId: user?.id || '',
+        playerId: user?.id || "",
         date: new Date(),
         sessionType: this.mapSessionType(sessionData.session_type),
         metrics: {
-          type: 'internal',
+          type: "internal",
           internal: {
             sessionRPE: sessionData.rpe,
             duration: sessionData.duration_minutes,
@@ -590,13 +597,13 @@ export class TrainingLogComponent implements OnInit {
    */
   private mapSessionType(type: string): AcwrSessionType {
     const mapping: Record<string, AcwrSessionType> = {
-      practice: 'technical',
-      game: 'game',
-      strength: 'strength',
-      speed: 'sprint',
-      recovery: 'recovery',
-      skills: 'technical',
+      practice: "technical",
+      game: "game",
+      strength: "strength",
+      speed: "sprint",
+      recovery: "recovery",
+      skills: "technical",
     };
-    return mapping[type] || 'technical';
+    return mapping[type] || "technical";
   }
 }

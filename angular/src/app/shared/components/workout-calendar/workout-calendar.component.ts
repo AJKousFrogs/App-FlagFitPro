@@ -47,9 +47,9 @@ export interface WorkoutEntry {
           (onClick)="previousMonth()"
           pTooltip="Previous month"
         ></p-button>
-        
+
         <h3 class="month-title">{{ monthYearLabel() }}</h3>
-        
+
         <p-button
           icon="pi pi-chevron-right"
           [text]="true"
@@ -57,7 +57,7 @@ export interface WorkoutEntry {
           (onClick)="nextMonth()"
           pTooltip="Next month"
         ></p-button>
-        
+
         <p-button
           label="Today"
           [text]="true"
@@ -69,15 +69,15 @@ export interface WorkoutEntry {
 
       <!-- View Toggle -->
       <div class="view-toggle">
-        <button 
-          class="toggle-btn" 
+        <button
+          class="toggle-btn"
           [class.active]="viewMode() === 'month'"
           (click)="viewMode.set('month')"
         >
           Month
         </button>
-        <button 
-          class="toggle-btn" 
+        <button
+          class="toggle-btn"
           [class.active]="viewMode() === 'week'"
           (click)="viewMode.set('week')"
         >
@@ -95,7 +95,7 @@ export interface WorkoutEntry {
       <!-- Calendar Grid -->
       <div class="calendar-grid" [class.week-view]="viewMode() === 'week'">
         @for (day of visibleDays(); track day.date.toISOString()) {
-          <div 
+          <div
             class="calendar-day"
             [class.today]="day.isToday"
             [class.other-month]="!day.isCurrentMonth"
@@ -108,7 +108,7 @@ export interface WorkoutEntry {
               @if (day.workouts.length > 0) {
                 <div class="workout-indicators">
                   @for (workout of day.workouts.slice(0, 3); track workout.id) {
-                    <span 
+                    <span
                       class="workout-dot"
                       [class]="'type-' + workout.type"
                       [class.completed]="workout.completed"
@@ -116,16 +116,18 @@ export interface WorkoutEntry {
                     ></span>
                   }
                   @if (day.workouts.length > 3) {
-                    <span class="more-indicator">+{{ day.workouts.length - 3 }}</span>
+                    <span class="more-indicator"
+                      >+{{ day.workouts.length - 3 }}</span
+                    >
                   }
                 </div>
               }
             </div>
-            
-            @if (viewMode() === 'week' || day.isToday) {
+
+            @if (viewMode() === "week" || day.isToday) {
               <div class="day-workouts">
                 @for (workout of day.workouts; track workout.id) {
-                  <div 
+                  <div
                     class="workout-item"
                     [class]="'type-' + workout.type"
                     [class.completed]="workout.completed"
@@ -134,7 +136,9 @@ export interface WorkoutEntry {
                     <i [class]="getWorkoutIcon(workout.type)"></i>
                     <span class="workout-title">{{ workout.title }}</span>
                     @if (workout.duration) {
-                      <span class="workout-duration">{{ workout.duration }}m</span>
+                      <span class="workout-duration"
+                        >{{ workout.duration }}m</span
+                      >
                     }
                     @if (workout.completed) {
                       <i class="pi pi-check-circle completed-icon"></i>
@@ -196,298 +200,312 @@ export interface WorkoutEntry {
       </div>
     </div>
   `,
-  styles: [`
-    .workout-calendar {
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-      padding: var(--space-4);
-    }
+  styles: [
+    `
+      .workout-calendar {
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+        padding: var(--space-4);
+      }
 
-    .calendar-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin-bottom: var(--space-4);
-    }
+      .calendar-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+      }
 
-    .month-title {
-      flex: 1;
-      text-align: center;
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin: 0;
-      color: var(--text-primary);
-    }
+      .month-title {
+        flex: 1;
+        text-align: center;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+      }
 
-    .today-btn {
-      margin-left: auto;
-    }
+      .today-btn {
+        margin-left: auto;
+      }
 
-    .view-toggle {
-      display: flex;
-      gap: var(--space-1);
-      margin-bottom: var(--space-4);
-      background: var(--p-surface-100);
-      border-radius: var(--p-border-radius);
-      padding: var(--space-1);
-    }
-
-    .toggle-btn {
-      flex: 1;
-      padding: var(--space-2) var(--space-3);
-      border: none;
-      background: transparent;
-      border-radius: var(--p-border-radius);
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: var(--text-secondary);
-    }
-
-    .toggle-btn.active {
-      background: var(--surface-primary);
-      color: var(--color-brand-primary);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .weekday-headers {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: var(--space-1);
-      margin-bottom: var(--space-2);
-    }
-
-    .weekday {
-      text-align: center;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      padding: var(--space-2);
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: var(--space-1);
-    }
-
-    .calendar-grid.week-view {
-      grid-template-columns: repeat(7, 1fr);
-    }
-
-    .calendar-grid.week-view .calendar-day {
-      min-height: 150px;
-    }
-
-    .calendar-day {
-      min-height: 80px;
-      padding: var(--space-2);
-      border-radius: var(--p-border-radius);
-      background: var(--p-surface-50);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 2px solid transparent;
-    }
-
-    .calendar-day:hover {
-      background: var(--p-surface-100);
-    }
-
-    .calendar-day.today {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
-    }
-
-    .calendar-day.other-month {
-      opacity: 0.4;
-    }
-
-    .calendar-day.past {
-      opacity: 0.7;
-    }
-
-    .calendar-day.has-workouts {
-      background: var(--surface-primary);
-    }
-
-    .day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: var(--space-1);
-    }
-
-    .day-number {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .today .day-number {
-      background: var(--color-brand-primary);
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .workout-indicators {
-      display: flex;
-      gap: 2px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .workout-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      cursor: help;
-    }
-
-    .workout-dot.completed {
-      opacity: 0.5;
-    }
-
-    .more-indicator {
-      font-size: 0.625rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    /* Workout type colors */
-    .type-strength { background: var(--color-workout-strength); }
-    .type-cardio { background: var(--color-workout-cardio); }
-    .type-mobility { background: var(--color-workout-mobility); }
-    .type-practice { background: var(--color-workout-practice); }
-    .type-game { background: var(--color-workout-game); }
-    .type-rest { background: var(--color-workout-rest); }
-
-    .day-workouts {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-      margin-top: var(--space-2);
-    }
-
-    .workout-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-      padding: var(--space-1) var(--space-2);
-      border-radius: var(--p-border-radius);
-      font-size: 0.75rem;
-      background: var(--p-surface-100);
-      transition: all 0.2s ease;
-    }
-
-    .workout-item:hover {
-      background: var(--p-surface-200);
-    }
-
-    .workout-item.completed {
-      opacity: 0.6;
-      text-decoration: line-through;
-    }
-
-    .workout-item i:first-child {
-      font-size: 0.75rem;
-    }
-
-    .workout-title {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .workout-duration {
-      font-size: 0.625rem;
-      color: var(--text-secondary);
-    }
-
-    .completed-icon {
-      color: var(--color-status-success);
-      font-size: 0.75rem;
-    }
-
-    .calendar-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
-    .month-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-3);
-      margin-top: var(--space-4);
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-value {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    @media (max-width: 768px) {
-      .calendar-day {
-        min-height: 60px;
+      .view-toggle {
+        display: flex;
+        gap: var(--space-1);
+        margin-bottom: var(--space-4);
+        background: var(--p-surface-100);
+        border-radius: var(--p-border-radius);
         padding: var(--space-1);
       }
 
-      .day-workouts {
-        display: none;
+      .toggle-btn {
+        flex: 1;
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        background: transparent;
+        border-radius: var(--p-border-radius);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--text-secondary);
       }
 
-      .calendar-grid.week-view .day-workouts {
+      .toggle-btn.active {
+        background: var(--surface-primary);
+        color: var(--color-brand-primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .weekday-headers {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: var(--space-1);
+        margin-bottom: var(--space-2);
+      }
+
+      .weekday {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        padding: var(--space-2);
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: var(--space-1);
+      }
+
+      .calendar-grid.week-view {
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .calendar-grid.week-view .calendar-day {
+        min-height: 150px;
+      }
+
+      .calendar-day {
+        min-height: 80px;
+        padding: var(--space-2);
+        border-radius: var(--p-border-radius);
+        background: var(--p-surface-50);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+      }
+
+      .calendar-day:hover {
+        background: var(--p-surface-100);
+      }
+
+      .calendar-day.today {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-light);
+      }
+
+      .calendar-day.other-month {
+        opacity: 0.4;
+      }
+
+      .calendar-day.past {
+        opacity: 0.7;
+      }
+
+      .calendar-day.has-workouts {
+        background: var(--surface-primary);
+      }
+
+      .day-header {
         display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--space-1);
       }
 
-      .month-stats {
-        grid-template-columns: repeat(2, 1fr);
+      .day-number {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .today .day-number {
+        background: var(--color-brand-primary);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .workout-indicators {
+        display: flex;
+        gap: 2px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .workout-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        cursor: help;
+      }
+
+      .workout-dot.completed {
+        opacity: 0.5;
+      }
+
+      .more-indicator {
+        font-size: 0.625rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* Workout type colors */
+      .type-strength {
+        background: var(--color-workout-strength);
+      }
+      .type-cardio {
+        background: var(--color-workout-cardio);
+      }
+      .type-mobility {
+        background: var(--color-workout-mobility);
+      }
+      .type-practice {
+        background: var(--color-workout-practice);
+      }
+      .type-game {
+        background: var(--color-workout-game);
+      }
+      .type-rest {
+        background: var(--color-workout-rest);
+      }
+
+      .day-workouts {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        margin-top: var(--space-2);
+      }
+
+      .workout-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--p-border-radius);
+        font-size: 0.75rem;
+        background: var(--p-surface-100);
+        transition: all 0.2s ease;
+      }
+
+      .workout-item:hover {
+        background: var(--p-surface-200);
+      }
+
+      .workout-item.completed {
+        opacity: 0.6;
+        text-decoration: line-through;
+      }
+
+      .workout-item i:first-child {
+        font-size: 0.75rem;
+      }
+
+      .workout-title {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .workout-duration {
+        font-size: 0.625rem;
+        color: var(--text-secondary);
+      }
+
+      .completed-icon {
+        color: var(--color-status-success);
+        font-size: 0.75rem;
       }
 
       .calendar-legend {
-        justify-content: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
       }
-    }
-  `],
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .month-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-3);
+        margin-top: var(--space-4);
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      @media (max-width: 768px) {
+        .calendar-day {
+          min-height: 60px;
+          padding: var(--space-1);
+        }
+
+        .day-workouts {
+          display: none;
+        }
+
+        .calendar-grid.week-view .day-workouts {
+          display: flex;
+        }
+
+        .month-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .calendar-legend {
+          justify-content: center;
+        }
+      }
+    `,
+  ],
 })
 export class WorkoutCalendarComponent implements OnInit {
   @Input() workouts: WorkoutEntry[] = [];
@@ -516,15 +534,17 @@ export class WorkoutCalendarComponent implements OnInit {
 
   monthStats = computed(() => {
     const days = this.visibleDays();
-    const allWorkouts = days.flatMap(d => d.workouts);
-    const completedWorkouts = allWorkouts.filter(w => w.completed);
-    
+    const allWorkouts = days.flatMap((d) => d.workouts);
+    const completedWorkouts = allWorkouts.filter((w) => w.completed);
+
     // Calculate streak
     let streakDays = 0;
-    const sortedDays = [...days].sort((a, b) => b.date.getTime() - a.date.getTime());
+    const sortedDays = [...days].sort(
+      (a, b) => b.date.getTime() - a.date.getTime(),
+    );
     for (const day of sortedDays) {
       if (day.isPast || day.isToday) {
-        const hasCompletedWorkout = day.workouts.some(w => w.completed);
+        const hasCompletedWorkout = day.workouts.some((w) => w.completed);
         if (hasCompletedWorkout) {
           streakDays++;
         } else if (day.workouts.length > 0) {
@@ -536,7 +556,10 @@ export class WorkoutCalendarComponent implements OnInit {
     return {
       totalWorkouts: allWorkouts.length,
       completedWorkouts: completedWorkouts.length,
-      totalMinutes: completedWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0),
+      totalMinutes: completedWorkouts.reduce(
+        (sum, w) => sum + (w.duration || 0),
+        0,
+      ),
       streakDays,
     };
   });
@@ -548,32 +571,32 @@ export class WorkoutCalendarComponent implements OnInit {
   private getMonthDays(date: Date, today: Date): WorkoutDay[] {
     const year = date.getFullYear();
     const month = date.getMonth();
-    
+
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    
+
     const days: WorkoutDay[] = [];
-    
+
     // Add days from previous month to fill the first week
     const firstDayOfWeek = firstDay.getDay();
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
       const d = new Date(year, month, -i);
       days.push(this.createWorkoutDay(d, today, false));
     }
-    
+
     // Add days of current month
     for (let i = 1; i <= lastDay.getDate(); i++) {
       const d = new Date(year, month, i);
       days.push(this.createWorkoutDay(d, today, true));
     }
-    
+
     // Add days from next month to complete the grid
     const remainingDays = 42 - days.length; // 6 rows * 7 days
     for (let i = 1; i <= remainingDays; i++) {
       const d = new Date(year, month + 1, i);
       days.push(this.createWorkoutDay(d, today, false));
     }
-    
+
     return days;
   }
 
@@ -581,19 +604,25 @@ export class WorkoutCalendarComponent implements OnInit {
     const days: WorkoutDay[] = [];
     const startOfWeek = new Date(date);
     startOfWeek.setDate(date.getDate() - date.getDay());
-    
+
     for (let i = 0; i < 7; i++) {
       const d = new Date(startOfWeek);
       d.setDate(startOfWeek.getDate() + i);
-      days.push(this.createWorkoutDay(d, today, d.getMonth() === date.getMonth()));
+      days.push(
+        this.createWorkoutDay(d, today, d.getMonth() === date.getMonth()),
+      );
     }
-    
+
     return days;
   }
 
-  private createWorkoutDay(date: Date, today: Date, isCurrentMonth: boolean): WorkoutDay {
+  private createWorkoutDay(
+    date: Date,
+    today: Date,
+    isCurrentMonth: boolean,
+  ): WorkoutDay {
     const dateStr = date.toISOString().split("T")[0];
-    const workoutsForDay = this.workouts.filter(w => {
+    const workoutsForDay = this.workouts.filter((w) => {
       // Assuming workouts have a date property or we match by some logic
       return true; // Placeholder - would filter by actual date
     });
@@ -614,7 +643,9 @@ export class WorkoutCalendarComponent implements OnInit {
       newDate.setDate(current.getDate() - 7);
       this.currentDate.set(newDate);
     } else {
-      this.currentDate.set(new Date(current.getFullYear(), current.getMonth() - 1, 1));
+      this.currentDate.set(
+        new Date(current.getFullYear(), current.getMonth() - 1, 1),
+      );
     }
   }
 
@@ -625,7 +656,9 @@ export class WorkoutCalendarComponent implements OnInit {
       newDate.setDate(current.getDate() + 7);
       this.currentDate.set(newDate);
     } else {
-      this.currentDate.set(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+      this.currentDate.set(
+        new Date(current.getFullYear(), current.getMonth() + 1, 1),
+      );
     }
   }
 

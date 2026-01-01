@@ -116,7 +116,7 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribe(
         "test_table",
         "user_id=eq.user-123",
-        callback
+        callback,
       );
 
       expect(mockSupabaseService.client.channel).toHaveBeenCalled();
@@ -130,7 +130,7 @@ describe("RealtimeService", () => {
       service.subscribe("test_table", "filter1", callback);
 
       expect(mockLoggerService.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Already subscribed")
+        expect.stringContaining("Already subscribed"),
       );
     });
 
@@ -163,7 +163,7 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribeToTrainingSessions(callback);
 
       expect(mockSupabaseService.client.channel).toHaveBeenCalledWith(
-        "training_sessions"
+        "training_sessions",
       );
       expect(typeof unsubscribe).toBe("function");
     });
@@ -175,7 +175,7 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribeToTrainingSessions(callback);
 
       expect(mockLoggerService.warn).toHaveBeenCalledWith(
-        expect.stringContaining("No user logged in")
+        expect.stringContaining("No user logged in"),
       );
       expect(typeof unsubscribe).toBe("function");
     });
@@ -252,7 +252,7 @@ describe("RealtimeService", () => {
       service.subscribeToTeamUpdates("team-123", callback);
 
       expect(mockSupabaseService.client.channel).toHaveBeenCalledWith(
-        "team_team-123"
+        "team_team-123",
       );
     });
 
@@ -262,7 +262,7 @@ describe("RealtimeService", () => {
       service.subscribeToTeamUpdates("", callback);
 
       expect(mockLoggerService.warn).toHaveBeenCalledWith(
-        expect.stringContaining("No team ID")
+        expect.stringContaining("No team ID"),
       );
     });
   });
@@ -292,7 +292,7 @@ describe("RealtimeService", () => {
       service.subscribeToMessages("conv-123", callback);
 
       expect(mockSupabaseService.client.channel).toHaveBeenCalledWith(
-        "messages_conv-123"
+        "messages_conv-123",
       );
     });
 
@@ -302,7 +302,7 @@ describe("RealtimeService", () => {
       service.subscribeToMessages("", callback);
 
       expect(mockLoggerService.warn).toHaveBeenCalledWith(
-        expect.stringContaining("No conversation ID")
+        expect.stringContaining("No conversation ID"),
       );
     });
   });
@@ -379,10 +379,14 @@ describe("RealtimeService", () => {
       let capturedCallback: ((payload: unknown) => void) | null = null;
 
       mockChannel.on.mockImplementation(
-        (_type: string, _config: unknown, callback: (payload: unknown) => void) => {
+        (
+          _type: string,
+          _config: unknown,
+          callback: (payload: unknown) => void,
+        ) => {
           capturedCallback = callback;
           return mockChannel;
-        }
+        },
       );
 
       (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
@@ -410,10 +414,14 @@ describe("RealtimeService", () => {
       let capturedCallback: ((payload: unknown) => void) | null = null;
 
       mockChannel.on.mockImplementation(
-        (_type: string, _config: unknown, callback: (payload: unknown) => void) => {
+        (
+          _type: string,
+          _config: unknown,
+          callback: (payload: unknown) => void,
+        ) => {
           capturedCallback = callback;
           return mockChannel;
-        }
+        },
       );
 
       (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
@@ -441,10 +449,14 @@ describe("RealtimeService", () => {
       let capturedCallback: ((payload: unknown) => void) | null = null;
 
       mockChannel.on.mockImplementation(
-        (_type: string, _config: unknown, callback: (payload: unknown) => void) => {
+        (
+          _type: string,
+          _config: unknown,
+          callback: (payload: unknown) => void,
+        ) => {
           capturedCallback = callback;
           return mockChannel;
-        }
+        },
       );
 
       (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
@@ -496,7 +508,9 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribe("test_table", "filter1", callback);
       unsubscribe();
 
-      expect((mockSupabaseService as any).client.removeChannel).toHaveBeenCalled();
+      expect(
+        (mockSupabaseService as any).client.removeChannel,
+      ).toHaveBeenCalled();
     });
 
     it("should clear all channels on unsubscribeAll", () => {
@@ -532,7 +546,7 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribe(
         "test_table",
         "email=eq.test@example.com",
-        callback
+        callback,
       );
 
       expect(typeof unsubscribe).toBe("function");
@@ -545,7 +559,7 @@ describe("RealtimeService", () => {
         const unsubscribe = service.subscribe(
           "test_table",
           `filter${i}`,
-          callback
+          callback,
         );
         unsubscribe();
       }
@@ -554,4 +568,3 @@ describe("RealtimeService", () => {
     });
   });
 });
-

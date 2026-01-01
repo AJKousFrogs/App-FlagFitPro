@@ -11,7 +11,7 @@ import { UniversalChartAccessibility } from "./components/universal-chart-access
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
 import { performGlobalSearch } from "./services/global-search-service.js";
 
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 // Global application state
 window.FlagFitApp = {
@@ -193,7 +193,7 @@ class FlagFitApplication {
 
   getCurrentPage() {
     // Try to determine current page from various sources
-    const {pathname} = window.location;
+    const { pathname } = window.location;
     const filename = pathname.split("/").pop().replace(".html", "");
 
     // Check body class

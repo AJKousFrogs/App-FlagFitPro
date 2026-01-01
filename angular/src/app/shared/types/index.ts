@@ -53,23 +53,23 @@ export interface Player {
   dateOfBirth?: string;
   height?: number; // in cm
   weight?: number; // in kg
-  dominantHand: 'left' | 'right';
+  dominantHand: "left" | "right";
   status: PlayerStatus;
   createdAt: string;
   updatedAt: string;
 }
 
-export type PlayerPosition = 
-  | 'QB' 
-  | 'WR' 
-  | 'RB' 
-  | 'DB' 
-  | 'LB' 
-  | 'RUSH' 
-  | 'CENTER'
-  | 'OTHER';
+export type PlayerPosition =
+  | "QB"
+  | "WR"
+  | "RB"
+  | "DB"
+  | "LB"
+  | "RUSH"
+  | "CENTER"
+  | "OTHER";
 
-export type PlayerStatus = 'active' | 'injured' | 'inactive' | 'suspended';
+export type PlayerStatus = "active" | "injured" | "inactive" | "suspended";
 
 export interface User {
   id: string;
@@ -81,7 +81,7 @@ export interface User {
   updatedAt: string;
 }
 
-export type UserRole = 'player' | 'coach' | 'admin';
+export type UserRole = "player" | "coach" | "admin";
 
 // ============================================
 // Game & Performance Types
@@ -93,7 +93,7 @@ export interface GameStats {
   gameDate: string;
   opponent: string;
   present: boolean;
-  
+
   // Passing stats
   passAttempts: number;
   completions: number;
@@ -102,17 +102,17 @@ export interface GameStats {
   interceptions: number;
   snapAccuracy?: number;
   throwAccuracy?: number;
-  
+
   // Receiving stats
   targets: number;
   receptions: number;
   receivingYards: number;
   drops: number;
-  
+
   // Rushing stats
   rushingAttempts: number;
   rushingYards: number;
-  
+
   // Defensive stats
   flagPullAttempts: number;
   flagPulls: number;
@@ -124,7 +124,7 @@ export interface AggregatedStats {
   playerId: string;
   period: StatPeriod;
   gamesPlayed: number;
-  
+
   // Totals
   totalPassAttempts: number;
   totalCompletions: number;
@@ -135,7 +135,7 @@ export interface AggregatedStats {
   totalReceivingYards: number;
   totalRushingYards: number;
   totalFlagPulls: number;
-  
+
   // Averages
   avgCompletionRate: number;
   avgPassingYardsPerGame: number;
@@ -145,7 +145,7 @@ export interface AggregatedStats {
 }
 
 export interface StatPeriod {
-  type: 'game' | 'week' | 'month' | 'season' | 'career';
+  type: "game" | "week" | "month" | "season" | "career";
   startDate: string;
   endDate: string;
   label: string;
@@ -169,16 +169,16 @@ export interface TrainingSession {
   updatedAt: string;
 }
 
-export type TrainingType = 
-  | 'strength'
-  | 'conditioning'
-  | 'skills'
-  | 'recovery'
-  | 'team_practice'
-  | 'individual';
+export type TrainingType =
+  | "strength"
+  | "conditioning"
+  | "skills"
+  | "recovery"
+  | "team_practice"
+  | "individual";
 
-export type IntensityLevel = 'light' | 'moderate' | 'high' | 'max';
-export type SessionStatus = 'planned' | 'in_progress' | 'completed' | 'skipped';
+export type IntensityLevel = "light" | "moderate" | "high" | "max";
+export type SessionStatus = "planned" | "in_progress" | "completed" | "skipped";
 
 export interface Exercise {
   id: string;
@@ -194,15 +194,15 @@ export interface Exercise {
 }
 
 export type ExerciseCategory =
-  | 'warmup'
-  | 'strength'
-  | 'power'
-  | 'speed'
-  | 'agility'
-  | 'endurance'
-  | 'flexibility'
-  | 'cooldown'
-  | 'skills';
+  | "warmup"
+  | "strength"
+  | "power"
+  | "speed"
+  | "agility"
+  | "endurance"
+  | "flexibility"
+  | "cooldown"
+  | "skills";
 
 // ============================================
 // Load Management & Recovery Types
@@ -218,7 +218,7 @@ export interface LoadData {
   riskLevel: RiskLevel;
 }
 
-export type RiskLevel = 'low' | 'moderate' | 'high' | 'critical';
+export type RiskLevel = "low" | "moderate" | "high" | "critical";
 
 export interface ReadinessScore {
   playerId: string;
@@ -232,7 +232,7 @@ export interface ReadinessFactor {
   name: string;
   value: number;
   weight: number;
-  status: 'good' | 'fair' | 'poor';
+  status: "good" | "fair" | "poor";
 }
 
 export interface WellnessData {
@@ -264,7 +264,13 @@ export interface NutritionLog {
   notes?: string;
 }
 
-export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'pre_workout' | 'post_workout';
+export type MealType =
+  | "breakfast"
+  | "lunch"
+  | "dinner"
+  | "snack"
+  | "pre_workout"
+  | "post_workout";
 
 export interface FoodItem {
   name: string;
@@ -312,7 +318,11 @@ export interface Tournament {
   status: TournamentStatus;
 }
 
-export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed' | 'cancelled';
+export type TournamentStatus =
+  | "upcoming"
+  | "in_progress"
+  | "completed"
+  | "cancelled";
 
 export interface Game {
   id: string;
@@ -327,7 +337,12 @@ export interface Game {
   stats?: GameStats[];
 }
 
-export type GameStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'postponed';
+export type GameStatus =
+  | "scheduled"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "postponed";
 
 // ============================================
 // Analytics & Chart Types
@@ -356,7 +371,7 @@ export interface ComparisonData {
 export interface TrendData {
   period: string;
   values: number[];
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   trendPercentage: number;
 }
 
@@ -376,19 +391,19 @@ export interface FormField<T = unknown> {
   validators?: Validator[];
 }
 
-export type FormFieldType = 
-  | 'text' 
-  | 'email' 
-  | 'password' 
-  | 'number' 
-  | 'date' 
-  | 'select' 
-  | 'checkbox' 
-  | 'radio' 
-  | 'textarea';
+export type FormFieldType =
+  | "text"
+  | "email"
+  | "password"
+  | "number"
+  | "date"
+  | "select"
+  | "checkbox"
+  | "radio"
+  | "textarea";
 
 export interface Validator {
-  type: 'required' | 'email' | 'min' | 'max' | 'pattern' | 'custom';
+  type: "required" | "email" | "min" | "max" | "pattern" | "custom";
   value?: unknown;
   message: string;
 }
@@ -411,7 +426,7 @@ export interface TableColumn<T = unknown> {
   sortable: boolean;
   filterable: boolean;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   formatter?: (value: unknown) => string;
 }
 
@@ -419,7 +434,7 @@ export interface TableState {
   page: number;
   pageSize: number;
   sortBy?: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
   filters: Record<string, unknown>;
   searchQuery?: string;
 }
@@ -432,7 +447,7 @@ export interface SelectOption {
 }
 
 export interface NotificationConfig {
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   title: string;
   message: string;
   duration?: number;
@@ -456,7 +471,7 @@ export interface DateRange {
 
 export interface TimeFrame {
   value: number;
-  unit: 'day' | 'week' | 'month' | 'year';
+  unit: "day" | "week" | "month" | "year";
   label: string;
 }
 
@@ -470,7 +485,7 @@ export interface FileUpload {
   name: string;
   size: number;
   type: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: "pending" | "uploading" | "success" | "error";
   progress: number;
   error?: string;
   url?: string;
@@ -482,7 +497,7 @@ export interface FileUpload {
 
 export interface Permission {
   resource: string;
-  action: 'create' | 'read' | 'update' | 'delete';
+  action: "create" | "read" | "update" | "delete";
   granted: boolean;
 }
 
@@ -508,14 +523,14 @@ export interface AppError {
 }
 
 export type ErrorCode =
-  | 'AUTH_FAILED'
-  | 'NOT_FOUND'
-  | 'VALIDATION_ERROR'
-  | 'PERMISSION_DENIED'
-  | 'SERVER_ERROR'
-  | 'NETWORK_ERROR'
-  | 'TIMEOUT'
-  | 'UNKNOWN';
+  | "AUTH_FAILED"
+  | "NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "PERMISSION_DENIED"
+  | "SERVER_ERROR"
+  | "NETWORK_ERROR"
+  | "TIMEOUT"
+  | "UNKNOWN";
 
 // ============================================
 // Utility Types
@@ -531,12 +546,14 @@ export type DeepPartial<T> = {
 /**
  * Make specific properties required
  */
-export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type RequireProps<T, K extends keyof T> = Omit<T, K> &
+  Required<Pick<T, K>>;
 
 /**
  * Make specific properties optional
  */
-export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type OptionalProps<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>;
 
 /**
  * Extract keys of type
@@ -554,4 +571,3 @@ export type Nullable<T> = T | null;
  * Maybe type
  */
 export type Maybe<T> = T | null | undefined;
-

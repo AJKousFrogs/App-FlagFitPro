@@ -112,7 +112,7 @@ async function applyMigration() {
           `❌ Error executing statement ${i + 1}:`,
           execError.message,
         );
-        console.error("Statement:", `${statement.substring(0, 100)  }...`);
+        console.error("Statement:", `${statement.substring(0, 100)}...`);
         throw execError;
       }
     }

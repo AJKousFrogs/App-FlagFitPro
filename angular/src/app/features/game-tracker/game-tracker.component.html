@@ -2,7 +2,11 @@
   <div class="game-tracker-page">
     <app-page-header
       title="Game Tracker"
-      [subtitle]="isCoachOrAdmin() ? 'Track team games, plays, and performance metrics' : 'Log your personal games and track your performance'"
+      [subtitle]="
+        isCoachOrAdmin()
+          ? 'Track team games, plays, and performance metrics'
+          : 'Log your personal games and track your performance'
+      "
       icon="pi-list"
     >
       <div class="header-actions">
@@ -27,8 +31,15 @@
           <h3>{{ getFormTitle() }}</h3>
         </ng-template>
         <!-- Visibility Info Banner -->
-        <div class="visibility-info-banner" [class.personal]="!isCoachOrAdmin()">
-          <i class="pi" [class.pi-users]="isCoachOrAdmin()" [class.pi-user]="!isCoachOrAdmin()"></i>
+        <div
+          class="visibility-info-banner"
+          [class.personal]="!isCoachOrAdmin()"
+        >
+          <i
+            class="pi"
+            [class.pi-users]="isCoachOrAdmin()"
+            [class.pi-user]="!isCoachOrAdmin()"
+          ></i>
           <span>{{ getFormDescription() }}</span>
         </div>
         <form [formGroup]="gameForm" (ngSubmit)="submitGame()">
@@ -113,17 +124,30 @@
                 >
                 </p-inputNumber>
                 <div class="unit-toggle-switch">
-                  <span class="unit-label" [class.active]="temperatureUnit === 'C'">°C</span>
-                  <button 
-                    type="button" 
+                  <span
+                    class="unit-label"
+                    [class.active]="temperatureUnit === 'C'"
+                    >°C</span
+                  >
+                  <button
+                    type="button"
                     class="toggle-track"
                     [class.fahrenheit]="temperatureUnit === 'F'"
-                    (click)="setTemperatureUnit(temperatureUnit === 'F' ? 'C' : 'F')"
-                    [attr.aria-label]="'Switch to ' + (temperatureUnit === 'F' ? 'Celsius' : 'Fahrenheit')"
+                    (click)="
+                      setTemperatureUnit(temperatureUnit === 'F' ? 'C' : 'F')
+                    "
+                    [attr.aria-label]="
+                      'Switch to ' +
+                      (temperatureUnit === 'F' ? 'Celsius' : 'Fahrenheit')
+                    "
                   >
                     <span class="toggle-thumb"></span>
                   </button>
-                  <span class="unit-label" [class.active]="temperatureUnit === 'F'">°F</span>
+                  <span
+                    class="unit-label"
+                    [class.active]="temperatureUnit === 'F'"
+                    >°F</span
+                  >
                 </div>
               </div>
             </div>
@@ -680,7 +704,7 @@
     <!-- Games List -->
     <p-card class="games-list-card">
       <ng-template pTemplate="header">
-        <h3>{{ isCoachOrAdmin() ? 'Team & Personal Games' : 'My Games' }}</h3>
+        <h3>{{ isCoachOrAdmin() ? "Team & Personal Games" : "My Games" }}</h3>
       </ng-template>
       <p-table [value]="games()" [paginator]="true" [rows]="10">
         <ng-template pTemplate="header">
@@ -695,7 +719,10 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-game>
-          <tr [attr.data-game-id]="game.id" [class.personal-game-row]="game.isPersonal">
+          <tr
+            [attr.data-game-id]="game.id"
+            [class.personal-game-row]="game.isPersonal"
+          >
             <td>{{ game.date }}</td>
             <td>{{ game.opponent }}</td>
             <td>

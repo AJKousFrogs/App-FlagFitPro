@@ -87,16 +87,33 @@ exports.handler = async (event, context) => {
       const trainingFrequency = Math.round((sessionCount / 30) * 7);
 
       // Build comprehensive profile with null-safety flags (RISK-019 fix)
-      const heightCm = userInfo.height_cm ? parseFloat(userInfo.height_cm) : null;
-      const weightKg = userInfo.weight_kg ? parseFloat(userInfo.weight_kg) : null;
-      
+      const heightCm = userInfo.height_cm
+        ? parseFloat(userInfo.height_cm)
+        : null;
+      const weightKg = userInfo.weight_kg
+        ? parseFloat(userInfo.weight_kg)
+        : null;
+
       // Flag incomplete profile data so UI can prompt user
-      const profileComplete = !!(heightCm && weightKg && userInfo.birth_date && userInfo.position);
+      const profileComplete = !!(
+        heightCm &&
+        weightKg &&
+        userInfo.birth_date &&
+        userInfo.position
+      );
       const missingFields = [];
-      if (!heightCm) {missingFields.push('height');}
-      if (!weightKg) {missingFields.push('weight');}
-      if (!userInfo.birth_date) {missingFields.push('birthDate');}
-      if (!userInfo.position) {missingFields.push('position');}
+      if (!heightCm) {
+        missingFields.push("height");
+      }
+      if (!weightKg) {
+        missingFields.push("weight");
+      }
+      if (!userInfo.birth_date) {
+        missingFields.push("birthDate");
+      }
+      if (!userInfo.position) {
+        missingFields.push("position");
+      }
 
       const profile = {
         userId: userInfo.id,
@@ -104,8 +121,8 @@ exports.handler = async (event, context) => {
         weightKg,
         position: userInfo.position || null,
         birthDate: userInfo.birth_date || null,
-        role: userInfo.role || 'athlete',
-        experienceLevel: userInfo.experience_level || 'beginner',
+        role: userInfo.role || "athlete",
+        experienceLevel: userInfo.experience_level || "beginner",
         injuries: injuriesResult.rows.map((row) => ({
           type: row.type,
           severity: row.severity,
@@ -120,9 +137,9 @@ exports.handler = async (event, context) => {
           : 60, // Default to 60 min if no data
         avgIntensity: trainingData.avg_intensity
           ? parseFloat(trainingData.avg_intensity).toFixed(1)
-          : '5.0', // Default to moderate if no data
+          : "5.0", // Default to moderate if no data
         recentSessions: recentSessionsResult.rows.map((row) => ({
-          type: row.session_type || 'Training',
+          type: row.session_type || "Training",
           duration: row.duration_minutes || 60,
           intensity: row.intensity_level || 5,
           date: row.session_date,

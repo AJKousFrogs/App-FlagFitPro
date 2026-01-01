@@ -47,7 +47,7 @@ export interface TrainingVideo {
   source: VideoSource;
   isPlaylist: boolean;
   playlistVideos?: number;
-  
+
   // Visibility and assignment fields (from database)
   visibilityType?: VideoVisibilityType;
   targetPlayerId?: string | null;
@@ -63,25 +63,33 @@ export interface TrainingVideo {
 }
 
 // Video visibility types for RLS-based access control
-export type VideoVisibilityType = 'public' | 'private' | 'assigned';
+export type VideoVisibilityType = "public" | "private" | "assigned";
 
 // Completion status for assigned videos
-export type VideoCompletionStatus = 'pending' | 'completed' | 'skipped';
+export type VideoCompletionStatus = "pending" | "completed" | "skipped";
 
-export type FlagPosition = "QB" | "WR" | "Center" | "DB" | "Rusher" | "LB" | "Hybrid" | "All";
-export type TrainingFocus = 
-  | "speed" 
-  | "agility" 
-  | "strength" 
-  | "power" 
-  | "skills" 
-  | "throwing" 
-  | "catching" 
-  | "route_running" 
-  | "coverage" 
-  | "rushing" 
-  | "recovery" 
-  | "mobility" 
+export type FlagPosition =
+  | "QB"
+  | "WR"
+  | "Center"
+  | "DB"
+  | "Rusher"
+  | "LB"
+  | "Hybrid"
+  | "All";
+export type TrainingFocus =
+  | "speed"
+  | "agility"
+  | "strength"
+  | "power"
+  | "skills"
+  | "throwing"
+  | "catching"
+  | "route_running"
+  | "coverage"
+  | "rushing"
+  | "recovery"
+  | "mobility"
   | "injury_prevention"
   | "conditioning"
   | "mental"
@@ -94,18 +102,33 @@ export type TrainingFocus =
   | "explosive_power";
 
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "all";
-export type TrainingPhase = "off_season" | "pre_season" | "in_season" | "tournament_prep" | "recovery" | "all";
-export type Equipment = "none" | "cones" | "ladder" | "bands" | "weights" | "sled" | "football" | "partner" | "field";
-export type DrillType = 
-  | "warm_up" 
-  | "sprint" 
-  | "agility" 
-  | "plyometric" 
-  | "strength" 
-  | "skill" 
-  | "conditioning" 
-  | "cool_down" 
-  | "mobility" 
+export type TrainingPhase =
+  | "off_season"
+  | "pre_season"
+  | "in_season"
+  | "tournament_prep"
+  | "recovery"
+  | "all";
+export type Equipment =
+  | "none"
+  | "cones"
+  | "ladder"
+  | "bands"
+  | "weights"
+  | "sled"
+  | "football"
+  | "partner"
+  | "field";
+export type DrillType =
+  | "warm_up"
+  | "sprint"
+  | "agility"
+  | "plyometric"
+  | "strength"
+  | "skill"
+  | "conditioning"
+  | "cool_down"
+  | "mobility"
   | "prehab";
 
 export interface VideoSource {
@@ -162,13 +185,13 @@ export interface WeeklySession {
 // ATHLETE SCHEDULE TYPES - Different work/life schedules
 // ============================================================================
 
-export type WorkScheduleType = 
-  | "early_bird"      // Starts work at 6am - prefers evening mobility
-  | "standard"        // Starts work at 9am - can do morning mobility
-  | "late_starter"    // Starts work late/afternoon - prefers morning mobility
-  | "shift_worker"    // Variable shifts - needs flexible options
-  | "student"         // Student schedule - flexible
-  | "remote_worker";  // Works from home - most flexible
+export type WorkScheduleType =
+  | "early_bird" // Starts work at 6am - prefers evening mobility
+  | "standard" // Starts work at 9am - can do morning mobility
+  | "late_starter" // Starts work late/afternoon - prefers morning mobility
+  | "shift_worker" // Variable shifts - needs flexible options
+  | "student" // Student schedule - flexible
+  | "remote_worker"; // Works from home - most flexible
 
 export interface AthleteScheduleProfile {
   scheduleType: WorkScheduleType;
@@ -210,7 +233,10 @@ export interface DailyRoutineRecommendation {
 // SCHEDULE-BASED ROUTINE RECOMMENDATIONS
 // ============================================================================
 
-const SCHEDULE_RECOMMENDATIONS: Record<WorkScheduleType, DailyRoutineRecommendation> = {
+const SCHEDULE_RECOMMENDATIONS: Record<
+  WorkScheduleType,
+  DailyRoutineRecommendation
+> = {
   early_bird: {
     scheduleType: "early_bird",
     morning: null, // No time for morning routine - starts work at 6am
@@ -225,7 +251,8 @@ const SCHEDULE_RECOMMENDATIONS: Record<WorkScheduleType, DailyRoutineRecommendat
       routine: "Foam Rolling Recovery",
       videoId: "foam_rolling_routine",
       duration: 15,
-      description: "Do foam rolling after practice instead of separate evening mobility",
+      description:
+        "Do foam rolling after practice instead of separate evening mobility",
     },
     totalDailyMinutes: 15,
     notes: [
@@ -255,7 +282,8 @@ const SCHEDULE_RECOMMENDATIONS: Record<WorkScheduleType, DailyRoutineRecommendat
       routine: "Foam Rolling Recovery",
       videoId: "foam_rolling_routine",
       duration: 15,
-      description: "Replace evening foam rolling with post-practice foam rolling",
+      description:
+        "Replace evening foam rolling with post-practice foam rolling",
     },
     totalDailyMinutes: 25,
     notes: [
@@ -393,7 +421,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "speed_001",
     title: "Complete Speed Training for Football Players",
-    description: "Comprehensive speed development program covering acceleration mechanics, arm action, and sprint technique. Perfect for all positions.",
+    description:
+      "Comprehensive speed development program covering acceleration mechanics, arm action, and sprint technique. Perfect for all positions.",
     url: "https://www.youtube.com/watch?v=6WXQL_pJc2I",
     platform: "youtube",
     duration: 15,
@@ -413,7 +442,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "speed_002",
     title: "First Step Explosion - 0-10 Yard Acceleration",
-    description: "Master the first 10 yards which account for 60% of 40-yard dash performance. Critical for all flag football positions.",
+    description:
+      "Master the first 10 yards which account for 60% of 40-yard dash performance. Critical for all flag football positions.",
     url: "https://www.youtube.com/watch?v=kVvGHj_pNas",
     platform: "youtube",
     duration: 12,
@@ -433,7 +463,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "speed_003",
     title: "Hip Flexor Strength for Faster Sprinting",
-    description: "Evidence-based hip flexor exercises to improve stride frequency and sprint speed. Based on Morin & Samozino research.",
+    description:
+      "Evidence-based hip flexor exercises to improve stride frequency and sprint speed. Based on Morin & Samozino research.",
     url: "https://www.youtube.com/watch?v=Y2kgQgLrCeM",
     platform: "youtube",
     duration: 18,
@@ -453,7 +484,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "speed_004",
     title: "Resisted Sprint Training with Sled",
-    description: "Proper sled sprint technique with 10-20% bodyweight load for acceleration development. Based on Petrakos et al. research.",
+    description:
+      "Proper sled sprint technique with 10-20% bodyweight load for acceleration development. Based on Petrakos et al. research.",
     url: "https://www.youtube.com/watch?v=bHmUqQv2nKU",
     platform: "youtube",
     duration: 10,
@@ -477,7 +509,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "agility_001",
     title: "Pro Agility / 5-10-5 Shuttle Technique",
-    description: "Master the pro agility test with proper technique for change of direction. Essential for all flag football positions.",
+    description:
+      "Master the pro agility test with proper technique for change of direction. Essential for all flag football positions.",
     url: "https://www.youtube.com/watch?v=1VdcvQvKYjU",
     platform: "youtube",
     duration: 8,
@@ -497,7 +530,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "agility_002",
     title: "Ladder Drills for Quick Feet",
-    description: "20+ ladder drill variations to improve foot speed and coordination. Great for warm-ups or dedicated agility sessions.",
+    description:
+      "20+ ladder drill variations to improve foot speed and coordination. Great for warm-ups or dedicated agility sessions.",
     url: "https://www.youtube.com/watch?v=2uqYU_IMCMI",
     platform: "youtube",
     duration: 15,
@@ -517,7 +551,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "agility_003",
     title: "Deceleration Training for Injury Prevention",
-    description: "Learn proper deceleration mechanics to reduce injury risk and improve cutting ability. Based on Brughelli et al. research.",
+    description:
+      "Learn proper deceleration mechanics to reduce injury risk and improve cutting ability. Based on Brughelli et al. research.",
     url: "https://www.youtube.com/watch?v=pWVBF_5Xmio",
     platform: "youtube",
     duration: 12,
@@ -537,7 +572,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "agility_004",
     title: "Reactive Agility Drills with Partner",
-    description: "Develop game-like reactive agility with partner drills. Better than pre-planned agility for sport transfer.",
+    description:
+      "Develop game-like reactive agility with partner drills. Better than pre-planned agility for sport transfer.",
     url: "https://www.youtube.com/watch?v=Qp6Qj_0LBAM",
     platform: "youtube",
     duration: 14,
@@ -561,7 +597,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "qb_001",
     title: "QB Throwing Mechanics Fundamentals",
-    description: "Complete breakdown of proper throwing mechanics including grip, stance, and release. Foundation for all QBs.",
+    description:
+      "Complete breakdown of proper throwing mechanics including grip, stance, and release. Foundation for all QBs.",
     url: "https://www.youtube.com/watch?v=L5_FhZZLXFM",
     platform: "youtube",
     duration: 20,
@@ -581,7 +618,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "qb_002",
     title: "Throwing on the Run - Rollout Techniques",
-    description: "Master throwing while moving left and right. Essential for flag football QBs who scramble frequently.",
+    description:
+      "Master throwing while moving left and right. Essential for flag football QBs who scramble frequently.",
     url: "https://www.youtube.com/watch?v=JQTx5J8O7-o",
     platform: "youtube",
     duration: 15,
@@ -602,7 +640,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "qb_003",
     title: "QB Arm Care & Shoulder Prehab",
-    description: "Daily arm care routine to prevent shoulder injuries. Based on Reinold et al. research for overhead athletes.",
+    description:
+      "Daily arm care routine to prevent shoulder injuries. Based on Reinold et al. research for overhead athletes.",
     url: "https://www.youtube.com/watch?v=Fz9VLfKhKKQ",
     platform: "youtube",
     duration: 12,
@@ -622,7 +661,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "qb_004",
     title: "QB Footwork & Pocket Movement",
-    description: "Develop quick feet in the pocket and proper drop mechanics. Includes scramble drills.",
+    description:
+      "Develop quick feet in the pocket and proper drop mechanics. Includes scramble drills.",
     url: "https://www.youtube.com/watch?v=8Hq8xCDZvnE",
     platform: "youtube",
     duration: 18,
@@ -642,7 +682,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "qb_005",
     title: "QB Core Training for Throwing Power",
-    description: "Rotational core exercises to increase throwing velocity. Based on Kibler et al. research.",
+    description:
+      "Rotational core exercises to increase throwing velocity. Based on Kibler et al. research.",
     url: "https://www.youtube.com/watch?v=eGo4IYlbE5g",
     platform: "youtube",
     duration: 15,
@@ -666,7 +707,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "wr_001",
     title: "Route Running Fundamentals",
-    description: "Master the route tree with proper technique for each route. Includes releases and stem work.",
+    description:
+      "Master the route tree with proper technique for each route. Includes releases and stem work.",
     url: "https://www.youtube.com/watch?v=Vp5aLlTNgCQ",
     platform: "youtube",
     duration: 25,
@@ -686,7 +728,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "wr_002",
     title: "Release Moves to Beat Press Coverage",
-    description: "Learn 10+ release techniques to get off the line against physical defenders.",
+    description:
+      "Learn 10+ release techniques to get off the line against physical defenders.",
     url: "https://www.youtube.com/watch?v=Y0kJPvQqGfY",
     platform: "youtube",
     duration: 18,
@@ -706,7 +749,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "wr_003",
     title: "Catching Drills - Hands & Concentration",
-    description: "Improve catching ability with progressive drills for hand-eye coordination and concentration.",
+    description:
+      "Improve catching ability with progressive drills for hand-eye coordination and concentration.",
     url: "https://www.youtube.com/watch?v=rYbN0qJP8gg",
     platform: "youtube",
     duration: 12,
@@ -726,7 +770,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "wr_004",
     title: "WR Speed Training - 40 Yard Dash Improvement",
-    description: "Position-specific speed training for receivers. Focus on acceleration and top-end speed.",
+    description:
+      "Position-specific speed training for receivers. Focus on acceleration and top-end speed.",
     url: "https://www.youtube.com/watch?v=2TYk-PkSxDo",
     platform: "youtube",
     duration: 20,
@@ -750,7 +795,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "db_001",
     title: "Backpedal Technique & Drills",
-    description: "Master proper backpedal mechanics for zone and man coverage. Foundation skill for all DBs.",
+    description:
+      "Master proper backpedal mechanics for zone and man coverage. Foundation skill for all DBs.",
     url: "https://www.youtube.com/watch?v=Xk_0yJHlK0Q",
     platform: "youtube",
     duration: 15,
@@ -770,7 +816,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "db_002",
     title: "Hip Turn & Transition Drills",
-    description: "Develop fluid hip turns for man coverage. Critical for staying with receivers on deep routes.",
+    description:
+      "Develop fluid hip turns for man coverage. Critical for staying with receivers on deep routes.",
     url: "https://www.youtube.com/watch?v=BqKpVYz8Wzk",
     platform: "youtube",
     duration: 12,
@@ -790,7 +837,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "db_003",
     title: "Zone Coverage Drops & Reads",
-    description: "Learn proper zone drops, eye discipline, and route recognition for zone coverage.",
+    description:
+      "Learn proper zone drops, eye discipline, and route recognition for zone coverage.",
     url: "https://www.youtube.com/watch?v=8Xj_0LJPWAM",
     platform: "youtube",
     duration: 18,
@@ -810,7 +858,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "db_004",
     title: "DB Lateral Movement & Shuffle Drills",
-    description: "Improve lateral quickness for zone coverage. Focus on maintaining athletic position.",
+    description:
+      "Improve lateral quickness for zone coverage. Focus on maintaining athletic position.",
     url: "https://www.youtube.com/watch?v=Lp_9TbK8Fqk",
     platform: "youtube",
     duration: 14,
@@ -834,7 +883,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "rusher_001",
     title: "Pass Rush Techniques & Get-Offs",
-    description: "Master the first step explosion and pass rush moves for flag football rushers.",
+    description:
+      "Master the first step explosion and pass rush moves for flag football rushers.",
     url: "https://www.youtube.com/watch?v=vQp_5xCTvzs",
     platform: "youtube",
     duration: 16,
@@ -854,7 +904,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "rusher_002",
     title: "Rush Moves & Counter Moves",
-    description: "Learn multiple rush moves including speed rush, bull rush, and spin moves adapted for flag.",
+    description:
+      "Learn multiple rush moves including speed rush, bull rush, and spin moves adapted for flag.",
     url: "https://www.youtube.com/watch?v=Ks_5KqQfPnE",
     platform: "youtube",
     duration: 20,
@@ -874,7 +925,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "rusher_003",
     title: "Rusher Agility & Pursuit Angles",
-    description: "Develop the agility to chase down scrambling QBs and take proper pursuit angles.",
+    description:
+      "Develop the agility to chase down scrambling QBs and take proper pursuit angles.",
     url: "https://www.youtube.com/watch?v=Qp6Qj_0LBAM",
     platform: "youtube",
     duration: 12,
@@ -898,7 +950,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "strength_001",
     title: "Lower Body Strength for Football",
-    description: "Complete lower body program including squats, deadlifts, and single-leg work. Build the foundation for speed and power.",
+    description:
+      "Complete lower body program including squats, deadlifts, and single-leg work. Build the foundation for speed and power.",
     url: "https://www.youtube.com/watch?v=Dy28eq2PjcM",
     platform: "youtube",
     duration: 30,
@@ -918,7 +971,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "strength_002",
     title: "Nordic Curls - Proper Technique & Progressions",
-    description: "Master the Nordic curl for hamstring injury prevention. 51% injury reduction based on Al Attar et al. research.",
+    description:
+      "Master the Nordic curl for hamstring injury prevention. 51% injury reduction based on Al Attar et al. research.",
     url: "https://www.youtube.com/watch?v=d8AAPcYxHKE",
     platform: "youtube",
     duration: 10,
@@ -938,7 +992,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "strength_003",
     title: "Copenhagen Adductor Exercise",
-    description: "Learn the Copenhagen exercise for groin injury prevention. 41% injury reduction based on Harøy et al. research.",
+    description:
+      "Learn the Copenhagen exercise for groin injury prevention. 41% injury reduction based on Harøy et al. research.",
     url: "https://www.youtube.com/watch?v=Dsh0Z1qQNME",
     platform: "youtube",
     duration: 8,
@@ -958,7 +1013,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "strength_004",
     title: "Power Development - Plyometrics for Football",
-    description: "Plyometric exercises to develop explosive power. Includes box jumps, bounds, and depth jumps.",
+    description:
+      "Plyometric exercises to develop explosive power. Includes box jumps, bounds, and depth jumps.",
     url: "https://www.youtube.com/watch?v=SNkCYhtSq4M",
     platform: "youtube",
     duration: 20,
@@ -978,7 +1034,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "strength_005",
     title: "Single Leg Strength for Athletes",
-    description: "Essential single-leg exercises for injury prevention and performance. Includes split squats, RDLs, and step-ups.",
+    description:
+      "Essential single-leg exercises for injury prevention and performance. Includes split squats, RDLs, and step-ups.",
     url: "https://www.youtube.com/watch?v=SsP0FGwW2Oc",
     platform: "youtube",
     duration: 18,
@@ -999,12 +1056,13 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   // ============================================================================
   // MOBILITY & RECOVERY
   // ============================================================================
-  
+
   // ⭐ DAILY MOBILITY PLAYLIST - Essential for all flag football players
   {
     id: "mobility_daily_playlist",
     title: "Daily Mobility for Flag Football Athletes - Complete Playlist",
-    description: "Comprehensive daily mobility playlist specifically curated for flag football players. Do these routines every morning or evening before sleep to maintain movement quality, prevent injuries, and improve athletic performance. Essential for players who practice only 1-2x per week.",
+    description:
+      "Comprehensive daily mobility playlist specifically curated for flag football players. Do these routines every morning or evening before sleep to maintain movement quality, prevent injuries, and improve athletic performance. Essential for players who practice only 1-2x per week.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 45,
@@ -1013,25 +1071,43 @@ const VIDEO_DATABASE: TrainingVideo[] = [
     skillLevel: "all",
     phase: ["all"],
     equipment: ["none"],
-    muscleGroups: ["hip flexors", "glutes", "hamstrings", "ankles", "thoracic spine", "shoulders", "full body"],
+    muscleGroups: [
+      "hip flexors",
+      "glutes",
+      "hamstrings",
+      "ankles",
+      "thoracic spine",
+      "shoulders",
+      "full body",
+    ],
     drillTypes: ["mobility", "prehab"],
-    tags: ["daily mobility", "morning routine", "evening routine", "flexibility", "injury prevention", "recovery", "flag football"],
+    tags: [
+      "daily mobility",
+      "morning routine",
+      "evening routine",
+      "flexibility",
+      "injury prevention",
+      "recovery",
+      "flag football",
+    ],
     rating: 5.0,
     addedDate: "2024-12-27",
-    source: { 
-      channel: "Flag Football Mobility", 
-      channelUrl: "https://www.youtube.com/playlist?list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
-      credibility: "professional" 
+    source: {
+      channel: "Flag Football Mobility",
+      channelUrl:
+        "https://www.youtube.com/playlist?list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
+      credibility: "professional",
     },
     isPlaylist: true,
     playlistVideos: 15,
   },
-  
+
   // ⭐ FOAM ROLLING ROUTINE - Essential recovery for all athletes
   {
     id: "foam_rolling_routine",
     title: "Complete Foam Rolling Routine for Athletes",
-    description: "Full-body foam rolling routine for muscle recovery and tissue quality. WHEN TO DO: (1) Before bed if you did morning mobility, OR (2) After practice if you do evening mobility instead of morning. Helps release muscle tension, improve recovery, and reduce soreness. Essential for flag football players with demanding schedules.",
+    description:
+      "Full-body foam rolling routine for muscle recovery and tissue quality. WHEN TO DO: (1) Before bed if you did morning mobility, OR (2) After practice if you do evening mobility instead of morning. Helps release muscle tension, improve recovery, and reduce soreness. Essential for flag football players with demanding schedules.",
     url: "https://www.youtube.com/watch?v=Oz4xHEgMaLY",
     platform: "youtube",
     duration: 15,
@@ -1040,20 +1116,38 @@ const VIDEO_DATABASE: TrainingVideo[] = [
     skillLevel: "all",
     phase: ["all"],
     equipment: ["none"],
-    muscleGroups: ["quads", "hamstrings", "IT band", "calves", "glutes", "back", "lats", "full body"],
+    muscleGroups: [
+      "quads",
+      "hamstrings",
+      "IT band",
+      "calves",
+      "glutes",
+      "back",
+      "lats",
+      "full body",
+    ],
     drillTypes: ["cool_down", "mobility", "prehab"],
-    tags: ["foam rolling", "recovery", "muscle release", "before bed", "after practice", "tissue quality", "soreness relief"],
+    tags: [
+      "foam rolling",
+      "recovery",
+      "muscle release",
+      "before bed",
+      "after practice",
+      "tissue quality",
+      "soreness relief",
+    ],
     rating: 4.9,
     addedDate: "2024-12-27",
     source: { channel: "Recovery Training", credibility: "professional" },
     isPlaylist: false,
   },
-  
+
   // ⭐ REST DAY STRETCHING - Essential for recovery days
   {
     id: "rest_day_stretching",
     title: "Rest Day Full Body Stretching Routine",
-    description: "Complete stretching routine specifically designed for rest days. Helps maintain flexibility, promotes recovery, and prepares your body for the next training session. WHEN TO DO: On rest days (no training/practice), can be done morning, afternoon, or evening. Perfect for flag football players to use on their off days to stay loose and recover faster.",
+    description:
+      "Complete stretching routine specifically designed for rest days. Helps maintain flexibility, promotes recovery, and prepares your body for the next training session. WHEN TO DO: On rest days (no training/practice), can be done morning, afternoon, or evening. Perfect for flag football players to use on their off days to stay loose and recover faster.",
     url: "https://www.youtube.com/watch?v=_r8RPkprhVM",
     platform: "youtube",
     duration: 20,
@@ -1062,9 +1156,26 @@ const VIDEO_DATABASE: TrainingVideo[] = [
     skillLevel: "all",
     phase: ["all"],
     equipment: ["none"],
-    muscleGroups: ["hip flexors", "hamstrings", "quads", "glutes", "back", "shoulders", "calves", "full body"],
+    muscleGroups: [
+      "hip flexors",
+      "hamstrings",
+      "quads",
+      "glutes",
+      "back",
+      "shoulders",
+      "calves",
+      "full body",
+    ],
     drillTypes: ["mobility", "cool_down"],
-    tags: ["rest day", "stretching", "recovery", "flexibility", "off day", "full body stretch", "static stretching"],
+    tags: [
+      "rest day",
+      "stretching",
+      "recovery",
+      "flexibility",
+      "off day",
+      "full body stretch",
+      "static stretching",
+    ],
     rating: 4.9,
     addedDate: "2024-12-27",
     source: { channel: "Recovery Training", credibility: "professional" },
@@ -1073,7 +1184,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_morning",
     title: "10-Minute Morning Mobility for Athletes",
-    description: "Quick morning mobility routine to wake up your body and prepare for the day. Perfect for flag football players to do right after waking up. Focuses on hips, spine, and ankles - the key areas for athletic movement.",
+    description:
+      "Quick morning mobility routine to wake up your body and prepare for the day. Perfect for flag football players to do right after waking up. Focuses on hips, spine, and ankles - the key areas for athletic movement.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 10,
@@ -1093,7 +1205,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_evening",
     title: "15-Minute Evening Mobility & Recovery",
-    description: "Wind-down mobility routine for before bed. Helps release tension from the day, improves sleep quality, and prepares your body for recovery. Essential for flag football players, especially after training or games.",
+    description:
+      "Wind-down mobility routine for before bed. Helps release tension from the day, improves sleep quality, and prepares your body for recovery. Essential for flag football players, especially after training or games.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 15,
@@ -1113,7 +1226,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_hip_flexor_focus",
     title: "Hip Flexor Mobility for Sprinters",
-    description: "Targeted hip flexor mobility routine. Critical for flag football players as tight hip flexors limit sprint speed and increase injury risk. Based on research showing hip flexor strength correlates with stride frequency (Morin & Samozino, 2016).",
+    description:
+      "Targeted hip flexor mobility routine. Critical for flag football players as tight hip flexors limit sprint speed and increase injury risk. Based on research showing hip flexor strength correlates with stride frequency (Morin & Samozino, 2016).",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 12,
@@ -1133,7 +1247,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_ankle_achilles",
     title: "Ankle & Achilles Mobility for Explosive Athletes",
-    description: "Ankle mobility and Achilles tendon preparation. Essential for flag football players as ankle stiffness correlates with sprint performance (Kubo et al., 2000). Improves change of direction and reduces ankle sprain risk.",
+    description:
+      "Ankle mobility and Achilles tendon preparation. Essential for flag football players as ankle stiffness correlates with sprint performance (Kubo et al., 2000). Improves change of direction and reduces ankle sprain risk.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 10,
@@ -1144,7 +1259,13 @@ const VIDEO_DATABASE: TrainingVideo[] = [
     equipment: ["none"],
     muscleGroups: ["ankles", "achilles", "calves", "soleus"],
     drillTypes: ["mobility", "prehab"],
-    tags: ["ankle mobility", "achilles", "sprint", "COD", "ankle sprain prevention"],
+    tags: [
+      "ankle mobility",
+      "achilles",
+      "sprint",
+      "COD",
+      "ankle sprain prevention",
+    ],
     rating: 4.8,
     addedDate: "2024-12-27",
     source: { channel: "Flag Football Mobility", credibility: "professional" },
@@ -1153,7 +1274,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_thoracic_spine",
     title: "Thoracic Spine Mobility for Throwing Athletes",
-    description: "Thoracic spine mobility routine especially important for QBs. Improved thoracic rotation allows better throwing mechanics and reduces shoulder/elbow stress. Also benefits all positions for better running mechanics.",
+    description:
+      "Thoracic spine mobility routine especially important for QBs. Improved thoracic rotation allows better throwing mechanics and reduces shoulder/elbow stress. Also benefits all positions for better running mechanics.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 10,
@@ -1173,7 +1295,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_groin_adductors",
     title: "Groin & Adductor Mobility",
-    description: "Groin and adductor mobility routine. Critical for DBs who do lateral shuffling and all players who cut. Groin injuries are common in flag football - this routine helps prevent them. Complements Copenhagen adductor strength work.",
+    description:
+      "Groin and adductor mobility routine. Critical for DBs who do lateral shuffling and all players who cut. Groin injuries are common in flag football - this routine helps prevent them. Complements Copenhagen adductor strength work.",
     url: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
     platform: "youtube",
     duration: 10,
@@ -1184,7 +1307,13 @@ const VIDEO_DATABASE: TrainingVideo[] = [
     equipment: ["none"],
     muscleGroups: ["adductors", "groin", "inner thigh"],
     drillTypes: ["mobility", "prehab"],
-    tags: ["groin", "adductors", "lateral movement", "DB mobility", "injury prevention"],
+    tags: [
+      "groin",
+      "adductors",
+      "lateral movement",
+      "DB mobility",
+      "injury prevention",
+    ],
     rating: 4.8,
     addedDate: "2024-12-27",
     source: { channel: "Flag Football Mobility", credibility: "professional" },
@@ -1193,7 +1322,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_001",
     title: "Hip Mobility Routine for Athletes",
-    description: "15-minute hip mobility routine to improve movement quality and reduce injury risk. Do daily.",
+    description:
+      "15-minute hip mobility routine to improve movement quality and reduce injury risk. Do daily.",
     url: "https://www.youtube.com/watch?v=NG9qbvAN3gQ",
     platform: "youtube",
     duration: 15,
@@ -1213,7 +1343,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_002",
     title: "Ankle Mobility for Sprinters",
-    description: "Improve ankle dorsiflexion for better sprint mechanics and reduced injury risk.",
+    description:
+      "Improve ankle dorsiflexion for better sprint mechanics and reduced injury risk.",
     url: "https://www.youtube.com/watch?v=XISJxsccN68",
     platform: "youtube",
     duration: 10,
@@ -1233,7 +1364,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_003",
     title: "Post-Game Recovery Routine",
-    description: "Complete recovery routine for after games or hard training. Includes foam rolling and stretching.",
+    description:
+      "Complete recovery routine for after games or hard training. Includes foam rolling and stretching.",
     url: "https://www.youtube.com/watch?v=g_tea8ZNk5A",
     platform: "youtube",
     duration: 20,
@@ -1253,7 +1385,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mobility_004",
     title: "Dynamic Warm-Up for Football",
-    description: "Complete dynamic warm-up routine before training or games. Activates all key muscle groups.",
+    description:
+      "Complete dynamic warm-up routine before training or games. Activates all key muscle groups.",
     url: "https://www.youtube.com/watch?v=3B-3Khbht5s",
     platform: "youtube",
     duration: 12,
@@ -1277,7 +1410,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "conditioning_001",
     title: "Repeated Sprint Ability Training",
-    description: "Build the ability to maintain sprint quality throughout a game. Essential for flag football.",
+    description:
+      "Build the ability to maintain sprint quality throughout a game. Essential for flag football.",
     url: "https://www.youtube.com/watch?v=QGc-wc3RGK0",
     platform: "youtube",
     duration: 15,
@@ -1297,7 +1431,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "conditioning_002",
     title: "Tournament Conditioning Protocol",
-    description: "Build the fitness to play 6-8 games in a weekend tournament. Includes work-to-rest ratios.",
+    description:
+      "Build the fitness to play 6-8 games in a weekend tournament. Includes work-to-rest ratios.",
     url: "https://www.youtube.com/watch?v=9Y9wYxwQp4M",
     platform: "youtube",
     duration: 20,
@@ -1321,7 +1456,8 @@ const VIDEO_DATABASE: TrainingVideo[] = [
   {
     id: "mental_001",
     title: "Pre-Game Mental Preparation",
-    description: "Mental preparation routine for competition. Includes visualization and focus techniques.",
+    description:
+      "Mental preparation routine for competition. Includes visualization and focus techniques.",
     url: "https://www.youtube.com/watch?v=yG7v4y_xwzQ",
     platform: "youtube",
     duration: 15,
@@ -1351,14 +1487,20 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_morning_mobility",
     name: "Morning Mobility Routine",
-    description: "10-minute morning routine to wake up your body. Do this every day right after waking up. Essential for flag football players to maintain movement quality.",
+    description:
+      "10-minute morning routine to wake up your body. Do this every day right after waking up. Essential for flag football players to maintain movement quality.",
     totalDuration: 10,
     position: "All",
     focus: ["mobility"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_morning", order: 1, duration: 10, notes: "Follow along - do every morning" },
+      {
+        videoId: "mobility_morning",
+        order: 1,
+        duration: 10,
+        notes: "Follow along - do every morning",
+      },
     ],
     restBetweenVideos: 0,
     weeklyFrequency: "Daily (7x per week)",
@@ -1373,14 +1515,20 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_evening_mobility",
     name: "Evening Mobility & Wind-Down",
-    description: "15-minute evening routine before bed. Helps release tension, improves sleep quality, and accelerates recovery. Critical for flag football players, especially after training days.",
+    description:
+      "15-minute evening routine before bed. Helps release tension, improves sleep quality, and accelerates recovery. Critical for flag football players, especially after training days.",
     totalDuration: 15,
     position: "All",
     focus: ["mobility", "recovery"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_evening", order: 1, duration: 15, notes: "Do 30-60 min before sleep" },
+      {
+        videoId: "mobility_evening",
+        order: 1,
+        duration: 15,
+        notes: "Do 30-60 min before sleep",
+      },
     ],
     restBetweenVideos: 0,
     weeklyFrequency: "Daily (7x per week)",
@@ -1395,15 +1543,26 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_daily_full_mobility",
     name: "Complete Daily Mobility (Morning + Evening)",
-    description: "Full daily mobility protocol combining morning activation and evening recovery. The gold standard for flag football players who want to stay healthy and perform at their best.",
+    description:
+      "Full daily mobility protocol combining morning activation and evening recovery. The gold standard for flag football players who want to stay healthy and perform at their best.",
     totalDuration: 25,
     position: "All",
     focus: ["mobility", "recovery", "injury_prevention"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_morning", order: 1, duration: 10, notes: "Morning - right after waking" },
-      { videoId: "mobility_evening", order: 2, duration: 15, notes: "Evening - before bed" },
+      {
+        videoId: "mobility_morning",
+        order: 1,
+        duration: 10,
+        notes: "Morning - right after waking",
+      },
+      {
+        videoId: "mobility_evening",
+        order: 2,
+        duration: 15,
+        notes: "Evening - before bed",
+      },
     ],
     restBetweenVideos: 0,
     weeklyFrequency: "Daily (7x per week)",
@@ -1418,15 +1577,14 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_targeted_hip_flexors",
     name: "Hip Flexor Focus Session",
-    description: "Targeted hip flexor mobility for sprinters. Do 3-4x per week in addition to daily mobility. Critical for improving sprint speed and preventing hip flexor strains.",
+    description:
+      "Targeted hip flexor mobility for sprinters. Do 3-4x per week in addition to daily mobility. Critical for improving sprint speed and preventing hip flexor strains.",
     totalDuration: 12,
     position: "All",
     focus: ["mobility", "injury_prevention"],
     phase: "all",
     skillLevel: "all",
-    videos: [
-      { videoId: "mobility_hip_flexor_focus", order: 1, duration: 12 },
-    ],
+    videos: [{ videoId: "mobility_hip_flexor_focus", order: 1, duration: 12 }],
     restBetweenVideos: 0,
     weeklyFrequency: "3-4x per week",
     notes: [
@@ -1439,15 +1597,14 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_targeted_ankles",
     name: "Ankle & Achilles Focus Session",
-    description: "Targeted ankle mobility for explosive athletes. Do 3-4x per week. Improves ground contact efficiency and reduces ankle sprain risk.",
+    description:
+      "Targeted ankle mobility for explosive athletes. Do 3-4x per week. Improves ground contact efficiency and reduces ankle sprain risk.",
     totalDuration: 10,
     position: "All",
     focus: ["mobility", "injury_prevention"],
     phase: "all",
     skillLevel: "all",
-    videos: [
-      { videoId: "mobility_ankle_achilles", order: 1, duration: 10 },
-    ],
+    videos: [{ videoId: "mobility_ankle_achilles", order: 1, duration: 10 }],
     restBetweenVideos: 0,
     weeklyFrequency: "3-4x per week",
     notes: [
@@ -1457,22 +1614,33 @@ const TRAINING_SESSIONS: TrainingSession[] = [
       "Based on Kubo et al. research",
     ],
   },
-  
+
   // ============================================================================
   // REST DAY SESSIONS
   // ============================================================================
   {
     id: "session_rest_day_recovery",
     name: "Rest Day Recovery Session",
-    description: "Complete rest day routine combining stretching and light mobility. Do this on days with no training or practice to maintain flexibility and promote recovery.",
+    description:
+      "Complete rest day routine combining stretching and light mobility. Do this on days with no training or practice to maintain flexibility and promote recovery.",
     totalDuration: 35,
     position: "All",
     focus: ["recovery", "mobility"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "rest_day_stretching", order: 1, duration: 20, notes: "Full body stretching" },
-      { videoId: "foam_rolling_routine", order: 2, duration: 15, notes: "Foam rolling for tissue quality" },
+      {
+        videoId: "rest_day_stretching",
+        order: 1,
+        duration: 20,
+        notes: "Full body stretching",
+      },
+      {
+        videoId: "foam_rolling_routine",
+        order: 2,
+        duration: 15,
+        notes: "Foam rolling for tissue quality",
+      },
     ],
     restBetweenVideos: 60,
     weeklyFrequency: "1-2x per week (rest days)",
@@ -1487,15 +1655,14 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_rest_day_stretching_only",
     name: "Rest Day Stretching",
-    description: "Full body stretching routine for rest days. Perfect when you want a lighter recovery session without foam rolling.",
+    description:
+      "Full body stretching routine for rest days. Perfect when you want a lighter recovery session without foam rolling.",
     totalDuration: 20,
     position: "All",
     focus: ["recovery", "mobility"],
     phase: "all",
     skillLevel: "all",
-    videos: [
-      { videoId: "rest_day_stretching", order: 1, duration: 20 },
-    ],
+    videos: [{ videoId: "rest_day_stretching", order: 1, duration: 20 }],
     restBetweenVideos: 0,
     weeklyFrequency: "1-2x per week (rest days)",
     notes: [
@@ -1508,16 +1675,32 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_active_recovery_day",
     name: "Active Recovery Day (Complete)",
-    description: "Full active recovery protocol for rest days. Combines morning mobility, stretching, and evening foam rolling for maximum recovery.",
+    description:
+      "Full active recovery protocol for rest days. Combines morning mobility, stretching, and evening foam rolling for maximum recovery.",
     totalDuration: 45,
     position: "All",
     focus: ["recovery", "mobility"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_morning", order: 1, duration: 10, notes: "Morning - wake up routine" },
-      { videoId: "rest_day_stretching", order: 2, duration: 20, notes: "Midday or afternoon - stretching" },
-      { videoId: "foam_rolling_routine", order: 3, duration: 15, notes: "Evening - foam rolling before bed" },
+      {
+        videoId: "mobility_morning",
+        order: 1,
+        duration: 10,
+        notes: "Morning - wake up routine",
+      },
+      {
+        videoId: "rest_day_stretching",
+        order: 2,
+        duration: 20,
+        notes: "Midday or afternoon - stretching",
+      },
+      {
+        videoId: "foam_rolling_routine",
+        order: 3,
+        duration: 15,
+        notes: "Evening - foam rolling before bed",
+      },
     ],
     restBetweenVideos: 0,
     weeklyFrequency: "1x per week (full rest day)",
@@ -1532,15 +1715,26 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_qb_mobility",
     name: "QB-Specific Mobility",
-    description: "Mobility routine specifically for quarterbacks. Focuses on thoracic spine rotation, shoulder mobility, and hip rotation for throwing mechanics.",
+    description:
+      "Mobility routine specifically for quarterbacks. Focuses on thoracic spine rotation, shoulder mobility, and hip rotation for throwing mechanics.",
     totalDuration: 22,
     position: "QB",
     focus: ["mobility", "injury_prevention"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_thoracic_spine", order: 1, duration: 10, notes: "T-spine for throwing" },
-      { videoId: "mobility_hip_flexor_focus", order: 2, duration: 12, notes: "Hips for scrambling" },
+      {
+        videoId: "mobility_thoracic_spine",
+        order: 1,
+        duration: 10,
+        notes: "T-spine for throwing",
+      },
+      {
+        videoId: "mobility_hip_flexor_focus",
+        order: 2,
+        duration: 12,
+        notes: "Hips for scrambling",
+      },
     ],
     restBetweenVideos: 30,
     weeklyFrequency: "Daily for QBs",
@@ -1554,15 +1748,26 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_db_mobility",
     name: "DB-Specific Mobility",
-    description: "Mobility routine specifically for defensive backs. Focuses on hip rotation for backpedal, groin for lateral movement, and ankles for reactive cuts.",
+    description:
+      "Mobility routine specifically for defensive backs. Focuses on hip rotation for backpedal, groin for lateral movement, and ankles for reactive cuts.",
     totalDuration: 22,
     position: "DB",
     focus: ["mobility", "injury_prevention"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "mobility_groin_adductors", order: 1, duration: 10, notes: "Groin for lateral movement" },
-      { videoId: "mobility_hip_flexor_focus", order: 2, duration: 12, notes: "Hips for backpedal" },
+      {
+        videoId: "mobility_groin_adductors",
+        order: 1,
+        duration: 10,
+        notes: "Groin for lateral movement",
+      },
+      {
+        videoId: "mobility_hip_flexor_focus",
+        order: 2,
+        duration: 12,
+        notes: "Hips for backpedal",
+      },
     ],
     restBetweenVideos: 30,
     weeklyFrequency: "Daily for DBs",
@@ -1580,14 +1785,20 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_15_speed",
     name: "15-Minute Speed Blast",
-    description: "Quick speed session focusing on acceleration. Perfect for time-limited training.",
+    description:
+      "Quick speed session focusing on acceleration. Perfect for time-limited training.",
     totalDuration: 15,
     position: "All",
     focus: ["speed"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "speed_002", order: 1, duration: 12, notes: "Focus on first step" },
+      {
+        videoId: "speed_002",
+        order: 1,
+        duration: 12,
+        notes: "Focus on first step",
+      },
     ],
     restBetweenVideos: 60,
     weeklyFrequency: "2-3x per week",
@@ -1596,15 +1807,14 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_15_mobility",
     name: "15-Minute Hip Mobility",
-    description: "Daily hip mobility routine to improve movement and prevent injury.",
+    description:
+      "Daily hip mobility routine to improve movement and prevent injury.",
     totalDuration: 15,
     position: "All",
     focus: ["mobility"],
     phase: "all",
     skillLevel: "all",
-    videos: [
-      { videoId: "mobility_001", order: 1, duration: 15 },
-    ],
+    videos: [{ videoId: "mobility_001", order: 1, duration: 15 }],
     restBetweenVideos: 0,
     weeklyFrequency: "Daily",
     notes: ["Can do morning or evening", "Great for recovery days"],
@@ -1612,7 +1822,8 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_15_prehab",
     name: "15-Minute Injury Prevention",
-    description: "Essential injury prevention exercises: Nordic curls and Copenhagen.",
+    description:
+      "Essential injury prevention exercises: Nordic curls and Copenhagen.",
     totalDuration: 15,
     position: "All",
     focus: ["injury_prevention"],
@@ -1631,7 +1842,8 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_30_qb",
     name: "30-Minute QB Development",
-    description: "Complete QB session covering arm care, footwork, and throwing on the run.",
+    description:
+      "Complete QB session covering arm care, footwork, and throwing on the run.",
     totalDuration: 30,
     position: "QB",
     focus: ["throwing", "skills", "injury_prevention"],
@@ -1655,7 +1867,12 @@ const TRAINING_SESSIONS: TrainingSession[] = [
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "wr_001", order: 1, duration: 25, notes: "Route fundamentals" },
+      {
+        videoId: "wr_001",
+        order: 1,
+        duration: 25,
+        notes: "Route fundamentals",
+      },
     ],
     restBetweenVideos: 60,
     weeklyFrequency: "2-3x per week",
@@ -1664,14 +1881,20 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_30_db",
     name: "30-Minute DB Development",
-    description: "Complete DB session covering backpedal, hip turns, and coverage.",
+    description:
+      "Complete DB session covering backpedal, hip turns, and coverage.",
     totalDuration: 30,
     position: "DB",
     focus: ["coverage", "agility"],
     phase: "all",
     skillLevel: "all",
     videos: [
-      { videoId: "db_001", order: 1, duration: 15, notes: "Backpedal technique" },
+      {
+        videoId: "db_001",
+        order: 1,
+        duration: 15,
+        notes: "Backpedal technique",
+      },
       { videoId: "db_002", order: 2, duration: 12, notes: "Hip turn drills" },
     ],
     restBetweenVideos: 60,
@@ -1701,7 +1924,8 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_45_complete",
     name: "45-Minute Complete Athlete",
-    description: "Full session covering speed, strength, and injury prevention.",
+    description:
+      "Full session covering speed, strength, and injury prevention.",
     totalDuration: 45,
     position: "All",
     focus: ["speed", "strength", "injury_prevention"],
@@ -1728,7 +1952,12 @@ const TRAINING_SESSIONS: TrainingSession[] = [
     skillLevel: "all",
     videos: [
       { videoId: "mobility_004", order: 1, duration: 12, notes: "Warm-up" },
-      { videoId: "rusher_001", order: 2, duration: 16, notes: "Get-off drills" },
+      {
+        videoId: "rusher_001",
+        order: 2,
+        duration: 16,
+        notes: "Get-off drills",
+      },
       { videoId: "rusher_002", order: 3, duration: 20, notes: "Rush moves" },
     ],
     restBetweenVideos: 90,
@@ -1740,7 +1969,8 @@ const TRAINING_SESSIONS: TrainingSession[] = [
   {
     id: "session_60_strength",
     name: "60-Minute Strength Session",
-    description: "Complete lower body strength session for off-season development.",
+    description:
+      "Complete lower body strength session for off-season development.",
     totalDuration: 60,
     position: "All",
     focus: ["strength", "power"],
@@ -1768,25 +1998,110 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_daily_mobility",
     name: "Daily Mobility Protocol",
-    description: "Essential daily mobility routine for ALL flag football players. Do morning and evening mobility EVERY DAY regardless of your other training. This is the foundation for injury prevention and performance.",
+    description:
+      "Essential daily mobility routine for ALL flag football players. Do morning and evening mobility EVERY DAY regardless of your other training. This is the foundation for injury prevention and performance.",
     position: "All",
     teamPracticesPerWeek: 0,
     additionalSessionsRecommended: 14,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Monday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Tuesday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Tuesday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Wednesday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Wednesday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Thursday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Thursday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Friday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Friday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Saturday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Saturday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
-      { day: "Sunday", type: "individual", sessionId: "session_morning_mobility", duration: 10, focus: "Morning Mobility" },
-      { day: "Sunday", type: "individual", sessionId: "session_evening_mobility", duration: 15, focus: "Evening Mobility" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Wednesday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Wednesday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Friday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Friday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "individual",
+        sessionId: "session_morning_mobility",
+        duration: 10,
+        focus: "Morning Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "individual",
+        sessionId: "session_evening_mobility",
+        duration: 15,
+        focus: "Evening Mobility",
+      },
     ],
     totalWeeklyMinutes: 175,
     goals: [
@@ -1804,18 +2119,60 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_1_practice",
     name: "1 Practice Per Week Plan (with Daily Mobility)",
-    description: "For athletes with only 1 team practice per week. Includes DAILY morning and evening mobility plus focused training sessions. Maximize individual development.",
+    description:
+      "For athletes with only 1 team practice per week. Includes DAILY morning and evening mobility plus focused training sessions. Maximize individual development.",
     position: "All",
     teamPracticesPerWeek: 1,
     additionalSessionsRecommended: 4,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_30_speed_agility", duration: 30, focus: "Speed & Agility + Daily Mobility" },
-      { day: "Tuesday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Injury Prevention + Daily Mobility" },
-      { day: "Wednesday", type: "team_practice", duration: 90, focus: "Team Practice + Daily Mobility" },
-      { day: "Thursday", type: "recovery", sessionId: "session_daily_full_mobility", duration: 25, focus: "Recovery - Full Mobility Day" },
-      { day: "Friday", type: "individual", sessionId: "session_45_complete", duration: 45, focus: "Complete Training + Daily Mobility" },
-      { day: "Saturday", type: "individual", sessionId: "session_targeted_hip_flexors", duration: 12, focus: "Hip Flexor Focus + Daily Mobility" },
-      { day: "Sunday", type: "rest", sessionId: "session_rest_day_recovery", duration: 35, focus: "Rest Day - Stretching + Foam Rolling" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_30_speed_agility",
+        duration: 30,
+        focus: "Speed & Agility + Daily Mobility",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Injury Prevention + Daily Mobility",
+      },
+      {
+        day: "Wednesday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice + Daily Mobility",
+      },
+      {
+        day: "Thursday",
+        type: "recovery",
+        sessionId: "session_daily_full_mobility",
+        duration: 25,
+        focus: "Recovery - Full Mobility Day",
+      },
+      {
+        day: "Friday",
+        type: "individual",
+        sessionId: "session_45_complete",
+        duration: 45,
+        focus: "Complete Training + Daily Mobility",
+      },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_targeted_hip_flexors",
+        duration: 12,
+        focus: "Hip Flexor Focus + Daily Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "rest",
+        sessionId: "session_rest_day_recovery",
+        duration: 35,
+        focus: "Rest Day - Stretching + Foam Rolling",
+      },
     ],
     totalWeeklyMinutes: 400,
     goals: [
@@ -1828,18 +2185,53 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_2_practice",
     name: "2 Practices Per Week Plan (with Daily Mobility)",
-    description: "For athletes with 2 team practices per week. Includes DAILY mobility plus targeted individual work.",
+    description:
+      "For athletes with 2 team practices per week. Includes DAILY mobility plus targeted individual work.",
     position: "All",
     teamPracticesPerWeek: 2,
     additionalSessionsRecommended: 3,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_30_speed_agility", duration: 30, focus: "Speed & Agility" },
-      { day: "Tuesday", type: "team_practice", duration: 90, focus: "Team Practice" },
-      { day: "Wednesday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Injury Prevention" },
-      { day: "Thursday", type: "team_practice", duration: 90, focus: "Team Practice" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_30_speed_agility",
+        duration: 30,
+        focus: "Speed & Agility",
+      },
+      {
+        day: "Tuesday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice",
+      },
+      {
+        day: "Wednesday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Injury Prevention",
+      },
+      {
+        day: "Thursday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice",
+      },
       { day: "Friday", type: "recovery", duration: 20, focus: "Recovery" },
-      { day: "Saturday", type: "individual", sessionId: "session_15_mobility", duration: 15, focus: "Mobility" },
-      { day: "Sunday", type: "rest", sessionId: "session_rest_day_stretching_only", duration: 20, focus: "Rest Day - Stretching" },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_15_mobility",
+        duration: 15,
+        focus: "Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "rest",
+        sessionId: "session_rest_day_stretching_only",
+        duration: 20,
+        focus: "Rest Day - Stretching",
+      },
     ],
     totalWeeklyMinutes: 280,
     goals: [
@@ -1851,18 +2243,54 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_1_practice_qb",
     name: "1 Practice Per Week - QB Specific",
-    description: "QB-specific plan for athletes with only 1 team practice per week.",
+    description:
+      "QB-specific plan for athletes with only 1 team practice per week.",
     position: "QB",
     teamPracticesPerWeek: 1,
     additionalSessionsRecommended: 4,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_30_qb", duration: 30, focus: "QB Development" },
-      { day: "Tuesday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Arm Care + Prehab" },
-      { day: "Wednesday", type: "team_practice", duration: 90, focus: "Team Practice" },
-      { day: "Thursday", type: "individual", sessionId: "session_30_qb", duration: 30, focus: "QB Development" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_30_qb",
+        duration: 30,
+        focus: "QB Development",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Arm Care + Prehab",
+      },
+      {
+        day: "Wednesday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_30_qb",
+        duration: 30,
+        focus: "QB Development",
+      },
       { day: "Friday", type: "recovery", duration: 20, focus: "Recovery" },
-      { day: "Saturday", type: "individual", sessionId: "session_15_mobility", duration: 15, focus: "Mobility" },
-      { day: "Sunday", type: "rest", sessionId: "session_rest_day_stretching_only", duration: 20, focus: "Rest Day - Stretching" },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_15_mobility",
+        duration: 15,
+        focus: "Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "rest",
+        sessionId: "session_rest_day_stretching_only",
+        duration: 20,
+        focus: "Rest Day - Stretching",
+      },
     ],
     totalWeeklyMinutes: 220,
     goals: [
@@ -1875,18 +2303,54 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_1_practice_wr",
     name: "1 Practice Per Week - WR Specific",
-    description: "WR-specific plan for athletes with only 1 team practice per week.",
+    description:
+      "WR-specific plan for athletes with only 1 team practice per week.",
     position: "WR",
     teamPracticesPerWeek: 1,
     additionalSessionsRecommended: 4,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_30_wr", duration: 30, focus: "Route Running" },
-      { day: "Tuesday", type: "individual", sessionId: "session_30_speed_agility", duration: 30, focus: "Speed & Agility" },
-      { day: "Wednesday", type: "team_practice", duration: 90, focus: "Team Practice" },
-      { day: "Thursday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Injury Prevention" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_30_wr",
+        duration: 30,
+        focus: "Route Running",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_30_speed_agility",
+        duration: 30,
+        focus: "Speed & Agility",
+      },
+      {
+        day: "Wednesday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Injury Prevention",
+      },
       { day: "Friday", type: "recovery", duration: 20, focus: "Recovery" },
-      { day: "Saturday", type: "individual", sessionId: "session_15_mobility", duration: 15, focus: "Mobility" },
-      { day: "Sunday", type: "rest", sessionId: "session_rest_day_stretching_only", duration: 20, focus: "Rest Day - Stretching" },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_15_mobility",
+        duration: 15,
+        focus: "Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "rest",
+        sessionId: "session_rest_day_stretching_only",
+        duration: 20,
+        focus: "Rest Day - Stretching",
+      },
     ],
     totalWeeklyMinutes: 220,
     goals: [
@@ -1899,18 +2363,54 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
   {
     id: "plan_1_practice_db",
     name: "1 Practice Per Week - DB Specific",
-    description: "DB-specific plan for athletes with only 1 team practice per week.",
+    description:
+      "DB-specific plan for athletes with only 1 team practice per week.",
     position: "DB",
     teamPracticesPerWeek: 1,
     additionalSessionsRecommended: 4,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_30_db", duration: 30, focus: "Coverage Skills" },
-      { day: "Tuesday", type: "individual", sessionId: "session_30_speed_agility", duration: 30, focus: "Speed & Agility" },
-      { day: "Wednesday", type: "team_practice", duration: 90, focus: "Team Practice" },
-      { day: "Thursday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Injury Prevention" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_30_db",
+        duration: 30,
+        focus: "Coverage Skills",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_30_speed_agility",
+        duration: 30,
+        focus: "Speed & Agility",
+      },
+      {
+        day: "Wednesday",
+        type: "team_practice",
+        duration: 90,
+        focus: "Team Practice",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Injury Prevention",
+      },
       { day: "Friday", type: "recovery", duration: 20, focus: "Recovery" },
-      { day: "Saturday", type: "individual", sessionId: "session_15_mobility", duration: 15, focus: "Mobility" },
-      { day: "Sunday", type: "rest", sessionId: "session_rest_day_stretching_only", duration: 20, focus: "Rest Day - Stretching" },
+      {
+        day: "Saturday",
+        type: "individual",
+        sessionId: "session_15_mobility",
+        duration: 15,
+        focus: "Mobility",
+      },
+      {
+        day: "Sunday",
+        type: "rest",
+        sessionId: "session_rest_day_stretching_only",
+        duration: 20,
+        focus: "Rest Day - Stretching",
+      },
     ],
     totalWeeklyMinutes: 220,
     goals: [
@@ -1928,10 +2428,33 @@ const WEEKLY_PLANS: WeeklyPlan[] = [
     teamPracticesPerWeek: 1,
     additionalSessionsRecommended: 2,
     sessions: [
-      { day: "Monday", type: "individual", sessionId: "session_15_speed", duration: 15, focus: "Speed Sharpness" },
-      { day: "Tuesday", type: "individual", sessionId: "session_15_prehab", duration: 15, focus: "Injury Prevention" },
-      { day: "Wednesday", type: "team_practice", duration: 60, focus: "Light Team Practice" },
-      { day: "Thursday", type: "individual", sessionId: "session_15_mobility", duration: 15, focus: "Mobility" },
+      {
+        day: "Monday",
+        type: "individual",
+        sessionId: "session_15_speed",
+        duration: 15,
+        focus: "Speed Sharpness",
+      },
+      {
+        day: "Tuesday",
+        type: "individual",
+        sessionId: "session_15_prehab",
+        duration: 15,
+        focus: "Injury Prevention",
+      },
+      {
+        day: "Wednesday",
+        type: "team_practice",
+        duration: 60,
+        focus: "Light Team Practice",
+      },
+      {
+        day: "Thursday",
+        type: "individual",
+        sessionId: "session_15_mobility",
+        duration: 15,
+        focus: "Mobility",
+      },
       { day: "Friday", type: "rest", duration: 0, focus: "Rest - Travel" },
       { day: "Saturday", type: "rest", duration: 0, focus: "Tournament Day 1" },
       { day: "Sunday", type: "rest", duration: 0, focus: "Tournament Day 2" },
@@ -1986,7 +2509,7 @@ export class TrainingVideoDatabaseService {
    */
   getVideosByPosition(position: FlagPosition): TrainingVideo[] {
     return this._allVideos().filter(
-      (v) => v.positions.includes(position) || v.positions.includes("All")
+      (v) => v.positions.includes(position) || v.positions.includes("All"),
     );
   }
 
@@ -2009,7 +2532,7 @@ export class TrainingVideoDatabaseService {
    */
   getVideosBySkillLevel(level: SkillLevel): TrainingVideo[] {
     return this._allVideos().filter(
-      (v) => v.skillLevel === level || v.skillLevel === "all"
+      (v) => v.skillLevel === level || v.skillLevel === "all",
     );
   }
 
@@ -2018,7 +2541,7 @@ export class TrainingVideoDatabaseService {
    */
   getVideosByPhase(phase: TrainingPhase): TrainingVideo[] {
     return this._allVideos().filter(
-      (v) => v.phase.includes(phase) || v.phase.includes("all")
+      (v) => v.phase.includes(phase) || v.phase.includes("all"),
     );
   }
 
@@ -2027,7 +2550,7 @@ export class TrainingVideoDatabaseService {
    */
   getVideosByEquipment(equipment: Equipment[]): TrainingVideo[] {
     return this._allVideos().filter((v) =>
-      v.equipment.every((e) => equipment.includes(e) || e === "none")
+      v.equipment.every((e) => equipment.includes(e) || e === "none"),
     );
   }
 
@@ -2040,7 +2563,7 @@ export class TrainingVideoDatabaseService {
       (v) =>
         v.title.toLowerCase().includes(lowerKeyword) ||
         v.description.toLowerCase().includes(lowerKeyword) ||
-        v.tags.some((t) => t.toLowerCase().includes(lowerKeyword))
+        v.tags.some((t) => t.toLowerCase().includes(lowerKeyword)),
     );
   }
 
@@ -2058,7 +2581,7 @@ export class TrainingVideoDatabaseService {
    */
   getNoEquipmentVideos(): TrainingVideo[] {
     return this._allVideos().filter(
-      (v) => v.equipment.length === 1 && v.equipment[0] === "none"
+      (v) => v.equipment.length === 1 && v.equipment[0] === "none",
     );
   }
 
@@ -2077,13 +2600,15 @@ export class TrainingVideoDatabaseService {
 
     if (filters.position) {
       results = results.filter(
-        (v) => v.positions.includes(filters.position!) || v.positions.includes("All")
+        (v) =>
+          v.positions.includes(filters.position!) ||
+          v.positions.includes("All"),
       );
     }
 
     if (filters.focus && filters.focus.length > 0) {
       results = results.filter((v) =>
-        filters.focus!.some((f) => v.trainingFocus.includes(f))
+        filters.focus!.some((f) => v.trainingFocus.includes(f)),
       );
     }
 
@@ -2093,19 +2618,21 @@ export class TrainingVideoDatabaseService {
 
     if (filters.skillLevel) {
       results = results.filter(
-        (v) => v.skillLevel === filters.skillLevel || v.skillLevel === "all"
+        (v) => v.skillLevel === filters.skillLevel || v.skillLevel === "all",
       );
     }
 
     if (filters.phase) {
       results = results.filter(
-        (v) => v.phase.includes(filters.phase!) || v.phase.includes("all")
+        (v) => v.phase.includes(filters.phase!) || v.phase.includes("all"),
       );
     }
 
     if (filters.equipment && filters.equipment.length > 0) {
       results = results.filter((v) =>
-        v.equipment.every((e) => filters.equipment!.includes(e) || e === "none")
+        v.equipment.every(
+          (e) => filters.equipment!.includes(e) || e === "none",
+        ),
       );
     }
 
@@ -2142,7 +2669,7 @@ export class TrainingVideoDatabaseService {
    */
   getSessionsByPosition(position: FlagPosition): TrainingSession[] {
     return this._allSessions().filter(
-      (s) => s.position === position || s.position === "All"
+      (s) => s.position === position || s.position === "All",
     );
   }
 
@@ -2186,7 +2713,7 @@ export class TrainingVideoDatabaseService {
    */
   getPlansByPracticeFrequency(practicesPerWeek: number): WeeklyPlan[] {
     return this._allPlans().filter(
-      (p) => p.teamPracticesPerWeek === practicesPerWeek
+      (p) => p.teamPracticesPerWeek === practicesPerWeek,
     );
   }
 
@@ -2195,7 +2722,7 @@ export class TrainingVideoDatabaseService {
    */
   getPlansByPosition(position: FlagPosition): WeeklyPlan[] {
     return this._allPlans().filter(
-      (p) => p.position === position || p.position === "All"
+      (p) => p.position === position || p.position === "All",
     );
   }
 
@@ -2204,12 +2731,12 @@ export class TrainingVideoDatabaseService {
    */
   getRecommendedPlan(
     position: FlagPosition,
-    practicesPerWeek: number
+    practicesPerWeek: number,
   ): WeeklyPlan | undefined {
     // First try to find position-specific plan
     const positionPlan = this._allPlans().find(
       (p) =>
-        p.position === position && p.teamPracticesPerWeek === practicesPerWeek
+        p.position === position && p.teamPracticesPerWeek === practicesPerWeek,
     );
 
     if (positionPlan) return positionPlan;
@@ -2217,7 +2744,7 @@ export class TrainingVideoDatabaseService {
     // Fall back to general plan
     return this._allPlans().find(
       (p) =>
-        p.position === "All" && p.teamPracticesPerWeek === practicesPerWeek
+        p.position === "All" && p.teamPracticesPerWeek === practicesPerWeek,
     );
   }
 
@@ -2226,7 +2753,11 @@ export class TrainingVideoDatabaseService {
    */
   getPlanWithDetails(planId: string): {
     plan: WeeklyPlan;
-    sessionDetails: { day: string; session: TrainingSession | null; videos: TrainingVideo[] }[];
+    sessionDetails: {
+      day: string;
+      session: TrainingSession | null;
+      videos: TrainingVideo[];
+    }[];
   } | null {
     const plan = this.getPlanById(planId);
     if (!plan) return null;
@@ -2257,7 +2788,7 @@ export class TrainingVideoDatabaseService {
   getQuickWorkout(
     availableMinutes: number,
     position: FlagPosition,
-    focus?: TrainingFocus
+    focus?: TrainingFocus,
   ): TrainingVideo[] {
     let videos = this.filterVideos({
       position,
@@ -2275,7 +2806,7 @@ export class TrainingVideoDatabaseService {
   getTodaysRecommendation(
     position: FlagPosition,
     phase: TrainingPhase,
-    dayOfWeek: number // 0 = Sunday, 6 = Saturday
+    dayOfWeek: number, // 0 = Sunday, 6 = Saturday
   ): TrainingVideo[] {
     // Define focus by day of week
     const dayFocus: Record<number, TrainingFocus[]> = {
@@ -2299,14 +2830,35 @@ export class TrainingVideoDatabaseService {
    * Get videos for specific training need
    */
   getVideosForNeed(need: string): TrainingVideo[] {
-    const needMappings: Record<string, { focus: TrainingFocus[]; tags: string[] }> = {
-      "faster_40": { focus: ["speed"], tags: ["40 yard dash", "acceleration"] },
-      "better_cuts": { focus: ["agility"], tags: ["COD", "cutting", "deceleration"] },
-      "injury_prevention": { focus: ["injury_prevention"], tags: ["Nordic", "Copenhagen", "prehab"] },
-      "arm_health": { focus: ["injury_prevention"], tags: ["arm care", "shoulder"] },
-      "route_running": { focus: ["route_running"], tags: ["routes", "technique"] },
-      "coverage": { focus: ["coverage"], tags: ["backpedal", "hip turn", "zone"] },
-      "first_step": { focus: ["speed"], tags: ["first step", "explosion", "acceleration"] },
+    const needMappings: Record<
+      string,
+      { focus: TrainingFocus[]; tags: string[] }
+    > = {
+      faster_40: { focus: ["speed"], tags: ["40 yard dash", "acceleration"] },
+      better_cuts: {
+        focus: ["agility"],
+        tags: ["COD", "cutting", "deceleration"],
+      },
+      injury_prevention: {
+        focus: ["injury_prevention"],
+        tags: ["Nordic", "Copenhagen", "prehab"],
+      },
+      arm_health: {
+        focus: ["injury_prevention"],
+        tags: ["arm care", "shoulder"],
+      },
+      route_running: {
+        focus: ["route_running"],
+        tags: ["routes", "technique"],
+      },
+      coverage: {
+        focus: ["coverage"],
+        tags: ["backpedal", "hip turn", "zone"],
+      },
+      first_step: {
+        focus: ["speed"],
+        tags: ["first step", "explosion", "acceleration"],
+      },
     };
 
     const mapping = needMappings[need];
@@ -2315,7 +2867,9 @@ export class TrainingVideoDatabaseService {
     return this._allVideos().filter(
       (v) =>
         v.trainingFocus.some((f) => mapping.focus.includes(f)) ||
-        v.tags.some((t) => mapping.tags.some((mt) => t.toLowerCase().includes(mt.toLowerCase())))
+        v.tags.some((t) =>
+          mapping.tags.some((mt) => t.toLowerCase().includes(mt.toLowerCase())),
+        ),
     );
   }
 
@@ -2352,7 +2906,8 @@ export class TrainingVideoDatabaseService {
       byPosition,
       byFocus,
       totalMinutes: videos.reduce((sum, v) => sum + v.duration, 0),
-      averageRating: videos.reduce((sum, v) => sum + v.rating, 0) / videos.length,
+      averageRating:
+        videos.reduce((sum, v) => sum + v.rating, 0) / videos.length,
     };
   }
 
@@ -2363,17 +2918,27 @@ export class TrainingVideoDatabaseService {
   /**
    * Get daily mobility routine based on time of day
    */
-  getDailyMobilityRoutine(timeOfDay: "morning" | "evening" | "both"): TrainingVideo[] {
+  getDailyMobilityRoutine(
+    timeOfDay: "morning" | "evening" | "both",
+  ): TrainingVideo[] {
     const mobilityVideos = this._allVideos().filter(
-      (v) => v.tags.includes("morning routine") || v.tags.includes("evening routine") || v.tags.includes("daily mobility")
+      (v) =>
+        v.tags.includes("morning routine") ||
+        v.tags.includes("evening routine") ||
+        v.tags.includes("daily mobility"),
     );
 
     if (timeOfDay === "morning") {
-      return mobilityVideos.filter((v) => v.tags.includes("morning routine") || v.tags.includes("wake up"));
+      return mobilityVideos.filter(
+        (v) => v.tags.includes("morning routine") || v.tags.includes("wake up"),
+      );
     } else if (timeOfDay === "evening") {
-      return mobilityVideos.filter((v) => v.tags.includes("evening routine") || v.tags.includes("before bed"));
+      return mobilityVideos.filter(
+        (v) =>
+          v.tags.includes("evening routine") || v.tags.includes("before bed"),
+      );
     }
-    
+
     return mobilityVideos;
   }
 
@@ -2387,16 +2952,18 @@ export class TrainingVideoDatabaseService {
   /**
    * Get position-specific mobility routine
    */
-  getPositionMobilityRoutine(position: FlagPosition): TrainingSession | undefined {
+  getPositionMobilityRoutine(
+    position: FlagPosition,
+  ): TrainingSession | undefined {
     const positionMobilitySessions: Record<string, string> = {
-      "QB": "session_qb_mobility",
-      "DB": "session_db_mobility",
-      "WR": "session_targeted_hip_flexors",
-      "Center": "session_targeted_hip_flexors",
-      "Rusher": "session_targeted_ankles",
-      "LB": "session_db_mobility",
-      "Hybrid": "session_daily_full_mobility",
-      "All": "session_daily_full_mobility",
+      QB: "session_qb_mobility",
+      DB: "session_db_mobility",
+      WR: "session_targeted_hip_flexors",
+      Center: "session_targeted_hip_flexors",
+      Rusher: "session_targeted_ankles",
+      LB: "session_db_mobility",
+      Hybrid: "session_daily_full_mobility",
+      All: "session_daily_full_mobility",
     };
 
     const sessionId = positionMobilitySessions[position];
@@ -2406,21 +2973,27 @@ export class TrainingVideoDatabaseService {
   /**
    * Get targeted mobility for specific body area
    */
-  getTargetedMobility(bodyArea: "hips" | "ankles" | "thoracic" | "groin" | "full"): TrainingVideo[] {
+  getTargetedMobility(
+    bodyArea: "hips" | "ankles" | "thoracic" | "groin" | "full",
+  ): TrainingVideo[] {
     const areaMapping: Record<string, string[]> = {
-      "hips": ["hip flexors", "hip mobility", "psoas"],
-      "ankles": ["ankle", "achilles", "calves"],
-      "thoracic": ["thoracic", "t-spine", "upper back"],
-      "groin": ["groin", "adductors", "inner thigh"],
-      "full": ["full body", "daily mobility"],
+      hips: ["hip flexors", "hip mobility", "psoas"],
+      ankles: ["ankle", "achilles", "calves"],
+      thoracic: ["thoracic", "t-spine", "upper back"],
+      groin: ["groin", "adductors", "inner thigh"],
+      full: ["full body", "daily mobility"],
     };
 
     const keywords = areaMapping[bodyArea];
     return this._allVideos().filter(
       (v) =>
         v.trainingFocus.includes("mobility") &&
-        (v.muscleGroups.some((m) => keywords.some((k) => m.toLowerCase().includes(k))) ||
-         v.tags.some((t) => keywords.some((k) => t.toLowerCase().includes(k))))
+        (v.muscleGroups.some((m) =>
+          keywords.some((k) => m.toLowerCase().includes(k)),
+        ) ||
+          v.tags.some((t) =>
+            keywords.some((k) => t.toLowerCase().includes(k)),
+          )),
     );
   }
 
@@ -2462,10 +3035,10 @@ export class TrainingVideoDatabaseService {
       (v) =>
         v.trainingFocus.includes("mobility") &&
         (v.tags.includes("evening routine") ||
-         v.tags.includes("before bed") ||
-         v.tags.includes("sleep") ||
-         v.tags.includes("wind down") ||
-         v.tags.includes("recovery"))
+          v.tags.includes("before bed") ||
+          v.tags.includes("sleep") ||
+          v.tags.includes("wind down") ||
+          v.tags.includes("recovery")),
     );
   }
 
@@ -2482,17 +3055,25 @@ export class TrainingVideoDatabaseService {
     playlist: TrainingVideo | undefined;
   } {
     const allMobility = this._allVideos().filter(
-      (v) => v.trainingFocus.includes("mobility") || v.trainingFocus.includes("recovery")
+      (v) =>
+        v.trainingFocus.includes("mobility") ||
+        v.trainingFocus.includes("recovery"),
     );
 
     return {
-      morning: allMobility.filter((v) => v.tags.includes("morning routine") || v.tags.includes("wake up")),
-      evening: allMobility.filter((v) => v.tags.includes("evening routine") || v.tags.includes("before bed")),
-      targeted: allMobility.filter((v) => 
-        v.tags.includes("hip flexors") || 
-        v.tags.includes("ankle") || 
-        v.tags.includes("thoracic") || 
-        v.tags.includes("groin")
+      morning: allMobility.filter(
+        (v) => v.tags.includes("morning routine") || v.tags.includes("wake up"),
+      ),
+      evening: allMobility.filter(
+        (v) =>
+          v.tags.includes("evening routine") || v.tags.includes("before bed"),
+      ),
+      targeted: allMobility.filter(
+        (v) =>
+          v.tags.includes("hip flexors") ||
+          v.tags.includes("ankle") ||
+          v.tags.includes("thoracic") ||
+          v.tags.includes("groin"),
       ),
       recovery: allMobility.filter((v) => v.trainingFocus.includes("recovery")),
       warmUp: allMobility.filter((v) => v.drillTypes.includes("warm_up")),
@@ -2515,44 +3096,50 @@ export class TrainingVideoDatabaseService {
   /**
    * Get routine recommendation based on athlete's work schedule
    */
-  getScheduleBasedRoutine(scheduleType: WorkScheduleType): DailyRoutineRecommendation {
+  getScheduleBasedRoutine(
+    scheduleType: WorkScheduleType,
+  ): DailyRoutineRecommendation {
     return SCHEDULE_RECOMMENDATIONS[scheduleType];
   }
 
   /**
    * Get all schedule types with descriptions
    */
-  getAllScheduleTypes(): { type: WorkScheduleType; name: string; description: string }[] {
+  getAllScheduleTypes(): {
+    type: WorkScheduleType;
+    name: string;
+    description: string;
+  }[] {
     return [
-      { 
-        type: "early_bird", 
-        name: "Early Bird (6am start)", 
-        description: "You start work around 6am - no time for morning mobility" 
+      {
+        type: "early_bird",
+        name: "Early Bird (6am start)",
+        description: "You start work around 6am - no time for morning mobility",
       },
-      { 
-        type: "standard", 
-        name: "Standard (9am start)", 
-        description: "You start work around 9am - time for morning routine" 
+      {
+        type: "standard",
+        name: "Standard (9am start)",
+        description: "You start work around 9am - time for morning routine",
       },
-      { 
-        type: "late_starter", 
-        name: "Late Starter (afternoon)", 
-        description: "You start work in the afternoon - lots of morning time" 
+      {
+        type: "late_starter",
+        name: "Late Starter (afternoon)",
+        description: "You start work in the afternoon - lots of morning time",
       },
-      { 
-        type: "shift_worker", 
-        name: "Shift Worker", 
-        description: "Variable shifts - need flexible routine" 
+      {
+        type: "shift_worker",
+        name: "Shift Worker",
+        description: "Variable shifts - need flexible routine",
       },
-      { 
-        type: "student", 
-        name: "Student", 
-        description: "Student schedule - flexible with more free time" 
+      {
+        type: "student",
+        name: "Student",
+        description: "Student schedule - flexible with more free time",
       },
-      { 
-        type: "remote_worker", 
-        name: "Remote Worker", 
-        description: "Work from home - most flexible schedule" 
+      {
+        type: "remote_worker",
+        name: "Remote Worker",
+        description: "Work from home - most flexible schedule",
       },
     ];
   }
@@ -2563,14 +3150,22 @@ export class TrainingVideoDatabaseService {
   getPersonalizedDailyRoutine(
     scheduleType: WorkScheduleType,
     isPracticeDay: boolean,
-    hasMorningTime: boolean
+    hasMorningTime: boolean,
   ): {
-    routines: { time: string; video: TrainingVideo | undefined; notes: string }[];
+    routines: {
+      time: string;
+      video: TrainingVideo | undefined;
+      notes: string;
+    }[];
     totalMinutes: number;
     explanation: string;
   } {
     const recommendation = SCHEDULE_RECOMMENDATIONS[scheduleType];
-    const routines: { time: string; video: TrainingVideo | undefined; notes: string }[] = [];
+    const routines: {
+      time: string;
+      video: TrainingVideo | undefined;
+      notes: string;
+    }[] = [];
     let totalMinutes = 0;
 
     // Morning routine (if applicable and has time)
@@ -2591,7 +3186,8 @@ export class TrainingVideoDatabaseService {
       routines.push({
         time: "After Practice",
         video: foamRolling,
-        notes: "Foam rolling after practice for recovery - replaces evening routine",
+        notes:
+          "Foam rolling after practice for recovery - replaces evening routine",
       });
       totalMinutes += 15;
     } else {
@@ -2610,17 +3206,23 @@ export class TrainingVideoDatabaseService {
     // Build explanation
     let explanation = "";
     if (scheduleType === "early_bird") {
-      explanation = "Since you start work early, focus on evening recovery. On practice days, foam rolling after practice is your main recovery work.";
+      explanation =
+        "Since you start work early, focus on evening recovery. On practice days, foam rolling after practice is your main recovery work.";
     } else if (scheduleType === "standard") {
-      explanation = "You have the ideal schedule for both morning mobility and evening foam rolling. On practice days, do foam rolling after practice instead of evening.";
+      explanation =
+        "You have the ideal schedule for both morning mobility and evening foam rolling. On practice days, do foam rolling after practice instead of evening.";
     } else if (scheduleType === "late_starter") {
-      explanation = "Use your morning time for extended mobility work. Evenings are free for rest.";
+      explanation =
+        "Use your morning time for extended mobility work. Evenings are free for rest.";
     } else if (scheduleType === "shift_worker") {
-      explanation = "Adapt to your shifts - the key is consistency. Always do something before sleep, and always foam roll after practice.";
+      explanation =
+        "Adapt to your shifts - the key is consistency. Always do something before sleep, and always foam roll after practice.";
     } else if (scheduleType === "student") {
-      explanation = "You have more flexibility - use it to build great habits. Extended routines will pay off long-term.";
+      explanation =
+        "You have more flexibility - use it to build great habits. Extended routines will pay off long-term.";
     } else if (scheduleType === "remote_worker") {
-      explanation = "Working from home gives you the most flexibility. You can even add mid-day mobility breaks.";
+      explanation =
+        "Working from home gives you the most flexibility. You can even add mid-day mobility breaks.";
     }
 
     return {
@@ -2635,19 +3237,27 @@ export class TrainingVideoDatabaseService {
    */
   getWeeklyMobilitySchedule(
     scheduleType: WorkScheduleType,
-    practiceDays: string[] // e.g., ["Tuesday", "Thursday"]
+    practiceDays: string[], // e.g., ["Tuesday", "Thursday"]
   ): {
     day: string;
     morning: string | null;
     evening: string | null;
     notes: string;
   }[] {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const recommendation = SCHEDULE_RECOMMENDATIONS[scheduleType];
 
     return days.map((day) => {
       const isPracticeDay = practiceDays.includes(day);
-      
+
       let morning: string | null = null;
       let evening: string | null = null;
       let notes = "";
@@ -2663,9 +3273,10 @@ export class TrainingVideoDatabaseService {
         notes = "Practice day - foam rolling replaces evening mobility";
       } else {
         if (recommendation.evening) {
-          evening = scheduleType === "standard" || scheduleType === "remote_worker"
-            ? "Foam Rolling before bed (15 min)"
-            : "Evening Mobility (15 min)";
+          evening =
+            scheduleType === "standard" || scheduleType === "remote_worker"
+              ? "Foam Rolling before bed (15 min)"
+              : "Evening Mobility (15 min)";
         }
         notes = "Rest day - full recovery routine";
       }
@@ -2740,7 +3351,8 @@ export class TrainingVideoDatabaseService {
     switch (intensityLevel) {
       case "light":
         sessionId = "session_rest_day_stretching_only";
-        description = "Light stretching only - perfect when you're very sore or fatigued";
+        description =
+          "Light stretching only - perfect when you're very sore or fatigued";
         notes = [
           "Just stretching, no foam rolling",
           "Good for when you're feeling beat up",
@@ -2760,7 +3372,8 @@ export class TrainingVideoDatabaseService {
         break;
       case "full":
         sessionId = "session_active_recovery_day";
-        description = "Full active recovery - morning mobility + stretching + evening foam rolling";
+        description =
+          "Full active recovery - morning mobility + stretching + evening foam rolling";
         notes = [
           "The complete recovery protocol",
           "Split across the day",
@@ -2771,9 +3384,10 @@ export class TrainingVideoDatabaseService {
     }
 
     const session = this.getSessionById(sessionId);
-    const videos = session?.videos
-      .map((sv) => this.getVideoById(sv.videoId))
-      .filter((v): v is TrainingVideo => v !== undefined) || [];
+    const videos =
+      session?.videos
+        .map((sv) => this.getVideoById(sv.videoId))
+        .filter((v): v is TrainingVideo => v !== undefined) || [];
 
     return {
       session,
@@ -2789,14 +3403,20 @@ export class TrainingVideoDatabaseService {
    */
   getRestDaySessions(): TrainingSession[] {
     return this._allSessions().filter(
-      (s) => s.id.includes("rest_day") || s.id.includes("active_recovery")
+      (s) => s.id.includes("rest_day") || s.id.includes("active_recovery"),
     );
   }
 
   /**
    * Get recommended rest day routine based on previous day's activity
    */
-  getRestDayRecommendation(previousDayActivity: "tournament" | "hard_practice" | "light_training" | "rest"): {
+  getRestDayRecommendation(
+    previousDayActivity:
+      | "tournament"
+      | "hard_practice"
+      | "light_training"
+      | "rest",
+  ): {
     recommendation: string;
     session: TrainingSession | undefined;
     rationale: string;
@@ -2806,25 +3426,29 @@ export class TrainingVideoDatabaseService {
         return {
           recommendation: "Full Active Recovery Day",
           session: this.getSessionById("session_active_recovery_day"),
-          rationale: "After a tournament, your body needs maximum recovery. Spread mobility, stretching, and foam rolling throughout the day.",
+          rationale:
+            "After a tournament, your body needs maximum recovery. Spread mobility, stretching, and foam rolling throughout the day.",
         };
       case "hard_practice":
         return {
           recommendation: "Rest Day Recovery (Stretching + Foam Rolling)",
           session: this.getSessionById("session_rest_day_recovery"),
-          rationale: "After hard practice, combine stretching and foam rolling to reduce soreness and maintain flexibility.",
+          rationale:
+            "After hard practice, combine stretching and foam rolling to reduce soreness and maintain flexibility.",
         };
       case "light_training":
         return {
           recommendation: "Rest Day Stretching Only",
           session: this.getSessionById("session_rest_day_stretching_only"),
-          rationale: "After light training, stretching is sufficient. Save foam rolling for after harder sessions.",
+          rationale:
+            "After light training, stretching is sufficient. Save foam rolling for after harder sessions.",
         };
       case "rest":
         return {
           recommendation: "Rest Day Stretching Only",
           session: this.getSessionById("session_rest_day_stretching_only"),
-          rationale: "If yesterday was also rest, light stretching keeps you loose without overdoing recovery work.",
+          rationale:
+            "If yesterday was also rest, light stretching keeps you loose without overdoing recovery work.",
         };
     }
   }
@@ -2832,7 +3456,9 @@ export class TrainingVideoDatabaseService {
   /**
    * Get complete day type recommendations
    */
-  getDayTypeRecommendation(dayType: "practice" | "training" | "rest" | "tournament"): {
+  getDayTypeRecommendation(
+    dayType: "practice" | "training" | "rest" | "tournament",
+  ): {
     morning: TrainingVideo | undefined;
     mainActivity: string;
     evening: TrainingVideo | undefined;

@@ -151,15 +151,15 @@ angular/src/app/
 
 ### Key Services
 
-| Service | Lines | Purpose |
-|---------|-------|---------|
-| `acwr.service.ts` | 1,273 | EWMA-based ACWR calculations, risk zones, tolerance detection |
-| `acwr-alerts.service.ts` | 434 | Alert generation, danger zone detection |
-| `ai-chat.service.ts` | 270 | AI coaching with safety tiers |
-| `wellness.service.ts` | 582 | Sleep, mood, stress tracking |
-| `nutrition.service.ts` | 713 | Macro/micro tracking, meal plans |
-| `notification-state.service.ts` | 394 | Signal-based notification state |
-| `training-stats-calculation.service.ts` | 363 | Volume, intensity, ACWR calculations |
+| Service                                 | Lines | Purpose                                                       |
+| --------------------------------------- | ----- | ------------------------------------------------------------- |
+| `acwr.service.ts`                       | 1,273 | EWMA-based ACWR calculations, risk zones, tolerance detection |
+| `acwr-alerts.service.ts`                | 434   | Alert generation, danger zone detection                       |
+| `ai-chat.service.ts`                    | 270   | AI coaching with safety tiers                                 |
+| `wellness.service.ts`                   | 582   | Sleep, mood, stress tracking                                  |
+| `nutrition.service.ts`                  | 713   | Macro/micro tracking, meal plans                              |
+| `notification-state.service.ts`         | 394   | Signal-based notification state                               |
+| `training-stats-calculation.service.ts` | 363   | Volume, intensity, ACWR calculations                          |
 
 ### Component Architecture
 
@@ -180,13 +180,13 @@ All components use:
 })
 export class AcwrDashboardComponent {
   private acwrService = inject(AcwrService);
-  
+
   // Reactive signals
   acwrRatio = this.acwrService.acwrRatio;
   riskZone = this.acwrService.riskZone;
-  
+
   // Computed signals
-  canTrainHard = computed(() => 
+  canTrainHard = computed(() =>
     this.acwrRatio() <= 1.5 && this.riskZone().level !== 'danger-zone'
   );
 }
@@ -223,26 +223,26 @@ All functions use standardized `baseHandler`:
 ```javascript
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'ai-chat',
-    allowedMethods: ['POST'],
-    rateLimitType: 'CREATE',
+    functionName: "ai-chat",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       // Function logic
-    }
+    },
   });
 };
 ```
 
 ### API Endpoints
 
-| Category | Endpoints | Description |
-|----------|-----------|-------------|
-| **AI Coaching** | `/api/ai/chat`, `/api/ai/feedback` | AI chat with safety |
-| **Load Management** | `/api/load-management/acwr`, `/monotony`, `/tsb` | ACWR calculations |
-| **Training** | `/api/training-stats`, `/training-plan` | Training data |
-| **Readiness** | `/api/calc-readiness`, `/readiness-history` | Readiness scores |
-| **Recommendations** | `/api/smart-training-recommendations` | AI recommendations |
+| Category            | Endpoints                                        | Description         |
+| ------------------- | ------------------------------------------------ | ------------------- |
+| **AI Coaching**     | `/api/ai/chat`, `/api/ai/feedback`               | AI chat with safety |
+| **Load Management** | `/api/load-management/acwr`, `/monotony`, `/tsb` | ACWR calculations   |
+| **Training**        | `/api/training-stats`, `/training-plan`          | Training data       |
+| **Readiness**       | `/api/calc-readiness`, `/readiness-history`      | Readiness scores    |
+| **Recommendations** | `/api/smart-training-recommendations`            | AI recommendations  |
 
 ---
 
@@ -306,7 +306,7 @@ CREATE POLICY "Users can view own data" ON training_sessions
 CREATE POLICY "Coaches can view team data" ON training_sessions
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM team_members 
+      SELECT 1 FROM team_members
       WHERE team_members.team_id = training_sessions.team_id
       AND team_members.user_id = auth.uid()
       AND team_members.role = 'coach'
@@ -350,22 +350,34 @@ CREATE POLICY "Coaches can view team data" ON training_sessions
 
 ### ACWR Thresholds (Gabbett 2016)
 
-| ACWR Range | Risk Zone | AI Behavior |
-|------------|-----------|-------------|
-| < 0.80 | Under-training | ✅ Can recommend more training |
-| 0.80 - 1.30 | Sweet Spot | ✅ All recommendations allowed |
-| 1.30 - 1.50 | Elevated | ✅ Allowed with monitoring advice |
-| > 1.50 | Danger | ⛔ **BLOCKS high-intensity** |
-| > 1.80 | Critical | ⛔ **Recommends rest only** |
+| ACWR Range  | Risk Zone      | AI Behavior                       |
+| ----------- | -------------- | --------------------------------- |
+| < 0.80      | Under-training | ✅ Can recommend more training    |
+| 0.80 - 1.30 | Sweet Spot     | ✅ All recommendations allowed    |
+| 1.30 - 1.50 | Elevated       | ✅ Allowed with monitoring advice |
+| > 1.50      | Danger         | ⛔ **BLOCKS high-intensity**      |
+| > 1.80      | Critical       | ⛔ **Recommends rest only**       |
 
 ### High-Intensity Keywords Detected
 
 ```javascript
 const HIGH_INTENSITY_KEYWORDS = [
-  "sprint", "explosive", "plyometric", "max effort",
-  "high intensity", "hiit", "power", "speed work",
-  "all out", "100%", "full speed", "intense",
-  "heavy", "max weight", "1rm", "pr attempt"
+  "sprint",
+  "explosive",
+  "plyometric",
+  "max effort",
+  "high intensity",
+  "hiit",
+  "power",
+  "speed work",
+  "all out",
+  "100%",
+  "full speed",
+  "intense",
+  "heavy",
+  "max weight",
+  "1rm",
+  "pr attempt",
 ];
 ```
 
@@ -379,17 +391,17 @@ FlagFit Pro uses **Angular Signals** (not NgRx):
 
 ```typescript
 // Service with signals
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class NotificationStateService {
   // State signals
   private readonly notifications = signal<Notification[]>([]);
   private readonly loading = signal<boolean>(false);
-  
+
   // Computed signals (derived state)
-  readonly unreadCount = computed(() => 
-    this.notifications().filter(n => !n.read).length
+  readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.read).length,
   );
-  
+
   // Combined state
   readonly state = computed<NotificationState>(() => ({
     notifications: this.notifications(),
@@ -405,19 +417,17 @@ export class NotificationStateService {
 @Injectable()
 export abstract class BaseViewModel {
   protected destroyRef = inject(DestroyRef);
-  
+
   // Common state
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   // RxJS → Signal bridge
   protected subscribe<T>(
     observable: Observable<T>,
-    callbacks: { next?: (v: T) => void; error?: (e: unknown) => void }
+    callbacks: { next?: (v: T) => void; error?: (e: unknown) => void },
   ): void {
-    observable.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(callbacks);
+    observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(callbacks);
   }
 }
 ```

@@ -8,7 +8,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 Deno.serve(async (req: Request) => {
@@ -24,10 +25,12 @@ Deno.serve(async (req: Request) => {
     // Get all pending reminders that are due
     const { data: dueReminders, error: fetchError } = await supabase
       .from("consultation_reminders")
-      .select(`
+      .select(
+        `
         *,
         consultation:pending_professional_consultations(*)
-      `)
+      `,
+      )
       .eq("reminder_status", "pending")
       .lte("scheduled_for", new Date().toISOString());
 
@@ -38,7 +41,7 @@ Deno.serve(async (req: Request) => {
     if (!dueReminders || dueReminders.length === 0) {
       return new Response(
         JSON.stringify({ message: "No reminders due", processed: 0 }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -52,9 +55,9 @@ Deno.serve(async (req: Request) => {
 
     for (const reminder of dueReminders) {
       results.processed++;
-      
+
       const consultation = reminder.consultation;
-      
+
       // Skip if consultation is already resolved
       if (consultation?.consultation_status !== "pending") {
         await supabase
@@ -74,24 +77,27 @@ Deno.serve(async (req: Request) => {
 
         if (tokens && tokens.length > 0) {
           // Send push notification via the push function
-          const pushResponse = await fetch(`${supabaseUrl}/functions/v1/push/send`, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${supabaseServiceKey}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId: reminder.user_id,
-              title: reminder.title,
-              body: reminder.body,
-              type: "consultation_reminder",
-              url: "/chat", // Open chat with Merlin
-              data: {
-                consultationId: consultation.id,
-                referralType: consultation.referral_type,
+          const pushResponse = await fetch(
+            `${supabaseUrl}/functions/v1/push/send`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${supabaseServiceKey}`,
+                "Content-Type": "application/json",
               },
-            }),
-          });
+              body: JSON.stringify({
+                userId: reminder.user_id,
+                title: reminder.title,
+                body: reminder.body,
+                type: "consultation_reminder",
+                url: "/chat", // Open chat with Merlin
+                data: {
+                  consultationId: consultation.id,
+                  referralType: consultation.referral_type,
+                },
+              }),
+            },
+          );
 
           if (pushResponse.ok) {
             results.sent++;
@@ -109,7 +115,7 @@ Deno.serve(async (req: Request) => {
 
         // Update consultation reminder count
         const newReminderCount = (consultation.reminder_count || 0) + 1;
-        
+
         if (newReminderCount >= consultation.max_reminders) {
           // Max reminders reached - mark consultation as expired
           await supabase
@@ -136,28 +142,26 @@ Deno.serve(async (req: Request) => {
             .eq("id", consultation.id);
 
           // Create next reminder
-          await supabase
-            .from("consultation_reminders")
-            .insert({
-              user_id: reminder.user_id,
-              consultation_id: consultation.id,
-              title: `🏥 Reminder #${newReminderCount + 1}: Professional Consultation`,
-              body: `Hi! This is reminder #${newReminderCount + 1} - have you been able to see the ${consultation.recommended_professional} yet? Your health is important! Once you have their guidance, I can help adjust your training. 💪`,
-              scheduled_for: nextReminderDate.toISOString(),
-            });
+          await supabase.from("consultation_reminders").insert({
+            user_id: reminder.user_id,
+            consultation_id: consultation.id,
+            title: `🏥 Reminder #${newReminderCount + 1}: Professional Consultation`,
+            body: `Hi! This is reminder #${newReminderCount + 1} - have you been able to see the ${consultation.recommended_professional} yet? Your health is important! Once you have their guidance, I can help adjust your training. 💪`,
+            scheduled_for: nextReminderDate.toISOString(),
+          });
 
           results.rescheduled++;
         }
-
       } catch (sendError) {
         results.failed++;
         console.error("Failed to process reminder:", sendError);
-        
+
         await supabase
           .from("consultation_reminders")
           .update({
             reminder_status: "failed",
-            error_message: sendError instanceof Error ? sendError.message : "Unknown error",
+            error_message:
+              sendError instanceof Error ? sendError.message : "Unknown error",
           })
           .eq("id", reminder.id);
       }
@@ -169,19 +173,20 @@ Deno.serve(async (req: Request) => {
         message: `Processed ${results.processed} reminders`,
         results,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-
   } catch (error) {
     console.error("Error processing consultation reminders:", error);
-    
+
     return new Response(
       JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });
-

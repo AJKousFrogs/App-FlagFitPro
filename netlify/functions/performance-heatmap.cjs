@@ -3,9 +3,7 @@
 // Endpoint: /api/performance/heatmap
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const {
-  createSuccessResponse,
-} = require("./utils/error-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**
@@ -70,7 +68,9 @@ async function getHeatmapData(userId, timeRange) {
     }
 
     const trainingSessions = sessions || [];
-    console.log(`[performance-heatmap] Found ${trainingSessions.length} sessions for user ${userId}`);
+    console.log(
+      `[performance-heatmap] Found ${trainingSessions.length} sessions for user ${userId}`,
+    );
 
     // Group sessions by date
     const sessionsByDate = {};

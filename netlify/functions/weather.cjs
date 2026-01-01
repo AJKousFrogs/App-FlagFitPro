@@ -63,7 +63,7 @@ async function getWeatherData(latitude, longitude, city) {
  * Determine if weather is suitable for outdoor training
  */
 function isWeatherSuitable(weatherData) {
-  const {temp} = weatherData.main;
+  const { temp } = weatherData.main;
   const condition = weatherData.weather[0].main.toLowerCase();
   const windSpeed = weatherData.wind?.speed || 0;
 
@@ -90,7 +90,7 @@ function isWeatherSuitable(weatherData) {
  * Get suitability level for training
  */
 function getSuitabilityLevel(weatherData) {
-  const {temp} = weatherData.main;
+  const { temp } = weatherData.main;
   const condition = weatherData.weather[0].main.toLowerCase();
   const windSpeed = weatherData.wind?.speed || 0;
 

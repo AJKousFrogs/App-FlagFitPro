@@ -1,7 +1,6 @@
 // Enhanced static file server for development
 // Lightweight alternative to full Express server with modern features
 
- 
 import http from "http";
 import fs from "fs/promises";
 import { createReadStream, constants } from "fs";
@@ -111,7 +110,7 @@ const formatBytes = (bytes) => {
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / k**i).toFixed(2))} ${sizes[i]}`;
+  return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 };
 
 // Check if client accepts compression
@@ -148,10 +147,10 @@ const sanitizePath = (requestPath, baseDir) => {
 // Inject environment script into HTML
 const injectEnvScript = (htmlContent) => {
   if (htmlContent.includes("</body>")) {
-    return htmlContent.replace("</body>", `${envScript  }</body>`);
+    return htmlContent.replace("</body>", `${envScript}</body>`);
   }
   if (htmlContent.includes("</head>")) {
-    return htmlContent.replace("</head>", `${envScript  }</head>`);
+    return htmlContent.replace("</head>", `${envScript}</head>`);
   }
   return htmlContent + envScript;
 };
@@ -313,7 +312,7 @@ const handleRequest = async (req, res) => {
       req.url,
       `http://${req.headers.host || "localhost"}`,
     );
-    let {pathname} = parsedUrl;
+    let { pathname } = parsedUrl;
 
     // Set CORS headers for all requests
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -409,7 +408,7 @@ const server = http.createServer(handleRequest);
 
 // Start server
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log(`🏈 Flag Football App - Enhanced Server`);
   console.log("=".repeat(60));
   console.log(`🌐 Server running on http://localhost:${PORT}`);
@@ -433,7 +432,7 @@ server.listen(PORT, "0.0.0.0", () => {
       `   Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables`,
     );
   }
-  console.log(`${"=".repeat(60)  }\n`);
+  console.log(`${"=".repeat(60)}\n`);
 });
 
 // Enhanced error handling

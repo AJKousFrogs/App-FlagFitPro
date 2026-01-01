@@ -88,16 +88,14 @@ export class EvidenceConfigService {
     const user = this.authService.getUser();
     if (user?.id) {
       try {
-        await this.supabaseService.client
-          .from("user_activity_logs")
-          .insert({
-            user_id: user.id,
-            activity_type: "preset_change",
-            activity_data: {
-              preset_id: presetId,
-              changed_at: new Date().toISOString(),
-            },
-          });
+        await this.supabaseService.client.from("user_activity_logs").insert({
+          user_id: user.id,
+          activity_type: "preset_change",
+          activity_data: {
+            preset_id: presetId,
+            changed_at: new Date().toISOString(),
+          },
+        });
       } catch (error) {
         // Silently fail if table doesn't exist
         this.logger.debug("Activity log table not available:", error);

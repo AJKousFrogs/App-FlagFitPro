@@ -122,9 +122,9 @@ import {
             <td>
               <div class="video-title-cell">
                 <span class="title">{{ video.title }}</span>
-                <span class="subtitle">{{
-                  video.description | slice : 0 : 50
-                }}...</span>
+                <span class="subtitle"
+                  >{{ video.description | slice: 0 : 50 }}...</span
+                >
               </div>
             </td>
             <td>
@@ -133,28 +133,29 @@ import {
                   video.creator.displayName
                 }}</span>
                 @if (video.creator.verified) {
-                <i class="pi pi-verified verified-icon"></i>
+                  <i class="pi pi-verified verified-icon"></i>
                 }
               </div>
             </td>
             <td>
               <div class="tags-cell">
                 @for (pos of video.positions.slice(0, 2); track pos) {
-                <p-tag [value]="pos" severity="info"></p-tag>
-                } @if (video.positions.length > 2) {
-                <span class="more-tag"
-                  >+{{ video.positions.length - 2 }}</span
-                >
+                  <p-tag [value]="pos" severity="info"></p-tag>
+                }
+                @if (video.positions.length > 2) {
+                  <span class="more-tag"
+                    >+{{ video.positions.length - 2 }}</span
+                  >
                 }
               </div>
             </td>
             <td>
               <div class="tags-cell">
                 @for (focus of video.trainingFocus.slice(0, 2); track focus) {
-                <p-tag
-                  [value]="getFormatFocus(focus)"
-                  severity="success"
-                ></p-tag>
+                  <p-tag
+                    [value]="getFormatFocus(focus)"
+                    severity="success"
+                  ></p-tag>
                 }
               </div>
             </td>
@@ -167,7 +168,9 @@ import {
             <td>
               <p-tag
                 [value]="getVideoStatusValue(video.id)"
-                [severity]="getStatusSeverityValue(getVideoStatusValue(video.id))"
+                [severity]="
+                  getStatusSeverityValue(getVideoStatusValue(video.id))
+                "
               ></p-tag>
             </td>
             <td>
@@ -179,22 +182,23 @@ import {
                   pTooltip="Preview"
                   (click)="preview.emit(video)"
                 ></button>
-                @if (getVideoStatusValue(video.id) !== 'approved') {
-                <button
-                  pButton
-                  icon="pi pi-check"
-                  class="p-button-text p-button-rounded p-button-success"
-                  pTooltip="Approve"
-                  (click)="approve.emit(video)"
-                ></button>
-                } @if (getVideoStatusValue(video.id) !== 'rejected') {
-                <button
-                  pButton
-                  icon="pi pi-times"
-                  class="p-button-text p-button-rounded p-button-danger"
-                  pTooltip="Reject"
-                  (click)="reject.emit(video)"
-                ></button>
+                @if (getVideoStatusValue(video.id) !== "approved") {
+                  <button
+                    pButton
+                    icon="pi pi-check"
+                    class="p-button-text p-button-rounded p-button-success"
+                    pTooltip="Approve"
+                    (click)="approve.emit(video)"
+                  ></button>
+                }
+                @if (getVideoStatusValue(video.id) !== "rejected") {
+                  <button
+                    pButton
+                    icon="pi pi-times"
+                    class="p-button-text p-button-rounded p-button-danger"
+                    pTooltip="Reject"
+                    (click)="reject.emit(video)"
+                  ></button>
                 }
                 <button
                   pButton
@@ -349,7 +353,7 @@ export class VideoCurationVideoTableComponent {
   }
 
   getStatusSeverityValue(
-    status: string
+    status: string,
   ): "warn" | "success" | "danger" | undefined {
     return getStatusSeverity(status);
   }
@@ -362,4 +366,3 @@ export class VideoCurationVideoTableComponent {
     });
   }
 }
-

@@ -35,15 +35,22 @@ import { LoggerService } from "./logger.service";
 // INTERFACES
 // ============================================================================
 
-export type FlagFootballPosition = "QB" | "WR" | "Center" | "Rusher" | "DB" | "LB" | "Hybrid";
+export type FlagFootballPosition =
+  | "QB"
+  | "WR"
+  | "Center"
+  | "Rusher"
+  | "DB"
+  | "LB"
+  | "Hybrid";
 
 /**
  * QB Subtypes - Modern flag football QBs have different roles
  */
-export type QBSubtype = 
-  | "pocket_passer"      // Traditional QB, minimal running
-  | "dual_threat"        // Runs and throws equally
-  | "double_qb_primary"  // Primary QB in double-QB scheme
+export type QBSubtype =
+  | "pocket_passer" // Traditional QB, minimal running
+  | "dual_threat" // Runs and throws equally
+  | "double_qb_primary" // Primary QB in double-QB scheme
   | "double_qb_secondary"; // Secondary QB who also runs routes
 
 /**
@@ -291,7 +298,8 @@ export interface SeasonalReadiness {
 
 const UNIVERSAL_REQUIREMENTS: UniversalRequirements = {
   reactiveReadiness: {
-    description: "All flag football players must be 'on toes, locked and ready' - able to explode in any direction instantly",
+    description:
+      "All flag football players must be 'on toes, locked and ready' - able to explode in any direction instantly",
     exercises: [
       "Athletic stance holds (30s)",
       "Reactive starts (visual/audio cue)",
@@ -308,7 +316,8 @@ const UNIVERSAL_REQUIREMENTS: UniversalRequirements = {
     ],
   },
   coreStability: {
-    description: "Core stability is the foundation for all movement - throwing, cutting, sprinting",
+    description:
+      "Core stability is the foundation for all movement - throwing, cutting, sprinting",
     exercises: [
       "Dead bug variations",
       "Pallof press (anti-rotation)",
@@ -320,7 +329,8 @@ const UNIVERSAL_REQUIREMENTS: UniversalRequirements = {
     frequency: "3-4x per week, 10-15 min per session",
   },
   hipFlexorStrength: {
-    description: "Hip flexors drive knee lift in sprinting - weak hip flexors = slow sprints",
+    description:
+      "Hip flexors drive knee lift in sprinting - weak hip flexors = slow sprints",
     exercises: [
       "Hip flexor marches",
       "Hanging knee raises",
@@ -330,10 +340,12 @@ const UNIVERSAL_REQUIREMENTS: UniversalRequirements = {
       "High knees with resistance",
     ],
     frequency: "2-3x per week",
-    evidenceBase: "Morin & Samozino (2016) - Hip flexor strength correlates with sprint velocity",
+    evidenceBase:
+      "Morin & Samozino (2016) - Hip flexor strength correlates with sprint velocity",
   },
   ankleComplex: {
-    description: "Ankle stiffness and strength critical for ground contact efficiency and injury prevention",
+    description:
+      "Ankle stiffness and strength critical for ground contact efficiency and injury prevention",
     exercises: [
       "Calf raises (straight and bent knee)",
       "Ankle hops (pogo jumps)",
@@ -356,7 +368,10 @@ const UNIVERSAL_REQUIREMENTS: UniversalRequirements = {
 // POSITION-SPECIFIC REQUIREMENTS
 // ============================================================================
 
-const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> = {
+const POSITION_REQUIREMENTS: Record<
+  FlagFootballPosition,
+  PositionRequirements
+> = {
   QB: {
     position: "QB",
     primaryAttributes: [
@@ -376,12 +391,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
     ],
     benchmarks: {
       // Updated for dual-threat QB demands
-      sprint10m: { elite: 1.60, good: 1.70, average: 1.80, needsWork: 1.90, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.90, good: 3.05, average: 3.20, needsWork: 3.35, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 70, good: 60, average: 50, needsWork: 40, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.15, good: 4.30, average: 4.50, needsWork: 4.70, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 2.0, good: 1.7, average: 1.5, needsWork: 1.2, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 10, good: 12, average: 15, needsWork: 18, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.6,
+        good: 1.7,
+        average: 1.8,
+        needsWork: 1.9,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.9,
+        good: 3.05,
+        average: 3.2,
+        needsWork: 3.35,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 70,
+        good: 60,
+        average: 50,
+        needsWork: 40,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.15,
+        good: 4.3,
+        average: 4.5,
+        needsWork: 4.7,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 2.0,
+        good: 1.7,
+        average: 1.5,
+        needsWork: 1.2,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 10,
+        good: 12,
+        average: 15,
+        needsWork: 18,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "ARM CARE (NON-NEGOTIABLE) - 320 throws/tournament capacity",
@@ -394,7 +451,13 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Route running (for double QB schemes)",
       "Catching ability",
     ],
-    commonInjuries: ["Shoulder (throwing)", "Elbow (UCL)", "Hip flexor", "Lower back", "Ankle (scrambling)"],
+    commonInjuries: [
+      "Shoulder (throwing)",
+      "Elbow (UCL)",
+      "Hip flexor",
+      "Lower back",
+      "Ankle (scrambling)",
+    ],
     preventionFocus: [
       "Shoulder external rotation strength",
       "Thoracic spine mobility",
@@ -408,14 +471,30 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         {
           type: "pocket_passer",
           description: "Traditional QB who primarily throws from the pocket",
-          primarySkills: ["Accuracy", "Arm strength", "Pocket movement", "Quick release"],
-          sprintRequirements: "Moderate - 15-20 sprints/week, focus on short bursts",
-          trainingEmphasis: ["Arm care", "Footwork in pocket", "Throwing mechanics"],
+          primarySkills: [
+            "Accuracy",
+            "Arm strength",
+            "Pocket movement",
+            "Quick release",
+          ],
+          sprintRequirements:
+            "Moderate - 15-20 sprints/week, focus on short bursts",
+          trainingEmphasis: [
+            "Arm care",
+            "Footwork in pocket",
+            "Throwing mechanics",
+          ],
         },
         {
           type: "dual_threat",
-          description: "Modern QB who runs and throws equally. MOST COMMON in flag football.",
-          primarySkills: ["Throwing on the run", "Scrambling", "Speed", "Decision-making"],
+          description:
+            "Modern QB who runs and throws equally. MOST COMMON in flag football.",
+          primarySkills: [
+            "Throwing on the run",
+            "Scrambling",
+            "Speed",
+            "Decision-making",
+          ],
           sprintRequirements: "High - 25-35 sprints/week, acceleration focus",
           trainingEmphasis: [
             "Throwing while running LEFT and RIGHT",
@@ -426,9 +505,16 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         },
         {
           type: "double_qb_primary",
-          description: "Primary QB in double-QB scheme. Throws more, but must also run routes.",
-          primarySkills: ["Throwing", "Route running", "Catching", "Reactive readiness"],
-          sprintRequirements: "High - 25-30 sprints/week, route-specific patterns",
+          description:
+            "Primary QB in double-QB scheme. Throws more, but must also run routes.",
+          primarySkills: [
+            "Throwing",
+            "Route running",
+            "Catching",
+            "Reactive readiness",
+          ],
+          sprintRequirements:
+            "High - 25-30 sprints/week, route-specific patterns",
           trainingEmphasis: [
             "Throwing on the run",
             "Route running",
@@ -438,9 +524,16 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         },
         {
           type: "double_qb_secondary",
-          description: "Secondary QB who primarily runs routes and catches. Throws occasionally.",
-          primarySkills: ["Route running", "Catching", "Speed", "Throwing (backup)"],
-          sprintRequirements: "Very high - 30-40 sprints/week, WR-like training",
+          description:
+            "Secondary QB who primarily runs routes and catches. Throws occasionally.",
+          primarySkills: [
+            "Route running",
+            "Catching",
+            "Speed",
+            "Throwing (backup)",
+          ],
+          sprintRequirements:
+            "Very high - 30-40 sprints/week, WR-like training",
           trainingEmphasis: [
             "Route running",
             "Catching",
@@ -579,7 +672,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       },
       fatigueManagement: {
         nflComparison: "NFL QB throws 30-40 balls per game, 1 game/week",
-        flagFootballDemand: "Flag QB throws 40+ balls per game, 8 games in 2-3 days",
+        flagFootballDemand:
+          "Flag QB throws 40+ balls per game, 8 games in 2-3 days",
         tournamentThrowVolume: 320,
         recoveryProtocol: [
           "Ice shoulder between games (10-15 min)",
@@ -627,15 +721,21 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Escape sprints (evading rush)",
         "Route running (double QB schemes)",
       ],
-      sprintDistances: ["5-15m scrambles", "10-20m bootlegs", "Full routes if secondary QB"],
-      weeklyVolume: "Dual-threat: 25-35 sprints/week | Pocket: 15-20 sprints/week",
+      sprintDistances: [
+        "5-15m scrambles",
+        "10-20m bootlegs",
+        "Full routes if secondary QB",
+      ],
+      weeklyVolume:
+        "Dual-threat: 25-35 sprints/week | Pocket: 15-20 sprints/week",
       keyDrills: [
         "Scramble drill with throw",
         "Bootleg and throw on the run",
         "Reactive escape drills",
         "Route running (for double QB)",
       ],
-      rationale: "Modern flag QBs scramble on 40%+ of plays. Must be able to throw accurately while moving.",
+      rationale:
+        "Modern flag QBs scramble on 40%+ of plays. Must be able to throw accurately while moving.",
     },
   },
 
@@ -656,12 +756,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Deceleration ability",
     ],
     benchmarks: {
-      sprint10m: { elite: 1.55, good: 1.65, average: 1.75, needsWork: 1.85, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.80, good: 2.95, average: 3.10, needsWork: 3.25, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 80, good: 70, average: 60, needsWork: 50, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.10, good: 4.25, average: 4.40, needsWork: 4.55, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 2.2, good: 1.9, average: 1.6, needsWork: 1.3, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 8, good: 10, average: 13, needsWork: 16, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.55,
+        good: 1.65,
+        average: 1.75,
+        needsWork: 1.85,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.8,
+        good: 2.95,
+        average: 3.1,
+        needsWork: 3.25,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 80,
+        good: 70,
+        average: 60,
+        needsWork: 50,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.1,
+        good: 4.25,
+        average: 4.4,
+        needsWork: 4.55,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 2.2,
+        good: 1.9,
+        average: 1.6,
+        needsWork: 1.3,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 8,
+        good: 10,
+        average: 13,
+        needsWork: 16,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "Explosive acceleration (first 10m)",
@@ -671,7 +813,12 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Reactive agility",
       "Reactive readiness (on toes, locked)",
     ],
-    commonInjuries: ["Hamstring strain", "Ankle sprain", "ACL/MCL", "Hip flexor"],
+    commonInjuries: [
+      "Hamstring strain",
+      "Ankle sprain",
+      "ACL/MCL",
+      "Hip flexor",
+    ],
     preventionFocus: [
       "Nordic curls (hamstring)",
       "Ankle stability",
@@ -701,7 +848,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Sprint with deceleration to cut",
         "Flying 30m sprints",
       ],
-      rationale: "WRs run the most straight-line distance. Must be able to sprint 8x 40 yards in a row at near-max effort.",
+      rationale:
+        "WRs run the most straight-line distance. Must be able to sprint 8x 40 yards in a row at near-max effort.",
     },
   },
 
@@ -722,12 +870,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
     ],
     benchmarks: {
       // Updated - Centers need to be faster (like WRs)
-      sprint10m: { elite: 1.60, good: 1.70, average: 1.80, needsWork: 1.90, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.90, good: 3.05, average: 3.20, needsWork: 3.35, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 65, good: 55, average: 45, needsWork: 35, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.20, good: 4.40, average: 4.60, needsWork: 4.80, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 1.8, good: 1.5, average: 1.3, needsWork: 1.0, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 12, good: 14, average: 17, needsWork: 20, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.6,
+        good: 1.7,
+        average: 1.8,
+        needsWork: 1.9,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.9,
+        good: 3.05,
+        average: 3.2,
+        needsWork: 3.35,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 65,
+        good: 55,
+        average: 45,
+        needsWork: 35,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.2,
+        good: 4.4,
+        average: 4.6,
+        needsWork: 4.8,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 1.8,
+        good: 1.5,
+        average: 1.3,
+        needsWork: 1.0,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 12,
+        good: 14,
+        average: 17,
+        needsWork: 20,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "Core stability for snapping",
@@ -737,7 +927,13 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Hip hinge mobility",
       "Reactive readiness (snap to sprint)",
     ],
-    commonInjuries: ["Lower back", "Hip flexor", "Shoulder", "Wrist", "Hamstring"],
+    commonInjuries: [
+      "Lower back",
+      "Hip flexor",
+      "Shoulder",
+      "Wrist",
+      "Hamstring",
+    ],
     preventionFocus: [
       "Core anti-extension",
       "Hip mobility",
@@ -767,7 +963,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Acceleration from hip hinge",
         "Straight-line speed work",
       ],
-      rationale: "Modern centers are essentially WRs who snap. Must be able to sprint 8x 40 yards in a row.",
+      rationale:
+        "Modern centers are essentially WRs who snap. Must be able to sprint 8x 40 yards in a row.",
     },
   },
 
@@ -787,12 +984,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Anticipation",
     ],
     benchmarks: {
-      sprint10m: { elite: 1.55, good: 1.65, average: 1.75, needsWork: 1.85, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.85, good: 3.00, average: 3.15, needsWork: 3.30, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 75, good: 65, average: 55, needsWork: 45, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.15, good: 4.30, average: 4.45, needsWork: 4.60, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 2.1, good: 1.8, average: 1.5, needsWork: 1.2, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 9, good: 11, average: 14, needsWork: 17, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.55,
+        good: 1.65,
+        average: 1.75,
+        needsWork: 1.85,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.85,
+        good: 3.0,
+        average: 3.15,
+        needsWork: 3.3,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 75,
+        good: 65,
+        average: 55,
+        needsWork: 45,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.15,
+        good: 4.3,
+        average: 4.45,
+        needsWork: 4.6,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 2.1,
+        good: 1.8,
+        average: 1.5,
+        needsWork: 1.2,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 9,
+        good: 11,
+        average: 14,
+        needsWork: 17,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "First-step explosion",
@@ -830,7 +1069,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Pursuit angle sprints",
         "Closing speed drills",
       ],
-      rationale: "Rushers need elite first-step quickness. Most sprints are <10m with direction changes.",
+      rationale:
+        "Rushers need elite first-step quickness. Most sprints are <10m with direction changes.",
     },
   },
 
@@ -851,12 +1091,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Anticipation",
     ],
     benchmarks: {
-      sprint10m: { elite: 1.55, good: 1.65, average: 1.75, needsWork: 1.85, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.85, good: 3.00, average: 3.15, needsWork: 3.30, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 78, good: 68, average: 58, needsWork: 48, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.10, good: 4.25, average: 4.40, needsWork: 4.55, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 2.0, good: 1.7, average: 1.4, needsWork: 1.1, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 8, good: 10, average: 13, needsWork: 16, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.55,
+        good: 1.65,
+        average: 1.75,
+        needsWork: 1.85,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.85,
+        good: 3.0,
+        average: 3.15,
+        needsWork: 3.3,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 78,
+        good: 68,
+        average: 58,
+        needsWork: 48,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.1,
+        good: 4.25,
+        average: 4.4,
+        needsWork: 4.55,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 2.0,
+        good: 1.7,
+        average: 1.4,
+        needsWork: 1.1,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 8,
+        good: 10,
+        average: 13,
+        needsWork: 16,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "Backpedal mechanics and speed",
@@ -943,7 +1225,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Forward closing: 5-15 yards",
         "Man coverage runs: 10-40 yards",
       ],
-      weeklyVolume: "Zone DB: 30-40 sprints (60% backpedal/lateral) | Man DB: 35-45 sprints (more forward)",
+      weeklyVolume:
+        "Zone DB: 30-40 sprints (60% backpedal/lateral) | Man DB: 35-45 sprints (more forward)",
       keyDrills: [
         "Backpedal to forward transition",
         "Lateral to backpedal transition",
@@ -951,7 +1234,8 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
         "Reactive break drills",
         "45-degree angle breaks",
       ],
-      rationale: "Zone DBs sprint MORE backpedaling and laterally. Man DBs need more forward running and hip turns.",
+      rationale:
+        "Zone DBs sprint MORE backpedaling and laterally. Man DBs need more forward running and hip turns.",
     },
   },
 
@@ -971,12 +1255,54 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Communication",
     ],
     benchmarks: {
-      sprint10m: { elite: 1.60, good: 1.70, average: 1.80, needsWork: 1.90, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.90, good: 3.05, average: 3.20, needsWork: 3.35, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 72, good: 62, average: 52, needsWork: 42, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.20, good: 4.35, average: 4.50, needsWork: 4.65, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 1.9, good: 1.6, average: 1.3, needsWork: 1.0, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 10, good: 12, average: 15, needsWork: 18, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.6,
+        good: 1.7,
+        average: 1.8,
+        needsWork: 1.9,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.9,
+        good: 3.05,
+        average: 3.2,
+        needsWork: 3.35,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 72,
+        good: 62,
+        average: 52,
+        needsWork: 42,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.2,
+        good: 4.35,
+        average: 4.5,
+        needsWork: 4.65,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 1.9,
+        good: 1.6,
+        average: 1.3,
+        needsWork: 1.0,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 10,
+        good: 12,
+        average: 15,
+        needsWork: 18,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "Lateral shuffle speed",
@@ -1004,19 +1330,56 @@ const POSITION_REQUIREMENTS: Record<FlagFootballPosition, PositionRequirements> 
       "Adaptability",
       "Reactive readiness (on toes, locked)",
     ],
-    secondaryAttributes: [
-      "Speed",
-      "Agility",
-      "Power",
-      "Endurance",
-    ],
+    secondaryAttributes: ["Speed", "Agility", "Power", "Endurance"],
     benchmarks: {
-      sprint10m: { elite: 1.60, good: 1.70, average: 1.80, needsWork: 1.90, unit: "s", higherIsBetter: false },
-      sprint20m: { elite: 2.90, good: 3.05, average: 3.20, needsWork: 3.35, unit: "s", higherIsBetter: false },
-      verticalJump: { elite: 73, good: 63, average: 53, needsWork: 43, unit: "cm", higherIsBetter: true },
-      proAgility505: { elite: 4.18, good: 4.33, average: 4.48, needsWork: 4.63, unit: "s", higherIsBetter: false },
-      relativeSquat: { elite: 2.0, good: 1.7, average: 1.4, needsWork: 1.1, unit: "x BW", higherIsBetter: true },
-      bodyFatPercentage: { elite: 9, good: 11, average: 14, needsWork: 17, unit: "%", higherIsBetter: false },
+      sprint10m: {
+        elite: 1.6,
+        good: 1.7,
+        average: 1.8,
+        needsWork: 1.9,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      sprint20m: {
+        elite: 2.9,
+        good: 3.05,
+        average: 3.2,
+        needsWork: 3.35,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      verticalJump: {
+        elite: 73,
+        good: 63,
+        average: 53,
+        needsWork: 43,
+        unit: "cm",
+        higherIsBetter: true,
+      },
+      proAgility505: {
+        elite: 4.18,
+        good: 4.33,
+        average: 4.48,
+        needsWork: 4.63,
+        unit: "s",
+        higherIsBetter: false,
+      },
+      relativeSquat: {
+        elite: 2.0,
+        good: 1.7,
+        average: 1.4,
+        needsWork: 1.1,
+        unit: "x BW",
+        higherIsBetter: true,
+      },
+      bodyFatPercentage: {
+        elite: 9,
+        good: 11,
+        average: 14,
+        needsWork: 17,
+        unit: "%",
+        higherIsBetter: false,
+      },
     },
     trainingPriorities: [
       "Well-rounded development",
@@ -1071,7 +1434,7 @@ const ELITE_COMPARISONS = {
     usainBolt100m: 9.58,
     usainBoltTopSpeed: 12.27, // m/s (44.72 km/h)
     eliteTeamSport10m: 1.55, // seconds
-    eliteTeamSport40m: 4.50, // seconds
+    eliteTeamSport40m: 4.5, // seconds
     accelerationPhase: 30, // meters to reach max velocity
   },
 
@@ -1098,8 +1461,12 @@ export class FlagFootballAthleteProfileService {
   private logger = inject(LoggerService);
 
   // State
-  private readonly _athleteProfile = signal<AthletePhysicalProfile | null>(null);
-  private readonly _benchmarks = signal<AthletePerformanceBenchmarks | null>(null);
+  private readonly _athleteProfile = signal<AthletePhysicalProfile | null>(
+    null,
+  );
+  private readonly _benchmarks = signal<AthletePerformanceBenchmarks | null>(
+    null,
+  );
   private readonly _assessment = signal<AthleteAssessment | null>(null);
 
   // Public signals
@@ -1110,7 +1477,9 @@ export class FlagFootballAthleteProfileService {
   /**
    * Get position requirements
    */
-  getPositionRequirements(position: FlagFootballPosition): PositionRequirements {
+  getPositionRequirements(
+    position: FlagFootballPosition,
+  ): PositionRequirements {
     return POSITION_REQUIREMENTS[position];
   }
 
@@ -1127,7 +1496,7 @@ export class FlagFootballAthleteProfileService {
   assessAthlete(
     position: FlagFootballPosition,
     profile: AthletePhysicalProfile,
-    benchmarks: AthletePerformanceBenchmarks
+    benchmarks: AthletePerformanceBenchmarks,
   ): AthleteAssessment {
     const requirements = this.getPositionRequirements(position);
     const scores: Record<string, number> = {};
@@ -1141,7 +1510,7 @@ export class FlagFootballAthleteProfileService {
     if (benchmarks.sprint10m) {
       scores["speed10m"] = this.scoreBenchmark(
         benchmarks.sprint10m,
-        requirements.benchmarks.sprint10m
+        requirements.benchmarks.sprint10m,
       );
       if (scores["speed10m"] >= 80) strengths.push("Elite acceleration (10m)");
       if (scores["speed10m"] < 50) {
@@ -1153,7 +1522,7 @@ export class FlagFootballAthleteProfileService {
     if (benchmarks.sprint20m) {
       scores["speed20m"] = this.scoreBenchmark(
         benchmarks.sprint20m,
-        requirements.benchmarks.sprint20m
+        requirements.benchmarks.sprint20m,
       );
       if (scores["speed20m"] >= 80) strengths.push("Excellent 20m speed");
       if (scores["speed20m"] < 50) weaknesses.push("20m sprint needs work");
@@ -1162,7 +1531,7 @@ export class FlagFootballAthleteProfileService {
     if (benchmarks.verticalJump) {
       scores["power"] = this.scoreBenchmark(
         benchmarks.verticalJump,
-        requirements.benchmarks.verticalJump
+        requirements.benchmarks.verticalJump,
       );
       if (scores["power"] >= 80) strengths.push("Elite vertical power");
       if (scores["power"] < 50) {
@@ -1174,7 +1543,7 @@ export class FlagFootballAthleteProfileService {
     if (benchmarks.proAgility505) {
       scores["agility"] = this.scoreBenchmark(
         benchmarks.proAgility505,
-        requirements.benchmarks.proAgility505
+        requirements.benchmarks.proAgility505,
       );
       if (scores["agility"] >= 80) strengths.push("Elite change of direction");
       if (scores["agility"] < 50) {
@@ -1184,10 +1553,11 @@ export class FlagFootballAthleteProfileService {
     }
 
     if (benchmarks.relativeSquat || profile.relativeStrength) {
-      const relSquat = benchmarks.relativeSquat || profile.relativeStrength || 0;
+      const relSquat =
+        benchmarks.relativeSquat || profile.relativeStrength || 0;
       scores["strength"] = this.scoreBenchmark(
         relSquat,
-        requirements.benchmarks.relativeSquat
+        requirements.benchmarks.relativeSquat,
       );
       if (scores["strength"] >= 80) strengths.push("Elite relative strength");
       if (scores["strength"] < 50) {
@@ -1199,17 +1569,20 @@ export class FlagFootballAthleteProfileService {
     if (profile.bodyFatPercentage) {
       scores["bodyComp"] = this.scoreBenchmark(
         profile.bodyFatPercentage,
-        requirements.benchmarks.bodyFatPercentage
+        requirements.benchmarks.bodyFatPercentage,
       );
       if (scores["bodyComp"] >= 80) strengths.push("Optimal body composition");
       if (scores["bodyComp"] < 50) {
         weaknesses.push("Body composition needs attention");
-        recommendations.push("Focus on lean mass maintenance, reduce excess body fat");
+        recommendations.push(
+          "Focus on lean mass maintenance, reduce excess body fat",
+        );
       }
     }
 
     // Calculate overall scores
-    const speedScore = ((scores["speed10m"] || 50) + (scores["speed20m"] || 50)) / 2;
+    const speedScore =
+      ((scores["speed10m"] || 50) + (scores["speed20m"] || 50)) / 2;
     const agilityScore = scores["agility"] || 50;
     const powerScore = scores["power"] || 50;
     const strengthScore = scores["strength"] || 50;
@@ -1228,27 +1601,35 @@ export class FlagFootballAthleteProfileService {
     // Overall score (weighted)
     const overallScore = Math.round(
       speedScore * 0.25 +
-      agilityScore * 0.25 +
-      powerScore * 0.20 +
-      strengthScore * 0.15 +
-      enduranceScore * 0.10 +
-      bodyCompositionScore * 0.05
+        agilityScore * 0.25 +
+        powerScore * 0.2 +
+        strengthScore * 0.15 +
+        enduranceScore * 0.1 +
+        bodyCompositionScore * 0.05,
     );
 
     // Injury risk assessment
     if (scores["strength"] && scores["strength"] < 50) {
-      injuryRisks.push("Low relative strength increases injury risk (Suchomel et al. 2016)");
+      injuryRisks.push(
+        "Low relative strength increases injury risk (Suchomel et al. 2016)",
+      );
     }
     if (benchmarks.relativeSquat && benchmarks.relativeSquat < 1.5) {
-      injuryRisks.push("Relative squat <1.5x BW associated with higher injury rates");
+      injuryRisks.push(
+        "Relative squat <1.5x BW associated with higher injury rates",
+      );
     }
     if (profile.bodyFatPercentage && profile.bodyFatPercentage > 18) {
-      injuryRisks.push("Higher body fat may increase joint stress during cutting");
+      injuryRisks.push(
+        "Higher body fat may increase joint stress during cutting",
+      );
     }
 
     // Generate recommendations
     if (priorities.length === 0) {
-      recommendations.push("Maintain current training - all benchmarks are solid");
+      recommendations.push(
+        "Maintain current training - all benchmarks are solid",
+      );
     } else {
       recommendations.push(`Priority focus areas: ${priorities.join(", ")}`);
     }
@@ -1285,15 +1666,19 @@ export class FlagFootballAthleteProfileService {
     if (higherIsBetter) {
       if (value >= elite) return 100;
       if (value >= good) return 80 + ((value - good) / (elite - good)) * 20;
-      if (value >= average) return 60 + ((value - average) / (good - average)) * 20;
-      if (value >= needsWork) return 40 + ((value - needsWork) / (average - needsWork)) * 20;
+      if (value >= average)
+        return 60 + ((value - average) / (good - average)) * 20;
+      if (value >= needsWork)
+        return 40 + ((value - needsWork) / (average - needsWork)) * 20;
       return Math.max(0, 40 * (value / needsWork));
     } else {
       // Lower is better (times)
       if (value <= elite) return 100;
       if (value <= good) return 80 + ((good - value) / (good - elite)) * 20;
-      if (value <= average) return 60 + ((average - value) / (average - good)) * 20;
-      if (value <= needsWork) return 40 + ((needsWork - value) / (needsWork - average)) * 20;
+      if (value <= average)
+        return 60 + ((average - value) / (average - good)) * 20;
+      if (value <= needsWork)
+        return 40 + ((needsWork - value) / (needsWork - average)) * 20;
       return Math.max(0, 40 * (needsWork / value));
     }
   }
@@ -1303,7 +1688,7 @@ export class FlagFootballAthleteProfileService {
    */
   getTrainingRecommendations(
     assessment: AthleteAssessment,
-    position: FlagFootballPosition
+    position: FlagFootballPosition,
   ): TrainingRecommendation[] {
     const recommendations: TrainingRecommendation[] = [];
     const requirements = this.getPositionRequirements(position);
@@ -1412,7 +1797,7 @@ export class FlagFootballAthleteProfileService {
   calculateSeasonalReadiness(
     assessment: AthleteAssessment,
     currentACWR: number,
-    weeksOfTraining: number
+    weeksOfTraining: number,
   ): SeasonalReadiness {
     // Base readiness on assessment scores
     const speedReadiness = assessment.speedScore;
@@ -1420,22 +1805,26 @@ export class FlagFootballAthleteProfileService {
 
     // Durability based on strength, endurance, and training history
     const durabilityReadiness = Math.round(
-      (assessment.strengthScore * 0.4 +
+      assessment.strengthScore * 0.4 +
         assessment.enduranceScore * 0.4 +
-        Math.min(weeksOfTraining * 5, 100) * 0.2)
+        Math.min(weeksOfTraining * 5, 100) * 0.2,
     );
 
     // Overall readiness
     const overallReadiness = Math.round(
-      (speedReadiness * 0.3 +
+      speedReadiness * 0.3 +
         strengthReadiness * 0.25 +
         assessment.agilityScore * 0.25 +
-        durabilityReadiness * 0.2)
+        durabilityReadiness * 0.2,
     );
 
     // Injury risk based on ACWR and strength
     let injuryRisk: "low" | "moderate" | "high" = "moderate";
-    if (currentACWR >= 0.8 && currentACWR <= 1.3 && assessment.strengthScore >= 60) {
+    if (
+      currentACWR >= 0.8 &&
+      currentACWR <= 1.3 &&
+      assessment.strengthScore >= 60
+    ) {
       injuryRisk = "low";
     } else if (currentACWR > 1.5 || assessment.strengthScore < 40) {
       injuryRisk = "high";
@@ -1454,7 +1843,9 @@ export class FlagFootballAthleteProfileService {
       recommendations.push("Build base fitness before increasing game load");
     }
     if (durabilityReadiness < 50) {
-      recommendations.push("Focus on durability training - strength and endurance");
+      recommendations.push(
+        "Focus on durability training - strength and endurance",
+      );
     }
     if (injuryRisk === "high") {
       recommendations.push("Reduce training load and focus on recovery");

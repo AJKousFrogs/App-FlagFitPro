@@ -1,6 +1,6 @@
 /**
  * Netlify Function: Daily Training
- * 
+ *
  * Provides personalized daily training plans based on:
  * - User's position and experience level
  * - Current ACWR and training load
@@ -17,18 +17,66 @@ const {
 
 // Seasonal training focus based on month
 const SEASONAL_CONTEXT = {
-  1: { season: "winter", primaryFocus: "Base Building & Strength", outdoorSprintSuitable: false },
-  2: { season: "winter", primaryFocus: "Base Building & Strength", outdoorSprintSuitable: false },
-  3: { season: "spring", primaryFocus: "Speed Development", outdoorSprintSuitable: true },
-  4: { season: "spring", primaryFocus: "Speed & Agility", outdoorSprintSuitable: true },
-  5: { season: "spring", primaryFocus: "Pre-Season Conditioning", outdoorSprintSuitable: true },
-  6: { season: "summer", primaryFocus: "Peak Performance", outdoorSprintSuitable: true },
-  7: { season: "summer", primaryFocus: "In-Season Maintenance", outdoorSprintSuitable: true },
-  8: { season: "summer", primaryFocus: "In-Season Performance", outdoorSprintSuitable: true },
-  9: { season: "fall", primaryFocus: "In-Season Maintenance", outdoorSprintSuitable: true },
-  10: { season: "fall", primaryFocus: "Late Season Recovery", outdoorSprintSuitable: true },
-  11: { season: "fall", primaryFocus: "Off-Season Transition", outdoorSprintSuitable: false },
-  12: { season: "winter", primaryFocus: "Recovery & Base Building", outdoorSprintSuitable: false },
+  1: {
+    season: "winter",
+    primaryFocus: "Base Building & Strength",
+    outdoorSprintSuitable: false,
+  },
+  2: {
+    season: "winter",
+    primaryFocus: "Base Building & Strength",
+    outdoorSprintSuitable: false,
+  },
+  3: {
+    season: "spring",
+    primaryFocus: "Speed Development",
+    outdoorSprintSuitable: true,
+  },
+  4: {
+    season: "spring",
+    primaryFocus: "Speed & Agility",
+    outdoorSprintSuitable: true,
+  },
+  5: {
+    season: "spring",
+    primaryFocus: "Pre-Season Conditioning",
+    outdoorSprintSuitable: true,
+  },
+  6: {
+    season: "summer",
+    primaryFocus: "Peak Performance",
+    outdoorSprintSuitable: true,
+  },
+  7: {
+    season: "summer",
+    primaryFocus: "In-Season Maintenance",
+    outdoorSprintSuitable: true,
+  },
+  8: {
+    season: "summer",
+    primaryFocus: "In-Season Performance",
+    outdoorSprintSuitable: true,
+  },
+  9: {
+    season: "fall",
+    primaryFocus: "In-Season Maintenance",
+    outdoorSprintSuitable: true,
+  },
+  10: {
+    season: "fall",
+    primaryFocus: "Late Season Recovery",
+    outdoorSprintSuitable: true,
+  },
+  11: {
+    season: "fall",
+    primaryFocus: "Off-Season Transition",
+    outdoorSprintSuitable: false,
+  },
+  12: {
+    season: "winter",
+    primaryFocus: "Recovery & Base Building",
+    outdoorSprintSuitable: false,
+  },
 };
 
 // Session types based on day of week and phase
@@ -96,7 +144,11 @@ async function getUserContext(userId) {
     };
   } catch (error) {
     console.error("[DailyTraining] Error getting user context:", error);
-    return { profile: {}, sessions: [], acwr: { value: 1.0, status: "Optimal" } };
+    return {
+      profile: {},
+      sessions: [],
+      acwr: { value: 1.0, status: "Optimal" },
+    };
   }
 }
 
@@ -115,19 +167,25 @@ function calculateACWR(sessions) {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 28);
 
   // Acute load (last 7 days)
-  const acuteSessions = sessions.filter(s => new Date(s.completed_at) >= sevenDaysAgo);
-  const acuteLoad = acuteSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 7;
+  const acuteSessions = sessions.filter(
+    (s) => new Date(s.completed_at) >= sevenDaysAgo,
+  );
+  const acuteLoad =
+    acuteSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 7;
 
   // Chronic load (last 28 days)
-  const chronicSessions = sessions.filter(s => new Date(s.completed_at) >= twentyEightDaysAgo);
-  const chronicLoad = chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 28;
+  const chronicSessions = sessions.filter(
+    (s) => new Date(s.completed_at) >= twentyEightDaysAgo,
+  );
+  const chronicLoad =
+    chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 28;
 
   if (chronicLoad === 0) {
     return { value: 1.0, status: "Building baseline" };
   }
 
   const acwr = acuteLoad / chronicLoad;
-  
+
   let status;
   if (acwr < 0.8) {
     status = "Under-training - increase load gradually";
@@ -158,7 +216,9 @@ async function getPlyometricExercises(difficulty = "intermediate", limit = 3) {
       return getDefaultPlyometrics();
     }
 
-    return data.length > 0 ? data.map(formatPlyometric) : getDefaultPlyometrics();
+    return data.length > 0
+      ? data.map(formatPlyometric)
+      : getDefaultPlyometrics();
   } catch {
     return getDefaultPlyometrics();
   }
@@ -233,7 +293,12 @@ function getDefaultPlyometrics() {
       exercise_category: "lower_body",
       difficulty_level: "intermediate",
       description: "Explosive jump onto a box or platform",
-      instructions: ["Stand facing box", "Swing arms and jump", "Land softly", "Step down"],
+      instructions: [
+        "Stand facing box",
+        "Swing arms and jump",
+        "Land softly",
+        "Step down",
+      ],
       intensity_level: "moderate",
       safety_notes: ["Ensure stable surface", "Step down, don't jump"],
       recommended_contacts: 30,
@@ -246,7 +311,12 @@ function getDefaultPlyometrics() {
       exercise_category: "lower_body",
       difficulty_level: "intermediate",
       description: "Side-to-side explosive jumps",
-      instructions: ["Start in athletic stance", "Push off laterally", "Land on outside foot", "Repeat"],
+      instructions: [
+        "Start in athletic stance",
+        "Push off laterally",
+        "Land on outside foot",
+        "Repeat",
+      ],
       intensity_level: "moderate",
       safety_notes: ["Control landing", "Keep knee over toe"],
       recommended_contacts: 30,
@@ -259,7 +329,12 @@ function getDefaultPlyometrics() {
       exercise_category: "lower_body",
       difficulty_level: "beginner",
       description: "Quick, low-amplitude jumps for ankle stiffness",
-      instructions: ["Stand with feet hip-width", "Jump using ankle power", "Minimize knee bend", "Stay on balls of feet"],
+      instructions: [
+        "Stand with feet hip-width",
+        "Jump using ankle power",
+        "Minimize knee bend",
+        "Stay on balls of feet",
+      ],
       intensity_level: "low",
       safety_notes: ["Low injury risk", "Good for all levels"],
       recommended_contacts: 20,
@@ -280,7 +355,11 @@ function getDefaultIsometrics() {
       description: "Isometric squat against wall for quad strength",
       category: "lower_body",
       setup_instructions: "Back against wall, slide down to parallel",
-      execution_cues: ["Press back into wall", "Keep knees over ankles", "Breathe normally"],
+      execution_cues: [
+        "Press back into wall",
+        "Keep knees over ankles",
+        "Breathe normally",
+      ],
       difficulty_level: "beginner",
       session_duration: 30,
       session_sets: 3,
@@ -291,7 +370,8 @@ function getDefaultIsometrics() {
       name: "Plank Hold",
       description: "Core stability exercise",
       category: "core",
-      setup_instructions: "Forearms on ground, body straight from head to heels",
+      setup_instructions:
+        "Forearms on ground, body straight from head to heels",
       execution_cues: ["Keep hips level", "Engage glutes", "Breathe steadily"],
       difficulty_level: "beginner",
       session_duration: 45,
@@ -304,7 +384,11 @@ function getDefaultIsometrics() {
       description: "Hip extension hold for glute activation",
       category: "lower_body",
       setup_instructions: "Lie on back, knees bent, drive hips up",
-      execution_cues: ["Squeeze glutes at top", "Don't hyperextend back", "Press through heels"],
+      execution_cues: [
+        "Squeeze glutes at top",
+        "Don't hyperextend back",
+        "Press through heels",
+      ],
       difficulty_level: "beginner",
       session_duration: 30,
       session_sets: 3,
@@ -326,12 +410,21 @@ function buildWarmupProtocol() {
         duration: 8,
         exercises: [
           { name: "Light jog", duration: "2 min", intensity: "50-60%" },
-          { name: "Jump rope", duration: "5 min", intensity: "Moderate-High", variations: ["Basic bounce", "Alternating feet", "High knees"] },
-          { name: "Plank series", duration: "3 min", breakdown: [
-            { variation: "Standard plank", duration: "1.5 min" },
-            { variation: "Right side plank", duration: "45s" },
-            { variation: "Left side plank", duration: "45s" },
-          ]},
+          {
+            name: "Jump rope",
+            duration: "5 min",
+            intensity: "Moderate-High",
+            variations: ["Basic bounce", "Alternating feet", "High knees"],
+          },
+          {
+            name: "Plank series",
+            duration: "3 min",
+            breakdown: [
+              { variation: "Standard plank", duration: "1.5 min" },
+              { variation: "Right side plank", duration: "45s" },
+              { variation: "Left side plank", duration: "45s" },
+            ],
+          },
         ],
       },
       {
@@ -339,8 +432,18 @@ function buildWarmupProtocol() {
         duration: 5,
         exercises: [
           { name: "Band pull-aparts", sets: 2, reps: 15, focus: "Upper back" },
-          { name: "Band external rotations", sets: 2, reps: "10 each", focus: "Rotator cuff" },
-          { name: "Band monster walks", sets: 2, distance: "10m each way", focus: "Glutes" },
+          {
+            name: "Band external rotations",
+            sets: 2,
+            reps: "10 each",
+            focus: "Rotator cuff",
+          },
+          {
+            name: "Band monster walks",
+            sets: 2,
+            distance: "10m each way",
+            focus: "Glutes",
+          },
           { name: "Band squats", sets: 2, reps: 10, focus: "Glute activation" },
         ],
       },
@@ -348,9 +451,21 @@ function buildWarmupProtocol() {
         name: "Phase 3: Dynamic Stretching & Mobility",
         duration: 4,
         exercises: [
-          { name: "Dynamic stretching sequence", duration: "2 min", movements: ["Arm circles", "Leg swings", "Torso rotations"] },
-          { name: "Copenhagen plank", duration: "45s each side", focus: "Adductors" },
-          { name: "World's greatest stretch", reps: "3 each side", focus: "Full body" },
+          {
+            name: "Dynamic stretching sequence",
+            duration: "2 min",
+            movements: ["Arm circles", "Leg swings", "Torso rotations"],
+          },
+          {
+            name: "Copenhagen plank",
+            duration: "45s each side",
+            focus: "Adductors",
+          },
+          {
+            name: "World's greatest stretch",
+            reps: "3 each side",
+            focus: "Full body",
+          },
         ],
       },
       {
@@ -372,14 +487,22 @@ function buildWarmupProtocol() {
  */
 async function buildDailyTrainingPlan(userId, userContext) {
   const today = new Date();
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   const dayOfWeek = dayNames[today.getDay()].toLowerCase();
   const month = today.getMonth() + 1;
-  
+
   const seasonal = SEASONAL_CONTEXT[month];
   const sessionType = SESSION_TYPES[dayOfWeek];
   const hour = today.getHours();
-  
+
   // Get greeting based on time of day
   let greeting;
   if (hour < 12) {
@@ -391,17 +514,26 @@ async function buildDailyTrainingPlan(userId, userContext) {
   }
 
   // Get user name from profile
-  const userName = userContext.profile?.first_name || userContext.profile?.full_name?.split(" ")[0] || "Player";
-  
+  const userName =
+    userContext.profile?.first_name ||
+    userContext.profile?.full_name?.split(" ")[0] ||
+    "Player";
+
   // Get exercises
   const plyometrics = await getPlyometricExercises(
-    userContext.profile?.experience_level || "intermediate"
+    userContext.profile?.experience_level || "intermediate",
   );
   const isometrics = await getIsometricExercises();
-  
+
   // Calculate total contacts and duration
-  const totalContacts = plyometrics.reduce((sum, ex) => sum + (ex.recommended_contacts || 0), 0);
-  const totalIsoDuration = isometrics.reduce((sum, ex) => sum + ((ex.session_duration || 30) * (ex.session_sets || 3)), 0);
+  const totalContacts = plyometrics.reduce(
+    (sum, ex) => sum + (ex.recommended_contacts || 0),
+    0,
+  );
+  const totalIsoDuration = isometrics.reduce(
+    (sum, ex) => sum + (ex.session_duration || 30) * (ex.session_sets || 3),
+    0,
+  );
 
   // Build schedule blocks
   const schedule = [
@@ -473,7 +605,10 @@ async function buildDailyTrainingPlan(userId, userContext) {
       totalDuration: schedule.reduce((sum, block) => sum + block.duration, 0),
       schedule,
     },
-    motivationalMessage: MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)],
+    motivationalMessage:
+      MOTIVATIONAL_MESSAGES[
+        Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)
+      ],
   };
 }
 
@@ -512,7 +647,7 @@ function getCoachingNotes(season, sessionType) {
 async function updateTrainingProgress(userId, updates) {
   try {
     const today = new Date().toISOString().split("T")[0];
-    
+
     // Check if there's an existing session for today
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from("training_sessions")
@@ -580,7 +715,10 @@ exports.handler = async (event, context) => {
       if (event.httpMethod === "GET") {
         try {
           const userContext = await getUserContext(userId);
-          const trainingPlan = await buildDailyTrainingPlan(userId, userContext);
+          const trainingPlan = await buildDailyTrainingPlan(
+            userId,
+            userContext,
+          );
 
           return createSuccessResponse(trainingPlan, requestId);
         } catch (error) {
@@ -589,7 +727,7 @@ exports.handler = async (event, context) => {
             "Failed to generate training plan",
             500,
             "generation_error",
-            requestId
+            requestId,
           );
         }
       }
@@ -604,7 +742,7 @@ exports.handler = async (event, context) => {
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId
+            requestId,
           );
         }
 
@@ -616,7 +754,7 @@ exports.handler = async (event, context) => {
               result.message || "Failed to update progress",
               500,
               "update_error",
-              requestId
+              requestId,
             );
           }
 
@@ -627,12 +765,17 @@ exports.handler = async (event, context) => {
             "Failed to update training progress",
             500,
             "database_error",
-            requestId
+            requestId,
           );
         }
       }
 
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed", requestId);
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+        requestId,
+      );
     },
   });
 };

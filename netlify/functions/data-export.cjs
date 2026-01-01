@@ -137,13 +137,15 @@ const USER_DATA_TABLES = [
  * Remove sensitive fields from data
  */
 function sanitizeData(data, sensitiveFields = []) {
-  if (!data) {return data;}
-  
-  if (Array.isArray(data)) {
-    return data.map(item => sanitizeData(item, sensitiveFields));
+  if (!data) {
+    return data;
   }
-  
-  if (typeof data === 'object') {
+
+  if (Array.isArray(data)) {
+    return data.map((item) => sanitizeData(item, sensitiveFields));
+  }
+
+  if (typeof data === "object") {
     const sanitized = { ...data };
     for (const field of sensitiveFields) {
       if (field in sanitized) {
@@ -152,7 +154,7 @@ function sanitizeData(data, sensitiveFields = []) {
     }
     return sanitized;
   }
-  
+
   return data;
 }
 
@@ -160,14 +162,20 @@ function sanitizeData(data, sensitiveFields = []) {
  * Export data from a single table for a user
  */
 async function exportTableData(tableConfig, userId) {
-  const { table, userIdColumn, sensitiveFields = [], exportName, description } = tableConfig;
-  
+  const {
+    table,
+    userIdColumn,
+    sensitiveFields = [],
+    exportName,
+    description,
+  } = tableConfig;
+
   try {
     const { data, error } = await supabaseAdmin
       .from(table)
       .select("*")
       .eq(userIdColumn, userId);
-    
+
     if (error) {
       // Table might not exist or user might not have access
       if (error.code === "42P01" || error.message?.includes("does not exist")) {
@@ -181,9 +189,9 @@ async function exportTableData(tableConfig, userId) {
       }
       throw error;
     }
-    
+
     const sanitizedData = sanitizeData(data, sensitiveFields);
-    
+
     return {
       name: exportName,
       description,
@@ -208,13 +216,16 @@ async function exportTableData(tableConfig, userId) {
 async function generateDataExport(userId) {
   const startTime = Date.now();
   const exportId = `export-${userId}-${Date.now()}`;
-  
+
   const exportData = {
     exportId,
     exportDate: new Date().toISOString(),
     userId,
     format: "JSON",
-    gdprArticles: ["Article 15 (Right of Access)", "Article 20 (Data Portability)"],
+    gdprArticles: [
+      "Article 15 (Right of Access)",
+      "Article 20 (Data Portability)",
+    ],
     sections: {},
     summary: {
       tablesExported: 0,
@@ -223,13 +234,13 @@ async function generateDataExport(userId) {
       totalRecords: 0,
     },
   };
-  
+
   // Export data from each table
   for (const tableConfig of USER_DATA_TABLES) {
     const result = await exportTableData(tableConfig, userId);
-    
+
     exportData.sections[result.name] = result;
-    
+
     if (result.status === "success") {
       exportData.summary.tablesExported++;
       exportData.summary.totalRecords += result.records;
@@ -239,23 +250,26 @@ async function generateDataExport(userId) {
       exportData.summary.tablesError++;
     }
   }
-  
+
   exportData.summary.durationMs = Date.now() - startTime;
-  
+
   // Log the export request
-  await supabaseAdmin.from("gdpr_data_processing_log").insert({
-    user_id: userId,
-    operation_type: "data_export",
-    status: "completed",
-    details: {
-      export_id: exportId,
-      tables_exported: exportData.summary.tablesExported,
-      total_records: exportData.summary.totalRecords,
-    },
-  }).catch(err => {
-    console.warn("Failed to log data export:", err);
-  });
-  
+  await supabaseAdmin
+    .from("gdpr_data_processing_log")
+    .insert({
+      user_id: userId,
+      operation_type: "data_export",
+      status: "completed",
+      details: {
+        export_id: exportId,
+        tables_exported: exportData.summary.tablesExported,
+        total_records: exportData.summary.totalRecords,
+      },
+    })
+    .catch((err) => {
+      console.warn("Failed to log data export:", err);
+    });
+
   return exportData;
 }
 
@@ -268,16 +282,16 @@ async function generateDataInventory(userId) {
     generatedAt: new Date().toISOString(),
     categories: [],
   };
-  
+
   for (const tableConfig of USER_DATA_TABLES) {
     const { table, userIdColumn, exportName, description } = tableConfig;
-    
+
     try {
       const { count, error } = await supabaseAdmin
         .from(table)
         .select("*", { count: "exact", head: true })
         .eq(userIdColumn, userId);
-      
+
       if (!error) {
         inventory.categories.push({
           name: exportName,
@@ -290,7 +304,7 @@ async function generateDataInventory(userId) {
       // Skip tables that don't exist
     }
   }
-  
+
   return inventory;
 }
 
@@ -305,9 +319,11 @@ async function getExportRequestStatus(userId) {
     .eq("operation_type", "data_export")
     .order("created_at", { ascending: false })
     .limit(5);
-  
-  if (error) {throw error;}
-  
+
+  if (error) {
+    throw error;
+  }
+
   return {
     recentExports: data || [],
     lastExport: data?.[0] || null,
@@ -319,7 +335,7 @@ async function getExportRequestStatus(userId) {
  */
 async function requestDataExport(userId, options = {}) {
   const { format = "json", deliveryMethod = "download" } = options;
-  
+
   // Log the request
   const { data: request, error } = await supabaseAdmin
     .from("gdpr_data_processing_log")
@@ -335,9 +351,11 @@ async function requestDataExport(userId, options = {}) {
     })
     .select()
     .single();
-  
-  if (error) {throw error;}
-  
+
+  if (error) {
+    throw error;
+  }
+
   return {
     requestId: request.id,
     status: "pending",
@@ -351,11 +369,12 @@ async function requestDataExport(userId, options = {}) {
 // =============================================================================
 
 async function handleRequest(event, _context, { userId }) {
-  const path = event.path
-    .replace("/.netlify/functions/data-export", "")
-    .replace(/^\/api\/data-export\/?/, "")
-    .replace(/^\//, "") || "";
-  
+  const path =
+    event.path
+      .replace("/.netlify/functions/data-export", "")
+      .replace(/^\/api\/data-export\/?/, "")
+      .replace(/^\//, "") || "";
+
   let body = {};
   if (event.body && event.httpMethod === "POST") {
     try {
@@ -387,7 +406,7 @@ async function handleRequest(event, _context, { userId }) {
     // Generate and download data export immediately
     if (event.httpMethod === "GET" && (path === "download" || path === "")) {
       const exportData = await generateDataExport(userId);
-      
+
       // Return as downloadable JSON
       return {
         statusCode: 200,
@@ -410,25 +429,29 @@ async function handleRequest(event, _context, { userId }) {
     // Get information about what data is collected
     if (event.httpMethod === "GET" && path === "info") {
       return createSuccessResponse({
-        dataCategories: USER_DATA_TABLES.map(t => ({
+        dataCategories: USER_DATA_TABLES.map((t) => ({
           name: t.exportName,
           description: t.description,
           table: t.table,
         })),
         gdprRights: {
-          access: "You have the right to access all personal data we hold about you (Article 15)",
-          portability: "You have the right to receive your data in a machine-readable format (Article 20)",
-          erasure: "You have the right to request deletion of your data (Article 17) - use /account-deletion endpoint",
-          rectification: "You have the right to correct inaccurate data (Article 16) - update via profile settings",
+          access:
+            "You have the right to access all personal data we hold about you (Article 15)",
+          portability:
+            "You have the right to receive your data in a machine-readable format (Article 20)",
+          erasure:
+            "You have the right to request deletion of your data (Article 17) - use /account-deletion endpoint",
+          rectification:
+            "You have the right to correct inaccurate data (Article 16) - update via profile settings",
         },
         exportFormats: ["JSON"],
-        retentionPolicy: "Data is retained for 3 years after account deletion for legal compliance, then permanently deleted",
+        retentionPolicy:
+          "Data is retained for 3 years after account deletion for legal compliance, then permanently deleted",
         contact: "privacy@flagfitpro.com",
       });
     }
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
-
   } catch (error) {
     console.error("Data export error:", error);
     throw error;
@@ -452,4 +475,3 @@ exports.handler = async (event, context) => {
 // Export for use in other modules
 exports.generateDataExport = generateDataExport;
 exports.generateDataInventory = generateDataInventory;
-

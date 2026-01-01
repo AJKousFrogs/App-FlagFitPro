@@ -17,13 +17,13 @@ npm run test:privacy
 # Expected output: All tests pass
 ```
 
-| Test Suite | What It Proves | Command |
-|------------|----------------|---------|
-| `consent-gating.test.js` | Coaches can't see data without consent | `npx vitest run tests/privacy-safety/consent-gating.test.js` |
-| `ai-opt-out.test.js` | AI fails fast when disabled | `npx vitest run tests/privacy-safety/ai-opt-out.test.js` |
-| `deletion-lifecycle.test.js` | Deletion works correctly | `npx vitest run tests/privacy-safety/deletion-lifecycle.test.js` |
-| `data-state.test.js` | No fake data shown as real | `npx vitest run tests/privacy-safety/data-state.test.js` |
-| `age-gating.test.js` | 16+ gating enforced server-side | `npx vitest run tests/privacy-safety/age-gating.test.js` |
+| Test Suite                   | What It Proves                         | Command                                                          |
+| ---------------------------- | -------------------------------------- | ---------------------------------------------------------------- |
+| `consent-gating.test.js`     | Coaches can't see data without consent | `npx vitest run tests/privacy-safety/consent-gating.test.js`     |
+| `ai-opt-out.test.js`         | AI fails fast when disabled            | `npx vitest run tests/privacy-safety/ai-opt-out.test.js`         |
+| `deletion-lifecycle.test.js` | Deletion works correctly               | `npx vitest run tests/privacy-safety/deletion-lifecycle.test.js` |
+| `data-state.test.js`         | No fake data shown as real             | `npx vitest run tests/privacy-safety/data-state.test.js`         |
+| `age-gating.test.js`         | 16+ gating enforced server-side        | `npx vitest run tests/privacy-safety/age-gating.test.js`         |
 
 ### ✅ Database Verification (Must Pass)
 
@@ -34,31 +34,33 @@ npm run verify:db
 # Expected output: ALL CHECKS PASSED
 ```
 
-| Check | Requirement |
-|-------|-------------|
-| Consent Views | `v_load_monitoring_consent`, `v_workout_logs_consent` exist |
-| ACWR Functions | All calculation functions exist |
-| Triggers | `trigger_update_load_monitoring` attached |
-| RLS Enabled | All privacy tables have RLS enabled |
-| AI Fail-Fast | `require_ai_consent()` function exists |
+| Check          | Requirement                                                 |
+| -------------- | ----------------------------------------------------------- |
+| Consent Views  | `v_load_monitoring_consent`, `v_workout_logs_consent` exist |
+| ACWR Functions | All calculation functions exist                             |
+| Triggers       | `trigger_update_load_monitoring` attached                   |
+| RLS Enabled    | All privacy tables have RLS enabled                         |
+| AI Fail-Fast   | `require_ai_consent()` function exists                      |
 
 ### ✅ Manual Verification
 
 - [ ] **Deletion Queue Health**: Backlog < 10
+
   ```sql
-  SELECT COUNT(*) FROM account_deletion_requests 
+  SELECT COUNT(*) FROM account_deletion_requests
   WHERE status = 'pending' AND scheduled_hard_delete_at <= NOW();
   ```
 
 - [ ] **No Expired Records**: Should be 0
+
   ```sql
-  SELECT COUNT(*) FROM emergency_medical_records 
+  SELECT COUNT(*) FROM emergency_medical_records
   WHERE retention_expires_at <= NOW();
   ```
 
 - [ ] **Recent Deletions Processed**: Check last 24h
   ```sql
-  SELECT * FROM privacy_audit_log 
+  SELECT * FROM privacy_audit_log
   WHERE action IN ('deletion_completed', 'deletion_failed')
   AND created_at > NOW() - INTERVAL '24 hours';
   ```
@@ -91,21 +93,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run Privacy Tests
         run: npm run test:privacy:ci
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          
+
       - name: Verify DB Objects
         run: npm run verify:db:ci
         env:
@@ -120,7 +122,7 @@ Add to `netlify.toml`:
 ```toml
 [[plugins]]
   package = "./plugins/privacy-check"
-  
+
   [plugins.inputs]
     fail_build = true
 ```
@@ -180,20 +182,20 @@ supabase db execute --sql "SELECT ai_processing_enabled, COUNT(*) FROM privacy_s
 
 ## Files Created in Chunk 4
 
-| File | Purpose |
-|------|---------|
-| `tests/privacy-safety/README.md` | Test matrix and instructions |
-| `tests/privacy-safety/consent-gating.test.js` | Consent enforcement tests |
-| `tests/privacy-safety/ai-opt-out.test.js` | AI opt-out tests |
-| `tests/privacy-safety/deletion-lifecycle.test.js` | Deletion workflow tests |
-| `tests/privacy-safety/data-state.test.js` | Data state contract tests |
-| `tests/privacy-safety/age-gating.test.js` | 16+ age gating tests |
-| `scripts/verify-db-objects.cjs` | CI verification script |
-| `docs/RUNBOOKS/ACCOUNT_DELETION.md` | Deletion operations runbook |
-| `docs/RUNBOOKS/RETENTION_CLEANUP.md` | Retention cleanup runbook |
-| `docs/RUNBOOKS/PRIVACY_INCIDENT.md` | Privacy incident runbook |
-| `docs/MONITORING.md` | Monitoring & alerts plan |
-| `netlify/functions/utils/privacy-logger.cjs` | Structured privacy logging |
+| File                                              | Purpose                      |
+| ------------------------------------------------- | ---------------------------- |
+| `tests/privacy-safety/README.md`                  | Test matrix and instructions |
+| `tests/privacy-safety/consent-gating.test.js`     | Consent enforcement tests    |
+| `tests/privacy-safety/ai-opt-out.test.js`         | AI opt-out tests             |
+| `tests/privacy-safety/deletion-lifecycle.test.js` | Deletion workflow tests      |
+| `tests/privacy-safety/data-state.test.js`         | Data state contract tests    |
+| `tests/privacy-safety/age-gating.test.js`         | 16+ age gating tests         |
+| `scripts/verify-db-objects.cjs`                   | CI verification script       |
+| `docs/RUNBOOKS/ACCOUNT_DELETION.md`               | Deletion operations runbook  |
+| `docs/RUNBOOKS/RETENTION_CLEANUP.md`              | Retention cleanup runbook    |
+| `docs/RUNBOOKS/PRIVACY_INCIDENT.md`               | Privacy incident runbook     |
+| `docs/MONITORING.md`                              | Monitoring & alerts plan     |
+| `netlify/functions/utils/privacy-logger.cjs`      | Structured privacy logging   |
 
 ---
 
@@ -221,4 +223,3 @@ Before releasing to production:
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

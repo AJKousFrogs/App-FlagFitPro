@@ -52,7 +52,13 @@ import {
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeChannel, REALTIME_LISTEN_TYPES, REALTIME_POSTGRES_CHANGES_LISTEN_EVENT, RealtimePostgresInsertPayload, RealtimePostgresUpdatePayload } from "@supabase/supabase-js";
+import {
+  RealtimeChannel,
+  REALTIME_LISTEN_TYPES,
+  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+  RealtimePostgresInsertPayload,
+  RealtimePostgresUpdatePayload,
+} from "@supabase/supabase-js";
 import { ResearchCitation } from "../config/evidence-config";
 
 interface LoadMonitoringRecord {
@@ -541,7 +547,8 @@ export class AcwrService {
           .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
 
       // Default to investigate - injury check can be done separately via checkToleranceWithInjuryData()
-      const recommendation: "maintain" | "adjust" | "investigate" = "investigate";
+      const recommendation: "maintain" | "adjust" | "investigate" =
+        "investigate";
       const message =
         `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days. ` +
         `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
@@ -564,7 +571,9 @@ export class AcwrService {
    * Async method to check tolerance with injury data
    * Call this separately when you need injury-aware tolerance detection
    */
-  public async checkToleranceWithInjuryData(): Promise<ToleranceDetection | undefined> {
+  public async checkToleranceWithInjuryData(): Promise<
+    ToleranceDetection | undefined
+  > {
     const cfg = this.config();
     if (!cfg.toleranceDetection.enabled) return undefined;
 
@@ -573,7 +582,10 @@ export class AcwrService {
       return undefined;
     }
 
-    const recentHistory = history.slice(0, cfg.toleranceDetection.consecutiveHighDays);
+    const recentHistory = history.slice(
+      0,
+      cfg.toleranceDetection.consecutiveHighDays,
+    );
     const daysAboveThreshold = recentHistory.filter(
       (h) => h.ratio > cfg.thresholds.dangerHigh,
     ).length;
@@ -589,11 +601,13 @@ export class AcwrService {
       const endDate = recentHistory[0]?.date;
 
       // Check if injury occurred during this high-load period
-      const injuryOccurred = playerId ? await this.checkForRecentInjury(
-        playerId,
-        startDate?.toISOString(),
-        endDate?.toISOString(),
-      ) : false;
+      const injuryOccurred = playerId
+        ? await this.checkForRecentInjury(
+            playerId,
+            startDate?.toISOString(),
+            endDate?.toISOString(),
+          )
+        : false;
 
       let recommendation: "maintain" | "adjust" | "investigate" = "investigate";
       let message = "";
@@ -899,7 +913,7 @@ export class AcwrService {
         authors: c.authors,
         year: c.year,
         title: c.title,
-        doi: c.doi || '',
+        doi: c.doi || "",
       })),
       scienceNotes: acwrConfig.scienceNotes.thresholds,
       coachOverride: acwrConfig.scienceNotes.coachOverride,
@@ -1037,24 +1051,26 @@ export class AcwrService {
       }
 
       // Convert workout logs to TrainingSession format
-      const sessions: TrainingSession[] = workoutLogs.map((log: WorkoutLog) => ({
-        playerId: log.player_id,
-        date: new Date(log.completed_at),
-        sessionType: this.inferSessionType(log),
-        metrics: {
-          type: "internal",
-          internal: {
-            sessionRPE: log.rpe || 5,
-            duration: log.duration_minutes || 60,
-            workload: (log.rpe || 5) * (log.duration_minutes || 60),
+      const sessions: TrainingSession[] = workoutLogs.map(
+        (log: WorkoutLog) => ({
+          playerId: log.player_id,
+          date: new Date(log.completed_at),
+          sessionType: this.inferSessionType(log),
+          metrics: {
+            type: "internal",
+            internal: {
+              sessionRPE: log.rpe || 5,
+              duration: log.duration_minutes || 60,
+              workload: (log.rpe || 5) * (log.duration_minutes || 60),
+            },
+            calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
           },
-          calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
-        },
-        load: (log.rpe || 5) * (log.duration_minutes || 60),
-        notes: log.notes,
-        completed: true,
-        modifiedFromPlan: false,
-      }));
+          load: (log.rpe || 5) * (log.duration_minutes || 60),
+          notes: log.notes,
+          completed: true,
+          modifiedFromPlan: false,
+        }),
+      );
 
       this.addSessions(sessions);
       this.logger.success(`[ACWR] Loaded ${sessions.length} training sessions`);

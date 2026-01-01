@@ -7,10 +7,17 @@
 
 import { Injectable, inject, signal, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { RealtimeChannel, RealtimePostgresChangesPayload, REALTIME_POSTGRES_CHANGES_LISTEN_EVENT, REALTIME_LISTEN_TYPES } from "@supabase/supabase-js";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+  REALTIME_LISTEN_TYPES,
+} from "@supabase/supabase-js";
 import { LoggerService } from "./logger.service";
 
-export interface RealtimeEvent<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface RealtimeEvent<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> {
   eventType: "INSERT" | "UPDATE" | "DELETE";
   table: string;
   schema: string;
@@ -19,9 +26,13 @@ export interface RealtimeEvent<T extends Record<string, unknown> = Record<string
   errors: unknown;
 }
 
-export type RealtimeCallback<T extends Record<string, unknown> = Record<string, unknown>> = (event: RealtimeEvent<T>) => void;
+export type RealtimeCallback<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = (event: RealtimeEvent<T>) => void;
 
-export interface RealtimeSubscriptionCallbacks<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface RealtimeSubscriptionCallbacks<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> {
   onInsert?: (payload: RealtimeEvent<T>) => void;
   onUpdate?: (payload: RealtimeEvent<T>) => void;
   onDelete?: (payload: RealtimeEvent<T>) => void;
@@ -311,10 +322,7 @@ export class RealtimeService {
   /**
    * Subscribe to channel updates (new channels, archived, etc.)
    */
-  subscribeToChannels(
-    teamId: string,
-    callback: RealtimeCallback,
-  ): () => void {
+  subscribeToChannels(teamId: string, callback: RealtimeCallback): () => void {
     if (!teamId) {
       this.logger.warn("Cannot subscribe: No team ID provided");
       return () => {};

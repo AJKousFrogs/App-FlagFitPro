@@ -163,7 +163,7 @@ describe("AiChatService", () => {
     it("should clear error on new message", async () => {
       // First, set an error
       mockApiService.post.mockReturnValue(
-        throwError(() => new Error("Network error"))
+        throwError(() => new Error("Network error")),
       );
       await firstValueFrom(service.sendMessage({ message: "Fail" }));
 
@@ -184,7 +184,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "How do I warm up?" })
+        service.sendMessage({ message: "How do I warm up?" }),
       );
 
       expect(response.riskLevel).toBe("low");
@@ -195,7 +195,9 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockHighRiskResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "My knee hurts badly, what should I do?" })
+        service.sendMessage({
+          message: "My knee hurts badly, what should I do?",
+        }),
       );
 
       expect(response.riskLevel).toBe("high");
@@ -207,7 +209,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockACWRBlockedResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Can I do sprint training today?" })
+        service.sendMessage({ message: "Can I do sprint training today?" }),
       );
 
       expect(response.riskLevel).toBe("high");
@@ -227,7 +229,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.citations).toBeDefined();
@@ -239,7 +241,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockHighRiskResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.citations).toBeDefined();
@@ -256,7 +258,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.suggestedActions).toBeDefined();
@@ -331,11 +333,11 @@ describe("AiChatService", () => {
   describe("Error Handling", () => {
     it("should handle API errors gracefully", async () => {
       mockApiService.post.mockReturnValue(
-        throwError(() => new Error("Network error"))
+        throwError(() => new Error("Network error")),
       );
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       // Should return fallback message
@@ -350,11 +352,11 @@ describe("AiChatService", () => {
         of({
           success: false,
           error: "Server error",
-        })
+        }),
       );
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.content).toContain("trouble connecting");
@@ -362,7 +364,7 @@ describe("AiChatService", () => {
 
     it("should handle load session failure", async () => {
       mockApiService.get.mockReturnValue(
-        throwError(() => new Error("Session not found"))
+        throwError(() => new Error("Session not found")),
       );
 
       await firstValueFrom(service.loadSession("invalid-session"));
@@ -395,7 +397,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.metadata).toBeDefined();
@@ -407,7 +409,7 @@ describe("AiChatService", () => {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
 
       const response = await firstValueFrom(
-        service.sendMessage({ message: "Test" })
+        service.sendMessage({ message: "Test" }),
       );
 
       expect(response.metadata!.usage).toBeDefined();
@@ -432,7 +434,7 @@ describe("AiChatService", () => {
 
       expect(mockApiService.post).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ session_id: "existing-session" })
+        expect.objectContaining({ session_id: "existing-session" }),
       );
     });
 
@@ -448,7 +450,7 @@ describe("AiChatService", () => {
 
       expect(mockApiService.post).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ team_id: "team-123" })
+        expect.objectContaining({ team_id: "team-123" }),
       );
     });
 
@@ -468,9 +470,8 @@ describe("AiChatService", () => {
         expect.objectContaining({
           goal: "Improve speed",
           time_horizon: "weekly",
-        })
+        }),
       );
     });
   });
 });
-

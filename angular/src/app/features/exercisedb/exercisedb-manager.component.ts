@@ -190,15 +190,26 @@ import {
                   @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                     <p-card styleClass="exercise-card skeleton-card">
                       <p-skeleton height="200px"></p-skeleton>
-                      <p-skeleton width="70%" height="1.5rem" styleClass="mt-3"></p-skeleton>
-                      <p-skeleton width="40%" height="1rem" styleClass="mt-2"></p-skeleton>
+                      <p-skeleton
+                        width="70%"
+                        height="1.5rem"
+                        styleClass="mt-3"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="40%"
+                        height="1rem"
+                        styleClass="mt-2"
+                      ></p-skeleton>
                     </p-card>
                   }
                 </div>
               } @else {
                 <div class="exercises-grid">
                   @for (exercise of filteredExercises(); track exercise.id) {
-                    <p-card styleClass="exercise-card" (click)="openExerciseDetail(exercise)">
+                    <p-card
+                      styleClass="exercise-card"
+                      (click)="openExerciseDetail(exercise)"
+                    >
                       <div class="exercise-image-container">
                         @if (exercise.gif_url) {
                           <img
@@ -214,7 +225,10 @@ import {
                         }
                         <div class="exercise-badges">
                           @if (exercise.is_approved) {
-                            <p-badge value="Approved" severity="success"></p-badge>
+                            <p-badge
+                              value="Approved"
+                              severity="success"
+                            ></p-badge>
                           }
                           @if (exercise.is_curated && !exercise.is_approved) {
                             <p-badge value="Curated" severity="info"></p-badge>
@@ -222,7 +236,11 @@ import {
                           @if (exercise.flag_football_relevance) {
                             <p-badge
                               [value]="exercise.flag_football_relevance + '/10'"
-                              [severity]="getRelevanceSeverity(exercise.flag_football_relevance)"
+                              [severity]="
+                                getRelevanceSeverity(
+                                  exercise.flag_football_relevance
+                                )
+                              "
                             ></p-badge>
                           }
                         </div>
@@ -247,12 +265,23 @@ import {
                         }
                         @if (exercise.applicable_positions?.length) {
                           <div class="position-chips">
-                            @for (pos of exercise.applicable_positions?.slice(0, 3); track pos) {
-                              <p-chip [label]="pos" styleClass="position-chip"></p-chip>
+                            @for (
+                              pos of exercise.applicable_positions?.slice(0, 3);
+                              track pos
+                            ) {
+                              <p-chip
+                                [label]="pos"
+                                styleClass="position-chip"
+                              ></p-chip>
                             }
-                            @if ((exercise.applicable_positions?.length || 0) > 3) {
+                            @if (
+                              (exercise.applicable_positions?.length || 0) > 3
+                            ) {
                               <span class="more-positions">
-                                +{{ (exercise.applicable_positions?.length || 0) - 3 }}
+                                +{{
+                                  (exercise.applicable_positions?.length || 0) -
+                                    3
+                                }}
                               </span>
                             }
                           </div>
@@ -266,7 +295,10 @@ import {
                   <div class="empty-state">
                     <i class="pi pi-inbox"></i>
                     <h3>No exercises found</h3>
-                    <p>Try adjusting your filters or import exercises from ExerciseDB</p>
+                    <p>
+                      Try adjusting your filters or import exercises from
+                      ExerciseDB
+                    </p>
                   </div>
                 }
               }
@@ -282,9 +314,9 @@ import {
                   Import Exercises from ExerciseDB API
                 </h3>
                 <p class="import-description">
-                  Import exercises from the ExerciseDB API and automatically categorize them
-                  for flag football training. Exercises will be auto-tagged based on body part
-                  and target muscle relevance.
+                  Import exercises from the ExerciseDB API and automatically
+                  categorize them for flag football training. Exercises will be
+                  auto-tagged based on body part and target muscle relevance.
                 </p>
 
                 <div class="import-options">
@@ -317,13 +349,19 @@ import {
 
                 @if (importing()) {
                   <div class="import-progress">
-                    <p-progressBar mode="indeterminate" styleClass="import-bar"></p-progressBar>
-                    <p class="progress-text">Importing exercises from ExerciseDB...</p>
+                    <p-progressBar
+                      mode="indeterminate"
+                      styleClass="import-bar"
+                    ></p-progressBar>
+                    <p class="progress-text">
+                      Importing exercises from ExerciseDB...
+                    </p>
                   </div>
                 } @else {
                   <p-button
                     label="Start Import"
                     icon="pi pi-download"
+                    [rounded]="true"
                     (onClick)="startImport()"
                     styleClass="import-button"
                   ></p-button>
@@ -334,24 +372,34 @@ import {
                     <h4>Last Import Results</h4>
                     <div class="results-grid">
                       <div class="result-item">
-                        <span class="result-value">{{ lastImportStats()?.fetched }}</span>
+                        <span class="result-value">{{
+                          lastImportStats()?.fetched
+                        }}</span>
                         <span class="result-label">Fetched</span>
                       </div>
                       <div class="result-item success">
-                        <span class="result-value">{{ lastImportStats()?.imported }}</span>
+                        <span class="result-value">{{
+                          lastImportStats()?.imported
+                        }}</span>
                         <span class="result-label">Imported</span>
                       </div>
                       <div class="result-item info">
-                        <span class="result-value">{{ lastImportStats()?.updated }}</span>
+                        <span class="result-value">{{
+                          lastImportStats()?.updated
+                        }}</span>
                         <span class="result-label">Updated</span>
                       </div>
                       <div class="result-item warning">
-                        <span class="result-value">{{ lastImportStats()?.skipped }}</span>
+                        <span class="result-value">{{
+                          lastImportStats()?.skipped
+                        }}</span>
                         <span class="result-label">Skipped</span>
                       </div>
                       @if ((lastImportStats()?.errors || 0) > 0) {
                         <div class="result-item error">
-                          <span class="result-value">{{ lastImportStats()?.errors }}</span>
+                          <span class="result-value">{{
+                            lastImportStats()?.errors
+                          }}</span>
                           <span class="result-label">Errors</span>
                         </div>
                       }
@@ -377,8 +425,12 @@ import {
                           ></p-tag>
                         </div>
                         <div class="history-details">
-                          <span class="history-type">{{ log.import_type }} import</span>
-                          <span class="history-date">{{ formatDate(log.started_at) }}</span>
+                          <span class="history-type"
+                            >{{ log.import_type }} import</span
+                          >
+                          <span class="history-date">{{
+                            formatDate(log.started_at)
+                          }}</span>
                         </div>
                         <div class="history-stats">
                           <span>{{ log.total_imported }} imported</span>
@@ -419,9 +471,15 @@ import {
                       <div class="approval-info">
                         <h4>{{ exercise.name }}</h4>
                         <div class="approval-meta">
-                          <p-tag [value]="exercise.body_part" severity="info"></p-tag>
+                          <p-tag
+                            [value]="exercise.body_part"
+                            severity="info"
+                          ></p-tag>
                           <p-tag [value]="exercise.equipment"></p-tag>
-                          <p-tag [value]="exercise.target_muscle" severity="secondary"></p-tag>
+                          <p-tag
+                            [value]="exercise.target_muscle"
+                            severity="secondary"
+                          ></p-tag>
                         </div>
                       </div>
                     </div>
@@ -431,7 +489,8 @@ import {
                         <strong>{{ exercise.ff_category }}</strong>
                         @if (exercise.flag_football_relevance) {
                           <span class="relevance">
-                            (Relevance: {{ exercise.flag_football_relevance }}/10)
+                            (Relevance:
+                            {{ exercise.flag_football_relevance }}/10)
                           </span>
                         }
                       </div>
@@ -440,15 +499,17 @@ import {
                       <p-button
                         label="Review & Approve"
                         icon="pi pi-check"
+                        [rounded]="true"
+                        severity="success"
                         (onClick)="openApprovalDialog(exercise)"
-                        styleClass="p-button-success"
                       ></p-button>
                       <p-button
                         label="Skip"
                         icon="pi pi-times"
-                        (onClick)="skipExercise(exercise)"
-                        styleClass="p-button-secondary"
+                        [rounded]="true"
+                        severity="secondary"
                         [outlined]="true"
+                        (onClick)="skipExercise(exercise)"
                       ></p-button>
                     </div>
                   </p-card>
@@ -490,9 +551,17 @@ import {
                 <div class="detail-section">
                   <h4>Target</h4>
                   <div class="detail-tags">
-                    <p-tag [value]="selectedExercise()?.body_part || ''" severity="info"></p-tag>
-                    <p-tag [value]="selectedExercise()?.target_muscle || ''" severity="secondary"></p-tag>
-                    <p-tag [value]="selectedExercise()?.equipment || ''"></p-tag>
+                    <p-tag
+                      [value]="selectedExercise()?.body_part || ''"
+                      severity="info"
+                    ></p-tag>
+                    <p-tag
+                      [value]="selectedExercise()?.target_muscle || ''"
+                      severity="secondary"
+                    ></p-tag>
+                    <p-tag
+                      [value]="selectedExercise()?.equipment || ''"
+                    ></p-tag>
                   </div>
                 </div>
 
@@ -500,7 +569,10 @@ import {
                   <div class="detail-section">
                     <h4>Secondary Muscles</h4>
                     <div class="detail-tags">
-                      @for (muscle of selectedExercise()?.secondary_muscles; track muscle) {
+                      @for (
+                        muscle of selectedExercise()?.secondary_muscles;
+                        track muscle
+                      ) {
                         <p-chip [label]="muscle"></p-chip>
                       }
                     </div>
@@ -510,7 +582,10 @@ import {
                 @if (selectedExercise()?.ff_category) {
                   <div class="detail-section">
                     <h4>Flag Football Category</h4>
-                    <p-tag [value]="selectedExercise()?.ff_category || ''" styleClass="ff-category-tag"></p-tag>
+                    <p-tag
+                      [value]="selectedExercise()?.ff_category || ''"
+                      styleClass="ff-category-tag"
+                    ></p-tag>
                   </div>
                 }
 
@@ -518,8 +593,14 @@ import {
                   <div class="detail-section">
                     <h4>Training Focus</h4>
                     <div class="detail-tags">
-                      @for (focus of selectedExercise()?.ff_training_focus; track focus) {
-                        <p-chip [label]="focus" styleClass="focus-chip"></p-chip>
+                      @for (
+                        focus of selectedExercise()?.ff_training_focus;
+                        track focus
+                      ) {
+                        <p-chip
+                          [label]="focus"
+                          styleClass="focus-chip"
+                        ></p-chip>
                       }
                     </div>
                   </div>
@@ -529,8 +610,14 @@ import {
                   <div class="detail-section">
                     <h4>Applicable Positions</h4>
                     <div class="detail-tags">
-                      @for (pos of selectedExercise()?.applicable_positions; track pos) {
-                        <p-chip [label]="pos" styleClass="position-chip"></p-chip>
+                      @for (
+                        pos of selectedExercise()?.applicable_positions;
+                        track pos
+                      ) {
+                        <p-chip
+                          [label]="pos"
+                          styleClass="position-chip"
+                        ></p-chip>
                       }
                     </div>
                   </div>
@@ -540,7 +627,10 @@ import {
                   <div class="detail-section">
                     <h4>Instructions</h4>
                     <ol class="instructions-list">
-                      @for (instruction of selectedExercise()?.instructions; track instruction) {
+                      @for (
+                        instruction of selectedExercise()?.instructions;
+                        track instruction
+                      ) {
                         <li>{{ instruction }}</li>
                       }
                     </ol>
@@ -549,9 +639,14 @@ import {
 
                 @if (selectedExercise()?.safety_notes?.length) {
                   <div class="detail-section safety">
-                    <h4><i class="pi pi-exclamation-triangle"></i> Safety Notes</h4>
+                    <h4>
+                      <i class="pi pi-exclamation-triangle"></i> Safety Notes
+                    </h4>
                     <ul>
-                      @for (note of selectedExercise()?.safety_notes; track note) {
+                      @for (
+                        note of selectedExercise()?.safety_notes;
+                        track note
+                      ) {
                         <li>{{ note }}</li>
                       }
                     </ul>
@@ -562,7 +657,10 @@ import {
                   <div class="detail-section">
                     <h4><i class="pi pi-megaphone"></i> Coaching Cues</h4>
                     <ul>
-                      @for (cue of selectedExercise()?.coaching_cues; track cue) {
+                      @for (
+                        cue of selectedExercise()?.coaching_cues;
+                        track cue
+                      ) {
                         <li>{{ cue }}</li>
                       }
                     </ul>
@@ -575,15 +673,17 @@ import {
                 <p-button
                   label="Approve Exercise"
                   icon="pi pi-check"
+                  [rounded]="true"
+                  severity="success"
                   (onClick)="openApprovalDialog(selectedExercise()!)"
-                  styleClass="p-button-success"
                 ></p-button>
               }
               <p-button
                 label="Close"
                 icon="pi pi-times"
+                [rounded]="true"
+                severity="secondary"
                 (onClick)="showDetailDialog = false"
-                styleClass="p-button-secondary"
               ></p-button>
             </ng-template>
           }
@@ -610,7 +710,9 @@ import {
                   [max]="10"
                   [step]="1"
                 ></p-slider>
-                <span class="slider-value">{{ approvalData.flag_football_relevance }}/10</span>
+                <span class="slider-value"
+                  >{{ approvalData.flag_football_relevance }}/10</span
+                >
               </div>
 
               <div class="form-group">
@@ -676,14 +778,17 @@ import {
             <p-button
               label="Cancel"
               icon="pi pi-times"
+              [rounded]="true"
+              severity="secondary"
+              [text]="true"
               (onClick)="showApprovalDialog = false"
-              styleClass="p-button-secondary"
             ></p-button>
             <p-button
               label="Approve"
               icon="pi pi-check"
+              [rounded]="true"
+              severity="success"
               (onClick)="approveExercise()"
-              styleClass="p-button-success"
             ></p-button>
           </ng-template>
         </p-dialog>
@@ -695,7 +800,11 @@ import {
       .exercisedb-manager {
         padding: var(--space-6);
         min-height: 100vh;
-        background: linear-gradient(135deg, var(--surface-ground) 0%, var(--surface-section) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--surface-ground) 0%,
+          var(--surface-section) 100%
+        );
       }
 
       /* Stats Grid */
@@ -710,7 +819,9 @@ import {
         background: var(--surface-card);
         border-radius: var(--border-radius-lg);
         border: 1px solid var(--surface-border);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       :host ::ng-deep .stat-card:hover {
@@ -737,25 +848,26 @@ import {
       }
 
       .stat-icon {
-        font-size: 2.5rem;
-        color: var(--primary-color);
+        font-size: var(--icon-2xl); /* 2rem/32px */
+        color: var(--ds-primary-green);
         opacity: 0.8;
       }
 
       .stat-details {
         display: flex;
         flex-direction: column;
+        gap: var(--space-1);
       }
 
       .stat-value {
         font-size: var(--font-heading-lg);
         font-weight: var(--font-weight-bold);
-        color: var(--text-color);
+        color: var(--color-text-primary);
       }
 
       .stat-label {
         font-size: var(--font-body-sm);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       /* Tabs */
@@ -818,7 +930,9 @@ import {
 
       :host ::ng-deep .exercise-card {
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
         background: var(--surface-card);
         border-radius: var(--border-radius-lg);
         overflow: hidden;
@@ -857,12 +971,16 @@ import {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, var(--surface-100) 0%, var(--surface-200) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--surface-100) 0%,
+          var(--surface-200) 100%
+        );
       }
 
       .exercise-placeholder i {
-        font-size: 3rem;
-        color: var(--text-color-secondary);
+        font-size: var(--icon-3xl); /* 3rem/48px */
+        color: var(--color-text-secondary);
         opacity: 0.5;
       }
 
@@ -883,8 +1001,8 @@ import {
         font-size: var(--font-body-lg);
         font-weight: var(--font-weight-semibold);
         margin: 0 0 var(--space-2) 0;
-        color: var(--text-color);
-        line-height: 1.3;
+        color: var(--color-text-primary);
+        line-height: var(--line-height-tight);
       }
 
       .exercise-meta {
@@ -898,11 +1016,11 @@ import {
         align-items: center;
         gap: var(--space-1);
         font-size: var(--font-body-sm);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .meta-item i {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs); /* 0.75rem/12px */
       }
 
       :host ::ng-deep .category-tag {
@@ -917,7 +1035,7 @@ import {
       }
 
       :host ::ng-deep .position-chip {
-        font-size: 0.7rem;
+        font-size: var(--font-body-xs); /* 0.75rem/12px */
       }
 
       .more-positions {
@@ -1470,21 +1588,21 @@ export class ExerciseDBManagerComponent implements OnInit {
   // Computed values
   totalExercises = computed(() => this.exercises().length);
   approvedCount = computed(
-    () => this.exercises().filter((e) => e.is_approved).length
+    () => this.exercises().filter((e) => e.is_approved).length,
   );
   pendingCount = computed(
-    () => this.exercises().filter((e) => !e.is_approved && e.is_curated).length
+    () => this.exercises().filter((e) => !e.is_approved && e.is_curated).length,
   );
   curatedCount = computed(
-    () => this.exercises().filter((e) => e.is_curated).length
+    () => this.exercises().filter((e) => e.is_curated).length,
   );
   pendingExercises = computed(() =>
     this.exercises()
       .filter((e) => !e.is_approved && e.is_curated)
       .sort(
         (a, b) =>
-          (b.flag_football_relevance || 0) - (a.flag_football_relevance || 0)
-      )
+          (b.flag_football_relevance || 0) - (a.flag_football_relevance || 0),
+      ),
   );
 
   bodyPartOptions = computed(() => {
@@ -1518,10 +1636,10 @@ export class ExerciseDBManagerComponent implements OnInit {
 
     // Subscribe to loading states
     this.exerciseDBService.loading$.subscribe((loading) =>
-      this.loading.set(loading)
+      this.loading.set(loading),
     );
     this.exerciseDBService.importing$.subscribe((importing) =>
-      this.importing.set(importing)
+      this.importing.set(importing),
     );
   }
 
@@ -1559,7 +1677,7 @@ export class ExerciseDBManagerComponent implements OnInit {
           e.name.toLowerCase().includes(query) ||
           e.body_part?.toLowerCase().includes(query) ||
           e.target_muscle?.toLowerCase().includes(query) ||
-          e.equipment?.toLowerCase().includes(query)
+          e.equipment?.toLowerCase().includes(query),
       );
     }
 
@@ -1578,13 +1696,15 @@ export class ExerciseDBManagerComponent implements OnInit {
       filtered = filtered.filter(
         (e) =>
           e.applicable_positions?.includes(this.selectedPosition!) ||
-          e.applicable_positions?.includes("All")
+          e.applicable_positions?.includes("All"),
       );
     }
 
     // Category filter
     if (this.selectedCategory) {
-      filtered = filtered.filter((e) => e.ff_category === this.selectedCategory);
+      filtered = filtered.filter(
+        (e) => e.ff_category === this.selectedCategory,
+      );
     }
 
     // Status filter
@@ -1689,7 +1809,7 @@ export class ExerciseDBManagerComponent implements OnInit {
   }
 
   getRelevanceSeverity(
-    relevance: number
+    relevance: number,
   ): "success" | "info" | "warn" | "danger" | "secondary" {
     if (relevance >= 8) return "success";
     if (relevance >= 6) return "info";
@@ -1698,7 +1818,7 @@ export class ExerciseDBManagerComponent implements OnInit {
   }
 
   getStatusSeverity(
-    status: string
+    status: string,
   ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (status) {
       case "completed":

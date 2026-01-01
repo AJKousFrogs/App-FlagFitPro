@@ -33,7 +33,13 @@ import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
 
 type CertificationLevel = "youth" | "high_school" | "college" | "professional";
-type OfficialRole = "head_referee" | "line_judge" | "field_judge" | "back_judge" | "scorekeeper" | "timekeeper";
+type OfficialRole =
+  | "head_referee"
+  | "line_judge"
+  | "field_judge"
+  | "back_judge"
+  | "scorekeeper"
+  | "timekeeper";
 type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
 @Component({
@@ -126,17 +132,27 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   <td>
                     <div class="contact-info">
                       @if (official.email) {
-                        <span><i class="pi pi-envelope"></i> {{ official.email }}</span>
+                        <span
+                          ><i class="pi pi-envelope"></i>
+                          {{ official.email }}</span
+                        >
                       }
                       @if (official.phone) {
-                        <span><i class="pi pi-phone"></i> {{ official.phone }}</span>
+                        <span
+                          ><i class="pi pi-phone"></i>
+                          {{ official.phone }}</span
+                        >
                       }
                     </div>
                   </td>
                   <td>
                     <p-tag
-                      [value]="getCertificationLabel(official.certification_level)"
-                      [severity]="getCertificationSeverity(official.certification_level)"
+                      [value]="
+                        getCertificationLabel(official.certification_level)
+                      "
+                      [severity]="
+                        getCertificationSeverity(official.certification_level)
+                      "
                     ></p-tag>
                   </td>
                   <td>
@@ -200,11 +216,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               </div>
             } @else {
               <div class="assignments-list">
-                @for (assignment of upcomingAssignments(); track assignment.id) {
+                @for (
+                  assignment of upcomingAssignments();
+                  track assignment.id
+                ) {
                   <div class="assignment-item">
                     <div class="assignment-info">
                       <div class="game-info">
-                        <span class="game-date">{{ assignment.game_date | date: 'EEE, MMM d' }}</span>
+                        <span class="game-date">{{
+                          assignment.game_date | date: "EEE, MMM d"
+                        }}</span>
                         @if (assignment.game_location) {
                           <span class="game-location">
                             <i class="pi pi-map-marker"></i>
@@ -213,8 +234,13 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                         }
                       </div>
                       <div class="official-info">
-                        <span class="official-name">{{ assignment.official_name }}</span>
-                        <p-tag [value]="getRoleLabel(assignment.role)" size="small"></p-tag>
+                        <span class="official-name">{{
+                          assignment.official_name
+                        }}</span>
+                        <p-tag
+                          [value]="getRoleLabel(assignment.role)"
+                          size="small"
+                        ></p-tag>
                       </div>
                     </div>
                     <div class="assignment-status">
@@ -235,7 +261,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                           icon="pi pi-check"
                           [text]="true"
                           pTooltip="Confirm"
-                          (onClick)="updateAssignmentStatus(assignment, 'confirmed')"
+                          (onClick)="
+                            updateAssignmentStatus(assignment, 'confirmed')
+                          "
                           [disabled]="assignment.status === 'confirmed'"
                         ></p-button>
                         <p-button
@@ -296,18 +324,31 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           <div class="dialog-form">
             <div class="form-field">
               <label>Name *</label>
-              <input pInputText [(ngModel)]="officialForm.name" placeholder="Full name" />
+              <input
+                pInputText
+                [(ngModel)]="officialForm.name"
+                placeholder="Full name"
+              />
             </div>
 
             <div class="form-row">
               <div class="form-field">
                 <label>Email</label>
-                <input pInputText [(ngModel)]="officialForm.email" type="email" placeholder="email@example.com" />
+                <input
+                  pInputText
+                  [(ngModel)]="officialForm.email"
+                  type="email"
+                  placeholder="email@example.com"
+                />
               </div>
 
               <div class="form-field">
                 <label>Phone</label>
-                <input pInputText [(ngModel)]="officialForm.phone" placeholder="(555) 123-4567" />
+                <input
+                  pInputText
+                  [(ngModel)]="officialForm.phone"
+                  placeholder="(555) 123-4567"
+                />
               </div>
             </div>
 
@@ -324,18 +365,29 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
               <div class="form-field">
                 <label>Years Experience</label>
-                <p-inputNumber [(ngModel)]="officialForm.years_experience" [min]="0"></p-inputNumber>
+                <p-inputNumber
+                  [(ngModel)]="officialForm.years_experience"
+                  [min]="0"
+                ></p-inputNumber>
               </div>
             </div>
 
             <div class="form-field">
               <label>Notes</label>
-              <input pInputText [(ngModel)]="officialForm.notes" placeholder="Additional notes..." />
+              <input
+                pInputText
+                [(ngModel)]="officialForm.notes"
+                placeholder="Additional notes..."
+              />
             </div>
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" (onClick)="showOfficialDialog = false"></p-button>
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showOfficialDialog = false"
+            ></p-button>
             <p-button
               [label]="editingOfficial ? 'Save Changes' : 'Add Official'"
               icon="pi pi-check"
@@ -393,7 +445,11 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           }
 
           <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" (onClick)="showScheduleDialog = false"></p-button>
+            <p-button
+              label="Cancel"
+              [text]="true"
+              (onClick)="showScheduleDialog = false"
+            ></p-button>
             <p-button
               label="Schedule"
               icon="pi pi-check"
@@ -429,7 +485,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         padding: var(--space-4);
         border-bottom: 1px solid var(--surface-border);
 
-        h3 { margin: 0; }
+        h3 {
+          margin: 0;
+        }
       }
 
       .official-cell {
@@ -464,7 +522,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         gap: var(--space-1);
       }
 
-      .empty-state, .empty-message {
+      .empty-state,
+      .empty-message {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -476,7 +535,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           margin-bottom: var(--space-2);
         }
 
-        p { margin: 0; }
+        p {
+          margin: 0;
+        }
       }
 
       .assignments-list {
@@ -597,7 +658,16 @@ export class OfficialsComponent implements OnInit {
   // State
   officials = signal<Official[]>([]);
   gameAssignments = signal<GameOfficial[]>([]);
-  paymentSummary = signal<Array<{ official_id: string; official_name: string; total_games: number; total_payment: number; paid: number; pending: number }>>([]);
+  paymentSummary = signal<
+    Array<{
+      official_id: string;
+      official_name: string;
+      total_games: number;
+      total_payment: number;
+      paid: number;
+      pending: number;
+    }>
+  >([]);
   upcomingGames = signal<Array<{ label: string; value: string }>>([]);
 
   // UI State
@@ -612,10 +682,12 @@ export class OfficialsComponent implements OnInit {
   scheduleForm = { game_id: "", role: "" as OfficialRole, payment_amount: 0 };
 
   // Options
-  certificationOptions = this.officialsService.CERTIFICATION_LEVELS.map((c) => ({
-    label: c.label,
-    value: c.value,
-  }));
+  certificationOptions = this.officialsService.CERTIFICATION_LEVELS.map(
+    (c) => ({
+      label: c.label,
+      value: c.value,
+    }),
+  );
 
   roleOptions = this.officialsService.OFFICIAL_ROLES.map((r) => ({
     label: r.label,
@@ -626,7 +698,9 @@ export class OfficialsComponent implements OnInit {
   filteredOfficials = computed(() => {
     let list = this.officials();
     if (this.selectedCertification) {
-      list = list.filter((o) => o.certification_level === this.selectedCertification);
+      list = list.filter(
+        (o) => o.certification_level === this.selectedCertification,
+      );
     }
     return list;
   });
@@ -635,7 +709,10 @@ export class OfficialsComponent implements OnInit {
     const now = new Date();
     return this.gameAssignments()
       .filter((a) => a.game_date && new Date(a.game_date) >= now)
-      .sort((a, b) => new Date(a.game_date!).getTime() - new Date(b.game_date!).getTime());
+      .sort(
+        (a, b) =>
+          new Date(a.game_date!).getTime() - new Date(b.game_date!).getTime(),
+      );
   });
 
   ngOnInit(): void {
@@ -646,7 +723,10 @@ export class OfficialsComponent implements OnInit {
 
   isCoach(): boolean {
     const user = this.authService.getUser();
-    return user?.user_metadata?.role === "coach" || user?.user_metadata?.role === "admin";
+    return (
+      user?.user_metadata?.role === "coach" ||
+      user?.user_metadata?.role === "admin"
+    );
   }
 
   getEmptyOfficialForm() {
@@ -696,11 +776,15 @@ export class OfficialsComponent implements OnInit {
 
   getCertificationLabel(level: string | undefined): string {
     if (!level) return "N/A";
-    const found = this.officialsService.CERTIFICATION_LEVELS.find((c) => c.value === level);
+    const found = this.officialsService.CERTIFICATION_LEVELS.find(
+      (c) => c.value === level,
+    );
     return found?.label || level;
   }
 
-  getCertificationSeverity(level: string | undefined): "success" | "info" | "warn" | "danger" {
+  getCertificationSeverity(
+    level: string | undefined,
+  ): "success" | "info" | "warn" | "danger" {
     const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
       professional: "success",
       college: "info",
@@ -711,7 +795,9 @@ export class OfficialsComponent implements OnInit {
   }
 
   getRoleLabel(role: string): string {
-    const found = this.officialsService.OFFICIAL_ROLES.find((r) => r.value === role);
+    const found = this.officialsService.OFFICIAL_ROLES.find(
+      (r) => r.value === role,
+    );
     return found?.label || role;
   }
 
@@ -797,13 +883,18 @@ export class OfficialsComponent implements OnInit {
 
   openScheduleDialog(official: Official): void {
     this.selectedOfficial.set(official);
-    this.scheduleForm = { game_id: "", role: "" as OfficialRole, payment_amount: 0 };
+    this.scheduleForm = {
+      game_id: "",
+      role: "" as OfficialRole,
+      payment_amount: 0,
+    };
     this.showScheduleDialog = true;
   }
 
   scheduleOfficial(): void {
     const official = this.selectedOfficial();
-    if (!official || !this.scheduleForm.game_id || !this.scheduleForm.role) return;
+    if (!official || !this.scheduleForm.game_id || !this.scheduleForm.role)
+      return;
 
     this.officialsService
       .scheduleOfficial({
@@ -823,7 +914,10 @@ export class OfficialsComponent implements OnInit {
       });
   }
 
-  updateAssignmentStatus(assignment: GameOfficial, status: AssignmentStatus): void {
+  updateAssignmentStatus(
+    assignment: GameOfficial,
+    status: AssignmentStatus,
+  ): void {
     this.officialsService
       .updateGameOfficial(assignment.id, { status })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -831,7 +925,7 @@ export class OfficialsComponent implements OnInit {
         next: () => {
           this.toastService.success("Status updated");
           this.gameAssignments.update((list) =>
-            list.map((a) => (a.id === assignment.id ? { ...a, status } : a))
+            list.map((a) => (a.id === assignment.id ? { ...a, status } : a)),
           );
         },
         error: () => this.toastService.error("Failed to update status"),
@@ -847,7 +941,9 @@ export class OfficialsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.success("Assignment removed");
-          this.gameAssignments.update((list) => list.filter((a) => a.id !== assignment.id));
+          this.gameAssignments.update((list) =>
+            list.filter((a) => a.id !== assignment.id),
+          );
           this.loadPaymentSummary();
         },
         error: () => this.toastService.error("Failed to remove assignment"),

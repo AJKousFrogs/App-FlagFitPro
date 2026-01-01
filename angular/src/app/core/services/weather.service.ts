@@ -34,65 +34,12 @@ export class WeatherService {
           if (response.success && response.data) {
             return response.data;
           }
-          // Fallback to mock weather
-          return this.generateMockWeather();
+          return null;
         }),
         catchError(() => {
-          // Fallback to mock weather on error
-          return of(this.generateMockWeather());
+          return of(null);
         }),
       );
-  }
-
-  /**
-   * Generate mock weather data for development
-   */
-  private generateMockWeather(): WeatherData {
-    const conditions = [
-      {
-        condition: "Sunny",
-        temp: 72,
-        suitable: true,
-        suitability: "excellent" as const,
-      },
-      {
-        condition: "Partly Cloudy",
-        temp: 68,
-        suitable: true,
-        suitability: "good" as const,
-      },
-      {
-        condition: "Cloudy",
-        temp: 65,
-        suitable: true,
-        suitability: "good" as const,
-      },
-      {
-        condition: "Light Rain",
-        temp: 60,
-        suitable: false,
-        suitability: "fair" as const,
-      },
-      {
-        condition: "Rainy",
-        temp: 55,
-        suitable: false,
-        suitability: "poor" as const,
-      },
-    ];
-
-    const randomCondition =
-      conditions[Math.floor(Math.random() * conditions.length)];
-
-    return {
-      temp: randomCondition.temp,
-      condition: randomCondition.condition,
-      suitability: randomCondition.suitability,
-      suitable: randomCondition.suitable,
-      humidity: Math.floor(Math.random() * 40) + 40,
-      windSpeed: Math.floor(Math.random() * 15) + 5,
-      description: `Perfect for outdoor training`,
-    };
   }
 
   /**

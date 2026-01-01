@@ -19,15 +19,17 @@ import { ButtonModule } from "primeng/button";
           <p-button
             label="Go to Dashboard"
             icon="pi pi-home"
+            [rounded]="true"
+            size="large"
             [routerLink]="['/dashboard']"
-            styleClass="p-button-lg"
           ></p-button>
           <p-button
             label="Go Back"
             icon="pi pi-arrow-left"
+            [rounded]="true"
             [outlined]="true"
+            size="large"
             (onClick)="goBack()"
-            styleClass="p-button-lg"
           ></p-button>
         </div>
         <div class="helpful-links">

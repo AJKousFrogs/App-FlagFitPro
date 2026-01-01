@@ -11,32 +11,29 @@
 
 import { DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import {
-    Notification,
-    NotificationStateService,
+  Notification,
+  NotificationStateService,
 } from "../../../core/services/notification-state.service";
 
 @Component({
   selector: "app-notifications-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    DatePipe,
-  ],
+  imports: [RouterModule, DatePipe],
   template: `
     <!-- Backdrop -->
     @if (visible) {
       <div class="notifications-backdrop" (click)="close()"></div>
     }
-    
+
     <!-- Panel -->
     <div class="notifications-panel" [class.open]="visible">
       <!-- Header -->
@@ -45,7 +42,9 @@ import {
           <i class="pi pi-bell header-icon"></i>
           <h3>Notifications</h3>
           @if (notificationService.unreadCount() > 0) {
-            <span class="unread-badge">{{ notificationService.unreadCount() }}</span>
+            <span class="unread-badge">{{
+              notificationService.unreadCount()
+            }}</span>
           }
         </div>
         <div class="header-actions">
@@ -85,7 +84,10 @@ import {
               <i class="pi pi-bell-slash"></i>
             </div>
             <h4>No notifications</h4>
-            <p>You're all caught up! We'll notify you when something important happens.</p>
+            <p>
+              You're all caught up! We'll notify you when something important
+              happens.
+            </p>
           </div>
         }
 
@@ -95,27 +97,35 @@ import {
             @for (group of groupedNotifications(); track group.date) {
               <div class="notification-group">
                 <div class="group-header">{{ group.label }}</div>
-                @for (notification of group.notifications; track notification.id) {
+                @for (
+                  notification of group.notifications;
+                  track notification.id
+                ) {
                   <div
                     class="notification-item"
                     [class.unread]="!notification.read"
                     (click)="handleNotificationClick(notification)"
                   >
-                    <div class="notification-icon" [class]="getIconClass(notification.type)">
+                    <div
+                      class="notification-icon"
+                      [class]="getIconClass(notification.type)"
+                    >
                       <i [class]="getIcon(notification.type)"></i>
                     </div>
                     <div class="notification-body">
-                      <p class="notification-message">{{ notification.message }}</p>
+                      <p class="notification-message">
+                        {{ notification.message }}
+                      </p>
                       <span class="notification-time">
                         <i class="pi pi-clock"></i>
-                        {{ notification.created_at | date : "shortTime" }}
+                        {{ notification.created_at | date: "shortTime" }}
                       </span>
                     </div>
                     @if (!notification.read) {
                       <div class="unread-indicator"></div>
                     }
-                    <button 
-                      class="dismiss-btn" 
+                    <button
+                      class="dismiss-btn"
                       (click)="dismissNotification($event, notification)"
                       aria-label="Dismiss"
                     >
@@ -157,8 +167,12 @@ import {
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       /* Panel */
@@ -316,8 +330,13 @@ import {
       }
 
       @keyframes pulse {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 0.7; }
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.7;
+        }
       }
 
       /* Empty State */
@@ -568,11 +587,17 @@ export class NotificationsPanelComponent {
   visible = false;
   isLoading = signal(false);
 
-  notifications = computed(() => this.notificationService.state().notifications);
+  notifications = computed(
+    () => this.notificationService.state().notifications,
+  );
 
   groupedNotifications = computed(() => {
     const notifications = this.notifications();
-    const groups: { date: string; label: string; notifications: Notification[] }[] = [];
+    const groups: {
+      date: string;
+      label: string;
+      notifications: Notification[];
+    }[] = [];
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -604,16 +629,32 @@ export class NotificationsPanelComponent {
     });
 
     if (todayNotifications.length > 0) {
-      groups.push({ date: "today", label: "Today", notifications: todayNotifications });
+      groups.push({
+        date: "today",
+        label: "Today",
+        notifications: todayNotifications,
+      });
     }
     if (yesterdayNotifications.length > 0) {
-      groups.push({ date: "yesterday", label: "Yesterday", notifications: yesterdayNotifications });
+      groups.push({
+        date: "yesterday",
+        label: "Yesterday",
+        notifications: yesterdayNotifications,
+      });
     }
     if (thisWeekNotifications.length > 0) {
-      groups.push({ date: "week", label: "This Week", notifications: thisWeekNotifications });
+      groups.push({
+        date: "week",
+        label: "This Week",
+        notifications: thisWeekNotifications,
+      });
     }
     if (olderNotifications.length > 0) {
-      groups.push({ date: "older", label: "Older", notifications: olderNotifications });
+      groups.push({
+        date: "older",
+        label: "Older",
+        notifications: olderNotifications,
+      });
     }
 
     return groups;
@@ -668,7 +709,10 @@ export class NotificationsPanelComponent {
     }
   }
 
-  async dismissNotification(event: Event, notification: Notification): Promise<void> {
+  async dismissNotification(
+    event: Event,
+    notification: Notification,
+  ): Promise<void> {
     event.stopPropagation();
     this.notificationService.removeNotification(notification.id);
   }
@@ -676,7 +720,9 @@ export class NotificationsPanelComponent {
   viewAllNotifications(): void {
     // Navigate to settings page with notifications tab active
     // Since there's no dedicated notifications page, redirect to settings
-    this.router.navigate(['/settings'], { queryParams: { tab: 'notifications' } });
+    this.router.navigate(["/settings"], {
+      queryParams: { tab: "notifications" },
+    });
     this.close();
   }
 

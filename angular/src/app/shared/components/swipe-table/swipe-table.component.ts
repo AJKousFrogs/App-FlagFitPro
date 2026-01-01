@@ -17,8 +17,8 @@ import { ButtonModule } from "primeng/button";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TableModule, ButtonModule],
   template: `
-    <div 
-      class="swipe-table-container" 
+    <div
+      class="swipe-table-container"
       #tableContainer
       role="region"
       [attr.aria-label]="tableLabel()"
@@ -26,10 +26,10 @@ import { ButtonModule } from "primeng/button";
     >
       <!-- Screen reader instructions -->
       <span [id]="'table-instructions-' + tableId" class="sr-only">
-        On mobile devices, swipe left on a row to reveal edit and delete actions.
-        On desktop, use the action buttons in the Actions column.
+        On mobile devices, swipe left on a row to reveal edit and delete
+        actions. On desktop, use the action buttons in the Actions column.
       </span>
-      
+
       <p-table
         [value]="data()"
         [scrollable]="true"
@@ -98,13 +98,17 @@ import { ButtonModule } from "primeng/button";
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td [attr.colspan]="columns().length + 1" class="text-center" role="status">
+            <td
+              [attr.colspan]="columns().length + 1"
+              class="text-center"
+              role="status"
+            >
               No data available
             </td>
           </tr>
         </ng-template>
       </p-table>
-      
+
       <!-- Live region for screen reader announcements -->
       <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {{ announcement() }}
@@ -242,15 +246,15 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
   columns = input<Array<{ field: string; header: string }>>([]);
   onEdit = input<(row: T) => void>();
   onDelete = input<(row: T) => void>();
-  tableLabel = input<string>('Data table');
+  tableLabel = input<string>("Data table");
 
   @ViewChild("tableContainer") tableContainer!: ElementRef;
 
   // Unique ID for accessibility
   tableId = Math.random().toString(36).substr(2, 9);
-  
+
   // Announcement for screen readers
-  announcement = signal<string>('');
+  announcement = signal<string>("");
 
   swipingIndex: number | null = null;
   swipeDistance = 0;
@@ -303,7 +307,7 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
     const editFn = this.onEdit();
     if (editFn) {
       editFn(row);
-      this.announcement.set('Edit action triggered');
+      this.announcement.set("Edit action triggered");
     }
     this.resetSwipe();
   }
@@ -312,7 +316,7 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
     const deleteFn = this.onDelete();
     if (deleteFn) {
       deleteFn(row);
-      this.announcement.set('Delete action triggered');
+      this.announcement.set("Delete action triggered");
     }
     this.resetSwipe();
   }

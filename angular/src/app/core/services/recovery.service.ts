@@ -1,10 +1,10 @@
-import { Injectable, inject, computed, signal, effect } from "@angular/core";
-import { Observable, of, from } from "rxjs";
-import { map, catchError } from "rxjs/operators";
-import { SupabaseService } from "./supabase.service";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
+import { Observable, from, of } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
-import { ApiService } from "./api.service";
+import { SupabaseService } from "./supabase.service";
 
 // API Endpoints for recovery data
 const API_ENDPOINTS = {
@@ -109,15 +109,15 @@ export interface AthleteRecoveryProfile {
   recoveryPreferences: {
     preferredModalities: string[];
     avoidedModalities: string[];
-    temperatureSensitivity: 'low' | 'normal' | 'high';
-    pressureTolerance: 'low' | 'moderate' | 'high';
+    temperatureSensitivity: "low" | "normal" | "high";
+    pressureTolerance: "low" | "moderate" | "high";
   };
   sleepPattern: {
     typicalBedtime: string;
     typicalWakeTime: string;
     sleepQualityAverage: number;
     sleepIssues: string[];
-    chronotype: 'early' | 'intermediate' | 'late';
+    chronotype: "early" | "intermediate" | "late";
   };
   stressTriggers: string[];
   recoveryAccelerators: string[];
@@ -127,7 +127,7 @@ export interface AthleteRecoveryProfile {
     afternoon: boolean;
     evening: boolean;
   };
-  recoveryEnvironment: 'home' | 'gym' | 'facility' | 'mixed';
+  recoveryEnvironment: "home" | "gym" | "facility" | "mixed";
   recoveryEquipmentOwned: string[];
   recoveryEquipmentDesired: string[];
   recoveryBudgetMonthly: number | null;
@@ -210,7 +210,7 @@ export class RecoveryService {
         )
         .eq("athlete_id", userId)
         .in("status", ["in_progress", "paused"])
-        .order("start_time", { ascending: false });
+        .order("started_at", { ascending: false });
 
       if (error) {
         this.logger.error("[Recovery] Error loading active sessions:", error);
@@ -328,8 +328,8 @@ export class RecoveryService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.warn("[Recovery] No user logged in, using mock data");
-      return of(this.getMockRecoveryData());
+      this.logger.error("[Recovery] No user logged in - real data required");
+      throw new Error("Authentication required for recovery metrics");
     }
 
     return from(
@@ -344,8 +344,7 @@ export class RecoveryService {
           .single();
 
         if (error || !data) {
-          this.logger.warn("[Recovery] No wellness data, using mock");
-          return this.getMockRecoveryData();
+          throw new Error("No wellness data available for this athlete");
         }
 
         // Calculate recovery metrics from wellness data
@@ -421,15 +420,15 @@ export class RecoveryService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Recovery] Error fetching metrics:", error);
-        return of(this.getMockRecoveryData());
+        this.logger.error("[Recovery] Error fetching real metrics:", error);
+        throw error;
       }),
     );
   }
 
   /**
    * Get recommended recovery protocols based on current metrics
-   * First tries to load from database, falls back to default protocols
+   * First tries to load from database, fails if unavailable
    */
   getRecommendedProtocols(): Observable<RecoveryProtocol[]> {
     return from(this.loadProtocolsFromDatabase());
@@ -446,47 +445,54 @@ export class RecoveryService {
         .order("protocol_name");
 
       if (error) {
-        this.logger.debug("[Recovery] Protocols table not available, using defaults");
-        return this.getMockProtocols();
+        this.logger.error("[Recovery] Protocols table not available:", error);
+        throw error;
       }
 
       if (data && data.length > 0) {
-        this.logger.success(`[Recovery] Loaded ${data.length} protocols from database`);
-        return data.map((p: DatabaseRecoveryProtocol) => this.transformDatabaseProtocol(p));
+        this.logger.success(
+          `[Recovery] Loaded ${data.length} protocols from database`,
+        );
+        return data.map((p: DatabaseRecoveryProtocol) =>
+          this.transformDatabaseProtocol(p),
+        );
       }
 
-      return this.getMockProtocols();
-    } catch {
-      return this.getMockProtocols();
+      throw new Error("No recovery protocols found in database");
+    } catch (error) {
+      this.logger.error("[Recovery] Failed to load protocols:", error);
+      throw error;
     }
   }
 
   /**
    * Transform database protocol record to RecoveryProtocol interface
    */
-  private transformDatabaseProtocol(p: DatabaseRecoveryProtocol): RecoveryProtocol {
+  private transformDatabaseProtocol(
+    p: DatabaseRecoveryProtocol,
+  ): RecoveryProtocol {
     // Map category to display-friendly format
     const categoryDisplayMap: Record<string, string> = {
-      'cryotherapy': 'Cryotherapy',
-      'compression': 'Compression',
-      'manual_therapy': 'Manual Therapy',
-      'heat_therapy': 'Heat Therapy',
-      'sleep': 'Sleep',
-      'nutrition': 'Nutrition',
-      'hydration': 'Hydration',
-      'mobility': 'Mobility',
-      'breathing': 'Breathing',
-      'mental_recovery': 'Mental Recovery',
-      'active_recovery': 'Active Recovery',
-      'passive_recovery': 'Passive Recovery',
+      cryotherapy: "Cryotherapy",
+      compression: "Compression",
+      manual_therapy: "Manual Therapy",
+      heat_therapy: "Heat Therapy",
+      sleep: "Sleep",
+      nutrition: "Nutrition",
+      hydration: "Hydration",
+      mobility: "Mobility",
+      breathing: "Breathing",
+      mental_recovery: "Mental Recovery",
+      active_recovery: "Active Recovery",
+      passive_recovery: "Passive Recovery",
     };
 
     // Map evidence level to display format
     const evidenceLevelMap: Record<string, string> = {
-      'A': 'Strong',
-      'B': 'Moderate',
-      'C': 'Limited',
-      'D': 'Expert Opinion',
+      A: "Strong",
+      B: "Moderate",
+      C: "Limited",
+      D: "Expert Opinion",
     };
 
     return {
@@ -496,7 +502,8 @@ export class RecoveryService {
       category: categoryDisplayMap[p.category] || p.category,
       duration: p.duration_minutes || 20,
       priority: p.priority || "medium",
-      evidenceLevel: evidenceLevelMap[p.evidence_level] || p.evidence_level || "Moderate",
+      evidenceLevel:
+        evidenceLevelMap[p.evidence_level] || p.evidence_level || "Moderate",
       studyCount: p.study_count || 0,
       benefits: p.benefits || [],
       steps: p.steps || [],
@@ -515,22 +522,29 @@ export class RecoveryService {
     return from(this.loadProtocolsByCategoryFromDatabase(category));
   }
 
-  private async loadProtocolsByCategoryFromDatabase(category: string): Promise<RecoveryProtocol[]> {
+  private async loadProtocolsByCategoryFromDatabase(
+    category: string,
+  ): Promise<RecoveryProtocol[]> {
     try {
       const { data, error } = await this.supabaseService.client
         .from("recovery_protocols")
         .select("*")
         .eq("is_active", true)
-        .eq("category", category.toLowerCase().replace(' ', '_'))
+        .eq("category", category.toLowerCase().replace(" ", "_"))
         .order("priority", { ascending: true })
         .order("protocol_name");
 
       if (error) {
-        this.logger.debug(`[Recovery] Error loading ${category} protocols:`, error);
+        this.logger.debug(
+          `[Recovery] Error loading ${category} protocols:`,
+          error,
+        );
         return [];
       }
 
-      return (data || []).map((p: DatabaseRecoveryProtocol) => this.transformDatabaseProtocol(p));
+      return (data || []).map((p: DatabaseRecoveryProtocol) =>
+        this.transformDatabaseProtocol(p),
+      );
     } catch {
       return [];
     }
@@ -543,14 +557,18 @@ export class RecoveryService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.warn("[Recovery] No user logged in, cannot fetch recovery profile");
+      this.logger.warn(
+        "[Recovery] No user logged in, cannot fetch recovery profile",
+      );
       return of(null);
     }
 
     return from(this.loadAthleteRecoveryProfile(userId));
   }
 
-  private async loadAthleteRecoveryProfile(userId: string): Promise<AthleteRecoveryProfile | null> {
+  private async loadAthleteRecoveryProfile(
+    userId: string,
+  ): Promise<AthleteRecoveryProfile | null> {
     try {
       const { data, error } = await this.supabaseService.client
         .from("athlete_recovery_profiles")
@@ -569,58 +587,88 @@ export class RecoveryService {
     }
   }
 
-  private transformRecoveryProfile(data: Record<string, unknown>): AthleteRecoveryProfile {
-    const preferences = (data['recovery_preferences'] as Record<string, unknown>) || {};
-    const sleepPattern = (data['sleep_pattern'] as Record<string, unknown>) || {};
-    const recoveryTimes = (data['preferred_recovery_times'] as Record<string, boolean>) || {};
+  private transformRecoveryProfile(
+    data: Record<string, unknown>,
+  ): AthleteRecoveryProfile {
+    const preferences =
+      (data["recovery_preferences"] as Record<string, unknown>) || {};
+    const sleepPattern =
+      (data["sleep_pattern"] as Record<string, unknown>) || {};
+    const recoveryTimes =
+      (data["preferred_recovery_times"] as Record<string, boolean>) || {};
 
     return {
-      id: data['id'] as string,
-      athleteId: data['athlete_id'] as string,
+      id: data["id"] as string,
+      athleteId: data["athlete_id"] as string,
       recoveryPreferences: {
-        preferredModalities: (preferences['preferred_modalities'] as string[]) || [],
-        avoidedModalities: (preferences['avoided_modalities'] as string[]) || [],
-        temperatureSensitivity: (preferences['temperature_sensitivity'] as 'low' | 'normal' | 'high') || 'normal',
-        pressureTolerance: (preferences['pressure_tolerance'] as 'low' | 'moderate' | 'high') || 'moderate',
+        preferredModalities:
+          (preferences["preferred_modalities"] as string[]) || [],
+        avoidedModalities:
+          (preferences["avoided_modalities"] as string[]) || [],
+        temperatureSensitivity:
+          (preferences["temperature_sensitivity"] as
+            | "low"
+            | "normal"
+            | "high") || "normal",
+        pressureTolerance:
+          (preferences["pressure_tolerance"] as "low" | "moderate" | "high") ||
+          "moderate",
       },
       sleepPattern: {
-        typicalBedtime: (sleepPattern['typical_bedtime'] as string) || '22:00',
-        typicalWakeTime: (sleepPattern['typical_wake_time'] as string) || '06:00',
-        sleepQualityAverage: (sleepPattern['sleep_quality_average'] as number) || 7,
-        sleepIssues: (sleepPattern['sleep_issues'] as string[]) || [],
-        chronotype: (sleepPattern['chronotype'] as 'early' | 'intermediate' | 'late') || 'intermediate',
+        typicalBedtime: (sleepPattern["typical_bedtime"] as string) || "22:00",
+        typicalWakeTime:
+          (sleepPattern["typical_wake_time"] as string) || "06:00",
+        sleepQualityAverage:
+          (sleepPattern["sleep_quality_average"] as number) || 7,
+        sleepIssues: (sleepPattern["sleep_issues"] as string[]) || [],
+        chronotype:
+          (sleepPattern["chronotype"] as "early" | "intermediate" | "late") ||
+          "intermediate",
       },
-      stressTriggers: (data['stress_triggers'] as string[]) || [],
-      recoveryAccelerators: (data['recovery_accelerators'] as string[]) || [],
-      recoveryGoals: (data['recovery_goals'] as string[]) || [],
+      stressTriggers: (data["stress_triggers"] as string[]) || [],
+      recoveryAccelerators: (data["recovery_accelerators"] as string[]) || [],
+      recoveryGoals: (data["recovery_goals"] as string[]) || [],
       preferredRecoveryTimes: {
-        morning: recoveryTimes['morning'] || false,
-        afternoon: recoveryTimes['afternoon'] || true,
-        evening: recoveryTimes['evening'] || true,
+        morning: recoveryTimes["morning"] || false,
+        afternoon: recoveryTimes["afternoon"] || true,
+        evening: recoveryTimes["evening"] || true,
       },
-      recoveryEnvironment: (data['recovery_environment'] as 'home' | 'gym' | 'facility' | 'mixed') || 'mixed',
-      recoveryEquipmentOwned: (data['recovery_equipment_owned'] as string[]) || [],
-      recoveryEquipmentDesired: (data['recovery_equipment_desired'] as string[]) || [],
-      recoveryBudgetMonthly: data['recovery_budget_monthly'] as number | null,
-      timeAvailableDailyMinutes: (data['time_available_daily_minutes'] as number) || 30,
-      injuryHistory: (data['injury_history'] as string[]) || [],
-      chronicConditions: (data['chronic_conditions'] as string[]) || [],
-      areasOfConcern: (data['areas_of_concern'] as string[]) || [],
-      baselineHrv: data['baseline_hrv'] as number | null,
-      baselineRestingHr: data['baseline_resting_hr'] as number | null,
-      baselineSleepScore: data['baseline_sleep_score'] as number | null,
-      baselineRecoveryScore: data['baseline_recovery_score'] as number | null,
-      protocolEffectiveness: (data['protocol_effectiveness'] as Record<string, number>) || {},
-      favoriteProtocols: (data['favorite_protocols'] as string[]) || [],
-      profileCompleted: (data['profile_completed'] as boolean) || false,
-      lastAssessmentDate: data['last_assessment_date'] ? new Date(data['last_assessment_date'] as string) : null,
+      recoveryEnvironment:
+        (data["recovery_environment"] as
+          | "home"
+          | "gym"
+          | "facility"
+          | "mixed") || "mixed",
+      recoveryEquipmentOwned:
+        (data["recovery_equipment_owned"] as string[]) || [],
+      recoveryEquipmentDesired:
+        (data["recovery_equipment_desired"] as string[]) || [],
+      recoveryBudgetMonthly: data["recovery_budget_monthly"] as number | null,
+      timeAvailableDailyMinutes:
+        (data["time_available_daily_minutes"] as number) || 30,
+      injuryHistory: (data["injury_history"] as string[]) || [],
+      chronicConditions: (data["chronic_conditions"] as string[]) || [],
+      areasOfConcern: (data["areas_of_concern"] as string[]) || [],
+      baselineHrv: data["baseline_hrv"] as number | null,
+      baselineRestingHr: data["baseline_resting_hr"] as number | null,
+      baselineSleepScore: data["baseline_sleep_score"] as number | null,
+      baselineRecoveryScore: data["baseline_recovery_score"] as number | null,
+      protocolEffectiveness:
+        (data["protocol_effectiveness"] as Record<string, number>) || {},
+      favoriteProtocols: (data["favorite_protocols"] as string[]) || [],
+      profileCompleted: (data["profile_completed"] as boolean) || false,
+      lastAssessmentDate: data["last_assessment_date"]
+        ? new Date(data["last_assessment_date"] as string)
+        : null,
     };
   }
 
   /**
    * Create or update athlete recovery profile
    */
-  saveAthleteRecoveryProfile(profile: Partial<AthleteRecoveryProfile>): Observable<boolean> {
+  saveAthleteRecoveryProfile(
+    profile: Partial<AthleteRecoveryProfile>,
+  ): Observable<boolean> {
     const userId = this.userId();
 
     if (!userId) {
@@ -631,23 +679,32 @@ export class RecoveryService {
     return from(this.upsertRecoveryProfile(userId, profile));
   }
 
-  private async upsertRecoveryProfile(userId: string, profile: Partial<AthleteRecoveryProfile>): Promise<boolean> {
+  private async upsertRecoveryProfile(
+    userId: string,
+    profile: Partial<AthleteRecoveryProfile>,
+  ): Promise<boolean> {
     try {
       const dbProfile = {
         athlete_id: userId,
-        recovery_preferences: profile.recoveryPreferences ? {
-          preferred_modalities: profile.recoveryPreferences.preferredModalities,
-          avoided_modalities: profile.recoveryPreferences.avoidedModalities,
-          temperature_sensitivity: profile.recoveryPreferences.temperatureSensitivity,
-          pressure_tolerance: profile.recoveryPreferences.pressureTolerance,
-        } : undefined,
-        sleep_pattern: profile.sleepPattern ? {
-          typical_bedtime: profile.sleepPattern.typicalBedtime,
-          typical_wake_time: profile.sleepPattern.typicalWakeTime,
-          sleep_quality_average: profile.sleepPattern.sleepQualityAverage,
-          sleep_issues: profile.sleepPattern.sleepIssues,
-          chronotype: profile.sleepPattern.chronotype,
-        } : undefined,
+        recovery_preferences: profile.recoveryPreferences
+          ? {
+              preferred_modalities:
+                profile.recoveryPreferences.preferredModalities,
+              avoided_modalities: profile.recoveryPreferences.avoidedModalities,
+              temperature_sensitivity:
+                profile.recoveryPreferences.temperatureSensitivity,
+              pressure_tolerance: profile.recoveryPreferences.pressureTolerance,
+            }
+          : undefined,
+        sleep_pattern: profile.sleepPattern
+          ? {
+              typical_bedtime: profile.sleepPattern.typicalBedtime,
+              typical_wake_time: profile.sleepPattern.typicalWakeTime,
+              sleep_quality_average: profile.sleepPattern.sleepQualityAverage,
+              sleep_issues: profile.sleepPattern.sleepIssues,
+              chronotype: profile.sleepPattern.chronotype,
+            }
+          : undefined,
         stress_triggers: profile.stressTriggers,
         recovery_accelerators: profile.recoveryAccelerators,
         recovery_goals: profile.recoveryGoals,
@@ -672,12 +729,12 @@ export class RecoveryService {
 
       // Remove undefined values
       const cleanProfile = Object.fromEntries(
-        Object.entries(dbProfile).filter(([, v]) => v !== undefined)
+        Object.entries(dbProfile).filter(([, v]) => v !== undefined),
       );
 
       const { error } = await this.supabaseService.client
         .from("athlete_recovery_profiles")
-        .upsert(cleanProfile, { onConflict: 'athlete_id' });
+        .upsert(cleanProfile, { onConflict: "athlete_id" });
 
       if (error) {
         this.logger.error("[Recovery] Error saving recovery profile:", error);
@@ -695,7 +752,10 @@ export class RecoveryService {
   /**
    * Update protocol effectiveness after completing a session
    */
-  updateProtocolEffectiveness(protocolId: string, rating: number): Observable<boolean> {
+  updateProtocolEffectiveness(
+    protocolId: string,
+    rating: number,
+  ): Observable<boolean> {
     const userId = this.userId();
 
     if (!userId) {
@@ -705,21 +765,30 @@ export class RecoveryService {
     return from(this.saveProtocolEffectiveness(userId, protocolId, rating));
   }
 
-  private async saveProtocolEffectiveness(userId: string, protocolId: string, rating: number): Promise<boolean> {
+  private async saveProtocolEffectiveness(
+    userId: string,
+    protocolId: string,
+    rating: number,
+  ): Promise<boolean> {
     try {
       // Get current profile
-      const { data: profile, error: fetchError } = await this.supabaseService.client
-        .from("athlete_recovery_profiles")
-        .select("protocol_effectiveness")
-        .eq("athlete_id", userId)
-        .single();
+      const { data: profile, error: fetchError } =
+        await this.supabaseService.client
+          .from("athlete_recovery_profiles")
+          .select("protocol_effectiveness")
+          .eq("athlete_id", userId)
+          .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        this.logger.error("[Recovery] Error fetching profile for effectiveness update:", fetchError);
+      if (fetchError && fetchError.code !== "PGRST116") {
+        this.logger.error(
+          "[Recovery] Error fetching profile for effectiveness update:",
+          fetchError,
+        );
         return false;
       }
 
-      const currentEffectiveness = (profile?.protocol_effectiveness as Record<string, number>) || {};
+      const currentEffectiveness =
+        (profile?.protocol_effectiveness as Record<string, number>) || {};
       const updatedEffectiveness = {
         ...currentEffectiveness,
         [protocolId]: rating,
@@ -727,13 +796,19 @@ export class RecoveryService {
 
       const { error } = await this.supabaseService.client
         .from("athlete_recovery_profiles")
-        .upsert({
-          athlete_id: userId,
-          protocol_effectiveness: updatedEffectiveness,
-        }, { onConflict: 'athlete_id' });
+        .upsert(
+          {
+            athlete_id: userId,
+            protocol_effectiveness: updatedEffectiveness,
+          },
+          { onConflict: "athlete_id" },
+        );
 
       if (error) {
-        this.logger.error("[Recovery] Error updating protocol effectiveness:", error);
+        this.logger.error(
+          "[Recovery] Error updating protocol effectiveness:",
+          error,
+        );
         return false;
       }
 
@@ -753,7 +828,7 @@ export class RecoveryService {
 
     if (!userId) {
       this.logger.error("[Recovery] Cannot start session: No user logged in");
-      return of(this.createMockSession(protocol));
+      throw new Error("Authentication required");
     }
 
     return from(
@@ -789,8 +864,8 @@ export class RecoveryService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Recovery] Failed to start session:", error);
-        return of(this.createMockSession(protocol));
+        this.logger.error("[Recovery] Failed to start real session:", error);
+        throw error;
       }),
     );
   }
@@ -876,8 +951,17 @@ export class RecoveryService {
     return this.apiService
       .get<ResearchInsight[]>(API_ENDPOINTS.recovery.researchInsights)
       .pipe(
-        map((response) => response.data || []),
-        catchError(() => of(this.getMockResearchInsights())),
+        map((response) => {
+          if (response.success && response.data) return response.data;
+          throw new Error("No research insights available");
+        }),
+        catchError((error) => {
+          this.logger.error(
+            "[Recovery] Error fetching research insights:",
+            error,
+          );
+          throw error;
+        }),
       );
   }
 
@@ -888,8 +972,17 @@ export class RecoveryService {
     return this.apiService
       .get<number[]>(API_ENDPOINTS.recovery.weeklyTrends)
       .pipe(
-        map((response) => response.data || []),
-        catchError(() => of([75, 78, 72, 85, 80, 77, 82])),
+        map((response) => {
+          if (response.success && response.data) return response.data;
+          throw new Error("No recovery trends available");
+        }),
+        catchError((error) => {
+          this.logger.error(
+            "[Recovery] Error fetching recovery trends:",
+            error,
+          );
+          throw error;
+        }),
       );
   }
 
@@ -900,237 +993,17 @@ export class RecoveryService {
     return this.apiService
       .get<Record<string, number>>(API_ENDPOINTS.recovery.protocolEffectiveness)
       .pipe(
-        map((response) => response.data || {}),
-        catchError(() =>
-          of({
-            Cryotherapy: 8.5,
-            Compression: 7.8,
-            "Manual Therapy": 8.2,
-            "Heat Therapy": 7.5,
-          }),
-        ),
+        map((response) => {
+          if (response.success && response.data) return response.data;
+          throw new Error("No effectiveness data available");
+        }),
+        catchError((error) => {
+          this.logger.error(
+            "[Recovery] Error fetching effectiveness data:",
+            error,
+          );
+          throw error;
+        }),
       );
-  }
-
-  // Mock data methods for development
-  private getMockRecoveryData(): RecoveryData {
-    return {
-      overallScore: 78,
-      metrics: [
-        {
-          name: "Sleep Quality",
-          value: 8.2,
-          unit: "/10",
-          percentage: 82,
-          icon: "pi pi-moon",
-          color: "#10c96b",
-        },
-        {
-          name: "Heart Rate Variability",
-          value: 45,
-          unit: "ms",
-          percentage: 75,
-          icon: "pi pi-heart",
-          color: "#10c96b",
-        },
-        {
-          name: "Muscle Soreness",
-          value: 3,
-          unit: "/10",
-          percentage: 70,
-          icon: "pi pi-exclamation-circle",
-          color: "#f1c40f",
-        },
-        {
-          name: "Stress Level",
-          value: 4,
-          unit: "/10",
-          percentage: 60,
-          icon: "pi pi-info-circle",
-          color: "#f1c40f",
-        },
-      ],
-    };
-  }
-
-  private getMockProtocols(): RecoveryProtocol[] {
-    return [
-      {
-        id: "1",
-        name: "Cold Water Immersion",
-        description:
-          "15-minute cold water immersion protocol shown to reduce muscle soreness and inflammation.",
-        category: "Cryotherapy",
-        duration: 15,
-        priority: "high",
-        evidenceLevel: "Strong",
-        studyCount: 24,
-        benefits: [
-          "Reduces muscle soreness",
-          "Decreases inflammation",
-          "Improves recovery time",
-          "Enhances sleep quality",
-        ],
-        steps: [
-          {
-            id: "1",
-            title: "Preparation",
-            description: "Prepare cold water bath (10-15°C)",
-            duration: 2,
-            icon: "pi pi-cog",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "2",
-            title: "Immersion",
-            description: "Immerse body up to shoulders for 10 minutes",
-            duration: 10,
-            icon: "pi pi-water",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "3",
-            title: "Warm-up",
-            description: "Gradual warm-up with light movement",
-            duration: 3,
-            icon: "pi pi-sun",
-            completed: false,
-            active: false,
-          },
-        ],
-      },
-      {
-        id: "2",
-        name: "Compression Therapy",
-        description:
-          "30-minute compression session using compression garments or devices.",
-        category: "Compression",
-        duration: 30,
-        priority: "medium",
-        evidenceLevel: "Moderate",
-        studyCount: 18,
-        benefits: [
-          "Improves circulation",
-          "Reduces swelling",
-          "Accelerates recovery",
-        ],
-        steps: [
-          {
-            id: "1",
-            title: "Setup",
-            description: "Apply compression garments or device",
-            duration: 2,
-            icon: "pi pi-cog",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "2",
-            title: "Compression Session",
-            description: "Maintain compression for 25 minutes",
-            duration: 25,
-            icon: "pi pi-compress",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "3",
-            title: "Recovery",
-            description: "Remove compression and assess",
-            duration: 3,
-            icon: "pi pi-check",
-            completed: false,
-            active: false,
-          },
-        ],
-      },
-      {
-        id: "3",
-        name: "Foam Rolling Protocol",
-        description:
-          "20-minute self-myofascial release using foam roller targeting major muscle groups.",
-        category: "Manual Therapy",
-        duration: 20,
-        priority: "medium",
-        evidenceLevel: "Moderate",
-        studyCount: 15,
-        benefits: [
-          "Improves flexibility",
-          "Reduces muscle tension",
-          "Enhances mobility",
-        ],
-        steps: [
-          {
-            id: "1",
-            title: "Warm-up",
-            description: "Light movement to warm muscles",
-            duration: 3,
-            icon: "pi pi-sun",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "2",
-            title: "Rolling",
-            description: "Foam roll major muscle groups",
-            duration: 15,
-            icon: "pi pi-circle",
-            completed: false,
-            active: false,
-          },
-          {
-            id: "3",
-            title: "Stretching",
-            description: "Light stretching to finish",
-            duration: 2,
-            icon: "pi pi-arrows-alt",
-            completed: false,
-            active: false,
-          },
-        ],
-      },
-    ];
-  }
-
-  private createMockSession(protocol: RecoveryProtocol): RecoverySession {
-    return {
-      id: "session-1",
-      protocol,
-      startTime: new Date(),
-      duration: protocol.duration * 60, // Convert to seconds
-      progress: 0,
-      paused: false,
-    };
-  }
-
-  private getMockResearchInsights(): ResearchInsight[] {
-    return [
-      {
-        id: "1",
-        title:
-          "Effects of Cold Water Immersion on Recovery from Exercise-Induced Muscle Damage",
-        summary:
-          "This systematic review found that cold water immersion significantly reduces muscle soreness and improves recovery markers compared to passive recovery.",
-        authors: "Bleakley et al.",
-        year: 2012,
-        journal: "British Journal of Sports Medicine",
-        doi: "10.1136/bjsports-2011-090061",
-        category: "Cryotherapy",
-      },
-      {
-        id: "2",
-        title:
-          "Compression Garments and Recovery from Exercise-Induced Muscle Damage",
-        summary:
-          "Research demonstrates that compression garments can reduce perceived muscle soreness and improve recovery time following intense exercise.",
-        authors: "Hill et al.",
-        year: 2014,
-        journal: "Journal of Strength and Conditioning Research",
-        doi: "10.1519/JSC.0000000000000288",
-        category: "Compression",
-      },
-    ];
   }
 }

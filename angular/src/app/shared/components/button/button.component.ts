@@ -63,17 +63,20 @@ import { CommonModule } from "@angular/common";
       }
 
       <!-- Icon (left) -->
-      @if (icon() && iconPosition() === 'left' && !loading()) {
+      @if (icon() && iconPosition() === "left" && !loading()) {
         <i [class]="'btn-icon pi ' + icon()" aria-hidden="true"></i>
       }
 
       <!-- Button content -->
-      <span class="btn-content" [class.btn-content-hidden]="loading() && !showLabelOnLoading()">
+      <span
+        class="btn-content"
+        [class.btn-content-hidden]="loading() && !showLabelOnLoading()"
+      >
         <ng-content></ng-content>
       </span>
 
       <!-- Icon (right) -->
-      @if (icon() && iconPosition() === 'right' && !loading()) {
+      @if (icon() && iconPosition() === "right" && !loading()) {
         <i [class]="'btn-icon pi ' + icon()" aria-hidden="true"></i>
       }
     </button>
@@ -104,9 +107,9 @@ import { CommonModule } from "@angular/common";
         vertical-align: middle;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
-        
+
         /* Premium transition */
-        transition: 
+        transition:
           transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
           box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -225,7 +228,7 @@ import { CommonModule } from "@angular/common";
           background-color: var(--ds-primary-green-hover);
           border-color: var(--ds-primary-green-hover);
           transform: translateY(-2px);
-          box-shadow: 
+          box-shadow:
             0 6px 20px rgba(var(--ds-primary-green-rgb), 0.35),
             0 3px 10px rgba(0, 0, 0, 0.1);
         }
@@ -337,7 +340,7 @@ import { CommonModule } from "@angular/common";
           background-color: var(--primitive-error-600, #dc2626);
           border-color: var(--primitive-error-600, #dc2626);
           transform: translateY(-2px);
-          box-shadow: 
+          box-shadow:
             0 6px 20px rgba(239, 68, 68, 0.35),
             0 3px 10px rgba(0, 0, 0, 0.1);
         }
@@ -366,7 +369,7 @@ import { CommonModule } from "@angular/common";
           background-color: var(--primitive-success-600, #d4a617);
           border-color: var(--primitive-success-600, #d4a617);
           transform: translateY(-2px);
-          box-shadow: 
+          box-shadow:
             0 6px 20px rgba(241, 196, 15, 0.35),
             0 3px 10px rgba(0, 0, 0, 0.1);
         }
@@ -509,33 +512,35 @@ export class ButtonComponent {
 
   // Internal state
   isPressed = signal(false);
-  ripples = signal<Array<{ id: number; x: number; y: number; size: number }>>([]);
+  ripples = signal<Array<{ id: number; x: number; y: number; size: number }>>(
+    [],
+  );
   private rippleId = 0;
 
   // Computed class string
   buttonClass = computed(() => {
     const classes = ["btn", `btn-${this.variant()}`];
-    
+
     if (this.size() !== "md") {
       classes.push(`btn-${this.size()}`);
     }
-    
+
     if (this.iconOnly()) {
       classes.push("btn-icon-only");
     }
-    
+
     if (this.rounded()) {
       classes.push("btn-rounded");
     }
-    
+
     if (this.block()) {
       classes.push("btn-block");
     }
-    
+
     if (this.isPressed()) {
       classes.push("btn-pressed");
     }
-    
+
     return classes.join(" ");
   });
 
@@ -559,23 +564,25 @@ export class ButtonComponent {
   private createRipple(event: MouseEvent): void {
     const button = event.currentTarget as HTMLElement;
     const rect = button.getBoundingClientRect();
-    
+
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     const size = Math.max(rect.width, rect.height) * 2;
-    
+
     const ripple = {
       id: this.rippleId++,
       x,
       y,
       size,
     };
-    
-    this.ripples.update(ripples => [...ripples, ripple]);
-    
+
+    this.ripples.update((ripples) => [...ripples, ripple]);
+
     // Remove ripple after animation
     setTimeout(() => {
-      this.ripples.update(ripples => ripples.filter(r => r.id !== ripple.id));
+      this.ripples.update((ripples) =>
+        ripples.filter((r) => r.id !== ripple.id),
+      );
     }, 600);
   }
 }

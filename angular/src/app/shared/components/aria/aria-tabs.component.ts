@@ -238,7 +238,7 @@ export class AriaTabsComponent {
           }
         });
       },
-      { allowSignalWrites: true }
+      { allowSignalWrites: true },
     );
   }
 
@@ -276,7 +276,8 @@ export class AriaTabsComponent {
         newIndex = this.getNextEnabledIndex(currentIndex, -1);
         break;
       case "Home":
-        newIndex = enabledTabs.length > 0 ? tabsList.indexOf(enabledTabs[0]) : 0;
+        newIndex =
+          enabledTabs.length > 0 ? tabsList.indexOf(enabledTabs[0]) : 0;
         break;
       case "End":
         newIndex =
@@ -318,8 +319,7 @@ export class AriaTabsComponent {
           this.elementRef.nativeElement.querySelectorAll("[role='tab']");
         (tabButtons[index] as HTMLElement)?.focus();
       },
-      { injector: this.injector }
+      { injector: this.injector },
     );
   }
 }
-

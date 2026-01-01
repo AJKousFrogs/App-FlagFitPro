@@ -24,7 +24,7 @@ export { ActionCardComponent } from "./action-card/action-card.component";
 // FORM COMPONENTS
 // ============================================================================
 export { InputComponent } from "./input/input.component";
-export { SelectComponent, type SelectOption } from "./select/select.component";
+// SelectComponent removed - use PrimeNG p-select directly
 export { CheckboxComponent } from "./checkbox/checkbox.component";
 export { RadioComponent } from "./radio/radio.component";
 export { TextareaComponent } from "./textarea/textarea.component";
@@ -32,13 +32,22 @@ export { TextareaComponent } from "./textarea/textarea.component";
 // ============================================================================
 // DATA DISPLAY COMPONENTS
 // ============================================================================
-export { TableComponent, type TableColumn } from "./table/table.component";
+// TableComponent removed - use PrimeNG p-table or p-datatable directly
 export { BadgeComponent } from "./badge/badge.component";
 export { AvatarComponent } from "./avatar/avatar.component";
 export { SkeletonComponent } from "./skeleton/skeleton.component";
-export { TrendCardComponent, type TrendData } from "./trend-card/trend-card.component";
-export { StatsGridComponent, type StatItem } from "./stats-grid/stats-grid.component";
-export { QuickStatsBarComponent, type QuickStat } from "./quick-stats-bar/quick-stats-bar.component";
+export {
+  TrendCardComponent,
+  type TrendData,
+} from "./trend-card/trend-card.component";
+export {
+  StatsGridComponent,
+  type StatItem,
+} from "./stats-grid/stats-grid.component";
+export {
+  QuickStatsBarComponent,
+  type QuickStat,
+} from "./quick-stats-bar/quick-stats-bar.component";
 
 // ============================================================================
 // WELLNESS & HEALTH COMPONENTS (Single Source of Truth)
@@ -52,19 +61,32 @@ export {
 // ============================================================================
 // METRIC & PROGRESS COMPONENTS
 // ============================================================================
-export { MetricRingComponent, type MetricRingThresholds } from "./metric-ring/metric-ring.component";
+export {
+  MetricRingComponent,
+  type MetricRingThresholds,
+} from "./metric-ring/metric-ring.component";
 export { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 
 // ============================================================================
 // STATUS & INDICATOR COMPONENTS
 // ============================================================================
-export { PulseIndicatorComponent, type PulseStatus } from "./pulse-indicator/pulse-indicator.component";
-export { StatusTimelineComponent, type TimelineItem } from "./status-timeline/status-timeline.component";
+export {
+  PulseIndicatorComponent,
+  type PulseStatus,
+} from "./pulse-indicator/pulse-indicator.component";
+export {
+  StatusTimelineComponent,
+  type TimelineItem,
+} from "./status-timeline/status-timeline.component";
 
 // ============================================================================
 // GAMIFICATION COMPONENTS
 // ============================================================================
-export { AchievementBadgeComponent, type BadgeTier, type BadgeRarity } from "./achievement-badge/achievement-badge.component";
+export {
+  AchievementBadgeComponent,
+  type BadgeTier,
+  type BadgeRarity,
+} from "./achievement-badge/achievement-badge.component";
 
 // ============================================================================
 // NAVIGATION & LAYOUT COMPONENTS
@@ -76,9 +98,9 @@ export { SwipeableCardsComponent } from "./swipeable-cards/swipeable-cards.compo
 // FEEDBACK COMPONENTS
 // ============================================================================
 export { AlertComponent } from "./alert/alert.component";
-export { ModalComponent } from "./modal/modal.component";
+// ModalComponent removed - use PrimeNG p-dialog directly
 export { ToastComponent } from "./toast/toast.component";
-export { SpinnerComponent } from "./spinner/spinner.component";
+// SpinnerComponent removed - use PrimeNG p-progressSpinner directly
 
 // ============================================================================
 // UTILITY COMPONENTS
@@ -102,7 +124,10 @@ export { TournamentModeWidgetComponent } from "./tournament-mode-widget/tourname
 // ============================================================================
 // ANALYTICS & INSIGHTS COMPONENTS
 // ============================================================================
-export { ActionableInsightsComponent, type Insight } from "./actionable-insights/actionable-insights.component";
+export {
+  ActionableInsightsComponent,
+  type Insight,
+} from "./actionable-insights/actionable-insights.component";
 
 // ============================================================================
 // COACH COMPONENTS
@@ -112,7 +137,10 @@ export { TeamWellnessOverviewComponent } from "./team-wellness-overview/team-wel
 // ============================================================================
 // CONNECTIVITY COMPONENTS
 // ============================================================================
-export { OfflineBadgeComponent, type OfflineCapability } from "./offline-badge/offline-badge.component";
+export {
+  OfflineBadgeComponent,
+  type OfflineCapability,
+} from "./offline-badge/offline-badge.component";
 
 // ============================================================================
 // KEYBOARD & ACCESSIBILITY COMPONENTS
@@ -122,10 +150,18 @@ export { KeyboardShortcutsModalComponent } from "./keyboard-shortcuts-modal/keyb
 // ============================================================================
 // SUCCESS & FEEDBACK COMPONENTS
 // ============================================================================
-export { SuccessCheckmarkComponent, type SuccessSize, type SuccessVariant } from "./success-checkmark/success-checkmark.component";
+export {
+  SuccessCheckmarkComponent,
+  type SuccessSize,
+  type SuccessVariant,
+} from "./success-checkmark/success-checkmark.component";
 
 // ============================================================================
 // LOADING & SKELETON COMPONENTS
 // ============================================================================
-export { SkeletonLoaderComponent, SkeletonRepeatComponent, type SkeletonVariant } from "./skeleton-loader/skeleton-loader.component";
+export {
+  SkeletonLoaderComponent,
+  SkeletonRepeatComponent,
+  type SkeletonVariant,
+} from "./skeleton-loader/skeleton-loader.component";
 export { EmptyStateComponent } from "./empty-state/empty-state.component";

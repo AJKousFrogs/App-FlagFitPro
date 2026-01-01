@@ -195,4 +195,3 @@ export class VideoCurationPlaylistDialogComponent {
     this.resetForm();
   }
 }
-

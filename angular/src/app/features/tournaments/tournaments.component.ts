@@ -1,10 +1,10 @@
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -27,7 +27,12 @@ import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { CreateTournamentDto, Tournament, TournamentService, TournamentVisibilityScope } from "../../core/services/tournament.service";
+import {
+  CreateTournamentDto,
+  Tournament,
+  TournamentService,
+  TournamentVisibilityScope,
+} from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -35,9 +40,9 @@ interface PlayerAvailability {
   playerId: string;
   playerName: string;
   position: string;
-  status: 'confirmed' | 'declined' | 'tentative' | 'pending';
+  status: "confirmed" | "declined" | "tentative" | "pending";
   reason?: string;
-  paymentStatus: 'pending' | 'paid' | 'partial' | 'not_required';
+  paymentStatus: "pending" | "paid" | "partial" | "not_required";
   amountPaid: number;
 }
 
@@ -79,7 +84,7 @@ interface TournamentBudget {
     <app-main-layout>
       <p-toast></p-toast>
       <p-confirmDialog></p-confirmDialog>
-      
+
       <div class="tournaments-page">
         <app-page-header
           title="Tournament Schedule"
@@ -88,16 +93,16 @@ interface TournamentBudget {
         >
           <div class="header-actions">
             @if (nextTournament(); as next) {
-              <p-button 
-                [label]="'Next: ' + next.name" 
+              <p-button
+                [label]="'Next: ' + next.name"
                 icon="pi pi-calendar"
                 [outlined]="true"
                 (onClick)="scrollToTournament(next.id)"
               ></p-button>
             }
             @if (isAuthenticated()) {
-              <p-button 
-                [label]="getAddButtonLabel()" 
+              <p-button
+                [label]="getAddButtonLabel()"
                 icon="pi pi-plus"
                 (onClick)="openCreateDialog()"
               ></p-button>
@@ -116,12 +121,15 @@ interface TournamentBudget {
         <!-- Empty State -->
         @if (!tournamentService.loading() && tournaments().length === 0) {
           <div class="empty-state">
-            <i class="pi pi-calendar-times" style="font-size: 3rem; color: var(--text-secondary)"></i>
+            <i
+              class="pi pi-calendar-times"
+              style="font-size: 3rem; color: var(--text-secondary)"
+            ></i>
             <h3>No Tournaments Scheduled</h3>
             <p>There are no tournaments in the system yet.</p>
             @if (isAuthenticated()) {
-              <p-button 
-                label="Add First Tournament" 
+              <p-button
+                label="Add First Tournament"
                 icon="pi pi-plus"
                 (onClick)="openCreateDialog()"
               ></p-button>
@@ -135,160 +143,27 @@ interface TournamentBudget {
             <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
               <div class="tournaments-grid">
                 @for (tournament of tournaments2026(); track tournament.id) {
-                  <p-card class="tournament-card" [attr.data-id]="tournament.id" [class.personal-tournament]="isPersonalTournament(tournament)">
+                  <p-card
+                    class="tournament-card"
+                    [attr.data-id]="tournament.id"
+                    [class.personal-tournament]="
+                      isPersonalTournament(tournament)
+                    "
+                  >
                     <div class="tournament-header">
                       <div class="header-row">
                         <div class="tags-row">
                           <p-tag
-                            [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
-                            [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
-                          ></p-tag>
-                          @if (isPersonalTournament(tournament)) {
-                            <p-tag
-                              value="Personal"
-                              severity="warn"
-                              icon="pi pi-user"
-                              styleClass="personal-badge"
-                            ></p-tag>
-                          }
-                        </div>
-                        @if (isAuthenticated()) {
-                          <div class="card-actions">
-                            <p-button 
-                              icon="pi pi-pencil" 
-                              [rounded]="true" 
-                              [text]="true"
-                              size="small"
-                              (onClick)="openEditDialog(tournament)"
-                            ></p-button>
-                            <p-button 
-                              icon="pi pi-trash" 
-                              [rounded]="true" 
-                              [text]="true"
-                              severity="danger"
-                              size="small"
-                              (onClick)="confirmDelete(tournament)"
-                            ></p-button>
-                          </div>
-                        }
-                      </div>
-                      <h3 class="tournament-title">{{ tournament.flag }} {{ tournament.name }}</h3>
-                      <p class="tournament-subtitle">{{ tournament.tournament_type === 'game_day' ? 'Game Day' : (tournament.tournament_type || 'Championship') }}</p>
-                    </div>
-                    <div class="tournament-body">
-                      <div class="tournament-info">
-                        <div class="info-item">
-                          <div class="info-icon">
-                            <i class="pi pi-calendar"></i>
-                          </div>
-                          <div>
-                            <div class="info-value">{{ tournamentService.formatDateRange(tournament.start_date, tournament.end_date) }}</div>
-                            <div class="info-label">Date</div>
-                          </div>
-                        </div>
-                        <div class="info-item">
-                          <div class="info-icon">📍</div>
-                          <div>
-                            <div class="info-value">{{ tournament.location || 'TBD' }}</div>
-                            <div class="info-label">{{ tournament.country || 'Location' }}</div>
-                          </div>
-                        </div>
-                        @if (tournament.venue) {
-                          <div class="info-item">
-                            <div class="info-icon">🏟️</div>
-                            <div>
-                              <div class="info-value">{{ tournament.venue }}</div>
-                              <div class="info-label">Venue</div>
-                            </div>
-                          </div>
-                        }
-                        @if (tournament.expected_teams) {
-                          <div class="info-item">
-                            <div class="info-icon">
-                              <i class="pi pi-users"></i>
-                            </div>
-                            <div>
-                              <div class="info-value">{{ tournament.expected_teams }}</div>
-                              <div class="info-label">Expected Teams</div>
-                            </div>
-                          </div>
-                        }
-                      </div>
-                      
-                      @if (tournament.daysUntil && tournament.daysUntil > 0) {
-                        <div class="tournament-countdown">
-                          <span class="countdown-value">{{ tournament.daysUntil }}</span>
-                          <span class="countdown-label">days until tournament</span>
-                        </div>
-                      }
-                      
-                      @if (tournament.notes) {
-                        <div class="tournament-notes">
-                          <p>{{ tournament.notes }}</p>
-                        </div>
-                      }
-                      
-                      <div class="tournament-actions">
-                        @if (tournament.website_url) {
-                          <p-button
-                            label="Website"
-                            icon="pi pi-external-link"
-                            [outlined]="true"
-                            size="small"
-                            (onClick)="openWebsite(tournament.website_url)"
-                          ></p-button>
-                        }
-                        @if (isAuthenticated()) {
-                          <p-button
-                            label="My Availability"
-                            icon="pi pi-calendar-plus"
-                            [outlined]="true"
-                            size="small"
-                            (onClick)="openAvailabilityDialog(tournament)"
-                          ></p-button>
-                        }
-                        @if (canViewTeamAvailability()) {
-                          <p-button 
-                            label="Team Status" 
-                            icon="pi pi-users"
-                            size="small"
-                            (onClick)="openTeamAvailabilityDialog(tournament)"
-                          ></p-button>
-                        }
-                        <p-button 
-                          label="View Details" 
-                          size="small"
-                          (onClick)="viewDetails(tournament)"
-                        ></p-button>
-                      </div>
-                    </div>
-                  </p-card>
-                } @empty {
-                  <div class="empty-season">
-                    <p>No tournaments scheduled for 2026 yet.</p>
-                    @if (isAuthenticated()) {
-                      <p-button 
-                        label="Add Tournament" 
-                        icon="pi pi-plus"
-                        [outlined]="true"
-                        (onClick)="openCreateDialog()"
-                      ></p-button>
-                    }
-                  </div>
-                }
-              </div>
-            </p-tabpanel>
-            
-            <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
-              <div class="tournaments-grid">
-                @for (tournament of tournaments2027(); track tournament.id) {
-                  <p-card class="tournament-card" [attr.data-id]="tournament.id" [class.personal-tournament]="isPersonalTournament(tournament)">
-                    <div class="tournament-header">
-                      <div class="header-row">
-                        <div class="tags-row">
-                          <p-tag
-                            [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
-                            [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
+                            [value]="
+                              tournamentService.getStatusLabel(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            [severity]="
+                              tournamentService.getStatusSeverity(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
                           ></p-tag>
                           @if (isPersonalTournament(tournament)) {
                             <p-tag
@@ -319,8 +194,16 @@ interface TournamentBudget {
                           </div>
                         }
                       </div>
-                      <h3 class="tournament-title">{{ tournament.flag }} {{ tournament.name }}</h3>
-                      <p class="tournament-subtitle">{{ tournament.tournament_type === 'game_day' ? 'Game Day' : (tournament.tournament_type || 'Championship') }}</p>
+                      <h3 class="tournament-title">
+                        {{ tournament.flag }} {{ tournament.name }}
+                      </h3>
+                      <p class="tournament-subtitle">
+                        {{
+                          tournament.tournament_type === "game_day"
+                            ? "Game Day"
+                            : tournament.tournament_type || "Championship"
+                        }}
+                      </p>
                     </div>
                     <div class="tournament-body">
                       <div class="tournament-info">
@@ -329,22 +212,221 @@ interface TournamentBudget {
                             <i class="pi pi-calendar"></i>
                           </div>
                           <div>
-                            <div class="info-value">{{ tournamentService.formatDateRange(tournament.start_date, tournament.end_date) }}</div>
+                            <div class="info-value">
+                              {{
+                                tournamentService.formatDateRange(
+                                  tournament.start_date,
+                                  tournament.end_date
+                                )
+                              }}
+                            </div>
                             <div class="info-label">Date</div>
                           </div>
                         </div>
                         <div class="info-item">
                           <div class="info-icon">📍</div>
                           <div>
-                            <div class="info-value">{{ tournament.location || 'TBD' }}</div>
-                            <div class="info-label">{{ tournament.country || 'Location' }}</div>
+                            <div class="info-value">
+                              {{ tournament.location || "TBD" }}
+                            </div>
+                            <div class="info-label">
+                              {{ tournament.country || "Location" }}
+                            </div>
+                          </div>
+                        </div>
+                        @if (tournament.venue) {
+                          <div class="info-item">
+                            <div class="info-icon">🏟️</div>
+                            <div>
+                              <div class="info-value">
+                                {{ tournament.venue }}
+                              </div>
+                              <div class="info-label">Venue</div>
+                            </div>
+                          </div>
+                        }
+                        @if (tournament.expected_teams) {
+                          <div class="info-item">
+                            <div class="info-icon">
+                              <i class="pi pi-users"></i>
+                            </div>
+                            <div>
+                              <div class="info-value">
+                                {{ tournament.expected_teams }}
+                              </div>
+                              <div class="info-label">Expected Teams</div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+
+                      @if (tournament.daysUntil && tournament.daysUntil > 0) {
+                        <div class="tournament-countdown">
+                          <span class="countdown-value">{{
+                            tournament.daysUntil
+                          }}</span>
+                          <span class="countdown-label"
+                            >days until tournament</span
+                          >
+                        </div>
+                      }
+
+                      @if (tournament.notes) {
+                        <div class="tournament-notes">
+                          <p>{{ tournament.notes }}</p>
+                        </div>
+                      }
+
+                      <div class="tournament-actions">
+                        @if (tournament.website_url) {
+                          <p-button
+                            label="Website"
+                            icon="pi pi-external-link"
+                            [outlined]="true"
+                            size="small"
+                            (onClick)="openWebsite(tournament.website_url)"
+                          ></p-button>
+                        }
+                        @if (isAuthenticated()) {
+                          <p-button
+                            label="My Availability"
+                            icon="pi pi-calendar-plus"
+                            [outlined]="true"
+                            size="small"
+                            (onClick)="openAvailabilityDialog(tournament)"
+                          ></p-button>
+                        }
+                        @if (canViewTeamAvailability()) {
+                          <p-button
+                            label="Team Status"
+                            icon="pi pi-users"
+                            size="small"
+                            (onClick)="openTeamAvailabilityDialog(tournament)"
+                          ></p-button>
+                        }
+                        <p-button
+                          label="View Details"
+                          size="small"
+                          (onClick)="viewDetails(tournament)"
+                        ></p-button>
+                      </div>
+                    </div>
+                  </p-card>
+                } @empty {
+                  <div class="empty-season">
+                    <p>No tournaments scheduled for 2026 yet.</p>
+                    @if (isAuthenticated()) {
+                      <p-button
+                        label="Add Tournament"
+                        icon="pi pi-plus"
+                        [outlined]="true"
+                        (onClick)="openCreateDialog()"
+                      ></p-button>
+                    }
+                  </div>
+                }
+              </div>
+            </p-tabpanel>
+
+            <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
+              <div class="tournaments-grid">
+                @for (tournament of tournaments2027(); track tournament.id) {
+                  <p-card
+                    class="tournament-card"
+                    [attr.data-id]="tournament.id"
+                    [class.personal-tournament]="
+                      isPersonalTournament(tournament)
+                    "
+                  >
+                    <div class="tournament-header">
+                      <div class="header-row">
+                        <div class="tags-row">
+                          <p-tag
+                            [value]="
+                              tournamentService.getStatusLabel(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            [severity]="
+                              tournamentService.getStatusSeverity(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                          ></p-tag>
+                          @if (isPersonalTournament(tournament)) {
+                            <p-tag
+                              value="Personal"
+                              severity="warn"
+                              icon="pi pi-user"
+                              styleClass="personal-badge"
+                            ></p-tag>
+                          }
+                        </div>
+                        @if (isAuthenticated()) {
+                          <div class="card-actions">
+                            <p-button
+                              icon="pi pi-pencil"
+                              [rounded]="true"
+                              [text]="true"
+                              size="small"
+                              (onClick)="openEditDialog(tournament)"
+                            ></p-button>
+                            <p-button
+                              icon="pi pi-trash"
+                              [rounded]="true"
+                              [text]="true"
+                              severity="danger"
+                              size="small"
+                              (onClick)="confirmDelete(tournament)"
+                            ></p-button>
+                          </div>
+                        }
+                      </div>
+                      <h3 class="tournament-title">
+                        {{ tournament.flag }} {{ tournament.name }}
+                      </h3>
+                      <p class="tournament-subtitle">
+                        {{
+                          tournament.tournament_type === "game_day"
+                            ? "Game Day"
+                            : tournament.tournament_type || "Championship"
+                        }}
+                      </p>
+                    </div>
+                    <div class="tournament-body">
+                      <div class="tournament-info">
+                        <div class="info-item">
+                          <div class="info-icon">
+                            <i class="pi pi-calendar"></i>
+                          </div>
+                          <div>
+                            <div class="info-value">
+                              {{
+                                tournamentService.formatDateRange(
+                                  tournament.start_date,
+                                  tournament.end_date
+                                )
+                              }}
+                            </div>
+                            <div class="info-label">Date</div>
+                          </div>
+                        </div>
+                        <div class="info-item">
+                          <div class="info-icon">📍</div>
+                          <div>
+                            <div class="info-value">
+                              {{ tournament.location || "TBD" }}
+                            </div>
+                            <div class="info-label">
+                              {{ tournament.country || "Location" }}
+                            </div>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div class="tournament-actions">
-                        <p-button 
-                          label="View Details" 
+                        <p-button
+                          label="View Details"
                           size="small"
                           (onClick)="viewDetails(tournament)"
                         ></p-button>
@@ -355,8 +437,8 @@ interface TournamentBudget {
                   <div class="empty-season">
                     <p>No tournaments scheduled for 2027 yet.</p>
                     @if (isAuthenticated()) {
-                      <p-button 
-                        label="Add Tournament" 
+                      <p-button
+                        label="Add Tournament"
                         icon="pi pi-plus"
                         [outlined]="true"
                         (onClick)="openCreateDialog()"
@@ -389,7 +471,10 @@ interface TournamentBudget {
               </div>
               <div class="banner-content">
                 <strong>Personal Game Day</strong>
-                <p>This will only be visible to you and your coaches. It won't affect other players' schedules or workload calculations.</p>
+                <p>
+                  This will only be visible to you and your coaches. It won't
+                  affect other players' schedules or workload calculations.
+                </p>
               </div>
             </div>
           }
@@ -400,7 +485,10 @@ interface TournamentBudget {
               </div>
               <div class="banner-content">
                 <strong>Team Tournament</strong>
-                <p>This will be visible to all team members and will affect everyone's training schedule and workload calculations.</p>
+                <p>
+                  This will be visible to all team members and will affect
+                  everyone's training schedule and workload calculations.
+                </p>
               </div>
             </div>
           }
@@ -426,13 +514,14 @@ interface TournamentBudget {
               <div class="form-field full-width">
                 <label for="tournament-name">
                   <i class="pi pi-tag"></i>
-                  {{ isPlayer() ? 'Game Day Name' : 'Tournament Name' }} <span class="required">*</span>
+                  {{ isPlayer() ? "Game Day Name" : "Tournament Name" }}
+                  <span class="required">*</span>
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-name"
                   name="tournamentName"
-                  [(ngModel)]="formData.name" 
+                  [(ngModel)]="formData.name"
                   placeholder="e.g., Adria Bowl 2026"
                   class="w-full"
                   autocomplete="off"
@@ -445,11 +534,11 @@ interface TournamentBudget {
                   <i class="pi pi-bookmark"></i>
                   Short Name
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-shortName"
                   name="shortName"
-                  [(ngModel)]="formData.short_name" 
+                  [(ngModel)]="formData.short_name"
                   placeholder="e.g., Adria Bowl"
                   autocomplete="off"
                 />
@@ -459,7 +548,7 @@ interface TournamentBudget {
                   <i class="pi pi-users"></i>
                   Expected Teams
                 </label>
-                <p-inputNumber 
+                <p-inputNumber
                   inputId="tournament-teams"
                   [(ngModel)]="formData.expected_teams"
                   [min]="2"
@@ -483,11 +572,11 @@ interface TournamentBudget {
                   <i class="pi pi-globe"></i>
                   Country
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-country"
                   name="country"
-                  [(ngModel)]="formData.country" 
+                  [(ngModel)]="formData.country"
                   placeholder="e.g., Croatia"
                   autocomplete="country-name"
                 />
@@ -497,11 +586,11 @@ interface TournamentBudget {
                   <i class="pi pi-building"></i>
                   City
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-location"
                   name="location"
-                  [(ngModel)]="formData.location" 
+                  [(ngModel)]="formData.location"
                   placeholder="e.g., Zagreb"
                   autocomplete="address-level2"
                 />
@@ -513,11 +602,11 @@ interface TournamentBudget {
                   <i class="pi pi-home"></i>
                   Venue / Stadium
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-venue"
                   name="venue"
-                  [(ngModel)]="formData.venue" 
+                  [(ngModel)]="formData.venue"
                   placeholder="e.g., Stadium Name or Sports Complex"
                   autocomplete="off"
                 />
@@ -537,7 +626,7 @@ interface TournamentBudget {
                   <i class="pi pi-calendar-plus"></i>
                   Start Date <span class="required">*</span>
                 </label>
-                <p-datepicker 
+                <p-datepicker
                   inputId="tournament-startDate"
                   [(ngModel)]="formData.start_date_obj"
                   [showIcon]="true"
@@ -553,7 +642,7 @@ interface TournamentBudget {
                   <i class="pi pi-calendar-minus"></i>
                   End Date
                 </label>
-                <p-datepicker 
+                <p-datepicker
                   inputId="tournament-endDate"
                   [(ngModel)]="formData.end_date_obj"
                   [showIcon]="true"
@@ -571,7 +660,7 @@ interface TournamentBudget {
                   <i class="pi pi-clock"></i>
                   Registration Deadline
                 </label>
-                <p-datepicker 
+                <p-datepicker
                   inputId="tournament-deadline"
                   [(ngModel)]="formData.registration_deadline_obj"
                   [showIcon]="true"
@@ -597,7 +686,7 @@ interface TournamentBudget {
                   <i class="pi pi-flag"></i>
                   Tournament Type
                 </label>
-                <p-select 
+                <p-select
                   inputId="tournament-type"
                   [(ngModel)]="formData.tournament_type"
                   [options]="tournamentTypes"
@@ -613,7 +702,7 @@ interface TournamentBudget {
                   <i class="pi pi-star"></i>
                   Competition Level
                 </label>
-                <p-select 
+                <p-select
                   inputId="tournament-level"
                   [(ngModel)]="formData.competition_level"
                   [options]="competitionLevels"
@@ -627,7 +716,7 @@ interface TournamentBudget {
             </div>
             <div class="form-row">
               <div class="form-field full-width checkbox-field">
-                <p-checkbox 
+                <p-checkbox
                   [(ngModel)]="formData.is_home_tournament"
                   [binary]="true"
                   inputId="homeTournament"
@@ -652,11 +741,11 @@ interface TournamentBudget {
                   <i class="pi pi-globe"></i>
                   Official Website
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-website"
                   name="website"
-                  [(ngModel)]="formData.website_url" 
+                  [(ngModel)]="formData.website_url"
                   placeholder="https://tournament-website.com"
                   autocomplete="url"
                 />
@@ -666,11 +755,11 @@ interface TournamentBudget {
                   <i class="pi pi-instagram"></i>
                   Instagram
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-instagram"
                   name="instagram"
-                  [(ngModel)]="formData.instagram_url" 
+                  [(ngModel)]="formData.instagram_url"
                   placeholder="https://instagram.com/tournament"
                   autocomplete="off"
                 />
@@ -682,11 +771,11 @@ interface TournamentBudget {
                   <i class="pi pi-facebook"></i>
                   Facebook
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-facebook"
                   name="facebook"
-                  [(ngModel)]="formData.facebook_url" 
+                  [(ngModel)]="formData.facebook_url"
                   placeholder="https://facebook.com/event/..."
                   autocomplete="off"
                 />
@@ -696,11 +785,11 @@ interface TournamentBudget {
                   <i class="pi pi-file-edit"></i>
                   Registration Link
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-registration"
                   name="registration"
-                  [(ngModel)]="formData.registration_url" 
+                  [(ngModel)]="formData.registration_url"
                   placeholder="https://registration-form.com"
                   autocomplete="off"
                 />
@@ -720,11 +809,11 @@ interface TournamentBudget {
                   <i class="pi pi-map-marker"></i>
                   Venue Location (Google Maps)
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-venue-map"
                   name="venueMap"
-                  [(ngModel)]="formData.venue_maps_url" 
+                  [(ngModel)]="formData.venue_maps_url"
                   placeholder="https://maps.google.com/..."
                   autocomplete="off"
                 />
@@ -734,11 +823,11 @@ interface TournamentBudget {
                   <i class="pi pi-building"></i>
                   Hotel Location (Google Maps)
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-hotel-map"
                   name="hotelMap"
-                  [(ngModel)]="formData.hotel_maps_url" 
+                  [(ngModel)]="formData.hotel_maps_url"
                   placeholder="https://maps.google.com/..."
                   autocomplete="off"
                 />
@@ -750,11 +839,11 @@ interface TournamentBudget {
                   <i class="pi pi-home"></i>
                   Recommended Hotel
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-hotel-name"
                   name="hotelName"
-                  [(ngModel)]="formData.hotel_name" 
+                  [(ngModel)]="formData.hotel_name"
                   placeholder="e.g., Hotel Ambassador"
                   autocomplete="off"
                 />
@@ -764,11 +853,11 @@ interface TournamentBudget {
                   <i class="pi pi-external-link"></i>
                   Hotel Booking Link
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-hotel-booking"
                   name="hotelBooking"
-                  [(ngModel)]="formData.hotel_booking_url" 
+                  [(ngModel)]="formData.hotel_booking_url"
                   placeholder="https://booking.com/..."
                   autocomplete="off"
                 />
@@ -788,11 +877,11 @@ interface TournamentBudget {
                   <i class="pi pi-user"></i>
                   Contact Person
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-contact-name"
                   name="contactName"
-                  [(ngModel)]="formData.contact_name" 
+                  [(ngModel)]="formData.contact_name"
                   placeholder="e.g., John Smith"
                   autocomplete="off"
                 />
@@ -802,11 +891,11 @@ interface TournamentBudget {
                   <i class="pi pi-envelope"></i>
                   Contact Email
                 </label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   id="tournament-contact-email"
                   name="contactEmail"
-                  [(ngModel)]="formData.contact_email" 
+                  [(ngModel)]="formData.contact_email"
                   placeholder="contact@tournament.com"
                   autocomplete="email"
                 />
@@ -818,11 +907,11 @@ interface TournamentBudget {
                   <i class="pi pi-pencil"></i>
                   Notes & Additional Information
                 </label>
-                <textarea 
-                  pTextarea 
+                <textarea
+                  pTextarea
                   id="tournament-notes"
                   name="notes"
-                  [(ngModel)]="formData.notes" 
+                  [(ngModel)]="formData.notes"
                   rows="3"
                   placeholder="Travel tips, dress code, parking info, special requirements..."
                   class="w-full"
@@ -835,14 +924,14 @@ interface TournamentBudget {
 
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <p-button 
-              label="Cancel" 
+            <p-button
+              label="Cancel"
               icon="pi pi-times"
               [outlined]="true"
               severity="secondary"
               (onClick)="closeDialog()"
             ></p-button>
-            <p-button 
+            <p-button
               [label]="editingTournament ? 'Save Changes' : 'Create Tournament'"
               [icon]="editingTournament ? 'pi pi-check' : 'pi pi-plus'"
               [loading]="tournamentService.loading()"
@@ -853,8 +942,8 @@ interface TournamentBudget {
       </p-dialog>
 
       <!-- Player Availability Dialog -->
-      <p-dialog 
-        [(visible)]="showAvailabilityDialog" 
+      <p-dialog
+        [(visible)]="showAvailabilityDialog"
         header="My Tournament Availability"
         [modal]="true"
         [style]="{ width: '500px' }"
@@ -863,14 +952,22 @@ interface TournamentBudget {
         @if (selectedTournament) {
           <div class="availability-dialog">
             <div class="tournament-summary">
-              <h3>{{ selectedTournament.flag }} {{ selectedTournament.name }}</h3>
+              <h3>
+                {{ selectedTournament.flag }} {{ selectedTournament.name }}
+              </h3>
               <p class="tournament-dates">
                 <i class="pi pi-calendar"></i>
-                {{ tournamentService.formatDateRange(selectedTournament.start_date, selectedTournament.end_date) }}
+                {{
+                  tournamentService.formatDateRange(
+                    selectedTournament.start_date,
+                    selectedTournament.end_date
+                  )
+                }}
               </p>
               <p class="tournament-location">
                 <i class="pi pi-map-marker"></i>
-                {{ selectedTournament.location }}, {{ selectedTournament.country }}
+                {{ selectedTournament.location }},
+                {{ selectedTournament.country }}
               </p>
             </div>
 
@@ -879,9 +976,11 @@ interface TournamentBudget {
                 <label>Will you be attending?</label>
                 <div class="availability-options">
                   @for (option of availabilityOptions; track option.value) {
-                    <div 
+                    <div
                       class="availability-option"
-                      [class.selected]="availabilityForm.status === option.value"
+                      [class.selected]="
+                        availabilityForm.status === option.value
+                      "
                       [class]="'option-' + option.value"
                       (click)="availabilityForm.status = option.value"
                     >
@@ -892,12 +991,15 @@ interface TournamentBudget {
                 </div>
               </div>
 
-              @if (availabilityForm.status === 'declined' || availabilityForm.status === 'tentative') {
+              @if (
+                availabilityForm.status === "declined" ||
+                availabilityForm.status === "tentative"
+              ) {
                 <div class="form-field">
                   <label>Reason (optional)</label>
-                  <textarea 
-                    pTextarea 
-                    [(ngModel)]="availabilityForm.reason" 
+                  <textarea
+                    pTextarea
+                    [(ngModel)]="availabilityForm.reason"
                     rows="2"
                     placeholder="Let your coach know why..."
                     class="w-full"
@@ -905,11 +1007,11 @@ interface TournamentBudget {
                 </div>
               }
 
-              @if (availabilityForm.status === 'confirmed') {
+              @if (availabilityForm.status === "confirmed") {
                 <div class="form-grid-2">
                   <div class="form-field">
                     <label>Arrival Date</label>
-                    <p-datepicker 
+                    <p-datepicker
                       [(ngModel)]="availabilityForm.arrivalDate"
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
@@ -919,7 +1021,7 @@ interface TournamentBudget {
                   </div>
                   <div class="form-field">
                     <label>Departure Date</label>
-                    <p-datepicker 
+                    <p-datepicker
                       [(ngModel)]="availabilityForm.departureDate"
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
@@ -930,7 +1032,7 @@ interface TournamentBudget {
                 </div>
 
                 <div class="form-field">
-                  <p-checkbox 
+                  <p-checkbox
                     [(ngModel)]="availabilityForm.accommodationNeeded"
                     [binary]="true"
                     inputId="accommodation"
@@ -939,7 +1041,7 @@ interface TournamentBudget {
                 </div>
 
                 <div class="form-field">
-                  <p-checkbox 
+                  <p-checkbox
                     [(ngModel)]="availabilityForm.transportationNeeded"
                     [binary]="true"
                     inputId="transportation"
@@ -949,8 +1051,8 @@ interface TournamentBudget {
 
                 <div class="form-field">
                   <label>Dietary Restrictions</label>
-                  <input 
-                    pInputText 
+                  <input
+                    pInputText
                     [(ngModel)]="availabilityForm.dietaryRestrictions"
                     placeholder="Any dietary needs..."
                     class="w-full"
@@ -959,23 +1061,36 @@ interface TournamentBudget {
               }
 
               <!-- Cost Information -->
-              @if (tournamentCost() > 0 && availabilityForm.status === 'confirmed') {
+              @if (
+                tournamentCost() > 0 && availabilityForm.status === "confirmed"
+              ) {
                 <div class="cost-summary">
                   <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
                   <div class="cost-breakdown">
                     <div class="cost-item">
                       <span>Your share:</span>
-                      <span class="cost-value">€{{ tournamentCost() | number:'1.2-2' }}</span>
+                      <span class="cost-value"
+                        >€{{ tournamentCost() | number: "1.2-2" }}</span
+                      >
                     </div>
                     @if (availabilityForm.amountPaid > 0) {
                       <div class="cost-item paid">
                         <span>Already paid:</span>
-                        <span class="cost-value">€{{ availabilityForm.amountPaid | number:'1.2-2' }}</span>
+                        <span class="cost-value"
+                          >€{{
+                            availabilityForm.amountPaid | number: "1.2-2"
+                          }}</span
+                        >
                       </div>
                     }
                     <div class="cost-item remaining">
                       <span>Remaining:</span>
-                      <span class="cost-value">€{{ (tournamentCost() - availabilityForm.amountPaid) | number:'1.2-2' }}</span>
+                      <span class="cost-value"
+                        >€{{
+                          tournamentCost() - availabilityForm.amountPaid
+                            | number: "1.2-2"
+                        }}</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -985,12 +1100,12 @@ interface TournamentBudget {
         }
 
         <ng-template pTemplate="footer">
-          <p-button 
-            label="Cancel" 
+          <p-button
+            label="Cancel"
             [outlined]="true"
             (onClick)="showAvailabilityDialog = false"
           ></p-button>
-          <p-button 
+          <p-button
             label="Save"
             icon="pi pi-check"
             [loading]="savingAvailability()"
@@ -1000,8 +1115,8 @@ interface TournamentBudget {
       </p-dialog>
 
       <!-- Team Availability Overview Dialog (for coaches) -->
-      <p-dialog 
-        [(visible)]="showTeamAvailabilityDialog" 
+      <p-dialog
+        [(visible)]="showTeamAvailabilityDialog"
         header="Team Availability"
         [modal]="true"
         [style]="{ width: '800px', maxHeight: '80vh' }"
@@ -1010,26 +1125,43 @@ interface TournamentBudget {
         @if (selectedTournament) {
           <div class="team-availability-dialog">
             <div class="tournament-summary">
-              <h3>{{ selectedTournament.flag }} {{ selectedTournament.name }}</h3>
-              <p class="tournament-dates">{{ tournamentService.formatDateRange(selectedTournament.start_date, selectedTournament.end_date) }}</p>
+              <h3>
+                {{ selectedTournament.flag }} {{ selectedTournament.name }}
+              </h3>
+              <p class="tournament-dates">
+                {{
+                  tournamentService.formatDateRange(
+                    selectedTournament.start_date,
+                    selectedTournament.end_date
+                  )
+                }}
+              </p>
             </div>
 
             <!-- Summary Stats -->
             <div class="availability-summary">
               <div class="summary-stat confirmed">
-                <div class="stat-value">{{ teamAvailabilitySummary().confirmed }}</div>
+                <div class="stat-value">
+                  {{ teamAvailabilitySummary().confirmed }}
+                </div>
                 <div class="stat-label">Confirmed</div>
               </div>
               <div class="summary-stat tentative">
-                <div class="stat-value">{{ teamAvailabilitySummary().tentative }}</div>
+                <div class="stat-value">
+                  {{ teamAvailabilitySummary().tentative }}
+                </div>
                 <div class="stat-label">Tentative</div>
               </div>
               <div class="summary-stat declined">
-                <div class="stat-value">{{ teamAvailabilitySummary().declined }}</div>
+                <div class="stat-value">
+                  {{ teamAvailabilitySummary().declined }}
+                </div>
                 <div class="stat-label">Declined</div>
               </div>
               <div class="summary-stat pending">
-                <div class="stat-value">{{ teamAvailabilitySummary().pending }}</div>
+                <div class="stat-value">
+                  {{ teamAvailabilitySummary().pending }}
+                </div>
                 <div class="stat-label">No Response</div>
               </div>
             </div>
@@ -1041,22 +1173,39 @@ interface TournamentBudget {
                 <div class="budget-grid">
                   <div class="budget-item">
                     <span class="budget-label">Total Estimated</span>
-                    <span class="budget-value">€{{ tournamentBudget()!.totalEstimated | number:'1.2-2' }}</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.totalEstimated | number: "1.2-2"
+                      }}</span
+                    >
                   </div>
                   <div class="budget-item">
                     <span class="budget-label">Team Contribution</span>
-                    <span class="budget-value">€{{ tournamentBudget()!.teamContribution | number:'1.2-2' }}</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.teamContribution | number: "1.2-2"
+                      }}</span
+                    >
                   </div>
                   <div class="budget-item">
                     <span class="budget-label">Sponsor Contribution</span>
-                    <span class="budget-value">€{{ tournamentBudget()!.sponsorContribution | number:'1.2-2' }}</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.sponsorContribution
+                          | number: "1.2-2"
+                      }}</span
+                    >
                   </div>
                   <div class="budget-item highlight">
                     <span class="budget-label">Per Player</span>
-                    <span class="budget-value">€{{ tournamentBudget()!.perPlayer | number:'1.2-2' }}</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.perPlayer | number: "1.2-2"
+                      }}</span
+                    >
                   </div>
                 </div>
-                <p-button 
+                <p-button
                   label="Manage Budget"
                   icon="pi pi-cog"
                   [outlined]="true"
@@ -1070,13 +1219,16 @@ interface TournamentBudget {
             <div class="player-availability-list">
               <h4>Player Responses</h4>
               @for (player of teamAvailability(); track player.playerId) {
-                <div class="player-availability-item" [class]="'status-' + player.status">
+                <div
+                  class="player-availability-item"
+                  [class]="'status-' + player.status"
+                >
                   <div class="player-info">
                     <span class="player-name">{{ player.playerName }}</span>
                     <span class="player-position">{{ player.position }}</span>
                   </div>
                   <div class="player-status">
-                    <p-tag 
+                    <p-tag
                       [value]="getAvailabilityLabel(player.status)"
                       [severity]="getAvailabilitySeverity(player.status)"
                     ></p-tag>
@@ -1088,11 +1240,11 @@ interface TournamentBudget {
                     </div>
                   }
                   <div class="player-payment">
-                    @if (player.paymentStatus === 'paid') {
+                    @if (player.paymentStatus === "paid") {
                       <p-tag value="Paid" severity="success"></p-tag>
-                    } @else if (player.paymentStatus === 'partial') {
+                    } @else if (player.paymentStatus === "partial") {
                       <p-tag value="Partial" severity="warn"></p-tag>
-                    } @else if (player.status === 'confirmed') {
+                    } @else if (player.status === "confirmed") {
                       <p-tag value="Unpaid" severity="danger"></p-tag>
                     }
                   </div>
@@ -1106,13 +1258,13 @@ interface TournamentBudget {
 
             <!-- Actions -->
             <div class="dialog-actions">
-              <p-button 
+              <p-button
                 label="Send Reminders"
                 icon="pi pi-bell"
                 [outlined]="true"
                 (onClick)="sendAvailabilityReminders()"
               ></p-button>
-              <p-button 
+              <p-button
                 label="Export Report"
                 icon="pi pi-download"
                 [outlined]="true"
@@ -1123,16 +1275,16 @@ interface TournamentBudget {
         }
 
         <ng-template pTemplate="footer">
-          <p-button 
-            label="Close" 
+          <p-button
+            label="Close"
             (onClick)="showTeamAvailabilityDialog = false"
           ></p-button>
         </ng-template>
       </p-dialog>
 
       <!-- Budget Management Dialog -->
-      <p-dialog 
-        [(visible)]="showBudgetDialog" 
+      <p-dialog
+        [(visible)]="showBudgetDialog"
         header="Tournament Budget"
         [modal]="true"
         [style]="{ width: '700px' }"
@@ -1143,7 +1295,7 @@ interface TournamentBudget {
             <div class="form-grid">
               <div class="form-field">
                 <label>Registration Fee</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.registrationFee"
                   mode="currency"
                   currency="EUR"
@@ -1153,7 +1305,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field">
                 <label>Entry Fee Per Player</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.entryFeePerPlayer"
                   mode="currency"
                   currency="EUR"
@@ -1163,7 +1315,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field">
                 <label>Travel Cost (Estimated)</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.travelCost"
                   mode="currency"
                   currency="EUR"
@@ -1173,7 +1325,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field">
                 <label>Accommodation Per Night</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.accommodationPerNight"
                   mode="currency"
                   currency="EUR"
@@ -1183,7 +1335,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field">
                 <label>Number of Nights</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.totalNights"
                   [min]="0"
                   [style]="{ width: '100%' }"
@@ -1191,7 +1343,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field">
                 <label>Per Diem Per Player</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.perDiem"
                   mode="currency"
                   currency="EUR"
@@ -1201,7 +1353,7 @@ interface TournamentBudget {
               </div>
               <div class="form-field full-width">
                 <label>Other Costs</label>
-                <p-inputNumber 
+                <p-inputNumber
                   [(ngModel)]="budgetForm.otherCosts"
                   mode="currency"
                   currency="EUR"
@@ -1211,8 +1363,8 @@ interface TournamentBudget {
               </div>
               <div class="form-field full-width">
                 <label>Other Costs Description</label>
-                <input 
-                  pInputText 
+                <input
+                  pInputText
                   [(ngModel)]="budgetForm.otherCostsDescription"
                   placeholder="Equipment, uniforms, etc."
                   class="w-full"
@@ -1225,7 +1377,7 @@ interface TournamentBudget {
               <div class="form-grid">
                 <div class="form-field">
                   <label>Team Contribution</label>
-                  <p-inputNumber 
+                  <p-inputNumber
                     [(ngModel)]="budgetForm.teamContribution"
                     mode="currency"
                     currency="EUR"
@@ -1235,7 +1387,7 @@ interface TournamentBudget {
                 </div>
                 <div class="form-field">
                   <label>Sponsor Contribution</label>
-                  <p-inputNumber 
+                  <p-inputNumber
                     [(ngModel)]="budgetForm.sponsorContribution"
                     mode="currency"
                     currency="EUR"
@@ -1250,27 +1402,41 @@ interface TournamentBudget {
             <div class="budget-calculated">
               <div class="calc-row">
                 <span>Total Estimated Cost:</span>
-                <span class="calc-value">€{{ calculateTotalBudget() | number:'1.2-2' }}</span>
+                <span class="calc-value"
+                  >€{{ calculateTotalBudget() | number: "1.2-2" }}</span
+                >
               </div>
               <div class="calc-row">
                 <span>Total Funding:</span>
-                <span class="calc-value">€{{ (budgetForm.teamContribution + budgetForm.sponsorContribution) | number:'1.2-2' }}</span>
+                <span class="calc-value"
+                  >€{{
+                    budgetForm.teamContribution + budgetForm.sponsorContribution
+                      | number: "1.2-2"
+                  }}</span
+                >
               </div>
               <div class="calc-row highlight">
-                <span>Player Share ({{ teamAvailabilitySummary().confirmed }} confirmed):</span>
-                <span class="calc-value">€{{ calculatePlayerShare() | number:'1.2-2' }}</span>
+                <span
+                  >Player Share ({{
+                    teamAvailabilitySummary().confirmed
+                  }}
+                  confirmed):</span
+                >
+                <span class="calc-value"
+                  >€{{ calculatePlayerShare() | number: "1.2-2" }}</span
+                >
               </div>
             </div>
           </div>
         }
 
         <ng-template pTemplate="footer">
-          <p-button 
-            label="Cancel" 
+          <p-button
+            label="Cancel"
             [outlined]="true"
             (onClick)="showBudgetDialog = false"
           ></p-button>
-          <p-button 
+          <p-button
             label="Save Budget"
             icon="pi pi-check"
             [loading]="savingBudget()"
@@ -1327,7 +1493,9 @@ interface TournamentBudget {
       }
 
       .tournament-card {
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       .tournament-card:hover {
@@ -1378,12 +1546,20 @@ interface TournamentBudget {
       }
 
       .visibility-info-banner.personal {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0.1) 0%,
+          rgba(245, 158, 11, 0.05) 100%
+        );
         border: 1px solid rgba(245, 158, 11, 0.2);
       }
 
       .visibility-info-banner.team {
-        background: linear-gradient(135deg, rgba(8, 153, 73, 0.1) 0%, rgba(8, 153, 73, 0.05) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(8, 153, 73, 0.1) 0%,
+          rgba(8, 153, 73, 0.05) 100%
+        );
         border: 1px solid rgba(8, 153, 73, 0.2);
       }
 
@@ -1518,7 +1694,7 @@ interface TournamentBudget {
       /* ================================================================
          TOURNAMENT DIALOG - Premium Form Design
          ================================================================ */
-      
+
       .tournament-form {
         display: flex;
         flex-direction: column;
@@ -1548,7 +1724,7 @@ interface TournamentBudget {
       }
 
       .section-header span {
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: 0.9375rem;
         font-weight: 600;
         color: #1a1a1a;
@@ -1585,7 +1761,7 @@ interface TournamentBudget {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         font-weight: 500;
         font-size: 0.8125rem;
         color: #4b5563;
@@ -1677,7 +1853,10 @@ interface TournamentBudget {
         font-size: 0.9375rem;
       }
 
-      .tournament-form ::ng-deep .p-datepicker .p-datepicker-input-icon-container {
+      .tournament-form
+        ::ng-deep
+        .p-datepicker
+        .p-datepicker-input-icon-container {
         position: absolute;
         left: 0.875rem;
         top: 50%;
@@ -2090,67 +2269,67 @@ interface TournamentBudget {
       /* ================================================================
          RESPONSIVE BREAKPOINTS - Full Coverage
          ================================================================ */
-      
+
       /* Extra Large Screens (> 1400px) */
       @media (min-width: 1400px) {
         .tournaments-grid {
           grid-template-columns: repeat(3, 1fr);
         }
-        
+
         .tournament-info {
           grid-template-columns: repeat(4, 1fr);
         }
-        
+
         .budget-grid {
           grid-template-columns: repeat(4, 1fr);
         }
       }
-      
+
       /* Large Screens (1200px - 1399px) */
       @media (min-width: 1200px) and (max-width: 1399px) {
         .tournaments-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .tournament-info {
           grid-template-columns: repeat(3, 1fr);
         }
       }
-      
+
       /* Medium-Large Screens (1024px - 1199px) */
       @media (min-width: 1024px) and (max-width: 1199px) {
         .tournaments-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .tournament-info {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .availability-summary {
           grid-template-columns: repeat(4, 1fr);
         }
       }
-      
+
       /* Tablet Landscape (769px - 1023px) */
       @media (min-width: 769px) and (max-width: 1023px) {
         .tournaments-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .tournament-info {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .availability-options {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .budget-grid {
           grid-template-columns: repeat(3, 1fr);
         }
       }
-      
+
       /* Tablet Portrait (768px) */
       @media (max-width: 768px) {
         .header-actions {
@@ -2187,115 +2366,115 @@ interface TournamentBudget {
           grid-template-columns: 1fr;
           gap: var(--space-2);
         }
-        
+
         .tournament-card {
           padding: var(--space-4);
         }
-        
+
         .countdown-section {
           flex-direction: column;
           text-align: center;
         }
       }
-      
+
       /* Mobile Large (481px - 767px) */
       @media (min-width: 481px) and (max-width: 767px) {
         .availability-options {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .budget-grid {
           grid-template-columns: repeat(2, 1fr);
         }
       }
-      
+
       /* Mobile Small (< 480px) */
       @media (max-width: 480px) {
         .tournaments-page {
           padding: var(--space-3);
         }
-        
+
         .header-actions {
           gap: var(--space-2);
         }
-        
+
         .tournament-card {
           padding: var(--space-3);
         }
-        
+
         .availability-options {
           grid-template-columns: 1fr;
         }
-        
+
         .availability-summary {
           grid-template-columns: 1fr;
         }
-        
+
         .budget-grid {
           grid-template-columns: 1fr;
         }
-        
+
         .calc-row {
           flex-direction: column;
           gap: var(--space-1);
           text-align: center;
         }
-        
+
         .calc-row.highlight {
           padding: var(--space-2);
         }
       }
-      
+
       /* Extra Small Screens (< 375px) */
       @media (max-width: 374px) {
         .tournaments-page {
           padding: var(--space-2);
         }
-        
+
         .tournament-title {
           font-size: var(--font-body-lg);
         }
-        
+
         .tournament-meta {
           flex-direction: column;
           align-items: flex-start;
         }
       }
-      
+
       /* Landscape Mode on Mobile */
       @media (max-height: 500px) and (orientation: landscape) {
         .tournaments-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .tournament-card {
           padding: var(--space-3);
         }
       }
-      
+
       /* Touch Device Optimizations */
       @media (hover: none) and (pointer: coarse) {
         .tournament-card:hover {
           transform: none;
         }
-        
+
         .availability-option,
         .header-actions button {
           min-height: 44px;
         }
       }
-      
+
       /* Print Styles */
       @media print {
         .header-actions,
         .tournament-actions {
           display: none !important;
         }
-        
+
         .tournaments-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .tournament-card {
           box-shadow: none;
           border: 1px solid #ccc;
@@ -2322,35 +2501,40 @@ export class TournamentsComponent implements OnInit {
   // Dialog state
   showDialog = false;
   editingTournament: Tournament | null = null;
-  
+
   // Availability dialogs
   showAvailabilityDialog = false;
   showTeamAvailabilityDialog = false;
   showBudgetDialog = false;
   selectedTournament: Tournament | null = null;
-  
+
   // Loading states
   savingAvailability = signal(false);
   savingBudget = signal(false);
-  
+
   // Availability data
   teamAvailability = signal<PlayerAvailability[]>([]);
-  teamAvailabilitySummary = signal({ confirmed: 0, tentative: 0, declined: 0, pending: 0 });
+  teamAvailabilitySummary = signal({
+    confirmed: 0,
+    tentative: 0,
+    declined: 0,
+    pending: 0,
+  });
   tournamentBudget = signal<TournamentBudget | null>(null);
   tournamentCost = signal(0);
-  
+
   // Availability form
   availabilityForm = {
-    status: 'pending' as 'confirmed' | 'declined' | 'tentative' | 'pending',
-    reason: '',
+    status: "pending" as "confirmed" | "declined" | "tentative" | "pending",
+    reason: "",
     arrivalDate: null as Date | null,
     departureDate: null as Date | null,
     accommodationNeeded: true,
     transportationNeeded: false,
-    dietaryRestrictions: '',
-    amountPaid: 0
+    dietaryRestrictions: "",
+    amountPaid: 0,
   };
-  
+
   // Budget form
   budgetForm = {
     registrationFee: 0,
@@ -2360,22 +2544,26 @@ export class TournamentsComponent implements OnInit {
     totalNights: 0,
     perDiem: 0,
     otherCosts: 0,
-    otherCostsDescription: '',
+    otherCostsDescription: "",
     teamContribution: 0,
-    sponsorContribution: 0
+    sponsorContribution: 0,
   };
-  
+
   // Options
-  availabilityOptions: Array<{ value: 'pending' | 'confirmed' | 'declined' | 'tentative'; label: string; icon: string }> = [
-    { value: 'confirmed', label: 'Yes, I\'m in!', icon: 'pi pi-check-circle' },
-    { value: 'tentative', label: 'Maybe', icon: 'pi pi-question-circle' },
-    { value: 'declined', label: 'Can\'t make it', icon: 'pi pi-times-circle' },
-    { value: 'pending', label: 'Undecided', icon: 'pi pi-clock' }
+  availabilityOptions: Array<{
+    value: "pending" | "confirmed" | "declined" | "tentative";
+    label: string;
+    icon: string;
+  }> = [
+    { value: "confirmed", label: "Yes, I'm in!", icon: "pi pi-check-circle" },
+    { value: "tentative", label: "Maybe", icon: "pi pi-question-circle" },
+    { value: "declined", label: "Can't make it", icon: "pi pi-times-circle" },
+    { value: "pending", label: "Undecided", icon: "pi pi-clock" },
   ];
 
   // Form data
-  formData: CreateTournamentDto & { 
-    start_date_obj?: Date; 
+  formData: CreateTournamentDto & {
+    start_date_obj?: Date;
     end_date_obj?: Date;
     registration_deadline_obj?: Date;
     instagram_url?: string;
@@ -2391,27 +2579,35 @@ export class TournamentsComponent implements OnInit {
 
   // Dropdown options
   tournamentTypes = [
-    { label: 'Game Day', value: 'game_day' },
-    { label: 'League', value: 'league' },
-    { label: 'Cup', value: 'cup' },
-    { label: 'Championship', value: 'championship' },
-    { label: 'Friendly', value: 'friendly' },
-    { label: 'Qualifier', value: 'qualifier' },
-    { label: 'International', value: 'international' },
+    { label: "Game Day", value: "game_day" },
+    { label: "League", value: "league" },
+    { label: "Cup", value: "cup" },
+    { label: "Championship", value: "championship" },
+    { label: "Friendly", value: "friendly" },
+    { label: "Qualifier", value: "qualifier" },
+    { label: "International", value: "international" },
   ];
 
   competitionLevels = [
-    { label: 'National', value: 'national' },
-    { label: 'Regional', value: 'regional' },
-    { label: 'European', value: 'european' },
-    { label: 'World', value: 'world' },
-    { label: 'Friendly', value: 'friendly' },
+    { label: "National", value: "national" },
+    { label: "Regional", value: "regional" },
+    { label: "European", value: "european" },
+    { label: "World", value: "world" },
+    { label: "Friendly", value: "friendly" },
   ];
 
   // Visibility options for the form
   visibilityOptions = [
-    { label: 'Team Event (visible to all team members)', value: 'team', icon: 'pi pi-users' },
-    { label: 'Personal Game Day (only you and coaches)', value: 'personal', icon: 'pi pi-user' },
+    {
+      label: "Team Event (visible to all team members)",
+      value: "team",
+      icon: "pi pi-users",
+    },
+    {
+      label: "Personal Game Day (only you and coaches)",
+      value: "personal",
+      icon: "pi pi-user",
+    },
   ];
 
   ngOnInit(): void {
@@ -2423,8 +2619,14 @@ export class TournamentsComponent implements OnInit {
    */
   isCoachOrAdmin(): boolean {
     const user = this.authService.currentUser();
-    const role = user?.role?.toLowerCase() || '';
-    return ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(role);
+    const role = user?.role?.toLowerCase() || "";
+    return [
+      "coach",
+      "manager",
+      "admin",
+      "head_coach",
+      "assistant_coach",
+    ].includes(role);
   }
 
   /**
@@ -2438,7 +2640,7 @@ export class TournamentsComponent implements OnInit {
    * Get the appropriate button label based on user role
    */
   getAddButtonLabel(): string {
-    return this.isPlayer() ? 'Add Game Day' : 'Add Tournament';
+    return this.isPlayer() ? "Add Game Day" : "Add Tournament";
   }
 
   /**
@@ -2446,18 +2648,18 @@ export class TournamentsComponent implements OnInit {
    */
   getDialogTitle(): string {
     if (this.editingTournament) {
-      return this.editingTournament.visibility_scope === 'personal' 
-        ? 'Edit Game Day' 
-        : 'Edit Tournament';
+      return this.editingTournament.visibility_scope === "personal"
+        ? "Edit Game Day"
+        : "Edit Tournament";
     }
-    return this.isPlayer() ? 'Add Personal Game Day' : 'Add Tournament';
+    return this.isPlayer() ? "Add Personal Game Day" : "Add Tournament";
   }
 
   /**
    * Check if a tournament is a personal game day
    */
   isPersonalTournament(tournament: Tournament): boolean {
-    return tournament.visibility_scope === 'personal';
+    return tournament.visibility_scope === "personal";
   }
 
   async loadTournaments(): Promise<void> {
@@ -2483,36 +2685,39 @@ export class TournamentsComponent implements OnInit {
     contact_email?: string;
   } {
     // Default visibility based on user role
-    const defaultVisibility: TournamentVisibilityScope = this.isCoachOrAdmin() ? 'team' : 'personal';
-    
+    const defaultVisibility: TournamentVisibilityScope = this.isCoachOrAdmin()
+      ? "team"
+      : "personal";
+
     return {
-      name: '',
-      short_name: '',
-      location: '',
-      country: '',
-      venue: '',
-      start_date: '',
-      end_date: '',
-      tournament_type: defaultVisibility === 'personal' ? 'game_day' : 'championship',
-      competition_level: 'regional',
+      name: "",
+      short_name: "",
+      location: "",
+      country: "",
+      venue: "",
+      start_date: "",
+      end_date: "",
+      tournament_type:
+        defaultVisibility === "personal" ? "game_day" : "championship",
+      competition_level: "regional",
       expected_teams: undefined,
-      registration_deadline: '',
-      website_url: '',
-      notes: '',
+      registration_deadline: "",
+      website_url: "",
+      notes: "",
       is_home_tournament: false,
       visibility_scope: defaultVisibility,
       start_date_obj: undefined,
       end_date_obj: undefined,
       registration_deadline_obj: undefined,
-      instagram_url: '',
-      facebook_url: '',
-      registration_url: '',
-      venue_maps_url: '',
-      hotel_maps_url: '',
-      hotel_name: '',
-      hotel_booking_url: '',
-      contact_name: '',
-      contact_email: '',
+      instagram_url: "",
+      facebook_url: "",
+      registration_url: "",
+      venue_maps_url: "",
+      hotel_maps_url: "",
+      hotel_name: "",
+      hotel_booking_url: "",
+      contact_name: "",
+      contact_email: "",
     };
   }
 
@@ -2526,23 +2731,29 @@ export class TournamentsComponent implements OnInit {
     this.editingTournament = tournament;
     this.formData = {
       name: tournament.name,
-      short_name: tournament.short_name || '',
-      location: tournament.location || '',
-      country: tournament.country || '',
-      venue: tournament.venue || '',
+      short_name: tournament.short_name || "",
+      location: tournament.location || "",
+      country: tournament.country || "",
+      venue: tournament.venue || "",
       start_date: tournament.start_date,
-      end_date: tournament.end_date || '',
-      tournament_type: tournament.tournament_type || 'championship',
-      competition_level: tournament.competition_level || 'regional',
+      end_date: tournament.end_date || "",
+      tournament_type: tournament.tournament_type || "championship",
+      competition_level: tournament.competition_level || "regional",
       expected_teams: tournament.expected_teams,
-      registration_deadline: tournament.registration_deadline || '',
-      website_url: tournament.website_url || '',
-      notes: tournament.notes || '',
+      registration_deadline: tournament.registration_deadline || "",
+      website_url: tournament.website_url || "",
+      notes: tournament.notes || "",
       is_home_tournament: tournament.is_home_tournament || false,
-      visibility_scope: tournament.visibility_scope || 'team',
-      start_date_obj: tournament.start_date ? new Date(tournament.start_date) : undefined,
-      end_date_obj: tournament.end_date ? new Date(tournament.end_date) : undefined,
-      registration_deadline_obj: tournament.registration_deadline ? new Date(tournament.registration_deadline) : undefined,
+      visibility_scope: tournament.visibility_scope || "team",
+      start_date_obj: tournament.start_date
+        ? new Date(tournament.start_date)
+        : undefined,
+      end_date_obj: tournament.end_date
+        ? new Date(tournament.end_date)
+        : undefined,
+      registration_deadline_obj: tournament.registration_deadline
+        ? new Date(tournament.registration_deadline)
+        : undefined,
     };
     this.showDialog = true;
   }
@@ -2557,9 +2768,9 @@ export class TournamentsComponent implements OnInit {
     // Validate required fields
     if (!this.formData.name || !this.formData.start_date_obj) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Validation Error',
-        detail: 'Tournament name and start date are required',
+        severity: "error",
+        summary: "Validation Error",
+        detail: "Tournament name and start date are required",
       });
       return;
     }
@@ -2568,11 +2779,17 @@ export class TournamentsComponent implements OnInit {
     const data: CreateTournamentDto = {
       ...this.formData,
       start_date: this.formatDate(this.formData.start_date_obj),
-      end_date: this.formData.end_date_obj ? this.formatDate(this.formData.end_date_obj) : undefined,
-      registration_deadline: this.formData.registration_deadline_obj 
-        ? this.formatDate(this.formData.registration_deadline_obj) 
+      end_date: this.formData.end_date_obj
+        ? this.formatDate(this.formData.end_date_obj)
         : undefined,
-      flag: this.formData.country ? this.tournamentService.getCountryFlag(this.getCountryCode(this.formData.country)) : undefined,
+      registration_deadline: this.formData.registration_deadline_obj
+        ? this.formatDate(this.formData.registration_deadline_obj)
+        : undefined,
+      flag: this.formData.country
+        ? this.tournamentService.getCountryFlag(
+            this.getCountryCode(this.formData.country),
+          )
+        : undefined,
     };
 
     // Remove date objects before sending
@@ -2582,7 +2799,10 @@ export class TournamentsComponent implements OnInit {
 
     let success = false;
     if (this.editingTournament) {
-      const result = await this.tournamentService.updateTournament(this.editingTournament.id, data);
+      const result = await this.tournamentService.updateTournament(
+        this.editingTournament.id,
+        data,
+      );
       success = !!result;
     } else {
       const result = await this.tournamentService.createTournament(data);
@@ -2591,16 +2811,18 @@ export class TournamentsComponent implements OnInit {
 
     if (success) {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: this.editingTournament ? 'Tournament updated' : 'Tournament created',
+        severity: "success",
+        summary: "Success",
+        detail: this.editingTournament
+          ? "Tournament updated"
+          : "Tournament created",
       });
       this.closeDialog();
     } else {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: this.tournamentService.error() || 'Failed to save tournament',
+        severity: "error",
+        summary: "Error",
+        detail: this.tournamentService.error() || "Failed to save tournament",
       });
     }
   }
@@ -2608,22 +2830,24 @@ export class TournamentsComponent implements OnInit {
   confirmDelete(tournament: Tournament): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete "${tournament.name}"?`,
-      header: 'Delete Tournament',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      header: "Delete Tournament",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
-        const success = await this.tournamentService.deleteTournament(tournament.id);
+        const success = await this.tournamentService.deleteTournament(
+          tournament.id,
+        );
         if (success) {
           this.messageService.add({
-            severity: 'success',
-            summary: 'Deleted',
-            detail: 'Tournament deleted successfully',
+            severity: "success",
+            summary: "Deleted",
+            detail: "Tournament deleted successfully",
           });
         } else {
           this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to delete tournament',
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to delete tournament",
           });
         }
       },
@@ -2632,54 +2856,56 @@ export class TournamentsComponent implements OnInit {
 
   viewDetails(tournament: Tournament): void {
     // Could navigate to detail page or open a dialog
-    this.logger.info('View details:', tournament);
+    this.logger.info("View details:", tournament);
   }
 
   scrollToTournament(id: string): void {
     const element = document.querySelector(`[data-id="${id}"]`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
 
   openWebsite(url?: string): void {
     if (url) {
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   }
 
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 
   private getCountryCode(country: string): string {
     // Simple mapping for common countries
     const codes: Record<string, string> = {
-      'croatia': 'HR',
-      'slovenia': 'SI',
-      'germany': 'DE',
-      'austria': 'AT',
-      'italy': 'IT',
-      'france': 'FR',
-      'spain': 'ES',
-      'usa': 'US',
-      'united states': 'US',
-      'uk': 'GB',
-      'united kingdom': 'GB',
-      'denmark': 'DK',
-      'serbia': 'RS',
-      'hungary': 'HU',
-      'poland': 'PL',
-      'czech republic': 'CZ',
-      'slovakia': 'SK',
+      croatia: "HR",
+      slovenia: "SI",
+      germany: "DE",
+      austria: "AT",
+      italy: "IT",
+      france: "FR",
+      spain: "ES",
+      usa: "US",
+      "united states": "US",
+      uk: "GB",
+      "united kingdom": "GB",
+      denmark: "DK",
+      serbia: "RS",
+      hungary: "HU",
+      poland: "PL",
+      "czech republic": "CZ",
+      slovakia: "SK",
     };
-    return codes[country.toLowerCase()] || country.substring(0, 2).toUpperCase();
+    return (
+      codes[country.toLowerCase()] || country.substring(0, 2).toUpperCase()
+    );
   }
 
   // ============================================================================
   // PLAYER AVAILABILITY
   // ============================================================================
-  
+
   canViewTeamAvailability(): boolean {
     // Check if user is a coach or higher
     // This would need to check the user's role in their team
@@ -2689,7 +2915,7 @@ export class TournamentsComponent implements OnInit {
   async openAvailabilityDialog(tournament: Tournament): Promise<void> {
     this.selectedTournament = tournament;
     this.showAvailabilityDialog = true;
-    
+
     // Load existing availability
     await this.loadMyAvailability(tournament.id);
     await this.loadTournamentCost(tournament.id);
@@ -2701,77 +2927,81 @@ export class TournamentsComponent implements OnInit {
       if (!user) return;
 
       const { data } = await this.supabaseService.client
-        .from('player_tournament_availability')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('player_id', user.id)
+        .from("player_tournament_availability")
+        .select("*")
+        .eq("tournament_id", tournamentId)
+        .eq("player_id", user.id)
         .single();
 
       if (data) {
         this.availabilityForm = {
-          status: data.status || 'pending',
-          reason: data.reason || '',
+          status: data.status || "pending",
+          reason: data.reason || "",
           arrivalDate: data.arrival_date ? new Date(data.arrival_date) : null,
-          departureDate: data.departure_date ? new Date(data.departure_date) : null,
+          departureDate: data.departure_date
+            ? new Date(data.departure_date)
+            : null,
           accommodationNeeded: data.accommodation_needed ?? true,
           transportationNeeded: data.transportation_needed ?? false,
-          dietaryRestrictions: data.dietary_restrictions || '',
-          amountPaid: data.amount_paid || 0
+          dietaryRestrictions: data.dietary_restrictions || "",
+          amountPaid: data.amount_paid || 0,
         };
       } else {
         // Reset form
         this.availabilityForm = {
-          status: 'pending',
-          reason: '',
+          status: "pending",
+          reason: "",
           arrivalDate: null,
           departureDate: null,
           accommodationNeeded: true,
           transportationNeeded: false,
-          dietaryRestrictions: '',
-          amountPaid: 0
+          dietaryRestrictions: "",
+          amountPaid: 0,
         };
       }
     } catch (error) {
-      this.logger.error('Error loading availability:', error);
+      this.logger.error("Error loading availability:", error);
     }
   }
 
   async loadTournamentCost(tournamentId: string): Promise<void> {
     try {
-      const { data } = await this.supabaseService.client
-        .rpc('calculate_player_tournament_cost', {
+      const { data } = await this.supabaseService.client.rpc(
+        "calculate_player_tournament_cost",
+        {
           p_tournament_id: tournamentId,
-          p_team_id: await this.getCurrentTeamId()
-        });
+          p_team_id: await this.getCurrentTeamId(),
+        },
+      );
 
       this.tournamentCost.set(data || 0);
     } catch (error) {
-      this.logger.error('Error loading tournament cost:', error);
+      this.logger.error("Error loading tournament cost:", error);
       this.tournamentCost.set(0);
     }
   }
 
   async saveAvailability(): Promise<void> {
     if (!this.selectedTournament) return;
-    
+
     this.savingAvailability.set(true);
-    
+
     try {
       const user = this.authService.currentUser();
-      if (!user) throw new Error('Not authenticated');
+      if (!user) throw new Error("Not authenticated");
 
       const teamId = await this.getCurrentTeamId();
-      if (!teamId) throw new Error('No team found');
+      if (!teamId) throw new Error("No team found");
 
       // Get player's team_member id
       const { data: memberData } = await this.supabaseService.client
-        .from('team_members')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('team_id', teamId)
+        .from("team_members")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("team_id", teamId)
         .single();
 
-      if (!memberData) throw new Error('Not a team member');
+      if (!memberData) throw new Error("Not a team member");
 
       const availabilityData = {
         player_id: memberData.id,
@@ -2779,39 +3009,39 @@ export class TournamentsComponent implements OnInit {
         team_id: teamId,
         status: this.availabilityForm.status,
         reason: this.availabilityForm.reason || null,
-        arrival_date: this.availabilityForm.arrivalDate 
-          ? this.formatDate(this.availabilityForm.arrivalDate) 
+        arrival_date: this.availabilityForm.arrivalDate
+          ? this.formatDate(this.availabilityForm.arrivalDate)
           : null,
-        departure_date: this.availabilityForm.departureDate 
-          ? this.formatDate(this.availabilityForm.departureDate) 
+        departure_date: this.availabilityForm.departureDate
+          ? this.formatDate(this.availabilityForm.departureDate)
           : null,
         accommodation_needed: this.availabilityForm.accommodationNeeded,
         transportation_needed: this.availabilityForm.transportationNeeded,
         dietary_restrictions: this.availabilityForm.dietaryRestrictions || null,
-        responded_at: new Date().toISOString()
+        responded_at: new Date().toISOString(),
       };
 
       const { error } = await this.supabaseService.client
-        .from('player_tournament_availability')
+        .from("player_tournament_availability")
         .upsert(availabilityData, {
-          onConflict: 'player_id,tournament_id'
+          onConflict: "player_id,tournament_id",
         });
 
       if (error) throw error;
 
       this.messageService.add({
-        severity: 'success',
-        summary: 'Saved',
-        detail: 'Your availability has been updated'
+        severity: "success",
+        summary: "Saved",
+        detail: "Your availability has been updated",
       });
-      
+
       this.showAvailabilityDialog = false;
     } catch (error: any) {
-      this.logger.error('Error saving availability:', error);
+      this.logger.error("Error saving availability:", error);
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'Failed to save availability'
+        severity: "error",
+        summary: "Error",
+        detail: error.message || "Failed to save availability",
       });
     } finally {
       this.savingAvailability.set(false);
@@ -2825,7 +3055,7 @@ export class TournamentsComponent implements OnInit {
   async openTeamAvailabilityDialog(tournament: Tournament): Promise<void> {
     this.selectedTournament = tournament;
     this.showTeamAvailabilityDialog = true;
-    
+
     await this.loadTeamAvailability(tournament.id);
     await this.loadTournamentBudget(tournament.id);
   }
@@ -2837,36 +3067,38 @@ export class TournamentsComponent implements OnInit {
 
       // Get all team players with their availability
       const { data: members } = await this.supabaseService.client
-        .from('team_members')
-        .select(`
+        .from("team_members")
+        .select(
+          `
           id,
           role,
           users:user_id(raw_user_meta_data)
-        `)
-        .eq('team_id', teamId)
-        .eq('role', 'player');
+        `,
+        )
+        .eq("team_id", teamId)
+        .eq("role", "player");
 
       const { data: availability } = await this.supabaseService.client
-        .from('player_tournament_availability')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('team_id', teamId);
+        .from("player_tournament_availability")
+        .select("*")
+        .eq("tournament_id", tournamentId)
+        .eq("team_id", teamId);
 
       // Map availability to players
       const availabilityMap = new Map(
-        (availability || []).map(a => [a.player_id, a])
+        (availability || []).map((a) => [a.player_id, a]),
       );
 
       const playerList: PlayerAvailability[] = (members || []).map((m: any) => {
         const avail = availabilityMap.get(m.id);
         return {
           playerId: m.id,
-          playerName: m.users?.raw_user_meta_data?.full_name || 'Unknown',
-          position: m.users?.raw_user_meta_data?.position || 'Player',
-          status: avail?.status || 'pending',
+          playerName: m.users?.raw_user_meta_data?.full_name || "Unknown",
+          position: m.users?.raw_user_meta_data?.position || "Player",
+          status: avail?.status || "pending",
           reason: avail?.reason,
-          paymentStatus: avail?.payment_status || 'pending',
-          amountPaid: avail?.amount_paid || 0
+          paymentStatus: avail?.payment_status || "pending",
+          amountPaid: avail?.amount_paid || 0,
         };
       });
 
@@ -2874,13 +3106,12 @@ export class TournamentsComponent implements OnInit {
 
       // Calculate summary
       const summary = { confirmed: 0, tentative: 0, declined: 0, pending: 0 };
-      playerList.forEach(p => {
+      playerList.forEach((p) => {
         summary[p.status]++;
       });
       this.teamAvailabilitySummary.set(summary);
-
     } catch (error) {
-      this.logger.error('Error loading team availability:', error);
+      this.logger.error("Error loading team availability:", error);
     }
   }
 
@@ -2890,10 +3121,10 @@ export class TournamentsComponent implements OnInit {
       if (!teamId) return;
 
       const { data } = await this.supabaseService.client
-        .from('tournament_budgets')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('team_id', teamId)
+        .from("tournament_budgets")
+        .select("*")
+        .eq("tournament_id", tournamentId)
+        .eq("team_id", teamId)
         .single();
 
       if (data) {
@@ -2901,9 +3132,9 @@ export class TournamentsComponent implements OnInit {
           totalEstimated: data.total_estimated_cost || 0,
           teamContribution: data.team_contribution || 0,
           sponsorContribution: data.sponsor_contribution || 0,
-          perPlayer: data.player_share_per_person || 0
+          perPlayer: data.player_share_per_person || 0,
         });
-        
+
         // Populate budget form
         this.budgetForm = {
           registrationFee: data.registration_fee || 0,
@@ -2913,45 +3144,50 @@ export class TournamentsComponent implements OnInit {
           totalNights: data.total_nights || 0,
           perDiem: data.per_diem_per_player || 0,
           otherCosts: data.other_costs || 0,
-          otherCostsDescription: data.other_costs_description || '',
+          otherCostsDescription: data.other_costs_description || "",
           teamContribution: data.team_contribution || 0,
-          sponsorContribution: data.sponsor_contribution || 0
+          sponsorContribution: data.sponsor_contribution || 0,
         };
       } else {
         this.tournamentBudget.set(null);
       }
     } catch (error) {
-      this.logger.error('Error loading budget:', error);
+      this.logger.error("Error loading budget:", error);
       this.tournamentBudget.set(null);
     }
   }
 
   getAvailabilityLabel(status: string): string {
     const labels: Record<string, string> = {
-      confirmed: 'Confirmed',
-      tentative: 'Maybe',
-      declined: 'Can\'t Attend',
-      pending: 'No Response'
+      confirmed: "Confirmed",
+      tentative: "Maybe",
+      declined: "Can't Attend",
+      pending: "No Response",
     };
     return labels[status] || status;
   }
 
-  getAvailabilitySeverity(status: string): 'success' | 'warn' | 'danger' | 'secondary' | 'info' | 'contrast' {
-    const severities: Record<string, 'success' | 'warn' | 'danger' | 'secondary'> = {
-      confirmed: 'success',
-      tentative: 'warn',
-      declined: 'danger',
-      pending: 'secondary'
+  getAvailabilitySeverity(
+    status: string,
+  ): "success" | "warn" | "danger" | "secondary" | "info" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "warn" | "danger" | "secondary"
+    > = {
+      confirmed: "success",
+      tentative: "warn",
+      declined: "danger",
+      pending: "secondary",
     };
-    return severities[status] || 'secondary';
+    return severities[status] || "secondary";
   }
 
   async sendAvailabilityReminders(): Promise<void> {
     // Would integrate with email service
     this.messageService.add({
-      severity: 'info',
-      summary: 'Reminders Sent',
-      detail: 'Reminder emails have been sent to players who haven\'t responded'
+      severity: "info",
+      summary: "Reminders Sent",
+      detail: "Reminder emails have been sent to players who haven't responded",
     });
   }
 
@@ -2960,25 +3196,25 @@ export class TournamentsComponent implements OnInit {
     const tournament = this.selectedTournament;
     if (!tournament || players.length === 0) return;
 
-    const headers = ['Name', 'Position', 'Status', 'Reason', 'Payment Status'];
-    const rows = players.map(p => [
+    const headers = ["Name", "Position", "Status", "Reason", "Payment Status"];
+    const rows = players.map((p) => [
       p.playerName,
       p.position,
       this.getAvailabilityLabel(p.status),
-      p.reason || '',
-      p.paymentStatus
+      p.reason || "",
+      p.paymentStatus,
     ]);
 
     const csvContent = [
       `Tournament: ${tournament.name}`,
       `Date: ${tournament.start_date} - ${tournament.end_date}`,
-      '',
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
+      "",
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${tournament.short_name || tournament.name}_availability.csv`;
     link.click();
@@ -2996,10 +3232,12 @@ export class TournamentsComponent implements OnInit {
     const confirmedPlayers = this.teamAvailabilitySummary().confirmed;
     return (
       this.budgetForm.registrationFee +
-      (this.budgetForm.entryFeePerPlayer * confirmedPlayers) +
+      this.budgetForm.entryFeePerPlayer * confirmedPlayers +
       this.budgetForm.travelCost +
-      (this.budgetForm.accommodationPerNight * this.budgetForm.totalNights) +
-      (this.budgetForm.perDiem * confirmedPlayers * (this.budgetForm.totalNights + 1)) +
+      this.budgetForm.accommodationPerNight * this.budgetForm.totalNights +
+      this.budgetForm.perDiem *
+        confirmedPlayers *
+        (this.budgetForm.totalNights + 1) +
       this.budgetForm.otherCosts
     );
   }
@@ -3007,23 +3245,24 @@ export class TournamentsComponent implements OnInit {
   calculatePlayerShare(): number {
     const confirmedPlayers = this.teamAvailabilitySummary().confirmed;
     if (confirmedPlayers === 0) return 0;
-    
+
     const total = this.calculateTotalBudget();
-    const funding = this.budgetForm.teamContribution + this.budgetForm.sponsorContribution;
+    const funding =
+      this.budgetForm.teamContribution + this.budgetForm.sponsorContribution;
     return Math.max(0, (total - funding) / confirmedPlayers);
   }
 
   async saveBudget(): Promise<void> {
     if (!this.selectedTournament) return;
-    
+
     this.savingBudget.set(true);
-    
+
     try {
       const teamId = await this.getCurrentTeamId();
-      if (!teamId) throw new Error('No team found');
+      if (!teamId) throw new Error("No team found");
 
       const confirmedPlayers = this.teamAvailabilitySummary().confirmed;
-      
+
       const budgetData = {
         tournament_id: this.selectedTournament.id,
         team_id: teamId,
@@ -3032,41 +3271,45 @@ export class TournamentsComponent implements OnInit {
         estimated_travel_cost: this.budgetForm.travelCost,
         accommodation_cost_per_night: this.budgetForm.accommodationPerNight,
         total_nights: this.budgetForm.totalNights,
-        estimated_accommodation_total: this.budgetForm.accommodationPerNight * this.budgetForm.totalNights,
+        estimated_accommodation_total:
+          this.budgetForm.accommodationPerNight * this.budgetForm.totalNights,
         per_diem_per_player: this.budgetForm.perDiem,
-        estimated_meals_total: this.budgetForm.perDiem * confirmedPlayers * (this.budgetForm.totalNights + 1),
+        estimated_meals_total:
+          this.budgetForm.perDiem *
+          confirmedPlayers *
+          (this.budgetForm.totalNights + 1),
         other_costs: this.budgetForm.otherCosts,
         other_costs_description: this.budgetForm.otherCostsDescription,
         team_contribution: this.budgetForm.teamContribution,
         sponsor_contribution: this.budgetForm.sponsorContribution,
         player_share_per_person: this.calculatePlayerShare(),
-        budget_status: 'draft',
-        created_by: this.authService.currentUser()?.id
+        budget_status: "draft",
+        created_by: this.authService.currentUser()?.id,
       };
 
       const { error } = await this.supabaseService.client
-        .from('tournament_budgets')
+        .from("tournament_budgets")
         .upsert(budgetData, {
-          onConflict: 'tournament_id,team_id'
+          onConflict: "tournament_id,team_id",
         });
 
       if (error) throw error;
 
       this.messageService.add({
-        severity: 'success',
-        summary: 'Saved',
-        detail: 'Budget has been updated'
+        severity: "success",
+        summary: "Saved",
+        detail: "Budget has been updated",
       });
-      
+
       // Reload budget to get calculated fields
       await this.loadTournamentBudget(this.selectedTournament.id);
       this.showBudgetDialog = false;
     } catch (error: any) {
-      this.logger.error('Error saving budget:', error);
+      this.logger.error("Error saving budget:", error);
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'Failed to save budget'
+        severity: "error",
+        summary: "Error",
+        detail: error.message || "Failed to save budget",
       });
     } finally {
       this.savingBudget.set(false);
@@ -3083,9 +3326,9 @@ export class TournamentsComponent implements OnInit {
 
     try {
       const { data } = await this.supabaseService.client
-        .from('team_members')
-        .select('team_id')
-        .eq('user_id', user.id)
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", user.id)
         .limit(1)
         .single();
 

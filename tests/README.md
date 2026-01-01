@@ -12,6 +12,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 - **Mock Strategy**: Extensive mocking of external dependencies (Supabase, API calls)
 
 **Test Files:**
+
 - `auth-manager.test.js` - Authentication logic and session management
 - `api-config.test.js` - API configuration and HTTP client
 - `error-handler.test.js` - Error handling and user notifications
@@ -25,6 +26,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 - **Mock Strategy**: Partial mocking focusing on external services (Supabase)
 
 **Test Files:**
+
 - `api-integration.test.js` - Full API workflow tests with Netlify Functions
 - `database-integration.test.js` - Database operation tests (Supabase)
 - `api-endpoints.test.js` - API endpoint validation
@@ -38,6 +40,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 - **Mock Strategy**: Minimal mocking, real user interactions
 
 **Test Files:**
+
 - `user-authentication.spec.js` - Login, register, password reset flows
 - `dashboard-navigation.spec.js` - Dashboard and navigation tests
 - `training-workflow.spec.js` - Training session workflows
@@ -51,6 +54,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 - **Framework**: Vitest
 
 **Test Files:**
+
 - `age-gating.test.js` - Age verification tests
 - `consent-gating.test.js` - Consent management
 - `deletion-lifecycle.test.js` - Data deletion flows

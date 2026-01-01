@@ -1,0 +1,563 @@
+/**
+ * Session Analytics Component
+ *
+ * Phase 2: Completion analytics widget for micro-sessions
+ *
+ * Features:
+ * - Weekly completion rate visualization
+ * - Current and best streaks
+ * - Session type breakdown
+ * - Average follow-up ratings
+ *
+ * Usage:
+ * <app-session-analytics></app-session-analytics>
+ */
+
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { ProgressBarModule } from "primeng/progressbar";
+import { TagModule } from "primeng/tag";
+import { SkeletonModule } from "primeng/skeleton";
+import { TooltipModule } from "primeng/tooltip";
+import { ChartModule } from "primeng/chart";
+import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
+
+interface WeeklyBreakdown {
+  week_start: string;
+  session_type: string;
+  total_assigned: number;
+  completed: number;
+  skipped: number;
+  pending: number;
+  completion_rate: number;
+  avg_duration_minutes: number;
+  avg_follow_up_rating: number;
+}
+
+interface AnalyticsData {
+  weekly_breakdown: WeeklyBreakdown[];
+  totals: {
+    total_assigned: number;
+    total_completed: number;
+    total_skipped: number;
+    completion_rate: number;
+  };
+  streaks: {
+    current: number;
+    best: number;
+  };
+}
+
+@Component({
+  selector: "app-session-analytics",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    CardModule,
+    ProgressBarModule,
+    TagModule,
+    SkeletonModule,
+    TooltipModule,
+    ChartModule,
+  ],
+  template: `
+    <div class="session-analytics">
+      <!-- Summary Stats -->
+      <div class="stats-grid">
+        <div class="stat-card completion-rate">
+          @if (loading()) {
+            <p-skeleton width="100%" height="80px"></p-skeleton>
+          } @else {
+            <div class="stat-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value"
+                >{{ analytics()?.totals?.completion_rate || 0 }}%</span
+              >
+              <span class="stat-label">Completion Rate</span>
+            </div>
+            <p-progressBar
+              [value]="analytics()?.totals?.completion_rate || 0"
+              [showValue]="false"
+              styleClass="completion-bar"
+            ></p-progressBar>
+          }
+        </div>
+
+        <div class="stat-card streak">
+          @if (loading()) {
+            <p-skeleton width="100%" height="80px"></p-skeleton>
+          } @else {
+            <div class="stat-icon fire">
+              <i class="pi pi-bolt"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{
+                analytics()?.streaks?.current || 0
+              }}</span>
+              <span class="stat-label">Current Streak</span>
+            </div>
+            <div class="streak-info">
+              <span>Best: {{ analytics()?.streaks?.best || 0 }} days</span>
+            </div>
+          }
+        </div>
+
+        <div class="stat-card completed">
+          @if (loading()) {
+            <p-skeleton width="100%" height="80px"></p-skeleton>
+          } @else {
+            <div class="stat-icon success">
+              <i class="pi pi-flag-fill"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{
+                analytics()?.totals?.total_completed || 0
+              }}</span>
+              <span class="stat-label">Sessions Completed</span>
+            </div>
+            <div class="total-info">
+              <span
+                >of
+                {{ analytics()?.totals?.total_assigned || 0 }} assigned</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Weekly Chart -->
+      @if (!loading() && chartData()) {
+        <p-card class="chart-card">
+          <ng-template pTemplate="header">
+            <div class="chart-header">
+              <h3>Weekly Progress</h3>
+              <p-tag
+                [value]="'Last 4 weeks'"
+                [rounded]="true"
+                severity="secondary"
+              ></p-tag>
+            </div>
+          </ng-template>
+          <div class="chart-container">
+            <p-chart
+              type="bar"
+              [data]="chartData()"
+              [options]="chartOptions"
+              [height]="'200px'"
+            ></p-chart>
+          </div>
+        </p-card>
+      }
+
+      <!-- Session Type Breakdown -->
+      @if (!loading() && sessionTypeStats().length > 0) {
+        <div class="type-breakdown">
+          <h4>By Session Type</h4>
+          <div class="type-list">
+            @for (type of sessionTypeStats(); track type.type) {
+              <div class="type-item">
+                <div class="type-info">
+                  <span class="type-name">
+                    <i [class]="getTypeIcon(type.type)"></i>
+                    {{ formatTypeName(type.type) }}
+                  </span>
+                  <span class="type-count"
+                    >{{ type.completed }}/{{ type.total }}</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="type.rate"
+                  [showValue]="false"
+                  styleClass="type-bar"
+                ></p-progressBar>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (
+        !loading() &&
+        (!analytics()?.totals?.total_assigned ||
+          analytics()?.totals?.total_assigned === 0)
+      ) {
+        <div class="empty-state">
+          <i class="pi pi-chart-bar"></i>
+          <h3>No Sessions Yet</h3>
+          <p>
+            Start micro-sessions from AI Coach suggestions to track your
+            progress here.
+          </p>
+        </div>
+      }
+    </div>
+  `,
+  styles: [
+    `
+      .session-analytics {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+      }
+
+      @media (max-width: 768px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .stat-card {
+        background: var(--surface-card);
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        background: rgba(8, 153, 73, 0.1);
+        color: #089949;
+      }
+
+      .stat-icon.fire {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      .stat-icon.success {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+
+      .stat-content {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-value {
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+      }
+
+      .stat-label {
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .streak-info,
+      .total-info {
+        font-size: var(--text-xs);
+        color: var(--color-text-muted);
+      }
+
+      :host ::ng-deep .completion-bar .p-progressbar {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--surface-100);
+      }
+
+      :host ::ng-deep .completion-bar .p-progressbar-value {
+        background: linear-gradient(90deg, #089949, #0ab85a);
+      }
+
+      .chart-card {
+        border-radius: var(--radius-xl);
+      }
+
+      .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-4) var(--space-4) 0;
+      }
+
+      .chart-header h3 {
+        margin: 0;
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .chart-container {
+        padding: var(--space-4);
+      }
+
+      .type-breakdown {
+        background: var(--surface-card);
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .type-breakdown h4 {
+        margin: 0 0 var(--space-4) 0;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+
+      .type-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .type-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .type-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .type-name {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--text-sm);
+        color: var(--color-text-primary);
+      }
+
+      .type-name i {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+      }
+
+      .type-count {
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+      }
+
+      :host ::ng-deep .type-bar .p-progressbar {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--surface-100);
+      }
+
+      :host ::ng-deep .type-bar .p-progressbar-value {
+        background: #089949;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: var(--space-12) var(--space-4);
+        background: var(--surface-card);
+        border-radius: var(--radius-xl);
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        color: var(--surface-300);
+        margin-bottom: var(--space-4);
+      }
+
+      .empty-state h3 {
+        margin: 0 0 var(--space-2) 0;
+        color: var(--color-text-primary);
+      }
+
+      .empty-state p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+      }
+    `,
+  ],
+})
+export class SessionAnalyticsComponent implements OnInit {
+  private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
+
+  loading = signal(true);
+  analytics = signal<AnalyticsData | null>(null);
+
+  // Chart configuration
+  chartOptions = {
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom" as const,
+        labels: {
+          usePointStyle: true,
+          padding: 16,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+        },
+      },
+    },
+    maintainAspectRatio: false,
+    responsive: true,
+  };
+
+  // Computed chart data
+  chartData = computed(() => {
+    const data = this.analytics();
+    if (!data || !data.weekly_breakdown || data.weekly_breakdown.length === 0) {
+      return null;
+    }
+
+    // Aggregate by week
+    const weekMap = new Map<
+      string,
+      { completed: number; skipped: number; pending: number }
+    >();
+
+    for (const week of data.weekly_breakdown) {
+      const existing = weekMap.get(week.week_start) || {
+        completed: 0,
+        skipped: 0,
+        pending: 0,
+      };
+      weekMap.set(week.week_start, {
+        completed: existing.completed + week.completed,
+        skipped: existing.skipped + week.skipped,
+        pending: existing.pending + week.pending,
+      });
+    }
+
+    const weeks = Array.from(weekMap.keys()).sort().slice(-4);
+    const labels = weeks.map((w) => this.formatWeekLabel(w));
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Completed",
+          data: weeks.map((w) => weekMap.get(w)?.completed || 0),
+          backgroundColor: "#089949",
+          borderRadius: 4,
+        },
+        {
+          label: "Skipped",
+          data: weeks.map((w) => weekMap.get(w)?.skipped || 0),
+          backgroundColor: "#f59e0b",
+          borderRadius: 4,
+        },
+      ],
+    };
+  });
+
+  // Computed session type stats
+  sessionTypeStats = computed(() => {
+    const data = this.analytics();
+    if (!data || !data.weekly_breakdown) return [];
+
+    // Aggregate by session type
+    const typeMap = new Map<string, { completed: number; total: number }>();
+
+    for (const week of data.weekly_breakdown) {
+      const existing = typeMap.get(week.session_type) || {
+        completed: 0,
+        total: 0,
+      };
+      typeMap.set(week.session_type, {
+        completed: existing.completed + week.completed,
+        total: existing.total + week.total_assigned,
+      });
+    }
+
+    return Array.from(typeMap.entries()).map(([type, stats]) => ({
+      type,
+      completed: stats.completed,
+      total: stats.total,
+      rate:
+        stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
+    }));
+  });
+
+  ngOnInit(): void {
+    this.loadAnalytics();
+  }
+
+  async loadAnalytics(): Promise<void> {
+    this.loading.set(true);
+
+    try {
+      const response = await this.apiService
+        .get<AnalyticsData>("/api/micro-sessions/analytics", { weeks: 4 })
+        .toPromise();
+
+      if (response?.success && response.data) {
+        this.analytics.set(response.data);
+      }
+    } catch (error) {
+      this.logger.error("Error loading session analytics:", error);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // Helper methods
+  formatWeekLabel(weekStart: string): string {
+    const date = new Date(weekStart);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  formatTypeName(type: string): string {
+    const names: Record<string, string> = {
+      recovery: "Recovery",
+      technique: "Technique",
+      mobility: "Mobility",
+      mental: "Mental",
+      strength: "Strength",
+      warm_up: "Warm-up",
+    };
+    return names[type] || type;
+  }
+
+  getTypeIcon(type: string): string {
+    const icons: Record<string, string> = {
+      recovery: "pi pi-heart",
+      technique: "pi pi-bullseye",
+      mobility: "pi pi-sync",
+      mental: "pi pi-eye",
+      strength: "pi pi-bolt",
+      warm_up: "pi pi-sun",
+    };
+    return icons[type] || "pi pi-circle";
+  }
+}

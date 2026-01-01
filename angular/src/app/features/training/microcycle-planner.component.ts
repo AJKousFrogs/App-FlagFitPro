@@ -339,7 +339,7 @@ export class MicrocyclePlannerComponent implements OnInit {
   ): DayPlan {
     // Calculate day name
     const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
-    
+
     // Check game proximity first (48-72 hour deload rule)
     const gameProximity = this.getGameProximity(date, gameDays);
 

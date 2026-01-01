@@ -9,7 +9,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import { supabase, pool, checkDatabaseHealth } from "./utils/database.js";
-import { safeQuery, safeParseInt, safeFormatDate } from "./utils/query-helper.js";
+import {
+  safeQuery,
+  safeParseInt,
+  safeFormatDate,
+} from "./utils/query-helper.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
   validateUserId,
@@ -75,7 +79,10 @@ router.get("/overview", async (req, res) => {
         .select("*")
         .eq("user_id", userId)
         .eq("status", "completed")
-        .gte("session_date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+        .gte(
+          "session_date",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        );
 
       trainingData = {
         completed: sessions?.length || 0,
@@ -87,7 +94,10 @@ router.get("/overview", async (req, res) => {
         .from("performance_metrics")
         .select("performance_score")
         .eq("user_id", userId)
-        .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+        .gte(
+          "created_at",
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        );
 
       if (metrics?.length > 0) {
         const avgScore =
@@ -104,7 +114,10 @@ router.get("/overview", async (req, res) => {
         .from("team_chemistry")
         .select("chemistry_score, communication_score, trust_score")
         .eq("user_id", userId)
-        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          "created_at",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        )
         .limit(1)
         .order("created_at", { ascending: false });
 
@@ -169,13 +182,17 @@ router.get("/overview", async (req, res) => {
         LIMIT 1
       `;
 
-      const [trainingResult, performanceResult, chemistryResult, upcomingResult] =
-        await Promise.all([
-          executeQuery(trainingProgressQuery, [userId]),
-          executeQuery(performanceQuery, [userId]),
-          executeQuery(teamChemistryQuery, [userId]),
-          executeQuery(upcomingQuery, [userId]),
-        ]);
+      const [
+        trainingResult,
+        performanceResult,
+        chemistryResult,
+        upcomingResult,
+      ] = await Promise.all([
+        executeQuery(trainingProgressQuery, [userId]),
+        executeQuery(performanceQuery, [userId]),
+        executeQuery(teamChemistryQuery, [userId]),
+        executeQuery(upcomingQuery, [userId]),
+      ]);
 
       trainingData = {
         completed: safeParseInt(trainingResult.rows[0]?.completed_sessions, 0),
@@ -187,7 +204,10 @@ router.get("/overview", async (req, res) => {
       };
 
       performanceData = {
-        score: safeParseFloat(performanceResult.rows[0]?.avg_score, 8.4).toFixed(1),
+        score: safeParseFloat(
+          performanceResult.rows[0]?.avg_score,
+          8.4,
+        ).toFixed(1),
         total: safeParseInt(performanceResult.rows[0]?.total_sessions, 0),
       };
 
@@ -213,7 +233,10 @@ router.get("/overview", async (req, res) => {
       },
       teamChemistry: {
         overall: safeParseFloat(chemistryData?.chemistry_score, 9.1).toFixed(1),
-        communication: safeParseFloat(chemistryData?.communication_score, 9.1).toFixed(1),
+        communication: safeParseFloat(
+          chemistryData?.communication_score,
+          9.1,
+        ).toFixed(1),
         trust: safeParseFloat(chemistryData?.trust_score, 8.7).toFixed(1),
         status: "Excellent team synergy",
       },
@@ -265,7 +288,9 @@ router.get("/training-calendar", async (req, res) => {
 
       const { data } = await supabase
         .from("training_sessions")
-        .select("session_date, session_type, status, duration_minutes, performance_score")
+        .select(
+          "session_date, session_type, status, duration_minutes, performance_score",
+        )
         .eq("user_id", userId)
         .gte("session_date", startDate.toISOString())
         .lte("session_date", endDate.toISOString())
@@ -415,10 +440,30 @@ router.get("/olympic-qualification", async (req, res) => {
       benchmarks.length > 0
         ? benchmarks
         : [
-            { metric_name: "40-Yard Dash", current_value: 4.52, target_value: 4.4, unit: "s" },
-            { metric_name: "Passing Accuracy", current_value: 82.5, target_value: 85, unit: "%" },
-            { metric_name: "Agility Shuttle", current_value: 4.18, target_value: 4.0, unit: "s" },
-            { metric_name: "Game IQ Score", current_value: 87, target_value: 90, unit: "" },
+            {
+              metric_name: "40-Yard Dash",
+              current_value: 4.52,
+              target_value: 4.4,
+              unit: "s",
+            },
+            {
+              metric_name: "Passing Accuracy",
+              current_value: 82.5,
+              target_value: 85,
+              unit: "%",
+            },
+            {
+              metric_name: "Agility Shuttle",
+              current_value: 4.18,
+              target_value: 4.0,
+              unit: "s",
+            },
+            {
+              metric_name: "Game IQ Score",
+              current_value: 87,
+              target_value: 90,
+              unit: "",
+            },
           ];
 
     return sendSuccess(res, {
@@ -451,7 +496,9 @@ router.get("/sponsor-rewards", async (req, res) => {
     if (supabase) {
       const { data: rewards } = await supabase
         .from("sponsor_rewards")
-        .select("available_points, current_tier, products_available, tier_progress_percentage")
+        .select(
+          "available_points, current_tier, products_available, tier_progress_percentage",
+        )
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(1);
@@ -514,10 +561,30 @@ router.get("/sponsor-rewards", async (req, res) => {
       products.length > 0
         ? products
         : [
-            { product_name: "Pro Grip Football Socks", points_cost: 350, relevance_score: 92, category: "Gear" },
-            { product_name: "Recovery Massage Gun", points_cost: 1650, relevance_score: 78, category: "Recovery" },
-            { product_name: "Elite Training Shorts", points_cost: 780, relevance_score: 89, category: "Gear" },
-            { product_name: "Recovery Band Set", points_cost: 420, relevance_score: 94, category: "Recovery" },
+            {
+              product_name: "Pro Grip Football Socks",
+              points_cost: 350,
+              relevance_score: 92,
+              category: "Gear",
+            },
+            {
+              product_name: "Recovery Massage Gun",
+              points_cost: 1650,
+              relevance_score: 78,
+              category: "Recovery",
+            },
+            {
+              product_name: "Elite Training Shorts",
+              points_cost: 780,
+              relevance_score: 89,
+              category: "Gear",
+            },
+            {
+              product_name: "Recovery Band Set",
+              points_cost: 420,
+              relevance_score: 94,
+              category: "Recovery",
+            },
           ];
 
     return sendSuccess(res, {
@@ -549,7 +616,9 @@ router.get("/wearables", async (req, res) => {
     if (supabase) {
       const { data } = await supabase
         .from("wearables_data")
-        .select("device_type, heart_rate, hrv, sleep_score, training_load, last_sync, connection_status")
+        .select(
+          "device_type, heart_rate, hrv, sleep_score, training_load, last_sync, connection_status",
+        )
         .eq("user_id", userId)
         .order("last_sync", { ascending: false });
 
@@ -617,7 +686,9 @@ router.get("/team-chemistry", async (req, res) => {
     if (supabase) {
       const { data } = await supabase
         .from("team_chemistry")
-        .select("overall_chemistry, communication_score, trust_score, leadership_score, last_intervention, intervention_effectiveness")
+        .select(
+          "overall_chemistry, communication_score, trust_score, leadership_score, last_intervention, intervention_effectiveness",
+        )
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(1);
@@ -722,14 +793,18 @@ router.get("/notifications", async (req, res) => {
               notification_type: "weather",
               message: "Weather alert: Tomorrow's practice moved to 6PM",
               is_read: false,
-              created_at: safeFormatDate(new Date(Date.now() - 2 * 60 * 60 * 1000)),
+              created_at: safeFormatDate(
+                new Date(Date.now() - 2 * 60 * 60 * 1000),
+              ),
               priority: "medium",
             },
             {
               notification_type: "tournament",
               message: "European Championship bracket updated",
               is_read: false,
-              created_at: safeFormatDate(new Date(Date.now() - 4 * 60 * 60 * 1000)),
+              created_at: safeFormatDate(
+                new Date(Date.now() - 4 * 60 * 60 * 1000),
+              ),
               priority: "low",
             },
           ];
@@ -814,8 +889,12 @@ router.get("/health", async (req, res) => {
     const dbHealth = await checkDatabaseHealth();
 
     const healthStatus = {
-      success: dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
-      status: dbHealth.supabase === "connected" || dbHealth.postgres === "connected" ? "healthy" : "unhealthy",
+      success:
+        dbHealth.supabase === "connected" || dbHealth.postgres === "connected",
+      status:
+        dbHealth.supabase === "connected" || dbHealth.postgres === "connected"
+          ? "healthy"
+          : "unhealthy",
       service: ROUTE_NAME,
       version: "2.1.0",
       timestamp: safeFormatDate(new Date()),
@@ -829,7 +908,10 @@ router.get("/health", async (req, res) => {
     const statusCode = healthStatus.success ? 200 : 503;
     res.status(statusCode).json(healthStatus);
   } catch (error) {
-    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(
+      `${ROUTE_NAME.toUpperCase()} health check error:`,
+      error,
+    );
     res.status(503).json({
       success: false,
       status: "unhealthy",

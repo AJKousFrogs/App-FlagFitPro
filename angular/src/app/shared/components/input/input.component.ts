@@ -60,7 +60,12 @@ import { CommonModule } from "@angular/common";
         <div [id]="id() + '-help'" class="form-help">{{ helpText() }}</div>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert" aria-live="polite">
+        <div
+          [id]="id() + '-error'"
+          class="form-error"
+          role="alert"
+          aria-live="polite"
+        >
           <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
           {{ errorMessage() }}
         </div>
@@ -140,23 +145,45 @@ import { CommonModule } from "@angular/common";
       }
 
       @keyframes input-shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-        20%, 40%, 60%, 80% { transform: translateX(4px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+          transform: translateX(-4px);
+        }
+        20%,
+        40%,
+        60%,
+        80% {
+          transform: translateX(4px);
+        }
       }
 
       .form-control.is-invalid:focus {
         border-color: var(--color-status-error, var(--p-error-color));
-        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
+        box-shadow: 0 0 0 3px
+          rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
       }
 
       .form-control.is-valid {
-        border-color: var(--color-status-success, var(--p-success-color, #4caf50));
+        border-color: var(
+          --color-status-success,
+          var(--p-success-color, #4caf50)
+        );
       }
 
       .form-control.is-valid:focus {
-        border-color: var(--color-status-success, var(--p-success-color, #4caf50));
-        box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
+        border-color: var(
+          --color-status-success,
+          var(--p-success-color, #4caf50)
+        );
+        box-shadow: 0 0 0 3px
+          rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
       }
 
       .form-help {
@@ -220,12 +247,12 @@ export class InputComponent implements ControlValueAccessor {
   getAriaDescribedBy(): string | null {
     const ids: string[] = [];
     if (this.errorMessage()) {
-      ids.push(this.id() + '-error');
+      ids.push(this.id() + "-error");
     }
     if (this.helpText() && !this.errorMessage()) {
-      ids.push(this.id() + '-help');
+      ids.push(this.id() + "-help");
     }
-    return ids.length > 0 ? ids.join(' ') : null;
+    return ids.length > 0 ? ids.join(" ") : null;
   }
 
   // Value signal for ControlValueAccessor

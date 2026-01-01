@@ -21,49 +21,51 @@
  * @angular 21
  */
 
+import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   signal,
-  computed,
-  ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 
 // PrimeNG Components
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
-import { Select } from "primeng/select";
-import { MultiSelect } from "primeng/multiselect";
-import { ToastModule } from "primeng/toast";
-import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
-import { BadgeModule } from "primeng/badge";
-import { TooltipModule } from "primeng/tooltip";
-import { SkeletonModule } from "primeng/skeleton";
 import { AvatarModule } from "primeng/avatar";
-import { TimelineModule } from "primeng/timeline";
-import { StepsModule } from "primeng/steps";
+import { BadgeModule } from "primeng/badge";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { Chip } from "primeng/chip";
+import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
+import { InputTextModule } from "primeng/inputtext";
+import { MultiSelect } from "primeng/multiselect";
+import { SkeletonModule } from "primeng/skeleton";
+import { StepsModule } from "primeng/steps";
+import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
+import { TimelineModule } from "primeng/timeline";
+import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
 
 // Services
-import {
-  InstagramVideoService,
-  InstagramVideo,
-} from "../../../core/services/instagram-video.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
+import { InstagramVideoService } from "../../../core/services/instagram-video.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
 import {
   FlagPosition,
   TrainingFocus,
 } from "../../../core/services/training-video-database.service";
-import { ToastService } from "../../../core/services/toast.service";
-import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -98,7 +100,6 @@ interface VideoSuggestion {
     ButtonModule,
     InputTextModule,
     TextareaModule,
-    Select,
     MultiSelect,
     ToastModule,
     DialogModule,
@@ -128,7 +129,7 @@ interface VideoSuggestion {
               <p>Found a great drill on Instagram? Share it with your team!</p>
             </div>
           </div>
-          
+
           <!-- Stats Pills -->
           <div class="stats-pills">
             <div class="stat-pill">
@@ -158,7 +159,10 @@ interface VideoSuggestion {
                 </div>
               </ng-template>
 
-              <form [formGroup]="suggestionForm" (ngSubmit)="submitSuggestion()">
+              <form
+                [formGroup]="suggestionForm"
+                (ngSubmit)="submitSuggestion()"
+              >
                 <!-- Step 1: Instagram URL -->
                 <div class="form-step">
                   <div class="step-header">
@@ -166,7 +170,9 @@ interface VideoSuggestion {
                     <span class="step-title">Paste Instagram URL</span>
                   </div>
                   <div class="url-input-container">
-                    <span class="p-input-icon-left p-input-icon-right url-input-wrapper">
+                    <span
+                      class="p-input-icon-left p-input-icon-right url-input-wrapper"
+                    >
                       <i class="pi pi-instagram"></i>
                       <input
                         type="text"
@@ -180,22 +186,27 @@ interface VideoSuggestion {
                         <i class="pi pi-check-circle valid-icon"></i>
                       }
                     </span>
-                    @if (suggestionForm.get('instagramUrl')?.invalid && suggestionForm.get('instagramUrl')?.touched) {
+                    @if (
+                      suggestionForm.get("instagramUrl")?.invalid &&
+                      suggestionForm.get("instagramUrl")?.touched
+                    ) {
                       <small class="error-text">
                         <i class="pi pi-exclamation-circle"></i>
                         Please enter a valid Instagram Reel or Post URL
                       </small>
                     }
                   </div>
-                  
+
                   <!-- URL Preview -->
                   @if (isValidUrl() && extractedShortcode()) {
                     <div class="url-preview">
                       <div class="preview-badge">
                         <i class="pi pi-instagram"></i>
-                        Instagram {{ isReel() ? 'Reel' : 'Post' }}
+                        Instagram {{ isReel() ? "Reel" : "Post" }}
                       </div>
-                      <span class="shortcode">ID: {{ extractedShortcode() }}</span>
+                      <span class="shortcode"
+                        >ID: {{ extractedShortcode() }}</span
+                      >
                     </div>
                   }
                 </div>
@@ -275,7 +286,9 @@ interface VideoSuggestion {
                   <div class="step-header">
                     <span class="step-number">4</span>
                     <span class="step-title">Why is this valuable?</span>
-                    <span class="step-optional">(Optional but helps approval)</span>
+                    <span class="step-optional"
+                      >(Optional but helps approval)</span
+                    >
                   </div>
 
                   <div class="form-field">
@@ -312,8 +325,8 @@ interface VideoSuggestion {
                 My Submissions
               </h2>
               @if (mySuggestions().length > 0) {
-                <p-tag 
-                  [value]="mySuggestions().length + ' total'" 
+                <p-tag
+                  [value]="mySuggestions().length + ' total'"
                   severity="info"
                 ></p-tag>
               }
@@ -324,7 +337,11 @@ interface VideoSuggestion {
               <div class="suggestions-list">
                 @for (i of [1, 2, 3]; track i) {
                   <div class="suggestion-card skeleton">
-                    <p-skeleton width="100%" height="80px" borderRadius="12px"></p-skeleton>
+                    <p-skeleton
+                      width="100%"
+                      height="80px"
+                      borderRadius="12px"
+                    ></p-skeleton>
                   </div>
                 }
               </div>
@@ -341,7 +358,7 @@ interface VideoSuggestion {
               <!-- Suggestions List -->
               <div class="suggestions-list">
                 @for (suggestion of mySuggestions(); track suggestion.id) {
-                  <article 
+                  <article
                     class="suggestion-card"
                     [class.approved]="suggestion.status === 'approved'"
                     [class.rejected]="suggestion.status === 'rejected'"
@@ -349,22 +366,36 @@ interface VideoSuggestion {
                   >
                     <div class="suggestion-status">
                       @switch (suggestion.status) {
-                        @case ('approved') {
-                          <p-tag value="Approved" severity="success" icon="pi pi-check"></p-tag>
+                        @case ("approved") {
+                          <p-tag
+                            value="Approved"
+                            severity="success"
+                            icon="pi pi-check"
+                          ></p-tag>
                         }
-                        @case ('rejected') {
-                          <p-tag value="Not Approved" severity="danger" icon="pi pi-times"></p-tag>
+                        @case ("rejected") {
+                          <p-tag
+                            value="Not Approved"
+                            severity="danger"
+                            icon="pi pi-times"
+                          ></p-tag>
                         }
-                        @case ('pending') {
-                          <p-tag value="Pending Review" severity="warn" icon="pi pi-clock"></p-tag>
+                        @case ("pending") {
+                          <p-tag
+                            value="Pending Review"
+                            severity="warn"
+                            icon="pi pi-clock"
+                          ></p-tag>
                         }
                       }
                     </div>
 
                     <div class="suggestion-content">
                       <h4>{{ suggestion.title }}</h4>
-                      <p class="suggestion-description">{{ suggestion.description }}</p>
-                      
+                      <p class="suggestion-description">
+                        {{ suggestion.description }}
+                      </p>
+
                       <div class="suggestion-meta">
                         <span class="meta-item">
                           <i class="pi pi-calendar"></i>
@@ -373,15 +404,21 @@ interface VideoSuggestion {
                         @if (suggestion.positions.length > 0) {
                           <span class="meta-item">
                             <i class="pi pi-users"></i>
-                            {{ suggestion.positions.join(', ') }}
+                            {{ suggestion.positions.join(", ") }}
                           </span>
                         }
                       </div>
 
                       @if (suggestion.training_focus.length > 0) {
                         <div class="suggestion-tags">
-                          @for (focus of suggestion.training_focus.slice(0, 3); track focus) {
-                            <p-chip [label]="formatFocus(focus)" styleClass="focus-chip"></p-chip>
+                          @for (
+                            focus of suggestion.training_focus.slice(0, 3);
+                            track focus
+                          ) {
+                            <p-chip
+                              [label]="formatFocus(focus)"
+                              styleClass="focus-chip"
+                            ></p-chip>
                           }
                         </div>
                       }
@@ -402,7 +439,7 @@ interface VideoSuggestion {
                         pTooltip="Open in Instagram"
                         (click)="openInInstagram(suggestion)"
                       ></button>
-                      @if (suggestion.status === 'pending') {
+                      @if (suggestion.status === "pending") {
                         <button
                           pButton
                           icon="pi pi-trash"
@@ -470,7 +507,7 @@ interface VideoSuggestion {
                 <span>Tips for Getting Approved</span>
               </div>
             </ng-template>
-            
+
             <div class="tips-grid">
               <div class="tip-item">
                 <div class="tip-icon">
@@ -481,7 +518,7 @@ interface VideoSuggestion {
                   <p>Submit videos from verified trainers or pro athletes</p>
                 </div>
               </div>
-              
+
               <div class="tip-item">
                 <div class="tip-icon">
                   <i class="pi pi-tag"></i>
@@ -491,7 +528,7 @@ interface VideoSuggestion {
                   <p>Select accurate positions and training focus areas</p>
                 </div>
               </div>
-              
+
               <div class="tip-item">
                 <div class="tip-icon">
                   <i class="pi pi-comment"></i>
@@ -501,7 +538,7 @@ interface VideoSuggestion {
                   <p>Tell coaches why this video helps the team</p>
                 </div>
               </div>
-              
+
               <div class="tip-item">
                 <div class="tip-icon">
                   <i class="pi pi-flag"></i>
@@ -1351,12 +1388,12 @@ export class VideoSuggestionComponent implements OnInit {
   ];
 
   // Computed
-  approvedCount = computed(() =>
-    this.mySuggestions().filter((s) => s.status === "approved").length
+  approvedCount = computed(
+    () => this.mySuggestions().filter((s) => s.status === "approved").length,
   );
 
-  pendingCount = computed(() =>
-    this.mySuggestions().filter((s) => s.status === "pending").length
+  pendingCount = computed(
+    () => this.mySuggestions().filter((s) => s.status === "pending").length,
   );
 
   isValidUrl = computed(() => {
@@ -1456,7 +1493,7 @@ export class VideoSuggestionComponent implements OnInit {
 
       const formValue = this.suggestionForm.value;
       const shortcode = this.instagramService.extractShortcode(
-        formValue.instagramUrl
+        formValue.instagramUrl,
       );
 
       const suggestion: Partial<VideoSuggestion> = {
@@ -1563,7 +1600,7 @@ export class VideoSuggestionComponent implements OnInit {
       if (error) throw error;
 
       this.mySuggestions.update((suggestions) =>
-        suggestions.filter((s) => s.id !== suggestion.id)
+        suggestions.filter((s) => s.id !== suggestion.id),
       );
       this.toastService.info("Suggestion deleted");
     } catch (error) {

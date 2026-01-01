@@ -3,8 +3,8 @@
  * Migrated from inline styles to SCSS using design system
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 .dashboard-content {
   padding: space(6);
@@ -26,8 +26,9 @@
 
 .metric-card {
   min-height: 150px;
-  transition: transform get-transition(fast) get-easing(smooth),
-              box-shadow get-transition(fast) get-easing(smooth);
+  transition:
+    transform get-transition(fast) get-easing(smooth),
+    box-shadow get-transition(fast) get-easing(smooth);
 
   @include hover-support {
     &:hover {

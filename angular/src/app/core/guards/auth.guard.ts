@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   // This handles the race condition where the signal hasn't updated yet
   const hasSession = !!supabaseService.session();
   const isAuthenticated = authService.isAuthenticated();
-  
+
   if (hasSession || isAuthenticated) {
     return true;
   }

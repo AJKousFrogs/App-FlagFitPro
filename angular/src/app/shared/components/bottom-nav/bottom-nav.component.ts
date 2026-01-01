@@ -41,13 +41,17 @@ interface NavItem {
           <div class="nav-icon-wrapper">
             <i [class]="'pi ' + item.icon"></i>
             @if (item.badge && item.badge > 0) {
-              <p-badge [value]="item.badge.toString()" severity="danger" class="nav-badge"></p-badge>
+              <p-badge
+                [value]="item.badge.toString()"
+                severity="danger"
+                class="nav-badge"
+              ></p-badge>
             }
           </div>
           <span class="nav-label">{{ item.label }}</span>
         </a>
       }
-      
+
       <!-- More menu for additional items -->
       @if (hasMoreItems()) {
         <button class="nav-item more-btn" (click)="toggleMoreMenu()" pRipple>
@@ -80,7 +84,10 @@ interface NavItem {
                 <i [class]="'pi ' + item.icon"></i>
                 <span>{{ item.label }}</span>
                 @if (item.badge && item.badge > 0) {
-                  <p-badge [value]="item.badge.toString()" severity="danger"></p-badge>
+                  <p-badge
+                    [value]="item.badge.toString()"
+                    severity="danger"
+                  ></p-badge>
                 }
               </a>
             }
@@ -89,182 +96,192 @@ interface NavItem {
       </div>
     }
   `,
-  styles: [`
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 64px;
-      background: var(--surface-primary);
-      border-top: 1px solid var(--p-surface-200);
-      display: none;
-      justify-content: space-around;
-      align-items: center;
-      padding: 0 var(--space-2);
-      z-index: 1000;
-      padding-bottom: env(safe-area-inset-bottom, 0);
-    }
-
-    .bottom-nav.hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 768px) {
+  styles: [
+    `
       .bottom-nav {
-        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: var(--surface-primary);
+        border-top: 1px solid var(--p-surface-200);
+        display: none;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 var(--space-2);
+        z-index: 1000;
+        padding-bottom: env(safe-area-inset-bottom, 0);
       }
-    }
 
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-1);
-      padding: var(--space-2);
-      border-radius: var(--p-border-radius);
-      text-decoration: none;
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
-      min-width: 64px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
+      .bottom-nav.hidden {
+        display: none !important;
+      }
 
-    .nav-item:hover {
-      color: var(--color-brand-primary);
-      background: var(--color-brand-light);
-    }
+      @media (max-width: 768px) {
+        .bottom-nav {
+          display: flex;
+        }
+      }
 
-    .nav-item.active {
-      color: var(--color-brand-primary);
-    }
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-1);
+        padding: var(--space-2);
+        border-radius: var(--p-border-radius);
+        text-decoration: none;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        min-width: 64px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+      }
 
-    .nav-item.active .nav-icon-wrapper i {
-      transform: scale(1.1);
-    }
+      .nav-item:hover {
+        color: var(--color-brand-primary);
+        background: var(--color-brand-light);
+      }
 
-    .nav-icon-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      .nav-item.active {
+        color: var(--color-brand-primary);
+      }
 
-    .nav-icon-wrapper i {
-      font-size: 1.25rem;
-      transition: transform 0.2s ease;
-    }
+      .nav-item.active .nav-icon-wrapper i {
+        transform: scale(1.1);
+      }
 
-    .nav-badge {
-      position: absolute;
-      top: -6px;
-      right: -10px;
-      transform: scale(0.8);
-    }
+      .nav-icon-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .nav-label {
-      font-size: 0.625rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
+      .nav-icon-wrapper i {
+        font-size: 1.25rem;
+        transition: transform 0.2s ease;
+      }
 
-    /* More menu overlay */
-    .more-menu-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1001;
-      display: flex;
-      align-items: flex-end;
-      animation: fadeIn 0.2s ease;
-    }
+      .nav-badge {
+        position: absolute;
+        top: -6px;
+        right: -10px;
+        transform: scale(0.8);
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+      .nav-label {
+        font-size: 0.625rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
 
-    .more-menu {
-      width: 100%;
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius) var(--p-border-radius) 0 0;
-      padding-bottom: env(safe-area-inset-bottom, var(--space-4));
-      animation: slideUp 0.3s ease;
-    }
+      /* More menu overlay */
+      .more-menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        display: flex;
+        align-items: flex-end;
+        animation: fadeIn 0.2s ease;
+      }
 
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
-    .more-menu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-4);
-      border-bottom: 1px solid var(--p-surface-200);
-      font-weight: 600;
-      font-size: 1.125rem;
-    }
+      .more-menu {
+        width: 100%;
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius) var(--p-border-radius) 0 0;
+        padding-bottom: env(safe-area-inset-bottom, var(--space-4));
+        animation: slideUp 0.3s ease;
+      }
 
-    .close-btn {
-      background: transparent;
-      border: none;
-      padding: var(--space-2);
-      cursor: pointer;
-      color: var(--text-secondary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
 
-    .close-btn:hover {
-      background: var(--p-surface-100);
-    }
+      .more-menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--p-surface-200);
+        font-weight: 600;
+        font-size: 1.125rem;
+      }
 
-    .more-menu-items {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-2);
-      padding: var(--space-4);
-    }
+      .close-btn {
+        background: transparent;
+        border: none;
+        padding: var(--space-2);
+        cursor: pointer;
+        color: var(--text-secondary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .more-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-4);
-      border-radius: var(--p-border-radius);
-      text-decoration: none;
-      color: var(--text-primary);
-      transition: all 0.2s ease;
-    }
+      .close-btn:hover {
+        background: var(--p-surface-100);
+      }
 
-    .more-item:hover {
-      background: var(--p-surface-100);
-    }
+      .more-menu-items {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-2);
+        padding: var(--space-4);
+      }
 
-    .more-item.active {
-      background: var(--color-brand-light);
-      color: var(--color-brand-primary);
-    }
+      .more-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-4);
+        border-radius: var(--p-border-radius);
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.2s ease;
+      }
 
-    .more-item i {
-      font-size: 1.5rem;
-    }
+      .more-item:hover {
+        background: var(--p-surface-100);
+      }
 
-    .more-item span {
-      font-size: 0.75rem;
-      text-align: center;
-    }
-  `],
+      .more-item.active {
+        background: var(--color-brand-light);
+        color: var(--color-brand-primary);
+      }
+
+      .more-item i {
+        font-size: 1.5rem;
+      }
+
+      .more-item span {
+        font-size: 0.75rem;
+        text-align: center;
+      }
+    `,
+  ],
 })
 export class BottomNavComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -276,12 +293,23 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   currentRoute = signal("");
 
   // Routes where bottom nav should be hidden (like login, landing)
-  private hiddenRoutes = ["/", "/login", "/register", "/reset-password", "/update-password", "/verify-email", "/onboarding"];
+  private hiddenRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/reset-password",
+    "/update-password",
+    "/verify-email",
+    "/onboarding",
+  ];
 
   isVisible = computed(() => {
     const route = this.currentRoute();
     const isAuthenticated = this.authService.isAuthenticated();
-    return isAuthenticated && !this.hiddenRoutes.some(r => route === r || route.startsWith("/auth"));
+    return (
+      isAuthenticated &&
+      !this.hiddenRoutes.some((r) => route === r || route.startsWith("/auth"))
+    );
   });
 
   // Primary nav items (shown in bottom bar)
@@ -305,7 +333,12 @@ export class BottomNavComponent implements OnInit, OnDestroy {
     { label: "Travel", icon: "pi-globe", route: "/travel/recovery" },
     // Team
     { label: "Team", icon: "pi-users", route: "/roster" },
-    { label: "Depth Chart", icon: "pi-sitemap", route: "/depth-chart", roles: ["coach", "assistant_coach"] },
+    {
+      label: "Depth Chart",
+      icon: "pi-sitemap",
+      route: "/depth-chart",
+      roles: ["coach", "assistant_coach"],
+    },
     // Resources
     { label: "Videos", icon: "pi-youtube", route: "/training/videos" },
     // Community
@@ -318,21 +351,21 @@ export class BottomNavComponent implements OnInit, OnDestroy {
 
   visibleNavItems = computed(() => {
     const unreadCount = this.notificationState.unreadCount();
-    return this.primaryNavItems.map(item => ({
+    return this.primaryNavItems.map((item) => ({
       ...item,
-      badge: item.route === "/chat" ? unreadCount : undefined
+      badge: item.route === "/chat" ? unreadCount : undefined,
     }));
   });
 
   moreNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
-    
+
     return this.secondaryNavItems
-      .filter(item => !item.roles || item.roles.includes(userRole))
-      .map(item => ({
+      .filter((item) => !item.roles || item.roles.includes(userRole))
+      .map((item) => ({
         ...item,
-        badge: item.route === "/chat" ? unreadCount : undefined
+        badge: item.route === "/chat" ? unreadCount : undefined,
       }));
   });
 
@@ -340,9 +373,9 @@ export class BottomNavComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
-    
+
     this.routerSub = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
         this.showMoreMenu.set(false);
@@ -354,6 +387,6 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   }
 
   toggleMoreMenu(): void {
-    this.showMoreMenu.update(v => !v);
+    this.showMoreMenu.update((v) => !v);
   }
 }

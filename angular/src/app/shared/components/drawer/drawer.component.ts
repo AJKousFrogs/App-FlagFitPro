@@ -163,7 +163,8 @@ export type DrawerPosition = "left" | "right" | "top" | "bottom";
         align-items: center;
         justify-content: space-between;
         padding: var(--space-5, 1.25rem);
-        border-bottom: 1px solid var(--color-border-secondary, var(--p-surface-border));
+        border-bottom: 1px solid
+          var(--color-border-secondary, var(--p-surface-border));
         background: var(--surface-secondary, var(--p-surface-50));
       }
 
@@ -185,7 +186,7 @@ export type DrawerPosition = "left" | "right" | "top" | "bottom";
         align-items: center;
         justify-content: center;
         border-radius: var(--radius-lg, var(--p-border-radius));
-        transition: 
+        transition:
           background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -242,7 +243,8 @@ export type DrawerPosition = "left" | "right" | "top" | "bottom";
         justify-content: flex-end;
         gap: var(--space-3, 0.75rem);
         padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
-        border-top: 1px solid var(--color-border-secondary, var(--p-surface-border));
+        border-top: 1px solid
+          var(--color-border-secondary, var(--p-surface-border));
         background: var(--surface-secondary, var(--p-surface-50));
       }
 

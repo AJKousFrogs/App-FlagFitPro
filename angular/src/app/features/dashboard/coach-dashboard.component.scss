@@ -3,8 +3,8 @@
  * Comprehensive responsive layout with improved tablet breakpoints
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 .dashboard-content {
   padding: space(4);
@@ -170,8 +170,9 @@
   gap: space(3);
   box-shadow: var(--card-shadow);
   border: 1px solid var(--surface-border);
-  transition: transform get-transition(fast),
-              box-shadow get-transition(fast);
+  transition:
+    transform get-transition(fast),
+    box-shadow get-transition(fast);
 
   // Hover only on devices with hover support
   @include hover-support {
@@ -182,7 +183,11 @@
   }
 
   &.primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-700));
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--primary-700)
+    );
     color: white;
     border: none;
 
@@ -578,15 +583,29 @@
 .perf-score {
   font-weight: var(--font-weight-semibold);
 
-  &.excellent { color: var(--green-600); }
-  &.good { color: var(--primary-color); }
-  &.average { color: var(--yellow-600); }
-  &.poor { color: var(--red-600); }
+  &.excellent {
+    color: var(--green-600);
+  }
+  &.good {
+    color: var(--primary-color);
+  }
+  &.average {
+    color: var(--yellow-600);
+  }
+  &.poor {
+    color: var(--red-600);
+  }
 }
 
-.trend-up { color: var(--green-500); }
-.trend-down { color: var(--red-500); }
-.trend-stable { color: var(--text-color-secondary); }
+.trend-up {
+  color: var(--green-500);
+}
+.trend-down {
+  color: var(--red-500);
+}
+.trend-stable {
+  color: var(--text-color-secondary);
+}
 
 .readiness-cell {
   @include flex-start;
@@ -700,10 +719,22 @@
    ACWR CLASSES
    ============================================ */
 
-.acwr-safe { color: var(--green-600); font-weight: var(--font-weight-semibold); }
-.acwr-moderate { color: var(--yellow-600); font-weight: var(--font-weight-semibold); }
-.acwr-high { color: var(--orange-600); font-weight: var(--font-weight-semibold); }
-.acwr-danger { color: var(--red-600); font-weight: var(--font-weight-bold); }
+.acwr-safe {
+  color: var(--green-600);
+  font-weight: var(--font-weight-semibold);
+}
+.acwr-moderate {
+  color: var(--yellow-600);
+  font-weight: var(--font-weight-semibold);
+}
+.acwr-high {
+  color: var(--orange-600);
+  font-weight: var(--font-weight-semibold);
+}
+.acwr-danger {
+  color: var(--red-600);
+  font-weight: var(--font-weight-bold);
+}
 
 /* ============================================
    READINESS PROGRESS BAR

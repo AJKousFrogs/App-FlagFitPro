@@ -11,14 +11,14 @@
 
 ## 🎯 Project Status: ~85% Production Ready
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Database Schema** | ✅ 100% | 55+ migrations, 250+ tables, RLS policies |
-| **Backend API** | ✅ 100% | 80 Netlify Functions, rate limiting, error handling |
-| **Angular Frontend** | ✅ 90% | 28+ feature modules, 86+ services, PrimeNG UI |
-| **AI Coaching** | ✅ 100% | Groq LLM + 3-tier safety + ACWR integration |
-| **ACWR Monitoring** | ✅ 100% | 1,273-line service with Gabbett 2016 thresholds |
-| **Testing** | 🔄 20% | Unit tests in progress |
+| Component            | Status  | Details                                             |
+| -------------------- | ------- | --------------------------------------------------- |
+| **Database Schema**  | ✅ 100% | 55+ migrations, 250+ tables, RLS policies           |
+| **Backend API**      | ✅ 100% | 80 Netlify Functions, rate limiting, error handling |
+| **Angular Frontend** | ✅ 90%  | 28+ feature modules, 86+ services, PrimeNG UI       |
+| **AI Coaching**      | ✅ 100% | Groq LLM + 3-tier safety + ACWR integration         |
+| **ACWR Monitoring**  | ✅ 100% | 1,273-line service with Gabbett 2016 thresholds     |
+| **Testing**          | 🔄 20%  | Unit tests in progress                              |
 
 ---
 
@@ -36,13 +36,13 @@
 
 Based on Gabbett (2016) research - "The training-injury prevention paradox":
 
-| ACWR Range | Risk Zone | Color | AI Behavior |
-|------------|-----------|-------|-------------|
-| < 0.80 | Under-training | 🟠 Orange | Can recommend more training |
-| 0.80 - 1.30 | Sweet Spot | 🟢 Green | All recommendations allowed |
-| 1.30 - 1.50 | Elevated | 🟡 Yellow | Allowed with monitoring |
-| > 1.50 | Danger | 🔴 Red | **BLOCKS high-intensity** |
-| > 1.80 | Critical | 🔴 Red | **Recommends rest only** |
+| ACWR Range  | Risk Zone      | Color     | AI Behavior                 |
+| ----------- | -------------- | --------- | --------------------------- |
+| < 0.80      | Under-training | 🟠 Orange | Can recommend more training |
+| 0.80 - 1.30 | Sweet Spot     | 🟢 Green  | All recommendations allowed |
+| 1.30 - 1.50 | Elevated       | 🟡 Yellow | Allowed with monitoring     |
+| > 1.50      | Danger         | 🔴 Red    | **BLOCKS high-intensity**   |
+| > 1.80      | Critical       | 🔴 Red    | **Recommends rest only**    |
 
 ### 🏆 Olympic Preparation
 
@@ -136,10 +136,10 @@ npm run dev
 
 **Always run both servers together!** The app requires:
 
-| Server | Port | Purpose |
-|--------|------|---------|
+| Server     | Port             | Purpose                        |
+| ---------- | ---------------- | ------------------------------ |
 | API Server | `localhost:4000` | Backend APIs, Supabase queries |
-| Angular | `localhost:4200` | Frontend UI |
+| Angular    | `localhost:4200` | Frontend UI                    |
 
 ```bash
 # ✅ CORRECT - runs both servers
@@ -155,13 +155,13 @@ The app will be available at `http://localhost:4200`
 
 Set in Netlify UI (Site Settings → Environment Variables):
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `SUPABASE_URL` | Supabase project URL | ✅ Yes |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes |
-| `SUPABASE_ANON_KEY` | Supabase anon key | ✅ Yes |
-| `JWT_SECRET` | JWT signing secret | ✅ Yes |
-| `GROQ_API_KEY` | Groq API key for AI | ⚠️ Optional |
+| Variable               | Description               | Required    |
+| ---------------------- | ------------------------- | ----------- |
+| `SUPABASE_URL`         | Supabase project URL      | ✅ Yes      |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes      |
+| `SUPABASE_ANON_KEY`    | Supabase anon key         | ✅ Yes      |
+| `JWT_SECRET`           | JWT signing secret        | ✅ Yes      |
+| `GROQ_API_KEY`         | Groq API key for AI       | ⚠️ Optional |
 
 Get your FREE Groq API key at: https://console.groq.com/
 
@@ -189,28 +189,28 @@ flagfit-pro/
 
 ### Core Services (86+)
 
-| Service | Lines | Purpose |
-|---------|-------|---------|
-| `acwr.service.ts` | 1,273 | ACWR calculations with EWMA |
-| `acwr-alerts.service.ts` | 434 | Load alerts and warnings |
-| `ai-chat.service.ts` | 270 | AI coaching chat |
-| `wellness.service.ts` | 582 | Wellness tracking |
-| `nutrition.service.ts` | 713 | Nutrition management |
-| `training-stats-calculation.service.ts` | 363 | Training statistics |
-| `notification-state.service.ts` | 394 | Signal-based notifications |
+| Service                                 | Lines | Purpose                     |
+| --------------------------------------- | ----- | --------------------------- |
+| `acwr.service.ts`                       | 1,273 | ACWR calculations with EWMA |
+| `acwr-alerts.service.ts`                | 434   | Load alerts and warnings    |
+| `ai-chat.service.ts`                    | 270   | AI coaching chat            |
+| `wellness.service.ts`                   | 582   | Wellness tracking           |
+| `nutrition.service.ts`                  | 713   | Nutrition management        |
+| `training-stats-calculation.service.ts` | 363   | Training statistics         |
+| `notification-state.service.ts`         | 394   | Signal-based notifications  |
 
 ### Feature Components (28+)
 
-| Feature | Components | Status |
-|---------|------------|--------|
-| **Training** | 10 components | ✅ Complete |
-| **Analytics** | 2 components | ✅ Complete |
-| **Dashboard** | 3 components | ✅ Complete |
-| **ACWR Dashboard** | 1 component | ✅ Complete |
-| **Game Tracker** | 2 components | ✅ Complete |
-| **Wellness** | 1 component | ✅ Complete |
-| **Auth** | 4 components | ✅ Complete |
-| **Profile/Settings** | 2 components | ✅ Complete |
+| Feature              | Components    | Status      |
+| -------------------- | ------------- | ----------- |
+| **Training**         | 10 components | ✅ Complete |
+| **Analytics**        | 2 components  | ✅ Complete |
+| **Dashboard**        | 3 components  | ✅ Complete |
+| **ACWR Dashboard**   | 1 component   | ✅ Complete |
+| **Game Tracker**     | 2 components  | ✅ Complete |
+| **Wellness**         | 1 component   | ✅ Complete |
+| **Auth**             | 4 components  | ✅ Complete |
+| **Profile/Settings** | 2 components  | ✅ Complete |
 
 ---
 
@@ -227,16 +227,16 @@ flagfit-pro/
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and dependencies |
-| [API.md](docs/API.md) | Complete API reference (80 endpoints) |
-| [DATABASE_SETUP.md](docs/DATABASE_SETUP.md) | Database schema (250+ tables) |
-| [BACKEND_SETUP.md](docs/BACKEND_SETUP.md) | Netlify Functions setup |
-| [AUTHENTICATION_PATTERN.md](docs/AUTHENTICATION_PATTERN.md) | Supabase Auth patterns |
-| [LOAD_MANAGEMENT_QUICK_START.md](docs/LOAD_MANAGEMENT_QUICK_START.md) | ACWR load monitoring |
-| [angular/README.md](angular/README.md) | Angular-specific documentation |
-| [ANGULAR_PRIMENG_GUIDE.md](ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG best practices |
+| Document                                                              | Description                           |
+| --------------------------------------------------------------------- | ------------------------------------- |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md)                               | System design and dependencies        |
+| [API.md](docs/API.md)                                                 | Complete API reference (80 endpoints) |
+| [DATABASE_SETUP.md](docs/DATABASE_SETUP.md)                           | Database schema (250+ tables)         |
+| [BACKEND_SETUP.md](docs/BACKEND_SETUP.md)                             | Netlify Functions setup               |
+| [AUTHENTICATION_PATTERN.md](docs/AUTHENTICATION_PATTERN.md)           | Supabase Auth patterns                |
+| [LOAD_MANAGEMENT_QUICK_START.md](docs/LOAD_MANAGEMENT_QUICK_START.md) | ACWR load monitoring                  |
+| [angular/README.md](angular/README.md)                                | Angular-specific documentation        |
+| [ANGULAR_PRIMENG_GUIDE.md](ANGULAR_PRIMENG_GUIDE.md)                  | Angular 21 + PrimeNG best practices   |
 
 ---
 

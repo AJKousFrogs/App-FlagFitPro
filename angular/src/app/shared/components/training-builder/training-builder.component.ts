@@ -1,38 +1,38 @@
 import {
-  Component,
-  signal,
-  computed,
   ChangeDetectionStrategy,
-  inject,
+  Component,
+  computed,
   DestroyRef,
+  inject,
+  signal,
 } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
-  Validators,
   ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { StepsModule } from "primeng/steps";
+import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { Chip } from "primeng/chip";
+import { StepsModule } from "primeng/steps";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { DialogModule } from "primeng/dialog";
 import { ToggleButtonModule } from "primeng/togglebutton";
 import { AIService } from "../../../core/services/ai.service";
-import { WeatherService } from "../../../core/services/weather.service";
 import { AuthService } from "../../../core/services/auth.service";
-import { LoggerService } from "../../../core/services/logger.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
-import { ToastService } from "../../../core/services/toast.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Router } from "@angular/router";
+import { ToastService } from "../../../core/services/toast.service";
+import { WeatherService } from "../../../core/services/weather.service";
 
 interface TrainingExercise {
   id: string;
@@ -67,7 +67,7 @@ interface Goal {
     ButtonModule,
     Select,
     Slider,
-    Chip,
+    InputTextModule,
     TagModule,
     TimelineModule,
     DialogModule,
@@ -156,12 +156,13 @@ interface Goal {
                 </div>
               </div>
               <div class="form-field">
-                <label>Available Equipment</label>
-                <p-chips
+                <label>Available Equipment (comma-separated)</label>
+                <input
+                  type="text"
+                  pInputText
                   formControlName="equipment"
-                  placeholder="Add equipment (optional)"
-                >
-                </p-chips>
+                  placeholder="e.g., cones, football, agility ladder"
+                />
               </div>
               <!-- Weather-based recommendations -->
               @if (weatherData()) {
@@ -696,7 +697,7 @@ export class TrainingBuilderComponent {
         [Validators.required, Validators.min(15), Validators.max(120)],
       ],
       intensity: ["medium", Validators.required],
-      equipment: [[]],
+      equipment: [""],
     });
 
     // Angular 21: Initialize in constructor instead of OnInit
@@ -711,7 +712,8 @@ export class TrainingBuilderComponent {
     }
 
     // Load recent performance data from Supabase
-    let recentPerformance: Array<{ date: string; rpe: number; type: string }> = [];
+    let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
+      [];
     try {
       const { data: sessions } = await this.supabaseService.client
         .from("training_sessions")
@@ -732,7 +734,11 @@ export class TrainingBuilderComponent {
     }
 
     // Load upcoming games/events
-    let upcomingGames: Array<{ date: string; opponent?: string; importance?: string }> = [];
+    let upcomingGames: Array<{
+      date: string;
+      opponent?: string;
+      importance?: string;
+    }> = [];
     try {
       const { data: events } = await this.supabaseService.client
         .from("team_events")
@@ -799,7 +805,13 @@ export class TrainingBuilderComponent {
     const duration = this.sessionForm.get("duration")?.value || 60;
     const intensity = this.sessionForm.get("intensity")?.value || "medium";
     const goals = this.selectedGoals();
-    const equipment = this.sessionForm.get("equipment")?.value || [];
+    const equipmentStr = this.sessionForm.get("equipment")?.value || "";
+    const equipment = equipmentStr
+      ? equipmentStr
+          .split(",")
+          .map((e: string) => e.trim())
+          .filter((e: string) => e)
+      : [];
 
     // Try AI service first
     const user = this.authService.getUser();
@@ -865,39 +877,48 @@ export class TrainingBuilderComponent {
     equipment: string[],
   ): TrainingExercise[] {
     return suggestions
-      .filter((s): s is Record<string, unknown> => 
-        s !== null && 
-        typeof s === 'object' && 
-        'formData' in s &&
-        s['formData'] !== null &&
-        typeof s['formData'] === 'object'
+      .filter(
+        (s): s is Record<string, unknown> =>
+          s !== null &&
+          typeof s === "object" &&
+          "formData" in s &&
+          s["formData"] !== null &&
+          typeof s["formData"] === "object",
       )
       .map((suggestion, index) => {
-        const formData = suggestion['formData'] as Record<string, unknown>;
-        const suggestionId = suggestion['id'];
-        const suggestionTitle = suggestion['title'];
-        const suggestionDescription = suggestion['description'];
-        const formSessionType = formData['sessionType'];
-        const formDuration = formData['duration'];
-        const formIntensity = formData['intensity'];
-        const formEquipment = formData['equipment'];
-        
+        const formData = suggestion["formData"] as Record<string, unknown>;
+        const suggestionId = suggestion["id"];
+        const suggestionTitle = suggestion["title"];
+        const suggestionDescription = suggestion["description"];
+        const formSessionType = formData["sessionType"];
+        const formDuration = formData["duration"];
+        const formIntensity = formData["intensity"];
+        const formEquipment = formData["equipment"];
+
         return {
-          id: `ai-${typeof suggestionId === 'string' ? suggestionId : 'unknown'}-${index}`,
-          name: typeof suggestionTitle === 'string' ? suggestionTitle : 'Untitled Exercise',
-          category: typeof formSessionType === 'string' ? formSessionType : "mixed",
-          duration: typeof formDuration === 'number' ? formDuration : Math.floor(duration / 3),
-          intensity: (
-            formIntensity === 'low' ||
-            formIntensity === 'medium' ||
-            formIntensity === 'high'
-              ? formIntensity
-              : intensity
-          ) as "low" | "medium" | "high",
-          equipment: Array.isArray(formEquipment) 
-            ? formEquipment.filter((e): e is string => typeof e === 'string')
+          id: `ai-${typeof suggestionId === "string" ? suggestionId : "unknown"}-${index}`,
+          name:
+            typeof suggestionTitle === "string"
+              ? suggestionTitle
+              : "Untitled Exercise",
+          category:
+            typeof formSessionType === "string" ? formSessionType : "mixed",
+          duration:
+            typeof formDuration === "number"
+              ? formDuration
+              : Math.floor(duration / 3),
+          intensity: (formIntensity === "low" ||
+          formIntensity === "medium" ||
+          formIntensity === "high"
+            ? formIntensity
+            : intensity) as "low" | "medium" | "high",
+          equipment: Array.isArray(formEquipment)
+            ? formEquipment.filter((e): e is string => typeof e === "string")
             : equipment,
-          description: typeof suggestionDescription === 'string' ? suggestionDescription : '',
+          description:
+            typeof suggestionDescription === "string"
+              ? suggestionDescription
+              : "",
           aiRecommended: true,
         };
       });
@@ -1075,7 +1096,7 @@ export class TrainingBuilderComponent {
     try {
       const duration = this.sessionForm.get("duration")?.value || 60;
       const intensity = this.sessionForm.get("intensity")?.value || "medium";
-      
+
       // Map intensity to RPE (1-10 scale)
       const rpeMap: Record<string, number> = {
         low: 4,
@@ -1094,13 +1115,15 @@ export class TrainingBuilderComponent {
         sessionType,
         rpe,
         duration,
-        `Training goals: ${goals.join(", ")}. Exercises: ${this.generatedExercises().map(e => e.name).join(", ")}`
+        `Training goals: ${goals.join(", ")}. Exercises: ${this.generatedExercises()
+          .map((e) => e.name)
+          .join(", ")}`,
       );
 
       if (session.id) {
         this.toastService.success("Training session started and logged!");
         this.logger.success("Session saved to database:", session);
-        
+
         // Navigate to dashboard to see updated ACWR
         this.router.navigate(["/dashboard"]);
       } else {
@@ -1131,23 +1154,26 @@ export class TrainingBuilderComponent {
     try {
       // Create the session template
       const sessionType = this.mapGoalsToSessionType(goals);
-      const sessionName = `${goals.map(g => g.charAt(0).toUpperCase() + g.slice(1)).join(" & ")} Session`;
+      const sessionName = `${goals.map((g) => g.charAt(0).toUpperCase() + g.slice(1)).join(" & ")} Session`;
 
-      const { data: template, error: templateError } = await this.supabaseService.client
-        .from("training_session_templates")
-        .insert({
-          session_name: sessionName,
-          session_type: sessionType,
-          duration_minutes: duration,
-          intensity_level: intensity,
-          description: `AI-generated ${sessionType} session focusing on ${goals.join(", ")}`,
-          equipment_needed: [...new Set(exercises.flatMap(e => e.equipment || []))],
-          notes: `Generated on ${new Date().toLocaleDateString()}`,
-          day_of_week: new Date().getDay(),
-          session_order: 1,
-        })
-        .select()
-        .single();
+      const { data: template, error: templateError } =
+        await this.supabaseService.client
+          .from("training_session_templates")
+          .insert({
+            session_name: sessionName,
+            session_type: sessionType,
+            duration_minutes: duration,
+            intensity_level: intensity,
+            description: `AI-generated ${sessionType} session focusing on ${goals.join(", ")}`,
+            equipment_needed: [
+              ...new Set(exercises.flatMap((e) => e.equipment || [])),
+            ],
+            notes: `Generated on ${new Date().toLocaleDateString()}`,
+            day_of_week: new Date().getDay(),
+            session_order: 1,
+          })
+          .select()
+          .single();
 
       if (templateError) {
         throw new Error(templateError.message);
@@ -1156,7 +1182,7 @@ export class TrainingBuilderComponent {
       // Save individual exercises linked to the template
       for (let i = 0; i < exercises.length; i++) {
         const exercise = exercises[i];
-        
+
         // Check if exercise exists in master exercises table
         const { data: existingExercise } = await this.supabaseService.client
           .from("exercises")
@@ -1168,55 +1194,67 @@ export class TrainingBuilderComponent {
 
         // If not, create it
         if (!exerciseId) {
-          const { data: newExercise, error: exerciseError } = await this.supabaseService.client
-            .from("exercises")
-            .insert({
-              name: exercise.name,
-              category: exercise.category,
-              description: exercise.description,
-              equipment_needed: exercise.equipment,
-              difficulty_level: exercise.intensity,
-            })
-            .select("id")
-            .single();
+          const { data: newExercise, error: exerciseError } =
+            await this.supabaseService.client
+              .from("exercises")
+              .insert({
+                name: exercise.name,
+                category: exercise.category,
+                description: exercise.description,
+                equipment_needed: exercise.equipment,
+                difficulty_level: exercise.intensity,
+              })
+              .select("id")
+              .single();
 
           if (exerciseError) {
-            this.logger.warn(`Could not create exercise ${exercise.name}:`, exerciseError);
+            this.logger.warn(
+              `Could not create exercise ${exercise.name}:`,
+              exerciseError,
+            );
             continue;
           }
           exerciseId = newExercise?.id;
         }
 
         // Link exercise to session template
-        await this.supabaseService.client
-          .from("session_exercises")
-          .insert({
-            session_template_id: template.id,
-            exercise_id: exerciseId,
-            exercise_name: exercise.name,
-            exercise_order: i + 1,
-            sets: 3,
-            reps: "8-12",
-            duration_seconds: exercise.duration * 60,
-            intensity: exercise.intensity,
-            notes: exercise.description,
-          });
+        await this.supabaseService.client.from("session_exercises").insert({
+          session_template_id: template.id,
+          exercise_id: exerciseId,
+          exercise_name: exercise.name,
+          exercise_order: i + 1,
+          sets: 3,
+          reps: "8-12",
+          duration_seconds: exercise.duration * 60,
+          intensity: exercise.intensity,
+          notes: exercise.description,
+        });
       }
 
       this.toastService.success("Session template saved successfully!");
       this.logger.info("Session template saved:", template.id);
-      
+
       // Optionally navigate to training schedule
       this.router.navigate(["/training/schedule"]);
     } catch (error: any) {
       this.logger.error("Error saving session template:", error);
-      this.toastService.error(error.message || "Failed to save session template");
+      this.toastService.error(
+        error.message || "Failed to save session template",
+      );
     } finally {
       this.isSaving.set(false);
     }
   }
 
-  private mapGoalsToSessionType(goals: string[]): "technical" | "sprint" | "strength" | "conditioning" | "recovery" | "game" {
+  private mapGoalsToSessionType(
+    goals: string[],
+  ):
+    | "technical"
+    | "sprint"
+    | "strength"
+    | "conditioning"
+    | "recovery"
+    | "game" {
     // Map training goals to session types
     if (goals.includes("speed")) return "sprint";
     if (goals.includes("agility")) return "technical";

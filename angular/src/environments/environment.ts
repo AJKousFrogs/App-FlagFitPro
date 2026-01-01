@@ -18,7 +18,10 @@ declare global {
 // Helper to get environment value with fallback
 const getEnvValue = (key: string, fallback: string): string => {
   // Check runtime injection first (for flexibility)
-  if (typeof window !== 'undefined' && window._env?.[key as keyof typeof window._env]) {
+  if (
+    typeof window !== "undefined" &&
+    window._env?.[key as keyof typeof window._env]
+  ) {
     return window._env[key as keyof typeof window._env] as string;
   }
   return fallback;
@@ -26,21 +29,22 @@ const getEnvValue = (key: string, fallback: string): string => {
 
 // Default development values (safe to commit - public anon key only)
 const DEFAULTS = {
-  SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU',
-  API_URL: 'http://localhost:3001',
+  SUPABASE_URL: "https://pvziciccwxgftcielknm.supabase.co",
+  SUPABASE_ANON_KEY:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU",
+  API_URL: "http://localhost:4000",
 };
 
 export const environment = {
   production: false,
-  apiUrl: getEnvValue('API_URL', DEFAULTS.API_URL),
+  apiUrl: getEnvValue("API_URL", DEFAULTS.API_URL),
   supabase: {
-    url: getEnvValue('SUPABASE_URL', DEFAULTS.SUPABASE_URL),
-    anonKey: getEnvValue('SUPABASE_ANON_KEY', DEFAULTS.SUPABASE_ANON_KEY),
+    url: getEnvValue("SUPABASE_URL", DEFAULTS.SUPABASE_URL),
+    anonKey: getEnvValue("SUPABASE_ANON_KEY", DEFAULTS.SUPABASE_ANON_KEY),
   },
   // VAPID public key for push notifications (generate your own for production)
   // To generate: npx web-push generate-vapid-keys
-  vapidPublicKey: '',
+  vapidPublicKey: "",
   // Angular DevTools configuration
   devtools: {
     enabled: true,

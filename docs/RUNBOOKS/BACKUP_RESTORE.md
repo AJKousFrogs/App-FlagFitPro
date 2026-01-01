@@ -21,13 +21,13 @@
 
 ### What Gets Backed Up
 
-| Component | Backup Method | Frequency | Retention |
-|-----------|---------------|-----------|-----------|
-| **Supabase Database** | Automatic (Supabase) | Daily | 7 days (Free), 30 days (Pro) |
-| **Supabase Database** | Manual SQL dump | Before migrations | 90 days |
-| **Netlify Deploys** | Automatic (Netlify) | Every deploy | Unlimited |
-| **Source Code** | Git | Every commit | Unlimited |
-| **Environment Vars** | Manual export | Monthly | Secure storage |
+| Component             | Backup Method        | Frequency         | Retention                    |
+| --------------------- | -------------------- | ----------------- | ---------------------------- |
+| **Supabase Database** | Automatic (Supabase) | Daily             | 7 days (Free), 30 days (Pro) |
+| **Supabase Database** | Manual SQL dump      | Before migrations | 90 days                      |
+| **Netlify Deploys**   | Automatic (Netlify)  | Every deploy      | Unlimited                    |
+| **Source Code**       | Git                  | Every commit      | Unlimited                    |
+| **Environment Vars**  | Manual export        | Monthly           | Secure storage               |
 
 ### What Does NOT Get Backed Up Automatically
 
@@ -138,16 +138,16 @@ const supabase = createClient(
 
 async function backupBucket(bucketName) {
   const { data: files } = await supabase.storage.from(bucketName).list();
-  
+
   for (const file of files) {
     const { data } = await supabase.storage.from(bucketName).download(file.name);
     const buffer = Buffer.from(await data.arrayBuffer());
-    
+
     const backupPath = `backups/storage/${bucketName}/${file.name}`;
     fs.mkdirSync(path.dirname(backupPath), { recursive: true });
     fs.writeFileSync(backupPath, buffer);
   }
-  
+
   console.log(`Backed up ${files.length} files from ${bucketName}`);
 }
 
@@ -172,7 +172,7 @@ supabase db dump --schema-only -f backups/schema_before_migration.sql
 
 # 4. Record row counts for critical tables
 psql "postgresql://..." -c "
-SELECT 
+SELECT
   'users' as table_name, COUNT(*) as row_count FROM users
 UNION ALL SELECT 'workout_logs', COUNT(*) FROM workout_logs
 UNION ALL SELECT 'training_sessions', COUNT(*) FROM training_sessions
@@ -285,7 +285,7 @@ curl -s https://your-app.netlify.app/.netlify/functions/health | jq '.checks.dat
 
 # 2. Verify table row counts
 psql "postgresql://..." -c "
-SELECT 
+SELECT
   'users' as table_name, COUNT(*) as row_count FROM users
 UNION ALL SELECT 'workout_logs', COUNT(*) FROM workout_logs
 UNION ALL SELECT 'training_sessions', COUNT(*) FROM training_sessions;
@@ -359,24 +359,24 @@ curl "https://[PROJECT_REF].supabase.co/storage/v1/bucket/avatars/objects" \
 
 ### Daily (Automated)
 
-| Task | Time | Owner |
-|------|------|-------|
-| Supabase automatic backup | 00:00 UTC | Supabase |
+| Task                      | Time        | Owner      |
+| ------------------------- | ----------- | ---------- |
+| Supabase automatic backup | 00:00 UTC   | Supabase   |
 | Health check verification | Every 5 min | Monitoring |
 
 ### Weekly (Manual)
 
-| Task | Day | Owner |
-|------|-----|-------|
+| Task                    | Day    | Owner   |
+| ----------------------- | ------ | ------- |
 | Verify backup integrity | Monday | On-call |
-| Test restore procedure | Friday | DevOps |
+| Test restore procedure  | Friday | DevOps  |
 
 ### Monthly
 
-| Task | Week | Owner |
-|------|------|-------|
-| Environment vars backup | Week 1 | DevOps |
-| Storage backup | Week 2 | DevOps |
+| Task                     | Week   | Owner  |
+| ------------------------ | ------ | ------ |
+| Environment vars backup  | Week 1 | DevOps |
+| Storage backup           | Week 2 | DevOps |
 | Backup retention cleanup | Week 4 | DevOps |
 
 ---
@@ -411,15 +411,14 @@ netlify env:set KEY "value"
 
 ### Backup Locations
 
-| Type | Location | Retention |
-|------|----------|-----------|
-| SQL dumps | `backups/` | 90 days |
-| Schema snapshots | `backups/` | 90 days |
-| Env var exports | `backups/env/` (encrypted) | 90 days |
-| Storage backups | `backups/storage/` | 30 days |
+| Type             | Location                   | Retention |
+| ---------------- | -------------------------- | --------- |
+| SQL dumps        | `backups/`                 | 90 days   |
+| Schema snapshots | `backups/`                 | 90 days   |
+| Env var exports  | `backups/env/` (encrypted) | 90 days   |
+| Storage backups  | `backups/storage/`         | 30 days   |
 
 ---
 
 **Document Version:** 1.0.0  
 **Next Review:** March 2026
-

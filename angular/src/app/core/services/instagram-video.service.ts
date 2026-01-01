@@ -1280,7 +1280,7 @@ export class InstagramVideoService {
   private readonly _videos = signal<InstagramVideo[]>(CURATED_INSTAGRAM_VIDEOS);
   private readonly _creators = signal<InstagramCreator[]>(FEATURED_CREATORS);
   private readonly _embedCache = signal<Map<string, InstagramEmbedResponse>>(
-    new Map()
+    new Map(),
   );
   private readonly _loadingStates = signal<Map<string, boolean>>(new Map());
   private readonly _selectedVideo = signal<InstagramVideo | null>(null);
@@ -1292,11 +1292,9 @@ export class InstagramVideoService {
 
   // Computed signals
   readonly totalVideos = computed(() => this._videos().length);
-  readonly reelsOnly = computed(() =>
-    this._videos().filter((v) => v.isReel)
-  );
+  readonly reelsOnly = computed(() => this._videos().filter((v) => v.isReel));
   readonly verifiedCreators = computed(() =>
-    this._creators().filter((c) => c.verified)
+    this._creators().filter((c) => c.verified),
   );
 
   readonly videosByPosition = computed(() => {
@@ -1355,7 +1353,7 @@ export class InstagramVideoService {
       if (
         filter.positions?.length &&
         !video.positions.some(
-          (p) => filter.positions!.includes(p) || p === "All"
+          (p) => filter.positions!.includes(p) || p === "All",
         )
       ) {
         return false;
@@ -1399,7 +1397,7 @@ export class InstagramVideoService {
       if (
         filter.tags?.length &&
         !filter.tags.some((tag) =>
-          video.tags.some((vt) => vt.toLowerCase().includes(tag.toLowerCase()))
+          video.tags.some((vt) => vt.toLowerCase().includes(tag.toLowerCase())),
         )
       ) {
         return false;
@@ -1440,7 +1438,7 @@ export class InstagramVideoService {
     position: FlagPosition,
     phase: TrainingPhase,
     skillLevel: SkillLevel,
-    limit: number = 5
+    limit: number = 5,
   ): InstagramVideo[] {
     const filtered = this.filterVideos({
       positions: [position],
@@ -1459,7 +1457,7 @@ export class InstagramVideoService {
     const today = new Date();
     const dayOfYear = Math.floor(
       (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) /
-        86400000
+        86400000,
     );
 
     let videos = this._videos();
@@ -1503,7 +1501,7 @@ export class InstagramVideoService {
 
       if (!response.ok) {
         this.logger.warn(
-          `[InstagramVideoService] oEmbed request failed: ${response.status}`
+          `[InstagramVideoService] oEmbed request failed: ${response.status}`,
         );
         return null;
       }
@@ -1517,7 +1515,10 @@ export class InstagramVideoService {
 
       return data;
     } catch (error) {
-      this.logger.error("[InstagramVideoService] Failed to fetch embed data:", error);
+      this.logger.error(
+        "[InstagramVideoService] Failed to fetch embed data:",
+        error,
+      );
       return null;
     } finally {
       // Clear loading state
@@ -1537,7 +1538,7 @@ export class InstagramVideoService {
       width?: number;
       maxWidth?: string;
       captioned?: boolean;
-    } = {}
+    } = {},
   ): string {
     const { width = 400, maxWidth = "100%", captioned = true } = options;
 
@@ -1608,7 +1609,7 @@ export class InstagramVideoService {
    */
   getCreatorByUsername(username: string): InstagramCreator | undefined {
     return this._creators().find(
-      (c) => c.username.toLowerCase() === username.toLowerCase()
+      (c) => c.username.toLowerCase() === username.toLowerCase(),
     );
   }
 
@@ -1617,7 +1618,7 @@ export class InstagramVideoService {
    */
   getVideosByCreator(username: string): InstagramVideo[] {
     return this._videos().filter(
-      (v) => v.creator.username.toLowerCase() === username.toLowerCase()
+      (v) => v.creator.username.toLowerCase() === username.toLowerCase(),
     );
   }
 
@@ -1642,7 +1643,7 @@ export class InstagramVideoService {
     options: {
       position?: FlagPosition;
       focus?: TrainingFocus[];
-    } = {}
+    } = {},
   ): InstagramPlaylist {
     const videos = videoIds
       .map((id) => this.getVideoById(id))
@@ -1650,7 +1651,7 @@ export class InstagramVideoService {
 
     const totalDuration = videos.reduce(
       (sum, v) => sum + (v.duration || 60),
-      0
+      0,
     );
 
     return {
@@ -1791,7 +1792,7 @@ export class InstagramVideoService {
         video.description.toLowerCase().includes(lowerQuery) ||
         video.tags.some((tag) => tag.toLowerCase().includes(lowerQuery)) ||
         video.creator.username.toLowerCase().includes(lowerQuery) ||
-        video.creator.displayName.toLowerCase().includes(lowerQuery)
+        video.creator.displayName.toLowerCase().includes(lowerQuery),
     );
   }
 

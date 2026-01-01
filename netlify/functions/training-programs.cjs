@@ -1,6 +1,6 @@
 /**
  * Training Programs API
- * 
+ *
  * Provides endpoints for:
  * - GET /training-programs - List all programs
  * - GET /training-programs?id={id} - Get single program with phases
@@ -12,7 +12,10 @@
  */
 
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**
@@ -20,10 +23,11 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
  */
 async function getPrograms(queryParams) {
   const { position, active_only } = queryParams;
-  
+
   let query = supabaseAdmin
     .from("training_programs")
-    .select(`
+    .select(
+      `
       id,
       name,
       description,
@@ -42,7 +46,8 @@ async function getPrograms(queryParams) {
         name,
         display_name
       )
-    `)
+    `,
+    )
     .order("start_date", { ascending: false });
 
   if (active_only === "true") {
@@ -55,7 +60,9 @@ async function getPrograms(queryParams) {
 
   const { data, error } = await query;
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -65,7 +72,8 @@ async function getPrograms(queryParams) {
 async function getProgram(programId) {
   const { data, error } = await supabaseAdmin
     .from("training_programs")
-    .select(`
+    .select(
+      `
       id,
       name,
       description,
@@ -95,11 +103,14 @@ async function getProgram(programId) {
         load_progression,
         goals
       )
-    `)
+    `,
+    )
     .eq("id", programId)
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Sort phases by phase_order
   if (data && data.training_phases) {
@@ -115,23 +126,28 @@ async function getProgram(programId) {
 async function getFullProgram(programId) {
   // Get program with phases
   const program = await getProgram(programId);
-  if (!program) {return null;}
+  if (!program) {
+    return null;
+  }
 
   // Get all weeks for the program's phases
-  const phaseIds = program.training_phases.map(p => p.id);
-  
+  const phaseIds = program.training_phases.map((p) => p.id);
+
   const { data: weeks, error: weeksError } = await supabaseAdmin
     .from("training_weeks")
     .select("*")
     .in("phase_id", phaseIds)
     .order("week_number", { ascending: true });
 
-  if (weeksError) {throw weeksError;}
+  if (weeksError) {
+    throw weeksError;
+  }
 
   // Get all session templates for the program
   const { data: sessions, error: sessionsError } = await supabaseAdmin
     .from("training_session_templates")
-    .select(`
+    .select(
+      `
       *,
       session_exercises (
         id,
@@ -162,11 +178,14 @@ async function getFullProgram(programId) {
           video_url
         )
       )
-    `)
+    `,
+    )
     .eq("program_id", programId)
     .order("day_of_week", { ascending: true });
 
-  if (sessionsError) {throw sessionsError;}
+  if (sessionsError) {
+    throw sessionsError;
+  }
 
   // Get movement patterns
   const { data: movementPatterns, error: mpError } = await supabaseAdmin
@@ -174,7 +193,9 @@ async function getFullProgram(programId) {
     .select("*")
     .eq("program_id", programId);
 
-  if (mpError) {throw mpError;}
+  if (mpError) {
+    throw mpError;
+  }
 
   // Get warmup protocols
   const { data: warmupProtocols, error: wpError } = await supabaseAdmin
@@ -182,11 +203,13 @@ async function getFullProgram(programId) {
     .select("*")
     .eq("program_id", programId);
 
-  if (wpError) {throw wpError;}
+  if (wpError) {
+    throw wpError;
+  }
 
   // Organize data hierarchically
   const weeksByPhase = {};
-  weeks.forEach(week => {
+  weeks.forEach((week) => {
     if (!weeksByPhase[week.phase_id]) {
       weeksByPhase[week.phase_id] = [];
     }
@@ -194,23 +217,25 @@ async function getFullProgram(programId) {
   });
 
   const sessionsByWeek = {};
-  sessions.forEach(session => {
+  sessions.forEach((session) => {
     if (session.week_id) {
       if (!sessionsByWeek[session.week_id]) {
         sessionsByWeek[session.week_id] = [];
       }
       // Sort exercises by order
       if (session.session_exercises) {
-        session.session_exercises.sort((a, b) => a.exercise_order - b.exercise_order);
+        session.session_exercises.sort(
+          (a, b) => a.exercise_order - b.exercise_order,
+        );
       }
       sessionsByWeek[session.week_id].push(session);
     }
   });
 
   // Attach weeks to phases and sessions to weeks
-  program.training_phases.forEach(phase => {
+  program.training_phases.forEach((phase) => {
     phase.weeks = weeksByPhase[phase.id] || [];
-    phase.weeks.forEach(week => {
+    phase.weeks.forEach((week) => {
       week.sessions = sessionsByWeek[week.id] || [];
     });
   });
@@ -232,7 +257,9 @@ async function getPhases(programId) {
     .eq("program_id", programId)
     .order("phase_order", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -246,7 +273,9 @@ async function getWeeks(phaseId) {
     .eq("phase_id", phaseId)
     .order("week_number", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -256,7 +285,8 @@ async function getWeeks(phaseId) {
 async function getSessions(weekId) {
   const { data, error } = await supabaseAdmin
     .from("training_session_templates")
-    .select(`
+    .select(
+      `
       *,
       session_exercises (
         id,
@@ -284,17 +314,22 @@ async function getSessions(weekId) {
           equipment_needed
         )
       )
-    `)
+    `,
+    )
     .eq("week_id", weekId)
     .order("day_of_week", { ascending: true })
     .order("session_order", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   // Sort exercises within each session
-  data?.forEach(session => {
+  data?.forEach((session) => {
     if (session.session_exercises) {
-      session.session_exercises.sort((a, b) => a.exercise_order - b.exercise_order);
+      session.session_exercises.sort(
+        (a, b) => a.exercise_order - b.exercise_order,
+      );
     }
   });
 
@@ -307,7 +342,8 @@ async function getSessions(weekId) {
 async function getExercises(sessionId) {
   const { data, error } = await supabaseAdmin
     .from("session_exercises")
-    .select(`
+    .select(
+      `
       *,
       exercises (
         id,
@@ -323,11 +359,14 @@ async function getExercises(sessionId) {
         video_url,
         image_url
       )
-    `)
+    `,
+    )
     .eq("session_template_id", sessionId)
     .order("exercise_order", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -339,20 +378,24 @@ async function getCurrentWeek(programId, date) {
 
   const { data, error } = await supabaseAdmin
     .from("training_weeks")
-    .select(`
+    .select(
+      `
       *,
       training_phases!inner (
         id,
         name,
         program_id
       )
-    `)
+    `,
+    )
     .eq("training_phases.program_id", programId)
     .lte("start_date", targetDate)
     .gte("end_date", targetDate)
     .single();
 
-  if (error && error.code !== "PGRST116") {throw error;} // PGRST116 = no rows
+  if (error && error.code !== "PGRST116") {
+    throw error;
+  } // PGRST116 = no rows
   return data;
 }
 
@@ -365,9 +408,12 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: false, // Public access for program templates
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId: _userId, requestId }) => {
       const queryParams = event.queryStringParameters || {};
-      const path = event.path.replace("/.netlify/functions/training-programs", "");
+      const path = event.path.replace(
+        "/.netlify/functions/training-programs",
+        "",
+      );
 
       try {
         let result;
@@ -377,55 +423,86 @@ exports.handler = async (event, context) => {
           // Get phases for a program
           const programId = queryParams.programId || queryParams.program_id;
           if (!programId) {
-            return createErrorResponse("programId is required", 400, "validation_error", requestId);
+            return createErrorResponse(
+              "programId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
           result = await getPhases(programId);
-        } 
-        else if (path === "/weeks" || queryParams.action === "weeks") {
+        } else if (path === "/weeks" || queryParams.action === "weeks") {
           // Get weeks for a phase
           const phaseId = queryParams.phaseId || queryParams.phase_id;
           if (!phaseId) {
-            return createErrorResponse("phaseId is required", 400, "validation_error", requestId);
+            return createErrorResponse(
+              "phaseId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
           result = await getWeeks(phaseId);
-        }
-        else if (path === "/sessions" || queryParams.action === "sessions") {
+        } else if (path === "/sessions" || queryParams.action === "sessions") {
           // Get sessions for a week
           const weekId = queryParams.weekId || queryParams.week_id;
           if (!weekId) {
-            return createErrorResponse("weekId is required", 400, "validation_error", requestId);
+            return createErrorResponse(
+              "weekId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
           result = await getSessions(weekId);
-        }
-        else if (path === "/exercises" || queryParams.action === "exercises") {
+        } else if (
+          path === "/exercises" ||
+          queryParams.action === "exercises"
+        ) {
           // Get exercises for a session
           const sessionId = queryParams.sessionId || queryParams.session_id;
           if (!sessionId) {
-            return createErrorResponse("sessionId is required", 400, "validation_error", requestId);
+            return createErrorResponse(
+              "sessionId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
           result = await getExercises(sessionId);
-        }
-        else if (path === "/current-week" || queryParams.action === "current-week") {
+        } else if (
+          path === "/current-week" ||
+          queryParams.action === "current-week"
+        ) {
           // Get current week based on date
-          const programId = queryParams.programId || queryParams.program_id || queryParams.id;
+          const programId =
+            queryParams.programId || queryParams.program_id || queryParams.id;
           if (!programId) {
-            return createErrorResponse("programId is required", 400, "validation_error", requestId);
+            return createErrorResponse(
+              "programId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
           result = await getCurrentWeek(programId, queryParams.date);
-        }
-        else if (queryParams.id) {
+        } else if (queryParams.id) {
           // Get single program
           if (queryParams.full === "true") {
             result = await getFullProgram(queryParams.id);
           } else {
             result = await getProgram(queryParams.id);
           }
-          
+
           if (!result) {
-            return createErrorResponse("Program not found", 404, "not_found", requestId);
+            return createErrorResponse(
+              "Program not found",
+              404,
+              "not_found",
+              requestId,
+            );
           }
-        }
-        else {
+        } else {
           // List all programs
           result = await getPrograms(queryParams);
         }
@@ -439,15 +516,17 @@ exports.handler = async (event, context) => {
           },
         });
       } catch (error) {
-        console.error(`[training-programs] Error (Request ID: ${requestId}):`, error);
+        console.error(
+          `[training-programs] Error (Request ID: ${requestId}):`,
+          error,
+        );
         return createErrorResponse(
           error.message || "Failed to fetch training programs",
           500,
           "server_error",
-          requestId
+          requestId,
         );
       }
     },
   });
 };
-

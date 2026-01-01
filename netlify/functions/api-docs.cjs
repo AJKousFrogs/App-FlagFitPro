@@ -2,7 +2,10 @@
 // Provides interactive API documentation for the Flag Football app
 // Endpoint: /api/api-docs
 
-const { createSuccessResponse, CORS_HEADERS } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  CORS_HEADERS,
+} = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 // API endpoint definitions
@@ -19,7 +22,7 @@ const API_ENDPOINTS = {
       system: {},
     },
   },
-  
+
   // Authentication
   "auth-login": {
     path: "/api/auth-login",
@@ -38,7 +41,7 @@ const API_ENDPOINTS = {
     rateLimit: "READ (100/min)",
     response: { user: {} },
   },
-  
+
   // Dashboard & Analytics
   dashboard: {
     path: "/api/dashboard",
@@ -71,7 +74,7 @@ const API_ENDPOINTS = {
       "/summary - Analytics summary",
     ],
   },
-  
+
   // Training
   "training-sessions": {
     path: "/api/training-sessions",
@@ -98,7 +101,7 @@ const API_ENDPOINTS = {
       startDate: "ISO date string",
     },
   },
-  
+
   // Load Management
   "load-management": {
     path: "/api/load-management",
@@ -114,7 +117,7 @@ const API_ENDPOINTS = {
       "/training-loads - Historical training loads",
     ],
   },
-  
+
   // Readiness
   "calc-readiness": {
     path: "/api/calc-readiness",
@@ -144,7 +147,7 @@ const API_ENDPOINTS = {
       days: "number (default: 7, max: 365)",
     },
   },
-  
+
   // Games
   games: {
     path: "/api/games",
@@ -161,7 +164,7 @@ const API_ENDPOINTS = {
       "POST /:gameId/plays - Save a play",
     ],
   },
-  
+
   // Player Stats
   "player-stats": {
     path: "/api/player-stats",
@@ -179,7 +182,7 @@ const API_ENDPOINTS = {
       "/date-range - Stats for date range",
     ],
   },
-  
+
   // Wellness
   wellness: {
     path: "/api/wellness",
@@ -200,7 +203,7 @@ const API_ENDPOINTS = {
       soreness: "number (1-10)",
     },
   },
-  
+
   // Notifications
   notifications: {
     path: "/api/notifications",
@@ -218,7 +221,7 @@ const API_ENDPOINTS = {
       ids: "array (for bulk)",
     },
   },
-  
+
   // User
   "user-profile": {
     path: "/api/user-profile",
@@ -234,7 +237,7 @@ const API_ENDPOINTS = {
     auth: true,
     rateLimit: "READ (100/min)",
   },
-  
+
   // Fixtures
   fixtures: {
     path: "/api/fixtures",
@@ -247,7 +250,7 @@ const API_ENDPOINTS = {
       days: "number (default: 14, max: 365)",
     },
   },
-  
+
   // Recovery
   recovery: {
     path: "/api/recovery",
@@ -261,7 +264,7 @@ const API_ENDPOINTS = {
       "/session - Start/complete recovery session",
     ],
   },
-  
+
   // Nutrition
   nutrition: {
     path: "/api/nutrition",
@@ -280,11 +283,31 @@ const API_ENDPOINTS = {
 
 // Rate limit information
 const RATE_LIMITS = {
-  READ: { requests: 100, window: "1 minute", description: "Standard read operations" },
-  CREATE: { requests: 50, window: "1 minute", description: "Create/write operations" },
-  UPDATE: { requests: 30, window: "1 minute", description: "Update operations" },
-  DELETE: { requests: 10, window: "1 minute", description: "Delete operations" },
-  AUTH: { requests: 5, window: "1 minute", description: "Authentication operations" },
+  READ: {
+    requests: 100,
+    window: "1 minute",
+    description: "Standard read operations",
+  },
+  CREATE: {
+    requests: 50,
+    window: "1 minute",
+    description: "Create/write operations",
+  },
+  UPDATE: {
+    requests: 30,
+    window: "1 minute",
+    description: "Update operations",
+  },
+  DELETE: {
+    requests: 10,
+    window: "1 minute",
+    description: "Delete operations",
+  },
+  AUTH: {
+    requests: 5,
+    window: "1 minute",
+    description: "Authentication operations",
+  },
 };
 
 // Authentication information
@@ -349,7 +372,7 @@ function generateHtmlDocs(docs) {
           <p><strong>Auth Required:</strong> ${endpoint.auth !== false ? "Yes" : "No"}</p>
           <p><strong>Rate Limit:</strong> ${endpoint.rateLimit || "Standard"}</p>
           <p>${endpoint.description}</p>
-          ${endpoint.subEndpoints ? `<p><strong>Sub-endpoints:</strong><ul>${endpoint.subEndpoints.map(s => `<li>${s}</li>`).join("")}</ul></p>` : ""}
+          ${endpoint.subEndpoints ? `<p><strong>Sub-endpoints:</strong><ul>${endpoint.subEndpoints.map((s) => `<li>${s}</li>`).join("")}</ul></p>` : ""}
         </div>
       `;
     })
@@ -386,9 +409,12 @@ function generateHtmlDocs(docs) {
   
   <h2>Rate Limits</h2>
   <div class="info-box">
-    ${Object.entries(docs.rateLimits).map(([type, info]) => 
-      `<p><strong>${type}:</strong> ${info.requests} requests per ${info.window} - ${info.description}</p>`
-    ).join("")}
+    ${Object.entries(docs.rateLimits)
+      .map(
+        ([type, info]) =>
+          `<p><strong>${type}:</strong> ${info.requests} requests per ${info.window} - ${info.description}</p>`,
+      )
+      .join("")}
   </div>
   
   <h2>Endpoints</h2>
@@ -399,4 +425,3 @@ function generateHtmlDocs(docs) {
 </html>
   `;
 }
-

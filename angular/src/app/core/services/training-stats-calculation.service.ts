@@ -136,7 +136,7 @@ export class TrainingStatsCalculationService {
     // Log deprecation warning
     this.logger.warn(
       "[DEPRECATED] TrainingStatsCalculationService.calculateACWR() is deprecated. " +
-        "Use AcwrService.acwrData() for consistent ACWR calculations."
+        "Use AcwrService.acwrData() for consistent ACWR calculations.",
     );
 
     // Try to use AcwrService if data is available
@@ -366,7 +366,7 @@ export class TrainingStatsCalculationService {
    * Map AcwrService risk zone level to local ACWRData riskZone format
    */
   private mapRiskZone(
-    level: string
+    level: string,
   ): "insufficient_data" | "detraining" | "optimal" | "elevated" | "danger" {
     switch (level) {
       case "no-data":

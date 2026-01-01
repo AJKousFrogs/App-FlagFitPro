@@ -22,7 +22,7 @@
      BUTTON COMPONENT ENHANCEMENTS
      Premium button design system with modern aesthetics
      ================================================================ */
-  
+
   .p-button {
     font-family: var(--font-family-sans);
     font-weight: var(--font-weight-semibold);
@@ -32,7 +32,7 @@
     padding: 0.75rem 1.5rem;
     min-height: var(--button-height-md);
     border: 2px solid transparent;
-    transition: 
+    transition:
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -45,10 +45,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    
+
     /* Subtle inner glow effect */
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(
@@ -60,10 +60,10 @@
       pointer-events: none;
       border-radius: inherit;
     }
-    
+
     /* Ripple effect on click */
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background: radial-gradient(
@@ -73,14 +73,18 @@
       );
       transform: scale(0);
       opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+      transition:
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.3s;
       pointer-events: none;
     }
-    
+
     &:active::after {
       transform: scale(2.5);
       opacity: 1;
-      transition: transform 0s, opacity 0s;
+      transition:
+        transform 0s,
+        opacity 0s;
     }
 
     /* Icon styling within buttons */
@@ -88,31 +92,31 @@
       font-size: 1.125rem;
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
+
     /* Icon spacing - left icon */
     .p-button-icon-left {
       margin-right: 0.5rem;
     }
-    
+
     /* Icon spacing - right icon */
     .p-button-icon-right {
       margin-left: 0.5rem;
     }
-    
+
     /* Arrow icon animation on hover */
     &:hover .pi-arrow-right,
     &:hover .pi-chevron-right {
       transform: translateX(3px);
     }
   }
-  
+
   /* Hover state for pointer devices */
   @media (hover: hover) and (pointer: fine) {
     .p-button:hover:not(:disabled) {
       transform: translateY(-2px);
     }
   }
-  
+
   .p-button:active:not(:disabled) {
     transform: translateY(0) scale(0.98);
   }
@@ -120,11 +124,11 @@
   /* Focus visible state for accessibility */
   .p-button:focus-visible {
     outline: none;
-    box-shadow: 
+    box-shadow:
       0 0 0 3px var(--surface-primary),
       0 0 0 5px var(--ds-primary-green);
   }
-  
+
   /* Disabled state */
   .p-button:disabled,
   .p-button.p-disabled {
@@ -133,47 +137,59 @@
     transform: none !important;
     box-shadow: none !important;
   }
-  
+
   /* ================================
      PRIMARY BUTTON - Main CTA
      Solid green with white text
      ================================ */
   .p-button-primary,
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-success):not(.p-button-info):not(.p-button-warning):not(.p-button-danger):not(.p-button-help):not(.p-button-contrast) {
-    background: linear-gradient(180deg, var(--ds-primary-green-light) 0%, var(--ds-primary-green) 100%);
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-success):not(.p-button-info):not(.p-button-warning):not(
+      .p-button-danger
+    ):not(.p-button-help):not(.p-button-contrast) {
+    background: linear-gradient(
+      180deg,
+      var(--ds-primary-green-light) 0%,
+      var(--ds-primary-green) 100%
+    );
     border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--ds-primary-green) 0%, var(--ds-primary-green-hover) 100%);
+        background: linear-gradient(
+          180deg,
+          var(--ds-primary-green) 0%,
+          var(--ds-primary-green-hover) 100%
+        );
         border-color: var(--ds-primary-green-hover);
-        box-shadow: 
+        box-shadow:
           0 8px 20px rgba(var(--ds-primary-green-rgb), 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
     }
-    
+
     &:active:not(:disabled) {
       background: var(--ds-primary-green-hover);
-      box-shadow: 
+      box-shadow:
         0 1px 4px rgba(var(--ds-primary-green-rgb), 0.2),
         inset 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--ds-primary-green),
         0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25);
     }
   }
-  
+
   /* ================================
      SECONDARY BUTTON - Alternative actions
      Subtle background with green text
@@ -182,37 +198,37 @@
     background: var(--surface-secondary);
     border-color: var(--color-border-primary);
     color: var(--color-text-primary);
-    box-shadow: 
+    box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    
+
     &::before {
       background: none;
     }
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: var(--surface-tertiary);
         border-color: var(--ds-primary-green);
         color: var(--ds-primary-green);
-        box-shadow: 
+        box-shadow:
           0 4px 12px rgba(0, 0, 0, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.5);
       }
     }
-    
+
     &:active:not(:disabled) {
       background: var(--surface-tertiary);
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-text-secondary);
     }
   }
-  
+
   /* ================================
      OUTLINED BUTTON - Ghost style
      Transparent with colored border
@@ -222,11 +238,11 @@
     border: 2px solid var(--ds-primary-green);
     color: var(--ds-primary-green);
     box-shadow: none;
-    
+
     &::before {
       background: none;
     }
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: rgba(var(--ds-primary-green-rgb), 0.08);
@@ -235,13 +251,13 @@
         box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.15);
       }
     }
-    
+
     &:active:not(:disabled) {
       background: rgba(var(--ds-primary-green-rgb), 0.12);
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--ds-primary-green);
     }
@@ -250,7 +266,7 @@
     &.p-button-secondary {
       border-color: var(--color-border-primary);
       color: var(--color-text-secondary);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
@@ -259,66 +275,66 @@
         }
       }
     }
-    
+
     &.p-button-success {
       border-color: var(--color-status-success);
       color: var(--color-status-success);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-success-light);
         }
       }
     }
-    
+
     &.p-button-danger {
       border-color: var(--color-status-error);
       color: var(--color-status-error);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-error-light);
         }
       }
     }
-    
+
     &.p-button-warning {
       border-color: var(--color-status-warning);
       color: var(--color-status-warning-text);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-warning-light);
         }
       }
     }
-    
+
     &.p-button-info {
       border-color: var(--color-status-info);
       color: var(--color-status-info);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-info-light);
         }
       }
     }
-    
+
     &.p-button-help {
       border-color: #8b5cf6;
       color: #8b5cf6;
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: rgba(139, 92, 246, 0.1);
         }
       }
     }
-    
+
     &.p-button-contrast {
       border-color: var(--color-text-primary);
       color: var(--color-text-primary);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-text-primary);
@@ -327,7 +343,7 @@
       }
     }
   }
-  
+
   /* ================================
      TEXT BUTTON - Minimal style
      No background, just text
@@ -338,11 +354,11 @@
     color: var(--ds-primary-green);
     padding: 0.5rem 1rem;
     box-shadow: none;
-    
+
     &::before {
       background: none;
     }
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: rgba(var(--ds-primary-green-rgb), 0.08);
@@ -350,7 +366,7 @@
         transform: translateY(-1px);
       }
     }
-    
+
     &:active:not(:disabled) {
       background: rgba(var(--ds-primary-green-rgb), 0.12);
     }
@@ -358,7 +374,7 @@
     /* Text button severity variants */
     &.p-button-secondary {
       color: var(--color-text-secondary);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
@@ -366,60 +382,60 @@
         }
       }
     }
-    
+
     &.p-button-success {
       color: var(--color-status-success);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-success-light);
         }
       }
     }
-    
+
     &.p-button-danger {
       color: var(--color-status-error);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-error-light);
         }
       }
     }
-    
+
     &.p-button-warning {
       color: var(--color-status-warning-text);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-warning-light);
         }
       }
     }
-    
+
     &.p-button-info {
       color: var(--color-status-info);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--color-status-info-light);
         }
       }
     }
-    
+
     &.p-button-help {
       color: #8b5cf6;
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: rgba(139, 92, 246, 0.1);
         }
       }
     }
-    
+
     &.p-button-contrast {
       color: var(--color-text-primary);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
@@ -427,81 +443,101 @@
       }
     }
   }
-  
+
   /* ================================
      SUCCESS BUTTON
      Green/lime for positive actions
      ================================ */
   .p-button-success:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(180deg, #74c41e 0%, var(--color-status-success) 100%);
+    background: linear-gradient(
+      180deg,
+      #74c41e 0%,
+      var(--color-status-success) 100%
+    );
     border-color: var(--color-status-success);
     color: #ffffff;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(99, 173, 14, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--color-status-success) 0%, #569a0b 100%);
-        box-shadow: 
+        background: linear-gradient(
+          180deg,
+          var(--color-status-success) 0%,
+          #569a0b 100%
+        );
+        box-shadow:
           0 8px 20px rgba(99, 173, 14, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-status-success);
     }
   }
-  
+
   /* ================================
      INFO BUTTON
      Blue for informational actions
      ================================ */
   .p-button-info:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(180deg, #38bdf8 0%, var(--color-status-info) 100%);
+    background: linear-gradient(
+      180deg,
+      #38bdf8 0%,
+      var(--color-status-info) 100%
+    );
     border-color: var(--color-status-info);
     color: #ffffff;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(14, 165, 233, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--color-status-info) 0%, #0284c7 100%);
-        box-shadow: 
+        background: linear-gradient(
+          180deg,
+          var(--color-status-info) 0%,
+          #0284c7 100%
+        );
+        box-shadow:
           0 8px 20px rgba(14, 165, 233, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-status-info);
     }
   }
-  
+
   /* ================================
      WARNING BUTTON
      Amber/orange for caution actions
      ================================ */
   .p-button-warning:not(.p-button-outlined):not(.p-button-text),
   .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(180deg, #fcd34d 0%, var(--color-status-warning) 100%);
+    background: linear-gradient(
+      180deg,
+      #fcd34d 0%,
+      var(--color-status-warning) 100%
+    );
     border-color: var(--color-status-warning);
     color: #78350f;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(255, 192, 0, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    
+
     &::before {
       background: linear-gradient(
         180deg,
@@ -509,54 +545,66 @@
         rgba(255, 255, 255, 0) 50%
       );
     }
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--color-status-warning) 0%, #e6ac00 100%);
-        box-shadow: 
+        background: linear-gradient(
+          180deg,
+          var(--color-status-warning) 0%,
+          #e6ac00 100%
+        );
+        box-shadow:
           0 8px 20px rgba(255, 192, 0, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-status-warning);
     }
   }
-  
+
   /* ================================
      DANGER BUTTON
      Red for destructive actions
      ================================ */
   .p-button-danger:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(180deg, #ff4d6a 0%, var(--color-status-error) 100%);
+    background: linear-gradient(
+      180deg,
+      #ff4d6a 0%,
+      var(--color-status-error) 100%
+    );
     border-color: var(--color-status-error);
     color: #ffffff;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(255, 0, 60, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--color-status-error) 0%, #d9002f 100%);
-        box-shadow: 
+        background: linear-gradient(
+          180deg,
+          var(--color-status-error) 0%,
+          #d9002f 100%
+        );
+        box-shadow:
           0 8px 20px rgba(255, 0, 60, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-status-error);
     }
   }
-  
+
   /* ================================
      HELP BUTTON
      Purple for help/support actions
@@ -565,58 +613,62 @@
     background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
     border-color: #8b5cf6;
     color: #ffffff;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(139, 92, 246, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
-        box-shadow: 
+        box-shadow:
           0 8px 20px rgba(139, 92, 246, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px #8b5cf6;
     }
   }
-  
+
   /* ================================
      CONTRAST BUTTON
      High contrast dark/light button
      ================================ */
   .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(180deg, #404040 0%, var(--color-text-primary) 100%);
+    background: linear-gradient(
+      180deg,
+      #404040 0%,
+      var(--color-text-primary) 100%
+    );
     border-color: var(--color-text-primary);
     color: var(--surface-primary);
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(0, 0, 0, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: linear-gradient(180deg, #525252 0%, #262626 100%);
-        box-shadow: 
+        box-shadow:
           0 8px 20px rgba(0, 0, 0, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
       }
     }
-    
+
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--color-text-primary);
     }
   }
-  
+
   /* ================================
      ROUNDED BUTTONS
      Pill-shaped buttons
@@ -634,30 +686,30 @@
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
     min-height: var(--button-height-sm);
-    
+
     .p-button-icon {
       font-size: 0.9375rem;
     }
-    
+
     &.p-button-rounded {
       padding: 0.5rem 1.25rem;
     }
   }
-  
+
   .p-button-lg {
     padding: 1rem 2rem;
     font-size: 1.0625rem;
     min-height: var(--button-height-lg);
-    
+
     .p-button-icon {
       font-size: 1.25rem;
     }
-    
+
     &.p-button-rounded {
       padding: 1rem 2.25rem;
     }
   }
-  
+
   /* ================================
      ICON ONLY BUTTONS
      ================================ */
@@ -666,17 +718,17 @@
     width: var(--button-height-md);
     height: var(--button-height-md);
     justify-content: center;
-    
+
     &.p-button-rounded {
       border-radius: 50%;
     }
-    
+
     &.p-button-sm {
       width: var(--button-height-sm);
       height: var(--button-height-sm);
       padding: 0.5rem;
     }
-    
+
     &.p-button-lg {
       width: var(--button-height-lg);
       height: var(--button-height-lg);
@@ -689,20 +741,20 @@
      ================================ */
   .p-button-group {
     display: inline-flex;
-    
+
     .p-button {
       border-radius: 0;
-      
+
       &:first-child {
         border-top-left-radius: var(--radius-full, 9999px);
         border-bottom-left-radius: var(--radius-full, 9999px);
       }
-      
+
       &:last-child {
         border-top-right-radius: var(--radius-full, 9999px);
         border-bottom-right-radius: var(--radius-full, 9999px);
       }
-      
+
       &:not(:last-child) {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
       }
@@ -715,19 +767,23 @@
   .p-button-loading {
     pointer-events: none;
     position: relative;
-    
+
     .p-button-label {
       opacity: 0.7;
     }
-    
+
     .p-button-loading-icon {
       animation: button-spin 1s linear infinite;
     }
   }
-  
+
   @keyframes button-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   /* ================================
@@ -739,11 +795,11 @@
       background: var(--surface-secondary);
       border-color: var(--color-border-primary);
       color: var(--color-text-primary);
-      
+
       &::before {
         background: none;
       }
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: var(--surface-tertiary);
@@ -752,18 +808,18 @@
         }
       }
     }
-    
+
     .p-button-outlined {
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: rgba(var(--ds-primary-green-rgb), 0.15);
         }
       }
-      
+
       &.p-button-contrast {
         border-color: var(--surface-primary);
         color: var(--surface-primary);
-        
+
         @media (hover: hover) and (pointer: fine) {
           &:hover:not(:disabled) {
             background: var(--surface-primary);
@@ -772,7 +828,7 @@
         }
       }
     }
-    
+
     .p-button-text {
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
@@ -780,12 +836,12 @@
         }
       }
     }
-    
+
     .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
       background: linear-gradient(180deg, #f5f5f5 0%, #e5e5e5 100%);
       border-color: #e5e5e5;
       color: var(--primitive-neutral-900);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
           background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
@@ -793,75 +849,75 @@
       }
     }
   }
-  
+
   /* ================================================================
      CARD COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-card {
     background: var(--surface-primary);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-border-subtle);
     overflow: hidden;
-    transition: 
+    transition:
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
-  
+
   @media (hover: hover) and (pointer: fine) {
     .p-card:hover {
       transform: translateY(-4px);
-      box-shadow: 
+      box-shadow:
         0 12px 40px -10px rgba(0, 0, 0, 0.15),
         0 4px 15px -5px rgba(0, 0, 0, 0.1);
       border-color: rgba(var(--ds-primary-green-rgb), 0.2);
     }
   }
-  
+
   .p-card-header {
     padding: var(--space-5);
     background: var(--surface-secondary);
   }
-  
+
   .p-card-body {
     padding: var(--space-5);
   }
-  
+
   .p-card-content {
     padding: 0;
   }
-  
+
   .p-card-footer {
     padding: var(--space-4) var(--space-5);
     border-top: 1px solid var(--color-border-secondary);
     background: var(--surface-secondary);
   }
-  
+
   .p-card-title {
     font-size: var(--font-heading-md);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     margin-bottom: var(--space-2);
   }
-  
+
   .p-card-subtitle {
     font-size: var(--font-body-sm);
     color: var(--color-text-secondary);
   }
-  
+
   /* ================================================================
      DIALOG/MODAL COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-dialog {
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
     animation: dialog-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
+
   @keyframes dialog-scale-in {
     from {
       opacity: 0;
@@ -872,14 +928,14 @@
       transform: scale(1) translateY(0);
     }
   }
-  
+
   .p-dialog-mask {
     background: rgba(0, 0, 0, 0.5);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     animation: backdrop-fade-in 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
-  
+
   @keyframes backdrop-fade-in {
     from {
       opacity: 0;
@@ -892,7 +948,7 @@
       backdrop-filter: blur(4px);
     }
   }
-  
+
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--color-border-secondary, #e5e5e5);
@@ -902,9 +958,13 @@
     justify-content: space-between;
     gap: 1rem;
   }
-  
+
   .p-dialog-title {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family:
+      "Poppins",
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
     font-size: 1.25rem; /* 20px - heading-sm per design system */
     font-weight: 600; /* semibold per design system */
     line-height: 1.4;
@@ -912,12 +972,12 @@
     color: var(--color-text-primary, #1a1a1a);
     margin: 0;
   }
-  
+
   .p-dialog-content {
     padding: var(--space-5);
     background: var(--surface-primary);
   }
-  
+
   .p-dialog-footer {
     padding: var(--space-4) var(--space-5);
     border-top: 1px solid var(--color-border-secondary);
@@ -926,12 +986,12 @@
     justify-content: flex-end;
     gap: var(--space-3);
   }
-  
+
   /* ================================================================
      GLOBAL CLOSE BUTTON - Premium Design
      Unified close button styling for dialogs, sidebars, panels, etc.
      ================================================================ */
-  
+
   .p-dialog-header-close,
   .p-dialog-header-icon,
   .p-dialog-header-maximize,
@@ -945,37 +1005,37 @@
     height: 2.5rem;
     min-width: 2.5rem;
     min-height: 2.5rem;
-    
+
     /* Circular design - modern & clean */
     border-radius: 50%;
-    
+
     /* Layout */
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    
+
     /* Base appearance */
     background: var(--surface-secondary, #f8f9fa);
     border: 1px solid var(--color-border-secondary, #e5e7eb);
     color: var(--color-text-secondary, #6b7280);
-    
+
     /* Interaction */
     cursor: pointer;
     outline: none;
     position: relative;
     overflow: hidden;
-    
+
     /* Smooth transitions */
-    transition: 
+    transition:
       background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     /* Icon styling */
-    .pi, 
+    .pi,
     .p-icon,
     svg,
     i {
@@ -985,22 +1045,25 @@
       line-height: 1;
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
+
     /* Subtle inner shadow for depth */
-    box-shadow: 
+    box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.8),
       0 1px 2px rgba(0, 0, 0, 0.05);
-    
+
     /* Hover state - Green accent */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+        background: var(
+          --ds-primary-green-ultra-subtle,
+          rgba(8, 153, 73, 0.08)
+        );
         border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
-        color: var(--ds-primary-green, #089949);
-        box-shadow: 
+        color: var(--ds-primary-green);
+        box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.8),
           0 2px 8px rgba(8, 153, 73, 0.15);
-        
+
         .pi,
         .p-icon,
         svg,
@@ -1009,31 +1072,31 @@
         }
       }
     }
-    
+
     /* Focus visible - Accessibility */
     &:focus-visible {
-      box-shadow: 
+      box-shadow:
         0 0 0 2px var(--surface-primary, #ffffff),
-        0 0 0 4px var(--ds-primary-green, #089949);
-      border-color: var(--ds-primary-green, #089949);
+        0 0 0 4px var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
     }
-    
+
     /* Active/Pressed state */
     &:active {
       transform: scale(0.92);
       background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.15));
-      border-color: var(--ds-primary-green, #089949);
-      color: var(--ds-primary-green, #089949);
-      box-shadow: 
+      border-color: var(--ds-primary-green);
+      color: var(--ds-primary-green);
+      box-shadow:
         inset 0 2px 4px rgba(0, 0, 0, 0.1),
         0 1px 2px rgba(0, 0, 0, 0.05);
     }
   }
-  
+
   /* ================================
      Close Button Variants
      ================================ */
-  
+
   /* Danger variant - for destructive dialogs */
   .close-button-danger,
   .p-dialog-header-close.danger {
@@ -1042,10 +1105,10 @@
         background: rgba(239, 68, 68, 0.08);
         border-color: rgba(239, 68, 68, 0.2);
         color: #ef4444;
-        box-shadow: 
+        box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.8),
           0 2px 8px rgba(239, 68, 68, 0.15);
-        
+
         .pi,
         .p-icon,
         svg,
@@ -1054,21 +1117,21 @@
         }
       }
     }
-    
+
     &:active {
       background: rgba(239, 68, 68, 0.15);
       border-color: #ef4444;
       color: #ef4444;
     }
   }
-  
+
   /* Ghost variant - minimal style */
   .close-button-ghost,
   .p-dialog-header-close.ghost {
     background: transparent;
     border-color: transparent;
     box-shadow: none;
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--surface-secondary, #f8f9fa);
@@ -1077,14 +1140,14 @@
       }
     }
   }
-  
+
   /* Small variant */
   .close-button-sm {
     width: 2rem;
     height: 2rem;
     min-width: 2rem;
     min-height: 2rem;
-    
+
     .pi,
     .p-icon,
     svg,
@@ -1094,14 +1157,14 @@
       height: 0.75rem;
     }
   }
-  
+
   /* Large variant */
   .close-button-lg {
     width: 3rem;
     height: 3rem;
     min-width: 3rem;
     min-height: 3rem;
-    
+
     .pi,
     .p-icon,
     svg,
@@ -1111,62 +1174,62 @@
       height: 1.125rem;
     }
   }
-  
-/* ================================
+
+  /* ================================
    Dark Mode Adjustments
    ================================ */
 
-[data-theme="dark"],
-.dark-theme {
-  .p-dialog-header-close,
-  .p-dialog-header-icon,
-  .p-dialog-header-maximize,
-  .p-sidebar-close,
-  .p-panel-header-icon,
-  .p-drawer-close,
-  .close-button,
-  [class*="close-btn"] {
-    background: var(--primitive-neutral-800, #262626);
-    border-color: var(--primitive-neutral-700, #404040);
-    color: var(--primitive-neutral-400, #a3a3a3);
-    box-shadow: 
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.2);
-    
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background: rgba(16, 201, 107, 0.15);
-        border-color: rgba(16, 201, 107, 0.3);
+  [data-theme="dark"],
+  .dark-theme {
+    .p-dialog-header-close,
+    .p-dialog-header-icon,
+    .p-dialog-header-maximize,
+    .p-sidebar-close,
+    .p-panel-header-icon,
+    .p-drawer-close,
+    .close-button,
+    [class*="close-btn"] {
+      background: var(--primitive-neutral-800, #262626);
+      border-color: var(--primitive-neutral-700, #404040);
+      color: var(--primitive-neutral-400, #a3a3a3);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: rgba(16, 201, 107, 0.15);
+          border-color: rgba(16, 201, 107, 0.3);
+          color: #10c96b;
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            0 2px 8px rgba(16, 201, 107, 0.2);
+        }
+      }
+
+      &:active {
+        background: rgba(16, 201, 107, 0.2);
+        border-color: #10c96b;
         color: #10c96b;
-        box-shadow: 
-          inset 0 1px 0 rgba(255, 255, 255, 0.05),
-          0 2px 8px rgba(16, 201, 107, 0.2);
       }
     }
-    
-    &:active {
-      background: rgba(16, 201, 107, 0.2);
-      border-color: #10c96b;
-      color: #10c96b;
-    }
   }
-}
-  
+
   /* ================================================================
      TOAST COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-toast {
     opacity: 1;
   }
-  
+
   .p-toast-message {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     animation: toast-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
   }
-  
+
   @keyframes toast-slide-in {
     from {
       opacity: 0;
@@ -1177,31 +1240,47 @@
       transform: translateX(0) scale(1);
     }
   }
-  
+
   .p-toast-message-success {
-    background: linear-gradient(135deg, var(--color-status-success-light) 0%, var(--surface-primary) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-status-success-light) 0%,
+      var(--surface-primary) 100%
+    );
     border-left: 4px solid var(--color-status-success);
   }
-  
+
   .p-toast-message-info {
-    background: linear-gradient(135deg, var(--ds-primary-green-subtle) 0%, var(--surface-primary) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--ds-primary-green-subtle) 0%,
+      var(--surface-primary) 100%
+    );
     border-left: 4px solid var(--ds-primary-green);
   }
-  
+
   .p-toast-message-warn {
-    background: linear-gradient(135deg, var(--color-status-warning-light) 0%, var(--surface-primary) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-status-warning-light) 0%,
+      var(--surface-primary) 100%
+    );
     border-left: 4px solid var(--color-status-warning);
   }
-  
+
   .p-toast-message-error {
-    background: linear-gradient(135deg, var(--color-status-error-light) 0%, var(--surface-primary) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-status-error-light) 0%,
+      var(--surface-primary) 100%
+    );
     border-left: 4px solid var(--color-status-error);
   }
-  
+
   .p-toast-message-content {
     padding: var(--space-4);
   }
-  
+
   .p-toast-close-button {
     /* Smaller circular close button for toasts */
     width: 1.75rem;
@@ -1217,11 +1296,11 @@
     color: inherit;
     cursor: pointer;
     opacity: 0.7;
-    transition: 
+    transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     .pi,
     .p-icon,
     svg {
@@ -1230,12 +1309,12 @@
       height: 0.75rem;
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: rgba(255, 255, 255, 0.25);
         opacity: 1;
-        
+
         .pi,
         .p-icon,
         svg {
@@ -1243,17 +1322,17 @@
         }
       }
     }
-    
+
     &:active {
       transform: scale(0.9);
       background: rgba(255, 255, 255, 0.3);
     }
   }
-  
+
   /* ================================================================
      MENU COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-menu {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
@@ -1262,7 +1341,7 @@
     animation: menu-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     transform-origin: top left;
   }
-  
+
   @keyframes menu-scale-in {
     from {
       opacity: 0;
@@ -1273,19 +1352,19 @@
       transform: scale(1) translateY(0);
     }
   }
-  
+
   .p-menuitem {
     margin: var(--space-1);
   }
-  
+
   .p-menuitem-link {
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
-    transition: 
+    transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       padding-left 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--ds-primary-green-subtle);
@@ -1293,48 +1372,48 @@
         padding-left: calc(var(--space-4) + 4px);
       }
     }
-    
+
     &:focus-visible {
       box-shadow: inset 0 0 0 2px var(--ds-primary-green);
     }
   }
-  
+
   .p-menuitem-icon {
     margin-right: var(--space-3);
     color: var(--color-text-secondary);
     transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
-  
+
   .p-menuitem-link:hover .p-menuitem-icon {
     color: var(--ds-primary-green);
   }
-  
+
   .p-menu-separator {
     margin: var(--space-2) var(--space-3);
     border-color: var(--color-border-secondary);
   }
-  
+
   /* ================================================================
      DROPDOWN COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-dropdown {
     border-radius: var(--radius-lg);
     border-color: var(--color-border-primary);
-    transition: 
+    transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     &:hover:not(.p-disabled) {
       border-color: var(--ds-primary-green);
     }
-    
+
     &.p-focus {
       border-color: var(--ds-primary-green);
       box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
     }
   }
-  
+
   .p-dropdown-panel {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
@@ -1342,7 +1421,7 @@
     animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     transform-origin: top center;
   }
-  
+
   @keyframes dropdown-scale-in {
     from {
       opacity: 0;
@@ -1353,60 +1432,60 @@
       transform: scaleY(1);
     }
   }
-  
+
   .p-dropdown-item {
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     margin: var(--space-1);
-    transition: 
+    transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     &:hover {
       background: var(--ds-primary-green-subtle);
       color: var(--ds-primary-green);
     }
-    
+
     &.p-highlight {
       background: var(--ds-primary-green);
       color: var(--color-text-on-primary);
     }
   }
-  
+
   /* ================================================================
      INPUT COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-inputtext {
     border-radius: var(--radius-lg);
     border-color: var(--color-border-primary);
     padding: var(--space-3) var(--space-4);
-    transition: 
+    transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     &:hover:not(:disabled):not(:focus) {
       border-color: var(--color-text-secondary);
     }
-    
+
     &:focus {
       border-color: var(--ds-primary-green);
       box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
     }
-    
+
     &.p-invalid {
       border-color: var(--color-status-error);
-      
+
       &:focus {
         box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.2);
       }
     }
   }
-  
+
   .p-inputtext::placeholder {
     color: var(--color-text-muted);
   }
-  
+
   /* Float Label Enhancement */
   .p-float-label {
     .p-inputtext:focus ~ label,
@@ -1415,39 +1494,39 @@
       transform: translateY(-1.5rem) scale(0.85);
     }
   }
-  
+
   /* ================================================================
      CHECKBOX & RADIO ENHANCEMENTS
      ================================================================ */
-  
+
   .p-checkbox {
     .p-checkbox-box {
       border-radius: var(--radius-md);
       border-color: var(--color-border-primary);
-      transition: 
+      transition:
         background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-      
+
       &:hover {
         border-color: var(--ds-primary-green);
       }
-      
+
       &.p-highlight {
         background: var(--ds-primary-green);
         border-color: var(--ds-primary-green);
-        
+
         .p-checkbox-icon {
           animation: checkbox-check 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
         }
       }
     }
-    
+
     &:not(.p-disabled):hover .p-checkbox-box {
       transform: scale(1.05);
     }
   }
-  
+
   @keyframes checkbox-check {
     from {
       transform: scale(0);
@@ -1456,34 +1535,34 @@
       transform: scale(1);
     }
   }
-  
+
   .p-radiobutton {
     .p-radiobutton-box {
       border-color: var(--color-border-primary);
-      transition: 
+      transition:
         background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-      
+
       &:hover {
         border-color: var(--ds-primary-green);
       }
-      
+
       &.p-highlight {
         border-color: var(--ds-primary-green);
-        
+
         .p-radiobutton-icon {
           background: var(--ds-primary-green);
           animation: radio-select 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
         }
       }
     }
-    
+
     &:not(.p-disabled):hover .p-radiobutton-box {
       transform: scale(1.05);
     }
   }
-  
+
   @keyframes radio-select {
     from {
       transform: scale(0);
@@ -1492,41 +1571,41 @@
       transform: scale(1);
     }
   }
-  
+
   /* ================================================================
      SWITCH/TOGGLE ENHANCEMENTS
      ================================================================ */
-  
+
   .p-inputswitch {
     .p-inputswitch-slider {
       border-radius: var(--radius-full);
       transition: background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
-      
+
       &::before {
         border-radius: 50%;
         transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
       }
     }
-    
+
     &.p-inputswitch-checked .p-inputswitch-slider {
       background: var(--ds-primary-green);
     }
-    
+
     &:hover:not(.p-disabled) .p-inputswitch-slider::before {
       transform: scale(1.1);
     }
   }
-  
+
   /* ================================================================
      BADGE COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-badge {
     border-radius: var(--radius-full);
     font-weight: var(--font-weight-semibold);
     animation: badge-pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
+
   @keyframes badge-pop-in {
     from {
       transform: scale(0);
@@ -1537,99 +1616,143 @@
       opacity: 1;
     }
   }
-  
+
   .p-badge-success {
     background: var(--color-status-success);
     color: var(--color-text-primary);
   }
-  
+
   .p-badge-info {
     background: var(--ds-primary-green);
     color: var(--color-text-on-primary);
   }
-  
+
   .p-badge-warning {
     background: var(--color-status-warning);
     color: var(--color-text-primary);
   }
-  
+
   .p-badge-danger {
     background: var(--color-status-error);
     color: var(--color-text-on-primary);
   }
-  
+
   /* ================================================================
      TAG COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-tag {
     border-radius: var(--radius-full);
     font-weight: var(--font-weight-medium);
     padding: var(--space-1) var(--space-3);
   }
-  
+
   .p-tag-success {
     background: var(--color-status-success-light);
     color: var(--color-status-success);
   }
-  
+
   .p-tag-info {
     background: var(--ds-primary-green-subtle);
     color: var(--ds-primary-green);
   }
-  
+
   .p-tag-warning {
     background: var(--color-status-warning-light);
     color: #92400e;
   }
-  
+
   .p-tag-danger {
     background: var(--color-status-error-light);
     color: var(--color-status-error);
   }
-  
+
   /* ================================================================
      TOOLTIP COMPONENT ENHANCEMENTS
+     Premium tooltips matching #089949 green design system
      ================================================================ */
-  
+
   .p-tooltip {
     .p-tooltip-text {
-      border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-3);
-      font-size: var(--font-body-sm);
-      box-shadow: var(--shadow-md);
-      animation: tooltip-fade-in 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: var(--surface-primary, #ffffff) !important;
+      color: var(--color-text-primary, #1a1a1a) !important;
+      border: 1px solid var(--ds-primary-green) !important;
+      border-radius: var(--radius-lg, 12px) !important;
+      padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+      font-family: var(--font-family-sans) !important;
+      font-size: var(--font-body-sm, 0.875rem) !important;
+      font-weight: var(--font-weight-medium, 500) !important;
+      box-shadow:
+        0 8px 24px rgba(8, 153, 73, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.08) !important;
+      animation: tooltip-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 280px;
+    }
+
+    /* Tooltip arrow - make it match the border */
+    .p-tooltip-arrow {
+      border-color: var(--ds-primary-green) !important;
     }
   }
-  
-  @keyframes tooltip-fade-in {
+
+  /* Position-specific arrow colors */
+  .p-tooltip-top .p-tooltip-arrow {
+    border-top-color: var(--ds-primary-green) !important;
+  }
+
+  .p-tooltip-bottom .p-tooltip-arrow {
+    border-bottom-color: var(--ds-primary-green) !important;
+  }
+
+  .p-tooltip-left .p-tooltip-arrow {
+    border-left-color: var(--ds-primary-green) !important;
+  }
+
+  .p-tooltip-right .p-tooltip-arrow {
+    border-right-color: var(--ds-primary-green) !important;
+  }
+
+  @keyframes tooltip-scale-in {
     from {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.9) translateY(4px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
-  
+
+  /* Dark Mode Tooltip */
+  [data-theme="dark"] .p-tooltip,
+  .dark-theme .p-tooltip {
+    .p-tooltip-text {
+      background: var(--primitive-neutral-800, #262626) !important;
+      color: #ffffff !important;
+      border-color: var(--ds-primary-green-light, #10c96b) !important;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 4px 12px rgba(16, 201, 107, 0.15) !important;
+    }
+  }
+
   /* ================================================================
      DATATABLE COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-datatable {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-border-secondary);
   }
-  
+
   .p-datatable-header {
     background: var(--surface-secondary);
     border-bottom: 1px solid var(--color-border-secondary);
     padding: var(--space-4);
   }
-  
+
   .p-datatable-thead > tr > th {
     background: var(--surface-secondary);
     border-bottom: 2px solid var(--color-border-primary);
@@ -1637,30 +1760,30 @@
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     transition: background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     &.p-sortable-column:hover {
       background: var(--surface-tertiary);
     }
   }
-  
+
   .p-datatable-tbody > tr {
-    transition: 
+    transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       transform 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--ds-primary-green-ultra-subtle);
         transform: translateX(4px);
       }
     }
-    
+
     &.p-highlight {
       background: var(--ds-primary-green-subtle);
       color: var(--ds-primary-green);
     }
   }
-  
+
   .p-datatable-tbody > tr > td {
     padding: var(--space-4);
     border-bottom: 1px solid var(--color-border-secondary);
@@ -1670,7 +1793,7 @@
      DATATABLE RESPONSIVE STYLES
      Mobile-first responsive table with card layout on small screens
      ================================================================ */
-  
+
   @media (max-width: 767px) {
     /* Scrollable table container */
     .p-datatable-wrapper {
@@ -1783,24 +1906,24 @@
       min-width: 44px;
     }
   }
-  
+
   /* ================================================================
      ACCORDION COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-accordion {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
   }
-  
+
   .p-accordion-header {
     .p-accordion-header-link {
       padding: var(--space-4) var(--space-5);
-      transition: 
+      transition:
         background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           background: var(--ds-primary-green-subtle);
@@ -1808,21 +1931,21 @@
         }
       }
     }
-    
+
     .p-accordion-toggle-icon {
       transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
+
     &.p-highlight .p-accordion-toggle-icon {
       transform: rotate(180deg);
     }
   }
-  
+
   .p-accordion-content {
     padding: var(--space-5);
     animation: accordion-expand 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
+
   @keyframes accordion-expand {
     from {
       opacity: 0;
@@ -1833,25 +1956,25 @@
       transform: translateY(0);
     }
   }
-  
+
   /* ================================================================
      TABVIEW COMPONENT ENHANCEMENTS (Legacy)
      ================================================================ */
-  
+
   .p-tabview {
     .p-tabview-nav {
       border-bottom: 2px solid var(--color-border-secondary);
     }
-    
+
     .p-tabview-nav-link {
       padding: var(--space-4) var(--space-5);
       border: none;
       border-bottom: 2px solid transparent;
       margin-bottom: -2px;
-      transition: 
+      transition:
         color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(.p-highlight) {
           color: var(--ds-primary-green);
@@ -1859,18 +1982,18 @@
         }
       }
     }
-    
+
     .p-tabview-nav-link.p-highlight {
       color: var(--ds-primary-green);
       border-color: var(--ds-primary-green);
     }
-    
+
     .p-tabview-panel {
       padding: var(--space-5);
       animation: tab-fade-in 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
     }
   }
-  
+
   @keyframes tab-fade-in {
     from {
       opacity: 0;
@@ -1879,15 +2002,15 @@
       opacity: 1;
     }
   }
-  
+
   /* ================================================================
      TABS COMPONENT ENHANCEMENTS (PrimeNG 21+)
      Modern Segment Control Style - iOS/macOS Inspired
      ================================================================ */
-  
+
   .p-tabs {
     background: transparent;
-    
+
     /* Tab List Container - Segment Control Style */
     .p-tablist {
       display: flex;
@@ -1902,12 +2025,12 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      
+
       &::-webkit-scrollbar {
         display: none;
       }
     }
-    
+
     /* Individual Tab - Segment Button */
     .p-tab {
       display: inline-flex;
@@ -1929,68 +2052,73 @@
       min-height: 48px;
       flex: 1;
       outline: none;
-      
+
       /* Icon within tab */
-      i, .pi {
+      i,
+      .pi {
         font-size: 1.125rem;
         color: #9ca3af;
         transition: color 0.2s ease;
       }
-      
+
       /* Hover state */
       @media (hover: hover) and (pointer: fine) {
-        &:hover:not(.p-tab-active):not([aria-selected="true"]):not([data-p-active="true"]) {
+        &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
+            [data-p-active="true"]
+          ) {
           background: rgba(255, 255, 255, 0.6);
           color: #374151;
-          
-          i, .pi {
-            color: var(--ds-primary-green, #089949);
+
+          i,
+          .pi {
+            color: var(--ds-primary-green);
           }
         }
       }
-      
+
       /* Focus state */
       &:focus-visible {
-        box-shadow: 
+        box-shadow:
           0 0 0 2px #f3f4f6,
-          0 0 0 4px var(--ds-primary-green, #089949);
+          0 0 0 4px var(--ds-primary-green);
       }
-      
+
       /* Active/Selected state - White card that pops out */
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
         background: #ffffff;
-        color: var(--ds-primary-green, #089949);
+        color: var(--ds-primary-green);
         font-weight: 600;
-        box-shadow: 
+        box-shadow:
           0 1px 3px rgba(0, 0, 0, 0.1),
           0 2px 8px rgba(0, 0, 0, 0.05);
-        
-        i, .pi {
-          color: var(--ds-primary-green, #089949);
+
+        i,
+        .pi {
+          color: var(--ds-primary-green);
         }
       }
-      
+
       /* Active press state */
       &:active:not(:disabled) {
         transform: scale(0.98);
       }
     }
-    
+
     /* Tab Panels Container */
     .p-tabpanels {
       padding: 0;
       background: transparent;
     }
-    
+
     /* Individual Tab Panel */
     .p-tabpanel {
       padding: 0;
       animation: tab-panel-fade-in 250ms ease-out;
     }
   }
-  
+
   @keyframes tab-panel-fade-in {
     from {
       opacity: 0;
@@ -2001,38 +2129,39 @@
       transform: translateY(0);
     }
   }
-  
+
   /* ================================================================
      TABS RESPONSIVE STYLES
      Mobile-optimized tabs with horizontal scroll
      ================================================================ */
-  
+
   @media (max-width: 767px) {
     .p-tabs {
       .p-tablist {
         padding: 4px;
         border-radius: 12px;
       }
-      
+
       .p-tab {
         padding: 10px 14px;
         font-size: 0.875rem;
         gap: 8px;
         min-height: 44px;
         border-radius: 8px;
-        
-        i, .pi {
-          font-size: 1rem;
+
+        i,
+        .pi {
+          font-size: var(--font-body-md, 1rem);
         }
       }
     }
   }
-  
+
   /* ================================================================
      TABS VARIANTS
      Different tab styles for various contexts
      ================================================================ */
-  
+
   /* Underline variant - classic tab style */
   .p-tabs.tabs-underline {
     .p-tablist {
@@ -2045,12 +2174,12 @@
       box-shadow: none;
       margin-bottom: 1.25rem;
     }
-    
+
     .p-tab {
       border-radius: 0;
       margin-bottom: -2px;
       border-bottom: 2px solid transparent;
-      
+
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
@@ -2058,12 +2187,13 @@
         color: var(--ds-primary-green);
         border-bottom-color: var(--ds-primary-green);
         box-shadow: none;
-        
-        i, .pi {
+
+        i,
+        .pi {
           color: var(--ds-primary-green);
         }
       }
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(.p-tab-active):not([aria-selected="true"]) {
           background: transparent;
@@ -2073,26 +2203,31 @@
       }
     }
   }
-  
+
   /* Pill variant - Green filled active state */
   .p-tabs.tabs-filled {
     .p-tab {
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
-        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #0ab85a 100%);
+        background: linear-gradient(
+          135deg,
+          var(--ds-primary-green) 0%,
+          #0ab85a 100%
+        );
         color: white;
-        box-shadow: 
+        box-shadow:
           0 4px 12px rgba(8, 153, 73, 0.25),
           0 2px 4px rgba(0, 0, 0, 0.1);
-        
-        i, .pi {
+
+        i,
+        .pi {
           color: white;
         }
       }
     }
   }
-  
+
   /* Compact variant for tighter spaces */
   .p-tabs.tabs-compact {
     .p-tablist {
@@ -2100,7 +2235,7 @@
       gap: 2px;
       border-radius: 10px;
     }
-    
+
     .p-tab {
       padding: 8px 14px;
       font-size: 0.8125rem;
@@ -2108,7 +2243,7 @@
       min-height: 36px;
     }
   }
-  
+
   /* Dark mode adjustments */
   [data-theme="dark"],
   .dark-theme {
@@ -2117,49 +2252,53 @@
         background: rgba(255, 255, 255, 0.08);
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
       }
-      
+
       .p-tab {
         color: rgba(255, 255, 255, 0.6);
-        
-        i, .pi {
+
+        i,
+        .pi {
           color: rgba(255, 255, 255, 0.4);
         }
-        
-        &:hover:not(.p-tab-active):not([aria-selected="true"]):not([data-p-active="true"]) {
+
+        &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
+            [data-p-active="true"]
+          ) {
           background: rgba(255, 255, 255, 0.1);
           color: rgba(255, 255, 255, 0.9);
         }
-        
+
         &.p-tab-active,
         &[aria-selected="true"],
         &[data-p-active="true"] {
           background: var(--surface-primary);
           color: var(--ds-primary-green);
-          
-          i, .pi {
+
+          i,
+          .pi {
             color: var(--ds-primary-green);
           }
         }
       }
     }
   }
-  
+
   /* ================================================================
      SIDEBAR COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-sidebar {
     box-shadow: var(--shadow-xl);
-    
+
     &.p-sidebar-left {
       animation: sidebar-slide-left 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
+
     &.p-sidebar-right {
       animation: sidebar-slide-right 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
   }
-  
+
   @keyframes sidebar-slide-left {
     from {
       transform: translateX(-100%);
@@ -2168,7 +2307,7 @@
       transform: translateX(0);
     }
   }
-  
+
   @keyframes sidebar-slide-right {
     from {
       transform: translateX(100%);
@@ -2177,29 +2316,29 @@
       transform: translateX(0);
     }
   }
-  
+
   .p-sidebar-header {
     padding: var(--space-5);
     border-bottom: 1px solid var(--color-border-secondary);
   }
-  
+
   .p-sidebar-content {
     padding: var(--space-5);
   }
-  
+
   /* p-sidebar-close inherits from global close button styles above */
-  
+
   /* ================================================================
      PROGRESSBAR COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-progressbar {
     border-radius: var(--radius-full);
     height: 8px;
     background: var(--surface-tertiary);
     overflow: hidden;
   }
-  
+
   .p-progressbar-value {
     border-radius: var(--radius-full);
     background: linear-gradient(
@@ -2210,9 +2349,9 @@
     transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
     position: relative;
     overflow: hidden;
-    
+
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(
@@ -2224,7 +2363,7 @@
       animation: progress-shine 2s infinite;
     }
   }
-  
+
   @keyframes progress-shine {
     0% {
       transform: translateX(-100%);
@@ -2233,28 +2372,28 @@
       transform: translateX(100%);
     }
   }
-  
+
   /* ================================================================
      AVATAR COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-avatar {
     transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         transform: scale(1.1);
       }
     }
   }
-  
+
   .p-avatar-group {
     .p-avatar {
       border: 2px solid var(--surface-primary);
-      transition: 
+      transition:
         transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
         z-index 0ms;
-      
+
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           transform: scale(1.15) translateY(-4px);
@@ -2263,18 +2402,18 @@
       }
     }
   }
-  
+
   /* ================================================================
      CHIP COMPONENT ENHANCEMENTS
      ================================================================ */
-  
+
   .p-chip {
     border-radius: var(--radius-full);
     padding: var(--space-1) var(--space-3);
-    transition: 
+    transition:
       transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         transform: scale(1.05);
@@ -2282,12 +2421,12 @@
       }
     }
   }
-  
+
   .p-chip-remove-icon {
-    transition: 
+    transition:
       color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         color: var(--color-status-error);
@@ -2311,6 +2450,98 @@
 }
 
 /* ================================================================
+   🚨 CRITICAL: NO BLACK TEXT ON GREEN - PERMANENT DESIGN SYSTEM RULE
+   ================================================================
+   
+   ABSOLUTE RULES (NEVER OVERRIDE):
+   1. NEVER black/dark text (#000, #1a1a1a, black) on green backgrounds (#089949)
+   2. ALWAYS white (#ffffff) text on primary green
+   3. WCAG AA minimum contrast enforced everywhere
+   4. Before generating ANY green button/card: check --on-primary token
+   
+   VIOLATION = IMMEDIATE REJECTION + WHITE TEXT CORRECTION
+   ================================================================ */
+
+/* ================================================================
+   GREEN CONTAINER RULE - BULLETPROOF OVERRIDE SYSTEM
+   This catches ALL possible green background scenarios
+   ================================================================ */
+
+/* Inline style green backgrounds - highest specificity */
+*[style*="background-color: rgb(8, 153, 73)"],
+*[style*="background-color:#089949"],
+*[style*="background: #089949"],
+*[style*="background:#089949"],
+*[style*="background-color: #089949"],
+*[style*="089949"],
+*[style*="green"] {
+  color: #ffffff !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+
+  &,
+  & *,
+  & span,
+  & p,
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6,
+  & label,
+  & a {
+    color: #ffffff !important;
+  }
+}
+
+/* Class-based green backgrounds */
+.p-button-green,
+.btn-green,
+[class*="green-bg"],
+[class*="bg-green"],
+.bg-primary,
+.primary-bg,
+.bg-brand {
+  color: #ffffff !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+
+  &,
+  & * {
+    color: #ffffff !important;
+  }
+}
+
+/* PrimeNG SPECIFIC - Green components */
+:where(
+  .p-button,
+  .p-card,
+  .p-panel,
+  .p-tabview-title,
+  .p-tag,
+  .p-badge,
+  .p-chip,
+  .p-message
+) {
+  &[style*="089949"],
+  &.p-button-green,
+  &.bg-primary {
+    --text-color: #ffffff !important;
+    --p-button-text-color: #ffffff !important;
+    color: #ffffff !important;
+
+    &,
+    & *,
+    & .p-button-label,
+    & .p-button-icon,
+    & span,
+    & i,
+    & p {
+      color: #ffffff !important;
+    }
+  }
+}
+
+/* ================================================================
    CRITICAL: BUTTON TEXT COLOR ENFORCEMENT
    Design System Rule: WHITE ON GREEN, GREEN ON WHITE, BLACK ON WHITE
    NO BLACK ON GREEN - EVER!
@@ -2319,7 +2550,9 @@
    ================================================================ */
 
 /* Primary/default buttons - WHITE text on GREEN background */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link),
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link),
 .p-button-primary,
 .p-button-success:not(.p-button-outlined):not(.p-button-text),
 .p-button-info:not(.p-button-outlined):not(.p-button-text),
@@ -2329,15 +2562,15 @@
 .p-button-help:not(.p-button-outlined):not(.p-button-text),
 .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
   color: #ffffff !important;
-  
+
   .p-button-label {
     color: #ffffff !important;
   }
-  
+
   .p-button-icon {
     color: #ffffff !important;
   }
-  
+
   span {
     color: #ffffff !important;
   }
@@ -2347,15 +2580,15 @@
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
   color: #78350f !important;
-  
+
   .p-button-label {
     color: #78350f !important;
   }
-  
+
   .p-button-icon {
     color: #78350f !important;
   }
-  
+
   span {
     color: #78350f !important;
   }
@@ -2365,25 +2598,25 @@
 .p-button-outlined,
 .p-button-text,
 .p-button-link {
-  color: var(--ds-primary-green, #089949) !important;
-  
+  color: var(--ds-primary-green) !important;
+
   .p-button-label {
-    color: var(--ds-primary-green, #089949) !important;
+    color: var(--ds-primary-green) !important;
   }
-  
+
   .p-button-icon {
-    color: var(--ds-primary-green, #089949) !important;
+    color: var(--ds-primary-green) !important;
   }
 }
 
 /* Secondary button - inherit text color or use secondary text */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
   color: var(--color-text-primary, #1a1a1a) !important;
-  
+
   .p-button-label {
     color: var(--color-text-primary, #1a1a1a) !important;
   }
-  
+
   .p-button-icon {
     color: var(--color-text-primary, #1a1a1a) !important;
   }
@@ -2392,7 +2625,7 @@
 /* Outlined severity variants */
 .p-button-outlined.p-button-secondary {
   color: var(--color-text-secondary, #4a4a4a) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-text-secondary, #4a4a4a) !important;
@@ -2401,7 +2634,7 @@
 
 .p-button-outlined.p-button-success {
   color: var(--color-status-success, #63ad0e) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-status-success, #63ad0e) !important;
@@ -2410,7 +2643,7 @@
 
 .p-button-outlined.p-button-info {
   color: var(--color-status-info, #0ea5e9) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-status-info, #0ea5e9) !important;
@@ -2420,7 +2653,7 @@
 .p-button-outlined.p-button-warning,
 .p-button-outlined.p-button-warn {
   color: var(--color-status-warning-text, #92400e) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-status-warning-text, #92400e) !important;
@@ -2429,7 +2662,7 @@
 
 .p-button-outlined.p-button-danger {
   color: var(--color-status-error, #ff003c) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-status-error, #ff003c) !important;
@@ -2438,7 +2671,7 @@
 
 .p-button-outlined.p-button-help {
   color: #8b5cf6 !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: #8b5cf6 !important;
@@ -2447,7 +2680,7 @@
 
 .p-button-outlined.p-button-contrast {
   color: var(--color-text-primary, #1a1a1a) !important;
-  
+
   .p-button-label,
   .p-button-icon {
     color: var(--color-text-primary, #1a1a1a) !important;
@@ -2504,15 +2737,27 @@ p-button .p-button,
 }
 
 /* Primary button - ensure GREEN background with WHITE text */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link),
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link),
 .p-button.p-button-primary {
-  background: linear-gradient(180deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
-  border-color: var(--ds-primary-green, #089949) !important;
+  background: linear-gradient(
+    180deg,
+    var(--ds-primary-green-light, #0ab85a) 0%,
+    var(--ds-primary-green) 100%
+  ) !important;
+  border-color: var(--ds-primary-green) !important;
   color: #ffffff !important;
 }
 
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link) .p-button-label,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link) .p-button-icon,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link)
+  .p-button-label,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link)
+  .p-button-icon,
 .p-button.p-button-primary .p-button-label,
 .p-button.p-button-primary .p-button-icon {
   color: #ffffff !important;
@@ -2527,30 +2772,30 @@ p-button .p-button,
   .p-dialog-mask {
     background: rgba(0, 0, 0, 0.7);
   }
-  
+
   .p-card:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 40px -10px rgba(0, 0, 0, 0.5),
       0 4px 15px -5px rgba(0, 0, 0, 0.3);
   }
-  
+
   .p-button:hover:not(:disabled) {
-    box-shadow: 
+    box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.3),
       0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   /* Dark mode: Outlined contrast button should be white */
   .p-button-outlined.p-button-contrast {
     color: var(--surface-primary, #ffffff) !important;
     border-color: var(--surface-primary, #ffffff) !important;
-    
+
     .p-button-label,
     .p-button-icon {
       color: var(--surface-primary, #ffffff) !important;
     }
   }
-  
+
   /* Dark mode: Text contrast button should be white */
   .p-button-text.p-button-contrast {
     color: var(--surface-primary, #ffffff) !important;
@@ -2572,7 +2817,7 @@ p-button .p-button,
   z-index: 10000 !important;
   background: var(--surface-primary, #ffffff) !important;
   border-radius: 16px !important;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.12),
     0 8px 24px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
@@ -2616,7 +2861,7 @@ p-button .p-button,
   z-index: 10000 !important;
   background: var(--surface-primary, #ffffff) !important;
   border-radius: var(--radius-lg, 12px) !important;
-  box-shadow: 
+  box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.15),
     0 4px 12px rgba(0, 0, 0, 0.1) !important;
   border: 1px solid var(--color-border-secondary, #e5e5e5) !important;
@@ -2664,7 +2909,7 @@ p-button .p-button,
 .p-dropdown-item:hover,
 .p-listbox-item:hover {
   background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.08)) !important;
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green) !important;
 }
 
 .p-select-option.p-highlight,
@@ -2674,7 +2919,7 @@ p-button .p-button,
 .p-select-option[aria-selected="true"],
 .p-select-item[data-p-selected="true"] {
   background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.12)) !important;
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green) !important;
   font-weight: 600 !important;
 }
 
@@ -2686,7 +2931,11 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-header {
   padding: 1rem 1.25rem !important;
   border-bottom: 1px solid var(--color-border-secondary, #e5e7eb) !important;
-  background: linear-gradient(to bottom, var(--surface-secondary, #f9fafb), var(--surface-primary, #ffffff)) !important;
+  background: linear-gradient(
+    to bottom,
+    var(--surface-secondary, #f9fafb),
+    var(--surface-primary, #ffffff)
+  ) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -2707,9 +2956,13 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-year,
 .p-datepicker-panel .p-datepicker-title button,
 .p-datepicker-panel .p-datepicker-title span {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   font-weight: 600 !important;
-  font-size: 1rem !important;
+  font-size: var(--font-body-md, 1rem) !important;
   color: var(--color-text-primary, #1a1a1a) !important;
   margin: 0 0.125rem !important;
   background: none !important;
@@ -2723,8 +2976,11 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-title button:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-month:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-year:hover {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08)) !important;
-  color: var(--ds-primary-green, #089949) !important;
+  background: var(
+    --ds-primary-green-ultra-subtle,
+    rgba(8, 153, 73, 0.08)
+  ) !important;
+  color: var(--ds-primary-green) !important;
 }
 
 /* Navigation Arrows */
@@ -2747,9 +3003,15 @@ p-button .p-button,
 
 .p-datepicker-panel .p-datepicker-prev:hover,
 .p-datepicker-panel .p-datepicker-next:hover {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.1)) !important;
-  border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2)) !important;
-  color: var(--ds-primary-green, #089949) !important;
+  background: var(
+    --ds-primary-green-ultra-subtle,
+    rgba(8, 153, 73, 0.1)
+  ) !important;
+  border-color: var(
+    --ds-primary-green-subtle,
+    rgba(8, 153, 73, 0.2)
+  ) !important;
+  color: var(--ds-primary-green) !important;
   transform: scale(1.05) !important;
 }
 
@@ -2778,7 +3040,11 @@ p-button .p-button,
 /* Weekday Headers */
 .p-datepicker-panel .p-datepicker-calendar th {
   padding: 0.5rem 0 !important;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   font-weight: 600 !important;
   font-size: 0.6875rem !important;
   text-transform: uppercase !important;
@@ -2798,7 +3064,11 @@ p-button .p-button,
   width: 2.5rem !important;
   height: 2.5rem !important;
   border-radius: 10px !important;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   font-size: 0.875rem !important;
   font-weight: 500 !important;
   display: flex !important;
@@ -2812,10 +3082,19 @@ p-button .p-button,
 }
 
 /* Hover State */
-.p-datepicker-panel .p-datepicker-calendar td > span:hover:not(.p-disabled):not(.p-highlight),
-.p-datepicker-panel .p-datepicker-calendar td > button:hover:not(.p-disabled):not(.p-highlight) {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08)) !important;
-  color: var(--ds-primary-green, #089949) !important;
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td
+  > span:hover:not(.p-disabled):not(.p-highlight),
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td
+  > button:hover:not(.p-disabled):not(.p-highlight) {
+  background: var(
+    --ds-primary-green-ultra-subtle,
+    rgba(8, 153, 73, 0.08)
+  ) !important;
+  color: var(--ds-primary-green) !important;
 }
 
 /* Selected Date */
@@ -2823,20 +3102,32 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-calendar td > button.p-highlight,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > span,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > button {
-  background: var(--ds-primary-green, #089949) !important;
+  background: var(--ds-primary-green) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3) !important;
 }
 
 /* Today's Date */
-.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-today > span:not(.p-highlight),
-.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-today > button:not(.p-highlight),
-.p-datepicker-panel .p-datepicker-calendar td[data-p-today="true"] > span:not(.p-highlight),
-.p-datepicker-panel .p-datepicker-calendar td[data-p-today="true"] > button:not(.p-highlight) {
-  border: 2px solid var(--ds-primary-green, #089949) !important;
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td.p-datepicker-today
+  > span:not(.p-highlight),
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td.p-datepicker-today
+  > button:not(.p-highlight),
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td[data-p-today="true"]
+  > span:not(.p-highlight),
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td[data-p-today="true"]
+  > button:not(.p-highlight) {
+  border: 2px solid var(--ds-primary-green) !important;
   background: transparent !important;
-  color: var(--ds-primary-green, #089949) !important;
+  color: var(--ds-primary-green) !important;
   font-weight: 600 !important;
 }
 
@@ -2844,7 +3135,10 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-calendar td > span.p-disabled,
 .p-datepicker-panel .p-datepicker-calendar td > button.p-disabled,
 .p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span,
-.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > button {
+.p-datepicker-panel
+  .p-datepicker-calendar
+  td.p-datepicker-other-month
+  > button {
   color: var(--color-text-disabled, #d1d5db) !important;
   cursor: not-allowed !important;
 }
@@ -2858,16 +3152,16 @@ p-button .p-button,
     font-size: 0.8125rem !important;
     border-radius: 8px !important;
   }
-  
+
   .p-datepicker-panel .p-datepicker-header {
     padding: 0.875rem 1rem !important;
   }
-  
+
   .p-datepicker-panel .p-datepicker-title span,
   .p-datepicker-panel .p-datepicker-title button {
     font-size: 0.9375rem !important;
   }
-  
+
   .p-datepicker-panel .p-datepicker-prev,
   .p-datepicker-panel .p-datepicker-next {
     width: 2.25rem !important;
@@ -2885,7 +3179,11 @@ p-button .p-button,
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-header,
 .dark-theme .p-datepicker-panel .p-datepicker-header {
-  background: linear-gradient(to bottom, var(--primitive-neutral-700, #404040), var(--primitive-neutral-800, #262626)) !important;
+  background: linear-gradient(
+    to bottom,
+    var(--primitive-neutral-700, #404040),
+    var(--primitive-neutral-800, #262626)
+  ) !important;
   border-color: var(--primitive-neutral-700, #404040) !important;
 }
 
@@ -2917,8 +3215,16 @@ p-button .p-button,
   color: var(--primitive-neutral-200, #e5e5e5) !important;
 }
 
-[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span,
-.dark-theme .p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span {
+[data-theme="dark"]
+  .p-datepicker-panel
+  .p-datepicker-calendar
+  td.p-datepicker-other-month
+  > span,
+.dark-theme
+  .p-datepicker-panel
+  .p-datepicker-calendar
+  td.p-datepicker-other-month
+  > span {
   color: var(--primitive-neutral-600, #525252) !important;
 }
 
@@ -2978,13 +3284,13 @@ p-button .p-button,
     border: 1px solid var(--color-border-secondary, #e5e7eb);
     color: var(--color-text-secondary, #6b7280);
     cursor: pointer;
-    transition: 
+    transition:
       background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 
+    box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.8),
       0 1px 2px rgba(0, 0, 0, 0.05);
 
@@ -2996,10 +3302,13 @@ p-button .p-button,
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+        background: var(
+          --ds-primary-green-ultra-subtle,
+          rgba(8, 153, 73, 0.08)
+        );
         border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
-        color: var(--ds-primary-green, #089949);
-        box-shadow: 
+        color: var(--ds-primary-green);
+        box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.8),
           0 2px 8px rgba(8, 153, 73, 0.15);
 
@@ -3035,7 +3344,7 @@ p-button .p-button,
   cursor: pointer;
   opacity: 0.7;
   margin-left: 0.5rem;
-  transition: 
+  transition:
     background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
     opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
     transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -3074,14 +3383,14 @@ p-button .p-button,
   background: transparent;
   color: var(--color-text-muted, #6b7280);
   cursor: pointer;
-  transition: 
+  transition:
     background-color 150ms ease,
     color 150ms ease,
     transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   &:hover {
     background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
   }
 
   &:active {

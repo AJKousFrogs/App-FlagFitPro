@@ -51,7 +51,7 @@ export async function safeQuery(
     serverLogger.error(`${routeName.toUpperCase()} database query error:`, {
       message: error.message,
       code: error.code,
-      query: `${query.substring(0, 100)  }...`,
+      query: `${query.substring(0, 100)}...`,
     });
     throw new Error(`Database operation failed: ${error.message}`);
   }

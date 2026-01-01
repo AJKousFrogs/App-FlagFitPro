@@ -5,7 +5,7 @@
 
 import { storageService } from "./storage-service-unified.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 class PlayerProfileService {
   /**

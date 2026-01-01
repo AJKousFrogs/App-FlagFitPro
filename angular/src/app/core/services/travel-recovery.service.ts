@@ -64,7 +64,10 @@ import { Observable, of } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
-import { RecoveryService, RecoveryProtocol as BaseRecoveryProtocol } from "./recovery.service";
+import {
+  RecoveryService,
+  RecoveryProtocol as BaseRecoveryProtocol,
+} from "./recovery.service";
 
 // ============================================================================
 // INTERFACES
@@ -113,7 +116,13 @@ export interface ProtocolRecommendation {
   time: string;
   action: string;
   importance: "critical" | "high" | "medium" | "low";
-  category: "sleep" | "light" | "nutrition" | "training" | "hydration" | "general";
+  category:
+    | "sleep"
+    | "light"
+    | "nutrition"
+    | "training"
+    | "hydration"
+    | "general";
   evidenceBase?: string;
 }
 
@@ -203,7 +212,13 @@ export interface CarTravelRecommendation {
   time: string;
   action: string;
   importance: "critical" | "high" | "medium" | "low";
-  category: "circulation" | "compression" | "hydration" | "nutrition" | "rest" | "driver-safety";
+  category:
+    | "circulation"
+    | "compression"
+    | "hydration"
+    | "nutrition"
+    | "rest"
+    | "driver-safety";
   evidenceBase?: string;
   duration?: number; // minutes
 }
@@ -356,7 +371,12 @@ export class TravelRecoveryService {
   /**
    * Create a new travel plan
    */
-  createTravelPlan(planData: Omit<TravelPlan, "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection">): TravelPlan {
+  createTravelPlan(
+    planData: Omit<
+      TravelPlan,
+      "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection"
+    >,
+  ): TravelPlan {
     const userId = this.authService.getUser()?.id || "anonymous";
 
     // Calculate timezone difference
@@ -452,7 +472,10 @@ export class TravelRecoveryService {
     const flightFatigue = Math.min(20, plan.flightDuration * 1.5);
     const layoverFatigue = plan.layovers * 5;
 
-    const totalScore = Math.min(100, baseScore + flightFatigue + layoverFatigue);
+    const totalScore = Math.min(
+      100,
+      baseScore + flightFatigue + layoverFatigue,
+    );
 
     // Determine level
     let level: JetLagSeverity["level"] = "mild";
@@ -513,7 +536,9 @@ export class TravelRecoveryService {
     for (let day = 1; day <= severity.estimatedRecoveryDays + 2; day++) {
       const date = new Date(plan.arrivalDate);
       date.setDate(date.getDate() + day - 1);
-      protocol.push(this.generatePostArrivalDay(day, date, plan, profile, severity));
+      protocol.push(
+        this.generatePostArrivalDay(day, date, plan, profile, severity),
+      );
     }
 
     this._recoveryProtocol.set(protocol);
@@ -527,7 +552,7 @@ export class TravelRecoveryService {
     day: number,
     date: Date,
     plan: TravelPlan,
-    profile: CircadianProfile
+    profile: CircadianProfile,
   ): RecoveryProtocol {
     const timezones = Math.abs(plan.timezonesEast);
     const isEastward = plan.travelDirection === "eastward";
@@ -557,7 +582,8 @@ export class TravelRecoveryService {
         action: `Begin shifting sleep schedule ${shiftDirection} by ${shiftMinutes} minutes`,
         importance: "high",
         category: "sleep",
-        evidenceBase: "Eastman & Burgess (2009) - Gradual shift reduces jet lag",
+        evidenceBase:
+          "Eastman & Burgess (2009) - Gradual shift reduces jet lag",
       },
       {
         time: "Morning",
@@ -629,13 +655,17 @@ export class TravelRecoveryService {
       mealTiming: [
         {
           meal: "breakfast",
-          time: isEastward ? this.addMinutes("07:00", -totalShift) : this.addMinutes("07:00", totalShift),
+          time: isEastward
+            ? this.addMinutes("07:00", -totalShift)
+            : this.addMinutes("07:00", totalShift),
           notes: "High protein to promote alertness",
           emphasis: ["high protein", "complex carbs"],
         },
         {
           meal: "dinner",
-          time: isEastward ? this.addMinutes("19:00", -totalShift) : this.addMinutes("19:00", totalShift),
+          time: isEastward
+            ? this.addMinutes("19:00", -totalShift)
+            : this.addMinutes("19:00", totalShift),
           notes: "Earlier dinner to support earlier sleep",
           emphasis: ["complex carbs", "tryptophan-rich foods"],
         },
@@ -652,7 +682,9 @@ export class TravelRecoveryService {
         {
           name: "Melatonin",
           dosage: "0.5-3mg",
-          timing: isEastward ? "Early evening (6-7pm)" : "Not needed pre-travel",
+          timing: isEastward
+            ? "Early evening (6-7pm)"
+            : "Not needed pre-travel",
           purpose: "Begin circadian shift for eastward travel",
           evidenceLevel: "strong",
           caution: "Start with low dose to assess tolerance",
@@ -664,7 +696,10 @@ export class TravelRecoveryService {
   /**
    * Generate travel day protocol
    */
-  private generateTravelDay(plan: TravelPlan, profile: CircadianProfile): RecoveryProtocol {
+  private generateTravelDay(
+    plan: TravelPlan,
+    profile: CircadianProfile,
+  ): RecoveryProtocol {
     const isEastward = plan.travelDirection === "eastward";
 
     const recommendations: ProtocolRecommendation[] = [
@@ -712,7 +747,8 @@ export class TravelRecoveryService {
     } else {
       recommendations.push({
         time: "During flight",
-        action: "Stay awake if arriving in evening, sleep if arriving in morning",
+        action:
+          "Stay awake if arriving in evening, sleep if arriving in morning",
         importance: "high",
         category: "sleep",
       });
@@ -753,7 +789,11 @@ export class TravelRecoveryService {
       trainingGuidelines: {
         allowedIntensity: "light",
         maxDuration: 20,
-        recommendedActivities: ["in-seat stretches", "walking the aisle", "ankle circles"],
+        recommendedActivities: [
+          "in-seat stretches",
+          "walking the aisle",
+          "ankle circles",
+        ],
         avoidActivities: ["anything strenuous"],
         notes: "Focus on movement to prevent stiffness",
       },
@@ -785,7 +825,7 @@ export class TravelRecoveryService {
     date: Date,
     plan: TravelPlan,
     profile: CircadianProfile,
-    severity: JetLagSeverity
+    severity: JetLagSeverity,
   ): RecoveryProtocol {
     const isEastward = plan.travelDirection === "eastward";
     const timezones = Math.abs(plan.timezonesEast);
@@ -800,7 +840,8 @@ export class TravelRecoveryService {
         action: "Get outside in natural light as soon as possible",
         importance: "critical",
         category: "light",
-        evidenceBase: "Light is the primary zeitgeber for circadian resynchronization",
+        evidenceBase:
+          "Light is the primary zeitgeber for circadian resynchronization",
       });
       recommendations.push({
         time: "Arrival day",
@@ -857,7 +898,10 @@ export class TravelRecoveryService {
 
     // Competition readiness check
     const daysToCompetition = plan.competitionDate
-      ? Math.ceil((new Date(plan.competitionDate).getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+      ? Math.ceil(
+          (new Date(plan.competitionDate).getTime() - date.getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
       : null;
 
     if (daysToCompetition !== null && daysToCompetition <= 2) {
@@ -912,8 +956,16 @@ export class TravelRecoveryService {
       date,
       recommendations,
       sleepWindow: {
-        bedTime: isRecovered ? profile.naturalBedTime : isEastward ? "21:00" : "23:30",
-        wakeTime: isRecovered ? profile.naturalWakeTime : isEastward ? "06:00" : "08:00",
+        bedTime: isRecovered
+          ? profile.naturalBedTime
+          : isEastward
+            ? "21:00"
+            : "23:30",
+        wakeTime: isRecovered
+          ? profile.naturalWakeTime
+          : isEastward
+            ? "06:00"
+            : "08:00",
       },
       lightExposure,
       mealTiming: [
@@ -945,7 +997,11 @@ export class TravelRecoveryService {
             : ["position-specific drills", "moderate cardio", "skills work"],
         avoidActivities:
           day <= 2
-            ? ["high-intensity intervals", "heavy lifting", "competition simulation"]
+            ? [
+                "high-intensity intervals",
+                "heavy lifting",
+                "competition simulation",
+              ]
             : day <= severity.estimatedRecoveryDays
               ? ["max effort work"]
               : [],
@@ -988,50 +1044,171 @@ export class TravelRecoveryService {
       {
         category: "Sleep & Recovery",
         items: [
-          { id: "sleep-1", item: "Eye mask (blackout quality)", packed: false, essential: true },
-          { id: "sleep-2", item: "Earplugs or noise-canceling headphones", packed: false, essential: true },
-          { id: "sleep-3", item: "Neck pillow for flight", packed: false, essential: false },
-          { id: "sleep-4", item: "Melatonin supplements", packed: false, essential: true, notes: "0.5-3mg doses" },
-          { id: "sleep-5", item: "Compression socks", packed: false, essential: true },
-          { id: "sleep-6", item: "Light blanket/layer for cold planes", packed: false, essential: false },
+          {
+            id: "sleep-1",
+            item: "Eye mask (blackout quality)",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "sleep-2",
+            item: "Earplugs or noise-canceling headphones",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "sleep-3",
+            item: "Neck pillow for flight",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "sleep-4",
+            item: "Melatonin supplements",
+            packed: false,
+            essential: true,
+            notes: "0.5-3mg doses",
+          },
+          {
+            id: "sleep-5",
+            item: "Compression socks",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "sleep-6",
+            item: "Light blanket/layer for cold planes",
+            packed: false,
+            essential: false,
+          },
         ],
       },
       {
         category: "Hydration & Nutrition",
         items: [
-          { id: "hydration-1", item: "Reusable water bottle (empty for security)", packed: false, essential: true },
-          { id: "hydration-2", item: "Electrolyte tablets/powder", packed: false, essential: true },
-          { id: "hydration-3", item: "Healthy snacks (nuts, protein bars)", packed: false, essential: true },
-          { id: "hydration-4", item: "Ginger chews (for nausea)", packed: false, essential: false },
+          {
+            id: "hydration-1",
+            item: "Reusable water bottle (empty for security)",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "hydration-2",
+            item: "Electrolyte tablets/powder",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "hydration-3",
+            item: "Healthy snacks (nuts, protein bars)",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "hydration-4",
+            item: "Ginger chews (for nausea)",
+            packed: false,
+            essential: false,
+          },
         ],
       },
       {
         category: "Training & Recovery Gear",
         items: [
-          { id: "training-1", item: "Resistance bands", packed: false, essential: false },
-          { id: "training-2", item: "Foam roller (travel size)", packed: false, essential: false },
-          { id: "training-3", item: "Massage ball", packed: false, essential: false },
-          { id: "training-4", item: "Training shoes", packed: false, essential: true },
-          { id: "training-5", item: "Competition gear", packed: false, essential: true },
+          {
+            id: "training-1",
+            item: "Resistance bands",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "training-2",
+            item: "Foam roller (travel size)",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "training-3",
+            item: "Massage ball",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "training-4",
+            item: "Training shoes",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "training-5",
+            item: "Competition gear",
+            packed: false,
+            essential: true,
+          },
         ],
       },
       {
         category: "Health & Wellness",
         items: [
-          { id: "health-1", item: "Sunglasses (for light management)", packed: false, essential: true },
-          { id: "health-2", item: "Sunscreen", packed: false, essential: false },
-          { id: "health-3", item: "Basic first aid kit", packed: false, essential: false },
-          { id: "health-4", item: "Any prescription medications", packed: false, essential: true },
-          { id: "health-5", item: "Hand sanitizer", packed: false, essential: true },
+          {
+            id: "health-1",
+            item: "Sunglasses (for light management)",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "health-2",
+            item: "Sunscreen",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "health-3",
+            item: "Basic first aid kit",
+            packed: false,
+            essential: false,
+          },
+          {
+            id: "health-4",
+            item: "Any prescription medications",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "health-5",
+            item: "Hand sanitizer",
+            packed: false,
+            essential: true,
+          },
         ],
       },
       {
         category: "Documents & Tech",
         items: [
-          { id: "docs-1", item: "Passport (valid 6+ months)", packed: false, essential: true },
-          { id: "docs-2", item: "Travel insurance documents", packed: false, essential: true },
-          { id: "docs-3", item: "Competition registration/credentials", packed: false, essential: true },
-          { id: "docs-4", item: "Phone charger & adapter", packed: false, essential: true },
+          {
+            id: "docs-1",
+            item: "Passport (valid 6+ months)",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "docs-2",
+            item: "Travel insurance documents",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "docs-3",
+            item: "Competition registration/credentials",
+            packed: false,
+            essential: true,
+          },
+          {
+            id: "docs-4",
+            item: "Phone charger & adapter",
+            packed: false,
+            essential: true,
+          },
           { id: "docs-5", item: "Headphones", packed: false, essential: false },
         ],
       },
@@ -1045,7 +1222,11 @@ export class TravelRecoveryService {
   /**
    * Get travel info for Olympic venues
    */
-  getOlympicVenueInfo(venue: "LA28" | "BRISBANE32"): { timezone: string; offset: number; city: string } {
+  getOlympicVenueInfo(venue: "LA28" | "BRISBANE32"): {
+    timezone: string;
+    offset: number;
+    city: string;
+  } {
     return OLYMPIC_VENUES[venue];
   }
 
@@ -1054,13 +1235,21 @@ export class TravelRecoveryService {
    */
   calculateOlympicTravelImpact(
     homeTimezone: string,
-    olympicVenue: "LA28" | "BRISBANE32"
-  ): { timezonesDifference: number; direction: string; estimatedRecoveryDays: number } {
+    olympicVenue: "LA28" | "BRISBANE32",
+  ): {
+    timezonesDifference: number;
+    direction: string;
+    estimatedRecoveryDays: number;
+  } {
     const home = MAJOR_TIMEZONES[homeTimezone];
     const venue = OLYMPIC_VENUES[olympicVenue];
 
     if (!home) {
-      return { timezonesDifference: 0, direction: "unknown", estimatedRecoveryDays: 0 };
+      return {
+        timezonesDifference: 0,
+        direction: "unknown",
+        estimatedRecoveryDays: 0,
+      };
     }
 
     let diff = venue.offset - home.offset;
@@ -1085,7 +1274,11 @@ export class TravelRecoveryService {
   /**
    * Get available timezones for selection
    */
-  getAvailableTimezones(): Array<{ value: string; label: string; offset: number }> {
+  getAvailableTimezones(): Array<{
+    value: string;
+    label: string;
+    offset: number;
+  }> {
     return Object.entries(MAJOR_TIMEZONES).map(([tz, data]) => ({
       value: tz,
       label: `${data.city} (UTC${data.offset >= 0 ? "+" : ""}${data.offset})`,
@@ -1106,7 +1299,7 @@ export class TravelRecoveryService {
   private addMinutes(time: string, minutes: number): string {
     const [hours, mins] = time.split(":").map(Number);
     const totalMinutes = hours * 60 + mins + minutes;
-    const newHours = Math.floor(((totalMinutes % 1440) + 1440) % 1440 / 60);
+    const newHours = Math.floor((((totalMinutes % 1440) + 1440) % 1440) / 60);
     const newMins = ((totalMinutes % 60) + 60) % 60;
     return `${newHours.toString().padStart(2, "0")}:${newMins.toString().padStart(2, "0")}`;
   }
@@ -1136,7 +1329,10 @@ export class TravelRecoveryService {
    * Calculate blood circulation risk for car travel
    * Based on duration, driver status, and other factors
    */
-  calculateCarTravelRisk(durationHours: number, isDriver: boolean): BloodCirculationRisk {
+  calculateCarTravelRisk(
+    durationHours: number,
+    isDriver: boolean,
+  ): BloodCirculationRisk {
     const factors: string[] = [];
     const recommendations: string[] = [];
     let score = 0;
@@ -1172,7 +1368,9 @@ export class TravelRecoveryService {
 
     // Add risk-appropriate recommendations
     if (riskLevel === "very-high" || riskLevel === "high") {
-      recommendations.push("Wear compression garments throughout entire journey");
+      recommendations.push(
+        "Wear compression garments throughout entire journey",
+      );
       recommendations.push("Stop every 1-1.5 hours for movement breaks");
       recommendations.push("Use massage gun at every rest stop");
       recommendations.push("Perform seated exercises every 30 minutes");
@@ -1205,7 +1403,10 @@ export class TravelRecoveryService {
   /**
    * Generate comprehensive car travel protocol
    */
-  generateCarTravelProtocol(durationHours: number, isDriver: boolean): CarTravelProtocol[] {
+  generateCarTravelProtocol(
+    durationHours: number,
+    isDriver: boolean,
+  ): CarTravelProtocol[] {
     const protocols: CarTravelProtocol[] = [];
 
     // Pre-departure protocol
@@ -1214,7 +1415,9 @@ export class TravelRecoveryService {
     // During travel protocols (every 2 hours)
     const numStops = Math.floor(durationHours / 2);
     for (let i = 1; i <= numStops; i++) {
-      protocols.push(this.generateDuringTravelProtocol(i * 2, isDriver, durationHours));
+      protocols.push(
+        this.generateDuringTravelProtocol(i * 2, isDriver, durationHours),
+      );
     }
 
     // Post-arrival protocol
@@ -1236,7 +1439,8 @@ export class TravelRecoveryService {
           action: "Put on compression garments (socks or full leggings)",
           importance: "critical",
           category: "compression",
-          evidenceBase: "Engel et al. (2016) - Compression enhances venous blood flow at rest",
+          evidenceBase:
+            "Engel et al. (2016) - Compression enhances venous blood flow at rest",
         },
         {
           time: "30 min before",
@@ -1247,21 +1451,25 @@ export class TravelRecoveryService {
         },
         {
           time: "15 min before",
-          action: "Use massage gun on calves, quads, and glutes for 5 minutes total",
+          action:
+            "Use massage gun on calves, quads, and glutes for 5 minutes total",
           importance: "high",
           category: "circulation",
-          evidenceBase: "Konrad et al. (2023) - Percussion therapy increases blood flow velocity",
+          evidenceBase:
+            "Konrad et al. (2023) - Percussion therapy increases blood flow velocity",
           duration: 5,
         },
         {
           time: "Before departure",
-          action: "Adjust seat for optimal posture - knees slightly higher than hips if possible",
+          action:
+            "Adjust seat for optimal posture - knees slightly higher than hips if possible",
           importance: "medium",
           category: "circulation",
         },
         {
           time: "Before departure",
-          action: "Pack healthy snacks: bananas (potassium), nuts, whole grain crackers",
+          action:
+            "Pack healthy snacks: bananas (potassium), nuts, whole grain crackers",
           importance: "medium",
           category: "nutrition",
         },
@@ -1275,7 +1483,8 @@ export class TravelRecoveryService {
           recommendation: "Light, balanced meal 1-2 hours before travel",
           foods: ["Oatmeal", "Banana", "Eggs", "Whole grain toast"],
           avoid: ["Heavy fatty foods", "Excessive caffeine", "Alcohol"],
-          reason: "Heavy meals divert blood to digestion; caffeine/alcohol cause dehydration",
+          reason:
+            "Heavy meals divert blood to digestion; caffeine/alcohol cause dehydration",
         },
       ],
     };
@@ -1287,10 +1496,11 @@ export class TravelRecoveryService {
   private generateDuringTravelProtocol(
     hourMark: number,
     isDriver: boolean,
-    totalDuration: number
+    totalDuration: number,
   ): CarTravelProtocol {
     const isLongTrip = totalDuration >= 8;
-    const isMidPoint = hourMark >= totalDuration / 2 - 1 && hourMark <= totalDuration / 2 + 1;
+    const isMidPoint =
+      hourMark >= totalDuration / 2 - 1 && hourMark <= totalDuration / 2 + 1;
 
     const recommendations: CarTravelRecommendation[] = [
       {
@@ -1298,7 +1508,8 @@ export class TravelRecoveryService {
         action: "STOP - Take a 10-15 minute break",
         importance: "critical",
         category: "rest",
-        evidenceBase: "Regular breaks every 2 hours reduce DVT risk significantly",
+        evidenceBase:
+          "Regular breaks every 2 hours reduce DVT risk significantly",
         duration: 15,
       },
       {
@@ -1306,7 +1517,8 @@ export class TravelRecoveryService {
         action: "Walk briskly for 5 minutes minimum",
         importance: "critical",
         category: "circulation",
-        evidenceBase: "Walking activates calf muscle pump, promoting venous return",
+        evidenceBase:
+          "Walking activates calf muscle pump, promoting venous return",
         duration: 5,
       },
       {
@@ -1328,10 +1540,12 @@ export class TravelRecoveryService {
     if (isMidPoint || isLongTrip) {
       recommendations.push({
         time: "At stop",
-        action: "Use massage gun on calves (60s each), quads (60s each), glutes (60s each)",
+        action:
+          "Use massage gun on calves (60s each), quads (60s each), glutes (60s each)",
         importance: "high",
         category: "circulation",
-        evidenceBase: "Konrad et al. (2023) - 60-120s application increases blood flow 30-50%",
+        evidenceBase:
+          "Konrad et al. (2023) - 60-120s application increases blood flow 30-50%",
         duration: 6,
       });
     }
@@ -1356,7 +1570,8 @@ export class TravelRecoveryService {
     if (isMidPoint) {
       recommendations.push({
         time: "At stop",
-        action: "Have a light meal: sandwich, fruit, yogurt - avoid heavy/greasy food",
+        action:
+          "Have a light meal: sandwich, fruit, yogurt - avoid heavy/greasy food",
         importance: "medium",
         category: "nutrition",
       });
@@ -1373,9 +1588,15 @@ export class TravelRecoveryService {
         {
           timing: `Hour ${hourMark}`,
           recommendation: "Light snack with potassium and complex carbs",
-          foods: ["Banana", "Trail mix", "Whole grain crackers", "Apple with nut butter"],
+          foods: [
+            "Banana",
+            "Trail mix",
+            "Whole grain crackers",
+            "Apple with nut butter",
+          ],
           avoid: ["Chips", "Candy", "Soda", "Fast food"],
-          reason: "Potassium helps prevent muscle cramps; complex carbs provide sustained energy",
+          reason:
+            "Potassium helps prevent muscle cramps; complex carbs provide sustained energy",
         },
       ],
     };
@@ -1384,7 +1605,9 @@ export class TravelRecoveryService {
   /**
    * Post-arrival protocol
    */
-  private generatePostArrivalProtocol(totalDuration: number): CarTravelProtocol {
+  private generatePostArrivalProtocol(
+    totalDuration: number,
+  ): CarTravelProtocol {
     const isLongTrip = totalDuration >= 8;
 
     return {
@@ -1396,20 +1619,24 @@ export class TravelRecoveryService {
           action: "Walk for 10-15 minutes before sitting again",
           importance: "critical",
           category: "circulation",
-          evidenceBase: "Post-travel movement critical for restoring normal circulation",
+          evidenceBase:
+            "Post-travel movement critical for restoring normal circulation",
           duration: 15,
         },
         {
           time: "Within 30 min",
-          action: "Use massage gun comprehensively: calves, quads, hamstrings, glutes, lower back",
+          action:
+            "Use massage gun comprehensively: calves, quads, hamstrings, glutes, lower back",
           importance: "critical",
           category: "circulation",
-          evidenceBase: "Konrad et al. (2023) - Post-activity percussion reduces muscle stiffness",
+          evidenceBase:
+            "Konrad et al. (2023) - Post-activity percussion reduces muscle stiffness",
           duration: 10,
         },
         {
           time: "Within 30 min",
-          action: "Perform full stretching routine focusing on hip flexors, hamstrings, calves",
+          action:
+            "Perform full stretching routine focusing on hip flexors, hamstrings, calves",
           importance: "high",
           category: "circulation",
           duration: 10,
@@ -1433,7 +1660,8 @@ export class TravelRecoveryService {
           action: "Keep compression garments on for 2-4 hours post-arrival",
           importance: "medium",
           category: "compression",
-          evidenceBase: "Extended compression wear aids recovery from prolonged sitting",
+          evidenceBase:
+            "Extended compression wear aids recovery from prolonged sitting",
         },
         {
           time: "Before bed",
@@ -1457,7 +1685,8 @@ export class TravelRecoveryService {
             "Turmeric/ginger",
           ],
           avoid: ["Alcohol", "Processed foods", "Excessive sodium"],
-          reason: "Anti-inflammatory foods support recovery; protein aids muscle repair",
+          reason:
+            "Anti-inflammatory foods support recovery; protein aids muscle repair",
         },
       ],
     };
@@ -1470,7 +1699,8 @@ export class TravelRecoveryService {
     return [
       {
         name: "Ankle Pumps",
-        description: "Point toes down, then pull up toward shin. Alternate rhythmically.",
+        description:
+          "Point toes down, then pull up toward shin. Alternate rhythmically.",
         sets: 3,
         reps: 20,
         targetArea: "calves",
@@ -1487,7 +1717,8 @@ export class TravelRecoveryService {
       },
       {
         name: "Heel Raises (Seated)",
-        description: "Lift heels off floor while keeping toes down, hold 2 seconds.",
+        description:
+          "Lift heels off floor while keeping toes down, hold 2 seconds.",
         sets: 3,
         reps: 15,
         duration: 2,
@@ -1497,7 +1728,8 @@ export class TravelRecoveryService {
       },
       {
         name: "Toe Raises",
-        description: "Lift toes off floor while keeping heels down, hold 2 seconds.",
+        description:
+          "Lift toes off floor while keeping heels down, hold 2 seconds.",
         sets: 3,
         reps: 15,
         duration: 2,
@@ -1522,7 +1754,8 @@ export class TravelRecoveryService {
         duration: 5,
         targetArea: "glutes",
         canDoSeated: true,
-        evidenceBase: "Activates gluteal muscles and promotes pelvic circulation",
+        evidenceBase:
+          "Activates gluteal muscles and promotes pelvic circulation",
       },
       {
         name: "Thigh Squeezes",
@@ -1549,7 +1782,8 @@ export class TravelRecoveryService {
         duration: 300, // 5 minutes
         targetArea: "full-body",
         canDoSeated: false,
-        evidenceBase: "Walking is the most effective way to activate muscle pumps",
+        evidenceBase:
+          "Walking is the most effective way to activate muscle pumps",
       },
       {
         name: "Standing Calf Raises",
@@ -1571,7 +1805,8 @@ export class TravelRecoveryService {
       },
       {
         name: "Leg Swings (Side to Side)",
-        description: "Hold onto car for balance, swing leg across body and out.",
+        description:
+          "Hold onto car for balance, swing leg across body and out.",
         sets: 2,
         reps: 15,
         targetArea: "thighs",
@@ -1579,7 +1814,8 @@ export class TravelRecoveryService {
       },
       {
         name: "Walking Lunges",
-        description: "Step forward into lunge, alternate legs for 10 steps each.",
+        description:
+          "Step forward into lunge, alternate legs for 10 steps each.",
         sets: 2,
         reps: 10,
         targetArea: "thighs",
@@ -1629,7 +1865,8 @@ export class TravelRecoveryService {
         duration: 60,
         targetArea: "calves",
         canDoSeated: false,
-        evidenceBase: "Foam rolling increases blood flow and reduces muscle tension",
+        evidenceBase:
+          "Foam rolling increases blood flow and reduces muscle tension",
       },
       {
         name: "Foam Rolling - Quads",
@@ -1657,11 +1894,13 @@ export class TravelRecoveryService {
         duration: 60,
         targetArea: "thighs",
         canDoSeated: false,
-        evidenceBase: "Hip flexors shorten significantly during prolonged sitting",
+        evidenceBase:
+          "Hip flexors shorten significantly during prolonged sitting",
       },
       {
         name: "Pigeon Pose",
-        description: "Yoga pigeon pose to open hips, hold 60 seconds each side.",
+        description:
+          "Yoga pigeon pose to open hips, hold 60 seconds each side.",
         sets: 1,
         reps: 1,
         duration: 60,
@@ -1683,7 +1922,9 @@ export class TravelRecoveryService {
   /**
    * Get compression guidelines based on phase
    */
-  getCompressionGuidelines(phase: "pre-travel" | "during-travel" | "post-arrival"): CompressionGuideline {
+  getCompressionGuidelines(
+    phase: "pre-travel" | "during-travel" | "post-arrival",
+  ): CompressionGuideline {
     const baseGuideline: CompressionGuideline = {
       garmentType: "full-leggings",
       pressureLevel: "moderate",
@@ -1697,7 +1938,8 @@ export class TravelRecoveryService {
         "Not recommended if you have peripheral artery disease",
         "Consult doctor if you have diabetes or circulation issues",
       ],
-      evidenceBase: "Engel et al. (2016) - Meta-analysis: compression garments enhance venous blood flow during rest and recovery",
+      evidenceBase:
+        "Engel et al. (2016) - Meta-analysis: compression garments enhance venous blood flow during rest and recovery",
     };
 
     switch (phase) {
@@ -1761,7 +2003,8 @@ export class TravelRecoveryService {
           "Start with lower intensity and increase gradually",
           "Never use for more than 2 minutes on one spot",
         ],
-        evidenceBase: "Konrad et al. (2023) - Localized percussion vibration increases blood flow velocity by 30-50%",
+        evidenceBase:
+          "Konrad et al. (2023) - Localized percussion vibration increases blood flow velocity by 30-50%",
       },
       {
         timing: "rest-stop",
@@ -1795,7 +2038,8 @@ export class TravelRecoveryService {
           "Focus on comfort, not deep tissue work",
           "Stay hydrated after use",
         ],
-        evidenceBase: "Mayo Clinic (2024) - Percussion therapy stimulates mechanoreceptors, reducing pain perception",
+        evidenceBase:
+          "Mayo Clinic (2024) - Percussion therapy stimulates mechanoreceptors, reducing pain perception",
       },
       {
         timing: "post-arrival",
@@ -1845,7 +2089,8 @@ export class TravelRecoveryService {
           "STOP if you experience sharp pain",
           "WARNING: Excessive use can cause rhabdomyolysis (Szabo et al. 2020)",
         ],
-        evidenceBase: "Cheatham et al. (2021) - Massage guns improve flexibility and reduce muscle soreness post-activity",
+        evidenceBase:
+          "Cheatham et al. (2021) - Massage guns improve flexibility and reduce muscle soreness post-activity",
       },
     ];
   }
@@ -2068,63 +2313,81 @@ export class TravelRecoveryService {
     return [
       {
         topic: "Compression Garments & Blood Flow",
-        finding: "Sports compression garments significantly enhance venous blood flow at rest, during exercise, and in recovery. Meta-analysis of 29 studies showed consistent improvements in peripheral blood flow.",
+        finding:
+          "Sports compression garments significantly enhance venous blood flow at rest, during exercise, and in recovery. Meta-analysis of 29 studies showed consistent improvements in peripheral blood flow.",
         source: "Engel et al. (2016) - Systematic Review & Meta-Analysis",
         pubmedId: "36622554",
-        recommendation: "Wear 15-20 mmHg graduated compression socks or leggings during all travel >2 hours.",
+        recommendation:
+          "Wear 15-20 mmHg graduated compression socks or leggings during all travel >2 hours.",
       },
       {
         topic: "Compression & Performance",
-        finding: "Lower-limb compression tights worn during repeated-sprint cycling improved muscle blood flow and overall performance. Benefits seen in both blood flow velocity and muscle oxygenation.",
+        finding:
+          "Lower-limb compression tights worn during repeated-sprint cycling improved muscle blood flow and overall performance. Benefits seen in both blood flow velocity and muscle oxygenation.",
         source: "Brophy-Williams et al. (2017)",
         pubmedId: "29252067",
-        recommendation: "Compression can help maintain performance readiness during travel to competitions.",
+        recommendation:
+          "Compression can help maintain performance readiness during travel to competitions.",
       },
       {
         topic: "Compression & Hemodynamics",
-        finding: "Compression garments enhance central hemodynamic responses, including increased stroke volume and reduced heart rate, particularly after physiological challenges.",
+        finding:
+          "Compression garments enhance central hemodynamic responses, including increased stroke volume and reduced heart rate, particularly after physiological challenges.",
         source: "Born et al. (2013)",
         pubmedId: "33065703",
-        recommendation: "Continue wearing compression for 2-4 hours post-travel for optimal recovery.",
+        recommendation:
+          "Continue wearing compression for 2-4 hours post-travel for optimal recovery.",
       },
       {
         topic: "Massage Gun & Blood Flow",
-        finding: "Localized percussion vibration using massage guns increases blood flow velocity by 30-50% and muscle volume. Higher frequencies (40-53 Hz) and longer durations (60-120s) produce greater increases.",
+        finding:
+          "Localized percussion vibration using massage guns increases blood flow velocity by 30-50% and muscle volume. Higher frequencies (40-53 Hz) and longer durations (60-120s) produce greater increases.",
         source: "Konrad et al. (2023) - Journal of Clinical Medicine",
         pubmedId: "MDPI: 10.3390/jcm12052047",
-        recommendation: "Use massage gun for 60-90 seconds per muscle group at rest stops and post-arrival.",
+        recommendation:
+          "Use massage gun for 60-90 seconds per muscle group at rest stops and post-arrival.",
       },
       {
         topic: "Massage Gun & Flexibility",
-        finding: "Systematic review found massage guns effectively improve flexibility in iliopsoas, hamstrings, triceps surae, and posterior chain muscles.",
+        finding:
+          "Systematic review found massage guns effectively improve flexibility in iliopsoas, hamstrings, triceps surae, and posterior chain muscles.",
         source: "Cheatham et al. (2021)",
         pubmedId: "37754971",
-        recommendation: "Combine massage gun use with stretching for optimal flexibility restoration.",
+        recommendation:
+          "Combine massage gun use with stretching for optimal flexibility restoration.",
       },
       {
         topic: "Massage Gun Safety Warning",
-        finding: "Case reports of severe rhabdomyolysis following excessive massage gun use, particularly in young athletes. Risk increases with prolonged application (>2 min per area) and high pressure.",
+        finding:
+          "Case reports of severe rhabdomyolysis following excessive massage gun use, particularly in young athletes. Risk increases with prolonged application (>2 min per area) and high pressure.",
         source: "Szabo et al. (2020)",
         pubmedId: "33156927",
-        recommendation: "NEVER use massage gun for more than 2 minutes on one area. Use moderate pressure. Stop if pain occurs.",
+        recommendation:
+          "NEVER use massage gun for more than 2 minutes on one area. Use moderate pressure. Stop if pain occurs.",
       },
       {
         topic: "Prolonged Sitting & DVT Risk",
-        finding: "Sitting for more than 4 hours increases DVT risk 2-3 times. Risk compounds with duration and is present in car travel as well as air travel.",
+        finding:
+          "Sitting for more than 4 hours increases DVT risk 2-3 times. Risk compounds with duration and is present in car travel as well as air travel.",
         source: "Scurr et al. (2001) / Clarke et al. (2016) Cochrane Review",
-        recommendation: "Take mandatory breaks every 2 hours. Perform seated exercises every 30 minutes.",
+        recommendation:
+          "Take mandatory breaks every 2 hours. Perform seated exercises every 30 minutes.",
       },
       {
         topic: "Movement & Venous Return",
-        finding: "The calf muscle pump (soleus and gastrocnemius) is critical for venous return. Simple ankle pumps and calf raises significantly improve blood flow even when seated.",
+        finding:
+          "The calf muscle pump (soleus and gastrocnemius) is critical for venous return. Simple ankle pumps and calf raises significantly improve blood flow even when seated.",
         source: "Multiple studies on venous physiology",
-        recommendation: "Perform 20 ankle pumps every 30 minutes during travel. Do standing calf raises at every stop.",
+        recommendation:
+          "Perform 20 ankle pumps every 30 minutes during travel. Do standing calf raises at every stop.",
       },
       {
         topic: "Hydration & Blood Viscosity",
-        finding: "Dehydration increases blood viscosity, making clot formation more likely. Adequate hydration is essential for maintaining healthy blood flow during prolonged sitting.",
+        finding:
+          "Dehydration increases blood viscosity, making clot formation more likely. Adequate hydration is essential for maintaining healthy blood flow during prolonged sitting.",
         source: "General cardiovascular research",
-        recommendation: "Drink 250ml water per hour of travel. Include electrolytes to maintain hydration.",
+        recommendation:
+          "Drink 250ml water per hour of travel. Include electrolytes to maintain hydration.",
       },
     ];
   }

@@ -94,13 +94,17 @@ export class ErrorTrackingService {
           // This prevents build-time errors when Sentry is not installed
           const sentryPackage = "@sentry" + "/angular"; // Split to avoid static analysis
           try {
-            const sentryModule = await import(/* @vite-ignore */ sentryPackage).catch(() => null);
+            const sentryModule = await import(
+              /* @vite-ignore */ sentryPackage
+            ).catch(() => null);
             if (sentryModule) {
               this.Sentry = sentryModule;
             }
           } catch {
             // Module not found - this is expected in dev/test environments
-            this.logger.debug("[ErrorTracking] Sentry package not installed, skipping");
+            this.logger.debug(
+              "[ErrorTracking] Sentry package not installed, skipping",
+            );
             return;
           }
         }
@@ -111,9 +115,8 @@ export class ErrorTrackingService {
         }
 
         const dsn =
-          (
-            window as unknown as { _env?: { VITE_SENTRY_DSN?: string } }
-          )._env?.VITE_SENTRY_DSN || "";
+          (window as unknown as { _env?: { VITE_SENTRY_DSN?: string } })._env
+            ?.VITE_SENTRY_DSN || "";
 
         if (dsn) {
           this.Sentry.init({
@@ -155,16 +158,19 @@ export class ErrorTrackingService {
           this.isInitialized = true;
         } else {
           this.logger.warn(
-            "[ErrorTracking] Sentry DSN not configured, skipping initialization"
+            "[ErrorTracking] Sentry DSN not configured, skipping initialization",
           );
         }
       } catch (error) {
         // Gracefully handle any initialization errors
-        this.logger.debug("[ErrorTracking] Sentry initialization skipped:", error);
+        this.logger.debug(
+          "[ErrorTracking] Sentry initialization skipped:",
+          error,
+        );
       }
     } else {
       this.logger.debug(
-        "[ErrorTracking] Sentry disabled, using local logging only"
+        "[ErrorTracking] Sentry disabled, using local logging only",
       );
     }
 
@@ -186,7 +192,7 @@ export class ErrorTrackingService {
   captureError(
     error: Error | unknown,
     context?: ErrorContext,
-    severity: ErrorSeverity = "error"
+    severity: ErrorSeverity = "error",
   ): void {
     const errorObj = error instanceof Error ? error : new Error(String(error));
 
@@ -232,7 +238,7 @@ export class ErrorTrackingService {
   captureMessage(
     message: string,
     context?: ErrorContext,
-    severity: ErrorSeverity = "info"
+    severity: ErrorSeverity = "info",
   ): void {
     // Log locally
     this.logger.info(`[${severity.toUpperCase()}]`, message, context);
@@ -306,7 +312,7 @@ export class ErrorTrackingService {
     method: string,
     url: string,
     status: number,
-    duration: number
+    duration: number,
   ): void {
     this.addBreadcrumb({
       type: "http",
@@ -347,7 +353,7 @@ export class ErrorTrackingService {
    * Map severity to Sentry level
    */
   private mapSeverity(
-    severity: ErrorSeverity
+    severity: ErrorSeverity,
   ): "fatal" | "error" | "warning" | "info" | "debug" {
     return severity;
   }
@@ -389,4 +395,3 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
   }
 }
-

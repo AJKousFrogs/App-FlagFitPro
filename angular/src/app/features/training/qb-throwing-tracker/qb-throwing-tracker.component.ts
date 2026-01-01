@@ -153,7 +153,11 @@ interface ThrowingSession {
                 @for (i of [1, 2, 3, 4]; track i) {
                   <div class="stat-item">
                     <p-skeleton width="60px" height="40px"></p-skeleton>
-                    <p-skeleton width="100px" height="16px" class="mt-2"></p-skeleton>
+                    <p-skeleton
+                      width="100px"
+                      height="16px"
+                      class="mt-2"
+                    ></p-skeleton>
                   </div>
                 }
               </div>
@@ -164,16 +168,25 @@ interface ThrowingSession {
                   <div class="stat-label">Total Throws</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-value highlight">{{ weeklyStats().avgCompletion }}%</div>
+                  <div class="stat-value highlight">
+                    {{ weeklyStats().avgCompletion }}%
+                  </div>
                   <div class="stat-label">Avg Completion</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-value">{{ weeklyStats().sessionsCount }}</div>
+                  <div class="stat-value">
+                    {{ weeklyStats().sessionsCount }}
+                  </div>
                   <div class="stat-label">Sessions</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-value" [class.positive]="weeklyStats().trend > 0" [class.negative]="weeklyStats().trend < 0">
-                    {{ weeklyStats().trend > 0 ? '+' : '' }}{{ weeklyStats().trend }}%
+                  <div
+                    class="stat-value"
+                    [class.positive]="weeklyStats().trend > 0"
+                    [class.negative]="weeklyStats().trend < 0"
+                  >
+                    {{ weeklyStats().trend > 0 ? "+" : ""
+                    }}{{ weeklyStats().trend }}%
                   </div>
                   <div class="stat-label">vs Last Week</div>
                 </div>
@@ -190,7 +203,11 @@ interface ThrowingSession {
             </div>
           </ng-template>
           @if (chartData()) {
-            <p-chart type="line" [data]="chartData()" [options]="chartOptions"></p-chart>
+            <p-chart
+              type="line"
+              [data]="chartData()"
+              [options]="chartOptions"
+            ></p-chart>
           } @else {
             <div class="empty-chart">
               <i class="pi pi-chart-line"></i>
@@ -225,13 +242,23 @@ interface ThrowingSession {
               @for (session of recentSessions(); track session.id) {
                 <div class="session-item">
                   <div class="session-date">
-                    {{ session.date | date: 'MMM d, yyyy' }}
+                    {{ session.date | date: "MMM d, yyyy" }}
                   </div>
                   <div class="session-details">
                     <span class="throw-type">{{ session.throw_type }}</span>
-                    <span class="throws">{{ session.total_throws }} throws</span>
+                    <span class="throws"
+                      >{{ session.total_throws }} throws</span
+                    >
                   </div>
-                  <div class="session-rate" [class.good]="session.completion_rate >= 70" [class.average]="session.completion_rate >= 50 && session.completion_rate < 70" [class.needs-work]="session.completion_rate < 50">
+                  <div
+                    class="session-rate"
+                    [class.good]="session.completion_rate >= 70"
+                    [class.average]="
+                      session.completion_rate >= 50 &&
+                      session.completion_rate < 70
+                    "
+                    [class.needs-work]="session.completion_rate < 50"
+                  >
                     {{ session.completion_rate }}%
                   </div>
                 </div>
@@ -517,7 +544,7 @@ export class QbThrowingTrackerComponent implements OnInit {
   calculatedCompletionRate = computed(() => {
     if (this.sessionData.totalThrows === 0) return 0;
     return Math.round(
-      (this.sessionData.completions / this.sessionData.totalThrows) * 100
+      (this.sessionData.completions / this.sessionData.totalThrows) * 100,
     );
   });
 
@@ -543,12 +570,13 @@ export class QbThrowingTrackerComponent implements OnInit {
       }
 
       // Load recent sessions
-      const { data: sessions, error: sessionsError } = await this.supabaseService.client
-        .from("qb_throwing_sessions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false })
-        .limit(10);
+      const { data: sessions, error: sessionsError } =
+        await this.supabaseService.client
+          .from("qb_throwing_sessions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("date", { ascending: false })
+          .limit(10);
 
       if (sessionsError) {
         this.logger.warn("Error loading sessions:", sessionsError);
@@ -571,21 +599,21 @@ export class QbThrowingTrackerComponent implements OnInit {
     const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
     const thisWeekSessions = sessions.filter(
-      (s) => new Date(s.date) >= weekAgo
+      (s) => new Date(s.date) >= weekAgo,
     );
     const lastWeekSessions = sessions.filter(
-      (s) => new Date(s.date) >= twoWeeksAgo && new Date(s.date) < weekAgo
+      (s) => new Date(s.date) >= twoWeeksAgo && new Date(s.date) < weekAgo,
     );
 
     const thisWeekTotal = thisWeekSessions.reduce(
       (sum, s) => sum + s.total_throws,
-      0
+      0,
     );
     const thisWeekAvg =
       thisWeekSessions.length > 0
         ? Math.round(
             thisWeekSessions.reduce((sum, s) => sum + s.completion_rate, 0) /
-              thisWeekSessions.length
+              thisWeekSessions.length,
           )
         : 0;
 
@@ -593,7 +621,7 @@ export class QbThrowingTrackerComponent implements OnInit {
       lastWeekSessions.length > 0
         ? Math.round(
             lastWeekSessions.reduce((sum, s) => sum + s.completion_rate, 0) /
-              lastWeekSessions.length
+              lastWeekSessions.length,
           )
         : 0;
 
@@ -620,7 +648,7 @@ export class QbThrowingTrackerComponent implements OnInit {
         new Date(s.date).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
-        })
+        }),
       ),
       datasets: [
         {

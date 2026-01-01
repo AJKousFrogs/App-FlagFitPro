@@ -108,51 +108,70 @@ export class DepthChartService {
    * Get all depth chart templates for a team
    */
   getTeamDepthCharts(teamId: string): Observable<DepthChartTemplate[]> {
-    return this.apiService.get<DepthChartTemplate[]>("/api/depth-chart/templates", {
-      team_id: teamId,
-    }).pipe(
-      map((response: ApiResponse<DepthChartTemplate[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch depth charts:", error);
-        return of([]);
+    return this.apiService
+      .get<DepthChartTemplate[]>("/api/depth-chart/templates", {
+        team_id: teamId,
       })
-    );
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartTemplate[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch depth charts:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Get a depth chart with all its entries
    */
-  getDepthChartWithEntries(templateId: string): Observable<DepthChartWithEntries | null> {
-    return this.apiService.get<DepthChartWithEntries>(`/api/depth-chart/templates/${templateId}`).pipe(
-      map((response: ApiResponse<DepthChartWithEntries>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to fetch depth chart:", error);
-        return of(null);
-      })
-    );
+  getDepthChartWithEntries(
+    templateId: string,
+  ): Observable<DepthChartWithEntries | null> {
+    return this.apiService
+      .get<DepthChartWithEntries>(`/api/depth-chart/templates/${templateId}`)
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartWithEntries>) =>
+            response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch depth chart:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Create a new depth chart template
    */
-  createDepthChart(payload: CreateDepthChartPayload): Observable<DepthChartTemplate | null> {
+  createDepthChart(
+    payload: CreateDepthChartPayload,
+  ): Observable<DepthChartTemplate | null> {
     // Add default positions if not provided
-    const positionsToCreate = payload.positions || 
-      this.FLAG_FOOTBALL_POSITIONS[payload.chart_type]?.map(p => ({
+    const positionsToCreate =
+      payload.positions ||
+      this.FLAG_FOOTBALL_POSITIONS[payload.chart_type]?.map((p) => ({
         position_name: p.name,
         position_abbreviation: p.abbreviation,
-      })) || [];
+      })) ||
+      [];
 
-    return this.apiService.post<DepthChartTemplate>("/api/depth-chart/templates", {
-      ...payload,
-      positions: positionsToCreate,
-    }).pipe(
-      map((response: ApiResponse<DepthChartTemplate>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to create depth chart:", error);
-        return of(null);
+    return this.apiService
+      .post<DepthChartTemplate>("/api/depth-chart/templates", {
+        ...payload,
+        positions: positionsToCreate,
       })
-    );
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartTemplate>) => response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to create depth chart:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -160,58 +179,78 @@ export class DepthChartService {
    */
   updateDepthChart(
     templateId: string,
-    updates: Partial<Pick<DepthChartTemplate, "name" | "is_active">>
+    updates: Partial<Pick<DepthChartTemplate, "name" | "is_active">>,
   ): Observable<DepthChartTemplate | null> {
-    return this.apiService.put<DepthChartTemplate>(`/api/depth-chart/templates/${templateId}`, updates).pipe(
-      map((response: ApiResponse<DepthChartTemplate>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update depth chart:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .put<DepthChartTemplate>(
+        `/api/depth-chart/templates/${templateId}`,
+        updates,
+      )
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartTemplate>) => response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to update depth chart:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Delete a depth chart template
    */
   deleteDepthChart(templateId: string): Observable<boolean> {
-    return this.apiService.delete(`/api/depth-chart/templates/${templateId}`).pipe(
-      map(() => true),
-      catchError((error) => {
-        this.logger.error("Failed to delete depth chart:", error);
-        return of(false);
-      })
-    );
+    return this.apiService
+      .delete(`/api/depth-chart/templates/${templateId}`)
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          this.logger.error("Failed to delete depth chart:", error);
+          return of(false);
+        }),
+      );
   }
 
   /**
    * Update a single depth chart entry (assign player, change depth order)
    */
-  updateEntry(entryId: string, updates: UpdateEntryPayload): Observable<DepthChartEntry | null> {
-    return this.apiService.put<DepthChartEntry>(`/api/depth-chart/entries/${entryId}`, updates).pipe(
-      map((response: ApiResponse<DepthChartEntry>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update depth chart entry:", error);
-        return of(null);
-      })
-    );
+  updateEntry(
+    entryId: string,
+    updates: UpdateEntryPayload,
+  ): Observable<DepthChartEntry | null> {
+    return this.apiService
+      .put<DepthChartEntry>(`/api/depth-chart/entries/${entryId}`, updates)
+      .pipe(
+        map((response: ApiResponse<DepthChartEntry>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to update depth chart entry:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Swap two players' positions in the depth chart
    */
-  swapPositions(entryId1: string, entryId2: string, reason?: string): Observable<boolean> {
-    return this.apiService.post("/api/depth-chart/entries/swap", {
-      entry_id_1: entryId1,
-      entry_id_2: entryId2,
-      change_reason: reason,
-    }).pipe(
-      map(() => true),
-      catchError((error) => {
-        this.logger.error("Failed to swap positions:", error);
-        return of(false);
+  swapPositions(
+    entryId1: string,
+    entryId2: string,
+    reason?: string,
+  ): Observable<boolean> {
+    return this.apiService
+      .post("/api/depth-chart/entries/swap", {
+        entry_id_1: entryId1,
+        entry_id_2: entryId2,
+        change_reason: reason,
       })
-    );
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          this.logger.error("Failed to swap positions:", error);
+          return of(false);
+        }),
+      );
   }
 
   /**
@@ -220,20 +259,22 @@ export class DepthChartService {
   addPosition(
     templateId: string,
     positionName: string,
-    abbreviation: string
+    abbreviation: string,
   ): Observable<DepthChartEntry | null> {
-    return this.apiService.post<DepthChartEntry>("/api/depth-chart/entries", {
-      template_id: templateId,
-      position_name: positionName,
-      position_abbreviation: abbreviation,
-      depth_order: 1,
-    }).pipe(
-      map((response: ApiResponse<DepthChartEntry>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to add position:", error);
-        return of(null);
+    return this.apiService
+      .post<DepthChartEntry>("/api/depth-chart/entries", {
+        template_id: templateId,
+        position_name: positionName,
+        position_abbreviation: abbreviation,
+        depth_order: 1,
       })
-    );
+      .pipe(
+        map((response: ApiResponse<DepthChartEntry>) => response.data || null),
+        catchError((error) => {
+          this.logger.error("Failed to add position:", error);
+          return of(null);
+        }),
+      );
   }
 
   /**
@@ -241,32 +282,51 @@ export class DepthChartService {
    */
   getDepthChartHistory(
     templateId: string,
-    options?: { limit?: number; startDate?: string; endDate?: string }
+    options?: { limit?: number; startDate?: string; endDate?: string },
   ): Observable<DepthChartHistory[]> {
-    return this.apiService.get<DepthChartHistory[]>(`/api/depth-chart/templates/${templateId}/history`, {
-      limit: options?.limit,
-      start_date: options?.startDate,
-      end_date: options?.endDate,
-    }).pipe(
-      map((response: ApiResponse<DepthChartHistory[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch depth chart history:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<DepthChartHistory[]>(
+        `/api/depth-chart/templates/${templateId}/history`,
+        {
+          limit: options?.limit,
+          start_date: options?.startDate,
+          end_date: options?.endDate,
+        },
+      )
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartHistory[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch depth chart history:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Get player position preferences
    */
-  getPlayerPositionPreferences(playerId: string): Observable<PlayerPositionPreference[]> {
-    return this.apiService.get<PlayerPositionPreference[]>(`/api/depth-chart/player/${playerId}/preferences`).pipe(
-      map((response: ApiResponse<PlayerPositionPreference[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch player position preferences:", error);
-        return of([]);
-      })
-    );
+  getPlayerPositionPreferences(
+    playerId: string,
+  ): Observable<PlayerPositionPreference[]> {
+    return this.apiService
+      .get<
+        PlayerPositionPreference[]
+      >(`/api/depth-chart/player/${playerId}/preferences`)
+      .pipe(
+        map(
+          (response: ApiResponse<PlayerPositionPreference[]>) =>
+            response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error(
+            "Failed to fetch player position preferences:",
+            error,
+          );
+          return of([]);
+        }),
+      );
   }
 
   /**
@@ -274,48 +334,72 @@ export class DepthChartService {
    */
   updatePlayerPositionPreference(
     preferenceId: string,
-    updates: Partial<Pick<PlayerPositionPreference, "coach_assessment" | "notes">>
+    updates: Partial<
+      Pick<PlayerPositionPreference, "coach_assessment" | "notes">
+    >,
   ): Observable<PlayerPositionPreference | null> {
-    return this.apiService.put<PlayerPositionPreference>(
-      `/api/depth-chart/preferences/${preferenceId}`,
-      updates
-    ).pipe(
-      map((response: ApiResponse<PlayerPositionPreference>) => response.data || null),
-      catchError((error) => {
-        this.logger.error("Failed to update player position preference:", error);
-        return of(null);
-      })
-    );
+    return this.apiService
+      .put<PlayerPositionPreference>(
+        `/api/depth-chart/preferences/${preferenceId}`,
+        updates,
+      )
+      .pipe(
+        map(
+          (response: ApiResponse<PlayerPositionPreference>) =>
+            response.data || null,
+        ),
+        catchError((error) => {
+          this.logger.error(
+            "Failed to update player position preference:",
+            error,
+          );
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Get all unassigned players for a team (players not in any depth chart position)
    */
-  getUnassignedPlayers(teamId: string, templateId: string): Observable<Array<{ id: string; name: string; number?: string }>> {
-    return this.apiService.get<Array<{ id: string; name: string; number?: string }>>(
-      `/api/depth-chart/templates/${templateId}/unassigned`,
-      { team_id: teamId }
-    ).pipe(
-      map((response: ApiResponse<Array<{ id: string; name: string; number?: string }>>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to fetch unassigned players:", error);
-        return of([]);
-      })
-    );
+  getUnassignedPlayers(
+    teamId: string,
+    templateId: string,
+  ): Observable<Array<{ id: string; name: string; number?: string }>> {
+    return this.apiService
+      .get<
+        Array<{ id: string; name: string; number?: string }>
+      >(`/api/depth-chart/templates/${templateId}/unassigned`, { team_id: teamId })
+      .pipe(
+        map(
+          (
+            response: ApiResponse<
+              Array<{ id: string; name: string; number?: string }>
+            >,
+          ) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to fetch unassigned players:", error);
+          return of([]);
+        }),
+      );
   }
 
   /**
    * Initialize default depth charts for a new team
    */
   initializeTeamDepthCharts(teamId: string): Observable<DepthChartTemplate[]> {
-    return this.apiService.post<DepthChartTemplate[]>("/api/depth-chart/initialize", {
-      team_id: teamId,
-    }).pipe(
-      map((response: ApiResponse<DepthChartTemplate[]>) => response.data || []),
-      catchError((error) => {
-        this.logger.error("Failed to initialize depth charts:", error);
-        return of([]);
+    return this.apiService
+      .post<DepthChartTemplate[]>("/api/depth-chart/initialize", {
+        team_id: teamId,
       })
-    );
+      .pipe(
+        map(
+          (response: ApiResponse<DepthChartTemplate[]>) => response.data || [],
+        ),
+        catchError((error) => {
+          this.logger.error("Failed to initialize depth charts:", error);
+          return of([]);
+        }),
+      );
   }
 }

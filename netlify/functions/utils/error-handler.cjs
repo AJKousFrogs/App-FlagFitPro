@@ -36,7 +36,10 @@ const ALLOWED_ORIGINS = [
 
 const getCorsOrigin = (requestOrigin) => {
   // In development, allow all origins
-  if (process.env.NODE_ENV === "development" || process.env.NETLIFY_DEV === "true") {
+  if (
+    process.env.NODE_ENV === "development" ||
+    process.env.NETLIFY_DEV === "true"
+  ) {
     return requestOrigin || "*";
   }
   // In production, validate against allowed origins
@@ -48,7 +51,8 @@ const getCorsOrigin = (requestOrigin) => {
 };
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": process.env.NODE_ENV === "development" ? "*" : ALLOWED_ORIGINS[0],
+  "Access-Control-Allow-Origin":
+    process.env.NODE_ENV === "development" ? "*" : ALLOWED_ORIGINS[0],
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Credentials": "true",
@@ -57,10 +61,10 @@ const CORS_HEADERS = {
 
 /**
  * Create a standardized error response
- * 
+ *
  * Note: Fourth parameter can be either additionalData object or requestId string
  * for backward compatibility with older code patterns.
- * 
+ *
  * @param {Error|string} error - Error object or message
  * @param {number} statusCode - HTTP status code
  * @param {string} errorType - Error type from ErrorType enum
@@ -77,9 +81,11 @@ function createErrorResponse(
   const timestamp = new Date().toISOString();
 
   // Handle backward compatibility: if fourth param is string (requestId), ignore it
-  const additionalData = typeof additionalDataOrRequestId === 'object' && additionalDataOrRequestId !== null
-    ? additionalDataOrRequestId
-    : {};
+  const additionalData =
+    typeof additionalDataOrRequestId === "object" &&
+    additionalDataOrRequestId !== null
+      ? additionalDataOrRequestId
+      : {};
 
   // Log the error
   console.error(
@@ -103,24 +109,29 @@ function createErrorResponse(
 
 /**
  * Create a standardized success response
- * 
+ *
  * Supports two calling conventions:
  * 1. createSuccessResponse(data) - Simple response with data
  * 2. createSuccessResponse(data, statusCode, message, cacheTTL) - Full options
- * 
+ *
  * Note: If second parameter is a string (requestId), it's ignored for backward compatibility
  * with older code that passed requestId. Use options object for new code.
- * 
+ *
  * @param {*} data - Data to return
  * @param {number|string} statusCodeOrRequestId - HTTP status code (default: 200) or requestId (ignored)
  * @param {string} message - Optional success message
  * @param {number} cacheTTL - Cache TTL in seconds (0 = no cache)
  * @returns {object} Netlify function response
  */
-function createSuccessResponse(data, statusCodeOrRequestId = 200, message = null, cacheTTL = 0) {
+function createSuccessResponse(
+  data,
+  statusCodeOrRequestId = 200,
+  message = null,
+  cacheTTL = 0,
+) {
   // Handle backward compatibility: if second param is a string (requestId), use defaults
   let statusCode = 200;
-  if (typeof statusCodeOrRequestId === 'number') {
+  if (typeof statusCodeOrRequestId === "number") {
     statusCode = statusCodeOrRequestId;
   }
   // If it's a string (requestId), we ignore it and use default statusCode
@@ -135,12 +146,15 @@ function createSuccessResponse(data, statusCodeOrRequestId = 200, message = null
   }
 
   // Add cache headers based on TTL
-  const cacheHeaders = cacheTTL > 0 ? {
-    'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${cacheTTL * 5}`,
-    'CDN-Cache-Control': `public, max-age=${cacheTTL}`,
-  } : {
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-  };
+  const cacheHeaders =
+    cacheTTL > 0
+      ? {
+          "Cache-Control": `public, max-age=${cacheTTL}, stale-while-revalidate=${cacheTTL * 5}`,
+          "CDN-Cache-Control": `public, max-age=${cacheTTL}`,
+        }
+      : {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+        };
 
   return {
     statusCode,
@@ -316,7 +330,10 @@ async function tryCatch(operation, context = "Operation", options = {}) {
     try {
       // Create timeout promise
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(`Operation timed out after ${timeout}ms`)), timeout);
+        setTimeout(
+          () => reject(new Error(`Operation timed out after ${timeout}ms`)),
+          timeout,
+        );
       });
 
       // Race operation against timeout
@@ -324,7 +341,10 @@ async function tryCatch(operation, context = "Operation", options = {}) {
       return { success: true, data: result };
     } catch (error) {
       lastError = error;
-      console.error(`[${context}] Error (attempt ${attempt + 1}/${retries + 1}):`, error);
+      console.error(
+        `[${context}] Error (attempt ${attempt + 1}/${retries + 1}):`,
+        error,
+      );
 
       // Don't retry on certain errors
       if (error.message?.includes("timed out") || attempt === retries) {
@@ -333,14 +353,16 @@ async function tryCatch(operation, context = "Operation", options = {}) {
 
       // Exponential backoff before retry
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise(resolve => setTimeout(resolve, 2**attempt * 100));
+      await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 100));
     }
   }
 
   return {
     success: false,
     error: lastError?.message || "Operation failed",
-    errorType: lastError?.message?.includes("timed out") ? ErrorType.TIMEOUT : ErrorType.UNKNOWN,
+    errorType: lastError?.message?.includes("timed out")
+      ? ErrorType.TIMEOUT
+      : ErrorType.UNKNOWN,
   };
 }
 

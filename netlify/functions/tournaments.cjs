@@ -2,7 +2,10 @@
 // Full CRUD operations for tournament management
 // Supports: GET (list/single), POST (create), PUT (update), DELETE
 
-const { supabaseAdmin, checkEnvVars: _checkEnvVars } = require("./supabase-client.cjs");
+const {
+  supabaseAdmin,
+  checkEnvVars: _checkEnvVars,
+} = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
@@ -16,11 +19,11 @@ const {
 
 /**
  * Get all tournaments or a specific tournament by ID
- * 
+ *
  * Visibility Rules:
  * - 'team' scope: Visible to all team members (created by coach/manager/admin)
  * - 'personal' scope: Visible only to the player who created it + all coaches
- * 
+ *
  * For players: See all 'team' tournaments + their own 'personal' tournaments
  * For coaches/managers/admins: See all 'team' tournaments + all 'personal' tournaments
  */
@@ -36,7 +39,7 @@ async function getTournaments(event, _context, { userId, requestId }) {
       .select("role")
       .eq("id", userId)
       .single();
-    userRole = userData?.role || 'player';
+    userRole = userData?.role || "player";
   }
 
   // Get single tournament by ID
@@ -55,10 +58,16 @@ async function getTournaments(event, _context, { userId, requestId }) {
     }
 
     // Check visibility for personal tournaments
-    if (data && data.visibility_scope === 'personal') {
-      const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
+    if (data && data.visibility_scope === "personal") {
+      const isCoachOrAdmin = [
+        "coach",
+        "manager",
+        "admin",
+        "head_coach",
+        "assistant_coach",
+      ].includes(userRole);
       const isOwner = data.created_by === userId || data.player_id === userId;
-      
+
       if (!isCoachOrAdmin && !isOwner) {
         return handleNotFoundError(`Tournament with ID ${id}`, requestId);
       }
@@ -105,16 +114,23 @@ async function getTournaments(event, _context, { userId, requestId }) {
   }
 
   // Apply visibility filtering
-  const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
-  
+  const isCoachOrAdmin = [
+    "coach",
+    "manager",
+    "admin",
+    "head_coach",
+    "assistant_coach",
+  ].includes(userRole);
+
   let filteredData = data || [];
   if (!isCoachOrAdmin && userId) {
     // Players only see: team tournaments + their own personal tournaments
-    filteredData = filteredData.filter(t => 
-      t.visibility_scope === 'team' || 
-      t.visibility_scope === null || // Legacy tournaments
-      t.created_by === userId ||
-      t.player_id === userId
+    filteredData = filteredData.filter(
+      (t) =>
+        t.visibility_scope === "team" ||
+        t.visibility_scope === null || // Legacy tournaments
+        t.created_by === userId ||
+        t.player_id === userId,
     );
   }
   // Coaches/managers/admins see all tournaments (team + all personal)
@@ -132,7 +148,7 @@ async function getTournaments(event, _context, { userId, requestId }) {
 
 /**
  * Create a new tournament
- * 
+ *
  * Visibility Rules:
  * - If created by coach/manager/admin: visibility_scope = 'team' (all team members see it)
  * - If created by player: visibility_scope = 'personal' (only that player + coaches see it)
@@ -146,7 +162,7 @@ async function createTournament(event, _context, { userId, requestId }) {
       "Invalid JSON in request body",
       400,
       "invalid_json",
-      requestId
+      requestId,
     );
   }
 
@@ -158,29 +174,37 @@ async function createTournament(event, _context, { userId, requestId }) {
       `Missing required fields: ${missingFields.join(", ")}`,
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
   // Get user role to determine visibility scope
-  let userRole = 'player';
+  let userRole = "player";
   if (userId) {
     const { data: userData } = await supabaseAdmin
       .from("users")
       .select("role")
       .eq("id", userId)
       .single();
-    userRole = userData?.role || 'player';
+    userRole = userData?.role || "player";
   }
 
   // Determine visibility scope based on user role
   // Coaches/managers/admins create team-wide tournaments
   // Players create personal tournaments (only visible to them + coaches)
-  const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
-  const visibilityScope = body.visibility_scope || (isCoachOrAdmin ? 'team' : 'personal');
-  
+  const isCoachOrAdmin = [
+    "coach",
+    "manager",
+    "admin",
+    "head_coach",
+    "assistant_coach",
+  ].includes(userRole);
+  const visibilityScope =
+    body.visibility_scope || (isCoachOrAdmin ? "team" : "personal");
+
   // For personal tournaments, set player_id to the creator
-  const playerId = visibilityScope === 'personal' ? userId : (body.player_id || null);
+  const playerId =
+    visibilityScope === "personal" ? userId : body.player_id || null;
 
   // Prepare tournament data
   const tournamentData = {
@@ -190,11 +214,16 @@ async function createTournament(event, _context, { userId, requestId }) {
     country: body.country || null,
     flag: body.flag || null,
     start_date: body.start_date || body.startDate,
-    end_date: body.end_date || body.endDate || body.start_date || body.startDate,
-    tournament_type: body.tournament_type || body.tournamentType || "championship",
-    competition_level: body.competition_level || body.competitionLevel || "regional",
-    is_home_tournament: body.is_home_tournament || body.isHomeTournament || false,
-    registration_deadline: body.registration_deadline || body.registrationDeadline || null,
+    end_date:
+      body.end_date || body.endDate || body.start_date || body.startDate,
+    tournament_type:
+      body.tournament_type || body.tournamentType || "championship",
+    competition_level:
+      body.competition_level || body.competitionLevel || "regional",
+    is_home_tournament:
+      body.is_home_tournament || body.isHomeTournament || false,
+    registration_deadline:
+      body.registration_deadline || body.registrationDeadline || null,
     max_roster_size: body.max_roster_size || body.maxRosterSize || null,
     format: body.format || null,
     notes: body.notes || null,
@@ -217,21 +246,26 @@ async function createTournament(event, _context, { userId, requestId }) {
     throw error;
   }
 
-  const scopeMessage = visibilityScope === 'personal' 
-    ? 'Personal game day created (visible to you and coaches)' 
-    : 'Team tournament created (visible to all team members)';
+  const scopeMessage =
+    visibilityScope === "personal"
+      ? "Personal game day created (visible to you and coaches)"
+      : "Team tournament created (visible to all team members)";
 
   return createSuccessResponse(
     { tournament: data, message: scopeMessage },
     requestId,
-    201
+    201,
   );
 }
 
 /**
  * Update an existing tournament
  */
-async function updateTournament(event, _context, { userId: _userId, requestId }) {
+async function updateTournament(
+  event,
+  _context,
+  { userId: _userId, requestId },
+) {
   const queryParams = event.queryStringParameters || {};
   const { id } = queryParams;
 
@@ -240,7 +274,7 @@ async function updateTournament(event, _context, { userId: _userId, requestId })
       "Tournament ID is required",
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
@@ -252,7 +286,7 @@ async function updateTournament(event, _context, { userId: _userId, requestId })
       "Invalid JSON in request body",
       400,
       "invalid_json",
-      requestId
+      requestId,
     );
   }
 
@@ -310,7 +344,7 @@ async function updateTournament(event, _context, { userId: _userId, requestId })
       "No valid fields to update",
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
@@ -332,14 +366,18 @@ async function updateTournament(event, _context, { userId: _userId, requestId })
 
   return createSuccessResponse(
     { tournament: data, message: "Tournament updated successfully" },
-    requestId
+    requestId,
   );
 }
 
 /**
  * Delete a tournament
  */
-async function deleteTournament(event, _context, { userId: _userId, requestId }) {
+async function deleteTournament(
+  event,
+  _context,
+  { userId: _userId, requestId },
+) {
   const queryParams = event.queryStringParameters || {};
   const { id } = queryParams;
 
@@ -348,7 +386,7 @@ async function deleteTournament(event, _context, { userId: _userId, requestId })
       "Tournament ID is required",
       400,
       "validation_error",
-      requestId
+      requestId,
     );
   }
 
@@ -375,7 +413,7 @@ async function deleteTournament(event, _context, { userId: _userId, requestId })
 
   return createSuccessResponse(
     { message: `Tournament "${existing.name}" deleted successfully` },
-    requestId
+    requestId,
   );
 }
 
@@ -384,28 +422,36 @@ async function deleteTournament(event, _context, { userId: _userId, requestId })
 // =====================================================
 
 function getCalculatedStatus(startDate, endDate, today) {
-  if (!startDate) {return "upcoming";}
-  
+  if (!startDate) {
+    return "upcoming";
+  }
+
   const start = startDate.split("T")[0];
   const end = (endDate || startDate).split("T")[0];
-  
-  if (today < start) {return "upcoming";}
-  if (today > end) {return "completed";}
+
+  if (today < start) {
+    return "upcoming";
+  }
+  if (today > end) {
+    return "completed";
+  }
   return "ongoing";
 }
 
 function getDaysUntil(startDate) {
-  if (!startDate) {return null;}
-  
+  if (!startDate) {
+    return null;
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const start = new Date(startDate);
   start.setHours(0, 0, 0, 0);
-  
+
   const diffTime = start.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   return diffDays > 0 ? diffDays : 0;
 }
 

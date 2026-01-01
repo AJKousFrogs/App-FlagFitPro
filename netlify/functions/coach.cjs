@@ -7,7 +7,10 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin, db } = require("./supabase-client.cjs");
-const { ConsentDataReader, AccessContext } = require("./utils/consent-data-reader.cjs");
+const {
+  ConsentDataReader,
+  AccessContext,
+} = require("./utils/consent-data-reader.cjs");
 const { DataState } = require("./utils/data-state.cjs");
 
 // Initialize consent-aware data reader
@@ -34,7 +37,7 @@ async function getCoachTeamId(coachId) {
 /**
  * Get coach dashboard data
  * Returns squad overview, risk flags, and upcoming fixtures
- * 
+ *
  * Uses ConsentDataReader for consent-protected tables (training_sessions, wellness_entries)
  */
 async function getCoachDashboard(userId) {
@@ -75,10 +78,12 @@ async function getCoachDashboard(userId) {
         });
 
         const sessions = sessionsResult.data || [];
-        
+
         // Track blocked players
         if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
-          sessionsResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+          sessionsResult.consentInfo.blockedPlayerIds.forEach((id) =>
+            allBlockedPlayerIds.add(id),
+          );
         }
 
         // Calculate ACWR (Acute:Chronic Workload Ratio)
@@ -99,14 +104,17 @@ async function getCoachDashboard(userId) {
 
           acwr = chronic > 0 ? acute / chronic : 1.0;
           workload = acute; // Weekly workload
-          dataState = sessions.length >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA;
+          dataState =
+            sessions.length >= 7
+              ? DataState.REAL_DATA
+              : DataState.INSUFFICIENT_DATA;
           totalAccessibleCount += sessions.length;
         }
 
         // Calculate readiness from wellness data using ConsentDataReader
         let readiness = 75; // Default baseline
         let wellnessDataState = DataState.NO_DATA;
-        
+
         try {
           const wellnessResult = await consentReader.readWellnessEntries({
             requesterId: userId,
@@ -120,7 +128,9 @@ async function getCoachDashboard(userId) {
 
           // Track blocked players from wellness
           if (wellnessResult.consentInfo?.blockedPlayerIds?.length > 0) {
-            wellnessResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+            wellnessResult.consentInfo.blockedPlayerIds.forEach((id) =>
+              allBlockedPlayerIds.add(id),
+            );
           }
 
           const wellnessData = wellnessResult.data || [];
@@ -133,9 +143,15 @@ async function getCoachDashboard(userId) {
             const stressScore = (10 - (w.stress_level || 5)) * 10; // Inverse
             const sorenessScore = (10 - (w.muscle_soreness || 5)) * 10; // Inverse
             const moodScore = (w.mood || 5) * 10;
-            
-            const wellnessAvg = (sleepScore + energyScore + stressScore + sorenessScore + moodScore) / 5;
-            
+
+            const wellnessAvg =
+              (sleepScore +
+                energyScore +
+                stressScore +
+                sorenessScore +
+                moodScore) /
+              5;
+
             // Combine wellness with ACWR impact
             const acwrPenalty = Math.abs(acwr - 1.0) * 15; // Penalty for being far from optimal ACWR
             readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
@@ -145,7 +161,10 @@ async function getCoachDashboard(userId) {
             readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
           }
         } catch (wellnessErr) {
-          console.warn(`Could not fetch wellness for user ${member.user_id}:`, wellnessErr.message);
+          console.warn(
+            `Could not fetch wellness for user ${member.user_id}:`,
+            wellnessErr.message,
+          );
           readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
         }
 
@@ -182,7 +201,8 @@ async function getCoachDashboard(userId) {
         blockedCount: allBlockedPlayerIds.size,
         accessibleCount: totalAccessibleCount,
       },
-      dataState: squadMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
+      dataState:
+        squadMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
     };
   } catch (error) {
     console.error("Error getting coach dashboard:", error);
@@ -193,7 +213,7 @@ async function getCoachDashboard(userId) {
 /**
  * Get team information
  * Returns team members with their stats
- * 
+ *
  * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
 async function getTeamInfo(userId, coachId) {
@@ -243,7 +263,9 @@ async function getTeamInfo(userId, coachId) {
 
           // Track blocked players
           if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
-            sessionsResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+            sessionsResult.consentInfo.blockedPlayerIds.forEach((id) =>
+              allBlockedPlayerIds.add(id),
+            );
           }
 
           let acwr = 1.0;
@@ -263,7 +285,10 @@ async function getTeamInfo(userId, coachId) {
 
             acwr = chronic > 0 ? acute / chronic : 1.0;
             workload = acute;
-            dataState = sessions.length >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA;
+            dataState =
+              sessions.length >= 7
+                ? DataState.REAL_DATA
+                : DataState.INSUFFICIENT_DATA;
             totalAccessibleCount += sessions.length;
           }
 
@@ -298,7 +323,8 @@ async function getTeamInfo(userId, coachId) {
         blockedCount: allBlockedPlayerIds.size,
         accessibleCount: totalAccessibleCount,
       },
-      dataState: enrichedMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
+      dataState:
+        enrichedMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
     };
   } catch (error) {
     console.error("Error getting team info:", error);
@@ -309,7 +335,7 @@ async function getTeamInfo(userId, coachId) {
 /**
  * Get training analytics
  * Returns training statistics and trends
- * 
+ *
  * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
 async function getTrainingAnalytics(userId, coachId) {
@@ -413,7 +439,8 @@ async function getTrainingAnalytics(userId, coachId) {
       trends,
       distribution,
       consentInfo,
-      dataState: totalSessions >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA,
+      dataState:
+        totalSessions >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA,
     };
   } catch (error) {
     console.error("Error getting training analytics:", error);

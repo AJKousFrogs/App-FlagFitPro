@@ -28,7 +28,8 @@ const RECOVERY_PROTOCOLS = {
   active_recovery: {
     category: "active_recovery",
     name: "Active Recovery",
-    description: "Light movement to promote blood flow and reduce muscle stiffness",
+    description:
+      "Light movement to promote blood flow and reduce muscle stiffness",
     techniques: [
       {
         name: "Light Walking",
@@ -80,8 +81,15 @@ const RECOVERY_PROTOCOLS = {
           "Stay for 10-15 minutes",
           "Gradually warm up after",
         ],
-        benefits: ["Reduces inflammation", "Decreases muscle soreness", "Vasoconstriction"],
-        cautions: ["Not recommended before strength training", "Avoid if you have circulation issues"],
+        benefits: [
+          "Reduces inflammation",
+          "Decreases muscle soreness",
+          "Vasoconstriction",
+        ],
+        cautions: [
+          "Not recommended before strength training",
+          "Avoid if you have circulation issues",
+        ],
       },
       {
         name: "Cold Shower",
@@ -107,7 +115,11 @@ const RECOVERY_PROTOCOLS = {
           "15-20 minutes on, 40 minutes off",
           "Can repeat 2-3 times",
         ],
-        benefits: ["Targeted relief", "Reduces local inflammation", "Pain relief"],
+        benefits: [
+          "Targeted relief",
+          "Reduces local inflammation",
+          "Pain relief",
+        ],
       },
       {
         name: "Contrast Therapy",
@@ -120,10 +132,19 @@ const RECOVERY_PROTOCOLS = {
           "Repeat 3-4 cycles",
           "End on cold",
         ],
-        benefits: ["Pumping action", "Enhanced blood flow", "Reduced stiffness"],
+        benefits: [
+          "Pumping action",
+          "Enhanced blood flow",
+          "Reduced stiffness",
+        ],
       },
     ],
-    contraindications: ["Raynaud's disease", "Cold allergies", "Open wounds", "Numbness/nerve damage"],
+    contraindications: [
+      "Raynaud's disease",
+      "Cold allergies",
+      "Open wounds",
+      "Numbness/nerve damage",
+    ],
     evidence_level: "Moderate-Strong",
   },
 
@@ -144,8 +165,17 @@ const RECOVERY_PROTOCOLS = {
           "Cool down gradually",
           "Rehydrate after",
         ],
-        benefits: ["Muscle relaxation", "Improved circulation", "Heat shock proteins", "Mental relaxation"],
-        cautions: ["Stay hydrated", "Avoid alcohol", "Not immediately post-exercise"],
+        benefits: [
+          "Muscle relaxation",
+          "Improved circulation",
+          "Heat shock proteins",
+          "Mental relaxation",
+        ],
+        cautions: [
+          "Stay hydrated",
+          "Avoid alcohol",
+          "Not immediately post-exercise",
+        ],
       },
       {
         name: "Hot Bath/Epsom Salt Bath",
@@ -158,7 +188,12 @@ const RECOVERY_PROTOCOLS = {
           "Soak for 15-20 minutes",
           "Hydrate during and after",
         ],
-        benefits: ["Muscle relaxation", "Stress relief", "Improved sleep", "Magnesium absorption (Epsom)"],
+        benefits: [
+          "Muscle relaxation",
+          "Stress relief",
+          "Improved sleep",
+          "Magnesium absorption (Epsom)",
+        ],
       },
       {
         name: "Heat Pack Application",
@@ -171,10 +206,19 @@ const RECOVERY_PROTOCOLS = {
           "15-20 minutes application",
           "Follow with gentle stretching",
         ],
-        benefits: ["Localized relief", "Muscle relaxation", "Improved flexibility"],
+        benefits: [
+          "Localized relief",
+          "Muscle relaxation",
+          "Improved flexibility",
+        ],
       },
     ],
-    contraindications: ["Acute injuries (first 48-72 hours)", "Inflammation", "Fever", "Pregnancy (sauna)"],
+    contraindications: [
+      "Acute injuries (first 48-72 hours)",
+      "Inflammation",
+      "Fever",
+      "Pregnancy (sauna)",
+    ],
     evidence_level: "Moderate",
   },
 
@@ -182,7 +226,8 @@ const RECOVERY_PROTOCOLS = {
   compression: {
     category: "compression",
     name: "Compression Therapy",
-    description: "External pressure to reduce swelling and improve venous return",
+    description:
+      "External pressure to reduce swelling and improve venous return",
     techniques: [
       {
         name: "Compression Garments",
@@ -195,7 +240,11 @@ const RECOVERY_PROTOCOLS = {
           "Continue 2-12 hours post-exercise",
           "Remove for sleeping (unless prescribed)",
         ],
-        benefits: ["Reduced muscle oscillation", "Improved proprioception", "Faster lactate clearance"],
+        benefits: [
+          "Reduced muscle oscillation",
+          "Improved proprioception",
+          "Faster lactate clearance",
+        ],
       },
       {
         name: "Pneumatic Compression (NormaTec, etc.)",
@@ -208,7 +257,11 @@ const RECOVERY_PROTOCOLS = {
           "20-30 minute session",
           "Can use while resting/stretching",
         ],
-        benefits: ["Enhanced lymphatic drainage", "Reduced swelling", "Improved circulation"],
+        benefits: [
+          "Enhanced lymphatic drainage",
+          "Reduced swelling",
+          "Improved circulation",
+        ],
       },
       {
         name: "Elevation + Compression",
@@ -223,7 +276,11 @@ const RECOVERY_PROTOCOLS = {
         benefits: ["Venous return", "Reduced pooling", "Relaxation"],
       },
     ],
-    contraindications: ["Peripheral vascular disease", "Deep vein thrombosis", "Skin infections"],
+    contraindications: [
+      "Peripheral vascular disease",
+      "Deep vein thrombosis",
+      "Skin infections",
+    ],
     evidence_level: "Moderate",
   },
 
@@ -244,8 +301,20 @@ const RECOVERY_PROTOCOLS = {
           "Pause on tender spots (30 sec)",
           "Breathe through discomfort",
         ],
-        areas: ["Quads", "IT band", "Hamstrings", "Glutes", "Upper back", "Lats", "Calves"],
-        benefits: ["Increased ROM", "Reduced muscle tension", "Improved blood flow"],
+        areas: [
+          "Quads",
+          "IT band",
+          "Hamstrings",
+          "Glutes",
+          "Upper back",
+          "Lats",
+          "Calves",
+        ],
+        benefits: [
+          "Increased ROM",
+          "Reduced muscle tension",
+          "Improved blood flow",
+        ],
       },
       {
         name: "Massage Gun/Percussion Therapy",
@@ -271,7 +340,13 @@ const RECOVERY_PROTOCOLS = {
           "Move slightly to adjacent areas",
           "Breathe and relax into pressure",
         ],
-        areas: ["Glutes/piriformis", "Upper back", "Feet", "Hip flexors", "Pecs"],
+        areas: [
+          "Glutes/piriformis",
+          "Upper back",
+          "Feet",
+          "Hip flexors",
+          "Pecs",
+        ],
         benefits: ["Targeted release", "Inexpensive", "Highly portable"],
       },
       {
@@ -291,11 +366,25 @@ const RECOVERY_PROTOCOLS = {
         name: "Professional Massage",
         duration: "30-90 minutes",
         frequency: "Weekly or bi-weekly for athletes",
-        types: ["Sports massage", "Deep tissue", "Swedish", "Myofascial release"],
-        benefits: ["Expert assessment", "Full body treatment", "Injury prevention"],
+        types: [
+          "Sports massage",
+          "Deep tissue",
+          "Swedish",
+          "Myofascial release",
+        ],
+        benefits: [
+          "Expert assessment",
+          "Full body treatment",
+          "Injury prevention",
+        ],
       },
     ],
-    contraindications: ["Acute injuries", "Bruising", "Skin conditions", "Blood clots"],
+    contraindications: [
+      "Acute injuries",
+      "Bruising",
+      "Skin conditions",
+      "Blood clots",
+    ],
     evidence_level: "Moderate-Strong",
   },
 
@@ -342,7 +431,11 @@ const RECOVERY_PROTOCOLS = {
         duration: "20-30 minutes OR 90 minutes",
         when: "Early afternoon (1-3 PM)",
         caution: "Avoid napping after 3 PM",
-        benefits: ["Cognitive restoration", "Physical recovery", "Mood improvement"],
+        benefits: [
+          "Cognitive restoration",
+          "Physical recovery",
+          "Mood improvement",
+        ],
       },
     ],
     evidence_level: "Very Strong",
@@ -362,7 +455,11 @@ const RECOVERY_PROTOCOLS = {
           carbs: "0.5-1g per kg body weight",
           fluids: "500-750ml per 0.5kg lost",
         },
-        examples: ["Protein shake + banana", "Chocolate milk", "Greek yogurt + fruit"],
+        examples: [
+          "Protein shake + banana",
+          "Chocolate milk",
+          "Greek yogurt + fruit",
+        ],
       },
       {
         name: "Short-Term Recovery (1-4 hours)",
@@ -372,7 +469,10 @@ const RECOVERY_PROTOCOLS = {
           carbs: "Complex carbs to replenish glycogen",
           vegetables: "Antioxidants and micronutrients",
         },
-        examples: ["Chicken + rice + vegetables", "Salmon + sweet potato + greens"],
+        examples: [
+          "Chicken + rice + vegetables",
+          "Salmon + sweet potato + greens",
+        ],
       },
       {
         name: "Extended Recovery (4-24 hours)",
@@ -423,116 +523,124 @@ const RECOVERY_PROTOCOLS = {
  */
 function generateRecoveryRecommendations(params) {
   const {
-    trainingType: _trainingType,        // 'strength', 'speed', 'agility', 'game', 'conditioning'
-    intensity,           // 1-10 scale
-    duration: _duration,            // minutes
-    muscleGroups = [],   // ['legs', 'upper_body', 'core', 'full_body']
-    timeAvailable,       // minutes available for recovery
-    equipment = [],      // ['foam_roller', 'massage_gun', 'ice_bath', 'sauna', 'compression']
-    soreness = 0,        // current soreness level 1-10
-    sleepQuality,        // 'poor', 'fair', 'good', 'excellent'
+    trainingType: _trainingType, // 'strength', 'speed', 'agility', 'game', 'conditioning'
+    intensity, // 1-10 scale
+    duration: _duration, // minutes
+    muscleGroups = [], // ['legs', 'upper_body', 'core', 'full_body']
+    timeAvailable, // minutes available for recovery
+    equipment = [], // ['foam_roller', 'massage_gun', 'ice_bath', 'sauna', 'compression']
+    soreness = 0, // current soreness level 1-10
+    sleepQuality, // 'poor', 'fair', 'good', 'excellent'
     daysUntilNextSession = 1,
   } = params;
 
   const recommendations = {
-    immediate: [],      // Do right after training
-    sameDay: [],        // Later same day
-    nextDay: [],        // Following day
-    ongoing: [],        // General recommendations
-    priority: 'normal', // 'low', 'normal', 'high', 'critical'
+    immediate: [], // Do right after training
+    sameDay: [], // Later same day
+    nextDay: [], // Following day
+    ongoing: [], // General recommendations
+    priority: "normal", // 'low', 'normal', 'high', 'critical'
   };
 
   // Determine recovery priority based on intensity and time until next session
   if (intensity >= 8 || (intensity >= 6 && daysUntilNextSession <= 1)) {
-    recommendations.priority = 'high';
+    recommendations.priority = "high";
   } else if (intensity >= 9 || soreness >= 7) {
-    recommendations.priority = 'critical';
+    recommendations.priority = "critical";
   } else if (intensity <= 4) {
-    recommendations.priority = 'low';
+    recommendations.priority = "low";
   }
 
   // Immediate recovery (0-30 min post-training)
   recommendations.immediate.push({
-    protocol: 'nutrition_recovery',
-    technique: 'Immediate Post-Exercise',
-    duration: '15-30 minutes',
-    priority: 'high',
-    reason: 'Optimal window for protein synthesis and glycogen replenishment',
+    protocol: "nutrition_recovery",
+    technique: "Immediate Post-Exercise",
+    duration: "15-30 minutes",
+    priority: "high",
+    reason: "Optimal window for protein synthesis and glycogen replenishment",
   });
 
-  if (equipment.includes('foam_roller') || timeAvailable >= 10) {
+  if (equipment.includes("foam_roller") || timeAvailable >= 10) {
     recommendations.immediate.push({
-      protocol: 'manual_therapy',
-      technique: 'Foam Rolling',
-      duration: '10-15 minutes',
-      priority: 'medium',
+      protocol: "manual_therapy",
+      technique: "Foam Rolling",
+      duration: "10-15 minutes",
+      priority: "medium",
       focus: muscleGroups,
-      reason: 'Reduce muscle tension and improve blood flow',
+      reason: "Reduce muscle tension and improve blood flow",
     });
   }
 
   // Cold therapy for high intensity
-  if (intensity >= 7 && (equipment.includes('ice_bath') || equipment.includes('cold_shower'))) {
+  if (
+    intensity >= 7 &&
+    (equipment.includes("ice_bath") || equipment.includes("cold_shower"))
+  ) {
     recommendations.immediate.push({
-      protocol: 'cryotherapy',
-      technique: equipment.includes('ice_bath') ? 'Ice Bath' : 'Cold Shower',
-      duration: equipment.includes('ice_bath') ? '10-15 minutes' : '3-5 minutes',
-      priority: 'medium',
-      reason: 'Reduce inflammation and accelerate recovery from high-intensity training',
-      caution: 'May blunt strength adaptations if used consistently after strength training',
+      protocol: "cryotherapy",
+      technique: equipment.includes("ice_bath") ? "Ice Bath" : "Cold Shower",
+      duration: equipment.includes("ice_bath")
+        ? "10-15 minutes"
+        : "3-5 minutes",
+      priority: "medium",
+      reason:
+        "Reduce inflammation and accelerate recovery from high-intensity training",
+      caution:
+        "May blunt strength adaptations if used consistently after strength training",
     });
   }
 
   // Same day recovery
   if (timeAvailable >= 30) {
     recommendations.sameDay.push({
-      protocol: 'active_recovery',
-      technique: 'Light Walking',
-      duration: '15-20 minutes',
-      priority: 'medium',
-      reason: 'Promote blood flow without adding stress',
+      protocol: "active_recovery",
+      technique: "Light Walking",
+      duration: "15-20 minutes",
+      priority: "medium",
+      reason: "Promote blood flow without adding stress",
     });
   }
 
-  if (equipment.includes('compression')) {
+  if (equipment.includes("compression")) {
     recommendations.sameDay.push({
-      protocol: 'compression',
-      technique: 'Compression Garments',
-      duration: '2-4 hours',
-      priority: 'low',
-      reason: 'Support venous return and reduce swelling',
+      protocol: "compression",
+      technique: "Compression Garments",
+      duration: "2-4 hours",
+      priority: "low",
+      reason: "Support venous return and reduce swelling",
     });
   }
 
   // Evening/night recovery
-  if (equipment.includes('sauna') && intensity <= 7) {
+  if (equipment.includes("sauna") && intensity <= 7) {
     recommendations.sameDay.push({
-      protocol: 'heat_therapy',
-      technique: 'Sauna',
-      duration: '15-20 minutes',
-      priority: 'low',
-      timing: 'Evening, 2+ hours after training',
-      reason: 'Muscle relaxation and heat shock protein activation',
+      protocol: "heat_therapy",
+      technique: "Sauna",
+      duration: "15-20 minutes",
+      priority: "low",
+      timing: "Evening, 2+ hours after training",
+      reason: "Muscle relaxation and heat shock protein activation",
     });
   }
 
   recommendations.sameDay.push({
-    protocol: 'manual_therapy',
-    technique: 'Static Stretching',
-    duration: '15-20 minutes',
-    priority: 'medium',
-    timing: 'Evening',
+    protocol: "manual_therapy",
+    technique: "Static Stretching",
+    duration: "15-20 minutes",
+    priority: "medium",
+    timing: "Evening",
     focus: muscleGroups,
-    reason: 'Improve flexibility and reduce next-day stiffness',
+    reason: "Improve flexibility and reduce next-day stiffness",
   });
 
   // Sleep recommendation based on quality
-  if (sleepQuality === 'poor' || sleepQuality === 'fair') {
+  if (sleepQuality === "poor" || sleepQuality === "fair") {
     recommendations.sameDay.push({
-      protocol: 'sleep',
-      technique: 'Sleep Hygiene Protocol',
-      priority: 'high',
-      reason: 'Poor sleep significantly impairs recovery. Focus on sleep quality tonight.',
+      protocol: "sleep",
+      technique: "Sleep Hygiene Protocol",
+      priority: "high",
+      reason:
+        "Poor sleep significantly impairs recovery. Focus on sleep quality tonight.",
       tips: RECOVERY_PROTOCOLS.sleep.techniques[0].protocol,
     });
   }
@@ -540,45 +648,50 @@ function generateRecoveryRecommendations(params) {
   // Next day recovery
   if (soreness >= 5 || intensity >= 7) {
     recommendations.nextDay.push({
-      protocol: 'active_recovery',
-      technique: 'Light Activity',
-      duration: '20-30 minutes',
-      priority: 'medium',
-      options: ['Walking', 'Swimming', 'Easy cycling', 'Yoga'],
-      reason: 'Active recovery reduces DOMS more effectively than complete rest',
+      protocol: "active_recovery",
+      technique: "Light Activity",
+      duration: "20-30 minutes",
+      priority: "medium",
+      options: ["Walking", "Swimming", "Easy cycling", "Yoga"],
+      reason:
+        "Active recovery reduces DOMS more effectively than complete rest",
     });
   }
 
-  if (equipment.includes('massage_gun')) {
+  if (equipment.includes("massage_gun")) {
     recommendations.nextDay.push({
-      protocol: 'manual_therapy',
-      technique: 'Massage Gun',
-      duration: '10-15 minutes',
-      priority: 'medium',
+      protocol: "manual_therapy",
+      technique: "Massage Gun",
+      duration: "10-15 minutes",
+      priority: "medium",
       focus: muscleGroups,
-      reason: 'Address any remaining muscle tension',
+      reason: "Address any remaining muscle tension",
     });
   }
 
   // Ongoing recommendations
   recommendations.ongoing.push({
-    protocol: 'nutrition_recovery',
-    technique: 'Extended Recovery Nutrition',
-    priority: 'high',
+    protocol: "nutrition_recovery",
+    technique: "Extended Recovery Nutrition",
+    priority: "high",
     tips: [
-      'Protein with every meal (20-40g)',
-      'Stay hydrated (aim for clear/light yellow urine)',
-      'Include anti-inflammatory foods (fish, berries, leafy greens)',
-      'Limit alcohol (impairs recovery)',
+      "Protein with every meal (20-40g)",
+      "Stay hydrated (aim for clear/light yellow urine)",
+      "Include anti-inflammatory foods (fish, berries, leafy greens)",
+      "Limit alcohol (impairs recovery)",
     ],
   });
 
   recommendations.ongoing.push({
-    protocol: 'sleep',
-    technique: 'Consistent Sleep Schedule',
-    priority: 'high',
-    target: '7-9 hours per night',
-    tips: ['Same bedtime/wake time daily', 'Dark, cool room', 'No screens before bed'],
+    protocol: "sleep",
+    technique: "Consistent Sleep Schedule",
+    priority: "high",
+    target: "7-9 hours per night",
+    tips: [
+      "Same bedtime/wake time daily",
+      "Dark, cool room",
+      "No screens before bed",
+    ],
   });
 
   return recommendations;
@@ -600,7 +713,8 @@ function getAllProtocolsSummary() {
     category: protocol.category,
     name: protocol.name,
     description: protocol.description,
-    techniqueCount: protocol.techniques?.length || protocol.recommendations ? 1 : 0,
+    techniqueCount:
+      protocol.techniques?.length || protocol.recommendations ? 1 : 0,
     evidenceLevel: protocol.evidence_level,
   }));
 }
@@ -632,15 +746,20 @@ async function getAthleteRecoveryProfile(userId) {
 async function saveAthleteRecoveryProfile(userId, profileData) {
   const { data, error } = await supabaseAdmin
     .from("athlete_recovery_profiles")
-    .upsert({
-      user_id: userId,
-      ...profileData,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" })
+    .upsert(
+      {
+        user_id: userId,
+        ...profileData,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    )
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -658,7 +777,9 @@ async function logRecoverySession(userId, sessionData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -673,7 +794,9 @@ async function getRecoveryHistory(userId, limit = 30) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -692,7 +815,9 @@ async function getStoredProtocols(filters = {}) {
 
   const { data, error } = await query.order("name");
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -701,10 +826,11 @@ async function getStoredProtocols(filters = {}) {
 // =============================================================================
 
 async function handleRequest(event, _context, { userId }) {
-  const path = event.path
-    .replace("/.netlify/functions/recovery", "")
-    .replace(/^\/api\/recovery\/?/, "")
-    .replace(/^\//, "") || "";
+  const path =
+    event.path
+      .replace("/.netlify/functions/recovery", "")
+      .replace(/^\/api\/recovery\/?/, "")
+      .replace(/^\//, "") || "";
 
   let body = {};
   if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
@@ -730,11 +856,11 @@ async function handleRequest(event, _context, { userId }) {
     if (event.httpMethod === "GET" && path.startsWith("protocols/")) {
       const category = path.replace("protocols/", "");
       const protocol = getProtocolDetails(category);
-      
+
       if (!protocol) {
         return createErrorResponse("Protocol not found", 404, "not_found");
       }
-      
+
       return createSuccessResponse(protocol);
     }
 
@@ -750,7 +876,8 @@ async function handleRequest(event, _context, { userId }) {
       if (!profile) {
         return createSuccessResponse({
           exists: false,
-          message: "No recovery profile found. Create one with POST /recovery/profile",
+          message:
+            "No recovery profile found. Create one with POST /recovery/profile",
         });
       }
       return createSuccessResponse(profile);
@@ -771,7 +898,10 @@ async function handleRequest(event, _context, { userId }) {
     // Get recovery history
     if (event.httpMethod === "GET" && path === "history") {
       const params = event.queryStringParameters || {};
-      const history = await getRecoveryHistory(userId, parseInt(params.limit) || 30);
+      const history = await getRecoveryHistory(
+        userId,
+        parseInt(params.limit) || 30,
+      );
       return createSuccessResponse(history);
     }
 
@@ -783,7 +913,6 @@ async function handleRequest(event, _context, { userId }) {
     }
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
-
   } catch (error) {
     console.error("Recovery API error:", error);
     throw error;

@@ -448,7 +448,10 @@ export class TrainingHeatmapComponent {
     return cell.date.toISOString();
   }
 
-  trackByStep(index: number, step: { title: string; description: string }): number {
+  trackByStep(
+    index: number,
+    step: { title: string; description: string },
+  ): number {
     return index;
   }
 }

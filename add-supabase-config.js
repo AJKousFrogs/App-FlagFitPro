@@ -73,7 +73,6 @@ pagesToUpdate.forEach((filename) => {
   const filePath = path.join(__dirname, filename);
 
   if (!fs.existsSync(filePath)) {
-     
     console.log(`⚠️  Skipped: ${filename} (file not found)`);
     skipped++;
     return;
@@ -83,7 +82,6 @@ pagesToUpdate.forEach((filename) => {
 
   // Check if already has Supabase config
   if (content.includes("window._env") && content.includes("SUPABASE_URL")) {
-     
     console.log(`✅ Skipped: ${filename} (already has config)`);
     skipped++;
     return;
@@ -92,12 +90,11 @@ pagesToUpdate.forEach((filename) => {
   // Find a good insertion point - after <head> tag or before first <script>
   if (content.includes("</head>")) {
     // Insert before </head>
-    content = content.replace("</head>", `${supabaseConfig  }\n  </head>`);
+    content = content.replace("</head>", `${supabaseConfig}\n  </head>`);
   } else if (content.includes("<script")) {
     // Insert before first script tag
-    content = content.replace(/<script/, `${supabaseConfig  }\n    <script`);
+    content = content.replace(/<script/, `${supabaseConfig}\n    <script`);
   } else {
-     
     console.log(`⚠️  Skipped: ${filename} (no insertion point found)`);
     skipped++;
     return;
@@ -105,14 +102,13 @@ pagesToUpdate.forEach((filename) => {
 
   // Write back to file
   fs.writeFileSync(filePath, content);
-   
+
   console.log(`✅ Updated: ${filename}`);
   updated++;
 });
 
- 
 console.log(`\n📊 Summary:`);
- 
+
 console.log(`   Updated: ${updated} files`);
- 
+
 console.log(`   Skipped: ${skipped} files`);

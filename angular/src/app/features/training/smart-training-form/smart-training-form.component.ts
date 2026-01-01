@@ -449,7 +449,8 @@ export class SmartTrainingFormComponent implements OnInit {
     if (!user) return;
 
     // Load recent performance data from Supabase
-    let recentPerformance: Array<{ date: string; rpe: number; type: string }> = [];
+    let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
+      [];
     try {
       const { data: sessions } = await this.supabaseService.client
         .from("training_sessions")
@@ -470,7 +471,11 @@ export class SmartTrainingFormComponent implements OnInit {
     }
 
     // Load upcoming games/events
-    let upcomingGames: Array<{ date: string; opponent?: string; importance?: string }> = [];
+    let upcomingGames: Array<{
+      date: string;
+      opponent?: string;
+      importance?: string;
+    }> = [];
     try {
       const { data: events } = await this.supabaseService.client
         .from("team_events")
@@ -508,22 +513,24 @@ export class SmartTrainingFormComponent implements OnInit {
   }
 
   private async loadWeatherData() {
-    this.weatherService.getWeatherData()
+    this.weatherService
+      .getWeatherData()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (weather) => {
-        this.weatherData.set(weather);
-      },
-      error: (error) => {
-        this.logger.error("Error loading weather data:", error);
-      },
-    });
+        next: (weather) => {
+          this.weatherData.set(weather);
+        },
+        error: (error) => {
+          this.logger.error("Error loading weather data:", error);
+        },
+      });
   }
 
   private setupFormWatchers() {
     // Update recommended equipment when session type changes
-    this.trainingForm.get("sessionType")?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.trainingForm
+      .get("sessionType")
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((type) => {
         this.updateRecommendedEquipment(type);
       });
@@ -638,7 +645,8 @@ export class SmartTrainingFormComponent implements OnInit {
         this.router.navigate(["/training/schedule"]);
       }, 1000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to create session";
+      const message =
+        error instanceof Error ? error.message : "Failed to create session";
       this.toastService.error(message);
       this.logger.error("Error creating training session:", error);
     } finally {

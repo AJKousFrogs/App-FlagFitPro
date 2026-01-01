@@ -9,25 +9,37 @@
  * - onClick handlers for drill-down
  */
 
-import { ChartOptions, TooltipItem, Chart, LegendItem, ChartEvent, ActiveElement, LegendElement } from 'chart.js';
+import {
+  ChartOptions,
+  TooltipItem,
+  Chart,
+  LegendItem,
+  ChartEvent,
+  ActiveElement,
+  LegendElement,
+} from "chart.js";
 
 /**
  * Calculate trend from data points
  */
-function calculateTrend(data: number[]): { direction: 'up' | 'down' | 'stable'; percentage: number } {
-  if (data.length < 2) return { direction: 'stable', percentage: 0 };
+function calculateTrend(data: number[]): {
+  direction: "up" | "down" | "stable";
+  percentage: number;
+} {
+  if (data.length < 2) return { direction: "stable", percentage: 0 };
 
   const first = data[0];
   const last = data[data.length - 1];
 
-  if (first === 0) return { direction: last > 0 ? 'up' : 'stable', percentage: 0 };
+  if (first === 0)
+    return { direction: last > 0 ? "up" : "stable", percentage: 0 };
 
   const percentage = ((last - first) / first) * 100;
 
-  if (Math.abs(percentage) < 1) return { direction: 'stable', percentage: 0 };
+  if (Math.abs(percentage) < 1) return { direction: "stable", percentage: 0 };
   return {
-    direction: percentage > 0 ? 'up' : 'down',
-    percentage: Math.abs(percentage)
+    direction: percentage > 0 ? "up" : "down",
+    percentage: Math.abs(percentage),
   };
 }
 
@@ -35,7 +47,7 @@ function calculateTrend(data: number[]): { direction: 'up' | 'down' | 'stable'; 
  * Get responsive font size based on screen width
  */
 function getResponsiveFontSize(baseSize: number): number {
-  if (typeof window === 'undefined') return baseSize;
+  if (typeof window === "undefined") return baseSize;
 
   const width = window.innerWidth;
 
@@ -53,13 +65,13 @@ function getResponsiveFontSize(baseSize: number): number {
  */
 export const CUSTOM_TOOLTIP_CALLBACKS = {
   title: (tooltipItems: TooltipItem<any>[]) => {
-    return tooltipItems[0]?.label || '';
+    return tooltipItems[0]?.label || "";
   },
 
   label: (tooltipItem: TooltipItem<any>) => {
     const dataset = tooltipItem.dataset;
     const value = tooltipItem.parsed.y;
-    const label = dataset.label || '';
+    const label = dataset.label || "";
 
     return `${label}: ${value}`;
   },
@@ -71,22 +83,22 @@ export const CUSTOM_TOOLTIP_CALLBACKS = {
     // Calculate trend for this dataset
     const trend = calculateTrend(datasetData);
 
-    if (trend.direction === 'stable') {
-      return ['', 'Trend: Stable'];
+    if (trend.direction === "stable") {
+      return ["", "Trend: Stable"];
     }
 
-    const arrow = trend.direction === 'up' ? '↑' : '↓';
+    const arrow = trend.direction === "up" ? "↑" : "↓";
     return [
-      '',
+      "",
       `Trend: ${arrow} ${trend.percentage.toFixed(1)}%`,
-      trend.direction === 'up' ? 'Improving' : 'Declining'
+      trend.direction === "up" ? "Improving" : "Declining",
     ];
   },
 
   footer: (tooltipItems: TooltipItem<any>[]) => {
     // Add contextual information
-    return ['', 'Click to view details'];
-  }
+    return ["", "Click to view details"];
+  },
 };
 
 /**
@@ -98,12 +110,16 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
 
   // Interaction settings
   interaction: {
-    mode: 'index',
+    mode: "index",
     intersect: false,
   },
 
   // Custom onClick handler for drill-down
-  onClick: (event: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
+  onClick: (
+    event: ChartEvent,
+    activeElements: ActiveElement[],
+    chart: Chart,
+  ) => {
     if (activeElements.length > 0) {
       const element = activeElements[0];
       const datasetIndex = element.datasetIndex;
@@ -112,14 +128,14 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       const label = chart.data.labels?.[index];
 
       // Dispatch custom event for component to handle
-      const customEvent = new CustomEvent('chartClick', {
+      const customEvent = new CustomEvent("chartClick", {
         detail: {
           datasetLabel: dataset.label,
           dataLabel: label,
           value: dataset.data[index],
           datasetIndex,
-          index
-        }
+          index,
+        },
       });
       chart.canvas.dispatchEvent(customEvent);
     }
@@ -129,30 +145,34 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
     // Legend configuration with toggle
     legend: {
       display: true,
-      position: 'top',
-      align: 'center',
+      position: "top",
+      align: "center",
       labels: {
         usePointStyle: true,
         padding: 15,
         font: {
           size: getResponsiveFontSize(12),
           family: "'Poppins', sans-serif",
-          weight: '500'
+          weight: "500",
         },
-        color: 'var(--color-text-primary)',
+        color: "var(--color-text-primary)",
         generateLabels: (chart: Chart) => {
           const datasets = chart.data.datasets;
           return datasets.map((dataset, i) => ({
-            text: dataset.label || '',
+            text: dataset.label || "",
             fillStyle: dataset.backgroundColor as string,
             strokeStyle: dataset.borderColor as string,
             lineWidth: 2,
             hidden: !chart.isDatasetVisible(i),
-            datasetIndex: i
+            datasetIndex: i,
           }));
-        }
+        },
       },
-      onClick: (e: ChartEvent, legendItem: LegendItem, legend: LegendElement<'line'>) => {
+      onClick: (
+        e: ChartEvent,
+        legendItem: LegendItem,
+        legend: LegendElement<"line">,
+      ) => {
         const index = legendItem.datasetIndex!;
         const chart = legend.chart;
 
@@ -165,36 +185,36 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
         }
 
         chart.update();
-      }
+      },
     },
 
     // Enhanced tooltip
     tooltip: {
       enabled: true,
-      mode: 'index',
+      mode: "index",
       intersect: false,
-      backgroundColor: 'rgba(0, 0, 0, 0.9)',
-      titleColor: '#fff',
-      bodyColor: '#fff',
-      borderColor: 'var(--color-brand-primary)',
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      titleColor: "#fff",
+      bodyColor: "#fff",
+      borderColor: "var(--color-brand-primary)",
       borderWidth: 1,
       padding: 12,
       titleFont: {
         size: getResponsiveFontSize(14),
-        weight: 'bold',
-        family: "'Poppins', sans-serif"
+        weight: "bold",
+        family: "'Poppins', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif"
+        family: "'Poppins', sans-serif",
       },
       footerFont: {
         size: getResponsiveFontSize(11),
         family: "'Poppins', sans-serif",
-        style: 'italic'
+        style: "italic",
       },
       displayColors: true,
-      callbacks: CUSTOM_TOOLTIP_CALLBACKS
+      callbacks: CUSTOM_TOOLTIP_CALLBACKS,
     },
 
     // Zoom plugin configuration
@@ -202,42 +222,42 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       zoom: {
         wheel: {
           enabled: true,
-          speed: 0.1
+          speed: 0.1,
         },
         pinch: {
-          enabled: true
+          enabled: true,
         },
-        mode: 'x',
+        mode: "x",
         onZoomComplete: ({ chart }: { chart: Chart }) => {
           // Dispatch custom event when zoom completes
-          const customEvent = new CustomEvent('chartZoom', {
+          const customEvent = new CustomEvent("chartZoom", {
             detail: {
-              scales: chart.scales
-            }
+              scales: chart.scales,
+            },
           });
           chart.canvas.dispatchEvent(customEvent);
-        }
+        },
       },
       pan: {
         enabled: true,
-        mode: 'x',
-        modifierKey: 'shift',
+        mode: "x",
+        modifierKey: "shift",
         onPanComplete: ({ chart }: { chart: Chart }) => {
           // Dispatch custom event when pan completes
-          const customEvent = new CustomEvent('chartPan', {
+          const customEvent = new CustomEvent("chartPan", {
             detail: {
-              scales: chart.scales
-            }
+              scales: chart.scales,
+            },
           });
           chart.canvas.dispatchEvent(customEvent);
-        }
+        },
       },
       limits: {
         x: {
-          minRange: 2 // Minimum 2 data points visible
-        }
-      }
-    }
+          minRange: 2, // Minimum 2 data points visible
+        },
+      },
+    },
   },
 
   scales: {
@@ -245,124 +265,124 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       display: true,
       grid: {
         display: true,
-        color: 'rgba(0, 0, 0, 0.05)',
-        drawBorder: false
+        color: "rgba(0, 0, 0, 0.05)",
+        drawBorder: false,
       },
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif"
+          family: "'Poppins', sans-serif",
         },
-        color: 'var(--color-text-secondary)',
+        color: "var(--color-text-secondary)",
         maxRotation: 45,
-        minRotation: 0
-      }
+        minRotation: 0,
+      },
     },
     y: {
       display: true,
       beginAtZero: true,
       grid: {
         display: true,
-        color: 'rgba(0, 0, 0, 0.05)',
-        drawBorder: false
+        color: "rgba(0, 0, 0, 0.05)",
+        drawBorder: false,
       },
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif"
+          family: "'Poppins', sans-serif",
         },
-        color: 'var(--color-text-secondary)',
-        padding: 8
-      }
-    }
-  }
+        color: "var(--color-text-secondary)",
+        padding: 8,
+      },
+    },
+  },
 };
 
 /**
  * Line Chart Options with Enhanced Features
  */
-export const ENHANCED_LINE_CHART_OPTIONS: ChartOptions<'line'> = {
+export const ENHANCED_LINE_CHART_OPTIONS: ChartOptions<"line"> = {
   ...ENHANCED_CHART_OPTIONS,
   elements: {
     line: {
       tension: 0.4,
-      borderWidth: 3
+      borderWidth: 3,
     },
     point: {
       radius: 4,
       hitRadius: 10,
       hoverRadius: 6,
-      hoverBorderWidth: 2
-    }
-  }
+      hoverBorderWidth: 2,
+    },
+  },
 };
 
 /**
  * Bar Chart Options with Enhanced Features
  */
-export const ENHANCED_BAR_CHART_OPTIONS: ChartOptions<'bar'> = {
+export const ENHANCED_BAR_CHART_OPTIONS: ChartOptions<"bar"> = {
   ...ENHANCED_CHART_OPTIONS,
   elements: {
     bar: {
       borderWidth: 0,
-      borderRadius: 4
-    }
-  }
+      borderRadius: 4,
+    },
+  },
 };
 
 /**
  * Doughnut Chart Options with Enhanced Features
  */
-export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<'doughnut'> = {
+export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
   ...ENHANCED_CHART_OPTIONS,
   scales: undefined, // Doughnut charts don't use scales
-  cutout: '65%',
+  cutout: "65%",
   plugins: {
     ...ENHANCED_CHART_OPTIONS.plugins,
     legend: {
       ...ENHANCED_CHART_OPTIONS.plugins?.legend,
-      position: 'right'
-    }
-  }
+      position: "right",
+    },
+  },
 };
 
 /**
  * Radar Chart Options with Enhanced Features
  */
-export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
+export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
   responsive: true,
   maintainAspectRatio: false,
 
   interaction: {
-    mode: 'index',
+    mode: "index",
     intersect: false,
   },
 
   plugins: {
     legend: {
       display: true,
-      position: 'top',
+      position: "top",
       labels: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif"
+          family: "'Poppins', sans-serif",
         },
-        color: 'var(--color-text-primary)'
-      }
+        color: "var(--color-text-primary)",
+      },
     },
     tooltip: {
       enabled: true,
-      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
       titleFont: {
         size: getResponsiveFontSize(14),
-        family: "'Poppins', sans-serif"
+        family: "'Poppins', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif"
+        family: "'Poppins', sans-serif",
       },
-      callbacks: CUSTOM_TOOLTIP_CALLBACKS
-    }
+      callbacks: CUSTOM_TOOLTIP_CALLBACKS,
+    },
   },
 
   scales: {
@@ -373,24 +393,24 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
         stepSize: 2,
         font: {
           size: getResponsiveFontSize(11),
-          family: "'Poppins', sans-serif"
+          family: "'Poppins', sans-serif",
         },
-        color: 'var(--color-text-secondary)',
-        backdropColor: 'transparent'
+        color: "var(--color-text-secondary)",
+        backdropColor: "transparent",
       },
       grid: {
-        color: 'rgba(0, 0, 0, 0.1)'
+        color: "rgba(0, 0, 0, 0.1)",
       },
       pointLabels: {
         font: {
           size: getResponsiveFontSize(12),
           family: "'Poppins', sans-serif",
-          weight: 500
+          weight: 500,
         },
-        color: 'var(--color-text-primary)'
-      }
-    }
-  }
+        color: "var(--color-text-primary)",
+      },
+    },
+  },
 };
 
 /**
@@ -398,12 +418,15 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
  * @param chart - Chart.js instance
  * @param filename - Filename for download
  */
-export function exportChartAsPNG(chart: Chart, filename: string = 'chart'): void {
+export function exportChartAsPNG(
+  chart: Chart,
+  filename: string = "chart",
+): void {
   const canvas = chart.canvas;
-  const url = canvas.toDataURL('image/png');
+  const url = canvas.toDataURL("image/png");
 
-  const link = document.createElement('a');
-  link.download = `${filename}-${new Date().toISOString().split('T')[0]}.png`;
+  const link = document.createElement("a");
+  link.download = `${filename}-${new Date().toISOString().split("T")[0]}.png`;
   link.href = url;
   link.click();
 }
@@ -443,33 +466,33 @@ export function updateChartFontSizes(chart: Chart): void {
 
   // Update legend font size
   const legendFont = options.plugins.legend?.labels?.font;
-  if (legendFont && typeof legendFont === 'object' && 'size' in legendFont) {
+  if (legendFont && typeof legendFont === "object" && "size" in legendFont) {
     (legendFont as { size?: number }).size = getResponsiveFontSize(12);
   }
 
   // Update tooltip font sizes
   if (options.plugins.tooltip) {
     const titleFont = options.plugins.tooltip.titleFont;
-    if (titleFont && typeof titleFont === 'object' && 'size' in titleFont) {
+    if (titleFont && typeof titleFont === "object" && "size" in titleFont) {
       (titleFont as { size?: number }).size = getResponsiveFontSize(14);
     }
     const bodyFont = options.plugins.tooltip.bodyFont;
-    if (bodyFont && typeof bodyFont === 'object' && 'size' in bodyFont) {
+    if (bodyFont && typeof bodyFont === "object" && "size" in bodyFont) {
       (bodyFont as { size?: number }).size = getResponsiveFontSize(13);
     }
     const footerFont = options.plugins.tooltip.footerFont;
-    if (footerFont && typeof footerFont === 'object' && 'size' in footerFont) {
+    if (footerFont && typeof footerFont === "object" && "size" in footerFont) {
       (footerFont as { size?: number }).size = getResponsiveFontSize(11);
     }
   }
 
   // Update axis font sizes
   const xFont = options.scales.x?.ticks?.font;
-  if (xFont && typeof xFont === 'object' && 'size' in xFont) {
+  if (xFont && typeof xFont === "object" && "size" in xFont) {
     (xFont as { size?: number }).size = getResponsiveFontSize(12);
   }
   const yFont = options.scales.y?.ticks?.font;
-  if (yFont && typeof yFont === 'object' && 'size' in yFont) {
+  if (yFont && typeof yFont === "object" && "size" in yFont) {
     (yFont as { size?: number }).size = getResponsiveFontSize(12);
   }
 

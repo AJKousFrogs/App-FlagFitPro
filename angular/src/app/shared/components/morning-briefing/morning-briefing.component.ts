@@ -113,7 +113,9 @@ interface TodaysPlan {
             </div>
             <div class="metric">
               <span class="metric-label">Today</span>
-              <span class="metric-value">{{ todaysPlan()?.sessionType || "Rest" }}</span>
+              <span class="metric-value">{{
+                todaysPlan()?.sessionType || "Rest"
+              }}</span>
             </div>
           </div>
 
@@ -123,16 +125,20 @@ interface TodaysPlan {
               <i class="pi pi-flag"></i>
               <span>
                 @if (isGameToday()) {
-                  GAME DAY! {{ upcomingGame()?.opponent }} at {{ upcomingGame()?.time }}
+                  GAME DAY! {{ upcomingGame()?.opponent }} at
+                  {{ upcomingGame()?.time }}
                 } @else {
-                  Game in {{ hoursUntilGame() }}h vs {{ upcomingGame()?.opponent }}
+                  Game in {{ hoursUntilGame() }}h vs
+                  {{ upcomingGame()?.opponent }}
                 }
               </span>
             </div>
           }
 
           <button class="expand-btn" pRipple>
-            <span>{{ hasCheckedInToday() ? "View Details" : "Quick Check-in" }}</span>
+            <span>{{
+              hasCheckedInToday() ? "View Details" : "Quick Check-in"
+            }}</span>
             <i class="pi pi-chevron-down"></i>
           </button>
         </div>
@@ -179,7 +185,9 @@ interface TodaysPlan {
                     ></p-slider>
                     <span class="emoji-label">🔥</span>
                   </div>
-                  <div class="slider-value">{{ quickCheckIn.overallFeeling }}/10</div>
+                  <div class="slider-value">
+                    {{ quickCheckIn.overallFeeling }}/10
+                  </div>
                 </div>
 
                 <!-- Sleep Hours -->
@@ -196,7 +204,10 @@ interface TodaysPlan {
                       suffix=" hrs"
                       styleClass="sleep-number-input"
                     ></p-inputNumber>
-                    <span class="sleep-quality" [class]="getSleepQualityClass()">
+                    <span
+                      class="sleep-quality"
+                      [class]="getSleepQualityClass()"
+                    >
                       {{ getSleepQualityLabel() }}
                     </span>
                   </div>
@@ -257,8 +268,12 @@ interface TodaysPlan {
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-type">
-                    <span class="type-badge">{{ todaysPlan()!.sessionType }}</span>
-                    <span class="duration">{{ todaysPlan()!.duration }} min</span>
+                    <span class="type-badge">{{
+                      todaysPlan()!.sessionType
+                    }}</span>
+                    <span class="duration"
+                      >{{ todaysPlan()!.duration }} min</span
+                    >
                   </div>
                   <p-tag
                     [value]="todaysPlan()!.phase"
@@ -342,8 +357,14 @@ interface TodaysPlan {
                   <span class="opponent">{{ upcomingGame()!.opponent }}</span>
                 </div>
                 <div class="game-details">
-                  <span><i class="pi pi-clock"></i> {{ upcomingGame()!.time }}</span>
-                  <span><i class="pi pi-map-marker"></i> {{ upcomingGame()!.location }}</span>
+                  <span
+                    ><i class="pi pi-clock"></i>
+                    {{ upcomingGame()!.time }}</span
+                  >
+                  <span
+                    ><i class="pi pi-map-marker"></i>
+                    {{ upcomingGame()!.location }}</span
+                  >
                 </div>
                 <div class="countdown" [class.urgent]="hoursUntilGame() < 24">
                   <span class="countdown-value">{{ hoursUntilGame() }}</span>
@@ -1023,8 +1044,9 @@ export class MorningBriefingComponent implements OnInit {
   userName = computed(() => {
     const user = this.authService.getUser();
     // Access name or email from user object
-    const name = (user as { name?: string; email?: string })?.name || 
-                 (user as { email?: string })?.email?.split("@")[0];
+    const name =
+      (user as { name?: string; email?: string })?.name ||
+      (user as { email?: string })?.email?.split("@")[0];
     return name?.split(" ")[0] || "Athlete";
   });
 
@@ -1150,7 +1172,8 @@ export class MorningBriefingComponent implements OnInit {
             const todaysEntry = response.data.find(
               (entry: { date: string }) =>
                 entry.date === today ||
-                new Date(entry.date).toDateString() === new Date().toDateString()
+                new Date(entry.date).toDateString() ===
+                  new Date().toDateString(),
             );
             this.hasCheckedInToday.set(!!todaysEntry);
           }
@@ -1210,7 +1233,9 @@ export class MorningBriefingComponent implements OnInit {
             this.hasCheckedInToday.set(true);
             this.checkInComplete.emit();
           } else {
-            this.toastService.error(response.error || "Failed to save check-in");
+            this.toastService.error(
+              response.error || "Failed to save check-in",
+            );
           }
           this.isSubmitting.set(false);
         },

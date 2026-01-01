@@ -231,7 +231,10 @@ export class PerformanceMonitorService {
   }
 
   private getMemoryUsage(): number {
-    if (typeof performance !== "undefined" && (performance as ExtendedPerformance).memory) {
+    if (
+      typeof performance !== "undefined" &&
+      (performance as ExtendedPerformance).memory
+    ) {
       const memory = (performance as ExtendedPerformance).memory!;
       return Math.round(memory.usedJSHeapSize / 1048576); // Convert to MB
     }
@@ -330,16 +333,16 @@ export class PerformanceMonitorService {
       for (const img of Array.from(images)) {
         const imgElement = img as HTMLImageElement;
         const src = imgElement.src;
-        
+
         // Skip small images or already optimized
-        if (!src.startsWith('data:image') || src.includes('image/webp')) {
+        if (!src.startsWith("data:image") || src.includes("image/webp")) {
           continue;
         }
 
         try {
           const result = await this.imageCompression.compressImageFromDataUrl(
             src,
-            this.imageCompression.getPresetOptions('post')
+            this.imageCompression.getPresetOptions("post"),
           );
 
           // Only replace if we achieved significant compression
@@ -347,11 +350,11 @@ export class PerformanceMonitorService {
             imgElement.src = result.dataUrl;
             compressedCount++;
             this.logger.debug(
-              `Compressed image: ${result.compressionRatio}% reduction`
+              `Compressed image: ${result.compressionRatio}% reduction`,
             );
           }
         } catch (error) {
-          this.logger.debug('Could not compress image:', error);
+          this.logger.debug("Could not compress image:", error);
         }
       }
 
@@ -359,7 +362,7 @@ export class PerformanceMonitorService {
         this.logger.info(`Compressed ${compressedCount} images on page`);
       }
     } catch (error) {
-      this.logger.warn('Image compression optimization failed:', error);
+      this.logger.warn("Image compression optimization failed:", error);
     }
   }
 

@@ -15,24 +15,28 @@ This document establishes form validation standards for FlagFit Pro Angular fron
 ## Core Principles
 
 ### 1. **Inline Validation**
+
 - Show validation feedback as the user types (debounced)
 - Display errors only after field is touched/blurred
 - Show success states for valid required fields
 - Never block user input, only provide feedback
 
 ### 2. **Clear Error Messages**
+
 - Specific, actionable error messages
 - Tell users WHAT went wrong and HOW to fix it
 - Avoid technical jargon
 - Use friendly, helpful tone
 
 ### 3. **Visual Hierarchy**
+
 - ✅ Success: Green with checkmark
 - ⚠️ Warning: Yellow/orange with exclamation
 - ❌ Error: Red with X icon
 - 🔵 Info: Blue with info icon
 
 ### 4. **Accessibility First**
+
 - ARIA labels on all inputs
 - Error messages linked via `aria-describedby`
 - Clear focus indicators
@@ -138,12 +142,12 @@ This document establishes form validation standards for FlagFit Pro Angular fron
 ### **Email Validation**
 
 ```typescript
-import { FormValidators } from '@/shared/utils/form.utils';
+import { FormValidators } from "@/shared/utils/form.utils";
 
 // In component
 emailError = computed(() => {
   const email = this.email();
-  if (!email && !this.emailTouched()) return '';
+  if (!email && !this.emailTouched()) return "";
 
   const requiredError = FormValidators.required(email);
   if (requiredError) return requiredError;
@@ -151,11 +155,12 @@ emailError = computed(() => {
   const emailError = FormValidators.email(email);
   if (emailError) return emailError;
 
-  return '';
+  return "";
 });
 ```
 
 **Error Messages:**
+
 - `"Email is required"` - Field is empty
 - `"Please enter a valid email address"` - Invalid format
 - `"Email is already registered"` - Already exists (async)
@@ -165,7 +170,7 @@ emailError = computed(() => {
 ```typescript
 passwordError = computed(() => {
   const pwd = this.password();
-  if (!pwd && !this.passwordTouched()) return '';
+  if (!pwd && !this.passwordTouched()) return "";
 
   const requiredError = FormValidators.required(pwd);
   if (requiredError) return requiredError;
@@ -173,11 +178,12 @@ passwordError = computed(() => {
   const strengthError = FormValidators.passwordStrength(pwd);
   if (strengthError) return strengthError;
 
-  return '';
+  return "";
 });
 ```
 
 **Error Messages:**
+
 - `"Password is required"`
 - `"Password must be at least 8 characters"`
 - `"Password must include uppercase, lowercase, number, and special character"`
@@ -189,16 +195,16 @@ confirmPasswordError = computed(() => {
   const confirm = this.confirmPassword();
   const original = this.password();
 
-  if (!confirm && !this.confirmTouched()) return '';
+  if (!confirm && !this.confirmTouched()) return "";
 
   const requiredError = FormValidators.required(confirm);
   if (requiredError) return requiredError;
 
   if (confirm !== original) {
-    return 'Passwords do not match';
+    return "Passwords do not match";
   }
 
-  return '';
+  return "";
 });
 ```
 
@@ -207,14 +213,14 @@ confirmPasswordError = computed(() => {
 ```typescript
 phoneError = computed(() => {
   const phone = this.phone();
-  if (!phone) return ''; // Optional field
+  if (!phone) return ""; // Optional field
 
   const phonePattern = /^\+?[1-9]\d{1,14}$/; // E.164 format
-  if (!phonePattern.test(phone.replace(/[\s\-\(\)]/g, ''))) {
-    return 'Please enter a valid phone number';
+  if (!phonePattern.test(phone.replace(/[\s\-\(\)]/g, ""))) {
+    return "Please enter a valid phone number";
   }
 
-  return '';
+  return "";
 });
 ```
 
@@ -223,7 +229,7 @@ phoneError = computed(() => {
 ```typescript
 usernameError = computed(() => {
   const username = this.username();
-  if (!username && !this.usernameTouched()) return '';
+  if (!username && !this.usernameTouched()) return "";
 
   const requiredError = FormValidators.required(username);
   if (requiredError) return requiredError;
@@ -236,11 +242,11 @@ usernameError = computed(() => {
 
   const patternError = FormValidators.pattern(
     /^[a-zA-Z0-9_]+$/,
-    'Username can only contain letters, numbers, and underscores'
+    "Username can only contain letters, numbers, and underscores",
   )(username);
   if (patternError) return patternError;
 
-  return '';
+  return "";
 });
 ```
 
@@ -395,6 +401,7 @@ async onSubmit(): Promise<void> {
 ## Error Message Standards
 
 ### **Required Fields**
+
 - ✅ `"Email is required"`
 - ✅ `"Password is required"`
 - ✅ `"Please enter your name"`
@@ -402,6 +409,7 @@ async onSubmit(): Promise<void> {
 - ❌ `"This field cannot be empty"` (too wordy)
 
 ### **Format Errors**
+
 - ✅ `"Please enter a valid email address"`
 - ✅ `"Phone number must be in format: +1 (555) 123-4567"`
 - ✅ `"Date must be in MM/DD/YYYY format"`
@@ -409,6 +417,7 @@ async onSubmit(): Promise<void> {
 - ❌ `"Format error"` (not specific)
 
 ### **Length Errors**
+
 - ✅ `"Username must be at least 3 characters"`
 - ✅ `"Bio cannot exceed 200 characters"`
 - ✅ `"Password must be between 8-128 characters"`
@@ -416,6 +425,7 @@ async onSubmit(): Promise<void> {
 - ❌ `"String length validation failed"` (technical jargon)
 
 ### **Pattern Errors**
+
 - ✅ `"Username can only contain letters, numbers, and underscores"`
 - ✅ `"Password must include at least one number"`
 - ✅ `"URL must start with http:// or https://"`
@@ -423,6 +433,7 @@ async onSubmit(): Promise<void> {
 - ❌ `"Regex validation failed"` (technical)
 
 ### **Async Errors**
+
 - ✅ `"This email is already registered"`
 - ✅ `"Username is already taken. Try adding numbers or underscores"`
 - ✅ `"Could not verify email availability. Please try again"`
@@ -488,6 +499,7 @@ onSubmit(): void {
 ## Testing Checklist
 
 ### **Unit Tests**
+
 - [ ] All validators return correct error messages
 - [ ] Form validity updates correctly
 - [ ] Async validation debounces properly
@@ -495,12 +507,14 @@ onSubmit(): void {
 - [ ] Error messages clear when field becomes valid
 
 ### **Integration Tests**
+
 - [ ] Form submission with valid data succeeds
 - [ ] Form submission with invalid data shows errors
 - [ ] Async validation cancels previous requests
 - [ ] Error messages persist until user corrects
 
 ### **Accessibility Tests**
+
 - [ ] Screen reader announces errors
 - [ ] Keyboard navigation works
 - [ ] Focus indicators visible
@@ -508,6 +522,7 @@ onSubmit(): void {
 - [ ] Required fields marked with aria-required
 
 ### **Visual Tests**
+
 - [ ] Error states show red border + icon
 - [ ] Success states show green border + checkmark
 - [ ] Loading states show spinner
@@ -522,7 +537,7 @@ onSubmit(): void {
 
 ```typescript
 @Component({
-  selector: 'app-register',
+  selector: "app-register",
   standalone: true,
   imports: [
     CommonModule,
@@ -587,9 +602,9 @@ onSubmit(): void {
 })
 export class RegisterComponent {
   // Signals for form state
-  email = signal('');
-  password = signal('');
-  confirmPassword = signal('');
+  email = signal("");
+  password = signal("");
+  confirmPassword = signal("");
 
   emailTouched = signal(false);
   passwordTouched = signal(false);
@@ -597,29 +612,29 @@ export class RegisterComponent {
 
   emailValidating = signal(false);
   emailAvailable = signal(false);
-  emailAsyncError = signal('');
+  emailAsyncError = signal("");
 
   isSubmitting = signal(false);
 
   // Validation errors
   emailError = computed(() => {
-    if (!this.emailTouched()) return '';
+    if (!this.emailTouched()) return "";
     const email = this.email();
-    return FormValidators.required(email) || FormValidators.email(email) || '';
+    return FormValidators.required(email) || FormValidators.email(email) || "";
   });
 
   passwordError = computed(() => {
-    if (!this.passwordTouched()) return '';
-    return FormValidators.passwordStrength(this.password()) || '';
+    if (!this.passwordTouched()) return "";
+    return FormValidators.passwordStrength(this.password()) || "";
   });
 
   confirmPasswordError = computed(() => {
-    if (!this.confirmTouched()) return '';
+    if (!this.confirmTouched()) return "";
     const confirm = this.confirmPassword();
     const original = this.password();
-    if (!confirm) return 'Please confirm your password';
-    if (confirm !== original) return 'Passwords do not match';
-    return '';
+    if (!confirm) return "Please confirm your password";
+    if (confirm !== original) return "Passwords do not match";
+    return "";
   });
 
   formValid = computed(() => {
