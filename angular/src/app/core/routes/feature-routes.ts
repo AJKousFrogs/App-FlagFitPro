@@ -109,14 +109,34 @@ export const dashboardRoutes: Routes = [
  * Training Routes (High Priority)
  */
 export const trainingRoutes: Routes = [
+  // Daily Protocol - New primary training page
   {
     path: "training",
+    loadComponent: () =>
+      import("../../features/training/daily-protocol/daily-protocol.component").then(
+        (m) => m.DailyProtocolComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: true, priority: "high" },
+  },
+  {
+    path: "training/protocol/:date",
+    loadComponent: () =>
+      import("../../features/training/daily-protocol/daily-protocol.component").then(
+        (m) => m.DailyProtocolComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" },
+  },
+  // Legacy training page moved to /training/builder
+  {
+    path: "training/builder",
     loadComponent: () =>
       import("../../features/training/training.component").then(
         (m) => m.TrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: false },
   },
   {
     path: "training/daily",

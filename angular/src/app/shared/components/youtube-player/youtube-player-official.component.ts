@@ -69,44 +69,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       }
     </div>
   `,
-  styles: [
-    `
-      .youtube-player-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .player-controls {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-
-      .player-info {
-        display: flex;
-        gap: 1.5rem;
-        padding: 0.75rem;
-        background: var(--p-surface-ground);
-        border-radius: var(--p-border-radius);
-        font-size: 0.875rem;
-      }
-
-      .info-item {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .info-label {
-        font-weight: 600;
-        color: var(--p-text-color-secondary);
-      }
-
-      .info-value {
-        color: var(--p-text-color);
-      }
-    `,
-  ],
+  styleUrl: './youtube-player-official.component.scss',
 })
 export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
   // Angular 21: Use input() signal instead of @Input() with signal assignment

@@ -772,7 +772,7 @@ const CURATED_INSTAGRAM_VIDEOS: InstagramVideo[] = [
     embedUrl: "https://www.instagram.com/reel/C25example25/embed/",
     creator: {
       username: "speed_coach_elite",
-      displayName: "Speed Coach Elite",
+      displayName: "Speed Coach",
       profileUrl: "https://www.instagram.com/speed_coach_elite/",
       verified: true,
       credibility: "coach",

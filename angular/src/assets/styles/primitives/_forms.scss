@@ -1,0 +1,388 @@
+/**
+ * Form Primitives
+ * ================
+ * 
+ * Standardized form patterns for the design system.
+ * See Decision 23 (Forms), 32 (Validation), 54 (Error Summary) in DESIGN_SYSTEM_RULES.md.
+ * 
+ * USAGE:
+ *   <div class="form-field">
+ *     <label class="form-label">Email <span class="form-required">*</span></label>
+ *     <input type="email" class="p-inputtext" />
+ *     <span class="form-help">We'll never share your email.</span>
+ *     <span class="form-error">Please enter a valid email.</span>
+ *   </div>
+ * 
+ * VALIDATION BEHAVIOR (Decision 32):
+ *   - Validate on blur + submit (not every keystroke)
+ *   - One error per field, plain language
+ *   - Scroll to first error on submit (Decision 54)
+ */
+
+@layer primitives {
+  // ============================================
+  // FORM FIELD CONTAINER
+  // ============================================
+
+  .form-field {
+    margin-bottom: var(--space-5);
+  }
+
+  .form-field--inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .form-field--horizontal {
+    display: grid;
+    grid-template-columns: minmax(120px, 200px) 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    margin-bottom: var(--space-4);
+  }
+
+  // Compact spacing for dense forms
+  .form-field--compact {
+    margin-bottom: var(--space-3);
+  }
+
+  // ============================================
+  // FORM LABEL
+  // ============================================
+
+  .form-label {
+    display: block;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .form-label--inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: 0;
+  }
+
+  // Checkbox/radio label (clickable, full row)
+  .form-label--control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-normal);
+    cursor: pointer;
+    margin-bottom: 0;
+    min-height: 44px; // Touch target (Decision 42)
+  }
+
+  // ============================================
+  // REQUIRED INDICATOR
+  // ============================================
+
+  .form-required {
+    color: var(--color-status-error);
+    margin-left: var(--space-1);
+    font-weight: var(--font-weight-normal);
+  }
+
+  // Screen reader only required text
+  .form-required--sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  // ============================================
+  // HELP TEXT
+  // ============================================
+
+  .form-help {
+    display: block;
+    font-size: var(--font-body-xs);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  // ============================================
+  // ERROR MESSAGE (Decision 32)
+  // ============================================
+
+  .form-error {
+    display: block;
+    font-size: var(--font-body-xs);
+    line-height: var(--line-height-normal);
+    color: var(--color-status-error);
+    margin-top: var(--space-1);
+  }
+
+  // Animated entrance
+  .form-error--animated {
+    animation: form-error-enter var(--motion-fast) var(--ease-decelerate);
+  }
+
+  @keyframes form-error-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // ============================================
+  // ERROR SUMMARY (Decision 54)
+  // ============================================
+  // Shows at top of form on submit with errors
+
+  .form-error-summary {
+    border: var(--border-1) solid var(--color-border-danger);
+    background: var(--color-status-error-surface, rgba(239, 68, 68, 0.08));
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .form-error-summary__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-status-error);
+    margin: 0;
+  }
+
+  .form-error-summary__list {
+    margin: var(--space-2) 0 0 0;
+    padding-left: var(--space-5);
+    font-size: var(--font-body-sm);
+    color: var(--color-text-primary);
+
+    li {
+      margin-bottom: var(--space-1);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    a {
+      color: var(--color-status-error);
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: var(--focus-ring-offset);
+        border-radius: var(--radius-sm);
+      }
+    }
+  }
+
+  // ============================================
+  // FORM GROUPS
+  // ============================================
+
+  .form-group {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-group__title {
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-4) 0;
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-1) solid var(--color-border-muted);
+  }
+
+  // ============================================
+  // FORM ROW (Multiple fields side by side)
+  // ============================================
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .form-row--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-row--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    .form-row,
+    .form-row--2,
+    .form-row--3 {
+      grid-template-columns: 1fr;
+    }
+
+    .form-field--horizontal {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ============================================
+  // FORM ACTIONS (Submit area)
+  // ============================================
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    margin-top: var(--space-5);
+    border-top: var(--border-1) solid var(--color-border-muted);
+  }
+
+  .form-actions--start {
+    justify-content: flex-start;
+  }
+
+  .form-actions--between {
+    justify-content: space-between;
+  }
+
+  .form-actions--no-border {
+    border-top: none;
+    padding-top: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  // ============================================
+  // CHECKBOX/RADIO GROUP (Decision 42)
+  // ============================================
+
+  .form-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-control-group--inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .form-control-group__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px; // Touch target
+  }
+
+  // ============================================
+  // INPUT ADDONS
+  // ============================================
+
+  .form-input-group {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .form-input-addon {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-3);
+    background: var(--color-surface-secondary);
+    border: var(--border-1) solid var(--color-border-default);
+    font-size: var(--font-body-sm);
+    color: var(--color-text-muted);
+  }
+
+  .form-input-addon--start {
+    border-right: none;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  }
+
+  .form-input-addon--end {
+    border-left: none;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  }
+
+  .form-input-group .p-inputtext {
+    flex: 1;
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+
+    &:last-child {
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    }
+  }
+
+  // ============================================
+  // READ-ONLY STATE (Decision 46)
+  // ============================================
+
+  .form-field--readonly {
+    .form-label {
+      color: var(--color-text-muted);
+    }
+  }
+
+  .form-readonly-value {
+    font-size: var(--font-body-md);
+    color: var(--color-text-primary);
+    padding: var(--space-3) 0;
+  }
+
+  // ============================================
+  // DISABLED STATE (Decision 46)
+  // ============================================
+
+  .form-field--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+
+    .form-label {
+      cursor: not-allowed;
+    }
+  }
+
+  // ============================================
+  // IME-SAFE COMPOSITION (Decision 60)
+  // ============================================
+  // Styles for inputs during IME composition
+
+  .p-inputtext[data-composing="true"],
+  input[data-composing="true"] {
+    // Optional: subtle indicator during composition
+    border-color: var(--color-border-focus);
+  }
+
+  // ============================================
+  // REDUCED MOTION (Decision 51)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-error--animated {
+      animation: none;
+    }
+  }
+}

@@ -65,23 +65,14 @@
 
     <!-- Search (left position) -->
     @if (config().searchPosition === "left") {
-      <div class="search-container">
-        <span class="p-input-icon-left search-wrapper">
+      <div class="search-container" (click)="onSearch()">
+        <div class="search-trigger">
           <i class="pi pi-search"></i>
-          <input
-            id="header-search-left"
-            name="search"
-            type="search"
-            pInputText
-            [placeholder]="config().searchPlaceholder || 'Search...'"
-            [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)"
-            (keyup.enter)="onSearch()"
-            class="search-input"
-            aria-label="Search"
-            autocomplete="off"
-          />
-        </span>
+          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
+          <div class="search-shortcut">
+            <kbd>⌘</kbd><kbd>K</kbd>
+          </div>
+        </div>
       </div>
     }
   </div>
@@ -90,23 +81,14 @@
   <div class="header-center">
     <!-- Search (center position) -->
     @if (config().searchPosition === "center") {
-      <div class="search-container">
-        <span class="p-input-icon-left search-wrapper">
+      <div class="search-container" (click)="onSearch()">
+        <div class="search-trigger">
           <i class="pi pi-search"></i>
-          <input
-            id="header-search-center"
-            name="search"
-            type="search"
-            pInputText
-            [placeholder]="config().searchPlaceholder || 'Search...'"
-            [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)"
-            (keyup.enter)="onSearch()"
-            class="search-input"
-            aria-label="Search"
-            autocomplete="off"
-          />
-        </span>
+          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
+          <div class="search-shortcut">
+            <kbd>⌘</kbd><kbd>K</kbd>
+          </div>
+        </div>
       </div>
     }
   </div>
@@ -115,23 +97,14 @@
   <div class="header-right">
     <!-- Search (right position) -->
     @if (config().searchPosition === "right") {
-      <div class="search-container">
-        <span class="p-input-icon-left search-wrapper">
+      <div class="search-container" (click)="onSearch()">
+        <div class="search-trigger">
           <i class="pi pi-search"></i>
-          <input
-            id="header-search-right"
-            name="search"
-            type="search"
-            pInputText
-            [placeholder]="config().searchPlaceholder || 'Search...'"
-            [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)"
-            (keyup.enter)="onSearch()"
-            class="search-input"
-            aria-label="Search"
-            autocomplete="off"
-          />
-        </span>
+          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
+          <div class="search-shortcut">
+            <kbd>⌘</kbd><kbd>K</kbd>
+          </div>
+        </div>
       </div>
     }
 

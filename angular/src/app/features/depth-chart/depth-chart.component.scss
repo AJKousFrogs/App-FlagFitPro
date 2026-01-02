@@ -1,0 +1,225 @@
+// ============================================================================
+// depth-chart.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .depth-chart-page {
+    padding: var(--space-6);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .depth-chart-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    text-align: center;
+
+    i {
+      font-size: var(--font-display-md);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    h3 {
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    p {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-4);
+    }
+  }
+
+  .chart-container {
+    padding: var(--space-4) 0;
+  }
+
+  .positions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .position-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  .position-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-100);
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  .position-abbr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-body-sm);
+  }
+
+  .position-name {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .players-list {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 80px;
+  }
+
+  .player-slot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-50);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--surface-border);
+    cursor: grab;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+
+    &:hover {
+      border-color: var(--primary-color);
+    }
+
+    &.starter {
+      background: var(--primary-50);
+      border-color: var(--primary-200);
+    }
+
+    &.empty {
+      cursor: pointer;
+      border-style: dashed;
+    }
+
+    &.cdk-drag-preview {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.cdk-drag-placeholder {
+      opacity: 0.5;
+    }
+  }
+
+  .depth-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--surface-200);
+    border-radius: 50%;
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    flex-shrink: 0;
+  }
+
+  .player-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .player-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .player-number {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .empty-slot {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+
+    i {
+      font-size: var(--font-heading-sm);
+    }
+  }
+
+  .drag-handle {
+    cursor: grab;
+    color: var(--color-text-secondary);
+    padding: var(--space-2);
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
+  }
+
+  .add-backup-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--surface-border);
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .unassigned-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .unassigned-player {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-100);
+    border-radius: var(--border-radius);
+  }
+
+  .assign-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .assign-info {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+}
+

@@ -26,7 +26,7 @@ export class ApiService {
 
   private getApiBaseUrl(): string {
     // Check environment configuration first
-    if (environment.apiUrl && environment.apiUrl !== "mock://api") {
+    if (environment.apiUrl) {
       return environment.apiUrl;
     }
 

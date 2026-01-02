@@ -1,746 +1,623 @@
-import {
-  Component,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  OnInit,
-} from "@angular/core";
+/**
+ * QB Throwing Tracker Component
+ *
+ * Tracks QB throwing sessions, arm care compliance, and progression toward 320-throw capacity.
+ * Shows weekly totals, arm health metrics, and progression phase.
+ *
+ * Design System Compliant (DESIGN_SYSTEM_RULES.md)
+ */
 
-import { FormsModule } from "@angular/forms";
-import { CommonModule, DatePipe } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { InputNumberModule } from "primeng/inputnumber";
-import { Select } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
-import { SkeletonModule } from "primeng/skeleton";
-import { ToastModule } from "primeng/toast";
-import { ChartModule } from "primeng/chart";
-import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { SupabaseService } from "../../../core/services/supabase.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { ToastService } from "../../../core/services/toast.service";
-import { LoggerService } from "../../../core/services/logger.service";
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { Checkbox } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { Select } from 'primeng/select';
+import { Slider } from 'primeng/slider';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
+import { MessageService } from 'primeng/api';
+
+import { ApiService } from '../../../core/services/api.service';
+import { LoggerService } from '../../../core/services/logger.service';
 
 interface ThrowingSession {
   id: string;
-  date: string;
-  total_throws: number;
-  completions: number;
-  completion_rate: number;
-  throw_type: string;
+  sessionDate: string;
+  totalThrows: number;
+  shortThrows: number;
+  mediumThrows: number;
+  longThrows: number;
+  sessionType: string;
+  location?: string;
+  armFeelingBefore?: number;
+  armFeelingAfter?: number;
+  preThrowingWarmupDone: boolean;
+  postThrowingArmCareDone: boolean;
+  iceApplied: boolean;
+  warmupDurationMinutes?: number;
+  throwingDurationMinutes?: number;
+  armCareDurationMinutes?: number;
   notes?: string;
+  mechanicsFocus?: string;
+  fatigueLevel?: number;
+}
+
+interface ProgressionStatus {
+  currentWeekAvg: number;
+  targetThrows: number;
+  progressionPhase: string;
+  daysSinceLastSession: number;
+  weeklyCompliancePct: number;
+  recommendation: string;
+}
+
+interface WeeklyStats {
+  weekStart: string;
+  weeklyThrows: number;
+  sessionsCount: number;
+  avgArmFeeling: number;
+  warmupCompliancePct: number;
+  armCareCompliancePct: number;
+  iceSessions: number;
+}
+
+interface SessionTypeOption {
+  label: string;
+  value: string;
 }
 
 @Component({
-  selector: "app-qb-throwing-tracker",
+  selector: 'app-qb-throwing-tracker',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     CommonModule,
-    CardModule,
+    FormsModule,
     ButtonModule,
+    CardModule,
+    Checkbox,
+    DialogModule,
     InputNumberModule,
+    InputTextModule,
+    ProgressBarModule,
     Select,
-    TextareaModule,
-    SkeletonModule,
+    Slider,
+    TagModule,
     ToastModule,
-    ChartModule,
-    MainLayoutComponent,
-    PageHeaderComponent,
-    DatePipe,
+    TooltipModule,
   ],
+  providers: [MessageService],
   template: `
     <p-toast></p-toast>
-    <app-main-layout>
-      <div class="qb-throwing-tracker-page">
-        <app-page-header
-          title="QB Throwing Tracker"
-          subtitle="Track your throwing volume, accuracy, and progression"
-          icon="pi-chart-bar"
-        ></app-page-header>
 
-        <div class="tracker-grid">
-          <!-- Log Session Card -->
-          <p-card class="tracker-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <h3><i class="pi pi-plus-circle"></i> Log Throwing Session</h3>
-              </div>
-            </ng-template>
-            <form class="tracker-form" (ngSubmit)="saveSession()">
-              <div class="form-group">
-                <label>Throw Type</label>
-                <p-select
-                  [(ngModel)]="sessionData.throwType"
-                  name="throwType"
-                  [options]="throwTypes"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Select throw type"
-                  styleClass="w-full"
-                ></p-select>
-              </div>
+    <div class="qb-throwing-tracker">
+      <!-- Header -->
+      <header class="tracker-header">
+        <div class="header-content">
+          <h1 class="page-title">
+            <i class="pi pi-bullseye"></i>
+            QB Throwing Tracker
+          </h1>
+          <p class="page-subtitle">Track your throws and build toward tournament capacity</p>
+        </div>
+        <p-button
+          label="Log Session"
+          icon="pi pi-plus"
+          (onClick)="openLogDialog()"
+        ></p-button>
+      </header>
 
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Total Throws</label>
-                  <p-inputNumber
-                    [(ngModel)]="sessionData.totalThrows"
-                    name="totalThrows"
-                    [min]="0"
-                    [max]="500"
-                    placeholder="0"
-                    styleClass="w-full"
-                  ></p-inputNumber>
+      <!-- Progression Status Card -->
+      @if (progressionStatus()) {
+        <div class="status-card">
+          <div class="status-header">
+            <div class="phase-badge" [class]="getPhaseClass()">
+              {{ progressionStatus()!.progressionPhase }}
+            </div>
+            @if (progressionStatus()!.daysSinceLastSession <= 3) {
+              <p-tag value="Active" severity="success" [rounded]="true"></p-tag>
+            } @else {
+              <p-tag 
+                [value]="progressionStatus()!.daysSinceLastSession + ' days ago'" 
+                severity="warn" 
+                [rounded]="true"
+              ></p-tag>
+            }
+          </div>
+
+          <div class="status-metrics">
+            <div class="metric">
+              <div class="metric-value">{{ progressionStatus()!.currentWeekAvg }}</div>
+              <div class="metric-label">Avg/Session</div>
+            </div>
+            <div class="metric target">
+              <div class="metric-value">{{ progressionStatus()!.targetThrows }}</div>
+              <div class="metric-label">Target</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value">{{ progressionStatus()!.weeklyCompliancePct | number:'1.0-0' }}%</div>
+              <div class="metric-label">Arm Care</div>
+            </div>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-label">
+              <span>Progress to Target</span>
+              <span>{{ getProgressPercent() }}%</span>
+            </div>
+            <p-progressBar 
+              [value]="getProgressPercent()" 
+              [showValue]="false"
+              styleClass="progress-bar"
+            ></p-progressBar>
+          </div>
+
+          <div class="recommendation">
+            <i class="pi pi-lightbulb"></i>
+            <span>{{ progressionStatus()!.recommendation }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Weekly Stats -->
+      <div class="section">
+        <h2 class="section-title">Weekly History</h2>
+        @if (weeklyStats().length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-chart-bar"></i>
+            <p>No throwing data yet. Log your first session!</p>
+          </div>
+        } @else {
+          <div class="weekly-chart">
+            @for (week of weeklyStats(); track week.weekStart) {
+              <div class="week-bar">
+                <div 
+                  class="bar-fill" 
+                  [style.height.%]="getBarHeight(week.weeklyThrows)"
+                  [class.high]="week.weeklyThrows >= 600"
+                  [class.medium]="week.weeklyThrows >= 300 && week.weeklyThrows < 600"
+                  pTooltip="{{ week.weeklyThrows }} throws in {{ week.sessionsCount }} sessions"
+                >
+                  <span class="bar-value">{{ week.weeklyThrows }}</span>
                 </div>
-                <div class="form-group">
-                  <label>Completions</label>
-                  <p-inputNumber
-                    [(ngModel)]="sessionData.completions"
-                    name="completions"
-                    [min]="0"
-                    [max]="sessionData.totalThrows || 500"
-                    placeholder="0"
-                    styleClass="w-full"
-                  ></p-inputNumber>
+                <div class="bar-label">{{ formatWeekLabel(week.weekStart) }}</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="section">
+        <h2 class="section-title">Recent Sessions</h2>
+        @if (recentSessions().length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-calendar"></i>
+            <p>No sessions logged yet.</p>
+          </div>
+        } @else {
+          <div class="sessions-list">
+            @for (session of recentSessions(); track session.id) {
+              <div class="session-card">
+                <div class="session-main">
+                  <div class="session-info">
+                    <div class="session-date">
+                      {{ session.sessionDate | date:'EEE, MMM d' }}
+                      <p-tag 
+                        [value]="formatSessionType(session.sessionType)" 
+                        [severity]="getSessionTypeSeverity(session.sessionType)"
+                        [rounded]="true"
+                      ></p-tag>
+                    </div>
+                    <div class="throw-breakdown">
+                      <span class="throw-total">{{ session.totalThrows }} throws</span>
+                      @if (session.shortThrows || session.mediumThrows || session.longThrows) {
+                        <span class="throw-detail">
+                          ({{ session.shortThrows || 0 }}S / {{ session.mediumThrows || 0 }}M / {{ session.longThrows || 0 }}L)
+                        </span>
+                      }
+                    </div>
+                  </div>
+                  <div class="session-compliance">
+                    <div class="compliance-item" [class.done]="session.preThrowingWarmupDone">
+                      <i class="pi" [class.pi-check]="session.preThrowingWarmupDone" [class.pi-times]="!session.preThrowingWarmupDone"></i>
+                      <span>Warm-up</span>
+                    </div>
+                    <div class="compliance-item" [class.done]="session.postThrowingArmCareDone">
+                      <i class="pi" [class.pi-check]="session.postThrowingArmCareDone" [class.pi-times]="!session.postThrowingArmCareDone"></i>
+                      <span>Arm Care</span>
+                    </div>
+                    @if (session.iceApplied) {
+                      <div class="compliance-item done">
+                        <i class="pi pi-check"></i>
+                        <span>Ice</span>
+                      </div>
+                    }
+                  </div>
                 </div>
-              </div>
-
-              <div class="completion-preview">
-                <span class="completion-rate">
-                  {{ calculatedCompletionRate() }}%
-                </span>
-                <span class="completion-label">Completion Rate</span>
-              </div>
-
-              <div class="form-group">
-                <label>Notes (Optional)</label>
-                <textarea
-                  pTextarea
-                  [(ngModel)]="sessionData.notes"
-                  name="notes"
-                  rows="3"
-                  placeholder="How did the session feel? Any focus areas?"
-                  class="w-full"
-                ></textarea>
-              </div>
-
-              <p-button
-                type="submit"
-                label="Save Session"
-                icon="pi pi-save"
-                [loading]="isSaving()"
-                [disabled]="!canSave()"
-                styleClass="w-full"
-              ></p-button>
-            </form>
-          </p-card>
-
-          <!-- Weekly Stats Card -->
-          <p-card class="stats-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <h3><i class="pi pi-chart-line"></i> Weekly Stats</h3>
-              </div>
-            </ng-template>
-
-            @if (isLoading()) {
-              <div class="stats-grid">
-                @for (i of [1, 2, 3, 4]; track i) {
-                  <div class="stat-item">
-                    <p-skeleton width="60px" height="40px"></p-skeleton>
-                    <p-skeleton
-                      width="100px"
-                      height="16px"
-                      class="mt-2"
-                    ></p-skeleton>
+                @if (session.armFeelingAfter) {
+                  <div class="arm-feeling">
+                    <span class="feeling-label">Arm feeling:</span>
+                    <div class="feeling-scale">
+                      @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+                        <div 
+                          class="feeling-dot" 
+                          [class.active]="i <= (session.armFeelingAfter || 0)"
+                          [class.good]="i <= 3"
+                          [class.moderate]="i > 3 && i <= 6"
+                          [class.concern]="i > 6"
+                        ></div>
+                      }
+                    </div>
+                    <span class="feeling-value">{{ session.armFeelingAfter }}/10</span>
+                  </div>
+                }
+                @if (session.notes) {
+                  <div class="session-notes">
+                    <i class="pi pi-comment"></i>
+                    {{ session.notes }}
                   </div>
                 }
               </div>
-            } @else {
-              <div class="stats-grid">
-                <div class="stat-item">
-                  <div class="stat-value">{{ weeklyStats().totalThrows }}</div>
-                  <div class="stat-label">Total Throws</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value highlight">
-                    {{ weeklyStats().avgCompletion }}%
-                  </div>
-                  <div class="stat-label">Avg Completion</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value">
-                    {{ weeklyStats().sessionsCount }}
-                  </div>
-                  <div class="stat-label">Sessions</div>
-                </div>
-                <div class="stat-item">
-                  <div
-                    class="stat-value"
-                    [class.positive]="weeklyStats().trend > 0"
-                    [class.negative]="weeklyStats().trend < 0"
-                  >
-                    {{ weeklyStats().trend > 0 ? "+" : ""
-                    }}{{ weeklyStats().trend }}%
-                  </div>
-                  <div class="stat-label">vs Last Week</div>
-                </div>
-              </div>
             }
-          </p-card>
+          </div>
+        }
+      </div>
+
+      <!-- Arm Care Reminder -->
+      @if (showArmCareReminder()) {
+        <div class="arm-care-reminder">
+          <div class="reminder-icon">💪</div>
+          <div class="reminder-content">
+            <h4>Arm Care Reminder</h4>
+            <p>You threw {{ lastSessionThrows() }} balls. Don't forget your post-throwing arm care routine!</p>
+          </div>
+          <p-button
+            label="Mark Complete"
+            icon="pi pi-check"
+            size="small"
+            (onClick)="markArmCareDone()"
+          ></p-button>
+        </div>
+      }
+    </div>
+
+    <!-- Log Session Dialog -->
+    <p-dialog
+      header="Log Throwing Session"
+      [modal]="true"
+      [visible]="showLogDialog()"
+      (visibleChange)="showLogDialog.set($event)"
+      [style]="{ width: '500px' }"
+      [breakpoints]="{ '640px': '95vw' }"
+      [draggable]="false"
+    >
+      <div class="log-form">
+        <!-- Session Type -->
+        <div class="form-field">
+          <label>Session Type *</label>
+          <p-select
+            [options]="sessionTypes"
+            [(ngModel)]="formData.sessionType"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select type"
+            [style]="{ width: '100%' }"
+          ></p-select>
         </div>
 
-        <!-- Progress Chart -->
-        <p-card class="chart-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <h3><i class="pi pi-chart-bar"></i> Throwing Progress</h3>
-            </div>
-          </ng-template>
-          @if (chartData()) {
-            <p-chart
-              type="line"
-              [data]="chartData()"
-              [options]="chartOptions"
-            ></p-chart>
-          } @else {
-            <div class="empty-chart">
-              <i class="pi pi-chart-line"></i>
-              <p>Log more sessions to see your progress chart</p>
+        <!-- Total Throws -->
+        <div class="form-field">
+          <label>Total Throws *</label>
+          <p-inputNumber
+            [(ngModel)]="formData.totalThrows"
+            [min]="0"
+            [max]="500"
+            [showButtons]="true"
+            [step]="10"
+            [style]="{ width: '100%' }"
+            placeholder="0"
+          ></p-inputNumber>
+          <small class="field-hint">
+            Target: {{ progressionStatus()?.targetThrows || 150 }} throws/session
+          </small>
+        </div>
+
+        <!-- Throw Breakdown -->
+        <div class="form-row">
+          <div class="form-field">
+            <label>Short (0-10y)</label>
+            <p-inputNumber
+              [(ngModel)]="formData.shortThrows"
+              [min]="0"
+              [max]="300"
+              [style]="{ width: '100%' }"
+            ></p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label>Medium (10-20y)</label>
+            <p-inputNumber
+              [(ngModel)]="formData.mediumThrows"
+              [min]="0"
+              [max]="300"
+              [style]="{ width: '100%' }"
+            ></p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label>Long (20y+)</label>
+            <p-inputNumber
+              [(ngModel)]="formData.longThrows"
+              [min]="0"
+              [max]="200"
+              [style]="{ width: '100%' }"
+            ></p-inputNumber>
+          </div>
+        </div>
+
+        <!-- Arm Feeling -->
+        <div class="form-field">
+          <label>Arm Feeling After (1=fresh, 10=fatigued)</label>
+          <p-slider
+            [(ngModel)]="formData.armFeelingAfter"
+            [min]="1"
+            [max]="10"
+            [step]="1"
+          ></p-slider>
+          <div class="slider-labels">
+            <span>Fresh</span>
+            <span class="current-value">{{ formData.armFeelingAfter || 5 }}</span>
+            <span>Fatigued</span>
+          </div>
+        </div>
+
+        <!-- Compliance Checkboxes -->
+        <div class="compliance-section">
+          <div class="form-field checkbox-group">
+            <p-checkbox
+              [(ngModel)]="formData.preThrowingWarmupDone"
+              [binary]="true"
+              inputId="warmup"
+            ></p-checkbox>
+            <label for="warmup">Pre-throwing warm-up completed (30 min)</label>
+          </div>
+
+          <div class="form-field checkbox-group">
+            <p-checkbox
+              [(ngModel)]="formData.postThrowingArmCareDone"
+              [binary]="true"
+              inputId="armcare"
+            ></p-checkbox>
+            <label for="armcare">Post-throwing arm care completed</label>
+          </div>
+
+          @if ((formData.totalThrows || 0) >= 100) {
+            <div class="form-field checkbox-group">
+              <p-checkbox
+                [(ngModel)]="formData.iceApplied"
+                [binary]="true"
+                inputId="ice"
+              ></p-checkbox>
+              <label for="ice">Ice applied (recommended for 100+ throws)</label>
             </div>
           }
-        </p-card>
+        </div>
 
-        <!-- Recent Sessions -->
-        <p-card class="sessions-card">
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <h3><i class="pi pi-history"></i> Recent Sessions</h3>
-            </div>
-          </ng-template>
-
-          @if (isLoading()) {
-            @for (i of [1, 2, 3]; track i) {
-              <div class="session-item">
-                <p-skeleton width="100px" height="16px"></p-skeleton>
-                <p-skeleton width="150px" height="14px"></p-skeleton>
-                <p-skeleton width="80px" height="24px"></p-skeleton>
-              </div>
-            }
-          } @else if (recentSessions().length === 0) {
-            <div class="empty-sessions">
-              <i class="pi pi-inbox"></i>
-              <p>No sessions logged yet. Start tracking your throws!</p>
-            </div>
-          } @else {
-            <div class="sessions-list">
-              @for (session of recentSessions(); track session.id) {
-                <div class="session-item">
-                  <div class="session-date">
-                    {{ session.date | date: "MMM d, yyyy" }}
-                  </div>
-                  <div class="session-details">
-                    <span class="throw-type">{{ session.throw_type }}</span>
-                    <span class="throws"
-                      >{{ session.total_throws }} throws</span
-                    >
-                  </div>
-                  <div
-                    class="session-rate"
-                    [class.good]="session.completion_rate >= 70"
-                    [class.average]="
-                      session.completion_rate >= 50 &&
-                      session.completion_rate < 70
-                    "
-                    [class.needs-work]="session.completion_rate < 50"
-                  >
-                    {{ session.completion_rate }}%
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </p-card>
+        <!-- Notes -->
+        <div class="form-field">
+          <label>Notes / Mechanics Focus</label>
+          <textarea
+            pInputText
+            [(ngModel)]="formData.notes"
+            rows="2"
+            placeholder="What did you work on?"
+            [style]="{ width: '100%' }"
+          ></textarea>
+        </div>
       </div>
-    </app-main-layout>
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Cancel"
+          [outlined]="true"
+          (onClick)="closeLogDialog()"
+        ></p-button>
+        <p-button
+          label="Save Session"
+          icon="pi pi-check"
+          (onClick)="saveSession()"
+          [loading]="isSaving()"
+          [disabled]="!isFormValid()"
+        ></p-button>
+      </ng-template>
+    </p-dialog>
   `,
-  styles: [
-    `
-      .qb-throwing-tracker-page {
-        padding: var(--space-6);
-      }
-
-      .tracker-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-6);
-        margin-top: var(--space-4);
-      }
-
-      @media (max-width: 1024px) {
-        .tracker-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .card-header h3 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        margin: 0;
-        font-size: 1.125rem;
-        font-weight: 600;
-      }
-
-      .tracker-card,
-      .stats-card,
-      .chart-card,
-      .sessions-card {
-        margin-top: var(--space-4);
-      }
-
-      .form-group {
-        margin-bottom: var(--space-4);
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: var(--space-2);
-        font-weight: 500;
-        color: var(--text-primary);
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-4);
-      }
-
-      .completion-preview {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: var(--space-4);
-        margin-bottom: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .completion-rate {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-      }
-
-      .completion-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-4);
-      }
-
-      .stat-item {
-        text-align: center;
-        padding: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .stat-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .stat-value.highlight {
-        color: var(--color-brand-primary);
-      }
-
-      .stat-value.positive {
-        color: var(--p-green-500);
-      }
-
-      .stat-value.negative {
-        color: var(--p-red-500);
-      }
-
-      .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-top: var(--space-2);
-      }
-
-      .chart-card {
-        margin-top: var(--space-6);
-      }
-
-      .empty-chart {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-8);
-        color: var(--text-secondary);
-        text-align: center;
-      }
-
-      .empty-chart i {
-        font-size: 3rem;
-        margin-bottom: var(--space-4);
-        opacity: 0.5;
-      }
-
-      .sessions-card {
-        margin-top: var(--space-6);
-      }
-
-      .sessions-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-      }
-
-      .session-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .session-date {
-        font-weight: 500;
-        color: var(--text-primary);
-      }
-
-      .session-details {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-        flex: 1;
-        margin: 0 var(--space-4);
-      }
-
-      .throw-type {
-        font-size: 0.875rem;
-        color: var(--text-primary);
-      }
-
-      .throws {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-      }
-
-      .session-rate {
-        font-weight: 700;
-        font-size: 1.125rem;
-        padding: var(--space-2) var(--space-3);
-        border-radius: var(--p-border-radius);
-      }
-
-      .session-rate.good {
-        background: var(--p-green-100);
-        color: var(--p-green-700);
-      }
-
-      .session-rate.average {
-        background: var(--p-yellow-100);
-        color: var(--p-yellow-700);
-      }
-
-      .session-rate.needs-work {
-        background: var(--p-red-100);
-        color: var(--p-red-700);
-      }
-
-      .empty-sessions {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: var(--space-8);
-        color: var(--text-secondary);
-        text-align: center;
-      }
-
-      .empty-sessions i {
-        font-size: 2.5rem;
-        margin-bottom: var(--space-4);
-        opacity: 0.5;
-      }
-    `,
-  ],
+  styleUrl: './qb-throwing-tracker.component.scss',
 })
 export class QbThrowingTrackerComponent implements OnInit {
-  private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
-  private toastService = inject(ToastService);
+  private api = inject(ApiService);
   private logger = inject(LoggerService);
+  private messageService = inject(MessageService);
 
-  throwTypes = [
-    { label: "Short Passes (0-10 yds)", value: "short" },
-    { label: "Medium Passes (10-20 yds)", value: "medium" },
-    { label: "Deep Passes (20+ yds)", value: "deep" },
-    { label: "Quick Releases", value: "quick" },
-    { label: "Play Action", value: "play_action" },
-    { label: "Rollout", value: "rollout" },
-    { label: "Mixed/Practice", value: "mixed" },
-  ];
-
-  sessionData = {
-    throwType: "mixed",
-    totalThrows: 0,
-    completions: 0,
-    notes: "",
-  };
-
-  isLoading = signal(false);
-  isSaving = signal(false);
+  // State
+  progressionStatus = signal<ProgressionStatus | null>(null);
+  weeklyStats = signal<WeeklyStats[]>([]);
   recentSessions = signal<ThrowingSession[]>([]);
-  weeklyStats = signal({
-    totalThrows: 0,
-    avgCompletion: 0,
-    sessionsCount: 0,
-    trend: 0,
-  });
-  chartData = signal<any>(null);
+  showLogDialog = signal(false);
+  isSaving = signal(false);
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: "top" as const,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100,
-        title: {
-          display: true,
-          text: "Completion Rate (%)",
-        },
-      },
-    },
-  };
+  // Form
+  formData: Partial<ThrowingSession> = this.getEmptyForm();
 
-  calculatedCompletionRate = computed(() => {
-    if (this.sessionData.totalThrows === 0) return 0;
-    return Math.round(
-      (this.sessionData.completions / this.sessionData.totalThrows) * 100,
-    );
-  });
-
-  canSave = computed(() => {
-    return (
-      this.sessionData.totalThrows > 0 &&
-      this.sessionData.completions <= this.sessionData.totalThrows
-    );
-  });
+  sessionTypes: SessionTypeOption[] = [
+    { label: 'Practice', value: 'practice' },
+    { label: 'Warm-up Only', value: 'warm_up' },
+    { label: 'Drill Work', value: 'drill_work' },
+    { label: 'Game', value: 'game' },
+    { label: 'Tournament', value: 'tournament' },
+    { label: '320 Simulation', value: 'simulation' },
+  ];
 
   ngOnInit(): void {
     this.loadData();
   }
 
   async loadData(): Promise<void> {
-    this.isLoading.set(true);
-
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
-        this.logger.warn("No user found");
-        return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await this.api.get('/api/qb-throwing').toPromise();
+      if (response?.success) {
+        this.progressionStatus.set(response.data.progression);
+        this.weeklyStats.set(response.data.weeklyStats || []);
+        this.recentSessions.set(response.data.recentSessions || []);
       }
-
-      // Load recent sessions
-      const { data: sessions, error: sessionsError } =
-        await this.supabaseService.client
-          .from("qb_throwing_sessions")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("date", { ascending: false })
-          .limit(10);
-
-      if (sessionsError) {
-        this.logger.warn("Error loading sessions:", sessionsError);
-      } else {
-        this.recentSessions.set(sessions || []);
-        this.calculateWeeklyStats(sessions || []);
-        this.buildChartData(sessions || []);
-      }
-    } catch (error) {
-      this.logger.error("Error loading QB throwing data:", error);
-      this.toastService.error("Failed to load throwing data");
-    } finally {
-      this.isLoading.set(false);
+    } catch (err) {
+      this.logger.error('Failed to load QB throwing data', err);
     }
   }
 
-  private calculateWeeklyStats(sessions: ThrowingSession[]): void {
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-
-    const thisWeekSessions = sessions.filter(
-      (s) => new Date(s.date) >= weekAgo,
-    );
-    const lastWeekSessions = sessions.filter(
-      (s) => new Date(s.date) >= twoWeeksAgo && new Date(s.date) < weekAgo,
-    );
-
-    const thisWeekTotal = thisWeekSessions.reduce(
-      (sum, s) => sum + s.total_throws,
-      0,
-    );
-    const thisWeekAvg =
-      thisWeekSessions.length > 0
-        ? Math.round(
-            thisWeekSessions.reduce((sum, s) => sum + s.completion_rate, 0) /
-              thisWeekSessions.length,
-          )
-        : 0;
-
-    const lastWeekAvg =
-      lastWeekSessions.length > 0
-        ? Math.round(
-            lastWeekSessions.reduce((sum, s) => sum + s.completion_rate, 0) /
-              lastWeekSessions.length,
-          )
-        : 0;
-
-    const trend = lastWeekAvg > 0 ? thisWeekAvg - lastWeekAvg : 0;
-
-    this.weeklyStats.set({
-      totalThrows: thisWeekTotal,
-      avgCompletion: thisWeekAvg,
-      sessionsCount: thisWeekSessions.length,
-      trend,
-    });
+  openLogDialog(): void {
+    this.formData = this.getEmptyForm();
+    this.showLogDialog.set(true);
   }
 
-  private buildChartData(sessions: ThrowingSession[]): void {
-    if (sessions.length < 2) {
-      this.chartData.set(null);
-      return;
-    }
-
-    const last7Sessions = sessions.slice(0, 7).reverse();
-
-    this.chartData.set({
-      labels: last7Sessions.map((s) =>
-        new Date(s.date).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        }),
-      ),
-      datasets: [
-        {
-          label: "Completion Rate",
-          data: last7Sessions.map((s) => s.completion_rate),
-          fill: false,
-          borderColor: "#10b981",
-          backgroundColor: "#10b981",
-          tension: 0.4,
-        },
-        {
-          label: "Throws",
-          data: last7Sessions.map((s) => s.total_throws),
-          fill: false,
-          borderColor: "#3b82f6",
-          backgroundColor: "#3b82f6",
-          tension: 0.4,
-          yAxisID: "y1",
-        },
-      ],
-    });
-
-    // Update chart options for dual axis
-    this.chartOptions = {
-      ...this.chartOptions,
-      scales: {
-        ...this.chartOptions.scales,
-        y1: {
-          type: "linear",
-          display: true,
-          position: "right",
-          title: {
-            display: true,
-            text: "Total Throws",
-          },
-          grid: {
-            drawOnChartArea: false,
-          },
-        },
-      } as any,
-    };
+  closeLogDialog(): void {
+    this.showLogDialog.set(false);
   }
 
   async saveSession(): Promise<void> {
-    if (!this.canSave()) return;
+    if (!this.isFormValid()) return;
 
     this.isSaving.set(true);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
-        this.toastService.error("You must be logged in to save sessions");
-        return;
-      }
+      await this.api.post('/api/qb-throwing', this.formData).toPromise();
 
-      const completionRate = this.calculatedCompletionRate();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Session Logged',
+        detail: `${this.formData.totalThrows} throws recorded!`,
+        life: 3000,
+      });
 
-      const { error } = await this.supabaseService.client
-        .from("qb_throwing_sessions")
-        .insert({
-          user_id: user.id,
-          date: new Date().toISOString().split("T")[0],
-          total_throws: this.sessionData.totalThrows,
-          completions: this.sessionData.completions,
-          completion_rate: completionRate,
-          throw_type: this.sessionData.throwType,
-          notes: this.sessionData.notes || null,
-        });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      this.toastService.success("Session saved successfully!");
-
-      // Reset form
-      this.sessionData = {
-        throwType: "mixed",
-        totalThrows: 0,
-        completions: 0,
-        notes: "",
-      };
-
-      // Reload data
       await this.loadData();
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to save session";
-      this.toastService.error(message);
-      this.logger.error("Error saving session:", error);
+      this.closeLogDialog();
+    } catch (err) {
+      this.logger.error('Failed to save throwing session', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to save session. Please try again.',
+      });
     } finally {
       this.isSaving.set(false);
+    }
+  }
+
+  getEmptyForm(): Partial<ThrowingSession> {
+    return {
+      sessionType: 'practice',
+      totalThrows: 0,
+      shortThrows: 0,
+      mediumThrows: 0,
+      longThrows: 0,
+      armFeelingAfter: 5,
+      preThrowingWarmupDone: false,
+      postThrowingArmCareDone: false,
+      iceApplied: false,
+      notes: '',
+    };
+  }
+
+  isFormValid(): boolean {
+    return !!(this.formData.sessionType && (this.formData.totalThrows || 0) > 0);
+  }
+
+  getProgressPercent(): number {
+    const status = this.progressionStatus();
+    if (!status || !status.targetThrows) return 0;
+    return Math.min(100, Math.round((status.currentWeekAvg / status.targetThrows) * 100));
+  }
+
+  getPhaseClass(): string {
+    const phase = this.progressionStatus()?.progressionPhase || '';
+    if (phase.includes('Tournament')) return 'phase-tournament';
+    if (phase.includes('Building')) return 'phase-building';
+    return 'phase-foundation';
+  }
+
+  getBarHeight(throws: number): number {
+    const maxThrows = 800; // Max expected weekly throws
+    return Math.min(100, Math.max(15, (throws / maxThrows) * 100));
+  }
+
+  formatWeekLabel(weekStart: string): string {
+    const date = new Date(weekStart);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  formatSessionType(type: string): string {
+    const labels: Record<string, string> = {
+      practice: 'Practice',
+      warm_up: 'Warm-up',
+      drill_work: 'Drills',
+      game: 'Game',
+      tournament: 'Tournament',
+      simulation: 'Simulation',
+    };
+    return labels[type] || type;
+  }
+
+  getSessionTypeSeverity(type: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+    const severities: Record<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary'> = {
+      practice: 'info',
+      warm_up: 'secondary',
+      drill_work: 'info',
+      game: 'success',
+      tournament: 'danger',
+      simulation: 'warn',
+    };
+    return severities[type] || 'secondary';
+  }
+
+  showArmCareReminder(): boolean {
+    const sessions = this.recentSessions();
+    if (sessions.length === 0) return false;
+    const lastSession = sessions[0];
+    const today = new Date().toISOString().split('T')[0];
+    return lastSession.sessionDate === today && 
+           !lastSession.postThrowingArmCareDone && 
+           lastSession.totalThrows >= 50;
+  }
+
+  lastSessionThrows(): number {
+    return this.recentSessions()[0]?.totalThrows || 0;
+  }
+
+  async markArmCareDone(): Promise<void> {
+    const lastSession = this.recentSessions()[0];
+    if (!lastSession) return;
+
+    try {
+      await this.api.post('/api/qb-throwing/arm-care', {
+        sessionId: lastSession.id,
+      }).toPromise();
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Arm Care Complete',
+        detail: 'Great job taking care of your arm!',
+        life: 2000,
+      });
+
+      await this.loadData();
+    } catch (err) {
+      this.logger.error('Failed to mark arm care done', err);
     }
   }
 }

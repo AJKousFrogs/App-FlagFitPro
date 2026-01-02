@@ -678,35 +678,23 @@ export class SettingsComponent implements OnInit {
 
     try {
       // In production, this would fetch real session data from Supabase
-      // For now, we'll show mock data
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      this.activeSessions.set([
-        {
-          id: "1",
-          deviceName: "Chrome on macOS",
-          deviceType: "desktop",
-          location: "San Francisco, CA",
-          lastActive: "Active now",
-          isCurrent: true,
-        },
-        {
-          id: "2",
-          deviceName: "Safari on iPhone",
-          deviceType: "mobile",
-          location: "San Francisco, CA",
-          lastActive: "2 hours ago",
-          isCurrent: false,
-        },
-        {
-          id: "3",
-          deviceName: "Firefox on Windows",
-          deviceType: "desktop",
-          location: "New York, NY",
-          lastActive: "Yesterday",
-          isCurrent: false,
-        },
-      ]);
+      // For now, we only show the current session info if available
+      const user = this.authService.getUser();
+      
+      if (user) {
+        this.activeSessions.set([
+          {
+            id: "current",
+            deviceName: "Current Session",
+            deviceType: "desktop",
+            location: "Unknown",
+            lastActive: "Active now",
+            isCurrent: true,
+          }
+        ]);
+      } else {
+        this.activeSessions.set([]);
+      }
     } catch (error) {
       this.logger.error("Error loading sessions:", error);
     } finally {

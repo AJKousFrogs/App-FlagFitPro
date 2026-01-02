@@ -144,64 +144,6 @@ async function getHeatmapData(userId, timeRange) {
   }
 }
 
-/**
- * Generate mock heatmap data for development
- */
-function _generateMockHeatmapData(timeRange) {
-  const cells = [];
-  const endDate = new Date();
-  const startDate = new Date();
-
-  switch (timeRange) {
-    case "3months":
-      startDate.setMonth(endDate.getMonth() - 3);
-      break;
-    case "6months":
-      startDate.setMonth(endDate.getMonth() - 6);
-      break;
-    case "1year":
-      startDate.setFullYear(endDate.getFullYear() - 1);
-      break;
-    default:
-      startDate.setMonth(endDate.getMonth() - 6);
-  }
-
-  const currentDate = new Date(startDate);
-  while (currentDate <= endDate) {
-    const dateStr = currentDate.toISOString().split("T")[0];
-    const dayOfWeek = currentDate.getDay();
-
-    // Simulate training pattern (more training Mon-Fri, less on weekends)
-    const hasTraining = dayOfWeek >= 1 && dayOfWeek <= 5 && Math.random() > 0.3;
-
-    if (hasTraining) {
-      const intensity = Math.floor(Math.random() * 8); // 0-7
-      const sessions = Math.floor(Math.random() * 3) + 1;
-      const duration = Math.floor(Math.random() * 90) + 30;
-
-      cells.push({
-        date: dateStr,
-        value: intensity * 10,
-        intensity,
-        sessions,
-        duration,
-      });
-    } else {
-      cells.push({
-        date: dateStr,
-        value: 0,
-        intensity: 0,
-        sessions: 0,
-        duration: 0,
-      });
-    }
-
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return cells;
-}
-
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "performance-heatmap",

@@ -1,0 +1,20 @@
+// ============================================================================
+// qb-training-schedule.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .qb-training-schedule-page {
+    padding: var(--space-6);
+  }
+
+  .schedule-card,
+  .calendar-card {
+    margin-top: var(--space-4);
+  }
+
+  .program-info {
+    padding: var(--space-4);
+  }
+}
+

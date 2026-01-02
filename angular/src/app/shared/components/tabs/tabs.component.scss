@@ -1,0 +1,37 @@
+// ============================================================================
+// tabs.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  :host ::ng-deep .p-tabview-nav {
+    background-color: var(--surface-primary);
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  :host ::ng-deep .p-tabview-nav-link {
+    padding: 1rem 1.5rem;
+    color: var(--color-text-secondary);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  }
+
+  :host ::ng-deep .p-tabview-nav-link:hover {
+    color: var(--color-text-primary);
+    background-color: var(--surface-secondary);
+  }
+
+  :host ::ng-deep .p-tabview-nav-link.p-highlight {
+    color: var(--ds-primary-green);
+    border-bottom-color: var(--ds-primary-green);
+  }
+
+  :host ::ng-deep .p-tabview-panels {
+    padding: 1.5rem;
+    background-color: var(--surface-primary);
+  }
+}
+

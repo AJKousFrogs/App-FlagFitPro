@@ -33,7 +33,6 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TabPanel, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../../core/services/api.service";
@@ -118,8 +117,6 @@ interface TeamOption {
     Select,
     SkeletonModule,
     TableModule,
-    Tabs,
-    TabPanel,
     TagModule,
     TooltipModule,
     MainLayoutComponent,
@@ -440,165 +437,7 @@ interface TeamOption {
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .coach-analytics {
-        padding: var(--space-6);
-      }
-
-      .analytics-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-8);
-      }
-
-      .header-filters {
-        display: flex;
-        gap: var(--space-3);
-      }
-
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: var(--space-4);
-        margin-bottom: var(--space-8);
-      }
-
-      .metric-card {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-        background: white;
-        padding: var(--space-4);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      .metric-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-      }
-
-      .metric-icon.athletes {
-        background: #e0f2fe;
-        color: #0284c7;
-      }
-      .metric-icon.interactions {
-        background: #f0fdf4;
-        color: #16a34a;
-      }
-      .metric-icon.sessions {
-        background: #fef9c3;
-        color: #ca8a04;
-      }
-      .metric-icon.accuracy {
-        background: #f5f3ff;
-        color: #7c3aed;
-      }
-
-      .metric-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .metric-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .metric-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .metric-sub {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
-
-      .analytics-grid {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        gap: var(--space-6);
-      }
-
-      .charts-column {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6);
-      }
-
-      .side-column {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6);
-      }
-
-      .analytics-card {
-        height: 100%;
-      }
-
-      .classification-stats {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6);
-      }
-
-      .stat-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-4);
-      }
-
-      .stat-item {
-        background: var(--p-surface-50);
-        padding: var(--space-3);
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .risk-distribution {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .distribution-item {
-        margin-bottom: var(--space-2);
-      }
-
-      .dist-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.875rem;
-        margin-bottom: 4px;
-      }
-
-      .chart-container {
-        height: 250px;
-        position: relative;
-      }
-
-      @media (max-width: 1024px) {
-        .analytics-grid {
-          grid-template-columns: 1fr;
-        }
-        .side-column {
-          order: -1;
-        }
-      }
-    `,
-  ],
+  styleUrl: './coach-analytics.component.scss',
 })
 export class CoachAnalyticsComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -637,91 +476,34 @@ export class CoachAnalyticsComponent implements OnInit {
 
   loadAnalytics(): void {
     this.loading.set(true);
-    // Mocking load for demo
+    // Real data would come from this.apiService.get("/api/analytics/summary")
     setTimeout(() => {
       this.overview.set({
-        totalAthletes: 24,
-        activeAthletesLast7Days: 18,
-        totalAiInteractions: 452,
-        interactionsLast7Days: 86,
-        sessionCompletionRate: 78,
-        feedbackAccuracyRate: 92,
-        reviewedMessages: 124,
+        totalAthletes: 0,
+        activeAthletesLast7Days: 0,
+        totalAiInteractions: 0,
+        interactionsLast7Days: 0,
+        sessionCompletionRate: 0,
+        feedbackAccuracyRate: null,
+        reviewedMessages: 0,
       });
 
       this.classification.set({
-        total: 452,
-        riskDistribution: { high: 12, medium: 45, low: 395 },
-        topIntents: [
-          { intent: "training_query", count: 180 },
-          { intent: "recovery_advice", count: 95 },
-          { intent: "nutrition_info", count: 72 },
-        ],
-        youthInteractions: 120,
-        youthPercentage: 26,
-        avgConfidence: 0.88,
+        total: 0,
+        riskDistribution: { high: 0, medium: 0, low: 0 },
+        topIntents: [],
+        youthInteractions: 0,
+        youthPercentage: 0,
+        avgConfidence: null,
       });
 
-      this.trends.set({
-        period: "30d",
-        startDate: "2024-11-23",
-        endDate: "2024-12-23",
-        daily: [], // Empty for mock
-        summary: {
-          totalQueries: 452,
-          avgQueriesPerDay: 15.1,
-          highRiskTotal: 12,
-          sessionsCompleted: 342,
-        },
-      });
-
-      this.leaderboard.set([
-        {
-          rank: 1,
-          userId: "1",
-          name: "Marcus Rivera",
-          completedSessions: 28,
-          totalSessions: 30,
-          completionRate: 93,
-          totalMinutes: 1240,
-          lastCompleted: new Date().toISOString(),
-        },
-        {
-          rank: 2,
-          userId: "2",
-          name: "Sarah Chen",
-          completedSessions: 26,
-          totalSessions: 30,
-          completionRate: 87,
-          totalMinutes: 1100,
-          lastCompleted: new Date().toISOString(),
-        },
-        {
-          rank: 3,
-          userId: "3",
-          name: "Jackson Lee",
-          completedSessions: 24,
-          totalSessions: 30,
-          completionRate: 80,
-          totalMinutes: 980,
-          lastCompleted: new Date().toISOString(),
-        },
-      ]);
-
-      this.feedbackStats.set({
-        athleteFeedback: { helpful: 120, notHelpful: 12, helpfulRate: 91 },
-        coachFeedback: {
-          appropriate: 115,
-          tooStrict: 4,
-          tooLenient: 3,
-          wrongIntent: 2,
-          accuracyRate: 92,
-        },
-      });
+      this.trends.set(null);
+      this.leaderboard.set([]);
+      this.feedbackStats.set(null);
 
       this.updateCharts();
       this.loading.set(false);
-    }, 800);
+    }, 500);
   }
 
   private initChartOptions(): void {

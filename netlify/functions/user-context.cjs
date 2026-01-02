@@ -133,13 +133,14 @@ async function getUserContext(userId) {
     // Get recent supplement logs (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const dateStr = sevenDaysAgo.toISOString().split("T")[0];
 
     const { data: supplements, error: supplementsError } = await supabaseAdmin
-      .from("supplements_logs")
-      .select("supplement, logged_at, taken_at, dose")
+      .from("supplement_logs")
+      .select("supplement_name, created_at, date, dosage")
       .eq("user_id", userId)
-      .gte("taken_at", sevenDaysAgo.toISOString())
-      .order("taken_at", { ascending: false })
+      .gte("date", dateStr)
+      .order("date", { ascending: false })
       .limit(10);
 
     if (supplementsError) {
@@ -201,9 +202,9 @@ async function getUserContext(userId) {
       activeProgram,
       supplements: {
         recentLogs: (supplements || []).map((log) => ({
-          supplement: log.supplement,
-          loggedAt: log.logged_at || log.taken_at,
-          dose: log.dose, // User logged, AI never recommends
+          supplement: log.supplement_name,
+          loggedAt: log.created_at || log.date,
+          dose: log.dosage, // User logged, AI never recommends
         })),
       },
     };

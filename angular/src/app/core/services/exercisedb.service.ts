@@ -176,7 +176,7 @@ export class ExerciseDBService {
   ];
 
   private getApiBaseUrl(): string {
-    if (environment.apiUrl && environment.apiUrl !== "mock://api") {
+    if (environment.apiUrl) {
       return environment.apiUrl;
     }
 

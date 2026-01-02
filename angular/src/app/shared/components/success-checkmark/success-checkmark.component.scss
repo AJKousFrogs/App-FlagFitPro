@@ -1,0 +1,272 @@
+// ============================================================================
+// success-checkmark.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .success-checkmark-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    position: relative;
+  }
+
+  /* ================================
+     SIZE VARIANTS
+     ================================ */
+
+  .size-sm {
+    --checkmark-size: 32px;
+    --stroke-width: 3px;
+  }
+
+  .size-md {
+    --checkmark-size: 48px;
+    --stroke-width: 3px;
+  }
+
+  .size-lg {
+    --checkmark-size: 64px;
+    --stroke-width: 4px;
+  }
+
+  .size-xl {
+    --checkmark-size: 96px;
+    --stroke-width: 5px;
+  }
+
+  /* ================================
+     CIRCLE BACKGROUND
+     ================================ */
+
+  .success-circle {
+    position: absolute;
+    width: calc(var(--checkmark-size) + 20px);
+    height: calc(var(--checkmark-size) + 20px);
+    background: var(--ds-primary-green-subtle);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  .animated .success-circle {
+    animation: circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1)
+      forwards;
+  }
+
+  .success-circle.pulse {
+    animation:
+      circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      circle-pulse 2s ease-in-out 500ms infinite;
+  }
+
+  @keyframes circle-expand {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes circle-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.2;
+    }
+  }
+
+  /* ================================
+     CHECKMARK SVG
+     ================================ */
+
+  .checkmark-svg {
+    position: relative;
+    z-index: 1;
+    width: var(--checkmark-size);
+    height: var(--checkmark-size);
+  }
+
+  .checkmark-circle {
+    stroke: var(--ds-primary-green);
+    stroke-width: var(--stroke-width);
+    fill: none;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-linecap: round;
+  }
+
+  .checkmark-circle.filled {
+    fill: var(--ds-primary-green-subtle);
+  }
+
+  .animated .checkmark-circle {
+    animation: circle-draw 600ms cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+
+  @keyframes circle-draw {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .checkmark-check {
+    stroke: var(--ds-primary-green);
+    stroke-width: var(--stroke-width);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+  }
+
+  .animated .checkmark-check {
+    animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms
+      forwards;
+  }
+
+  @keyframes check-draw {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* ================================
+     VARIANT STYLES
+     ================================ */
+
+  .variant-minimal .checkmark-check {
+    stroke-width: calc(var(--stroke-width) - 1px);
+  }
+
+  .variant-outlined .checkmark-circle {
+    stroke-width: 2px;
+  }
+
+  /* ================================
+     VISIBILITY
+     ================================ */
+
+  .success-checkmark-container:not(.visible) {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  .success-checkmark-container.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .animated.visible {
+    animation: container-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1)
+      forwards;
+  }
+
+  @keyframes container-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* ================================
+     LABEL
+     ================================ */
+
+  .success-label {
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--ds-primary-green);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  .animated .success-label {
+    animation: label-fade 300ms ease-out 600ms forwards;
+  }
+
+  @keyframes label-fade {
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ================================
+     COLOR VARIANTS
+     ================================ */
+
+  .color-success {
+    --checkmark-color: var(--color-status-success);
+  }
+
+  .color-primary {
+    --checkmark-color: var(--ds-primary-green);
+  }
+
+  .color-white {
+    --checkmark-color: white;
+  }
+
+  .color-success .checkmark-check,
+  .color-success .checkmark-circle {
+    stroke: var(--color-status-success);
+  }
+
+  .color-white .checkmark-check,
+  .color-white .checkmark-circle {
+    stroke: white;
+  }
+
+  /* ================================
+     REDUCED MOTION
+     ================================ */
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated .success-circle,
+    .animated .checkmark-circle,
+    .animated .checkmark-check,
+    .animated .success-label,
+    .animated.visible {
+      animation: none;
+    }
+
+    .success-circle {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+
+    .checkmark-circle {
+      stroke-dashoffset: 0;
+    }
+
+    .checkmark-check {
+      stroke-dashoffset: 0;
+    }
+
+    .success-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+

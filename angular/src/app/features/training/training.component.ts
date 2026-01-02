@@ -2,6 +2,7 @@ import {
   Component,
   OnInit,
   inject,
+  signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Router } from "@angular/router";
@@ -12,6 +13,7 @@ import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ToastModule } from "primeng/toast";
 import { DialogModule } from "primeng/dialog";
+import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -23,6 +25,7 @@ import {
 import { HeaderService } from "../../core/services/header.service";
 import { TrainingStateService } from "../../core/services/training-state.service";
 import { TrainingDataLoaderService } from "../../core/services/training-data-loader.service";
+import { ApiService } from "../../core/services/api.service";
 import {
   Workout,
   Achievement,
@@ -41,6 +44,7 @@ import {
     ProgressBarModule,
     ToastModule,
     DialogModule,
+    TooltipModule,
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,
@@ -56,10 +60,44 @@ import {
         [enablePullToRefresh]="true"
         (pullToRefresh)="refreshTrainingData()"
       >
-        <!-- Wellness Alert Banner -->
+        <!-- Back to Daily Protocol Banner -->
+        <div class="protocol-banner primary" (click)="goToDailyProtocol()">
+          <div class="banner-icon">📋</div>
+          <div class="banner-content">
+            <h3>← Back to Daily Protocol</h3>
+            <p>Your AI-prescribed daily training with progressive overload</p>
+          </div>
+          <div class="banner-stats">
+            @if (streakCount() > 0) {
+              <div class="streak-badge" pTooltip="Training streak">
+                🔥 {{ streakCount() }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="header-content">
+            <div class="position-indicator">
+              <span class="position-icon">{{ positionIcon() }}</span>
+              <span class="position-label">{{ positionLabel() }}</span>
+            </div>
+            <h1 class="page-title">Custom Session Builder</h1>
+            <p class="page-subtitle">Build additional {{ positionLabel().toLowerCase() }}-specific training sessions</p>
+          </div>
+          @if (readinessScore() > 0) {
+            <div class="readiness-badge-compact" [class]="readinessStatus()">
+              <span class="readiness-value">{{ readinessScore() }}</span>
+              <span class="readiness-label">Readiness</span>
+            </div>
+          }
+        </div>
+
+        <!-- Wellness Alert Banner (compact) -->
         @if (wellnessAlert()) {
           <div
-            class="wellness-alert-banner"
+            class="wellness-alert-banner compact"
             [class]="'alert-' + wellnessAlert()!.severity"
           >
             <div class="alert-icon">
@@ -70,55 +108,63 @@ import {
               }
             </div>
             <div class="alert-content">
-              <h3>{{ wellnessAlert()!.message }}</h3>
-              <ul class="alert-recommendations">
-                @for (rec of wellnessAlert()!.recommendations; track rec) {
-                  <li>{{ rec }}</li>
-                }
-              </ul>
+              <span>{{ wellnessAlert()!.message }}</span>
             </div>
-            <div class="alert-actions">
-              <button class="alert-btn" (click)="goToWellnessCheckin()">
-                Update Wellness
-              </button>
-              <button class="alert-dismiss" (click)="dismissWellnessAlert()">
-                ✕
-              </button>
-            </div>
+            <p-button
+              label="Update"
+              size="small"
+              [outlined]="true"
+              (onClick)="goToWellnessCheckin()"
+            ></p-button>
+            <button class="alert-dismiss" (click)="dismissWellnessAlert()">✕</button>
           </div>
         }
 
-        <!-- Readiness Score Badge -->
-        @if (readinessScore() > 0 && !wellnessAlert()) {
-          <div class="readiness-badge" [class]="readinessStatus()">
-            <span class="readiness-icon">
-              @if (readinessStatus() === "excellent") {
-                🟢
-              } @else if (readinessStatus() === "good") {
-                🔵
-              } @else if (readinessStatus() === "caution") {
-                🟡
-              } @else {
-                🔴
-              }
-            </span>
-            <span class="readiness-label"
-              >Readiness: {{ readinessScore() }}%</span
+        <!-- Position-Specific Quick Actions -->
+        <div class="quick-actions">
+          @for (action of positionQuickActions(); track action.label) {
+            <div 
+              class="action-card" 
+              (click)="navigateToAction(action.route)"
+              [pTooltip]="action.tooltip"
             >
+              <span class="action-icon">{{ action.icon }}</span>
+              <span class="action-label">{{ action.label }}</span>
+              @if (action.label === 'Achievements' && totalAchievements() > 0) {
+                <span class="action-badge">{{ totalAchievements() }}</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Position Priority Workouts -->
+        @if (positionWorkouts().length > 0) {
+          <div class="priority-workouts">
+            <div class="priority-header">
+              <h3>{{ positionIcon() }} {{ positionLabel() }} Priority Training</h3>
+              <p-tag value="Position-Specific" severity="info" />
+            </div>
+            <div class="priority-grid">
+              @for (workout of positionWorkouts(); track workout.title) {
+                <div 
+                  class="priority-card" 
+                  [class.high]="workout.priority === 'high'"
+                  [class.medium]="workout.priority === 'medium'"
+                  (click)="startPriorityWorkout(workout)"
+                >
+                  <span class="priority-icon">{{ workout.icon }}</span>
+                  <div class="priority-info">
+                    <span class="priority-title">{{ workout.title }}</span>
+                    <span class="priority-desc">{{ workout.description }}</span>
+                  </div>
+                  @if (workout.priority === 'high') {
+                    <span class="priority-badge">Priority</span>
+                  }
+                </div>
+              }
+            </div>
           </div>
         }
-
-        <!-- Hero Section -->
-        <div class="hero-section">
-          <p-card class="hero-card">
-            <div class="hero-badge">Training Hub</div>
-            <h1 class="hero-title">
-              Welcome back, <span>{{ userName() }}!</span>
-            </h1>
-            <p class="hero-subtitle">Ready to dominate today?</p>
-            <div class="hero-note">Your Weekly Performance Snapshot</div>
-          </p-card>
-        </div>
 
         <!-- Smart Training Session Builder -->
         <app-training-builder></app-training-builder>
@@ -126,588 +172,134 @@ import {
         <!-- Training Stats Grid -->
         <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
 
-        <!-- Weekly Schedule -->
-        <p-card class="schedule-card">
-          <ng-template pTemplate="header">
-            <div class="section-header">
-              <h2>
-                <i class="pi pi-calendar"></i>
-                Weekly Training Schedule
-              </h2>
+        <!-- Two Column Grid -->
+        <div class="training-grid">
+          <!-- Weekly Schedule -->
+          <p-card class="schedule-card">
+            <ng-template pTemplate="header">
+              <div class="section-header">
+                <h2>
+                  <i class="pi pi-calendar"></i>
+                  This Week
+                </h2>
+              </div>
+            </ng-template>
+            <div class="weekly-schedule-compact">
+              @for (day of weeklySchedule(); track trackByDayName($index, day)) {
+                <div class="schedule-day-compact" [class.today]="isToday(day.name)">
+                  <div class="day-indicator">
+                    <span class="day-abbrev">{{ day.name.substring(0, 3) }}</span>
+                    @if (day.sessions.length > 0) {
+                      <span class="session-dot"></span>
+                    }
+                  </div>
+                  @if (day.sessions.length > 0) {
+                    <div class="day-session-preview">
+                      {{ day.sessions[0].title }}
+                    </div>
+                  } @else {
+                    <div class="day-session-preview empty">Rest</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="card-footer">
               <p-button
-                label="View Details"
+                label="Full Schedule"
                 icon="pi pi-th-large"
-                [outlined]="true"
+                [text]="true"
+                size="small"
                 (onClick)="toggleScheduleView()"
               ></p-button>
             </div>
-          </ng-template>
-          <div class="weekly-schedule-grid">
-            @for (day of weeklySchedule(); track trackByDayName($index, day)) {
-              <div class="schedule-day">
-                <div class="day-name">{{ day.name }}</div>
-                <div class="day-sessions">
-                  @for (
-                    session of day.sessions;
-                    track trackBySessionTime($index, session)
-                  ) {
-                    <div class="session-item">
-                      <div class="session-time">{{ session.time }}</div>
-                      <div class="session-title">{{ session.title }}</div>
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        </p-card>
+          </p-card>
 
-        <!-- Training Grid -->
-        <div class="training-grid">
-          <!-- Workouts Section -->
+          <!-- Quick Workouts -->
           <p-card class="workouts-section">
             <ng-template pTemplate="header">
               <h2>
                 <i class="pi pi-bolt"></i>
-                Available Workouts
+                Quick Workouts
               </h2>
             </ng-template>
-            <div class="workouts-list">
+            <div class="workouts-list-compact">
               @for (
-                workout of workouts();
+                workout of workouts().slice(0, 4);
                 track trackByWorkoutTitle($index, workout)
               ) {
                 <div
-                  class="workout-card"
-                  [style.border-color]="workout.iconBg"
-                  [class.swiping-right]="
-                    swipingWorkoutId() === workout.title &&
-                    swipeDirection() === 'right'
-                  "
-                  [class.swiping-left]="
-                    swipingWorkoutId() === workout.title &&
-                    swipeDirection() === 'left'
-                  "
-                  appSwipeGesture
-                  (swipeRight)="onSwipeRight($event, workout)"
-                  (swipeLeft)="onSwipeLeft($event, workout)"
+                  class="workout-card-compact"
+                  [style.border-left-color]="workout.iconBg"
+                  (click)="startWorkout(workout)"
                 >
-                  <div class="workout-icon" [style.background]="workout.iconBg">
+                  <div class="workout-icon-small" [style.background]="workout.iconBg">
                     <i [class]="workout.icon"></i>
                   </div>
-                  <div class="workout-content">
-                    <h3 class="workout-title">{{ workout.title }}</h3>
-                    <p class="workout-description">{{ workout.description }}</p>
-                    <div class="workout-meta">
-                      <span>⏱️ {{ workout.duration }}</span>
-                      <span>🔥 {{ workout.intensity }}</span>
-                      <span>📍 {{ workout.location }}</span>
-                    </div>
+                  <div class="workout-info">
+                    <span class="workout-name">{{ workout.title }}</span>
+                    <span class="workout-meta-compact">{{ workout.duration }} • {{ workout.intensity }}</span>
                   </div>
-                  <p-button
-                    label="Start"
-                    (onClick)="startWorkout(workout)"
-                  ></p-button>
+                  <i class="pi pi-play"></i>
                 </div>
               }
             </div>
+            @if (workouts().length > 4) {
+              <div class="card-footer">
+                <p-button
+                  label="View All {{ workouts().length }} Workouts"
+                  icon="pi pi-list"
+                  [text]="true"
+                  size="small"
+                  (onClick)="showAllWorkouts()"
+                ></p-button>
+              </div>
+            }
           </p-card>
+        </div>
 
-          <!-- Progress & Achievements -->
-          <p-card class="progress-section">
-            <ng-template pTemplate="header">
-              <h2>
-                <i class="pi pi-chart-line"></i>
-                Progress & Achievements
-              </h2>
-            </ng-template>
-            <div class="achievements-list">
-              @for (
-                achievement of achievements();
-                track trackByAchievementTitle($index, achievement)
-              ) {
-                <div class="achievement-item">
-                  <div class="achievement-icon">{{ achievement.icon }}</div>
-                  <div class="achievement-content">
-                    <div class="achievement-title">{{ achievement.title }}</div>
-                    <div class="achievement-date">{{ achievement.date }}</div>
-                  </div>
+        <!-- Recent Achievements -->
+        @if (recentAchievements().length > 0) {
+          <div class="achievements-strip">
+            <div class="strip-header">
+              <h3>🏆 Recent Achievements</h3>
+              <p-button
+                label="View All"
+                [text]="true"
+                size="small"
+                (onClick)="goToAchievements()"
+              ></p-button>
+            </div>
+            <div class="achievements-scroll">
+              @for (achievement of recentAchievements(); track achievement.id) {
+                <div class="achievement-chip" [pTooltip]="achievement.description">
+                  <span class="ach-icon">{{ achievement.icon }}</span>
+                  <span class="ach-name">{{ achievement.title }}</span>
                 </div>
               }
             </div>
-          </p-card>
+          </div>
+        }
+
+        <!-- LA28 Progress Teaser -->
+        <div class="la28-teaser" (click)="goToRoadmap()">
+          <div class="teaser-content">
+            <span class="teaser-icon">🏅</span>
+            <div class="teaser-text">
+              <span class="teaser-title">Road to LA28</span>
+              <span class="teaser-subtitle">{{ daysUntilOlympics() }} days until Olympics</span>
+            </div>
+          </div>
+          <div class="teaser-progress">
+            <div class="progress-ring-mini">
+              <span>{{ overallProgress() }}%</span>
+            </div>
+          </div>
+          <i class="pi pi-chevron-right"></i>
         </div>
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .training-page {
-        padding: var(--space-6);
-        position: relative;
-      }
-
-      .training-page::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: var(--color-brand-primary);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s;
-        z-index: 10;
-      }
-
-      /* Wellness Alert Banner */
-      .wellness-alert-banner {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-4);
-        padding: var(--space-4) var(--space-5);
-        border-radius: var(--radius-xl);
-        margin-bottom: var(--space-6);
-        animation: slideDown 0.3s ease-out;
-      }
-
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .wellness-alert-banner.alert-critical {
-        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        border: 2px solid var(--color-status-error);
-      }
-
-      .wellness-alert-banner.alert-warning {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        border: 2px solid var(--color-status-warning);
-      }
-
-      .alert-icon {
-        font-size: var(--text-3xl);
-        flex-shrink: 0;
-      }
-
-      .alert-content {
-        flex: 1;
-      }
-
-      .alert-content h3 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--text-base);
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-text-primary);
-      }
-
-      .alert-recommendations {
-        margin: 0;
-        padding-left: var(--space-4);
-        font-size: var(--text-sm);
-        color: var(--color-text-secondary);
-      }
-
-      .alert-recommendations li {
-        margin-bottom: var(--space-1);
-      }
-
-      .alert-actions {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-        flex-shrink: 0;
-      }
-
-      .alert-btn {
-        padding: var(--space-2) var(--space-4);
-        background: var(--color-brand-primary);
-        color: white;
-        border: none;
-        border-radius: var(--radius-md);
-        font-size: var(--text-sm);
-        font-weight: var(--font-weight-medium);
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .alert-btn:hover {
-        background: var(--color-brand-primary-dark);
-      }
-
-      .alert-dismiss {
-        background: none;
-        border: none;
-        font-size: var(--text-xl);
-        cursor: pointer;
-        padding: var(--space-1);
-        opacity: 0.6;
-        transition: opacity 0.2s;
-      }
-
-      .alert-dismiss:hover {
-        opacity: 1;
-      }
-
-      /* Readiness Badge */
-      .readiness-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-2) var(--space-4);
-        border-radius: var(--radius-full);
-        font-size: var(--text-sm);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--space-4);
-      }
-
-      .readiness-badge.excellent {
-        background: var(--color-status-success-subtle);
-        color: var(--color-status-success);
-      }
-
-      .readiness-badge.good {
-        background: #dbeafe;
-        color: #2563eb;
-      }
-
-      .readiness-badge.caution {
-        background: var(--color-status-warning-subtle);
-        color: #d97706;
-      }
-
-      .readiness-badge.rest {
-        background: var(--color-status-error-subtle);
-        color: var(--color-status-error);
-      }
-
-      @media (max-width: 640px) {
-        .wellness-alert-banner {
-          flex-direction: column;
-        }
-
-        .alert-actions {
-          flex-direction: row;
-          width: 100%;
-        }
-
-        .alert-btn {
-          flex: 1;
-        }
-      }
-
-      .training-page.refreshing::before {
-        transform: scaleX(1);
-        animation: refresh-indicator 1s ease-in-out;
-      }
-
-      @keyframes refresh-indicator {
-        0% {
-          transform: scaleX(0);
-        }
-        50% {
-          transform: scaleX(1);
-        }
-        100% {
-          transform: scaleX(0);
-        }
-      }
-
-      .hero-section {
-        margin-bottom: var(--space-8);
-      }
-
-      .hero-card {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary),
-          var(--color-brand-secondary)
-        );
-        color: white;
-        border: none;
-      }
-
-      .hero-badge {
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: var(--font-body-sm);
-        opacity: 0.9;
-        margin-bottom: var(--space-4);
-        color: inherit; /* Inherit white from hero-card */
-      }
-
-      .hero-title {
-        font-size: var(--font-display-sm);
-        font-weight: var(--font-weight-bold);
-        margin-bottom: var(--space-4);
-        color: inherit; /* Inherit white from hero-card */
-
-        span {
-          color: inherit; /* Ensure nested span also inherits white */
-        }
-      }
-
-      .hero-subtitle {
-        font-size: var(--font-heading-sm);
-        opacity: 0.9;
-        margin-bottom: var(--space-6);
-        color: inherit; /* Inherit white from hero-card */
-      }
-
-      .hero-note {
-        font-size: var(--font-body-sm);
-        opacity: 0.7;
-        color: inherit; /* Inherit white from hero-card */
-      }
-
-      .schedule-cta-card {
-        margin-bottom: var(--space-8);
-      }
-
-      .cta-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--space-6);
-        flex-wrap: wrap;
-      }
-
-      .cta-text h2 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        font-size: var(--font-heading-lg);
-        font-weight: var(--font-weight-bold);
-        margin-bottom: var(--space-4);
-        color: var(--color-brand-primary);
-      }
-
-      .cta-text p {
-        max-width: 600px;
-        color: var(--text-secondary);
-        margin: 0;
-      }
-
-      .schedule-card {
-        margin-bottom: var(--space-8);
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-      }
-
-      .section-header h2 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        font-size: var(--font-heading-lg);
-        font-weight: var(--font-weight-bold);
-        margin: 0;
-      }
-
-      .weekly-schedule-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-4);
-      }
-
-      .schedule-day {
-        padding: var(--space-4);
-        border-radius: var(--p-border-radius);
-        background: var(--p-surface-50);
-      }
-
-      .day-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: var(--space-3);
-      }
-
-      .session-item {
-        padding: var(--space-2);
-        margin-bottom: var(--space-2);
-        background: white;
-        border-radius: var(--p-border-radius);
-      }
-
-      .session-time {
-        font-size: var(--font-body-xs);
-        color: var(--text-secondary);
-      }
-
-      .session-title {
-        font-size: var(--font-body-sm);
-        font-weight: var(--font-weight-medium);
-        color: var(--text-primary);
-      }
-
-      .training-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: var(--space-6);
-      }
-
-      .workouts-section,
-      .progress-section {
-        height: 100%;
-      }
-
-      .workouts-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .workout-card {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-        padding: var(--space-5);
-        border: 2px solid;
-        border-radius: var(--p-border-radius);
-        transition: all 0.2s;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .workout-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .workout-card.swiping-right {
-        transform: translateX(100px);
-        opacity: 0.7;
-        background: var(--color-brand-primary-subtle);
-      }
-
-      .workout-card.swiping-left {
-        transform: translateX(-100px);
-        opacity: 0.7;
-        background: var(--color-status-warning-light);
-      }
-
-      .workout-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
-        transition: opacity 0.2s;
-        pointer-events: none;
-      }
-
-      .workout-card.swiping-right::before {
-        content: "✓ Complete";
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--color-brand-primary);
-        color: var(--color-text-on-primary);
-        font-weight: var(--font-weight-semibold);
-        opacity: 1;
-      }
-
-      .workout-card.swiping-left::before {
-        content: "⏱ Postpone";
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--color-status-warning);
-        color: var(--color-text-on-primary);
-        font-weight: var(--font-weight-semibold);
-        opacity: 1;
-      }
-
-      .workout-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: var(--p-border-radius);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: var(--icon-2xl);
-        color: var(--color-text-on-primary);
-      }
-
-      .workout-content {
-        flex: 1;
-      }
-
-      .workout-title {
-        font-size: var(--font-body-lg);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--space-2);
-      }
-
-      .workout-description {
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-        margin-bottom: var(--space-3);
-      }
-
-      .workout-meta {
-        display: flex;
-        gap: var(--space-4);
-        font-size: var(--font-body-xs);
-        color: var(--text-secondary);
-      }
-
-      .achievements-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .achievement-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-3);
-        border-radius: var(--p-border-radius);
-        background: var(--p-surface-50);
-      }
-
-      .achievement-icon {
-        font-size: var(--icon-3xl);
-      }
-
-      .achievement-title {
-        font-weight: var(--font-weight-semibold);
-        color: var(--text-primary);
-      }
-
-      .achievement-date {
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-      }
-
-      @media (max-width: 768px) {
-        .training-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .cta-content {
-          flex-direction: column;
-          align-items: stretch;
-        }
-      }
-    `,
-  ],
+  styleUrl: './training.component.scss',
 })
 export class TrainingComponent implements OnInit {
   // Refactored: Now using dedicated services for state and data loading
@@ -716,6 +308,7 @@ export class TrainingComponent implements OnInit {
   private toastService = inject(ToastService);
   private headerService = inject(HeaderService);
   private router = inject(Router);
+  private api = inject(ApiService);
 
   // Expose state signals to template (readonly references)
   readonly userName = this.trainingState.userName;
@@ -734,12 +327,35 @@ export class TrainingComponent implements OnInit {
   readonly hasWorkouts = this.trainingState.hasWorkouts;
   readonly shouldShowWellnessAlert = this.trainingState.shouldShowWellnessAlert;
 
+  // New signals for achievements/streaks integration
+  readonly streakCount = signal(0);
+  readonly totalAchievements = signal(0);
+  readonly recentAchievements = signal<Array<{ id: string; icon: string; title: string; description: string }>>([]);
+  readonly daysUntilOlympics = signal(0);
+  readonly overallProgress = signal(0);
+
+  // Position-specific signals
+  readonly playerPosition = signal<string | null>(null);
+  readonly positionLabel = signal('Athlete');
+  readonly positionIcon = signal('🏈');
+  readonly positionQuickActions = signal<Array<{ icon: string; label: string; route: string; tooltip: string }>>([]);
+  readonly positionWorkouts = signal<Array<{ title: string; description: string; icon: string; priority: 'high' | 'medium' | 'low' }>>([]);
+
   async ngOnInit(): Promise<void> {
     // Configure header for training page
     this.headerService.setTrainingHeader();
 
+    // Load player settings to get position
+    await this.loadPlayerPosition();
+
     // Load all training data using data loader service
     await this.loadData();
+    
+    // Load achievements data
+    await this.loadAchievementsData();
+    
+    // Calculate Olympics countdown
+    this.calculateOlympicsCountdown();
   }
 
   /**
@@ -767,6 +383,284 @@ export class TrainingComponent implements OnInit {
     }
   }
 
+  /**
+   * Load achievements and streaks data
+   */
+  private async loadAchievementsData(): Promise<void> {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await this.api.get('/api/achievements').toPromise();
+      if (response?.success && response.data) {
+        const earned = response.data.achievements?.filter((a: { earned: boolean }) => a.earned) || [];
+        this.totalAchievements.set(earned.length);
+        this.recentAchievements.set(
+          earned
+            .sort((a: { earnedAt: string }, b: { earnedAt: string }) => 
+              new Date(b.earnedAt || 0).getTime() - new Date(a.earnedAt || 0).getTime()
+            )
+            .slice(0, 5)
+            .map((a: { id: string; icon: string; name: string; description: string }) => ({
+              id: a.id,
+              icon: a.icon,
+              title: a.name,
+              description: a.description,
+            }))
+        );
+      }
+
+      // Load streaks
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const streaksResponse: any = await this.api.get('/api/achievements/streaks').toPromise();
+      if (streaksResponse?.success && streaksResponse.data?.streaks) {
+        const trainingStreak = streaksResponse.data.streaks.find(
+          (s: { streak_type: string }) => s.streak_type === 'training'
+        );
+        this.streakCount.set(trainingStreak?.current_streak || 0);
+      }
+    } catch (error) {
+      console.error("Error loading achievements data:", error);
+    }
+  }
+
+  /**
+   * Calculate days until LA 2028 Olympics
+   */
+  private calculateOlympicsCountdown(): void {
+    const olympicsDate = new Date('2028-07-14');
+    const now = new Date();
+    const diff = olympicsDate.getTime() - now.getTime();
+    this.daysUntilOlympics.set(Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    
+    // Calculate rough progress (from 2025 to 2028 = ~1277 days)
+    const totalDays = 1277;
+    const daysCompleted = totalDays - this.daysUntilOlympics();
+    this.overallProgress.set(Math.min(100, Math.max(0, Math.round((daysCompleted / totalDays) * 100))));
+  }
+
+  /**
+   * Load player position and configure position-specific UI
+   */
+  private async loadPlayerPosition(): Promise<void> {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await this.api.get('/api/player-settings').toPromise();
+      if (response?.success && response.data?.position) {
+        const position = response.data.position;
+        this.playerPosition.set(position);
+        this.configurePositionUI(position);
+      } else {
+        // Default to generic athlete
+        this.configurePositionUI('athlete');
+      }
+    } catch (error) {
+      console.error("Error loading player position:", error);
+      this.configurePositionUI('athlete');
+    }
+  }
+
+  /**
+   * Configure UI based on player position
+   */
+  private configurePositionUI(position: string): void {
+    const positionConfig: Record<string, {
+      label: string;
+      icon: string;
+      quickActions: Array<{ icon: string; label: string; route: string; tooltip: string }>;
+      priorityWorkouts: Array<{ title: string; description: string; icon: string; priority: 'high' | 'medium' | 'low' }>;
+    }> = {
+      // Quarterback
+      qb: {
+        label: 'Quarterback',
+        icon: '🎯',
+        quickActions: [
+          { icon: '🎯', label: 'Throwing', route: '/training/qb/throwing', tooltip: 'Track throwing sessions & arm care' },
+          { icon: '💪', label: 'Arm Care', route: '/training/qb/throwing', tooltip: 'Rotator cuff & arm health' },
+          { icon: '🦵', label: 'Hip Mobility', route: '/training', tooltip: 'Hip & shoulder mobility' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Throwing Progression', description: 'Structured throw count with arm care', icon: '🎯', priority: 'high' },
+          { title: 'Hip 90/90 Mobility', description: 'QB-specific hip rotation', icon: '🦵', priority: 'high' },
+          { title: 'Rotator Cuff Warm-up', description: 'Pre-throwing arm prep', icon: '💪', priority: 'high' },
+          { title: 'Footwork Drills', description: 'Drop-back & pocket movement', icon: '👟', priority: 'medium' },
+        ],
+      },
+      quarterback: {
+        label: 'Quarterback',
+        icon: '🎯',
+        quickActions: [
+          { icon: '🎯', label: 'Throwing', route: '/training/qb/throwing', tooltip: 'Track throwing sessions & arm care' },
+          { icon: '💪', label: 'Arm Care', route: '/training/qb/throwing', tooltip: 'Rotator cuff & arm health' },
+          { icon: '🦵', label: 'Hip Mobility', route: '/training', tooltip: 'Hip & shoulder mobility' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Throwing Progression', description: 'Structured throw count with arm care', icon: '🎯', priority: 'high' },
+          { title: 'Hip 90/90 Mobility', description: 'QB-specific hip rotation', icon: '🦵', priority: 'high' },
+          { title: 'Rotator Cuff Warm-up', description: 'Pre-throwing arm prep', icon: '💪', priority: 'high' },
+          { title: 'Footwork Drills', description: 'Drop-back & pocket movement', icon: '👟', priority: 'medium' },
+        ],
+      },
+      // Center
+      center: {
+        label: 'Center',
+        icon: '🎯',
+        quickActions: [
+          { icon: '🎯', label: 'Snap Drills', route: '/training', tooltip: 'Snap mechanics & accuracy' },
+          { icon: '💪', label: 'Core Work', route: '/training', tooltip: 'Core stability for snapping' },
+          { icon: '🏃', label: 'Blocking', route: '/training', tooltip: 'Pass protection drills' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Snap Mechanics', description: 'Shotgun & under-center snaps', icon: '🎯', priority: 'high' },
+          { title: 'Core Stability', description: 'Anti-rotation & bracing', icon: '💪', priority: 'high' },
+          { title: 'Hip Hinge Drills', description: 'Proper snap position', icon: '🦵', priority: 'high' },
+          { title: 'Hand-Eye Coordination', description: 'Snap accuracy under pressure', icon: '👁️', priority: 'medium' },
+        ],
+      },
+      // Blitzer (Rusher who chases QB)
+      blitzer: {
+        label: 'Blitzer',
+        icon: '⚡',
+        quickActions: [
+          { icon: '⚡', label: 'Decel Drills', route: '/training', tooltip: 'Deceleration & change of direction' },
+          { icon: '🏃', label: 'Sprint Work', route: '/training', tooltip: 'Acceleration & top speed' },
+          { icon: '🦵', label: 'Agility', route: '/training', tooltip: 'Lateral movement & cuts' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: '3-Step Deceleration', description: 'Controlled stopping at speed', icon: '⚡', priority: 'high' },
+          { title: 'Change of Direction', description: 'Quick cuts & redirects', icon: '↩️', priority: 'high' },
+          { title: 'Sprint Mechanics', description: 'Acceleration technique', icon: '🏃', priority: 'high' },
+          { title: 'Reactive Agility', description: 'Read & react drills', icon: '👁️', priority: 'medium' },
+        ],
+      },
+      rusher: {
+        label: 'Rusher',
+        icon: '⚡',
+        quickActions: [
+          { icon: '⚡', label: 'Decel Drills', route: '/training', tooltip: 'Deceleration & change of direction' },
+          { icon: '🏃', label: 'Sprint Work', route: '/training', tooltip: 'Acceleration & top speed' },
+          { icon: '🦵', label: 'Agility', route: '/training', tooltip: 'Lateral movement & cuts' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: '3-Step Deceleration', description: 'Controlled stopping at speed', icon: '⚡', priority: 'high' },
+          { title: 'Change of Direction', description: 'Quick cuts & redirects', icon: '↩️', priority: 'high' },
+          { title: 'Sprint Mechanics', description: 'Acceleration technique', icon: '🏃', priority: 'high' },
+          { title: 'Reactive Agility', description: 'Read & react drills', icon: '👁️', priority: 'medium' },
+        ],
+      },
+      // Wide Receiver
+      wr: {
+        label: 'Wide Receiver',
+        icon: '🏃',
+        quickActions: [
+          { icon: '🏃', label: 'Route Running', route: '/training', tooltip: 'Route technique & timing' },
+          { icon: '⚡', label: 'Speed Work', route: '/training', tooltip: 'Sprint & acceleration' },
+          { icon: '🤲', label: 'Catching', route: '/training', tooltip: 'Hand-eye coordination' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Route Trees', description: 'Full route combinations', icon: '🗺️', priority: 'high' },
+          { title: 'Release Moves', description: 'Off the line techniques', icon: '💨', priority: 'high' },
+          { title: 'Sprint Training', description: 'Top-end speed development', icon: '🏃', priority: 'high' },
+          { title: 'Catching Drills', description: 'Contested & over-shoulder', icon: '🤲', priority: 'medium' },
+        ],
+      },
+      'wide receiver': {
+        label: 'Wide Receiver',
+        icon: '🏃',
+        quickActions: [
+          { icon: '🏃', label: 'Route Running', route: '/training', tooltip: 'Route technique & timing' },
+          { icon: '⚡', label: 'Speed Work', route: '/training', tooltip: 'Sprint & acceleration' },
+          { icon: '🤲', label: 'Catching', route: '/training', tooltip: 'Hand-eye coordination' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Route Trees', description: 'Full route combinations', icon: '🗺️', priority: 'high' },
+          { title: 'Release Moves', description: 'Off the line techniques', icon: '💨', priority: 'high' },
+          { title: 'Sprint Training', description: 'Top-end speed development', icon: '🏃', priority: 'high' },
+          { title: 'Catching Drills', description: 'Contested & over-shoulder', icon: '🤲', priority: 'medium' },
+        ],
+      },
+      // Defensive Back
+      db: {
+        label: 'Defensive Back',
+        icon: '🛡️',
+        quickActions: [
+          { icon: '🛡️', label: 'Coverage', route: '/training', tooltip: 'Man & zone techniques' },
+          { icon: '🏃', label: 'Backpedal', route: '/training', tooltip: 'Backpedal & transition' },
+          { icon: '👁️', label: 'Ball Drills', route: '/training', tooltip: 'Interception technique' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Backpedal & Break', description: 'Hip turn & transition', icon: '↩️', priority: 'high' },
+          { title: 'Mirror Drills', description: 'Shadowing receivers', icon: '🪞', priority: 'high' },
+          { title: 'Sprint Training', description: 'Recovery speed', icon: '🏃', priority: 'high' },
+          { title: 'Ball Skills', description: 'High-point & intercept', icon: '🏈', priority: 'medium' },
+        ],
+      },
+      'defensive back': {
+        label: 'Defensive Back',
+        icon: '🛡️',
+        quickActions: [
+          { icon: '🛡️', label: 'Coverage', route: '/training', tooltip: 'Man & zone techniques' },
+          { icon: '🏃', label: 'Backpedal', route: '/training', tooltip: 'Backpedal & transition' },
+          { icon: '👁️', label: 'Ball Drills', route: '/training', tooltip: 'Interception technique' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Backpedal & Break', description: 'Hip turn & transition', icon: '↩️', priority: 'high' },
+          { title: 'Mirror Drills', description: 'Shadowing receivers', icon: '🪞', priority: 'high' },
+          { title: 'Sprint Training', description: 'Recovery speed', icon: '🏃', priority: 'high' },
+          { title: 'Ball Skills', description: 'High-point & intercept', icon: '🏈', priority: 'medium' },
+        ],
+      },
+      // Default/Athlete
+      athlete: {
+        label: 'Athlete',
+        icon: '🏈',
+        quickActions: [
+          { icon: '🏃', label: 'Speed', route: '/training', tooltip: 'Sprint & acceleration' },
+          { icon: '📊', label: 'Periodization', route: '/periodization', tooltip: 'View your training plan' },
+          { icon: '💚', label: 'Recovery', route: '/recovery', tooltip: 'Recovery protocols' },
+          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+        ],
+        priorityWorkouts: [
+          { title: 'Sprint Training', description: 'Speed development', icon: '🏃', priority: 'high' },
+          { title: 'Agility Drills', description: 'Change of direction', icon: '↩️', priority: 'high' },
+          { title: 'Core Stability', description: 'Athletic foundation', icon: '💪', priority: 'medium' },
+          { title: 'Mobility Work', description: 'Flexibility & range', icon: '🧘', priority: 'medium' },
+        ],
+      },
+    };
+
+    const normalizedPosition = position.toLowerCase().trim();
+    const config = positionConfig[normalizedPosition] || positionConfig['athlete'];
+
+    this.positionLabel.set(config.label);
+    this.positionIcon.set(config.icon);
+    this.positionQuickActions.set(config.quickActions);
+    this.positionWorkouts.set(config.priorityWorkouts);
+  }
+
+  /**
+   * Check if a day name is today
+   */
+  isToday(dayName: string): boolean {
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    return dayName.toLowerCase() === today.toLowerCase();
+  }
+
+  /**
+   * Check if current player is a QB
+   */
+  isQB(): boolean {
+    const pos = this.playerPosition()?.toLowerCase();
+    return pos === 'qb' || pos === 'quarterback';
+  }
+
   // ============================================================================
   // NAVIGATION METHODS
   // ============================================================================
@@ -775,12 +669,63 @@ export class TrainingComponent implements OnInit {
     this.router.navigate(["/wellness"]);
   }
 
+  goToDailyProtocol(): void {
+    this.router.navigate(["/training"]);
+  }
+
   toggleScheduleView(): void {
     this.router.navigate(["/training/schedule"]);
   }
 
   openScheduleBuilder(): void {
     this.router.navigate(["/training/builder"]);
+  }
+
+  goToQBThrowing(): void {
+    this.router.navigate(["/training/qb/throwing"]);
+  }
+
+  goToPeriodization(): void {
+    this.router.navigate(["/periodization"]);
+  }
+
+  goToRecovery(): void {
+    this.router.navigate(["/recovery"]);
+  }
+
+  goToAchievements(): void {
+    // Open achievements dialog in daily protocol or navigate
+    this.router.navigate(["/training"]);
+  }
+
+  goToRoadmap(): void {
+    // Navigate to daily protocol which has the LA28 roadmap
+    this.router.navigate(["/training"]);
+  }
+
+  showAllWorkouts(): void {
+    // Could open a dialog or navigate to a workouts page
+    this.toastService.info("Showing all workouts");
+  }
+
+  /**
+   * Navigate to position-specific action
+   */
+  navigateToAction(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  /**
+   * Start a position-priority workout
+   */
+  startPriorityWorkout(workout: { title: string; description: string; icon: string; priority: string }): void {
+    this.toastService.info(`Starting ${workout.title}`);
+    // Navigate to daily protocol which will handle the workout
+    this.router.navigate(["/training"], {
+      queryParams: {
+        focus: workout.title.toLowerCase().replace(/\s+/g, '-'),
+      },
+    });
   }
 
   // ============================================================================

@@ -1,0 +1,250 @@
+/**
+ * Typography Primitives
+ * =====================
+ * 
+ * Standardized typography patterns for the design system.
+ * See Decision 4 (Typography Scale) and Decision 56-60 (JP Readiness) in DESIGN_SYSTEM_RULES.md.
+ * 
+ * USAGE:
+ *   <h1 class="page-title">Dashboard</h1>
+ *   <h2 class="section-title">Performance</h2>
+ *   <p class="body-text">Content here...</p>
+ *   <span class="caption">Last updated 2 hours ago</span>
+ * 
+ * HIERARCHY:
+ *   .page-title       - Main page heading (2xl)
+ *   .section-title    - Section heading (lg)
+ *   .subsection-title - Subsection heading (md)
+ *   .group-title      - Group/card heading (sm)
+ *   .body-text        - Default body text (md)
+ *   .body-sm          - Small body text (sm)
+ *   .caption          - Captions, timestamps, metadata (xs)
+ */
+
+@layer primitives {
+  // ============================================
+  // BASE TYPOGRAPHY
+  // ============================================
+
+  body {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  // ============================================
+  // HEADINGS
+  // ============================================
+
+  .page-title {
+    font-size: var(--font-heading-2xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-tight);
+    margin: 0;
+  }
+
+  .section-title {
+    font-size: var(--font-heading-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-tight);
+    margin: 0;
+  }
+
+  .subsection-title {
+    font-size: var(--font-heading-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .group-title {
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  // ============================================
+  // BODY TEXT
+  // ============================================
+
+  .body-text {
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+  }
+
+  .body-lg {
+    font-size: var(--font-body-lg);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+  }
+
+  .body-sm {
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+  }
+
+  // ============================================
+  // CAPTIONS & METADATA
+  // ============================================
+
+  .caption {
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-muted);
+  }
+
+  .overline {
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  // ============================================
+  // TEXT MODIFIERS
+  // ============================================
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-success {
+    color: var(--color-status-success);
+  }
+
+  .text-warning {
+    color: var(--color-status-warning);
+  }
+
+  .text-error {
+    color: var(--color-status-error);
+  }
+
+  .text-info {
+    color: var(--color-status-info);
+  }
+
+  // Weight modifiers
+  .font-normal {
+    font-weight: var(--font-weight-normal);
+  }
+
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .font-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .font-bold {
+    font-weight: var(--font-weight-bold);
+  }
+
+  // ============================================
+  // LINKS
+  // ============================================
+
+  .link {
+    color: var(--ds-primary-green);
+    text-decoration: none;
+    transition: color var(--motion-fast) var(--ease-standard);
+
+    &:hover {
+      color: var(--ds-primary-green-hover);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-ring-offset);
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  // ============================================
+  // TRUNCATION (Decision 58: Text expansion)
+  // ============================================
+
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  // ============================================
+  // JAPANESE (CJK) OVERRIDES (Decision 56-61)
+  // ============================================
+  // JP text needs adjusted line height and no tight letter-spacing
+
+  :lang(ja) {
+    .page-title,
+    .section-title,
+    .subsection-title,
+    .group-title {
+      letter-spacing: var(--letter-spacing-normal);
+      line-height: var(--line-height-jp, 1.6);
+    }
+
+    .body-text,
+    .body-lg,
+    .body-sm,
+    .caption {
+      line-height: var(--line-height-jp, 1.6);
+    }
+
+    // CJK line breaking (Decision 61)
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-break: strict;
+  }
+
+  // ============================================
+  // REDUCED MOTION (Decision 51)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .link {
+      transition: none;
+    }
+  }
+}

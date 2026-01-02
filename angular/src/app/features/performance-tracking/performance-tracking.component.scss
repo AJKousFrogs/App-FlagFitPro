@@ -1,0 +1,80 @@
+// ============================================================================
+// performance-tracking.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .performance-page {
+    padding: var(--space-6);
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    padding: var(--space-5);
+    background: var(--surface-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-heading-md);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-2);
+    color: var(--color-text-primary);
+  }
+
+  .page-subtitle {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .chart-card {
+    min-height: 300px;
+  }
+
+  .table-card {
+    margin-bottom: var(--space-6);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-8);
+  }
+
+  .empty-state .empty-icon {
+    font-size: var(--font-display-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
+  .empty-state h4 {
+    font-size: var(--font-heading-sm);
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-text-primary);
+  }
+
+  .empty-state p {
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  @media (max-width: 768px) {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+

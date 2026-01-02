@@ -1,0 +1,110 @@
+// ============================================================================
+// offline-banner.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .offline-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .status-offline {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+  }
+
+  .status-slow {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+  }
+
+  .status-syncing {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+  }
+
+  .status-online {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+
+  .banner-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+  }
+
+  .status-icon i {
+    font-size: var(--font-body-md);
+  }
+
+  .status-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .status-title {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-body-sm);
+  }
+
+  .status-message {
+    font-size: var(--font-body-xs);
+    opacity: 0.9;
+  }
+
+  .banner-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .banner-actions ::ng-deep .p-button {
+    color: white !important;
+  }
+
+  .banner-actions ::ng-deep .p-button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  @media (max-width: 768px) {
+    .offline-banner {
+      padding: var(--space-2) var(--space-3);
+    }
+
+    .status-message {
+      display: none;
+    }
+  }
+}
+

@@ -100,7 +100,7 @@ export const createMockCoach = (overrides = {}) =>
   createMockUser({
     role: "coach",
     email: "coach@flagfitpro.com",
-    name: "Coach Smith",
+    name: "Coach",
     profile: {
       certifications: ["NFHS Certified", "USA Football Coach"],
       yearsExperience: 10,

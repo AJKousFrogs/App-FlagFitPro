@@ -1,0 +1,608 @@
+/**
+ * PrimeNG Brand Overrides
+ * =======================
+ * 
+ * Structural adjustments and token application for PrimeNG components.
+ * See Decision 16 in DESIGN_SYSTEM_RULES.md.
+ * 
+ * RULES:
+ * 1. Use tokens from _token-mapping.scss
+ * 2. Keep structural fixes minimal
+ * 3. No hex colors or raw values
+ */
+
+@layer primeng-brand {
+  // ============================================
+  // BUTTONS
+  // ============================================
+
+  .p-button {
+    font-family: var(--p-button-font-family);
+    font-weight: var(--p-button-font-weight);
+    border-radius: var(--p-button-border-radius);
+    padding: var(--p-button-padding-y) var(--p-button-padding-x);
+    transition: 
+      background-color var(--p-transition-duration) var(--p-transition-timing-function),
+      border-color var(--p-transition-duration) var(--p-transition-timing-function),
+      box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+
+    // Primary (default)
+    &:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary) {
+      background: var(--p-button-primary-background);
+      color: var(--p-button-primary-color);
+      border-color: var(--p-button-primary-background);
+
+      &:hover:not(:disabled) {
+        background: var(--p-button-primary-hover-background);
+        border-color: var(--p-button-primary-hover-background);
+      }
+
+      &:active:not(:disabled) {
+        background: var(--p-button-primary-active-background);
+        border-color: var(--p-button-primary-active-background);
+      }
+    }
+
+    // Outlined
+    &.p-button-outlined {
+      background: transparent;
+      border-color: var(--p-button-secondary-border-color);
+      color: var(--color-text-primary);
+
+      &:hover:not(:disabled) {
+        background: var(--p-button-secondary-hover-background);
+      }
+    }
+
+    // Text
+    &.p-button-text {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-text-primary);
+
+      &:hover:not(:disabled) {
+        background: var(--p-button-secondary-hover-background);
+      }
+    }
+
+    // Danger severity
+    &.p-button-danger {
+      background: var(--p-button-danger-background);
+      border-color: var(--p-button-danger-background);
+      color: var(--p-button-danger-color);
+
+      &:hover:not(:disabled) {
+        background: var(--p-button-danger-hover-background);
+        border-color: var(--p-button-danger-hover-background);
+      }
+    }
+
+    // Success severity
+    &.p-button-success {
+      background: var(--p-button-success-background);
+      border-color: var(--p-button-success-background);
+      color: var(--p-button-success-color);
+
+      &:hover:not(:disabled) {
+        background: var(--p-button-success-hover-background);
+        border-color: var(--p-button-success-hover-background);
+      }
+    }
+
+    // Small size
+    &.p-button-sm {
+      padding: var(--p-button-sm-padding-y) var(--p-button-sm-padding-x);
+      font-size: var(--p-button-sm-font-size);
+    }
+
+    // Large size
+    &.p-button-lg {
+      padding: var(--p-button-lg-padding-y) var(--p-button-lg-padding-x);
+      font-size: var(--p-button-lg-font-size);
+    }
+
+    // Rounded (Decision 9A: Only when explicitly set)
+    &.p-button-rounded {
+      border-radius: var(--radius-full);
+    }
+
+    // Raised policy: primary CTA only (review rule)
+    // We keep the style but do not force raised everywhere
+    &.p-button-raised {
+      box-shadow: var(--shadow-2);
+    }
+
+    // Focus state removed - handled by unified focus section below
+
+    // Disabled state (Decision 46)
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    // Icon alignment
+    .p-button-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  // ============================================
+  // CARDS (Decision 14: Border-first)
+  // ============================================
+
+  .p-card {
+    background: var(--p-card-background);
+    border-radius: var(--p-card-border-radius);
+    box-shadow: var(--p-card-shadow);
+    border: var(--p-card-border);
+    transition: box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+
+    // Hover handled in media query section below (Decision 52)
+
+    .p-card-header {
+      padding: var(--p-card-header-padding);
+      border-bottom: var(--p-card-header-border-bottom);
+    }
+
+    .p-card-body {
+      padding: 0;
+    }
+
+    .p-card-content {
+      padding: var(--p-card-content-padding);
+    }
+
+    .p-card-footer {
+      padding: var(--p-card-footer-padding);
+      border-top: var(--p-card-footer-border-top);
+    }
+  }
+
+  // ============================================
+  // TAGS
+  // ============================================
+
+  .p-tag {
+    padding: var(--p-tag-padding-y) var(--p-tag-padding-x);
+    border-radius: var(--p-tag-border-radius);
+    font-size: var(--p-tag-font-size);
+    font-weight: var(--p-tag-font-weight);
+
+    &.p-tag-success {
+      background: var(--p-tag-success-background);
+      color: var(--p-tag-success-color);
+    }
+
+    &.p-tag-info {
+      background: var(--p-tag-info-background);
+      color: var(--p-tag-info-color);
+    }
+
+    &.p-tag-warn {
+      background: var(--p-tag-warn-background);
+      color: var(--p-tag-warn-color);
+    }
+
+    &.p-tag-danger {
+      background: var(--p-tag-danger-background);
+      color: var(--p-tag-danger-color);
+    }
+  }
+
+  // ============================================
+  // DIALOG
+  // ============================================
+
+  .p-dialog {
+    background: var(--p-dialog-background);
+    border-radius: var(--p-dialog-border-radius);
+    box-shadow: var(--p-dialog-shadow);
+
+    .p-dialog-header {
+      padding: var(--p-dialog-header-padding);
+      border-bottom: var(--p-dialog-header-border-bottom);
+
+      .p-dialog-title {
+        font-size: var(--p-dialog-header-font-size);
+        font-weight: var(--p-dialog-header-font-weight);
+      }
+    }
+
+    .p-dialog-content {
+      padding: var(--p-dialog-content-padding);
+    }
+
+    .p-dialog-footer {
+      padding: var(--p-dialog-footer-padding);
+      border-top: var(--p-dialog-footer-border-top);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--p-dialog-footer-gap);
+    }
+  }
+
+  .p-dialog-mask {
+    z-index: var(--p-modal-z-index);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  // ============================================
+  // INPUTS
+  // ============================================
+
+  .p-inputtext,
+  .p-textarea {
+    font-family: var(--p-inputtext-font-family, var(--font-family-sans));
+    font-size: var(--p-inputtext-font-size);
+    border-radius: var(--p-inputtext-border-radius);
+    padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
+    border: var(--p-inputtext-border-width) solid var(--p-inputtext-border-color);
+    transition: 
+      border-color var(--p-transition-duration) var(--p-transition-timing-function),
+      box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      border-color: var(--p-inputtext-focus-border-color);
+      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color);
+    }
+
+    &.ng-invalid.ng-touched,
+    &.p-invalid {
+      border-color: var(--p-inputtext-invalid-border-color);
+    }
+
+    &:disabled {
+      background: var(--p-inputtext-disabled-background);
+      opacity: var(--p-inputtext-disabled-opacity);
+      cursor: not-allowed;
+    }
+
+    &::placeholder {
+      color: var(--p-inputtext-placeholder-color);
+    }
+  }
+
+  // ============================================
+  // SELECT / DROPDOWN
+  // ============================================
+
+  .p-select {
+    border-radius: var(--p-select-border-radius);
+    border-color: var(--p-select-border-color);
+
+    &:focus-within,
+    &.p-focus {
+      border-color: var(--p-select-focus-border-color);
+      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color);
+    }
+  }
+
+  .p-select-panel {
+    background: var(--p-select-panel-background);
+    border-radius: var(--p-select-panel-border-radius);
+    box-shadow: var(--p-select-panel-shadow);
+    border: var(--p-select-panel-border);
+    z-index: var(--p-overlay-z-index);
+
+    .p-select-option {
+      padding: var(--p-select-option-padding);
+      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+
+      &:hover {
+        background: var(--p-select-option-hover-background);
+      }
+
+      &.p-highlight {
+        background: var(--p-select-option-selected-background);
+      }
+    }
+  }
+
+  // ============================================
+  // DATATABLE
+  // ============================================
+
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background: var(--p-datatable-header-background);
+      padding: var(--p-datatable-header-padding);
+      font-size: var(--p-datatable-header-font-size);
+      font-weight: var(--p-datatable-header-font-weight);
+      color: var(--p-datatable-header-color);
+      text-transform: var(--p-datatable-header-text-transform);
+      letter-spacing: var(--p-datatable-header-letter-spacing);
+      border-bottom: var(--border-1) solid var(--p-datatable-border-color);
+    }
+
+    .p-datatable-tbody > tr {
+      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+
+      > td {
+        padding: var(--p-datatable-row-padding);
+        border-bottom: var(--border-1) solid var(--p-datatable-border-color);
+      }
+
+      &:hover {
+        background: var(--p-datatable-row-hover-background);
+      }
+
+      &.p-highlight {
+        background: var(--p-datatable-row-selected-background);
+      }
+    }
+
+    // Compact variant
+    &.p-datatable-sm {
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: var(--p-datatable-sm-row-padding);
+      }
+    }
+  }
+
+  // ============================================
+  // TOAST
+  // ============================================
+
+  .p-toast {
+    z-index: var(--p-toast-z-index);
+
+    .p-toast-message {
+      border-radius: var(--p-toast-border-radius);
+      box-shadow: var(--p-toast-shadow);
+
+      .p-toast-message-content {
+        padding: var(--p-toast-padding);
+      }
+
+      &.p-toast-message-success {
+        background: var(--p-toast-success-background);
+        border-left: 4px solid var(--p-toast-success-border-color);
+        color: var(--p-toast-success-color);
+      }
+
+      &.p-toast-message-info {
+        background: var(--p-toast-info-background);
+        border-left: 4px solid var(--p-toast-info-border-color);
+        color: var(--p-toast-info-color);
+      }
+
+      &.p-toast-message-warn {
+        background: var(--p-toast-warn-background);
+        border-left: 4px solid var(--p-toast-warn-border-color);
+        color: var(--p-toast-warn-color);
+      }
+
+      &.p-toast-message-error {
+        background: var(--p-toast-error-background);
+        border-left: 4px solid var(--p-toast-error-border-color);
+        color: var(--p-toast-error-color);
+      }
+    }
+  }
+
+  // ============================================
+  // TOOLTIP
+  // ============================================
+
+  .p-tooltip {
+    z-index: var(--p-tooltip-z-index);
+    max-width: var(--p-tooltip-max-width);
+
+    .p-tooltip-text {
+      background: var(--p-tooltip-background);
+      color: var(--p-tooltip-color);
+      border-radius: var(--p-tooltip-border-radius);
+      padding: var(--p-tooltip-padding);
+      font-size: var(--p-tooltip-font-size);
+      box-shadow: var(--p-tooltip-shadow);
+    }
+  }
+
+  // ============================================
+  // PROGRESSBAR
+  // ============================================
+
+  .p-progressbar {
+    background: var(--p-progressbar-background);
+    border-radius: var(--p-progressbar-border-radius);
+    height: var(--p-progressbar-height);
+
+    .p-progressbar-value {
+      background: var(--p-progressbar-value-background);
+      border-radius: var(--p-progressbar-border-radius);
+    }
+  }
+
+  // ============================================
+  // CHECKBOX / RADIO
+  // ============================================
+
+  .p-checkbox {
+    .p-checkbox-box {
+      width: var(--p-checkbox-width);
+      height: var(--p-checkbox-height);
+      border-radius: var(--p-checkbox-border-radius);
+      border-color: var(--p-checkbox-border-color);
+      transition: 
+        background-color var(--p-transition-duration) var(--p-transition-timing-function),
+        border-color var(--p-transition-duration) var(--p-transition-timing-function);
+
+      &.p-highlight {
+        background: var(--p-checkbox-checked-background);
+        border-color: var(--p-checkbox-checked-border-color);
+      }
+
+      &:focus-visible {
+        box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-checkbox-focus-ring-color);
+      }
+    }
+  }
+
+  .p-radio {
+    .p-radio-box {
+      width: var(--p-radio-width);
+      height: var(--p-radio-height);
+      border-color: var(--p-radio-border-color);
+
+      &.p-highlight {
+        border-color: var(--p-radio-checked-border-color);
+
+        .p-radio-icon {
+          background: var(--p-radio-checked-background);
+        }
+      }
+    }
+  }
+
+  // ============================================
+  // TOGGLESWITCH
+  // ============================================
+
+  .p-toggleswitch {
+    .p-toggleswitch-slider {
+      width: var(--p-toggleswitch-width);
+      height: var(--p-toggleswitch-height);
+      border-radius: var(--p-toggleswitch-border-radius);
+      background: var(--p-toggleswitch-background);
+      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+
+      &::before {
+        width: var(--p-toggleswitch-handle-size);
+        height: var(--p-toggleswitch-handle-size);
+        background: var(--p-toggleswitch-handle-background);
+        border-radius: var(--radius-full);
+      }
+    }
+
+    &.p-toggleswitch-checked .p-toggleswitch-slider {
+      background: var(--p-toggleswitch-checked-background);
+    }
+  }
+
+  // ============================================
+  // MENU
+  // ============================================
+
+  .p-menu {
+    background: var(--p-menu-background);
+    border-radius: var(--p-menu-border-radius);
+    box-shadow: var(--p-menu-shadow);
+    padding: var(--p-menu-padding);
+
+    .p-menuitem-link {
+      padding: var(--p-menu-item-padding);
+      border-radius: var(--p-menu-item-border-radius);
+      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+
+      &:hover {
+        background: var(--p-menu-item-hover-background);
+      }
+    }
+  }
+
+  // ============================================
+  // SKELETON
+  // ============================================
+
+  .p-skeleton {
+    background: var(--p-skeleton-background);
+    border-radius: var(--p-skeleton-border-radius);
+  }
+
+  // ============================================
+  // UNIFIED FOCUS RING (Decision 12/18/50)
+  // ============================================
+  // All interactive elements share the same focus ring for consistency
+
+  .p-button:focus-visible,
+  .p-inputtext:focus-visible,
+  .p-textarea:focus-visible,
+  .p-dropdown:focus-visible,
+  .p-select:focus-visible,
+  .p-multiselect:focus-visible,
+  .p-checkbox .p-checkbox-box:focus-visible,
+  .p-radiobutton .p-radiobutton-box:focus-visible,
+  .p-toggleswitch:focus-visible,
+  .p-calendar:focus-visible,
+  .p-autocomplete:focus-visible {
+    outline: var(--focus-ring-width, 3px) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  // ============================================
+  // HOVER-CAPABLE DEVICES ONLY (Decision 52)
+  // ============================================
+  // Hover effects only on devices that support hover
+
+  @media (hover: hover) and (pointer: fine) {
+    .p-card:hover {
+      box-shadow: var(--shadow-2);
+    }
+
+    .p-datatable .p-datatable-tbody > tr:hover {
+      background: var(--p-datatable-row-hover-background);
+    }
+
+    .p-menu .p-menuitem-link:hover {
+      background: var(--p-menu-item-hover-background);
+    }
+
+    .p-select-panel .p-select-option:hover {
+      background: var(--p-select-option-hover-background);
+    }
+  }
+
+  // ============================================
+  // MOBILE RESPONSIVE FIXES
+  // ============================================
+
+  @media (max-width: 768px) {
+    .p-dialog {
+      max-height: 90vh;
+      max-width: 95vw;
+      margin: var(--space-3);
+    }
+
+    .p-button {
+      // Ensure minimum touch target
+      min-height: 44px;
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION (Decision 51)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .p-button,
+    .p-card,
+    .p-inputtext,
+    .p-select,
+    .p-datatable .p-datatable-tbody > tr,
+    .p-menu .p-menuitem-link,
+    .p-checkbox .p-checkbox-box,
+    .p-toggleswitch .p-toggleswitch-slider {
+      transition: none;
+    }
+  }
+
+  // ============================================
+  // HIGH CONTRAST MODE (Decision 51)
+  // ============================================
+
+  @media (forced-colors: active) {
+    .p-button:focus-visible,
+    .p-inputtext:focus-visible,
+    .p-checkbox .p-checkbox-box:focus-visible {
+      outline: 3px solid CanvasText;
+    }
+
+    .p-card {
+      border: 1px solid CanvasText;
+    }
+  }
+}

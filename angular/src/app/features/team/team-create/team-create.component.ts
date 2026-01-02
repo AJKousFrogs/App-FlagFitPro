@@ -137,43 +137,7 @@ import { AuthService } from "../../../core/services/auth.service";
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .team-create-page {
-        padding: var(--space-6);
-      }
-
-      .team-create-card {
-        margin-top: var(--space-6);
-        max-width: 600px;
-      }
-
-      .form-group {
-        margin-bottom: var(--space-4);
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: var(--space-2);
-        font-weight: 500;
-        color: var(--text-primary);
-      }
-
-      .form-group label.required::after {
-        content: " *";
-        color: var(--p-red-500);
-      }
-
-      .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: var(--space-3);
-        margin-top: var(--space-6);
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--p-surface-200);
-      }
-    `,
-  ],
+  styleUrl: './team-create.component.scss',
 })
 export class TeamCreateComponent {
   private router = inject(Router);

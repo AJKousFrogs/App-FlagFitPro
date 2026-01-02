@@ -11,6 +11,8 @@ export interface WellnessData {
   userId?: string;
   date: string;
   sleep?: number;
+  sleepHours?: number;
+  sleepScore?: number; // 0-100 from wearables
   energy?: number;
   stress?: number;
   soreness?: number;
@@ -132,11 +134,11 @@ export class WellnessService {
 
     return from(
       (async () => {
-        // Query using both athlete_id and user_id for compatibility
+        // Query using user_id
         const { data, error } = await this.supabaseService.client
           .from("wellness_entries")
           .select("*")
-          .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
+          .eq("user_id", userId)
           .gte("date", cutoffDate.toISOString().split("T")[0])
           .order("date", { ascending: false });
 
@@ -303,12 +305,13 @@ export class WellnessService {
       return of({ success: false, error: "Not authenticated" });
     }
 
-    // Set both athlete_id and user_id for compatibility
+    // Set user_id
     const wellnessEntry = {
-      athlete_id: userId,
       user_id: userId,
       date: data.date || new Date().toISOString().split("T")[0],
       sleep_quality: data.sleep,
+      sleep_hours: data.sleepHours,
+      sleep_score: data.sleepScore,
       energy_level: data.energy,
       stress_level: data.stress,
       muscle_soreness: data.soreness,
@@ -520,190 +523,6 @@ export class WellnessService {
     return recommendations;
   }
 
-  /**
-   * Check if wellness data indicates training should be modified
-   * @deprecated Use ReadinessService or AcwrService for comprehensive training alerts.
-   * Used by training components to show warnings
-   */
-  getTrainingAlert(data: WellnessData): {
-    shouldAlert: boolean;
-    severity: "warning" | "critical" | "info";
-    message: string;
-    recommendations: string[];
-  } | null {
-    const issues: string[] = [];
-    const recommendations: string[] = [];
-    let severity: "warning" | "critical" | "info" = "info";
-
-    // Critical: Very high soreness + low sleep = injury risk
-    if (data.soreness && data.soreness >= 8 && data.sleep && data.sleep < 5) {
-      severity = "critical";
-      issues.push("High soreness combined with poor sleep");
-      recommendations.push("🚨 Rest day strongly recommended");
-      recommendations.push(
-        "Focus on recovery: foam rolling, stretching, sleep",
-      );
-    }
-    // Critical: Very high stress + low energy
-    else if (
-      data.stress &&
-      data.stress >= 8 &&
-      data.energy &&
-      data.energy < 4
-    ) {
-      severity = "critical";
-      issues.push("High stress with low energy");
-      recommendations.push(
-        "🚨 Light activity only - no high-intensity training",
-      );
-      recommendations.push("Consider meditation or light mobility work");
-    }
-    // Warning: High soreness
-    else if (data.soreness && data.soreness >= 7) {
-      severity = "warning";
-      issues.push("Elevated muscle soreness");
-      recommendations.push("⚠️ Reduce training intensity by 20-30%");
-      recommendations.push("Extended warmup recommended (15+ minutes)");
-      recommendations.push("Avoid explosive movements");
-    }
-    // Warning: High stress
-    else if (data.stress && data.stress >= 7) {
-      severity = "warning";
-      issues.push("Elevated stress levels");
-      recommendations.push("⚠️ Reduce training volume");
-      recommendations.push("Focus on technique over intensity");
-    }
-    // Warning: Poor sleep
-    else if (data.sleep && data.sleep < 5) {
-      severity = "warning";
-      issues.push("Poor sleep quality");
-      recommendations.push("⚠️ Reduce high-intensity work");
-      recommendations.push("Shorter session recommended");
-    }
-    // Warning: Dehydration
-    else if (data.hydration && data.hydration < 5) {
-      severity = "warning";
-      issues.push("Low hydration");
-      recommendations.push("⚠️ Hydrate before training (500ml minimum)");
-      recommendations.push("Monitor for cramping during session");
-    }
-
-    if (issues.length === 0) {
-      return null;
-    }
-
-    return {
-      shouldAlert: true,
-      severity,
-      message: `Wellness Alert: ${issues.join(", ")}`,
-      recommendations,
-    };
-  }
-
-  /**
-   * Calculate readiness score for training (0-100)
-   * @deprecated Use ReadinessService.calculateToday() for the unified evidence-based readiness score.
-   * Based on Olympic athlete performance science
-   */
-  calculateReadinessScore(data: WellnessData): {
-    score: number;
-    status: "excellent" | "good" | "caution" | "rest";
-    breakdown: { metric: string; score: number; weight: number }[];
-  } {
-    const breakdown: { metric: string; score: number; weight: number }[] = [];
-
-    // Weights based on sports science research for flag football
-    const weights = {
-      sleep: 25, // Sleep is critical for reaction time
-      energy: 20, // Energy affects explosiveness
-      soreness: 20, // Soreness indicates recovery status (inverted)
-      stress: 15, // Mental state affects decision-making (inverted)
-      hydration: 10, // Hydration affects endurance
-      motivation: 10, // Motivation affects effort
-    };
-
-    let totalScore = 0;
-    let totalWeight = 0;
-
-    if (data.sleep !== undefined) {
-      const sleepScore = Math.min(10, data.sleep) * 10;
-      breakdown.push({
-        metric: "Sleep",
-        score: sleepScore,
-        weight: weights.sleep,
-      });
-      totalScore += sleepScore * weights.sleep;
-      totalWeight += weights.sleep;
-    }
-
-    if (data.energy !== undefined) {
-      const energyScore = data.energy * 10;
-      breakdown.push({
-        metric: "Energy",
-        score: energyScore,
-        weight: weights.energy,
-      });
-      totalScore += energyScore * weights.energy;
-      totalWeight += weights.energy;
-    }
-
-    if (data.soreness !== undefined) {
-      // Invert soreness (low soreness = high score)
-      const sorenessScore = (10 - data.soreness) * 10;
-      breakdown.push({
-        metric: "Recovery",
-        score: sorenessScore,
-        weight: weights.soreness,
-      });
-      totalScore += sorenessScore * weights.soreness;
-      totalWeight += weights.soreness;
-    }
-
-    if (data.stress !== undefined) {
-      // Invert stress (low stress = high score)
-      const stressScore = (10 - data.stress) * 10;
-      breakdown.push({
-        metric: "Mental",
-        score: stressScore,
-        weight: weights.stress,
-      });
-      totalScore += stressScore * weights.stress;
-      totalWeight += weights.stress;
-    }
-
-    if (data.hydration !== undefined) {
-      const hydrationScore = data.hydration * 10;
-      breakdown.push({
-        metric: "Hydration",
-        score: hydrationScore,
-        weight: weights.hydration,
-      });
-      totalScore += hydrationScore * weights.hydration;
-      totalWeight += weights.hydration;
-    }
-
-    if (data.motivation !== undefined) {
-      const motivationScore = data.motivation * 10;
-      breakdown.push({
-        metric: "Motivation",
-        score: motivationScore,
-        weight: weights.motivation,
-      });
-      totalScore += motivationScore * weights.motivation;
-      totalWeight += weights.motivation;
-    }
-
-    const finalScore =
-      totalWeight > 0 ? Math.round(totalScore / totalWeight) : 0;
-
-    let status: "excellent" | "good" | "caution" | "rest";
-    if (finalScore >= 80) status = "excellent";
-    else if (finalScore >= 65) status = "good";
-    else if (finalScore >= 45) status = "caution";
-    else status = "rest";
-
-    return { score: finalScore, status, breakdown };
-  }
 
   /**
    * Load wellness data from database

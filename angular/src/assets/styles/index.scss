@@ -1,0 +1,172 @@
+/**
+ * FlagFit Pro - Design System Index
+ * ==================================
+ * 
+ * Single entry point for all design system styles.
+ * Import this file in styles.scss or angular.json.
+ * 
+ * LAYER ORDER (lowest to highest specificity):
+ *   reset → tokens → primeng-base → primeng-brand → primitives → features → overrides
+ * 
+ * DO NOT:
+ *   - Add imports outside this file
+ *   - Change layer order
+ *   - Add styles outside layers
+ */
+
+// ============================================
+// 1. IMPORTS (MUST BE AT TOP)
+// ============================================
+
+@import 'design-system-tokens';
+@import 'primeng/token-mapping';
+@import 'primeng/brand-overrides';
+@import 'primitives/typography';
+@import 'primitives/layout';
+@import 'primitives/cards';
+@import 'primitives/forms';
+@import 'primitives/tables';
+@import 'primitives/feedback';
+@import 'primitives/dialogs';
+@import 'overrides/exceptions';
+
+
+// ============================================
+// 2. LAYER ORDER DECLARATION
+// ============================================
+
+@layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
+
+
+// ============================================
+// 3. RESET LAYER
+// ============================================
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input, button, textarea, select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ul, ol {
+    list-style: none;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  // Scrollbar
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-default) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-default);
+    border-radius: 4px;
+  }
+}
+
+
+// ============================================
+// 4. GLOBAL ROOT STYLES
+// ============================================
+
+:root {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-md);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-primary);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--color-surface-primary);
+  color: var(--color-text-primary);
+}
+
+
+// ============================================
+// 5. HIGH CONTRAST MODE
+// ============================================
+
+@media (forced-colors: active) {
+  .p-button,
+  .card,
+  .p-card {
+    border: 2px solid currentColor;
+  }
+
+  *:focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
+
+// ============================================
+// 6. REDUCED MOTION (in overrides layer)
+// ============================================
+
+@layer overrides {
+  // exception: reduced-motion
+  // Ticket: DS-SYSTEM
+  // Owner: @system
+  // Scope: global accessibility
+  // Remove by: never (permanent accessibility feature)
+  // Reason: Required for WCAG compliance
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms;
+      animation-iteration-count: 1;
+      transition-duration: 0.01ms;
+    }
+  }
+}

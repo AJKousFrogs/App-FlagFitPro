@@ -124,26 +124,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       </ng-template>
     </p-dialog>
   `,
-  styles: [
-    `
-      .playlist-form {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-
-        label {
-          font-weight: var(--font-weight-medium);
-          color: var(--color-text-primary);
-        }
-      }
-    `,
-  ],
+  styleUrl: './video-curation-playlist-dialog.component.scss',
 })
 export class VideoCurationPlaylistDialogComponent {
   videoOptions = input.required<VideoOption[]>();

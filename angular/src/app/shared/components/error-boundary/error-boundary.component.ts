@@ -73,73 +73,7 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
       <ng-content></ng-content>
     }
   `,
-  styles: [
-    `
-      .error-boundary-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 400px;
-        padding: var(--space-6);
-      }
-
-      .error-card {
-        max-width: 500px;
-        width: 100%;
-      }
-
-      .error-content {
-        text-align: center;
-        padding: var(--space-6);
-      }
-
-      .error-icon {
-        font-size: 4rem;
-        color: var(--color-status-warning, #f59e0b);
-        margin-bottom: var(--space-4);
-      }
-
-      .error-title {
-        font-size: var(--font-heading-lg, 1.5rem);
-        font-weight: var(--font-weight-bold, 700);
-        color: var(--text-primary);
-        margin: 0 0 var(--space-3) 0;
-      }
-
-      .error-message {
-        font-size: var(--font-body-md, 1rem);
-        color: var(--text-secondary);
-        margin: 0 0 var(--space-2) 0;
-        line-height: 1.5;
-      }
-
-      .error-component {
-        font-size: var(--font-body-sm, 0.875rem);
-        color: var(--text-muted);
-        margin: 0 0 var(--space-6) 0;
-        font-family: monospace;
-      }
-
-      .error-actions {
-        display: flex;
-        gap: var(--space-3);
-        justify-content: center;
-        margin-bottom: var(--space-4);
-      }
-
-      .error-help {
-        font-size: var(--font-body-xs, 0.75rem);
-        color: var(--text-muted);
-        margin: 0;
-      }
-
-      @media (max-width: 640px) {
-        .error-actions {
-          flex-direction: column;
-        }
-      }
-    `,
-  ],
+  styleUrl: './error-boundary.component.scss',
 })
 export class ErrorBoundaryComponent {
   @Input() componentName?: string;

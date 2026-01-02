@@ -1,10 +1,14 @@
 /**
  * Coach Dashboard Component Styles
  * Comprehensive responsive layout with improved tablet breakpoints
+ *
+ * Design System Compliant - All tokens from design-system-tokens.scss
  */
 
 @use "styles/variables" as *;
 @use "styles/mixins" as *;
+
+@layer features {
 
 .dashboard-content {
   padding: space(4);
@@ -33,6 +37,7 @@
 
 .dashboard-header {
   @include flex-between;
+
   margin-bottom: space(5);
   padding: space(4);
   background: var(--surface-card);
@@ -51,10 +56,11 @@
   flex: 1;
 }
 
+// Decision 8: Use semantic token names
 .team-name {
   font-size: var(--text-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--text-color);
+  color: var(--color-text-primary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -62,7 +68,7 @@
 
   // Mobile
   @include respond-to(md) {
-    font-size: var(--text-xl);
+    font-size: var(--font-heading-sm);
     justify-content: center;
   }
 }
@@ -71,9 +77,10 @@
   font-size: var(--text-3xl);
 }
 
+// Decision 8: Use semantic token names
 .header-subtitle {
-  color: var(--text-color-secondary);
-  margin: space(1) 0 0 0;
+  color: var(--color-text-secondary);
+  margin: space(1) 0 0;
   display: flex;
   align-items: center;
   gap: space(2);
@@ -86,18 +93,19 @@
   // Mobile - wrap
   @include respond-to(md) {
     flex-wrap: wrap;
-    font-size: var(--text-sm);
+    font-size: var(--font-body-sm);
   }
 }
 
+// Decision 2/3: Use spacing and radius tokens
 .streak-badge {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-body-xs);
   font-weight: var(--font-weight-bold);
   background: var(--surface-200);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 
   &.winning {
     background: var(--green-100);
@@ -174,11 +182,10 @@
     transform get-transition(fast),
     box-shadow get-transition(fast);
 
-  // Hover only on devices with hover support
+  // Hover only on devices with hover support (Decision 14: shadow-only hover)
   @include hover-support {
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: get-shadow(md);
+      box-shadow: var(--shadow-2);
     }
   }
 
@@ -222,26 +229,29 @@
 }
 
 .stat-value {
-  font-size: var(--text-xl);
+  font-size: var(--font-heading-sm);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
 
   // Mobile
   @include respond-to(md) {
-    font-size: var(--text-lg);
+    font-size: var(--font-body-lg);
   }
 }
 
+// Decision 8: Use semantic token names
 .stat-label {
   @include text-style(sm, normal);
-  color: var(--text-color-secondary);
-  margin-top: 2px;
+
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
 }
 
 .stat-detail {
   @include text-style(xs, normal);
-  color: var(--text-color-secondary);
-  margin-top: 2px;
+
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
 
   &.warning {
     color: var(--red-500);
@@ -313,12 +323,15 @@
 
 .card-header {
   @include flex-between;
+
   padding: space(3) space(4);
   border-bottom: 1px solid var(--surface-border);
 
   h3 {
     margin: 0;
+
     @include text-style(base, semibold);
+
     display: flex;
     align-items: center;
     gap: space(2);
@@ -358,6 +371,7 @@
 
 .chart-insights {
   @include flex-between;
+
   padding: space(3) 0;
   border-top: 1px solid var(--surface-border);
   margin-top: space(3);
@@ -381,7 +395,9 @@
 
 .insight-value {
   display: block;
+
   @include text-style(xl, bold);
+
   color: var(--primary-color);
 
   &.trend-up {
@@ -391,7 +407,8 @@
 
 .insight-label {
   @include text-style(xs, normal);
-  color: var(--text-color-secondary);
+
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -406,6 +423,7 @@
 
 .alerts-list {
   @include flex-column;
+
   gap: space(3);
   padding: space(3);
 }
@@ -424,6 +442,7 @@
 
 .alert-header {
   @include flex-start;
+
   gap: space(2);
   margin-bottom: space(2);
 }
@@ -438,20 +457,25 @@
 
   .player-position {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
 .alert-message {
   margin: space(2) 0;
+
   @include text-style(sm, normal);
-  color: var(--text-color);
+
+  color: var(--color-text-primary);
 }
 
 .alert-recommendation {
   margin: space(2) 0;
+
   @include text-style(xs, normal);
-  color: var(--text-color-secondary);
+
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   gap: space(1);
@@ -471,11 +495,13 @@
     flex-wrap: wrap;
   }
 
+  // Decision 2/3: Use spacing and radius tokens
   .metric {
     @include text-style(xs, normal);
-    padding: 2px 8px;
+
+    padding: var(--space-1) var(--space-2);
     background: var(--surface-100);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 
     &.danger {
       background: var(--red-100);
@@ -489,13 +515,9 @@
   gap: space(2);
   margin-top: space(2);
 
-  // Mobile - full width buttons
+  // Mobile - full width buttons (::ng-deep moved to @layer overrides)
   @include respond-to(md) {
     flex-direction: column;
-
-    :host ::ng-deep p-button {
-      width: 100%;
-    }
   }
 }
 
@@ -511,7 +533,7 @@
 
   p {
     margin: 0;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -531,6 +553,7 @@
 
 .player-cell {
   @include flex-start;
+
   gap: space(2);
 }
 
@@ -538,6 +561,7 @@
   position: relative;
 }
 
+// Small badge overlay - pixel values intentional for precise positioning
 .blocked-badge {
   position: absolute;
   bottom: -2px;
@@ -545,11 +569,11 @@
   width: 16px;
   height: 16px;
   background: var(--surface-400);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
+  border: var(--border-2) solid white;
 
   i {
     font-size: var(--font-body-xs);
@@ -567,7 +591,8 @@
   .jersey-number,
   .blocked-label {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 
   .blocked-label {
@@ -577,6 +602,7 @@
 
 .performance-cell {
   @include flex-start;
+
   gap: space(1);
 }
 
@@ -604,16 +630,18 @@
   color: var(--red-500);
 }
 .trend-stable {
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .readiness-cell {
   @include flex-start;
+
   gap: space(2);
 }
 
 .readiness-value {
   @include text-style(sm, medium);
+
   min-width: 24px;
 }
 
@@ -622,21 +650,13 @@
   gap: 0;
 }
 
-.at-risk-row {
-  background: var(--yellow-50) !important;
-}
-
-.injured-row {
-  background: var(--red-50) !important;
-}
-
+/* Row styling moved to @layer overrides */
 .consent-blocked-row {
-  background: var(--surface-100) !important;
   opacity: 0.85;
 }
 
 .blocked-data {
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
@@ -646,6 +666,7 @@
 
 .partial-data-notice {
   @include flex-start;
+
   gap: space(4);
   padding: space(4);
   background: var(--blue-50);
@@ -660,18 +681,19 @@
   }
 }
 
+// Decision 2/3: Use spacing and radius tokens
 .notice-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--space-10);
+  height: var(--space-10);
   background: var(--blue-100);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 
   i {
-    font-size: 1.25rem;
+    font-size: var(--font-body-lg);
     color: var(--blue-600);
   }
 }
@@ -681,14 +703,18 @@
 
   h4 {
     margin: 0 0 space(1);
+
     @include text-style(base, semibold);
-    color: var(--text-color);
+
+    color: var(--color-text-primary);
   }
 
   p {
     margin: 0 0 space(2);
+
     @include text-style(sm, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
@@ -696,7 +722,9 @@
   display: inline-flex;
   align-items: center;
   gap: space(1);
+
   @include text-style(sm, medium);
+
   color: var(--blue-600);
   text-decoration: none;
 
@@ -712,7 +740,7 @@
 .empty-message {
   text-align: center;
   padding: space(6);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -740,17 +768,7 @@
    READINESS PROGRESS BAR
    ============================================ */
 
-:host ::ng-deep .readiness-high .p-progressbar-value {
-  background: var(--green-500);
-}
-
-:host ::ng-deep .readiness-medium .p-progressbar-value {
-  background: var(--yellow-500);
-}
-
-:host ::ng-deep .readiness-low .p-progressbar-value {
-  background: var(--red-500);
-}
+/* ProgressBar styling moved to @layer overrides */
 
 /* ============================================
    GAMES CARD
@@ -758,18 +776,22 @@
 
 .games-list {
   @include flex-column;
+
   gap: space(2);
   padding: space(3);
 }
 
 .game-item {
   @include flex-start;
+
   gap: space(3);
   padding: space(3);
   background: var(--surface-50);
   border-radius: var(--border-radius);
   border: 1px solid var(--surface-border);
-  transition: all get-transition(fast);
+
+  // Decision 19: No transition: all - specify properties
+  transition: background-color var(--motion-fast) var(--ease-standard);
 
   @include hover-support {
     &:hover {
@@ -789,20 +811,24 @@
 
   .date-day {
     display: block;
+
     @include text-style(xl, bold);
+
     color: var(--primary-color);
     line-height: 1;
   }
 
   .date-month {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
     text-transform: uppercase;
   }
 }
 
 .game-info {
   flex: 1;
+
   @include flex-column;
 
   .opponent {
@@ -812,14 +838,15 @@
   .location,
   .game-type {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
 .no-games {
   text-align: center;
   padding: space(4);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -828,12 +855,14 @@
 
 .results-list {
   @include flex-column;
+
   gap: space(2);
   padding: space(3);
 }
 
 .result-item {
   @include flex-start;
+
   gap: space(2);
   padding: space(2);
   border-radius: var(--border-radius);
@@ -841,10 +870,12 @@
 
 .result-badge {
   @include flex-center;
+
   width: 28px;
   height: 28px;
   border-radius: 50%;
   font-weight: var(--font-weight-bold);
+
   @include text-style(sm, bold);
 
   &.win {
@@ -865,6 +896,7 @@
 
 .result-info {
   flex: 1;
+
   @include flex-column;
 
   .opponent {
@@ -873,19 +905,21 @@
 
   .score {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
 .result-date {
   @include text-style(xs, normal);
-  color: var(--text-color-secondary);
+
+  color: var(--color-text-secondary);
 }
 
 .no-results {
   text-align: center;
   padding: space(4);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -894,12 +928,14 @@
 
 .schedule-list {
   @include flex-column;
+
   gap: space(2);
   padding: space(3);
 }
 
 .session-item {
   @include flex-start;
+
   gap: space(2);
   padding: space(2);
   background: var(--surface-50);
@@ -925,12 +961,14 @@
 
   .time {
     display: block;
+
     @include text-style(sm, semibold);
   }
 
   .day {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
@@ -939,12 +977,14 @@
 
   .session-title {
     display: block;
+
     @include text-style(sm, medium);
   }
 
   .session-meta {
     @include text-style(xs, normal);
-    color: var(--text-color-secondary);
+
+    color: var(--color-text-secondary);
   }
 }
 
@@ -966,6 +1006,7 @@
 
 .action-btn {
   @include flex-column;
+
   align-items: center;
   gap: space(1);
   padding: space(3);
@@ -973,14 +1014,20 @@
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
   cursor: pointer;
-  transition: all get-transition(fast);
+
+  // Decision 19: No transition: all - specify properties
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
   font-family: inherit;
 
+  // Decision 14: Shadow-only hover, no transform
   @include hover-support {
     &:hover {
       background: var(--primary-50);
       border-color: var(--primary-200);
-      transform: translateY(-2px);
+      box-shadow: var(--shadow-1);
     }
   }
 
@@ -990,13 +1037,14 @@
   }
 
   i {
-    font-size: var(--text-xl);
+    font-size: var(--font-heading-sm);
     color: var(--primary-color);
   }
 
   span {
     @include text-style(xs, medium);
-    color: var(--text-color);
+
+    color: var(--color-text-primary);
   }
 }
 
@@ -1007,24 +1055,28 @@
 .session-form,
 .message-form {
   @include flex-column;
+
   gap: space(4);
   padding: space(2);
 }
 
 .form-field {
   @include flex-column;
+
   gap: space(1);
 
   label {
     @include text-style(sm, medium);
-    color: var(--text-color);
+
+    color: var(--color-text-primary);
   }
 }
 
 .loading-placeholder {
   @include flex-center;
+
   height: 200px;
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -1037,17 +1089,12 @@
 }
 
 /* ============================================
-   PRINT STYLES
+   PRINT STYLES (non-important rules)
    ============================================ */
 
 @media print {
   .dashboard-content {
     padding: 0;
-  }
-
-  .header-actions,
-  .quick-actions {
-    display: none !important;
   }
 
   .stats-grid {
@@ -1061,5 +1108,68 @@
   .stat-card {
     box-shadow: none;
     border: 1px solid var(--color-border-primary);
+  }
+}
+} // End @layer features
+
+// ============================================================================
+// @layer overrides - PrimeNG Component Overrides & Important Declarations
+// All ::ng-deep and !important declarations must be documented here
+// ============================================================================
+
+@layer overrides {
+  /*
+   * EXCEPTION: PrimeNG Table Row Background Overrides
+   * Reason: PrimeNG p-table has high CSS specificity for row backgrounds
+   * Scope: coach-dashboard only
+   * Status: Permanent - required for table row state styling
+   */
+  .at-risk-row {
+    background: var(--yellow-50) !important;
+  }
+
+  .injured-row {
+    background: var(--red-50) !important;
+  }
+
+  .consent-blocked-row {
+    background: var(--surface-100) !important;
+  }
+
+  /*
+   * EXCEPTION: PrimeNG ProgressBar Value Styling
+   * Reason: PrimeNG progressbar inner value cannot be styled without ::ng-deep
+   * Scope: coach-dashboard only
+   * Status: Permanent - PrimeNG limitation
+   */
+  :host ::ng-deep .readiness-high .p-progressbar-value {
+    background: var(--green-500);
+  }
+
+  :host ::ng-deep .readiness-medium .p-progressbar-value {
+    background: var(--yellow-500);
+  }
+
+  :host ::ng-deep .readiness-low .p-progressbar-value {
+    background: var(--red-500);
+  }
+
+  /*
+   * EXCEPTION: PrimeNG Button Width Override (Mobile)
+   * Reason: PrimeNG button wrapper needs ::ng-deep for responsive width
+   * Scope: coach-dashboard alert actions on mobile
+   */
+  @media (max-width: 768px) {
+    .alert-actions :host ::ng-deep p-button {
+      width: 100%;
+    }
+  }
+
+  // Print styles with required !important
+  @media print {
+    .header-actions,
+    .quick-actions {
+      display: none !important;
+    }
   }
 }

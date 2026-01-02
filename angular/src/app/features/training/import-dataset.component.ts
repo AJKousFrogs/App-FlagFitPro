@@ -1,19 +1,18 @@
+import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
   signal,
-  ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
-import { ToastService } from "../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
+import { ToastService } from "../../core/services/toast.service";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
 import { WearableParserService } from "../../core/services/wearable-parser.service";
-import { DatasetGeneratorService } from "../../core/services/dataset-generator.service";
 import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
 
 @Component({
@@ -62,15 +61,6 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
           (click)="activeTab.set('paste')"
         >
           Paste JSON
-        </button>
-        <button
-          class="tab-button px-4 py-2 font-semibold"
-          [class.active]="activeTab() === 'generate'"
-          [class.border-b-2]="activeTab() === 'generate'"
-          [class.border-brand-primary]="activeTab() === 'generate'"
-          (click)="activeTab.set('generate')"
-        >
-          Generate Test Data
         </button>
       </div>
 
@@ -175,68 +165,6 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
         </div>
       }
 
-      <!-- Generate Tab -->
-      @if (activeTab() === "generate") {
-        <div class="generate-section">
-          <div class="mb-4">
-            <label
-              for="generateAthleteId"
-              class="block text-sm font-semibold text-text-primary mb-2"
-              >Athlete ID</label
-            >
-            <input
-              id="generateAthleteId"
-              type="text"
-              [value]="athleteId()"
-              (input)="athleteId.set($any($event.target).value)"
-              placeholder="Enter athlete UUID"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="block text-sm font-semibold text-text-primary mb-2"
-                >Duration (minutes)</label
-              >
-              <input
-                type="number"
-                [value]="generateOptions.durationMinutes"
-                (input)="
-                  generateOptions.durationMinutes = +$any($event.target).value
-                "
-                min="15"
-                max="180"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-text-primary mb-2"
-                >Intensity</label
-              >
-              <select
-                [value]="generateOptions.intensity"
-                (change)="generateOptions.intensity = $any($event.target).value"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="game">Game</option>
-              </select>
-            </div>
-          </div>
-
-          <button
-            class="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-            (click)="generateAndImport()"
-            [disabled]="!athleteId() || isLoading()"
-          >
-            Generate & Import Test Dataset
-          </button>
-        </div>
-      }
-
       <!-- Results -->
       @if (importResult()) {
         <div
@@ -280,22 +208,11 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
       }
     </div>
   `,
-  styles: [
-    `
-      .tab-button {
-        @apply transition-colors;
-      }
-
-      .tab-button.active {
-        @apply text-brand-primary;
-      }
-    `,
-  ],
+  styleUrl: './import-dataset.component.scss',
 })
 export class ImportDatasetComponent {
   private metricsService = inject(TrainingMetricsService);
   private wearableParser = inject(WearableParserService);
-  private datasetGenerator = inject(DatasetGeneratorService);
   private toastService = inject(ToastService);
 
   // Angular 21: Use model() signals for two-way binding instead of ngModel
@@ -314,11 +231,6 @@ export class ImportDatasetComponent {
     };
     error?: string;
   } | null>(null);
-
-  generateOptions = {
-    durationMinutes: 90,
-    intensity: "medium" as "low" | "medium" | "high" | "game",
-  };
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -358,50 +270,6 @@ export class ImportDatasetComponent {
       const errorMessage = ErrorHandlerUtil.extractErrorMessage(
         error,
         "Failed to parse and import file",
-      );
-      this.importResult.set({
-        success: false,
-        error: errorMessage,
-      });
-      this.toastService.error(errorMessage, "Import Failed");
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
-  async generateAndImport() {
-    if (!this.athleteId()) {
-      this.toastService.warn("Please enter an Athlete ID");
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.importResult.set(null);
-
-    try {
-      const dataset = this.datasetGenerator.generateDataset({
-        durationMinutes: this.generateOptions.durationMinutes,
-        intensity: this.generateOptions.intensity,
-      });
-
-      const result = await this.metricsService.importOpenDataset(
-        this.athleteId(),
-        dataset.data,
-      );
-
-      if (result.ok) {
-        this.importResult.set({
-          success: true,
-          metrics: result.metrics,
-        });
-        this.toastService.success("Test dataset generated and imported!");
-      } else {
-        throw new Error("Import failed");
-      }
-    } catch (error) {
-      const errorMessage = ErrorHandlerUtil.extractErrorMessage(
-        error,
-        "Failed to generate and import dataset",
       );
       this.importResult.set({
         success: false,

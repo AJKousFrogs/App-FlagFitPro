@@ -984,7 +984,7 @@ p-button > .p-button {
   background: linear-gradient(
     135deg,
     var(--color-status-info) 0%,
-    var(--primitive-foundation-600, #2563eb) 100%
+    var(--color-status-info) 100%
   ) !important;
   color: var(--color-text-on-primary) !important;
 }
@@ -1135,7 +1135,7 @@ p-button > .p-button {
 .p-tooltip .p-tooltip-text,
 .p-tooltip-text {
   background: var(--color-text-on-primary) !important;
-  color: #1a1a1a !important;
+  color: var(--primitive-neutral-900) !important;
   border: 1px solid var(--ds-primary-green) !important;
   border-radius: 12px !important;
   padding: 0.75rem 1rem !important;
@@ -1176,9 +1176,9 @@ p-button > .p-button {
 .dark-theme .p-tooltip .p-tooltip-text,
 [data-theme="dark"] .p-tooltip-text,
 .dark-theme .p-tooltip-text {
-  background: #262626 !important;
+  background: var(--primitive-neutral-800) !important;
   color: var(--color-text-on-primary) !important;
-  border-color: #10c96b !important;
+  border-color: var(--primitive-primary-500) !important;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
     0 4px 12px rgba(16, 201, 107, 0.15) !important;

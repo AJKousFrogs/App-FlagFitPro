@@ -137,69 +137,7 @@ import {
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .enhanced-analytics-page {
-        padding: var(--space-6);
-      }
-
-      .risk-analysis {
-        text-align: center;
-        padding: var(--space-6);
-      }
-
-      .risk-score {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: var(--space-4);
-      }
-
-      .score-value {
-        font-size: 3rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-      }
-
-      .score-label {
-        font-size: 1.25rem;
-        color: var(--text-secondary);
-        margin-top: var(--space-2);
-      }
-
-      .predictions {
-        padding: var(--space-6);
-        text-align: center;
-        color: var(--text-secondary);
-      }
-
-      .no-data-state,
-      .insufficient-data-state {
-        text-align: center;
-        padding: var(--space-8);
-      }
-
-      .no-data-state i,
-      .insufficient-data-state i {
-        font-size: 3rem;
-        color: var(--text-secondary);
-        margin-bottom: var(--space-4);
-      }
-
-      .no-data-state h4,
-      .insufficient-data-state h4 {
-        font-size: var(--font-heading-sm);
-        margin: 0 0 var(--space-2) 0;
-        color: var(--text-primary);
-      }
-
-      .no-data-state p,
-      .insufficient-data-state p {
-        color: var(--text-secondary);
-        margin: 0 0 var(--space-4) 0;
-      }
-    `,
-  ],
+  styleUrl: './enhanced-analytics.component.scss',
 })
 export class EnhancedAnalyticsComponent implements OnInit {
   private supabaseService = inject(SupabaseService);

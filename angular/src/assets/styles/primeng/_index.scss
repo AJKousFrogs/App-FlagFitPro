@@ -1,0 +1,19 @@
+/**
+ * PrimeNG Design System Integration
+ * ==================================
+ * 
+ * Import order matters for CSS layers.
+ * See Decision 7 and Decision 16 in DESIGN_SYSTEM_RULES.md.
+ * 
+ * FILES:
+ *   _token-mapping.scss  - CSS variables mapping PrimeNG → design tokens
+ *   _brand-overrides.scss - CSS rules applying tokens to components
+ * 
+ * LAYER: primeng-brand
+ */
+
+// Token mapping (CSS custom properties)
+@use 'token-mapping';
+
+// Brand overrides (component styling rules)
+@use 'brand-overrides';

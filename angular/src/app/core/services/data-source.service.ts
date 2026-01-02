@@ -29,9 +29,6 @@ export enum DataState {
   /** Some data exists but not enough for reliable calculations */
   INSUFFICIENT_DATA = "INSUFFICIENT_DATA",
 
-  /** Demo/mock data is being shown (clearly labeled) */
-  DEMO_DATA = "DEMO_DATA",
-
   /** Real, verified data with sufficient history */
   REAL_DATA = "REAL_DATA",
 }
@@ -216,12 +213,7 @@ export class DataSourceService {
   evaluateDataState(
     currentDataPoints: number,
     metricType: MetricType,
-    isDemo: boolean = false,
   ): DataState {
-    if (isDemo) {
-      return DataState.DEMO_DATA;
-    }
-
     if (currentDataPoints === 0) {
       return DataState.NO_DATA;
     }
@@ -242,17 +234,15 @@ export class DataSourceService {
     currentDataPoints: number,
     metricType: MetricType,
     options: {
-      isDemo?: boolean;
       lastUpdated?: string | null;
       metadata?: DataWithState<T>["metadata"];
     } = {},
   ): DataWithState<T> {
-    const { isDemo = false, lastUpdated = null, metadata } = options;
+    const { lastUpdated = null, metadata } = options;
     const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
     const dataState = this.evaluateDataState(
       currentDataPoints,
       metricType,
-      isDemo,
     );
 
     const warnings: string[] = [];
@@ -269,9 +259,6 @@ export class DataSourceService {
         warnings.push(
           `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`,
         );
-        break;
-      case DataState.DEMO_DATA:
-        warnings.push("This is demonstration data, not your actual metrics.");
         break;
     }
 
@@ -313,8 +300,6 @@ export class DataSourceService {
         return "info";
       case DataState.INSUFFICIENT_DATA:
         return "warning";
-      case DataState.DEMO_DATA:
-        return "danger";
       case DataState.REAL_DATA:
         return "safe";
     }
@@ -329,8 +314,6 @@ export class DataSourceService {
         return "No Data";
       case DataState.INSUFFICIENT_DATA:
         return "Insufficient Data";
-      case DataState.DEMO_DATA:
-        return "Demo Data";
       case DataState.REAL_DATA:
         return "Real Data";
     }
@@ -345,8 +328,6 @@ export class DataSourceService {
         return "pi-inbox";
       case DataState.INSUFFICIENT_DATA:
         return "pi-exclamation-triangle";
-      case DataState.DEMO_DATA:
-        return "pi-info-circle";
       case DataState.REAL_DATA:
         return "pi-check-circle";
     }

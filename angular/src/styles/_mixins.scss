@@ -535,6 +535,8 @@
 
 // Reduced motion support
 @mixin respect-motion-preference {
+  @content;
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     transition: none;

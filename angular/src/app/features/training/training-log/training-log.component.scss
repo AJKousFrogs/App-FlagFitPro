@@ -1,0 +1,157 @@
+// ============================================================================
+// training-log.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .training-log-page {
+    padding: var(--space-6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .form-section {
+    margin-bottom: var(--space-6);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .section-header i {
+    font-size: var(--icon-xl);
+    color: var(--color-brand-primary);
+  }
+
+  .section-header h3 {
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  .session-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .session-type-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-4);
+    border: 2px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+    text-align: center;
+  }
+
+  .session-type-card:hover {
+    border-color: var(--color-brand-primary);
+    background: var(--surface-secondary);
+  }
+
+  .session-type-card.selected {
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary-subtle);
+  }
+
+  .type-icon {
+    font-size: var(--font-heading-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .type-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .type-description {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-field label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  .form-field small {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .rpe-help {
+    font-weight: var(--font-weight-normal);
+    color: var(--color-brand-primary);
+  }
+
+  .rpe-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  .calculated-load {
+    margin-top: var(--space-6);
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .load-label {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
+
+  .load-value {
+    font-size: var(--font-display-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-primary);
+  }
+
+  .load-formula {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  @media (max-width: 768px) {
+    .session-types-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+

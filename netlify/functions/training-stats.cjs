@@ -118,10 +118,7 @@ const getTrainingStats = async (userId) => {
       totalSessions,
       averageScore: averageScore || 0,
       currentStreak,
-      recentSessions:
-        formattedRecentSessions.length > 0
-          ? formattedRecentSessions
-          : getFallbackSessions(),
+      recentSessions: formattedRecentSessions,
       progressData: {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         values: progressValues,
@@ -130,49 +127,20 @@ const getTrainingStats = async (userId) => {
     };
   } catch (error) {
     console.error("Database error in getTrainingStats:", error);
-    return getFallbackTrainingStats();
+    return {
+      weeklyHours: 0,
+      totalSessions: 0,
+      averageScore: 0,
+      currentStreak: 0,
+      recentSessions: [],
+      progressData: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        values: [0, 0, 0, 0, 0, 0, 0],
+      },
+      workoutTypes: {},
+    };
   }
 };
-
-// Fallback training stats if database is unavailable
-const getFallbackTrainingStats = () => {
-  return {
-    weeklyHours: 12,
-    totalSessions: 35,
-    averageScore: 85,
-    currentStreak: 5,
-    recentSessions: getFallbackSessions(),
-    progressData: {
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      values: [88, 85, 92, 78, 90, 87, 95],
-    },
-    workoutTypes: {
-      speed: { completed: 8, totalTime: 360 },
-      strength: { completed: 6, totalTime: 420 },
-      agility: { completed: 10, totalTime: 300 },
-      endurance: { completed: 4, totalTime: 240 },
-    },
-  };
-};
-
-const getFallbackSessions = () => [
-  {
-    id: "1",
-    name: "Speed Training",
-    duration: "45 minutes",
-    timeAgo: "2 hours ago",
-    score: 88,
-    type: "speed",
-  },
-  {
-    id: "2",
-    name: "Agility Drills",
-    duration: "30 minutes",
-    timeAgo: "Yesterday",
-    score: 85,
-    type: "agility",
-  },
-];
 
 // Helper functions
 const formatWorkoutName = (workoutType) => {
@@ -232,7 +200,7 @@ exports.handler = async (event, context) => {
           user_id: userId,
           workout_type: workoutType,
           duration: parseInt(duration),
-          score: score || Math.floor(Math.random() * 20) + 80,
+          score: score || 0,
         });
 
         return createSuccessResponse(

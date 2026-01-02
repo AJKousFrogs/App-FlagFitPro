@@ -1,0 +1,51 @@
+// ============================================================================
+// page-loading-state.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .loading-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10, 2.5rem);
+    min-height: 300px;
+  }
+
+  .loading-message {
+    margin-top: var(--space-4, 1rem);
+    font-size: var(--font-body-md, 1rem);
+    color: var(--color-text-secondary);
+  }
+
+  .skeleton-layout {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6, 1.5rem);
+  }
+
+  .skeleton-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  .skeleton-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .skeleton-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .skeleton-content {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+}
+

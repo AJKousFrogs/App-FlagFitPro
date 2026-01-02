@@ -28,13 +28,7 @@ import { TooltipModule } from "primeng/tooltip";
       <ng-content></ng-content>
     </span>
   `,
-  styles: [
-    `
-      :host {
-        display: inline-block;
-      }
-    `,
-  ],
+  styleUrl: './tooltip.component.scss',
 })
 export class TooltipComponent {
   // Configuration

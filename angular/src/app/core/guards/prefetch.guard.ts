@@ -30,30 +30,3 @@ export const prefetchGuard: CanActivateFn = (route, state) => {
   return true;
 };
 
-/**
- * Setup prefetching on navigation link hover/focus
- * Call this in app component or navigation component
- */
-export function setupPrefetching(router: Router): void {
-  // Listen for navigation events
-  router.events
-    .pipe(
-      filter((event) => event instanceof NavigationEnd),
-      take(1),
-    )
-    .subscribe(() => {
-      // Setup prefetching for analytics links
-      const analyticsLinks = document.querySelectorAll('a[href*="/analytics"]');
-      analyticsLinks.forEach((link) => {
-        link.addEventListener(
-          "mouseenter",
-          () => {
-            // Prefetch on hover
-            const analyticsDataService = inject(AnalyticsDataService);
-            analyticsDataService.getAllAnalytics().subscribe();
-          },
-          { once: true },
-        );
-      });
-    });
-}

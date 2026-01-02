@@ -25,57 +25,57 @@
   --p-primary-200: rgba(var(--ds-primary-green-rgb), 0.2);
   --p-primary-300: rgba(var(--ds-primary-green-rgb), 0.3);
   --p-primary-400: rgba(var(--ds-primary-green-rgb), 0.4);
-  --p-primary-500: var(--ds-primary-green); /* #089949 - Main brand color */
-  --p-primary-600: var(--color-brand-primary-dark, #077839);
-  --p-primary-700: #065f2e;
-  --p-primary-800: #054724;
-  --p-primary-900: #042f18;
-  --p-primary-950: #021710;
+  --p-primary-500: var(--ds-primary-green); /* var(--ds-primary-green) - Main brand color */
+  --p-primary-600: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-primary-700: var(--primitive-primary-900);
+  --p-primary-800: var(--primitive-primary-900);
+  --p-primary-900: var(--primitive-primary-900);
+  --p-primary-950: var(--primitive-primary-900);
 
   /* PrimeNG Primary Color - Main */
   --p-primary-color: var(--ds-primary-green);
-  --p-primary-contrast-color: #ffffff; /* CRITICAL: White text on green */
-  --p-primary-hover-color: var(--color-brand-primary-dark, #077839);
-  --p-primary-active-color: #065f2e;
+  --p-primary-contrast-color: var(--color-text-on-primary); /* CRITICAL: White text on green */
+  --p-primary-hover-color: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-primary-active-color: var(--primitive-primary-900);
 
   /* ================================================================
      TEXT COLORS - CRITICAL FIX for black-on-green issue
      ================================================================ */
 
   /* Default text colors (light mode) */
-  --p-text-color: var(--color-text-primary, #0f172a);
-  --p-text-muted-color: var(--color-text-secondary, #64748b);
-  --p-text-hover-muted-color: var(--color-text-primary, #0f172a);
+  --p-text-color: var(--color-text-primary, var(--primitive-neutral-900));
+  --p-text-muted-color: var(--color-text-secondary, var(--primitive-neutral-500));
+  --p-text-hover-muted-color: var(--color-text-primary, var(--primitive-neutral-900));
 
   /* Text on colored backgrounds */
-  --p-highlight-text-color: #ffffff; /* White text on primary/success/etc */
+  --p-highlight-text-color: var(--color-text-on-primary); /* White text on primary/success/etc */
   --p-primary-text-color: var(--ds-primary-green);
 
   /* ================================================================
      SURFACE COLORS - Backgrounds, cards, panels
      ================================================================ */
 
-  --p-surface-0: #ffffff;
-  --p-surface-50: var(--surface-secondary, #f8fafc);
-  --p-surface-100: var(--surface-tertiary, #f1f5f9);
-  --p-surface-200: #e2e8f0;
-  --p-surface-300: #cbd5e1;
-  --p-surface-400: #94a3b8;
-  --p-surface-500: #64748b;
-  --p-surface-600: #475569;
-  --p-surface-700: #334155;
-  --p-surface-800: #1e293b;
-  --p-surface-900: #0f172a;
-  --p-surface-950: #020617;
+  --p-surface-0: var(--color-text-on-primary);
+  --p-surface-50: var(--surface-secondary, var(--primitive-neutral-50));
+  --p-surface-100: var(--surface-tertiary, var(--primitive-neutral-100));
+  --p-surface-200: var(--primitive-neutral-200);
+  --p-surface-300: var(--primitive-neutral-300);
+  --p-surface-400: var(--primitive-neutral-400);
+  --p-surface-500: var(--primitive-neutral-500);
+  --p-surface-600: var(--primitive-neutral-600);
+  --p-surface-700: var(--primitive-neutral-700);
+  --p-surface-800: var(--primitive-neutral-800);
+  --p-surface-900: var(--primitive-neutral-900);
+  --p-surface-950: var(--primitive-neutral-950);
 
-  --p-content-background: var(--surface-card, #ffffff);
-  --p-card-background: var(--surface-card, #ffffff);
-  --p-surface-ground: var(--surface-ground, #f8fafc);
-  --p-surface-section: var(--surface-card, #ffffff);
-  --p-surface-card: var(--surface-card, #ffffff);
-  --p-surface-overlay: var(--surface-card, #ffffff);
-  --p-surface-border: var(--color-border-secondary, #e2e8f0);
-  --p-surface-hover: var(--surface-secondary, #f8fafc);
+  --p-content-background: var(--surface-card, var(--color-text-on-primary));
+  --p-card-background: var(--surface-card, var(--color-text-on-primary));
+  --p-surface-ground: var(--surface-ground, var(--primitive-neutral-50));
+  --p-surface-section: var(--surface-card, var(--color-text-on-primary));
+  --p-surface-card: var(--surface-card, var(--color-text-on-primary));
+  --p-surface-overlay: var(--surface-card, var(--color-text-on-primary));
+  --p-surface-border: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-surface-hover: var(--surface-secondary, var(--primitive-neutral-50));
 
   /* ================================================================
      STATUS COLORS - Success, Warning, Danger, Info
@@ -85,29 +85,29 @@
   --p-green-50: rgba(var(--ds-primary-green-rgb), 0.05);
   --p-green-100: rgba(var(--ds-primary-green-rgb), 0.1);
   --p-green-500: var(--ds-primary-green);
-  --p-green-600: var(--color-brand-primary-dark, #077839);
-  --p-green-700: #065f2e;
+  --p-green-600: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-green-700: var(--primitive-primary-900);
 
   /* Warning (Yellow/Amber) */
-  --p-yellow-50: #fffbeb;
-  --p-yellow-100: #fef3c7;
-  --p-yellow-500: #f59e0b;
-  --p-yellow-600: #d97706;
-  --p-yellow-700: #b45309;
+  --p-yellow-50: var(--primitive-warning-50);
+  --p-yellow-100: var(--primitive-warning-100);
+  --p-yellow-500: var(--color-status-warning);
+  --p-yellow-600: var(--primitive-warning-600);
+  --p-yellow-700: var(--primitive-warning-700);
 
   /* Danger (Red) */
-  --p-red-50: #fef2f2;
-  --p-red-100: #fee2e2;
-  --p-red-500: #ef4444;
-  --p-red-600: #dc2626;
-  --p-red-700: #b91c1c;
+  --p-red-50: var(--primitive-error-50);
+  --p-red-100: var(--primitive-error-100);
+  --p-red-500: var(--color-status-error);
+  --p-red-600: var(--primitive-error-600);
+  --p-red-700: var(--primitive-error-700);
 
   /* Info (Blue) */
-  --p-blue-50: #eff6ff;
-  --p-blue-100: #dbeafe;
-  --p-blue-500: #3b82f6;
-  --p-blue-600: #2563eb;
-  --p-blue-700: #1d4ed8;
+  --p-blue-50: var(--color-status-info-light);
+  --p-blue-100: var(--color-status-info-light);
+  --p-blue-500: var(--color-status-info);
+  --p-blue-600: var(--color-status-info);
+  --p-blue-700: var(--color-status-info);
 
   /* ================================================================
      COMPONENT-SPECIFIC VARIABLES
@@ -116,16 +116,16 @@
   /* Button */
   --p-button-primary-background: var(--ds-primary-green);
   --p-button-primary-border-color: var(--ds-primary-green);
-  --p-button-primary-color: #ffffff; /* CRITICAL: White text */
-  --p-button-primary-hover-background: var(--color-brand-primary-dark, #077839);
+  --p-button-primary-color: var(--color-text-on-primary); /* CRITICAL: White text */
+  --p-button-primary-hover-background: var(--color-brand-primary-dark, var(--primitive-primary-800));
   --p-button-primary-hover-border-color: var(
     --color-brand-primary-dark,
-    #077839
+    var(--primitive-primary-800)
   );
-  --p-button-primary-hover-color: #ffffff;
-  --p-button-primary-active-background: #065f2e;
-  --p-button-primary-active-border-color: #065f2e;
-  --p-button-primary-active-color: #ffffff;
+  --p-button-primary-hover-color: var(--color-text-on-primary);
+  --p-button-primary-active-background: var(--primitive-primary-900);
+  --p-button-primary-active-border-color: var(--primitive-primary-900);
+  --p-button-primary-active-color: var(--color-text-on-primary);
 
   --p-button-secondary-color: var(--ds-primary-green);
   --p-button-secondary-border-color: var(--ds-primary-green);
@@ -152,48 +152,48 @@
   --p-button-lg-padding-x: var(--space-5, 1.25rem);
 
   /* Card */
-  --p-card-background: var(--surface-card, #ffffff);
-  --p-card-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-card-background: var(--surface-card, var(--color-text-on-primary));
+  --p-card-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
   --p-card-border-radius: var(--radius-xl, 0.75rem);
   --p-card-body-padding: var(--space-5, 1.25rem);
   --p-card-title-font-size: var(--font-heading-md, 1.25rem);
   --p-card-title-font-weight: var(--font-weight-semibold, 600);
-  --p-card-subtitle-color: var(--color-text-secondary, #64748b);
+  --p-card-subtitle-color: var(--color-text-secondary, var(--primitive-neutral-500));
   --p-card-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1));
 
   /* Input */
-  --p-input-border-color: var(--color-border-primary, #cbd5e1);
+  --p-input-border-color: var(--color-border-primary, var(--primitive-neutral-300));
   --p-input-hover-border-color: var(--ds-primary-green);
   --p-input-focus-border-color: var(--ds-primary-green);
   --p-input-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.2);
   --p-input-padding-y: var(--space-3, 0.75rem);
   --p-input-padding-x: var(--space-4, 1rem);
   --p-input-border-radius: var(--radius-md, 0.375rem);
-  --p-input-placeholder-color: var(--color-text-muted, #94a3b8);
+  --p-input-placeholder-color: var(--color-text-muted, var(--primitive-neutral-400));
 
   /* Dropdown/Select */
-  --p-dropdown-background: var(--surface-card, #ffffff);
-  --p-dropdown-border-color: var(--color-border-primary, #cbd5e1);
+  --p-dropdown-background: var(--surface-card, var(--color-text-on-primary));
+  --p-dropdown-border-color: var(--color-border-primary, var(--primitive-neutral-300));
   --p-dropdown-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
   --p-dropdown-focus-border-color: var(--ds-primary-green);
 
   /* Checkbox/Radio */
-  --p-checkbox-border-color: var(--color-border-primary, #cbd5e1);
+  --p-checkbox-border-color: var(--color-border-primary, var(--primitive-neutral-300));
   --p-checkbox-checked-background: var(--ds-primary-green);
   --p-checkbox-checked-border-color: var(--ds-primary-green);
-  --p-checkbox-icon-checked-color: #ffffff;
+  --p-checkbox-icon-checked-color: var(--color-text-on-primary);
 
   /* Tag/Badge */
   --p-tag-primary-background: var(--ds-primary-green);
-  --p-tag-primary-color: #ffffff;
+  --p-tag-primary-color: var(--color-text-on-primary);
   --p-tag-success-background: var(--ds-primary-green);
-  --p-tag-success-color: #ffffff;
-  --p-tag-warning-background: #f59e0b;
-  --p-tag-warning-color: #78350f;
-  --p-tag-danger-background: #ef4444;
-  --p-tag-danger-color: #ffffff;
-  --p-tag-info-background: #3b82f6;
-  --p-tag-info-color: #ffffff;
+  --p-tag-success-color: var(--color-text-on-primary);
+  --p-tag-warning-background: var(--color-status-warning);
+  --p-tag-warning-color: var(--primitive-warning-900);
+  --p-tag-danger-background: var(--color-status-error);
+  --p-tag-danger-color: var(--color-text-on-primary);
+  --p-tag-info-background: var(--color-status-info);
+  --p-tag-info-color: var(--color-text-on-primary);
 
   /* Dialog/Modal */
   --p-dialog-border-radius: var(--radius-xl, 0.75rem);
@@ -206,17 +206,17 @@
   --p-toast-border-radius: var(--radius-lg, 0.5rem);
   --p-toast-success-background: var(--ds-primary-green);
   --p-toast-success-border-color: var(--ds-primary-green);
-  --p-toast-success-color: #ffffff;
-  --p-toast-warn-background: #f59e0b;
-  --p-toast-warn-color: #78350f;
-  --p-toast-error-background: #ef4444;
-  --p-toast-error-color: #ffffff;
-  --p-toast-info-background: #3b82f6;
-  --p-toast-info-color: #ffffff;
+  --p-toast-success-color: var(--color-text-on-primary);
+  --p-toast-warn-background: var(--color-status-warning);
+  --p-toast-warn-color: var(--primitive-warning-900);
+  --p-toast-error-background: var(--color-status-error);
+  --p-toast-error-color: var(--color-text-on-primary);
+  --p-toast-info-background: var(--color-status-info);
+  --p-toast-info-color: var(--color-text-on-primary);
 
   /* Menu */
-  --p-menu-background: var(--surface-card, #ffffff);
-  --p-menu-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-menu-background: var(--surface-card, var(--color-text-on-primary));
+  --p-menu-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
   --p-menu-border-radius: var(--radius-lg, 0.5rem);
   --p-menu-item-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
   --p-menu-item-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
@@ -224,42 +224,42 @@
   --p-menu-item-active-color: var(--ds-primary-green);
 
   /* Datatable */
-  --p-datatable-header-background: var(--surface-secondary, #f8fafc);
-  --p-datatable-header-border-color: var(--color-border-secondary, #e2e8f0);
-  --p-datatable-row-hover-background: var(--surface-secondary, #f8fafc);
+  --p-datatable-header-background: var(--surface-secondary, var(--primitive-neutral-50));
+  --p-datatable-header-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-datatable-row-hover-background: var(--surface-secondary, var(--primitive-neutral-50));
   --p-datatable-row-selected-background: rgba(var(--ds-primary-green-rgb), 0.1);
-  --p-datatable-row-selected-color: var(--color-text-primary, #0f172a);
+  --p-datatable-row-selected-color: var(--color-text-primary, var(--primitive-neutral-900));
 
   /* Paginator */
-  --p-paginator-background: var(--surface-card, #ffffff);
-  --p-paginator-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-paginator-background: var(--surface-card, var(--color-text-on-primary));
+  --p-paginator-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
   --p-paginator-element-hover-background: rgba(
     var(--ds-primary-green-rgb),
     0.04
   );
   --p-paginator-element-active-background: var(--ds-primary-green);
-  --p-paginator-element-active-color: #ffffff;
+  --p-paginator-element-active-color: var(--color-text-on-primary);
 
   /* Tabs */
   --p-tabview-nav-background: transparent;
-  --p-tabview-nav-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-tabview-nav-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
   --p-tabview-tab-active-color: var(--ds-primary-green);
   --p-tabview-tab-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
   --p-tabview-tab-hover-border-color: var(--ds-primary-green);
 
   /* Panel */
-  --p-panel-header-background: var(--surface-secondary, #f8fafc);
-  --p-panel-header-border-color: var(--color-border-secondary, #e2e8f0);
-  --p-panel-content-border-color: var(--color-border-secondary, #e2e8f0);
+  --p-panel-header-background: var(--surface-secondary, var(--primitive-neutral-50));
+  --p-panel-header-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-panel-content-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
 
   /* Progress Bar */
-  --p-progressbar-background: var(--surface-tertiary, #f1f5f9);
+  --p-progressbar-background: var(--surface-tertiary, var(--primitive-neutral-100));
   --p-progressbar-value-background: var(--ds-primary-green);
   --p-progressbar-border-radius: var(--radius-full, 9999px);
 
   /* Slider */
-  --p-slider-background: var(--surface-tertiary, #f1f5f9);
+  --p-slider-background: var(--surface-tertiary, var(--primitive-neutral-100));
   --p-slider-range-background: var(--ds-primary-green);
   --p-slider-handle-background: var(--ds-primary-green);
 
@@ -284,8 +284,8 @@
      ================================================================ */
 
   --p-disabled-opacity: 0.6;
-  --p-disabled-background: var(--surface-tertiary, #f1f5f9);
-  --p-disabled-color: var(--color-text-muted, #94a3b8);
+  --p-disabled-background: var(--surface-tertiary, var(--primitive-neutral-100));
+  --p-disabled-color: var(--color-text-muted, var(--primitive-neutral-400));
 }
 
 /* ================================================================
@@ -295,44 +295,44 @@
 [data-theme="dark"] {
   /* Primary colors (unchanged) */
   --p-primary-color: var(--ds-primary-green);
-  --p-primary-contrast-color: #ffffff;
+  --p-primary-contrast-color: var(--color-text-on-primary);
 
   /* Text colors for dark mode */
-  --p-text-color: #f1f5f9;
-  --p-text-muted-color: #94a3b8;
-  --p-highlight-text-color: #ffffff;
+  --p-text-color: var(--primitive-neutral-100);
+  --p-text-muted-color: var(--primitive-neutral-400);
+  --p-highlight-text-color: var(--color-text-on-primary);
 
   /* Surface colors for dark mode */
-  --p-surface-0: #020617;
-  --p-surface-50: #0f172a;
-  --p-surface-100: #1e293b;
-  --p-surface-200: #334155;
-  --p-surface-300: #475569;
-  --p-surface-400: #64748b;
-  --p-surface-500: #94a3b8;
-  --p-surface-600: #cbd5e1;
-  --p-surface-700: #e2e8f0;
-  --p-surface-800: #f1f5f9;
-  --p-surface-900: #f8fafc;
-  --p-surface-950: #ffffff;
+  --p-surface-0: var(--primitive-neutral-950);
+  --p-surface-50: var(--primitive-neutral-900);
+  --p-surface-100: var(--primitive-neutral-800);
+  --p-surface-200: var(--primitive-neutral-700);
+  --p-surface-300: var(--primitive-neutral-600);
+  --p-surface-400: var(--primitive-neutral-500);
+  --p-surface-500: var(--primitive-neutral-400);
+  --p-surface-600: var(--primitive-neutral-300);
+  --p-surface-700: var(--primitive-neutral-200);
+  --p-surface-800: var(--primitive-neutral-100);
+  --p-surface-900: var(--primitive-neutral-50);
+  --p-surface-950: var(--color-text-on-primary);
 
-  --p-content-background: var(--primitive-neutral-800, #1e293b);
-  --p-card-background: var(--primitive-neutral-800, #1e293b);
-  --p-surface-ground: var(--primitive-neutral-950, #020617);
-  --p-surface-card: var(--primitive-neutral-800, #1e293b);
-  --p-surface-border: var(--primitive-neutral-700, #334155);
-  --p-surface-hover: var(--primitive-neutral-700, #334155);
+  --p-content-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-card-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-surface-ground: var(--primitive-neutral-950, var(--primitive-neutral-950));
+  --p-surface-card: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-surface-border: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  --p-surface-hover: var(--primitive-neutral-700, var(--primitive-neutral-700));
 
   /* Component backgrounds */
-  --p-datatable-header-background: var(--primitive-neutral-900, #0f172a);
-  --p-panel-header-background: var(--primitive-neutral-900, #0f172a);
-  --p-menu-background: var(--primitive-neutral-800, #1e293b);
-  --p-paginator-background: var(--primitive-neutral-800, #1e293b);
+  --p-datatable-header-background: var(--primitive-neutral-900, var(--primitive-neutral-900));
+  --p-panel-header-background: var(--primitive-neutral-900, var(--primitive-neutral-900));
+  --p-menu-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-paginator-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
 
   /* Inputs in dark mode */
-  --p-input-border-color: var(--primitive-neutral-700, #334155);
-  --p-dropdown-background: var(--primitive-neutral-800, #1e293b);
-  --p-disabled-background: var(--primitive-neutral-900, #0f172a);
+  --p-input-border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  --p-dropdown-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-disabled-background: var(--primitive-neutral-900, var(--primitive-neutral-900));
 }
 
 /* ================================================================
@@ -346,20 +346,20 @@
 p-button[severity="primary"] .p-button {
   background: var(--ds-primary-green) !important;
   border-color: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 
   .p-button-label,
   .p-button-icon,
   span,
   i {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 
   &:hover,
   &:focus {
-    background: var(--color-brand-primary-dark, #077839) !important;
-    border-color: var(--color-brand-primary-dark, #077839) !important;
-    color: #ffffff !important;
+    background: var(--color-brand-primary-dark, var(--primitive-primary-800)) !important;
+    border-color: var(--color-brand-primary-dark, var(--primitive-primary-800)) !important;
+    color: var(--color-text-on-primary) !important;
   }
 }
 
@@ -369,7 +369,7 @@ p-button[severity="primary"] .p-button {
   &.bg-primary,
   &.card-primary {
     background: var(--ds-primary-green) !important;
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
 
     .p-card-title,
     .p-card-subtitle,
@@ -383,7 +383,7 @@ p-button[severity="primary"] .p-button {
     p,
     span,
     div {
-      color: #ffffff !important;
+      color: var(--color-text-on-primary) !important;
     }
   }
 }
@@ -394,16 +394,16 @@ p-button[severity="primary"] .p-button {
 .p-badge-success,
 .p-badge-primary {
   background: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* PrimeNG Chip Primary */
 .p-chip-primary {
   background: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 
   .p-chip-text {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 }
 
@@ -426,7 +426,7 @@ p-button[severity="primary"] .p-button {
 .p-paginator .p-paginator-page.p-highlight {
   background: var(--ds-primary-green) !important;
   border-color: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* PrimeNG Menu Item Active */

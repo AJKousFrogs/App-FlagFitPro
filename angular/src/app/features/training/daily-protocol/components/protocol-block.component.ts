@@ -1,0 +1,243 @@
+/**
+ * Protocol Block Component
+ *
+ * Wraps a group of exercises (Morning Mobility, Foam Roll, Main Session, etc.)
+ * with:
+ * - Expandable/collapsible header
+ * - Progress tracking
+ * - Completion status
+ * - Time of day recommendations
+ *
+ * Design System Compliant (DESIGN_SYSTEM_RULES.md)
+ */
+
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
+
+import {
+  ProtocolBlock,
+  PrescribedExercise,
+  getBlockConfig,
+} from '../daily-protocol.models';
+import { ExerciseCardComponent } from './exercise-card.component';
+
+@Component({
+  selector: 'app-protocol-block',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    ButtonModule,
+    ProgressBarModule,
+    TagModule,
+    ExerciseCardComponent,
+  ],
+  template: `
+    <div
+      class="protocol-block"
+      [class.completed]="block().status === 'complete'"
+      [class.expanded]="isExpanded()"
+      [attr.aria-label]="block().title"
+    >
+      <!-- Block Header -->
+      <div
+        class="block-header"
+        (click)="toggleExpand()"
+        [style.--block-color]="blockConfig().color"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="toggleExpand()"
+        (keydown.space)="toggleExpand(); $event.preventDefault()"
+      >
+        <div class="header-left">
+          <div class="block-icon" [style.background]="blockConfig().color">
+            @if (block().status === 'complete') {
+              <i class="pi pi-check"></i>
+            } @else {
+              <i class="pi" [class]="blockConfig().icon"></i>
+            }
+          </div>
+          <div class="block-info">
+            <h3 class="block-title">{{ block().title }}</h3>
+            <div class="block-meta">
+              <span class="exercise-count">
+                {{ block().completedCount }}/{{ block().totalCount }} exercises
+              </span>
+              @if (block().estimatedDurationMinutes) {
+                <span class="separator">•</span>
+                <span class="duration">~{{ block().estimatedDurationMinutes }} min</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Status Tag -->
+          @if (block().status === 'complete') {
+            <p-tag value="Done" severity="success" [rounded]="true"></p-tag>
+          } @else if (block().status === 'in_progress') {
+            <p-tag value="In Progress" severity="info" [rounded]="true"></p-tag>
+          } @else if (block().status === 'skipped') {
+            <p-tag value="Skipped" severity="secondary" [rounded]="true"></p-tag>
+          } @else {
+            <p-tag value="Pending" severity="warn" [rounded]="true"></p-tag>
+          }
+
+          <!-- Progress -->
+          @if (block().status !== 'complete' && block().totalCount > 0) {
+            <div class="progress-indicator">
+              <span class="progress-text">{{ block().progressPercent }}%</span>
+            </div>
+          }
+
+          <!-- Expand Toggle -->
+          <button
+            class="expand-toggle"
+            [attr.aria-expanded]="isExpanded()"
+            (click)="$event.stopPropagation()"
+          >
+            <i
+              class="pi"
+              [class.pi-chevron-down]="!isExpanded()"
+              [class.pi-chevron-up]="isExpanded()"
+            ></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      @if (block().totalCount > 0) {
+        <div class="progress-bar-container" [style.--block-color]="blockConfig().color">
+          <div
+            class="progress-bar-fill"
+            [style.width.%]="block().progressPercent"
+          ></div>
+        </div>
+      }
+
+      <!-- Expanded Content -->
+      @if (isExpanded()) {
+        <div class="block-content">
+          <!-- AI Note for the Block -->
+          @if (block().aiNote) {
+            <div class="block-ai-note">
+              <i class="pi pi-sparkles"></i>
+              <span>{{ block().aiNote }}</span>
+            </div>
+          }
+
+          <!-- Exercise List -->
+          <div class="exercise-list">
+            @for (exercise of block().exercises; track exercise.id; let i = $index) {
+              <app-exercise-card
+                [exercise]="exercise"
+                [sequenceNumber]="i + 1"
+                (complete)="onExerciseComplete($event)"
+                (skip)="onExerciseSkip($event)"
+              ></app-exercise-card>
+            }
+          </div>
+
+          <!-- Block Actions -->
+          @if (block().status !== 'complete' && block().totalCount > 0) {
+            <div class="block-actions">
+              <p-button
+                label="Mark All Complete"
+                icon="pi pi-check-circle"
+                (onClick)="onMarkAllComplete()"
+                [outlined]="true"
+                styleClass="mark-all-btn"
+              ></p-button>
+              <p-button
+                label="Skip Block"
+                icon="pi pi-forward"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="onSkipBlock()"
+                styleClass="skip-block-btn"
+              ></p-button>
+            </div>
+          }
+
+          <!-- Completion Info -->
+          @if (block().status === 'complete' && block().completedAt) {
+            <div class="completion-info">
+              <i class="pi pi-check-circle"></i>
+              <span>Completed at {{ formatTime(block().completedAt!) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  `,
+  styleUrl: './protocol-block.component.scss',
+})
+export class ProtocolBlockComponent {
+  // Inputs
+  block = input.required<ProtocolBlock>();
+  defaultExpanded = input<boolean>(false);
+
+  // Outputs
+  exerciseComplete = output<PrescribedExercise>();
+  exerciseSkip = output<PrescribedExercise>();
+  markAllComplete = output<ProtocolBlock>();
+  skipBlock = output<ProtocolBlock>();
+
+  // Local state
+  isExpanded = signal(false);
+
+  // Computed
+  blockConfig = computed(() => getBlockConfig(this.block().type));
+
+  constructor() {
+    // Set initial expanded state based on input or block status
+    if (this.defaultExpanded()) {
+      this.isExpanded.set(true);
+    }
+  }
+
+  ngOnInit(): void {
+    // Auto-expand if in progress
+    if (this.block().status === 'in_progress') {
+      this.isExpanded.set(true);
+    }
+  }
+
+  // Methods
+  toggleExpand(): void {
+    this.isExpanded.update((v) => !v);
+  }
+
+  onExerciseComplete(exercise: PrescribedExercise): void {
+    this.exerciseComplete.emit(exercise);
+  }
+
+  onExerciseSkip(exercise: PrescribedExercise): void {
+    this.exerciseSkip.emit(exercise);
+  }
+
+  onMarkAllComplete(): void {
+    this.markAllComplete.emit(this.block());
+  }
+
+  onSkipBlock(): void {
+    this.skipBlock.emit(this.block());
+  }
+
+  formatTime(date: Date): string {
+    return new Date(date).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+}

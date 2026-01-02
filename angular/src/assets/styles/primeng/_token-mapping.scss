@@ -1,0 +1,360 @@
+/**
+ * PrimeNG Token Mapping
+ * =====================
+ * 
+ * This file maps PrimeNG CSS variables to design system tokens.
+ * See Decision 16 in DESIGN_SYSTEM_RULES.md.
+ * 
+ * RULES:
+ * 1. PrimeNG styling ONLY allowed in this file and _brand-overrides.scss
+ * 2. Feature SCSS must NEVER style .p-* classes directly
+ * 3. All values must use design system tokens
+ * 
+ * IMPORTANT: This uses PrimeNG v19+ CSS variable naming.
+ * Adjust variable names if using an older version.
+ */
+
+@layer primeng-brand {
+  :root {
+    // ============================================
+    // BUTTONS
+    // ============================================
+    
+    // Primary button
+    --p-button-primary-background: var(--ds-primary-green);
+    --p-button-primary-hover-background: var(--ds-primary-green-hover);
+    --p-button-primary-active-background: var(--primitive-primary-800);
+    --p-button-primary-color: var(--color-text-on-primary);
+
+    // IMPORTANT: Decision 9A says standard radius default.
+    // PrimeNG "rounded" should map to radius-full only when [rounded]="true".
+    // Default token for button radius should be radius-lg.
+    --p-button-border-radius: var(--radius-lg);
+
+    // Default button padding
+    --p-button-padding-x: var(--space-6);
+    --p-button-padding-y: var(--space-3);
+
+    // Severity mapping (Decision 26)
+    --p-button-danger-background: var(--color-status-error);
+    --p-button-danger-hover-background: var(--primitive-error-600);
+    --p-button-danger-active-background: var(--primitive-error-700);
+    --p-button-danger-color: var(--color-text-on-primary);
+    --p-button-success-background: var(--color-status-success);
+    --p-button-success-hover-background: var(--primitive-success-600);
+    --p-button-success-color: var(--color-text-on-primary);
+    --p-button-warn-background: var(--color-status-warning);
+    --p-button-warn-hover-background: var(--primitive-warning-600);
+    --p-button-warn-color: var(--color-text-primary);
+    --p-button-info-background: var(--color-status-info);
+    --p-button-info-hover-background: var(--primitive-info-600);
+    --p-button-info-color: var(--color-text-on-primary);
+    --p-button-secondary-background: var(--color-surface-secondary);
+    --p-button-secondary-hover-background: var(--color-surface-hover);
+    --p-button-secondary-color: var(--color-text-primary);
+    --p-button-secondary-border-color: var(--color-border-default);
+
+    // Button sizes (Decision 49)
+    --p-button-sm-padding-x: var(--space-4);
+    --p-button-sm-padding-y: var(--space-2);
+    --p-button-sm-font-size: var(--font-body-sm);
+    --p-button-lg-padding-x: var(--space-8);
+    --p-button-lg-padding-y: var(--space-4);
+    --p-button-lg-font-size: var(--font-body-lg);
+
+    // Button typography
+    --p-button-font-family: var(--font-family-sans);
+    --p-button-font-weight: var(--font-weight-semibold);
+
+    // ============================================
+    // CARDS (Decision 14: Border-first + Policy A)
+    // ============================================
+    
+    --p-card-background: var(--color-surface-primary);
+    --p-card-border-radius: var(--radius-xl);
+    --p-card-shadow: var(--shadow-1);
+    --p-card-padding: var(--space-5);
+    --p-card-border: var(--border-1) solid var(--color-border-default);
+    
+    // Card header
+    --p-card-header-padding: var(--space-4) var(--space-5);
+    --p-card-header-border-bottom: var(--border-1) solid var(--color-border-muted);
+    
+    // Card content
+    --p-card-content-padding: var(--space-5);
+    
+    // Card footer
+    --p-card-footer-padding: var(--space-4) var(--space-5);
+    --p-card-footer-border-top: var(--border-1) solid var(--color-border-muted);
+
+    // ============================================
+    // TAGS / BADGES
+    // ============================================
+    
+    --p-tag-padding-x: var(--space-3);
+    --p-tag-padding-y: var(--space-1);
+    --p-tag-border-radius: var(--radius-full);
+    --p-tag-font-size: var(--font-body-xs);
+    --p-tag-font-weight: var(--font-weight-medium);
+
+    // Tag severities
+    --p-tag-success-background: var(--color-status-success-surface);
+    --p-tag-success-color: var(--color-status-success);
+    --p-tag-info-background: var(--color-status-info-surface);
+    --p-tag-info-color: var(--color-status-info);
+    --p-tag-warn-background: var(--color-status-warning-surface);
+    --p-tag-warn-color: var(--color-status-warning);
+    --p-tag-danger-background: var(--color-status-error-surface);
+    --p-tag-danger-color: var(--color-status-error);
+
+    // ============================================
+    // DIALOG / DRAWER (Decision 25)
+    // ============================================
+    
+    --p-dialog-border-radius: var(--radius-xl);
+    --p-dialog-shadow: var(--shadow-3);
+    --p-dialog-background: var(--color-surface-primary);
+    
+    // Dialog header
+    --p-dialog-header-padding: var(--space-5);
+    --p-dialog-header-border-bottom: var(--border-1) solid var(--color-border-muted);
+    --p-dialog-header-font-size: var(--font-heading-md);
+    --p-dialog-header-font-weight: var(--font-weight-semibold);
+    
+    // Dialog content
+    --p-dialog-content-padding: var(--space-5);
+    
+    // Dialog footer (secondary left, primary right)
+    --p-dialog-footer-padding: var(--space-4) var(--space-5);
+    --p-dialog-footer-border-top: var(--border-1) solid var(--color-border-muted);
+    --p-dialog-footer-gap: var(--space-3);
+
+    // Dialog sizes
+    --p-dialog-sm-width: 400px;
+    --p-dialog-md-width: 560px;
+    --p-dialog-lg-width: 800px;
+    --p-dialog-xl-width: 90vw;
+
+    // ============================================
+    // INPUTS (Decision 23)
+    // ============================================
+    
+    --p-inputtext-border-radius: var(--radius-lg);
+    --p-inputtext-padding-x: var(--space-4);
+    --p-inputtext-padding-y: var(--space-3);
+    --p-inputtext-font-size: var(--font-body-md);
+    --p-inputtext-font-family: var(--font-family-sans);
+    
+    // Input borders
+    --p-inputtext-border-color: var(--color-border-default);
+    --p-inputtext-border-width: var(--border-1);
+    
+    // Input focus state
+    --p-inputtext-focus-border-color: var(--color-border-focus);
+    --p-inputtext-focus-ring-color: var(--color-focus-ring);
+    --p-inputtext-focus-ring-width: 3px;
+    --p-inputtext-focus-ring-offset: 0;
+    
+    // Input error state (Decision 32)
+    --p-inputtext-invalid-border-color: var(--color-border-danger);
+    
+    // Input disabled state (Decision 46)
+    --p-inputtext-disabled-background: var(--color-surface-secondary);
+    --p-inputtext-disabled-opacity: 0.5;
+    
+    // Input placeholder
+    --p-inputtext-placeholder-color: var(--color-text-muted);
+
+    // ============================================
+    // SELECT / DROPDOWN (Decision 41)
+    // ============================================
+    
+    --p-select-border-radius: var(--radius-lg);
+    --p-select-padding-x: var(--space-4);
+    --p-select-padding-y: var(--space-3);
+    --p-select-border-color: var(--color-border-default);
+    --p-select-focus-border-color: var(--color-border-focus);
+    
+    // Dropdown panel
+    --p-select-panel-background: var(--color-surface-primary);
+    --p-select-panel-border-radius: var(--radius-xl);
+    --p-select-panel-shadow: var(--shadow-3);
+    --p-select-panel-border: var(--border-1) solid var(--color-border-default);
+    
+    // Option items
+    --p-select-option-padding: var(--space-2) var(--space-3);
+    --p-select-option-hover-background: var(--color-surface-hover);
+    --p-select-option-selected-background: var(--color-surface-selected);
+
+    // ============================================
+    // DATATABLE (Decision 24)
+    // ============================================
+    
+    // Table header
+    --p-datatable-header-background: var(--color-surface-secondary);
+    --p-datatable-header-padding: var(--space-3) var(--space-4);
+    --p-datatable-header-font-size: var(--font-body-sm);
+    --p-datatable-header-font-weight: var(--font-weight-semibold);
+    --p-datatable-header-color: var(--color-text-muted);
+    --p-datatable-header-text-transform: uppercase;
+    --p-datatable-header-letter-spacing: var(--letter-spacing-wide);
+    
+    // Table body
+    --p-datatable-row-padding: var(--space-3) var(--space-4);
+    --p-datatable-row-hover-background: var(--color-surface-hover);
+    --p-datatable-row-selected-background: var(--color-surface-selected);
+    --p-datatable-border-color: var(--color-border-muted);
+    
+    // Compact variant (Decision 24: 40px rows)
+    --p-datatable-sm-row-padding: var(--space-2) var(--space-3);
+
+    // ============================================
+    // TOAST (Decision 26)
+    // ============================================
+    
+    --p-toast-border-radius: var(--radius-lg);
+    --p-toast-shadow: var(--shadow-2);
+    --p-toast-padding: var(--space-3) var(--space-4);
+    
+    // Toast severities
+    --p-toast-success-background: var(--color-status-success-surface);
+    --p-toast-success-border-color: var(--color-status-success);
+    --p-toast-success-color: var(--color-status-success);
+    --p-toast-info-background: var(--color-status-info-surface);
+    --p-toast-info-border-color: var(--color-status-info);
+    --p-toast-info-color: var(--color-status-info);
+    --p-toast-warn-background: var(--color-status-warning-surface);
+    --p-toast-warn-border-color: var(--color-status-warning);
+    --p-toast-warn-color: var(--color-status-warning);
+    --p-toast-error-background: var(--color-status-error-surface);
+    --p-toast-error-border-color: var(--color-status-error);
+    --p-toast-error-color: var(--color-status-error);
+
+    // ============================================
+    // TOOLTIP (Decision 31)
+    // ============================================
+    
+    --p-tooltip-background: var(--color-surface-inverse);
+    --p-tooltip-color: var(--color-text-on-inverse);
+    --p-tooltip-border-radius: var(--radius-md);
+    --p-tooltip-padding: var(--space-2) var(--space-3);
+    --p-tooltip-font-size: var(--font-body-xs);
+    --p-tooltip-max-width: 240px;
+    --p-tooltip-shadow: var(--shadow-2);
+
+    // ============================================
+    // PROGRESSBAR
+    // ============================================
+    
+    --p-progressbar-background: var(--color-surface-secondary);
+    --p-progressbar-value-background: var(--ds-primary-green);
+    --p-progressbar-border-radius: var(--radius-full);
+    --p-progressbar-height: 8px;
+
+    // ============================================
+    // CHECKBOX / RADIO (Decision 42)
+    // ============================================
+    
+    --p-checkbox-width: 20px;
+    --p-checkbox-height: 20px;
+    --p-checkbox-border-radius: var(--radius-md);
+    --p-checkbox-border-color: var(--color-border-default);
+    --p-checkbox-checked-background: var(--ds-primary-green);
+    --p-checkbox-checked-border-color: var(--ds-primary-green);
+    --p-checkbox-focus-ring-color: var(--color-focus-ring);
+    --p-radio-width: 20px;
+    --p-radio-height: 20px;
+    --p-radio-border-color: var(--color-border-default);
+    --p-radio-checked-background: var(--ds-primary-green);
+    --p-radio-checked-border-color: var(--ds-primary-green);
+
+    // ============================================
+    // TOGGLESWITCH (Decision 9B)
+    // ============================================
+    
+    --p-toggleswitch-width: 48px;
+    --p-toggleswitch-height: 26px;
+    --p-toggleswitch-border-radius: var(--radius-full);
+    --p-toggleswitch-background: var(--color-border-default);
+    --p-toggleswitch-checked-background: var(--ds-primary-green);
+    --p-toggleswitch-handle-size: 20px;
+    --p-toggleswitch-handle-background: var(--color-surface-primary);
+
+    // ============================================
+    // ACCORDION
+    // ============================================
+    
+    --p-accordion-header-padding: var(--space-4);
+    --p-accordion-content-padding: var(--space-4);
+    --p-accordion-border-color: var(--color-border-muted);
+
+    // ============================================
+    // TABS
+    // ============================================
+    
+    --p-tabs-nav-padding: 0;
+    --p-tabs-nav-gap: var(--space-1);
+    --p-tabs-tab-padding: var(--space-3) var(--space-4);
+    --p-tabs-tab-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    --p-tabs-tab-active-border-color: var(--ds-primary-green);
+    --p-tabs-tab-active-color: var(--ds-primary-green);
+    --p-tabs-content-padding: var(--space-4);
+
+    // ============================================
+    // MENU
+    // ============================================
+    
+    --p-menu-background: var(--color-surface-primary);
+    --p-menu-border-radius: var(--radius-xl);
+    --p-menu-shadow: var(--shadow-3);
+    --p-menu-padding: var(--space-2);
+    --p-menu-item-padding: var(--space-2) var(--space-3);
+    --p-menu-item-border-radius: var(--radius-md);
+    --p-menu-item-hover-background: var(--color-surface-hover);
+
+    // ============================================
+    // AVATAR
+    // ============================================
+    
+    --p-avatar-sm-width: 32px;
+    --p-avatar-sm-height: 32px;
+    --p-avatar-md-width: 40px;
+    --p-avatar-md-height: 40px;
+    --p-avatar-lg-width: 56px;
+    --p-avatar-lg-height: 56px;
+    --p-avatar-border-radius: var(--radius-full);
+    --p-avatar-background: var(--color-surface-secondary);
+
+    // ============================================
+    // SKELETON
+    // ============================================
+    
+    --p-skeleton-background: var(--color-surface-secondary);
+    --p-skeleton-border-radius: var(--radius-md);
+
+    // ============================================
+    // Z-INDEX (Decision 20)
+    // ============================================
+    
+    --p-overlay-z-index: var(--z-dropdown);
+    --p-modal-z-index: var(--z-modal);
+    --p-tooltip-z-index: var(--z-tooltip);
+    --p-toast-z-index: var(--z-toast);
+
+    // ============================================
+    // MOTION (Decision 19)
+    // ============================================
+    
+    --p-transition-duration: var(--motion-fast);
+    --p-transition-timing-function: var(--ease-standard);
+
+    // ============================================
+    // FOCUS RING (Decision 12/18/50)
+    // ============================================
+    // Unified focus ring tokens for all interactive elements
+    
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 2px;
+    --color-focus-ring: var(--ds-primary-green);
+  }
+}

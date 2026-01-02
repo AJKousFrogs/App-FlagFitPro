@@ -1,0 +1,67 @@
+// ============================================================================
+// enhanced-analytics.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .enhanced-analytics-page {
+    padding: var(--space-6);
+  }
+
+  .risk-analysis {
+    text-align: center;
+    padding: var(--space-6);
+  }
+
+  .risk-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--space-4);
+  }
+
+  .score-value {
+    font-size: var(--font-display-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-primary);
+  }
+
+  .score-label {
+    font-size: var(--font-heading-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  .predictions {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  .no-data-state,
+  .insufficient-data-state {
+    text-align: center;
+    padding: var(--space-8);
+  }
+
+  .no-data-state i,
+  .insufficient-data-state i {
+    font-size: var(--font-display-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
+  .no-data-state h4,
+  .insufficient-data-state h4 {
+    font-size: var(--font-heading-sm);
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-text-primary);
+  }
+
+  .no-data-state p,
+  .insufficient-data-state p {
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4) 0;
+  }
+}
+

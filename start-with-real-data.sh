@@ -58,7 +58,7 @@ echo ""
 
 # Start API server in background
 echo "📦 Starting API server on port 3001..."
-node server.js &
+PORT=3001 node server.js &
 API_PID=$!
 
 # Wait for API server to start

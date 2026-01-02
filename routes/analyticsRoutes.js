@@ -58,13 +58,15 @@ async function executeQuery(query, params = []) {
  */
 router.get("/performance-trends", async (req, res) => {
   try {
-    const userIdParam = req.query.userId || "1";
+    const userIdParam = req.query.userId;
 
-    if (req.query.userId) {
+    if (userIdParam) {
       const userIdValidation = validateUserId(userIdParam);
       if (!userIdValidation.isValid) {
         return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
       }
+    } else {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
 
     const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
@@ -139,7 +141,7 @@ router.get("/performance-trends", async (req, res) => {
       weeksData.push(`Week ${index + 1}`);
       const normalizedScore = Math.min(
         100,
-        Math.max(0, (row.avg_score || 8.5) * 10),
+        Math.max(0, (row.avg_score || 0) * 10),
       );
       overallScores.push(Math.round(normalizedScore));
 
@@ -154,31 +156,8 @@ router.get("/performance-trends", async (req, res) => {
       trainingScores.push(Math.round(sessionEffectiveness));
     });
 
-    // Fill missing weeks with interpolated data
-    while (weeksData.length < weeks) {
-      const weekIndex = weeksData.length;
-      weeksData.push(`Week ${weekIndex + 1}`);
-
-      if (weekIndex === 0) {
-        overallScores.push(78);
-        trainingScores.push(75);
-      } else {
-        const prevOverall = overallScores[weekIndex - 1] || 78;
-        const prevTraining = trainingScores[weekIndex - 1] || 75;
-
-        const newOverall = Math.min(
-          100,
-          Math.max(0, prevOverall + (Math.random() * 6 - 2)),
-        );
-        const newTraining = Math.min(
-          100,
-          Math.max(0, prevTraining + (Math.random() * 5 - 1)),
-        );
-
-        overallScores.push(Math.round(newOverall));
-        trainingScores.push(Math.round(newTraining));
-      }
-    }
+    // Don't fill missing weeks with interpolated data anymore
+    // Let the frontend handle empty data states
 
     return sendSuccess(res, {
       weeks: weeksData,
@@ -188,7 +167,7 @@ router.get("/performance-trends", async (req, res) => {
         (sum, row) => sum + (row.sessions_count || 0),
         0,
       ),
-      averageScore: Math.round(safeAverage(overallScores, 78)),
+      averageScore: overallScores.length > 0 ? Math.round(safeAverage(overallScores, 0)) : 0,
     });
   } catch (error) {
     serverLogger.error(
@@ -211,7 +190,14 @@ router.get("/performance-trends", async (req, res) => {
  */
 router.get("/team-chemistry", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let chemistryData = null;
 
@@ -291,17 +277,18 @@ router.get("/team-chemistry", async (req, res) => {
     );
 
     const currentScores = [
-      chemistryData.avg_communication || 8.5,
-      chemistryData.avg_coordination || 7.8,
-      chemistryData.avg_trust || 9.1,
-      chemistryData.avg_cohesion || 8.2,
+      chemistryData.avg_communication || 0,
+      chemistryData.avg_coordination || 0,
+      chemistryData.avg_trust || 0,
+      chemistryData.avg_cohesion || 0,
       leadershipScore,
       adaptabilityScore,
     ];
 
     const targetScores = currentScores.map((score) => {
-      const target = Math.min(10, score + 0.5 + Math.random() * 0.5);
-      return Math.max(1, target);
+      // Set target 10% higher than current or at least 5
+      const target = Math.max(5, score * 1.1);
+      return Math.min(10, target);
     });
 
     return sendSuccess(res, {
@@ -336,7 +323,14 @@ router.get("/team-chemistry", async (req, res) => {
  */
 router.get("/training-distribution", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     const periodValidation = validatePeriod(req.query.period);
     if (!periodValidation.isValid) {
@@ -422,26 +416,8 @@ router.get("/training-distribution", async (req, res) => {
       );
     });
 
-    // Fill with default data if not enough sessions
-    if (trainingTypes.length < 5) {
-      const defaultTypes = [
-        "Agility Training",
-        "Speed Development",
-        "Technical Skills",
-        "Strength Training",
-        "Recovery Sessions",
-      ];
-      const defaultCounts = [30, 25, 20, 15, 10];
-
-      defaultTypes.forEach((type, index) => {
-        if (!trainingTypes.includes(type)) {
-          trainingTypes.push(type);
-          sessionCounts.push(defaultCounts[index]);
-          avgDurations.push(45);
-          avgPerformances.push(8.5);
-        }
-      });
-    }
+    // Only return data if we have it
+    // Removed default mock fallbacks
 
     return sendSuccess(res, {
       trainingTypes: trainingTypes.slice(0, 5),
@@ -469,7 +445,14 @@ router.get("/training-distribution", async (req, res) => {
  */
 router.get("/position-performance", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let positionData = [];
 
@@ -525,34 +508,18 @@ router.get("/position-performance", async (req, res) => {
       positionData = result.rows;
     }
 
-    // Default positions if no data
-    const defaultPositions = [
-      "Quarterback",
-      "Wide Receiver",
-      "Running Back",
-      "Defensive Back",
-      "Rusher",
-    ];
-    const defaultScores = [87, 92, 89, 85, 78];
-    const targetScores = [90, 95, 92, 88, 82];
-
-    const positions = [];
-    const currentScores = [];
-    const targetScoresData = [];
+    // Only return data if we have it
+    // Removed default position mock fallbacks
 
     if (positionData.length > 0) {
       positionData.forEach((row) => {
         positions.push(row.position_name);
         const performance = Math.round(
-          safeParseFloat(row.avg_performance, 8.5) * 10,
+          safeParseFloat(row.avg_performance, 0) * 10,
         );
         currentScores.push(performance);
-        targetScoresData.push(performance + 3);
+        targetScoresData.push(Math.min(100, performance + 5));
       });
-    } else {
-      positions.push(...defaultPositions);
-      currentScores.push(...defaultScores);
-      targetScoresData.push(...targetScores);
     }
 
     return sendSuccess(res, {
@@ -560,7 +527,7 @@ router.get("/position-performance", async (req, res) => {
       currentScores,
       targetScores: targetScoresData,
       totalPositions: positions.length,
-      averagePerformance: Math.round(safeAverage(currentScores, 87)),
+      averagePerformance: currentScores.length > 0 ? Math.round(safeAverage(currentScores, 0)) : 0,
     });
   } catch (error) {
     serverLogger.error("Position performance error:", error);
@@ -580,7 +547,14 @@ router.get("/position-performance", async (req, res) => {
  */
 router.get("/injury-risk", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let riskData = null;
 
@@ -641,10 +615,7 @@ router.get("/injury-risk", async (req, res) => {
       highRisk = 10;
     }
 
-    // Add some randomization for demo
-    lowRisk = Math.max(0, lowRisk + (Math.random() * 10 - 5));
-    mediumRisk = Math.max(0, mediumRisk + (Math.random() * 8 - 4));
-    highRisk = Math.max(0, 100 - lowRisk - mediumRisk);
+    // Removed randomization for demo
 
     // Normalize to 100
     const total = lowRisk + mediumRisk + highRisk;
@@ -680,13 +651,15 @@ router.get("/injury-risk", async (req, res) => {
  */
 router.get("/speed-development", async (req, res) => {
   try {
-    const userIdParam = req.query.userId || "1";
+    const userIdParam = req.query.userId;
 
-    if (req.query.userId) {
+    if (userIdParam) {
       const userIdValidation = validateUserId(userIdParam);
       if (!userIdValidation.isValid) {
         return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
       }
+    } else {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
 
     const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
@@ -786,35 +759,36 @@ router.get("/speed-development", async (req, res) => {
       });
     }
 
-    // Fill in arrays with data or fallback values
+    // Fill in arrays with data or empty values
     for (let i = 0; i < weeks; i++) {
       if (weeklyData[i] && weeklyData[i]["40-Yard Dash"].length > 0) {
-        const avgTime = safeAverage(weeklyData[i]["40-Yard Dash"], 4.65);
+        const avgTime = safeAverage(weeklyData[i]["40-Yard Dash"], 0);
         fortyYardTimes.push(Math.round(avgTime * 100) / 100);
       } else {
-        const baseTime = 4.65 - i * 0.03;
-        fortyYardTimes.push(Math.round(Math.max(3.5, baseTime) * 100) / 100);
+        fortyYardTimes.push(0);
       }
 
       if (weeklyData[i] && weeklyData[i]["10-Yard Sprint"].length > 0) {
-        const avgTime = safeAverage(weeklyData[i]["10-Yard Sprint"], 1.68);
+        const avgTime = safeAverage(weeklyData[i]["10-Yard Sprint"], 0);
         tenYardTimes.push(Math.round(avgTime * 100) / 100);
       } else {
-        const baseTime = 1.68 - i * 0.02;
-        tenYardTimes.push(Math.round(Math.max(1.0, baseTime) * 100) / 100);
+        tenYardTimes.push(0);
       }
     }
+
+    const validFortyTimes = fortyYardTimes.filter(t => t > 0);
+    const validTenTimes = tenYardTimes.filter(t => t > 0);
 
     return sendSuccess(res, {
       weeks: weeksData,
       fortyYardTimes,
       tenYardTimes,
-      bestFortyYard: Math.min(...fortyYardTimes),
-      bestTenYard: Math.min(...tenYardTimes),
+      bestFortyYard: validFortyTimes.length > 0 ? Math.min(...validFortyTimes) : 0,
+      bestTenYard: validTenTimes.length > 0 ? Math.min(...validTenTimes) : 0,
       totalImprovement:
-        Math.round(
-          (fortyYardTimes[0] - fortyYardTimes[fortyYardTimes.length - 1]) * 100,
-        ) / 100,
+        validFortyTimes.length > 1
+          ? Math.round((validFortyTimes[0] - validFortyTimes[validFortyTimes.length - 1]) * 100) / 100
+          : 0,
     });
   } catch (error) {
     serverLogger.error(
@@ -911,7 +885,7 @@ router.get("/user-engagement", async (req, res) => {
       "Goal Set",
       "Goal Achieved",
     ];
-    const userCounts = [1000, 850, 720, 680, 450, 320];
+    const userCounts = [0, 0, 0, 0, 0, 0];
 
     // Update with real data if available
     engagementData.forEach((row) => {
@@ -921,7 +895,7 @@ router.get("/user-engagement", async (req, res) => {
         if (stageIndex !== -1) {
           userCounts[stageIndex] = safeParseInt(
             row.unique_users,
-            userCounts[stageIndex],
+            0,
           );
         }
       }
@@ -929,7 +903,7 @@ router.get("/user-engagement", async (req, res) => {
 
     // Ensure funnel makes sense
     for (let i = 1; i < userCounts.length; i++) {
-      if (userCounts[i] > userCounts[i - 1]) {
+      if (userCounts[i] > userCounts[i - 1] && userCounts[i-1] > 0) {
         userCounts[i] = Math.round(userCounts[i - 1] * 0.9);
       }
     }
@@ -939,9 +913,9 @@ router.get("/user-engagement", async (req, res) => {
       userCounts,
       conversionRates: stages.map((stage, index) => {
         if (index === 0) {
-          return 100;
+          return userCounts[0] > 0 ? 100 : 0;
         }
-        return Math.round((userCounts[index] / userCounts[0]) * 100);
+        return userCounts[0] > 0 ? Math.round((userCounts[index] / userCounts[0]) * 100) : 0;
       }),
       period,
       totalUsers: userCounts[0],
@@ -964,7 +938,14 @@ router.get("/user-engagement", async (req, res) => {
  */
 router.get("/summary", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let summary = {
       weekly_sessions: 0,

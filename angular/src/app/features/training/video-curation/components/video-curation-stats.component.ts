@@ -54,67 +54,7 @@ import { CommonModule } from "@angular/common";
       </div>
     </section>
   `,
-  styles: [
-    `
-      .stats-section {
-        margin-bottom: var(--space-6);
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-4);
-      }
-
-      .stat-card {
-        background: var(--surface-primary);
-        border: 1px solid var(--color-border-primary);
-        border-radius: var(--radius-xl);
-        padding: var(--space-5);
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-      }
-
-      .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: var(--radius-lg);
-        background: var(--color-brand-primary-subtle);
-        color: var(--color-brand-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: var(--icon-xl);
-      }
-
-      .stat-icon.approved {
-        background: var(--color-status-success-light);
-        color: var(--color-status-success);
-      }
-
-      .stat-icon.pending {
-        background: var(--color-status-warning-light);
-        color: var(--color-status-warning);
-      }
-
-      .stat-content {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .stat-value {
-        font-size: var(--font-heading-lg);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-text-primary);
-      }
-
-      .stat-label {
-        font-size: var(--font-body-sm);
-        color: var(--color-text-secondary);
-      }
-    `,
-  ],
+  styleUrl: './video-curation-stats.component.scss',
 })
 export class VideoCurationStatsComponent {
   totalVideos = input.required<number>();

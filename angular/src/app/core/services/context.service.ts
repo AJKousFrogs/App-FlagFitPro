@@ -412,17 +412,28 @@ export class ContextService {
     const items: BreadcrumbItem[] = [];
     const segments = route.split("/").filter((s) => s);
 
-    // Always start with Dashboard
+    // If we're on the dashboard, don't show breadcrumbs at all (just one item makes no sense)
+    if (route === "/dashboard" || route === "/" || segments.length === 0) {
+      return [];
+    }
+
+    // Always start with Dashboard as home
     items.push({
       label: "Dashboard",
       route: "/dashboard",
       icon: "pi-home",
     });
 
-    // Build path segments
+    // Build path segments (skip 'dashboard' if it's the first segment since we already added it)
     let currentPath = "";
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
+      
+      // Skip dashboard as we already added it
+      if (currentPath === "/dashboard") {
+        return;
+      }
+      
       const metadata = this.routeMetadata[currentPath];
 
       if (metadata) {

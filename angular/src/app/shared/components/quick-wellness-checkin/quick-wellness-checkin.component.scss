@@ -1,0 +1,261 @@
+// ============================================================================
+// quick-wellness-checkin.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host ::ng-deep .quick-checkin-dialog .p-dialog-content {
+    padding: 0;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .quick-checkin {
+    padding: var(--space-6);
+  }
+
+  /* Header */
+  .checkin-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+  }
+
+  .header-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--color-brand-light);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-3);
+  }
+
+  .header-icon i {
+    font-size: var(--font-heading-md);
+    color: var(--color-brand-primary);
+  }
+
+  .checkin-header h2 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  .time-estimate {
+    margin: 0;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* Fields */
+  .checkin-field {
+    margin-bottom: var(--space-5);
+  }
+
+  .checkin-field > label {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  /* Feeling Scale */
+  .feeling-scale {
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+  }
+
+  .scale-buttons {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .scale-btn {
+    flex: 1;
+    aspect-ratio: 1;
+    border: 2px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  .scale-btn:hover {
+    border-color: var(--color-border-secondary);
+  }
+
+  .scale-btn.selected {
+    color: white;
+  }
+
+  .scale-btn.selected.low {
+    background: var(--color-status-error);
+    border-color: var(--color-status-error);
+  }
+
+  .scale-btn.selected.mid {
+    background: var(--color-status-warning);
+    border-color: var(--color-status-warning);
+  }
+
+  .scale-btn.selected.high {
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+  }
+
+  /* Sleep Input */
+  .sleep-input {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  :host ::ng-deep .sleep-number {
+    width: 140px;
+  }
+
+  .sleep-quality-indicator {
+    flex: 1;
+  }
+
+  .quality {
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .quality.good {
+    background: var(--primitive-success-50);
+    color: var(--primitive-success-700);
+  }
+
+  .quality.okay {
+    background: var(--primitive-info-50);
+    color: var(--primitive-info-700);
+  }
+
+  .quality.low {
+    background: var(--primitive-warning-50);
+    color: var(--primitive-warning-700);
+  }
+
+  .quality.poor {
+    background: var(--primitive-error-50);
+    color: var(--primitive-error-700);
+  }
+
+  /* Pain Question */
+  .pain-question {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .pain-question label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  .pain-details {
+    margin-top: var(--space-3);
+  }
+
+  .pain-details textarea {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    resize: none;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.2s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Actions */
+  .checkin-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  :host ::ng-deep .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .full-checkin-link {
+    font-size: var(--font-body-sm);
+    color: var(--color-brand-primary);
+    text-decoration: none;
+  }
+
+  .full-checkin-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Streak */
+  .streak-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: var(--primitive-warning-50);
+    border-radius: var(--radius-md);
+    color: var(--primitive-warning-700);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .streak-indicator i {
+    color: var(--color-status-warning);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .scale-btn {
+      font-size: var(--font-body-xs);
+    }
+
+    .sleep-input {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    :host ::ng-deep .sleep-number {
+      width: 100%;
+    }
+  }
+}
+

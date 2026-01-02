@@ -43,12 +43,13 @@ async function logSupplement(userId, supplementData) {
 
     // Insert supplement log
     const { data, error } = await supabaseAdmin
-      .from("supplements_logs")
+      .from("supplement_logs")
       .insert({
         user_id: userId,
-        supplement: supplement.trim(),
-        dose: dose || null,
-        taken_at: takenAtDate.toISOString(),
+        supplement_name: supplement.trim(),
+        dosage: dose ? String(dose) : null,
+        taken: true,
+        date: takenAtDate.toISOString().split("T")[0],
         notes: notes || null,
         created_at: new Date().toISOString(),
       })
@@ -81,10 +82,10 @@ async function logSupplement(userId, supplementData) {
 async function getSupplementLogs(userId, limit = 30) {
   try {
     const { data, error } = await supabaseAdmin
-      .from("supplements_logs")
+      .from("supplement_logs")
       .select("*")
       .eq("user_id", userId)
-      .order("taken_at", { ascending: false })
+      .order("date", { ascending: false })
       .limit(limit);
 
     if (error) {
@@ -107,13 +108,14 @@ async function getRecentSupplementLogs(userId) {
   try {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const dateStr = sevenDaysAgo.toISOString().split("T")[0];
 
     const { data, error } = await supabaseAdmin
-      .from("supplements_logs")
+      .from("supplement_logs")
       .select("*")
       .eq("user_id", userId)
-      .gte("taken_at", sevenDaysAgo.toISOString())
-      .order("taken_at", { ascending: false });
+      .gte("date", dateStr)
+      .order("date", { ascending: false });
 
     if (error) {
       console.error("Error fetching recent supplement logs:", error);
@@ -124,6 +126,62 @@ async function getRecentSupplementLogs(userId) {
   } catch (error) {
     console.error("Error in getRecentSupplementLogs:", error);
     throw error;
+  }
+}
+
+/**
+ * Get user's supplement list with today's status
+ * GET /api/supplements
+ */
+async function getUserSupplements(userId) {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+
+    // Get user's supplements (if they have a custom list)
+    const { data: userSupplements } = await supabaseAdmin
+      .from("user_supplements")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("active", true);
+
+    // Get today's logs
+    const { data: todayLogs } = await supabaseAdmin
+      .from("supplement_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("date", today);
+
+    // If user has custom supplements, use those
+    if (userSupplements && userSupplements.length > 0) {
+      const supplements = userSupplements.map((s) => {
+        const takenToday = todayLogs?.some(
+          (log) =>
+            log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+        );
+        return {
+          id: s.id,
+          name: s.name,
+          dosage: s.dosage,
+          timing: s.timing || "anytime",
+          category: s.category || "other",
+          taken: takenToday || false,
+          takenAt: takenToday
+            ? todayLogs.find(
+                (log) =>
+                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+              )?.created_at
+            : null,
+        };
+      });
+
+      return { supplements, todayLogs: todayLogs || [] };
+    }
+
+    // Return empty - frontend will use defaults
+    return { supplements: [], todayLogs: todayLogs || [] };
+  } catch (error) {
+    console.error("Error in getUserSupplements:", error);
+    return { supplements: [], todayLogs: [] };
   }
 }
 
@@ -169,9 +227,9 @@ exports.handler = async (event, context) => {
         return createSuccessResponse({ logs: result });
       }
 
-      // Default: return recent logs
-      const result = await getRecentSupplementLogs(userId);
-      return createSuccessResponse({ logs: result });
+      // Default: return user supplements with today's status
+      const result = await getUserSupplements(userId);
+      return createSuccessResponse(result);
     },
   });
 };

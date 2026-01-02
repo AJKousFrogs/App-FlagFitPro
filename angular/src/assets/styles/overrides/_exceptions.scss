@@ -1,0 +1,141 @@
+/**
+ * Design System Exceptions Layer
+ * ==============================
+ * 
+ * This file contains documented exceptions to the design system rules.
+ * See Decision 10 in DESIGN_SYSTEM_RULES.md for the exception process.
+ * 
+ * RULES:
+ * 1. Every exception MUST include the exception template below
+ * 2. Exceptions MUST have a removal date
+ * 3. Exceptions MUST be scoped to specific components
+ * 4. Undocumented !important or ::ng-deep is a violation
+ * 5. Review exceptions quarterly and remove expired ones
+ * 
+ * ALLOWED IN THIS FILE:
+ * - !important (with ticket)
+ * - ::ng-deep (with scope container)
+ * - Raw values (with justification)
+ */
+
+@layer overrides {
+
+  /* ================================================
+   * EXCEPTION TEMPLATE (REQUIRED)
+   * ================================================
+   * 
+   * Ticket: DS-____
+   * Owner: @____
+   * Scope: ____
+   * Remove by: YYYY-MM-DD
+   * Reason: ____
+   * 
+   * ================================================ */
+
+
+
+  /* ================================================
+   * ACTIVE EXCEPTIONS
+   * ================================================ */
+
+
+  /* ------------------------------------------------
+   * LEGACY FILE: styles.scss
+   * Ticket: DS-LEGACY-001
+   * Owner: @design-system-team
+   * Scope: Global legacy styles
+   * Remove by: 2026-Q2
+   * Reason: Legacy PrimeNG overrides predating design system.
+   *         Contains 294 !important declarations.
+   *         Gradually migrate to token-mapping.scss.
+   * Status: IN PROGRESS - Phase B tokenization complete
+   * ------------------------------------------------ */
+
+
+  /* ------------------------------------------------
+   * LEGACY FILE: primeng-theme.scss  
+   * Ticket: DS-LEGACY-002
+   * Owner: @design-system-team
+   * Scope: PrimeNG component overrides
+   * Remove by: 2026-Q2
+   * Reason: Legacy premium button/component effects.
+   *         Contains 218 !important declarations.
+   *         Many are decorative gradients and animations.
+   * Status: IN PROGRESS - Layer name corrected
+   * ------------------------------------------------ */
+
+
+  /* ------------------------------------------------
+   * LEGACY FILE: hover-system.scss
+   * Ticket: DS-LEGACY-003
+   * Owner: @design-system-team
+   * Scope: Hover state overrides
+   * Remove by: 2026-Q2
+   * Reason: Legacy hover system predating brand-overrides.scss.
+   *         Contains 86 !important declarations.
+   *         Should merge with _brand-overrides.scss.
+   * Status: IN PROGRESS - Hex colors fixed
+   * ------------------------------------------------ */
+
+
+  /* ------------------------------------------------
+   * COMPONENT FILE: settings.component.scss
+   * Ticket: DS-COMP-001
+   * Owner: @feature-team
+   * Scope: Settings page only
+   * Remove by: 2026-Q1
+   * Reason: PrimeNG toggleswitch and card styling overrides.
+   *         Contains 103 !important declarations.
+   *         Needs component refactor to use primitives.
+   * Status: PENDING
+   * ------------------------------------------------ */
+
+
+  /* 
+   * Example exception (commented out - for reference only):
+   *
+   * Ticket: DS-001
+   * Owner: @dev-name
+   * Scope: analytics-dashboard only
+   * Remove by: 2026-03-15
+   * Reason: PrimeNG DataTable paginator cannot be styled via 
+   *         CSS variables due to internal component structure.
+   *         Waiting for PrimeNG v20 which exposes these as tokens.
+   */
+  // .analytics-dashboard {
+  //   ::ng-deep .p-datatable-paginator {
+  //     padding: var(--space-2) !important;
+  //   }
+  // }
+
+  /*
+   * Example exception 2 (commented out - for reference only):
+   *
+   * Ticket: DS-002
+   * Owner: @dev-name
+   * Scope: calendar-widget only
+   * Remove by: 2026-02-28
+   * Reason: Calendar portal renders outside Angular component scope,
+   *         z-index token not available in portal context.
+   */
+  // .calendar-widget {
+  //   ::ng-deep .p-datepicker {
+  //     z-index: 9999 !important;
+  //   }
+  // }
+
+
+
+  /* ================================================
+   * EXPIRED EXCEPTIONS (Review & Remove)
+   * ================================================ */
+
+  // Move exceptions here before deletion for tracking
+
+
+
+  /* ================================================
+   * END OF EXCEPTIONS
+   * ================================================ */
+
+}

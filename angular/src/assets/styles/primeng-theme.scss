@@ -17,7 +17,7 @@
    Ensure proper cascade order
    ================================================================ */
 
-@layer primeng-theme {
+@layer primeng-brand {
   /* ================================================================
      BUTTON COMPONENT ENHANCEMENTS
      Premium button design system with modern aesthetics
@@ -447,15 +447,17 @@
   /* ================================
      SUCCESS BUTTON
      Green/lime for positive actions
+     allowed: gradient intermediate colors for severity button styling
      ================================ */
   .p-button-success:not(.p-button-outlined):not(.p-button-text) {
+    // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
       #74c41e 0%,
       var(--color-status-success) 100%
     );
     border-color: var(--color-status-success);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     box-shadow:
       0 2px 8px rgba(99, 173, 14, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
@@ -485,15 +487,17 @@
   /* ================================
      INFO BUTTON
      Blue for informational actions
+     allowed: gradient intermediate colors for severity button styling
      ================================ */
   .p-button-info:not(.p-button-outlined):not(.p-button-text) {
+    // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
       #38bdf8 0%,
       var(--color-status-info) 100%
     );
     border-color: var(--color-status-info);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     box-shadow:
       0 2px 8px rgba(14, 165, 233, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
@@ -523,16 +527,18 @@
   /* ================================
      WARNING BUTTON
      Amber/orange for caution actions
+     allowed: gradient intermediate colors for severity button styling
      ================================ */
   .p-button-warning:not(.p-button-outlined):not(.p-button-text),
   .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
+    // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
       #fcd34d 0%,
       var(--color-status-warning) 100%
     );
     border-color: var(--color-status-warning);
-    color: #78350f;
+    color: var(--primitive-warning-900);
     box-shadow:
       0 2px 8px rgba(255, 192, 0, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
@@ -570,15 +576,17 @@
   /* ================================
      DANGER BUTTON
      Red for destructive actions
+     allowed: gradient intermediate colors for severity button styling
      ================================ */
   .p-button-danger:not(.p-button-outlined):not(.p-button-text) {
+    // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
       #ff4d6a 0%,
       var(--color-status-error) 100%
     );
     border-color: var(--color-status-error);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     box-shadow:
       0 2px 8px rgba(255, 0, 60, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
@@ -608,11 +616,13 @@
   /* ================================
      HELP BUTTON
      Purple for help/support actions
+     allowed: purple (#8b5cf6) not in design token palette - PrimeNG standard severity
      ================================ */
   .p-button-help:not(.p-button-outlined):not(.p-button-text) {
+    // allowed: purple severity gradient
     background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
     border-color: #8b5cf6;
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     box-shadow:
       0 2px 8px rgba(139, 92, 246, 0.25),
       0 1px 2px rgba(0, 0, 0, 0.1),
@@ -642,7 +652,7 @@
   .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
     background: linear-gradient(
       180deg,
-      #404040 0%,
+      var(--primitive-neutral-700) 0%,
       var(--color-text-primary) 100%
     );
     border-color: var(--color-text-primary);
@@ -654,7 +664,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, #525252 0%, #262626 100%);
+        background: linear-gradient(180deg, var(--primitive-neutral-600) 0%, var(--primitive-neutral-800) 100%);
         box-shadow:
           0 8px 20px rgba(0, 0, 0, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
@@ -838,13 +848,13 @@
     }
 
     .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-      background: linear-gradient(180deg, #f5f5f5 0%, #e5e5e5 100%);
-      border-color: #e5e5e5;
+      background: linear-gradient(180deg, var(--primitive-neutral-100) 0%, var(--primitive-neutral-300) 100%);
+      border-color: var(--primitive-neutral-300);
       color: var(--primitive-neutral-900);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+          background: linear-gradient(180deg, var(--color-text-on-primary) 0%, var(--primitive-neutral-100) 100%);
         }
       }
     }
@@ -951,8 +961,8 @@
 
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--color-border-secondary, #e5e5e5);
-    background: var(--surface-primary, #ffffff);
+    border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    background: var(--surface-primary, var(--color-text-on-primary));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -969,7 +979,7 @@
     font-weight: 600; /* semibold per design system */
     line-height: 1.4;
     letter-spacing: 0;
-    color: var(--color-text-primary, #1a1a1a);
+    color: var(--color-text-primary, var(--primitive-neutral-900));
     margin: 0;
   }
 
@@ -1016,9 +1026,9 @@
     flex-shrink: 0;
 
     /* Base appearance */
-    background: var(--surface-secondary, #f8f9fa);
-    border: 1px solid var(--color-border-secondary, #e5e7eb);
-    color: var(--color-text-secondary, #6b7280);
+    background: var(--surface-secondary, var(--primitive-neutral-50));
+    border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    color: var(--color-text-secondary, var(--primitive-neutral-600));
 
     /* Interaction */
     cursor: pointer;
@@ -1076,7 +1086,7 @@
     /* Focus visible - Accessibility */
     &:focus-visible {
       box-shadow:
-        0 0 0 2px var(--surface-primary, #ffffff),
+        0 0 0 2px var(--surface-primary, var(--color-text-on-primary)),
         0 0 0 4px var(--ds-primary-green);
       border-color: var(--ds-primary-green);
     }
@@ -1104,7 +1114,7 @@
       &:hover {
         background: rgba(239, 68, 68, 0.08);
         border-color: rgba(239, 68, 68, 0.2);
-        color: #ef4444;
+        color: var(--color-status-error);
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.8),
           0 2px 8px rgba(239, 68, 68, 0.15);
@@ -1120,8 +1130,8 @@
 
     &:active {
       background: rgba(239, 68, 68, 0.15);
-      border-color: #ef4444;
-      color: #ef4444;
+      border-color: var(--color-status-error);
+      color: var(--color-status-error);
     }
   }
 
@@ -1134,7 +1144,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(--surface-secondary, #f8f9fa);
+        background: var(--surface-secondary, var(--primitive-neutral-50));
         border-color: transparent;
         box-shadow: none;
       }
@@ -1189,9 +1199,9 @@
     .p-drawer-close,
     .close-button,
     [class*="close-btn"] {
-      background: var(--primitive-neutral-800, #262626);
-      border-color: var(--primitive-neutral-700, #404040);
-      color: var(--primitive-neutral-400, #a3a3a3);
+      background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+      border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
+      color: var(--primitive-neutral-400, var(--primitive-neutral-500));
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
         0 1px 2px rgba(0, 0, 0, 0.2);
@@ -1200,7 +1210,7 @@
         &:hover {
           background: rgba(16, 201, 107, 0.15);
           border-color: rgba(16, 201, 107, 0.3);
-          color: #10c96b;
+          color: var(--primitive-primary-500);
           box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.05),
             0 2px 8px rgba(16, 201, 107, 0.2);
@@ -1209,8 +1219,8 @@
 
       &:active {
         background: rgba(16, 201, 107, 0.2);
-        border-color: #10c96b;
-        color: #10c96b;
+        border-color: var(--primitive-primary-500);
+        color: var(--primitive-primary-500);
       }
     }
   }
@@ -1659,7 +1669,7 @@
 
   .p-tag-warning {
     background: var(--color-status-warning-light);
-    color: #92400e;
+    color: var(--primitive-warning-800);
   }
 
   .p-tag-danger {
@@ -1669,13 +1679,13 @@
 
   /* ================================================================
      TOOLTIP COMPONENT ENHANCEMENTS
-     Premium tooltips matching #089949 green design system
+     Premium tooltips matching var(--ds-primary-green) green design system
      ================================================================ */
 
   .p-tooltip {
     .p-tooltip-text {
-      background: var(--surface-primary, #ffffff) !important;
-      color: var(--color-text-primary, #1a1a1a) !important;
+      background: var(--surface-primary, var(--color-text-on-primary)) !important;
+      color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
       border: 1px solid var(--ds-primary-green) !important;
       border-radius: var(--radius-lg, 12px) !important;
       padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
@@ -1727,9 +1737,9 @@
   [data-theme="dark"] .p-tooltip,
   .dark-theme .p-tooltip {
     .p-tooltip-text {
-      background: var(--primitive-neutral-800, #262626) !important;
-      color: #ffffff !important;
-      border-color: var(--ds-primary-green-light, #10c96b) !important;
+      background: var(--primitive-neutral-800, var(--primitive-neutral-800)) !important;
+      color: var(--color-text-on-primary) !important;
+      border-color: var(--ds-primary-green-light, var(--primitive-primary-500)) !important;
       box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.4),
         0 4px 12px rgba(16, 201, 107, 0.15) !important;
@@ -2015,7 +2025,7 @@
     .p-tablist {
       display: flex;
       align-items: stretch;
-      background: #f3f4f6;
+      background: var(--primitive-neutral-100);
       border-radius: 14px;
       padding: 5px;
       gap: 4px;
@@ -2041,7 +2051,7 @@
       font-family: var(--font-family-sans);
       font-size: 0.9375rem;
       font-weight: 500;
-      color: #6b7280;
+      color: var(--primitive-neutral-600);
       background: transparent;
       border: none;
       border-radius: 10px;
@@ -2057,7 +2067,7 @@
       i,
       .pi {
         font-size: 1.125rem;
-        color: #9ca3af;
+        color: var(--primitive-neutral-400);
         transition: color 0.2s ease;
       }
 
@@ -2067,7 +2077,7 @@
             [data-p-active="true"]
           ) {
           background: rgba(255, 255, 255, 0.6);
-          color: #374151;
+          color: var(--primitive-neutral-700);
 
           i,
           .pi {
@@ -2079,7 +2089,7 @@
       /* Focus state */
       &:focus-visible {
         box-shadow:
-          0 0 0 2px #f3f4f6,
+          0 0 0 2px var(--primitive-neutral-100),
           0 0 0 4px var(--ds-primary-green);
       }
 
@@ -2087,7 +2097,7 @@
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
-        background: #ffffff;
+        background: var(--color-text-on-primary);
         color: var(--ds-primary-green);
         font-weight: 600;
         box-shadow:
@@ -2213,7 +2223,7 @@
         background: linear-gradient(
           135deg,
           var(--ds-primary-green) 0%,
-          #0ab85a 100%
+          var(--primitive-primary-600) 100%
         );
         color: white;
         box-shadow:
@@ -2454,8 +2464,8 @@
    ================================================================
    
    ABSOLUTE RULES (NEVER OVERRIDE):
-   1. NEVER black/dark text (#000, #1a1a1a, black) on green backgrounds (#089949)
-   2. ALWAYS white (#ffffff) text on primary green
+   1. NEVER black/dark text (var(--primitive-neutral-950), var(--primitive-neutral-900), black) on green backgrounds (var(--ds-primary-green))
+   2. ALWAYS white (var(--color-text-on-primary)) text on primary green
    3. WCAG AA minimum contrast enforced everywhere
    4. Before generating ANY green button/card: check --on-primary token
    
@@ -2469,13 +2479,13 @@
 
 /* Inline style green backgrounds - highest specificity */
 *[style*="background-color: rgb(8, 153, 73)"],
-*[style*="background-color:#089949"],
-*[style*="background: #089949"],
-*[style*="background:#089949"],
-*[style*="background-color: #089949"],
+*[style*="background-color:var(--ds-primary-green)"],
+*[style*="background: var(--ds-primary-green)"],
+*[style*="background:var(--ds-primary-green)"],
+*[style*="background-color: var(--ds-primary-green)"],
 *[style*="089949"],
 *[style*="green"] {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
 
   &,
@@ -2490,7 +2500,7 @@
   & h6,
   & label,
   & a {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 }
 
@@ -2502,12 +2512,12 @@
 .bg-primary,
 .primary-bg,
 .bg-brand {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
 
   &,
   & * {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 }
 
@@ -2525,9 +2535,9 @@
   &[style*="089949"],
   &.p-button-green,
   &.bg-primary {
-    --text-color: #ffffff !important;
-    --p-button-text-color: #ffffff !important;
-    color: #ffffff !important;
+    --text-color: var(--color-text-on-primary) !important;
+    --p-button-text-color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary) !important;
 
     &,
     & *,
@@ -2536,7 +2546,7 @@
     & span,
     & i,
     & p {
-      color: #ffffff !important;
+      color: var(--color-text-on-primary) !important;
     }
   }
 }
@@ -2561,36 +2571,36 @@
 .p-button-danger:not(.p-button-outlined):not(.p-button-text),
 .p-button-help:not(.p-button-outlined):not(.p-button-text),
 .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 
   .p-button-label {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 
   .p-button-icon {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 
   span {
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
   }
 }
 
 /* Warning button - dark text for contrast on yellow/amber */
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
-  color: #78350f !important;
+  color: var(--primitive-warning-900) !important;
 
   .p-button-label {
-    color: #78350f !important;
+    color: var(--primitive-warning-900) !important;
   }
 
   .p-button-icon {
-    color: #78350f !important;
+    color: var(--primitive-warning-900) !important;
   }
 
   span {
-    color: #78350f !important;
+    color: var(--primitive-warning-900) !important;
   }
 }
 
@@ -2611,61 +2621,61 @@
 
 /* Secondary button - inherit text color or use secondary text */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
 
   .p-button-label {
-    color: var(--color-text-primary, #1a1a1a) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
   }
 
   .p-button-icon {
-    color: var(--color-text-primary, #1a1a1a) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
   }
 }
 
 /* Outlined severity variants */
 .p-button-outlined.p-button-secondary {
-  color: var(--color-text-secondary, #4a4a4a) !important;
+  color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-secondary, #4a4a4a) !important;
+    color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
   }
 }
 
 .p-button-outlined.p-button-success {
-  color: var(--color-status-success, #63ad0e) !important;
+  color: var(--color-status-success) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-success, #63ad0e) !important;
+    color: var(--color-status-success) !important;
   }
 }
 
 .p-button-outlined.p-button-info {
-  color: var(--color-status-info, #0ea5e9) !important;
+  color: var(--color-status-info, var(--color-status-info)) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-info, #0ea5e9) !important;
+    color: var(--color-status-info, var(--color-status-info)) !important;
   }
 }
 
 .p-button-outlined.p-button-warning,
 .p-button-outlined.p-button-warn {
-  color: var(--color-status-warning-text, #92400e) !important;
+  color: var(--color-status-warning-text) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-warning-text, #92400e) !important;
+    color: var(--color-status-warning-text) !important;
   }
 }
 
 .p-button-outlined.p-button-danger {
-  color: var(--color-status-error, #ff003c) !important;
+  color: var(--color-status-error) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-error, #ff003c) !important;
+    color: var(--color-status-error) !important;
   }
 }
 
@@ -2679,34 +2689,34 @@
 }
 
 .p-button-outlined.p-button-contrast {
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-primary, #1a1a1a) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
   }
 }
 
 /* Text button severity variants */
 .p-button-text.p-button-secondary {
-  color: var(--color-text-secondary, #4a4a4a) !important;
+  color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
 }
 
 .p-button-text.p-button-success {
-  color: var(--color-status-success, #63ad0e) !important;
+  color: var(--color-status-success) !important;
 }
 
 .p-button-text.p-button-info {
-  color: var(--color-status-info, #0ea5e9) !important;
+  color: var(--color-status-info, var(--color-status-info)) !important;
 }
 
 .p-button-text.p-button-warning,
 .p-button-text.p-button-warn {
-  color: var(--color-status-warning-text, #92400e) !important;
+  color: var(--color-status-warning-text) !important;
 }
 
 .p-button-text.p-button-danger {
-  color: var(--color-status-error, #ff003c) !important;
+  color: var(--color-status-error) !important;
 }
 
 .p-button-text.p-button-help {
@@ -2714,7 +2724,7 @@
 }
 
 .p-button-text.p-button-contrast {
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
 }
 
 /* ================================================================
@@ -2743,11 +2753,11 @@ p-button .p-button,
 .p-button.p-button-primary {
   background: linear-gradient(
     180deg,
-    var(--ds-primary-green-light, #0ab85a) 0%,
+    var(--ds-primary-green-light, var(--primitive-primary-600)) 0%,
     var(--ds-primary-green) 100%
   ) !important;
   border-color: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .p-button:not(.p-button-outlined):not(.p-button-text):not(
@@ -2760,7 +2770,7 @@ p-button .p-button,
   .p-button-icon,
 .p-button.p-button-primary .p-button-label,
 .p-button.p-button-primary .p-button-icon {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 /* ================================================================
@@ -2787,18 +2797,18 @@ p-button .p-button,
 
   /* Dark mode: Outlined contrast button should be white */
   .p-button-outlined.p-button-contrast {
-    color: var(--surface-primary, #ffffff) !important;
-    border-color: var(--surface-primary, #ffffff) !important;
+    color: var(--surface-primary, var(--color-text-on-primary)) !important;
+    border-color: var(--surface-primary, var(--color-text-on-primary)) !important;
 
     .p-button-label,
     .p-button-icon {
-      color: var(--surface-primary, #ffffff) !important;
+      color: var(--surface-primary, var(--color-text-on-primary)) !important;
     }
   }
 
   /* Dark mode: Text contrast button should be white */
   .p-button-text.p-button-contrast {
-    color: var(--surface-primary, #ffffff) !important;
+    color: var(--surface-primary, var(--color-text-on-primary)) !important;
   }
 }
 
@@ -2815,12 +2825,12 @@ p-button .p-button,
 .p-datepicker-overlay,
 .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
   z-index: 10000 !important;
-  background: var(--surface-primary, #ffffff) !important;
+  background: var(--surface-primary, var(--color-text-on-primary)) !important;
   border-radius: 16px !important;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.12),
     0 8px 24px rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
   overflow: hidden;
   min-width: 320px !important;
   max-width: 360px !important;
@@ -2859,12 +2869,12 @@ p-button .p-button,
 .p-autocomplete-panel,
 .p-cascadeselect-panel {
   z-index: 10000 !important;
-  background: var(--surface-primary, #ffffff) !important;
+  background: var(--surface-primary, var(--color-text-on-primary)) !important;
   border-radius: var(--radius-lg, 12px) !important;
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.15),
     0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid var(--color-border-secondary, #e5e5e5) !important;
+  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
   overflow: hidden;
   margin-top: 4px;
 }
@@ -2900,7 +2910,7 @@ p-button .p-button,
   border-radius: 8px !important;
   margin: 2px 0 !important;
   font-size: 0.9375rem !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
   transition: all 0.15s ease !important;
 }
 
@@ -2930,11 +2940,11 @@ p-button .p-button,
 /* Calendar Header */
 .p-datepicker-panel .p-datepicker-header {
   padding: 1rem 1.25rem !important;
-  border-bottom: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
   background: linear-gradient(
     to bottom,
-    var(--surface-secondary, #f9fafb),
-    var(--surface-primary, #ffffff)
+    var(--surface-secondary, var(--primitive-neutral-50)),
+    var(--surface-primary, var(--color-text-on-primary))
   ) !important;
   display: flex !important;
   align-items: center !important;
@@ -2963,7 +2973,7 @@ p-button .p-button,
     sans-serif !important;
   font-weight: 600 !important;
   font-size: var(--font-body-md, 1rem) !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
   margin: 0 0.125rem !important;
   background: none !important;
   border: none !important;
@@ -2990,9 +3000,9 @@ p-button .p-button,
   height: 2.5rem !important;
   min-width: 2.5rem !important;
   border-radius: 50% !important;
-  color: var(--color-text-secondary, #6b7280) !important;
-  background: var(--surface-secondary, #f3f4f6) !important;
-  border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  color: var(--color-text-secondary, var(--primitive-neutral-600)) !important;
+  background: var(--surface-secondary, var(--primitive-neutral-100)) !important;
+  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3049,7 +3059,7 @@ p-button .p-button,
   font-size: 0.6875rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
-  color: var(--color-text-muted, #9ca3af) !important;
+  color: var(--color-text-muted, var(--primitive-neutral-400)) !important;
   text-align: center !important;
 }
 
@@ -3078,7 +3088,7 @@ p-button .p-button,
   transition: all 0.15s ease !important;
   border: none !important;
   background: transparent !important;
-  color: var(--color-text-primary, #1a1a1a) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
 }
 
 /* Hover State */
@@ -3103,7 +3113,7 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > span,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > button {
   background: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
   font-weight: 600 !important;
   box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3) !important;
 }
@@ -3139,7 +3149,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > button {
-  color: var(--color-text-disabled, #d1d5db) !important;
+  color: var(--color-text-disabled, var(--primitive-neutral-300)) !important;
   cursor: not-allowed !important;
 }
 
@@ -3173,46 +3183,46 @@ p-button .p-button,
 /* Dark Mode - DatePicker */
 [data-theme="dark"] .p-datepicker-panel,
 .dark-theme .p-datepicker-panel {
-  background: var(--primitive-neutral-800, #262626) !important;
-  border-color: var(--primitive-neutral-700, #404040) !important;
+  background: var(--primitive-neutral-800, var(--primitive-neutral-800)) !important;
+  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-header,
 .dark-theme .p-datepicker-panel .p-datepicker-header {
   background: linear-gradient(
     to bottom,
-    var(--primitive-neutral-700, #404040),
-    var(--primitive-neutral-800, #262626)
+    var(--primitive-neutral-700, var(--primitive-neutral-700)),
+    var(--primitive-neutral-800, var(--primitive-neutral-800))
   ) !important;
-  border-color: var(--primitive-neutral-700, #404040) !important;
+  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-title span,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-title button,
 .dark-theme .p-datepicker-panel .p-datepicker-title span,
 .dark-theme .p-datepicker-panel .p-datepicker-title button {
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-prev,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-next,
 .dark-theme .p-datepicker-panel .p-datepicker-prev,
 .dark-theme .p-datepicker-panel .p-datepicker-next {
-  background: var(--primitive-neutral-700, #404040) !important;
-  border-color: var(--primitive-neutral-600, #525252) !important;
-  color: var(--primitive-neutral-300, #d4d4d4) !important;
+  background: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
+  border-color: var(--primitive-neutral-600, var(--primitive-neutral-600)) !important;
+  color: var(--primitive-neutral-300, var(--primitive-neutral-400)) !important;
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar th,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar th {
-  color: var(--primitive-neutral-500, #737373) !important;
+  color: var(--primitive-neutral-500, var(--primitive-neutral-600)) !important;
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > span,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > button,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > span,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > button {
-  color: var(--primitive-neutral-200, #e5e5e5) !important;
+  color: var(--primitive-neutral-200, var(--primitive-neutral-300)) !important;
 }
 
 [data-theme="dark"]
@@ -3225,7 +3235,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > span {
-  color: var(--primitive-neutral-600, #525252) !important;
+  color: var(--primitive-neutral-600, var(--primitive-neutral-600)) !important;
 }
 
 /* Input wrapper positioning fix */
@@ -3280,9 +3290,9 @@ p-button .p-button,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-secondary, #f8f9fa);
-    border: 1px solid var(--color-border-secondary, #e5e7eb);
-    color: var(--color-text-secondary, #6b7280);
+    background: var(--surface-secondary, var(--primitive-neutral-50));
+    border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    color: var(--color-text-secondary, var(--primitive-neutral-600));
     cursor: pointer;
     transition:
       background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -3381,7 +3391,7 @@ p-button .p-button,
   height: 1.25rem;
   border-radius: 50%;
   background: transparent;
-  color: var(--color-text-muted, #6b7280);
+  color: var(--color-text-muted, var(--primitive-neutral-600));
   cursor: pointer;
   transition:
     background-color 150ms ease,

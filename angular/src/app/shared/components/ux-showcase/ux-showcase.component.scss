@@ -1,0 +1,17 @@
+// ============================================================================
+// ux-showcase.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .ux-showcase {
+    padding: 1rem;
+  }
+
+  .info-text {
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    font-size: var(--font-body-sm);
+  }
+}
+

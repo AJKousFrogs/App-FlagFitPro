@@ -318,191 +318,7 @@ interface TeamMember {
       </p-dialog>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .coach-page {
-        padding: var(--space-6);
-      }
-
-      .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-6);
-        padding: var(--space-5);
-        background: var(--surface-primary);
-        border-radius: var(--p-border-radius);
-      }
-
-      .page-title {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: var(--space-2);
-        color: var(--text-primary);
-      }
-
-      .page-subtitle {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin: 0;
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-4);
-        margin-bottom: var(--space-6);
-      }
-
-      .stat-card {
-        text-align: center;
-      }
-
-      .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto var(--space-4);
-        font-size: 1.5rem;
-      }
-
-      .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: var(--space-2);
-      }
-
-      .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .chart-card,
-      .table-card {
-        margin-bottom: var(--space-6);
-      }
-
-      .chart-loading {
-        padding: var(--space-8);
-        text-align: center;
-        color: var(--text-secondary);
-      }
-
-      /* Consent blocked styles */
-      .consent-blocked-row {
-        background: var(--surface-100) !important;
-        opacity: 0.85;
-      }
-
-      .member-name-cell {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .blocked-indicator {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px;
-        height: 18px;
-        background: var(--surface-400);
-        border-radius: 50%;
-      }
-
-      .blocked-indicator i {
-        font-size: 10px;
-        color: white;
-      }
-
-      .blocked-data {
-        color: var(--text-secondary);
-        font-style: italic;
-      }
-
-      /* Partial Data Notice */
-      .partial-data-notice {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-4);
-        padding: var(--space-4);
-        background: var(--p-blue-50);
-        border: 1px solid var(--p-blue-200);
-        border-radius: var(--p-border-radius);
-        margin-bottom: var(--space-6);
-      }
-
-      .notice-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--p-blue-100);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-
-      .notice-icon i {
-        font-size: 1.25rem;
-        color: var(--p-blue-600);
-      }
-
-      .notice-content {
-        flex: 1;
-      }
-
-      .notice-content h4 {
-        margin: 0 0 var(--space-1);
-        font-size: var(--font-body-md);
-        font-weight: var(--font-weight-semibold);
-        color: var(--text-primary);
-      }
-
-      .notice-content p {
-        margin: 0 0 var(--space-2);
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-      }
-
-      .notice-link {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-1);
-        font-size: var(--font-body-sm);
-        font-weight: var(--font-weight-medium);
-        color: var(--p-blue-600);
-        text-decoration: none;
-      }
-
-      .notice-link:hover {
-        text-decoration: underline;
-      }
-
-      .notice-link i {
-        font-size: 0.75rem;
-      }
-
-      @media (max-width: 768px) {
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .page-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-4);
-        }
-      }
-    `,
-  ],
+  styleUrl: './coach.component.scss',
 })
 export class CoachComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -548,74 +364,39 @@ export class CoachComponent implements OnInit {
   }
 
   loadCoachData(): void {
-    // Load stats
+    // Load stats from real sources (placeholder for now but clean)
     this.stats.set([
       {
         label: "Team Members",
-        value: "20",
+        value: "0",
         icon: "pi-users",
         color: "var(--ds-primary-green)",
       },
       {
         label: "Avg Performance",
-        value: "85%",
+        value: "0%",
         icon: "pi-chart-line",
         color: "#10c96b",
       },
       {
         label: "Active Sessions",
-        value: "5",
+        value: "0",
         icon: "pi-calendar",
         color: "#f1c40f",
       },
       {
         label: "Upcoming Games",
-        value: "3",
+        value: "0",
         icon: "pi-trophy",
         color: "#e74c3c",
       },
     ]);
 
     // Load team chart
-    this.teamChartData.set({
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-      datasets: [
-        {
-          label: "Team Average",
-          data: [82, 84, 85, 87],
-          borderColor: "var(--ds-primary-green)",
-          backgroundColor: "var(--ds-primary-green-subtle)",
-        },
-      ],
-    });
+    this.teamChartData.set(null);
 
     // Load team members
-    this.teamMembers.set([
-      {
-        id: "1",
-        name: "Alex Johnson",
-        position: "QB",
-        performance: 92,
-        attendance: 95,
-        status: "Active",
-      },
-      {
-        id: "2",
-        name: "Sarah Williams",
-        position: "WR",
-        performance: 88,
-        attendance: 90,
-        status: "Active",
-      },
-      {
-        id: "3",
-        name: "Mike Davis",
-        position: "DB",
-        performance: 85,
-        attendance: 88,
-        status: "Active",
-      },
-    ]);
+    this.teamMembers.set([]);
   }
 
   openCreateSession(): void {

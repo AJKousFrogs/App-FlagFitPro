@@ -215,43 +215,7 @@ export interface PlayerFormData {
       </ng-template>
     </p-dialog>
   `,
-  styles: [
-    `
-      .player-form {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-        flex: 1;
-      }
-
-      .form-field label {
-        font-weight: var(--font-weight-medium);
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-      }
-
-      .form-row {
-        display: flex;
-        gap: var(--space-4);
-      }
-
-      .w-full {
-        width: 100%;
-      }
-
-      @media (max-width: 768px) {
-        .form-row {
-          flex-direction: column;
-        }
-      }
-    `,
-  ],
+  styleUrl: './roster-player-form-dialog.component.scss',
 })
 export class RosterPlayerFormDialogComponent implements OnChanges {
   private fb = inject(FormBuilder);

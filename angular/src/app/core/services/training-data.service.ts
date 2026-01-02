@@ -76,12 +76,11 @@ export class TrainingDataService {
 
     return from(
       (async () => {
-        // Query using both user_id and athlete_id for compatibility
-        // The database has both columns - user_id is the new standard, athlete_id is legacy
+        // Query using user_id
         let query = this.supabaseService.client
           .from("training_sessions")
           .select("*")
-          .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+          .eq("user_id", userId)
           .order("session_date", { ascending: false });
 
         // Apply filters
@@ -138,7 +137,7 @@ export class TrainingDataService {
         .from("training_sessions")
         .select("*")
         .eq("id", id)
-        .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+        .eq("user_id", userId)
         .single(),
     ).pipe(
       map(({ data, error }) => {
@@ -173,8 +172,8 @@ export class TrainingDataService {
       return of(null);
     }
 
-    // Ensure both user_id and athlete_id are set for compatibility
-    const sessionData = { ...session, user_id: userId, athlete_id: userId };
+    // Ensure user_id is set
+    const sessionData = { ...session, user_id: userId };
 
     return from(
       this.supabaseService.client
@@ -226,7 +225,7 @@ export class TrainingDataService {
         .from("training_sessions")
         .update(updateData)
         .eq("id", id)
-        .or(`user_id.eq.${userId},athlete_id.eq.${userId}`) // RLS ensures user can only update their own sessions
+        .eq("user_id", userId) // RLS ensures user can only update their own sessions
         .select()
         .single(),
     ).pipe(
@@ -262,7 +261,7 @@ export class TrainingDataService {
         .from("training_sessions")
         .delete()
         .eq("id", id)
-        .or(`user_id.eq.${userId},athlete_id.eq.${userId}`), // RLS ensures user can only delete their own sessions
+        .eq("user_id", userId), // RLS ensures user can only delete their own sessions
     ).pipe(
       map(({ error }) => {
         if (error) {
@@ -300,7 +299,7 @@ export class TrainingDataService {
         let query = this.supabaseService.client
           .from("training_sessions")
           .select("*")
-          .or(`user_id.eq.${userId},athlete_id.eq.${userId}`);
+          .eq("user_id", userId);
 
         const endDate = options?.endDate || new Date().toISOString();
         query = query.lte("session_date", endDate);

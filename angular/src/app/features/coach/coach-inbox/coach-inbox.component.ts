@@ -36,7 +36,6 @@ import { SkeletonModule } from "primeng/skeleton";
 import { AvatarModule } from "primeng/avatar";
 import { DividerModule } from "primeng/divider";
 import { InputTextModule } from "primeng/inputtext";
-import { Select } from "primeng/select";
 import { ApiService } from "../../../core/services/api.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -111,7 +110,6 @@ interface InboxStats {
     AvatarModule,
     DividerModule,
     InputTextModule,
-    Select,
     MainLayoutComponent,
   ],
   template: `
@@ -203,52 +201,7 @@ interface InboxStats {
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .coach-inbox {
-        padding: 2rem;
-      }
-      .inbox-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-      }
-      .inbox-item-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      }
-      .item-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-      }
-      .item-meta {
-        flex: 1;
-      }
-      .item-meta h3 {
-        margin: 0;
-        font-size: 1.1rem;
-      }
-      .timestamp {
-        font-size: 0.85rem;
-        color: #666;
-      }
-      .item-body h4 {
-        margin: 0 0 0.5rem 0;
-        color: #333;
-      }
-      .item-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
-      }
-    `,
-  ],
+  styleUrl: './coach-inbox.component.scss',
 })
 export class CoachInboxComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -278,51 +231,18 @@ export class CoachInboxComponent implements OnInit {
 
   loadInbox(): void {
     this.loading.set(true);
-    // Mocking for demo
+    // Real data would be fetched from API
     setTimeout(() => {
-      this.items.set([
-        {
-          id: "1",
-          coach_id: "coach-1",
-          team_id: "team-1",
-          player_id: "player-1",
-          inbox_type: "safety_alert",
-          priority: "high",
-          source_type: "ai_chat",
-          source_id: "chat-1",
-          title: "Injury Concern Detected",
-          summary: "Athlete Jackson reported sharp knee pain during route running.",
-          risk_level: "high",
-          acwr_value: 1.6,
-          acwr_zone: "danger",
-          intent_type: "injury_reporting",
-          athlete_context: {
-            injuries: [],
-            daily_pain: 7,
-            age_group: "adult",
-            acwr: 1.6,
-          },
-          status: "pending",
-          coach_action: null,
-          coach_notes: null,
-          override_reason: null,
-          override_alternative: null,
-          viewed_at: null,
-          actioned_at: null,
-          created_at: new Date().toISOString(),
-          is_new: true,
-          player: { id: "player-1", name: "Jackson Lee", position: "WR" },
-        },
-      ]);
+      this.items.set([]);
       this.stats.set({
-        safety_alerts: 1,
+        safety_alerts: 0,
         review_needed: 0,
         wins: 0,
-        total_pending: 1,
+        total_pending: 0,
         critical_count: 0,
       });
       this.loading.set(false);
-    }, 800);
+    }, 500);
   }
 
   onTabChange(event: any): void {

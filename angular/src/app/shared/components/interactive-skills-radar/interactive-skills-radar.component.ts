@@ -75,77 +75,7 @@ export interface SkillData {
       </div>
     </p-card>
   `,
-  styles: [
-    `
-      .skills-container {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6);
-      }
-
-      .radar-container {
-        min-height: 400px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .skills-breakdown {
-        padding: var(--space-5);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .skills-breakdown h4 {
-        margin: 0 0 var(--space-5) 0;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .sub-skills {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .sub-skill {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-        padding: var(--space-4);
-        background: var(--p-surface-card);
-        border-radius: var(--p-border-radius);
-        border: 1px solid var(--p-surface-200);
-      }
-
-      .sub-skill-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 1rem;
-      }
-
-      @media (min-width: 768px) {
-        .skills-container {
-          flex-direction: row;
-        }
-
-        .radar-container {
-          flex: 1;
-        }
-
-        .skills-breakdown {
-          flex: 0 0 350px;
-        }
-      }
-
-      @media (max-width: 767px) {
-        .radar-container {
-          min-height: 300px;
-        }
-      }
-    `,
-  ],
+  styleUrl: './interactive-skills-radar.component.scss',
 })
 export class InteractiveSkillsRadarComponent {
   private apiService = inject(ApiService);

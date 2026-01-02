@@ -114,68 +114,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
       </p-card>
     </div>
   `,
-  styles: [
-    `
-      .verify-email-page {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: var(--space-6);
-        background: var(--surface-secondary);
-      }
-
-      .verify-email-card {
-        width: 100%;
-        max-width: 500px;
-      }
-
-      .verify-email-logo {
-        display: flex;
-        justify-content: center;
-        margin-bottom: var(--space-4);
-      }
-
-      .verify-email-logo i {
-        font-size: var(--icon-3xl);
-        color: var(--color-brand-primary);
-      }
-
-      .verify-email-title {
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0;
-        color: var(--text-primary);
-      }
-
-      .verifying-state,
-      .verified-state,
-      .error-state,
-      .pending-state {
-        text-align: center;
-      }
-
-      .verified-message,
-      .pending-message {
-        margin-top: var(--space-4);
-        color: var(--text-secondary);
-        line-height: 1.6;
-      }
-
-      .back-to-login-link {
-        display: block;
-        text-align: center;
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        margin-top: var(--space-4);
-      }
-
-      .back-to-login-link:hover {
-        text-decoration: underline;
-      }
-    `,
-  ],
+  styleUrl: './verify-email.component.scss',
 })
 export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);

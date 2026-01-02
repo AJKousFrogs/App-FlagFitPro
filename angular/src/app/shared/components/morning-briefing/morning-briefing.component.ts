@@ -25,6 +25,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { firstValueFrom } from "rxjs";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
@@ -43,6 +44,8 @@ import { AcwrService } from "../../../core/services/acwr.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { DailyTrainingService } from "../../../core/services/daily-training.service";
 // GameService would be used for real game data - using signals for now
 
 interface QuickCheckIn {
@@ -50,6 +53,8 @@ interface QuickCheckIn {
   sleepHours: number;
   hasPain: boolean;
   painLocation?: string;
+  tookSupplements: boolean;
+  supplementsTaken?: string;
 }
 
 interface TodaysPlan {
@@ -99,23 +104,45 @@ interface TodaysPlan {
             </div>
           </div>
 
-          <!-- ACWR Quick View -->
+          <!-- ACWR Quick View with Micro-Context -->
           <div class="metrics-row">
             <div class="metric">
               <span class="metric-label">ACWR</span>
               <span class="metric-value" [class]="getAcwrClass()">
-                {{ acwrValue() | number: "1.2-2" }}
+                @if (acwrValue() === 0) {
+                  <span class="value-placeholder">—</span>
+                } @else {
+                  {{ acwrValue() | number: "1.2-2" }}
+                }
+              </span>
+              <span class="metric-context" [class]="getAcwrClass()">
+                {{ getAcwrContext() }}
               </span>
             </div>
             <div class="metric">
-              <span class="metric-label">Readiness</span>
+              <span class="metric-label">READINESS</span>
               <span class="metric-value">{{ readinessScore() }}%</span>
+              <span class="metric-context" [class]="getReadinessClass()">
+                {{ getReadinessContext() }}
+              </span>
             </div>
             <div class="metric">
-              <span class="metric-label">Today</span>
+              <span class="metric-label">TODAY</span>
               <span class="metric-value">{{
                 todaysPlan()?.sessionType || "Rest"
               }}</span>
+              <span class="metric-context muted">
+                {{ todaysPlan()?.duration ? todaysPlan()?.duration + ' min' : 'No session' }}
+              </span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">SUPPLEMENTS</span>
+              <span class="metric-value" [class]="quickCheckIn.tookSupplements ? 'status-good' : 'status-pending'">
+                {{ quickCheckIn.tookSupplements ? "Done" : "Pending" }}
+              </span>
+              <span class="metric-context" [class]="quickCheckIn.tookSupplements ? 'muted' : 'status-warn'">
+                {{ getSupplementContext() }}
+              </span>
             </div>
           </div>
 
@@ -170,29 +197,32 @@ interface TodaysPlan {
                 <span class="time-badge">~30 sec</span>
               </h3>
 
-              <div class="checkin-form">
+              <div class="checkin-form" role="form" aria-label="Quick wellness check-in form">
                 <!-- Overall Feeling Slider -->
                 <div class="feeling-slider">
-                  <label>How do you feel overall?</label>
-                  <div class="slider-container">
-                    <span class="emoji-label">😫</span>
+                  <label id="feeling-label">How do you feel overall?</label>
+                  <div class="slider-container" role="group" aria-labelledby="feeling-label">
+                    <span class="emoji-label" aria-hidden="true">😫</span>
                     <p-slider
                       [(ngModel)]="quickCheckIn.overallFeeling"
                       [min]="1"
                       [max]="10"
                       [step]="1"
                       styleClass="feeling-slider-input"
+                      [ariaLabel]="'Overall feeling rating: ' + quickCheckIn.overallFeeling + ' out of 10'"
                     ></p-slider>
-                    <span class="emoji-label">🔥</span>
+                    <span class="emoji-label" aria-hidden="true">🔥</span>
                   </div>
-                  <div class="slider-value">
+                  <div class="slider-value" aria-live="polite">
+                    <span class="visually-hidden">Current rating:</span>
                     {{ quickCheckIn.overallFeeling }}/10
+                    <span class="feeling-label">{{ getFeelingLabel(quickCheckIn.overallFeeling) }}</span>
                   </div>
                 </div>
 
                 <!-- Sleep Hours -->
                 <div class="sleep-input">
-                  <label>Sleep last night</label>
+                  <label id="sleep-label">Sleep last night</label>
                   <div class="input-row">
                     <p-inputNumber
                       [(ngModel)]="quickCheckIn.sleepHours"
@@ -203,10 +233,13 @@ interface TodaysPlan {
                       [showButtons]="true"
                       suffix=" hrs"
                       styleClass="sleep-number-input"
+                      ariaLabelledBy="sleep-label"
                     ></p-inputNumber>
                     <span
                       class="sleep-quality"
                       [class]="getSleepQualityClass()"
+                      role="status"
+                      [attr.aria-label]="'Sleep quality: ' + getSleepQualityLabel()"
                     >
                       {{ getSleepQualityLabel() }}
                     </span>
@@ -231,6 +264,29 @@ interface TodaysPlan {
                         [(ngModel)]="quickCheckIn.painLocation"
                         placeholder="Where? (e.g., left hamstring)"
                         class="pain-input"
+                      />
+                    </div>
+                  }
+                </div>
+
+                <!-- Supplement Check -->
+                <div class="supplement-check">
+                  <div class="supplement-toggle">
+                    <p-checkbox
+                      [(ngModel)]="quickCheckIn.tookSupplements"
+                      [binary]="true"
+                      inputId="tookSupplements"
+                    ></p-checkbox>
+                    <label for="tookSupplements">Did you take your supplements?</label>
+                  </div>
+                  @if (quickCheckIn.tookSupplements) {
+                    <div class="supplement-details">
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="quickCheckIn.supplementsTaken"
+                        placeholder="What did you take? (e.g., Creatine, Vit D)"
+                        class="supplement-input"
                       />
                     </div>
                   }
@@ -264,7 +320,7 @@ interface TodaysPlan {
               Today's Plan
             </h3>
 
-            @if (todaysPlan()) {
+            @if (todaysPlan() && todaysPlan()?.sessionType !== 'Rest') {
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-type">
@@ -392,629 +448,7 @@ interface TodaysPlan {
       }
     </div>
   `,
-  styles: [
-    `
-      .morning-briefing {
-        background: var(--surface-primary);
-        border-radius: 16px;
-        border: 1px solid var(--p-surface-200);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: var(--space-6);
-      }
-
-      /* Collapsed State */
-      .briefing-collapsed {
-        padding: var(--space-5);
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .briefing-collapsed:hover {
-        background: var(--p-surface-50);
-      }
-
-      .greeting-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: var(--space-4);
-      }
-
-      .greeting {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .greeting-emoji {
-        font-size: 2rem;
-      }
-
-      .greeting-text h2 {
-        margin: 0;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .date-text {
-        margin: 0;
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .metrics-row {
-        display: flex;
-        gap: var(--space-6);
-        margin-bottom: var(--space-4);
-      }
-
-      .metric {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-
-      .metric-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .metric-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .metric-value.optimal {
-        color: var(--p-green-600);
-      }
-
-      .metric-value.warning {
-        color: var(--p-orange-600);
-      }
-
-      .metric-value.danger {
-        color: var(--p-red-600);
-      }
-
-      .game-alert {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-3);
-        background: var(--p-orange-50);
-        border-radius: 8px;
-        color: var(--p-orange-700);
-        font-weight: 600;
-        margin-bottom: var(--space-4);
-      }
-
-      .game-alert.urgent {
-        background: var(--p-red-50);
-        color: var(--p-red-700);
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
-      }
-
-      .expand-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-2);
-        width: 100%;
-        padding: var(--space-3);
-        background: var(--color-brand-light);
-        color: var(--color-brand-primary);
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .expand-btn:hover {
-        background: var(--color-brand-primary);
-        color: white;
-      }
-
-      /* Expanded State */
-      .briefing-expanded {
-        padding: var(--space-6);
-      }
-
-      .expanded-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: var(--space-6);
-      }
-
-      .close-btn {
-        width: 36px;
-        height: 36px;
-        border: none;
-        background: var(--p-surface-100);
-        border-radius: 50%;
-        cursor: pointer;
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-
-      .close-btn:hover {
-        background: var(--p-surface-200);
-        color: var(--text-primary);
-      }
-
-      /* Check-in Section */
-      .checkin-section {
-        background: var(--p-surface-50);
-        border-radius: 12px;
-        padding: var(--space-5);
-        margin-bottom: var(--space-6);
-      }
-
-      .checkin-section h3 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        margin: 0 0 var(--space-4) 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .time-badge {
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        background: var(--p-surface-200);
-        padding: 2px 8px;
-        border-radius: 12px;
-        margin-left: auto;
-      }
-
-      .checkin-form {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-5);
-      }
-
-      .feeling-slider label,
-      .sleep-input label,
-      .pain-check label {
-        display: block;
-        font-weight: 500;
-        color: var(--text-primary);
-        margin-bottom: var(--space-2);
-      }
-
-      .slider-container {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .emoji-label {
-        font-size: 1.5rem;
-      }
-
-      :host ::ng-deep .feeling-slider-input {
-        flex: 1;
-      }
-
-      .slider-value {
-        text-align: center;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        margin-top: var(--space-2);
-      }
-
-      .input-row {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      :host ::ng-deep .sleep-number-input {
-        width: 140px;
-      }
-
-      .sleep-quality {
-        font-weight: 600;
-        font-size: 0.875rem;
-      }
-
-      .sleep-quality.good {
-        color: var(--p-green-600);
-      }
-
-      .sleep-quality.moderate {
-        color: var(--p-orange-600);
-      }
-
-      .sleep-quality.poor {
-        color: var(--p-red-600);
-      }
-
-      .pain-toggle {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .pain-location {
-        margin-top: var(--space-3);
-      }
-
-      .pain-input {
-        width: 100%;
-        padding: var(--space-3);
-        border: 1px solid var(--p-surface-300);
-        border-radius: 8px;
-        font-size: 0.875rem;
-      }
-
-      :host ::ng-deep .submit-btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .full-checkin-link {
-        text-align: center;
-        display: block;
-        color: var(--color-brand-primary);
-        font-size: 0.875rem;
-        text-decoration: none;
-      }
-
-      .full-checkin-link:hover {
-        text-decoration: underline;
-      }
-
-      .checkin-complete {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-4);
-        background: var(--p-green-50);
-        border-radius: 8px;
-        color: var(--p-green-700);
-        margin-bottom: var(--space-6);
-      }
-
-      .checkin-complete i {
-        font-size: 1.25rem;
-      }
-
-      .checkin-complete a {
-        margin-left: auto;
-        color: var(--p-green-700);
-        text-decoration: none;
-      }
-
-      .checkin-complete a:hover {
-        text-decoration: underline;
-      }
-
-      /* Today's Plan Section */
-      .todays-plan-section h3,
-      .game-day-section h3 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        margin: 0 0 var(--space-4) 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .plan-card {
-        background: var(--p-surface-50);
-        border-radius: 12px;
-        padding: var(--space-5);
-      }
-
-      .plan-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-4);
-      }
-
-      .plan-type {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .type-badge {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .duration {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .focus-areas {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-2);
-        margin-bottom: var(--space-4);
-      }
-
-      .focus-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .focus-tag {
-        background: var(--color-brand-light);
-        color: var(--color-brand-primary);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-
-      /* ACWR Visual */
-      .acwr-status {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-        padding: var(--space-4);
-        background: white;
-        border-radius: 8px;
-        margin-bottom: var(--space-4);
-      }
-
-      .acwr-visual {
-        flex: 1;
-      }
-
-      .acwr-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-        margin-bottom: var(--space-2);
-      }
-
-      .acwr-bar {
-        height: 8px;
-        background: var(--p-surface-200);
-        border-radius: 4px;
-        position: relative;
-        display: flex;
-        overflow: hidden;
-      }
-
-      .zone {
-        flex: 1;
-      }
-
-      .zone-low {
-        background: var(--p-blue-200);
-      }
-
-      .zone-optimal {
-        background: var(--p-green-300);
-      }
-
-      .zone-high {
-        background: var(--p-red-200);
-      }
-
-      .acwr-indicator {
-        position: absolute;
-        top: -4px;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: white;
-        border: 3px solid var(--p-green-500);
-        transform: translateX(-50%);
-        transition: left 0.3s;
-      }
-
-      .acwr-indicator.warning {
-        border-color: var(--p-orange-500);
-      }
-
-      .acwr-indicator.danger {
-        border-color: var(--p-red-500);
-      }
-
-      .acwr-zones {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.625rem;
-        color: var(--text-secondary);
-        margin-top: var(--space-1);
-      }
-
-      .acwr-value-display {
-        text-align: center;
-      }
-
-      .acwr-value-display .value {
-        display: block;
-        font-size: 1.5rem;
-        font-weight: 700;
-      }
-
-      .acwr-value-display .status {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-      }
-
-      :host ::ng-deep .start-practice-btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .rest-day {
-        text-align: center;
-        padding: var(--space-6);
-        background: var(--p-surface-50);
-        border-radius: 12px;
-      }
-
-      .rest-day i {
-        font-size: 2.5rem;
-        color: var(--p-blue-400);
-        margin-bottom: var(--space-3);
-      }
-
-      .rest-day h4 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: 1.125rem;
-        color: var(--text-primary);
-      }
-
-      .rest-day p {
-        margin: 0 0 var(--space-4) 0;
-        color: var(--text-secondary);
-      }
-
-      /* Game Day Section */
-      .game-day-section {
-        background: var(--p-orange-50);
-        border-radius: 12px;
-        padding: var(--space-5);
-        margin-top: var(--space-6);
-        border: 2px solid var(--p-orange-200);
-      }
-
-      .game-day-section.urgent {
-        background: var(--p-red-50);
-        border-color: var(--p-red-300);
-      }
-
-      .game-day-section h3 {
-        color: var(--p-orange-700);
-      }
-
-      .game-day-section.urgent h3 {
-        color: var(--p-red-700);
-      }
-
-      .game-info {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-4);
-        margin-bottom: var(--space-4);
-      }
-
-      .game-opponent {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .vs {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-      }
-
-      .opponent {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .game-details {
-        display: flex;
-        gap: var(--space-4);
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-      }
-
-      .game-details span {
-        display: flex;
-        align-items: center;
-        gap: var(--space-1);
-      }
-
-      .countdown {
-        margin-left: auto;
-        text-align: center;
-      }
-
-      .countdown-value {
-        display: block;
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--p-orange-600);
-      }
-
-      .countdown.urgent .countdown-value {
-        color: var(--p-red-600);
-      }
-
-      .countdown-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-      }
-
-      .game-actions {
-        display: flex;
-        gap: var(--space-3);
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .metrics-row {
-          flex-wrap: wrap;
-          gap: var(--space-4);
-        }
-
-        .metric {
-          min-width: 80px;
-        }
-
-        .game-info {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .countdown {
-          margin-left: 0;
-          width: 100%;
-          text-align: left;
-        }
-
-        .game-actions {
-          flex-direction: column;
-        }
-
-        .game-actions p-button {
-          width: 100%;
-        }
-      }
-    `,
-  ],
+  styleUrls: ["./morning-briefing.component.scss"],
 })
 export class MorningBriefingComponent implements OnInit {
   private router = inject(Router);
@@ -1023,6 +457,8 @@ export class MorningBriefingComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private apiService = inject(ApiService);
+  private dailyTrainingService = inject(DailyTrainingService);
 
   // Outputs
   checkInComplete = output<void>();
@@ -1031,6 +467,7 @@ export class MorningBriefingComponent implements OnInit {
   isExpanded = signal(false);
   isSubmitting = signal(false);
   hasCheckedInToday = signal(false);
+  isLoadingPlan = signal(false);
 
   // Quick check-in data
   quickCheckIn: QuickCheckIn = {
@@ -1038,6 +475,8 @@ export class MorningBriefingComponent implements OnInit {
     sleepHours: 7.5,
     hasPain: false,
     painLocation: "",
+    tookSupplements: false,
+    supplementsTaken: "",
   };
 
   // Computed values
@@ -1054,12 +493,7 @@ export class MorningBriefingComponent implements OnInit {
   acwrStatus = computed(() => this.acwrService.riskZone().description);
   readinessScore = signal(85); // Would come from ReadinessService
 
-  todaysPlan = signal<TodaysPlan | null>({
-    sessionType: "Speed & Agility",
-    duration: 90,
-    focus: ["Acceleration", "Change of Direction", "Route Running"],
-    phase: "Competition",
-  });
+  todaysPlan = signal<TodaysPlan | null>(null);
 
   upcomingGame = signal<{
     opponent: string;
@@ -1079,6 +513,30 @@ export class MorningBriefingComponent implements OnInit {
   ngOnInit(): void {
     this.checkTodaysWellness();
     this.loadUpcomingGame();
+    this.loadDailyTrainingPlan();
+  }
+
+  private loadDailyTrainingPlan(): void {
+    this.isLoadingPlan.set(true);
+    this.dailyTrainingService.getDailyTraining().subscribe({
+      next: (response) => {
+        if (response && response.todaysPractice) {
+          this.todaysPlan.set({
+            sessionType: response.todaysPractice.sessionType,
+            duration: response.todaysPractice.totalDuration,
+            focus: response.todaysPractice.focus,
+            phase: response.trainingStatus.phase || "Foundation",
+          });
+        }
+        this.isLoadingPlan.set(false);
+      },
+      error: (err) => {
+        this.logger.error("Error loading daily training plan:", err);
+        // Fallback or default
+        this.todaysPlan.set(null);
+        this.isLoadingPlan.set(false);
+      },
+    });
   }
 
   expand(): void {
@@ -1107,9 +565,48 @@ export class MorningBriefingComponent implements OnInit {
 
   getAcwrClass(): string {
     const acwr = this.acwrValue();
+    if (acwr === 0) return "unavailable";
     if (acwr >= 0.8 && acwr <= 1.3) return "optimal";
     if (acwr < 0.8 || (acwr > 1.3 && acwr <= 1.5)) return "warning";
     return "danger";
+  }
+
+  /** Micro-context label for ACWR */
+  getAcwrContext(): string {
+    const acwr = this.acwrValue();
+    if (acwr === 0) return "Not calculated";
+    if (acwr >= 0.8 && acwr <= 1.3) return "Optimal";
+    if (acwr < 0.8) return "Undertraining";
+    if (acwr > 1.5) return "High Risk";
+    return "Caution";
+  }
+
+  /** Micro-context label for Readiness */
+  getReadinessContext(): string {
+    const score = this.readinessScore();
+    if (score >= 80) return "High";
+    if (score >= 60) return "Moderate";
+    if (score >= 40) return "Low";
+    return "Very Low";
+  }
+
+  getReadinessClass(): string {
+    const score = this.readinessScore();
+    if (score >= 80) return "optimal";
+    if (score >= 60) return "moderate";
+    if (score >= 40) return "warning";
+    return "danger";
+  }
+
+  /** Micro-context label for Supplements */
+  getSupplementContext(): string {
+    if (this.quickCheckIn.tookSupplements) {
+      return "All logged";
+    }
+    const hour = new Date().getHours();
+    if (hour < 12) return "Morning dose";
+    if (hour < 18) return "Afternoon dose";
+    return "Evening dose";
   }
 
   getAcwrPosition(): number {
@@ -1132,6 +629,18 @@ export class MorningBriefingComponent implements OnInit {
     if (hours >= 6) return "Okay";
     if (hours >= 5) return "Low";
     return "Poor";
+  }
+
+  /**
+   * Get human-readable label for feeling value
+   * Improves slider accessibility by providing semantic meaning
+   */
+  getFeelingLabel(value: number): string {
+    if (value <= 2) return "Very poor";
+    if (value <= 4) return "Below average";
+    if (value <= 6) return "Average";
+    if (value <= 8) return "Good";
+    return "Excellent";
   }
 
   getPhasesSeverity(): "success" | "info" | "warn" | "danger" {
@@ -1188,21 +697,37 @@ export class MorningBriefingComponent implements OnInit {
   }
 
   private async loadUpcomingGame(): Promise<void> {
-    // Check for games in next 48 hours
-    try {
-      // Mock data for now - would come from GameService
-      const mockGame = {
-        opponent: "Eagles",
-        time: "2:00 PM",
-        location: "Home Field",
-        date: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-      };
+    const userId = this.authService.getUser()?.id;
+    if (!userId) return;
 
-      // Only show if game is within 48 hours
-      const hoursUntil =
-        (mockGame.date.getTime() - Date.now()) / (1000 * 60 * 60);
-      if (hoursUntil <= 48 && hoursUntil > 0) {
-        this.upcomingGame.set(mockGame);
+    try {
+      const today = new Date();
+      const twoDaysFromNow = new Date();
+      twoDaysFromNow.setDate(today.getDate() + 2);
+
+      const response = await firstValueFrom(this.apiService.get<any[]>('/api/games', {
+        startDate: today.toISOString().split('T')[0],
+        endDate: twoDaysFromNow.toISOString().split('T')[0],
+        limit: 1
+      }));
+
+      if (response && response.data && response.data.length > 0) {
+        const game = response.data[0];
+        const gameDate = new Date(game.game_date);
+        
+        // Only show if the game is in the future
+        if (gameDate.getTime() > Date.now()) {
+          this.upcomingGame.set({
+            opponent: game.opponent_name || game.opponent || "TBD",
+            time: game.game_time || "TBD",
+            location: game.location || "TBD",
+            date: gameDate,
+          });
+        } else {
+          this.upcomingGame.set(null);
+        }
+      } else {
+        this.upcomingGame.set(null);
       }
     } catch (error) {
       this.logger.error("Error loading upcoming game:", error);
@@ -1225,6 +750,26 @@ export class MorningBriefingComponent implements OnInit {
           : undefined,
         date: new Date().toISOString().split("T")[0],
       };
+
+      // Handle supplements if taken
+      if (this.quickCheckIn.tookSupplements && this.quickCheckIn.supplementsTaken) {
+        const supplements = this.quickCheckIn.supplementsTaken
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+
+        for (const supplement of supplements) {
+          this.apiService
+            .post(API_ENDPOINTS.supplements.log, {
+              supplement: supplement,
+              taken: true,
+              date: wellnessData.date,
+            })
+            .subscribe({
+              error: (err) => this.logger.error(`Error logging supplement ${supplement}:`, err),
+            });
+        }
+      }
 
       this.wellnessService.logWellness(wellnessData).subscribe({
         next: (response) => {

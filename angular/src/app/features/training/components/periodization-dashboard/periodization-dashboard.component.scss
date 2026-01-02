@@ -9,8 +9,8 @@
 
   h1 {
     font-size: var(--font-heading-lg, 2rem);
-    font-weight: 700;
-    color: var(--text-color);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -22,8 +22,8 @@
   }
 
   .subtitle {
-    color: var(--text-color-secondary);
-    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-body-lg);
   }
 }
 
@@ -54,13 +54,13 @@
   }
 
   .phase-week {
-    font-size: 0.9rem;
+    font-size: var(--font-body-sm);
     opacity: 0.9;
   }
 
   .phase-date {
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: var(--font-body-lg);
+    font-weight: var(--font-weight-medium);
   }
 }
 
@@ -71,9 +71,9 @@
 
 .phase-content {
   .phase-description {
-    font-size: 1.05rem;
+    font-size: var(--font-body-md);
     line-height: 1.6;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
     margin-bottom: 1.5rem;
   }
 }
@@ -82,9 +82,9 @@
   margin-bottom: 1.5rem;
 
   h4 {
-    font-size: 0.9rem;
+    font-size: var(--font-body-sm);
     text-transform: uppercase;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
     margin-bottom: 0.5rem;
   }
 
@@ -104,7 +104,7 @@
 
   &.secondary {
     background: var(--surface-200);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -112,28 +112,28 @@
   margin-bottom: 1.5rem;
 
   h4 {
-    font-size: 0.9rem;
+    font-size: var(--font-body-sm);
     text-transform: uppercase;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
     margin-bottom: 0.5rem;
   }
 
   .load-info {
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
+    font-size: var(--font-body-sm);
     margin-bottom: 0.5rem;
   }
 }
 
 :host ::ng-deep .load-bar {
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .acwr-status {
   padding: var(--space-4, 1rem);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-top: 1rem;
 
   &.acwr-optimal {
@@ -158,20 +158,20 @@
     margin-bottom: 0.5rem;
 
     .acwr-label {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       text-transform: uppercase;
-      font-size: 0.8rem;
+      font-size: var(--font-body-xs);
     }
 
     .acwr-value {
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-size: var(--font-heading-md);
+      font-weight: var(--font-weight-bold);
     }
   }
 
   .acwr-recommendation {
-    font-size: 0.9rem;
-    color: var(--text-color-secondary);
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -188,7 +188,7 @@
 
 .day-card {
   padding: var(--space-4, 1rem);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-50);
   border: 1px solid var(--surface-200);
 
@@ -218,13 +218,13 @@
     margin-bottom: 0.75rem;
 
     .day-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
   }
 
   .day-content {
-    font-size: 0.85rem;
-    color: var(--text-color-secondary);
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
 
     > div {
       display: flex;
@@ -233,7 +233,7 @@
       margin-bottom: 0.25rem;
 
       i {
-        font-size: 0.8rem;
+        font-size: var(--font-body-xs);
       }
     }
 
@@ -247,7 +247,7 @@
 .weekly-totals {
   background: var(--surface-50);
   padding: var(--space-6, 1.5rem);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   h4 {
     margin-bottom: 1rem;
@@ -263,14 +263,14 @@
     .total-item {
       .total-value {
         display: block;
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-md);
+        font-weight: var(--font-weight-bold);
         color: var(--primary-color);
       }
 
       .total-label {
-        font-size: 0.8rem;
-        color: var(--text-color-secondary);
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -285,7 +285,7 @@
     }
 
     p {
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -299,7 +299,7 @@
       padding: var(--space-2, 0.5rem) 1rem;
       border-radius: 20px;
       background: var(--surface-100);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -310,16 +310,16 @@
       }
 
       i {
-        font-size: 0.8rem;
+        font-size: var(--font-body-xs);
       }
     }
   }
 
   h4 {
     margin: var(--space-4, 1rem) 0 var(--space-2, 0.5rem);
-    font-size: 0.9rem;
+    font-size: var(--font-body-sm);
     text-transform: uppercase;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 
   .protocols-list {
@@ -343,11 +343,11 @@
   margin-top: 2rem;
   padding: var(--space-6, 1.5rem);
   background: var(--surface-50);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   h4 {
     margin-bottom: 1rem;
-    font-size: 1.1rem;
+    font-size: var(--font-body-lg);
   }
 
   ul {
@@ -394,14 +394,14 @@
 .timeline-content {
   .timeline-month {
     display: block;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-body-sm);
   }
 
   .timeline-phase {
     display: block;
-    font-size: 0.8rem;
-    color: var(--text-color-secondary);
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -421,19 +421,19 @@
       text-align: center;
       padding: var(--space-4, 1rem);
       background: var(--surface-50);
-      border-radius: 8px;
+      border-radius: var(--radius-md);
 
       .metric-label {
         display: block;
-        font-size: 0.8rem;
-        color: var(--text-color-secondary);
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
         margin-bottom: 0.25rem;
       }
 
       .metric-value {
         display: block;
-        font-size: 1.1rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         color: var(--primary-color);
         text-transform: capitalize;
       }
@@ -457,7 +457,7 @@
 .evidence-section {
   .evidence-intro {
     margin-bottom: 1.5rem;
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
     line-height: 1.6;
   }
 
@@ -470,12 +470,12 @@
   .research-card {
     padding: var(--space-6, 1.5rem);
     background: var(--surface-50);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--surface-200);
 
     .research-header {
-      font-size: 0.9rem;
-      color: var(--text-color-secondary);
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
       margin-bottom: 0.5rem;
     }
 
@@ -487,15 +487,15 @@
 
     .research-journal {
       display: block;
-      font-size: 0.85rem;
+      font-size: var(--font-body-sm);
       font-style: italic;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       margin-bottom: 1rem;
     }
 
     .research-finding,
     .research-application {
-      font-size: 0.9rem;
+      font-size: var(--font-body-sm);
       margin-bottom: 0.5rem;
       line-height: 1.5;
 
@@ -531,7 +531,7 @@
     padding: var(--space-4, 1rem);
     background: var(--yellow-50);
     border: 1px solid var(--yellow-200);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: flex-start;
@@ -539,7 +539,7 @@
 
     i {
       color: var(--yellow-600);
-      font-size: 1.2rem;
+      font-size: var(--font-heading-sm);
     }
   }
 }

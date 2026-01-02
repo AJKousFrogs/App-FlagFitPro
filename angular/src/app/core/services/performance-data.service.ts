@@ -8,12 +8,26 @@ import { AuthService } from "./auth.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
-  id?: number;
+  id?: string;
   userId?: string;
   weight: number;
   height: number;
   bodyFat?: number;
   muscleMass?: number;
+  // Enhanced body composition from smart scales
+  bodyWaterMass?: number;
+  fatMass?: number;
+  proteinMass?: number;
+  boneMineralContent?: number;
+  skeletalMuscleMass?: number;
+  musclePercentage?: number;
+  bodyWaterPercentage?: number;
+  proteinPercentage?: number;
+  boneMineralPercentage?: number;
+  visceralFatRating?: number;
+  basalMetabolicRate?: number;
+  waistToHipRatio?: number;
+  bodyAge?: number;
   notes?: string;
   timestamp: string;
 }
@@ -100,14 +114,15 @@ interface PaginationInfo {
 }
 
 interface DatabaseMeasurement {
-  id: number;
+  id: string;
   user_id: string;
   weight_kg: number;
   height_cm: number;
   body_fat_percentage?: number;
   muscle_mass_kg?: number;
   notes?: string;
-  measured_at: string;
+  measurement_date: string;
+  created_at?: string;
   [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
@@ -376,7 +391,7 @@ export class PerformanceDataService {
       bodyFat: data.body_fat_percentage,
       muscleMass: data.muscle_mass_kg,
       notes: data.notes,
-      timestamp: data.measured_at,
+      timestamp: data.measurement_date as string || new Date().toISOString(),
     };
   }
 
@@ -443,8 +458,8 @@ export class PerformanceDataService {
           .from("physical_measurements")
           .select("*")
           .eq("user_id", userId)
-          .gte("measured_at", cutoffDate.toISOString())
-          .order("measured_at", { ascending: false })
+          .gte("measurement_date", cutoffDate.toISOString().split("T")[0])
+          .order("measurement_date", { ascending: false })
           .range((page - 1) * limit, page * limit - 1);
 
         if (error) {
@@ -464,7 +479,7 @@ export class PerformanceDataService {
             bodyFat: m.body_fat_percentage,
             muscleMass: m.muscle_mass_kg,
             notes: m.notes,
-            timestamp: m.measured_at,
+            timestamp: m.measurement_date || m.created_at || new Date().toISOString(),
           }),
         );
 
@@ -520,12 +535,26 @@ export class PerformanceDataService {
         .from("physical_measurements")
         .insert({
           user_id: userId,
-          weight_kg: measurement.weight,
-          height_cm: measurement.height,
-          body_fat_percentage: measurement.bodyFat,
-          muscle_mass_kg: measurement.muscleMass,
+          weight: measurement.weight,
+          height: measurement.height,
+          body_fat: measurement.bodyFat,
+          muscle_mass: measurement.muscleMass,
+          // Enhanced body composition fields
+          body_water_mass: measurement.bodyWaterMass,
+          fat_mass: measurement.fatMass,
+          protein_mass: measurement.proteinMass,
+          bone_mineral_content: measurement.boneMineralContent,
+          skeletal_muscle_mass: measurement.skeletalMuscleMass,
+          muscle_percentage: measurement.musclePercentage,
+          body_water_percentage: measurement.bodyWaterPercentage,
+          protein_percentage: measurement.proteinPercentage,
+          bone_mineral_percentage: measurement.boneMineralPercentage,
+          visceral_fat_rating: measurement.visceralFatRating,
+          basal_metabolic_rate: measurement.basalMetabolicRate,
+          waist_to_hip_ratio: measurement.waistToHipRatio,
+          body_age: measurement.bodyAge,
           notes: measurement.notes,
-          measured_at: measurement.timestamp || new Date().toISOString(),
+          created_at: measurement.timestamp || new Date().toISOString(),
         })
         .select()
         .single(),

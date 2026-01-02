@@ -167,7 +167,7 @@ export class DailyTrainingService {
     });
 
     return this.http
-      .get<DailyTrainingResponse>(`${this.apiUrl}/daily-training`, { headers })
+      .get<DailyTrainingResponse>(`${this.apiUrl}/api/daily-training`, { headers })
       .pipe(
         map((response) => {
           this.logger.info("[DailyTraining] Received training plan from API");
@@ -205,7 +205,7 @@ export class DailyTrainingService {
       .post<{
         success: boolean;
         message: string;
-      }>(`${this.apiUrl}/daily-training`, updates, { headers })
+      }>(`${this.apiUrl}/api/daily-training`, updates, { headers })
       .pipe(
         catchError((error) => {
           this.logger.error("[DailyTraining] Error updating progress", error);
@@ -237,7 +237,7 @@ export class DailyTrainingService {
     }
 
     return this.http
-      .get<PlyometricExercise[]>(`${this.apiUrl}/plyometrics`, {
+      .get<PlyometricExercise[]>(`${this.apiUrl}/api/plyometrics`, {
         headers,
         params,
       })
@@ -272,7 +272,7 @@ export class DailyTrainingService {
     }
 
     return this.http
-      .get<IsometricExercise[]>(`${this.apiUrl}/isometrics`, {
+      .get<IsometricExercise[]>(`${this.apiUrl}/api/isometrics`, {
         headers,
         params,
       })

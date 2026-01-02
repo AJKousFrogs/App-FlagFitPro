@@ -1,0 +1,153 @@
+// ============================================================================
+// ai-feedback.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .ai-feedback {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .ai-feedback.compact {
+    gap: var(--space-2);
+  }
+
+  .quick-feedback {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .feedback-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+  }
+
+  .feedback-btn:hover:not(.disabled) {
+    background: var(--surface-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .feedback-btn.selected {
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    color: var(--color-text-on-primary);
+  }
+
+  .feedback-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .feedback-btn.text-btn {
+    width: auto;
+    padding: 0 var(--space-2);
+  }
+
+  .feedback-thanks {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-body-xs);
+    color: var(--color-status-success);
+  }
+
+  .dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .dialog-intro {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .section-label {
+    display: block;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .type-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .type-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .type-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: var(--font-body-sm);
+  }
+
+  .type-label i {
+    width: 16px;
+    color: var(--color-text-secondary);
+  }
+
+  .outcome-question {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border-secondary);
+  }
+
+  .outcome-options {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .outcome-btn {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+    font-size: var(--font-body-sm);
+  }
+
+  .outcome-btn:hover {
+    background: var(--surface-tertiary);
+  }
+
+  .outcome-btn.selected {
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    color: var(--color-text-on-primary);
+  }
+
+  @media (max-width: 480px) {
+    .feedback-btn {
+      width: 28px;
+      height: 28px;
+    }
+
+    .feedback-btn i {
+      font-size: var(--font-body-sm);
+    }
+  }
+}
+

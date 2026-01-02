@@ -33,7 +33,6 @@ import {
   GameResult,
   PlayerPerformanceStats,
   RiskAlert,
-  TeamMessage,
   TeamOverviewStats,
   TeamStatisticsService,
   TrainingSession,
@@ -978,7 +977,6 @@ export class CoachDashboardComponent implements OnInit {
   upcomingGames = signal<UpcomingGame[]>([]);
   trainingSessions = signal<TrainingSession[]>([]);
   riskAlerts = signal<RiskAlert[]>([]);
-  teamMessages = signal<TeamMessage[]>([]);
   performanceTrend = signal<{ labels: string[]; scores: number[] }>({
     labels: [],
     scores: [],

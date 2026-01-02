@@ -1,0 +1,112 @@
+// ============================================================================
+// consent-blocked-message.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .consent-blocked {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-status-info);
+  }
+
+  .consent-blocked.inline {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .consent-blocked.card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-6);
+  }
+
+  .consent-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primitive-info-100);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .consent-blocked.card .consent-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-4);
+  }
+
+  .consent-icon i {
+    font-size: var(--font-heading-sm);
+    color: var(--primitive-info-600);
+  }
+
+  .consent-blocked.card .consent-icon i {
+    font-size: var(--font-heading-lg);
+  }
+
+  .consent-content {
+    flex: 1;
+  }
+
+  .consent-title {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .consent-message {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .consent-reason {
+    margin: 0;
+    font-size: var(--font-body-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .consent-action {
+    margin: var(--space-3) 0 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-secondary);
+  }
+
+  .action-text {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .action-link:hover {
+    color: var(--color-brand-primary-dark);
+    text-decoration: underline;
+  }
+
+  .action-link i {
+    font-size: var(--font-body-xs);
+  }
+}
+

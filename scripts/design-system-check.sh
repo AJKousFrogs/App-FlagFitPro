@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+# ============================================================
+# Design System Enforcement Script
+# ============================================================
+# Enforces DESIGN_SYSTEM_RULES.md decisions via grep checks.
+# Run as part of CI or pre-commit.
+#
+# Usage: npm run lint:ds
+# ============================================================
+
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# Paths (relative to angular/ directory)
+TOKENS="src/assets/styles/design-system-tokens.scss"
+OVERRIDES_DIR="src/assets/styles/overrides"
+PRIMENG_DIR="src/assets/styles/primeng"
+
+# Change to angular directory
+cd "$(dirname "$0")/../angular"
+
+echo "============================================"
+echo "🔍 Design System Enforcement Checks"
+echo "============================================"
+echo ""
+
+FAILED=0
+
+# ============================================================
+# Decision 1: Hex colors only in tokens file
+# ============================================================
+echo "📋 Decision 1: Checking for hex colors outside tokens..."
+
+HEX=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  -E "#[0-9a-fA-F]{3,8}\b" src \
+  | grep -v "design-system-tokens.scss" \
+  | grep -v "// allowed:" \
+  | grep -v "/* allowed:" \
+  || true)
+
+if [ -n "$HEX" ]; then
+  echo -e "${RED}❌ Hex colors found outside tokens file:${NC}"
+  echo "$HEX" | head -20
+  HEX_COUNT=$(echo "$HEX" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $HEX_COUNT violations${NC}"
+  echo "   Fix: Replace with var(--token-name)"
+  FAILED=1
+else
+  echo -e "${GREEN}   ✓ No hex colors outside tokens${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 7: !important only in overrides
+# ============================================================
+echo "📋 Decision 7: Checking for !important outside overrides..."
+
+IMPORTANT=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  --exclude-dir=overrides \
+  "!important" src \
+  | grep -v "// exception:" \
+  | grep -v "/* exception:" \
+  || true)
+
+if [ -n "$IMPORTANT" ]; then
+  echo -e "${YELLOW}⚠️  !important found outside overrides:${NC}"
+  echo "$IMPORTANT" | head -20
+  IMP_COUNT=$(echo "$IMPORTANT" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $IMP_COUNT violations${NC}"
+  echo "   Fix: Move to @layer overrides with exception template"
+  # Warning only, not blocking
+else
+  echo -e "${GREEN}   ✓ No !important outside overrides${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 19: No transition: all
+# ============================================================
+echo "📋 Decision 19: Checking for transition: all..."
+
+TRANS_ALL=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  -E "transition:\s*all" src \
+  || true)
+
+if [ -n "$TRANS_ALL" ]; then
+  echo -e "${RED}❌ transition: all found:${NC}"
+  echo "$TRANS_ALL" | head -20
+  TRANS_COUNT=$(echo "$TRANS_ALL" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $TRANS_COUNT violations${NC}"
+  echo "   Fix: Specify exact properties (e.g., transition: background-color var(--motion-fast))"
+  FAILED=1
+else
+  echo -e "${GREEN}   ✓ No transition: all${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 22: ::ng-deep only in overrides
+# ============================================================
+echo "📋 Decision 22: Checking for ::ng-deep outside overrides..."
+
+NG_DEEP=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  --exclude-dir=overrides \
+  "::ng-deep" src \
+  | grep -v "// exception:" \
+  | grep -v "/* exception:" \
+  || true)
+
+if [ -n "$NG_DEEP" ]; then
+  echo -e "${YELLOW}⚠️  ::ng-deep found outside overrides:${NC}"
+  echo "$NG_DEEP" | head -20
+  NG_COUNT=$(echo "$NG_DEEP" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $NG_COUNT violations${NC}"
+  echo "   Fix: Move to overrides with exception template or refactor"
+  # Warning only, not blocking (gradual migration)
+else
+  echo -e "${GREEN}   ✓ No ::ng-deep outside overrides${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 16: .p-* classes only in primeng folder
+# ============================================================
+echo "📋 Decision 16: Checking for .p-* selectors outside primeng folder..."
+
+P_CLASSES=$(grep -RIn \
+  --include="*.scss" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  --exclude-dir=primeng \
+  --exclude-dir=overrides \
+  -E "\.p-[a-z]+" src/app \
+  | grep -v "// allowed:" \
+  | grep -v "/* allowed:" \
+  || true)
+
+if [ -n "$P_CLASSES" ]; then
+  echo -e "${YELLOW}⚠️  .p-* PrimeNG selectors found in feature SCSS:${NC}"
+  echo "$P_CLASSES" | head -20
+  P_COUNT=$(echo "$P_CLASSES" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $P_COUNT violations${NC}"
+  echo "   Fix: Move PrimeNG overrides to primeng/ folder or use component inputs"
+  # Warning only
+else
+  echo -e "${GREEN}   ✓ No .p-* selectors in feature SCSS${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 56: No hardcoded font-family
+# ============================================================
+echo "📋 Decision 56: Checking for hardcoded font-family..."
+
+FONT_FAMILY=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  -E "font-family:\s*['\"]?(Poppins|Arial|Helvetica|sans-serif)" src \
+  | grep -v "design-system-tokens.scss" \
+  | grep -v "var(--font" \
+  || true)
+
+if [ -n "$FONT_FAMILY" ]; then
+  echo -e "${YELLOW}⚠️  Hardcoded font-family found:${NC}"
+  echo "$FONT_FAMILY" | head -20
+  FONT_COUNT=$(echo "$FONT_FAMILY" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $FONT_COUNT violations${NC}"
+  echo "   Fix: Use var(--font-family-sans) or var(--font-family-mono)"
+  # Warning only
+else
+  echo -e "${GREEN}   ✓ No hardcoded font-family${NC}"
+fi
+echo ""
+
+# ============================================================
+# Summary
+# ============================================================
+echo "============================================"
+if [ $FAILED -eq 1 ]; then
+  echo -e "${RED}❌ Design system checks FAILED${NC}"
+  echo "   Fix the errors above before merging."
+  exit 1
+else
+  echo -e "${GREEN}✅ Design system checks PASSED${NC}"
+  echo "   (Warnings should be addressed but don't block merge)"
+fi
+echo "============================================"

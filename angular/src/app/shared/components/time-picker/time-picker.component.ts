@@ -64,57 +64,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      .time-picker-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .time-picker-input {
-        width: 100%;
-        max-width: 200px;
-        padding: 0.625rem 1rem;
-        font-size: 1rem;
-        border: 1px solid var(--p-surface-border);
-        border-radius: var(--p-border-radius);
-        background-color: var(--p-surface-0);
-        color: var(--p-text-color);
-        transition: all 0.2s ease;
-      }
-
-      .time-picker-input:focus {
-        outline: 2px solid var(--p-primary-color);
-        outline-offset: 2px;
-        border-color: var(--p-primary-color);
-      }
-
-      .time-picker-input.is-invalid {
-        border-color: var(--p-error-color);
-      }
-
-      .time-picker-input:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        background-color: var(--p-surface-100);
-      }
-
-      .form-help {
-        font-size: 0.75rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .form-error {
-        font-size: 0.75rem;
-        color: var(--p-error-color);
-      }
-    `,
-  ],
+  styleUrl: './time-picker.component.scss',
 })
 export class TimePickerComponent implements ControlValueAccessor {
   // Configuration

@@ -304,246 +304,7 @@ interface Goal {
       </div>
     </p-card>
   `,
-  styles: [
-    `
-      .training-builder {
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-
-      .step-content-wrapper {
-        margin-top: 2rem;
-      }
-
-      .step-content {
-        padding: 2rem 0;
-        min-height: 400px;
-      }
-
-      .goals-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-        margin: 1.5rem 0;
-      }
-
-      .goal-card {
-        padding: 1.5rem;
-        border: 2px solid var(--p-surface-border);
-        border-radius: var(--p-border-radius);
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      .goal-card:hover {
-        border-color: var(--p-primary-color);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .goal-card.selected {
-        border-color: var(--p-primary-color);
-        background: var(--p-primary-50);
-      }
-
-      .goal-card i {
-        font-size: var(--icon-2xl);
-        margin-bottom: var(--space-4);
-      }
-
-      .goal-card h4 {
-        margin: 0.5rem 0;
-        color: var(--p-text-color);
-      }
-
-      .goal-card p {
-        margin: 0;
-        color: var(--p-text-color-secondary);
-        font-size: 0.875rem;
-      }
-
-      .parameters-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-      }
-
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .form-field label {
-        font-weight: 600;
-        color: var(--p-text-color);
-      }
-
-      .duration-display {
-        text-align: center;
-        font-weight: 600;
-        color: var(--p-primary-color);
-        margin-top: 0.5rem;
-      }
-
-      .intensity-option {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .intensity-indicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-      }
-
-      .intensity-indicator.intensity-low {
-        background: var(--color-status-success);
-      }
-
-      .intensity-indicator.intensity-medium {
-        background: var(--color-status-warning);
-      }
-
-      .intensity-indicator.intensity-high {
-        background: var(--color-status-error);
-      }
-
-      .weather-notice {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-        border-left: 4px solid var(--p-primary-color);
-      }
-
-      .session-overview {
-        margin-bottom: 2rem;
-      }
-
-      .session-stats {
-        display: flex;
-        gap: 2rem;
-        margin-top: 1rem;
-      }
-
-      .stat {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-
-      .stat .label {
-        font-size: 0.875rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .stat .value {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--p-text-color);
-      }
-
-      .timeline-marker {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-      }
-
-      .marker-exercise {
-        background: var(--p-primary-color);
-      }
-
-      .marker-rest {
-        background: var(--p-surface-400);
-      }
-
-      .marker-warmup {
-        background: var(--color-status-warning);
-      }
-
-      .marker-cooldown {
-        background: var(--color-brand-primary);
-      }
-
-      .timeline-card {
-        margin-left: 1rem;
-        width: 300px;
-      }
-
-      .exercise-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-      }
-
-      .exercise-meta {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .duration {
-        font-size: 0.875rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .exercise-description {
-        margin: 0.5rem 0;
-        color: var(--p-text-color-secondary);
-      }
-
-      .exercise-actions {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-
-      .step-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--p-surface-border);
-      }
-
-      @media (max-width: 768px) {
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-
-        .session-stats {
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .timeline-card {
-          width: 100%;
-          margin-left: 0;
-        }
-
-        .step-actions {
-          flex-direction: column;
-        }
-      }
-    `,
-  ],
+  styleUrl: './training-builder.component.scss',
 })
 export class TrainingBuilderComponent {
   private fb = inject(FormBuilder);
@@ -741,17 +502,17 @@ export class TrainingBuilderComponent {
     }> = [];
     try {
       const { data: events } = await this.supabaseService.client
-        .from("team_events")
-        .select("event_date, event_name, event_type")
-        .gte("event_date", new Date().toISOString())
-        .order("event_date", { ascending: true })
+        .from("games")
+        .select("game_date, opponent_name")
+        .gte("game_date", new Date().toISOString().split("T")[0])
+        .order("game_date", { ascending: true })
         .limit(5);
 
       if (events) {
         upcomingGames = events.map((e) => ({
-          date: e.event_date,
-          opponent: e.event_name,
-          importance: e.event_type === "game" ? "high" : "medium",
+          date: e.game_date,
+          opponent: e.opponent_name,
+          importance: "high",
         }));
       }
     } catch (error) {
@@ -930,69 +691,8 @@ export class TrainingBuilderComponent {
     intensity: string,
     equipment: string[] = [],
   ): TrainingExercise[] {
-    // Mock exercise generation logic
-    const exerciseDatabase: Record<string, TrainingExercise[]> = {
-      speed: [
-        {
-          id: "sprint-intervals",
-          name: "40-Yard Sprints",
-          category: "speed",
-          duration: 15,
-          intensity: intensity as "low" | "medium" | "high",
-          equipment: ["cones"],
-          description: "High-intensity sprint intervals to improve top speed",
-          aiRecommended: true,
-        },
-      ],
-      agility: [
-        {
-          id: "cone-drill",
-          name: "5-10-5 Shuttle",
-          category: "agility",
-          duration: 12,
-          intensity: intensity as "low" | "medium" | "high",
-          equipment: ["cones"],
-          description: "Lateral movement drill for quick direction changes",
-          aiRecommended: true,
-        },
-      ],
-      endurance: [
-        {
-          id: "cardio-intervals",
-          name: "Cardiovascular Intervals",
-          category: "endurance",
-          duration: 20,
-          intensity: intensity as "low" | "medium" | "high",
-          equipment: [],
-          description:
-            "High-intensity interval training for cardiovascular fitness",
-          aiRecommended: false,
-        },
-      ],
-      skills: [
-        {
-          id: "skill-drills",
-          name: "Position-Specific Drills",
-          category: "skills",
-          duration: 18,
-          intensity: intensity as "low" | "medium" | "high",
-          equipment: ["football"],
-          description: "Focused practice on position-specific techniques",
-          aiRecommended: true,
-        },
-      ],
-    };
-
-    const exercises: TrainingExercise[] = [];
-    const availableTime = duration - 20; // Account for warmup/cooldown
-
-    goals.forEach((goal) => {
-      if (exerciseDatabase[goal]) {
-        exercises.push(...exerciseDatabase[goal]);
-      }
-    });
-
-    return exercises.slice(0, Math.floor(availableTime / 15)); // Rough estimation
+    // Return empty array. In production, this would fetch from a rule-based engine or ExerciseDB
+    return [];
   }
 
   private loadWeatherData() {
@@ -1002,21 +702,18 @@ export class TrainingBuilderComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (weather) => {
-          if (weather) {
+          if (weather && weather.condition !== "N/A") {
             this.weatherData.set({
               condition: weather.condition,
               temperature: weather.temp,
               recommendation: this.getWeatherRecommendation(weather),
             });
+          } else {
+            this.weatherData.set(null);
           }
         },
         error: () => {
-          // Fallback to mock data
-          this.weatherData.set({
-            condition: "Sunny",
-            temperature: 72,
-            recommendation: "Perfect for outdoor training",
-          });
+          this.weatherData.set(null);
         },
       });
   }

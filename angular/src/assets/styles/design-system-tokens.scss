@@ -330,6 +330,9 @@
   /* Font Sizes - Display */
   --font-display-2xl: 4.5rem; /* 72px */
   --font-display-xl: 3.75rem; /* 60px */
+  --font-display-lg: 3rem; /* 48px */
+  --font-display-md: 2.5rem; /* 40px */
+  --font-display-sm: 2rem; /* 32px */
 
   /* Font Sizes - Headings */
   --font-heading-2xl: 2.5rem; /* 40px */
@@ -344,6 +347,7 @@
   --font-body-md: 1rem; /* 16px */
   --font-body-sm: 0.875rem; /* 14px */
   --font-body-xs: 0.75rem; /* 12px */
+  --font-body-2xs: 0.625rem; /* 10px - use sparingly for very small labels */
 
   /* Legacy Font Size Aliases */
   --text-xs: var(--font-body-xs);
@@ -450,6 +454,74 @@
   --shadow-focus: 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2);
   --shadow-focus-inset: inset 0 0 0 0.2rem
     rgba(var(--ds-primary-green-rgb), 0.2);
+
+  /* ================================
+     DESIGN SYSTEM SEMANTIC ALIASES
+     Used by component SCSS files
+     ================================ */
+
+  /* Numbered Shadow Scale (Decision 14) */
+  --shadow-0: none;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.16);
+
+  /* Border Tokens (Decision 13) */
+  --border-1: 1px;
+  --border-2: 2px;
+  --color-border-default: var(--primitive-neutral-300);
+  --color-border-muted: var(--primitive-neutral-200);
+  --color-border-strong: var(--primitive-neutral-400);
+  --color-border-focus: var(--ds-primary-green);
+  --color-border-danger: var(--color-status-error);
+  --color-border-warning: var(--color-status-warning);
+
+  /* Surface Semantic Aliases */
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-hover: rgba(0, 0, 0, 0.04);
+  --color-surface-inverse: var(--primitive-neutral-900);
+
+  /* Text Semantic Aliases */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-primary: #ffffff;
+  --color-text-on-inverse: #ffffff;
+
+  /* Status Color Aliases */
+  --color-status-success: var(--ds-primary-green);
+  --color-status-warning: var(--primitive-warning-500);
+  --color-status-danger: var(--primitive-error-500);
+  --color-status-info: #0ea5e9;
+
+  /* Status Background Colors */
+  --color-success-bg: rgba(8, 153, 73, 0.1);
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-info-bg: rgba(14, 165, 233, 0.1);
+
+  /* Status Text Colors */
+  --color-success-text: #036d35;
+  --color-warning-text: var(--primitive-warning-800);
+  --color-danger-text: #b91c1c;
+  --color-info-text: #0284c7;
+
+  /* Motion Tokens (Decision 19) */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Container Widths (Decision 8.1) */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-max: 1440px;
 
   /* ================================
      GRADIENT TOKENS

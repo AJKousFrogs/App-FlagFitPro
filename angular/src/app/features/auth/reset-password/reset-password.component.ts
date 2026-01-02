@@ -92,75 +92,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       </p-card>
     </div>
   `,
-  styles: [
-    `
-      .reset-password-page {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: var(--space-6);
-        background: var(--surface-secondary);
-      }
-
-      .reset-password-card {
-        width: 100%;
-        max-width: 400px;
-      }
-
-      .reset-password-logo {
-        text-align: center;
-        margin-bottom: var(--space-4);
-        color: var(--color-brand-primary);
-        font-size: 3rem;
-      }
-
-      .reset-password-title {
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin-bottom: var(--space-6);
-      }
-
-      .reset-password-divider {
-        text-align: center;
-        position: relative;
-        color: var(--text-secondary);
-      }
-
-      .reset-password-divider::before,
-      .reset-password-divider::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        width: 45%;
-        height: 1px;
-        background: var(--p-surface-200);
-      }
-
-      .reset-password-divider::before {
-        left: 0;
-      }
-
-      .reset-password-divider::after {
-        right: 0;
-      }
-
-      .reset-password-login-link {
-        display: block;
-        text-align: center;
-        color: var(--color-brand-primary);
-        font-weight: 600;
-        text-decoration: none;
-      }
-
-      .required::after {
-        content: " *";
-        color: var(--color-warning);
-      }
-    `,
-  ],
+  styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent {
   private fb = inject(FormBuilder);

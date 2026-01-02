@@ -1,0 +1,100 @@
+// ============================================================================
+// radio.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-primary);
+  }
+
+  .radio-label.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .radio-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid var(--color-border-primary);
+    border-radius: 50%;
+    background-color: var(--surface-primary);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .radio-label:hover .radio-custom:not(.disabled) {
+    border-color: var(--ds-primary-green);
+  }
+
+  .radio-label.checked .radio-custom {
+    border-color: var(--ds-primary-green);
+  }
+
+  .radio-label.checked .radio-custom::after {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--ds-primary-green);
+  }
+
+  .radio-input:focus + .radio-custom {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  .radio-input.is-invalid + .radio-custom {
+    border-color: var(--color-status-error);
+  }
+
+  .radio-label.disabled .radio-custom {
+    background-color: var(--surface-tertiary);
+    border-color: var(--color-border-secondary);
+    cursor: not-allowed;
+  }
+
+  .radio-text {
+    flex: 1;
+  }
+
+  .form-help {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    margin-left: 2rem;
+  }
+
+  .form-error {
+    font-size: var(--font-body-xs);
+    color: var(--color-status-error);
+    margin-left: 2rem;
+  }
+}
+

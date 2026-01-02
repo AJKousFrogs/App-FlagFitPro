@@ -16,7 +16,6 @@
 const DataState = {
   NO_DATA: "NO_DATA",
   INSUFFICIENT_DATA: "INSUFFICIENT_DATA",
-  DEMO_DATA: "DEMO_DATA",
   REAL_DATA: "REAL_DATA",
 };
 
@@ -76,11 +75,7 @@ const MINIMUM_DATA_REQUIREMENTS = {
 /**
  * Evaluate the data state based on available data points
  */
-function evaluateDataState(currentDataPoints, metricType, isDemo = false) {
-  if (isDemo) {
-    return DataState.DEMO_DATA;
-  }
-
+function evaluateDataState(currentDataPoints, metricType) {
   if (currentDataPoints === 0) {
     return DataState.NO_DATA;
   }
@@ -109,12 +104,12 @@ function createDataResponse(
   metricType,
   options = {},
 ) {
-  const { isDemo = false, lastUpdated = null, metadata = {} } = options;
+  const { lastUpdated = null, metadata = {} } = options;
   const requirement = MINIMUM_DATA_REQUIREMENTS[metricType] || {
     minimumDays: 7,
     description: "Minimum data required",
   };
-  const dataState = evaluateDataState(currentDataPoints, metricType, isDemo);
+  const dataState = evaluateDataState(currentDataPoints, metricType);
 
   const warnings = [];
 
@@ -132,9 +127,6 @@ function createDataResponse(
       );
       break;
     }
-    case DataState.DEMO_DATA:
-      warnings.push("This is demonstration data, not your actual metrics.");
-      break;
   }
 
   // If data is insufficient, don't return the value

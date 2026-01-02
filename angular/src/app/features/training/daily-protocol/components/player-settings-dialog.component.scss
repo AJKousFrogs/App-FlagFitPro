@@ -1,0 +1,120 @@
+// ============================================================================
+// player-settings-dialog.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 20px);
+  }
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 12px);
+  }
+
+  .form-section h4 {
+    margin: 0;
+    font-size: var(--font-body-md, 16px);
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text-primary, #171717);
+    padding-bottom: var(--space-2, 8px);
+    border-bottom: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  }
+
+  .section-description {
+    margin: 0;
+    font-size: var(--font-body-sm, 14px);
+    color: var(--color-text-secondary, #737373);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1, 4px);
+  }
+
+  .form-field label {
+    font-size: var(--font-body-sm, 14px);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-secondary, #737373);
+  }
+
+  .field-hint {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-muted, #a3a3a3);
+  }
+
+  .recovery-note {
+    color: var(--ds-primary-green, #089949);
+  }
+
+  /* Practice Slots */
+  .practice-slot {
+    background: var(--primitive-neutral-50, #fafafa);
+    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+    border-radius: var(--radius-md, 6px);
+    padding: var(--space-3, 12px);
+  }
+
+  .slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2, 8px);
+  }
+
+  .day-name {
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text-primary, #171717);
+  }
+
+  .slot-times {
+    display: flex;
+    gap: var(--space-3, 12px);
+    flex-wrap: wrap;
+  }
+
+  .time-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1, 4px);
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .time-field label {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-muted, #a3a3a3);
+  }
+
+  .time-field input {
+    width: 100%;
+  }
+
+  .add-practice {
+    display: flex;
+    gap: var(--space-2, 8px);
+    align-items: center;
+  }
+
+  .add-practice p-dropdown {
+    flex: 1;
+  }
+
+  /* Checkbox Group */
+  .checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2, 8px);
+  }
+
+  .checkbox-group label {
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-primary, #171717);
+  }
+}
+

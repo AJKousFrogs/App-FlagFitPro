@@ -144,7 +144,7 @@ interface Workout {
             <app-empty-state
               icon="pi-bolt"
               title="No Workouts Yet"
-              message="Start logging your strength and conditioning sessions to track your Olympic preparation progress."
+              message="Start logging your strength and conditioning sessions to track your training progress."
               actionLabel="Log First Workout"
               (actionClicked)="createNewWorkout()"
             ></app-empty-state>
@@ -177,167 +177,7 @@ interface Workout {
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .workout-page {
-        padding: var(--space-6);
-      }
-
-      .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-6);
-        padding: var(--space-5);
-        background: var(--surface-primary);
-        border-radius: var(--p-border-radius);
-      }
-
-      .page-title {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        font-size: var(--font-heading-lg);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--space-2);
-        color: var(--text-primary);
-      }
-
-      .page-subtitle {
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-        margin: 0;
-      }
-
-      .active-workout-card {
-        margin-bottom: var(--space-6);
-      }
-
-      .workout-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .workout-header h3 {
-        margin: 0;
-        font-size: var(--font-heading-sm);
-        font-weight: var(--font-weight-semibold);
-        color: var(--text-primary);
-      }
-
-      .exercises-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-        margin-bottom: var(--space-4);
-      }
-
-      .exercise-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .exercise-info h4 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .exercise-details {
-        display: flex;
-        gap: var(--space-2);
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-      }
-
-      .exercise-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .workout-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: var(--space-3);
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--p-surface-200);
-      }
-
-      .workout-history-card {
-        margin-bottom: var(--space-6);
-      }
-
-      .workouts-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-      }
-
-      .workout-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-        transition: background 0.2s;
-      }
-
-      .workout-item:hover {
-        background: var(--p-surface-100);
-      }
-
-      .workout-info h4 {
-        margin: 0 0 var(--space-1) 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .workout-date,
-      .workout-stats {
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
-        margin: 0;
-      }
-
-      .loading-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-10);
-        color: var(--text-secondary);
-      }
-
-      .loading-state i {
-        font-size: 2rem;
-        margin-bottom: var(--space-3);
-        color: var(--color-brand-primary);
-      }
-
-      @media (max-width: 768px) {
-        .page-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-4);
-        }
-
-        .exercise-item {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-3);
-        }
-      }
-    `,
-  ],
+  styleUrl: './workout.component.scss',
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -507,12 +347,9 @@ export class WorkoutComponent implements OnInit {
   createNewWorkout(): void {
     const newWorkout: Workout = {
       id: Date.now().toString(),
-      name: "New Workout",
+      name: "New Training Session",
       date: new Date().toISOString().split("T")[0],
-      exercises: [
-        { id: "1", name: "Exercise 1", sets: 3, reps: 10, completed: false },
-        { id: "2", name: "Exercise 2", sets: 3, reps: 10, completed: false },
-      ],
+      exercises: [],
       completed: false,
     };
     this.activeWorkout.set(newWorkout);

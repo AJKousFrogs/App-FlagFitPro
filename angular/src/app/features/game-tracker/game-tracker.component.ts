@@ -114,7 +114,7 @@ interface Play {
     PageHeaderComponent,
   ],
   templateUrl: "./game-tracker.component.html",
-  styleUrls: ["./game-tracker.component.css"],
+  styleUrl: "./game-tracker.component.scss",
 })
 export class GameTrackerComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -371,7 +371,7 @@ export class GameTrackerComponent implements OnInit {
                       ? pId
                       : typeof pPlayerId === "string"
                         ? pPlayerId
-                        : `player-${Math.random()}`,
+                        : "unknown-player",
                   name:
                     typeof pName === "string"
                       ? pName
@@ -391,15 +391,8 @@ export class GameTrackerComponent implements OnInit {
   }
 
   private loadDefaultPlayers(): void {
-    // Fallback to default players if API fails
-    this.players.set([
-      { id: "player_1", name: "Player 1", position: "QB" },
-      { id: "player_2", name: "Player 2", position: "WR" },
-      { id: "player_3", name: "Player 3", position: "WR" },
-      { id: "player_4", name: "Player 4", position: "RB" },
-      { id: "player_5", name: "Player 5", position: "DB" },
-      { id: "player_6", name: "Player 6", position: "DB" },
-    ]);
+    // Return empty array if no players found
+    this.players.set([]);
   }
 
   initGameForm(): void {

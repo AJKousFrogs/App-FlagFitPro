@@ -24,46 +24,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
       }
     </div>
   `,
-  styles: [
-    `
-      .loading-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-12);
-        min-height: 300px;
-      }
-
-      .loading-state.compact {
-        padding: var(--space-6);
-        min-height: 200px;
-      }
-
-      .loading-message {
-        margin-top: var(--space-4);
-        font-size: 1rem;
-        color: var(--text-secondary);
-        text-align: center;
-      }
-
-      .loading-state.compact .loading-message {
-        font-size: 0.875rem;
-        margin-top: var(--space-3);
-      }
-
-      @media (max-width: 768px) {
-        .loading-state {
-          padding: var(--space-6);
-          min-height: 200px;
-        }
-
-        .loading-message {
-          font-size: 0.875rem;
-        }
-      }
-    `,
-  ],
+  styleUrl: './loading-state.component.scss',
 })
 export class LoadingStateComponent {
   // Angular 21: Use input() signal instead of @Input()

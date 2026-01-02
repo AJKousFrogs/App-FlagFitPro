@@ -246,7 +246,7 @@ const sampleData = {
     {
       quote_text:
         "Champions aren't made in comfort zones. Today's training is tomorrow's victory.",
-      author: "Coach Marcus Rivera",
+      author: "FlagFit Pro",
       category: "motivation",
       is_active: true,
     },

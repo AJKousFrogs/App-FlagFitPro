@@ -8,7 +8,11 @@
  * @version 1.0.0
  */
 
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
@@ -20,17 +24,17 @@ import { SkeletonModule } from "primeng/skeleton";
   imports: [CommonModule, ProgressSpinnerModule, SkeletonModule],
   template: `
     <div class="loading-state-container" role="status" aria-live="polite">
-      @if (variant === "spinner") {
+      @if (variant() === "spinner") {
         <p-progressSpinner
           [style]="{ width: '50px', height: '50px' }"
           strokeWidth="4"
           aria-label="Loading"
         ></p-progressSpinner>
-        <p class="loading-message">{{ message }}</p>
+        <p class="loading-message">{{ message() }}</p>
       } @else {
         <!-- Skeleton variant for content-aware loading -->
         <div class="skeleton-layout">
-          @if (showHeader) {
+          @if (showHeader()) {
             <div class="skeleton-header">
               <p-skeleton width="200px" height="32px"></p-skeleton>
               <p-skeleton
@@ -40,7 +44,7 @@ import { SkeletonModule } from "primeng/skeleton";
               ></p-skeleton>
             </div>
           }
-          @if (showCards) {
+          @if (showCards()) {
             <div class="skeleton-cards">
               @for (i of [1, 2, 3, 4]; track i) {
                 <div class="skeleton-card">
@@ -49,7 +53,7 @@ import { SkeletonModule } from "primeng/skeleton";
               }
             </div>
           }
-          @if (showContent) {
+          @if (showContent()) {
             <div class="skeleton-content">
               <p-skeleton width="100%" height="200px"></p-skeleton>
             </div>
@@ -58,58 +62,13 @@ import { SkeletonModule } from "primeng/skeleton";
       }
     </div>
   `,
-  styles: [
-    `
-      .loading-state-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-10, 2.5rem);
-        min-height: 300px;
-      }
-
-      .loading-message {
-        margin-top: var(--space-4, 1rem);
-        font-size: var(--font-body-md, 1rem);
-        color: var(--text-secondary);
-      }
-
-      .skeleton-layout {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6, 1.5rem);
-      }
-
-      .skeleton-header {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2, 0.5rem);
-      }
-
-      .skeleton-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-4, 1rem);
-      }
-
-      .skeleton-card {
-        border-radius: var(--p-border-radius, 8px);
-        overflow: hidden;
-      }
-
-      .skeleton-content {
-        border-radius: var(--p-border-radius, 8px);
-        overflow: hidden;
-      }
-    `,
-  ],
+  styleUrl: './page-loading-state.component.scss',
 })
 export class PageLoadingStateComponent {
-  @Input() message = "Loading...";
-  @Input() variant: "spinner" | "skeleton" = "spinner";
-  @Input() showHeader = true;
-  @Input() showCards = true;
-  @Input() showContent = true;
+  // Angular 21: Use input() signals instead of @Input()
+  message = input<string>("Loading...");
+  variant = input<"spinner" | "skeleton">("spinner");
+  showHeader = input<boolean>(true);
+  showCards = input<boolean>(true);
+  showContent = input<boolean>(true);
 }

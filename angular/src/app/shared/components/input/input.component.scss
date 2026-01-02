@@ -1,0 +1,158 @@
+// ============================================================================
+// input.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  label {
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text-primary, var(--color-text-primary));
+    font-size: var(--font-body-sm, 0.875rem);
+    transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+  }
+
+  .required-indicator {
+    color: var(--color-status-error, #ef4444);
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  .form-control {
+    width: 100%;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+    border: 1px solid var(--color-border-primary, var(--color-border-primary));
+    border-radius: var(--radius-lg, var(--radius-md));
+    font-size: var(--font-body-md, 1rem);
+    font-family: inherit;
+    background: var(--surface-primary, white);
+    color: var(--color-text-primary, var(--color-text-primary));
+    transition:
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .form-control::placeholder {
+    color: var(--color-text-muted, var(--color-text-secondary));
+  }
+
+  .form-control:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-text-secondary, var(--color-border-primary));
+  }
+
+  .form-control:focus {
+    outline: 2px solid var(--ds-primary-green, var(--ds-primary-green));
+    outline-offset: 2px;
+    border-color: var(--ds-primary-green, var(--ds-primary-green));
+    box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb, 8, 153, 73), 0.2);
+  }
+
+  .form-control:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .form-control:disabled {
+    background-color: var(--surface-secondary, var(--surface-tertiary));
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .form-control.is-invalid {
+    border-color: var(--color-status-error, var(--color-status-error));
+    animation: input-shake 0.4s ease-in-out;
+  }
+
+  @keyframes input-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-4px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(4px);
+    }
+  }
+
+  .form-control.is-invalid:focus {
+    border-color: var(--color-status-error, var(--color-status-error));
+    box-shadow: 0 0 0 3px
+      rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
+  }
+
+  .form-control.is-valid {
+    border-color: var(
+      --color-status-success,
+      var(--color-status-success)
+    );
+  }
+
+  .form-control.is-valid:focus {
+    border-color: var(
+      --color-status-success,
+      var(--color-status-success)
+    );
+    box-shadow: 0 0 0 3px
+      rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
+  }
+
+  .form-help {
+    font-size: var(--font-body-xs, 0.75rem);
+    color: var(--color-text-secondary, var(--color-text-secondary));
+    line-height: 1.4;
+  }
+
+  .form-error {
+    font-size: var(--font-body-xs, 0.75rem);
+    color: var(--color-status-error, var(--color-status-error));
+    display: flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+    animation: error-fade-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes error-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-control,
+    label,
+    .form-error {
+      transition: none;
+      animation: none;
+    }
+
+    .form-control.is-invalid {
+      animation: none;
+    }
+  }
+}
+

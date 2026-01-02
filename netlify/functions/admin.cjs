@@ -126,11 +126,11 @@ async function getHealthMetrics() {
     },
     {
       name: "Last Backup",
-      value: "2 hours ago",
-      status: "healthy",
-      severity: "success",
+      value: "N/A",
+      status: "pending",
+      severity: "warning",
       icon: "pi pi-save",
-      color: "#10c96b",
+      color: "#f59e0b",
     },
   ];
 }
@@ -680,36 +680,8 @@ async function getSyncStatus() {
     }));
   }
 
-  // Fallback to mock data if table doesn't exist or is empty
-  return [
-    {
-      source: "USDA Foods",
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      result: "pending",
-      severity: "warning",
-      recordsUpdated: 0,
-      _isMock: true,
-      _note: "Sync not yet implemented - create sync_logs table",
-    },
-    {
-      source: "Research Studies",
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      result: "pending",
-      severity: "warning",
-      recordsUpdated: 0,
-      _isMock: true,
-      _note: "Sync not yet implemented - create sync_logs table",
-    },
-    {
-      source: "Recovery Protocols",
-      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-      result: "pending",
-      severity: "warning",
-      recordsUpdated: 0,
-      _isMock: true,
-      _note: "Sync not yet implemented - create sync_logs table",
-    },
-  ];
+  // Fallback if table doesn't exist or is empty
+  return [];
 }
 
 /**

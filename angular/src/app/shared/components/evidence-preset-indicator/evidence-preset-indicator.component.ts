@@ -299,50 +299,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
       </p-dialog>
     </div>
   `,
-  styles: [
-    `
-      .preset-card {
-        min-height: 100px;
-      }
-      .preset-header {
-        margin-bottom: 0.5rem;
-      }
-      .preset-name {
-        font-size: 1.1rem;
-      }
-      .preset-population {
-        line-height: 1.5;
-      }
-      .evidence-details {
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-      .citation-item {
-        padding: 0.5rem;
-        background: var(--surface-secondary);
-        border-radius: 0.25rem;
-      }
-
-      /* Science Info Box - Uses brand primary subtle background */
-      .science-info-box {
-        background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-        border: 1px solid
-          var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.2));
-      }
-      .science-icon {
-        color: var(--color-brand-primary, #089949);
-      }
-
-      /* Coach Override Box - Uses surface secondary with subtle border */
-      .coach-override-box {
-        background: var(--surface-secondary, #f8faf9);
-        border: 1px solid var(--color-border-primary, #e5e7eb);
-      }
-      .coach-icon {
-        color: var(--color-text-secondary, #4a4a4a);
-      }
-    `,
-  ],
+  styleUrl: './evidence-preset-indicator.component.scss',
 })
 export class EvidencePresetIndicatorComponent {
   private evidenceConfigService = inject(EvidenceConfigService);

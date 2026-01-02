@@ -1,0 +1,348 @@
+// ============================================================================
+// la28-roadmap.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .roadmap-panel {
+    .summary-card {
+      background: linear-gradient(135deg, var(--primary-50), var(--surface-card));
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      border: 1px solid var(--primary-200);
+    }
+
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+
+      .header-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        h3 {
+          margin: 0;
+          font-size: var(--font-body-md);
+          font-weight: var(--font-weight-semibold);
+        }
+
+        .days-count {
+          font-size: var(--font-body-xs);
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+
+    .progress-overview {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .progress-ring {
+      position: relative;
+      width: 80px;
+      height: 80px;
+
+      svg {
+        transform: rotate(-90deg);
+        width: 100%;
+        height: 100%;
+      }
+
+      .ring-bg {
+        fill: none;
+        stroke: var(--surface-border);
+        stroke-width: 8;
+      }
+
+      .ring-fill {
+        fill: none;
+        stroke: var(--primary-500);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+      }
+
+      .ring-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .ring-value {
+          font-size: var(--font-heading-sm);
+          font-weight: var(--font-weight-bold);
+          color: var(--primary-700);
+          display: block;
+        }
+
+        .ring-label {
+          font-size: var(--font-body-2xs);
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+
+    .current-phase {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .phase-label {
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
+      }
+
+      .phase-name {
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-body-sm);
+      }
+
+      .phase-focus {
+        font-size: var(--font-body-xs);
+        color: var(--primary-600);
+      }
+    }
+
+    .mini-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: var(--surface-card);
+      border-radius: var(--border-radius);
+      font-size: var(--font-body-sm);
+
+      &.current {
+        border-left: 3px solid var(--primary-500);
+      }
+
+      &.past {
+        opacity: 0.6;
+      }
+
+      .milestone-icon {
+        font-size: var(--font-body-md);
+      }
+
+      .milestone-info {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .milestone-title {
+          font-weight: var(--font-weight-medium);
+        }
+
+        .milestone-date {
+          font-size: var(--font-body-xs);
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+  }
+
+  /* Dialog Styles */
+  .roadmap-full {
+    .stats-header {
+      display: flex;
+      justify-content: space-around;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+      border-radius: var(--border-radius);
+      margin-bottom: 1.5rem;
+
+      .stat-item {
+        text-align: center;
+
+        .stat-value {
+          display: block;
+          font-size: var(--font-heading-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--primary-700);
+        }
+
+        .stat-label {
+          font-size: var(--font-body-sm);
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+
+    .cycles-section {
+      margin-bottom: 2rem;
+
+      h4 {
+        margin: 0 0 1rem 0;
+        font-size: var(--font-body-lg);
+      }
+    }
+
+    .cycles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .cycle-card {
+      background: var(--surface-ground);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      border: 2px solid var(--surface-border);
+
+      &.active {
+        border-color: var(--primary-500);
+        background: var(--primary-50);
+      }
+
+      &.completed {
+        border-color: var(--green-400);
+        background: var(--green-50);
+      }
+
+      .cycle-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .cycle-year {
+          font-size: var(--font-body-xs);
+          color: var(--color-text-secondary);
+          font-weight: var(--font-weight-semibold);
+        }
+      }
+
+      h5 {
+        margin: 0 0 0.25rem 0;
+        font-size: var(--font-body-md);
+      }
+
+      .cycle-focus {
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+        margin: 0 0 0.5rem 0;
+      }
+
+      .target-event {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: var(--font-body-sm);
+        color: var(--primary-600);
+        margin-bottom: 0.5rem;
+      }
+
+      .cycle-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        .progress-text {
+          font-size: var(--font-body-xs);
+          color: var(--color-text-secondary);
+        }
+      }
+
+      .cycle-dates {
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+    }
+
+    .timeline-section {
+      margin-bottom: 2rem;
+
+      h4 {
+        margin: 0 0 1rem 0;
+        font-size: var(--font-body-lg);
+      }
+    }
+
+    .milestone-icon-large {
+      font-size: var(--font-heading-lg);
+    }
+
+    .olympic-countdown {
+      background: linear-gradient(135deg, #0057b7, #ffd700);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      text-align: center;
+      color: white;
+
+      .countdown-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .olympic-rings {
+        font-size: var(--font-display-md);
+      }
+
+      .countdown-text {
+        h3 {
+          margin: 0;
+          font-size: var(--font-heading-md);
+        }
+
+        p {
+          margin: 0.25rem 0 1rem;
+          opacity: 0.9;
+        }
+      }
+
+      .countdown-numbers {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+
+        .countdown-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .number {
+            font-size: var(--font-heading-xl);
+            font-weight: var(--font-weight-bold);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          }
+
+          .label {
+            font-size: var(--font-body-sm);
+            opacity: 0.9;
+          }
+        }
+      }
+    }
+  }
+
+  :host ::ng-deep {
+    .roadmap-timeline .p-timeline-event-content {
+      line-height: 1.4;
+    }
+
+    .roadmap-timeline .p-card {
+      box-shadow: none;
+      border: 1px solid var(--surface-border);
+    }
+  }
+}
+

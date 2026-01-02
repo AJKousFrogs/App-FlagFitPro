@@ -1,0 +1,200 @@
+/**
+ * Card Primitives
+ * ===============
+ * 
+ * Reusable card patterns for the design system.
+ * See Decision 14 (Border-first) and Decision 33 (Card hierarchy) in DESIGN_SYSTEM_RULES.md.
+ * 
+ * USAGE:
+ *   <div class="card">...</div>
+ *   <div class="card card--compact">...</div>
+ *   <button class="card card--interactive">...</button>
+ * 
+ * VARIANTS:
+ *   .card              - Default card (border-first, shadow-1)
+ *   .card--compact     - Reduced padding
+ *   .card--outlined    - Border only, no shadow
+ *   .card--elevated    - Higher shadow (shadow-2)
+ *   .card--interactive - Clickable card with hover/active/focus states
+ */
+
+@layer primitives {
+  // ============================================
+  // BASE CARD (Decision 14: Border-first)
+  // ============================================
+
+  .card {
+    background: var(--color-surface-primary);
+    border: var(--border-1) solid var(--color-border-default);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-5);
+  }
+
+  // ============================================
+  // SIZE VARIANTS
+  // ============================================
+
+  .card--compact {
+    padding: var(--space-4);
+  }
+
+  .card--spacious {
+    padding: var(--space-6);
+  }
+
+  // ============================================
+  // ELEVATION VARIANTS
+  // ============================================
+
+  .card--outlined {
+    box-shadow: var(--shadow-0);
+  }
+
+  .card--elevated {
+    box-shadow: var(--shadow-2);
+  }
+
+  .card--floating {
+    box-shadow: var(--shadow-3);
+  }
+
+  // ============================================
+  // INTERACTIVE CARD (Decision 45/52)
+  // ============================================
+  // For clickable cards (buttons, links, navigational)
+
+  .card--interactive {
+    cursor: pointer;
+    transition: 
+      box-shadow var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-standard);
+  }
+
+  // Hover only on hover-capable devices (Decision 52)
+  @media (hover: hover) and (pointer: fine) {
+    .card--interactive:hover {
+      box-shadow: var(--shadow-2);
+    }
+  }
+
+  // Active state (Decision 18)
+  .card--interactive:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-0);
+  }
+
+  // Focus state (Decision 12/18/50)
+  .card--interactive:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  // ============================================
+  // CARD SECTIONS (Decision 33)
+  // ============================================
+
+  .card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: var(--border-1) solid var(--color-border-muted);
+  }
+
+  .card__title {
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .card__subtitle {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .card__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    
+    // Max 2 actions in header (Decision 33)
+    // Additional actions go in overflow menu
+  }
+
+  .card__body {
+    // Content area - flexible
+  }
+
+  .card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    margin-top: var(--space-4);
+    border-top: var(--border-1) solid var(--color-border-muted);
+  }
+
+  // ============================================
+  // METRIC CARD VARIANT (Decision 33)
+  // ============================================
+  // For dashboard metrics/KPIs
+
+  .card--metric {
+    text-align: center;
+    padding: var(--space-4);
+  }
+
+  .card__value {
+    font-size: var(--font-heading-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1.2;
+  }
+
+  .card__label {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .card__delta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-medium);
+    margin-top: var(--space-2);
+
+    &--positive {
+      color: var(--color-status-success);
+    }
+
+    &--negative {
+      color: var(--color-status-error);
+    }
+
+    &--neutral {
+      color: var(--color-text-muted);
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION (Decision 51)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .card--interactive {
+      transition: none;
+    }
+
+    .card--interactive:active {
+      transform: none;
+    }
+  }
+}

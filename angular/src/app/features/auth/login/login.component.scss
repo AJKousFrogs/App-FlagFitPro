@@ -1,10 +1,13 @@
 /**
  * Login Component Styles
  * Migrated from inline styles to SCSS using design system
+ * Design System Compliant
  */
 
 @use "styles/variables" as *;
 @use "styles/mixins" as *;
+
+@layer features {
 
 // ============================================================================
 // PAGE LAYOUT
@@ -71,27 +74,7 @@
   }
 }
 
-// PrimeNG card overrides - must be at root level with ::ng-deep
-::ng-deep .login-card {
-  .p-card {
-    background: transparent;
-    box-shadow: none;
-    border: none;
-  }
-
-  .p-card-header {
-    padding: var(--space-10, 2.5rem) 2.5rem 0.75rem !important;
-    text-align: center !important;
-  }
-
-  .p-card-body {
-    padding: var(--space-6, 1.5rem) 2.5rem 2.5rem !important;
-  }
-
-  .p-card-content {
-    padding: 0 !important;
-  }
-}
+// PrimeNG card overrides - moved to @layer overrides
 
 // ============================================================================
 // LOGO & HEADER
@@ -105,7 +88,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ds-primary-green-subtle);
-  border-radius: 1rem;
+  border-radius: var(--radius-xl);
   color: var(--ds-primary-green);
   font-size: var(--font-heading-lg, 2rem);
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -130,8 +113,8 @@
 }
 
 .login-title {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--font-heading-md);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
   text-align: center;
@@ -181,7 +164,7 @@
   cursor: pointer;
   color: var(--color-text-muted);
   border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,38 +184,7 @@
   }
 }
 
-// Input field styling
-::ng-deep {
-  .p-inputtext {
-    width: 100%;
-    padding: var(--space-3, 0.75rem) 1rem;
-    font-size: var(--font-body-md, 1rem);
-    border: 1px solid var(--color-border-primary);
-    border-radius: 0.75rem;
-    background: var(--surface-primary);
-    color: var(--color-text-primary);
-    transition: all 0.15s ease;
-
-    &:focus {
-      outline: none;
-      border-color: var(--ds-primary-green);
-      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
-    }
-
-    &.ng-invalid.ng-touched,
-    &.ng-invalid.ng-dirty {
-      border-color: var(--color-status-error);
-
-      &:focus {
-        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15);
-      }
-    }
-
-    &::placeholder {
-      color: var(--color-text-muted);
-    }
-  }
-}
+// Input field styling - moved to @layer overrides
 
 // Error messages
 .p-error {
@@ -331,7 +283,7 @@
     border: 2px solid var(--color-border-primary);
     border-radius: var(--radius-sm);
     background: var(--surface-primary);
-    transition: all var(--transition-fast);
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
     position: relative;
     display: flex;
     align-items: center;
@@ -363,38 +315,7 @@
 // SUBMIT BUTTON
 // ============================================================================
 
-::ng-deep .login-submit-btn.p-button {
-  width: 100%;
-  justify-content: center;
-  padding: var(--space-3, 0.75rem) 1.5rem;
-  font-size: var(--font-body-md, 1rem);
-  font-weight: 600;
-  border-radius: 0.75rem;
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  transition: all 0.15s ease;
-
-  &:not(:disabled):hover {
-    background: var(--ds-primary-green-hover);
-    border-color: var(--ds-primary-green-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-  }
-}
+// Submit button styling - moved to @layer overrides
 
 // ============================================================================
 // DIVIDER
@@ -429,7 +350,7 @@
   text-decoration: none;
   padding: var(--space-3);
   border-radius: var(--radius-lg);
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
 
   &:hover {
     background: var(--ds-primary-green-subtle);
@@ -478,11 +399,11 @@
   .login-logo {
     width: 60px;
     height: 60px;
-    font-size: 1.5rem;
+    font-size: var(--font-heading-md);
   }
 
   .login-title {
-    font-size: 1.5rem;
+    font-size: var(--font-heading-md);
   }
 
   .login-form-options {
@@ -491,17 +412,7 @@
   }
 }
 
-@media (max-width: 480px) {
-  ::ng-deep .login-card {
-    .p-card-header {
-      padding: var(--space-6, 1.5rem) 1.25rem 0.5rem !important;
-    }
-
-    .p-card-body {
-      padding: var(--space-5, 1.25rem) !important;
-    }
-  }
-}
+// Mobile PrimeNG overrides - moved to @layer overrides
 
 // ============================================================================
 // DARK MODE
@@ -538,8 +449,129 @@
   .p-error {
     animation: none;
   }
+}
+} // End @layer features
 
-  * {
-    transition-duration: 0.01ms !important;
+// ============================================================================
+// @layer overrides - PrimeNG Component Overrides
+// All ::ng-deep and !important declarations must be documented here
+// ============================================================================
+
+@layer overrides {
+  /*
+   * EXCEPTION: PrimeNG Card Layout Overrides
+   * Reason: Custom padding and text alignment for login card
+   * Scope: login component only
+   */
+  :host ::ng-deep .login-card {
+    .p-card {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    .p-card-header {
+      padding: var(--space-10, 2.5rem) 2.5rem 0.75rem !important;
+      text-align: center !important;
+    }
+
+    .p-card-body {
+      padding: var(--space-6, 1.5rem) 2.5rem 2.5rem !important;
+    }
+
+    .p-card-content {
+      padding: 0 !important;
+    }
+  }
+
+  /*
+   * EXCEPTION: PrimeNG Input Field Styling
+   * Reason: Custom input styling for login form
+   */
+  :host ::ng-deep .p-inputtext {
+    width: 100%;
+    padding: var(--space-3, 0.75rem) 1rem;
+    font-size: var(--font-body-md, 1rem);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--surface-primary);
+    color: var(--color-text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+
+    &:focus {
+      outline: none;
+      border-color: var(--ds-primary-green);
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+    }
+
+    &.ng-invalid.ng-touched,
+    &.ng-invalid.ng-dirty {
+      border-color: var(--color-status-error);
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15);
+      }
+    }
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+
+  /*
+   * EXCEPTION: PrimeNG Submit Button Styling
+   * Reason: Full-width branded button for login
+   */
+  :host ::ng-deep .login-submit-btn.p-button {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-3, 0.75rem) 1.5rem;
+    font-size: var(--font-body-md, 1rem);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-lg);
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+
+    &:not(:disabled):hover {
+      background: var(--ds-primary-green-hover);
+      border-color: var(--ds-primary-green-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
+    }
+
+    &:not(:disabled):active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+    }
+  }
+
+  // Mobile responsive PrimeNG overrides
+  @media (max-width: 480px) {
+    :host ::ng-deep .login-card {
+      .p-card-header {
+        padding: var(--space-6, 1.5rem) 1.25rem 0.5rem !important;
+      }
+
+      .p-card-body {
+        padding: var(--space-5, 1.25rem) !important;
+      }
+    }
+  }
+
+  // Reduced motion - transition override
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition-duration: 0.01ms !important;
+    }
   }
 }

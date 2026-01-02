@@ -67,22 +67,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .qb-training-schedule-page {
-        padding: var(--space-6);
-      }
-
-      .schedule-card,
-      .calendar-card {
-        margin-top: var(--space-4);
-      }
-
-      .program-info {
-        padding: var(--space-4);
-      }
-    `,
-  ],
+  styleUrl: './qb-training-schedule.component.scss',
 })
 export class QbTrainingScheduleComponent implements OnInit {
   selectedDate = signal<Date>(new Date());

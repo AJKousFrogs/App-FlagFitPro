@@ -73,33 +73,3 @@ export const unsavedChangesGuard: CanDeactivateFn<unknown> = async (
     defaultFocus: "reject",
   });
 };
-
-/**
- * Helper mixin for components that need unsaved changes tracking
- *
- * Usage:
- * ```typescript
- * export class MyComponent implements CanComponentDeactivate {
- *   private formDirty = false;
- *
- *   hasUnsavedChanges(): boolean {
- *     return this.formDirty;
- *   }
- * }
- * ```
- */
-export abstract class UnsavedChangesMixin {
-  protected isDirty = false;
-
-  hasUnsavedChanges(): boolean {
-    return this.isDirty;
-  }
-
-  protected markDirty(): void {
-    this.isDirty = true;
-  }
-
-  protected markClean(): void {
-    this.isDirty = false;
-  }
-}

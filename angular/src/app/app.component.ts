@@ -21,36 +21,6 @@ import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loa
     <app-cookie-consent-banner />
     <app-loading-overlay />
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-
-      main:focus {
-        outline: 2px solid var(--ds-primary-green, #089949);
-        outline-offset: -2px;
-      }
-
-      main:focus:not(:focus-visible) {
-        outline: none;
-      }
-
-      /* Screen reader only class (global) */
-      :host ::ng-deep .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-    `,
-  ],
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {}

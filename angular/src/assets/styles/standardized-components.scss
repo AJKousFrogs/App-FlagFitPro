@@ -867,17 +867,17 @@ select {
 .p-tag {
   &.p-tag-success {
     background-color: var(--color-status-success);
-    color: #ffffff; /* White text on success green */
+    color: var(--color-text-on-primary); /* White text on success green */
   }
 
   &.p-tag-warning {
     background-color: var(--color-status-warning);
-    color: #78350f; /* Dark text on warning yellow for contrast */
+    color: var(--primitive-warning-900); /* Dark text on warning yellow for contrast */
   }
 
   &.p-tag-danger {
     background-color: var(--color-status-error);
-    color: #ffffff; /* White text on danger red */
+    color: var(--color-text-on-primary); /* White text on danger red */
   }
 }
 

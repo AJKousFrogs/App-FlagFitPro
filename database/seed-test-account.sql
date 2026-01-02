@@ -77,7 +77,7 @@ INSERT INTO auth.users (
   'coach.test@flagfitpro.com',
   crypt('TestPassword123!', gen_salt('bf')),
   NOW(), -- pre-verified
-  '{"role": "coach", "name": "Coach Test", "first_name": "Coach", "last_name": "Test"}'::jsonb,
+  '{"role": "coach", "name": "Coach", "first_name": "Coach", "last_name": ""}'::jsonb,
   '{"provider": "email", "providers": ["email"]}'::jsonb,
   NOW(),
   NOW(),

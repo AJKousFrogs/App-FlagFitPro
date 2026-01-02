@@ -539,8 +539,8 @@ export class MlPredictorService {
 
     return {
       probability: output,
-      timing: Math.random() * 0.5 + 0.3,
-      potential: Math.random() * 0.3 + 0.1,
+      timing: 0.5, // Standard baseline timing
+      potential: 0.2, // Standard potential
       recommendations: this.generateTrainingRecommendations(features),
     };
   }

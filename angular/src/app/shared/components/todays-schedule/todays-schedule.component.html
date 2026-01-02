@@ -1,0 +1,147 @@
+<!-- Today's Schedule Widget - True Timeline -->
+<div class="schedule-card">
+  <!-- Header -->
+  <div class="schedule-header">
+    <div class="header-title">
+      <i class="pi pi-calendar"></i>
+      <h3>Today's Schedule</h3>
+    </div>
+    <div class="header-progress">
+      <span class="progress-text">{{ completedCount() }}/{{ totalCount() }}</span>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="schedule-loading">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-item">
+          <p-skeleton width="50px" height="16px"></p-skeleton>
+          <p-skeleton width="100%" height="48px"></p-skeleton>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (!hasSchedule()) {
+    <div class="schedule-empty">
+      <i class="pi pi-calendar-times"></i>
+      <p>No activities scheduled</p>
+    </div>
+  }
+
+  <!-- Timeline View -->
+  @else {
+    <div class="timeline">
+      <!-- Vertical timeline line -->
+      <div class="timeline-track"></div>
+      
+      @for (item of scheduleItems(); track item.id; let i = $index) {
+        <div 
+          class="timeline-item" 
+          [class.completed]="item.status === 'completed'"
+          [class.current]="item.status === 'in-progress'"
+          [class.upcoming]="item.status === 'upcoming'"
+        >
+          <!-- Time column -->
+          <div class="item-time">
+            <span class="time-value">{{ item.time }}</span>
+          </div>
+
+          <!-- Marker (dot on timeline) -->
+          <div class="item-marker">
+            @if (item.status === 'completed') {
+              <div class="marker-dot completed">
+                <i class="pi pi-check"></i>
+              </div>
+            } @else if (item.status === 'in-progress') {
+              <div class="marker-dot current">
+                <div class="pulse-ring"></div>
+              </div>
+            } @else {
+              <div class="marker-dot upcoming"></div>
+            }
+          </div>
+
+          <!-- Content card -->
+          <div class="item-content">
+            <div class="content-row">
+              <span class="item-title">{{ item.title }}</span>
+              <span class="item-type">{{ item.type | titlecase }}</span>
+            </div>
+            
+            @if (item.description) {
+              <p class="item-description">{{ item.description }}</p>
+            }
+            
+            @if (item.duration) {
+              <span class="item-duration">
+                <i class="pi pi-clock"></i>
+                {{ item.duration }} min
+              </span>
+            }
+
+            <!-- Single CTA for current/next item -->
+            @if (item.status === 'in-progress') {
+              <button 
+                class="item-action primary"
+                (click)="markComplete(item)"
+              >
+                <i class="pi pi-check"></i>
+                Mark Complete
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- "NOW" indicator - show after completed items, before current -->
+        @if (item.status === 'completed' && i < scheduleItems().length - 1 && scheduleItems()[i + 1].status !== 'completed') {
+          <div class="now-indicator">
+            <div class="now-line"></div>
+            <span class="now-label">NOW</span>
+            <div class="now-line"></div>
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- Footer: Single CTA -->
+  @if (hasSchedule() && nextItem()) {
+    <div class="schedule-footer">
+      @if (nextItem()?.type === 'training') {
+        <button 
+          class="footer-cta"
+          routerLink="/training/daily"
+        >
+          <i class="pi pi-play"></i>
+          Start {{ nextItem()?.title }}
+        </button>
+      } @else if (nextItem()?.type === 'wellness') {
+        <button 
+          class="footer-cta secondary"
+          routerLink="/wellness"
+        >
+          <i class="pi pi-pencil"></i>
+          Log {{ nextItem()?.title }}
+        </button>
+      } @else {
+        <a class="footer-link" routerLink="/training/schedule">
+          View Full Schedule
+          <i class="pi pi-arrow-right"></i>
+        </a>
+      }
+    </div>
+  } @else if (hasSchedule()) {
+    <div class="schedule-footer">
+      <a class="footer-link" routerLink="/training/schedule">
+        View Full Schedule
+        <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+  }
+</div>

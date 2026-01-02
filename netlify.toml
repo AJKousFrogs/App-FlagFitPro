@@ -3,7 +3,7 @@
   publish = "angular/dist/flagfit-pro/browser"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
   NPM_FLAGS = "--legacy-peer-deps"
   VITE_APP_ENVIRONMENT = "production"
   VITE_APP_NAME = "FlagFit Pro"
@@ -804,8 +804,27 @@
 
 # API Routes for Supplements
 [[redirects]]
+  from = "/api/supplements"
+  to = "/.netlify/functions/supplements"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/supplements/*"
   to = "/.netlify/functions/supplements"
+  status = 200
+  force = true
+
+# API Routes for Hydration (used by HydrationTrackerComponent)
+[[redirects]]
+  from = "/api/hydration"
+  to = "/.netlify/functions/hydration"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/hydration/*"
+  to = "/.netlify/functions/hydration"
   status = 200
   force = true
 
@@ -1087,6 +1106,110 @@
 [[redirects]]
   from = "/api/push"
   to = "/.netlify/functions/push"
+  status = 200
+  force = true
+
+# API Routes for Daily Protocol System
+[[redirects]]
+  from = "/api/daily-protocol"
+  to = "/.netlify/functions/daily-protocol"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/daily-protocol/*"
+  to = "/.netlify/functions/daily-protocol"
+  status = 200
+  force = true
+
+# API Routes for Exercise Progression Calculator
+[[redirects]]
+  from = "/api/exercise-progression"
+  to = "/.netlify/functions/exercise-progression"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/exercise-progression/*"
+  to = "/.netlify/functions/exercise-progression"
+  status = 200
+  force = true
+
+# API Routes for Player Settings
+[[redirects]]
+  from = "/api/player-settings"
+  to = "/.netlify/functions/player-settings"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/player-settings/*"
+  to = "/.netlify/functions/player-settings"
+  status = 200
+  force = true
+
+# API Routes for Tournament Calendar
+[[redirects]]
+  from = "/api/tournament-calendar"
+  to = "/.netlify/functions/tournament-calendar"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/tournament-calendar/*"
+  to = "/.netlify/functions/tournament-calendar"
+  status = 200
+  force = true
+
+# API Routes for QB Throwing Tracker
+[[redirects]]
+  from = "/api/qb-throwing"
+  to = "/.netlify/functions/qb-throwing"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/qb-throwing/*"
+  to = "/.netlify/functions/qb-throwing"
+  status = 200
+  force = true
+
+# API Routes for Achievements
+[[redirects]]
+  from = "/api/achievements"
+  to = "/.netlify/functions/achievements"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/achievements/*"
+  to = "/.netlify/functions/achievements"
+  status = 200
+  force = true
+
+# API Routes for Program Cycles (LA28 Roadmap)
+[[redirects]]
+  from = "/api/program-cycles"
+  to = "/.netlify/functions/program-cycles"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/program-cycles/*"
+  to = "/.netlify/functions/program-cycles"
+  status = 200
+  force = true
+
+# API Routes for Wellness Check-in
+[[redirects]]
+  from = "/api/wellness-checkin"
+  to = "/.netlify/functions/wellness-checkin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wellness-checkin/*"
+  to = "/.netlify/functions/wellness-checkin"
   status = 200
   force = true
 

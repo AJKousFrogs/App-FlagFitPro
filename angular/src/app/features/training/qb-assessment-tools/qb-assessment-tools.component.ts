@@ -68,28 +68,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .qb-assessment-tools-page {
-        padding: var(--space-6);
-      }
-
-      .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: var(--space-4);
-        margin-top: var(--space-6);
-      }
-
-      .tool-card {
-        transition: transform 0.2s;
-      }
-
-      .tool-card:hover {
-        transform: translateY(-4px);
-      }
-    `,
-  ],
+  styleUrl: './qb-assessment-tools.component.scss',
 })
 export class QbAssessmentToolsComponent implements OnInit {
   ngOnInit(): void {

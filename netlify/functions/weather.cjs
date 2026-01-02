@@ -11,10 +11,21 @@ const { createSuccessResponse } = require("./utils/error-handler.cjs");
 async function getWeatherData(latitude, longitude, city) {
   const apiKey = process.env.OPENWEATHER_API_KEY;
 
-  // If no API key, return mock data for development
+  // If no API key, return error
   if (!apiKey) {
-    console.warn("OPENWEATHER_API_KEY not set, returning mock weather data");
-    return getMockWeatherData(city);
+    console.warn("OPENWEATHER_API_KEY not set");
+    return {
+      temp: 0,
+      condition: "N/A",
+      description: "Weather API key not configured",
+      humidity: 0,
+      windSpeed: 0,
+      visibility: null,
+      suitable: false,
+      suitability: "unknown",
+      icon: "❓",
+      location: city || "Unknown",
+    };
   }
 
   try {
@@ -54,8 +65,19 @@ async function getWeatherData(latitude, longitude, city) {
     };
   } catch (error) {
     console.error("Error fetching weather:", error);
-    // Return mock data on error
-    return getMockWeatherData(city);
+    // Return empty data on error
+    return {
+      temp: 0,
+      condition: "Error",
+      description: "Failed to fetch weather data",
+      humidity: 0,
+      windSpeed: 0,
+      visibility: null,
+      suitable: false,
+      suitability: "unknown",
+      icon: "⚠️",
+      location: city || "Unknown",
+    };
   }
 }
 
@@ -131,35 +153,6 @@ function getWeatherIcon(condition) {
     Fog: "🌫️",
   };
   return icons[condition] || "🌤️";
-}
-
-/**
- * Get mock weather data for development
- */
-function getMockWeatherData(city) {
-  const mockConditions = [
-    { condition: "Clear", temp: 72, suitable: true, suitability: "excellent" },
-    { condition: "Clouds", temp: 68, suitable: true, suitability: "good" },
-    { condition: "Rain", temp: 65, suitable: false, suitability: "poor" },
-    { condition: "Clear", temp: 75, suitable: true, suitability: "excellent" },
-  ];
-
-  const random =
-    mockConditions[Math.floor(Math.random() * mockConditions.length)];
-
-  return {
-    temp: random.temp,
-    condition: random.condition,
-    description: `${random.condition.toLowerCase()} skies`,
-    humidity: 60,
-    windSpeed: 8,
-    visibility: "10.0",
-    suitable: random.suitable,
-    suitability: random.suitability,
-    icon: getWeatherIcon(random.condition),
-    location: city || "Your Location",
-    mock: true, // Flag to indicate this is mock data
-  };
 }
 
 /**

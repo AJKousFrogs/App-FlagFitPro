@@ -6,7 +6,7 @@
    Design System Color: var(--ds-primary-green) (Primary Green)
    
    HOVER RULES (STRICTLY ENFORCED):
-   1. Primary buttons: Green → Darker green on hover (var(--ds-primary-green) → #036d35)
+   1. Primary buttons: Green → Darker green on hover (var(--ds-primary-green) → var(--primitive-primary-900))
    2. Cards/Lists: Transparent → Light green tint on hover
    3. Links: Green text → Underline + darker green on hover
    4. Icons: Inherit → Scale + color change on hover
@@ -35,9 +35,9 @@
      ================================ */
 
   /* Background colors on hover */
-  --hover-bg-primary: #036d35; /* Darkened green for solid buttons */
-  --hover-bg-primary-light: #07933f; /* Slightly darkened green */
-  --hover-bg-secondary: #f0f9f4; /* Light green tint for cards/lists */
+  --hover-bg-primary: var(--primitive-primary-900); /* Darkened green for solid buttons */
+  --hover-bg-primary-light: var(--primitive-primary-800); /* Slightly darkened green */
+  --hover-bg-secondary: var(--primitive-primary-50); /* Light green tint for cards/lists */
   --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
   --hover-bg-ultra-light: rgba(
     8,
@@ -51,8 +51,8 @@
   --hover-border-subtle: rgba(8, 153, 73, 0.3); /* Subtle green border */
 
   /* Text colors on hover */
-  --hover-text-primary: #036d35; /* Darker green for links */
-  --hover-text-on-primary: #ffffff; /* White text on green hover */
+  --hover-text-primary: var(--primitive-primary-900); /* Darker green for links */
+  --hover-text-on-primary: var(--color-text-on-primary); /* White text on green hover */
 
   /* Shadow on hover - green-tinted for brand consistency */
   --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);
@@ -98,7 +98,7 @@
 
 /* ================================================================
    PRIMARY BUTTON HOVER
-   Solid green buttons (var(--ds-primary-green) → #036d35)
+   Solid green buttons (var(--ds-primary-green) → var(--primitive-primary-900))
    ================================================================ */
 
 .hover-primary {
@@ -438,7 +438,7 @@
 .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--surface-tertiary, #e9ecef) !important;
+      background-color: var(--surface-tertiary) !important;
       border-color: var(--hover-border-primary) !important;
       color: var(--ds-primary-green) !important;
       box-shadow: var(--hover-shadow-sm) !important;
@@ -645,7 +645,7 @@
         [data-p-active="true"]
       ) {
       background-color: rgba(255, 255, 255, 0.6) !important;
-      color: var(--color-text-primary, #374151) !important;
+      color: var(--color-text-primary) !important;
 
       i,
       .pi {
@@ -657,7 +657,7 @@
   &.p-tab-active,
   &[aria-selected="true"],
   &[data-p-active="true"] {
-    background-color: #ffffff !important;
+    background-color: var(--color-text-on-primary) !important;
     color: var(--ds-primary-green) !important;
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.1),
@@ -698,7 +698,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--surface-tertiary, #e9ecef) !important;
+      background-color: var(--surface-tertiary) !important;
     }
   }
 }
@@ -744,7 +744,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      color: var(--color-status-error, #ff003c) !important;
+      color: var(--color-status-error) !important;
       transform: scale(1.2);
     }
   }
@@ -839,7 +839,7 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(:focus) {
-      border-color: var(--color-text-secondary, #6b7280) !important;
+      border-color: var(--color-text-secondary) !important;
     }
   }
 

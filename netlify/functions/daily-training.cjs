@@ -79,14 +79,14 @@ const SEASONAL_CONTEXT = {
   },
 };
 
-// Session types based on day of week and phase
+// Session types based on day of week - fallback only
 const SESSION_TYPES = {
-  monday: "Power",
-  tuesday: "Speed",
-  wednesday: "Recovery",
-  thursday: "Agility",
-  friday: "Conditioning",
-  saturday: "Game Day / Scrimmage",
+  monday: "Training",
+  tuesday: "Training",
+  wednesday: "Training",
+  thursday: "Training",
+  friday: "Training",
+  saturday: "Training",
   sunday: "Rest",
 };
 
@@ -134,12 +134,47 @@ async function getUserContext(userId) {
       console.warn("[DailyTraining] Error fetching sessions:", sessionsError);
     }
 
+    // Get upcoming games in next 48 hours
+    const today = new Date();
+    const twoDaysFromNow = new Date();
+    twoDaysFromNow.setDate(today.getDate() + 2);
+
+    const { data: games, error: gamesError } = await supabaseAdmin
+      .from("games")
+      .select("id, game_date, opponent_name")
+      .gte("game_date", today.toISOString().split("T")[0])
+      .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+      .order("game_date", { ascending: true });
+
+    if (gamesError) {
+      console.warn("[DailyTraining] Error fetching games:", gamesError);
+    }
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    // Get today's and tomorrow's scheduled sessions
+    const { data: scheduledSessions, error: scheduledError } = await supabaseAdmin
+      .from("training_sessions")
+      .select("session_type, session_date, status")
+      .eq("user_id", userId)
+      .gte("session_date", today.toISOString().split("T")[0])
+      .lte("session_date", tomorrowStr)
+      .order("session_date", { ascending: true });
+
+    if (scheduledError) {
+      console.warn("[DailyTraining] Error fetching scheduled sessions:", scheduledError);
+    }
+
     // Calculate ACWR
     const acwr = calculateACWR(sessions || []);
 
     return {
       profile: profile || {},
       sessions: sessions || [],
+      games: games || [],
+      scheduledSessions: scheduledSessions || [],
       acwr,
     };
   } catch (error) {
@@ -500,11 +535,20 @@ async function buildDailyTrainingPlan(userId, userContext) {
   const month = today.getMonth() + 1;
 
   const seasonal = SEASONAL_CONTEXT[month];
-  const sessionType = SESSION_TYPES[dayOfWeek];
-  const hour = today.getHours();
+  const todayStr = today.toISOString().split("T")[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+  const gameToday = userContext.games.find((g) => g.game_date === todayStr);
+  const gameTomorrow = userContext.games.find((g) => g.game_date === tomorrowStr);
+  const scheduledToday = userContext.scheduledSessions.find((s) => s.session_date === todayStr);
+
+  let sessionType = scheduledToday ? scheduledToday.session_type : (gameToday ? "Game Day" : (gameTomorrow ? "Rest" : "Rest"));
 
   // Get greeting based on time of day
   let greeting;
+  const hour = today.getHours();
   if (hour < 12) {
     greeting = "Good morning";
   } else if (hour < 17) {
@@ -517,13 +561,14 @@ async function buildDailyTrainingPlan(userId, userContext) {
   const userName =
     userContext.profile?.first_name ||
     userContext.profile?.full_name?.split(" ")[0] ||
-    "Player";
+    "Athlete";
 
-  // Get exercises
-  const plyometrics = await getPlyometricExercises(
+  // Get exercises (only if not a rest day)
+  const isRestDay = sessionType === "Rest";
+  const plyometrics = !isRestDay ? await getPlyometricExercises(
     userContext.profile?.experience_level || "intermediate",
-  );
-  const isometrics = await getIsometricExercises();
+  ) : [];
+  const isometrics = !isRestDay ? await getIsometricExercises() : [];
 
   // Calculate total contacts and duration
   const totalContacts = plyometrics.reduce(
@@ -536,7 +581,7 @@ async function buildDailyTrainingPlan(userId, userContext) {
   );
 
   // Build schedule blocks
-  const schedule = [
+  const schedule = isRestDay ? [] : [
     {
       block: "Warm-Up",
       duration: 20,
@@ -602,7 +647,7 @@ async function buildDailyTrainingPlan(userId, userContext) {
     todaysPractice: {
       sessionType,
       focus: getFocusAreas(sessionType),
-      totalDuration: schedule.reduce((sum, block) => sum + block.duration, 0),
+      totalDuration: schedule.length > 0 ? schedule.reduce((sum, block) => sum + block.duration, 0) : 0,
       schedule,
     },
     motivationalMessage:

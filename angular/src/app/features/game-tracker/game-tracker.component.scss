@@ -1,0 +1,991 @@
+/* ================================================================
+   GAME TRACKER - Premium Professional Design
+   Design System Compliant - January 2, 2026
+   ================================================================ */
+
+@layer features {
+  .game-tracker-page {
+    padding: var(--space-6);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ================================================================
+     HEADER
+     ================================================================ */
+
+  .header-actions {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  /* ================================================================
+     CARDS - Global Card Styling
+     ================================================================ */
+
+  .game-form-card,
+  .play-tracker-card,
+  .plays-list-card,
+  .games-list-card {
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  /* ================================================================
+     VISIBILITY INFO BANNER
+     ================================================================ */
+
+  .visibility-info-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-6);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--ds-primary-green-rgb), 0.08),
+      rgba(var(--ds-primary-green-rgb), 0.04)
+    );
+    border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
+    border-radius: var(--radius-lg);
+    color: var(--ds-primary-green);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .visibility-info-banner .pi {
+    font-size: var(--font-heading-sm);
+    flex-shrink: 0;
+  }
+
+  .visibility-info-banner.personal {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--primitive-warning-500-rgb), 0.08),
+      rgba(var(--primitive-warning-500-rgb), 0.04)
+    );
+    border-color: rgba(var(--primitive-warning-500-rgb), 0.2);
+    color: var(--color-status-warning);
+  }
+
+  /* Game type badges in table */
+  .personal-badge,
+  .team-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .personal-badge {
+    background: rgba(var(--primitive-warning-500-rgb), 0.1);
+    border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.2);
+    color: var(--color-status-warning);
+  }
+
+  .team-badge {
+    background: rgba(var(--ds-primary-green-rgb), 0.1);
+    border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.2);
+    color: var(--ds-primary-green);
+  }
+
+  .personal-badge .pi,
+  .team-badge .pi {
+    font-size: var(--font-body-xs);
+  }
+
+  /* Personal game row subtle highlight */
+  .personal-game-row {
+    background: rgba(var(--primitive-warning-500-rgb), 0.03);
+  }
+
+  /* ================================================================
+     FORM STYLING - Uniform Grid Layout
+     ================================================================ */
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+
+  /* Fixed column row for game setup */
+  .form-row {
+    display: grid;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  .form-row.four-col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .form-row.three-col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row.two-col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-field label {
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  /* ================================================================
+     TEMPERATURE INPUT WITH TOGGLE SWITCH
+     ================================================================ */
+
+  .temperature-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Toggle Switch for Temperature Unit (like Settings) */
+  .unit-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    justify-content: center;
+  }
+
+  .unit-label {
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+    min-width: var(--space-5);
+    text-align: center;
+  }
+
+  .unit-label.active {
+    font-weight: var(--font-weight-semibold);
+    color: var(--ds-primary-green);
+  }
+
+  /* Toggle Track - Green for Celsius, Grey for Fahrenheit */
+  .toggle-track {
+    position: relative;
+    width: var(--space-11);
+    height: var(--space-6);
+    background: var(--ds-primary-green);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color var(--transition-base), box-shadow var(--transition-base);
+    box-shadow: var(--shadow-inset), var(--shadow-1);
+  }
+
+  /* Fahrenheit selected = Grey track */
+  .toggle-track.fahrenheit {
+    background: var(--color-text-muted);
+  }
+
+  .toggle-track:hover {
+    box-shadow: var(--shadow-inset), var(--hover-shadow-sm);
+  }
+
+  .toggle-track:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus), var(--shadow-inset);
+  }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: var(--space-5);
+    height: var(--space-5);
+    background: var(--color-text-on-primary);
+    border-radius: var(--radius-full);
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-1);
+  }
+
+  .toggle-track.fahrenheit .toggle-thumb {
+    transform: translateX(var(--space-5));
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: var(--border-1) solid var(--color-border-secondary);
+    margin-top: var(--space-6);
+  }
+
+  /* ================================================================
+     PLAY TRACKER CARD
+     ================================================================ */
+
+  .game-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+    padding: var(--space-5) var(--space-6);
+    background: linear-gradient(
+      to right,
+      var(--surface-secondary),
+      transparent
+    );
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .game-header-content h3 {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .game-header-content h3::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: var(--space-5);
+    background: var(--ds-primary-green);
+    border-radius: 2px;
+  }
+
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .score-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .score-group label {
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .score-separator {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-heading-sm);
+  }
+
+  /* ================================================================
+     QUICK STATS GRID
+     ================================================================ */
+
+  .quick-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .stat-box {
+    padding: var(--space-5);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: var(--border-1) solid var(--color-border-secondary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .stat-box:hover {
+    border-color: rgba(var(--ds-primary-green-rgb), 0.2);
+    box-shadow: var(--shadow-2);
+  }
+
+  .stat-label {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .stat-value {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-heading-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  .stat-value-success {
+    color: var(--ds-primary-green);
+  }
+
+  .stat-value-danger {
+    color: var(--color-status-error);
+  }
+
+  /* ================================================================
+     PLAY TYPE SECTION
+     ================================================================ */
+
+  .play-type-section {
+    margin: var(--space-6) 0;
+    padding: var(--space-6);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    border: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .play-type-label {
+    display: block;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--space-4);
+  }
+
+  .play-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+
+  .play-type-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .play-type-label-text {
+    margin: 0;
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  /* ================================================================
+     PLAY DETAILS SECTION
+     ================================================================ */
+
+  .play-details-section {
+    margin-top: var(--space-6);
+    padding: var(--space-6);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    border: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .play-details-section h4 {
+    font-family: var(--font-family-sans);
+    margin: 0 0 var(--space-5) 0;
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .play-details-section h4::before {
+    content: "";
+    display: block;
+    width: 3px;
+    height: var(--space-4);
+    background: var(--ds-primary-green);
+    border-radius: 1.5px;
+  }
+
+  /* ================================================================
+     OUTCOME BUTTONS
+     ================================================================ */
+
+  .outcome-section {
+    margin-top: var(--space-6);
+  }
+
+  .outcome-label {
+    display: block;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--space-4);
+  }
+
+  .outcome-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .outcome-btn {
+    padding: var(--space-4) var(--space-4);
+    border: var(--border-2) solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+    color: var(--color-text-primary);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .outcome-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+
+  .outcome-btn.active {
+    border-width: 2px;
+  }
+
+  .outcome-btn.outcome-success {
+    border-color: var(--ds-primary-green);
+  }
+
+  .outcome-btn.outcome-success.active {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  .outcome-btn.outcome-danger {
+    border-color: var(--color-status-error);
+  }
+
+  .outcome-btn.outcome-danger.active {
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
+  }
+
+  .outcome-btn.outcome-warn {
+    border-color: var(--color-status-warning);
+  }
+
+  .outcome-btn.outcome-warn.active {
+    background: var(--color-status-warning);
+    color: var(--color-text-on-primary);
+  }
+
+  .outcome-btn.outcome-info {
+    border-color: var(--color-status-info);
+  }
+
+  .outcome-btn.outcome-info.active {
+    background: var(--color-status-info);
+    color: var(--color-text-on-primary);
+  }
+
+  /* ================================================================
+     DROP/MISS ANALYSIS
+     ================================================================ */
+
+  .drop-analysis-section,
+  .miss-analysis-section {
+    margin-top: var(--space-5);
+    padding: var(--space-5);
+    background: var(--color-error-bg);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-status-error);
+  }
+
+  /* ================================================================
+     FORM SECTION
+     ================================================================ */
+
+  .form-section {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  /* ================================================================
+     RESPONSIVE
+     ================================================================ */
+
+  /* Tablet breakpoint */
+  @media (max-width: 1024px) {
+    .form-row.four-col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Mobile breakpoint */
+  @media (max-width: 768px) {
+    .game-tracker-page {
+      padding: var(--space-4);
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row.four-col,
+    .form-row.three-col,
+    .form-row.two-col {
+      grid-template-columns: 1fr;
+    }
+
+    .play-type-options {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .game-header-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .score-display {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .quick-stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .outcome-buttons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Temperature toggle on mobile */
+    .unit-toggle-switch {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Small mobile */
+  @media (max-width: 480px) {
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .form-actions p-button {
+      width: 100%;
+    }
+  }
+}
+
+/* ================================================================
+   PRIMENG COMPONENT OVERRIDES
+   Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
+   ================================================================ */
+
+@layer overrides {
+  /*
+   * EXCEPTION: Card Headers
+   * Reason: PrimeNG card headers need custom styling
+   * Scope: Game tracker cards only
+   * Owner: @design-system
+   */
+  :host ::ng-deep .games-list-card .p-card-header,
+  :host ::ng-deep .plays-list-card .p-card-header,
+  :host ::ng-deep .game-form-card .p-card-header,
+  :host ::ng-deep .play-tracker-card .p-card-header {
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  :host ::ng-deep .p-card-header h3 {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: var(--space-5) var(--space-6);
+    background: linear-gradient(
+      to right,
+      var(--surface-secondary),
+      transparent
+    );
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  :host ::ng-deep .p-card-header h3::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: var(--space-5);
+    background: var(--ds-primary-green);
+    border-radius: 2px;
+  }
+
+  /*
+   * EXCEPTION: Games List Table
+   * Reason: PrimeNG table needs custom styling
+   * Scope: .games-list-card only
+   * Owner: @design-system
+   */
+  :host ::ng-deep .games-list-card .p-datatable {
+    font-family: var(--font-family-sans);
+  }
+
+  :host ::ng-deep .games-list-card .p-datatable-thead > tr > th {
+    background: var(--surface-secondary);
+    border: none;
+    border-bottom: var(--border-2) solid var(--color-border-secondary);
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-text-secondary);
+  }
+
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr {
+    transition: background-color var(--transition-fast);
+  }
+
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr:hover {
+    background: var(--ds-primary-green-ultra-subtle);
+  }
+
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td {
+    border: none;
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+    padding: var(--space-4) var(--space-5);
+    vertical-align: middle;
+  }
+
+  /* Date Column - Primary text */
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td:first-child {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    font-size: var(--font-body-md);
+  }
+
+  /* Opponent Column - Bold */
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td:nth-child(2) {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-body-md);
+  }
+
+  /* Location Column - Secondary */
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td:nth-child(3) {
+    color: var(--color-text-secondary);
+    font-size: var(--font-body-sm);
+  }
+
+  /* Score Column - Monospace, bold */
+  :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td:nth-child(4) {
+    font-family: var(--font-family-mono);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-body-md);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  /*
+   * EXCEPTION: Win/Loss Tags - Clean Text Style
+   * Reason: Tags need transparent background styling
+   * Scope: .games-list-card only
+   * Owner: @design-system
+   */
+  :host ::ng-deep .games-list-card .p-tag {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  :host ::ng-deep .games-list-card .p-tag-success {
+    color: var(--ds-primary-green);
+  }
+
+  :host ::ng-deep .games-list-card .p-tag-danger {
+    color: var(--color-status-error);
+  }
+
+  :host ::ng-deep .games-list-card .p-tag-info {
+    color: var(--color-text-secondary);
+  }
+
+  /*
+   * EXCEPTION: Action Buttons
+   * Reason: Text buttons need custom sizing
+   * Scope: .games-list-card last column
+   * Owner: @design-system
+   */
+  :host ::ng-deep .games-list-card .p-datatable-tbody td:last-child {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  :host ::ng-deep .games-list-card .p-button.p-button-text {
+    width: var(--space-9);
+    height: var(--space-9);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  :host ::ng-deep .games-list-card .p-button.p-button-text:hover {
+    background: var(--ds-primary-green-ultra-subtle);
+    color: var(--ds-primary-green);
+  }
+
+  /*
+   * EXCEPTION: Paginator
+   * Reason: PrimeNG paginator needs minimal style
+   * Scope: .games-list-card only
+   * Owner: @design-system
+   */
+  :host ::ng-deep .games-list-card .p-paginator {
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-secondary);
+    border: none;
+    border-top: var(--border-1) solid var(--color-border-secondary);
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  :host ::ng-deep .games-list-card .p-paginator-page,
+  :host ::ng-deep .games-list-card .p-paginator-first,
+  :host ::ng-deep .games-list-card .p-paginator-prev,
+  :host ::ng-deep .games-list-card .p-paginator-next,
+  :host ::ng-deep .games-list-card .p-paginator-last {
+    min-width: var(--space-8);
+    height: var(--space-8);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    border: none;
+    background: transparent;
+  }
+
+  :host ::ng-deep .games-list-card .p-paginator-page:hover,
+  :host ::ng-deep .games-list-card .p-paginator-first:hover,
+  :host ::ng-deep .games-list-card .p-paginator-prev:hover,
+  :host ::ng-deep .games-list-card .p-paginator-next:hover,
+  :host ::ng-deep .games-list-card .p-paginator-last:hover {
+    background: var(--surface-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  :host ::ng-deep .games-list-card .p-paginator-page.p-highlight {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  /*
+   * EXCEPTION: Input Controls
+   * Reason: PrimeNG inputs need uniform height and pill shape
+   * Scope: .game-form-card and .play-tracker-card
+   * Owner: @design-system
+   */
+  :host ::ng-deep .game-form-card .p-inputtext,
+  :host ::ng-deep .game-form-card .p-inputnumber .p-inputtext,
+  :host ::ng-deep .play-tracker-card .p-inputtext,
+  :host ::ng-deep .play-tracker-card .p-inputnumber .p-inputtext {
+    width: 100%;
+    height: var(--space-11);
+    border-radius: var(--radius-full);
+    padding: 0 var(--space-4);
+    border: var(--border-1) solid var(--color-border-secondary);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    background: var(--surface-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-sizing: border-box;
+  }
+
+  /* Select component - match input height */
+  :host ::ng-deep .game-form-card .p-select,
+  :host ::ng-deep .play-tracker-card .p-select {
+    width: 100%;
+    height: var(--space-11);
+    border-radius: var(--radius-full);
+    border: var(--border-1) solid var(--color-border-secondary);
+    background: var(--surface-primary);
+  }
+
+  :host ::ng-deep .game-form-card .p-select .p-select-label,
+  :host ::ng-deep .play-tracker-card .p-select .p-select-label {
+    padding: 0 var(--space-4);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    line-height: calc(var(--space-11) - 2px);
+  }
+
+  :host ::ng-deep .game-form-card .p-select .p-select-dropdown,
+  :host ::ng-deep .play-tracker-card .p-select .p-select-dropdown {
+    width: var(--space-11);
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    color: var(--color-text-secondary);
+  }
+
+  /* DatePicker - match input height */
+  :host ::ng-deep .game-form-card .p-datepicker,
+  :host ::ng-deep .play-tracker-card .p-datepicker {
+    width: 100%;
+  }
+
+  :host ::ng-deep .game-form-card .p-datepicker .p-inputtext,
+  :host ::ng-deep .play-tracker-card .p-datepicker .p-inputtext {
+    height: var(--space-11);
+    border-radius: var(--radius-full) 0 0 var(--radius-full);
+    border-right: none;
+  }
+
+  :host ::ng-deep .game-form-card .p-datepicker .p-datepicker-trigger,
+  :host ::ng-deep .play-tracker-card .p-datepicker .p-datepicker-trigger {
+    width: var(--space-11);
+    height: var(--space-11);
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
+    border-left: none;
+    color: var(--color-text-secondary);
+  }
+
+  :host ::ng-deep .game-form-card .p-datepicker .p-datepicker-trigger:hover,
+  :host ::ng-deep .play-tracker-card .p-datepicker .p-datepicker-trigger:hover {
+    background: var(--ds-primary-green-ultra-subtle);
+    color: var(--ds-primary-green);
+  }
+
+  /* Input Number - match height */
+  :host ::ng-deep .game-form-card .p-inputnumber,
+  :host ::ng-deep .play-tracker-card .p-inputnumber {
+    width: 100%;
+    display: flex;
+  }
+
+  :host ::ng-deep .game-form-card .p-inputnumber .p-inputnumber-button-group,
+  :host ::ng-deep .play-tracker-card .p-inputnumber .p-inputnumber-button-group {
+    display: none;
+  }
+
+  /* Focus states */
+  :host ::ng-deep .game-form-card .p-inputtext:focus,
+  :host ::ng-deep .game-form-card .p-inputnumber .p-inputtext:focus,
+  :host ::ng-deep .play-tracker-card .p-inputtext:focus,
+  :host ::ng-deep .play-tracker-card .p-inputnumber .p-inputtext:focus {
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-focus);
+    outline: none;
+  }
+
+  :host ::ng-deep .game-form-card .p-select:focus,
+  :host ::ng-deep .game-form-card .p-select.p-focus,
+  :host ::ng-deep .play-tracker-card .p-select:focus,
+  :host ::ng-deep .play-tracker-card .p-select.p-focus {
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-focus);
+  }
+
+  /* Placeholder styling */
+  :host ::ng-deep .game-form-card .p-inputtext::placeholder,
+  :host ::ng-deep .play-tracker-card .p-inputtext::placeholder {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-normal);
+  }
+
+  /*
+   * EXCEPTION: Plays List Table
+   * Reason: Table styling for plays list
+   * Scope: .plays-list-card only
+   * Owner: @design-system
+   */
+  :host ::ng-deep .plays-list-card .p-datatable-thead > tr > th {
+    background: var(--surface-secondary);
+    border: none;
+    border-bottom: var(--border-2) solid var(--color-border-secondary);
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-text-secondary);
+  }
+
+  :host ::ng-deep .plays-list-card .p-datatable-tbody > tr > td {
+    border: none;
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-body-md);
+    color: var(--color-text-primary);
+  }
+
+  :host ::ng-deep .plays-list-card .p-tag {
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  /*
+   * EXCEPTION: Mobile responsive overrides
+   * Reason: Tables need adjusted padding on mobile
+   * Scope: mobile breakpoint
+   * Owner: @design-system
+   */
+  @media (max-width: 768px) {
+    :host ::ng-deep .games-list-card .p-datatable-thead > tr > th,
+    :host ::ng-deep .games-list-card .p-datatable-tbody > tr > td {
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--font-body-sm);
+    }
+
+    :host ::ng-deep .games-list-card .p-datatable-tbody td:last-child {
+      gap: var(--space-1);
+    }
+  }
+
+  @media (max-width: 480px) {
+    :host ::ng-deep .form-actions .p-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

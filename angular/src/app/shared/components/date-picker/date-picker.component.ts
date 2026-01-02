@@ -69,37 +69,7 @@ import { DatePicker } from "primeng/datepicker";
       }
     </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      .date-picker-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      :host ::ng-deep .p-datepicker {
-        width: 100%;
-      }
-
-      :host ::ng-deep .p-datepicker-input {
-        width: 100%;
-      }
-
-      .form-help {
-        font-size: 0.75rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .form-error {
-        font-size: 0.75rem;
-        color: var(--p-error-color);
-      }
-    `,
-  ],
+  styleUrl: './date-picker.component.scss',
 })
 export class DatePickerComponent implements ControlValueAccessor {
   // Configuration

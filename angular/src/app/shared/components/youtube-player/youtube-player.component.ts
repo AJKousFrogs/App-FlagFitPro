@@ -136,63 +136,7 @@ interface WindowWithYouTubeAPI {
       }
     </div>
   `,
-  styles: [
-    `
-      .youtube-player-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .loading-state {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 2rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .youtube-container {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        aspect-ratio: 16 / 9;
-        background: var(--p-surface-ground);
-        border-radius: var(--p-border-radius);
-        overflow: hidden;
-      }
-
-      .player-controls {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-
-      .player-info {
-        display: flex;
-        gap: 1.5rem;
-        padding: 0.75rem;
-        background: var(--p-surface-ground);
-        border-radius: var(--p-border-radius);
-        font-size: 0.875rem;
-      }
-
-      .info-item {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .info-label {
-        font-weight: 600;
-        color: var(--p-text-color-secondary);
-      }
-
-      .info-value {
-        color: var(--p-text-color);
-      }
-    `,
-  ],
+  styleUrl: './youtube-player.component.scss',
 })
 export class YoutubePlayerComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);

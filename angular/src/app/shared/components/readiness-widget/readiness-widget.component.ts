@@ -250,49 +250,7 @@ import {
       }
     </div>
   `,
-  styles: [
-    `
-      .score-value {
-        @apply text-5xl font-bold mb-2;
-      }
-
-      .score-label {
-        @apply text-sm;
-      }
-
-      .suggestion-text {
-        @apply text-base;
-      }
-
-      .metric-item {
-        @apply text-center;
-      }
-
-      .metric-label {
-        @apply mb-1;
-      }
-
-      .metric-value {
-        @apply text-lg;
-      }
-
-      .component-item {
-        @apply flex justify-between items-center p-2 bg-white rounded;
-      }
-
-      .text-green-600 {
-        color: var(--color-status-success);
-      }
-
-      .text-yellow-600 {
-        color: var(--color-status-warning);
-      }
-
-      .text-red-600 {
-        color: var(--color-status-error);
-      }
-    `,
-  ],
+  styleUrl: './readiness-widget.component.scss',
 })
 export class ReadinessWidgetComponent {
   // Angular 21: Use input.required() for required inputs instead of @Input() with !

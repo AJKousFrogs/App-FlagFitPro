@@ -27,28 +27,6 @@ exports.handler = async (event, context) => {
       // Normalize email
       const normalizedEmail = email.trim().toLowerCase();
 
-      // Check for demo token in development
-      if (
-        process.env.NODE_ENV === "development" &&
-        normalizedEmail === "demo@flagfit.pro" &&
-        password === "demo-token"
-      ) {
-        return createSuccessResponse(
-          {
-            user: {
-              id: "demo-user-id",
-              email: "demo@flagfit.pro",
-              role: "player",
-              name: "Demo User",
-            },
-            session: {
-              access_token: "demo-token",
-              expires_in: 3600,
-            },
-          },
-          requestId,
-        );
-      }
 
       // Initialize Supabase client
       const supabase = getSupabaseClient();

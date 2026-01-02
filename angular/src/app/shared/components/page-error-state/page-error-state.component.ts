@@ -43,47 +43,7 @@ import { ButtonModule } from "primeng/button";
       }
     </div>
   `,
-  styles: [
-    `
-      .error-state-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-10, 2.5rem);
-        text-align: center;
-        min-height: 300px;
-      }
-
-      .error-icon {
-        font-size: 3rem;
-        color: var(--color-status-error, #ef4444);
-        margin-bottom: var(--space-4, 1rem);
-        opacity: 0.8;
-      }
-
-      .error-title {
-        font-size: var(--font-heading-md, 1.25rem);
-        font-weight: var(--font-weight-semibold, 600);
-        color: var(--text-primary);
-        margin: 0 0 var(--space-2, 0.5rem) 0;
-      }
-
-      .error-message {
-        font-size: var(--font-body-md, 1rem);
-        color: var(--text-secondary);
-        margin: 0 0 var(--space-6, 1.5rem) 0;
-        max-width: 400px;
-        line-height: 1.5;
-      }
-
-      .error-help {
-        font-size: var(--font-body-sm, 0.875rem);
-        color: var(--text-muted);
-        margin: var(--space-4, 1rem) 0 0 0;
-      }
-    `,
-  ],
+  styleUrl: './page-error-state.component.scss',
 })
 export class PageErrorStateComponent {
   @Input() title = "Unable to load data";

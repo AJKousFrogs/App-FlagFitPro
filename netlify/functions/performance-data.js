@@ -41,15 +41,15 @@ const dataMappers = {
 
   wellness: (w) => ({
     id: w.id,
-    userId: w.user_id,
+    userId: w.athlete_id || w.user_id,
     date: w.date,
-    sleep: w.sleep,
-    energy: w.energy,
-    stress: w.stress,
-    soreness: w.soreness,
-    motivation: w.motivation,
+    sleep: w.sleep_quality,
+    energy: w.energy_level,
+    stress: w.stress_level,
+    soreness: w.muscle_soreness,
+    motivation: w.motivation_level,
     mood: w.mood,
-    hydration: w.hydration,
+    hydration: w.hydration_level,
     notes: w.notes,
     timestamp: w.created_at,
   }),
@@ -57,12 +57,11 @@ const dataMappers = {
   supplement: (s) => ({
     id: s.id,
     userId: s.user_id,
-    name: s.name,
+    name: s.supplement_name,
     dosage: s.dosage,
-    frequency: s.frequency,
-    startDate: s.start_date,
-    endDate: s.end_date,
-    purpose: s.purpose,
+    date: s.date,
+    taken: s.taken,
+    timeOfDay: s.time_of_day,
     notes: s.notes,
   }),
 
@@ -419,9 +418,9 @@ async function handleWellness(method, userId, body, query) {
 
       try {
         const { data: wellness, error } = await supabaseAdmin
-          .from("wellness_data")
+          .from("wellness_entries")
           .select("*")
-          .eq("user_id", userId)
+          .eq("athlete_id", userId)
           .gte("date", startDate.toISOString().split("T")[0])
           .order("date", { ascending: false });
 
@@ -457,17 +456,18 @@ async function handleWellness(method, userId, body, query) {
 
       try {
         const { data, error } = await supabaseAdmin
-          .from("wellness_data")
+          .from("wellness_entries")
           .insert({
-            user_id: userId,
+            athlete_id: userId,
+            user_id: userId, // Keep for compatibility
             date: wellnessData.date || new Date().toISOString().split("T")[0],
-            sleep: wellnessData.sleep,
-            energy: wellnessData.energy,
-            stress: wellnessData.stress,
-            soreness: wellnessData.soreness,
-            motivation: wellnessData.motivation,
+            sleep_quality: wellnessData.sleep,
+            energy_level: wellnessData.energy,
+            stress_level: wellnessData.stress,
+            muscle_soreness: wellnessData.soreness,
+            motivation_level: wellnessData.motivation,
             mood: wellnessData.mood,
-            hydration: wellnessData.hydration,
+            hydration_level: wellnessData.hydration,
             notes: wellnessData.notes,
           })
           .select()
@@ -520,7 +520,7 @@ async function handleSupplements(method, userId, body, query) {
 
       try {
         const { data: supplements, error } = await supabaseAdmin
-          .from("supplements_data")
+          .from("supplement_logs")
           .select("*")
           .eq("user_id", userId)
           .gte("date", startDate.toISOString().split("T")[0])
@@ -533,7 +533,7 @@ async function handleSupplements(method, userId, body, query) {
         const supplementsData = (supplements || []).map((s) => ({
           id: s.id,
           userId: s.user_id,
-          name: s.name,
+          name: s.supplement_name,
           dosage: s.dosage,
           taken: s.taken,
           date: s.date,
@@ -566,10 +566,10 @@ async function handleSupplements(method, userId, body, query) {
 
       try {
         const { data, error } = await supabaseAdmin
-          .from("supplements_data")
+          .from("supplement_logs")
           .insert({
             user_id: userId,
-            name: supplementData.name,
+            supplement_name: supplementData.name,
             dosage: supplementData.dosage,
             taken:
               supplementData.taken !== undefined ? supplementData.taken : true,
@@ -892,9 +892,9 @@ async function handleTrends(method, userId, query) {
           .eq("user_id", userId)
           .gte("test_date", startDate.toISOString().split("T")[0]),
         supabaseAdmin
-          .from("wellness_data")
+          .from("wellness_entries")
           .select("*")
-          .eq("user_id", userId)
+          .eq("athlete_id", userId)
           .gte("date", startDate.toISOString().split("T")[0]),
       ]);
 
@@ -915,12 +915,12 @@ async function handleTrends(method, userId, query) {
     }));
 
     const wellness = (wellnessResult.data || []).map((w) => ({
-      userId: w.user_id,
-      sleep: w.sleep,
-      energy: w.energy,
-      stress: w.stress,
-      soreness: w.soreness,
-      motivation: w.motivation,
+      userId: w.athlete_id || w.user_id,
+      sleep: w.sleep_quality,
+      energy: w.energy_level,
+      stress: w.stress_level,
+      soreness: w.muscle_soreness,
+      motivation: w.motivation_level,
       date: w.date,
     }));
 
@@ -983,12 +983,12 @@ async function handleExport(userId, query) {
         .eq("user_id", userId)
         .gte("test_date", startDate.toISOString().split("T")[0]),
       supabaseAdmin
-        .from("wellness_data")
+        .from("wellness_entries")
         .select("*")
-        .eq("user_id", userId)
+        .eq("athlete_id", userId)
         .gte("date", startDate.toISOString().split("T")[0]),
       supabaseAdmin
-        .from("supplements_data")
+        .from("supplement_logs")
         .select("*")
         .eq("user_id", userId)
         .gte("date", startDate.toISOString().split("T")[0]),
@@ -1011,17 +1011,17 @@ async function handleExport(userId, query) {
         timestamp: t.test_date || t.created_at,
       })),
       wellness: (wellnessResult.data || []).map((w) => ({
-        userId: w.user_id,
-        sleep: w.sleep,
-        energy: w.energy,
-        stress: w.stress,
-        soreness: w.soreness,
-        motivation: w.motivation,
+        userId: w.athlete_id || w.user_id,
+        sleep: w.sleep_quality,
+        energy: w.energy_level,
+        stress: w.stress_level,
+        soreness: w.muscle_soreness,
+        motivation: w.motivation_level,
         date: w.date,
       })),
       supplements: (supplementsResult.data || []).map((s) => ({
         userId: s.user_id,
-        name: s.name,
+        name: s.supplement_name,
         dosage: s.dosage,
         taken: s.taken,
         date: s.date,

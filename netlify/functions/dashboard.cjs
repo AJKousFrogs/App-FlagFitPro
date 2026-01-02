@@ -57,7 +57,7 @@ const getDashboardData = async (userId) => {
             sessionsOnDate.reduce((sum, s) => sum + (s.score || 70), 0) /
               sessionsOnDate.length,
           )
-        : Math.floor(Math.random() * 20) + 70;
+        : 0;
     });
 
     // Calculate weekly goals
@@ -73,12 +73,12 @@ const getDashboardData = async (userId) => {
       ) / 60;
 
     return {
-      totalGames: Math.floor(avgScore / 10) + 5, // Estimate games from activity
-      winRate: Math.min(Math.round(avgScore), 100) || 75,
-      totalTouchdowns: Math.floor(avgScore * 1.5) || 15,
+      totalGames: trainingSessions.length > 0 ? Math.floor(avgScore / 10) : 0, // Estimate games from activity
+      winRate: Math.min(Math.round(avgScore), 100) || 0,
+      totalTouchdowns: Math.floor(avgScore * 0.15) || 0,
       trainingHours: Math.round(totalTrainingHours) || 0,
       recentActivity:
-        recentActivity.length > 0 ? recentActivity : getFallbackActivity(),
+        recentActivity.length > 0 ? recentActivity : [],
       performanceData: {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         values: performanceValues,
@@ -89,7 +89,7 @@ const getDashboardData = async (userId) => {
           target: 12,
         },
         gamesPlayed: {
-          current: Math.min(thisWeekSessions.length, 3),
+          current: 0,
           target: 3,
         },
         skillPractice: {
@@ -111,49 +111,28 @@ const getDashboardData = async (userId) => {
 };
 
 // Fallback dashboard data if database is unavailable
-// Note: _isFallback flag added at call site to indicate demo data (RISK-018)
+// Note: _isFallback flag added at call site to indicate no data available
 const getFallbackDashboardData = () => {
   return {
-    totalGames: 12,
-    winRate: 75,
-    totalTouchdowns: 28,
-    trainingHours: 45,
-    recentActivity: getFallbackActivity(),
+    totalGames: 0,
+    winRate: 0,
+    totalTouchdowns: 0,
+    trainingHours: 0,
+    recentActivity: [],
     performanceData: {
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      values: [78, 82, 75, 88, 92, 85, 79],
+      values: [0, 0, 0, 0, 0, 0, 0],
     },
     weeklyGoals: {
-      trainingHours: { current: 8, target: 12 },
-      gamesPlayed: { current: 2, target: 3 },
-      skillPractice: { current: 5, target: 7 },
+      trainingHours: { current: 0, target: 0 },
+      gamesPlayed: { current: 0, target: 0 },
+      skillPractice: { current: 0, target: 0 },
     },
-    // Fallback indicator - UI can check this to show "demo data" badge
+    // Fallback indicator - UI can check this to show "no data" message
     _isFallback: true,
     _fallbackReason: "no_data",
   };
 };
-
-const getFallbackActivity = () => [
-  {
-    type: "training",
-    icon: "🏃",
-    title: "Completed Speed Training",
-    timeAgo: "2 hours ago",
-  },
-  {
-    type: "game",
-    icon: "🏈",
-    title: "Won Against Eagles 24-17",
-    timeAgo: "1 day ago",
-  },
-  {
-    type: "achievement",
-    icon: "🏆",
-    title: "Earned MVP Badge",
-    timeAgo: "3 days ago",
-  },
-];
 
 // Get training calendar data
 const getTrainingCalendar = async (userId) => {

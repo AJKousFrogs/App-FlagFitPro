@@ -1,0 +1,48 @@
+/**
+ * Primitives Index
+ * ================
+ * 
+ * Reusable UI patterns built on design tokens.
+ * These are the building blocks for feature components.
+ * 
+ * LAYER ORDER (from DESIGN_SYSTEM_RULES.md):
+ *   @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
+ * 
+ * RULES:
+ * 1. All primitives use design tokens only
+ * 2. No hex colors or raw values
+ * 3. Primitives are generic - no feature-specific logic
+ * 
+ * UI CHANGE CHECKLIST (see UI_CHANGE_CHECKLIST.md):
+ * - [ ] npm run lint:css passes
+ * - [ ] npm run lint:ds passes
+ * - [ ] No hex/raw values outside tokens
+ * - [ ] No transition: all / ::ng-deep / !important
+ * - [ ] Keyboard: focus-visible works
+ * - [ ] Mobile: layout verified
+ */
+
+// Typography (base styles, headings, body text)
+@use 'typography';
+
+// Layout (containers, grids, flex, spacing)
+@use 'layout';
+
+// Card patterns
+@use 'cards';
+
+// Form patterns (fields, labels, validation, groups)
+@use 'forms';
+
+// Table patterns (density, variants, empty states)
+@use 'tables';
+
+// Feedback (badges, alerts, empty/loading states)
+@use 'feedback';
+
+// Dialog / overlay patterns (modals, drawers, popovers)
+@use 'dialogs';
+
+// TODO: Add more primitives as needed:
+// @use 'buttons';
+// @use 'navigation';

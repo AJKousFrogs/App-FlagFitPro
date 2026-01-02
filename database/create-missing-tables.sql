@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 
 -- Insert sample data for immediate functionality
 INSERT INTO daily_quotes (quote_text, author, category) VALUES
-('Champions aren''t made in comfort zones. Today''s training is tomorrow''s victory.', 'Coach Marcus Rivera', 'motivation'),
+('Every session counts. Track your progress to see the results.', 'FlagFit Pro', 'motivation'),
 ('The difference between ordinary and extraordinary is that little extra.', 'Jimmy Johnson', 'motivation'),
 ('Success is no accident. It is hard work, perseverance, learning, studying, sacrifice and most of all, love of what you are doing.', 'Pelé', 'motivation')
 ON CONFLICT DO NOTHING;

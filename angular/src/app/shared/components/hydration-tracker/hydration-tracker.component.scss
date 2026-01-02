@@ -1,0 +1,307 @@
+// ============================================================================
+// hydration-tracker.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  /* Standardized card container */
+  .hydration-card {
+    background: var(--surface-primary, #ffffff);
+    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+    border-radius: var(--radius-xl, 12px);
+    padding: var(--space-5, 20px);
+    box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Standardized header pattern */
+  .hydration-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5, 20px);
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 8px);
+
+    i {
+      font-size: var(--font-heading-sm);
+      color: var(--primitive-info-500, #3b82f6);
+    }
+
+    h3 {
+      font-size: var(--font-body-md, 16px);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--color-text-primary, #171717);
+      margin: 0;
+    }
+  }
+
+  .daily-goal {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-secondary, #737373);
+    background: var(--primitive-neutral-100, #f5f5f5);
+    padding: var(--space-1, 4px) var(--space-2, 8px);
+    border-radius: var(--radius-sm, 4px);
+  }
+
+  .hydration-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6, 24px);
+    margin-bottom: var(--space-5, 20px);
+  }
+
+  .water-visual {
+    flex-shrink: 0;
+  }
+
+  .water-bottle {
+    width: 60px;
+    height: 100px;
+    background: linear-gradient(to bottom, var(--primitive-info-50, #f0f9ff) 0%, var(--primitive-info-100, #e0f2fe) 100%);
+    border: 2px solid var(--primitive-info-200, #bae6fd);
+    border-radius: var(--radius-lg, 8px) var(--radius-lg, 8px) var(--radius-2xl, 16px) var(--radius-2xl, 16px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .water-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, var(--primitive-info-500, #3b82f6) 0%, var(--primitive-info-400, #60a5fa) 100%);
+    transition: height 500ms ease-out;
+    border-radius: 0 0 14px 14px;
+
+    &.low {
+      background: linear-gradient(to top, var(--primitive-error-500, #ef4444) 0%, var(--primitive-error-400, #f87171) 100%);
+    }
+
+    &.medium {
+      background: linear-gradient(to top, var(--primitive-warning-500, #f59e0b) 0%, var(--primitive-warning-400, #fbbf24) 100%);
+    }
+
+    &.high {
+      background: linear-gradient(to top, var(--primitive-info-500, #3b82f6) 0%, var(--primitive-info-400, #60a5fa) 100%);
+    }
+  }
+
+  .water-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: wave 2s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .water-waves {
+      animation: none;
+    }
+    .water-level {
+      transition: none;
+    }
+  }
+
+  .hydration-stats {
+    flex: 1;
+  }
+
+  .current-intake {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1, 4px);
+    margin-bottom: var(--space-1, 4px);
+
+    .value {
+      font-size: var(--font-heading-xl, 32px);
+      font-weight: var(--font-weight-bold, 700);
+      color: var(--color-text-primary, #171717);
+      line-height: 1;
+    }
+
+    .unit {
+      font-size: var(--font-body-sm, 14px);
+      color: var(--color-text-secondary, #737373);
+    }
+  }
+
+  .progress-text {
+    font-size: var(--font-body-sm, 13px);
+    color: var(--color-text-secondary, #737373);
+    margin-bottom: var(--space-2, 8px);
+  }
+
+  :host ::ng-deep .hydration-progress {
+    height: var(--space-2, 8px);
+    border-radius: var(--radius-sm, 4px);
+    background: var(--primitive-neutral-100, #f5f5f5);
+
+    .p-progressbar-value {
+      background: linear-gradient(90deg, var(--primitive-info-500, #3b82f6), var(--primitive-info-400, #60a5fa));
+      border-radius: var(--radius-sm, 4px);
+    }
+  }
+
+  .quick-add-section {
+    margin-bottom: var(--space-4, 16px);
+  }
+
+  .quick-add-label {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-secondary, #737373);
+    display: block;
+    margin-bottom: var(--space-2, 8px);
+  }
+
+  .quick-add-buttons {
+    display: flex;
+    gap: var(--space-2, 8px);
+    flex-wrap: wrap;
+  }
+
+  .quick-add-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1, 4px);
+    padding: var(--space-2, 8px) var(--space-3, 12px);
+    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+    border-radius: var(--radius-lg, 8px);
+    background: var(--surface-primary, #ffffff);
+    color: var(--color-text-tertiary, #525252);
+    font-size: var(--font-body-sm, 13px);
+    font-weight: var(--font-weight-medium, 500);
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 100ms ease;
+    min-width: 80px;
+    justify-content: center;
+
+    i {
+      font-size: var(--font-body-xs);
+      color: var(--primitive-info-500, #3b82f6);
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--primitive-info-50, #f0f9ff);
+      border-color: var(--primitive-info-500, #3b82f6);
+      color: var(--primitive-info-500, #3b82f6);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.loading {
+      background: var(--primitive-info-50, #f0f9ff);
+      border-color: var(--primitive-info-300, #93c5fd);
+      
+      i {
+        color: var(--primitive-info-500, #3b82f6);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primitive-info-500, #3b82f6);
+      outline-offset: 2px;
+    }
+  }
+
+  .recent-logs {
+    padding-top: var(--space-3, 12px);
+    border-top: 1px solid var(--primitive-neutral-100, #f5f5f5);
+    margin-bottom: var(--space-3, 12px);
+  }
+
+  .logs-label {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-secondary, #737373);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .logs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 8px);
+  }
+
+  .log-item {
+    font-size: var(--font-body-xs, 12px);
+    color: var(--color-text-tertiary, #525252);
+    background: var(--primitive-neutral-100, #f5f5f5);
+    padding: var(--space-1, 4px) var(--space-2, 8px);
+    border-radius: var(--radius-sm, 4px);
+  }
+
+  .hydration-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2, 8px);
+    padding: var(--space-2-5, 10px) var(--space-3, 12px);
+    background: var(--primitive-info-50, #f0f9ff);
+    border-radius: var(--radius-lg, 8px);
+    border-left: 3px solid var(--primitive-info-500, #3b82f6);
+    margin-top: auto;
+
+    i {
+      font-size: var(--font-body-sm);
+      color: var(--primitive-info-500, #3b82f6);
+      margin-top: 1px;
+    }
+
+    span {
+      font-size: var(--font-body-sm, 13px);
+      color: var(--primitive-info-800, #1e40af);
+      line-height: 1.4;
+    }
+
+    &.warning {
+      background: var(--primitive-warning-100, #fef3c7);
+      border-left-color: var(--primitive-warning-500, #f59e0b);
+
+      i {
+        color: var(--primitive-warning-500, #f59e0b);
+      }
+
+      span {
+        color: var(--primitive-warning-800, #92400e);
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hydration-card {
+      padding: var(--space-4, 16px);
+    }
+
+    .hydration-display {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .quick-add-buttons {
+      justify-content: center;
+    }
+  }
+}
+

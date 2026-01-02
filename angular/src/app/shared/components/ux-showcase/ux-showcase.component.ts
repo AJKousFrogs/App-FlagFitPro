@@ -71,19 +71,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       </p-card>
     </div>
   `,
-  styles: [
-    `
-      .ux-showcase {
-        padding: 1rem;
-      }
-
-      .info-text {
-        color: var(--p-text-color-secondary);
-        margin-bottom: 1rem;
-        font-size: 0.875rem;
-      }
-    `,
-  ],
+  styleUrl: './ux-showcase.component.scss',
 })
 export class UxShowcaseComponent {
   private logger = inject(LoggerService);
@@ -91,21 +79,21 @@ export class UxShowcaseComponent {
   tableData = signal([
     {
       id: 1,
-      name: "John Doe",
+      name: "Player 1",
       position: "Quarterback",
-      performance: "92%",
+      performance: "0%",
     },
     {
       id: 2,
-      name: "Jane Smith",
+      name: "Player 2",
       position: "Receiver",
-      performance: "88%",
+      performance: "0%",
     },
     {
       id: 3,
-      name: "Mike Johnson",
+      name: "Player 3",
       position: "Defender",
-      performance: "85%",
+      performance: "0%",
     },
   ]);
 

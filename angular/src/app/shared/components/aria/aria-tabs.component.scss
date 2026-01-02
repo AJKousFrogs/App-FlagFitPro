@@ -1,0 +1,97 @@
+// ============================================================================
+// aria-tabs.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .aria-tabs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .aria-tabs.vertical {
+    flex-direction: row;
+  }
+
+  .aria-tablist {
+    display: flex;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--color-border-secondary);
+    padding-bottom: 0;
+  }
+
+  .vertical .aria-tablist {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid var(--color-border-secondary);
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+
+  .aria-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  .vertical .aria-tab {
+    border-bottom: none;
+    border-right: 2px solid transparent;
+  }
+
+  .aria-tab:hover:not(:disabled) {
+    color: var(--color-text-primary);
+    background: var(--surface-secondary);
+  }
+
+  .aria-tab.selected {
+    color: var(--ds-primary-green);
+    border-bottom-color: var(--ds-primary-green);
+  }
+
+  .vertical .aria-tab.selected {
+    border-bottom-color: transparent;
+    border-right-color: var(--ds-primary-green);
+  }
+
+  .aria-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .aria-tab:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: -2px;
+    border-radius: var(--radius-md);
+  }
+
+  .aria-tabpanels {
+    flex: 1;
+  }
+
+  .aria-tabpanel {
+    padding: 1rem 0;
+  }
+
+  .aria-tabpanel:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
+  .aria-tabpanel[hidden] {
+    display: none;
+  }
+}
+

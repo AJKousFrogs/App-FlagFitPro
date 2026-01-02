@@ -175,52 +175,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       </form>
     </p-card>
   `,
-  styles: [
-    `
-      .form-status {
-        padding: 0.5rem;
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
-      }
-
-      .valid {
-        color: var(--p-success-color);
-        font-weight: 600;
-      }
-
-      .invalid {
-        color: var(--p-error-color);
-        font-weight: 600;
-      }
-
-      label.required::after {
-        content: " *";
-        color: var(--p-error-color);
-        margin-left: 0.25rem;
-      }
-
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border-width: 0;
-      }
-
-      input:focus-visible {
-        outline: 2px solid var(--p-primary-color);
-        outline-offset: 2px;
-      }
-
-      input[aria-invalid="true"] {
-        border-color: var(--p-error-color);
-      }
-    `,
-  ],
+  styleUrl: './signal-form.component.scss',
 })
 export class SignalFormComponent {
   // Form fields using Angular 21 model() API for two-way binding

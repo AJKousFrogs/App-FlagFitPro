@@ -134,64 +134,104 @@ async function getSprintVolumeTrend(athleteId, weeks = 4) {
  * Get game performance trend
  */
 async function getGamePerformanceTrend(athleteId, games = 5) {
-  // Query game performance data
-  // Note: This assumes a games/performance table exists
-  // Adjust based on your actual schema
-  const { data, error } = await supabaseAdmin
-    .from("games")
-    .select("*")
-    .eq("athlete_id", athleteId)
-    .order("game_date", { ascending: false })
-    .limit(games);
+  try {
+    // Try to query game_stats table first (more common schema)
+    let data = null;
+    let error = null;
 
-  if (error) {
-    // If games table doesn't exist, return mock data structure
-    console.warn("Games table not found, returning empty trend");
+    // Try game_stats table
+    const gameStatsResult = await supabaseAdmin
+      .from("game_stats")
+      .select("*")
+      .eq("user_id", athleteId)
+      .order("game_date", { ascending: false })
+      .limit(games);
+
+    if (!gameStatsResult.error && gameStatsResult.data?.length > 0) {
+      data = gameStatsResult.data;
+    } else {
+      // Try games table as fallback
+      const gamesResult = await supabaseAdmin
+        .from("games")
+        .select("*")
+        .or(`athlete_id.eq.${athleteId},user_id.eq.${athleteId}`)
+        .order("game_date", { ascending: false })
+        .limit(games);
+
+      if (!gamesResult.error) {
+        data = gamesResult.data;
+      } else {
+        error = gamesResult.error;
+      }
+    }
+
+    if (error) {
+      console.warn("Error fetching games:", error.message);
+      // Return empty but valid response instead of throwing
+      return {
+        games: [],
+        averagePerformance: 0,
+        trend: "stable",
+        message: "No game data available yet",
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        games: [],
+        averagePerformance: 0,
+        trend: "stable",
+        message: "No games recorded yet",
+      };
+    }
+
+    const gameData = (data || []).map((game) => ({
+      date: game.game_date || game.date,
+      opponent: game.opponent || game.opponent_name || "Unknown",
+      performance: game.performance_score || game.performance || game.rating || 0,
+      metrics: {
+        touchdowns: game.touchdowns || 0,
+        completions: game.completions || 0,
+        yards: game.yards || game.total_yards || 0,
+        ...(game.metrics || {}),
+      },
+    }));
+
+    const performances = gameData.map((g) => g.performance).filter((p) => p > 0);
+    const averagePerformance =
+      performances.length > 0
+        ? performances.reduce((sum, p) => sum + p, 0) / performances.length
+        : 0;
+
+    // Determine trend
+    let trend = "stable";
+    if (performances.length >= 2) {
+      const recent = performances.slice(0, Math.ceil(performances.length / 2));
+      const older = performances.slice(Math.ceil(performances.length / 2));
+      const recentAvg = recent.reduce((sum, p) => sum + p, 0) / recent.length;
+      const olderAvg = older.reduce((sum, p) => sum + p, 0) / older.length;
+
+      if (recentAvg > olderAvg * 1.05) {
+        trend = "improving";
+      } else if (recentAvg < olderAvg * 0.95) {
+        trend = "declining";
+      }
+    }
+
+    return {
+      games: gameData,
+      averagePerformance,
+      trend,
+    };
+  } catch (err) {
+    console.warn("Game performance trend error:", err.message);
     return {
       games: [],
       averagePerformance: 0,
       trend: "stable",
+      message: "Unable to load game data",
     };
   }
-
-  const gameData = (data || []).map((game) => ({
-    date: game.game_date || game.date,
-    opponent: game.opponent || game.opponent_name || "Unknown",
-    performance: game.performance_score || game.performance || 0,
-    metrics: {
-      touchdowns: game.touchdowns || 0,
-      completions: game.completions || 0,
-      yards: game.yards || 0,
-      ...(game.metrics || {}),
-    },
-  }));
-
-  const performances = gameData.map((g) => g.performance).filter((p) => p > 0);
-  const averagePerformance =
-    performances.length > 0
-      ? performances.reduce((sum, p) => sum + p, 0) / performances.length
-      : 0;
-
-  // Determine trend
-  let trend = "stable";
-  if (performances.length >= 2) {
-    const recent = performances.slice(0, Math.ceil(performances.length / 2));
-    const older = performances.slice(Math.ceil(performances.length / 2));
-    const recentAvg = recent.reduce((sum, p) => sum + p, 0) / recent.length;
-    const olderAvg = older.reduce((sum, p) => sum + p, 0) / older.length;
-
-    if (recentAvg > olderAvg * 1.05) {
-      trend = "improving";
-    } else if (recentAvg < olderAvg * 0.95) {
-      trend = "declining";
-    }
-  }
-
-  return {
-    games: gameData,
-    averagePerformance,
-    trend,
-  };
 }
 
 /**

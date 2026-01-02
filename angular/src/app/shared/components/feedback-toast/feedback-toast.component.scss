@@ -1,0 +1,107 @@
+// ============================================================================
+// feedback-toast.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .toast-container {
+    position: fixed;
+    top: var(--space-5);
+    right: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    z-index: var(--z-index-notification);
+    max-width: 400px;
+  }
+
+  .toast-item {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-on-primary);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-body-sm);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    animation: slideIn var(--transition-slow) ease-out;
+    line-height: var(--line-height-normal);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .success {
+    background: var(--ds-primary-green);
+    border-left: 4px solid var(--ds-primary-green-hover);
+  }
+  .error {
+    background: var(--color-status-error);
+    border-left: 4px solid var(--primitive-error-600, #dc2626);
+  }
+  .warning {
+    background: var(--color-status-warning);
+    border-left: 4px solid var(--primitive-warning-500, #f59e0b);
+    color: var(--color-text-primary);
+  }
+  .info {
+    background: var(--color-status-info);
+    border-left: 4px solid var(--primitive-primary-600, #0ab85a);
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .toast-icon {
+    font-size: var(--font-body-md);
+    flex-shrink: 0;
+  }
+
+  .toast-message {
+    flex: 1;
+  }
+
+  .toast-action-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-medium);
+    margin-left: 0.5rem;
+  }
+
+  .toast-action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .toast-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: var(--font-heading-sm);
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 0;
+    margin-left: 0.5rem;
+    line-height: 1;
+  }
+
+  .toast-close-btn:hover {
+    opacity: 1;
+  }
+}
+

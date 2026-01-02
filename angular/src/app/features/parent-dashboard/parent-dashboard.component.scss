@@ -28,7 +28,7 @@
 .header-subtitle {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
 }
 
 .children-grid {
@@ -43,7 +43,7 @@
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
 }
 
 .child-card:hover {
@@ -60,17 +60,17 @@
 
 :host ::ng-deep .child-avatar {
   background-color: var(--ds-primary-green) !important;
-  color: #ffffff !important;
+  color: var(--color-text-on-primary) !important;
 }
 
 .child-info h3 {
   margin: 0;
-  font-size: var(--text-lg);
+  font-size: var(--font-body-lg);
   font-weight: var(--font-weight-semibold);
 }
 
 .relationship {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--color-text-secondary);
 }
 
@@ -91,13 +91,13 @@
 }
 
 .stat-value {
-  font-size: var(--text-xl);
+  font-size: var(--font-heading-sm);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .stat-label {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--color-text-secondary);
 }
 
@@ -123,7 +123,7 @@
   align-items: center;
   gap: var(--space-3);
   margin: 0;
-  font-size: var(--text-lg);
+  font-size: var(--font-body-lg);
 }
 
 .activity-list {
@@ -156,7 +156,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-2);
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--color-text-secondary);
 }
 
@@ -179,7 +179,7 @@
 
 .activity-content .response {
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
 }
 
 .activity-meta {
@@ -190,7 +190,7 @@
 }
 
 .meta-tag {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   padding: 2px 8px;
   background: var(--surface-tertiary);
   border-radius: var(--radius-full);
@@ -255,25 +255,25 @@
 }
 
 .notif-child {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--ds-primary-green);
   font-weight: var(--font-weight-medium);
 }
 
 .notif-time {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--color-text-muted);
 }
 
 .notif-content h4 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
   font-weight: var(--font-weight-semibold);
 }
 
 .notif-content p {
   margin: 0;
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
   color: var(--color-text-secondary);
 }
 
@@ -296,7 +296,7 @@
 }
 
 .approval-child {
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
   color: var(--ds-primary-green);
   font-weight: var(--font-weight-medium);
 }
@@ -308,11 +308,11 @@
 .approval-item p {
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
 }
 
 .approval-meta {
-  font-size: var(--text-xs);
+  font-size: var(--font-body-xs);
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
 }
@@ -324,7 +324,7 @@
 .settings-subtitle {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
 }
 
 .settings-group {
@@ -333,7 +333,7 @@
 
 .settings-group h5 {
   margin: 0 0 var(--space-3) 0;
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
   color: var(--color-text-secondary);
 }
 
@@ -345,7 +345,7 @@
 }
 
 .setting-row label {
-  font-size: var(--text-sm);
+  font-size: var(--font-body-sm);
 }
 
 .tab-header {
@@ -364,7 +364,7 @@
 }
 
 .empty-state i {
-  font-size: 3rem;
+  font-size: var(--font-display-sm);
   color: var(--color-text-disabled);
   margin-bottom: var(--space-4);
 }

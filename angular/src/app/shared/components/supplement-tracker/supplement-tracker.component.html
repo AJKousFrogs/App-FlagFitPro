@@ -1,0 +1,360 @@
+<!-- Supplement Tracker Widget -->
+<div class="supplement-card">
+  <!-- Header -->
+  <div class="supplement-header">
+    <div class="header-title">
+      <i class="pi pi-heart-fill"></i>
+      <h3>Supplement Tracker</h3>
+    </div>
+    <div class="header-actions">
+      <span class="progress-badge">{{ takenCount() }}/{{ totalCount() }}</span>
+      <p-button
+        icon="pi pi-plus"
+        [rounded]="true"
+        [text]="true"
+        size="small"
+        pTooltip="Add supplement"
+        (onClick)="openAddDialog()"
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="supplement-progress">
+    <div class="progress-bar">
+      <div
+        class="progress-fill"
+        [style.width.%]="progressPercent()"
+        [class.complete]="progressPercent() === 100"
+      ></div>
+    </div>
+    <span class="progress-text">{{ progressPercent() }}% taken today</span>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="supplement-loading">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-row">
+          <p-skeleton shape="circle" size="24px"></p-skeleton>
+          <p-skeleton width="80%" height="20px"></p-skeleton>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Supplement List -->
+    <div class="supplement-list">
+      <!-- Morning -->
+      @if (morningSupplements().length > 0) {
+        <div class="timing-group">
+          <div class="timing-header">
+            <i class="pi pi-sun"></i>
+            <span>Morning</span>
+          </div>
+          @for (supp of morningSupplements(); track supp.id) {
+            <div
+              class="supplement-item"
+              [class.taken]="supp.taken"
+              (click)="toggleSupplement(supp)"
+              (keydown.enter)="toggleSupplement(supp)"
+              (keydown.space)="toggleSupplement(supp); $event.preventDefault()"
+              tabindex="0"
+              role="checkbox"
+              [attr.aria-checked]="supp.taken"
+              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+            >
+              <div class="item-checkbox">
+                <p-checkbox
+                  [ngModel]="supp.taken"
+                  [binary]="true"
+                  (click)="$event.stopPropagation()"
+                  (onChange)="toggleSupplement(supp)"
+                  [inputId]="'morning-' + supp.id"
+                ></p-checkbox>
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ supp.name }}</span>
+                @if (supp.dosage) {
+                  <span class="item-dosage">{{ supp.dosage }}</span>
+                }
+              </div>
+              <p-tag
+                [value]="supp.category | titlecase"
+                [severity]="getCategoryColor(supp.category)"
+                [rounded]="true"
+                styleClass="category-tag"
+              ></p-tag>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Pre-Workout -->
+      @if (preWorkoutSupplements().length > 0) {
+        <div class="timing-group">
+          <div class="timing-header">
+            <i class="pi pi-bolt"></i>
+            <span>Pre-Workout</span>
+          </div>
+          @for (supp of preWorkoutSupplements(); track supp.id) {
+            <div
+              class="supplement-item"
+              [class.taken]="supp.taken"
+              (click)="toggleSupplement(supp)"
+              (keydown.enter)="toggleSupplement(supp)"
+              (keydown.space)="toggleSupplement(supp); $event.preventDefault()"
+              tabindex="0"
+              role="checkbox"
+              [attr.aria-checked]="supp.taken"
+              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+            >
+              <div class="item-checkbox">
+                <p-checkbox
+                  [ngModel]="supp.taken"
+                  [binary]="true"
+                  (click)="$event.stopPropagation()"
+                  (onChange)="toggleSupplement(supp)"
+                  [inputId]="'preworkout-' + supp.id"
+                ></p-checkbox>
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ supp.name }}</span>
+                @if (supp.dosage) {
+                  <span class="item-dosage">{{ supp.dosage }}</span>
+                }
+              </div>
+              <p-tag
+                [value]="supp.category | titlecase"
+                [severity]="getCategoryColor(supp.category)"
+                [rounded]="true"
+                styleClass="category-tag"
+              ></p-tag>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Post-Workout -->
+      @if (postWorkoutSupplements().length > 0) {
+        <div class="timing-group">
+          <div class="timing-header">
+            <i class="pi pi-heart"></i>
+            <span>Post-Workout</span>
+          </div>
+          @for (supp of postWorkoutSupplements(); track supp.id) {
+            <div
+              class="supplement-item"
+              [class.taken]="supp.taken"
+              (click)="toggleSupplement(supp)"
+              (keydown.enter)="toggleSupplement(supp)"
+              (keydown.space)="toggleSupplement(supp); $event.preventDefault()"
+              tabindex="0"
+              role="checkbox"
+              [attr.aria-checked]="supp.taken"
+              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+            >
+              <div class="item-checkbox">
+                <p-checkbox
+                  [ngModel]="supp.taken"
+                  [binary]="true"
+                  (click)="$event.stopPropagation()"
+                  (onChange)="toggleSupplement(supp)"
+                  [inputId]="'postworkout-' + supp.id"
+                ></p-checkbox>
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ supp.name }}</span>
+                @if (supp.dosage) {
+                  <span class="item-dosage">{{ supp.dosage }}</span>
+                }
+              </div>
+              <p-tag
+                [value]="supp.category | titlecase"
+                [severity]="getCategoryColor(supp.category)"
+                [rounded]="true"
+                styleClass="category-tag"
+              ></p-tag>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Evening -->
+      @if (eveningSupplements().length > 0) {
+        <div class="timing-group">
+          <div class="timing-header">
+            <i class="pi pi-moon"></i>
+            <span>Evening</span>
+          </div>
+          @for (supp of eveningSupplements(); track supp.id) {
+            <div
+              class="supplement-item"
+              [class.taken]="supp.taken"
+              (click)="toggleSupplement(supp)"
+              (keydown.enter)="toggleSupplement(supp)"
+              (keydown.space)="toggleSupplement(supp); $event.preventDefault()"
+              tabindex="0"
+              role="checkbox"
+              [attr.aria-checked]="supp.taken"
+              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+            >
+              <div class="item-checkbox">
+                <p-checkbox
+                  [ngModel]="supp.taken"
+                  [binary]="true"
+                  (click)="$event.stopPropagation()"
+                  (onChange)="toggleSupplement(supp)"
+                  [inputId]="'evening-' + supp.id"
+                ></p-checkbox>
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ supp.name }}</span>
+                @if (supp.dosage) {
+                  <span class="item-dosage">{{ supp.dosage }}</span>
+                }
+              </div>
+              <p-tag
+                [value]="supp.category | titlecase"
+                [severity]="getCategoryColor(supp.category)"
+                [rounded]="true"
+                styleClass="category-tag"
+              ></p-tag>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Anytime -->
+      @if (anytimeSupplements().length > 0) {
+        <div class="timing-group">
+          <div class="timing-header">
+            <i class="pi pi-clock"></i>
+            <span>Anytime</span>
+          </div>
+          @for (supp of anytimeSupplements(); track supp.id) {
+            <div
+              class="supplement-item"
+              [class.taken]="supp.taken"
+              (click)="toggleSupplement(supp)"
+              (keydown.enter)="toggleSupplement(supp)"
+              (keydown.space)="toggleSupplement(supp); $event.preventDefault()"
+              tabindex="0"
+              role="checkbox"
+              [attr.aria-checked]="supp.taken"
+              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+            >
+              <div class="item-checkbox">
+                <p-checkbox
+                  [ngModel]="supp.taken"
+                  [binary]="true"
+                  (click)="$event.stopPropagation()"
+                  (onChange)="toggleSupplement(supp)"
+                  [inputId]="'anytime-' + supp.id"
+                ></p-checkbox>
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ supp.name }}</span>
+                @if (supp.dosage) {
+                  <span class="item-dosage">{{ supp.dosage }}</span>
+                }
+              </div>
+              <p-tag
+                [value]="supp.category | titlecase"
+                [severity]="getCategoryColor(supp.category)"
+                [rounded]="true"
+                styleClass="category-tag"
+              ></p-tag>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (totalCount() === 0) {
+      <div class="supplement-empty">
+        <i class="pi pi-inbox"></i>
+        <p>No supplements configured</p>
+        <p-button
+          label="Add Your First Supplement"
+          icon="pi pi-plus"
+          size="small"
+          (onClick)="openAddDialog()"
+        ></p-button>
+      </div>
+    }
+  }
+</div>
+
+<!-- Add Supplement Dialog -->
+<p-dialog
+  header="Add Supplement"
+  [(visible)]="showAddDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '400px' }"
+  styleClass="supplement-dialog"
+>
+  <div class="dialog-form">
+    <div class="form-field">
+      <label for="suppName">Supplement Name *</label>
+      <input
+        id="suppName"
+        type="text"
+        pInputText
+        [ngModel]="newSupplement().name"
+        (ngModelChange)="updateName($event)"
+        placeholder="e.g., Vitamin B12"
+      />
+    </div>
+
+    <div class="form-field">
+      <label for="suppDosage">Dosage</label>
+      <input
+        id="suppDosage"
+        type="text"
+        pInputText
+        [ngModel]="newSupplement().dosage"
+        (ngModelChange)="updateDosage($event)"
+        placeholder="e.g., 500mg"
+      />
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="suppTiming">Timing</label>
+        <p-select
+          id="suppTiming"
+          [options]="timingOptions"
+          [ngModel]="newSupplement().timing"
+          (ngModelChange)="updateTiming($event)"
+          placeholder="Select timing"
+        ></p-select>
+      </div>
+
+      <div class="form-field">
+        <label for="suppCategory">Category</label>
+        <p-select
+          id="suppCategory"
+          [options]="categoryOptions"
+          [ngModel]="newSupplement().category"
+          (ngModelChange)="updateCategory($event)"
+          placeholder="Select category"
+        ></p-select>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      [text]="true"
+      (onClick)="closeAddDialog()"
+    ></p-button>
+    <p-button
+      label="Add Supplement"
+      icon="pi pi-plus"
+      (onClick)="addSupplement()"
+    ></p-button>
+  </ng-template>
+</p-dialog>

@@ -92,64 +92,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
       </p-card>
     </div>
   `,
-  styles: [
-    `
-      .auth-callback-page {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: var(--space-6);
-        background: var(--surface-secondary);
-      }
-
-      .auth-callback-card {
-        width: 100%;
-        max-width: 450px;
-        text-align: center;
-      }
-
-      .processing-state,
-      .error-state,
-      .success-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-4);
-        padding: var(--space-6);
-      }
-
-      .processing-state h2,
-      .error-state h2,
-      .success-state h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .processing-description,
-      .success-description {
-        color: var(--text-secondary);
-        margin: 0;
-      }
-
-      .error-icon i {
-        font-size: 4rem;
-        color: var(--color-error);
-      }
-
-      .success-icon i {
-        font-size: 4rem;
-        color: var(--color-success);
-      }
-
-      .error-actions {
-        width: 100%;
-        margin-top: var(--space-4);
-      }
-    `,
-  ],
+  styleUrl: './auth-callback.component.scss',
 })
 export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);

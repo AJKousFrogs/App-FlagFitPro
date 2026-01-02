@@ -107,74 +107,7 @@ export interface DateRange {
       }
     </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      .date-range-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .date-range-presets {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-
-      .date-range-container {
-        display: flex;
-        align-items: flex-end;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-
-      .date-range-field {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .date-range-label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--p-text-color);
-        margin-bottom: 0.5rem;
-      }
-
-      .date-range-separator {
-        display: flex;
-        align-items: center;
-        padding-bottom: 0.5rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .form-help {
-        font-size: 0.75rem;
-        color: var(--p-text-color-secondary);
-      }
-
-      .form-error {
-        font-size: 0.75rem;
-        color: var(--p-error-color);
-      }
-
-      @media (max-width: 640px) {
-        .date-range-container {
-          flex-direction: column;
-        }
-
-        .date-range-separator {
-          transform: rotate(90deg);
-          padding: 0.5rem 0;
-          justify-content: center;
-        }
-      }
-    `,
-  ],
+  styleUrl: './date-range.component.scss',
 })
 export class DateRangeComponent {
   // Configuration

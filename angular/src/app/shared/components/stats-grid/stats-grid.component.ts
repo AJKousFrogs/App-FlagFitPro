@@ -65,68 +65,7 @@ export interface StatItem {
       }
     </div>
   `,
-  styles: [
-    `
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-4);
-        margin-bottom: var(--space-6);
-      }
-
-      .stat-card {
-        transition: transform 0.2s;
-      }
-
-      .stat-card:hover {
-        transform: translateY(-4px);
-      }
-
-      .stat-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-      }
-
-      .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        flex-shrink: 0;
-      }
-
-      .stat-info {
-        flex: 1;
-      }
-
-      .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: var(--space-1);
-      }
-
-      .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-bottom: var(--space-2);
-      }
-
-      .stat-trend {
-        margin-top: var(--space-2);
-      }
-
-      @media (max-width: 768px) {
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-    `,
-  ],
+  styleUrl: './stats-grid.component.scss',
 })
 export class StatsGridComponent {
   // Angular 21: Use input() signal instead of @Input()

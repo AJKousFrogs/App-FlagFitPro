@@ -50,18 +50,20 @@ async function executeQuery(query, params = []) {
 /**
  * GET /overview
  * Get dashboard overview data including training progress, performance, and team chemistry
- * @query {string} userId - User ID (optional, defaults to '1' for demo)
+ * @query {string} userId - User ID (required)
  * @returns {object} Dashboard overview data
  */
 router.get("/overview", async (req, res) => {
   try {
-    const userIdParam = req.query.userId || "1";
+    const userIdParam = req.query.userId;
 
-    if (req.query.userId) {
+    if (userIdParam) {
       const validation = validateUserId(userIdParam);
       if (!validation.isValid) {
         return sendError(res, validation.error, "INVALID_USER_ID", 400);
       }
+    } else {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
 
     const userId = userIdParam;
@@ -224,26 +226,26 @@ router.get("/overview", async (req, res) => {
       trainingProgress: {
         percentage: trainingData?.percentage || 0,
         completed: trainingData?.completed || 0,
-        trend: "+12% from last week",
+        trend: "0% from last week",
       },
       performanceScore: {
-        score: performanceData?.score || "8.4",
+        score: performanceData?.score || "0.0",
         total: performanceData?.total || 0,
-        status: "Olympic standard reached",
+        status: "Log sessions to see status",
       },
       teamChemistry: {
-        overall: safeParseFloat(chemistryData?.chemistry_score, 9.1).toFixed(1),
+        overall: safeParseFloat(chemistryData?.chemistry_score, 0).toFixed(1),
         communication: safeParseFloat(
           chemistryData?.communication_score,
-          9.1,
+          0,
         ).toFixed(1),
-        trust: safeParseFloat(chemistryData?.trust_score, 8.7).toFixed(1),
-        status: "Excellent team synergy",
+        trust: safeParseFloat(chemistryData?.trust_score, 0).toFixed(1),
+        status: "N/A",
       },
       nextSession: {
-        type: upcomingSession?.session_type || "Olympic preparation training",
-        time: upcomingSession?.scheduled_time || "4:00 PM",
-        duration: safeParseInt(upcomingSession?.duration_minutes, 120),
+        type: upcomingSession?.session_type || "No upcoming sessions",
+        time: upcomingSession?.scheduled_time || "N/A",
+        duration: safeParseInt(upcomingSession?.duration_minutes, 0),
       },
     };
 
@@ -268,13 +270,15 @@ router.get("/overview", async (req, res) => {
  */
 router.get("/training-calendar", async (req, res) => {
   try {
-    const userIdParam = req.query.userId || "1";
+    const userIdParam = req.query.userId;
 
-    if (req.query.userId) {
+    if (userIdParam) {
       const validation = validateUserId(userIdParam);
       if (!validation.isValid) {
         return sendError(res, validation.error, "INVALID_USER_ID", 400);
       }
+    } else {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
 
     const userId = userIdParam;
@@ -367,7 +371,14 @@ router.get("/training-calendar", async (req, res) => {
  */
 router.get("/olympic-qualification", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let olympicData = null;
     let benchmarks = [];
@@ -428,43 +439,18 @@ router.get("/olympic-qualification", async (req, res) => {
 
     // Default data if not found
     olympicData ||= {
-      qualification_probability: 73,
-      world_ranking: 8,
-      days_until_championship: 124,
-      european_championship_date: "2025-09-24",
-      world_championship_date: "2026-07-15",
+      qualification_probability: 0,
+      world_ranking: 0,
+      days_until_championship: 0,
+      european_championship_date: null,
+      world_championship_date: null,
       olympic_date: "2028-07-14",
     };
 
     benchmarks =
       benchmarks.length > 0
         ? benchmarks
-        : [
-            {
-              metric_name: "40-Yard Dash",
-              current_value: 4.52,
-              target_value: 4.4,
-              unit: "s",
-            },
-            {
-              metric_name: "Passing Accuracy",
-              current_value: 82.5,
-              target_value: 85,
-              unit: "%",
-            },
-            {
-              metric_name: "Agility Shuttle",
-              current_value: 4.18,
-              target_value: 4.0,
-              unit: "s",
-            },
-            {
-              metric_name: "Game IQ Score",
-              current_value: 87,
-              target_value: 90,
-              unit: "",
-            },
-          ];
+        : [];
 
     return sendSuccess(res, {
       qualification: olympicData,
@@ -488,7 +474,14 @@ router.get("/olympic-qualification", async (req, res) => {
  */
 router.get("/sponsor-rewards", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let sponsorData = null;
     let products = [];
@@ -551,41 +544,16 @@ router.get("/sponsor-rewards", async (req, res) => {
 
     // Default data
     sponsorData ||= {
-      available_points: 2847,
-      current_tier: "GOLD",
-      products_available: 236,
-      tier_progress_percentage: 65,
+      available_points: 0,
+      current_tier: "BRONZE",
+      products_available: 0,
+      tier_progress_percentage: 0,
     };
 
     products =
       products.length > 0
         ? products
-        : [
-            {
-              product_name: "Pro Grip Football Socks",
-              points_cost: 350,
-              relevance_score: 92,
-              category: "Gear",
-            },
-            {
-              product_name: "Recovery Massage Gun",
-              points_cost: 1650,
-              relevance_score: 78,
-              category: "Recovery",
-            },
-            {
-              product_name: "Elite Training Shorts",
-              points_cost: 780,
-              relevance_score: 89,
-              category: "Gear",
-            },
-            {
-              product_name: "Recovery Band Set",
-              points_cost: 420,
-              relevance_score: 94,
-              category: "Recovery",
-            },
-          ];
+        : [];
 
     return sendSuccess(res, {
       rewards: sponsorData,
@@ -609,7 +577,14 @@ router.get("/sponsor-rewards", async (req, res) => {
  */
 router.get("/wearables", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let wearablesData = [];
 
@@ -648,17 +623,7 @@ router.get("/wearables", async (req, res) => {
     wearablesData =
       wearablesData.length > 0
         ? wearablesData
-        : [
-            {
-              device_type: "Apple Watch",
-              heart_rate: 142,
-              hrv: 38,
-              sleep_score: 87,
-              training_load: 247,
-              last_sync: safeFormatDate(new Date()),
-              connection_status: "connected",
-            },
-          ];
+        : [];
 
     return sendSuccess(res, wearablesData);
   } catch (error) {
@@ -679,7 +644,14 @@ router.get("/wearables", async (req, res) => {
  */
 router.get("/team-chemistry", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let chemistryData = null;
 
@@ -717,12 +689,12 @@ router.get("/team-chemistry", async (req, res) => {
 
     // Default data
     chemistryData ||= {
-      overall_chemistry: 8.4,
-      communication_score: 9.1,
-      trust_score: 8.7,
-      leadership_score: 8.2,
-      last_intervention: "Trust building exercise",
-      intervention_effectiveness: 87,
+      overall_chemistry: 0,
+      communication_score: 0,
+      trust_score: 0,
+      leadership_score: 0,
+      last_intervention: null,
+      intervention_effectiveness: 0,
     };
 
     return sendSuccess(res, chemistryData);
@@ -744,7 +716,14 @@ router.get("/team-chemistry", async (req, res) => {
  */
 router.get("/notifications", async (req, res) => {
   try {
-    const userId = req.query.userId || "1";
+    const userId = req.query.userId;
+    if (!userId) {
+      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+    }
+    const userIdValidation = validateUserId(userId);
+    if (!userIdValidation.isValid) {
+      return sendError(res, userIdValidation.error, "INVALID_USER_ID", 400);
+    }
 
     let notifications = [];
 
@@ -781,33 +760,7 @@ router.get("/notifications", async (req, res) => {
     notifications =
       notifications.length > 0
         ? notifications
-        : [
-            {
-              notification_type: "injury_risk",
-              message: "Injury risk alert: Landing mechanics suboptimal",
-              is_read: false,
-              created_at: safeFormatDate(new Date(Date.now() - 15 * 60 * 1000)),
-              priority: "high",
-            },
-            {
-              notification_type: "weather",
-              message: "Weather alert: Tomorrow's practice moved to 6PM",
-              is_read: false,
-              created_at: safeFormatDate(
-                new Date(Date.now() - 2 * 60 * 60 * 1000),
-              ),
-              priority: "medium",
-            },
-            {
-              notification_type: "tournament",
-              message: "European Championship bracket updated",
-              is_read: false,
-              created_at: safeFormatDate(
-                new Date(Date.now() - 4 * 60 * 60 * 1000),
-              ),
-              priority: "low",
-            },
-          ];
+        : [];
 
     return sendSuccess(res, notifications);
   } catch (error) {
@@ -861,8 +814,8 @@ router.get("/daily-quote", async (req, res) => {
     // Default quote
     quote ||= {
       quote_text:
-        "Champions aren't made in comfort zones. Today's training is tomorrow's victory.",
-      author: "Coach Marcus Rivera",
+        "Every session counts. Track your progress to see the results.",
+      author: "FlagFit Pro",
       category: "motivation",
     };
 

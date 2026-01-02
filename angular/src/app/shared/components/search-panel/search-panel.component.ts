@@ -24,6 +24,7 @@ import { FormsModule } from "@angular/forms";
 import { InputTextModule } from "primeng/inputtext";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
+import { TooltipModule } from "primeng/tooltip";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import {
   SearchService,
@@ -40,22 +41,23 @@ import {
     InputTextModule,
     ButtonModule,
     DialogModule,
+    TooltipModule,
     ProgressSpinnerModule,
   ],
   template: `
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      [style]="{ width: '600px', maxWidth: '95vw' }"
+      [style]="{ width: '700px', maxWidth: '95vw', top: '10%' }"
       [showHeader]="false"
       [dismissableMask]="true"
       [closable]="true"
       position="top"
-      styleClass="search-dialog"
+      styleClass="command-palette-dialog"
     >
       <div class="search-panel">
         <!-- Search Input -->
-        <div class="search-input-container">
+        <div class="search-input-wrapper">
           <i class="pi pi-search search-icon"></i>
           <input
             #searchInput
@@ -71,392 +73,185 @@ import {
             class="search-input"
             autocomplete="off"
           />
-          @if (searchQuery) {
-            <p-button
-              icon="pi pi-times"
-              [text]="true"
-              [rounded]="true"
-              (onClick)="clearSearch()"
-              class="clear-btn"
-            ></p-button>
+          <div class="input-actions">
+            @if (searchQuery) {
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                [rounded]="true"
+                (onClick)="clearSearch()"
+                class="clear-btn"
+                pTooltip="Clear search (Esc)"
+                tooltipPosition="bottom"
+              ></p-button>
+            } @else {
+              <div class="esc-hint">ESC</div>
+            }
+          </div>
+        </div>
+
+        <div class="panel-content custom-scrollbar">
+          <!-- Loading State -->
+          @if (searchService.loading()) {
+            <div class="loading-state">
+              <p-progressSpinner
+                [style]="{ width: '32px', height: '32px' }"
+                strokeWidth="4"
+              ></p-progressSpinner>
+              <span>Searching across everything...</span>
+            </div>
+          }
+
+          <!-- Results -->
+          @if (!searchService.loading() && searchService.hasResults()) {
+            <div class="search-results">
+              <div class="section-label">Search Results</div>
+              @for (
+                result of searchService.results();
+                track result.id;
+                let i = $index
+              ) {
+                <div
+                  class="search-result-item"
+                  [class.selected]="selectedIndex() === i"
+                  (click)="selectResult(result); $event.stopPropagation()"
+                  (mouseenter)="selectedIndex.set(i)"
+                >
+                  <div class="result-icon-box" [class]="'type-' + result.type">
+                    <i [class]="result.icon"></i>
+                  </div>
+                  <div class="result-info">
+                    <div class="result-main">
+                      <span class="result-title">{{ result.title }}</span>
+                      <span class="result-badge">{{ getTypeLabel(result.type) }}</span>
+                    </div>
+                    @if (result.subtitle) {
+                      <div class="result-subtitle">{{ result.subtitle }}</div>
+                    }
+                  </div>
+                  <i class="pi pi-chevron-right enter-icon"></i>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- No Results -->
+          @if (
+            !searchService.loading() && searchQuery && !searchService.hasResults()
+          ) {
+            <div class="no-results">
+              <div class="no-results-icon">
+                <i class="pi pi-search"></i>
+              </div>
+              <h3>No results found</h3>
+              <p>We couldn't find anything matching "<strong>{{ searchQuery }}</strong>"</p>
+              <div class="no-results-suggestions">
+                <span>Try searching for:</span>
+                <div class="suggestion-chips">
+                  <span class="suggestion-chip" (click)="searchFor('Sprint'); $event.stopPropagation()">Sprint</span>
+                  <span class="suggestion-chip" (click)="searchFor('Quarterback'); $event.stopPropagation()">Quarterback</span>
+                  <span class="suggestion-chip" (click)="searchFor('Drills'); $event.stopPropagation()">Drills</span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Recent Searches (when no query) -->
+          @if (!searchQuery && searchService.recentSearches().length > 0) {
+            <div class="recent-searches">
+              <div class="section-header">
+                <div class="section-title">
+                  <i class="pi pi-history"></i>
+                  <span>Recent Searches</span>
+                </div>
+                <button class="clear-recent-link" (click)="clearRecentSearches(); $event.stopPropagation()">
+                  Clear history
+                </button>
+              </div>
+              <div class="recent-grid">
+                @for (recent of searchService.recentSearches(); track recent) {
+                  <div class="recent-tag" (click)="searchFor(recent); $event.stopPropagation()">
+                    <span>{{ recent }}</span>
+                    <i class="pi pi-arrow-up-left"></i>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Quick Links (when no query) -->
+          @if (!searchQuery) {
+            <div class="quick-links">
+              <div class="section-header">
+                <div class="section-title">
+                  <i class="pi pi-bolt"></i>
+                  <span>Quick Actions</span>
+                </div>
+              </div>
+              <div class="quick-links-grid">
+                <div class="quick-link-card" (click)="navigateTo('/training'); $event.stopPropagation()">
+                  <div class="quick-link-icon training">
+                    <i class="pi pi-calendar"></i>
+                  </div>
+                  <div class="quick-link-text">
+                    <span class="link-label">Training</span>
+                    <span class="link-desc">Today's plan</span>
+                  </div>
+                </div>
+                <div class="quick-link-card" (click)="navigateTo('/exercise-library'); $event.stopPropagation()">
+                  <div class="quick-link-icon exercises">
+                    <i class="pi pi-bolt"></i>
+                  </div>
+                  <div class="quick-link-text">
+                    <span class="link-label">Exercises</span>
+                    <span class="link-desc">Browse library</span>
+                  </div>
+                </div>
+                <div class="quick-link-card" (click)="navigateTo('/analytics'); $event.stopPropagation()">
+                  <div class="quick-link-icon analytics">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="quick-link-text">
+                    <span class="link-label">Analytics</span>
+                    <span class="link-desc">View trends</span>
+                  </div>
+                </div>
+                <div class="quick-link-card" (click)="navigateTo('/roster'); $event.stopPropagation()">
+                  <div class="quick-link-icon roster">
+                    <i class="pi pi-users"></i>
+                  </div>
+                  <div class="quick-link-text">
+                    <span class="link-label">Roster</span>
+                    <span class="link-desc">Team members</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           }
         </div>
 
-        <!-- Loading State -->
-        @if (searchService.loading()) {
-          <div class="loading-state">
-            <p-progressSpinner
-              [style]="{ width: '30px', height: '30px' }"
-            ></p-progressSpinner>
-            <span>Searching...</span>
-          </div>
-        }
-
-        <!-- Results -->
-        @if (!searchService.loading() && searchService.hasResults()) {
-          <div class="search-results">
-            @for (
-              result of searchService.results();
-              track result.id;
-              let i = $index
-            ) {
-              <div
-                class="search-result-item"
-                [class.selected]="selectedIndex() === i"
-                (click)="selectResult(result)"
-                (mouseenter)="selectedIndex.set(i)"
-              >
-                <div class="result-icon" [class]="'type-' + result.type">
-                  <i [class]="result.icon"></i>
-                </div>
-                <div class="result-content">
-                  <div class="result-title">{{ result.title }}</div>
-                  @if (result.subtitle) {
-                    <div class="result-subtitle">{{ result.subtitle }}</div>
-                  }
-                </div>
-                <div class="result-type">{{ getTypeLabel(result.type) }}</div>
-              </div>
-            }
-          </div>
-        }
-
-        <!-- No Results -->
-        @if (
-          !searchService.loading() && searchQuery && !searchService.hasResults()
-        ) {
-          <div class="no-results">
-            <i class="pi pi-search"></i>
-            <p>No results found for "{{ searchQuery }}"</p>
-            <span>Try different keywords or check spelling</span>
-          </div>
-        }
-
-        <!-- Recent Searches (when no query) -->
-        @if (!searchQuery && searchService.recentSearches().length > 0) {
-          <div class="recent-searches">
-            <div class="section-header">
-              <span>Recent Searches</span>
-              <p-button
-                label="Clear"
-                [text]="true"
-                size="small"
-                (onClick)="clearRecentSearches()"
-              ></p-button>
-            </div>
-            @for (recent of searchService.recentSearches(); track recent) {
-              <div class="recent-item" (click)="searchFor(recent)">
-                <i class="pi pi-history"></i>
-                <span>{{ recent }}</span>
-              </div>
-            }
-          </div>
-        }
-
-        <!-- Quick Links (when no query) -->
-        @if (!searchQuery) {
-          <div class="quick-links">
-            <div class="section-header">
-              <span>Quick Links</span>
-            </div>
-            <div class="quick-links-grid">
-              <div class="quick-link" (click)="navigateTo('/training')">
-                <i class="pi pi-calendar"></i>
-                <span>Training</span>
-              </div>
-              <div class="quick-link" (click)="navigateTo('/exercise-library')">
-                <i class="pi pi-bolt"></i>
-                <span>Exercises</span>
-              </div>
-              <div class="quick-link" (click)="navigateTo('/analytics')">
-                <i class="pi pi-chart-line"></i>
-                <span>Analytics</span>
-              </div>
-              <div class="quick-link" (click)="navigateTo('/roster')">
-                <i class="pi pi-users"></i>
-                <span>Roster</span>
-              </div>
-            </div>
-          </div>
-        }
-
         <!-- Keyboard Hints -->
-        <div class="keyboard-hints">
-          <span><kbd>↑</kbd><kbd>↓</kbd> to navigate</span>
-          <span><kbd>Enter</kbd> to select</span>
-          <span><kbd>Esc</kbd> to close</span>
+        <div class="command-palette-footer">
+          <div class="keyboard-hint">
+            <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
+            <span>Navigate</span>
+          </div>
+          <div class="keyboard-hint">
+            <span class="key-combo"><kbd>↵</kbd></span>
+            <span>Select</span>
+          </div>
+          <div class="keyboard-hint">
+            <span class="key-combo"><kbd>Esc</kbd></span>
+            <span>Close</span>
+          </div>
+          <div class="keyboard-hint search-type-hint">
+            <span>Searching <strong>Global Content</strong></span>
+          </div>
         </div>
       </div>
     </p-dialog>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      ::ng-deep .search-dialog {
-        .p-dialog-content {
-          padding: 0;
-          border-radius: var(--p-border-radius);
-          overflow: hidden;
-        }
-      }
-
-      .search-panel {
-        background: var(--surface-primary);
-      }
-
-      .search-input-container {
-        display: flex;
-        align-items: center;
-        padding: var(--space-4);
-        border-bottom: 1px solid var(--p-surface-200);
-        gap: var(--space-3);
-      }
-
-      .search-icon {
-        color: var(--text-secondary);
-        font-size: 1.25rem;
-      }
-
-      .search-input {
-        flex: 1;
-        border: none;
-        background: transparent;
-        font-size: 1.125rem;
-        padding: var(--space-2);
-      }
-
-      .search-input:focus {
-        outline: 2px solid var(--color-brand-primary, #089949);
-        outline-offset: 2px;
-      }
-
-      .search-input:focus:not(:focus-visible) {
-        outline: none;
-      }
-
-      .clear-btn {
-        color: var(--text-secondary);
-      }
-
-      .loading-state {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-3);
-        padding: var(--space-6);
-        color: var(--text-secondary);
-      }
-
-      .search-results {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .search-result-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-3) var(--space-4);
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .search-result-item:hover,
-      .search-result-item.selected {
-        background: var(--p-surface-100);
-      }
-
-      .result-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: var(--p-border-radius);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.125rem;
-      }
-
-      .result-icon.type-exercise {
-        background: var(--p-blue-100);
-        color: var(--p-blue-600);
-      }
-
-      .result-icon.type-program {
-        background: var(--p-green-100);
-        color: var(--p-green-600);
-      }
-
-      .result-icon.type-player {
-        background: var(--p-purple-100);
-        color: var(--p-purple-600);
-      }
-
-      .result-icon.type-video {
-        background: var(--p-red-100);
-        color: var(--p-red-600);
-      }
-
-      .result-icon.type-team {
-        background: var(--p-orange-100);
-        color: var(--p-orange-600);
-      }
-
-      .result-content {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .result-title {
-        font-weight: 500;
-        color: var(--text-primary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .result-subtitle {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .result-type {
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .no-results {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: var(--space-8);
-        color: var(--text-secondary);
-        text-align: center;
-      }
-
-      .no-results i {
-        font-size: 2.5rem;
-        margin-bottom: var(--space-4);
-        opacity: 0.5;
-      }
-
-      .no-results p {
-        margin: 0 0 var(--space-2);
-        font-weight: 500;
-        color: var(--text-primary);
-      }
-
-      .no-results span {
-        font-size: 0.875rem;
-      }
-
-      .recent-searches,
-      .quick-links {
-        padding: var(--space-4);
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-3);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-tertiary);
-      }
-
-      .recent-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-2) var(--space-3);
-        cursor: pointer;
-        border-radius: var(--p-border-radius);
-        transition: background 0.2s;
-      }
-
-      .recent-item:hover {
-        background: var(--p-surface-100);
-      }
-
-      .recent-item i {
-        color: var(--text-tertiary);
-      }
-
-      .quick-links-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-3);
-      }
-
-      .quick-link {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-4);
-        border-radius: var(--p-border-radius);
-        background: var(--p-surface-50);
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .quick-link:hover {
-        background: var(--p-surface-100);
-        transform: translateY(-2px);
-      }
-
-      .quick-link i {
-        font-size: 1.5rem;
-        color: var(--color-brand-primary);
-      }
-
-      .quick-link span {
-        font-size: 0.875rem;
-        color: var(--text-primary);
-      }
-
-      .keyboard-hints {
-        display: flex;
-        justify-content: center;
-        gap: var(--space-6);
-        padding: var(--space-3);
-        border-top: 1px solid var(--p-surface-200);
-        background: var(--p-surface-50);
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-      }
-
-      kbd {
-        display: inline-block;
-        padding: 0.125rem 0.375rem;
-        background: var(--p-surface-200);
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 0.75rem;
-        margin-right: 0.25rem;
-      }
-
-      @media (max-width: 768px) {
-        .quick-links-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .keyboard-hints {
-          display: none;
-        }
-      }
-    `,
-  ],
+  styleUrl: './search-panel.component.scss',
 })
 export class SearchPanelComponent {
   @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;

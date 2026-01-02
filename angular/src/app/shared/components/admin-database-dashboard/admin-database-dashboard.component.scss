@@ -1,0 +1,97 @@
+// ============================================================================
+// admin-database-dashboard.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .health-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .health-item {
+    padding: 1rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  .metric-value {
+    font-size: var(--font-heading-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .sync-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .sync-status {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border-primary);
+  }
+
+  .sync-status h4 {
+    margin: 0 0 1rem 0;
+    color: var(--color-text-primary);
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .status-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .status-time {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .data-manager {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  .data-manager p {
+    margin: 0.5rem 0;
+  }
+}
+

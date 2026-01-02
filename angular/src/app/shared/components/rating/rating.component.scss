@@ -1,0 +1,85 @@
+// ============================================================================
+// rating.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  .rating-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.25rem;
+  }
+
+  .rating-input {
+    display: none;
+  }
+
+  .rating-star {
+    cursor: pointer;
+    color: var(--color-border-secondary);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rating-star:hover:not(.rating-readonly .rating-star),
+  .rating-star:hover ~ .rating-star:not(.rating-readonly .rating-star) {
+    color: var(--ds-primary-green);
+  }
+
+  .rating-input:checked ~ .rating-star,
+  .rating-input:checked ~ .rating-star ~ .rating-star {
+    color: var(--ds-primary-green);
+  }
+
+  .rating-star.filled {
+    color: var(--ds-primary-green);
+  }
+
+  .rating-readonly .rating-star {
+    cursor: default;
+  }
+
+  .rating-sm {
+    gap: 0.125rem;
+  }
+
+  .rating-sm .rating-star {
+    font-size: var(--font-body-md);
+  }
+
+  .rating-lg {
+    gap: 0.5rem;
+  }
+
+  .rating-lg .rating-star {
+    font-size: var(--font-heading-lg);
+  }
+
+  .rating-value {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .form-help {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .form-error {
+    font-size: var(--font-body-xs);
+    color: var(--color-status-error);
+  }
+}
+

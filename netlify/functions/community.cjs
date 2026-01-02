@@ -157,7 +157,7 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
         avatar: user.avatar,
         points: user.points,
         posts: user.posts,
-        wins: Math.floor(user.points / 100), // Mock wins calculation
+        wins: user.wins || 0,
         losses: 0,
         pointsScored: user.points,
       }));

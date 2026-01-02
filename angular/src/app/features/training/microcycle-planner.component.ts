@@ -192,65 +192,7 @@ interface DayPlan {
       </div>
     </div>
   `,
-  styles: [
-    `
-      .stat-card {
-        @apply p-3 bg-white rounded border border-gray-200;
-      }
-
-      .stat-label {
-        @apply text-xs text-text-secondary mb-1;
-      }
-
-      .stat-value {
-        @apply text-lg font-bold text-text-primary;
-      }
-
-      .day-card {
-        @apply bg-white transition-all duration-200;
-      }
-
-      .day-card:hover {
-        @apply shadow-lg transform -translate-y-1;
-      }
-
-      .intensity-badge {
-        @apply inline-block px-2 py-1 rounded text-xs font-semibold text-white;
-      }
-
-      .intensity-low {
-        @apply bg-blue-500;
-      }
-
-      .intensity-medium {
-        @apply bg-green-500;
-      }
-
-      .intensity-high {
-        @apply bg-orange-500;
-      }
-
-      .intensity-rest {
-        @apply bg-gray-400;
-      }
-
-      .text-red-600 {
-        color: var(--color-status-error);
-      }
-
-      .text-yellow-500 {
-        color: var(--color-status-warning);
-      }
-
-      .text-green-500 {
-        color: var(--color-status-success);
-      }
-
-      .text-orange-500 {
-        color: var(--color-status-warning);
-      }
-    `,
-  ],
+  styleUrl: './microcycle-planner.component.scss',
 })
 export class MicrocyclePlannerComponent implements OnInit {
   @Input() athleteId!: string;
@@ -367,7 +309,7 @@ export class MicrocyclePlannerComponent implements OnInit {
       gameProximity.hoursUntilGame <= 48
     ) {
       // 24-48 hours before - minimal sprint work
-      suggestedSprintLoad = Math.floor(Math.random() * 2) + 2; // 2-3 sprints
+      suggestedSprintLoad = 2; // Fixed baseline
       suggestedIntensity = "low";
       maxSprints = 3;
       recommendedDuration = 30;
@@ -377,7 +319,7 @@ export class MicrocyclePlannerComponent implements OnInit {
       gameProximity.hoursUntilGame <= 72
     ) {
       // 48-72 hours before - reduced sprint volume
-      suggestedSprintLoad = Math.floor(Math.random() * 3) + 4; // 4-6 sprints
+      suggestedSprintLoad = 4; // Fixed baseline
       suggestedIntensity = "low";
       maxSprints = 6;
       recommendedDuration = 45;
@@ -391,7 +333,7 @@ export class MicrocyclePlannerComponent implements OnInit {
           suggestedIntensity = "rest";
           reasoning = "High ACWR - rest day recommended";
         } else {
-          suggestedSprintLoad = Math.floor(Math.random() * 3) + 2; // 2-4 sprints
+          suggestedSprintLoad = 2; // Fixed baseline
           suggestedIntensity = "low";
           maxSprints = 5;
           recommendedDuration = 30;
@@ -403,7 +345,7 @@ export class MicrocyclePlannerComponent implements OnInit {
           suggestedIntensity = "rest";
           reasoning = "Elevated ACWR - rest day";
         } else {
-          suggestedSprintLoad = Math.floor(Math.random() * 5) + 5; // 5-9 sprints (reduced)
+          suggestedSprintLoad = 5; // Fixed baseline
           suggestedIntensity = "low";
           maxSprints = 10;
           recommendedDuration = 45;
@@ -415,7 +357,7 @@ export class MicrocyclePlannerComponent implements OnInit {
           suggestedIntensity = "rest";
           reasoning = "Weekly rest day";
         } else {
-          suggestedSprintLoad = Math.floor(Math.random() * 10) + 15; // 15-24 sprints (increased)
+          suggestedSprintLoad = 15; // Fixed baseline
           suggestedIntensity = dayIndex % 2 === 0 ? "high" : "medium";
           maxSprints = 25;
           recommendedDuration = 90;
@@ -428,14 +370,14 @@ export class MicrocyclePlannerComponent implements OnInit {
           reasoning = "Weekly rest day";
         } else if (dayIndex === 0 || dayIndex === 3) {
           // High intensity days
-          suggestedSprintLoad = Math.floor(Math.random() * 8) + 12; // 12-19 sprints
+          suggestedSprintLoad = 12; // Fixed baseline
           suggestedIntensity = "high";
           maxSprints = 20;
           recommendedDuration = 90;
           reasoning = "Optimal ACWR - high intensity day";
         } else {
           // Medium intensity days
-          suggestedSprintLoad = Math.floor(Math.random() * 6) + 8; // 8-13 sprints
+          suggestedSprintLoad = 8; // Fixed baseline
           suggestedIntensity = "medium";
           maxSprints = 15;
           recommendedDuration = 60;
@@ -451,7 +393,7 @@ export class MicrocyclePlannerComponent implements OnInit {
         suggestedIntensity = "rest";
         reasoning = "High ACWR - rest day recommended";
       } else {
-        suggestedSprintLoad = Math.floor(Math.random() * 3) + 2; // 2-4 sprints
+        suggestedSprintLoad = 2; // Fixed baseline
         suggestedIntensity = "low";
         maxSprints = 5;
         recommendedDuration = 30;
@@ -463,7 +405,7 @@ export class MicrocyclePlannerComponent implements OnInit {
         suggestedIntensity = "rest";
         reasoning = "Elevated ACWR - rest day";
       } else {
-        suggestedSprintLoad = Math.floor(Math.random() * 5) + 5; // 5-9 sprints
+        suggestedSprintLoad = 5; // Fixed baseline
         suggestedIntensity = "low";
         maxSprints = 10;
         recommendedDuration = 45;
@@ -475,7 +417,7 @@ export class MicrocyclePlannerComponent implements OnInit {
         suggestedIntensity = "rest";
         reasoning = "Weekly rest day";
       } else {
-        suggestedSprintLoad = Math.floor(Math.random() * 10) + 15; // 15-24 sprints
+        suggestedSprintLoad = 15; // Fixed baseline
         suggestedIntensity = dayIndex % 2 === 0 ? "high" : "medium";
         maxSprints = 25;
         recommendedDuration = 90;
@@ -488,14 +430,14 @@ export class MicrocyclePlannerComponent implements OnInit {
         reasoning = "Weekly rest day";
       } else if (dayIndex === 0 || dayIndex === 3) {
         // High intensity days
-        suggestedSprintLoad = Math.floor(Math.random() * 8) + 12; // 12-19 sprints
+        suggestedSprintLoad = 12; // Fixed baseline
         suggestedIntensity = "high";
         maxSprints = 20;
         recommendedDuration = 90;
         reasoning = "Optimal ACWR - high intensity day";
       } else {
         // Medium intensity days
-        suggestedSprintLoad = Math.floor(Math.random() * 6) + 8; // 8-13 sprints
+        suggestedSprintLoad = 8; // Fixed baseline
         suggestedIntensity = "medium";
         maxSprints = 15;
         recommendedDuration = 60;

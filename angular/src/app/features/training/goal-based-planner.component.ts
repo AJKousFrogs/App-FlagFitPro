@@ -273,45 +273,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
       }
     </div>
   `,
-  styles: [
-    `
-      .stat-item {
-        @apply text-center;
-      }
-
-      .stat-label {
-        @apply mb-1;
-      }
-
-      .stat-value {
-        @apply text-lg;
-      }
-
-      .session-card {
-        @apply transition-all duration-200;
-      }
-
-      .session-card:hover {
-        @apply shadow-lg transform -translate-y-1;
-      }
-
-      .text-green-600 {
-        color: var(--color-status-success);
-      }
-
-      .text-yellow-600 {
-        color: var(--color-status-warning);
-      }
-
-      .text-red-600 {
-        color: var(--color-status-error);
-      }
-
-      .text-blue-600 {
-        color: var(--color-status-info);
-      }
-    `,
-  ],
+  styleUrl: './goal-based-planner.component.scss',
 })
 export class GoalBasedPlannerComponent implements OnInit {
   athleteId = input.required<string>();
