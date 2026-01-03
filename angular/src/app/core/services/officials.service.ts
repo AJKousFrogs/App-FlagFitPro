@@ -403,4 +403,27 @@ export class OfficialsService {
         }),
       );
   }
+
+  /**
+   * Get upcoming games for a team
+   */
+  getUpcomingGames(teamId: string): Observable<Array<{ label: string; value: string; date: string; opponent: string }>> {
+    return this.apiService.get<any[]>(`/api/coach/games`, { teamId, limit: 50 }).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          return (response.data as any[]).map(g => ({
+            label: `${new Date(g.date || g.game_date).toLocaleDateString()} vs ${g.opponent || g.opponent_name}`,
+            value: g.id || g.game_id,
+            date: g.date || g.game_date,
+            opponent: g.opponent || g.opponent_name
+          }));
+        }
+        return [];
+      }),
+      catchError(error => {
+        this.logger.error("Failed to fetch upcoming games:", error);
+        return of([]);
+      })
+    );
+  }
 }

@@ -28,15 +28,14 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-main-layout>
-      <div class="qb-training-schedule-page">
-        <app-page-header
-          title="QB Training Schedule"
-          subtitle="Quarterback-specific training program"
-          icon="pi-calendar"
-        ></app-page-header>
+    <div class="qb-training-schedule-page">
+      <app-page-header
+        title="QB Training Schedule"
+        subtitle="Quarterback-specific training program"
+        icon="pi-calendar"
+      ></app-page-header>
 
-        <p-card class="schedule-card">
+      <p-card class="schedule-card">
           <ng-template pTemplate="header">
             <h3>Throwing Volume Program</h3>
           </ng-template>
@@ -64,8 +63,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             [showWeek]="true"
           ></p-datepicker>
         </p-card>
-      </div>
-    </app-main-layout>
+    </div>
   `,
   styleUrl: './qb-training-schedule.component.scss',
 })

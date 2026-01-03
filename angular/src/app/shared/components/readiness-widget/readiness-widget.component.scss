@@ -5,31 +5,38 @@
 
 @layer features {
   .score-value {
-    @apply text-5xl font-bold mb-2;
+    font-size: var(--text-5xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-2);
   }
 
   .score-label {
-    @apply text-sm;
+    font-size: var(--font-body-sm);
   }
 
   .suggestion-text {
-    @apply text-base;
+    font-size: var(--font-body-md);
   }
 
   .metric-item {
-    @apply text-center;
+    text-align: center;
   }
 
   .metric-label {
-    @apply mb-1;
+    margin-bottom: var(--space-1);
   }
 
   .metric-value {
-    @apply text-lg;
+    font-size: var(--font-body-lg);
   }
 
   .component-item {
-    @apply flex justify-between items-center p-2 bg-white rounded;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2);
+    background: var(--surface-primary);
+    border-radius: var(--radius-sm);
   }
 
   .text-green-600 {

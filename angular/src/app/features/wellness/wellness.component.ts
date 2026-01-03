@@ -1,27 +1,31 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { InputNumberModule } from "primeng/inputnumber";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
-import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { WellnessService } from "../../core/services/wellness.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { WellnessService } from "../../core/services/wellness.service";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import {
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
+} from "../../shared/components/ui-components";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface WellnessMetric {
@@ -32,9 +36,9 @@ interface WellnessMetric {
   trend?: string;
 }
 
+
 @Component({
   selector: "app-wellness",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -43,24 +47,26 @@ interface WellnessMetric {
     ButtonModule,
     ChartModule,
     InputNumberModule,
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    AppLoadingComponent,
   ],
   template: `
     <app-main-layout>
       <!-- Loading State -->
-      @if (isPageLoading()) {
-        <app-page-loading-state
-          message="Loading wellness data..."
-          variant="skeleton"
-        ></app-page-loading-state>
-      }
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading wellness data..."
+      ></app-loading>
 
       <!-- Error State -->
-      @else if (hasPageError()) {
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load wellness data"
           [message]="pageErrorMessage()"
@@ -76,11 +82,10 @@ interface WellnessMetric {
             subtitle="Track your health, recovery, and wellness metrics"
             icon="pi-heart"
           >
-            <p-button
-              label="Log Check-in"
-              icon="pi pi-plus"
-              (onClick)="openCheckIn()"
-            ></p-button>
+            <app-button
+              icon="plus"
+              (clicked)="openCheckIn()"
+            >Log Check-in</app-button>
           </app-page-header>
 
           <!-- Wellness Metrics -->
@@ -89,10 +94,7 @@ interface WellnessMetric {
           <!-- Wellness Charts - Lazy loaded for performance -->
           <div class="charts-grid">
             @defer (on viewport) {
-              <p-card class="chart-card">
-                <ng-template pTemplate="header">
-                  <h3>Sleep Quality</h3>
-                </ng-template>
+              <app-card title="Sleep Quality">
                 @if (sleepChartData()) {
                   <p-chart
                     type="line"
@@ -100,18 +102,15 @@ interface WellnessMetric {
                     [options]="chartOptions"
                   ></p-chart>
                 }
-              </p-card>
+              </app-card>
             } @placeholder {
-              <p-card class="chart-card chart-loading">
+              <app-card title="Sleep Quality" [loading]="true">
                 <div class="loading-text">Loading sleep data...</div>
-              </p-card>
+              </app-card>
             }
 
             @defer (on viewport) {
-              <p-card class="chart-card">
-                <ng-template pTemplate="header">
-                  <h3>Recovery Score</h3>
-                </ng-template>
+              <app-card title="Recovery Score">
                 @if (recoveryChartData()) {
                   <p-chart
                     type="bar"
@@ -119,19 +118,20 @@ interface WellnessMetric {
                     [options]="chartOptions"
                   ></p-chart>
                 }
-              </p-card>
+              </app-card>
             } @placeholder {
-              <p-card class="chart-card chart-loading">
+              <app-card title="Recovery Score" [loading]="true">
                 <div class="loading-text">Loading recovery data...</div>
-              </p-card>
+              </app-card>
             }
           </div>
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
-          <p-card class="checkin-card">
-            <ng-template pTemplate="header">
-              <h3>Daily Wellness Check-in</h3>
-            </ng-template>
+          <app-card 
+            title="Daily Wellness Check-in" 
+            class="checkin-card"
+            [flush]="true"
+          >
             <div class="checkin-form">
               <!-- Sleep Section -->
               <div class="checkin-section">
@@ -278,18 +278,17 @@ interface WellnessMetric {
 
               <!-- Submit -->
               <div class="checkin-submit">
-                <p-button
-                  label="Submit Check-in"
-                  icon="pi pi-check"
+                <app-button
+                  icon="check"
                   [loading]="isSubmitting()"
-                  (onClick)="submitCheckIn()"
-                ></p-button>
+                  (clicked)="submitCheckIn()"
+                >Submit Check-in</app-button>
                 <small class="submit-note"
                   >Daily check-ins help optimize your training load</small
                 >
               </div>
             </div>
-          </p-card>
+          </app-card>
         </div>
       }
       <!-- End of @else for content -->
@@ -297,25 +296,26 @@ interface WellnessMetric {
   `,
   styleUrl: "./wellness.component.scss",
 })
-export class WellnessComponent implements OnInit {
-  private wellnessService = inject(WellnessService);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
+export class WellnessComponent {
+  private readonly wellnessService = inject(WellnessService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Runtime guard signals - prevent white screen crashes
-  isPageLoading = signal<boolean>(true);
-  hasPageError = signal<boolean>(false);
-  pageErrorMessage = signal<string>(
+  readonly isPageLoading = signal<boolean>(true);
+  readonly hasPageError = signal<boolean>(false);
+  readonly pageErrorMessage = signal<string>(
     "Something went wrong while loading wellness data. Please try again.",
   );
 
-  isSubmitting = signal(false);
+  readonly isSubmitting = signal(false);
 
-  metrics = signal<WellnessMetric[]>([]);
-  wellnessStats = signal<any[]>([]);
-  sleepChartData = signal<any>(null);
-  recoveryChartData = signal<any>(null);
+  readonly metrics = signal<WellnessMetric[]>([]);
+  readonly wellnessStats = signal<any[]>([]);
+  readonly sleepChartData = signal<any>(null);
+  readonly recoveryChartData = signal<any>(null);
   checkInData = {
     sleepHours: 7,
     sleepQuality: 7,
@@ -329,9 +329,10 @@ export class WellnessComponent implements OnInit {
     readiness: 7,
   };
 
-  chartOptions = DEFAULT_CHART_OPTIONS;
+  readonly chartOptions = DEFAULT_CHART_OPTIONS;
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.initializePage();
   }
 
@@ -373,7 +374,7 @@ export class WellnessComponent implements OnInit {
                 label: "Sleep Quality",
                 value: latestData.sleep ? `${latestData.sleep}h` : "N/A",
                 icon: "pi-moon",
-                color: "#3498db",
+                color: "var(--color-status-info)",
                 trend: this.calculateTrend(response.data, "sleep"),
                 trendType: "positive",
               },
@@ -392,7 +393,7 @@ export class WellnessComponent implements OnInit {
                 label: "Energy Level",
                 value: latestData.energy ? `${latestData.energy}/10` : "N/A",
                 icon: "pi-bolt",
-                color: "#f1c40f",
+                color: "var(--color-status-warning)",
                 trend: this.calculateTrend(response.data, "energy"),
                 trendType: "positive",
               },
@@ -404,8 +405,8 @@ export class WellnessComponent implements OnInit {
                 icon: "pi-shield",
                 color:
                   latestData.stress && latestData.stress <= 3
-                    ? "#10c96b"
-                    : "#f1c40f",
+                    ? "var(--color-status-success)"
+                    : "var(--color-status-warning)",
                 trend:
                   latestData.stress && latestData.stress <= 3
                     ? "Low"
@@ -433,8 +434,8 @@ export class WellnessComponent implements OnInit {
                 {
                   label: "Sleep Hours",
                   data: sortedData.map((d) => d.sleep || 0),
-                  borderColor: "#3498db",
-                  backgroundColor: "rgba(52, 152, 219, 0.1)",
+                  borderColor: "var(--color-status-info)",
+                  backgroundColor: "rgba(var(--color-status-info-rgb), 0.1)",
                 },
               ],
             });
@@ -489,7 +490,7 @@ export class WellnessComponent implements OnInit {
         label: "Sleep Quality",
         value: this.noDataMessage.title,
         icon: "pi-moon",
-        color: "#3498db",
+        color: "var(--color-status-info)",
         trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
@@ -505,7 +506,7 @@ export class WellnessComponent implements OnInit {
         label: "Energy Level",
         value: this.noDataMessage.title,
         icon: "pi-bolt",
-        color: "#f1c40f",
+        color: "var(--color-status-warning)",
         trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
@@ -513,7 +514,7 @@ export class WellnessComponent implements OnInit {
         label: "Stress Level",
         value: this.noDataMessage.title,
         icon: "pi-shield",
-        color: "#10c96b",
+        color: "var(--color-status-success)",
         trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
@@ -577,40 +578,37 @@ export class WellnessComponent implements OnInit {
       date: new Date().toISOString().split("T")[0],
     };
 
-    this.wellnessService
-      .logWellness(wellnessData)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.isSubmitting.set(false);
-          if (response.success) {
-            this.toastService.success("Wellness check-in saved! 💪");
-            // Reset form to defaults
-            this.checkInData = {
-              sleepHours: 7,
-              sleepQuality: 7,
-              energyLevel: 7,
-              soreness: 3,
-              hydration: 8,
-              restingHR: 0,
-              mood: 7,
-              stress: 3,
-              motivation: 7,
-              readiness: 7,
-            };
-            // Reload wellness data to show updated stats
-            this.loadWellnessData();
-          } else {
-            this.toastService.error(
-              response.error || "Failed to save check-in",
-            );
-          }
-        },
-        error: (err) => {
-          this.isSubmitting.set(false);
-          this.logger.error("Error submitting wellness check-in:", err);
-          this.toastService.error("Failed to save wellness check-in");
-        },
+    this.trainingService
+      .submitWellness(wellnessData)
+      .then((response: any) => {
+        this.isSubmitting.set(false);
+        if (response.success) {
+          this.toastService.success("Wellness check-in saved! 💪");
+          // Reset form to defaults
+          this.checkInData = {
+            sleepHours: 7,
+            sleepQuality: 7,
+            energyLevel: 7,
+            soreness: 3,
+            hydration: 8,
+            restingHR: 0,
+            mood: 7,
+            stress: 3,
+            motivation: 7,
+            readiness: 7,
+          };
+          // Reload wellness data to show updated stats
+          this.loadWellnessData();
+        } else {
+          this.toastService.error(
+            response.error || "Failed to save check-in",
+          );
+        }
+      })
+      .catch((err) => {
+        this.isSubmitting.set(false);
+        this.logger.error("Error submitting wellness check-in:", err);
+        this.toastService.error("Failed to save wellness check-in");
       });
   }
 

@@ -71,52 +71,71 @@
 
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--space-4);
     margin-bottom: var(--space-8);
   }
 
   .metric-card {
-    text-align: center;
+    text-align: left;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-2);
+    }
   }
 
   .metric-icon {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto var(--space-4);
+    width: 40px;
+    height: 40px;
+    margin: 0 0 var(--space-4) 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-brand-primary-subtle);
-    color: var(--color-brand-primary);
-    border-radius: var(--radius-full);
-    font-size: var(--text-2xl);
+    background: var(--ds-primary-green-ultra-subtle);
+    color: var(--ds-primary-green);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xl);
   }
 
   .metric-value {
-    font-size: var(--text-3xl);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--text-2xl);
+    font-weight: 800;
     color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
   }
 
   .metric-label {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-2);
   }
 
   .metric-trend {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-xs);
     font-weight: var(--font-weight-medium);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    display: inline-block;
   }
 
   .trend-positive {
+    background: var(--color-status-success-subtle);
     color: var(--color-status-success);
   }
 
   .trend-negative {
-    color: var(--color-status-warning);
+    background: var(--color-status-error-subtle);
+    color: var(--color-status-error);
+  }
+
+  .trend-neutral {
+    background: var(--surface-secondary);
+    color: var(--color-text-secondary);
   }
 
   .charts-grid {
@@ -137,44 +156,52 @@
   .chart-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
+    margin-bottom: var(--space-4);
+  }
+
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .chart-title {
     font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  .chart-subtitle {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
     margin: 0;
   }
 
-  .chart-actions {
-    display: flex;
-    gap: var(--space-2);
-  }
+  .chart-container {
+    height: 300px;
+    width: 100%;
+    position: relative;
 
-  .chart-controls {
-    display: flex;
-    gap: var(--space-3);
-  }
-
-  .chart-insights {
-    display: flex;
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
-  }
-
-  .insight-item {
-    flex: 1;
-    text-align: center;
+    &.radar, &.doughnut {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 320px;
+    }
   }
 
   .insight-value {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-brand-primary);
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--ds-primary-green);
     margin-bottom: var(--space-1);
+
+    &.danger, &.red { color: var(--color-status-error); }
+    &.warning, &.yellow { color: var(--color-status-warning); }
+    &.success, &.green { color: var(--ds-primary-green); }
   }
 
   .insight-label {

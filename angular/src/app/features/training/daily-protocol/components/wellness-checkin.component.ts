@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, inject, DestroyRef, output, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, signal, inject, output, input, effect } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { Slider } from "primeng/slider";
@@ -8,10 +8,10 @@ import { Textarea } from "primeng/textarea";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "../../../../core/services/api.service";
+import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 
-interface WellnessData {
+export interface WellnessData {
   sleepQuality: number;
   sleepHours: number;
   energyLevel: number;
@@ -21,7 +21,7 @@ interface WellnessData {
   notes?: string;
 }
 
-interface ReadinessResult {
+export interface ReadinessResult {
   readinessScore: number;
   sleepQuality: number;
   energyLevel: number;
@@ -32,8 +32,16 @@ interface ReadinessResult {
 
 @Component({
   selector: "app-wellness-checkin",
-  standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, Slider, Checkbox, Textarea, DialogModule, TagModule, TooltipModule],
+  imports: [
+    FormsModule, 
+    ButtonModule, 
+    Slider, 
+    Checkbox, 
+    Textarea, 
+    DialogModule, 
+    TagModule, 
+    TooltipModule
+  ],
   template: `
     <!-- Quick Checkin Button -->
     @if (!hasCheckedIn()) {
@@ -176,7 +184,7 @@ interface ReadinessResult {
             <span class="label-icon">📝</span>
             <span>Notes (optional)</span>
           </label>
-          <textarea pTextarea [(ngModel)]="formData.notes" rows="2" placeholder="Any additional notes..."></textarea>
+          <textarea p-textarea [(ngModel)]="formData.notes" rows="2" placeholder="Any additional notes..."></textarea>
         </div>
 
         <!-- Preview Score -->
@@ -198,18 +206,18 @@ interface ReadinessResult {
   styleUrl: './wellness-checkin.component.scss',
 })
 export class WellnessCheckinComponent implements OnInit {
-  private api = inject(ApiService);
+  private trainingService = inject(UnifiedTrainingService);
   private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
 
   // Input/Output
   date = input<string>(); // YYYY-MM-DD format
   checkinComplete = output<ReadinessResult>();
 
-  // State
-  hasCheckedIn = signal(false);
+  // State from Unified Service
+  hasCheckedIn = this.trainingService.hasCheckedInToday;
+  readinessScore = this.trainingService.readinessScore;
+  
   isSaving = signal(false);
-  readinessScore = signal(0);
   wellnessData = signal<WellnessData>({
     sleepQuality: 3,
     sleepHours: 7,
@@ -253,13 +261,10 @@ export class WellnessCheckinComponent implements OnInit {
   async loadExistingCheckin(): Promise<void> {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get(`/api/wellness-checkin?date=${targetDate}`).toPromise();
+      const response: any = await firstValueFrom(this.trainingService.getWellnessForDay(targetDate));
 
       if (response?.success && response.data) {
-        this.hasCheckedIn.set(true);
         this.wellnessData.set(response.data);
-        this.readinessScore.set(response.data.readinessScore || this.calculateScore(response.data));
         this.formData = { ...response.data };
       }
     } catch (err) {
@@ -273,13 +278,11 @@ export class WellnessCheckinComponent implements OnInit {
   }
 
   calculateScore(data: WellnessData): number {
-    // Formula: weighted average of wellness factors
-    // Sleep Quality: 30%, Sleep Hours: 15%, Energy: 25%, Soreness (inverted): 15%, Stress (inverted): 15%
     const sleepQualityScore = (data.sleepQuality / 5) * 100;
-    const sleepHoursScore = Math.min(100, ((data.sleepHours - 4) / 4) * 100); // 4-8h optimal
+    const sleepHoursScore = Math.min(100, ((data.sleepHours - 4) / 4) * 100);
     const energyScore = (data.energyLevel / 5) * 100;
-    const sorenessScore = (data.muscleSoreness / 5) * 100; // Higher is better (less sore)
-    const stressScore = (data.stressLevel / 5) * 100; // Higher is better (less stress)
+    const sorenessScore = (data.muscleSoreness / 5) * 100;
+    const stressScore = (data.stressLevel / 5) * 100;
 
     const weighted =
       sleepQualityScore * 0.3 +
@@ -298,19 +301,14 @@ export class WellnessCheckinComponent implements OnInit {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
       const readiness = this.calculateScore(this.formData);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api
-        .post("/api/wellness-checkin", {
-          date: targetDate,
-          ...this.formData,
-          readinessScore: readiness,
-        })
-        .toPromise();
+      const response: any = await this.trainingService.submitWellness({
+        date: targetDate,
+        ...this.formData,
+        readinessScore: readiness,
+      });
 
       if (response?.success) {
-        this.hasCheckedIn.set(true);
         this.wellnessData.set(this.formData);
-        this.readinessScore.set(readiness);
         this.showDialog = false;
 
         this.checkinComplete.emit({
@@ -322,7 +320,7 @@ export class WellnessCheckinComponent implements OnInit {
           recommendation: this.getRecommendation(readiness),
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error("Failed to save wellness checkin", err);
     } finally {
       this.isSaving.set(false);

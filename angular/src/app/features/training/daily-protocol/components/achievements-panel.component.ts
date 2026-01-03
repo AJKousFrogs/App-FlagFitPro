@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, computed, inject, DestroyRef } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, signal, computed, inject, DestroyRef } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
@@ -48,8 +48,7 @@ interface Stats {
 
 @Component({
   selector: "app-achievements-panel",
-  standalone: true,
-  imports: [CommonModule, ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TabsModule, SkeletonModule],
+  imports: [ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TabsModule, SkeletonModule],
   template: `
     <div class="achievements-panel">
       <!-- Summary Card -->
@@ -267,41 +266,42 @@ interface Stats {
   `,
   styleUrl: './achievements-panel.component.scss',
 })
-export class AchievementsPanelComponent implements OnInit {
-  private api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+export class AchievementsPanelComponent {
+  private readonly api = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  loading = signal(true);
-  achievements = signal<Achievement[]>([]);
-  grouped = signal<Record<string, Achievement[]>>({});
-  summary = signal<{
+  readonly loading = signal(true);
+  readonly achievements = signal<Achievement[]>([]);
+  readonly grouped = signal<Record<string, Achievement[]>>({});
+  readonly summary = signal<{
     totalEarned: number;
     totalAvailable: number;
     totalPoints: number;
     nextAchievement?: Achievement;
   } | null>(null);
-  streaks = signal<Streak[]>([]);
-  stats = signal<Stats | null>(null);
+  readonly streaks = signal<Streak[]>([]);
+  readonly stats = signal<Stats | null>(null);
 
   showFullDialog = false;
 
-  categories = computed(() => Object.keys(this.grouped()));
+  readonly categories = computed(() => Object.keys(this.grouped()));
 
-  activeStreaks = computed(() => this.streaks().filter((s) => s.isActive || s.atRisk));
+  readonly activeStreaks = computed(() => this.streaks().filter((s) => s.isActive || s.atRisk));
 
-  currentStreak = computed(() => {
+  readonly currentStreak = computed(() => {
     const training = this.streaks().find((s) => s.streak_type === "training");
     return training?.current_streak || 0;
   });
 
-  recentAchievements = computed(() =>
+  readonly recentAchievements = computed(() =>
     this.achievements()
       .filter((a) => a.earned)
       .sort((a, b) => new Date(b.earnedAt || 0).getTime() - new Date(a.earnedAt || 0).getTime())
       .slice(0, 5)
   );
 
-  ngOnInit() {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadData();
   }
 
@@ -316,7 +316,7 @@ export class AchievementsPanelComponent implements OnInit {
   async loadAchievements(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/achievements').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/achievements'));
       if (response?.success && response.data) {
         this.achievements.set(response.data.achievements || []);
         this.grouped.set(response.data.grouped || {});
@@ -337,7 +337,7 @@ export class AchievementsPanelComponent implements OnInit {
   async loadStreaks(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/achievements/streaks').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/achievements/streaks'));
       if (response?.success && response.data) {
         this.streaks.set(response.data.streaks || []);
       } else if (response?.streaks) {
@@ -351,7 +351,7 @@ export class AchievementsPanelComponent implements OnInit {
   async loadStats(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/achievements/stats').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/achievements/stats'));
       if (response?.success && response.data) {
         this.stats.set(response.data.stats);
       } else if (response?.stats) {

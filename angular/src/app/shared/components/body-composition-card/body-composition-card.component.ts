@@ -11,22 +11,25 @@
 
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
-import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { PerformanceDataService } from "../../../core/services/performance-data.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
+import {
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
+} from "../ui-components";
 
 interface BodyCompositionData {
   weight: number | null;
@@ -48,78 +51,57 @@ interface BodyCompositionData {
   imports: [
     CommonModule,
     RouterModule,
-    ButtonModule,
+    ButtonComponent,
+    CardComponent,
+    AppLoadingComponent,
     TagModule,
     TooltipModule,
-    SkeletonModule,
     DecimalPipe,
   ],
   template: `
-    <div class="body-comp-card">
-      <!-- Header -->
-      <div class="card-header">
-        <div class="header-title">
-          <i class="pi pi-chart-pie"></i>
-          <h3>Body Composition</h3>
-        </div>
-        @if (lastUpdated()) {
-          <span class="last-updated">
-            {{ formatDate(lastUpdated()!) }}
-          </span>
-        }
-      </div>
-
-      <!-- Loading State -->
-      @if (isLoading()) {
-        <div class="loading-state">
-          <div class="metric-skeleton">
-            <p-skeleton width="60%" height="2rem"></p-skeleton>
-            <p-skeleton width="40%" height="1rem"></p-skeleton>
-          </div>
-          <div class="metrics-grid">
-            @for (i of [1, 2, 3, 4]; track i) {
-              <div class="metric-skeleton-small">
-                <p-skeleton width="100%" height="3rem"></p-skeleton>
-              </div>
-            }
-          </div>
-        </div>
-      }
-
+    <app-card
+      title="Body Composition"
+      [subtitle]="lastUpdated() ? 'Last measured ' + formatDate(lastUpdated()!) : undefined"
+      headerIcon="pi-chart-pie"
+      headerIconColor="primary"
+      [loading]="isLoading()"
+    >
       <!-- Empty State -->
-      @else if (!hasData()) {
+      @if (!isLoading() && !hasData()) {
         <div class="empty-state">
           <i class="pi pi-scale empty-icon"></i>
           <p class="empty-title">No measurements yet</p>
           <p class="empty-description">
             Log your first body composition measurement to track changes over time.
           </p>
-          <button 
-            class="log-btn"
+          <app-button 
+            variant="primary"
+            size="md"
+            icon="plus"
             routerLink="/dashboard"
+            [rounded]="true"
             [queryParams]="{ action: 'log-metrics' }"
           >
-            <i class="pi pi-plus"></i>
             Log Measurement
-          </button>
+          </app-button>
         </div>
       }
 
       <!-- Data Display -->
-      @else {
+      @else if (!isLoading()) {
         <div class="body-comp-content">
           <!-- Primary Metric: Weight -->
           <div class="primary-metric">
             <div class="metric-main">
-              <span class="metric-value">{{ data().weight | number:'1.1-1' }}</span>
+              <span class="metric-value">{{ displayData().weight | number:'1.1-1' }}</span>
               <span class="metric-unit">kg</span>
-              @if (data().weightTrend) {
+              @if (displayData().weightTrend) {
                 <span 
                   class="trend-indicator"
-                  [class.up]="data().weightTrend === 'up'"
-                  [class.down]="data().weightTrend === 'down'"
+                  [class.up]="displayData().weightTrend === 'up'"
+                  [class.down]="displayData().weightTrend === 'down'"
                 >
-                  <i [class]="getTrendIcon(data().weightTrend!)"></i>
+                  <i [class]="getTrendIcon(displayData().weightTrend!)"></i>
                 </span>
               }
             </div>
@@ -129,147 +111,118 @@ interface BodyCompositionData {
           <!-- Secondary Metrics Grid -->
           <div class="metrics-grid">
             <!-- Body Fat -->
-            @if (data().bodyFat !== null) {
+            @if (displayData().bodyFat !== null) {
               <div class="metric-item">
                 <div class="metric-row">
-                  <span class="metric-value-sm">{{ data().bodyFat | number:'1.1-1' }}%</span>
-                  @if (data().fatTrend) {
+                  <span class="metric-value-sm">{{ displayData().bodyFat | number:'1.1-1' }}%</span>
+                  @if (displayData().fatTrend) {
                     <span 
                       class="trend-small"
-                      [class.good]="data().fatTrend === 'down'"
-                      [class.neutral]="data().fatTrend === 'stable'"
+                      [class.good]="displayData().fatTrend === 'down'"
+                      [class.neutral]="displayData().fatTrend === 'stable'"
                     >
-                      <i [class]="getTrendIcon(data().fatTrend!)"></i>
+                      <i [class]="getTrendIcon(displayData().fatTrend!)"></i>
                     </span>
                   }
                 </div>
                 <span class="metric-label-sm">Body Fat</span>
                 <div 
                   class="fat-bar"
-                  [pTooltip]="getFatRangeTooltip(data().bodyFat!)"
+                  [pTooltip]="getFatRangeTooltip(displayData().bodyFat!)"
                 >
                   <div 
                     class="fat-fill"
-                    [style.width.%]="getFatBarWidth(data().bodyFat!)"
-                    [class.low]="data().bodyFat! < 10"
-                    [class.ideal]="data().bodyFat! >= 10 && data().bodyFat! <= 20"
-                    [class.moderate]="data().bodyFat! > 20 && data().bodyFat! <= 30"
-                    [class.high]="data().bodyFat! > 30"
+                    [style.width.%]="getFatBarWidth(displayData().bodyFat!)"
+                    [class.low]="displayData().bodyFat! < 10"
+                    [class.ideal]="displayData().bodyFat! >= 10 && displayData().bodyFat! <= 20"
+                    [class.moderate]="displayData().bodyFat! > 20 && displayData().bodyFat! <= 30"
+                    [class.high]="displayData().bodyFat! > 30"
                   ></div>
                 </div>
               </div>
             }
 
             <!-- Muscle Mass -->
-            @if (data().muscleMass !== null) {
+            @if (displayData().muscleMass !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ data().muscleMass | number:'1.1-1' }} kg</span>
+                <span class="metric-value-sm">{{ displayData().muscleMass | number:'1.1-1' }} kg</span>
                 <span class="metric-label-sm">Muscle Mass</span>
               </div>
             }
 
             <!-- Body Water -->
-            @if (data().bodyWater !== null) {
+            @if (displayData().bodyWater !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ data().bodyWater | number:'1.1-1' }}%</span>
+                <span class="metric-value-sm">{{ displayData().bodyWater | number:'1.1-1' }}%</span>
                 <span class="metric-label-sm">Body Water</span>
               </div>
             }
 
             <!-- BMR -->
-            @if (data().basalMetabolicRate !== null) {
+            @if (displayData().basalMetabolicRate !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ data().basalMetabolicRate }}</span>
+                <span class="metric-value-sm">{{ displayData().basalMetabolicRate }}</span>
                 <span class="metric-label-sm">BMR (kcal)</span>
               </div>
             }
           </div>
-
-          <!-- View Details Link -->
-          <div class="card-footer">
-            <a routerLink="/performance/body-composition" class="view-link">
-              View Full History
-              <i class="pi pi-arrow-right"></i>
-            </a>
-          </div>
         </div>
       }
-    </div>
+
+      <!-- Footer -->
+      <div footer>
+        <a routerLink="/performance/body-composition" class="view-link">
+          View Full History
+          <i class="pi pi-arrow-right"></i>
+        </a>
+      </div>
+    </app-card>
   `,
   styleUrl: './body-composition-card.component.scss',
 })
 export class BodyCompositionCardComponent implements OnInit {
-  private performanceDataService = inject(PerformanceDataService);
+  private trainingService = inject(UnifiedTrainingService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  // State
-  isLoading = signal(true);
-  data = signal<BodyCompositionData>({
-    weight: null,
-    bodyFat: null,
-    muscleMass: null,
-    bodyWater: null,
-    bmi: null,
-    visceralFat: null,
-    basalMetabolicRate: null,
-    measurementDate: null,
-    weightTrend: null,
-    fatTrend: null,
-  });
+  // Use unified service signals
+  latestMeasurement = this.trainingService.latestMeasurement;
+  recentMeasurements = this.trainingService.recentMeasurements;
+  isLoading = this.trainingService.isRefreshing;
 
-  hasData = computed(() => this.data().weight !== null);
-  lastUpdated = computed(() => this.data().measurementDate);
+  // Computed display data
+  displayData = computed<BodyCompositionData>(() => {
+    const latest = this.latestMeasurement();
+    const measurements = this.recentMeasurements();
+    const previous = measurements.length > 1 ? measurements[1] : null;
 
-  ngOnInit(): void {
-    this.loadData();
-  }
-
-  private loadData(): void {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) {
-      this.isLoading.set(false);
-      return;
+    if (!latest) {
+      return {
+        weight: null, bodyFat: null, muscleMass: null, bodyWater: null,
+        bmi: null, visceralFat: null, basalMetabolicRate: null,
+        measurementDate: null, weightTrend: null, fatTrend: null
+      };
     }
 
-    this.performanceDataService
-      .getMeasurements("3m", 1, 10)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const measurements = response.data;
-          if (measurements && measurements.length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const latest = measurements[0] as any;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const previous = measurements.length > 1 ? (measurements[1] as any) : null;
+    return {
+      weight: latest.weight || null,
+      bodyFat: latest.bodyFat || null,
+      muscleMass: latest.muscleMass || null,
+      bodyWater: latest.bodyWaterPercentage || null,
+      bmi: latest.basalMetabolicRate ? null : null, // placeholder
+      visceralFat: latest.visceralFatRating || null,
+      basalMetabolicRate: latest.basalMetabolicRate || null,
+      measurementDate: latest.timestamp || null,
+      weightTrend: previous ? this.calculateTrend(latest.weight, previous.weight) : null,
+      fatTrend: previous ? this.calculateTrend(latest.bodyFat, previous.bodyFat) : null,
+    };
+  });
 
-            this.data.set({
-              weight: latest.weight || null,
-              bodyFat: latest.body_fat_percentage || latest.bodyFat || null,
-              muscleMass: latest.muscle_mass || latest.muscleMass || null,
-              bodyWater: latest.body_water_percentage || latest.bodyWater || null,
-              bmi: latest.bmi || null,
-              visceralFat: latest.visceral_fat_rating || null,
-              basalMetabolicRate: latest.basal_metabolic_rate || null,
-              measurementDate: latest.measurement_date || latest.created_at || null,
-              weightTrend: previous
-                ? this.calculateTrend(latest.weight, previous.weight)
-                : null,
-              fatTrend: previous
-                ? this.calculateTrend(
-                    latest.body_fat_percentage || latest.bodyFat,
-                    previous.body_fat_percentage || previous.bodyFat
-                  )
-                : null,
-            });
-          }
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.isLoading.set(false);
-        },
-      });
+  hasData = computed(() => this.displayData().weight !== null);
+  lastUpdated = computed(() => this.displayData().measurementDate);
+
+  ngOnInit(): void {
+    // Data is automatically loaded/refreshed by UnifiedTrainingService
   }
 
   private calculateTrend(
@@ -294,7 +247,6 @@ export class BodyCompositionCardComponent implements OnInit {
   }
 
   getFatBarWidth(fatPercent: number): number {
-    // Scale 0-40% body fat to 0-100% bar width
     return Math.min(100, (fatPercent / 40) * 100);
   }
 

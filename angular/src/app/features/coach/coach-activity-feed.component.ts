@@ -12,15 +12,14 @@
 
 import {
   Component,
-  OnInit,
   OnDestroy,
   inject,
   signal,
   computed,
+  input,
   ChangeDetectionStrategy,
-  Input,
+  DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
@@ -39,10 +38,8 @@ import { LoggerService } from "../../core/services/logger.service";
 
 @Component({
   selector: "app-coach-activity-feed",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     CardModule,
     ButtonModule,
@@ -54,7 +51,7 @@ import { LoggerService } from "../../core/services/logger.service";
     ScrollPanelModule,
   ],
   template: `
-    <div class="activity-feed" [class.compact]="compact">
+    <div class="activity-feed" [class.compact]="compact()">
       <!-- Header -->
       <div class="feed-header">
         <div class="header-title">
@@ -112,7 +109,7 @@ import { LoggerService } from "../../core/services/logger.service";
 
       <!-- Activity List -->
       @if (activities().length > 0) {
-        <p-scrollPanel [style]="{ width: '100%', height: maxHeight }">
+        <p-scrollPanel [style]="{ width: '100%', height: maxHeight() }">
           <div class="activity-list">
             @for (group of groupedActivities(); track group.date) {
               <div class="date-group">
@@ -196,7 +193,7 @@ import { LoggerService } from "../../core/services/logger.service";
       }
 
       <!-- Quick Stats Summary -->
-      @if (showSummary && activities().length > 0) {
+      @if (showSummary() && activities().length > 0) {
         <div class="activity-summary">
           <div class="summary-item">
             <i class="pi pi-chart-bar"></i>
@@ -212,15 +209,16 @@ import { LoggerService } from "../../core/services/logger.service";
   `,
   styleUrl: './coach-activity-feed.component.scss',
 })
-export class CoachActivityFeedComponent implements OnInit, OnDestroy {
-  private notificationService = inject(TeamNotificationService);
-  private logger = inject(LoggerService);
+export class CoachActivityFeedComponent implements OnDestroy {
+  private readonly notificationService = inject(TeamNotificationService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Inputs
-  @Input() compact = false;
-  @Input() showSummary = true;
-  @Input() maxHeight = "400px";
-  @Input() limit = 20;
+  // Inputs - Angular 21 signal inputs
+  readonly compact = input(false);
+  readonly showSummary = input(true);
+  readonly maxHeight = input("400px");
+  readonly limit = input(20);
 
   // State from service
   readonly activities = this.notificationService.activityFeed;
@@ -254,7 +252,8 @@ export class CoachActivityFeedComponent implements OnInit, OnDestroy {
     ).length;
   });
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadActivities();
   }
 

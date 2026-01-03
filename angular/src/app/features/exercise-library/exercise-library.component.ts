@@ -22,6 +22,8 @@ import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../core/services/api.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { Workout } from "../../core/models/training.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
 interface Exercise {
@@ -356,6 +358,7 @@ interface Category {
 export class ExerciseLibraryComponent implements OnInit {
   private apiService = inject(ApiService);
   private messageService = inject(MessageService);
+  private trainingService = inject(UnifiedTrainingService);
 
   searchQuery = "";
   selectedCategory = signal<string>("all");
@@ -546,16 +549,40 @@ export class ExerciseLibraryComponent implements OnInit {
   }
 
   addToWorkout(exercise: Exercise): void {
-    // Show success toast notification
-    this.messageService.add({
-      severity: "success",
-      summary: "Added to Workout",
-      detail: `"${exercise.name}" has been added to your workout plan`,
-      life: 3000,
-    });
+    // Convert Exercise to a Workout object for the service
+    const workout: Workout = {
+      type: exercise.category.toLowerCase(),
+      title: exercise.name,
+      description: exercise.description,
+      duration: "30 min", // Default duration
+      intensity: exercise.difficulty === "advanced" ? "high" : exercise.difficulty === "intermediate" ? "medium" : "low",
+      location: "Gym",
+      icon: this.getCategoryIcon(exercise.category),
+      iconBg: "#089949"
+    };
 
-    // TODO: Implement actual API call to add exercise to workout
-    console.log("Exercise added to workout:", exercise);
+    this.trainingService.logTrainingSession({
+      session_type: workout.type,
+      title: workout.title,
+      duration: 30,
+      intensity: exercise.difficulty === "advanced" ? 9 : exercise.difficulty === "intermediate" ? 6 : 3,
+      completed: true,
+      notes: `Added from Exercise Library: ${exercise.description}`
+    }).then(() => {
+      this.messageService.add({
+        severity: "success",
+        summary: "Added to Workout",
+        detail: `"${exercise.name}" has been logged to your daily protocol`,
+        life: 3000,
+      });
+    }).catch(err => {
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to add exercise to workout",
+        life: 3000,
+      });
+    });
   }
 
   resetFilters(): void {

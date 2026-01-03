@@ -32,8 +32,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { TagModule } from "primeng/tag";
 
 // Services
-import { WellnessService } from "../../../core/services/wellness.service";
-import { AcwrService } from "../../../core/services/acwr.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -228,8 +227,7 @@ interface ReadinessMetric {
   `,
 })
 export class GameDayReadinessComponent implements OnInit {
-  private readonly wellnessService = inject(WellnessService);
-  private readonly acwrService = inject(AcwrService);
+  private readonly trainingService = inject(UnifiedTrainingService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
@@ -239,7 +237,7 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   // ACWR from service
-  acwrValue = this.acwrService.acwrRatio;
+  acwrValue = this.trainingService.acwrRatio;
   acwrStatus = computed(() => {
     const ratio = this.acwrValue();
     if (ratio === 0) return "yellow";
@@ -478,17 +476,14 @@ export class GameDayReadinessComponent implements OnInit {
         this.logger.warn(
           "[GameDayReadiness] Table not found, saving as wellness entry",
         );
-        await this.wellnessService
-          .logWellness({
+        await this.trainingService.submitWellness({
             sleep: readinessData.sleep_quality,
             energy: readinessData.energy_level,
             soreness: readinessData.muscle_soreness,
             hydration: readinessData.hydration_level,
             motivation: readinessData.confidence_level,
             notes: `[Game Day Check-in] Score: ${readinessData.readiness_score}. ${this.notes}`,
-          })
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe();
+          });
       }
 
       // Alert coach if readiness is low

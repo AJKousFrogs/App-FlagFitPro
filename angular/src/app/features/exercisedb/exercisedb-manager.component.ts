@@ -116,416 +116,424 @@ import {
         </div>
 
         <!-- Tab View -->
-        <p-tabView styleClass="exercise-tabs">
-          <!-- Browse Tab -->
-          <p-tabPanel header="Browse Exercises">
-            <div class="tab-content">
-              <!-- Filters -->
-              <p-card styleClass="filters-card">
-                <div class="filters-row">
-                  <div class="filter-group">
-                    <label>Search</label>
-                    <input
-                      pInputText
-                      [(ngModel)]="searchQuery"
-                      placeholder="Search exercises..."
-                      (input)="onSearchChange()"
-                      class="search-input"
-                    />
-                  </div>
-                  <div class="filter-group">
-                    <label>Body Part</label>
-                    <p-dropdown
-                      [options]="bodyPartOptions()"
-                      [(ngModel)]="selectedBodyPart"
-                      placeholder="All Body Parts"
-                      [showClear]="true"
-                      (onChange)="applyFilters()"
-                    ></p-dropdown>
-                  </div>
-                  <div class="filter-group">
-                    <label>Equipment</label>
-                    <p-dropdown
-                      [options]="equipmentOptions()"
-                      [(ngModel)]="selectedEquipment"
-                      placeholder="All Equipment"
-                      [showClear]="true"
-                      (onChange)="applyFilters()"
-                    ></p-dropdown>
-                  </div>
-                  <div class="filter-group">
-                    <label>Position</label>
-                    <p-dropdown
-                      [options]="positionOptions"
-                      [(ngModel)]="selectedPosition"
-                      placeholder="All Positions"
-                      [showClear]="true"
-                      (onChange)="applyFilters()"
-                    ></p-dropdown>
-                  </div>
-                  <div class="filter-group">
-                    <label>Category</label>
-                    <p-dropdown
-                      [options]="categoryOptions()"
-                      [(ngModel)]="selectedCategory"
-                      placeholder="All Categories"
-                      [showClear]="true"
-                      (onChange)="applyFilters()"
-                    ></p-dropdown>
-                  </div>
-                  <div class="filter-group status-filter">
-                    <label>Status</label>
-                    <p-dropdown
-                      [options]="statusOptions"
-                      [(ngModel)]="selectedStatus"
-                      (onChange)="applyFilters()"
-                    ></p-dropdown>
-                  </div>
-                </div>
-              </p-card>
+        <p-tabs value="0" styleClass="exercise-tabs">
+          <p-tablist>
+            <p-tab value="0">Browse Exercises</p-tab>
+            <p-tab value="1">Import from ExerciseDB</p-tab>
+            <p-tab value="2">Approval Queue</p-tab>
+          </p-tablist>
 
-              <!-- Exercise Grid -->
-              @if (loading()) {
-                <div class="exercises-grid">
-                  @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                    <p-card styleClass="exercise-card skeleton-card">
-                      <p-skeleton height="200px"></p-skeleton>
-                      <p-skeleton
-                        width="70%"
-                        height="1.5rem"
-                        styleClass="mt-3"
-                      ></p-skeleton>
-                      <p-skeleton
-                        width="40%"
-                        height="1rem"
-                        styleClass="mt-2"
-                      ></p-skeleton>
-                    </p-card>
+          <p-tabpanels>
+            <!-- Browse Tab -->
+            <p-tabpanel value="0">
+              <div class="tab-content">
+                <!-- Filters -->
+                <p-card styleClass="filters-card">
+                  <div class="filters-row">
+                    <div class="filter-group">
+                      <label>Search</label>
+                      <input
+                        pInputText
+                        [(ngModel)]="searchQuery"
+                        placeholder="Search exercises..."
+                        (input)="onSearchChange()"
+                        class="search-input"
+                      />
+                    </div>
+                    <div class="filter-group">
+                      <label>Body Part</label>
+                      <p-select
+                        [options]="bodyPartOptions()"
+                        [(ngModel)]="selectedBodyPart"
+                        placeholder="All Body Parts"
+                        [showClear]="true"
+                        (onChange)="applyFilters()"
+                      ></p-select>
+                    </div>
+                    <div class="filter-group">
+                      <label>Equipment</label>
+                      <p-select
+                        [options]="equipmentOptions()"
+                        [(ngModel)]="selectedEquipment"
+                        placeholder="All Equipment"
+                        [showClear]="true"
+                        (onChange)="applyFilters()"
+                      ></p-select>
+                    </div>
+                    <div class="filter-group">
+                      <label>Position</label>
+                      <p-select
+                        [options]="positionOptions"
+                        [(ngModel)]="selectedPosition"
+                        placeholder="All Positions"
+                        [showClear]="true"
+                        (onChange)="applyFilters()"
+                      ></p-select>
+                    </div>
+                    <div class="filter-group">
+                      <label>Category</label>
+                      <p-select
+                        [options]="categoryOptions()"
+                        [(ngModel)]="selectedCategory"
+                        placeholder="All Categories"
+                        [showClear]="true"
+                        (onChange)="applyFilters()"
+                      ></p-select>
+                    </div>
+                    <div class="filter-group status-filter">
+                      <label>Status</label>
+                      <p-select
+                        [options]="statusOptions"
+                        [(ngModel)]="selectedStatus"
+                        (onChange)="applyFilters()"
+                      ></p-select>
+                    </div>
+                  </div>
+                </p-card>
+
+                <!-- Exercise Grid -->
+                @if (loading()) {
+                  <div class="exercises-grid">
+                    @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                      <p-card styleClass="exercise-card skeleton-card">
+                        <p-skeleton height="200px"></p-skeleton>
+                        <p-skeleton
+                          width="70%"
+                          height="1.5rem"
+                          styleClass="mt-3"
+                        ></p-skeleton>
+                        <p-skeleton
+                          width="40%"
+                          height="1rem"
+                          styleClass="mt-2"
+                        ></p-skeleton>
+                      </p-card>
+                    }
+                  </div>
+                } @else {
+                  <div class="exercises-grid">
+                    @for (exercise of filteredExercises(); track exercise.id) {
+                      <p-card
+                        styleClass="exercise-card"
+                        (click)="openExerciseDetail(exercise)"
+                      >
+                        <div class="exercise-image-container">
+                          @if (exercise.gif_url) {
+                            <img
+                              [src]="exercise.gif_url"
+                              [alt]="exercise.name"
+                              class="exercise-gif"
+                              loading="lazy"
+                            />
+                          } @else {
+                            <div class="exercise-placeholder">
+                              <i class="pi pi-image"></i>
+                            </div>
+                          }
+                          <div class="exercise-badges">
+                            @if (exercise.is_approved) {
+                              <p-badge
+                                value="Approved"
+                                severity="success"
+                              ></p-badge>
+                            }
+                            @if (exercise.is_curated && !exercise.is_approved) {
+                              <p-badge value="Curated" severity="info"></p-badge>
+                            }
+                            @if (exercise.flag_football_relevance) {
+                              <p-badge
+                                [value]="exercise.flag_football_relevance + '/10'"
+                                [severity]="
+                                  getRelevanceSeverity(
+                                    exercise.flag_football_relevance
+                                  )
+                                "
+                              ></p-badge>
+                            }
+                          </div>
+                        </div>
+                        <div class="exercise-info">
+                          <h3 class="exercise-name">{{ exercise.name }}</h3>
+                          <div class="exercise-meta">
+                            <span class="meta-item">
+                              <i class="pi pi-user"></i>
+                              {{ exercise.body_part }}
+                            </span>
+                            <span class="meta-item">
+                              <i class="pi pi-cog"></i>
+                              {{ exercise.equipment }}
+                            </span>
+                          </div>
+                          @if (exercise.ff_category) {
+                            <p-tag
+                              [value]="exercise.ff_category"
+                              styleClass="category-tag"
+                            ></p-tag>
+                          }
+                          @if (exercise.applicable_positions?.length) {
+                            <div class="position-chips">
+                              @for (
+                                pos of exercise.applicable_positions?.slice(0, 3);
+                                track pos
+                              ) {
+                                <p-chip
+                                  [label]="pos"
+                                  styleClass="position-chip"
+                                ></p-chip>
+                              }
+                              @if (
+                                (exercise.applicable_positions?.length || 0) > 3
+                              ) {
+                                <span class="more-positions">
+                                  +{{
+                                    (exercise.applicable_positions?.length || 0) -
+                                      3
+                                  }}
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </p-card>
+                    }
+                  </div>
+
+                  @if (filteredExercises().length === 0) {
+                    <div class="empty-state">
+                      <i class="pi pi-inbox"></i>
+                      <h3>No exercises found</h3>
+                      <p>
+                        Try adjusting your filters or import exercises from
+                        ExerciseDB
+                      </p>
+                    </div>
                   }
-                </div>
-              } @else {
-                <div class="exercises-grid">
-                  @for (exercise of filteredExercises(); track exercise.id) {
-                    <p-card
-                      styleClass="exercise-card"
-                      (click)="openExerciseDetail(exercise)"
-                    >
-                      <div class="exercise-image-container">
+                }
+              </div>
+            </p-tabpanel>
+
+            <!-- Import Tab -->
+            <p-tabpanel value="1">
+              <div class="tab-content import-tab">
+                <p-card styleClass="import-card">
+                  <h3 class="import-title">
+                    <i class="pi pi-cloud-download"></i>
+                    Import Exercises from ExerciseDB API
+                  </h3>
+                  <p class="import-description">
+                    Import exercises from the ExerciseDB API and automatically
+                    categorize them for flag football training. Exercises will be
+                    auto-tagged based on body part and target muscle relevance.
+                  </p>
+
+                  <div class="import-options">
+                    <div class="option-group">
+                      <label>Body Parts to Import</label>
+                      <p-multiSelect
+                        [options]="importBodyPartOptions"
+                        [(ngModel)]="importBodyParts"
+                        placeholder="Select body parts (leave empty for all)"
+                        display="chip"
+                        styleClass="import-multiselect"
+                      ></p-multiSelect>
+                    </div>
+                    <div class="option-group">
+                      <label>Equipment Filter</label>
+                      <p-select
+                        [options]="importEquipmentOptions"
+                        [(ngModel)]="importEquipment"
+                        placeholder="All equipment"
+                        [showClear]="true"
+                      ></p-select>
+                    </div>
+                    <div class="option-group checkbox-group">
+                      <label>
+                        <input type="checkbox" [(ngModel)]="autoApprove" />
+                        Auto-approve high relevance exercises (8+)
+                      </label>
+                    </div>
+                  </div>
+
+                  @if (importing()) {
+                    <div class="import-progress">
+                      <p-progressBar
+                        mode="indeterminate"
+                        styleClass="import-bar"
+                      ></p-progressBar>
+                      <p class="progress-text">
+                        Importing exercises from ExerciseDB...
+                      </p>
+                    </div>
+                  } @else {
+                    <p-button
+                      label="Start Import"
+                      icon="pi pi-download"
+                      [rounded]="true"
+                      (onClick)="startImport()"
+                      styleClass="import-button"
+                    ></p-button>
+                  }
+
+                  @if (lastImportStats()) {
+                    <div class="import-results">
+                      <h4>Last Import Results</h4>
+                      <div class="results-grid">
+                        <div class="result-item">
+                          <span class="result-value">{{
+                            lastImportStats()?.fetched
+                          }}</span>
+                          <span class="result-label">Fetched</span>
+                        </div>
+                        <div class="result-item success">
+                          <span class="result-value">{{
+                            lastImportStats()?.imported
+                          }}</span>
+                          <span class="result-label">Imported</span>
+                        </div>
+                        <div class="result-item info">
+                          <span class="result-value">{{
+                            lastImportStats()?.updated
+                          }}</span>
+                          <span class="result-label">Updated</span>
+                        </div>
+                        <div class="result-item warning">
+                          <span class="result-value">{{
+                            lastImportStats()?.skipped
+                          }}</span>
+                          <span class="result-label">Skipped</span>
+                        </div>
+                        @if ((lastImportStats()?.errors || 0) > 0) {
+                          <div class="result-item error">
+                            <span class="result-value">{{
+                              lastImportStats()?.errors
+                            }}</span>
+                            <span class="result-label">Errors</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </p-card>
+
+                <!-- Import History -->
+                <p-card styleClass="history-card">
+                  <h3 class="history-title">
+                    <i class="pi pi-history"></i>
+                    Import History
+                  </h3>
+                  @if (importLogs().length > 0) {
+                    <div class="history-list">
+                      @for (log of importLogs(); track log.id) {
+                        <div class="history-item">
+                          <div class="history-status">
+                            <p-tag
+                              [value]="log.status"
+                              [severity]="getStatusSeverity(log.status)"
+                            ></p-tag>
+                          </div>
+                          <div class="history-details">
+                            <span class="history-type"
+                              >{{ log.import_type }} import</span
+                            >
+                            <span class="history-date">{{
+                              formatDate(log.started_at)
+                            }}</span>
+                          </div>
+                          <div class="history-stats">
+                            <span>{{ log.total_imported }} imported</span>
+                            <span>{{ log.total_updated }} updated</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="no-history">No import history yet</p>
+                  }
+                </p-card>
+              </div>
+            </p-tabpanel>
+
+            <!-- Approval Queue Tab -->
+            <p-tabpanel value="2">
+              <div class="tab-content approval-tab">
+                <p-card styleClass="queue-info">
+                  <p>
+                    <i class="pi pi-info-circle"></i>
+                    Review and approve exercises for use in training programs.
+                    Exercises with high flag football relevance are prioritized.
+                  </p>
+                </p-card>
+
+                <div class="approval-grid">
+                  @for (exercise of pendingExercises(); track exercise.id) {
+                    <p-card styleClass="approval-card">
+                      <div class="approval-header">
                         @if (exercise.gif_url) {
                           <img
                             [src]="exercise.gif_url"
                             [alt]="exercise.name"
-                            class="exercise-gif"
-                            loading="lazy"
+                            class="approval-gif"
                           />
-                        } @else {
-                          <div class="exercise-placeholder">
-                            <i class="pi pi-image"></i>
-                          </div>
                         }
-                        <div class="exercise-badges">
-                          @if (exercise.is_approved) {
-                            <p-badge
-                              value="Approved"
-                              severity="success"
-                            ></p-badge>
-                          }
-                          @if (exercise.is_curated && !exercise.is_approved) {
-                            <p-badge value="Curated" severity="info"></p-badge>
-                          }
-                          @if (exercise.flag_football_relevance) {
-                            <p-badge
-                              [value]="exercise.flag_football_relevance + '/10'"
-                              [severity]="
-                                getRelevanceSeverity(
-                                  exercise.flag_football_relevance
-                                )
-                              "
-                            ></p-badge>
-                          }
+                        <div class="approval-info">
+                          <h4>{{ exercise.name }}</h4>
+                          <div class="approval-meta">
+                            <p-tag
+                              [value]="exercise.body_part"
+                              severity="info"
+                            ></p-tag>
+                            <p-tag [value]="exercise.equipment"></p-tag>
+                            <p-tag
+                              [value]="exercise.target_muscle"
+                              severity="secondary"
+                            ></p-tag>
+                          </div>
                         </div>
                       </div>
-                      <div class="exercise-info">
-                        <h3 class="exercise-name">{{ exercise.name }}</h3>
-                        <div class="exercise-meta">
-                          <span class="meta-item">
-                            <i class="pi pi-user"></i>
-                            {{ exercise.body_part }}
-                          </span>
-                          <span class="meta-item">
-                            <i class="pi pi-cog"></i>
-                            {{ exercise.equipment }}
-                          </span>
+                      @if (exercise.ff_category) {
+                        <div class="auto-categorization">
+                          <span class="label">Auto-categorized as:</span>
+                          <strong>{{ exercise.ff_category }}</strong>
+                          @if (exercise.flag_football_relevance) {
+                            <span class="relevance">
+                              (Relevance:
+                              {{ exercise.flag_football_relevance }}/10)
+                            </span>
+                          }
                         </div>
-                        @if (exercise.ff_category) {
-                          <p-tag
-                            [value]="exercise.ff_category"
-                            styleClass="category-tag"
-                          ></p-tag>
-                        }
-                        @if (exercise.applicable_positions?.length) {
-                          <div class="position-chips">
-                            @for (
-                              pos of exercise.applicable_positions?.slice(0, 3);
-                              track pos
-                            ) {
-                              <p-chip
-                                [label]="pos"
-                                styleClass="position-chip"
-                              ></p-chip>
-                            }
-                            @if (
-                              (exercise.applicable_positions?.length || 0) > 3
-                            ) {
-                              <span class="more-positions">
-                                +{{
-                                  (exercise.applicable_positions?.length || 0) -
-                                    3
-                                }}
-                              </span>
-                            }
-                          </div>
-                        }
+                      }
+                      <div class="approval-actions">
+                        <p-button
+                          label="Review & Approve"
+                          icon="pi pi-check"
+                          [rounded]="true"
+                          severity="success"
+                          (onClick)="openApprovalDialog(exercise)"
+                        ></p-button>
+                        <p-button
+                          label="Skip"
+                          icon="pi pi-times"
+                          [rounded]="true"
+                          severity="secondary"
+                          [outlined]="true"
+                          (onClick)="skipExercise(exercise)"
+                        ></p-button>
                       </div>
                     </p-card>
                   }
                 </div>
 
-                @if (filteredExercises().length === 0) {
+                @if (pendingExercises().length === 0) {
                   <div class="empty-state">
-                    <i class="pi pi-inbox"></i>
-                    <h3>No exercises found</h3>
-                    <p>
-                      Try adjusting your filters or import exercises from
-                      ExerciseDB
-                    </p>
+                    <i class="pi pi-check-circle"></i>
+                    <h3>All caught up!</h3>
+                    <p>No exercises pending approval</p>
                   </div>
-                }
-              }
-            </div>
-          </p-tabPanel>
-
-          <!-- Import Tab -->
-          <p-tabPanel header="Import from ExerciseDB">
-            <div class="tab-content import-tab">
-              <p-card styleClass="import-card">
-                <h3 class="import-title">
-                  <i class="pi pi-cloud-download"></i>
-                  Import Exercises from ExerciseDB API
-                </h3>
-                <p class="import-description">
-                  Import exercises from the ExerciseDB API and automatically
-                  categorize them for flag football training. Exercises will be
-                  auto-tagged based on body part and target muscle relevance.
-                </p>
-
-                <div class="import-options">
-                  <div class="option-group">
-                    <label>Body Parts to Import</label>
-                    <p-multiSelect
-                      [options]="importBodyPartOptions"
-                      [(ngModel)]="importBodyParts"
-                      placeholder="Select body parts (leave empty for all)"
-                      display="chip"
-                      styleClass="import-multiselect"
-                    ></p-multiSelect>
-                  </div>
-                  <div class="option-group">
-                    <label>Equipment Filter</label>
-                    <p-dropdown
-                      [options]="importEquipmentOptions"
-                      [(ngModel)]="importEquipment"
-                      placeholder="All equipment"
-                      [showClear]="true"
-                    ></p-dropdown>
-                  </div>
-                  <div class="option-group checkbox-group">
-                    <label>
-                      <input type="checkbox" [(ngModel)]="autoApprove" />
-                      Auto-approve high relevance exercises (8+)
-                    </label>
-                  </div>
-                </div>
-
-                @if (importing()) {
-                  <div class="import-progress">
-                    <p-progressBar
-                      mode="indeterminate"
-                      styleClass="import-bar"
-                    ></p-progressBar>
-                    <p class="progress-text">
-                      Importing exercises from ExerciseDB...
-                    </p>
-                  </div>
-                } @else {
-                  <p-button
-                    label="Start Import"
-                    icon="pi pi-download"
-                    [rounded]="true"
-                    (onClick)="startImport()"
-                    styleClass="import-button"
-                  ></p-button>
-                }
-
-                @if (lastImportStats()) {
-                  <div class="import-results">
-                    <h4>Last Import Results</h4>
-                    <div class="results-grid">
-                      <div class="result-item">
-                        <span class="result-value">{{
-                          lastImportStats()?.fetched
-                        }}</span>
-                        <span class="result-label">Fetched</span>
-                      </div>
-                      <div class="result-item success">
-                        <span class="result-value">{{
-                          lastImportStats()?.imported
-                        }}</span>
-                        <span class="result-label">Imported</span>
-                      </div>
-                      <div class="result-item info">
-                        <span class="result-value">{{
-                          lastImportStats()?.updated
-                        }}</span>
-                        <span class="result-label">Updated</span>
-                      </div>
-                      <div class="result-item warning">
-                        <span class="result-value">{{
-                          lastImportStats()?.skipped
-                        }}</span>
-                        <span class="result-label">Skipped</span>
-                      </div>
-                      @if ((lastImportStats()?.errors || 0) > 0) {
-                        <div class="result-item error">
-                          <span class="result-value">{{
-                            lastImportStats()?.errors
-                          }}</span>
-                          <span class="result-label">Errors</span>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-              </p-card>
-
-              <!-- Import History -->
-              <p-card styleClass="history-card">
-                <h3 class="history-title">
-                  <i class="pi pi-history"></i>
-                  Import History
-                </h3>
-                @if (importLogs().length > 0) {
-                  <div class="history-list">
-                    @for (log of importLogs(); track log.id) {
-                      <div class="history-item">
-                        <div class="history-status">
-                          <p-tag
-                            [value]="log.status"
-                            [severity]="getStatusSeverity(log.status)"
-                          ></p-tag>
-                        </div>
-                        <div class="history-details">
-                          <span class="history-type"
-                            >{{ log.import_type }} import</span
-                          >
-                          <span class="history-date">{{
-                            formatDate(log.started_at)
-                          }}</span>
-                        </div>
-                        <div class="history-stats">
-                          <span>{{ log.total_imported }} imported</span>
-                          <span>{{ log.total_updated }} updated</span>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                } @else {
-                  <p class="no-history">No import history yet</p>
-                }
-              </p-card>
-            </div>
-          </p-tabPanel>
-
-          <!-- Approval Queue Tab -->
-          <p-tabPanel header="Approval Queue">
-            <div class="tab-content approval-tab">
-              <p-card styleClass="queue-info">
-                <p>
-                  <i class="pi pi-info-circle"></i>
-                  Review and approve exercises for use in training programs.
-                  Exercises with high flag football relevance are prioritized.
-                </p>
-              </p-card>
-
-              <div class="approval-grid">
-                @for (exercise of pendingExercises(); track exercise.id) {
-                  <p-card styleClass="approval-card">
-                    <div class="approval-header">
-                      @if (exercise.gif_url) {
-                        <img
-                          [src]="exercise.gif_url"
-                          [alt]="exercise.name"
-                          class="approval-gif"
-                        />
-                      }
-                      <div class="approval-info">
-                        <h4>{{ exercise.name }}</h4>
-                        <div class="approval-meta">
-                          <p-tag
-                            [value]="exercise.body_part"
-                            severity="info"
-                          ></p-tag>
-                          <p-tag [value]="exercise.equipment"></p-tag>
-                          <p-tag
-                            [value]="exercise.target_muscle"
-                            severity="secondary"
-                          ></p-tag>
-                        </div>
-                      </div>
-                    </div>
-                    @if (exercise.ff_category) {
-                      <div class="auto-categorization">
-                        <span class="label">Auto-categorized as:</span>
-                        <strong>{{ exercise.ff_category }}</strong>
-                        @if (exercise.flag_football_relevance) {
-                          <span class="relevance">
-                            (Relevance:
-                            {{ exercise.flag_football_relevance }}/10)
-                          </span>
-                        }
-                      </div>
-                    }
-                    <div class="approval-actions">
-                      <p-button
-                        label="Review & Approve"
-                        icon="pi pi-check"
-                        [rounded]="true"
-                        severity="success"
-                        (onClick)="openApprovalDialog(exercise)"
-                      ></p-button>
-                      <p-button
-                        label="Skip"
-                        icon="pi pi-times"
-                        [rounded]="true"
-                        severity="secondary"
-                        [outlined]="true"
-                        (onClick)="skipExercise(exercise)"
-                      ></p-button>
-                    </div>
-                  </p-card>
                 }
               </div>
-
-              @if (pendingExercises().length === 0) {
-                <div class="empty-state">
-                  <i class="pi pi-check-circle"></i>
-                  <h3>All caught up!</h3>
-                  <p>No exercises pending approval</p>
-                </div>
-              }
-            </div>
-          </p-tabPanel>
-        </p-tabView>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
 
         <!-- Exercise Detail Dialog -->
         <p-dialog
@@ -717,11 +725,11 @@ import {
 
               <div class="form-group">
                 <label>Category</label>
-                <p-dropdown
+                <p-select
                   [options]="ffCategoryOptions"
                   [(ngModel)]="approvalData.ff_category"
                   placeholder="Select category"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-group">
@@ -746,11 +754,11 @@ import {
 
               <div class="form-group">
                 <label>Difficulty Level</label>
-                <p-dropdown
+                <p-select
                   [options]="difficultyOptions"
                   [(ngModel)]="approvalData.difficulty_level"
                   placeholder="Select difficulty"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-row">

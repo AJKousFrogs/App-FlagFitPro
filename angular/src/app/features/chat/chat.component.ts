@@ -457,6 +457,17 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                     </div>
                   }
 
+                  <!-- Quick Replies -->
+                  @if (newMessage.trim().length === 0) {
+                    <div class="quick-replies-row">
+                      @for (reply of quickReplyOptions(); track reply) {
+                        <button class="quick-reply-btn" (click)="sendQuickReply(reply)">
+                          {{ reply }}
+                        </button>
+                      }
+                    </div>
+                  }
+
                   <div class="input-row">
                     @if (
                       isCoach() &&
@@ -947,6 +958,25 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly currentUserId = computed(() => this.authService.getUser()?.id);
   readonly isCoach = this.channelService.isCoach;
 
+  // New features
+  readonly showQuickReplies = signal(false);
+  readonly quickReplyOptions = computed(() => {
+    if (this.isCoach()) {
+      return [
+        "Let's discuss this at practice.",
+        "Good effort today, team!",
+        "Check the new practice schedule.",
+        "Remember to log your readiness!",
+      ];
+    }
+    return [
+      "Copy that, Coach!",
+      "I'll be there.",
+      "Got it, thanks!",
+      "On it!",
+    ];
+  });
+
   // Presence state
   readonly teamOnlineUsers = this.presenceService.teamOnlineUsers;
   readonly teamOnlineCount = this.presenceService.teamOnlineCount;
@@ -1421,5 +1451,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       .single();
 
     return data?.team_id || null;
+  }
+
+  sendQuickReply(reply: string): void {
+    this.newMessage = reply;
+    this.sendMessage();
   }
 }

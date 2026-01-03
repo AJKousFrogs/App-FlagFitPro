@@ -20,17 +20,13 @@
  * />
  */
 
-import {
-  Component,
-  input,
-  computed,
-  signal,
-  ChangeDetectionStrategy,
-  afterNextRender,
-  ElementRef,
-  inject,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input
+} from "@angular/core";
 
 export interface MetricRingThresholds {
   danger: number;
@@ -154,10 +150,10 @@ export class MetricRingComponent {
   colorOverride = input<string>("");
 
   // SVG calculations
-  private readonly svgSize = 100;
-  private readonly center = 50;
-  private readonly radius = 42;
-  private readonly circumference = 2 * Math.PI * this.radius;
+  readonly svgSize = 100;
+  readonly center = 50;
+  readonly radius = 42;
+  readonly circumference = 2 * Math.PI * this.radius;
 
   // Computed
   strokeWidth = computed(() => {

@@ -533,7 +533,26 @@ export class OfficialsComponent implements OnInit {
   ngOnInit(): void {
     this.loadOfficials();
     this.loadPaymentSummary();
-    // TODO: Load upcoming games for scheduling
+    this.loadUpcomingGames();
+  }
+
+  loadUpcomingGames(): void {
+    const user = this.authService.getUser();
+    const teamId = user?.id || "default"; // Use user ID as team ID for now
+
+    this.officialsService.getUpcomingGames(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (games) => {
+          this.upcomingGames.set(
+            games.map(g => ({
+              label: `${new Date(g.date).toLocaleDateString()} vs ${g.opponent}`,
+              value: g.gameId
+            }))
+          );
+        },
+        error: (err) => this.logger.error("Failed to load upcoming games", err)
+      });
   }
 
   isCoach(): boolean {

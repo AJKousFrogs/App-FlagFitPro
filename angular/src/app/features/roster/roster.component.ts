@@ -12,58 +12,63 @@
  * - roster.models.ts: Shared interfaces
  * - roster-utils.ts: Helper functions
  */
+import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
-import { DatePipe, TitleCasePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ConfirmationService } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { DialogModule } from "primeng/dialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
 
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { ToastService } from "../../core/services/toast.service";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
-import { RosterService } from "./roster.service";
 import {
-  Player,
-  PlayerStatus,
-  TeamInvitation,
-  PositionGroup,
-  STATUS_OPTIONS,
-  ROLE_OPTIONS,
-} from "./roster.models";
+    PlayerFormData,
+    RosterFiltersComponent,
+    RosterOverviewComponent,
+    RosterPlayerCardComponent,
+    RosterPlayerFormDialogComponent,
+    RosterStaffCardComponent,
+} from "./components";
 import {
-  getPositionFullName,
-  getPositionIcon,
-  getJerseyColor,
-  getStatusSeverity,
-  getPlayerStats,
+    formatHeight,
+    formatWeight,
+    getJerseyColor,
+    getPlayerStats,
+    getPositionFullName,
+    getPositionIcon,
+    getStatusSeverity,
 } from "./roster-utils";
 import {
-  RosterPlayerCardComponent,
-  RosterStaffCardComponent,
-  RosterOverviewComponent,
-  RosterFiltersComponent,
-  RosterPlayerFormDialogComponent,
-  PlayerFormData,
-} from "./components";
+    Player,
+    PlayerRiskLevel,
+    PlayerStatus,
+    PositionGroup,
+    ROLE_OPTIONS,
+    STATUS_OPTIONS,
+    TeamInvitation,
+} from "./roster.models";
+import { RosterService } from "./roster.service";
+import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./services/player-metrics.service";
+
 
 @Component({
   selector: "app-roster",
@@ -84,13 +89,14 @@ import {
     // Angular
     FormsModule,
     DatePipe,
+    DecimalPipe,
     TitleCasePipe,
     // Layout
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    AppLoadingComponent,
     // Roster Components
     RosterPlayerCardComponent,
     RosterStaffCardComponent,
@@ -101,15 +107,14 @@ import {
   template: `
     <app-main-layout>
       <!-- Loading State -->
-      @if (isPageLoading()) {
-        <app-page-loading-state
-          message="Loading roster..."
-          variant="skeleton"
-        ></app-page-loading-state>
-      }
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading roster..."
+      ></app-loading>
 
       <!-- Error State -->
-      @else if (hasPageError()) {
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load roster"
           [message]="rosterService.error() || 'Something went wrong'"
@@ -371,13 +376,13 @@ import {
           (save)="savePlayer($event)"
         ></app-roster-player-form-dialog>
 
-        <!-- Player Details Dialog -->
+        <!-- Player Details Dialog (Phase 1 Enhanced) -->
         <p-dialog
           [visible]="showDetailsDialog()"
           (visibleChange)="showDetailsDialog.set($event)"
           [modal]="true"
           header="Player Details"
-          [style]="{ width: '600px' }"
+          [style]="{ width: '700px', maxHeight: '90vh' }"
           [closable]="true"
         >
           @if (selectedPlayer()) {
@@ -396,12 +401,44 @@ import {
                   <p class="details-position">
                     {{ getPositionFullName(selectedPlayer()!.position) }}
                   </p>
-                  <p-tag
-                    [value]="selectedPlayer()!.status | titlecase"
-                    [severity]="getStatusSeverity(selectedPlayer()!.status)"
-                  ></p-tag>
+                  <div class="details-tags">
+                    <p-tag
+                      [value]="selectedPlayer()!.status | titlecase"
+                      [severity]="getStatusSeverity(selectedPlayer()!.status)"
+                    ></p-tag>
+                    @if (enrichedSelectedPlayer()?.riskLevel && enrichedSelectedPlayer()!.riskLevel !== 'low') {
+                      <p-tag
+                        [value]="'Risk: ' + (enrichedSelectedPlayer()!.riskLevel | titlecase)"
+                        [severity]="getRiskSeverity(enrichedSelectedPlayer()!.riskLevel!)"
+                      ></p-tag>
+                    }
+                  </div>
                 </div>
               </div>
+
+              <!-- Live Metrics Summary -->
+              @if (enrichedSelectedPlayer()) {
+                <div class="details-metrics-summary">
+                  <div class="metric-card">
+                    <span class="metric-label">Readiness</span>
+                    <span class="metric-value" [class]="getReadinessClass(enrichedSelectedPlayer()!.readiness)">
+                      {{ enrichedSelectedPlayer()!.readiness }}%
+                    </span>
+                  </div>
+                  <div class="metric-card">
+                    <span class="metric-label">ACWR</span>
+                    <span class="metric-value" [class]="getACWRClass(enrichedSelectedPlayer()!.acwr)">
+                      {{ enrichedSelectedPlayer()!.acwr | number:'1.2-2' }}
+                    </span>
+                  </div>
+                  <div class="metric-card">
+                    <span class="metric-label">Performance</span>
+                    <span class="metric-value" [class]="getPerformanceClass(enrichedSelectedPlayer()!.performanceScore)">
+                      {{ enrichedSelectedPlayer()!.performanceScore }}%
+                    </span>
+                  </div>
+                </div>
+              }
 
               <div class="details-grid">
                 <div class="details-item">
@@ -417,13 +454,13 @@ import {
                 <div class="details-item">
                   <span class="details-label">Height</span>
                   <span class="details-value">{{
-                    selectedPlayer()!.height
+                    formatHeight(selectedPlayer()!.height)
                   }}</span>
                 </div>
                 <div class="details-item">
                   <span class="details-label">Weight</span>
                   <span class="details-value">{{
-                    selectedPlayer()!.weight
+                    formatWeight(selectedPlayer()!.weight)
                   }}</span>
                 </div>
                 @if (
@@ -447,6 +484,70 @@ import {
                   </div>
                 }
               </div>
+
+              <!-- Position Benchmarks Section -->
+              @if (enrichedSelectedPlayer()?.benchmarkComparison?.length) {
+                <div class="details-benchmarks">
+                  <h3><i class="pi pi-chart-bar"></i> Position Benchmarks</h3>
+                  <div class="benchmarks-grid">
+                    @for (benchmark of enrichedSelectedPlayer()!.benchmarkComparison; track benchmark.metric) {
+                      <div class="benchmark-item">
+                        <div class="benchmark-header">
+                          <span class="benchmark-name">{{ benchmark.metric }}</span>
+                          <span class="benchmark-rating" [class]="'rating-' + benchmark.rating">
+                            {{ benchmark.rating | titlecase }}
+                          </span>
+                        </div>
+                        @if (benchmark.value !== null) {
+                          <div class="benchmark-value">
+                            {{ benchmark.value }}{{ benchmark.unit }}
+                            <span class="benchmark-target">(Target: {{ benchmark.target }}{{ benchmark.unit }})</span>
+                          </div>
+                        } @else {
+                          <div class="benchmark-value not-tested">Not tested</div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Training Priorities -->
+              @if (trainingPriorities().length > 0) {
+                <div class="details-priorities">
+                  <h3><i class="pi pi-list-check"></i> Training Priorities</h3>
+                  <ul class="priorities-list">
+                    @for (priority of trainingPriorities(); track priority) {
+                      <li>{{ priority }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              <!-- Risk Assessment (for coaches) -->
+              @if (rosterService.canManageRoster() && riskAssessment()?.factors?.length) {
+                <div class="details-risk" [class]="'risk-level-' + riskAssessment()!.level">
+                  <h3><i class="pi pi-exclamation-triangle"></i> Risk Assessment</h3>
+                  <div class="risk-factors">
+                    @for (factor of riskAssessment()!.factors; track factor) {
+                      <div class="risk-factor">
+                        <i class="pi pi-info-circle"></i>
+                        {{ factor }}
+                      </div>
+                    }
+                  </div>
+                  @if (riskAssessment()!.recommendations?.length) {
+                    <div class="risk-recommendations">
+                      <strong>Recommendations:</strong>
+                      <ul>
+                        @for (rec of riskAssessment()!.recommendations; track rec) {
+                          <li>{{ rec }}</li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </div>
+              }
 
               @if (
                 selectedPlayer()!.stats &&
@@ -747,6 +848,7 @@ import {
 export class RosterComponent implements OnInit {
   // Services
   readonly rosterService = inject(RosterService);
+  private readonly metricsService = inject(PlayerMetricsService);
   private toastService = inject(ToastService);
   private confirmationService = inject(ConfirmationService);
 
@@ -793,6 +895,27 @@ export class RosterComponent implements OnInit {
   getJerseyColor = getJerseyColor;
   getStatusSeverity = getStatusSeverity;
   getPlayerStats = getPlayerStats;
+  formatHeight = formatHeight;
+  formatWeight = formatWeight;
+
+  // Phase 1: Enriched player computed signals
+  enrichedSelectedPlayer = computed<PlayerWithMetrics | null>(() => {
+    const player = this.selectedPlayer();
+    if (!player) return null;
+    return this.metricsService.enrichPlayer(player);
+  });
+
+  trainingPriorities = computed<string[]>(() => {
+    const player = this.selectedPlayer();
+    if (!player) return [];
+    return this.metricsService.getTrainingPriorities(player);
+  });
+
+  riskAssessment = computed<RiskAssessment | null>(() => {
+    const player = this.selectedPlayer();
+    if (!player) return null;
+    return this.metricsService.getRiskAssessment(player);
+  });
 
   // Computed
   headerSubtitle = computed(() => {
@@ -843,6 +966,38 @@ export class RosterComponent implements OnInit {
       players,
     }));
   });
+
+  // Phase 1: Helper methods for details dialog styling
+  getReadinessClass(readiness: number): string {
+    if (readiness >= 75) return "readiness-high";
+    if (readiness >= 55) return "readiness-medium";
+    return "readiness-low";
+  }
+
+  getACWRClass(acwr: number): string {
+    if (acwr >= 0.8 && acwr <= 1.3) return "acwr-safe";
+    if (acwr > 1.3 && acwr <= 1.5) return "acwr-elevated";
+    if (acwr > 1.5) return "acwr-danger";
+    if (acwr < 0.8) return "acwr-low";
+    return "acwr-safe";
+  }
+
+  getPerformanceClass(score: number): string {
+    if (score >= 80) return "perf-excellent";
+    if (score >= 60) return "perf-good";
+    if (score >= 40) return "perf-average";
+    return "perf-poor";
+  }
+
+  getRiskSeverity(level: PlayerRiskLevel): "success" | "info" | "warn" | "danger" {
+    switch (level) {
+      case "low": return "success";
+      case "moderate": return "warn";
+      case "high": return "warn";
+      case "critical": return "danger";
+      default: return "info";
+    }
+  }
 
   ngOnInit(): void {
     this.initializePage();

@@ -1,16 +1,12 @@
 <!-- Today's Schedule Widget - True Timeline -->
-<div class="schedule-card">
-  <!-- Header -->
-  <div class="schedule-header">
-    <div class="header-title">
-      <i class="pi pi-calendar"></i>
-      <h3>Today's Schedule</h3>
-    </div>
-    <div class="header-progress">
-      <span class="progress-text">{{ completedCount() }}/{{ totalCount() }}</span>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="progressPercent()"></div>
-      </div>
+<app-card 
+  title="Today schedule" 
+  headerIcon="pi-calendar"
+>
+  <div header-actions class="header-progress">
+    <span class="progress-text">{{ completedCount() }}/{{ totalCount() }}</span>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressPercent()"></div>
     </div>
   </div>
 
@@ -87,13 +83,27 @@
 
             <!-- Single CTA for current/next item -->
             @if (item.status === 'in-progress') {
-              <button 
-                class="item-action primary"
-                (click)="markComplete(item)"
-              >
-                <i class="pi pi-check"></i>
-                Mark Complete
-              </button>
+              <div class="item-actions mt-3">
+                @if (item.id === 'routine-breakfast') {
+                  <app-button 
+                    variant="primary"
+                    size="sm"
+                    icon="plus"
+                    (clicked)="takeSupplements(item)"
+                  >
+                    Take Supplements
+                  </app-button>
+                } @else {
+                  <app-button 
+                    variant="primary"
+                    size="sm"
+                    icon="check"
+                    (clicked)="markComplete(item)"
+                  >
+                    Mark Complete
+                  </app-button>
+                }
+              </div>
             }
           </div>
         </div>
@@ -111,37 +121,38 @@
   }
 
   <!-- Footer: Single CTA -->
-  @if (hasSchedule() && nextItem()) {
-    <div class="schedule-footer">
-      @if (nextItem()?.type === 'training') {
-        <button 
-          class="footer-cta"
-          routerLink="/training/daily"
-        >
-          <i class="pi pi-play"></i>
-          Start {{ nextItem()?.title }}
-        </button>
-      } @else if (nextItem()?.type === 'wellness') {
-        <button 
-          class="footer-cta secondary"
-          routerLink="/wellness"
-        >
-          <i class="pi pi-pencil"></i>
-          Log {{ nextItem()?.title }}
-        </button>
-      } @else {
-        <a class="footer-link" routerLink="/training/schedule">
-          View Full Schedule
-          <i class="pi pi-arrow-right"></i>
-        </a>
-      }
-    </div>
-  } @else if (hasSchedule()) {
-    <div class="schedule-footer">
+  <div footer>
+    @if (hasSchedule() && nextItem()) {
+      <div class="schedule-footer-unified">
+        @if (nextItem()?.type === 'training') {
+          <app-button 
+            [block]="true"
+            icon="play"
+            routerLink="/training/daily"
+          >
+            Start {{ nextItem()?.title }}
+          </app-button>
+        } @else if (nextItem()?.type === 'wellness') {
+          <app-button 
+            [block]="true"
+            variant="secondary"
+            icon="pencil"
+            routerLink="/wellness"
+          >
+            Log {{ nextItem()?.title }}
+          </app-button>
+        } @else {
+          <a class="footer-link" routerLink="/training/schedule">
+            View Full Schedule
+            <i class="pi pi-arrow-right"></i>
+          </a>
+        }
+      </div>
+    } @else if (hasSchedule()) {
       <a class="footer-link" routerLink="/training/schedule">
         View Full Schedule
         <i class="pi pi-arrow-right"></i>
       </a>
-    </div>
-  }
-</div>
+    }
+  </div>
+</app-card>

@@ -1,12 +1,10 @@
-import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -30,18 +28,23 @@ import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-  GameResult,
-  PlayerPerformanceStats,
-  RiskAlert,
-  TeamOverviewStats,
-  TeamStatisticsService,
-  TrainingSession,
-  UpcomingGame,
+    GameResult,
+    PlayerPerformanceStats,
+    RiskAlert,
+    TeamOverviewStats,
+    TeamStatisticsService,
+    TrainingSession,
+    UpcomingGame,
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import {
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
+} from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
@@ -56,12 +59,11 @@ interface ConsentInfo {
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
 
+
 @Component({
   selector: "app-coach-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     RouterModule,
     CardModule,
@@ -78,22 +80,25 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
     Textarea,
     DatePicker,
     Select,
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    DatePipe,
+    DecimalPipe,
   ],
   template: `
     <app-main-layout>
       <!-- Loading State -->
-      @if (isPageLoading()) {
-        <app-page-loading-state
-          message="Loading coach dashboard..."
-          variant="skeleton"
-        ></app-page-loading-state>
-      }
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading coach dashboard..."
+      ></app-loading>
 
       <!-- Error State -->
-      @else if (hasPageError()) {
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load dashboard"
           [message]="pageErrorMessage()"
@@ -104,126 +109,90 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
       <!-- Content -->
       @else {
         <div class="dashboard-content">
+          <!-- Lead with Coach Priority Command & Merlin Insight -->
+          <section class="priority-command-center">
+            <div class="merlin-coach-card">
+              <div class="merlin-avatar">
+                <i class="pi pi-sparkles"></i>
+              </div>
+              <div class="merlin-content">
+                <h3>Merlin's Team Briefing</h3>
+                <p>{{ merlinCoachInsight() }}</p>
+                <div class="merlin-actions">
+                  <app-button variant="text" size="sm" icon="comments" routerLink="/chat">Discuss Team Strategy</app-button>
+                </div>
+              </div>
+            </div>
+
+            @if (riskAlerts().length > 0) {
+              <div class="priority-athletes-strip">
+                <div class="strip-header">
+                  <span class="strip-title"><i class="pi pi-exclamation-triangle"></i> Needs Attention Now</span>
+                  <p-badge [value]="riskAlerts().length.toString()" severity="danger"></p-badge>
+                </div>
+                <div class="athlete-scroll">
+                  @for (alert of riskAlerts(); track alert.playerId) {
+                    <div class="priority-athlete-card" (click)="viewPlayer(alert.playerId)">
+                      <p-avatar [label]="getPlayerInitials(alert.playerName)" shape="circle" 
+                        [style]="{'background-color': alert.severity === 'critical' ? 'var(--red-500)' : 'var(--yellow-500)', 'color': 'white'}">
+                      </p-avatar>
+                      <div class="pa-info">
+                        <span class="pa-name">{{ alert.playerName }}</span>
+                        <span class="pa-reason">{{ alert.message }}</span>
+                      </div>
+                      <i class="pi pi-chevron-right"></i>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </section>
+
           <!-- Header with Team Name & Quick Actions -->
-          <div class="dashboard-header">
+          <div class="dashboard-header compact-header">
             <div class="header-info">
               <h1 class="team-name">
                 <i class="team-icon pi pi-flag"></i>
-                {{ teamOverview().teamName }} Dashboard
+                {{ teamOverview().teamName }}
               </h1>
               <p class="header-subtitle">
-                {{ teamOverview().season }} Season •
-                {{ teamOverview().wins }}-{{ teamOverview().losses
-                }}{{ teamOverview().ties > 0 ? "-" + teamOverview().ties : "" }}
-                Record
-                <span
-                  class="streak-badge"
-                  [class.winning]="teamOverview().streak.startsWith('W')"
-                >
+                {{ teamOverview().season }} •
+                {{ teamOverview().wins }}-{{ teamOverview().losses }}
+                <span class="streak-badge" [class.winning]="teamOverview().streak.startsWith('W')">
                   {{ teamOverview().streak }}
                 </span>
               </p>
             </div>
             <div class="header-actions">
-              <p-button
-                icon="pi pi-plus"
-                label="Create Session"
-                (onClick)="openCreateSession()"
-              ></p-button>
-              <p-button
-                icon="pi pi-send"
-                label="Team Message"
-                [outlined]="true"
-                (onClick)="openTeamMessage()"
-              ></p-button>
+              <app-button icon="plus" size="sm" (clicked)="openCreateSession()">Practice</app-button>
+              <app-button icon="send" size="sm" variant="outlined" (clicked)="openTeamMessage()">Message</app-button>
             </div>
           </div>
 
-          <!-- Key Stats Row -->
-          <div class="stats-grid">
-            <div class="stat-card primary">
-              <div class="stat-icon"><i class="pi pi-trophy"></i></div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  {{ teamOverview().wins }}-{{ teamOverview().losses }}
-                </div>
-                <div class="stat-label">Season Record</div>
-                <div class="stat-detail">
-                  {{ teamOverview().winPercentage }}% Win Rate
-                </div>
-              </div>
+          <!-- Key Stats Row - Refactored for Compactness -->
+          <div class="stats-compact-row">
+            <div class="sc-item" pTooltip="Average Team Readiness">
+              <span class="sc-label">Team Readiness</span>
+              <span class="sc-value" [class]="getWellnessClass()">{{ teamOverview().practiceAttendanceRate }}%</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-icon"><i class="pi pi-users"></i></div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  {{ teamOverview().activePlayers }}/{{
-                    teamOverview().totalPlayers
-                  }}
-                </div>
-                <div class="stat-label">Active Players</div>
-                <div
-                  class="stat-detail"
-                  [class.warning]="teamOverview().injuredPlayers > 0"
-                >
-                  {{ teamOverview().injuredPlayers }} injured
-                </div>
-              </div>
+            <div class="sc-divider"></div>
+            <div class="sc-item" pTooltip="Players in Danger Zone">
+              <span class="sc-label">At Risk</span>
+              <span class="sc-value" [class.warning]="teamOverview().playersAtRisk > 0">{{ teamOverview().playersAtRisk }}</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-icon"><i class="pi pi-star"></i></div>
-              <div class="stat-info">
-                <div class="stat-value">{{ teamOverview().overallRating }}</div>
-                <div class="stat-label">Team Rating</div>
-                <div class="stat-detail">
-                  Off: {{ teamOverview().offenseRating }} • Def:
-                  {{ teamOverview().defenseRating }}
-                </div>
-              </div>
+            <div class="sc-divider"></div>
+            <div class="sc-item" pTooltip="Current Injuries">
+              <span class="sc-label">Injured</span>
+              <span class="sc-value" [class.warning]="teamOverview().injuredPlayers > 0">{{ teamOverview().injuredPlayers }}</span>
             </div>
-
-            <div
-              class="stat-card"
-              [class.alert]="teamOverview().playersAtRisk > 0"
-            >
-              <div class="stat-icon">
-                <i class="pi pi-exclamation-triangle"></i>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">{{ teamOverview().playersAtRisk }}</div>
-                <div class="stat-label">Risk Alerts</div>
-                <div class="stat-detail">Players need attention</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">🤝</div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  {{ teamOverview().teamChemistry | number: "1.1-1" }}
-                </div>
-                <div class="stat-label">Team Chemistry</div>
-                <div class="stat-detail">Out of 10</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">📅</div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  {{ upcomingGames()[0]?.daysUntil || "-" }}
-                </div>
-                <div class="stat-label">Days to Game</div>
-                <div class="stat-detail">
-                  vs {{ upcomingGames()[0]?.opponent || "TBD" }}
-                </div>
-              </div>
+            <div class="sc-divider"></div>
+            <div class="sc-item" pTooltip="Team Chemistry Score">
+              <span class="sc-label">Chemistry</span>
+              <span class="sc-value">{{ teamOverview().teamChemistry | number: "1.1-1" }}</span>
             </div>
           </div>
 
-          <!-- Partial Data Notice (when some players have blocked consent) -->
+          <!-- Main Content Grid - Streamlined for Phase 2 -->
           @if (hasBlockedPlayers()) {
             <div class="partial-data-notice">
               <div class="notice-icon">
@@ -243,567 +212,160 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
             </div>
           }
 
-          <!-- Main Content Grid -->
-          <div class="main-grid">
-            <!-- Left Column: Performance & Alerts -->
-            <div class="left-column">
-              <!-- Team Performance Trend -->
-              @defer (on viewport) {
-                <p-card class="chart-card">
-                  <ng-template pTemplate="header">
-                    <div class="card-header">
-                      <h3>
-                        <i class="pi pi-chart-line"></i> Team Performance Trend
-                      </h3>
-                      <p-button
-                        icon="pi pi-external-link"
-                        [text]="true"
-                        [rounded]="true"
-                        pTooltip="View detailed analytics"
-                        (onClick)="navigateToAnalytics()"
-                      ></p-button>
-                    </div>
-                  </ng-template>
-                  @if (performanceChartData()) {
-                    <p-chart
-                      type="line"
-                      [data]="performanceChartData()"
-                      [options]="lineChartOptions"
-                      [style]="{ height: '250px' }"
-                    ></p-chart>
-                  }
-                  <div class="chart-insights">
-                    <div class="insight">
-                      <span class="insight-value">{{
-                        latestPerformanceScore()
-                      }}</span>
-                      <span class="insight-label">Current</span>
-                    </div>
-                    <div class="insight">
-                      <span class="insight-value trend-up"
-                        >+{{ performanceImprovement() }}</span
-                      >
-                      <span class="insight-label">Season Δ</span>
-                    </div>
-                    <div class="insight">
-                      <span class="insight-value"
-                        >{{ teamOverview().practiceAttendanceRate }}%</span
-                      >
-                      <span class="insight-label">Attendance</span>
-                    </div>
+          <!-- Main Content Grid - Streamlined for Phase 2 -->
+          <div class="dashboard-workspace">
+            <!-- Left Workspace: Roster & Performance -->
+            <div class="workspace-main">
+              <app-card [flush]="true">
+                <div class="workspace-tabs-header">
+                  <div class="tab-triggers">
+                    <button class="tab-trigger" [class.active]="activeTab === 'roster'" (click)="activeTab = 'roster'">
+                      <i class="pi pi-users"></i> Team Roster
+                    </button>
+                    <button class="tab-trigger" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">
+                      <i class="pi pi-chart-line"></i> Performance
+                    </button>
                   </div>
-                </p-card>
-              } @placeholder {
-                <p-card class="chart-card">
-                  <div class="loading-placeholder">
-                    Loading performance chart...
+                  <div class="tab-actions">
+                    <app-button variant="text" size="sm" icon="external-link" (clicked)="navigateToAnalytics()"></app-button>
                   </div>
-                </p-card>
-              }
+                </div>
 
-              <!-- Risk Alerts -->
-              <p-card
-                class="alerts-card"
-                [class.has-alerts]="riskAlerts().length > 0"
-              >
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3>
-                      <i class="pi pi-exclamation-triangle"></i>
-                      Risk Alerts
-                      @if (riskAlerts().length > 0) {
-                        <p-badge
-                          [value]="riskAlerts().length.toString()"
-                          severity="danger"
-                        ></p-badge>
-                      }
-                    </h3>
-                  </div>
-                </ng-template>
-
-                @if (riskAlerts().length > 0) {
-                  <div class="alerts-list">
-                    @for (alert of riskAlerts(); track alert.playerId) {
-                      <div
-                        class="alert-item"
-                        [class.critical]="alert.severity === 'critical'"
-                      >
-                        <div class="alert-header">
-                          <p-avatar
-                            [label]="getPlayerInitials(alert.playerName)"
-                            shape="circle"
-                            [style]="{
-                              'background-color':
-                                alert.severity === 'critical'
-                                  ? 'var(--red-500)'
-                                  : 'var(--yellow-500)',
-                              color: 'white',
-                            }"
-                          ></p-avatar>
-                          <div class="alert-player">
-                            <span class="player-name">{{
-                              alert.playerName
-                            }}</span>
-                            <span class="player-position">{{
-                              alert.position
-                            }}</span>
-                          </div>
-                          <p-tag
-                            [value]="alert.severity | titlecase"
-                            [severity]="
-                              alert.severity === 'critical' ? 'danger' : 'warn'
-                            "
-                          ></p-tag>
-                        </div>
-                        <p class="alert-message">{{ alert.message }}</p>
-                        <p class="alert-recommendation">
-                          <i class="pi pi-lightbulb"></i>
-                          {{ alert.recommendation }}
-                        </p>
-                        <div class="alert-metrics">
-                          @if (alert.acwr) {
-                            <span
-                              class="metric"
-                              [class.danger]="alert.acwr > 1.5"
-                            >
-                              ACWR: {{ alert.acwr | number: "1.2-2" }}
-                            </span>
-                          }
-                          @if (alert.readiness) {
-                            <span
-                              class="metric"
-                              [class.danger]="alert.readiness < 60"
-                            >
-                              Readiness: {{ alert.readiness }}/100
-                            </span>
-                          }
-                        </div>
-                        <div class="alert-actions">
-                          <p-button
-                            label="View Player"
-                            [text]="true"
-                            size="small"
-                            (onClick)="viewPlayer(alert.playerId)"
-                          ></p-button>
-                          <p-button
-                            label="Adjust Load"
-                            [outlined]="true"
-                            size="small"
-                            (onClick)="adjustPlayerLoad(alert.playerId)"
-                          ></p-button>
-                        </div>
+                <div class="tab-content">
+                  @if (activeTab === 'roster') {
+                    <div class="roster-workspace">
+                      <div class="workspace-filters">
+                        <app-button
+                          [variant]="playerFilter() === 'all' ? 'primary' : 'text'"
+                          size="sm"
+                          (clicked)="setPlayerFilter('all')"
+                        >All</app-button>
+                        <app-button
+                          [variant]="playerFilter() === 'at_risk' ? 'warning' : 'text'"
+                          size="sm"
+                          (clicked)="setPlayerFilter('at_risk')"
+                        >At Risk</app-button>
+                        <app-button
+                          [variant]="playerFilter() === 'injured' ? 'danger' : 'text'"
+                          size="sm"
+                          (clicked)="setPlayerFilter('injured')"
+                        >Injured</app-button>
                       </div>
-                    }
-                  </div>
-                } @else {
-                  <div class="no-alerts">
-                    <i class="pi pi-check-circle"></i>
-                    <p>All players are in good condition</p>
-                  </div>
-                }
-              </p-card>
-            </div>
 
-            <!-- Center Column: Player Roster -->
-            <div class="center-column">
-              <p-card class="roster-card">
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3><i class="pi pi-users"></i> Team Roster</h3>
-                    <div class="roster-filters">
-                      <p-button
-                        [label]="'All (' + players().length + ')'"
-                        [text]="playerFilter() === 'all'"
-                        [outlined]="playerFilter() !== 'all'"
-                        size="small"
-                        (onClick)="setPlayerFilter('all')"
-                      ></p-button>
-                      <p-button
-                        [label]="'At Risk (' + atRiskCount() + ')'"
-                        [text]="playerFilter() === 'at_risk'"
-                        [outlined]="playerFilter() !== 'at_risk'"
-                        size="small"
-                        severity="warn"
-                        (onClick)="setPlayerFilter('at_risk')"
-                      ></p-button>
-                      <p-button
-                        [label]="'Injured (' + injuredCount() + ')'"
-                        [text]="playerFilter() === 'injured'"
-                        [outlined]="playerFilter() !== 'injured'"
-                        size="small"
-                        severity="danger"
-                        (onClick)="setPlayerFilter('injured')"
-                      ></p-button>
-                    </div>
-                  </div>
-                </ng-template>
-
-                <p-table
-                  [value]="filteredPlayers()"
-                  [paginator]="filteredPlayers().length > 8"
-                  [rows]="8"
-                  [rowsPerPageOptions]="[8, 15, 25]"
-                  [scrollable]="true"
-                  scrollHeight="500px"
-                  styleClass="p-datatable-sm"
-                  [rowHover]="true"
-                >
-                  <ng-template pTemplate="header">
-                    <tr>
-                      <th style="width: 200px" pSortableColumn="playerName">
-                        Player <p-sortIcon field="playerName"></p-sortIcon>
-                      </th>
-                      <th style="width: 80px" pSortableColumn="position">
-                        Pos <p-sortIcon field="position"></p-sortIcon>
-                      </th>
-                      <th
-                        style="width: 100px"
-                        pSortableColumn="performanceScore"
+                      <p-table
+                        [value]="filteredPlayers()"
+                        [paginator]="filteredPlayers().length > 10"
+                        [rows]="10"
+                        styleClass="p-datatable-sm"
+                        [rowHover]="true"
                       >
-                        Perf <p-sortIcon field="performanceScore"></p-sortIcon>
-                      </th>
-                      <th style="width: 90px" pSortableColumn="acwr">
-                        ACWR <p-sortIcon field="acwr"></p-sortIcon>
-                      </th>
-                      <th style="width: 100px" pSortableColumn="readiness">
-                        Ready <p-sortIcon field="readiness"></p-sortIcon>
-                      </th>
-                      <th style="width: 90px">Status</th>
-                      <th style="width: 80px">Actions</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-player>
-                    <tr
-                      [class.at-risk-row]="player.riskLevel === 'high'"
-                      [class.injured-row]="player.status === 'injured'"
-                      [class.consent-blocked-row]="
-                        isPlayerBlocked(player.playerId)
-                      "
-                    >
-                      <td>
-                        <div class="player-cell">
-                          <div class="avatar-wrapper">
-                            <p-avatar
-                              [label]="player.avatarInitials"
-                              shape="circle"
-                              [style]="getAvatarStyle(player)"
-                            ></p-avatar>
-                            @if (isPlayerBlocked(player.playerId)) {
-                              <div
-                                class="blocked-badge"
-                                pTooltip="Data not shared"
-                              >
-                                <i class="pi pi-lock"></i>
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th pSortableColumn="playerName">Player</th>
+                            <th pSortableColumn="position">Pos</th>
+                            <th pSortableColumn="performanceScore">Perf</th>
+                            <th pSortableColumn="acwr">ACWR</th>
+                            <th pSortableColumn="readiness">Ready</th>
+                            <th>Status</th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-player>
+                          <tr (click)="viewPlayer(player.playerId)" class="clickable-row">
+                            <td>
+                              <div class="player-cell">
+                                <p-avatar [label]="player.avatarInitials" shape="circle" [style]="getAvatarStyle(player)"></p-avatar>
+                                <div class="player-info">
+                                  <span class="player-name">{{ player.playerName }}</span>
+                                  <span class="jersey-number">#{{ player.jerseyNumber || '--' }}</span>
+                                </div>
                               </div>
-                            }
-                          </div>
-                          <div class="player-info">
-                            <span class="player-name">{{
-                              player.playerName
-                            }}</span>
-                            @if (player.jerseyNumber) {
-                              <span class="jersey-number"
-                                >#{{ player.jerseyNumber }}</span
-                              >
-                            }
-                            @if (isPlayerBlocked(player.playerId)) {
-                              <span class="blocked-label">Data not shared</span>
-                            }
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p-tag
-                          [value]="player.position"
-                          [severity]="getPositionSeverity(player.position)"
-                        ></p-tag>
-                      </td>
-                      <td>
-                        @if (isPlayerBlocked(player.playerId)) {
-                          <span class="blocked-data">—</span>
-                        } @else {
-                          <div class="performance-cell">
-                            <span
-                              class="perf-score"
-                              [class]="
-                                getPerformanceClass(player.performanceScore)
-                              "
-                            >
-                              {{ player.performanceScore }}%
-                            </span>
-                            <i
-                              [class]="getTrendIcon(player.performanceTrend)"
-                              [ngClass]="'trend-' + player.performanceTrend"
-                            ></i>
-                          </div>
-                        }
-                      </td>
-                      <td>
-                        @if (isPlayerBlocked(player.playerId)) {
-                          <span class="blocked-data">—</span>
-                        } @else {
-                          <span [class]="getACWRClass(player.acwr)">
-                            {{ player.acwr | number: "1.2-2" }}
-                          </span>
-                        }
-                      </td>
-                      <td>
-                        @if (isPlayerBlocked(player.playerId)) {
-                          <span class="blocked-data">—</span>
-                        } @else {
-                          <div class="readiness-cell">
-                            <p-progressBar
-                              [value]="player.readiness"
-                              [showValue]="false"
-                              [style]="{ height: '8px', width: '60px' }"
-                              [styleClass]="
-                                getReadinessBarClass(player.readiness)
-                              "
-                            ></p-progressBar>
-                            <span class="readiness-value">{{
-                              player.readiness
-                            }}</span>
-                          </div>
-                        }
-                      </td>
-                      <td>
-                        @if (isPlayerBlocked(player.playerId)) {
-                          <p-tag
-                            value="Private"
-                            severity="secondary"
-                            pTooltip="Ask athlete to enable sharing"
-                          ></p-tag>
-                        } @else {
-                          <p-tag
-                            [value]="getStatusLabel(player.status)"
-                            [severity]="getStatusSeverity(player.status)"
-                          ></p-tag>
-                        }
-                      </td>
-                      <td>
-                        <div class="action-buttons">
-                          @if (isPlayerBlocked(player.playerId)) {
-                            <p-button
-                              icon="pi pi-envelope"
-                              [text]="true"
-                              [rounded]="true"
-                              pTooltip="Request data sharing"
-                              (onClick)="requestDataSharing(player.playerId)"
-                            ></p-button>
-                          } @else {
-                            <p-button
-                              icon="pi pi-eye"
-                              [text]="true"
-                              [rounded]="true"
-                              pTooltip="View Details"
-                              (onClick)="viewPlayer(player.playerId)"
-                            ></p-button>
-                            <p-button
-                              icon="pi pi-chart-bar"
-                              [text]="true"
-                              [rounded]="true"
-                              pTooltip="View Stats"
-                              (onClick)="viewPlayerStats(player.playerId)"
-                            ></p-button>
+                            </td>
+                            <td><p-tag [value]="player.position" [severity]="getPositionSeverity(player.position)"></p-tag></td>
+                            <td>
+                              <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">{{ player.performanceScore }}%</span>
+                            </td>
+                            <td><span [class]="getACWRClass(player.acwr)">{{ player.acwr | number: "1.2-2" }}</span></td>
+                            <td>
+                              <div class="readiness-compact">
+                                <div class="r-dot" [class]="getReadinessBarClass(player.readiness)"></div>
+                                <span>{{ player.readiness }}</span>
+                              </div>
+                            </td>
+                            <td><p-tag [value]="getStatusLabel(player.status)" [severity]="getStatusSeverity(player.status)"></p-tag></td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  }
+
+                  @if (activeTab === 'analytics') {
+                    <div class="analytics-workspace">
+                      <div class="analytics-hero">
+                        <div class="chart-container">
+                          @if (performanceChartData()) {
+                            <p-chart type="line" [data]="performanceChartData()" [options]="lineChartOptions" [style]="{ height: '200px' }"></p-chart>
                           }
                         </div>
-                      </td>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="emptymessage">
-                    <tr>
-                      <td colspan="7" class="empty-message">
-                        No players found matching the filter.
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </p-card>
+                        <div class="hero-stats">
+                          <div class="h-stat">
+                            <span class="h-label">Current Strength</span>
+                            <span class="h-value">{{ latestPerformanceScore() }}%</span>
+                          </div>
+                          <div class="h-stat">
+                            <span class="h-label">Attendance</span>
+                            <span class="h-value">{{ teamOverview().practiceAttendanceRate }}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </app-card>
             </div>
 
-            <!-- Right Column: Schedule & Games -->
-            <div class="right-column">
-              <!-- Upcoming Games -->
-              <p-card class="games-card">
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3><i class="pi pi-calendar"></i> Upcoming Games</h3>
-                    <p-button
-                      icon="pi pi-plus"
-                      [text]="true"
-                      [rounded]="true"
-                      pTooltip="Schedule Game"
-                      (onClick)="scheduleGame()"
-                    ></p-button>
-                  </div>
-                </ng-template>
-
-                <div class="games-list">
-                  @for (game of upcomingGames(); track game.gameId) {
-                    <div
-                      class="game-item"
-                      [class.imminent]="game.daysUntil <= 3"
-                    >
-                      <div class="game-date">
-                        <span class="date-day">{{
-                          game.date | date: "d"
-                        }}</span>
-                        <span class="date-month">{{
-                          game.date | date: "MMM"
-                        }}</span>
+            <!-- Right Workspace: Schedule & Quick -->
+            <div class="workspace-side">
+              <app-card title="Today schedule" headerIcon="pi-calendar" [compact]="true">
+                <div class="schedule-mini">
+                  @for (game of upcomingGames().slice(0, 2); track game.gameId) {
+                    <div class="mini-event game">
+                      <div class="ev-date">
+                        <span class="d">{{ game.date | date: 'd' }}</span>
+                        <span class="m">{{ game.date | date: 'MMM' }}</span>
                       </div>
-                      <div class="game-info">
-                        <span class="opponent">vs {{ game.opponent }}</span>
-                        <span class="location">{{ game.location }}</span>
-                        <span class="game-type">{{ game.gameType }}</span>
-                      </div>
-                      <div class="game-countdown">
-                        <p-tag
-                          [value]="getCountdownLabel(game.daysUntil)"
-                          [severity]="
-                            game.daysUntil <= 3
-                              ? 'danger'
-                              : game.daysUntil <= 7
-                                ? 'warn'
-                                : 'info'
-                          "
-                        ></p-tag>
+                      <div class="ev-info">
+                        <span class="t">vs {{ game.opponent }}</span>
+                        <span class="s">Game Day</span>
                       </div>
                     </div>
-                  } @empty {
-                    <div class="no-games">
-                      <p>No upcoming games scheduled</p>
-                      <p-button
-                        label="Schedule Game"
-                        [outlined]="true"
-                        size="small"
-                        (onClick)="scheduleGame()"
-                      ></p-button>
+                  }
+                  @for (session of trainingSessions().slice(0, 2); track session.sessionId) {
+                    <div class="mini-event practice">
+                      <div class="ev-date">
+                        <span class="d">{{ session.date | date: 'd' }}</span>
+                        <span class="m">{{ session.date | date: 'MMM' }}</span>
+                      </div>
+                      <div class="ev-info">
+                        <span class="t">{{ session.title }}</span>
+                        <span class="s">{{ session.time }}</span>
+                      </div>
                     </div>
                   }
                 </div>
-              </p-card>
-
-              <!-- Recent Results -->
-              <p-card class="results-card">
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3><i class="pi pi-history"></i> Recent Results</h3>
-                  </div>
-                </ng-template>
-
-                <div class="results-list">
-                  @for (game of recentGames(); track game.gameId) {
-                    <div class="result-item" [class]="game.result">
-                      <div class="result-badge" [class]="game.result">
-                        {{
-                          game.result === "win"
-                            ? "W"
-                            : game.result === "loss"
-                              ? "L"
-                              : "T"
-                        }}
-                      </div>
-                      <div class="result-info">
-                        <span class="opponent">vs {{ game.opponent }}</span>
-                        <span class="score"
-                          >{{ game.teamScore }} - {{ game.opponentScore }}</span
-                        >
-                      </div>
-                      <span class="result-date">{{
-                        game.date | date: "MMM d"
-                      }}</span>
-                    </div>
-                  } @empty {
-                    <div class="no-results">No recent games</div>
-                  }
+                <div class="card-footer">
+                  <app-button variant="text" size="sm" [block]="true" routerLink="/calendar">Full Schedule</app-button>
                 </div>
-              </p-card>
+              </app-card>
 
-              <!-- Training Schedule -->
-              <p-card class="schedule-card">
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3><i class="pi pi-clock"></i> Training Schedule</h3>
-                    <p-button
-                      icon="pi pi-plus"
-                      [text]="true"
-                      [rounded]="true"
-                      pTooltip="Add Session"
-                      (onClick)="openCreateSession()"
-                    ></p-button>
-                  </div>
-                </ng-template>
-
-                <div class="schedule-list">
-                  @for (
-                    session of trainingSessions();
-                    track session.sessionId
-                  ) {
-                    <div class="session-item" [class]="session.type">
-                      <div class="session-time">
-                        <span class="time">{{ session.time }}</span>
-                        <span class="day">{{
-                          session.date | date: "EEE"
-                        }}</span>
-                      </div>
-                      <div class="session-info">
-                        <span class="session-title">{{ session.title }}</span>
-                        <span class="session-meta">
-                          {{ session.duration }} min •
-                          {{ getSessionTypeLabel(session.type) }}
-                        </span>
-                      </div>
-                      <p-tag
-                        [value]="session.status | titlecase"
-                        [severity]="getSessionStatusSeverity(session.status)"
-                      ></p-tag>
-                    </div>
-                  } @empty {
-                    <div class="no-sessions">
-                      <p>No sessions scheduled</p>
-                    </div>
-                  }
-                </div>
-              </p-card>
-
-              <!-- Quick Actions -->
-              <p-card class="actions-card">
-                <ng-template pTemplate="header">
-                  <div class="card-header">
-                    <h3><i class="pi pi-bolt"></i> Quick Actions</h3>
-                  </div>
-                </ng-template>
-
-                <div class="quick-actions">
-                  <button class="action-btn" (click)="openCreateSession()">
-                    <i class="pi pi-calendar-plus"></i>
-                    <span>Create Practice</span>
-                  </button>
-                  <button class="action-btn" (click)="viewAllStats()">
-                    <i class="pi pi-chart-bar"></i>
-                    <span>View All Stats</span>
-                  </button>
-                  <button class="action-btn" (click)="openTeamMessage()">
-                    <i class="pi pi-comments"></i>
-                    <span>Team Message</span>
-                  </button>
-                  <button class="action-btn" (click)="viewInjuryReport()">
-                    <i class="pi pi-heart"></i>
-                    <span>Injury Report</span>
-                  </button>
-                  <button class="action-btn" (click)="navigateToAnalytics()">
-                    <i class="pi pi-chart-line"></i>
-                    <span>Analytics</span>
-                  </button>
-                  <button class="action-btn" (click)="manageRoster()">
-                    <i class="pi pi-users"></i>
-                    <span>Manage Roster</span>
-                  </button>
-                </div>
-              </p-card>
+              <div class="quick-command-grid">
+                <app-button variant="outlined" icon="calendar-plus" (clicked)="openCreateSession()">New Practice</app-button>
+                <app-button variant="outlined" icon="send" (clicked)="openTeamMessage()">Msg Team</app-button>
+                <app-button variant="outlined" icon="heart" (clicked)="viewInjuryReport()">Injuries</app-button>
+                <app-button variant="outlined" icon="users" (clicked)="manageRoster()">Roster</app-button>
+              </div>
             </div>
           </div>
+        </div>
         </div>
 
         <!-- Create Session Dialog -->
@@ -879,16 +441,14 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
             </div>
           </div>
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showCreateSessionDialog = false"
-            ></p-button>
-            <p-button
-              label="Create"
-              icon="pi pi-check"
-              (onClick)="createSession()"
-            ></p-button>
+            <app-button
+              variant="text"
+              (clicked)="showCreateSessionDialog = false"
+            >Cancel</app-button>
+            <app-button
+              icon="check"
+              (clicked)="createSession()"
+            >Create</app-button>
           </ng-template>
         </p-dialog>
 
@@ -914,16 +474,14 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
             </div>
           </div>
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showTeamMessageDialog = false"
-            ></p-button>
-            <p-button
-              label="Send"
-              icon="pi pi-send"
-              (onClick)="sendTeamMessage()"
-            ></p-button>
+            <app-button
+              variant="text"
+              (clicked)="showTeamMessageDialog = false"
+            >Cancel</app-button>
+            <app-button
+              icon="send"
+              (clicked)="sendTeamMessage()"
+            >Send</app-button>
           </ng-template>
         </p-dialog>
       }
@@ -932,14 +490,17 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
   `,
   styleUrls: ["./coach-dashboard.component.scss"],
 })
-export class CoachDashboardComponent implements OnInit {
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private headerService = inject(HeaderService);
-  private teamStatsService = inject(TeamStatisticsService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
+export class CoachDashboardComponent {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly headerService = inject(HeaderService);
+  private readonly teamStatsService = inject(TeamStatisticsService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
+
+  // Workspace state
+  activeTab: 'roster' | 'analytics' = 'roster';
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -1024,6 +585,26 @@ export class CoachDashboardComponent implements OnInit {
   };
 
   // Computed values
+  merlinCoachInsight = computed(() => {
+    const alerts = this.riskAlerts();
+    const overview = this.teamOverview();
+    const injured = this.injuredCount();
+    
+    if (alerts.length > 3) {
+      return `Coach, we have ${alerts.length} athletes at high risk today. I recommend adjusting the intensity of today's practice to prevent further injuries.`;
+    }
+    
+    if (injured > 0) {
+      return `With ${injured} athletes currently injured, we should focus on position-specific modifications for the upcoming sessions.`;
+    }
+
+    if (overview.avgTeamWorkload > 1.3) {
+      return `Team-wide ACWR is trending high (${overview.avgTeamWorkload.toFixed(2)}). Consider a deload week to maintain performance for the end of the season.`;
+    }
+
+    return "The squad is looking sharp today! Compliance is high, and readiness scores are optimal. Great day for a high-intensity session.";
+  });
+
   filteredPlayers = computed(() => {
     const filter = this.playerFilter();
     const allPlayers = this.players();
@@ -1092,11 +673,12 @@ export class CoachDashboardComponent implements OnInit {
   /**
    * Get the partial data message from centralized privacy copy
    */
-  partialDataMessage = computed(() => {
+  readonly partialDataMessage = computed(() => {
     return CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
   });
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.headerService.setDashboardHeader();
     this.initializePage();
   }

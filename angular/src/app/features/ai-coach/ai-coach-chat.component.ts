@@ -12,22 +12,22 @@
  */
 
 import { animate, style, transition, trigger } from "@angular/animations";
-import { CommonModule } from "@angular/common";
 import {
-  AfterViewChecked,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  ElementRef,
-  HostListener,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
+    AfterViewChecked,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    ElementRef,
+    HostListener,
+    ViewChild,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
@@ -43,6 +43,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -123,7 +124,6 @@ interface AutocompleteSuggestion {
 
 @Component({
   selector: "app-ai-coach-chat",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("slideDown", [
@@ -137,7 +137,6 @@ interface AutocompleteSuggestion {
     ]),
   ],
   imports: [
-    CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
@@ -155,7 +154,7 @@ interface AutocompleteSuggestion {
   ],
   template: `
     <app-main-layout>
-      <div class="chat-container" [class.has-messages]="messages().length > 0">
+      <div class="chat-container" [class.has-messages]="messages().length > 0" [class.is-coach-mode]="isCoach()">
         <!-- Daily Readiness Component (Modal) -->
         <app-daily-readiness
           [showOnInit]="true"
@@ -284,16 +283,19 @@ interface AutocompleteSuggestion {
                 </div>
                 <h2>Hey{{ userName() ? ", " + userName() : "" }}! 👋</h2>
                 <p>
-                  I'm Merlin, your AI-powered flag football coach. Ask me
-                  anything!
+                  @if (isCoach()) {
+                    I'm Merlin, your Team Strategy assistant. Ask me about your roster, practice planning, or injury risk analysis.
+                  } @else {
+                    I'm Merlin, your AI-powered flag football coach. Ask me anything!
+                  }
                 </p>
               </div>
 
               <div class="suggestions-section">
-                <h3>Quick Start</h3>
+                <h3>{{ isCoach() ? 'Command Center' : 'Quick Start' }}</h3>
                 <div class="suggestion-grid">
                   @for (
-                    suggestion of quickSuggestions;
+                    suggestion of quickSuggestions();
                     track suggestion.query
                   ) {
                     <button
@@ -796,13 +798,18 @@ interface AutocompleteSuggestion {
   `,
   styleUrl: "./ai-coach-chat.component.scss",
 })
-export class AiCoachChatComponent implements OnInit, AfterViewChecked {
-  private apiService = inject(ApiService);
-  private authService = inject(AuthService);
-  private logger = inject(LoggerService);
-  private toast = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
-  private destroyRef = inject(DestroyRef);
+export class AiCoachChatComponent implements AfterViewChecked {
+  private readonly apiService = inject(ApiService);
+  private readonly authService = inject(AuthService);
+  private readonly logger = inject(LoggerService);
+  private readonly toast = inject(ToastService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly route = inject(ActivatedRoute);
+
+  // User role check
+  isCoach = computed(() => this.authService.getUser()?.role === "coach");
 
   @ViewChild("messagesContainer") messagesContainer!: ElementRef;
   @ViewChild("messageInput") messageInput!: ElementRef;
@@ -889,50 +896,112 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     return msgs;
   });
 
-  // Quick suggestions for welcome state
-  quickSuggestions: QuickSuggestion[] = [
-    {
-      icon: "pi-bolt",
-      label: "Improve route running",
-      query: "How can I improve my route running?",
-      category: "Skills",
-    },
-    {
-      icon: "pi-heart",
-      label: "Pre-game nutrition",
-      query: "What should I eat before a game?",
-      category: "Nutrition",
-    },
-    {
-      icon: "pi-shield",
-      label: "Prevent injuries",
-      query: "How do I prevent injuries during training?",
-      category: "Health",
-    },
-    {
-      icon: "pi-sun",
-      label: "Warm-up routine",
-      query: "Give me a warm-up routine for game day",
-      category: "Training",
-    },
-    {
-      icon: "pi-forward",
-      label: "Speed training",
-      query: "How can I increase my speed?",
-      category: "Performance",
-    },
-    {
-      icon: "pi-star",
-      label: "QB drills",
-      query: "What drills should a quarterback practice?",
-      category: "Position",
-    },
-  ];
+  // Quick suggestions for welcome state - now more dynamic
+  quickSuggestions = computed<QuickSuggestion[]>(() => {
+    if (this.isCoach()) {
+      return [
+        {
+          icon: "pi-users",
+          label: "Team Health Report",
+          query: "Merlin, give me a briefing on current team injury risks and readiness.",
+          category: "Roster",
+        },
+        {
+          icon: "pi-calendar-plus",
+          label: "Plan Practice",
+          query: "Help me design a 90-minute high-intensity practice for today.",
+          category: "Planning",
+        },
+        {
+          icon: "pi-chart-line",
+          label: "Performance Trends",
+          query: "Which athletes have shown the most improvement in speed this month?",
+          category: "Analytics",
+        },
+        {
+          icon: "pi-shield",
+          label: "Injury Prevention",
+          query: "Show me the best warm-up routines to prevent hamstring strains.",
+          category: "Safety",
+        }
+      ];
+    }
 
-  // Computed context chips based on conversation
+    const suggestions: QuickSuggestion[] = [
+      {
+        icon: "pi-bolt",
+        label: "Improve route running",
+        query: "How can I improve my route running?",
+        category: "Skills",
+      },
+      {
+        icon: "pi-heart",
+        label: "Pre-game nutrition",
+        query: "What should I eat before a game?",
+        category: "Nutrition",
+      }
+    ];
+
+    // Add load-based suggestion
+    const acwr = this.trainingService.acwrRatio();
+    if (acwr > 1.3) {
+      suggestions.push({
+        icon: "pi-exclamation-triangle",
+        label: "Handle high load",
+        query: `My ACWR is ${acwr.toFixed(2)}. How should I adjust my training?`,
+        category: "Safety",
+      });
+    } else if (acwr < 0.8 && acwr > 0) {
+      suggestions.push({
+        icon: "pi-chart-line",
+        label: "Build back up",
+        query: "My training load has been low. How do I safely increase it?",
+        category: "Performance",
+      });
+    }
+
+    // Add position-based suggestion
+    const position = this.trainingService.userPosition();
+    if (position === 'QB') {
+      suggestions.push({
+        icon: "pi-star",
+        label: "QB arm care",
+        query: "What are the best arm care routines for a QB?",
+        category: "Position",
+      });
+    }
+
+    // Add health-based suggestion
+    const readinessLevel = this.trainingService.readinessLevel();
+    if (readinessLevel === 'low') {
+      suggestions.push({
+        icon: "pi-info-circle",
+        label: "Recover better",
+        query: "My readiness is low today. What recovery techniques do you suggest?",
+        category: "Recovery",
+      });
+    }
+
+    return suggestions.slice(0, 4);
+  });
+
+  // Computed context chips based on conversation and state
   contextChips = computed(() => {
     const msgs = this.messages();
-    if (msgs.length === 0) return [];
+    const isCoach = this.isCoach();
+    const chips: string[] = [];
+    
+    // If no messages, show some helpful starters based on current state
+    if (msgs.length === 0) {
+      if (isCoach) {
+        chips.push("Team load summary", "Next opponent strategy", "Injury report");
+      } else {
+        const acwr = this.trainingService.acwrRatio();
+        if (acwr > 1.3) chips.push("Explain my high ACWR");
+        if (this.trainingService.readinessScore() < 60) chips.push("Why is my readiness low?");
+      }
+      return chips.slice(0, 3);
+    }
 
     const lastAssistantMsg = [...msgs]
       .reverse()
@@ -941,25 +1010,39 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
     // Generate relevant follow-up suggestions based on intent
     const intent = lastAssistantMsg.intent;
-    const chips: string[] = [];
 
-    switch (intent) {
-      case "pain_injury":
-        chips.push("What exercises can I still do?", "How long should I rest?");
-        break;
-      case "technique_correction":
-        chips.push("Show me video examples", "Create a drill plan");
-        break;
-      case "plan_request":
-        chips.push("Adjust for my schedule", "Add recovery days");
-        break;
-      case "recovery_readiness":
-        chips.push("Low-intensity alternatives", "When can I return?");
-        break;
-      default:
-        if (msgs.length === 2) {
-          chips.push("Tell me more", "Give me a routine");
-        }
+    if (isCoach) {
+      switch (intent) {
+        case "team_report":
+          chips.push("Detailed roster view", "Export health PDF", "Message at-risk players");
+          break;
+        case "practice_plan":
+          chips.push("Reduce intensity", "Add position drills", "Save to calendar");
+          break;
+        default:
+          chips.push("Compare with last week", "Specific player deep-dive");
+      }
+    } else {
+      switch (intent) {
+        case "pain_injury":
+          chips.push("What exercises can I still do?", "How long should I rest?");
+          break;
+        case "technique_correction":
+          chips.push("Show me video examples", "Create a drill plan");
+          break;
+        case "plan_request":
+          chips.push("Adjust for my schedule", "Add recovery days");
+          break;
+        case "recovery_readiness":
+          chips.push("Low-intensity alternatives", "When can I return?");
+          break;
+        default:
+          // Fallback to state-based context
+          if (this.trainingService.acwrRatio() > 1.2) chips.push("Injury prevention tips");
+          if (msgs.length === 2) {
+            chips.push("Tell me more", "Give me a routine");
+          }
+      }
     }
 
     return chips.slice(0, 3);
@@ -989,9 +1072,21 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadTodayReadiness();
     this.initializeSpeechRecognition();
+    this.handleRouteParams();
+  }
+
+  private handleRouteParams(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (params['query']) {
+        this.currentMessage = params['query'];
+        // Small delay to ensure initialization is complete
+        setTimeout(() => this.sendMessage(), 100);
+      }
+    });
   }
 
   /**
@@ -1068,23 +1163,10 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   async loadTodayReadiness(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) return;
-
-    try {
-      const today = new Date().toISOString().split("T")[0];
-      const { data } = await this.supabaseService.client
-        .from("athlete_daily_state")
-        .select("readiness_score")
-        .eq("user_id", user.id)
-        .eq("state_date", today)
-        .single();
-
-      if (data?.readiness_score) {
-        this.todayReadinessScore.set(Math.round(data.readiness_score * 100));
-      }
-    } catch {
-      // No state for today yet
+    // We can now use the UnifiedTrainingService directly
+    const score = this.trainingService.readinessScore();
+    if (score > 0) {
+      this.todayReadinessScore.set(score);
     }
   }
 
@@ -1290,12 +1372,11 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     );
 
     try {
-      await this.apiService
+      await firstValueFrom(this.apiService
         .post("/api/response-feedback", {
           messageId: message.id,
           wasHelpful: helpful,
-        })
-        .toPromise();
+        }));
 
       this.toast.success(
         helpful ? "Thanks for the feedback!" : "Thanks, we'll improve!",

@@ -5,23 +5,36 @@
 
 @layer features {
   .stat-item {
-    @apply text-center;
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--surface-primary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
   }
 
   .stat-label {
-    @apply mb-1;
+    margin-bottom: var(--space-1);
+    font-size: var(--font-body-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
   }
 
   .stat-value {
-    @apply text-lg;
+    font-size: var(--font-body-lg);
+    font-weight: 700;
   }
 
   .session-card {
-    @apply transition-all duration-200;
-  }
-
-  .session-card:hover {
-    @apply shadow-lg transform -translate-y-1;
+    transition: all var(--transition-fast);
+    background: var(--surface-primary);
+    border: 2px solid var(--color-border-secondary);
+    
+    &:hover {
+      box-shadow: var(--shadow-2);
+      transform: translateY(-4px);
+      border-color: var(--ds-primary-green);
+    }
   }
 
   .text-green-600 {

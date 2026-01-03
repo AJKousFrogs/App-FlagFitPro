@@ -1,18 +1,17 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    input,
+    signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
-import { AcwrService } from "../../core/services/acwr.service";
-import { ReadinessService } from "../../core/services/readiness.service";
 import { TrainingPlanService } from "../../core/services/training-plan.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 
 interface DayPlan {
@@ -28,9 +27,8 @@ interface DayPlan {
 
 @Component({
   selector: "app-microcycle-planner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, TrafficLightRiskComponent],
+  imports: [FormsModule, TrafficLightRiskComponent, DatePipe, DecimalPipe, TitleCasePipe],
   template: `
     <div
       class="microcycle-planner bg-surface-primary rounded-lg shadow-medium p-6"
@@ -194,36 +192,34 @@ interface DayPlan {
   `,
   styleUrl: './microcycle-planner.component.scss',
 })
-export class MicrocyclePlannerComponent implements OnInit {
-  @Input() athleteId!: string;
+export class MicrocyclePlannerComponent {
+  // Angular 21: Use input() signal instead of @Input()
+  readonly athleteId = input.required<string>();
 
-  private metricsService = inject(TrainingMetricsService);
-  private acwrService = inject(AcwrService);
-  private readinessService = inject(ReadinessService);
-  private trainingPlanService = inject(TrainingPlanService);
+  private readonly metricsService = inject(TrainingMetricsService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly trainingPlanService = inject(TrainingPlanService);
 
-  weeklyPlan = signal<DayPlan[]>([]);
-  gameDays = signal<Date[]>([]);
-  currentACWR = computed(() => this.acwrService.acwrRatio());
-  acuteLoad = computed(() => this.acwrService.acuteLoad());
-  chronicLoad = computed(() => this.acwrService.chronicLoad());
-  currentRiskZone = computed(() => this.acwrService.riskZone());
-  readinessLevel = computed(
-    () => this.readinessService.current()?.level || "moderate",
-  );
-  lastUpdate = signal(new Date());
+  readonly weeklyPlan = signal<DayPlan[]>([]);
+  readonly gameDays = signal<Date[]>([]);
+  readonly currentACWR = this.trainingService.acwrRatio;
+  readonly acuteLoad = this.trainingService.acuteLoad;
+  readonly chronicLoad = this.trainingService.chronicLoad;
+  readonly currentRiskZone = this.trainingService.acwrRiskZone;
+  readonly readinessLevel = this.trainingService.readinessLevel;
+  readonly lastUpdate = signal(new Date());
 
-  totalSprintLoad = computed(() =>
+  readonly totalSprintLoad = computed(() =>
     this.weeklyPlan().reduce((sum, day) => sum + day.suggestedSprintLoad, 0),
   );
 
-  trainingDays = computed(
+  readonly trainingDays = computed(
     () =>
       this.weeklyPlan().filter((day) => day.suggestedIntensity !== "rest")
         .length,
   );
 
-  avgDailyLoad = computed(() => {
+  readonly avgDailyLoad = computed(() => {
     const total = this.weeklyPlan().reduce((sum, day) => {
       if (day.suggestedIntensity === "rest") return sum;
       return sum + day.suggestedSprintLoad * 10; // Rough estimate: 10 AU per sprint
@@ -231,21 +227,24 @@ export class MicrocyclePlannerComponent implements OnInit {
     return total / 7;
   });
 
-  endOfWeekACWR = computed(() => {
+  readonly endOfWeekACWR = computed(() => {
     const lastDay = this.weeklyPlan()[this.weeklyPlan().length - 1];
     return lastDay?.acwrProjection || this.currentACWR();
   });
 
-  async ngOnInit() {
-    // Load upcoming games
-    if (this.athleteId) {
-      const games = await this.trainingPlanService.getUpcomingGames(
-        this.athleteId,
-        14,
-      );
-      this.gameDays.set(games);
-    }
-    this.generateWeeklyPlan();
+  constructor() {
+    // Use effect to react to athleteId changes (Angular 21 pattern)
+    effect(async () => {
+      const athleteId = this.athleteId();
+      if (athleteId) {
+        const games = await this.trainingPlanService.getUpcomingGames(
+          athleteId,
+          14,
+        );
+        this.gameDays.set(games);
+      }
+      this.generateWeeklyPlan();
+    });
   }
 
   generateWeeklyPlan() {
@@ -463,27 +462,34 @@ export class MicrocyclePlannerComponent implements OnInit {
   }
 
   getDayCardClass(day: DayPlan): string {
-    if (day.suggestedIntensity === "rest") return "border-gray-300";
-    if (day.acwrProjection > 1.5) return "border-red-500 bg-red-50";
-    if (day.acwrProjection > 1.3) return "border-yellow-500 bg-yellow-50";
-    return "border-green-500 bg-green-50";
+    let classes = "";
+    if (day.suggestedIntensity === "rest") classes += " border-gray-300 opacity-80 bg-surface-secondary";
+    else if (day.acwrProjection > 1.5) classes += " border-red-500 bg-red-50";
+    else if (day.acwrProjection > 1.3) classes += " border-yellow-500 bg-yellow-50";
+    else classes += " border-green-500 bg-green-50";
+    
+    return classes;
   }
 
   getSprintLoadColor(load: number): string {
     if (load >= 15) return "var(--color-status-warning)"; // orange
     if (load >= 8) return "var(--color-status-success)"; // green
+    if (load === 0) return "var(--color-text-muted)";
     return "var(--color-status-info)"; // blue
   }
 
   getACWRColor(acwr: number): string {
-    if (acwr > 1.5) return "red-600";
-    if (acwr > 1.3) return "yellow-500";
-    if (acwr < 0.8) return "orange-500";
-    return "green-500";
+    if (acwr > 1.5) return "status-danger";
+    if (acwr > 1.3) return "status-warning";
+    if (acwr < 0.8 && acwr > 0) return "status-info";
+    return "status-success";
   }
 
   getRiskColor(): string {
-    return this.getACWRColor(this.currentACWR());
+    const acwr = this.currentACWR();
+    if (acwr > 1.5) return "status-danger";
+    if (acwr > 1.3) return "status-warning";
+    return "status-success";
   }
 
   /**

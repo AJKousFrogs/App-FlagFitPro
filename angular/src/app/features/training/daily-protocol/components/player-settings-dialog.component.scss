@@ -101,8 +101,43 @@
     align-items: center;
   }
 
-  .add-practice p-dropdown {
+  .add-practice p-select {
     flex: 1;
+  }
+
+  /* Routine List */
+  .routine-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .routine-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+  }
+
+  .routine-label {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-primary);
+    
+    i {
+      color: var(--ds-primary-green);
+      width: 20px;
+    }
+  }
+
+  .routine-time-input {
+    width: 100px !important;
+    font-size: var(--font-body-sm) !important;
+    padding: var(--space-1) var(--space-2) !important;
   }
 
   /* Checkbox Group */

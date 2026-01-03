@@ -1,11 +1,12 @@
 import {
   Component,
-  OnInit,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Router } from "@angular/router";
+import { firstValueFrom } from "rxjs";
 
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -23,8 +24,7 @@ import {
   SwipeEvent,
 } from "../../shared/directives/swipe-gesture.directive";
 import { HeaderService } from "../../core/services/header.service";
-import { TrainingStateService } from "../../core/services/training-state.service";
-import { TrainingDataLoaderService } from "../../core/services/training-data-loader.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ApiService } from "../../core/services/api.service";
 import {
   Workout,
@@ -35,7 +35,6 @@ import {
 
 @Component({
   selector: "app-training",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardModule,
@@ -301,31 +300,27 @@ import {
   `,
   styleUrl: './training.component.scss',
 })
-export class TrainingComponent implements OnInit {
-  // Refactored: Now using dedicated services for state and data loading
-  private trainingState = inject(TrainingStateService);
-  private trainingDataLoader = inject(TrainingDataLoaderService);
-  private toastService = inject(ToastService);
-  private headerService = inject(HeaderService);
-  private router = inject(Router);
-  private api = inject(ApiService);
+export class TrainingComponent {
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly toastService = inject(ToastService);
+  private readonly headerService = inject(HeaderService);
+  private readonly router = inject(Router);
+  private readonly api = inject(ApiService);
 
   // Expose state signals to template (readonly references)
-  readonly userName = this.trainingState.userName;
-  readonly trainingStats = this.trainingState.trainingStats;
-  readonly weeklySchedule = this.trainingState.weeklySchedule;
-  readonly workouts = this.trainingState.workouts;
-  readonly achievements = this.trainingState.achievements;
-  readonly swipingWorkoutId = this.trainingState.swipingWorkoutId;
-  readonly swipeDirection = this.trainingState.swipeDirection;
-  readonly isRefreshing = this.trainingState.isRefreshing;
-  readonly wellnessAlert = this.trainingState.wellnessAlert;
-  readonly readinessScore = this.trainingState.readinessScore;
-  readonly readinessStatus = this.trainingState.readinessStatus;
+  readonly userName = this.trainingService.userName;
+  readonly trainingStats = this.trainingService.trainingStats;
+  readonly weeklySchedule = this.trainingService.weeklySchedule;
+  readonly workouts = this.trainingService.workouts;
+  readonly achievements = this.trainingService.achievements;
+  readonly isRefreshing = this.trainingService.isRefreshing;
+  readonly wellnessAlert = this.trainingService.wellnessAlert;
+  readonly readinessScore = this.trainingService.readinessScore;
+  readonly readinessLevel = this.trainingService.readinessLevel;
 
   // Computed signals from state service
-  readonly hasWorkouts = this.trainingState.hasWorkouts;
-  readonly shouldShowWellnessAlert = this.trainingState.shouldShowWellnessAlert;
+  readonly hasWorkouts = computed(() => this.workouts().length > 0);
+  readonly shouldShowWellnessAlert = computed(() => this.wellnessAlert() !== null);
 
   // New signals for achievements/streaks integration
   readonly streakCount = signal(0);
@@ -341,7 +336,15 @@ export class TrainingComponent implements OnInit {
   readonly positionQuickActions = signal<Array<{ icon: string; label: string; route: string; tooltip: string }>>([]);
   readonly positionWorkouts = signal<Array<{ title: string; description: string; icon: string; priority: 'high' | 'medium' | 'low' }>>([]);
 
-  async ngOnInit(): Promise<void> {
+  // Computed for readiness badge status
+  readonly readinessStatus = computed(() => this.readinessLevel());
+
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
+    this.initializeComponent();
+  }
+
+  private async initializeComponent(): Promise<void> {
     // Configure header for training page
     this.headerService.setTrainingHeader();
 
@@ -360,23 +363,11 @@ export class TrainingComponent implements OnInit {
 
   /**
    * Load all training data and update state
-   * Refactored: Delegates to data loader service
+   * Refactored: Delegates to unified training service
    */
   private async loadData(): Promise<void> {
     try {
-      const data = await this.trainingDataLoader.loadAllTrainingData();
-
-      // Update state service with loaded data
-      this.trainingState.setAllTrainingData({
-        userName: data.userName || "Athlete",
-        stats: data.stats,
-        schedule: data.schedule,
-        workouts: data.workouts,
-        achievements: data.achievements,
-        wellnessAlert: data.wellnessData.alert,
-        readinessScore: data.wellnessData.readinessScore,
-        readinessStatus: data.wellnessData.readinessStatus,
-      });
+      await firstValueFrom(this.trainingService.getTodayOverview());
     } catch (error) {
       console.error("Error loading training data:", error);
       this.toastService.error("Failed to load training data");
@@ -389,7 +380,7 @@ export class TrainingComponent implements OnInit {
   private async loadAchievementsData(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/achievements').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/achievements'));
       if (response?.success && response.data) {
         const earned = response.data.achievements?.filter((a: { earned: boolean }) => a.earned) || [];
         this.totalAchievements.set(earned.length);
@@ -410,7 +401,7 @@ export class TrainingComponent implements OnInit {
 
       // Load streaks
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const streaksResponse: any = await this.api.get('/api/achievements/streaks').toPromise();
+      const streaksResponse: any = await firstValueFrom(this.api.get('/api/achievements/streaks'));
       if (streaksResponse?.success && streaksResponse.data?.streaks) {
         const trainingStreak = streaksResponse.data.streaks.find(
           (s: { streak_type: string }) => s.streak_type === 'training'
@@ -443,7 +434,7 @@ export class TrainingComponent implements OnInit {
   private async loadPlayerPosition(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/player-settings').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/player-settings'));
       if (response?.success && response.data?.position) {
         const position = response.data.position;
         this.playerPosition.set(position);
@@ -733,7 +724,7 @@ export class TrainingComponent implements OnInit {
   // ============================================================================
 
   dismissWellnessAlert(): void {
-    this.trainingState.dismissWellnessAlert();
+    this.trainingService.dismissWellnessAlert();
   }
 
   // ============================================================================
@@ -759,45 +750,28 @@ export class TrainingComponent implements OnInit {
    * Handle swipe right gesture - marks workout as complete
    */
   async onSwipeRight(event: SwipeEvent, workout: Workout): Promise<void> {
-    // Set swipe animation state
-    this.trainingState.setSwipeState(workout.title, "right");
+    const success = await this.trainingService.markWorkoutComplete(workout);
 
-    // Animate, then complete workout
-    setTimeout(async () => {
-      const success =
-        await this.trainingDataLoader.markWorkoutComplete(workout);
-
-      if (success) {
-        this.trainingState.removeWorkout(workout.title);
-        this.toastService.success(`${workout.title} marked as complete!`);
-      } else {
-        this.toastService.error("Failed to mark workout as complete");
-      }
-
-      this.trainingState.clearSwipeState();
-    }, 300);
+    if (success) {
+      this.trainingService.removeWorkout(workout.title);
+      this.toastService.success(`${workout.title} marked as complete!`);
+    } else {
+      this.toastService.error("Failed to mark workout as complete");
+    }
   }
 
   /**
    * Handle swipe left gesture - postpones workout to tomorrow
    */
   async onSwipeLeft(event: SwipeEvent, workout: Workout): Promise<void> {
-    // Set swipe animation state
-    this.trainingState.setSwipeState(workout.title, "left");
+    const success = await this.trainingService.postponeWorkout(workout);
 
-    // Animate, then postpone workout
-    setTimeout(async () => {
-      const success = await this.trainingDataLoader.postponeWorkout(workout);
-
-      if (success) {
-        this.trainingState.removeWorkout(workout.title);
-        this.toastService.info(`${workout.title} postponed to tomorrow`);
-      } else {
-        this.toastService.error("Failed to postpone workout");
-      }
-
-      this.trainingState.clearSwipeState();
-    }, 300);
+    if (success) {
+      this.trainingService.removeWorkout(workout.title);
+      this.toastService.info(`${workout.title} postponed to tomorrow`);
+    } else {
+      this.toastService.error("Failed to postpone workout");
+    }
   }
 
   /**
@@ -805,14 +779,8 @@ export class TrainingComponent implements OnInit {
    * Triggered by pull-to-refresh gesture
    */
   async refreshTrainingData(): Promise<void> {
-    this.trainingState.setRefreshing(true);
-
     await this.loadData();
-
-    setTimeout(() => {
-      this.trainingState.setRefreshing(false);
-      this.toastService.success("Training data refreshed");
-    }, 1000);
+    this.toastService.success("Training data refreshed");
   }
 
   // ============================================================================

@@ -36,7 +36,7 @@ import {
   TrainingSafetyService,
   SafetyWarning,
 } from "../../../core/services/training-safety.service";
-import { AcwrService } from "../../../core/services/acwr.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AgeAdjustedRecoveryService } from "../../../core/services/age-adjusted-recovery.service";
 import { SleepDebtService } from "../../../core/services/sleep-debt.service";
 import { TrainingLimitsService } from "../../../core/services/training-limits.service";
@@ -363,7 +363,7 @@ import {
 })
 export class TrainingSafetyComponent implements OnInit {
   private safetyService = inject(TrainingSafetyService);
-  private acwrService = inject(AcwrService);
+  private trainingService = inject(UnifiedTrainingService);
   private ageRecoveryService = inject(AgeAdjustedRecoveryService);
   private sleepDebtService = inject(SleepDebtService);
   private trainingLimitsService = inject(TrainingLimitsService);
@@ -374,10 +374,10 @@ export class TrainingSafetyComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   // ACWR signals
-  acwrValue = computed(() => this.acwrService.acwrRatio());
-  acwrRiskZone = computed(() => this.acwrService.riskZone());
-  acuteLoad = computed(() => this.acwrService.acuteLoad());
-  chronicLoad = computed(() => this.acwrService.chronicLoad());
+  acwrValue = this.trainingService.acwrRatio;
+  acwrRiskZone = this.trainingService.acwrRiskZone;
+  acuteLoad = this.trainingService.acuteLoad;
+  chronicLoad = this.trainingService.chronicLoad;
 
   // Centralized privacy/safety messages
   readonly acwrInsufficientMessage = METRIC_INSUFFICIENT_DATA.acwr;

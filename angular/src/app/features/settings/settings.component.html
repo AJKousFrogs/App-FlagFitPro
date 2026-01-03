@@ -6,26 +6,21 @@
       subtitle="Manage your account and application preferences"
       icon="pi-cog"
     >
-      <p-button
-        label="Save Changes"
-        icon="pi pi-save"
+      <app-button
+        icon="save"
         [rounded]="true"
-        (onClick)="saveSettings()"
-      ></p-button>
+        (clicked)="saveSettings()"
+      >Save Changes</app-button>
     </app-page-header>
 
     <!-- Settings Grid -->
     <div class="settings-grid">
       <!-- Profile Settings -->
-      <p-card class="settings-section">
-        <ng-template pTemplate="header">
-          <div class="section-header">
-            <div class="section-icon icon-profile">
-              <i class="pi pi-user"></i>
-            </div>
-            <h2 class="section-title">Profile Settings</h2>
-          </div>
-        </ng-template>
+      <app-card 
+        title="Profile Settings" 
+        headerIcon="pi-user"
+        headerIconColor="primary"
+      >
         <form [formGroup]="profileForm">
           <div class="p-field mb-4">
             <label for="settings-displayName" class="p-label"
@@ -107,18 +102,14 @@
             />
           </div>
         </form>
-      </p-card>
+      </app-card>
 
       <!-- Notification Settings -->
-      <p-card class="settings-section">
-        <ng-template pTemplate="header">
-          <div class="section-header">
-            <div class="section-icon icon-notifications">
-              <i class="pi pi-bell"></i>
-            </div>
-            <h2 class="section-title">Notification Settings</h2>
-          </div>
-        </ng-template>
+      <app-card 
+        title="Notification Settings" 
+        headerIcon="pi-bell"
+        headerIconColor="warning"
+      >
         <form [formGroup]="notificationForm" class="notification-form">
           <div class="notification-item">
             <div class="notification-info">
@@ -213,18 +204,14 @@
             </div>
           </div>
         </form>
-      </p-card>
+      </app-card>
 
       <!-- Privacy Settings -->
-      <p-card class="settings-section">
-        <ng-template pTemplate="header">
-          <div class="section-header">
-            <div class="section-icon icon-privacy">
-              <i class="pi pi-lock"></i>
-            </div>
-            <h2 class="section-title">Privacy Settings</h2>
-          </div>
-        </ng-template>
+      <app-card 
+        title="Privacy Settings" 
+        headerIcon="pi-lock"
+        headerIconColor="error"
+      >
         <form [formGroup]="privacyForm">
           <div class="p-field mb-4">
             <label for="profileVisibility" class="p-label"
@@ -274,26 +261,21 @@
               and more.
             </p>
           </div>
-          <p-button
-            label="Privacy Controls"
-            icon="pi pi-shield"
-            [outlined]="true"
+          <app-button
+            variant="outlined"
+            icon="shield"
             [rounded]="true"
             routerLink="/settings/privacy"
-          ></p-button>
+          >Privacy Controls</app-button>
         </div>
-      </p-card>
+      </app-card>
 
       <!-- App Preferences -->
-      <p-card class="settings-section">
-        <ng-template pTemplate="header">
-          <div class="section-header">
-            <div class="section-icon icon-preferences">
-              <i class="pi pi-cog"></i>
-            </div>
-            <h2 class="section-title">App Preferences</h2>
-          </div>
-        </ng-template>
+      <app-card 
+        title="App Preferences" 
+        headerIcon="pi-cog"
+        headerIconColor="info"
+      >
         <form [formGroup]="preferencesForm">
           <div class="p-field mb-4">
             <span id="settings-theme-label" class="p-label">Theme</span>
@@ -370,31 +352,26 @@
             </div>
           </div>
         </form>
-      </p-card>
+      </app-card>
 
       <!-- Security Settings -->
-      <p-card class="settings-section">
-        <ng-template pTemplate="header">
-          <div class="section-header">
-            <div class="section-icon icon-security">
-              <i class="pi pi-shield"></i>
-            </div>
-            <h2 class="section-title">Security</h2>
-          </div>
-        </ng-template>
+      <app-card 
+        title="Security" 
+        headerIcon="pi-shield"
+        headerIconColor="primary"
+      >
         <div class="security-actions">
           <div class="security-item">
             <div class="security-info">
               <h4>Change Password</h4>
               <p>Update your account password</p>
             </div>
-            <p-button
-              label="Change"
-              icon="pi pi-key"
-              [outlined]="true"
+            <app-button
+              variant="outlined"
+              icon="key"
               [rounded]="true"
-              (onClick)="showChangePasswordDialog = true"
-            ></p-button>
+              (clicked)="showChangePasswordDialog = true"
+            >Change</app-button>
           </div>
           <p-divider></p-divider>
 
@@ -413,22 +390,20 @@
               </p>
             </div>
             @if (is2FAEnabled()) {
-              <p-button
-                label="Disable"
-                icon="pi pi-times"
-                severity="secondary"
+              <app-button
+                variant="secondary"
+                icon="times"
                 [outlined]="true"
                 [rounded]="true"
-                (onClick)="showDisable2FADialog = true"
-              ></p-button>
+                (clicked)="showDisable2FADialog = true"
+              >Disable</app-button>
             } @else {
-              <p-button
-                label="Enable"
-                icon="pi pi-shield"
-                [outlined]="true"
+              <app-button
+                variant="outlined"
+                icon="shield"
                 [rounded]="true"
-                (onClick)="startSetup2FA()"
-              ></p-button>
+                (clicked)="startSetup2FA()"
+              >Enable</app-button>
             }
           </div>
           <p-divider></p-divider>
@@ -439,13 +414,12 @@
               <h4>Active Sessions</h4>
               <p>Manage your logged-in devices</p>
             </div>
-            <p-button
-              label="View"
-              icon="pi pi-desktop"
-              [outlined]="true"
+            <app-button
+              variant="outlined"
+              icon="desktop"
               [rounded]="true"
-              (onClick)="showSessionsDialog = true"
-            ></p-button>
+              (clicked)="showSessionsDialog = true"
+            >View</app-button>
           </div>
           <p-divider></p-divider>
 
@@ -454,17 +428,16 @@
               <h4>Delete Account</h4>
               <p>Permanently delete your account and all data</p>
             </div>
-            <p-button
-              label="Delete"
-              icon="pi pi-trash"
-              severity="danger"
+            <app-button
+              variant="danger"
+              icon="trash"
               [outlined]="true"
               [rounded]="true"
-              (onClick)="showDeleteAccountDialog = true"
-            ></p-button>
+              (clicked)="showDeleteAccountDialog = true"
+            >Delete</app-button>
           </div>
         </div>
-      </p-card>
+      </app-card>
     </div>
   </div>
 
@@ -487,13 +460,14 @@
           <h2>Change Password</h2>
           <p>Update your account password</p>
         </div>
-        <p-button
-          icon="pi pi-times"
-          [text]="true"
-          severity="secondary"
-          styleClass="dialog-close-btn"
-          (onClick)="showChangePasswordDialog = false"
-        ></p-button>
+      <app-button
+        icon="times"
+        variant="text"
+        [rounded]="true"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showChangePasswordDialog = false"
+      ></app-button>
       </div>
 
       <!-- Form Content -->
@@ -610,20 +584,19 @@
         </div>
       </form>
 
-      <!-- Footer Actions -->
       <div class="dialog-actions">
-        <p-button
-          label="Cancel"
-          [text]="true"
-          (onClick)="showChangePasswordDialog = false"
-        ></p-button>
-        <p-button
-          label="Update Password"
-          icon="pi pi-check"
+        <app-button
+          variant="text"
+          [rounded]="true"
+          (clicked)="showChangePasswordDialog = false"
+        >Cancel</app-button>
+        <app-button
+          icon="check"
+          [rounded]="true"
           [loading]="isChangingPassword()"
           [disabled]="passwordForm.invalid"
-          (onClick)="changePassword()"
-        ></p-button>
+          (clicked)="changePassword()"
+        >Update Password</app-button>
       </div>
     </div>
   </p-dialog>
@@ -647,13 +620,14 @@
           <h2>Delete Account</h2>
           <p>This action is permanent and irreversible</p>
         </div>
-        <p-button
-          icon="pi pi-times"
-          [text]="true"
+        <app-button
+          icon="times"
+          variant="text"
+          [rounded]="true"
           severity="secondary"
-          styleClass="dialog-close-btn"
-          (onClick)="showDeleteAccountDialog = false"
-        ></p-button>
+          class="dialog-close-btn"
+          (clicked)="showDeleteAccountDialog = false"
+        ></app-button>
       </div>
 
       <!-- Warning Content -->
@@ -697,19 +671,19 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <p-button
-          label="Cancel"
-          [text]="true"
-          (onClick)="showDeleteAccountDialog = false"
-        ></p-button>
-        <p-button
-          label="Delete My Account"
-          icon="pi pi-trash"
-          severity="danger"
+        <app-button
+          variant="text"
+          [rounded]="true"
+          (clicked)="showDeleteAccountDialog = false"
+        >Cancel</app-button>
+        <app-button
+          variant="danger"
+          icon="trash"
+          [rounded]="true"
           [loading]="isDeletingAccount()"
           [disabled]="deleteConfirmText !== 'DELETE'"
-          (onClick)="deleteAccount()"
-        ></p-button>
+          (clicked)="deleteAccount()"
+        >Delete My Account</app-button>
       </div>
     </div>
   </p-dialog>
@@ -733,13 +707,14 @@
           <h2>Two-Factor Authentication</h2>
           <p>Step {{ twoFAStep() }} of 4 — Add extra security</p>
         </div>
-        <p-button
-          icon="pi pi-times"
-          [text]="true"
+        <app-button
+          icon="times"
+          variant="text"
+          [rounded]="true"
           severity="secondary"
-          styleClass="dialog-close-btn"
-          (onClick)="close2FASetup()"
-        ></p-button>
+          class="dialog-close-btn"
+          (clicked)="close2FASetup()"
+        ></app-button>
       </div>
 
       <!-- Step Progress -->
@@ -873,42 +848,42 @@
       <!-- Footer Actions -->
       <div class="dialog-actions">
         @if (twoFAStep() < 4) {
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="close2FASetup()"
-          ></p-button>
+          <app-button
+            variant="text"
+            [rounded]="true"
+            (clicked)="close2FASetup()"
+          >Cancel</app-button>
 
           @if (twoFAStep() === 1) {
-            <p-button
-              label="I have an app"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              (onClick)="twoFAStep.set(2)"
-            ></p-button>
+            <app-button
+              icon="arrow-right"
+              iconPosition="right"
+              [rounded]="true"
+              (clicked)="twoFAStep.set(2)"
+            >I have an app</app-button>
           } @else if (twoFAStep() === 2) {
-            <p-button
-              label="Next"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              (onClick)="twoFAStep.set(3)"
-            ></p-button>
+            <app-button
+              icon="arrow-right"
+              iconPosition="right"
+              [rounded]="true"
+              (clicked)="twoFAStep.set(3)"
+            >Next</app-button>
           } @else if (twoFAStep() === 3) {
-            <p-button
-              label="Verify & Enable"
-              icon="pi pi-shield"
+            <app-button
+              icon="shield"
+              [rounded]="true"
               [loading]="isEnabling2FA()"
               [disabled]="twoFAVerificationCode.length !== 6"
-              (onClick)="verify2FA()"
-            ></p-button>
+              (clicked)="verify2FA()"
+            >Verify & Enable</app-button>
           }
         } @else {
-          <p-button
-            label="Done"
-            icon="pi pi-check"
-            styleClass="w-full"
-            (onClick)="close2FASetup()"
-          ></p-button>
+          <app-button
+            icon="check"
+            [block]="true"
+            [rounded]="true"
+            (clicked)="close2FASetup()"
+          >Done</app-button>
         }
       </div>
     </div>
@@ -916,51 +891,71 @@
 
   <!-- Disable 2FA Dialog -->
   <p-dialog
-    header="Disable Two-Factor Authentication"
     [(visible)]="showDisable2FADialog"
     [modal]="true"
     [style]="{ width: '400px' }"
     [closable]="true"
+    [showHeader]="false"
+    styleClass="twofa-dialog"
   >
-    <div class="disable-2fa">
-      <i class="pi pi-exclamation-triangle warning-icon"></i>
-      <p>Disabling 2FA will make your account less secure.</p>
-      <div class="p-field mt-4">
-        <label for="settings-disable2FACode" class="p-label"
-          >Enter your authenticator code to confirm:</label
-        >
-        <input
-          id="settings-disable2FACode"
-          name="disable2FACode"
-          type="text"
-          pInputText
-          [(ngModel)]="disable2FACode"
-          placeholder="000000"
-          maxlength="6"
-          class="code-input w-full"
-          autocomplete="one-time-code"
-          inputmode="numeric"
-        />
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header danger-header">
+        <div class="dialog-icon danger-icon">
+          <i class="pi pi-shield-slash"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Disable 2FA</h2>
+          <p>Remove the extra layer of security</p>
+        </div>
+        <app-button
+          icon="times"
+          variant="text"
+          [rounded]="true"
+          severity="secondary"
+          class="dialog-close-btn"
+          (clicked)="showDisable2FADialog = false"
+        ></app-button>
+      </div>
+
+      <div class="twofa-content">
+        <div class="step-section">
+          <i class="pi pi-exclamation-triangle success-icon" style="color: var(--color-status-error)"></i>
+          <p class="step-desc">Disabling 2FA will make your account less secure. Please confirm with your authenticator code.</p>
+          
+          <div class="code-input-wrapper">
+            <input
+              id="settings-disable2FACode"
+              name="disable2FACode"
+              type="text"
+              [(ngModel)]="disable2FACode"
+              placeholder="000000"
+              maxlength="6"
+              class="verification-code-input"
+              autocomplete="one-time-code"
+              inputmode="numeric"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        <app-button
+          variant="text"
+          [rounded]="true"
+          (clicked)="showDisable2FADialog = false"
+        >Cancel</app-button>
+        <app-button
+          variant="danger"
+          icon="times"
+          [rounded]="true"
+          [loading]="isDisabling2FA()"
+          [disabled]="disable2FACode.length !== 6"
+          (clicked)="disable2FA()"
+        >Disable 2FA</app-button>
       </div>
     </div>
-    <ng-template pTemplate="footer">
-      <p-button
-        label="Cancel"
-        [text]="true"
-        [rounded]="true"
-        severity="secondary"
-        (onClick)="showDisable2FADialog = false"
-      ></p-button>
-      <p-button
-        label="Disable 2FA"
-        icon="pi pi-times"
-        severity="danger"
-        [rounded]="true"
-        [loading]="isDisabling2FA()"
-        [disabled]="disable2FACode.length !== 6"
-        (onClick)="disable2FA()"
-      ></p-button>
-    </ng-template>
   </p-dialog>
 
   <!-- Active Sessions Dialog -->
@@ -982,13 +977,14 @@
           <h2>Active Sessions</h2>
           <p>Manage your logged-in devices</p>
         </div>
-        <p-button
-          icon="pi pi-times"
-          [text]="true"
+        <app-button
+          icon="times"
+          variant="text"
+          [rounded]="true"
           severity="secondary"
-          styleClass="dialog-close-btn"
-          (onClick)="showSessionsDialog = false"
-        ></p-button>
+          class="dialog-close-btn"
+          (clicked)="showSessionsDialog = false"
+        ></app-button>
       </div>
 
       <!-- Sessions Content -->
@@ -1043,19 +1039,19 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <p-button
-          label="Close"
-          [text]="true"
-          (onClick)="showSessionsDialog = false"
-        ></p-button>
-        <p-button
-          label="Sign out all others"
-          icon="pi pi-sign-out"
-          severity="danger"
+        <app-button
+          variant="text"
+          [rounded]="true"
+          (clicked)="showSessionsDialog = false"
+        >Close</app-button>
+        <app-button
+          variant="danger"
+          icon="sign-out"
+          [rounded]="true"
           [outlined]="true"
           [loading]="isRevokingAll()"
-          (onClick)="revokeAllSessions()"
-        ></p-button>
+          (clicked)="revokeAllSessions()"
+        >Sign out all others</app-button>
       </div>
     </div>
   </p-dialog>

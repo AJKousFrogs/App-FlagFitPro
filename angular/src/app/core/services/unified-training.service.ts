@@ -1,0 +1,694 @@
+import { Injectable, inject, computed, signal, DestroyRef } from "@angular/core";
+import { Observable, combineLatest, of, from } from "rxjs";
+import { map, shareReplay, switchMap, tap, catchError } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+
+import { AcwrService } from "./acwr.service";
+import { ReadinessService } from "./readiness.service";
+import { TrainingDataService } from "./training-data.service";
+import { WellnessService, WellnessData } from "./wellness.service";
+import { PerformanceDataService, PhysicalMeasurement } from "./performance-data.service";
+import { ApiService } from "./api.service";
+import { AuthService } from "./auth.service";
+import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
+import {
+  TrainingStatCard,
+  WeeklyScheduleDay,
+  Workout,
+  Achievement,
+  WellnessAlert,
+  ReadinessStatus,
+  TrainingDataResult,
+  SessionType,
+} from "../models/training.models";
+
+@Injectable({
+  providedIn: "root",
+})
+export class UnifiedTrainingService {
+  private acwrService = inject(AcwrService);
+  private readinessService = inject(ReadinessService);
+  private trainingDataService = inject(TrainingDataService);
+  private performanceDataService = inject(PerformanceDataService);
+  private wellnessService = inject(WellnessService);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
+  private logger = inject(LoggerService);
+  private supabase = inject(SupabaseService);
+  private destroyRef = inject(DestroyRef);
+
+  // ============================================================================
+  // CORE REACTIVE STATE (Signals)
+  // ============================================================================
+  
+  private userId = computed(() => this.authService.getUser()?.id);
+  
+  // Expose key metrics as signals (facade pattern)
+  readonly acwrRatio = this.acwrService.acwrRatio;
+  readonly acuteLoad = this.acwrService.acuteLoad;
+  readonly chronicLoad = this.acwrService.chronicLoad;
+  readonly weeklyProgression = this.acwrService.weeklyProgression;
+  readonly acwrRiskZone = this.acwrService.riskZone;
+
+  /**
+   * Get recommended training modification using evidence-based thresholds
+   */
+  getTrainingModification() {
+    return this.acwrService.getTrainingModification();
+  }
+
+  /**
+   * Get raw ACWR data for deep dives
+   */
+  acwrData() {
+    return this.acwrService.acwrData();
+  }
+
+  readonly readinessScore = computed(() => this.readinessService.current()?.score || 0);
+  readonly readinessLevel = computed(() => this.readinessService.current()?.level || "moderate");
+  
+  /**
+   * Get severity color for PrimeNG Tag
+   */
+  getReadinessSeverity(level: string): "success" | "warn" | "danger" {
+    if (level === "high") return "success";
+    if (level === "moderate") return "warn";
+    return "danger";
+  }
+  
+  readonly hasCheckedInToday = computed(() => {
+    const current = this.readinessService.current();
+    if (!current) return false;
+    return (current.wellnessIndex?.completeness || 0) > 0;
+  });
+
+  // Body Composition Facade
+  readonly latestMeasurement = this.performanceDataService.latestMeasurement;
+  readonly recentMeasurements = this.performanceDataService.recentMeasurements;
+
+  // Hydration Facade
+  readonly latestWellness = this.wellnessService.latestWellnessEntry;
+  readonly hydrationLevel = computed(() => this.latestWellness()?.hydration || 0);
+
+  // Training specific state moved from TrainingStateService
+  private readonly _userName = signal<string>("");
+  readonly userName = this._userName.asReadonly();
+
+  private readonly _userPosition = signal<string>("");
+  readonly userPosition = this._userPosition.asReadonly();
+
+  private readonly _trainingStats = signal<TrainingStatCard[]>([]);
+  readonly trainingStats = this._trainingStats.asReadonly();
+
+  private readonly _weeklySchedule = signal<WeeklyScheduleDay[]>([]);
+  readonly weeklySchedule = this._weeklySchedule.asReadonly();
+
+  readonly todaysScheduleItems = computed(() => {
+    const weekly = this._weeklySchedule();
+    const today = weekly.find((day) => day.isToday);
+    const sessions = today?.sessions || [];
+    
+    // Attempt to get user routine from settings
+    const user = this.authService.getUser();
+    const metadata: any = user?.user_metadata || {};
+    
+    const userRoutine = metadata.dailyRoutine || [
+      { id: 'wake', label: 'Wake Up', time: '07:00', icon: 'pi-sun' },
+      { id: 'breakfast', label: 'Breakfast', time: '08:15', icon: 'pi-apple' },
+      { id: 'mobility', label: 'Daily Mobility Routine', time: '07:10', icon: 'pi-bolt' },
+      { id: 'rolling', label: 'Morning Foam Rolling', time: '07:30', icon: 'pi-refresh' },
+      { id: 'work_start', label: 'Work/Study Start', time: '09:00', icon: 'pi-briefcase' },
+      { id: 'lunch', label: 'Lunch', time: '12:30', icon: 'pi-utensils' },
+      { id: 'work_end', label: 'Work/Study End', time: '17:00', icon: 'pi-home' },
+      { id: 'training', label: 'Daily Training', time: '18:00', icon: 'pi-bolt' },
+      { id: 'shower', label: 'Shower (Hot)', time: '20:00', icon: 'pi-info-circle' },
+      { id: 'sleep', label: 'Sleep', time: '22:30', icon: 'pi-moon' },
+    ];
+
+    const todaysSupplements = this.performanceDataService.todaysSupplements();
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    const getStatus = (itemTime: string): "completed" | "in-progress" | "upcoming" => {
+      const [h, m] = itemTime.split(":").map(Number);
+      if (currentHour > h || (currentHour === h && currentMinute >= m + 30)) return "completed";
+      if (currentHour === h || (currentHour === h - 1 && currentMinute >= 45)) return "in-progress";
+      return "upcoming";
+    };
+
+    const items: any[] = [];
+
+    // 1. Add User Routine Items
+    userRoutine.forEach((slot: { id: string; label: string; time: string; icon?: string }) => {
+      // Skip the 'training' slot from routine if we have actual sessions to add later
+      if (slot.id === 'training' && sessions.length > 0) return;
+
+      const item: any = {
+        id: `routine-${slot.id}`,
+        time: slot.time,
+        title: slot.label,
+        type: slot.id === 'breakfast' || slot.id === 'lunch' ? 'nutrition' : 
+              slot.id === 'wake' || slot.id === 'sleep' ? 'wellness' : 'recovery',
+        duration: slot.id === 'work_start' ? 480 : 30,
+        status: getStatus(slot.time),
+        description: slot.id === 'breakfast' ? 'Include supplements' : slot.label,
+        icon: slot.icon
+      };
+
+      // Add supplements to breakfast
+      if (slot.id === 'breakfast' && todaysSupplements.length > 0) {
+        item.supplements = todaysSupplements.filter(s => s.timeOfDay === 'morning');
+      }
+
+      items.push(item);
+    });
+
+    // 2. Add Actual Training Sessions
+    sessions.forEach((s, idx) => {
+      const time = s.time && s.time !== "TBD" ? s.time : "18:00";
+      items.push({
+        id: `session-${idx}`,
+        time: time,
+        title: s.title || "Daily Training",
+        type: (s.type === "game" ? "game" : "training") as any,
+        status: getStatus(time),
+        duration: s.duration || 90,
+        description: s.description || "Main session of the day",
+      });
+    });
+
+    // Sort all items by time
+    return items.sort((a, b) => a.time.localeCompare(b.time));
+  });
+
+  private readonly _workouts = signal<Workout[]>([]);
+  readonly workouts = this._workouts.asReadonly();
+
+  private readonly _achievements = signal<Achievement[]>([]);
+  readonly achievements = this._achievements.asReadonly();
+
+  private readonly _wellnessAlert = signal<WellnessAlert | null>(null);
+  readonly wellnessAlert = this._wellnessAlert.asReadonly();
+
+  private readonly _isRefreshing = signal(false);
+  readonly isRefreshing = this._isRefreshing.asReadonly();
+
+  private readonly _aiInsight = signal<string>("");
+  readonly aiInsight = this._aiInsight.asReadonly();
+
+  // ============================================================================
+  // MAIN DATA ORCHESTRATION
+  // ============================================================================
+
+  /**
+   * Get everything needed for the "Today" view in one coordinated call
+   * This now also populates the internal signals for global consistency
+   */
+  getTodayOverview() {
+    const id = this.userId();
+    if (!id) return of(null);
+
+    this._isRefreshing.set(true);
+
+    return combineLatest({
+      protocol: this.api.get(`/api/daily-protocol?date=${new Date().toISOString().split('T')[0]}`),
+      readiness: this.readinessService.calculateToday(id),
+      recommendations: this.api.get(`/api/smart-training-recommendations?athleteId=${id}`),
+      trainingData: from(this.loadAllTrainingData())
+    }).pipe(
+      map(data => {
+        const insight = this.generateAiInsight(data);
+        this._aiInsight.set(insight);
+        return {
+          ...data,
+          aiInsight: insight
+        };
+      }),
+      tap(() => this._isRefreshing.set(false)),
+      catchError(err => {
+        this.logger.error("Error in getTodayOverview", err);
+        this._isRefreshing.set(false);
+        return of(null);
+      }),
+      shareReplay(1)
+    );
+  }
+
+  /**
+   * Load all training data (from TrainingDataLoader logic)
+   */
+  private async loadAllTrainingData(): Promise<TrainingDataResult> {
+    const userId = this.userId();
+    if (!userId) return this.getFallbackData();
+
+    try {
+      const [sessions, schedule, workouts, wellnessData] = await Promise.all([
+        this.loadTrainingSessions(userId),
+        this.loadWeeklySchedule(userId),
+        this.loadAvailableWorkouts(),
+        this.checkWellnessForTraining(userId),
+      ]);
+
+      const stats = this.calculateTrainingStats(sessions);
+      const streak = this.calculateStreak(sessions);
+      const achievements = this.loadAchievements(userId, streak, sessions.length);
+      const userName = await this.getUserDisplayName(userId);
+
+      // Update Signals
+      this._userName.set(userName);
+      this._trainingStats.set(stats);
+      this._weeklySchedule.set(schedule);
+      this._workouts.set(workouts);
+      this._achievements.set(achievements);
+      this._wellnessAlert.set(wellnessData.alert);
+
+      return {
+        stats,
+        schedule,
+        workouts,
+        achievements,
+        wellnessData,
+        userName,
+        lastRefresh: new Date(),
+      };
+    } catch (error) {
+      this.logger.error("Error loading all training data", error);
+      return this.getFallbackData();
+    }
+  }
+
+  // ============================================================================
+  // UNIFIED LOGGING ACTIONS
+  // ============================================================================
+
+  /**
+   * Unified logging - handles all downstream updates automatically
+   */
+  async logTrainingSession(sessionData: any) {
+    this.logger.info("Logging training session via Unified Service");
+    const result = await this.trainingDataService.createTrainingSession(sessionData).toPromise();
+    
+    // Trigger updates
+    if (this.userId()) {
+      this.readinessService.calculateToday(this.userId()!).subscribe();
+      this.loadAllTrainingData(); // Refresh signals
+    }
+    
+    return result;
+  }
+
+  /**
+   * Unified wellness submission
+   */
+  async submitWellness(data: any) {
+    const result = await this.wellnessService.logWellness(data).toPromise();
+    if (this.userId()) {
+      this.readinessService.calculateToday(this.userId()!).subscribe();
+      this.loadAllTrainingData(); // Refresh signals
+    }
+    return result;
+  }
+
+  /**
+   * Quick update for hydration
+   */
+  async addHydration(amountMl: number) {
+    const current = this.latestWellness();
+    const currentLevel = current?.hydration || 0;
+    // Assuming hydration_level in DB is glasses or ml? 
+    // WellnessService.logWellness uses hydration_level.
+    // Let's assume it's glasses/units for now or ml depending on the component logic.
+    // In hydration-tracker.component.ts it was adding fixed amounts like 250ml.
+    
+    // We'll just pass through the update
+    return this.submitWellness({
+      ...current,
+      hydration: currentLevel + amountMl,
+      date: new Date().toISOString().split('T')[0]
+    });
+  }
+
+  /**
+   * Log supplement intake
+   */
+  logSupplement(supplement: { 
+    name: string; 
+    taken: boolean; 
+    timeOfDay: 'morning' | 'afternoon' | 'evening' | 'pre-workout' | 'post-workout'; 
+    date: string 
+  }) {
+    return this.performanceDataService.logSupplement(supplement);
+  }
+
+  /**
+   * Log body composition measurement
+   */
+  async logBodyComp(measurement: Partial<PhysicalMeasurement>) {
+    const result = await this.performanceDataService.logMeasurement(measurement).toPromise();
+    if (result.success) {
+      this.loadAllTrainingData();
+    }
+    return result;
+  }
+
+  /**
+   * Get wellness for a specific day
+   */
+  getWellnessForDay(date: string) {
+    return this.api.get(`/api/wellness-checkin?date=${date}`);
+  }
+
+  // ============================================================================
+  // INTERNAL CALCULATORS & TRANSFORMERS (Ported from Loader)
+  // ============================================================================
+
+  private async loadTrainingSessions(userId: string): Promise<any[]> {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const { data } = await this.supabase.client
+      .from("training_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("date", thirtyDaysAgo.toISOString())
+      .order("date", { ascending: false });
+
+    return data || [];
+  }
+
+  private async loadWeeklySchedule(userId: string): Promise<WeeklyScheduleDay[]> {
+    const startOfWeek = this.getStartOfWeek();
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+    const { data } = await this.supabase.client
+      .from("training_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("date", startOfWeek.toISOString())
+      .lte("date", endOfWeek.toISOString())
+      .order("date", { ascending: true });
+
+    return this.transformToWeeklySchedule(data || []);
+  }
+
+  private async loadAvailableWorkouts(): Promise<Workout[]> {
+    const userId = this.userId();
+    if (!userId) return this.getDefaultWorkouts();
+
+    const today = new Date().toISOString().split("T")[0];
+    const { data } = await this.supabase.client
+      .from("training_sessions")
+      .select("*")
+      .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+      .eq("session_date", today)
+      .eq("status", "scheduled")
+      .order("start_time", { ascending: true, nullsFirst: false });
+
+    if (!data || data.length === 0) return this.getDefaultWorkouts();
+    return data.map(w => this.transformToWorkout(w));
+  }
+
+  private async checkWellnessForTraining(userId: string) {
+    const { data } = await this.supabase.client
+      .from("wellness_checkins")
+      .select("*")
+      .eq("user_id", userId)
+      .order("checkin_date", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!data) return { alert: null, readinessScore: 0, readinessStatus: "good" as ReadinessStatus };
+
+    const score = this.calculateReadinessScore(data);
+    const status = this.getReadinessStatus(score);
+    return {
+      alert: this.generateWellnessAlert(score, status, data),
+      readinessScore: score,
+      readinessStatus: status
+    };
+  }
+
+  private calculateReadinessScore(wellness: any): number {
+    const sleep = wellness.sleep_quality || wellness.sleep || 0;
+    const energy = wellness.energy_level || wellness.energy || 0;
+    const stress = wellness.stress_level || wellness.stress || 10;
+    const soreness = wellness.soreness_level || wellness.soreness || 10;
+    const motivation = wellness.motivation_level || wellness.motivation || 0;
+
+    const score = (sleep * 2 + energy * 2 + (10 - stress) * 1.5 + (10 - soreness) * 1.5 + motivation * 1) / 8;
+    return Math.round(score * 10);
+  }
+
+  private getReadinessStatus(score: number): ReadinessStatus {
+    if (score >= 80) return "excellent";
+    if (score >= 60) return "good";
+    if (score >= 40) return "caution";
+    return "rest";
+  }
+
+  private generateWellnessAlert(score: number, status: ReadinessStatus, wellness: any): WellnessAlert | null {
+    if (status === "rest") return {
+      severity: "critical",
+      message: "Your body needs rest. Consider light recovery work today.",
+      recommendations: ["Focus on sleep", "Light stretching", "Proper hydration"],
+      icon: "pi-exclamation-triangle"
+    };
+    if (status === "caution") return {
+      severity: "warning",
+      message: "Signs of fatigue detected. Train with caution.",
+      recommendations: ["Reduce intensity 20%", "Extra warm-up"],
+      icon: "pi-info-circle"
+    };
+    return null;
+  }
+
+  private calculateTrainingStats(sessions: any[]): TrainingStatCard[] {
+    const now = new Date();
+    const thisWeek = sessions.filter(s => this.isThisWeek(new Date(s.date)));
+    const totalDuration = thisWeek.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const streak = this.calculateStreak(sessions);
+
+    return [
+      { label: "This Week", value: `${thisWeek.length} sessions`, icon: "pi-calendar", color: "#3b82f6", trend: "Active", trendType: "neutral" },
+      { label: "Total Duration", value: `${totalDuration} min`, icon: "pi-clock", color: "#10b981", trend: "This week", trendType: "neutral" },
+      { label: "Current Streak", value: `${streak} days`, icon: "pi-bolt", color: "#ef4444", trend: "Keep it up!", trendType: "positive" }
+    ];
+  }
+
+  private calculateStreak(sessions: any[]): number {
+    if (sessions.length === 0) return 0;
+    const uniqueDates = [...new Set(sessions.map(s => new Date(s.date).toISOString().split("T")[0]))].sort().reverse();
+    const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+    if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
+
+    let streak = 0;
+    for (let i = 0; i < uniqueDates.length; i++) {
+      const expected = new Date();
+      expected.setDate(expected.getDate() - i);
+      if (uniqueDates[i] === expected.toISOString().split("T")[0]) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  private loadAchievements(userId: string, streak: number, total: number): Achievement[] {
+    const list: Achievement[] = [];
+    if (streak >= 7) list.push({ icon: "pi-bolt", title: "7-Day Streak", date: new Date().toISOString(), level: "bronze" });
+    if (total >= 10) list.push({ icon: "pi-check-circle", title: "10 Sessions", date: new Date().toISOString(), level: "bronze" });
+    return list;
+  }
+
+  private async getUserDisplayName(userId: string): Promise<string> {
+    const { data } = await this.supabase.client.from("users").select("first_name").eq("id", userId).single();
+    return data?.first_name || "Athlete";
+  }
+
+  private generateAiInsight(data: any): string {
+    const recommendations = data.recommendations?.data?.recommendations;
+    const acwr = this.acwrRatio();
+    const readiness = this.readinessScore();
+    const hydration = this.hydrationLevel();
+    const userName = this.userName();
+
+    // 1. Critical Performance/Safety Insights (from Smart Recommendations)
+    if (recommendations) {
+      if (recommendations.overallStatus === 'injured') {
+        return `Hey ${userName}, let's take it easy. ${recommendations.warnings[0] || 'Focus on recovery exercises today.'}`;
+      }
+      if (recommendations.overallStatus === 'caution') {
+        return `Watch out, ${userName}! ${recommendations.warnings[0] || 'Your training load is high. Reduce intensity to stay safe.'}`;
+      }
+      if (recommendations.overallStatus === 'taper') {
+        return `Tournament mode on! ${recommendations.suggestions[0] || 'Keep intensity high but volume low.'}`;
+      }
+    }
+
+    // 2. High Priority Rule-Based Insights
+    if (acwr > 1.5) return `Your injury risk is very high (ACWR: ${acwr.toFixed(2)}). Merlin recommends immediate rest today.`;
+    if (readiness < 40) return `Readiness is low (${readiness}%). Focus heavily on recovery and extra sleep tonight.`;
+    if (hydration < 5 && hydration > 0) return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
+    
+    // 3. Protocol-Specific Insights
+    if (data.protocol?.data?.ai_rationale) {
+      return data.protocol.data.ai_rationale;
+    }
+
+    // 4. Achievement/Streak Insights
+    const streak = this.trainingStats().find(s => s.label === 'Current Streak')?.value;
+    if (streak && parseInt(streak) >= 3) {
+      return `${streak} streak! You're building amazing momentum, ${userName}. Keep it rolling!`;
+    }
+
+    // 5. General Performance Insights
+    if (readiness > 80 && acwr < 1.3) return "Physiological green light! You're perfectly primed for a high-intensity session.";
+    
+    return "Consistency is your superpower. Follow today's protocol to stay on track.";
+  }
+
+  // ============================================================================
+  // HELPERS
+  // ============================================================================
+
+  private getStartOfWeek(): Date {
+    const now = new Date();
+    const diff = now.getDay() === 0 ? -6 : 1 - now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  }
+
+  private isThisWeek(date: Date): boolean {
+    const start = this.getStartOfWeek();
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    return date >= start && date <= end;
+  }
+
+  private transformToWeeklySchedule(sessions: any[]): WeeklyScheduleDay[] {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const start = this.getStartOfWeek();
+    return days.map((name, i) => {
+      const d = new Date(start);
+      d.setDate(d.getDate() + i);
+      const daySessions = sessions.filter(s => new Date(s.date).toDateString() === d.toDateString());
+      return {
+        name,
+        date: d,
+        sessions: daySessions.map(s => ({ time: s.scheduled_time || "TBD", title: s.title || "Session", type: s.session_type })),
+        isToday: d.toDateString() === new Date().toDateString()
+      };
+    });
+  }
+
+  private transformToWorkout(w: any): Workout {
+    return {
+      id: w.id,
+      type: w.session_type || "training",
+      title: w.title || "Workout",
+      description: w.description || "",
+      duration: `${w.duration || 60} min`,
+      intensity: w.intensity > 6 ? "high" : w.intensity > 3 ? "medium" : "low",
+      location: w.location || "Gym",
+      icon: "pi-bolt",
+      iconBg: "#ef4444"
+    };
+  }
+
+  private getDefaultWorkouts(): Workout[] {
+    return [
+      { type: "speed", title: "Speed Work", description: "Acceleration focus", duration: "45 min", intensity: "high", location: "Track", icon: "pi-bolt", iconBg: "#ef4444" },
+      { type: "strength", title: "Strength", description: "Power focus", duration: "60 min", intensity: "medium", location: "Gym", icon: "pi-shield", iconBg: "#3b82f6" }
+    ];
+  }
+
+  /**
+   * Mark workout as complete
+   */
+  async markWorkoutComplete(workout: Workout): Promise<boolean> {
+    try {
+      const userId = this.userId();
+      if (!userId) return false;
+
+      const { error } = await this.supabase.client
+        .from("training_sessions")
+        .insert({
+          user_id: userId,
+          date: new Date().toISOString(),
+          session_type: workout.type,
+          duration: parseInt(workout.duration) || 60,
+          intensity: workout.intensity === "high" ? 9 : workout.intensity === "medium" ? 6 : 3,
+          completed: true,
+          notes: `Completed: ${workout.title}`,
+        });
+
+      if (error) return false;
+      
+      // Refresh state
+      await this.getTodayOverview().toPromise();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Postpone workout to later
+   */
+  async postponeWorkout(workout: Workout): Promise<boolean> {
+    try {
+      if (!workout.id) return false;
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const { error } = await this.supabase.client
+        .from("training_sessions")
+        .update({
+          session_date: tomorrow.toISOString().split("T")[0],
+          notes: "[Postponed]"
+        })
+        .eq("id", workout.id);
+
+      if (error) return false;
+      
+      // Refresh state
+      await this.getTodayOverview().toPromise();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Dismiss wellness alert locally
+   */
+  dismissWellnessAlert() {
+    this._wellnessAlert.set(null);
+  }
+
+  /**
+   * Remove a workout from the local list
+   */
+  removeWorkout(workoutTitle: string) {
+    this._workouts.update(list => list.filter(w => w.title !== workoutTitle));
+  }
+
+  private getFallbackData(): TrainingDataResult {
+    return {
+      stats: [],
+      schedule: [],
+      workouts: this.getDefaultWorkouts(),
+      achievements: [],
+      wellnessData: { alert: null, readinessScore: 0, readinessStatus: "good" },
+      userName: "Athlete",
+      lastRefresh: new Date()
+    };
+  }
+}

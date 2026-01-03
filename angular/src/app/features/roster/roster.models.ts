@@ -33,17 +33,54 @@ export interface Player {
   jersey: string;
   country: string;
   age: number;
-  height: string;
-  weight: string;
+  height: string;       // e.g., "188 cm"
+  weight: string;       // e.g., "84 kg"
   email?: string;
   phone?: string;
   status: PlayerStatus;
   stats?: Record<string, number | string>;
   created_at?: string;
   user_id?: string;
+  
+  // Live Performance Metrics (Phase 1 Enhancement)
+  readiness?: number;           // 0-100, from wellness check-in
+  acwr?: number;                // Acute:Chronic Workload Ratio
+  performanceScore?: number;    // 0-100, based on position benchmarks
+  riskLevel?: PlayerRiskLevel;  // Calculated from ACWR + readiness + injuries
+  
+  // Position-specific metrics
+  positionMetrics?: PositionMetrics;
 }
 
-export type PlayerStatus = "active" | "injured" | "inactive";
+export type PlayerStatus = "active" | "injured" | "inactive" | "limited" | "returning";
+
+export type PlayerRiskLevel = "low" | "moderate" | "high" | "critical";
+
+/**
+ * Position-specific metrics based on FlagFootballAthleteProfileService
+ */
+export interface PositionMetrics {
+  // Common to all positions
+  sprint10m?: number;         // seconds
+  sprint20m?: number;         // seconds
+  verticalJump?: number;      // cm
+  proAgility505?: number;     // seconds
+  relativeSquat?: number;     // x bodyweight
+  bodyFatPercentage?: number; // %
+  
+  // QB-specific
+  throwsThisWeek?: number;
+  armCareCompliance?: boolean;
+  throwingOnRunScore?: number;
+  
+  // WR/DB-specific
+  routeRunningScore?: number;
+  sprintCapacity?: number;    // 8x40 yard repeats ability
+  
+  // Rusher-specific
+  firstStepExplosion?: number;
+  closingSpeed?: number;
+}
 
 export interface TeamInvitation {
   id: string;
@@ -127,6 +164,8 @@ export const POSITION_FILTER_OPTIONS = [
 
 export const STATUS_OPTIONS: Array<{ label: string; value: PlayerStatus }> = [
   { label: "Active", value: "active" },
+  { label: "Limited", value: "limited" },
+  { label: "Returning", value: "returning" },
   { label: "Injured", value: "injured" },
   { label: "Inactive", value: "inactive" },
 ];

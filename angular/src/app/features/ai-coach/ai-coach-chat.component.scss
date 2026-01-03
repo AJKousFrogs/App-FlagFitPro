@@ -16,6 +16,11 @@
     margin: 0 auto;
     background: var(--surface-secondary);
     position: relative;
+
+    &.is-coach-mode {
+      border-left: 2px solid var(--ds-primary-green-subtle);
+      border-right: 2px solid var(--ds-primary-green-subtle);
+    }
   }
 
   /* ========================================

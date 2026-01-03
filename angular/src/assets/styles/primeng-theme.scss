@@ -321,8 +321,8 @@
     }
 
     &.p-button-help {
-      border-color: #8b5cf6;
-      color: #8b5cf6;
+      border-color: var(--color-status-help);
+      color: var(--color-status-help);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
@@ -424,7 +424,7 @@
     }
 
     &.p-button-help {
-      color: #8b5cf6;
+      color: var(--color-status-help);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
@@ -620,8 +620,8 @@
      ================================ */
   .p-button-help:not(.p-button-outlined):not(.p-button-text) {
     // allowed: purple severity gradient
-    background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
-    border-color: #8b5cf6;
+    background: linear-gradient(180deg, #a78bfa 0%, var(--color-status-help) 100%);
+    border-color: var(--color-status-help);
     color: var(--color-text-on-primary);
     box-shadow:
       0 2px 8px rgba(139, 92, 246, 0.25),
@@ -630,7 +630,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
+        background: linear-gradient(180deg, var(--color-status-help) 0%, var(--color-status-help-hover) 100%);
         box-shadow:
           0 8px 20px rgba(139, 92, 246, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
@@ -641,7 +641,7 @@
     &:focus-visible {
       box-shadow:
         0 0 0 3px var(--surface-primary),
-        0 0 0 5px #8b5cf6;
+        0 0 0 5px var(--color-status-help);
     }
   }
 

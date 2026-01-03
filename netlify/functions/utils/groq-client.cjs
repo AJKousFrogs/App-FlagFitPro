@@ -242,8 +242,8 @@ function buildAthleteContext(userContext) {
   const parts = [];
 
   // Personal context
-  if (userContext.athleteName) {
-    parts.push(`You're talking to ${userContext.athleteName}.`);
+  if (userContext.athleteName || userContext.userName) {
+    parts.push(`You're talking to ${userContext.athleteName || userContext.userName}.`);
   }
 
   // Position-specific context
@@ -284,37 +284,65 @@ function buildAthleteContext(userContext) {
     );
   }
 
-  // Training load context
+  // Training load context (ACWR)
   if (userContext.recentLoad) {
     const load = userContext.recentLoad;
-    if (load.acwr && load.acwr > 1.3) {
+    if (load.riskZone === "danger" || load.riskZone === "critical") {
+      parts.push(
+        `HIGH RISK: Their training load is dangerously high (ACWR: ${load.acwr?.toFixed(2)}). Prioritize recovery and injury prevention above all else.`,
+      );
+    } else if (load.acwr > 1.3) {
       parts.push(
         `Their training load is high right now (ACWR: ${load.acwr.toFixed(2)}). Be cautious about recommending additional intense work.`,
       );
-    } else if (load.acwr && load.acwr < 0.8) {
+    } else if (load.acwr < 0.8) {
       parts.push(
-        `Their training load has been light recently. They may need to build back up gradually.`,
+        `Their training load has been light recently (ACWR: ${load.acwr.toFixed(2)}). They may need to build back up gradually.`,
       );
     }
   }
 
-  // Daily readiness
-  if (userContext.dailyState) {
-    const state = userContext.dailyState;
-    if (state.pain_level && state.pain_level > 5) {
-      parts.push(
-        `They reported elevated pain today (${state.pain_level}/10). Be extra careful with recommendations.`,
-      );
+  // Today's Protocol Context
+  if (userContext.todayProtocol) {
+    const p = userContext.todayProtocol;
+    let protocolDesc = `Today's Focus: ${p.focus || "General training"}.`;
+    if (p.rationale) protocolDesc += ` Rationale: ${p.rationale}`;
+    if (p.progress > 0) protocolDesc += ` (Progress: ${p.progress}% complete)`;
+    
+    parts.push(protocolDesc);
+    
+    if (p.exercises && p.exercises.length > 0) {
+      const pendingEx = p.exercises.filter(e => e.status !== 'complete').slice(0, 3);
+      if (pendingEx.length > 0) {
+        parts.push(`Upcoming exercises: ${pendingEx.map(e => e.name).join(", ")}.`);
+      }
     }
-    if (state.fatigue_level && state.fatigue_level > 7) {
-      parts.push(
-        `They're feeling fatigued today. Recovery-focused advice may be appropriate.`,
-      );
-    }
-    if (state.motivation_level && state.motivation_level < 4) {
-      parts.push(
-        `Their motivation seems low today. Some encouragement would help.`,
-      );
+  }
+
+  // Recent Training History
+  if (userContext.recentSessions && userContext.recentSessions.length > 0) {
+    const sessions = userContext.recentSessions
+      .map(s => `${s.session_type} (${s.duration_minutes}m) on ${s.session_date}`)
+      .join(", ");
+    parts.push(`Recent sessions: ${sessions}.`);
+  }
+
+  // Daily readiness & Wellness
+  const wellness = userContext.latestWellness || userContext.dailyState;
+  if (wellness) {
+    if (wellness.readiness_score) parts.push(`Today's Readiness Score: ${wellness.readiness_score}/100.`);
+    if (wellness.sleep_quality < 5) parts.push(`Poor sleep reported (${wellness.sleep_quality}/10).`);
+    if (wellness.pain_level > 5) parts.push(`Elevated pain today (${wellness.pain_level}/10).`);
+    if (wellness.fatigue_level > 7) parts.push(`High fatigue reported today.`);
+  }
+
+  // Body Composition & Hydration
+  if (userContext.bodyStats) {
+    const stats = userContext.bodyStats;
+    if (stats.weight) parts.push(`Current weight: ${stats.weight}kg.`);
+    if (stats.hydration) {
+      const hydrationDesc = stats.hydration < 5 ? "low" : stats.hydration > 8 ? "good" : "moderate";
+      parts.push(`Hydration level is ${hydrationDesc} (${stats.hydration}/10).`);
     }
   }
 

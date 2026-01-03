@@ -137,12 +137,12 @@
 
   .suggestion-item.priority-high {
     border-left-color: var(--color-status-error);
-    background: var(--primitive-error-50);
+    background: var(--color-status-error-subtle);
   }
 
   .suggestion-item.accepted {
     opacity: 0.7;
-    background: var(--primitive-success-50);
+    background: var(--color-status-success-subtle);
     border-left-color: var(--ds-primary-green);
   }
 

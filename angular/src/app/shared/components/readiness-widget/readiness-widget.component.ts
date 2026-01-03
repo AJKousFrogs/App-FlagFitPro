@@ -1,41 +1,34 @@
-import {
-  Component,
-  input,
-  inject,
-  signal,
-  computed,
-  effect,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { SkeletonModule } from "primeng/skeleton";
-import { ButtonModule } from "primeng/button";
 import {
-  ReadinessService,
-  ReadinessResponse,
+    Component,
+    effect,
+    inject,
+    input
+} from "@angular/core";
+import {
+    ReadinessService
 } from "../../../core/services/readiness.service";
+import {
+    ButtonComponent,
+    CardComponent
+} from "../ui-components";
 
 @Component({
   selector: "app-readiness-widget",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule, SkeletonModule, ButtonModule],
+  imports: [CommonModule, CardComponent, TagModule, SkeletonModule, ButtonComponent],
   template: `
-    <div
-      class="readiness-widget bg-surface-primary rounded-lg shadow-medium p-6"
-    >
-      <div class="header mb-4 flex items-center justify-between">
-        <h3 class="text-xl font-bold text-text-primary">Readiness Today</h3>
-        <p-button
-          icon="pi pi-refresh"
-          [text]="true"
+    <app-card title="Readiness Today">
+      <div header-actions>
+        <app-button
+          icon="refresh"
+          variant="text"
           [rounded]="true"
           [loading]="loading()"
-          (onClick)="refresh()"
+          (clicked)="refresh()"
           [disabled]="loading()"
           ariaLabel="Refresh readiness score"
-        >
-        </p-button>
+        ></app-button>
       </div>
 
       @if (loading()) {
@@ -47,15 +40,13 @@ import {
         <div class="error-state p-4 bg-red-50 border border-red-200 rounded-lg">
           <p class="text-red-800 font-semibold mb-2">Error</p>
           <p class="text-red-700 text-sm">{{ error() }}</p>
-          <p-button
-            label="Retry"
-            icon="pi pi-refresh"
-            size="small"
-            [outlined]="true"
-            (onClick)="refresh()"
+          <app-button
+            variant="outlined"
+            size="sm"
+            icon="refresh"
+            (clicked)="refresh()"
             class="mt-3"
-          >
-          </p-button>
+          >Retry</app-button>
         </div>
       } @else if (readiness()) {
         <div class="readiness-content">
@@ -240,15 +231,13 @@ import {
       } @else {
         <div class="no-data-state p-4 text-center">
           <p class="text-text-secondary mb-4">No readiness data available</p>
-          <p-button
-            label="Calculate Readiness"
-            icon="pi pi-calculator"
-            (onClick)="refresh()"
-          >
-          </p-button>
+          <app-button
+            icon="calculator"
+            (clicked)="refresh()"
+          >Calculate Readiness</app-button>
         </div>
       }
-    </div>
+    </app-card>
   `,
   styleUrl: './readiness-widget.component.scss',
 })

@@ -35,8 +35,7 @@ import { SkeletonModule } from "primeng/skeleton";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
-import { AcwrService } from "../../../core/services/acwr.service";
-import { WellnessService } from "../../../core/services/wellness.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 
 export interface Insight {
   id: string;
@@ -224,8 +223,7 @@ export interface Insight {
 })
 export class ActionableInsightsComponent implements OnInit {
   private logger = inject(LoggerService);
-  private acwrService = inject(AcwrService);
-  private wellnessService = inject(WellnessService);
+  private trainingService = inject(UnifiedTrainingService);
 
   // Inputs
   maxVisible = input<number>(5);
@@ -347,8 +345,8 @@ export class ActionableInsightsComponent implements OnInit {
   private async generateInsights(): Promise<void> {
     try {
       // Get current data
-      const acwrData = this.acwrService.acwrData();
-      const riskZone = this.acwrService.riskZone();
+      const acwrData = this.trainingService.acwrData();
+      const riskZone = this.trainingService.acwrRiskZone();
 
       const generatedInsights: Insight[] = [];
 

@@ -11,21 +11,24 @@
 
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ButtonModule } from "primeng/button";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "../../../core/services/api.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import {
+    ButtonComponent,
+    CardComponent,
+} from "../ui-components";
 
 interface HydrationLog {
   id: string;
@@ -38,18 +41,14 @@ interface HydrationLog {
   selector: "app-hydration-tracker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, ProgressBarModule, TooltipModule],
+  imports: [CommonModule, ButtonComponent, CardComponent, ProgressBarModule, TooltipModule],
   template: `
-    <div class="hydration-card">
-      <!-- Header -->
-      <div class="hydration-header">
-        <div class="header-title">
-          <i class="pi pi-tint"></i>
-          <h3>Hydration</h3>
-        </div>
-        <span class="daily-goal">Goal: {{ dailyGoal() }}ml</span>
-      </div>
-
+    <app-card
+      title="Hydration"
+      [subtitle]="'Goal: ' + dailyGoal() + 'ml'"
+      headerIcon="pi-tint"
+      headerIconColor="info"
+    >
       <!-- Main Display -->
       <div class="hydration-display">
         <div class="water-visual">
@@ -86,22 +85,17 @@ interface HydrationLog {
         <span class="quick-add-label" id="quick-add-label">Quick Add:</span>
         <div class="quick-add-buttons" role="group" aria-labelledby="quick-add-label">
           @for (amount of quickAddAmounts; track amount) {
-            <button 
-              class="quick-add-btn"
-              [class.loading]="isLoading()"
-              (click)="addWater(amount)"
-              [disabled]="isLoading()"
+            <app-button
+              variant="outlined"
+              size="sm"
+              icon="plus"
+              [loading]="isLoading()"
+              (clicked)="addWater(amount)"
               [pTooltip]="'Add ' + amount + 'ml of water'"
-              [attr.aria-label]="'Add ' + amount + ' milliliters of water'"
-              [attr.aria-busy]="isLoading()"
+              [ariaLabel]="'Add ' + amount + ' milliliters of water'"
             >
-              @if (isLoading()) {
-                <i class="pi pi-spin pi-spinner"></i>
-              } @else {
-                <i class="pi pi-plus"></i>
-              }
               {{ amount }}ml
-            </button>
+            </app-button>
           }
         </div>
       </div>
@@ -121,18 +115,20 @@ interface HydrationLog {
       }
 
       <!-- Hydration Tips -->
-      @if (showTip()) {
-        <div class="hydration-tip" [class.warning]="needsMoreWater()">
-          <i [class]="needsMoreWater() ? 'pi pi-exclamation-triangle' : 'pi pi-info-circle'"></i>
-          <span>{{ hydrationTip() }}</span>
-        </div>
-      }
-    </div>
+      <div footer>
+        @if (showTip()) {
+          <div class="hydration-tip" [class.warning]="needsMoreWater()">
+            <i [class]="needsMoreWater() ? 'pi pi-exclamation-triangle' : 'pi-info-circle'"></i>
+            <span>{{ hydrationTip() }}</span>
+          </div>
+        }
+      </div>
+    </app-card>
   `,
   styleUrl: './hydration-tracker.component.scss',
 })
 export class HydrationTrackerComponent implements OnInit {
-  private apiService = inject(ApiService);
+  private trainingService = inject(UnifiedTrainingService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
@@ -147,7 +143,8 @@ export class HydrationTrackerComponent implements OnInit {
 
   // Computed values
   totalIntake = computed(() => {
-    return this.hydrationLogs().reduce((sum, log) => sum + log.amount, 0);
+    const unifiedLevel = this.trainingService.hydrationLevel();
+    return Math.max(unifiedLevel, this.hydrationLogs().reduce((sum, log) => sum + log.amount, 0));
   });
 
   progressPercent = computed(() => {
@@ -202,23 +199,15 @@ export class HydrationTrackerComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService
-      .get<{ success: boolean; data: { logs: HydrationLog[] } }>(
-        "/api/hydration"
-      )
+    this.trainingService.getWellnessForDay(new Date().toISOString().split('T')[0])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data = response as any;
-          if (data.success && data.data?.logs) {
-            this.hydrationLogs.set(data.data.logs as HydrationLog[]);
-          }
+        next: (response: any) => {
+          // Wellness entry might have the level but not individual logs
+          // We'll trust the computed totalIntake which uses trainingService.hydrationLevel()
           this.isLoading.set(false);
         },
         error: () => {
-          // Use empty state, no error toast for missing data
-          this.hydrationLogs.set([]);
           this.isLoading.set(false);
         },
       });
@@ -233,31 +222,9 @@ export class HydrationTrackerComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService
-      .post<{ success: boolean; data: HydrationLog }>("/api/hydration/log", {
-        amount,
-        type: "water",
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data = response as any;
-          if (data.success && data.data) {
-            // Add to local state immediately
-            const newLog: HydrationLog = {
-              id: data.data.id || Date.now().toString(),
-              amount: data.data.amount || amount,
-              timestamp: data.data.timestamp || new Date().toISOString(),
-              type: data.data.type || "water",
-            };
-            this.hydrationLogs.update((logs) => [...logs, newLog]);
-            this.toastService.success(`Added ${amount}ml 💧`);
-          }
-          this.isLoading.set(false);
-        },
-        error: () => {
-          // Optimistically add locally even if API fails
+    this.trainingService.addHydration(amount)
+      .then((result: any) => {
+        if (result.success) {
           const newLog: HydrationLog = {
             id: Date.now().toString(),
             amount,
@@ -266,8 +233,11 @@ export class HydrationTrackerComponent implements OnInit {
           };
           this.hydrationLogs.update((logs) => [...logs, newLog]);
           this.toastService.success(`Added ${amount}ml 💧`);
-          this.isLoading.set(false);
-        },
+        }
+        this.isLoading.set(false);
+      })
+      .catch(() => {
+        this.isLoading.set(false);
       });
   }
 

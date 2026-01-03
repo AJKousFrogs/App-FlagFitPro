@@ -116,19 +116,19 @@
 
   /* State-specific styles - Clean, modern gradients */
   .data-source-banner.no-data {
-    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    background: var(--neutral-600);
   }
 
   .data-source-banner.insufficient {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: var(--color-status-warning);
   }
 
   .data-source-banner.demo {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: var(--color-status-error);
   }
 
   .data-source-banner.real {
-    background: linear-gradient(135deg, #089949 0%, #067a3a 100%);
+    background: var(--ds-primary-green);
   }
 
   @media (max-width: 768px) {

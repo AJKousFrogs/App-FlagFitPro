@@ -1,16 +1,16 @@
+import { CommonModule } from "@angular/common";
 import {
-  Component,
-  input,
-  forwardRef,
-  signal,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    forwardRef,
+    input,
+    signal,
 } from "@angular/core";
 import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  FormsModule,
+    ControlValueAccessor,
+    FormsModule,
+    NG_VALUE_ACCESSOR,
 } from "@angular/forms";
-import { CommonModule } from "@angular/common";
 
 /**
  * Textarea Component - Angular 21
@@ -42,7 +42,7 @@ import { CommonModule } from "@angular/common";
         [readonly]="readonly()"
         [rows]="rows()"
         [cols]="cols()"
-        [maxlength]="maxlength() || null"
+        [attr.maxlength]="maxlength() || null"
         [class.is-invalid]="invalid()"
         [class.is-valid]="valid()"
         [value]="value()"

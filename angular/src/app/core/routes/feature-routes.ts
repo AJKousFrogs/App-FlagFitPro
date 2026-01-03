@@ -95,58 +95,65 @@ export const publicRoutes: Routes = [
  */
 export const dashboardRoutes: Routes = [
   {
+    path: "today",
+    loadComponent: () =>
+      import("../../features/today/today.component").then(
+        (m) => m.TodayComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: true, priority: "high" },
+  },
+  {
     path: "dashboard",
     loadComponent: () =>
       import("../../features/dashboard/dashboard.component").then(
         (m) => m.DashboardComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    canActivate: [authGuard],
   },
+  {
+    path: "athlete-dashboard",
+    redirectTo: "today",
+    pathMatch: "full"
+  }
 ];
 
 /**
  * Training Routes (High Priority)
  */
 export const trainingRoutes: Routes = [
-  // Daily Protocol - New primary training page
+  // Redirrect primary training entry points to today
   {
     path: "training",
-    loadComponent: () =>
-      import("../../features/training/daily-protocol/daily-protocol.component").then(
-        (m) => m.DailyProtocolComponent,
-      ),
-    canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    redirectTo: "today",
+    pathMatch: "full"
+  },
+  {
+    path: "training/daily",
+    redirectTo: "today",
+    pathMatch: "full"
+  },
+  {
+    path: "training/protocol",
+    redirectTo: "today",
+    pathMatch: "full"
   },
   {
     path: "training/protocol/:date",
-    loadComponent: () =>
-      import("../../features/training/daily-protocol/daily-protocol.component").then(
-        (m) => m.DailyProtocolComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: true, priority: "high" },
+    redirectTo: "today",
+    pathMatch: "full"
   },
-  // Legacy training page moved to /training/builder
+  // Keep advanced training routes under a consolidated workspace
   {
-    path: "training/builder",
+    path: "training/advanced",
     loadComponent: () =>
-      import("../../features/training/training.component").then(
-        (m) => m.TrainingComponent,
+      import("../../features/training/advanced-training/advanced-training.component").then(
+        (m) => m.AdvancedTrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
     data: { preload: false },
   },
-  {
-    path: "training/daily",
-    loadComponent: () =>
-      import("../../features/training/daily-training/daily-training.component").then(
-        (m) => m.DailyTrainingComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: true, priority: "high" },
-  },
+  // Sub-tools accessible via direct route but visually orphaned without hub
   {
     path: "workout",
     loadComponent: () =>
@@ -163,16 +170,15 @@ export const trainingRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
-  // TODO: Re-enable after PrimeNG v21 migration of exercisedb component
-  // {
-  //   path: "exercisedb",
-  //   loadComponent: () =>
-  //     import("../../features/exercisedb/exercisedb-manager.component").then(
-  //       (m) => m.ExerciseDBManagerComponent,
-  //     ),
-  //   canActivate: [authGuard],
-  //   data: { preload: false }, // Coach-only feature, load on demand
-  // },
+  {
+    path: "exercisedb",
+    loadComponent: () =>
+      import("../../features/exercisedb/exercisedb-manager.component").then(
+        (m) => m.ExerciseDBManagerComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Coach-only feature, load on demand
+  },
   {
     path: "training/schedule",
     loadComponent: () =>
@@ -182,28 +188,27 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: "training/qb/schedule",
+    path: "training/qb",
     loadComponent: () =>
-      import("../../features/training/qb-training-schedule/qb-training-schedule.component").then(
-        (m) => m.QbTrainingScheduleComponent,
+      import("../../features/training/qb-hub/qb-hub.component").then(
+        (m) => m.QbHubComponent,
       ),
     canActivate: [authGuard],
+  },
+  {
+    path: "training/qb/schedule",
+    redirectTo: "training/qb",
+    pathMatch: "full"
   },
   {
     path: "training/qb/throwing",
-    loadComponent: () =>
-      import("../../features/training/qb-throwing-tracker/qb-throwing-tracker.component").then(
-        (m) => m.QbThrowingTrackerComponent,
-      ),
-    canActivate: [authGuard],
+    redirectTo: "training/qb",
+    pathMatch: "full"
   },
   {
     path: "training/qb/assessment",
-    loadComponent: () =>
-      import("../../features/training/qb-assessment-tools/qb-assessment-tools.component").then(
-        (m) => m.QbAssessmentToolsComponent,
-      ),
-    canActivate: [authGuard],
+    redirectTo: "training/qb",
+    pathMatch: "full"
   },
   {
     path: "training/ai-scheduler",
@@ -271,15 +276,10 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: true, priority: "medium" },
   },
-  // === NEW ROUTES: Previously orphaned training components ===
+  // Advanced tool redirects - consolidate orphaned routes
   {
     path: "training/ai-companion",
-    loadComponent: () =>
-      import("../../features/training/ai-training-companion.component").then(
-        (m) => m.AITrainingCompanionComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false }, // AI features load on demand
+    redirectTo: "training/advanced",
   },
   {
     path: "training/load-analysis",
@@ -370,12 +370,17 @@ export const teamRoutes: Routes = [
     data: { preload: true, priority: "high" },
   },
   {
-    path: "coach",
+    path: "team/workspace",
     loadComponent: () =>
-      import("../../features/coach/coach.component").then(
-        (m) => m.CoachComponent,
+      import("../../features/team/team-workspace/team-workspace.component").then(
+        (m) => m.TeamWorkspaceComponent,
       ),
     canActivate: [authGuard],
+  },
+  {
+    path: "coach",
+    redirectTo: "team/workspace",
+    pathMatch: "full"
   },
   {
     path: "coach/dashboard",

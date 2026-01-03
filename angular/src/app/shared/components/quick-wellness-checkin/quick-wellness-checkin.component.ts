@@ -12,30 +12,29 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  inject,
-  signal,
-  input,
-  output,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    input,
+    output,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { Slider } from "primeng/slider";
-import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
 import { Textarea } from "primeng/textarea";
 
 // Services
-import { WellnessService } from "../../../core/services/wellness.service";
-import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { WellnessService } from "../../../core/services/wellness.service";
 
 @Component({
   selector: "app-quick-wellness-checkin",
@@ -47,7 +46,6 @@ import { LoggerService } from "../../../core/services/logger.service";
     RouterModule,
     DialogModule,
     ButtonModule,
-    Slider,
     InputNumberModule,
     CheckboxModule,
     Textarea,

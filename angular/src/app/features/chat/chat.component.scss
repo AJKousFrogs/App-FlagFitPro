@@ -351,9 +351,9 @@
   }
 
   .message-own .message-content {
-    text-align: right;
-    background: var(--gradient-primary);
-    color: var(--color-text-on-primary);
+    background: var(--surface-primary);
+    border: 1px solid var(--ds-primary-green-subtle);
+    color: var(--color-text-primary);
     border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
   }
 
@@ -442,7 +442,7 @@
   }
 
   .message-own .message-text {
-    color: var(--color-text-on-primary);
+    color: var(--color-text-secondary);
   }
 
   .message-actions {
@@ -516,6 +516,38 @@
 
   .message-input::placeholder {
     color: var(--color-text-muted);
+  }
+
+  /* ============================================
+     QUICK REPLIES
+     ============================================ */
+
+  .quick-replies-row {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-1);
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .quick-reply-btn {
+    white-space: nowrap;
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-tertiary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-full);
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--ds-primary-green-ultra-subtle);
+      border-color: var(--ds-primary-green);
+      color: var(--ds-primary-green);
+    }
   }
 
   /* ============================================

@@ -176,7 +176,7 @@ describe("AthleteDashboardComponent", () => {
       fixture.detectChanges();
 
       const loadingEl = fixture.nativeElement.querySelector(
-        "app-page-loading-state",
+        "app-loading",
       );
       expect(loadingEl).toBeTruthy();
     });

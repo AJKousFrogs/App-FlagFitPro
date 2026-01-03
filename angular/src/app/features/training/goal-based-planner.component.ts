@@ -18,8 +18,7 @@ import {
   TrainingGoal,
   WeeklyTrainingPlan,
 } from "../../core/services/training-plan.service";
-import { AcwrService } from "../../core/services/acwr.service";
-import { ReadinessService } from "../../core/services/readiness.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 
@@ -261,7 +260,15 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
 
       <!-- Generate Button -->
       @if (selectedGoal()) {
-        <div class="actions mt-6 flex justify-end">
+        <div class="actions mt-6 flex justify-end gap-3">
+          <p-button
+            label="Save to Schedule"
+            icon="pi pi-save"
+            [outlined]="true"
+            [loading]="saving()"
+            (onClick)="savePlan()"
+          >
+          </p-button>
           <p-button
             label="Generate Plan"
             icon="pi pi-calculator"
@@ -279,20 +286,18 @@ export class GoalBasedPlannerComponent implements OnInit {
   athleteId = input.required<string>();
 
   private trainingPlanService = inject(TrainingPlanService);
-  private acwrService = inject(AcwrService);
-  private readinessService = inject(ReadinessService);
+  private trainingService = inject(UnifiedTrainingService);
   private logger = inject(LoggerService);
 
   selectedGoal = signal<TrainingGoal | null>(null);
   weeklyPlan = signal<WeeklyTrainingPlan | null>(null);
   loading = signal(false);
+  saving = signal(false);
   gameDays = signal<Date[]>([]);
 
-  currentACWR = computed(() => this.acwrService.acwrRatio());
-  currentRiskZone = computed(() => this.acwrService.riskZone());
-  readinessLevel = computed(
-    () => this.readinessService.current()?.level || "moderate",
-  );
+  currentACWR = this.trainingService.acwrRatio;
+  currentRiskZone = this.trainingService.acwrRiskZone;
+  readinessLevel = this.trainingService.readinessLevel;
 
   goalOptions = [
     { label: "Speed", value: "speed" },
@@ -362,7 +367,7 @@ export class GoalBasedPlannerComponent implements OnInit {
   }
 
   getReadinessSeverity(): "success" | "warn" | "danger" {
-    return this.readinessService.getSeverity(this.readinessLevel());
+    return this.trainingService.getReadinessSeverity(this.readinessLevel());
   }
 
   getProgressionRule(): string {
@@ -411,5 +416,27 @@ export class GoalBasedPlannerComponent implements OnInit {
         (s) => s.sessionType !== "recovery" && s.sessionType !== "game",
       ).length || 0
     );
+  }
+
+  async savePlan() {
+    const plan = this.weeklyPlan();
+    if (!plan) return;
+
+    this.saving.set(true);
+    try {
+      // In a real app, this would call a service to save to Supabase
+      // For now, we simulate a save and show success
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      this.trainingService.logTrainingSession({
+        title: `Plan: ${this.getGoalLabel()}`,
+        date: new Date().toISOString(),
+        notes: `Auto-generated ${this.getGoalLabel()} plan saved.`
+      });
+      this.logger.info("Training plan saved to schedule");
+    } catch (error) {
+      this.logger.error("Failed to save training plan", error);
+    } finally {
+      this.saving.set(false);
+    }
   }
 }

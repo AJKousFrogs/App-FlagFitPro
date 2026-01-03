@@ -11,15 +11,14 @@
  * - Youth settings management
  */
 
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   inject,
-  OnInit,
   signal,
 } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { AvatarModule } from "primeng/avatar";
@@ -128,10 +127,8 @@ interface YouthSettings {
 
 @Component({
   selector: "app-parent-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     Tabs,
     TabPanel,
@@ -152,39 +149,40 @@ interface YouthSettings {
   templateUrl: "./parent-dashboard.component.html",
   styleUrl: "./parent-dashboard.component.scss",
 })
-export class ParentDashboardComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private authService = inject(AuthService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
-  private destroyRef = inject(DestroyRef);
+export class ParentDashboardComponent {
+  private readonly apiService = inject(ApiService);
+  private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State
-  loadingChildren = signal(true);
-  loadingActivity = signal(false);
-  loadingNotifications = signal(false);
-  savingSettings = signal(false);
-  processingApproval = signal<string | null>(null);
+  readonly loadingChildren = signal(true);
+  readonly loadingActivity = signal(false);
+  readonly loadingNotifications = signal(false);
+  readonly savingSettings = signal(false);
+  readonly processingApproval = signal<string | null>(null);
 
-  children = signal<LinkedChild[]>([]);
-  childStats = signal<Record<string, ChildStats>>({});
-  selectedChild = signal<LinkedChild | null>(null);
-  activity = signal<ActivityItem[]>([]);
-  notifications = signal<Notification[]>([]);
-  pendingApprovals = signal<ApprovalRequest[]>([]);
-  unreadCount = signal(0);
+  readonly children = signal<LinkedChild[]>([]);
+  readonly childStats = signal<Record<string, ChildStats>>({});
+  readonly selectedChild = signal<LinkedChild | null>(null);
+  readonly activity = signal<ActivityItem[]>([]);
+  readonly notifications = signal<Notification[]>([]);
+  readonly pendingApprovals = signal<ApprovalRequest[]>([]);
+  readonly unreadCount = signal(0);
 
   // Dialog state
   activeTabIndex = 0;
   settingsDialogVisible = false;
-  selectedChildForSettings = signal<LinkedChild | null>(null);
+  readonly selectedChildForSettings = signal<LinkedChild | null>(null);
   editingSettings: YouthSettings = this.getDefaultSettings();
 
   // Realtime
   private notificationChannel: RealtimeChannel | null = null;
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadData();
     this.setupRealtimeSubscription();
   }
@@ -201,9 +199,9 @@ export class ParentDashboardComponent implements OnInit {
     this.loadingChildren.set(true);
 
     try {
-      const response = await this.apiService
-        .get<{ children: LinkedChild[] }>("/api/parent-dashboard/children")
-        .toPromise();
+      const response = await firstValueFrom(
+        this.apiService.get<{ children: LinkedChild[] }>("/api/parent-dashboard/children")
+      );
 
       if (response?.success && response.data?.children) {
         this.children.set(response.data.children);
@@ -225,9 +223,9 @@ export class ParentDashboardComponent implements OnInit {
 
   private async loadChildStats(childId: string): Promise<void> {
     try {
-      const response = await this.apiService
-        .get<{ stats: ChildStats }>(`/api/parent-dashboard/children/${childId}`)
-        .toPromise();
+      const response = await firstValueFrom(
+        this.apiService.get<{ stats: ChildStats }>(`/api/parent-dashboard/children/${childId}`)
+      );
 
       if (response?.success && response.data?.stats) {
         this.childStats.update((stats) => ({
@@ -247,13 +245,13 @@ export class ParentDashboardComponent implements OnInit {
     this.loadingActivity.set(true);
 
     try {
-      const response = await this.apiService
-        .get<{
+      const response = await firstValueFrom(
+        this.apiService.get<{
           activity: ActivityItem[];
         }>(`/api/parent-dashboard/children/${child.child.id}/activity`, {
           limit: 50,
         })
-        .toPromise();
+      );
 
       if (response?.success && response.data?.activity) {
         this.activity.set(response.data.activity);
@@ -270,12 +268,12 @@ export class ParentDashboardComponent implements OnInit {
     this.loadingNotifications.set(true);
 
     try {
-      const response = await this.apiService
-        .get<{
+      const response = await firstValueFrom(
+        this.apiService.get<{
           notifications: Notification[];
           unread_count: number;
         }>("/api/parent-dashboard/notifications")
-        .toPromise();
+      );
 
       if (response?.success && response.data) {
         this.notifications.set(response.data.notifications || []);
@@ -290,11 +288,11 @@ export class ParentDashboardComponent implements OnInit {
 
   private async loadPendingApprovals(): Promise<void> {
     try {
-      const response = await this.apiService
-        .get<{
+      const response = await firstValueFrom(
+        this.apiService.get<{
           approvals: ApprovalRequest[];
         }>("/api/parent-dashboard/approvals")
-        .toPromise();
+      );
 
       if (response?.success && response.data?.approvals) {
         this.pendingApprovals.set(response.data.approvals);
@@ -358,9 +356,9 @@ export class ParentDashboardComponent implements OnInit {
 
   private async loadChildSettings(childId: string): Promise<void> {
     try {
-      const response = await this.apiService
-        .get<YouthSettings>(`/api/parent-dashboard/settings/${childId}`)
-        .toPromise();
+      const response = await firstValueFrom(
+        this.apiService.get<YouthSettings>(`/api/parent-dashboard/settings/${childId}`)
+      );
 
       if (response?.success && response.data) {
         this.editingSettings = {
@@ -380,12 +378,12 @@ export class ParentDashboardComponent implements OnInit {
     this.savingSettings.set(true);
 
     try {
-      await this.apiService
-        .patch(
+      await firstValueFrom(
+        this.apiService.patch(
           `/api/parent-dashboard/settings/${child.child.id}`,
           this.editingSettings,
         )
-        .toPromise();
+      );
 
       this.toastService.success("Settings saved");
       this.settingsDialogVisible = false;
@@ -399,11 +397,11 @@ export class ParentDashboardComponent implements OnInit {
 
   async markNotificationRead(notification: Notification): Promise<void> {
     try {
-      await this.apiService
-        .patch(`/api/parent-dashboard/notifications/${notification.id}`, {
+      await firstValueFrom(
+        this.apiService.patch(`/api/parent-dashboard/notifications/${notification.id}`, {
           status: "read",
         })
-        .toPromise();
+      );
 
       this.notifications.update((notifs) =>
         notifs.map((n) =>
@@ -428,9 +426,9 @@ export class ParentDashboardComponent implements OnInit {
     this.processingApproval.set(approval.id);
 
     try {
-      await this.apiService
-        .patch(`/api/parent-dashboard/approvals/${approval.id}`, { decision })
-        .toPromise();
+      await firstValueFrom(
+        this.apiService.patch(`/api/parent-dashboard/approvals/${approval.id}`, { decision })
+      );
 
       this.pendingApprovals.update((approvals) =>
         approvals.filter((a) => a.id !== approval.id),

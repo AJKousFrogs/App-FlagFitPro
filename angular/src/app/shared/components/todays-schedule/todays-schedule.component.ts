@@ -1,5 +1,5 @@
 /**
- * Today's Schedule Component
+ * Today schedule Component
  *
  * Displays the athlete's daily training schedule with timeline view.
  * Shows scheduled sessions, completed items, and upcoming activities.
@@ -10,22 +10,25 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    signal,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { SkeletonModule } from "primeng/skeleton";
 
-import { ApiService } from "../../../core/services/api.service";
+import {
+    ButtonComponent,
+    CardComponent,
+} from "../ui-components";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 export interface ScheduleItem {
@@ -46,7 +49,8 @@ export interface ScheduleItem {
   imports: [
     CommonModule,
     RouterModule,
-    ButtonModule,
+    ButtonComponent,
+    CardComponent,
     TagModule,
     TooltipModule,
     SkeletonModule,
@@ -54,14 +58,22 @@ export interface ScheduleItem {
   templateUrl: "./todays-schedule.component.html",
   styleUrls: ["./todays-schedule.component.scss"],
 })
-export class TodaysScheduleComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+export class TodaysScheduleComponent {
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly logger = inject(LoggerService);
 
-  // State
-  isLoading = signal(true);
-  scheduleItems = signal<ScheduleItem[]>([]);
-  error = signal<string | null>(null);
+  // State - local writable signal initialized from service
+  readonly isLoading = this.trainingService.isRefreshing;
+  readonly scheduleItems = signal<ScheduleItem[]>([]);
+  readonly error = signal<string | null>(null);
+
+  constructor() {
+    // Initialize schedule items from service using effect
+    effect(() => {
+      const items = this.trainingService.todaysScheduleItems();
+      this.scheduleItems.set(items as ScheduleItem[]);
+    });
+  }
 
   // Computed
   hasSchedule = computed(() => this.scheduleItems().length > 0);
@@ -88,34 +100,9 @@ export class TodaysScheduleComponent implements OnInit {
     return items.find((item) => item.status === "upcoming");
   });
 
-  ngOnInit(): void {
-    this.loadSchedule();
-  }
 
   private loadSchedule(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    // Try to fetch from daily-training API
-    this.apiService.get<any>("/api/daily-training").subscribe({
-      next: (response) => {
-        if (response?.data?.todaysPractice) {
-          const practice = response.data.todaysPractice;
-          const items = this.mapPracticeToSchedule(practice);
-          this.scheduleItems.set(items);
-        } else {
-          // Generate default schedule
-          this.scheduleItems.set(this.getDefaultSchedule());
-        }
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Error loading schedule:", err);
-        // Fall back to default schedule
-        this.scheduleItems.set(this.getDefaultSchedule());
-        this.isLoading.set(false);
-      },
-    });
+    // Handled by service refresh
   }
 
   private mapPracticeToSchedule(practice: any): ScheduleItem[] {
@@ -266,6 +253,24 @@ export class TodaysScheduleComponent implements OnInit {
       updated[index] = { ...updated[index], status: "completed" };
       this.scheduleItems.set(updated);
     }
+  }
+
+  takeSupplements(item: ScheduleItem): void {
+    const morningSupps = ["Creatine", "Vitamin D", "Omega-3", "Iron", "Calcium", "Multivitamin"];
+    const date = new Date().toISOString().split('T')[0];
+    
+    morningSupps.forEach(name => {
+      this.trainingService.logSupplement({
+        name,
+        taken: true,
+        timeOfDay: 'morning' as const,
+        date
+      }).subscribe({
+        error: (err: unknown) => this.logger.error('Failed to log supplement:', err)
+      });
+    });
+
+    this.markComplete(item);
   }
 
   refresh(): void {

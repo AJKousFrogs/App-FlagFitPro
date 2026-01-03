@@ -1,7 +1,7 @@
-import { Component, input, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Component, computed, input } from "@angular/core";
 import { TagModule } from "primeng/tag";
+import { CardComponent } from "../card/card.component";
 
 export interface TrendData {
   title: string;
@@ -16,18 +16,12 @@ export interface TrendData {
 @Component({
   selector: "app-trend-card",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule],
+  imports: [CommonModule, CardComponent, TagModule],
   template: `
-    <p-card class="trend-card">
-      <div class="trend-header">
+    <app-card [title]="data().title" [subtitle]="data().subtitle">
+      <div header-actions>
         <div class="trend-icon" [class]="data().icon || 'pi-chart-line'">
           <i [class]="'pi ' + (data().icon || 'pi-chart-line')"></i>
-        </div>
-        <div class="trend-content">
-          <h4 class="trend-title">{{ data().title }}</h4>
-          @if (data().subtitle) {
-            <p class="trend-subtitle">{{ data().subtitle }}</p>
-          }
         </div>
       </div>
 
@@ -43,7 +37,7 @@ export interface TrendData {
           </div>
         }
       </div>
-    </p-card>
+    </app-card>
   `,
   styleUrl: './trend-card.component.scss',
 })

@@ -1,5 +1,5 @@
 // ============================================================================
-// roster-player-card.component Styles
+// roster-player-card.component Styles (Phase 1 Enhanced)
 // Design System Compliant
 // ============================================================================
 
@@ -8,7 +8,9 @@
     position: relative;
     transition:
       transform 0.2s,
-      box-shadow 0.2s;
+      box-shadow 0.2s,
+      border-color 0.2s;
+    border: 2px solid transparent;
   }
 
   .player-card:hover {
@@ -21,6 +23,17 @@
     outline-offset: 2px;
   }
 
+  // Risk level card styling
+  .player-card.risk-high {
+    border-color: var(--color-status-warning);
+    background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);
+  }
+
+  .player-card.risk-critical {
+    border-color: var(--color-status-error);
+    background: linear-gradient(to bottom, rgba(239, 68, 68, 0.05), transparent);
+  }
+
   .card-checkbox {
     position: absolute;
     top: 12px;
@@ -28,10 +41,17 @@
     z-index: 1;
   }
 
-  .status-badge {
+  // Badge row for status + risk
+  .badge-row {
     position: absolute;
     top: 12px;
     right: 12px;
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .status-badge {
     padding: 4px 10px;
     border-radius: var(--radius-lg);
     font-size: var(--font-body-xs);
@@ -45,6 +65,16 @@
     color: var(--color-status-success);
   }
 
+  .status-limited {
+    background: var(--color-status-warning-bg);
+    color: var(--color-status-warning);
+  }
+
+  .status-returning {
+    background: var(--color-status-info-bg);
+    color: var(--color-status-info);
+  }
+
   .status-injured {
     background: var(--color-status-error-bg);
     color: var(--color-status-error);
@@ -55,12 +85,48 @@
     color: var(--color-text-secondary);
   }
 
+  // Risk badge
+  .risk-badge {
+    padding: 4px 8px;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+
+    i {
+      font-size: 10px;
+    }
+  }
+
+  .risk-moderate {
+    background: var(--color-status-warning-bg);
+    color: var(--color-status-warning);
+  }
+
+  .risk-high {
+    background: var(--color-status-warning);
+    color: white;
+  }
+
+  .risk-critical {
+    background: var(--color-status-error);
+    color: white;
+    animation: pulse-risk 2s infinite;
+  }
+
+  @keyframes pulse-risk {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
   .player-header {
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    margin-bottom: var(--space-4);
-    margin-top: var(--space-4);
+    margin-bottom: var(--space-3);
+    margin-top: var(--space-6);
   }
 
   .player-jersey {
@@ -108,11 +174,125 @@
     opacity: 0.5;
   }
 
+  // =========================================================================
+  // METRICS SECTION (Phase 1 Enhancement)
+  // =========================================================================
+  .metrics-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    margin: var(--space-3) 0;
+  }
+
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .metric-label {
+    font-size: var(--font-body-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .metric-value {
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-bold);
+  }
+
+  // Readiness colors
+  .readiness-high { color: var(--color-status-success); }
+  .readiness-medium { color: var(--color-status-warning); }
+  .readiness-low { color: var(--color-status-error); }
+
+  // Progress bar override for readiness
+  ::ng-deep .readiness-bar {
+    &.readiness-high .p-progressbar-value { background: var(--color-status-success); }
+    &.readiness-medium .p-progressbar-value { background: var(--color-status-warning); }
+    &.readiness-low .p-progressbar-value { background: var(--color-status-error); }
+  }
+
+  // ACWR colors
+  .acwr-safe { color: var(--color-status-success); }
+  .acwr-elevated { color: var(--color-status-warning); }
+  .acwr-danger { color: var(--color-status-error); }
+  .acwr-low { color: var(--color-status-info); }
+
+  // ACWR indicator
+  .acwr-indicator {
+    position: relative;
+    height: 6px;
+    background: linear-gradient(to right, 
+      var(--color-status-info) 0%, 
+      var(--color-status-success) 40%, 
+      var(--color-status-success) 65%, 
+      var(--color-status-warning) 75%, 
+      var(--color-status-error) 100%
+    );
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-1);
+  }
+
+  .acwr-marker {
+    position: absolute;
+    top: -2px;
+    width: 10px;
+    height: 10px;
+    background: var(--color-text-primary);
+    border: 2px solid white;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: var(--shadow-sm);
+  }
+
+  // Performance colors
+  .perf-excellent { color: var(--ds-primary-green); }
+  .perf-good { color: var(--color-status-success); }
+  .perf-average { color: var(--color-status-warning); }
+  .perf-poor { color: var(--color-status-error); }
+
+  // =========================================================================
+  // POSITION INSIGHT
+  // =========================================================================
+  .position-insight {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-xs);
+    margin-bottom: var(--space-3);
+
+    i {
+      font-size: 12px;
+    }
+
+    &.info {
+      background: var(--color-status-info-bg);
+      color: var(--color-status-info);
+    }
+
+    &.warning {
+      background: var(--color-status-warning-bg);
+      color: var(--color-status-warning);
+    }
+  }
+
   .player-details {
     display: flex;
     gap: var(--space-4);
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
+    padding-top: var(--space-3);
     border-top: 1px solid var(--color-border-secondary);
   }
 
@@ -143,13 +323,18 @@
     display: flex;
     justify-content: flex-end;
     gap: var(--space-1);
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
     border-top: 1px solid var(--color-border-secondary);
   }
 
   /* Responsive */
   @media (max-width: 768px) {
+    .metrics-section {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
     .player-header {
       flex-direction: column;
       text-align: center;
@@ -164,6 +349,12 @@
     .card-actions {
       justify-content: center;
       flex-wrap: wrap;
+    }
+
+    .badge-row {
+      position: static;
+      justify-content: center;
+      margin-bottom: var(--space-2);
     }
   }
 

@@ -266,6 +266,7 @@ export interface WeeklyScheduleDay {
     title: string;
     type?: SessionType;
     duration?: number;
+    description?: string;
   }>;
   isToday?: boolean;
 }

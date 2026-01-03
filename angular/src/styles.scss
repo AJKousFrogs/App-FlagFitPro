@@ -349,214 +349,212 @@ html.no-transitions * {
    Ensure all buttons are pill-shaped and have proper contrast
    ================================================================ */
 
-/* Force pill-shaped (fully rounded) buttons globally */
-.p-button,
-.p-button.p-component,
-button.p-button,
-p-button .p-button,
-p-button > .p-button {
-  border-radius: 9999px !important;
-  padding: 0.875rem 1.75rem !important;
-  gap: 0.625rem !important;
-  font-weight: 600 !important;
-  font-size: 0.9375rem !important;
-  letter-spacing: 0.01em !important;
-}
+@layer overrides {
+  /* Force pill-shaped (fully rounded) buttons globally */
+  .p-button,
+  .p-button.p-component,
+  button.p-button,
+  p-button .p-button,
+  p-button > .p-button {
+    border-radius: var(--radius-full) !important;
+    padding: 0.875rem 1.75rem !important;
+    gap: 0.625rem !important;
+    font-weight: var(--font-weight-semibold) !important;
+    font-size: 0.9375rem !important;
+    letter-spacing: 0.01em !important;
+  }
 
-/* Better icon spacing and CONSISTENT sizing within buttons */
-.p-button .p-button-icon {
-  width: 1rem !important;
-  height: 1rem !important;
-  min-width: 1rem !important;
-  max-width: 1rem !important;
-  min-height: 1rem !important;
-  max-height: 1rem !important;
-  font-size: var(--font-body-md, 1rem) !important;
-  line-height: 1 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-  overflow: hidden !important;
-}
+  /* Better icon spacing and CONSISTENT sizing within buttons */
+  .p-button .p-button-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+    min-width: 1rem !important;
+    max-width: 1rem !important;
+    min-height: 1rem !important;
+    max-height: 1rem !important;
+    font-size: var(--font-body-md, 1rem) !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+  }
 
-.p-button .p-button-icon-left {
-  margin-right: 0.5rem !important;
-}
+  .p-button .p-button-icon-left {
+    margin-right: var(--space-2) !important;
+  }
 
-.p-button .p-button-icon-right {
-  margin-left: 0.5rem !important;
-}
+  .p-button .p-button-icon-right {
+    margin-left: var(--space-2) !important;
+  }
 
-/* Force ALL PrimeIcons inside buttons to exact same size */
-.p-button .pi,
-.p-button i.pi,
-.p-button span.pi,
-.p-button [class^="pi-"],
-.p-button [class*=" pi-"] {
-  width: 1rem !important;
-  height: 1rem !important;
-  min-width: 1rem !important;
-  max-width: 1rem !important;
-  min-height: 1rem !important;
-  max-height: 1rem !important;
-  font-size: var(--font-body-md, 1rem) !important;
-  line-height: 1 !important;
-  display: inline-block !important;
-  text-align: center !important;
-}
+  /* Force ALL PrimeIcons inside buttons to exact same size */
+  .p-button .pi,
+  .p-button i.pi,
+  .p-button span.pi,
+  .p-button [class^="pi-"],
+  .p-button [class*=" pi-"] {
+    width: 1rem !important;
+    height: 1rem !important;
+    min-width: 1rem !important;
+    max-width: 1rem !important;
+    min-height: 1rem !important;
+    max-height: 1rem !important;
+    font-size: var(--font-body-md, 1rem) !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    text-align: center !important;
+  }
 
-/* Specific fix for icons that render larger (like pi-desktop) */
-.p-button .pi-desktop,
-.p-button .pi-monitor,
-.p-button .pi-tv {
-  font-size: 0.9rem !important;
-}
+  /* Specific fix for icons that render larger (like pi-desktop) */
+  .p-button .pi-desktop,
+  .p-button .pi-monitor,
+  .p-button .pi-tv {
+    font-size: 0.9rem !important;
+  }
 
-/* Specific fix for icons that render smaller */
-.p-button .pi-key {
-  font-size: var(--font-body-md, 1rem) !important;
-}
+  /* Specific fix for icons that render smaller */
+  .p-button .pi-key {
+    font-size: var(--font-body-md, 1rem) !important;
+  }
 
-/* Icon-only buttons should be circles */
-.p-button.p-button-icon-only,
-.p-button-icon-only {
-  border-radius: 50% !important;
-}
+  /* Icon-only buttons should be circles */
+  .p-button.p-button-icon-only,
+  .p-button-icon-only {
+    border-radius: var(--radius-full) !important;
+  }
 
-/* Primary buttons - GREEN background, WHITE text (light & dark mode) */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
-    .p-button-success
-  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
-  background: linear-gradient(
-    180deg,
-    var(--ds-primary-green-light) 0%,
-    var(--ds-primary-green) 100%
-  ) !important;
-  border: 2px solid var(--ds-primary-green) !important;
-  color: var(--color-text-on-primary) !important;
-  box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.3) !important;
-  padding: 0.875rem 1.75rem !important;
-  gap: 0.625rem !important;
-}
+  /* Primary buttons - GREEN background, WHITE text (light & dark mode) */
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+      .p-button-success
+    ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
+    background: var(--gradient-primary) !important;
+    border: 2px solid var(--ds-primary-green) !important;
+    color: var(--color-text-on-primary) !important;
+    box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.3) !important;
+    padding: 0.875rem 1.75rem !important;
+    gap: 0.625rem !important;
+  }
 
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
-    .p-button-success
-  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
-  .p-button-label,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
-    .p-button-success
-  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
-  .p-button-icon,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
-    .p-button-success
-  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
-  span {
-  color: var(--color-text-on-primary) !important;
-}
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+      .p-button-success
+    ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+    .p-button-label,
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+      .p-button-success
+    ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+    .p-button-icon,
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+      .p-button-success
+    ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast)
+    span {
+    color: var(--color-text-on-primary) !important;
+  }
 
-/* Hover state for primary buttons */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
-    .p-button-success
-  ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
-  background: linear-gradient(
-    180deg,
-    var(--ds-primary-green) 0%,
-    var(--primitive-primary-800) 100%
-  ) !important;
-  box-shadow: 0 6px 20px rgba(var(--ds-primary-green-rgb), 0.4) !important;
-  transform: translateY(-2px);
-}
+  /* Hover state for primary buttons */
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
+      .p-button-success
+    ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
+    background: linear-gradient(
+      180deg,
+      var(--ds-primary-green) 0%,
+      var(--primitive-primary-800) 100%
+    ) !important;
+    box-shadow: 0 6px 20px rgba(var(--ds-primary-green-rgb), 0.4) !important;
+    transform: translateY(-2px);
+  }
 
-/* Outlined buttons - transparent background, GREEN border & text */
-.p-button.p-button-outlined {
-  background: transparent !important;
-  border: 2px solid var(--ds-primary-green) !important;
-  color: var(--ds-primary-green) !important;
-  padding: 0.75rem 1.5rem !important;
-  min-width: 120px !important;
-  justify-content: center !important;
-}
+  /* Outlined buttons - transparent background, GREEN border & text */
+  .p-button.p-button-outlined {
+    background: transparent !important;
+    border: 2px solid var(--ds-primary-green) !important;
+    color: var(--ds-primary-green) !important;
+    padding: 0.75rem 1.5rem !important;
+    min-width: 120px !important;
+    justify-content: center !important;
+  }
 
-.p-button.p-button-outlined .p-button-label,
-.p-button.p-button-outlined .p-button-icon {
-  color: var(--ds-primary-green) !important;
-}
+  .p-button.p-button-outlined .p-button-label,
+  .p-button.p-button-outlined .p-button-icon {
+    color: var(--ds-primary-green) !important;
+  }
 
-/* Consistent icon sizing for outlined buttons */
-.p-button.p-button-outlined .p-button-icon,
-.p-button.p-button-outlined .pi {
-  width: 1rem !important;
-  height: 1rem !important;
-  min-width: 1rem !important;
-  max-width: 1rem !important;
-  font-size: var(--font-body-md, 1rem) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
+  /* Consistent icon sizing for outlined buttons */
+  .p-button.p-button-outlined .p-button-icon,
+  .p-button.p-button-outlined .pi {
+    width: 1rem !important;
+    height: 1rem !important;
+    min-width: 1rem !important;
+    max-width: 1rem !important;
+    font-size: var(--font-body-md, 1rem) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 
-/* Fix desktop icon specifically in outlined buttons */
-.p-button.p-button-outlined .pi-desktop {
-  font-size: 0.875rem !important;
-}
+  /* Fix desktop icon specifically in outlined buttons */
+  .p-button.p-button-outlined .pi-desktop {
+    font-size: 0.875rem !important;
+  }
 
-.p-button.p-button-outlined:hover {
-  background: var(--ds-primary-green-subtle) !important;
-}
+  .p-button.p-button-outlined:hover {
+    background: var(--ds-primary-green-subtle) !important;
+  }
 
-/* Text buttons */
-.p-button.p-button-text {
-  background: transparent !important;
-  border-color: transparent !important;
-  color: var(--ds-primary-green) !important;
-}
+  /* Text buttons */
+  .p-button.p-button-text {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: var(--ds-primary-green) !important;
+  }
 
-.p-button.p-button-text .p-button-label,
-.p-button.p-button-text .p-button-icon {
-  color: var(--ds-primary-green) !important;
-}
+  .p-button.p-button-text .p-button-label,
+  .p-button.p-button-text .p-button-icon {
+    color: var(--ds-primary-green) !important;
+  }
 
-/* Secondary buttons - subtle background */
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  background: var(--surface-secondary) !important;
-  border: 2px solid var(--color-border-primary) !important;
-  color: var(--color-text-primary) !important;
-}
+  /* Secondary buttons - subtle background */
+  .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
+    background: var(--surface-secondary) !important;
+    border: 2px solid var(--color-border-primary) !important;
+    color: var(--color-text-primary) !important;
+  }
 
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
-  .p-button-label,
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
-  .p-button-icon {
-  color: var(--color-text-primary) !important;
-}
+  .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
+    .p-button-label,
+  .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
+    .p-button-icon {
+    color: var(--color-text-primary) !important;
+  }
 
-/* Danger buttons */
-.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) {
-  background: linear-gradient(
-    180deg,
-    var(--primitive-error-400) 0%,
-    var(--color-status-error) 100%
-  ) !important;
-  border: 2px solid var(--color-status-error) !important;
-  color: var(--color-text-on-primary) !important;
-}
+  /* Danger buttons */
+  .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(
+      180deg,
+      var(--primitive-error-400) 0%,
+      var(--color-status-error) 100%
+    ) !important;
+    border: 2px solid var(--color-status-error) !important;
+    color: var(--color-text-on-primary) !important;
+  }
 
-.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
-  .p-button-label,
-.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
-  .p-button-icon {
-  color: var(--color-text-on-primary) !important;
+  .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
+    .p-button-label,
+  .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)
+    .p-button-icon {
+    color: var(--color-text-on-primary) !important;
+  }
 }
 
 /* ================================================================

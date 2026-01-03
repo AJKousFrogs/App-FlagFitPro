@@ -1,56 +1,48 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  ViewChildren,
-  QueryList,
-  AfterViewInit,
-  HostListener,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    HostListener,
+    QueryList,
+    ViewChildren,
+    inject,
+    signal,
 } from "@angular/core";
-import { UIChart } from "primeng/chart";
-import { CommonModule } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { ChartModule } from "primeng/chart";
-import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { Tabs, TabPanel } from "primeng/tabs";
+import { CardModule } from "primeng/card";
+import { ChartModule, UIChart } from "primeng/chart";
 import { Select } from "primeng/select";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
-import {
-  DEFAULT_CHART_OPTIONS,
-  LINE_CHART_OPTIONS,
-  BAR_CHART_OPTIONS,
-  DOUGHNUT_CHART_OPTIONS,
-} from "../../shared/config/chart.config";
-import {
-  ENHANCED_LINE_CHART_OPTIONS,
-  ENHANCED_BAR_CHART_OPTIONS,
-  ENHANCED_DOUGHNUT_CHART_OPTIONS,
-  ENHANCED_RADAR_CHART_OPTIONS,
-  exportChartAsPNG,
-  resetChartZoom,
-  updateChartFontSizes,
-} from "../../shared/config/enhanced-chart.config";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import {
-  PlayerStatisticsService,
-  PlayerGameStats,
-  PlayerSeasonStats,
-  PlayerMultiSeasonStats,
-} from "../../core/services/player-statistics.service";
-import { AuthService } from "../../core/services/auth.service";
-import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
-import { TrainingDataService } from "../../core/services/training-data.service";
-import { LoggerService } from "../../core/services/logger.service";
+import { TableModule } from "primeng/table";
+import { TabPanel, Tabs } from "primeng/tabs";
+import { TagModule } from "primeng/tag";
 import { AcwrService } from "../../core/services/acwr.service";
+import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
+import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
+import {
+    PlayerGameStats,
+    PlayerMultiSeasonStats,
+    PlayerSeasonStats,
+    PlayerStatisticsService,
+} from "../../core/services/player-statistics.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
+import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+    ENHANCED_BAR_CHART_OPTIONS,
+    ENHANCED_DOUGHNUT_CHART_OPTIONS,
+    ENHANCED_LINE_CHART_OPTIONS,
+    ENHANCED_RADAR_CHART_OPTIONS,
+    exportChartAsPNG,
+    resetChartZoom,
+    updateChartFontSizes,
+} from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface Metric {
@@ -63,10 +55,9 @@ interface Metric {
 
 @Component({
   selector: "app-analytics",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
     FormsModule,
     RouterModule,
     CardModule,
@@ -80,20 +71,19 @@ interface Metric {
     MainLayoutComponent,
     PageHeaderComponent,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    AppLoadingComponent,
   ],
   template: `
     <app-main-layout>
       <!-- Loading State -->
-      @if (isPageLoading()) {
-        <app-page-loading-state
-          message="Loading analytics..."
-          variant="skeleton"
-        ></app-page-loading-state>
-      }
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading analytics..."
+      ></app-loading>
 
       <!-- Error State -->
-      @else if (hasPageError()) {
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load analytics"
           [message]="pageErrorMessage()"
@@ -136,7 +126,10 @@ interface Metric {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
-                    <h3 class="chart-title">Performance Trends</h3>
+                    <div class="title-group">
+                      <h3 class="chart-title">Load vs Performance</h3>
+                      <p class="chart-subtitle">Acute/Chronic Workload vs Subjective Wellness</p>
+                    </div>
                     @if (performanceChartData()) {
                       <div class="chart-actions">
                         <p-button
@@ -150,48 +143,31 @@ interface Metric {
                         ></p-button>
                         <p-button
                           icon="pi pi-download"
-                          label="Export PNG"
                           [outlined]="true"
                           size="small"
                           (onClick)="exportChart('performance')"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-question-circle"
-                          label="Help"
-                          [text]="true"
-                          size="small"
-                          (onClick)="customizeChart('performance')"
                         ></p-button>
                       </div>
                     }
                   </div>
                 </ng-template>
                 @if (performanceChartData()) {
-                  <p-chart
-                    type="line"
-                    [data]="performanceChartData()"
-                    [options]="lineChartOptions"
-                  ></p-chart>
+                  <div class="chart-container">
+                    <p-chart
+                      type="line"
+                      [data]="performanceChartData()"
+                      [options]="lineChartOptions"
+                    ></p-chart>
+                  </div>
                   <div class="chart-insights">
                     <div class="insight-item">
-                      <div class="insight-value">91</div>
-                      <div class="insight-label">Current Score</div>
+                      <div class="insight-value">{{ acwrData()?.acwr || '0.00' }}</div>
+                      <div class="insight-label">Current ACWR</div>
                     </div>
                     <div class="insight-item">
-                      <div class="insight-value">+13</div>
-                      <div class="insight-label">Total Improvement</div>
+                      <div class="insight-value" [class]="acwrData()?.riskZone">{{ acwrData()?.riskZone || 'N/A' | titlecase }}</div>
+                      <div class="insight-label">Safety Zone</div>
                     </div>
-                    <div class="insight-item">
-                      <div class="insight-value">+5.2%</div>
-                      <div class="insight-label">Weekly Trend</div>
-                    </div>
-                  </div>
-                  <div class="chart-help-note">
-                    <i class="pi pi-info-circle"></i>
-                    <small
-                      >Scroll to zoom • Shift+drag to pan • Click legend to
-                      toggle • Hover for trends</small
-                    >
                   </div>
                 } @else {
                   <div class="empty-chart-state">
@@ -219,64 +195,34 @@ interface Metric {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
-                    <h3 class="chart-title">Team Chemistry Analysis</h3>
-                    @if (chemistryChartData()) {
-                      <div class="chart-actions">
-                        <p-button
-                          label="Details"
-                          [outlined]="true"
-                          size="small"
-                          (onClick)="viewChartDetails('chemistry')"
-                        ></p-button>
-                        <p-button
-                          label="Improve"
-                          size="small"
-                          (onClick)="showImprovementTips('chemistry')"
-                        ></p-button>
-                      </div>
-                    }
+                    <div class="title-group">
+                      <h3 class="chart-title">Skill Proficiency Radar</h3>
+                      <p class="chart-subtitle">Comparative assessment across core competencies</p>
+                    </div>
                   </div>
                 </ng-template>
                 @if (chemistryChartData()) {
-                  <p-chart
-                    type="radar"
-                    [data]="chemistryChartData()"
-                    [options]="radarChartOptions"
-                  ></p-chart>
-                  <div class="chart-insights">
-                    <div class="insight-item">
-                      <div class="insight-value">8.4</div>
-                      <div class="insight-label">Overall Score</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">9.1</div>
-                      <div class="insight-label">Trust Level</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">7.5</div>
-                      <div class="insight-label">Leadership</div>
-                    </div>
+                  <div class="chart-container radar">
+                    <p-chart
+                      type="radar"
+                      [data]="chemistryChartData()"
+                      [options]="radarChartOptions"
+                    ></p-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
                     <i class="pi pi-users empty-icon"></i>
-                    <h4>Team Chemistry Coming Soon</h4>
+                    <h4>Proficiency Data Coming Soon</h4>
                     <p>
-                      Join a team and participate in team activities to build
-                      chemistry metrics.
+                      Log more varied training sessions to populate your skill proficiency radar.
                     </p>
-                    <p-button
-                      label="View Roster"
-                      icon="pi pi-users"
-                      [routerLink]="['/roster']"
-                    ></p-button>
                   </div>
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
                 <div class="loading-placeholder">
-                  Loading team chemistry analysis...
+                  Loading skill proficiency...
                 </div>
               </p-card>
             }
@@ -286,64 +232,35 @@ interface Metric {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
-                    <h3 class="chart-title">Training Session Distribution</h3>
-                    @if (distributionChartData()) {
-                      <div class="chart-actions">
-                        <p-button
-                          label="Filter"
-                          [outlined]="true"
-                          size="small"
-                          (onClick)="filterTrainingData()"
-                        ></p-button>
-                        <p-button
-                          label="Schedule"
-                          size="small"
-                          [routerLink]="['/training/schedule']"
-                        ></p-button>
-                      </div>
-                    }
+                    <div class="title-group">
+                      <h3 class="chart-title">Training Mix</h3>
+                      <p class="chart-subtitle">Distribution of focus areas over 30 days</p>
+                    </div>
                   </div>
                 </ng-template>
                 @if (distributionChartData()) {
-                  <p-chart
-                    type="doughnut"
-                    [data]="distributionChartData()"
-                    [options]="DOUGHNUT_CHART_OPTIONS"
-                  ></p-chart>
-                  <div class="chart-insights">
-                    <div class="insight-item">
-                      <div class="insight-value">30</div>
-                      <div class="insight-label">Agility Sessions</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">25</div>
-                      <div class="insight-label">Speed Sessions</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">20</div>
-                      <div class="insight-label">Technical Sessions</div>
-                    </div>
+                  <div class="chart-container doughnut">
+                    <p-chart
+                      type="doughnut"
+                      [data]="distributionChartData()"
+                      [options]="DOUGHNUT_CHART_OPTIONS"
+                    ></p-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
                     <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                    <h4>{{ noDataMessage.title }}</h4>
+                    <h4>Mix Data Coming Soon</h4>
                     <p>
                       Log your training sessions to see how your time is
-                      distributed across different workout types.
+                      distributed.
                     </p>
-                    <p-button
-                      [label]="noDataMessage.actionLabel"
-                      icon="pi pi-plus"
-                      [routerLink]="noDataMessage.helpLink"
-                    ></p-button>
                   </div>
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
                 <div class="loading-placeholder">
-                  Loading training distribution...
+                  Loading training mix...
                 </div>
               </p-card>
             }
@@ -353,64 +270,34 @@ interface Metric {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
-                    <h3 class="chart-title">Position Performance Comparison</h3>
-                    @if (positionChartData()) {
-                      <div class="chart-actions">
-                        <p-button
-                          label="Benchmarks"
-                          [outlined]="true"
-                          size="small"
-                          (onClick)="showBenchmarks()"
-                        ></p-button>
-                        <p-button
-                          label="Optimize"
-                          size="small"
-                          (onClick)="showOptimizationTips()"
-                        ></p-button>
-                      </div>
-                    }
+                    <div class="title-group">
+                      <h3 class="chart-title">Benchmark Comparison</h3>
+                      <p class="chart-subtitle">Your metrics vs Olympic standard benchmarks</p>
+                    </div>
                   </div>
                 </ng-template>
                 @if (positionChartData()) {
-                  <p-chart
-                    type="bar"
-                    [data]="positionChartData()"
-                    [options]="BAR_CHART_OPTIONS"
-                  ></p-chart>
-                  <div class="chart-insights">
-                    <div class="insight-item">
-                      <div class="insight-value">94</div>
-                      <div class="insight-label">Top Performer</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">91</div>
-                      <div class="insight-label">Your Score</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value">89</div>
-                      <div class="insight-label">Team Average</div>
-                    </div>
+                  <div class="chart-container">
+                    <p-chart
+                      type="bar"
+                      [data]="positionChartData()"
+                      [options]="BAR_CHART_OPTIONS"
+                    ></p-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
                     <i class="pi pi-chart-bar empty-icon"></i>
-                    <h4>Position Data Coming Soon</h4>
+                    <h4>Benchmarks Coming Soon</h4>
                     <p>
-                      Complete your profile with your position and log game
-                      stats to see position-specific analytics.
+                      Complete your profile and log tests to see comparative analytics.
                     </p>
-                    <p-button
-                      label="Update Profile"
-                      icon="pi pi-user"
-                      [routerLink]="['/settings']"
-                    ></p-button>
                   </div>
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
                 <div class="loading-placeholder">
-                  Loading position performance...
+                  Loading benchmarks...
                 </div>
               </p-card>
             }
@@ -821,15 +708,15 @@ interface Metric {
   `,
   styleUrls: ["./analytics.component.scss"],
 })
-export class AnalyticsComponent implements OnInit, AfterViewInit {
+export class AnalyticsComponent implements AfterViewInit {
   @ViewChildren(UIChart) chartRefs!: QueryList<UIChart>;
-  private apiService = inject(ApiService);
-  private playerStatsService = inject(PlayerStatisticsService);
-  private authService = inject(AuthService);
-  private trainingStatsService = inject(TrainingStatsCalculationService);
-  private trainingDataService = inject(TrainingDataService);
-  private logger = inject(LoggerService);
-  private acwrService = inject(AcwrService);
+  private readonly apiService = inject(ApiService);
+  private readonly playerStatsService = inject(PlayerStatisticsService);
+  private readonly authService = inject(AuthService);
+  private readonly trainingStatsService = inject(TrainingStatsCalculationService);
+  private readonly trainingDataService = inject(TrainingDataService);
+  private readonly logger = inject(LoggerService);
+  private readonly acwrService = inject(AcwrService);
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -876,7 +763,8 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
   // Chart instances map for export/zoom functionality
   private chartInstances = new Map<string, any>();
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.initializePage();
   }
 
@@ -956,6 +844,8 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
             return {
               ...metric,
               value: stats.totalSessions.toString(),
+              trend: `+${stats.sessionsThisWeek || 0} this week`,
+              trendType: (stats.sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
             };
           }
           return metric;
@@ -967,7 +857,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
           const labels = Object.keys(stats.sessionsByType);
           const values = labels.map((key) => stats.sessionsByType[key].count);
           this.distributionChartData.set({
-            labels,
+            labels: labels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
             datasets: [
               {
                 data: values,
@@ -978,6 +868,8 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
                   "#e74c3c",
                   "#3498db",
                 ],
+                borderWidth: 0,
+                hoverOffset: 10
               },
             ],
           });
@@ -1250,31 +1142,31 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
   loadEmptyMetrics(): void {
     this.metrics.set([
       {
-        icon: "pi-chart-bar",
+        icon: "pi-chart-line",
         value: "N/A",
-        label: "Overall Performance",
-        trend: "Log training to track",
+        label: "Training Load",
+        trend: "ACWR focus",
         trendType: "neutral" as const,
       },
       {
         icon: "pi-users",
         value: "N/A",
-        label: "Team Chemistry",
-        trend: "Join a team to see",
+        label: "Team Rank",
+        trend: "Join a team",
         trendType: "neutral" as const,
       },
       {
         icon: "pi-bolt",
         value: "N/A",
-        label: "40-Yard Dash",
-        trend: "Record your time",
+        label: "Top Speed",
+        trend: "Record test",
         trendType: "neutral" as const,
       },
       {
-        icon: "pi-trophy",
-        value: "LA28",
-        label: "Olympic Goal",
-        trend: "Start your journey",
+        icon: "pi-calendar",
+        value: "0",
+        label: "Training Sessions",
+        trend: "Start today",
         trendType: "positive" as const,
       },
     ]);

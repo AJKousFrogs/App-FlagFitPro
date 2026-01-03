@@ -289,10 +289,15 @@ async function getUserContext(userId) {
     teamId: null,
     bodyStats: null,
     acwr: null, // NEW: ACWR data for safety checks
+    todayProtocol: null, // NEW: Current day's prescription
+    recentSessions: [], // NEW: Last few sessions for context
+    latestWellness: null, // NEW: Sleep, energy, etc
   };
 
   try {
-    // Get active injuries
+    const today = new Date().toISOString().split("T")[0];
+
+    // 1. Get active injuries
     const { data: injuries } = await supabaseAdmin
       .from("injuries")
       .select("type, severity, body_part, status")
@@ -303,19 +308,76 @@ async function getUserContext(userId) {
 
     context.injuries = injuries || [];
 
-    // Calculate ACWR for safety checks
+    // 2. Calculate ACWR for safety checks
     context.acwr = await calculateUserACWR(userId);
 
-    // Get recent load summary (from ACWR calculation)
+    // 3. Get recent load summary
     if (context.acwr && context.acwr.acuteLoad > 0) {
       context.recentLoad = {
         weeklyLoad: context.acwr.acuteLoad,
         sessionCount: context.acwr.sessionCount || 0,
-        avgRPE: context.acwr.acuteLoad / (context.acwr.sessionCount || 1) / 60, // Estimate
+        avgRPE: context.acwr.acuteLoad / (context.acwr.sessionCount || 1) / 60,
+        acwr: context.acwr.acwr,
+        riskZone: context.acwr.riskZone,
       };
     }
 
-    // Get user profile info
+    // 4. Get today's protocol and exercises
+    const { data: protocol } = await supabaseAdmin
+      .from("daily_protocols")
+      .select(`
+        *,
+        exercises:protocol_exercises(
+          exercise_id,
+          block_type,
+          status,
+          prescribed_sets,
+          prescribed_reps,
+          ai_note,
+          exercises(name)
+        )
+      `)
+      .eq("user_id", userId)
+      .eq("protocol_date", today)
+      .single();
+
+    if (protocol) {
+      context.todayProtocol = {
+        focus: protocol.training_focus,
+        progress: protocol.overall_progress,
+        rationale: protocol.ai_rationale,
+        exercises: protocol.exercises?.map(e => ({
+          name: e.exercises?.name,
+          block: e.block_type,
+          status: e.status,
+          sets: e.prescribed_sets,
+          reps: e.prescribed_reps,
+          note: e.ai_note
+        }))
+      };
+    }
+
+    // 5. Get recent session history (last 3)
+    const { data: recentSessions } = await supabaseAdmin
+      .from("training_sessions")
+      .select("session_date, session_type, duration_minutes, intensity_level, performance_score")
+      .eq("user_id", userId)
+      .order("session_date", { ascending: false })
+      .limit(3);
+    
+    context.recentSessions = recentSessions || [];
+
+    // 6. Get latest wellness entry
+    const { data: wellness } = await supabaseAdmin
+      .from("athlete_daily_state")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("state_date", today)
+      .single();
+    
+    context.latestWellness = wellness;
+
+    // 7. Get user profile and body comp
     const { data: profile } = await supabaseAdmin
       .from("user_profiles")
       .select("position, role, height_cm, weight_kg")
@@ -325,19 +387,32 @@ async function getUserContext(userId) {
     if (profile) {
       context.position = profile.position;
       context.role = profile.role;
+
+      // Get latest body measurement
+      const { data: measurement } = await supabaseAdmin
+        .from("physical_measurements")
+        .select("*")
+        .eq("user_id", userId)
+        .order("measurement_date", { ascending: false })
+        .limit(1)
+        .single();
+
       context.bodyStats = {
         height: profile.height_cm,
-        weight: profile.weight_kg,
+        weight: measurement?.weight_kg || profile.weight_kg,
+        bodyFat: measurement?.body_fat_percentage,
+        muscleMass: measurement?.muscle_mass_kg,
+        hydration: wellness?.hydration_level
       };
     }
 
-    // Get team membership
+    // 8. Get team membership
     const { data: teamMembership } = await supabaseAdmin
       .from("team_members")
       .select("team_id, role")
       .eq("user_id", userId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (teamMembership) {
       context.teamId = teamMembership.team_id;
@@ -345,7 +420,6 @@ async function getUserContext(userId) {
     }
   } catch (error) {
     console.error("Error fetching user context:", error);
-    // Continue with partial context
   }
 
   return context;

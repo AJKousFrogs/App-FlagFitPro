@@ -7,8 +7,8 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -75,9 +75,7 @@ interface SessionTypeOption {
 
 @Component({
   selector: 'app-qb-throwing-tracker',
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
     CardModule,
@@ -97,22 +95,6 @@ interface SessionTypeOption {
     <p-toast></p-toast>
 
     <div class="qb-throwing-tracker">
-      <!-- Header -->
-      <header class="tracker-header">
-        <div class="header-content">
-          <h1 class="page-title">
-            <i class="pi pi-bullseye"></i>
-            QB Throwing Tracker
-          </h1>
-          <p class="page-subtitle">Track your throws and build toward tournament capacity</p>
-        </div>
-        <p-button
-          label="Log Session"
-          icon="pi pi-plus"
-          (onClick)="openLogDialog()"
-        ></p-button>
-      </header>
-
       <!-- Progression Status Card -->
       @if (progressionStatus()) {
         <div class="status-card">
@@ -439,22 +421,22 @@ interface SessionTypeOption {
   `,
   styleUrl: './qb-throwing-tracker.component.scss',
 })
-export class QbThrowingTrackerComponent implements OnInit {
-  private api = inject(ApiService);
-  private logger = inject(LoggerService);
-  private messageService = inject(MessageService);
+export class QbThrowingTrackerComponent {
+  private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly messageService = inject(MessageService);
 
   // State
-  progressionStatus = signal<ProgressionStatus | null>(null);
-  weeklyStats = signal<WeeklyStats[]>([]);
-  recentSessions = signal<ThrowingSession[]>([]);
-  showLogDialog = signal(false);
-  isSaving = signal(false);
+  readonly progressionStatus = signal<ProgressionStatus | null>(null);
+  readonly weeklyStats = signal<WeeklyStats[]>([]);
+  readonly recentSessions = signal<ThrowingSession[]>([]);
+  readonly showLogDialog = signal(false);
+  readonly isSaving = signal(false);
 
   // Form
   formData: Partial<ThrowingSession> = this.getEmptyForm();
 
-  sessionTypes: SessionTypeOption[] = [
+  readonly sessionTypes: SessionTypeOption[] = [
     { label: 'Practice', value: 'practice' },
     { label: 'Warm-up Only', value: 'warm_up' },
     { label: 'Drill Work', value: 'drill_work' },
@@ -463,14 +445,15 @@ export class QbThrowingTrackerComponent implements OnInit {
     { label: '320 Simulation', value: 'simulation' },
   ];
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadData();
   }
 
   async loadData(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/qb-throwing').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/qb-throwing'));
       if (response?.success) {
         this.progressionStatus.set(response.data.progression);
         this.weeklyStats.set(response.data.weeklyStats || []);
@@ -496,7 +479,7 @@ export class QbThrowingTrackerComponent implements OnInit {
     this.isSaving.set(true);
 
     try {
-      await this.api.post('/api/qb-throwing', this.formData).toPromise();
+      await firstValueFrom(this.api.post('/api/qb-throwing', this.formData));
 
       this.messageService.add({
         severity: 'success',
@@ -604,9 +587,9 @@ export class QbThrowingTrackerComponent implements OnInit {
     if (!lastSession) return;
 
     try {
-      await this.api.post('/api/qb-throwing/arm-care', {
+      await firstValueFrom(this.api.post('/api/qb-throwing/arm-care', {
         sessionId: lastSession.id,
-      }).toPromise();
+      }));
 
       this.messageService.add({
         severity: 'success',

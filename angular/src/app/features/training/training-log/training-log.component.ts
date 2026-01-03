@@ -16,13 +16,12 @@
 
 import {
   Component,
-  OnInit,
   inject,
   signal,
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { firstValueFrom } from "rxjs";
 import {
   FormBuilder,
   FormGroup,
@@ -56,10 +55,8 @@ interface SessionType {
 
 @Component({
   selector: "app-training-log",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
@@ -272,18 +269,18 @@ interface SessionType {
   `,
   styleUrl: './training-log.component.scss',
 })
-export class TrainingLogComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private trainingDataService = inject(TrainingDataService);
-  private acwrService = inject(AcwrService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
+export class TrainingLogComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly trainingDataService = inject(TrainingDataService);
+  private readonly acwrService = inject(AcwrService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
 
-  isSubmitting = signal(false);
+  readonly isSubmitting = signal(false);
 
-  sessionTypes: SessionType[] = [
+  readonly sessionTypes: SessionType[] = [
     {
       label: "Practice",
       value: "practice",
@@ -322,7 +319,7 @@ export class TrainingLogComponent implements OnInit {
     },
   ];
 
-  sessionForm: FormGroup = this.fb.group({
+  readonly sessionForm: FormGroup = this.fb.group({
     sessionType: ["practice", Validators.required],
     durationMinutes: [
       60,
@@ -336,13 +333,13 @@ export class TrainingLogComponent implements OnInit {
     notes: [""],
   });
 
-  calculatedLoad = computed(() => {
+  readonly calculatedLoad = computed(() => {
     const duration = this.sessionForm.get("durationMinutes")?.value || 0;
     const rpe = this.sessionForm.get("rpe")?.value || 0;
     return duration * rpe;
   });
 
-  ngOnInit(): void {
+  constructor() {
     // Pre-fill athlete ID if available
     const user = this.authService.getUser();
     if (!user) {
@@ -397,8 +394,8 @@ export class TrainingLogComponent implements OnInit {
       };
 
       // Save to database via service
-      await this.trainingDataService
-        .createTrainingSession({
+      await firstValueFrom(
+        this.trainingDataService.createTrainingSession({
           user_id: user?.id || "",
           session_date: sessionData.session_date,
           session_type: sessionData.session_type,
@@ -406,7 +403,7 @@ export class TrainingLogComponent implements OnInit {
           rpe: sessionData.rpe,
           notes: sessionData.notes,
         })
-        .toPromise();
+      );
 
       // Update ACWR calculations
       this.acwrService.addSession({

@@ -17,15 +17,14 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardModule, ButtonModule, MainLayoutComponent, PageHeaderComponent],
   template: `
-    <app-main-layout>
-      <div class="qb-assessment-tools-page">
-        <app-page-header
-          title="QB Assessment Tools"
-          subtitle="Evaluate quarterback performance and skills"
-          icon="pi-clipboard"
-        ></app-page-header>
+    <div class="qb-assessment-tools-page">
+      <app-page-header
+        title="QB Assessment Tools"
+        subtitle="Evaluate quarterback performance and skills"
+        icon="pi-clipboard"
+      ></app-page-header>
 
-        <div class="tools-grid">
+      <div class="tools-grid">
           <p-card class="tool-card">
             <ng-template pTemplate="header">
               <h3>Throwing Accuracy Test</h3>
@@ -64,9 +63,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               class="mt-4"
             ></p-button>
           </p-card>
-        </div>
       </div>
-    </app-main-layout>
+    </div>
   `,
   styleUrl: './qb-assessment-tools.component.scss',
 })

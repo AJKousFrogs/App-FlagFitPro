@@ -10,8 +10,8 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, inject, model, output, signal, effect } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -33,12 +33,21 @@ export interface FlagPracticeSlot {
   expectedThrows?: number; // For QBs
 }
 
+export interface RoutineSlot {
+  id: string;
+  label: string;
+  time: string;
+  description?: string;
+  icon?: string;
+}
+
 export interface PlayerSettings {
   primaryPosition: string;
   secondaryPosition?: string;
   birthDate?: Date;
   flagPracticeSchedule: FlagPracticeSlot[];
   preferredTrainingDays: number[];
+  dailyRoutine: RoutineSlot[];
   maxSessionsPerWeek: number;
   hasGymAccess: boolean;
   hasFieldAccess: boolean;
@@ -57,9 +66,7 @@ interface DayOption {
 
 @Component({
   selector: 'app-player-settings-dialog',
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     DialogModule,
     ButtonModule,
@@ -220,6 +227,31 @@ interface DayOption {
           }
         </div>
 
+        <!-- Daily Routine -->
+        <div class="form-section">
+          <h4>My Daily Routine</h4>
+          <p class="section-description">
+            Set your preferred times for daily activities.
+          </p>
+          
+          <div class="routine-list">
+            @for (slot of settings.dailyRoutine; track slot.id) {
+              <div class="routine-field">
+                <div class="routine-label">
+                  <i [class]="slot.icon" class="mr-2"></i>
+                  <span>{{ slot.label }}</span>
+                </div>
+                <input
+                  pInputText
+                  type="time"
+                  [(ngModel)]="slot.time"
+                  class="routine-time-input"
+                />
+              </div>
+            }
+          </div>
+        </div>
+
         <!-- Training Preferences -->
         <div class="form-section">
           <h4>Training Preferences</h4>
@@ -273,13 +305,13 @@ interface DayOption {
   `,
   styleUrl: './player-settings-dialog.component.scss',
 })
-export class PlayerSettingsDialogComponent implements OnInit {
-  private api = inject(ApiService);
-  private logger = inject(LoggerService);
+export class PlayerSettingsDialogComponent {
+  private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
-  @Input() visible = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() settingsSaved = new EventEmitter<PlayerSettings>();
+  // Angular 21 signal-based inputs/outputs
+  readonly visible = model(false);
+  readonly settingsSaved = output<PlayerSettings>();
 
   // Form state
   settings: PlayerSettings = {
@@ -288,14 +320,24 @@ export class PlayerSettingsDialogComponent implements OnInit {
     birthDate: undefined,
     flagPracticeSchedule: [],
     preferredTrainingDays: [1, 2, 4, 5, 6], // Mon, Tue, Thu, Fri, Sat
+    dailyRoutine: [
+      { id: 'wake', label: 'Wake Up', time: '07:00', icon: 'pi-sun' },
+      { id: 'breakfast', label: 'Breakfast', time: '08:15', icon: 'pi-apple' },
+      { id: 'work_start', label: 'Work/Study Start', time: '09:00', icon: 'pi-briefcase' },
+      { id: 'lunch', label: 'Lunch', time: '12:30', icon: 'pi-utensils' },
+      { id: 'work_end', label: 'Work/Study End', time: '17:00', icon: 'pi-home' },
+      { id: 'training', label: 'Daily Training', time: '18:00', icon: 'pi-bolt' },
+      { id: 'shower', label: 'Shower (Hot)', time: '20:00', icon: 'pi-info-circle' },
+      { id: 'sleep', label: 'Sleep', time: '22:30', icon: 'pi-moon' },
+    ],
     maxSessionsPerWeek: 5,
     hasGymAccess: true,
     hasFieldAccess: true,
   };
 
-  isSaving = signal(false);
+  readonly isSaving = signal(false);
   selectedNewDay: number | null = null;
-  maxBirthDate = new Date();
+  readonly maxBirthDate = new Date();
 
   // Options
   positions: PositionOption[] = [
@@ -321,18 +363,23 @@ export class PlayerSettingsDialogComponent implements OnInit {
     return this.allDays.filter((d) => !usedDays.includes(d.value));
   }
 
-  selectedPositionDescription = signal<string>('');
-  calculatedAge = signal<number | null>(null);
-  ageRecoveryNote = signal<string>('');
+  readonly selectedPositionDescription = signal<string>('');
+  readonly calculatedAge = signal<number | null>(null);
+  readonly ageRecoveryNote = signal<string>('');
 
-  ngOnInit(): void {
-    this.loadSettings();
+  constructor() {
+    // React to visible changes to load settings
+    effect(() => {
+      if (this.visible()) {
+        this.loadSettings();
+      }
+    });
   }
 
   async loadSettings(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/player-settings').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/player-settings'));
       if (response?.success && response.data) {
         this.settings = {
           ...this.settings,
@@ -347,11 +394,8 @@ export class PlayerSettingsDialogComponent implements OnInit {
     }
   }
 
-  onVisibleChange(visible: boolean): void {
-    this.visibleChange.emit(visible);
-    if (visible) {
-      this.loadSettings();
-    }
+  onVisibleChange(newVisible: boolean): void {
+    this.visible.set(newVisible);
   }
 
   updatePositionDescription(): void {
@@ -427,7 +471,7 @@ export class PlayerSettingsDialogComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
   }
 
   async onSave(): Promise<void> {
@@ -439,10 +483,10 @@ export class PlayerSettingsDialogComponent implements OnInit {
         birthDate: this.settings.birthDate?.toISOString().split('T')[0],
       };
 
-      await this.api.post('/api/player-settings', payload).toPromise();
+      await firstValueFrom(this.api.post('/api/player-settings', payload));
 
       this.settingsSaved.emit(this.settings);
-      this.visibleChange.emit(false);
+      this.visible.set(false);
     } catch (err) {
       this.logger.error('Failed to save player settings', err);
     } finally {

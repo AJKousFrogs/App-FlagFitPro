@@ -1,17 +1,17 @@
-import {
-  Component,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  OnInit,
-  OnDestroy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, RouterModule, NavigationEnd } from "@angular/router";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
+import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
 import { RippleModule } from "primeng/ripple";
-import { filter, Subscription } from "rxjs";
+import { Subscription, filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
 
@@ -128,45 +128,35 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   });
 
   // Primary nav items (shown in bottom bar)
-  // Wellness promoted to primary for athletes - critical daily action
-  private primaryNavItems: NavItem[] = [
-    { label: "Home", icon: "pi-home", route: "/dashboard" },
-    { label: "Training", icon: "pi-bolt", route: "/training" },
-    { label: "Wellness", icon: "pi-heart", route: "/wellness" }, // Promoted!
-    { label: "Analytics", icon: "pi-chart-line", route: "/analytics" },
+  // Consolidated to 4 core items as per new architecture
+  private athleteNavItems: NavItem[] = [
+    { label: "Today", icon: "pi-calendar", route: "/today" },
+    { label: "Training", icon: "pi-bolt", route: "/training/advanced" },
+    { label: "AI Coach", icon: "pi-sparkles", route: "/chat" },
+    { label: "Profile", icon: "pi-user", route: "/profile" },
   ];
 
-  // Secondary nav items (shown in "More" menu)
-  // Reorganized for better UX flow
-  private secondaryNavItems: NavItem[] = [
-    // Competition
-    { label: "Game Day", icon: "pi-flag-fill", route: "/game/readiness" },
-    { label: "Fuel Plan", icon: "pi-apple", route: "/game/nutrition" },
-    { label: "Games", icon: "pi-video", route: "/game-tracker" },
-    { label: "Tournaments", icon: "pi-trophy", route: "/tournaments" },
-    // Recovery
-    { label: "Travel", icon: "pi-globe", route: "/travel/recovery" },
-    // Team
-    { label: "Team", icon: "pi-users", route: "/roster" },
-    {
-      label: "Depth Chart",
-      icon: "pi-sitemap",
-      route: "/depth-chart",
-      roles: ["coach", "assistant_coach"],
-    },
-    // Resources
-    { label: "Videos", icon: "pi-youtube", route: "/training/videos" },
-    // Community
-    { label: "Community", icon: "pi-comments", route: "/community" },
-    { label: "Chat", icon: "pi-inbox", route: "/chat" },
-    // Account
+  private coachNavItems: NavItem[] = [
+    { label: "Dashboard", icon: "pi-home", route: "/coach/dashboard" },
+    { label: "Team", icon: "pi-users", route: "/team/workspace" },
+    { label: "Analytics", icon: "pi-chart-line", route: "/coach/analytics" },
     { label: "Profile", icon: "pi-user", route: "/profile" },
+  ];
+
+  private secondaryNavItems: NavItem[] = [
+    { label: "Wellness", icon: "pi-heart", route: "/wellness", roles: ["player"] },
+    { label: "ACWR", icon: "pi-chart-bar", route: "/acwr", roles: ["player"] },
+    { label: "Tests", icon: "pi-list-check", route: "/tests", roles: ["player", "coach"] },
+    { label: "Library", icon: "pi-book", route: "/knowledge-base", roles: ["player", "coach"] },
     { label: "Settings", icon: "pi-cog", route: "/settings" },
   ];
 
   visibleNavItems = computed(() => {
+    const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
-    return this.primaryNavItems.map((item) => ({
+    const items = userRole === "coach" ? this.coachNavItems : this.athleteNavItems;
+    
+    return items.map((item) => ({
       ...item,
       badge: item.route === "/chat" ? unreadCount : undefined,
     }));
@@ -176,6 +166,7 @@ export class BottomNavComponent implements OnInit, OnDestroy {
     const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
 
+    // All other routes move to the "More" menu for power users
     return this.secondaryNavItems
       .filter((item) => !item.roles || item.roles.includes(userRole))
       .map((item) => ({

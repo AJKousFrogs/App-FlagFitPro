@@ -7,8 +7,8 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -51,9 +51,7 @@ interface EventTypeOption {
 
 @Component({
   selector: 'app-tournament-calendar',
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
     DialogModule,
@@ -309,7 +307,7 @@ interface EventTypeOption {
           </label>
         </div>
 
-        @if (isCoach) {
+        @if (isCoach()) {
           <div class="form-field checkbox-group">
             <p-checkbox
               [(ngModel)]="formData.isNationalTeamEvent"
@@ -364,32 +362,34 @@ interface EventTypeOption {
   `,
   styleUrl: './tournament-calendar.component.scss',
 })
-export class TournamentCalendarComponent implements OnInit {
-  private api = inject(ApiService);
-  private logger = inject(LoggerService);
+export class TournamentCalendarComponent {
+  private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
-  @Input() isCoach = false;
-  @Output() tournamentChanged = new EventEmitter<void>();
+  // Angular 21 signal inputs/outputs
+  readonly isCoach = input(false);
+  readonly tournamentChanged = output<void>();
 
   // State
-  tournaments = signal<Tournament[]>([]);
-  isLoading = signal(true);
-  showDialog = signal(false);
-  isEditing = signal(false);
-  isSaving = signal(false);
-  editingId = signal<string | null>(null);
+  readonly tournaments = signal<Tournament[]>([]);
+  readonly isLoading = signal(true);
+  readonly showDialog = signal(false);
+  readonly isEditing = signal(false);
+  readonly isSaving = signal(false);
+  readonly editingId = signal<string | null>(null);
 
   // Form
   formData: Partial<Tournament> = this.getEmptyForm();
 
-  eventTypes: EventTypeOption[] = [
+  readonly eventTypes: EventTypeOption[] = [
     { label: 'Club Tournament', value: 'club' },
     { label: 'International', value: 'international' },
     { label: 'National Team', value: 'national_team' },
     { label: 'Friendly', value: 'friendly' },
   ];
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadTournaments();
   }
 
@@ -398,7 +398,7 @@ export class TournamentCalendarComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get('/api/tournament-calendar').toPromise();
+      const response: any = await firstValueFrom(this.api.get('/api/tournament-calendar'));
       if (response?.success && response.data) {
         this.tournaments.set(response.data);
       }
@@ -445,7 +445,7 @@ export class TournamentCalendarComponent implements OnInit {
         id: this.editingId(),
       };
 
-      await this.api.post('/api/tournament-calendar', payload).toPromise();
+      await firstValueFrom(this.api.post('/api/tournament-calendar', payload));
 
       await this.loadTournaments();
       this.tournamentChanged.emit();
@@ -461,9 +461,9 @@ export class TournamentCalendarComponent implements OnInit {
     if (!confirm(`Delete "${tournament.name}"?`)) return;
 
     try {
-      await this.api
-        .post('/api/tournament-calendar/delete', { id: tournament.id })
-        .toPromise();
+      await firstValueFrom(
+        this.api.post('/api/tournament-calendar/delete', { id: tournament.id })
+      );
       await this.loadTournaments();
       this.tournamentChanged.emit();
     } catch (err) {

@@ -32,6 +32,140 @@
 }
 
 /* ============================================
+   PRIORITY COMMAND CENTER
+   ============================================ */
+
+.priority-command-center {
+  margin-bottom: space(6);
+  display: flex;
+  flex-direction: column;
+  gap: space(4);
+}
+
+.merlin-coach-card {
+  background: var(--ds-primary-green-gradient, linear-gradient(135deg, #089949 0%, #036d35 100%));
+  color: white;
+  padding: space(5);
+  border-radius: var(--radius-xl);
+  display: flex;
+  gap: space(4);
+  box-shadow: var(--shadow-md);
+  
+  .merlin-avatar {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .merlin-content {
+    flex: 1;
+    h3 {
+      margin: 0 0 space(1) 0;
+      font-size: var(--text-md);
+      font-weight: 700;
+    }
+    p {
+      margin: 0 0 space(3) 0;
+      font-size: var(--text-sm);
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+  }
+}
+
+.priority-athletes-strip {
+  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  padding: space(4);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
+
+  .strip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: space(3);
+    
+    .strip-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: space(2);
+      
+      i { color: var(--color-status-error); }
+    }
+  }
+
+  .athlete-scroll {
+    display: flex;
+    gap: space(3);
+    overflow-x: auto;
+    padding-bottom: space(2);
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--surface-300);
+      border-radius: var(--radius-full);
+    }
+  }
+}
+
+.priority-athlete-card {
+  flex: 0 0 240px;
+  background: var(--surface-ground);
+  padding: space(3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: space(3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+
+  &:hover {
+    border-color: var(--ds-primary-green);
+    transform: translateY(-2px);
+  }
+
+  .pa-info {
+    flex: 1;
+    overflow: hidden;
+    
+    .pa-name {
+      display: block;
+      font-weight: 700;
+      font-size: var(--text-sm);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pa-reason {
+      display: block;
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  
+  i {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+  }
+}
+
+/* ============================================
    HEADER
    ============================================ */
 
@@ -39,16 +173,26 @@
   @include flex-between;
 
   margin-bottom: space(5);
-  padding: space(4);
+  padding: space(3) space(4); // Reduced from 4
   background: var(--surface-card);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  border-radius: var(--radius-xl); // Use XL radius for consistency
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
+
+  &.compact-header {
+    margin-bottom: space(4);
+  }
 
   // Tablet landscape - start stacking
   @include respond-to(lg) {
+    flex-direction: row; // Keep row on larger tablets
+    text-align: left;
+  }
+  
+  @include respond-to(md) {
     flex-direction: column;
-    gap: space(3);
     text-align: center;
+    gap: space(3);
   }
 }
 
@@ -131,6 +275,201 @@
 }
 
 /* ============================================
+   COMPACT STATS ROW
+   ============================================ */
+
+.stats-compact-row {
+  display: flex;
+  align-items: center;
+  background: var(--surface-card);
+  padding: space(3) space(5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-border);
+  margin-bottom: space(5);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+
+  .sc-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 100px;
+    
+    .sc-label {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .sc-value {
+      font-size: var(--text-lg);
+      font-weight: 800;
+      color: var(--text-primary);
+      
+      &.good { color: var(--color-status-success); }
+      &.moderate { color: var(--color-status-warning); }
+      &.poor { color: var(--color-status-error); }
+      &.warning { color: var(--color-status-error); }
+    }
+  }
+
+  .sc-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--surface-border);
+    margin: 0 space(4);
+  }
+  
+  @include respond-to(md) {
+    padding: space(3);
+    .sc-item { min-width: 80px; }
+    .sc-divider { margin: 0 space(2); }
+  }
+}
+
+/* ============================================
+   WORKSPACE LAYOUT
+   ============================================ */
+
+.dashboard-workspace {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: space(5);
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workspace-main {
+  min-width: 0;
+}
+
+.workspace-side {
+  display: flex;
+  flex-direction: column;
+  gap: space(4);
+}
+
+.workspace-tabs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: space(2) space(4);
+  background: var(--surface-100);
+  border-bottom: 1px solid var(--surface-border);
+
+  .tab-triggers {
+    display: flex;
+    gap: space(1);
+  }
+
+  .tab-trigger {
+    padding: space(2) space(4);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: space(2);
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--surface-200);
+    }
+
+    &.active {
+      color: var(--ds-primary-green);
+      border-bottom-color: var(--ds-primary-green);
+    }
+  }
+}
+
+.workspace-filters {
+  padding: space(3) space(4);
+  display: flex;
+  gap: space(2);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.clickable-row {
+  cursor: pointer;
+  &:hover {
+    background: var(--surface-ground) !important;
+  }
+}
+
+.readiness-compact {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+
+  .r-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    
+    &.readiness-high { background: var(--color-status-success); }
+    &.readiness-medium { background: var(--color-status-warning); }
+    &.readiness-low { background: var(--color-status-error); }
+  }
+}
+
+.schedule-mini {
+  display: flex;
+  flex-direction: column;
+  gap: space(2);
+  padding: space(3);
+}
+
+.mini-event {
+  display: flex;
+  gap: space(3);
+  padding: space(2);
+  border-radius: var(--radius-md);
+  background: var(--surface-ground);
+  border-left: 3px solid var(--surface-border);
+
+  &.game { border-left-color: var(--color-status-warning); }
+  &.practice { border-left-color: var(--ds-primary-green); }
+
+  .ev-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 32px;
+    
+    .d { font-weight: 800; font-size: var(--text-base); color: var(--text-primary); line-height: 1; }
+    .m { font-size: var(--text-xs); color: var(--text-secondary); text-transform: uppercase; }
+  }
+
+  .ev-info {
+    display: flex;
+    flex-direction: column;
+    .t { font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); }
+    .s { font-size: var(--text-xs); color: var(--text-secondary); }
+  }
+}
+
+.quick-command-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: space(2);
+}
+
+/* ============================================
    STATS GRID - IMPROVED RESPONSIVE
    ============================================ */
 
@@ -169,55 +508,11 @@
   }
 }
 
-.stat-card {
-  background: var(--surface-card);
-  border-radius: var(--border-radius);
-  padding: space(4);
+.stat-content {
   display: flex;
   align-items: center;
-  gap: space(3);
-  box-shadow: var(--card-shadow);
-  border: 1px solid var(--surface-border);
-  transition:
-    transform get-transition(fast),
-    box-shadow get-transition(fast);
-
-  // Hover only on devices with hover support (Decision 14: shadow-only hover)
-  @include hover-support {
-    &:hover {
-      box-shadow: var(--shadow-2);
-    }
-  }
-
-  &.primary {
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--primary-700)
-    );
-    color: white;
-    border: none;
-
-    .stat-label,
-    .stat-detail {
-      color: var(--color-text-on-primary);
-      opacity: 0.85;
-    }
-  }
-
-  &.alert {
-    border-color: var(--red-300);
-    background: var(--red-50);
-  }
-
-  // Mobile - reduce padding
-  @include respond-to(md) {
-    padding: space(3);
-  }
-
-  @include respond-to(xs) {
-    padding: space(2);
-  }
+  gap: var(--space-3);
+  padding: var(--space-1);
 }
 
 .stat-icon {
@@ -254,8 +549,13 @@
   margin-top: var(--space-1);
 
   &.warning {
-    color: var(--red-500);
+    color: var(--color-status-error);
   }
+}
+
+.alert-card {
+  border-color: var(--color-status-error) !important;
+  background: var(--color-status-error-light) !important;
 }
 
 /* ============================================
@@ -355,31 +655,17 @@
    CHART CARD
    ============================================ */
 
-.chart-card {
-  min-height: 350px;
-
-  // Tablet - reduce height
-  @include respond-to(lg) {
-    min-height: 300px;
-  }
-
-  // Mobile - auto height
-  @include respond-to(md) {
-    min-height: auto;
-  }
-}
-
 .chart-insights {
   @include flex-between;
 
-  padding: space(3) 0;
-  border-top: 1px solid var(--surface-border);
-  margin-top: space(3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  margin-top: var(--space-3);
 
   // Mobile - wrap
   @include respond-to(md) {
     flex-wrap: wrap;
-    gap: space(3);
+    gap: var(--space-3);
   }
 }
 
@@ -398,10 +684,10 @@
 
   @include text-style(xl, bold);
 
-  color: var(--primary-color);
+  color: var(--ds-primary-green);
 
   &.trend-up {
-    color: var(--green-500);
+    color: var(--color-status-success);
   }
 }
 
@@ -415,36 +701,29 @@
    ALERTS CARD
    ============================================ */
 
-.alerts-card {
-  &.has-alerts {
-    border-left: 4px solid var(--red-500);
-  }
-}
-
 .alerts-list {
   @include flex-column;
 
-  gap: space(3);
-  padding: space(3);
+  gap: var(--space-3);
 }
 
 .alert-item {
-  padding: space(3);
-  background: var(--yellow-50);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--yellow-200);
+  padding: var(--space-3);
+  background: var(--color-status-warning-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-status-warning-subtle);
 
   &.critical {
-    background: var(--red-50);
-    border-color: var(--red-200);
+    background: var(--color-status-error-light);
+    border-color: var(--color-status-error-subtle);
   }
 }
 
 .alert-header {
   @include flex-start;
 
-  gap: space(2);
-  margin-bottom: space(2);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
 .alert-player {
@@ -463,7 +742,7 @@
 }
 
 .alert-message {
-  margin: space(2) 0;
+  margin: var(--space-2) 0;
 
   @include text-style(sm, normal);
 
@@ -471,51 +750,50 @@
 }
 
 .alert-recommendation {
-  margin: space(2) 0;
+  margin: var(--space-2) 0;
 
   @include text-style(xs, normal);
 
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  gap: space(1);
+  gap: var(--space-1);
 
   i {
-    color: var(--yellow-600);
+    color: var(--color-status-warning);
   }
 }
 
 .alert-metrics {
   display: flex;
-  gap: space(3);
-  margin: space(2) 0;
+  gap: var(--space-3);
+  margin: var(--space-2) 0;
 
   // Mobile - wrap
   @include respond-to(md) {
     flex-wrap: wrap;
   }
 
-  // Decision 2/3: Use spacing and radius tokens
   .metric {
     @include text-style(xs, normal);
 
     padding: var(--space-1) var(--space-2);
-    background: var(--surface-100);
+    background: var(--surface-tertiary);
     border-radius: var(--radius-sm);
 
     &.danger {
-      background: var(--red-100);
-      color: var(--red-700);
+      background: var(--color-status-error-light);
+      color: var(--color-status-error);
     }
   }
 }
 
 .alert-actions {
   display: flex;
-  gap: space(2);
-  margin-top: space(2);
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 
-  // Mobile - full width buttons (::ng-deep moved to @layer overrides)
+  // Mobile - full width buttons
   @include respond-to(md) {
     flex-direction: column;
   }
@@ -523,12 +801,12 @@
 
 .no-alerts {
   text-align: center;
-  padding: space(6);
-  color: var(--green-600);
+  padding: var(--space-6);
+  color: var(--color-status-success);
 
   i {
     font-size: var(--text-3xl);
-    margin-bottom: space(2);
+    margin-bottom: var(--space-2);
   }
 
   p {
@@ -538,638 +816,51 @@
 }
 
 /* ============================================
-   ROSTER CARD
+   ROSTER TABLE CUSTOMIZATIONS
    ============================================ */
 
-.roster-filters {
-  display: flex;
-  gap: space(1);
+:host ::ng-deep {
+  .p-datatable-thead > tr > th {
+    background: var(--surface-card);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--surface-border);
+  }
+}
 
-  // Mobile - wrap
-  @include respond-to(md) {
-    flex-wrap: wrap;
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  
+  &:hover {
+    background: var(--surface-ground) !important;
   }
 }
 
 .player-cell {
-  @include flex-start;
-
-  gap: space(2);
-}
-
-.avatar-wrapper {
-  position: relative;
-}
-
-// Small badge overlay - pixel values intentional for precise positioning
-.blocked-badge {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 16px;
-  height: 16px;
-  background: var(--surface-400);
-  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
-  justify-content: center;
-  border: var(--border-2) solid white;
-
-  i {
-    font-size: var(--font-body-xs);
-    color: white;
-  }
+  gap: space(3);
 }
 
 .player-info {
-  @include flex-column;
-
+  display: flex;
+  flex-direction: column;
+  
   .player-name {
-    font-weight: var(--font-weight-medium);
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
   }
-
-  .jersey-number,
-  .blocked-label {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-  }
-
-  .blocked-label {
-    font-style: italic;
-  }
-}
-
-.performance-cell {
-  @include flex-start;
-
-  gap: space(1);
-}
-
-.perf-score {
-  font-weight: var(--font-weight-semibold);
-
-  &.excellent {
-    color: var(--green-600);
-  }
-  &.good {
-    color: var(--primary-color);
-  }
-  &.average {
-    color: var(--yellow-600);
-  }
-  &.poor {
-    color: var(--red-600);
-  }
-}
-
-.trend-up {
-  color: var(--green-500);
-}
-.trend-down {
-  color: var(--red-500);
-}
-.trend-stable {
-  color: var(--color-text-secondary);
-}
-
-.readiness-cell {
-  @include flex-start;
-
-  gap: space(2);
-}
-
-.readiness-value {
-  @include text-style(sm, medium);
-
-  min-width: 24px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0;
-}
-
-/* Row styling moved to @layer overrides */
-.consent-blocked-row {
-  opacity: 0.85;
-}
-
-.blocked-data {
-  color: var(--color-text-secondary);
-  font-style: italic;
-}
-
-/* ============================================
-   PARTIAL DATA NOTICE
-   ============================================ */
-
-.partial-data-notice {
-  @include flex-start;
-
-  gap: space(4);
-  padding: space(4);
-  background: var(--blue-50);
-  border: 1px solid var(--blue-200);
-  border-radius: var(--border-radius);
-  margin-bottom: space(5);
-
-  // Mobile - smaller padding
-  @include respond-to(md) {
-    padding: space(3);
-    gap: space(3);
-  }
-}
-
-// Decision 2/3: Use spacing and radius tokens
-.notice-icon {
-  width: var(--space-10);
-  height: var(--space-10);
-  background: var(--blue-100);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  i {
-    font-size: var(--font-body-lg);
-    color: var(--blue-600);
-  }
-}
-
-.notice-content {
-  flex: 1;
-
-  h4 {
-    margin: 0 0 space(1);
-
-    @include text-style(base, semibold);
-
-    color: var(--color-text-primary);
-  }
-
-  p {
-    margin: 0 0 space(2);
-
-    @include text-style(sm, normal);
-
-    color: var(--color-text-secondary);
-  }
-}
-
-.notice-link {
-  display: inline-flex;
-  align-items: center;
-  gap: space(1);
-
-  @include text-style(sm, medium);
-
-  color: var(--blue-600);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  i {
-    font-size: var(--font-body-xs);
-  }
-}
-
-.empty-message {
-  text-align: center;
-  padding: space(6);
-  color: var(--color-text-secondary);
-}
-
-/* ============================================
-   ACWR CLASSES
-   ============================================ */
-
-.acwr-safe {
-  color: var(--green-600);
-  font-weight: var(--font-weight-semibold);
-}
-.acwr-moderate {
-  color: var(--yellow-600);
-  font-weight: var(--font-weight-semibold);
-}
-.acwr-high {
-  color: var(--orange-600);
-  font-weight: var(--font-weight-semibold);
-}
-.acwr-danger {
-  color: var(--red-600);
-  font-weight: var(--font-weight-bold);
-}
-
-/* ============================================
-   READINESS PROGRESS BAR
-   ============================================ */
-
-/* ProgressBar styling moved to @layer overrides */
-
-/* ============================================
-   GAMES CARD
-   ============================================ */
-
-.games-list {
-  @include flex-column;
-
-  gap: space(2);
-  padding: space(3);
-}
-
-.game-item {
-  @include flex-start;
-
-  gap: space(3);
-  padding: space(3);
-  background: var(--surface-50);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--surface-border);
-
-  // Decision 19: No transition: all - specify properties
-  transition: background-color var(--motion-fast) var(--ease-standard);
-
-  @include hover-support {
-    &:hover {
-      background: var(--surface-100);
-    }
-  }
-
-  &.imminent {
-    border-color: var(--red-300);
-    background: var(--red-50);
-  }
-}
-
-.game-date {
-  text-align: center;
-  min-width: 45px;
-
-  .date-day {
-    display: block;
-
-    @include text-style(xl, bold);
-
-    color: var(--primary-color);
-    line-height: 1;
-  }
-
-  .date-month {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-  }
-}
-
-.game-info {
-  flex: 1;
-
-  @include flex-column;
-
-  .opponent {
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .location,
-  .game-type {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-  }
-}
-
-.no-games {
-  text-align: center;
-  padding: space(4);
-  color: var(--color-text-secondary);
-}
-
-/* ============================================
-   RESULTS CARD
-   ============================================ */
-
-.results-list {
-  @include flex-column;
-
-  gap: space(2);
-  padding: space(3);
-}
-
-.result-item {
-  @include flex-start;
-
-  gap: space(2);
-  padding: space(2);
-  border-radius: var(--border-radius);
-}
-
-.result-badge {
-  @include flex-center;
-
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  font-weight: var(--font-weight-bold);
-
-  @include text-style(sm, bold);
-
-  &.win {
-    background: var(--green-500);
-    color: white;
-  }
-
-  &.loss {
-    background: var(--red-500);
-    color: white;
-  }
-
-  &.tie {
-    background: var(--gray-400);
-    color: white;
-  }
-}
-
-.result-info {
-  flex: 1;
-
-  @include flex-column;
-
-  .opponent {
-    @include text-style(sm, medium);
-  }
-
-  .score {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-  }
-}
-
-.result-date {
-  @include text-style(xs, normal);
-
-  color: var(--color-text-secondary);
-}
-
-.no-results {
-  text-align: center;
-  padding: space(4);
-  color: var(--color-text-secondary);
-}
-
-/* ============================================
-   SCHEDULE CARD
-   ============================================ */
-
-.schedule-list {
-  @include flex-column;
-
-  gap: space(2);
-  padding: space(3);
-}
-
-.session-item {
-  @include flex-start;
-
-  gap: space(2);
-  padding: space(2);
-  background: var(--surface-50);
-  border-radius: var(--border-radius);
-  border-left: 3px solid var(--primary-color);
-
-  &.game_prep {
-    border-left-color: var(--orange-500);
-  }
-
-  &.conditioning {
-    border-left-color: var(--purple-500);
-  }
-
-  &.film_study {
-    border-left-color: var(--blue-500);
-  }
-}
-
-.session-time {
-  text-align: center;
-  min-width: 50px;
-
-  .time {
-    display: block;
-
-    @include text-style(sm, semibold);
-  }
-
-  .day {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-  }
-}
-
-.session-info {
-  flex: 1;
-
-  .session-title {
-    display: block;
-
-    @include text-style(sm, medium);
-  }
-
-  .session-meta {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
+  
+  .jersey-number {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
   }
 }
 
 /* ============================================
-   QUICK ACTIONS
+   DEPRECATED STYLES (CLEANED UP)
    ============================================ */
-
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: space(2);
-  padding: space(3);
-
-  // Mobile - single column
-  @include respond-to(sm) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.action-btn {
-  @include flex-column;
-
-  align-items: center;
-  gap: space(1);
-  padding: space(3);
-  background: var(--surface-50);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-
-  // Decision 19: No transition: all - specify properties
-  transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
-  font-family: inherit;
-
-  // Decision 14: Shadow-only hover, no transform
-  @include hover-support {
-    &:hover {
-      background: var(--primary-50);
-      border-color: var(--primary-200);
-      box-shadow: var(--shadow-1);
-    }
-  }
-
-  // Touch targets
-  @include touch-device {
-    @include tap-target(44px);
-  }
-
-  i {
-    font-size: var(--font-heading-sm);
-    color: var(--primary-color);
-  }
-
-  span {
-    @include text-style(xs, medium);
-
-    color: var(--color-text-primary);
-  }
-}
-
-/* ============================================
-   FORM STYLES
-   ============================================ */
-
-.session-form,
-.message-form {
-  @include flex-column;
-
-  gap: space(4);
-  padding: space(2);
-}
-
-.form-field {
-  @include flex-column;
-
-  gap: space(1);
-
-  label {
-    @include text-style(sm, medium);
-
-    color: var(--color-text-primary);
-  }
-}
-
-.loading-placeholder {
-  @include flex-center;
-
-  height: 200px;
-  color: var(--color-text-secondary);
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-.dashboard-content {
-  @include fade-in;
-  @include respect-motion-preference;
-}
-
-/* ============================================
-   PRINT STYLES (non-important rules)
-   ============================================ */
-
-@media print {
-  .dashboard-content {
-    padding: 0;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-card {
-    box-shadow: none;
-    border: 1px solid var(--color-border-primary);
-  }
-}
-} // End @layer features
-
-// ============================================================================
-// @layer overrides - PrimeNG Component Overrides & Important Declarations
-// All ::ng-deep and !important declarations must be documented here
-// ============================================================================
-
-@layer overrides {
-  /*
-   * EXCEPTION: PrimeNG Table Row Background Overrides
-   * Reason: PrimeNG p-table has high CSS specificity for row backgrounds
-   * Scope: coach-dashboard only
-   * Status: Permanent - required for table row state styling
-   */
-  .at-risk-row {
-    background: var(--yellow-50) !important;
-  }
-
-  .injured-row {
-    background: var(--red-50) !important;
-  }
-
-  .consent-blocked-row {
-    background: var(--surface-100) !important;
-  }
-
-  /*
-   * EXCEPTION: PrimeNG ProgressBar Value Styling
-   * Reason: PrimeNG progressbar inner value cannot be styled without ::ng-deep
-   * Scope: coach-dashboard only
-   * Status: Permanent - PrimeNG limitation
-   */
-  :host ::ng-deep .readiness-high .p-progressbar-value {
-    background: var(--green-500);
-  }
-
-  :host ::ng-deep .readiness-medium .p-progressbar-value {
-    background: var(--yellow-500);
-  }
-
-  :host ::ng-deep .readiness-low .p-progressbar-value {
-    background: var(--red-500);
-  }
-
-  /*
-   * EXCEPTION: PrimeNG Button Width Override (Mobile)
-   * Reason: PrimeNG button wrapper needs ::ng-deep for responsive width
-   * Scope: coach-dashboard alert actions on mobile
-   */
-  @media (max-width: 768px) {
-    .alert-actions :host ::ng-deep p-button {
-      width: 100%;
-    }
-  }
-
-  // Print styles with required !important
-  @media print {
-    .header-actions,
-    .quick-actions {
-      display: none !important;
-    }
-  }
-}

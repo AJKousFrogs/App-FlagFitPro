@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, computed, inject, DestroyRef, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, signal, computed, inject, DestroyRef, input } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -43,8 +43,7 @@ interface Milestone {
 
 @Component({
   selector: "app-la28-roadmap",
-  standalone: true,
-  imports: [CommonModule, ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TimelineModule, CardModule],
+  imports: [ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TimelineModule, CardModule],
   template: `
     <div class="roadmap-panel">
       <!-- Summary Card -->
@@ -213,59 +212,59 @@ interface Milestone {
   `,
   styleUrl: './la28-roadmap.component.scss',
 })
-export class La28RoadmapComponent implements OnInit {
-  private api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+export class La28RoadmapComponent {
+  private readonly api = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // LA 2028 Olympics date (July 14, 2028 - Opening Ceremony)
-  private olympicsDate = new Date("2028-07-14");
-  ringCircumference = 2 * Math.PI * 45; // circumference = 2πr
+  private readonly olympicsDate = new Date("2028-07-14");
+  readonly ringCircumference = 2 * Math.PI * 45; // circumference = 2πr
 
-  playerCycles = signal<PlayerCycle[]>([]);
+  readonly playerCycles = signal<PlayerCycle[]>([]);
   showFullDialog = false;
 
   // Computed values
-  daysUntilOlympics = computed(() => {
+  readonly daysUntilOlympics = computed(() => {
     const now = new Date();
     const diff = this.olympicsDate.getTime() - now.getTime();
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   });
 
-  countdownYears = computed(() => {
+  readonly countdownYears = computed(() => {
     const days = this.daysUntilOlympics();
     return Math.floor(days / 365);
   });
 
-  countdownMonths = computed(() => {
+  readonly countdownMonths = computed(() => {
     const days = this.daysUntilOlympics();
     const remainingDays = days % 365;
     return Math.floor(remainingDays / 30);
   });
 
-  countdownDays = computed(() => {
+  readonly countdownDays = computed(() => {
     const days = this.daysUntilOlympics();
     return days % 30;
   });
 
-  totalCycles = computed(() => this.playerCycles().length);
+  readonly totalCycles = computed(() => this.playerCycles().length);
   
-  completedCycles = computed(() => this.playerCycles().filter((c) => c.status === "completed").length);
+  readonly completedCycles = computed(() => this.playerCycles().filter((c) => c.status === "completed").length);
 
-  overallProgress = computed(() => {
+  readonly overallProgress = computed(() => {
     const cycles = this.playerCycles();
     if (cycles.length === 0) return 0;
     const total = cycles.reduce((sum, c) => sum + c.completion_percentage, 0);
     return Math.round(total / cycles.length);
   });
 
-  ringOffset = computed(() => {
+  readonly ringOffset = computed(() => {
     const progress = this.overallProgress();
     return this.ringCircumference * (1 - progress / 100);
   });
 
-  currentCycle = computed(() => this.playerCycles().find((c) => c.status === "in_progress"));
+  readonly currentCycle = computed(() => this.playerCycles().find((c) => c.status === "in_progress"));
 
-  milestones = computed<Milestone[]>(() => {
+  readonly milestones = computed<Milestone[]>(() => {
     const now = new Date();
     const milestones: Milestone[] = [];
 
@@ -295,21 +294,22 @@ export class La28RoadmapComponent implements OnInit {
     return milestones.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   });
 
-  upcomingMilestones = computed(() => {
+  readonly upcomingMilestones = computed(() => {
     const now = new Date();
     return this.milestones()
       .filter((m) => new Date(m.date) >= now || m.status === "current")
       .slice(0, 5);
   });
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.loadCycles();
   }
 
   async loadCycles(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await this.api.get("/api/program-cycles").toPromise();
+      const response: any = await firstValueFrom(this.api.get("/api/program-cycles"));
       if (response?.success && response.data) {
         this.playerCycles.set(response.data);
       } else if (Array.isArray(response)) {

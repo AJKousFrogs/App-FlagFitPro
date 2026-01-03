@@ -11,31 +11,27 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  computed,
-  signal,
-  OnInit,
-  inject,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { AcwrService } from "../../core/services/acwr.service";
-import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
+import { AuthService } from "../../core/services/auth.service";
+import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
-import {
-  ACWRData,
-  RiskZone,
-  TrainingSession,
-} from "../../core/models/acwr.models";
-import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
+
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -45,19 +41,18 @@ import { PageLoadingStateComponent } from "../../shared/components/page-loading-
     CommonModule,
     RouterModule,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    AppLoadingComponent,
   ],
   template: `
     <!-- Loading State -->
-    @if (isPageLoading()) {
-      <app-page-loading-state
-        message="Loading ACWR data..."
-        variant="skeleton"
-      ></app-page-loading-state>
-    }
+    <app-loading
+      [visible]="isPageLoading()"
+      variant="skeleton"
+      message="Loading ACWR data..."
+    ></app-loading>
 
     <!-- Error State -->
-    @else if (hasPageError()) {
+    @if (hasPageError()) {
       <app-page-error-state
         title="Unable to load ACWR dashboard"
         [message]="pageErrorMessage()"
@@ -350,7 +345,7 @@ import { PageLoadingStateComponent } from "../../shared/components/page-loading-
 })
 export class AcwrDashboardComponent implements OnInit {
   // Inject services using Angular's inject() function
-  private readonly acwrService = inject(AcwrService);
+  private readonly trainingService = inject(UnifiedTrainingService);
   private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
   private logger = inject(LoggerService);
@@ -363,11 +358,11 @@ export class AcwrDashboardComponent implements OnInit {
   );
 
   // Reactive signals from services
-  public readonly acwrRatio = this.acwrService.acwrRatio;
-  public readonly riskZone = this.acwrService.riskZone;
-  public readonly acuteLoad = this.acwrService.acuteLoad;
-  public readonly chronicLoad = this.acwrService.chronicLoad;
-  public readonly weeklyProgression = this.acwrService.weeklyProgression;
+  public readonly acwrRatio = this.trainingService.acwrRatio;
+  public readonly riskZone = this.trainingService.acwrRiskZone;
+  public readonly acuteLoad = this.trainingService.acuteLoad;
+  public readonly chronicLoad = this.trainingService.chronicLoad;
+  public readonly weeklyProgression = this.trainingService.weeklyProgression;
 
   public readonly alerts = computed(() => this.alertsService.getActiveAlerts());
   public readonly topAlert = computed(() => {
@@ -376,16 +371,16 @@ export class AcwrDashboardComponent implements OnInit {
   });
 
   public readonly trainingMods = computed(() =>
-    this.acwrService.getTrainingModification(),
+    this.trainingService.getTrainingModification(),
   );
 
   public readonly lastUpdated = computed(
-    () => this.acwrService.acwrData().lastUpdated,
+    () => this.trainingService.acwrData().lastUpdated,
   );
 
   // Data quality signal from service
   public readonly dataQuality = computed(
-    () => this.acwrService.acwrData().dataQuality,
+    () => this.trainingService.acwrData().dataQuality,
   );
   public readonly hasInsufficientData = computed(() => {
     const quality = this.dataQuality();

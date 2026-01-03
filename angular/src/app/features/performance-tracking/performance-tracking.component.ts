@@ -1,30 +1,29 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { InputNumberModule } from "primeng/inputnumber";
-import { RouterModule } from "@angular/router";
+import { ApiService } from "../../core/services/api.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { ToastService } from "../../core/services/toast.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface PerformanceMetric {
@@ -34,9 +33,9 @@ interface PerformanceMetric {
   trendType: "up" | "down" | "neutral";
 }
 
+
 @Component({
   selector: "app-performance-tracking",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -52,21 +51,20 @@ interface PerformanceMetric {
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
-    PageLoadingStateComponent,
+    AppLoadingComponent,
     RouterModule,
   ],
   template: `
     <app-main-layout>
       <!-- Loading State -->
-      @if (isPageLoading()) {
-        <app-page-loading-state
-          message="Loading performance data..."
-          variant="skeleton"
-        ></app-page-loading-state>
-      }
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading performance data..."
+      ></app-loading>
 
       <!-- Error State -->
-      @else if (hasPageError()) {
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load performance data"
           [message]="pageErrorMessage()"
@@ -275,30 +273,30 @@ interface PerformanceMetric {
   `,
   styleUrl: './performance-tracking.component.scss',
 })
-export class PerformanceTrackingComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+export class PerformanceTrackingComponent {
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly supabaseService = inject(SupabaseService);
 
   // Runtime guard signals - prevent white screen crashes
-  isPageLoading = signal<boolean>(true);
-  hasPageError = signal<boolean>(false);
-  pageErrorMessage = signal<string>(
+  readonly isPageLoading = signal<boolean>(true);
+  readonly hasPageError = signal<boolean>(false);
+  readonly pageErrorMessage = signal<string>(
     "Something went wrong while loading performance data. Please try again.",
   );
 
   // Centralized UX copy for data states
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
-  metrics = signal<PerformanceMetric[]>([]);
-  performanceStats = signal<any[]>([]);
-  performanceChartData = signal<any>(null);
-  speedChartData = signal<any>(null);
-  performanceHistory = signal<any[]>([]);
+  readonly metrics = signal<PerformanceMetric[]>([]);
+  readonly performanceStats = signal<any[]>([]);
+  readonly performanceChartData = signal<any>(null);
+  readonly speedChartData = signal<any>(null);
+  readonly performanceHistory = signal<any[]>([]);
 
   // Dialog state
   showLogDialog = false;
-  isSaving = signal(false);
+  readonly isSaving = signal(false);
   newPerformance = {
     dash40: null as number | null,
     vertical: null as number | null,
@@ -307,9 +305,10 @@ export class PerformanceTrackingComponent implements OnInit {
     notes: "",
   };
 
-  chartOptions = DEFAULT_CHART_OPTIONS;
+  readonly chartOptions = DEFAULT_CHART_OPTIONS;
 
-  ngOnInit(): void {
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.initializePage();
   }
 

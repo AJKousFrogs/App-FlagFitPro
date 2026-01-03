@@ -13,33 +13,32 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  input,
-  output,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    input,
+    output,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { Slider } from "primeng/slider";
-import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
-import { TagModule } from "primeng/tag";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressBarModule } from "primeng/progressbar";
+import { TagModule } from "primeng/tag";
 // Services
-import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { TrainingDataService } from "../../../core/services/training-data.service";
 import { RecoveryService } from "../../../core/services/recovery.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 
 interface SorenessArea {
   id: string;
@@ -66,7 +65,6 @@ interface RecoveryRecommendation {
     RouterModule,
     DialogModule,
     ButtonModule,
-    Slider,
     InputNumberModule,
     CheckboxModule,
     TagModule,
@@ -282,8 +280,8 @@ export class PostTrainingRecoveryComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
-  private trainingDataService = inject(TrainingDataService);
   private recoveryService = inject(RecoveryService);
+  private unifiedTrainingService = inject(UnifiedTrainingService);
 
   // Inputs
   sessionName = input<string>("");
@@ -473,14 +471,15 @@ export class PostTrainingRecoveryComponent implements OnInit {
         timestamp: new Date().toISOString(),
       };
 
-      // Save to training data service
-      await this.trainingDataService.logSession({
+      // Save to training data service via unified service
+      await this.unifiedTrainingService.logTrainingSession({
         rpe: sessionData.rpe,
         duration_minutes: sessionData.duration,
         load: sessionData.load,
+        session_date: new Date().toISOString().split('T')[0],
         notes:
           sessionData.soreness.length > 0
-            ? `Soreness: ${sessionData.soreness.map((s) => s.label).join(", ")}`
+            ? `Soreness: ${sessionData.soreness.map((s: any) => s.label).join(", ")}`
             : undefined,
       });
 

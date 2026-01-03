@@ -4,49 +4,21 @@
 // ============================================================================
 
 @layer features {
-  .trend-card {
-    height: 100%;
-  }
-
-  .trend-header {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
-
   .trend-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-xl);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
     background: var(--color-brand-primary-subtle);
     color: var(--color-brand-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
     flex-shrink: 0;
   }
 
-  .trend-content {
-    flex: 1;
-  }
-
-  .trend-title {
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    margin: 0 0 var(--space-1) 0;
-  }
-
-  .trend-subtitle {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-
   .trend-body {
-    margin-top: var(--space-4);
+    padding: var(--space-1) 0;
   }
 
   .trend-value {

@@ -1,37 +1,37 @@
+import { CommonModule, DatePipe } from "@angular/common";
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
-import { CommonModule, DatePipe, CurrencyPipe } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CardModule } from "primeng/card";
+import { FormsModule } from "@angular/forms";
+import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { InputNumberModule } from "primeng/inputnumber";
-import { Select } from "primeng/select";
-import { DatePicker } from "primeng/datepicker";
 import { TooltipModule } from "primeng/tooltip";
-import { BadgeModule } from "primeng/badge";
+import { AuthService } from "../../core/services/auth.service";
+import {
+    EquipmentAssignment,
+    EquipmentItem,
+    EquipmentService,
+    EquipmentSummary,
+} from "../../core/services/equipment.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { TeamStatisticsService } from "../../core/services/team-statistics.service";
+import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import {
-  EquipmentService,
-  EquipmentItem,
-  EquipmentAssignment,
-  EquipmentSummary,
-} from "../../core/services/equipment.service";
-import { AuthService } from "../../core/services/auth.service";
-import { ToastService } from "../../core/services/toast.service";
-import { LoggerService } from "../../core/services/logger.service";
 
 type ItemType =
   | "jersey"
@@ -525,6 +525,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 })
 export class EquipmentComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
+  private teamStatsService = inject(TeamStatisticsService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
@@ -578,7 +579,21 @@ export class EquipmentComponent implements OnInit {
     this.loadEquipment();
     this.loadAssignments();
     this.loadSummary();
-    // TODO: Load team players for checkout dropdown
+    this.loadTeamPlayers();
+  }
+
+  loadTeamPlayers(): void {
+    const teamId = this.authService.getUser()?.user_metadata?.team_id || "default";
+    this.teamStatsService.getTeamPlayersStats(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.teamPlayers.set(
+            data.members.map(m => ({ id: m.playerId, name: m.playerName }))
+          );
+        },
+        error: (err) => this.logger.error("Failed to load team players", err)
+      });
   }
 
   isCoach(): boolean {

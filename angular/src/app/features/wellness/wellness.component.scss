@@ -41,10 +41,6 @@
     margin-bottom: var(--space-6);
   }
 
-  .chart-card {
-    min-height: 300px;
-  }
-
   .chart-loading {
     display: flex;
     align-items: center;
@@ -65,13 +61,14 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    padding: var(--space-6);
   }
 
   .checkin-section {
     padding: var(--space-4);
     background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-    border-left: 4px solid var(--color-brand-primary);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--ds-primary-green);
   }
 
   .section-label {
@@ -80,7 +77,7 @@
     gap: var(--space-2);
     font-size: var(--font-body-lg);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-brand-primary);
+    color: var(--ds-primary-green);
     margin: 0 0 var(--space-4) 0;
   }
 

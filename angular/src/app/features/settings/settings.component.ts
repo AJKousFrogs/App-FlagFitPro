@@ -30,6 +30,10 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import {
+    ButtonComponent,
+    CardComponent,
+} from "../../shared/components/ui-components";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 @Component({
@@ -44,6 +48,8 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     InputTextModule,
     Select,
     ToastModule,
+    ButtonComponent,
+    CardComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     PasswordModule,
