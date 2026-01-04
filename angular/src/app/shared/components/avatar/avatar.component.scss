@@ -16,9 +16,9 @@
     background: linear-gradient(
       135deg,
       var(--ds-primary-green) 0%,
-      var(--ds-primary-green-dark, #067a3b) 100%
+      var(--ds-primary-green-dark) 100%
     );
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     font-weight: var(--font-weight-bold);
     position: relative;
     overflow: hidden;

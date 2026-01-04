@@ -151,14 +151,14 @@ All components follow these principles:
 2. **Responsive**: Mobile-first design with breakpoints at 768px
 3. **Performance**: OnPush change detection strategy for optimal performance
 4. **Type Safety**: Full TypeScript support with interfaces and types
-5. **PrimeNG Integration**: Built on PrimeNG 19 components for consistency
+5. **PrimeNG Integration**: Built on PrimeNG 21 components for consistency
 
 ## Dependencies
 
 All components require:
 
-- Angular 19+
-- PrimeNG 19+
+- Angular 21+
+- PrimeNG 21+
 - PrimeIcons
 - Chart.js (for chart components)
 

@@ -25,7 +25,7 @@ import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -45,10 +45,11 @@ import { WellnessService } from "../../../core/services/wellness.service";
     FormsModule,
     RouterModule,
     DialogModule,
-    ButtonModule,
     InputNumberModule,
     CheckboxModule,
     Textarea,
+  
+    ButtonComponent,
   ],
   template: `
     <p-dialog
@@ -151,14 +152,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
 
         <!-- Actions -->
         <div class="checkin-actions">
-          <p-button
-            label="Submit Check-in"
-            icon="pi pi-check"
-            [loading]="isSubmitting()"
-            [disabled]="!canSubmit()"
-            (onClick)="submit()"
-            styleClass="submit-btn"
-          ></p-button>
+          <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="!canSubmit()" (clicked)="submit()">Submit Check-in</app-button>
 
           <a
             routerLink="/wellness"

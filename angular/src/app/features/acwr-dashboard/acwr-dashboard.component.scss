@@ -209,6 +209,22 @@
     height: 12px;
     border-radius: var(--radius-full);
     display: inline-block;
+
+    &--under {
+      background: var(--color-status-warning);
+    }
+
+    &--sweet {
+      background: var(--color-status-success);
+    }
+
+    &--elevated {
+      background: var(--color-status-warning-text);
+    }
+
+    &--danger {
+      background: var(--color-status-error);
+    }
   }
 
   .zone-range {

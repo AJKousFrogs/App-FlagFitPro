@@ -753,10 +753,11 @@ Configured in `angular.json`:
 
 ## 📚 Related Documentation
 
-- [angular/README.md](angular/README.md) - Angular app documentation
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture
-- [docs/UTILITIES.md](docs/UTILITIES.md) - Services API reference
+- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Complete feature & business logic guide
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
+- [API.md](./API.md) - API reference
+- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) - UI rules and design tokens
 
 ---
 
-**Last Updated:** 29. December 2025
+**Last Updated:** January 2026

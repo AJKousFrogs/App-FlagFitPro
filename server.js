@@ -2106,6 +2106,95 @@ app.post("/api/community/posts", async (req, res) => {
   }
 });
 
+// Wellness Check-in endpoint (matches Netlify function: /api/wellness-checkin)
+app.get("/api/wellness-checkin", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    const userId = req.query.userId || req.headers["x-user-id"];
+    const date = req.query.date || new Date().toISOString().split("T")[0];
+    
+    // Try to get user from auth header if not provided
+    let targetUserId = userId;
+    if (!targetUserId) {
+      const authHeader = req.headers.authorization;
+      if (authHeader?.startsWith("Bearer ")) {
+        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+        targetUserId = user?.id;
+      }
+    }
+
+    if (!targetUserId) {
+      return res.json({ success: true, data: null });
+    }
+
+    const { data, error } = await supabase
+      .from("daily_wellness_checkin")
+      .select("*")
+      .eq("user_id", targetUserId)
+      .eq("checkin_date", date)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      // PGRST116 = no rows returned, which is fine
+      console.error("[Wellness Checkin GET] Error:", error);
+    }
+
+    res.json({ success: true, data: data || null });
+  } catch (error) {
+    console.error("[Wellness Checkin GET] Error:", error);
+    res.json({ success: true, data: null });
+  }
+});
+
+app.post("/api/wellness-checkin", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    let targetUserId = req.body.userId || req.body.user_id;
+    
+    // Try to get user from auth header if not provided
+    if (!targetUserId) {
+      const authHeader = req.headers.authorization;
+      if (authHeader?.startsWith("Bearer ")) {
+        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+        targetUserId = user?.id;
+      }
+    }
+
+    if (!targetUserId) {
+      return res.status(401).json({ success: false, error: "User not authenticated" });
+    }
+
+    const checkinDate = req.body.checkin_date || new Date().toISOString().split("T")[0];
+    
+    const { data, error } = await supabase
+      .from("daily_wellness_checkin")
+      .upsert({
+        user_id: targetUserId,
+        checkin_date: checkinDate,
+        ...req.body,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "user_id,checkin_date" })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[Wellness Checkin POST] Error:", error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("[Wellness Checkin POST] Error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Wellness endpoints - REAL DATA
 app.get("/api/wellness/checkins", async (req, res) => {
   if (!supabase) {
@@ -3955,10 +4044,11 @@ app.get(/^(?!\/api).*$/, (_req, res) => {
     "angular/dist/flagfit-pro/browser/index.html",
   );
 
-  if (fs.existsSync(angularIndexPath)) {
+  if (fs.existsSync(angularIndexPath) && fs.statSync(angularIndexPath).size > 0) {
     res.send(injectScript(angularIndexPath));
   } else {
-    res.send(injectScript(path.join(__dirname, "index.html")));
+    // During development, redirect to Angular dev server
+    res.redirect('http://localhost:4200' + _req.path);
   }
 });
 

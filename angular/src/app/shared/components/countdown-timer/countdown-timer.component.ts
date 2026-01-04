@@ -33,13 +33,14 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 
 @Component({
   selector: "app-countdown-timer",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonComponent, IconButtonComponent],
   template: `
     <div class="countdown-timer" [class]="'status-' + status()">
       <!-- Progress ring -->
@@ -93,33 +94,15 @@ import { ButtonModule } from "primeng/button";
       <!-- Controls -->
       <div class="timer-controls">
         @if (!isRunning() && !isComplete()) {
-          <p-button
-            icon="pi pi-play"
-            [rounded]="true"
-            severity="success"
-            (onClick)="start()"
-            pTooltip="Start"
-          ></p-button>
+          <app-icon-button icon="pi-play" variant="success" (clicked)="start()" ariaLabel="play" />
         }
 
         @if (isRunning()) {
-          <p-button
-            icon="pi pi-pause"
-            [rounded]="true"
-            severity="warn"
-            (onClick)="pause()"
-            pTooltip="Pause"
-          ></p-button>
+          <app-icon-button icon="pi-pause" (clicked)="pause()" ariaLabel="pause" />
         }
 
         @if (secondsRemaining() !== initialSeconds() || isComplete()) {
-          <p-button
-            icon="pi pi-refresh"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="reset()"
-            pTooltip="Reset"
-          ></p-button>
+          <app-icon-button icon="pi-refresh" variant="outlined" (clicked)="reset()" ariaLabel="refresh" />
         }
       </div>
 
@@ -179,8 +162,8 @@ export class CountdownTimerComponent implements OnDestroy {
   isRunning = signal(false);
   isComplete = signal(false);
 
-  // Constants
-  private readonly circumference = 2 * Math.PI * 45;
+  // Constants - protected for template access
+  protected readonly circumference = 2 * Math.PI * 45;
 
   // Computed
   dashOffset = computed(() => {

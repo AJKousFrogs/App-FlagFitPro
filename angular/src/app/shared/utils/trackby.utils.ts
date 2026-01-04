@@ -1,17 +1,24 @@
 /**
  * TrackBy Utility Functions
  *
- * Reusable trackBy functions for Angular *ngFor directives to improve performance.
- * TrackBy functions help Angular identify which items have changed, been added, or removed.
+ * Reusable track functions for Angular @for blocks to improve performance.
+ * Track functions help Angular identify which items have changed, been added, or removed.
  *
  * @example
  * ```typescript
  * import { trackById, trackByIndex, trackByKey } from '@shared/utils/trackby.utils';
  *
  * // In template:
- * // <div *ngFor="let item of items; trackBy: trackById">
+ * // @for (item of items; track trackById($index, item)) {
+ * //   <div>{{ item.name }}</div>
+ * // }
  *
- * // In component:
+ * // Or more commonly with built-in track:
+ * // @for (item of items; track item.id) {
+ * //   <div>{{ item.name }}</div>
+ * // }
+ *
+ * // In component (if needed for complex scenarios):
  * readonly trackById = trackById;
  * readonly trackByIndex = trackByIndex;
  * readonly trackByName = trackByKey('name');

@@ -11,12 +11,12 @@
   .stepper-group {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--space-8);
   }
 
   .stepper-content {
     min-height: 300px;
-    padding: 1.5rem 0;
+    padding: var(--space-6) 0;
   }
 
   .step-panel {

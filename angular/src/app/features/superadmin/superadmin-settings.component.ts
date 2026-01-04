@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -26,10 +26,11 @@ interface SuperadminUser {
     RouterLink,
     FormsModule,
     CardModule,
-    ButtonModule,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -90,11 +91,7 @@ interface SuperadminUser {
                 <i class="pi pi-users"></i>
                 Manage Superadmins
               </h3>
-              <p-button
-                label="Add Superadmin"
-                icon="pi pi-plus"
-                (onClick)="showAddModal = true"
-              ></p-button>
+              <app-button iconLeft="pi-plus" (clicked)="showAddModal = true">Add Superadmin</app-button>
             </div>
           </ng-template>
 
@@ -129,13 +126,7 @@ interface SuperadminUser {
                   <td>{{ admin.notes || "-" }}</td>
                   <td>
                     @if (admin.email !== "aljosa@ljubljanafrogs.si") {
-                      <p-button
-                        label="Remove"
-                        severity="danger"
-                        [text]="true"
-                        size="small"
-                        (onClick)="removeSuperadmin(admin.user_id)"
-                      ></p-button>
+                      <app-button variant="text" size="sm" (clicked)="removeSuperadmin(admin.user_id)">Remove</app-button>
                     } @else {
                       <span class="founder-badge">Founder</span>
                     }
@@ -294,17 +285,8 @@ interface SuperadminUser {
               </div>
             </div>
             <div class="modal-footer">
-              <p-button
-                label="Cancel"
-                [text]="true"
-                (onClick)="showAddModal = false"
-              ></p-button>
-              <p-button
-                label="Add Superadmin"
-                icon="pi pi-plus"
-                (onClick)="addNewSuperadmin()"
-                [disabled]="!newAdminEmail.trim()"
-              ></p-button>
+              <app-button variant="text" (clicked)="showAddModal = false">Cancel</app-button>
+              <app-button iconLeft="pi-plus" [disabled]="!newAdminEmail.trim()" (clicked)="addNewSuperadmin()">Add Superadmin</app-button>
             </div>
           </div>
         </div>

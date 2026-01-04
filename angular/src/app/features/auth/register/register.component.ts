@@ -1,33 +1,33 @@
 import {
-  Component,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    signal,
 } from "@angular/core";
 
-import { Router, RouterModule, ActivatedRoute } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
-import { CheckboxModule } from "primeng/checkbox";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
-import { ToastService } from "../../../core/services/toast.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import {
-  getFormControlError,
-  isFormControlInvalid,
-  markFormGroupTouched,
+    getFormControlError,
+    isFormControlInvalid,
+    markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -38,7 +38,7 @@ import {
     RouterModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
     InputTextModule,
     MessageModule,
     ToastModule,
@@ -213,17 +213,14 @@ import {
             }
           </div>
 
-          <p-button
+          <app-button
             type="submit"
-            label="Create Account"
-            icon="pi pi-user-plus"
-            [rounded]="true"
+            iconLeft="pi-user-plus"
             [loading]="isLoading()"
             [disabled]="registerForm.invalid"
-            data-testid="register-submit"
-            styleClass="w-full mb-4"
-          >
-          </p-button>
+            [fullWidth]="true"
+            testId="register-submit"
+          >Create Account</app-button>
         </form>
 
         <div class="register-divider my-4">

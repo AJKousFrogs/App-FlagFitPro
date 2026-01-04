@@ -8,7 +8,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { StepsModule } from "primeng/steps";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 
 export interface StepperStep {
   label: string;
@@ -28,7 +29,10 @@ export interface StepperStep {
   selector: "app-stepper",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StepsModule, ButtonModule],
+  imports: [CommonModule, StepsModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="stepper-group">
       <p-steps
@@ -56,34 +60,13 @@ export interface StepperStep {
       @if (showNavigation()) {
         <div class="stepper-actions">
           @if (currentStepIndex() > 0) {
-            <p-button
-              label="Previous"
-              icon="pi pi-arrow-left"
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="previous()"
-            >
-            </p-button>
+            <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="previous()">Previous</app-button>
           }
           <div class="stepper-actions-right">
             @if (currentStepIndex() < steps().length - 1) {
-              <p-button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                [disabled]="!canProceed()"
-                (onClick)="next()"
-              >
-              </p-button>
+              <app-button iconLeft="pi-arrow-right" [disabled]="!canProceed()" (clicked)="next()">Next</app-button>
             } @else {
-              <p-button
-                [label]="finishLabel()"
-                icon="pi pi-check"
-                severity="success"
-                [disabled]="!canProceed()"
-                (onClick)="finish()"
-              >
-              </p-button>
+              <app-icon-button icon="pi-check" variant="success" [disabled]="!canProceed()" (clicked)="finish()" ariaLabel="check" />
             }
           </div>
         </div>

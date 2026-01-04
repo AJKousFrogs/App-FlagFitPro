@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject, DestroyRef, input } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -43,7 +44,10 @@ interface Milestone {
 
 @Component({
   selector: "app-la28-roadmap",
-  imports: [ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TimelineModule, CardModule],
+  imports: [ TagModule, TooltipModule, ProgressBar, DialogModule, TimelineModule, CardModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="roadmap-panel">
       <!-- Summary Card -->
@@ -53,14 +57,7 @@ interface Milestone {
             <h3>🏅 Road to LA28</h3>
             <span class="days-count">{{ daysUntilOlympics() }} days</span>
           </div>
-          <p-button
-            icon="pi pi-external-link"
-            [rounded]="true"
-            [text]="true"
-            severity="secondary"
-            (click)="showFullDialog = true"
-            pTooltip="View full roadmap"
-          />
+          <app-icon-button icon="pi-external-link" variant="text" ariaLabel="external-link" />
         </div>
 
         <!-- Progress Ring -->

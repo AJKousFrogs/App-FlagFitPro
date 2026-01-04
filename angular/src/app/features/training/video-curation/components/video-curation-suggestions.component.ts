@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { TooltipModule } from "primeng/tooltip";
 
 import { PlayerSuggestion } from "../video-curation.models";
@@ -28,7 +28,9 @@ import {
   selector: "app-video-curation-suggestions",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, ButtonModule, TooltipModule],
+  imports: [CommonModule, TagModule, TooltipModule,
+    ButtonComponent,
+  ],
   template: `
     <div class="tab-content">
       <div class="suggestions-header">
@@ -99,8 +101,9 @@ import {
                 <button
                   pButton
                   icon="pi pi-external-link"
-                  class="p-button-text p-button-rounded"
+                  class="p-button-text"
                   pTooltip="Open in Instagram"
+                  aria-label="Open in Instagram"
                   (click)="openInInstagram.emit(suggestion)"
                 ></button>
                 @if (suggestion.status === "pending") {

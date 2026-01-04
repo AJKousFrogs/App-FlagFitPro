@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { Tabs } from "primeng/tabs";
 import { AdminService } from "../../../core/services/admin.service";
@@ -16,7 +16,9 @@ import { firstValueFrom } from "rxjs";
 @Component({
   selector: "app-admin-database-dashboard",
   standalone: true,
-  imports: [CommonModule, CardModule, ButtonModule, TagModule, Tabs],
+  imports: [CommonModule, CardModule, TagModule, Tabs,
+    ButtonComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService],
   template: `
@@ -88,30 +90,11 @@ import { firstValueFrom } from "rxjs";
       <!-- Data Sync Controls -->
       <p-card header="Data Synchronization" class="sync-card">
         <div class="sync-controls">
-          <p-button
-            label="Sync USDA Data"
-            icon="pi pi-refresh"
-            [loading]="syncingUSDA()"
-            (onClick)="syncUSDAData()"
-          >
-          </p-button>
+          <app-button iconLeft="pi-refresh" [loading]="syncingUSDA()" (clicked)="syncUSDAData()">Sync USDA Data</app-button>
 
-          <p-button
-            label="Update Research Studies"
-            icon="pi pi-download"
-            [loading]="syncingResearch()"
-            (onClick)="syncResearchData()"
-          >
-          </p-button>
+          <app-button iconLeft="pi-download" [loading]="syncingResearch()" (clicked)="syncResearchData()">Update Research Studies</app-button>
 
-          <p-button
-            label="Backup Database"
-            icon="pi pi-save"
-            severity="secondary"
-            [loading]="creatingBackup()"
-            (onClick)="createBackup()"
-          >
-          </p-button>
+          <app-button variant="secondary" iconLeft="pi-save" [loading]="creatingBackup()" (clicked)="createBackup()">Backup Database</app-button>
         </div>
 
         @if (lastSyncStatus().length > 0) {

@@ -9,7 +9,7 @@ import {
 import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { TitleCasePipe } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
@@ -47,10 +47,11 @@ interface InvitationData {
   imports: [
     RouterModule,
     CardModule,
-    ButtonModule,
     MessageModule,
     ToastModule,
     TitleCasePipe,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -84,21 +85,8 @@ interface InvitationData {
                 >.
               }
             </p>
-            <p-button
-              label="Sign In"
-              icon="pi pi-sign-in"
-              [routerLink]="['/login']"
-              [queryParams]="{ returnUrl: currentUrl() }"
-              styleClass="w-full mt-4"
-            ></p-button>
-            <p-button
-              label="Create Account"
-              icon="pi pi-user-plus"
-              [outlined]="true"
-              [routerLink]="['/register']"
-              [queryParams]="{ returnUrl: currentUrl() }"
-              styleClass="w-full mt-3"
-            ></p-button>
+            <app-button iconLeft="pi-sign-in" routerLink="/login">Sign In</app-button>
+            <app-button variant="outlined" iconLeft="pi-user-plus" routerLink="/register">Create Account</app-button>
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
@@ -116,12 +104,7 @@ interface InvitationData {
             <p class="accepted-message">
               You've successfully joined {{ teamName() }}. Welcome to the team!
             </p>
-            <p-button
-              label="Go to Team Page"
-              icon="pi pi-users"
-              [routerLink]="['/roster']"
-              styleClass="w-full mt-4"
-            ></p-button>
+            <app-button iconLeft="pi-users" routerLink="/roster">Go to Team Page</app-button>
           </div>
         } @else if (isDeclined()) {
           <div class="declined-state">
@@ -132,12 +115,7 @@ interface InvitationData {
             <p class="declined-message">
               You have declined the invitation to join {{ teamName() }}.
             </p>
-            <p-button
-              label="Go to Dashboard"
-              icon="pi pi-home"
-              [routerLink]="['/dashboard']"
-              styleClass="w-full mt-4"
-            ></p-button>
+            <app-button iconLeft="pi-home" routerLink="/dashboard">Go to Dashboard</app-button>
           </div>
         } @else if (invitationData()) {
           <div class="invitation-state">
@@ -173,21 +151,8 @@ interface InvitationData {
             </div>
 
             <div class="invitation-actions">
-              <p-button
-                label="Accept Invitation"
-                icon="pi pi-check"
-                (onClick)="acceptInvitation()"
-                [loading]="isProcessing()"
-                styleClass="w-full mb-3"
-              ></p-button>
-              <p-button
-                label="Decline"
-                [outlined]="true"
-                severity="secondary"
-                (onClick)="declineInvitation()"
-                [loading]="isProcessing()"
-                styleClass="w-full"
-              ></p-button>
+              <app-button iconLeft="pi-check" [loading]="isProcessing()" (clicked)="acceptInvitation()">Accept Invitation</app-button>
+              <app-button variant="outlined" [loading]="isProcessing()" (clicked)="declineInvitation()">Decline</app-button>
             </div>
           </div>
         }

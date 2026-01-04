@@ -11,7 +11,8 @@ import {
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -52,7 +53,6 @@ interface PendingInvitation {
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     AvatarModule,
     TagModule,
     Tabs,
@@ -68,6 +68,9 @@ interface PendingInvitation {
     PageErrorStateComponent,
     DatePipe,
     TitleCasePipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -82,13 +85,7 @@ interface PendingInvitation {
                 <p>{{ getDeletionReason() }}</p>
               </div>
               <div class="deletion-banner-actions">
-                <p-button
-                  [label]="deletionMessage.actionLabel"
-                  icon="pi pi-times"
-                  severity="warn"
-                  (onClick)="cancelDeletion()"
-                  [loading]="cancellingDeletion()"
-                ></p-button>
+                <app-icon-button icon="pi-times" [loading]="cancellingDeletion()" (clicked)="cancelDeletion()" ariaLabel="times" />
                 <a
                   [routerLink]="deletionMessage.helpLink"
                   class="deletion-help-link"
@@ -400,31 +397,14 @@ interface PendingInvitation {
                               </div>
                               <div class="invitation-actions">
                                 @if (!invitation.isExpired) {
-                                  <p-button
-                                    label="Accept"
-                                    icon="pi pi-check"
-                                    (onClick)="acceptInvitation(invitation)"
-                                    [loading]="
+                                  <app-button iconLeft="pi-check" [loading]="
                                       processingInvitation() === invitation.id
-                                    "
-                                  ></p-button>
-                                  <p-button
-                                    label="Decline"
-                                    icon="pi pi-times"
-                                    [outlined]="true"
-                                    severity="secondary"
-                                    (onClick)="declineInvitation(invitation)"
-                                    [loading]="
+                                    " (clicked)="acceptInvitation(invitation)">Accept</app-button>
+                                  <app-button variant="outlined" iconLeft="pi-times" [loading]="
                                       processingInvitation() === invitation.id
-                                    "
-                                  ></p-button>
+                                    " (clicked)="declineInvitation(invitation)">Decline</app-button>
                                 } @else {
-                                  <p-button
-                                    label="Request New Invitation"
-                                    icon="pi pi-refresh"
-                                    [outlined]="true"
-                                    (onClick)="requestNewInvitation(invitation)"
-                                  ></p-button>
+                                  <app-button variant="outlined" iconLeft="pi-refresh" (clicked)="requestNewInvitation(invitation)">Request New Invitation</app-button>
                                 }
                               </div>
                             </div>

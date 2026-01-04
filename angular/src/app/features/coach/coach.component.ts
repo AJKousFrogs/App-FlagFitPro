@@ -8,7 +8,6 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -18,6 +17,9 @@ import { TooltipModule } from "primeng/tooltip";
 import { Textarea } from "primeng/textarea";
 import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { COLORS } from "../../core/constants/app.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -54,7 +56,8 @@ interface TeamMember {
     FormsModule,
     RouterModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
+    IconButtonComponent,
     ChartModule,
     TableModule,
     TagModule,
@@ -76,11 +79,10 @@ interface TeamMember {
           subtitle="Manage your team, track performance, and create training sessions"
           icon="pi-users"
         >
-          <p-button
-            label="Create Session"
-            icon="pi pi-plus"
-            (onClick)="openCreateSession()"
-          ></p-button>
+          <app-button
+            iconLeft="pi-plus"
+            (clicked)="openCreateSession()"
+          >Create Session</app-button>
         </app-page-header>
 
         <!-- Coach Stats -->
@@ -191,29 +193,23 @@ interface TeamMember {
                 </td>
                 <td>
                   @if (member.isConsentBlocked) {
-                    <p-button
-                      icon="pi pi-envelope"
-                      [text]="true"
-                      [rounded]="true"
+                    <app-icon-button
+                      icon="pi-envelope"
                       ariaLabel="Request data sharing"
-                      pTooltip="Ask athlete to enable sharing"
-                      (onClick)="requestDataSharing(member)"
-                    ></p-button>
+                      tooltip="Ask athlete to enable sharing"
+                      (clicked)="requestDataSharing(member)"
+                    />
                   } @else {
-                    <p-button
-                      icon="pi pi-eye"
-                      [text]="true"
-                      [rounded]="true"
+                    <app-icon-button
+                      icon="pi-eye"
                       ariaLabel="View details"
-                      (onClick)="viewMemberDetails(member)"
-                    ></p-button>
-                    <p-button
-                      icon="pi pi-pencil"
-                      [text]="true"
-                      [rounded]="true"
+                      (clicked)="viewMemberDetails(member)"
+                    />
+                    <app-icon-button
+                      icon="pi-pencil"
                       ariaLabel="Edit"
-                      (onClick)="editMember(member)"
-                    ></p-button>
+                      (clicked)="editMember(member)"
+                    />
                   }
                 </td>
               </tr>
@@ -302,18 +298,16 @@ interface TeamMember {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="showCreateSessionDialog = false"
-          ></p-button>
-          <p-button
-            label="Create Session"
-            icon="pi pi-check"
+          <app-button
+            variant="text"
+            (clicked)="showCreateSessionDialog = false"
+          >Cancel</app-button>
+          <app-button
+            iconLeft="pi-check"
             [loading]="isCreatingSession()"
             [disabled]="!isSessionValid()"
-            (onClick)="createSession()"
-          ></p-button>
+            (clicked)="createSession()"
+          >Create Session</app-button>
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -376,19 +370,19 @@ export class CoachComponent implements OnInit {
         label: "Avg Performance",
         value: "0%",
         icon: "pi-chart-line",
-        color: "#10c96b",
+        color: COLORS.PRIMARY_LIGHT,
       },
       {
         label: "Active Sessions",
         value: "0",
         icon: "pi-calendar",
-        color: "#f1c40f",
+        color: COLORS.WARNING,
       },
       {
         label: "Upcoming Games",
         value: "0",
         icon: "pi-trophy",
-        color: "#e74c3c",
+        color: COLORS.ERROR,
       },
     ]);
 

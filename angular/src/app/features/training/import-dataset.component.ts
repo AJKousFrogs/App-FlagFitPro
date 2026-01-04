@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
@@ -22,10 +22,11 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
   imports: [
     CommonModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     MessageModule,
     ToastModule,
+  
+    ButtonComponent,
   ],
 
   template: `

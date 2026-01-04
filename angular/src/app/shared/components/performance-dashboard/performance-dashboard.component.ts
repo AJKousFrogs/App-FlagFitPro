@@ -17,6 +17,7 @@ import { TagModule } from "primeng/tag";
 import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { interval, takeUntil, Subject } from "rxjs";
+import { COLORS } from "../../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -72,7 +73,7 @@ interface PerformanceMetric {
                   [size]="120"
                   [strokeWidth]="8"
                   [valueColor]="metric.color"
-                  [rangeColor]="'#e5e7eb'"
+                  [rangeColor]="'var(--p-surface-200)'"
                   [readonly]="true"
                   [showValue]="false"
                 >
@@ -146,16 +147,16 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
         {
           label: "Current",
           data: [speed, accuracy, endurance, 0, 0, 0],
-          backgroundColor: "rgba(16, 201, 107, 0.2)",
-          borderColor: "#10c96b",
-          pointBackgroundColor: "#10c96b",
+          backgroundColor: `${COLORS.PRIMARY_LIGHT}33`,
+          borderColor: COLORS.PRIMARY_LIGHT,
+          pointBackgroundColor: COLORS.PRIMARY_LIGHT,
         },
         {
           label: "Target",
           data: [90, 90, 85, 95, 85, 90],
-          backgroundColor: "rgba(241, 196, 15, 0.2)",
-          borderColor: "#f1c40f",
-          pointBackgroundColor: "#f1c40f",
+          backgroundColor: `${COLORS.WARNING}33`,
+          borderColor: COLORS.WARNING,
+          pointBackgroundColor: COLORS.WARNING,
         },
       ],
     };
@@ -248,7 +249,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
           trend: m.trend || "stable",
           trendValue: m.trendValue || 0,
           target: m.target || m.goal || 100,
-          color: m.color || "#10c96b",
+          color: m.color || COLORS.PRIMARY_LIGHT,
           icon: m.icon || "pi pi-chart-line",
         })),
       );
@@ -298,7 +299,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
       datasets: [
         {
           data: [],
-          borderColor: metric?.color || "#10c96b",
+          borderColor: metric?.color || COLORS.PRIMARY_LIGHT,
           fill: false,
           tension: 0.4,
         },

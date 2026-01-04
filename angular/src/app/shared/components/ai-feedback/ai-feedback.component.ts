@@ -8,10 +8,10 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
-import { RadioButtonModule } from "primeng/radiobutton";
+import { Radio} from "primeng/radiobutton";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -52,11 +52,12 @@ interface FeedbackData {
   imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
     DialogModule,
     TextareaModule,
-    RadioButtonModule,
+    Radio
     TooltipModule,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="ai-feedback" [class.compact]="compact()">
@@ -188,17 +189,8 @@ interface FeedbackData {
         </div>
 
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="dialogVisible = false"
-          ></p-button>
-          <p-button
-            label="Submit Feedback"
-            icon="pi pi-send"
-            (onClick)="submitDetailedFeedback()"
-            [disabled]="!detailedFeedbackType"
-          ></p-button>
+          <app-button variant="text" (clicked)="dialogVisible = false">Cancel</app-button>
+          <app-button iconLeft="pi-send" [disabled]="!detailedFeedbackType" (clicked)="submitDetailedFeedback()">Submit Feedback</app-button>
         </ng-template>
       </p-dialog>
     </div>

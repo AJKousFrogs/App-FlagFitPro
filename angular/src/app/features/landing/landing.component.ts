@@ -9,14 +9,16 @@ import {
   signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 
 @Component({
   selector: "app-landing",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule, ButtonModule],
+  imports: [CommonModule, RouterModule, CardModule,
+    ButtonComponent,
+  ],
   template: `
     <section class="hero-section">
       <div class="hero-background">
@@ -94,24 +96,8 @@ import { CardModule } from "primeng/card";
           </p>
 
           <div class="hero-actions animate-item" style="--delay: 4">
-            <p-button
-              label="Get Started Free"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              [rounded]="true"
-              size="large"
-              [routerLink]="['/register']"
-              styleClass="hero-btn-primary"
-            ></p-button>
-            <p-button
-              label="Sign In"
-              icon="pi pi-sign-in"
-              [rounded]="true"
-              [outlined]="true"
-              size="large"
-              [routerLink]="['/login']"
-              styleClass="hero-btn-secondary"
-            ></p-button>
+            <app-button size="lg" iconLeft="pi-arrow-right" routerLink="/register">Get Started Free</app-button>
+            <app-button variant="outlined" size="lg" iconLeft="pi-sign-in" routerLink="/login">Sign In</app-button>
           </div>
 
           <div class="hero-stats animate-item" style="--delay: 5">

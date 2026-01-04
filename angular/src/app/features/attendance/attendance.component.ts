@@ -11,7 +11,8 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";
@@ -33,6 +34,7 @@ import {
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 
 type EventType =
   | "practice"
@@ -51,7 +53,6 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     TableModule,
     TagModule,
     DialogModule,
@@ -66,6 +67,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -76,12 +80,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <p-button
-                label="Create Event"
-                icon="pi pi-plus"
-                [rounded]="true"
-                (onClick)="openCreateEventDialog()"
-              ></p-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()">Create Event</app-button>
             }
           </div>
         </app-page-header>
@@ -170,26 +169,14 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                         [severity]="event.is_mandatory ? 'danger' : 'info'"
                       ></p-tag>
                       @if (isCoach()) {
-                        <p-button
-                          icon="pi pi-users"
-                          [text]="true"
-                          [rounded]="true"
-                          pTooltip="Take Attendance"
-                          (onClick)="
+                        <app-icon-button icon="pi-users" variant="text" (clicked)="
                             openAttendanceDialog(event);
                             $event.stopPropagation()
-                          "
-                        ></p-button>
+                          " ariaLabel="users" />
                       } @else {
-                        <p-button
-                          icon="pi pi-check"
-                          [text]="true"
-                          [rounded]="true"
-                          pTooltip="Check In"
-                          (onClick)="
+                        <app-icon-button icon="pi-check" variant="text" (clicked)="
                             quickCheckIn(event); $event.stopPropagation()
-                          "
-                        ></p-button>
+                          " ariaLabel="check" />
                       }
                     </div>
                   </div>
@@ -288,7 +275,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           header="Create Event"
           [(visible)]="showCreateEventDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          [style]="dialogStyles.standard"
           [closable]="true"
         >
           <div class="dialog-form">
@@ -371,20 +358,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              [rounded]="true"
-              severity="secondary"
-              (onClick)="showCreateEventDialog = false"
-            ></p-button>
-            <p-button
-              label="Create Event"
-              icon="pi pi-check"
-              [rounded]="true"
-              (onClick)="createEvent()"
-              [disabled]="!canCreateEvent()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showCreateEventDialog = false">Cancel</app-button>
+            <app-button iconLeft="pi-check" [disabled]="!canCreateEvent()" (clicked)="createEvent()">Create Event</app-button>
           </ng-template>
         </p-dialog>
 
@@ -393,7 +368,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           header="Take Attendance"
           [(visible)]="showAttendanceDialog"
           [modal]="true"
-          [style]="{ width: '600px' }"
+          [style]="dialogStyles.complex"
           [closable]="true"
         >
           @if (selectedEvent()) {
@@ -420,20 +395,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     </div>
                     <div class="status-buttons">
                       @for (status of attendanceStatuses; track status.value) {
-                        <p-button
-                          [label]="status.label"
-                          [severity]="
-                            record.status === status.value
-                              ? status.severity
-                              : 'secondary'
-                          "
-                          [outlined]="record.status !== status.value"
-                          [rounded]="true"
-                          size="small"
-                          (onClick)="
+                        <app-button size="sm" (clicked)="
                             updateAttendanceStatus(record, status.value)
-                          "
-                        ></p-button>
+                          "></app-button>
                       }
                     </div>
                   </div>
@@ -443,19 +407,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           }
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Close"
-              [text]="true"
-              [rounded]="true"
-              severity="secondary"
-              (onClick)="showAttendanceDialog = false"
-            ></p-button>
-            <p-button
-              label="Save All"
-              icon="pi pi-check"
-              [rounded]="true"
-              (onClick)="saveAttendance()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showAttendanceDialog = false">Close</app-button>
+            <app-button iconLeft="pi-check" (clicked)="saveAttendance()">Save All</app-button>
           </ng-template>
         </p-dialog>
       </div>
@@ -468,6 +421,9 @@ export class AttendanceComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
 
   // State
   events = signal<TeamEvent[]>([]);

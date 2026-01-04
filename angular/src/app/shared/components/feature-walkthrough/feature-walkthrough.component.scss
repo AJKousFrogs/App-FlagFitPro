@@ -6,7 +6,7 @@
 @layer features {
   :host ::ng-deep .walkthrough-dialog .p-dialog-content {
     padding: 0;
-    border-radius: 20px;
+    border-radius: var(--radius-2xl);
     overflow: hidden;
   }
 
@@ -70,9 +70,9 @@
   }
 
   .step-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
+    width: 5rem;
+    height: 5rem;
+    border-radius: var(--radius-2xl);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -126,7 +126,7 @@
   .benefit-item i {
     color: var(--ds-primary-green);
     font-size: var(--font-body-md);
-    margin-top: 2px;
+    margin-top: var(--space-1);
   }
 
   .benefit-item span {
@@ -142,7 +142,7 @@
     padding: var(--space-3);
     background: var(--primitive-warning-50);
     border-radius: var(--radius-md);
-    border-left: 4px solid var(--primitive-warning-400);
+    border-left: var(--border-4) solid var(--primitive-warning-400);
   }
 
   .tip-box i {
@@ -207,19 +207,19 @@
     .p-button:not(.p-button-outlined):not(.p-button-success) {
     background: linear-gradient(
       135deg,
-      var(--ds-primary-green-light, #0ab85a) 0%,
-      var(--ds-primary-green, #089949) 100%
+      var(--ds-primary-green-light) 0%,
+      var(--ds-primary-green) 100%
     ) !important;
     border: none !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+    color: var(--color-text-on-primary) !important;
+    box-shadow: 0 4px 12px rgba(var(--primitive-primary-700-rgb), 0.3);
   }
 
   :host
     ::ng-deep
     .nav-buttons
     .p-button:not(.p-button-outlined):not(.p-button-success):hover {
-    box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
+    box-shadow: 0 6px 16px rgba(var(--primitive-primary-700-rgb), 0.4);
     transform: translateY(-1px);
   }
 
@@ -227,28 +227,28 @@
   :host ::ng-deep .nav-buttons .p-button-success {
     background: linear-gradient(
       135deg,
-      var(--ds-primary-green-light, #0ab85a) 0%,
-      var(--ds-primary-green, #089949) 100%
+      var(--ds-primary-green-light) 0%,
+      var(--ds-primary-green) 100%
     ) !important;
     border: none !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+    color: var(--color-text-on-primary) !important;
+    box-shadow: 0 4px 12px rgba(var(--primitive-primary-700-rgb), 0.3);
   }
 
   :host ::ng-deep .nav-buttons .p-button-success:hover {
-    box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
+    box-shadow: 0 6px 16px rgba(var(--primitive-primary-700-rgb), 0.4);
     transform: translateY(-1px);
   }
 
   /* Outlined button (Back) */
   :host ::ng-deep .nav-buttons .p-button-outlined {
-    border-color: var(--ds-primary-green, #089949) !important;
-    color: var(--ds-primary-green, #089949) !important;
+    border-color: var(--ds-primary-green) !important;
+    color: var(--ds-primary-green) !important;
     background: transparent !important;
   }
 
   :host ::ng-deep .nav-buttons .p-button-outlined:hover {
-    background: rgba(8, 153, 73, 0.08) !important;
+    background: rgba(var(--primitive-primary-700-rgb), 0.08) !important;
   }
 
   /* Responsive */
@@ -258,8 +258,8 @@
     }
 
     .step-icon {
-      width: 64px;
-      height: 64px;
+      width: 4rem;
+      height: 4rem;
     }
 
     .step-icon i {

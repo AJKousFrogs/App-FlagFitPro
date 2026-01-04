@@ -318,11 +318,11 @@
       }
 
       &.p-highlight {
-        background: var(--ds-primary-green, #089949);
-        border-color: var(--ds-primary-green, #089949);
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
 
         .p-checkbox-icon {
-          color: #ffffff;
+          color: var(--color-text-on-primary);
         }
       }
 

@@ -13,7 +13,8 @@
 import { Component, inject, model, output, signal, effect } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from 'primeng/checkbox';
 import { DatePicker } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -69,12 +70,14 @@ interface DayOption {
   imports: [
     FormsModule,
     DialogModule,
-    ButtonModule,
     Select,
     DatePicker,
     Checkbox,
     InputTextModule,
     MultiSelect,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-dialog
@@ -161,14 +164,7 @@ interface DayOption {
             <div class="practice-slot">
               <div class="slot-header">
                 <span class="day-name">{{ slot.dayName }}</span>
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="danger"
-                  size="small"
-                  (onClick)="removePracticeSlot(slot.day)"
-                ></p-button>
+                <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="removePracticeSlot(slot.day)" ariaLabel="trash" />
               </div>
               <div class="slot-times">
                 <div class="time-field">
@@ -217,12 +213,7 @@ interface DayOption {
                 placeholder="Add practice day..."
                 [style]="{ width: '100%' }"
               ></p-select>
-              <p-button
-                icon="pi pi-plus"
-                label="Add"
-                [disabled]="selectedNewDay === null"
-                (onClick)="addPracticeSlot()"
-              ></p-button>
+              <app-button iconLeft="pi-plus" [disabled]="selectedNewDay === null" (clicked)="addPracticeSlot()">Add</app-button>
             </div>
           }
         </div>
@@ -289,17 +280,8 @@ interface DayOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <p-button
-          label="Cancel"
-          [outlined]="true"
-          (onClick)="onCancel()"
-        ></p-button>
-        <p-button
-          label="Save Settings"
-          icon="pi pi-check"
-          (onClick)="onSave()"
-          [loading]="isSaving()"
-        ></p-button>
+        <app-button variant="outlined" (clicked)="onCancel()">Cancel</app-button>
+        <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="onSave()">Save Settings</app-button>
       </ng-template>
     </p-dialog>
   `,

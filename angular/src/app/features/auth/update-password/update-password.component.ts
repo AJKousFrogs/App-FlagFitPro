@@ -1,28 +1,28 @@
 import {
-  Component,
-  inject,
-  signal,
-  OnInit,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    ValidationErrors,
+    Validators,
 } from "@angular/forms";
+import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { PasswordModule } from "primeng/password";
 import { MessageModule } from "primeng/message";
+import { PasswordModule } from "primeng/password";
 import { ToastModule } from "primeng/toast";
-import { ToastService } from "../../../core/services/toast.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
  * Update Password Component
@@ -40,7 +40,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     RouterModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
     InputTextModule,
     PasswordModule,
     MessageModule,
@@ -112,20 +112,17 @@ import { LoggerService } from "../../../core/services/logger.service";
               }
             </div>
 
-            <p-button
+            <app-button
               type="submit"
-              label="Update Password"
-              icon="pi pi-check"
-              [rounded]="true"
+              iconLeft="pi-check"
               [loading]="isLoading()"
               [disabled]="passwordForm.invalid"
-              styleClass="w-full mb-4"
-            >
-            </p-button>
+              [fullWidth]="true"
+            >Update Password</app-button>
           </form>
         } @else if (isCheckingSession()) {
           <div class="checking-session">
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <i class="pi pi-spin pi-spinner icon-2xl"></i>
             <p>Verifying your reset link...</p>
           </div>
         } @else {

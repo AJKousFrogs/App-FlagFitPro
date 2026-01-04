@@ -8,9 +8,10 @@
  */
 
 import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from 'primeng/card';
 import { Checkbox } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
@@ -76,8 +77,8 @@ interface SessionTypeOption {
 @Component({
   selector: 'app-qb-throwing-tracker',
   imports: [
+    CommonModule,
     FormsModule,
-    ButtonModule,
     CardModule,
     Checkbox,
     DialogModule,
@@ -89,6 +90,8 @@ interface SessionTypeOption {
     TagModule,
     ToastModule,
     TooltipModule,
+  
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -103,12 +106,12 @@ interface SessionTypeOption {
               {{ progressionStatus()!.progressionPhase }}
             </div>
             @if (progressionStatus()!.daysSinceLastSession <= 3) {
-              <p-tag value="Active" severity="success" [rounded]="true"></p-tag>
+              <p-tag value="Active" severity="success" ></p-tag>
             } @else {
               <p-tag 
                 [value]="progressionStatus()!.daysSinceLastSession + ' days ago'" 
                 severity="warn" 
-                [rounded]="true"
+                
               ></p-tag>
             }
           </div>
@@ -194,7 +197,7 @@ interface SessionTypeOption {
                       <p-tag 
                         [value]="formatSessionType(session.sessionType)" 
                         [severity]="getSessionTypeSeverity(session.sessionType)"
-                        [rounded]="true"
+                        
                       ></p-tag>
                     </div>
                     <div class="throw-breakdown">
@@ -260,12 +263,7 @@ interface SessionTypeOption {
             <h4>Arm Care Reminder</h4>
             <p>You threw {{ lastSessionThrows() }} balls. Don't forget your post-throwing arm care routine!</p>
           </div>
-          <p-button
-            label="Mark Complete"
-            icon="pi pi-check"
-            size="small"
-            (onClick)="markArmCareDone()"
-          ></p-button>
+          <app-button size="sm" iconLeft="pi-check" (clicked)="markArmCareDone()">Mark Complete</app-button>
         </div>
       }
     </div>
@@ -404,18 +402,8 @@ interface SessionTypeOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <p-button
-          label="Cancel"
-          [outlined]="true"
-          (onClick)="closeLogDialog()"
-        ></p-button>
-        <p-button
-          label="Save Session"
-          icon="pi pi-check"
-          (onClick)="saveSession()"
-          [loading]="isSaving()"
-          [disabled]="!isFormValid()"
-        ></p-button>
+        <app-button variant="outlined" (clicked)="closeLogDialog()">Cancel</app-button>
+        <app-button iconLeft="pi-check" [loading]="isSaving()" [disabled]="!isFormValid()" (clicked)="saveSession()">Save Session</app-button>
       </ng-template>
     </p-dialog>
   `,

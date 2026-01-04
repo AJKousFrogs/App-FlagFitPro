@@ -24,7 +24,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 // PrimeNG Components
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { SliderModule } from "primeng/slider";
 import { TextareaModule } from "primeng/textarea";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -57,12 +57,13 @@ interface ReadinessMetric {
     FormsModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     SliderModule,
     TextareaModule,
     ProgressBarModule,
     TooltipModule,
     TagModule,
+  
+    ButtonComponent,
   ],
   styleUrl: "./game-day-readiness.component.scss",
   template: `
@@ -148,14 +149,7 @@ interface ReadinessMetric {
 
           <!-- Submit Button -->
           <div class="submit-section">
-            <p-button
-              label="Submit Readiness Check"
-              icon="pi pi-check"
-              [rounded]="true"
-              size="large"
-              [loading]="isSubmitting()"
-              (onClick)="submitReadiness()"
-            ></p-button>
+            <app-button size="lg" iconLeft="pi-check" [loading]="isSubmitting()" (clicked)="submitReadiness()">Submit Readiness Check</app-button>
             <p class="submit-note">
               <i class="pi pi-info-circle"></i>
               Complete this check-in at least 2 hours before competition
@@ -202,24 +196,9 @@ interface ReadinessMetric {
           }
 
           <div class="action-buttons">
-            <p-button
-              label="Back to Dashboard"
-              icon="pi pi-home"
-              [outlined]="true"
-              (onClick)="goToDashboard()"
-            ></p-button>
-            <p-button
-              label="Tournament Nutrition"
-              icon="pi pi-heart"
-              [outlined]="true"
-              routerLink="/game/nutrition"
-              pTooltip="Plan your fueling for all games"
-            ></p-button>
-            <p-button
-              label="View Game Plan"
-              icon="pi pi-file"
-              (onClick)="viewGamePlan()"
-            ></p-button>
+            <app-button variant="outlined" iconLeft="pi-home" (clicked)="goToDashboard()">Back to Dashboard</app-button>
+            <app-button variant="outlined" iconLeft="pi-heart" routerLink="/game/nutrition">Tournament Nutrition</app-button>
+            <app-button iconLeft="pi-file" (clicked)="viewGamePlan()">View Game Plan</app-button>
           </div>
         </div>
       }

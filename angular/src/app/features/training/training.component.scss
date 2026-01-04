@@ -520,13 +520,13 @@
     font-weight: var(--font-weight-medium);
   }
 
-  /* LA28 Teaser */
+  /* LA28 Teaser - Ukraine colors for Olympics branding */
   .la28-teaser {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3);
-    background: linear-gradient(135deg, #0057b7 0%, #1e40af 100%);
+    background: linear-gradient(135deg, var(--primitive-blue-600) 0%, var(--primitive-blue-800) 100%);
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: transform 0.2s;

@@ -9,7 +9,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -32,7 +32,9 @@ export interface ImageUploadResult {
   selector: "app-image-upload",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, ProgressBarModule, MessageModule],
+  imports: [CommonModule, ProgressBarModule, MessageModule,
+    ButtonComponent,
+  ],
   template: `
     <div [class]="containerClass()">
       <!-- Upload Area -->
@@ -106,13 +108,7 @@ export interface ImageUploadResult {
           <!-- Crop Controls -->
           @if (allowCrop() && uploadedImage()) {
             <div class="crop-controls">
-              <p-button
-                label="Crop Image"
-                icon="pi pi-crop"
-                size="small"
-                (onClick)="enableCrop()"
-              >
-              </p-button>
+              <app-button size="sm" iconLeft="pi-crop" (clicked)="enableCrop()">Crop Image</app-button>
             </div>
           }
 
@@ -135,8 +131,7 @@ export interface ImageUploadResult {
                 [min]="minHeight()"
                 [max]="maxHeight()"
               />
-              <p-button label="Resize" size="small" (onClick)="resizeImage()">
-              </p-button>
+              <app-button size="sm" (clicked)="resizeImage()">Resize</app-button>
             </div>
           }
         </div>

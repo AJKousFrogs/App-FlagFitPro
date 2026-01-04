@@ -1,104 +1,132 @@
 import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "./button.component";
+import { IconButtonComponent } from "./icon-button.component";
 
 /**
- * # Button Component
+ * # Button Component - Unified Design System
  *
- * A versatile button component with multiple variants, sizes, and premium interactions.
+ * THE SINGLE STANDARD BUTTON FOR THE ENTIRE APP.
+ * All buttons should use `<app-button>` or `<app-icon-button>`.
  *
  * ## Features
  * - **Variants**: primary, secondary, outlined, text, danger, success
- * - **Sizes**: sm, md, lg, xl
+ * - **Sizes**: sm, md, lg
  * - **States**: loading, disabled
- * - **Interactions**: ripple effect, hover lift, press feedback
- * - **Accessibility**: ARIA labels, keyboard navigation
+ * - **Icons**: Left icon, right icon, or icon-only
+ * - **Routing**: Built-in routerLink support
+ * - **Accessibility**: Full ARIA support, keyboard navigation
+ *
+ * ## Migration from PrimeNG
+ *
+ * | PrimeNG | App Button |
+ * |---------|------------|
+ * | `<p-button>` | `<app-button>` |
+ * | `severity="secondary"` | `variant="secondary"` |
+ * | `severity="danger"` | `variant="danger"` |
+ * | `severity="success"` | `variant="success"` |
+ * | `[outlined]="true"` | `variant="outlined"` |
+ * | `[text]="true"` | `variant="text"` |
+ * | `icon="pi pi-check"` | `iconLeft="pi-check"` |
+ * | `iconPos="right"` | `iconRight="pi-check"` |
+ * | `styleClass="w-full"` | `[fullWidth]="true"` |
+ * | `(onClick)="fn()"` | `(clicked)="fn()"` |
  *
  * ## Usage
  *
  * ```html
- * <app-button variant="primary" (clicked)="handleClick($event)">
+ * <app-button variant="primary" (clicked)="handleClick()">
  *   Click Me
  * </app-button>
+ *
+ * <app-button variant="secondary" iconLeft="pi-check" [loading]="isSaving">
+ *   Save Changes
+ * </app-button>
+ *
+ * <app-button variant="text" routerLink="/dashboard">
+ *   Go to Dashboard
+ * </app-button>
+ *
+ * <app-icon-button
+ *   icon="pi-plus"
+ *   ariaLabel="Add item"
+ *   (clicked)="addItem()"
+ * />
  * ```
  */
 const meta: Meta<ButtonComponent> = {
-  title: "Components/Button",
+  title: "Design System/Button",
   component: ButtonComponent,
   tags: ["autodocs"],
+  decorators: [
+    moduleMetadata({
+      imports: [ButtonComponent, IconButtonComponent, RouterModule.forRoot([])],
+    }),
+  ],
   argTypes: {
     variant: {
       control: "select",
-      options: [
-        "primary",
-        "secondary",
-        "outlined",
-        "text",
-        "danger",
-        "success",
-      ],
+      options: ["primary", "secondary", "outlined", "text", "danger", "success"],
       description: "Visual style variant of the button",
       table: {
+        type: { summary: "ButtonVariant" },
         defaultValue: { summary: "primary" },
       },
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg", "xl"],
+      options: ["sm", "md", "lg"],
       description: "Size of the button",
       table: {
+        type: { summary: "ButtonSize" },
         defaultValue: { summary: "md" },
       },
     },
     disabled: {
       control: "boolean",
-      description: "Whether the button is disabled",
+      description: "Disables the button",
       table: {
+        type: { summary: "boolean" },
         defaultValue: { summary: "false" },
       },
     },
     loading: {
       control: "boolean",
-      description: "Whether to show loading spinner",
+      description: "Shows loading spinner and disables interaction",
       table: {
+        type: { summary: "boolean" },
         defaultValue: { summary: "false" },
       },
     },
-    icon: {
+    fullWidth: {
+      control: "boolean",
+      description: "Makes the button full width",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+    iconLeft: {
       control: "text",
-      description: "PrimeIcons icon class (e.g., pi-check)",
+      description: "PrimeIcons icon on the left (e.g., pi-check)",
     },
-    iconPosition: {
+    iconRight: {
+      control: "text",
+      description: "PrimeIcons icon on the right (e.g., pi-arrow-right)",
+    },
+    type: {
       control: "select",
-      options: ["left", "right"],
-      description: "Position of the icon",
+      options: ["button", "submit", "reset"],
+      description: "HTML button type",
       table: {
-        defaultValue: { summary: "left" },
-      },
-    },
-    iconOnly: {
-      control: "boolean",
-      description: "Whether to show only the icon",
-      table: {
-        defaultValue: { summary: "false" },
-      },
-    },
-    rounded: {
-      control: "boolean",
-      description: "Whether to use fully rounded corners",
-      table: {
-        defaultValue: { summary: "false" },
-      },
-    },
-    block: {
-      control: "boolean",
-      description: "Whether the button should be full width",
-      table: {
-        defaultValue: { summary: "false" },
+        type: { summary: "button | submit | reset" },
+        defaultValue: { summary: "button" },
       },
     },
     ariaLabel: {
       control: "text",
-      description: "ARIA label for accessibility",
+      description: "ARIA label (required for icon-only buttons)",
     },
   },
   args: {
@@ -106,9 +134,8 @@ const meta: Meta<ButtonComponent> = {
     size: "md",
     disabled: false,
     loading: false,
-    iconOnly: false,
-    rounded: false,
-    block: false,
+    fullWidth: false,
+    type: "button",
   },
 };
 
@@ -116,7 +143,7 @@ export default meta;
 type Story = StoryObj<ButtonComponent>;
 
 // ================================
-// VARIANT STORIES
+// BASIC VARIANTS
 // ================================
 
 export const Primary: Story = {
@@ -180,7 +207,7 @@ export const Success: Story = {
 };
 
 // ================================
-// SIZE STORIES
+// SIZES
 // ================================
 
 export const Sizes: Story = {
@@ -190,14 +217,13 @@ export const Sizes: Story = {
         <app-button size="sm">Small</app-button>
         <app-button size="md">Medium</app-button>
         <app-button size="lg">Large</app-button>
-        <app-button size="xl">Extra Large</app-button>
       </div>
     `,
   }),
 };
 
 // ================================
-// STATE STORIES
+// STATES
 // ================================
 
 export const Loading: Story = {
@@ -206,7 +232,7 @@ export const Loading: Story = {
   },
   render: (args) => ({
     props: args,
-    template: `<app-button [loading]="loading">Loading...</app-button>`,
+    template: `<app-button [loading]="loading">Saving...</app-button>`,
   }),
 };
 
@@ -221,73 +247,64 @@ export const Disabled: Story = {
 };
 
 // ================================
-// ICON STORIES
+// ICONS
 // ================================
 
-export const WithIcon: Story = {
-  args: {
-    icon: "pi-check",
-    iconPosition: "left",
-  },
-  render: (args) => ({
-    props: args,
-    template: `<app-button [icon]="icon" [iconPosition]="iconPosition">Save Changes</app-button>`,
+export const WithLeftIcon: Story = {
+  render: () => ({
+    template: `<app-button iconLeft="pi-check">Save Changes</app-button>`,
   }),
 };
 
-export const IconRight: Story = {
-  args: {
-    icon: "pi-arrow-right",
-    iconPosition: "right",
-  },
-  render: (args) => ({
-    props: args,
-    template: `<app-button [icon]="icon" [iconPosition]="iconPosition">Continue</app-button>`,
+export const WithRightIcon: Story = {
+  render: () => ({
+    template: `<app-button iconRight="pi-arrow-right">Continue</app-button>`,
+  }),
+};
+
+export const WithBothIcons: Story = {
+  render: () => ({
+    template: `<app-button iconLeft="pi-file" iconRight="pi-download">Download Report</app-button>`,
   }),
 };
 
 export const IconOnly: Story = {
-  args: {
-    icon: "pi-plus",
-    iconOnly: true,
-    ariaLabel: "Add item",
-  },
-  render: (args) => ({
-    props: args,
-    template: `<app-button [icon]="icon" [iconOnly]="iconOnly" [ariaLabel]="ariaLabel"></app-button>`,
+  render: () => ({
+    template: `<app-button iconLeft="pi-plus" [iconOnly]="true" ariaLabel="Add item"></app-button>`,
   }),
 };
 
 // ================================
-// SHAPE STORIES
+// FULL WIDTH
 // ================================
 
-export const Rounded: Story = {
-  args: {
-    rounded: true,
-  },
-  render: (args) => ({
-    props: args,
-    template: `<app-button [rounded]="rounded">Rounded Button</app-button>`,
-  }),
-};
-
-export const Block: Story = {
-  args: {
-    block: true,
-  },
-  render: (args) => ({
-    props: args,
+export const FullWidth: Story = {
+  render: () => ({
     template: `
       <div style="width: 300px;">
-        <app-button [block]="block">Full Width Button</app-button>
+        <app-button [fullWidth]="true">Full Width Button</app-button>
       </div>
     `,
   }),
 };
 
 // ================================
-// ALL VARIANTS
+// FORM SUBMIT
+// ================================
+
+export const FormSubmit: Story = {
+  render: () => ({
+    template: `
+      <form (ngSubmit)="alert('Form submitted!')" style="display: flex; gap: 12px;">
+        <app-button type="submit" variant="primary">Submit Form</app-button>
+        <app-button type="reset" variant="secondary">Reset</app-button>
+      </form>
+    `,
+  }),
+};
+
+// ================================
+// ALL VARIANTS SHOWCASE
 // ================================
 
 export const AllVariants: Story = {
@@ -296,9 +313,9 @@ export const AllVariants: Story = {
       <div style="display: flex; flex-direction: column; gap: 24px;">
         <div>
           <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Primary</h4>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <app-button variant="primary">Default</app-button>
-            <app-button variant="primary" icon="pi-check">With Icon</app-button>
+            <app-button variant="primary" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="primary" [loading]="true">Loading</app-button>
             <app-button variant="primary" [disabled]="true">Disabled</app-button>
           </div>
@@ -306,9 +323,9 @@ export const AllVariants: Story = {
         
         <div>
           <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Secondary</h4>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <app-button variant="secondary">Default</app-button>
-            <app-button variant="secondary" icon="pi-check">With Icon</app-button>
+            <app-button variant="secondary" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="secondary" [loading]="true">Loading</app-button>
             <app-button variant="secondary" [disabled]="true">Disabled</app-button>
           </div>
@@ -316,9 +333,9 @@ export const AllVariants: Story = {
         
         <div>
           <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Outlined</h4>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <app-button variant="outlined">Default</app-button>
-            <app-button variant="outlined" icon="pi-check">With Icon</app-button>
+            <app-button variant="outlined" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="outlined" [loading]="true">Loading</app-button>
             <app-button variant="outlined" [disabled]="true">Disabled</app-button>
           </div>
@@ -326,9 +343,9 @@ export const AllVariants: Story = {
         
         <div>
           <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Text</h4>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <app-button variant="text">Default</app-button>
-            <app-button variant="text" icon="pi-check">With Icon</app-button>
+            <app-button variant="text" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="text" [loading]="true">Loading</app-button>
             <app-button variant="text" [disabled]="true">Disabled</app-button>
           </div>
@@ -336,11 +353,156 @@ export const AllVariants: Story = {
         
         <div>
           <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Danger</h4>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             <app-button variant="danger">Delete</app-button>
-            <app-button variant="danger" icon="pi-trash">With Icon</app-button>
+            <app-button variant="danger" iconLeft="pi-trash">With Icon</app-button>
             <app-button variant="danger" [loading]="true">Deleting</app-button>
             <app-button variant="danger" [disabled]="true">Disabled</app-button>
+          </div>
+        </div>
+        
+        <div>
+          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Success</h4>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <app-button variant="success">Complete</app-button>
+            <app-button variant="success" iconLeft="pi-check-circle">With Icon</app-button>
+            <app-button variant="success" [loading]="true">Processing</app-button>
+            <app-button variant="success" [disabled]="true">Disabled</app-button>
+          </div>
+        </div>
+      </div>
+    `,
+  }),
+};
+
+// ================================
+// ICON BUTTON COMPONENT
+// ================================
+
+const iconButtonMeta: Meta<IconButtonComponent> = {
+  title: "Design System/Icon Button",
+  component: IconButtonComponent,
+  tags: ["autodocs"],
+  decorators: [
+    moduleMetadata({
+      imports: [IconButtonComponent, RouterModule.forRoot([])],
+    }),
+  ],
+  argTypes: {
+    icon: {
+      control: "text",
+      description: "PrimeIcons icon class (e.g., pi-plus)",
+    },
+    ariaLabel: {
+      control: "text",
+      description: "ARIA label (REQUIRED)",
+    },
+    variant: {
+      control: "select",
+      options: ["primary", "secondary", "outlined", "text", "danger", "success"],
+      description: "Visual style variant",
+    },
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size of the button",
+    },
+  },
+};
+
+export const IconButtonBasic: StoryObj<IconButtonComponent> = {
+  render: () => ({
+    template: `
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <app-icon-button icon="pi-plus" ariaLabel="Add item"></app-icon-button>
+        <app-icon-button icon="pi-pencil" ariaLabel="Edit" variant="secondary"></app-icon-button>
+        <app-icon-button icon="pi-trash" ariaLabel="Delete" variant="danger"></app-icon-button>
+        <app-icon-button icon="pi-check" ariaLabel="Approve" variant="success"></app-icon-button>
+      </div>
+    `,
+  }),
+};
+
+export const IconButtonSizes: StoryObj<IconButtonComponent> = {
+  render: () => ({
+    template: `
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <app-icon-button icon="pi-cog" ariaLabel="Settings" size="sm"></app-icon-button>
+        <app-icon-button icon="pi-cog" ariaLabel="Settings" size="md"></app-icon-button>
+        <app-icon-button icon="pi-cog" ariaLabel="Settings" size="lg"></app-icon-button>
+      </div>
+    `,
+  }),
+};
+
+export const IconButtonVariants: StoryObj<IconButtonComponent> = {
+  render: () => ({
+    template: `
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="primary"></app-icon-button>
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="secondary"></app-icon-button>
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="outlined"></app-icon-button>
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="text"></app-icon-button>
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="danger"></app-icon-button>
+        <app-icon-button icon="pi-heart" ariaLabel="Like" variant="success"></app-icon-button>
+      </div>
+    `,
+  }),
+};
+
+export const IconButtonStates: StoryObj<IconButtonComponent> = {
+  render: () => ({
+    template: `
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <app-icon-button icon="pi-refresh" ariaLabel="Refresh" [loading]="true"></app-icon-button>
+        <app-icon-button icon="pi-trash" ariaLabel="Delete" [disabled]="true"></app-icon-button>
+      </div>
+    `,
+  }),
+};
+
+// ================================
+// MIGRATION EXAMPLES
+// ================================
+
+export const MigrationExamples: Story = {
+  render: () => ({
+    template: `
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <h3 style="margin-bottom: 16px; color: var(--color-text-primary);">Migration from PrimeNG</h3>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div>
+              <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">Before (PrimeNG)</h4>
+              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto;">
+&lt;p-button label="Save" (onClick)="save()"&gt;&lt;/p-button&gt;
+&lt;p-button label="Delete" severity="danger"&gt;&lt;/p-button&gt;
+&lt;p-button label="Cancel" [outlined]="true"&gt;&lt;/p-button&gt;
+&lt;p-button label="More" [text]="true"&gt;&lt;/p-button&gt;
+&lt;p-button icon="pi pi-check"&gt;&lt;/p-button&gt;</pre>
+            </div>
+            
+            <div>
+              <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">After (App Button)</h4>
+              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto;">
+&lt;app-button (clicked)="save()"&gt;Save&lt;/app-button&gt;
+&lt;app-button variant="danger"&gt;Delete&lt;/app-button&gt;
+&lt;app-button variant="outlined"&gt;Cancel&lt;/app-button&gt;
+&lt;app-button variant="text"&gt;More&lt;/app-button&gt;
+&lt;app-icon-button icon="pi-check" ariaLabel="Confirm"&gt;&lt;/app-icon-button&gt;</pre>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Live Examples</h4>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <app-button (clicked)="alert('Saved!')">Save</app-button>
+            <app-button variant="danger">Delete</app-button>
+            <app-button variant="outlined">Cancel</app-button>
+            <app-button variant="text">More</app-button>
+            <app-icon-button icon="pi-check" ariaLabel="Confirm"></app-icon-button>
           </div>
         </div>
       </div>

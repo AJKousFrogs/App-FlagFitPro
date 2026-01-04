@@ -21,7 +21,7 @@ export class ApiService {
   private baseUrl = this.getApiBaseUrl();
 
   constructor() {
-    console.log(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
+    this.logger.info(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
   }
 
   private getApiBaseUrl(): string {
@@ -408,5 +408,41 @@ export const API_ENDPOINTS = {
     devices: "/api/push/devices",
     device: (tokenId: string) => `/api/push/devices/${tokenId}`,
     test: "/api/push/test",
+  },
+  // Staff - Nutritionist endpoints
+  staffNutritionist: {
+    athletes: "/api/staff-nutritionist/athletes",
+    athleteTrends: (athleteId: string) => `/api/staff-nutritionist/athletes/${athleteId}/trends`,
+    supplements: "/api/staff-nutritionist/supplements",
+    hydration: "/api/staff-nutritionist/hydration",
+    generateReport: (athleteId: string) => `/api/staff-nutritionist/reports/${athleteId}`,
+    summary: "/api/staff-nutritionist/summary",
+  },
+  // Staff - Physiotherapist endpoints
+  staffPhysiotherapist: {
+    athletes: "/api/staff-physiotherapist/athletes",
+    athleteDetails: (athleteId: string) => `/api/staff-physiotherapist/athletes/${athleteId}`,
+    rtp: "/api/staff-physiotherapist/rtp",
+    updateRtp: (injuryId: string) => `/api/staff-physiotherapist/rtp/${injuryId}`,
+    summary: "/api/staff-physiotherapist/summary",
+    logInjury: "/api/staff-physiotherapist/injuries",
+  },
+  // Staff - Psychology endpoints
+  staffPsychology: {
+    myData: "/api/staff-psychology/my-data",
+    logEntry: "/api/staff-psychology/my-data/log",
+    wellnessReport: "/api/staff-psychology/reports/wellness",
+    preCompetitionReport: "/api/staff-psychology/reports/pre-competition",
+    team: "/api/staff-psychology/team",
+    athleteData: (athleteId: string) => `/api/staff-psychology/athletes/${athleteId}`,
+    createAssessment: "/api/staff-psychology/assessments",
+  },
+  // Scouting endpoints
+  scouting: {
+    reports: "/api/scouting/reports",
+    report: (reportId: string) => `/api/scouting/reports/${reportId}`,
+    opponents: "/api/scouting/opponents",
+    tendencies: (opponent: string) => `/api/scouting/tendencies/${encodeURIComponent(opponent)}`,
+    shareReport: (reportId: string) => `/api/scouting/reports/${reportId}/share`,
   },
 };

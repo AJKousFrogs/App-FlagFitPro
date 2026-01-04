@@ -1,20 +1,20 @@
 .periodization-dashboard {
-  padding: var(--space-6, 1.5rem);
+  padding: var(--space-6);
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .dashboard-header {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 
   h1 {
-    font-size: var(--font-heading-lg, 2rem);
+    font-size: var(--font-heading-lg);
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
 
     i {
       color: var(--primary-color);
@@ -28,16 +28,16 @@
 }
 
 :host ::ng-deep .phase-card {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 
   .p-card-header {
-    padding: var(--space-4, 1rem) 1.5rem;
+    padding: var(--space-4) var(--space-6);
     background: linear-gradient(
       135deg,
       var(--primary-color),
       var(--primary-700)
     );
-    border-radius: 6px 6px 0 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
 }
 
@@ -50,7 +50,7 @@
   .phase-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .phase-week {
@@ -65,8 +65,8 @@
 }
 
 :host ::ng-deep .phase-tag {
-  font-size: var(--font-body-md, 1rem);
-  padding: var(--space-2, 0.5rem) 1rem;
+  font-size: var(--font-body-md);
+  padding: var(--space-2) var(--space-4);
 }
 
 .phase-content {
@@ -74,25 +74,25 @@
     font-size: var(--font-body-md);
     line-height: 1.6;
     color: var(--color-text-secondary);
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
   }
 }
 
 .focus-areas {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 
   h4 {
     font-size: var(--font-body-sm);
     text-transform: uppercase;
     color: var(--color-text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 
   .chips-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
   }
 }
 
@@ -109,53 +109,53 @@
 }
 
 .load-targets {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 
   h4 {
     font-size: var(--font-body-sm);
     text-transform: uppercase;
     color: var(--color-text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 
   .load-info {
     display: flex;
     justify-content: space-between;
     font-size: var(--font-body-sm);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 }
 
 :host ::ng-deep .load-bar {
-  height: 8px;
+  height: var(--space-2);
   border-radius: var(--radius-sm);
 }
 
 .acwr-status {
-  padding: var(--space-4, 1rem);
+  padding: var(--space-4);
   border-radius: var(--radius-md);
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 
   &.acwr-optimal {
     background: var(--green-50);
-    border: 1px solid var(--green-200);
+    border: var(--border-1) solid var(--green-200);
   }
 
   &.acwr-caution {
     background: var(--yellow-50);
-    border: 1px solid var(--yellow-200);
+    border: var(--border-1) solid var(--yellow-200);
   }
 
   &.acwr-danger {
     background: var(--red-50);
-    border: 1px solid var(--red-200);
+    border: var(--border-1) solid var(--red-200);
   }
 
   .acwr-header {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+    gap: var(--space-4);
+    margin-bottom: var(--space-2);
 
     .acwr-label {
       font-weight: var(--font-weight-semibold);
@@ -176,38 +176,38 @@
 }
 
 :host ::ng-deep .training-tabs {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 }
 
 .weekly-schedule {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .day-card {
-  padding: var(--space-4, 1rem);
+  padding: var(--space-4);
   border-radius: var(--radius-md);
   background: var(--surface-50);
-  border: 1px solid var(--surface-200);
+  border: var(--border-1) solid var(--surface-200);
 
   &.session-training {
-    border-left: 4px solid var(--primary-color);
+    border-left: var(--border-4) solid var(--primary-color);
   }
 
   &.session-game {
-    border-left: 4px solid var(--orange-500);
+    border-left: var(--border-4) solid var(--orange-500);
     background: var(--orange-50);
   }
 
   &.session-recovery {
-    border-left: 4px solid var(--green-500);
+    border-left: var(--border-4) solid var(--green-500);
     background: var(--green-50);
   }
 
   &.session-rest {
-    border-left: 4px solid var(--gray-400);
+    border-left: var(--border-4) solid var(--gray-400);
     background: var(--surface-100);
   }
 
@@ -215,7 +215,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-3);
 
     .day-name {
       font-weight: var(--font-weight-semibold);
@@ -229,8 +229,8 @@
     > div {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.25rem;
+      gap: var(--space-2);
+      margin-bottom: var(--space-1);
 
       i {
         font-size: var(--font-body-xs);
@@ -238,7 +238,7 @@
     }
 
     .day-notes {
-      margin-top: 0.5rem;
+      margin-top: var(--space-2);
       font-style: italic;
     }
   }
@@ -246,18 +246,18 @@
 
 .weekly-totals {
   background: var(--surface-50);
-  padding: var(--space-6, 1.5rem);
+  padding: var(--space-6);
   border-radius: var(--radius-md);
 
   h4 {
-    margin-bottom: 1rem;
-    font-size: var(--font-body-md, 1rem);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-body-md);
   }
 
   .totals-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    gap: var(--space-4);
     text-align: center;
 
     .total-item {
@@ -278,10 +278,10 @@
 
 .sprint-protocols {
   .sprint-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
 
     h3 {
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     p {
@@ -292,17 +292,17 @@
   .sprint-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
 
     .feature {
-      padding: var(--space-2, 0.5rem) 1rem;
-      border-radius: 20px;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-2xl);
       background: var(--surface-100);
       color: var(--color-text-secondary);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
 
       &.active {
         background: var(--green-100);
@@ -316,7 +316,7 @@
   }
 
   h4 {
-    margin: var(--space-4, 1rem) 0 var(--space-2, 0.5rem);
+    margin: var(--space-4) 0 var(--space-2);
     font-size: var(--font-body-sm);
     text-transform: uppercase;
     color: var(--color-text-secondary);
@@ -325,7 +325,7 @@
   .protocols-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2);
 
     &.avoid :host ::ng-deep .protocol-chip {
       background: var(--red-100);
@@ -340,13 +340,13 @@
 }
 
 .sprint-tips {
-  margin-top: 2rem;
-  padding: var(--space-6, 1.5rem);
+  margin-top: var(--space-8);
+  padding: var(--space-6);
   background: var(--surface-50);
   border-radius: var(--radius-md);
 
   h4 {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     font-size: var(--font-body-lg);
   }
 
@@ -356,8 +356,8 @@
     margin: 0;
 
     li {
-      padding: var(--space-2, 0.5rem) 0;
-      border-bottom: 1px solid var(--surface-200);
+      padding: var(--space-2) 0;
+      border-bottom: var(--border-1) solid var(--surface-200);
 
       &:last-child {
         border-bottom: none;
@@ -367,7 +367,7 @@
 }
 
 .annual-timeline {
-  padding: var(--space-8, 2rem) 0;
+  padding: var(--space-8) 0;
   overflow-x: auto;
 }
 
@@ -378,8 +378,8 @@
 }
 
 .timeline-marker {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--space-10);
+  height: var(--space-10);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -387,7 +387,7 @@
   color: white;
 
   i {
-    font-size: var(--font-body-md, 1rem);
+    font-size: var(--font-body-md);
   }
 }
 
@@ -407,19 +407,19 @@
 
 .phase-detail {
   p {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     line-height: 1.6;
   }
 
   .phase-metrics {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
 
     .metric {
       text-align: center;
-      padding: var(--space-4, 1rem);
+      padding: var(--space-4);
       background: var(--surface-50);
       border-radius: var(--radius-md);
 
@@ -427,7 +427,7 @@
         display: block;
         font-size: var(--font-body-xs);
         color: var(--color-text-secondary);
-        margin-bottom: 0.25rem;
+        margin-bottom: var(--space-1);
       }
 
       .metric-value {
@@ -441,22 +441,22 @@
   }
 
   h5 {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 
   ul {
     margin: 0;
-    padding-left: 1.5rem;
+    padding-left: var(--space-6);
 
     li {
-      margin-bottom: 0.25rem;
+      margin-bottom: var(--space-1);
     }
   }
 }
 
 .evidence-section {
   .evidence-intro {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
     color: var(--color-text-secondary);
     line-height: 1.6;
   }
@@ -464,24 +464,24 @@
   .research-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1.5rem;
+    gap: var(--space-6);
   }
 
   .research-card {
-    padding: var(--space-6, 1.5rem);
+    padding: var(--space-6);
     background: var(--surface-50);
     border-radius: var(--radius-md);
-    border: 1px solid var(--surface-200);
+    border: var(--border-1) solid var(--surface-200);
 
     .research-header {
       font-size: var(--font-body-sm);
       color: var(--color-text-secondary);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .research-title {
-      font-size: var(--font-body-md, 1rem);
-      margin-bottom: 0.5rem;
+      font-size: var(--font-body-md);
+      margin-bottom: var(--space-2);
       line-height: 1.4;
     }
 
@@ -490,13 +490,13 @@
       font-size: var(--font-body-sm);
       font-style: italic;
       color: var(--color-text-secondary);
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-4);
     }
 
     .research-finding,
     .research-application {
       font-size: var(--font-body-sm);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
       line-height: 1.5;
 
       strong {
@@ -507,7 +507,7 @@
 }
 
 :host ::ng-deep .adjustments-card {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 
   .adjustments-list {
     list-style: none;
@@ -515,9 +515,9 @@
     margin: 0;
 
     li {
-      padding: var(--space-3, 0.75rem) 0;
-      border-bottom: 1px solid var(--surface-200);
-      font-size: var(--font-body-md, 1rem);
+      padding: var(--space-3) 0;
+      border-bottom: var(--border-1) solid var(--surface-200);
+      font-size: var(--font-body-md);
 
       &:last-child {
         border-bottom: none;
@@ -528,14 +528,14 @@
 
 .warnings-section {
   .warning-item {
-    padding: var(--space-4, 1rem);
+    padding: var(--space-4);
     background: var(--yellow-50);
-    border: 1px solid var(--yellow-200);
+    border: var(--border-1) solid var(--yellow-200);
     border-radius: var(--radius-md);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: var(--space-3);
 
     i {
       color: var(--yellow-600);
@@ -546,7 +546,7 @@
 
 @media (max-width: 768px) {
   .periodization-dashboard {
-    padding: var(--space-4, 1rem);
+    padding: var(--space-4);
   }
 
   .weekly-schedule {

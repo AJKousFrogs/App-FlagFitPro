@@ -8,15 +8,15 @@
     .summary-card {
       background: var(--surface-card);
       border-radius: var(--border-radius);
-      padding: 1rem;
-      border: 1px solid var(--surface-border);
+      padding: var(--space-4);
+      border: var(--border-1) solid var(--surface-border);
     }
 
     .summary-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
 
       h3 {
         margin: 0;
@@ -27,8 +27,8 @@
 
     .summary-stats {
       display: flex;
-      gap: 1.5rem;
-      margin-bottom: 1rem;
+      gap: var(--space-6);
+      margin-bottom: var(--space-4);
 
       .stat {
         display: flex;
@@ -50,14 +50,14 @@
 
     .active-streaks {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
 
       .streak-badge {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem 0.5rem;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
         background: var(--surface-ground);
         border-radius: var(--radius-xl);
         font-size: var(--font-body-sm);
@@ -79,8 +79,8 @@
           background: var(--orange-500);
           color: white;
           border-radius: 50%;
-          width: 1rem;
-          height: 1rem;
+          width: var(--space-4);
+          height: var(--space-4);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -93,14 +93,14 @@
     .next-achievement {
       background: var(--surface-ground);
       border-radius: var(--border-radius);
-      padding: 0.75rem;
-      margin-bottom: 0.75rem;
+      padding: var(--space-3);
+      margin-bottom: var(--space-3);
 
       .next-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
+        gap: var(--space-2);
+        margin-bottom: var(--space-2);
 
         .next-icon {
           font-size: var(--font-heading-sm);
@@ -128,7 +128,7 @@
     .recent-achievements {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
 
       .recent-label {
         font-size: var(--font-body-xs);
@@ -145,31 +145,31 @@
   /* Dialog styles */
   .achievements-grid {
     .category-section {
-      margin-bottom: 1.5rem;
+      margin-bottom: var(--space-6);
 
       h4 {
-        margin: 0 0 0.75rem 0;
+        margin: 0 0 var(--space-3) 0;
         font-size: var(--font-body-md);
         color: var(--color-text-secondary);
-        border-bottom: 1px solid var(--surface-border);
-        padding-bottom: 0.5rem;
+        border-bottom: var(--border-1) solid var(--surface-border);
+        padding-bottom: var(--space-2);
       }
     }
 
     .achievements-list {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .achievement-card {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.75rem;
+      gap: var(--space-3);
+      padding: var(--space-3);
       background: var(--surface-ground);
       border-radius: var(--border-radius);
-      border: 1px solid var(--surface-border);
+      border: var(--border-1) solid var(--surface-border);
       opacity: 0.6;
 
       &.earned {
@@ -200,8 +200,8 @@
         .ach-header {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 0.25rem;
+          gap: var(--space-2);
+          margin-bottom: var(--space-1);
 
           .ach-name {
             font-weight: var(--font-weight-semibold);
@@ -215,10 +215,10 @@
         }
 
         .ach-progress {
-          margin-top: 0.5rem;
+          margin-top: var(--space-2);
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: var(--space-2);
 
           .progress-text {
             font-size: var(--font-body-xs);
@@ -229,7 +229,7 @@
         .earned-date {
           font-size: var(--font-body-xs);
           color: var(--green-500);
-          margin-top: 0.25rem;
+          margin-top: var(--space-1);
           display: block;
         }
       }
@@ -245,13 +245,13 @@
   .streaks-detail {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
+    gap: var(--space-4);
 
     .streak-card {
       background: var(--surface-ground);
       border-radius: var(--border-radius);
-      padding: 1rem;
-      border: 2px solid var(--surface-border);
+      padding: var(--space-4);
+      border: var(--border-2) solid var(--surface-border);
 
       &.active {
         border-color: var(--green-400);
@@ -266,8 +266,8 @@
       .streak-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
 
         .streak-type-icon {
           font-size: var(--font-heading-md);
@@ -280,7 +280,7 @@
 
       .streak-stats {
         display: flex;
-        gap: 1.5rem;
+        gap: var(--space-6);
 
         .streak-stat {
           display: flex;
@@ -300,14 +300,14 @@
       }
 
       .risk-warning {
-        margin-top: 0.75rem;
+        margin-top: var(--space-3);
         font-size: var(--font-body-sm);
         color: var(--orange-600);
         font-weight: var(--font-weight-medium);
       }
 
       .start-prompt {
-        margin-top: 0.75rem;
+        margin-top: var(--space-3);
         font-size: var(--font-body-sm);
         color: var(--color-text-secondary);
       }
@@ -318,27 +318,27 @@
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
     }
 
     .stat-card {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      padding: var(--space-4);
       background: var(--surface-ground);
       border-radius: var(--border-radius);
       text-align: center;
 
       &.highlight {
         background: var(--primary-50);
-        border: 1px solid var(--primary-200);
+        border: var(--border-1) solid var(--primary-200);
       }
 
       .stat-icon {
         font-size: var(--font-heading-md);
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--space-2);
       }
 
       .stat-value {
@@ -355,12 +355,12 @@
 
     .points-summary {
       text-align: center;
-      padding: 1rem;
+      padding: var(--space-4);
       background: var(--primary-100);
       border-radius: var(--border-radius);
 
       h4 {
-        margin: 0 0 0.25rem 0;
+        margin: 0 0 var(--space-1) 0;
         color: var(--primary-700);
       }
 
@@ -382,4 +382,3 @@
     }
   }
 }
-

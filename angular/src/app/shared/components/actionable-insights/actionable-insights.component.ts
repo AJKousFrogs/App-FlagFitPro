@@ -27,7 +27,8 @@ import { RouterModule } from "@angular/router";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TooltipModule } from "primeng/tooltip";
@@ -66,11 +67,13 @@ export interface Insight {
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     TagModule,
     ProgressBarModule,
     TooltipModule,
     SkeletonModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="actionable-insights">
@@ -85,13 +88,7 @@ export interface Insight {
             size="small"
           ></p-tag>
         </div>
-        <p-button
-          icon="pi pi-refresh"
-          [text]="true"
-          [rounded]="true"
-          (onClick)="refreshInsights()"
-          pTooltip="Refresh insights"
-        ></p-button>
+        <app-icon-button icon="pi-refresh" variant="text" (clicked)="refreshInsights()" ariaLabel="refresh" />
       </div>
 
       <!-- Loading State -->
@@ -169,19 +166,9 @@ export interface Insight {
                 @if (insight.action) {
                   <div class="insight-action">
                     @if (insight.action.route) {
-                      <p-button
-                        [label]="insight.action.label"
-                        [routerLink]="insight.action.route"
-                        size="small"
-                        styleClass="p-button-sm"
-                      ></p-button>
+                      <app-button size="sm" routerLink="insight.action.route"></app-button>
                     } @else {
-                      <p-button
-                        [label]="insight.action.label"
-                        (onClick)="executeAction(insight)"
-                        size="small"
-                        styleClass="p-button-sm"
-                      ></p-button>
+                      <app-button size="sm" (clicked)="executeAction(insight)"></app-button>
                     }
                   </div>
                 }

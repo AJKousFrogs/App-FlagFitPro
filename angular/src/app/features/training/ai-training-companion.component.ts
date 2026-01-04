@@ -12,7 +12,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { CarouselModule } from "primeng/carousel";
 import { KnobModule } from "primeng/knob";
@@ -123,10 +123,11 @@ declare global {
     CommonModule,
     FormsModule,
     RouterModule,
-    ButtonModule,
     CardModule,
     CarouselModule,
     KnobModule,
+  
+    ButtonComponent,
   ],
   animations: [scaleInOut],
   template: `
@@ -169,12 +170,7 @@ declare global {
               @if (hasQuickActions()) {
                 <div class="bubble-actions">
                   @for (action of quickActions(); track action.label) {
-                    <p-button
-                      [label]="action.label"
-                      size="small"
-                      [text]="true"
-                      (onClick)="executeAction(action)"
-                    />
+                    <app-button variant="text" size="sm" (clicked)="executeAction(action)"></app-button>
                   }
                 </div>
               }
@@ -206,13 +202,7 @@ declare global {
                     @if (insight.actions) {
                       <div class="insight-actions">
                         @for (action of insight.actions; track action.label) {
-                          <p-button
-                            [label]="action.label"
-                            [icon]="action.icon"
-                            size="small"
-                            [severity]="action.severity"
-                            (onClick)="executeInsightAction(action)"
-                          />
+                          <app-button size="sm" (clicked)="executeInsightAction(action)"></app-button>
                         }
                       </div>
                     }
@@ -223,16 +213,7 @@ declare global {
 
             <!-- Voice Commands -->
             <div class="voice-controls">
-              <p-button
-                [icon]="
-                  isListening() ? 'pi pi-microphone' : 'pi pi-microphone-slash'
-                "
-                [label]="isListening() ? 'Listening...' : 'Voice Command'"
-                [severity]="isListening() ? 'success' : 'secondary'"
-                [loading]="processingVoice()"
-                (onClick)="toggleVoiceRecognition()"
-                class="voice-button"
-              />
+              <app-button [loading]="processingVoice()" (clicked)="toggleVoiceRecognition()"></app-button>
 
               @if (lastVoiceCommand()) {
                 <div class="voice-feedback">
@@ -285,18 +266,9 @@ declare global {
                     </div>
 
                     <div class="recommendation-actions">
-                      <p-button
-                        label="Try It"
-                        icon="pi pi-play"
-                        (onClick)="applyRecommendation(recommendation)"
-                      />
+                      <app-button iconLeft="pi-play" (clicked)="applyRecommendation(recommendation)">Try It</app-button>
 
-                      <p-button
-                        label="More Info"
-                        icon="pi pi-info-circle"
-                        [outlined]="true"
-                        (onClick)="showRecommendationDetails(recommendation)"
-                      />
+                      <app-button variant="outlined" iconLeft="pi-info-circle" (clicked)="showRecommendationDetails(recommendation)">More Info</app-button>
                     </div>
                   </div>
                 </ng-template>

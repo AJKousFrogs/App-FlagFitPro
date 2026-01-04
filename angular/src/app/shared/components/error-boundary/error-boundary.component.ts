@@ -16,16 +16,14 @@
  */
 
 import {
-  Component,
-  Input,
-  signal,
-  inject,
-  ErrorHandler,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    input,
+    signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";
 import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
 
@@ -33,7 +31,9 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
   selector: "app-error-boundary",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, CardModule],
+  imports: [ CardModule,
+    ButtonComponent,
+  ],
   template: `
     @if (hasError()) {
       <div class="error-boundary-container">
@@ -46,22 +46,14 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
             <p class="error-message">
               {{ errorMessage() }}
             </p>
-            <p class="error-component" *ngIf="componentName">
-              Component: {{ componentName }}
-            </p>
+            @if (componentName()) {
+              <p class="error-component">
+                Component: {{ componentName() }}
+              </p>
+            }
             <div class="error-actions">
-              <p-button
-                label="Try Again"
-                icon="pi pi-refresh"
-                (onClick)="retry()"
-                styleClass="p-button-primary"
-              ></p-button>
-              <p-button
-                label="Go to Dashboard"
-                icon="pi pi-home"
-                (onClick)="goToDashboard()"
-                [outlined]="true"
-              ></p-button>
+              <app-button iconLeft="pi-refresh" (clicked)="retry()">Try Again</app-button>
+              <app-button variant="outlined" iconLeft="pi-home" (clicked)="goToDashboard()">Go to Dashboard</app-button>
             </div>
             <p class="error-help">
               If this problem persists, please contact support.
@@ -76,7 +68,7 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
   styleUrl: './error-boundary.component.scss',
 })
 export class ErrorBoundaryComponent {
-  @Input() componentName?: string;
+  componentName = input<string>();
 
   private router = inject(Router);
   private errorHandler = inject(GlobalErrorHandlerService);

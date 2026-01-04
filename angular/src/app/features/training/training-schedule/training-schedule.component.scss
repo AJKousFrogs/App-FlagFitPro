@@ -1,18 +1,22 @@
 // ============================================================================
 // training-schedule.component Styles
-// Design System Compliant
+// Design System Compliant - Final Compact Dashboard-Grade Pass
 // ============================================================================
 
 @layer features {
+  // -------------------------------------------------------------------------
+  // 1. PAGE LAYOUT - Compact, aligned
+  // -------------------------------------------------------------------------
   .training-schedule-page {
-    padding: var(--space-6);
+    padding: var(--space-4);
   }
 
+  // Two-column layout - balanced weights
   .schedule-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
-    margin-top: var(--space-6);
+    grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.6fr);
+    gap: var(--space-4);
+    margin-top: var(--space-5);
   }
 
   @media (max-width: 1024px) {
@@ -21,57 +25,572 @@
     }
   }
 
+  // -------------------------------------------------------------------------
+  // 2. CARD BALANCE - Dashboard-consistent styling
+  // -------------------------------------------------------------------------
   .calendar-card,
   .sessions-card {
     height: fit-content;
+
+    :host ::ng-deep .p-card {
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--surface-border);
+    }
+
+    :host ::ng-deep .p-card-body {
+      padding: var(--space-4);
+    }
+
+    :host ::ng-deep .p-card-header {
+      padding: 0;
+    }
   }
 
+  // Card header - Removed from @layer, see outside override for player-dashboard match
+
+  // -------------------------------------------------------------------------
+  // 3. CALENDAR - Tighter, centered
+  // -------------------------------------------------------------------------
+  .calendar-card {
+    :host ::ng-deep .p-card-body {
+      padding: 0.625rem;
+    }
+
+    :host ::ng-deep .p-datepicker {
+      width: 100%;
+
+      .p-datepicker-calendar {
+        th {
+          padding: 0.25rem 0.375rem;
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-tertiary);
+          font-size: var(--font-body-2xs);
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+
+        td {
+          padding: 0.125rem;
+
+          > span {
+            width: 1.75rem;
+            height: 1.75rem;
+            font-size: var(--font-body-xs);
+            color: var(--color-text-secondary);
+          }
+        }
+
+        // Current month dates - slightly stronger
+        td:not(.p-datepicker-other-month) > span {
+          color: var(--color-text-primary);
+        }
+      }
+
+      // Selected day - keep clearly visible
+      .p-datepicker-selected > span {
+        background: var(--p-primary-500);
+        color: white;
+        font-weight: var(--font-weight-medium);
+      }
+
+      // Today highlight - subtle but visible
+      .p-datepicker-today > span {
+        background: var(--p-primary-50, rgba(59, 130, 246, 0.06));
+        color: var(--p-primary-600);
+        font-weight: var(--font-weight-medium);
+
+        &:not(.p-datepicker-selected) {
+          border: 1px solid var(--p-primary-200);
+        }
+      }
+
+      // Month navigation - compact
+      .p-datepicker-header {
+        padding: 0.375rem 0.5rem;
+        margin-bottom: 0.25rem;
+
+        .p-datepicker-prev-button,
+        .p-datepicker-next-button {
+          width: 1.5rem;
+          height: 1.5rem;
+
+          .p-icon {
+            width: 0.625rem;
+            height: 0.625rem;
+          }
+        }
+
+        .p-datepicker-title {
+          font-size: var(--font-compact-lg); // 13px - compact heading
+          font-weight: var(--font-weight-medium);
+        }
+      }
+
+      // Week numbers - subtle
+      .p-datepicker-weeknumber {
+        font-size: var(--font-body-2xs);
+        color: var(--color-text-tertiary);
+        opacity: 0.6;
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 3. LEGEND BLOCK - Unified visual block, tight spacing
+  // -------------------------------------------------------------------------
+  .calendar-legend {
+    margin-top: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    background: var(--surface-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  // Today row
+  .legend-today {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0 0 0.5rem 0;
+    font-size: var(--font-body-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  .legend-today-icon {
+    font-size: var(--font-compact-xs); // 8px - micro icon
+    color: var(--p-primary-500);
+    line-height: 1;
+  }
+
+  // Legend section
+  .legend-section {
+    margin-bottom: 0.5rem;
+  }
+
+  .legend-label {
+    display: block;
+    font-size: var(--font-body-2xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  // Legend items - baseline aligned
+  .legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-size: var(--font-compact-md); // 11px - compact body text
+    color: var(--color-text-secondary);
+    line-height: 1;
+
+    i {
+      font-size: var(--font-compact-xs); // 8px - micro icon
+      position: relative;
+      top: -0.05rem; // Fine-tune baseline alignment
+    }
+  }
+
+  .legend-completed {
+    color: var(--p-green-600);
+  }
+
+  .legend-scheduled {
+    color: var(--p-blue-500);
+  }
+
+  .legend-in-progress {
+    color: var(--p-yellow-600);
+  }
+
+  .legend-missed {
+    color: var(--p-red-500);
+  }
+
+  // Checkbox row - tight, aligned
+  .show-week-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border-secondary);
+    cursor: pointer;
+
+    :host ::ng-deep .p-checkbox {
+      width: 0.875rem;
+      height: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .p-checkbox-box {
+        width: 0.875rem;
+        height: 0.875rem;
+        border-radius: 0.1875rem;
+        border: 1.5px solid var(--color-border-primary);
+        background: var(--surface-primary);
+        transition: all 0.1s ease;
+
+        &:hover {
+          border-color: var(--p-primary-400);
+        }
+
+        &.p-highlight {
+          background: var(--p-primary-500);
+          border-color: var(--p-primary-500);
+
+          .p-checkbox-icon {
+            color: white;
+            font-size: var(--font-compact-xs); // 8px
+          }
+        }
+      }
+    }
+
+    label {
+      cursor: pointer;
+      font-size: var(--font-compact-md); // 11px - compact body text
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-secondary);
+      line-height: var(--font-body-sm);
+      user-select: none;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 4. SESSIONS LIST - Card-like rows matching wireframe
+  // -------------------------------------------------------------------------
   .sessions-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: 0.5rem;
+    min-height: 140px;
   }
 
+  // Session row - Card-like appearance
   .session-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-4);
-    background: var(--surface-secondary);
+    padding: 0.75rem 1rem;
+    background: var(--surface-primary);
     border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: var(--surface-secondary);
+      border-color: var(--color-border-primary);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: 2px solid var(--p-primary-400);
+      outline-offset: 1px;
+    }
   }
 
-  .session-item:hover {
-    background: var(--surface-tertiary);
-    transform: translateX(4px);
+  .session-item-skeleton {
+    cursor: default;
+    background: var(--surface-secondary);
+    box-shadow: none;
+
+    &:hover {
+      background: var(--surface-secondary);
+      box-shadow: none;
+    }
   }
 
+  // Session info - clear hierarchy
+  .session-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .session-title {
+    margin: 0;
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: 1.3;
+  }
+
+  .session-date {
+    margin: 0.25rem 0 0 0;
+    font-size: var(--font-body-xs);
+    color: var(--color-text-secondary);
+    line-height: 1.3;
+  }
+
+  .session-duration {
+    margin: 0.125rem 0 0 0;
+    font-size: var(--font-compact-md); // 11px - compact body text
+    color: var(--color-text-tertiary);
+    line-height: 1.3;
+  }
+
+  // Session actions - status tag + checkmark button
   .session-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 0.625rem;
+    flex-shrink: 0;
+
+    // Mark complete button
+    :host ::ng-deep .p-button.p-button-text {
+      width: 1.75rem;
+      height: 1.75rem;
+      padding: 0;
+
+      .p-button-icon {
+        font-size: var(--font-body-sm);
+      }
+    }
   }
 
-  .session-info h4 {
+  // -------------------------------------------------------------------------
+  // STATUS TAG - Design system compliant
+  // -------------------------------------------------------------------------
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-compact-md); // 11px - compact body text
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    text-transform: capitalize;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+
+    i {
+      font-size: var(--font-compact-xs); // 8px
+    }
+
+    // Completed - Green
+    &.status-completed {
+      background: var(--primitive-success-50);
+      color: var(--primitive-success-700);
+      border: 1px solid var(--primitive-success-200);
+
+      i {
+        color: var(--primitive-success-500);
+      }
+    }
+
+    // Scheduled - Blue
+    &.status-scheduled {
+      background: var(--primitive-blue-50);
+      color: var(--primitive-blue-700);
+      border: 1px solid var(--primitive-blue-200);
+
+      i {
+        color: var(--primitive-blue-500);
+      }
+    }
+
+    // In Progress - Amber/Orange
+    &.status-in_progress {
+      background: var(--primitive-warning-50);
+      color: var(--primitive-warning-700);
+      border: 1px solid var(--primitive-warning-200);
+
+      i {
+        color: var(--primitive-warning-500);
+      }
+    }
+
+    // Missed - Red
+    &.status-missed {
+      background: var(--primitive-error-50);
+      color: var(--primitive-error-700);
+      border: 1px solid var(--primitive-error-200);
+
+      i {
+        color: var(--primitive-error-500);
+      }
+    }
+  }
+
+  // Dark mode adjustments
+  :host-context(.dark-mode) {
+    .status-tag {
+      &.status-completed {
+        background: var(--primitive-success-900);
+        color: var(--primitive-success-300);
+        border-color: var(--primitive-success-800);
+      }
+
+      &.status-scheduled {
+        background: var(--primitive-blue-900);
+        color: var(--primitive-blue-300);
+        border-color: var(--primitive-blue-800);
+      }
+
+      &.status-in_progress {
+        background: var(--primitive-warning-900);
+        color: var(--primitive-warning-300);
+        border-color: var(--primitive-warning-800);
+      }
+
+      &.status-missed {
+        background: var(--primitive-error-900);
+        color: var(--primitive-error-300);
+        border-color: var(--primitive-error-800);
+      }
+    }
+  }
+
+  // Skeleton adjustments
+  .skeleton-date {
+    margin-top: 0.375rem;
+  }
+
+  .skeleton-duration {
+    margin-top: 0.25rem;
+  }
+
+  // -------------------------------------------------------------------------
+  // STATES - Empty, Error (compact)
+  // -------------------------------------------------------------------------
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-5) var(--space-3);
+    min-height: 140px;
+  }
+
+  .empty-state-icon {
+    font-size: var(--font-heading-lg);
+    color: var(--color-text-tertiary);
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state-title {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-compact-lg); // 13px - compact heading
+    font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
   }
 
-  .session-date,
-  .session-duration {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
+  .empty-state-message {
     margin: 0;
+    font-size: var(--font-compact-md); // 11px - compact body text
+    color: var(--color-text-tertiary);
   }
 
-  .empty-state {
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: var(--space-4);
+    min-height: 140px;
     text-align: center;
-    padding: var(--space-6);
-    color: var(--color-text-secondary);
+    max-width: 240px;
+    margin: 0 auto;
+  }
+
+  .error-icon {
+    font-size: var(--font-heading-md);
+    color: var(--p-red-300);
+    opacity: 0.7;
+  }
+
+  .error-text {
+    strong {
+      display: block;
+      margin-bottom: 0.125rem;
+      font-size: var(--font-body-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-body-2xs);
+      color: var(--color-text-tertiary);
+      line-height: 1.3;
+    }
+  }
+
+  .retry-button {
+    margin-top: var(--space-1);
+
+    :host ::ng-deep .p-button {
+      height: var(--badge-lg); // 28px
+      padding: 0 var(--space-2);
+      font-size: var(--font-compact-md); // 11px
+
+      .p-button-icon {
+        font-size: var(--font-body-xs);
+      }
+    }
   }
 }
 
+// ============================================================================
+// PRIMENG CARD HEADER OVERRIDE - Must be outside @layer for specificity
+// Matches player-dashboard pattern exactly
+// Overrides primeng-theme.scss line 903: background: var(--surface-secondary)
+// ============================================================================
+:host ::ng-deep p-card.calendar-card .p-card-header,
+:host ::ng-deep p-card.sessions-card .p-card-header {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
+// Even more specific selector if the above doesn't work
+:host ::ng-deep .calendar-card.p-card .p-card-header,
+:host ::ng-deep .sessions-card.p-card .p-card-header {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
+// Ensure card-header inside has proper styling (matching player dashboard)
+:host ::ng-deep .calendar-card .card-header,
+:host ::ng-deep .sessions-card .card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  background: transparent;
+  
+  i {
+    font-size: 1rem;
+    color: var(--color-brand-primary);
+    opacity: 0.85;
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+}

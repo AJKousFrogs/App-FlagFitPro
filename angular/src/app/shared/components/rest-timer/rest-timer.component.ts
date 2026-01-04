@@ -9,7 +9,8 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { DialogModule } from "primeng/dialog";
 import { Slider } from "primeng/slider";
 import { FormsModule } from "@angular/forms";
@@ -18,7 +19,10 @@ import { FormsModule } from "@angular/forms";
   selector: "app-rest-timer",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, DialogModule, Slider, FormsModule],
+  imports: [CommonModule, DialogModule, Slider, FormsModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <!-- Floating Timer Button (when minimized) -->
     @if (isMinimized() && isRunning()) {
@@ -55,22 +59,8 @@ import { FormsModule } from "@angular/forms";
             Rest Timer
           </span>
           <div class="header-actions">
-            <p-button
-              icon="pi pi-minus"
-              [text]="true"
-              [rounded]="true"
-              size="small"
-              (onClick)="minimize()"
-              pTooltip="Minimize"
-            ></p-button>
-            <p-button
-              icon="pi pi-times"
-              [text]="true"
-              [rounded]="true"
-              size="small"
-              (onClick)="close()"
-              pTooltip="Close"
-            ></p-button>
+            <app-icon-button icon="pi-minus" variant="text" size="sm" (clicked)="minimize()" ariaLabel="minus" />
+            <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="close()" ariaLabel="times" />
           </div>
         </div>
       </ng-template>
@@ -139,33 +129,11 @@ import { FormsModule } from "@angular/forms";
         <!-- Controls -->
         <div class="timer-controls">
           @if (!isRunning()) {
-            <p-button
-              label="Start"
-              icon="pi pi-play"
-              (onClick)="start()"
-              styleClass="w-full"
-            ></p-button>
+            <app-button iconLeft="pi-play" (clicked)="start()">Start</app-button>
           } @else {
-            <p-button
-              [label]="isPaused() ? 'Resume' : 'Pause'"
-              [icon]="isPaused() ? 'pi pi-play' : 'pi pi-pause'"
-              (onClick)="togglePause()"
-              [outlined]="true"
-            ></p-button>
-            <p-button
-              label="Reset"
-              icon="pi pi-refresh"
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="reset()"
-            ></p-button>
-            <p-button
-              label="+30s"
-              icon="pi pi-plus"
-              severity="secondary"
-              [text]="true"
-              (onClick)="addTime(30)"
-            ></p-button>
+            <app-button variant="outlined" (clicked)="togglePause()"></app-button>
+            <app-button variant="outlined" iconLeft="pi-refresh" (clicked)="reset()">Reset</app-button>
+            <app-button variant="text" iconLeft="pi-plus" (clicked)="addTime(30)">+30s</app-button>
           }
         </div>
 

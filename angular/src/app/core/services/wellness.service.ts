@@ -1,10 +1,10 @@
-import { Injectable, inject, signal, computed, effect } from "@angular/core";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { map, tap, catchError } from "rxjs/operators";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { SupabaseService } from "./supabase.service";
+import { catchError, map, tap } from "rxjs/operators";
+import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
-import { RealtimeService, RealtimeEvent } from "./realtime.service";
+import { RealtimeEvent, RealtimeService } from "./realtime.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface WellnessData {
   id?: number;
@@ -399,26 +399,26 @@ export class WellnessService {
     if (score >= 8) {
       return {
         status: "excellent",
-        color: "#10c96b",
+        color: STATUS_HEX_COLORS.success, // #089949 (brand green)
         message: "Your wellness is excellent! Keep up the great work.",
       };
     } else if (score >= 6) {
       return {
         status: "good",
-        color: "#2196f3",
+        color: STATUS_HEX_COLORS.info, // #3b82f6 (blue)
         message:
           "Your wellness is good. Small improvements can make a big difference.",
       };
     } else if (score >= 4) {
       return {
         status: "fair",
-        color: "#ff9800",
+        color: STATUS_HEX_COLORS.warning, // #f59e0b (amber)
         message: "Your wellness needs attention. Focus on recovery and rest.",
       };
     } else {
       return {
         status: "poor",
-        color: "#f44336",
+        color: STATUS_HEX_COLORS.error, // #ef4444 (red)
         message:
           "Your wellness is concerning. Consider taking a rest day and consulting a coach.",
       };

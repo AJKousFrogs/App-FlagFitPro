@@ -8,14 +8,13 @@
     </div>
     <div class="header-actions">
       <span class="progress-badge">{{ takenCount() }}/{{ totalCount() }}</span>
-      <p-button
-        icon="pi pi-plus"
-        [rounded]="true"
-        [text]="true"
-        size="small"
-        pTooltip="Add supplement"
-        (onClick)="openAddDialog()"
-      ></p-button>
+      <app-icon-button
+        icon="pi-plus"
+        ariaLabel="Add supplement"
+        tooltip="Add supplement"
+        size="sm"
+        (clicked)="openAddDialog()"
+      />
     </div>
   </div>
 
@@ -81,7 +80,7 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                [rounded]="true"
+                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -126,7 +125,7 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                [rounded]="true"
+                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -171,7 +170,7 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                [rounded]="true"
+                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -216,7 +215,7 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                [rounded]="true"
+                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -261,7 +260,7 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                [rounded]="true"
+                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -275,12 +274,11 @@
       <div class="supplement-empty">
         <i class="pi pi-inbox"></i>
         <p>No supplements configured</p>
-        <p-button
-          label="Add Your First Supplement"
-          icon="pi pi-plus"
-          size="small"
-          (onClick)="openAddDialog()"
-        ></p-button>
+        <app-button
+          iconLeft="pi-plus"
+          size="sm"
+          (clicked)="openAddDialog()"
+        >Add Your First Supplement</app-button>
       </div>
     }
   }
@@ -346,15 +344,13 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <p-button
-      label="Cancel"
-      [text]="true"
-      (onClick)="closeAddDialog()"
-    ></p-button>
-    <p-button
-      label="Add Supplement"
-      icon="pi pi-plus"
-      (onClick)="addSupplement()"
-    ></p-button>
+    <app-button
+      variant="text"
+      (clicked)="closeAddDialog()"
+    >Cancel</app-button>
+    <app-button
+      iconLeft="pi-plus"
+      (clicked)="addSupplement()"
+    >Add Supplement</app-button>
   </ng-template>
 </p-dialog>

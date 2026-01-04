@@ -1,7 +1,8 @@
 import { Component, signal, computed, inject, DestroyRef } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -48,21 +49,17 @@ interface Stats {
 
 @Component({
   selector: "app-achievements-panel",
-  imports: [ButtonModule, TagModule, TooltipModule, ProgressBar, DialogModule, TabsModule, SkeletonModule],
+  imports: [ TagModule, TooltipModule, ProgressBar, DialogModule, TabsModule, SkeletonModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="achievements-panel">
       <!-- Summary Card -->
       <div class="summary-card">
         <div class="summary-header">
           <h3>🏆 Achievements</h3>
-          <p-button
-            icon="pi pi-external-link"
-            [rounded]="true"
-            [text]="true"
-            severity="secondary"
-            (click)="showFullDialog = true"
-            pTooltip="View all achievements"
-          />
+          <app-icon-button icon="pi-external-link" variant="text" ariaLabel="external-link" />
         </div>
 
         @if (loading()) {

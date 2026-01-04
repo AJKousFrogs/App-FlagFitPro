@@ -10,7 +10,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { YouTubePlayerModule } from "@angular/youtube-player";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { LoggerService } from "../../../core/services/logger.service";
 
 /**
@@ -21,7 +21,9 @@ import { LoggerService } from "../../../core/services/logger.service";
   selector: "app-youtube-player-official",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, YouTubePlayerModule, CardModule, ButtonModule],
+  imports: [CommonModule, YouTubePlayerModule, CardModule,
+    ButtonComponent,
+  ],
   template: `
     <div class="youtube-player-container">
       @if (videoId()) {
@@ -40,18 +42,8 @@ import { LoggerService } from "../../../core/services/logger.service";
 
       @if (showControls()) {
         <div class="player-controls">
-          <p-button
-            [icon]="isPlaying() ? 'pi pi-pause' : 'pi pi-play'"
-            [label]="isPlaying() ? 'Pause' : 'Play'"
-            (onClick)="togglePlay()"
-            [disabled]="!playerReady()"
-          />
-          <p-button
-            icon="pi pi-stop"
-            label="Stop"
-            (onClick)="stop()"
-            [disabled]="!playerReady()"
-          />
+          <app-button [disabled]="!playerReady()" (clicked)="togglePlay()"></app-button>
+          <app-button iconLeft="pi-stop" [disabled]="!playerReady()" (clicked)="stop()">Stop</app-button>
         </div>
       }
 

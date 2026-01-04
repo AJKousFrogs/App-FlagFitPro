@@ -12,14 +12,18 @@ import {
 import { FormsModule } from "@angular/forms";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 @Component({
   selector: "app-roster-filters",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, InputTextModule, Select, ButtonModule],
+  imports: [FormsModule, InputTextModule, Select,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="search-filter-bar">
       <div class="search-box">
@@ -63,31 +67,11 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
       @if (canManage() && selectedCount() > 0) {
         <div class="bulk-actions">
           <span class="selected-count">{{ selectedCount() }} selected</span>
-          <p-button
-            label="Change Status"
-            icon="pi pi-tag"
-            [outlined]="true"
-            size="small"
-            (onClick)="bulkStatusChange.emit()"
-          ></p-button>
+          <app-button variant="outlined" size="sm" iconLeft="pi-tag" (clicked)="bulkStatusChange.emit()">Change Status</app-button>
           @if (canDelete()) {
-            <p-button
-              label="Remove"
-              icon="pi pi-trash"
-              severity="danger"
-              [outlined]="true"
-              size="small"
-              (onClick)="bulkRemove.emit()"
-            ></p-button>
+            <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="bulkRemove.emit()">Remove</app-button>
           }
-          <p-button
-            icon="pi pi-times"
-            [rounded]="true"
-            [text]="true"
-            size="small"
-            (onClick)="clearSelection.emit()"
-            pTooltip="Clear selection"
-          ></p-button>
+          <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="clearSelection.emit()" ariaLabel="times" />
         </div>
       }
     </div>

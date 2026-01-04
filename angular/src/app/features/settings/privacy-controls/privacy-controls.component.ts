@@ -9,7 +9,8 @@ import {
 import { CommonModule, DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Select } from "primeng/select";
 import { InputTextModule } from "primeng/inputtext";
@@ -32,6 +33,7 @@ import { DataExportService } from "../../../core/services/data-export.service";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
 
 /**
  * Privacy Controls Component
@@ -55,7 +57,6 @@ import { ToastService } from "../../../core/services/toast.service";
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     ToggleSwitch,
     Select,
     InputTextModule,
@@ -69,6 +70,9 @@ import { ToastService } from "../../../core/services/toast.service";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -79,13 +83,7 @@ import { ToastService } from "../../../core/services/toast.service";
           subtitle="Manage how your data is used and shared"
           icon="pi-shield"
         >
-          <p-button
-            label="Export My Data"
-            icon="pi pi-download"
-            [outlined]="true"
-            (onClick)="exportData()"
-            pTooltip="Download all your personal data"
-          ></p-button>
+          <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportData()">Export My Data</app-button>
         </app-page-header>
 
         @if (loading()) {
@@ -356,23 +354,12 @@ import { ToastService } from "../../../core/services/toast.service";
                       }}</span>
                       <span class="contact-phone">{{ contact.phone }}</span>
                     </div>
-                    <p-button
-                      icon="pi pi-trash"
-                      severity="danger"
-                      [text]="true"
-                      [rounded]="true"
-                      (onClick)="removeEmergencyContact($index)"
-                    ></p-button>
+                    <app-icon-button icon="pi-trash" variant="text" (clicked)="removeEmergencyContact($index)" ariaLabel="trash" />
                   </div>
                 }
 
                 @if (emergencyContacts().length < 3) {
-                  <p-button
-                    label="Add Emergency Contact"
-                    icon="pi pi-plus"
-                    [outlined]="true"
-                    (onClick)="showAddContactDialog = true"
-                  ></p-button>
+                  <app-button variant="outlined" iconLeft="pi-plus" (clicked)="showAddContactDialog = true">Add Emergency Contact</app-button>
                 }
               </div>
             </p-card>
@@ -458,12 +445,7 @@ import { ToastService } from "../../../core/services/toast.service";
                       </div>
                     </div>
                   } @else {
-                    <p-button
-                      label="Export"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="exportData()"
-                    ></p-button>
+                    <app-button variant="outlined" size="sm" (clicked)="exportData()">Export</app-button>
                   }
                 </div>
 
@@ -477,24 +459,11 @@ import { ToastService } from "../../../core/services/toast.service";
                         Deletion scheduled in
                         {{ deletionStatus()?.daysUntilDeletion }} days
                       </p>
-                      <p-button
-                        label="Cancel Deletion"
-                        severity="success"
-                        [outlined]="true"
-                        size="small"
-                        [loading]="deletionLoading()"
-                        (onClick)="cancelDeletion()"
-                      ></p-button>
+                      <app-button variant="outlined" size="sm" [loading]="deletionLoading()" (clicked)="cancelDeletion()">Cancel Deletion</app-button>
                     </div>
                   } @else {
                     <p>Permanently delete your account and all data.</p>
-                    <p-button
-                      label="Delete"
-                      severity="danger"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="showDeleteAccountDialog = true"
-                    ></p-button>
+                    <app-button variant="outlined" size="sm" (clicked)="showDeleteAccountDialog = true">Delete</app-button>
                   }
                 </div>
 
@@ -502,13 +471,7 @@ import { ToastService } from "../../../core/services/toast.service";
                   <i class="pi pi-history"></i>
                   <h5>View Audit Log</h5>
                   <p>See a history of how your data has been accessed.</p>
-                  <p-button
-                    label="Coming Soon"
-                    [outlined]="true"
-                    size="small"
-                    [disabled]="true"
-                    pTooltip="Audit log feature is under development"
-                  ></p-button>
+                  <app-button variant="outlined" size="sm" [disabled]="true">Coming Soon</app-button>
                 </div>
               </div>
             </p-card>
@@ -521,7 +484,7 @@ import { ToastService } from "../../../core/services/toast.service";
         header="Add Emergency Contact"
         [(visible)]="showAddContactDialog"
         [modal]="true"
-        [style]="{ width: '400px' }"
+        [style]="dialogStyles.form"
       >
         <div class="contact-form">
           <div class="p-field">
@@ -555,17 +518,8 @@ import { ToastService } from "../../../core/services/toast.service";
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="showAddContactDialog = false"
-          ></p-button>
-          <p-button
-            label="Add Contact"
-            icon="pi pi-plus"
-            [disabled]="!isContactValid()"
-            (onClick)="addEmergencyContact()"
-          ></p-button>
+          <app-button variant="text" (clicked)="showAddContactDialog = false">Cancel</app-button>
+          <app-button iconLeft="pi-plus" [disabled]="!isContactValid()" (clicked)="addEmergencyContact()">Add Contact</app-button>
         </ng-template>
       </p-dialog>
 
@@ -576,7 +530,7 @@ import { ToastService } from "../../../core/services/toast.service";
         header="Delete Account"
         [(visible)]="showDeleteAccountDialog"
         [modal]="true"
-        [style]="{ width: '450px' }"
+        [style]="dialogStyles.form"
       >
         <div class="delete-warning">
           <i class="pi pi-exclamation-triangle"></i>
@@ -620,19 +574,8 @@ import { ToastService } from "../../../core/services/toast.service";
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="showDeleteAccountDialog = false"
-          ></p-button>
-          <p-button
-            label="Delete My Account"
-            icon="pi pi-trash"
-            severity="danger"
-            [disabled]="deleteConfirmText !== 'DELETE'"
-            [loading]="deletionLoading()"
-            (onClick)="deleteAccount()"
-          ></p-button>
+          <app-button variant="text" (clicked)="showDeleteAccountDialog = false">Cancel</app-button>
+          <app-button variant="danger" iconLeft="pi-trash" [loading]="deletionLoading()" [disabled]="deleteConfirmText !== 'DELETE'" (clicked)="deleteAccount()">Delete My Account</app-button>
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -645,6 +588,9 @@ export class PrivacyControlsComponent implements OnInit {
   private deletionService = inject(AccountDeletionService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
 
   // State from service
   settings = this.privacyService.settings;

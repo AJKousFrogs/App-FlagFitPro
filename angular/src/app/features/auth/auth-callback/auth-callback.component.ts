@@ -1,19 +1,19 @@
 import {
-  Component,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  OnInit,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
  * Auth Callback Component
@@ -37,7 +37,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
   imports: [
     RouterModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
     MessageModule,
     ProgressSpinnerModule,
     ToastModule,
@@ -63,21 +63,17 @@ import { SupabaseService } from "../../../core/services/supabase.service";
             <h2>Authentication Failed</h2>
             <p-message severity="error" [text]="error()"></p-message>
             <div class="error-actions">
-              <p-button
-                label="Try Again"
-                icon="pi pi-refresh"
-                [rounded]="true"
-                [routerLink]="['/login']"
-                styleClass="w-full mb-3"
-              ></p-button>
-              <p-button
-                label="Go Home"
-                icon="pi pi-home"
-                [outlined]="true"
-                [rounded]="true"
-                [routerLink]="['/']"
-                styleClass="w-full"
-              ></p-button>
+              <app-button
+                iconLeft="pi-refresh"
+                routerLink="/login"
+                [fullWidth]="true"
+              >Try Again</app-button>
+              <app-button
+                iconLeft="pi-home"
+                variant="outlined"
+                routerLink="/"
+                [fullWidth]="true"
+              >Go Home</app-button>
             </div>
           </div>
         } @else if (success()) {

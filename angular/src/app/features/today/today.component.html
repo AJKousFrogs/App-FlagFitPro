@@ -1,0 +1,357 @@
+<app-main-layout>
+  <p-toast />
+
+  <!-- ========================================================================
+       LOADING STATE - Skeleton placeholders
+       ======================================================================== -->
+  @if (isLoading()) {
+    <div class="today-page" aria-busy="true" aria-label="Loading today's practice">
+      <p-skeleton width="100%" height="5rem" borderRadius="0.75rem" />
+      <div class="skeleton-grid">
+        <p-skeleton width="100%" height="4rem" borderRadius="0.75rem" />
+        <p-skeleton width="100%" height="4rem" borderRadius="0.75rem" />
+      </div>
+      <p-skeleton width="100%" height="3.5rem" borderRadius="0.75rem" />
+      <p-skeleton width="100%" height="10rem" borderRadius="0.75rem" />
+    </div>
+  }
+
+  <!-- ========================================================================
+       ONBOARDING BANNER - First-time users who haven't checked in
+       ======================================================================== -->
+  @if (isFirstTimeUser() && !hasCheckedInToday() && !isLoading()) {
+    <div class="onboarding-banner" @fadeSlideIn>
+      <p-card styleClass="onboarding-card">
+        <div class="onboarding-content">
+          <div class="onboarding-info">
+            <div class="onboarding-avatar">
+              <i class="pi pi-sparkles"></i>
+            </div>
+            <div class="onboarding-text">
+              <h2>Welcome, {{ userName() || 'Athlete' }}!</h2>
+              <p>I'm Merlin, your AI coach. Let me know how you're feeling to build your plan.</p>
+            </div>
+          </div>
+          <app-button
+            iconLeft="pi-arrow-down"
+            size="lg"
+            (clicked)="scrollToWellness()"
+          >Start Check-in</app-button>
+        </div>
+      </p-card>
+    </div>
+  }
+
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
+  @if (!isLoading()) {
+    <div class="today-page">
+
+      <!-- ====================================================================
+           SECTION 1: Welcome Card
+           ==================================================================== -->
+      <section aria-labelledby="welcome-heading">
+        <p-card styleClass="welcome-card">
+          <div class="welcome-row">
+            <div class="user-avatar" aria-hidden="true">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="welcome-text">
+              <span class="welcome-label">{{ greetingPrefix() }}</span>
+              <h1 id="welcome-heading" class="welcome-name">{{ userName() || 'Athlete' }}!</h1>
+              <p class="welcome-hint">{{ dayPhaseMessage() }}</p>
+            </div>
+            <div class="welcome-cta">
+              @if (!hasCheckedInToday()) {
+                <app-button
+                  iconLeft="pi-heart"
+                  (clicked)="scrollToWellness()"
+                >Check-in</app-button>
+              } @else {
+                <p-tag severity="success" icon="pi pi-check" value="Checked In" />
+              }
+            </div>
+          </div>
+        </p-card>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 2: Key Stats (ACWR & Readiness)
+           ==================================================================== -->
+      <section class="stats-grid" aria-label="Key performance metrics">
+        <p-card
+          styleClass="stat-card"
+          (click)="navigateToAcwr()"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="navigateToAcwr()"
+          (keydown.space)="navigateToAcwr()"
+        >
+          <div class="stat-row">
+            <div class="stat-icon acwr" aria-hidden="true">
+              <i class="pi pi-chart-line"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" [class]="acwrClass()">
+                {{ acwrValue().toFixed(2) }}
+              </span>
+              <span class="stat-label">ACWR</span>
+            </div>
+            <p-tag [value]="acwrStatusLabel()" [severity]="acwrSeverity()" />
+          </div>
+        </p-card>
+
+        <p-card
+          styleClass="stat-card"
+          (click)="navigateToWellness()"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="navigateToWellness()"
+          (keydown.space)="navigateToWellness()"
+        >
+          <div class="stat-row">
+            <div class="stat-icon readiness" aria-hidden="true">
+              <i class="pi pi-heart"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" [class]="readinessLevel()">
+                {{ readinessScore() }}%
+              </span>
+              <span class="stat-label">Readiness</span>
+            </div>
+            <p-tag [value]="readinessStatusLabel()" [severity]="readinessSeverity()" />
+          </div>
+        </p-card>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 3: Week Progress Strip
+           ==================================================================== -->
+      <section aria-label="Weekly progress">
+        <p-card styleClass="week-card">
+          <app-week-progress-strip [weekDays]="weekDays()" [stats]="weekStats()" />
+        </p-card>
+      </section>
+
+      <!-- ====================================================================
+           DYNAMIC CONTENT AREA
+           ==================================================================== -->
+      <main class="content-section">
+
+        <!-- ==================================================================
+             PHASE 1: Morning Check-in
+             ================================================================== -->
+        @if (activeFocus() === 'checkin') {
+          <section id="wellness-section" aria-labelledby="checkin-heading">
+            <p-card styleClass="content-card">
+              <div class="card-header">
+                <i class="pi pi-heart card-header-icon" aria-hidden="true"></i>
+                <span id="checkin-heading" class="card-header-title">Morning Check-in</span>
+                <p-tag severity="warn" value="Required" />
+              </div>
+              <p class="card-description">
+                Start your day by logging your readiness. This optimizes your training protocol.
+              </p>
+              <app-wellness-checkin
+                [date]="currentDate()"
+                (checkinComplete)="onWellnessComplete($event)"
+              />
+            </p-card>
+          </section>
+        }
+
+        <!-- ==================================================================
+             AI INSIGHT CARD (shown when available)
+             ================================================================== -->
+        @if (aiInsight()) {
+          <section aria-labelledby="insight-heading">
+            <p-card styleClass="insight-card">
+              <div class="insight-content">
+                <div class="insight-avatar" aria-hidden="true">
+                  <i class="pi pi-sparkles"></i>
+                </div>
+                <div class="insight-text">
+                  <h3 id="insight-heading" class="insight-title">Merlin's Insight</h3>
+                  <p class="insight-message">{{ aiInsight() }}</p>
+                  <app-button
+                    iconLeft="pi-comments"
+                    size="sm"
+                    [routerLink]="'/chat'"
+                    [queryParams]="{ query: 'Tell me more about: ' + aiInsight() }"
+                  >Discuss with Merlin</app-button>
+                </div>
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ==================================================================
+             PHASE 2: Training Protocol
+             ================================================================== -->
+        @if (activeFocus() === 'protocol') {
+          <section aria-labelledby="protocol-heading">
+            <p-card styleClass="content-card">
+              <div class="card-header">
+                <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
+                <span id="protocol-heading" class="card-header-title">Today's Protocol</span>
+                @if (protocol()?.overallProgress === 100) {
+                  <p-tag severity="success" value="Complete" icon="pi pi-check" />
+                }
+              </div>
+
+              @if (protocol(); as p) {
+                <!-- Progress Bar -->
+                <div class="protocol-progress-wrapper">
+                  <p-progressbar
+                    [value]="p.overallProgress"
+                    [showValue]="false"
+                    styleClass="protocol-bar"
+                  />
+                  <div class="protocol-meta">
+                    <span>{{ p.completedExercises }}/{{ p.totalExercises }} Exercises</span>
+                    <span>{{ p.overallProgress }}%</span>
+                  </div>
+                </div>
+
+                <!-- Protocol Blocks -->
+                <div class="protocol-blocks">
+                  @if (p.morningMobility) {
+                    <app-protocol-block
+                      [block]="p.morningMobility"
+                      (exerciseComplete)="refreshProtocol()"
+                    />
+                  }
+
+                  @if (p.foamRoll && p.foamRoll.totalCount > 0) {
+                    <app-protocol-block
+                      [block]="p.foamRoll"
+                      (exerciseComplete)="refreshProtocol()"
+                    />
+                  }
+
+                  @if (p.mainSession) {
+                    <app-protocol-block
+                      [block]="p.mainSession"
+                      (exerciseComplete)="refreshProtocol()"
+                    />
+                  }
+
+                  @if (p.eveningRecovery && p.eveningRecovery.totalCount > 0) {
+                    <app-protocol-block
+                      [block]="p.eveningRecovery"
+                      (exerciseComplete)="refreshProtocol()"
+                    />
+                  }
+                </div>
+
+                <!-- Footer Link -->
+                <div class="card-footer">
+                  <app-button
+                    iconRight="pi-external-link"
+                    variant="text"
+                    routerLink="/training/advanced"
+                  >Advanced Training Workspace</app-button>
+                </div>
+              } @else {
+                <!-- Empty State -->
+                <div class="empty-state">
+                  <i class="pi pi-calendar-plus"></i>
+                  <h3>No Training Plan Yet</h3>
+                  <p>We're still calculating your optimized path for today.</p>
+                  <app-button
+                    iconLeft="pi-refresh"
+                    (clicked)="refreshProtocol()"
+                  >Refresh Protocol</app-button>
+                </div>
+              }
+            </p-card>
+          </section>
+        }
+
+        <!-- ==================================================================
+             PHASE 3: Evening Wrap-up
+             ================================================================== -->
+        @if (activeFocus() === 'wrapup') {
+          <section aria-labelledby="wrapup-heading">
+            <p-card styleClass="content-card">
+              <div class="card-header">
+                <i class="pi pi-moon card-header-icon" aria-hidden="true"></i>
+                <span id="wrapup-heading" class="card-header-title">Evening Wrap-up</span>
+                <p-tag severity="info" value="Recovery Time" />
+              </div>
+              <p class="card-description">
+                Great job today! Log your effort to keep your ACWR accurate.
+              </p>
+
+              <div class="action-list">
+                <p-card
+                  styleClass="action-card"
+                  (click)="openRecoveryDialog()"
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="openRecoveryDialog()"
+                  (keydown.space)="openRecoveryDialog()"
+                >
+                  <div class="action-row">
+                    <div class="action-icon" aria-hidden="true">
+                      <i class="pi pi-book"></i>
+                    </div>
+                    <div class="action-text">
+                      <h4>Log Session Effort (RPE)</h4>
+                      <p>Tell Merlin how hard you worked.</p>
+                    </div>
+                    <i class="pi pi-chevron-right action-chevron" aria-hidden="true"></i>
+                  </div>
+                </p-card>
+
+                <p-card
+                  styleClass="action-card"
+                  [routerLink]="['/wellness']"
+                  role="button"
+                  tabindex="0"
+                >
+                  <div class="action-row">
+                    <div class="action-icon" aria-hidden="true">
+                      <i class="pi pi-heart"></i>
+                    </div>
+                    <div class="action-text">
+                      <h4>Review Recovery Stats</h4>
+                      <p>Check your trends and sleep debt.</p>
+                    </div>
+                    <i class="pi pi-chevron-right action-chevron" aria-hidden="true"></i>
+                  </div>
+                </p-card>
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ==================================================================
+             TODAY'S SCHEDULE (always visible)
+             ================================================================== -->
+        <section aria-label="Today's schedule">
+          <app-todays-schedule />
+        </section>
+
+        <!-- ==================================================================
+             ERROR STATE
+             ================================================================== -->
+        @if (error()) {
+          <p-message severity="error" [text]="error()!" styleClass="w-full" />
+        }
+      </main>
+    </div>
+  }
+
+  <!-- ========================================================================
+       RECOVERY DIALOG
+       ======================================================================== -->
+  @if (showRecoveryDialog()) {
+    <app-post-training-recovery
+      sessionName="Today's Training"
+      (closed)="closeRecoveryDialog()"
+      (saved)="onRecoverySaved()"
+    />
+  }
+</app-main-layout>

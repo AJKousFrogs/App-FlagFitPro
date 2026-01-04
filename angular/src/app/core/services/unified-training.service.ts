@@ -12,6 +12,7 @@ import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { COLORS } from "../constants/app.constants";
 import {
   TrainingStatCard,
   WeeklyScheduleDay,
@@ -348,7 +349,7 @@ export class UnifiedTrainingService {
    */
   async logBodyComp(measurement: Partial<PhysicalMeasurement>) {
     const result = await this.performanceDataService.logMeasurement(measurement).toPromise();
-    if (result.success) {
+    if (result && result.success) {
       this.loadAllTrainingData();
     }
     return result;
@@ -473,9 +474,9 @@ export class UnifiedTrainingService {
     const streak = this.calculateStreak(sessions);
 
     return [
-      { label: "This Week", value: `${thisWeek.length} sessions`, icon: "pi-calendar", color: "#3b82f6", trend: "Active", trendType: "neutral" },
-      { label: "Total Duration", value: `${totalDuration} min`, icon: "pi-clock", color: "#10b981", trend: "This week", trendType: "neutral" },
-      { label: "Current Streak", value: `${streak} days`, icon: "pi-bolt", color: "#ef4444", trend: "Keep it up!", trendType: "positive" }
+      { label: "This Week", value: `${thisWeek.length} sessions`, icon: "pi-calendar", color: COLORS.BLUE, trend: "Active", trendType: "neutral" },
+      { label: "Total Duration", value: `${totalDuration} min`, icon: "pi-clock", color: COLORS.SUCCESS, trend: "This week", trendType: "neutral" },
+      { label: "Current Streak", value: `${streak} days`, icon: "pi-bolt", color: COLORS.ERROR, trend: "Keep it up!", trendType: "positive" }
     ];
   }
 
@@ -597,14 +598,14 @@ export class UnifiedTrainingService {
       intensity: w.intensity > 6 ? "high" : w.intensity > 3 ? "medium" : "low",
       location: w.location || "Gym",
       icon: "pi-bolt",
-      iconBg: "#ef4444"
+      iconBg: COLORS.ERROR
     };
   }
 
   private getDefaultWorkouts(): Workout[] {
     return [
-      { type: "speed", title: "Speed Work", description: "Acceleration focus", duration: "45 min", intensity: "high", location: "Track", icon: "pi-bolt", iconBg: "#ef4444" },
-      { type: "strength", title: "Strength", description: "Power focus", duration: "60 min", intensity: "medium", location: "Gym", icon: "pi-shield", iconBg: "#3b82f6" }
+      { type: "speed", title: "Speed Work", description: "Acceleration focus", duration: "45 min", intensity: "high", location: "Track", icon: "pi-bolt", iconBg: COLORS.ERROR },
+      { type: "strength", title: "Strength", description: "Power focus", duration: "60 min", intensity: "medium", location: "Gym", icon: "pi-shield", iconBg: COLORS.BLUE }
     ];
   }
 

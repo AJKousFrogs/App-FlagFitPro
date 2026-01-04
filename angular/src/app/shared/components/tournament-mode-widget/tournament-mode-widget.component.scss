@@ -249,7 +249,7 @@
   .hydration-status {
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-semibold);
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     border-radius: var(--radius-lg);
   }
 
@@ -346,7 +346,7 @@
   .phase-badge {
     font-size: var(--font-body-2xs);
     font-weight: var(--font-weight-semibold);
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     border-radius: var(--radius-lg);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -386,7 +386,7 @@
 
   .food-chip {
     font-size: var(--font-body-xs);
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     background: white;
     border-radius: var(--radius-lg);
     color: var(--primitive-success-700);

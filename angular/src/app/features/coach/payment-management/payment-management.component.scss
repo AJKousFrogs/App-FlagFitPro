@@ -1,0 +1,431 @@
+
+.payment-management-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  padding-bottom: var(--space-2);
+  overflow-x: auto;
+
+  .tab-btn {
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ds-surface-base);
+      color: var(--ds-text-primary);
+    }
+
+    &.active {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+// Financial Overview
+.financial-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--ds-border-default);
+
+  &.balance {
+    border-left-color: var(--primitive-error-500);
+  }
+
+  &.collected {
+    border-left-color: var(--ds-primary-green);
+  }
+
+  &.due {
+    border-left-color: var(--primitive-warning-500);
+  }
+
+  &.overdue {
+    border-left-color: var(--primitive-error-500);
+  }
+
+  .stat-icon {
+    font-size: var(--font-heading-md);
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+
+    .stat-value {
+      font-size: var(--font-heading-md);
+      font-weight: 700;
+      color: var(--ds-text-primary);
+    }
+
+    .stat-label {
+      font-size: var(--font-body-sm);
+      font-weight: 500;
+      color: var(--ds-text-primary);
+    }
+
+    .stat-sub {
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+    }
+  }
+}
+
+// Card Headers
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-body-lg);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .balance-filters {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+// Fees Preview
+.fees-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fee-preview-card {
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--ds-primary-green);
+
+  &.overdue {
+    border-left-color: var(--primitive-error-500);
+  }
+
+  .fee-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+
+    .fee-icon {
+      font-size: var(--font-heading-sm);
+    }
+
+    h4 {
+      margin: 0;
+      font-size: var(--font-body-md);
+      font-weight: 500;
+      color: var(--ds-text-primary);
+      flex: 1;
+    }
+  }
+
+  .fee-progress {
+    .progress-text {
+      display: block;
+      margin-top: var(--space-1);
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+    }
+  }
+}
+
+// Fees List
+.fees-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fee-card {
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ds-border-default);
+  overflow: hidden;
+
+  &.overdue {
+    border-color: var(--primitive-error-500);
+  }
+}
+
+.fee-card > .fee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--ds-surface-base);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  .fee-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    .fee-icon {
+      font-size: var(--font-heading-md);
+    }
+
+    h3 {
+      margin: 0;
+      font-size: var(--font-body-lg);
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .fee-actions {
+    display: flex;
+    gap: var(--space-1);
+  }
+}
+
+.fee-details {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  p {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    strong {
+      color: var(--ds-text-primary);
+    }
+
+    .guest-fee {
+      margin-left: var(--space-3);
+    }
+
+    .overdue-badge {
+      margin-left: var(--space-2);
+      color: var(--primitive-error-500);
+      font-weight: 500;
+    }
+  }
+}
+
+.fee-progress-section {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .progress-detail {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+  }
+
+  .status-counts {
+    margin: var(--space-2) 0 0 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-tertiary);
+  }
+}
+
+.outstanding-section {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .outstanding-list {
+    margin: 0;
+    padding-left: var(--space-4);
+
+    li {
+      font-size: var(--font-body-sm);
+      color: var(--primitive-error-500);
+      margin-bottom: var(--space-1);
+    }
+  }
+}
+
+.fee-card-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  flex-wrap: wrap;
+}
+
+// Player Balances
+.balance-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--ds-border-subtle);
+}
+
+.owes {
+  color: var(--primitive-error-500);
+  font-weight: 500;
+}
+
+// Form Styles
+.fee-form,
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.form-field {
+  label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    label {
+      margin: 0;
+      cursor: pointer;
+    }
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  label {
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.current-balance {
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  font-size: var(--font-body-sm);
+  color: var(--ds-text-secondary);
+
+  strong {
+    color: var(--primitive-error-500);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .payment-management-page {
+    padding: var(--space-3);
+  }
+
+  .financial-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+
+    .balance-filters {
+      width: 100%;
+    }
+  }
+
+  .fee-card-actions {
+    flex-direction: column;
+
+    p-button {
+      width: 100%;
+    }
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-actions {
+    flex-direction: column;
+  }
+}

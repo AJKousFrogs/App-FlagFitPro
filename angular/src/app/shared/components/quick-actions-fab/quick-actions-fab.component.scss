@@ -1,216 +1,270 @@
-// ============================================================================
-// quick-actions-fab.component Styles
-// Design System Compliant
-// ============================================================================
+/**
+ * Quick Actions FAB Component Styles
+ * ─────────────────────────────────────────────────────────────
+ * Floating Action Button with expandable action menu
+ * Design: Raised style buttons (8px radius), Poppins font
+ * ─────────────────────────────────────────────────────────────
+ */
 
-@layer features {
-  /* Backdrop */
-  .fab-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 9998;
-    animation: fadeIn 0.2s ease;
-  }
+/* ================================================================
+   BACKDROP
+   ================================================================ */
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+.fab-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  animation: fabBackdropFade 0.2s ease forwards;
+}
 
-  /* Container */
-  .quick-actions-container {
-    position: fixed;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
-    right: 24px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 16px;
-  }
+@keyframes fabBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  /* Action Items Container */
-  .action-items {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-end;
-    padding-right: 6px; /* Align with main FAB center */
-  }
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 
-  /* Individual Action Item */
-  .action-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.quick-actions-container {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-6));
+  right: var(--space-6);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+/* ================================================================
+   ACTION ITEMS LIST
+   ================================================================ */
+
+.action-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-end;
+  padding-right: var(--space-2); /* Align with main FAB */
+}
+
+/* ================================================================
+   INDIVIDUAL ACTION ITEM - RAISED BUTTON STYLE
+   ================================================================ */
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  animation: fabSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(var(--space-3));
+}
+
+@keyframes fabSlideIn {
+  from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(var(--space-3));
   }
-
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .action-label {
-    width: 160px;
-    padding: 12px 20px;
-    background: var(--surface-primary, #ffffff);
-    border-radius: 25px;
-    font-family:
-      "Poppins",
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      sans-serif;
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary, #1a1a1a);
-    white-space: nowrap;
-    text-align: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-  }
-
-  .action-item:hover .action-label {
-    background: var(--ds-primary-green, #089949);
-    color: white;
-  }
-
-  .action-icon {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
-    min-height: 52px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
-    box-shadow: 0 4px 16px rgba(8, 153, 73, 0.3);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-    flex-shrink: 0;
-  }
-
-  .action-icon i {
-    font-size: var(--font-heading-sm);
-    color: #ffffff !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .action-item:hover .action-icon {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(8, 153, 73, 0.4);
-  }
-
-  /* Main FAB Button */
-  .main-fab {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
-    box-shadow:
-      0 6px 24px rgba(8, 153, 73, 0.4),
-      0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .main-fab:hover {
-    transform: scale(1.08);
-    box-shadow:
-      0 8px 32px rgba(8, 153, 73, 0.5),
-      0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .main-fab:active {
-    transform: scale(0.95);
-  }
-
-  .main-fab.active {
-    background: #1a1a1a;
-  }
-
-  .fab-icon {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .merlin-img {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    object-fit: cover;
-    transition: all 0.3s ease;
-  }
-
-  .main-fab.active .merlin-img {
-    opacity: 0;
-    transform: scale(0.5) rotate(90deg);
-  }
-
-  .fab-close {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: scale(0.5) rotate(-90deg);
-    transition: all 0.3s ease;
-  }
-
-  .fab-close i {
-    font-size: var(--font-heading-md);
-    color: white;
-  }
-
-  .main-fab.active .fab-close {
+  to {
     opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-
-  /* Hide on mobile - bottom nav handles navigation */
-  @media (max-width: 768px) {
-    .quick-actions-container {
-      display: none;
-    }
-    .fab-backdrop {
-      display: none;
-    }
+    transform: translateY(0);
   }
 }
 
+/* Action Label - Raised style (8px radius), Poppins font */
+.action-label {
+  min-width: 150px;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-card);
+  border-radius: var(--radius-lg); /* Raised style - NOT pill */
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--font-body-md);
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+  letter-spacing: -0.01em;
+}
+
+.action-item:hover .action-label {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(var(--ds-primary-green-rgb), 0.25);
+}
+
+/* Action Icon - Raised style (8px radius) */
+.action-icon {
+  width: var(--space-12);
+  height: var(--space-12);
+  min-width: var(--space-12);
+  min-height: var(--space-12);
+  border-radius: var(--radius-lg); /* Raised style - NOT round */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ds-primary-green);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.action-icon i {
+  font-size: var(--font-heading-sm);
+  color: var(--color-text-on-primary) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-item:hover .action-icon {
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 6px 16px rgba(var(--ds-primary-green-rgb), 0.4);
+}
+
+/* ================================================================
+   MAIN FAB BUTTON - Raised style
+   ================================================================ */
+
+.main-fab {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-xl); /* Raised style - NOT fully round */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--ds-primary-green);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 6px 20px rgba(var(--ds-primary-green-rgb), 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.main-fab:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    0 8px 28px rgba(var(--ds-primary-green-rgb), 0.4);
+}
+
+.main-fab:active {
+  transform: scale(0.98);
+}
+
+.main-fab.active {
+  background: var(--surface-900);
+  border-radius: var(--radius-xl);
+}
+
+/* FAB Icon Container */
+.fab-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Merlin Avatar Image */
+.merlin-img {
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  transition: all 0.25s ease;
+}
+
+.main-fab.active .merlin-img {
+  opacity: 0;
+  transform: scale(0.5) rotate(90deg);
+}
+
+/* Close Icon */
+.fab-close {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+  transition: all 0.25s ease;
+}
+
+.fab-close i {
+  font-size: var(--font-heading-lg);
+  color: var(--color-text-on-primary);
+}
+
+.main-fab.active .fab-close {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* ================================================================
+   RESPONSIVE - Hide on mobile (bottom nav takes over)
+   ================================================================ */
+
+@media (max-width: 768px) {
+  .quick-actions-container {
+    display: none;
+  }
+  
+  .fab-backdrop {
+    display: none;
+  }
+}
+
+/* ================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================ */
+
+[data-theme="dark"] .action-label,
+.dark-theme .action-label {
+  background: var(--surface-800);
+  color: var(--text-color);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .action-item:hover .action-label,
+.dark-theme .action-item:hover .action-label {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+}
+
+[data-theme="dark"] .main-fab.active,
+.dark-theme .main-fab.active {
+  background: var(--surface-100);
+}
+
+[data-theme="dark"] .main-fab.active .fab-close i,
+.dark-theme .main-fab.active .fab-close i {
+  color: var(--surface-900);
+}

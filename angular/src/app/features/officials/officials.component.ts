@@ -1,36 +1,37 @@
+import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
-import { CommonModule, DatePipe, CurrencyPipe } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
+import { AvatarModule } from "primeng/avatar";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { InputNumberModule } from "primeng/inputnumber";
-import { Select } from "primeng/select";
-import { DatePicker } from "primeng/datepicker";
 import { TooltipModule } from "primeng/tooltip";
-import { AvatarModule } from "primeng/avatar";
+import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
+import {
+    GameOfficial,
+    Official,
+    OfficialsService,
+} from "../../core/services/officials.service";
+import { ToastService } from "../../core/services/toast.service";
+import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import {
-  OfficialsService,
-  Official,
-  GameOfficial,
-} from "../../core/services/officials.service";
-import { AuthService } from "../../core/services/auth.service";
-import { ToastService } from "../../core/services/toast.service";
-import { LoggerService } from "../../core/services/logger.service";
 
 type CertificationLevel = "youth" | "high_school" | "college" | "professional";
 type OfficialRole =
@@ -50,7 +51,6 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     TableModule,
     TagModule,
     DialogModule,
@@ -63,6 +63,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     PageHeaderComponent,
     DatePipe,
     CurrencyPipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -73,11 +76,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <p-button
-                label="Add Official"
-                icon="pi pi-plus"
-                (onClick)="openAddOfficialDialog()"
-              ></p-button>
+              <app-button iconLeft="pi-plus" (clicked)="openAddOfficialDialog()">Add Official</app-button>
             }
           </div>
         </app-page-header>
@@ -171,18 +170,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   <td>
                     <div class="action-buttons">
                       @if (isCoach()) {
-                        <p-button
-                          icon="pi pi-calendar-plus"
-                          [text]="true"
-                          pTooltip="Schedule for Game"
-                          (onClick)="openScheduleDialog(official)"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-pencil"
-                          [text]="true"
-                          pTooltip="Edit"
-                          (onClick)="openEditOfficialDialog(official)"
-                        ></p-button>
+                        <app-icon-button icon="pi-calendar-plus" variant="text" (clicked)="openScheduleDialog(official)" ariaLabel="calendar-plus" />
+                        <app-icon-button icon="pi-pencil" variant="text" (clicked)="openEditOfficialDialog(official)" ariaLabel="pencil" />
                       }
                     </div>
                   </td>
@@ -257,22 +246,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     </div>
                     @if (isCoach()) {
                       <div class="assignment-actions">
-                        <p-button
-                          icon="pi pi-check"
-                          [text]="true"
-                          pTooltip="Confirm"
-                          (onClick)="
+                        <app-icon-button icon="pi-check" variant="text" [disabled]="assignment.status === 'confirmed'" (clicked)="
                             updateAssignmentStatus(assignment, 'confirmed')
-                          "
-                          [disabled]="assignment.status === 'confirmed'"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-times"
-                          [text]="true"
-                          severity="danger"
-                          pTooltip="Remove"
-                          (onClick)="removeAssignment(assignment)"
-                        ></p-button>
+                          " ariaLabel="check" />
+                        <app-icon-button icon="pi-times" variant="text" (clicked)="removeAssignment(assignment)" ariaLabel="times" />
                       </div>
                     }
                   </div>
@@ -319,7 +296,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           [header]="editingOfficial ? 'Edit Official' : 'Add Official'"
           [(visible)]="showOfficialDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          [style]="dialogStyles.standard"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -383,17 +360,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showOfficialDialog = false"
-            ></p-button>
-            <p-button
-              [label]="editingOfficial ? 'Save Changes' : 'Add Official'"
-              icon="pi pi-check"
-              (onClick)="saveOfficial()"
-              [disabled]="!officialForm.name"
-            ></p-button>
+            <app-button variant="text" (clicked)="showOfficialDialog = false">Cancel</app-button>
+            <app-icon-button icon="pi-check" [disabled]="!officialForm.name" (clicked)="saveOfficial()" ariaLabel="check" />
           </ng-template>
         </p-dialog>
 
@@ -402,7 +370,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           header="Schedule Official for Game"
           [(visible)]="showScheduleDialog"
           [modal]="true"
-          [style]="{ width: '450px' }"
+          [style]="dialogStyles.form"
         >
           @if (selectedOfficial()) {
             <div class="dialog-form">
@@ -445,17 +413,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           }
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showScheduleDialog = false"
-            ></p-button>
-            <p-button
-              label="Schedule"
-              icon="pi pi-check"
-              (onClick)="scheduleOfficial()"
-              [disabled]="!scheduleForm.game_id || !scheduleForm.role"
-            ></p-button>
+            <app-button variant="text" (clicked)="showScheduleDialog = false">Cancel</app-button>
+            <app-button iconLeft="pi-check" [disabled]="!scheduleForm.game_id || !scheduleForm.role" (clicked)="scheduleOfficial()">Schedule</app-button>
           </ng-template>
         </p-dialog>
       </div>
@@ -469,6 +428,9 @@ export class OfficialsComponent implements OnInit {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
 
   // State
   officials = signal<Official[]>([]);
@@ -547,7 +509,7 @@ export class OfficialsComponent implements OnInit {
           this.upcomingGames.set(
             games.map(g => ({
               label: `${new Date(g.date).toLocaleDateString()} vs ${g.opponent}`,
-              value: g.gameId
+              value: g.value
             }))
           );
         },

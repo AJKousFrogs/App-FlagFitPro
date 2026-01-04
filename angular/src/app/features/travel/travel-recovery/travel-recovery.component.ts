@@ -30,7 +30,7 @@ import { RouterModule } from "@angular/router";
 
 // PrimeNG Components
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Select } from "primeng/select";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -80,7 +80,6 @@ interface TimezoneOption {
     FormsModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     Select,
     DatePickerModule,
     InputNumberModule,
@@ -97,6 +96,8 @@ interface TimezoneOption {
     BadgeModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -107,12 +108,7 @@ interface TimezoneOption {
           icon="pi-globe"
         >
           @if (hasActivePlan() || hasActiveCarPlan()) {
-            <p-button
-              label="New Trip"
-              icon="pi pi-plus"
-              [outlined]="true"
-              (onClick)="startNewPlan()"
-            ></p-button>
+            <app-button variant="outlined" iconLeft="pi-plus" (clicked)="startNewPlan()">New Trip</app-button>
           }
         </app-page-header>
 
@@ -301,12 +297,7 @@ interface TimezoneOption {
               </div>
 
               <div class="form-actions">
-                <p-button
-                  label="Generate Recovery Protocol"
-                  icon="pi pi-bolt"
-                  (onClick)="createPlan()"
-                  [disabled]="!canCreatePlan()"
-                ></p-button>
+                <app-button iconLeft="pi-bolt" [disabled]="!canCreatePlan()" (clicked)="createPlan()">Generate Recovery Protocol</app-button>
               </div>
             </p-card>
           </div>
@@ -563,7 +554,7 @@ interface TimezoneOption {
                         <p-tag
                           [value]="rec.importance"
                           [severity]="getImportanceColor(rec.importance)"
-                          [rounded]="true"
+                          
                         ></p-tag>
                       </div>
                     }
@@ -634,7 +625,7 @@ interface TimezoneOption {
                         <p-tag
                           [value]="protocol.phase"
                           [severity]="getPhaseColor(protocol.phase)"
-                          [rounded]="true"
+                          
                         ></p-tag>
                         @if (isToday(protocol.date)) {
                           <p-badge value="Today" severity="info"></p-badge>
@@ -806,12 +797,7 @@ interface TimezoneOption {
                 </div>
 
                 <div class="form-actions">
-                  <p-button
-                    label="Generate Car Travel Protocol"
-                    icon="pi pi-bolt"
-                    (onClick)="createCarPlan()"
-                    [disabled]="!canCreateCarPlan()"
-                  ></p-button>
+                  <app-button iconLeft="pi-bolt" [disabled]="!canCreateCarPlan()" (clicked)="createCarPlan()">Generate Car Travel Protocol</app-button>
                 </div>
               </p-card>
 
@@ -1091,7 +1077,7 @@ interface TimezoneOption {
                           <p-tag
                             [value]="exercise.targetArea | titlecase"
                             [severity]="getTargetAreaColor(exercise.targetArea)"
-                            [rounded]="true"
+                            
                           ></p-tag>
                         </div>
                         <p class="exercise-description">
@@ -1158,7 +1144,7 @@ interface TimezoneOption {
                                   @if (rec.duration) {
                                     <p-tag
                                       [value]="rec.duration + ' min'"
-                                      [rounded]="true"
+                                      
                                       severity="secondary"
                                     ></p-tag>
                                   }

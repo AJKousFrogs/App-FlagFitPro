@@ -16,11 +16,12 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { DialogModule } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
-import { SelectButtonModule } from "primeng/selectbutton";
+import { Select} from "primeng/selectbutton";
 import { SpeedDialModule } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -73,14 +74,16 @@ interface Play {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ButtonModule,
     DialogModule,
     Select,
     InputNumberModule,
-    SelectButtonModule,
+    Select
     SpeedDialModule,
     SwipeGestureDirective,
     GameTimePipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div
@@ -190,28 +193,16 @@ interface Play {
         <p-speedDial
           [model]="gameActions()"
           direction="up"
-          buttonClassName="p-button-lg p-button-rounded p-button-success"
+          buttonClassName="p-button-lg p-button-success"
           [transitionDelay]="80"
         />
 
         <div class="action-history">
-          <p-button
-            icon="pi pi-undo"
-            [text]="true"
-            [disabled]="!canUndo()"
-            (onClick)="undoLastPlay()"
-            ariaLabel="Undo last play"
-          />
+          <app-icon-button icon="pi-undo" variant="text" [disabled]="!canUndo()" (clicked)="undoLastPlay()" ariaLabel="Undo last play" />
 
           <span class="play-counter">Play {{ currentPlay() }}</span>
 
-          <p-button
-            icon="pi pi-redo"
-            [text]="true"
-            [disabled]="!canRedo()"
-            (onClick)="redoPlay()"
-            ariaLabel="Redo play"
-          />
+          <app-icon-button icon="pi-redo" variant="text" [disabled]="!canRedo()" (clicked)="redoPlay()" ariaLabel="Redo play" />
         </div>
       </div>
 
@@ -257,12 +248,8 @@ interface Play {
           </div>
 
           <div class="form-actions">
-            <p-button label="Cancel" [text]="true" (onClick)="cancelPlay()" />
-            <p-button
-              label="Save Play"
-              (onClick)="savePlay()"
-              [disabled]="playForm.invalid"
-            />
+            <app-button variant="text" (clicked)="cancelPlay()">Cancel</app-button>
+            <app-button [disabled]="playForm.invalid" (clicked)="savePlay()">Save Play</app-button>
           </div>
         </form>
       </p-dialog>

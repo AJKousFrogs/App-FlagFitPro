@@ -21,17 +21,18 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-bottom: 1px solid var(--color-border-secondary);
+    background: transparent;
+    border-bottom: none;
 
     i {
-      font-size: var(--font-heading-xl);
-      color: var(--color-brand-primary);
+      font-size: 1.5rem;
+      color: var(--ds-primary-green);
     }
 
     h3 {
       margin: 0;
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-body-lg);
+      font-weight: var(--font-weight-semibold);
       color: var(--color-text-primary);
     }
 
@@ -42,31 +43,24 @@
     }
   }
 
-  // ===== Olympic Card =====
+  // ===== Olympic Card (Dashboard-consistent) =====
   .olympic-header {
-    background: linear-gradient(
-      135deg,
-      var(--primitive-blue-500) 0%,
-      var(--primitive-amber-400) 25%,
-      var(--color-text-primary) 50%,
-      var(--primitive-success-500) 75%,
-      var(--primitive-error-500) 100%
-    );
-    color: var(--color-text-on-primary);
+    background: var(--surface-secondary);
+    border-bottom: 1px solid var(--surface-border);
 
     h3,
     p {
-      color: var(--color-text-on-primary);
+      color: inherit;
     }
   }
 
   .olympic-rings {
-    font-size: var(--font-heading-2xl);
+    font-size: 2rem;
   }
 
   .olympic-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
     padding: var(--space-4);
   }
@@ -76,21 +70,24 @@
     flex-direction: column;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-4);
-    border: 2px solid var(--color-border-secondary);
-    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
     background: var(--surface-primary);
     cursor: pointer;
-    transition: border-color var(--transition-fast), transform var(--transition-fast);
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    box-shadow: var(--shadow-sm);
 
     &:hover {
-      border-color: var(--color-brand-primary);
+      border-color: var(--ds-primary-green);
+      box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
 
     &.selected {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
+      border-color: var(--ds-primary-green);
+      background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
+      box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
     }
   }
 
@@ -690,7 +687,7 @@
 
   .essential-badge {
     font-size: var(--font-body-xs);
-    padding: 2px 6px;
+    padding: var(--space-1) 6px;
     background: var(--color-status-warning);
     color: var(--color-text-on-primary);
     border-radius: var(--radius-sm);
@@ -702,44 +699,48 @@
     color: var(--color-text-muted);
   }
 
-  // ===== Travel Type Selector =====
+  // ===== Travel Type Selector (Dashboard-consistent cards) =====
   .travel-type-selector {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
     margin-bottom: var(--space-6);
   }
 
   .type-btn {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-4);
-    border: 2px solid var(--color-border-secondary);
-    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
     background: var(--surface-primary);
     cursor: pointer;
-    transition: border-color var(--transition-fast), transform var(--transition-fast);
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    box-shadow: var(--shadow-sm);
 
     &:hover {
-      border-color: var(--color-brand-primary);
+      border-color: var(--ds-primary-green);
+      box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
 
     &.active {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-light);
+      border-color: var(--ds-primary-green);
+      background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
+      box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
     }
 
     i {
-      font-size: var(--font-heading-2xl);
-      color: var(--color-brand-primary);
+      font-size: 1.75rem;
+      color: var(--ds-primary-green);
     }
 
     span {
       font-weight: var(--font-weight-semibold);
       color: var(--color-text-primary);
+      font-size: var(--font-body-md);
     }
 
     small {
@@ -1068,7 +1069,7 @@
   }
 
   .muscle-duration {
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     background: var(--color-brand-primary);
     color: var(--color-text-on-primary);
     border-radius: var(--radius-full);

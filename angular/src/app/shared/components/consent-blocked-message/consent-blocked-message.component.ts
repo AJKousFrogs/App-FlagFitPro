@@ -8,7 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule, Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import {
   CONSENT_BLOCKED_MESSAGES,
   PrivacyMessage,
@@ -45,7 +45,9 @@ export type ConsentBlockedDataType =
   selector: "app-consent-blocked-message",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule, ButtonModule],
+  imports: [CommonModule, RouterModule, CardModule,
+    ButtonComponent,
+  ],
   template: `
     <div class="consent-blocked" [class]="variant">
       <div class="consent-icon">

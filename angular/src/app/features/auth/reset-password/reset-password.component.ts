@@ -1,25 +1,25 @@
 import {
-  Component,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
 } from "@angular/core";
 
-import { Router, RouterModule } from "@angular/router";
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
+import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
-import { ToastService } from "../../../core/services/toast.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 @Component({
   selector: "app-reset-password",
@@ -29,7 +29,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     RouterModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
     InputTextModule,
     MessageModule,
     ToastModule,
@@ -70,16 +70,13 @@ import { LoggerService } from "../../../core/services/logger.service";
             }
           </div>
 
-          <p-button
+          <app-button
             type="submit"
-            label="Send Reset Link"
-            icon="pi pi-send"
-            [rounded]="true"
+            iconLeft="pi-send"
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
-            styleClass="w-full mb-4"
-          >
-          </p-button>
+            [fullWidth]="true"
+          >Send Reset Link</app-button>
         </form>
 
         <div class="reset-password-divider my-4">

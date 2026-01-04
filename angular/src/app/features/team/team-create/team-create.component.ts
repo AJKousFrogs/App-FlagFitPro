@@ -13,7 +13,7 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastModule } from "primeng/toast";
 import { Select } from "primeng/select";
@@ -31,12 +31,13 @@ import { AuthService } from "../../../core/services/auth.service";
     RouterModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     ToastModule,
     Select,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -118,19 +119,8 @@ import { AuthService } from "../../../core/services/auth.service";
             </div>
 
             <div class="form-actions">
-              <p-button
-                label="Cancel"
-                [outlined]="true"
-                severity="secondary"
-                [routerLink]="['/roster']"
-              ></p-button>
-              <p-button
-                type="submit"
-                label="Create Team"
-                icon="pi pi-check"
-                [loading]="isSubmitting()"
-                [disabled]="teamForm.invalid"
-              ></p-button>
+              <app-button variant="outlined" routerLink="/roster">Cancel</app-button>
+              <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="teamForm.invalid">Create Team</app-button>
             </div>
           </form>
         </p-card>

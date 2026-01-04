@@ -1,0 +1,289 @@
+// Cycle Tracking Component Styles
+
+.cycle-tracking-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Status Card
+.status-card {
+  margin-bottom: var(--space-4);
+}
+
+.cycle-status-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.current-phase-highlight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+
+  .phase-icon {
+    font-size: var(--font-display-sm);
+    color: var(--ds-primary-green);
+  }
+
+  .phase-details {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 var(--space-1) 0;
+      font-size: var(--font-heading-sm);
+      color: var(--ds-text-primary);
+    }
+
+    .phase-subtitle {
+      color: var(--ds-text-secondary);
+      font-size: var(--font-body-sm);
+    }
+  }
+}
+
+.cycle-stats {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+
+  span {
+    color: var(--ds-text-secondary);
+    font-size: var(--font-body-sm);
+  }
+
+  strong {
+    color: var(--ds-text-primary);
+  }
+}
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--ds-surface-base);
+    border-radius: var(--radius-md);
+
+    .stat-value {
+      font-size: var(--font-heading-sm);
+      font-weight: 600;
+      color: var(--ds-primary-green);
+    }
+
+    .stat-label {
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+      margin-top: var(--space-1);
+    }
+  }
+}
+
+// Recommendations
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  .recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--ds-surface-base);
+    border-radius: var(--radius-md);
+
+    i {
+      font-size: var(--font-heading-sm);
+      color: var(--ds-primary-green);
+      margin-top: var(--space-1);
+    }
+  }
+}
+
+// Calendar Card
+.calendar-card {
+  margin-bottom: var(--space-4);
+}
+
+.calendar-legend {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--ds-border-subtle);
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+
+      &.menstrual {
+        background: var(--primitive-error-400);
+      }
+
+      &.follicular {
+        background: var(--primitive-cyan-400);
+      }
+
+      &.ovulation {
+        background: var(--primitive-yellow-300);
+      }
+
+      &.luteal {
+        background: var(--primitive-teal-300);
+      }
+    }
+  }
+}
+
+// Symptoms Card
+.symptoms-card {
+  margin-bottom: var(--space-4);
+}
+
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-2);
+
+  .symptom-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--ds-surface-base);
+    border: 1px solid var(--ds-border-subtle);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--ds-surface-elevated);
+    }
+
+    &.active {
+      background: var(--ds-primary-green-subtle);
+      border-color: var(--ds-primary-green);
+    }
+
+    i {
+      font-size: var(--font-body-md);
+    }
+  }
+}
+
+.symptom-notes {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--ds-border-subtle);
+}
+
+// History Card
+.history-card {
+  margin-bottom: var(--space-4);
+
+  .symptoms-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Privacy Card
+.privacy-card {
+  margin-bottom: var(--space-4);
+}
+
+.privacy-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  .privacy-option {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+
+    label {
+      font-weight: 500;
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .privacy-note {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--ds-surface-base);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: var(--space-6);
+
+  .empty-icon {
+    font-size: var(--font-display-md);
+    color: var(--ds-text-tertiary);
+    margin-bottom: var(--space-3);
+  }
+
+  h3 {
+    margin: 0 0 var(--space-2) 0;
+    color: var(--ds-text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--ds-text-secondary);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .cycle-tracking-page {
+    padding: var(--space-3);
+  }
+
+  .current-phase-highlight {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .symptoms-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

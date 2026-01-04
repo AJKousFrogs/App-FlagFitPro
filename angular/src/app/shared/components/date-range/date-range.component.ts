@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 
 export interface DateRange {
   start: Date | null;
@@ -26,7 +26,9 @@ export interface DateRange {
   selector: "app-date-range",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, DatePicker, ButtonModule],
+  imports: [CommonModule, FormsModule, DatePicker,
+    ButtonComponent,
+  ],
   template: `
     <div class="date-range-group">
       @if (label()) {
@@ -37,14 +39,7 @@ export interface DateRange {
       @if (showPresets()) {
         <div class="date-range-presets">
           @for (preset of presets(); track preset.value) {
-            <p-button
-              [label]="preset.label"
-              [text]="true"
-              size="small"
-              (onClick)="applyPreset(preset.value)"
-              [class.active]="selectedPreset() === preset.value"
-            >
-            </p-button>
+            <app-button variant="text" size="sm" (clicked)="applyPreset(preset.value)"></app-button>
           }
         </div>
       }

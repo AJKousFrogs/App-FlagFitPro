@@ -24,7 +24,8 @@ import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { AvatarModule } from "primeng/avatar";
@@ -72,13 +73,15 @@ interface TeamWellnessSummary {
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     TagModule,
     ProgressBarModule,
     AvatarModule,
     TooltipModule,
     BadgeModule,
     SkeletonModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="team-wellness-overview">
@@ -188,12 +191,7 @@ interface TeamWellnessSummary {
                 [value]="athletesNeedingAttention().length.toString()"
               ></p-badge>
             </h3>
-            <p-button
-              label="View All"
-              [text]="true"
-              size="small"
-              routerLink="/roster"
-            ></p-button>
+            <app-button variant="text" size="sm" routerLink="/roster">View All</app-button>
           </div>
 
           <div class="attention-list">
@@ -240,14 +238,7 @@ interface TeamWellnessSummary {
                   </div>
                 </div>
 
-                <p-button
-                  icon="pi pi-arrow-right"
-                  [rounded]="true"
-                  [text]="true"
-                  [routerLink]="['/roster']"
-                  [queryParams]="{ player: athlete.id }"
-                  pTooltip="View athlete details"
-                ></p-button>
+                <app-icon-button icon="pi-arrow-right" variant="text" routerLink="/roster" ariaLabel="arrow-right" />
               </div>
             }
           </div>
@@ -262,13 +253,7 @@ interface TeamWellnessSummary {
               <i class="pi pi-clock"></i>
               Not Checked In Today
             </h3>
-            <p-button
-              label="Send Reminder"
-              icon="pi pi-bell"
-              size="small"
-              [outlined]="true"
-              (onClick)="sendReminders()"
-            ></p-button>
+            <app-button variant="outlined" size="sm" iconLeft="pi-bell" (clicked)="sendReminders()">Send Reminder</app-button>
           </div>
 
           <div class="not-checked-list">

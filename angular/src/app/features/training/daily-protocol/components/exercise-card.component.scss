@@ -307,7 +307,7 @@
 
   .ai-note i {
     color: var(--primitive-info-500, #3b82f6);
-    margin-top: 2px;
+    margin-top: var(--space-1);
   }
 
   .ai-note span {

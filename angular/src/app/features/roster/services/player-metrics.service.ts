@@ -12,7 +12,7 @@
 
 import { Injectable, inject, computed, signal } from "@angular/core";
 import { FlagFootballAthleteProfileService, FlagFootballPosition, PositionRequirements, BenchmarkRange } from "../../../core/services/flag-football-athlete-profile.service";
-import { ACWRService } from "../../../core/services/acwr.service";
+import { AcwrService } from "../../../core/services/acwr.service";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { Player, PlayerRiskLevel, PositionMetrics } from "../roster.models";
@@ -47,7 +47,7 @@ export interface RiskAssessment {
 })
 export class PlayerMetricsService {
   private readonly athleteProfileService = inject(FlagFootballAthleteProfileService);
-  private readonly acwrService = inject(ACWRService);
+  private readonly acwrService = inject(AcwrService);
   private readonly wellnessService = inject(WellnessService);
   private readonly logger = inject(LoggerService);
 

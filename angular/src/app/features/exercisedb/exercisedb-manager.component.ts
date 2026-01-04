@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { TagModule } from "primeng/tag";
 import { Select } from "primeng/select";
@@ -34,6 +34,7 @@ import {
   ImportLog,
   ExerciseApprovalData,
 } from "../../core/services/exercisedb.service";
+import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 
 @Component({
   selector: "app-exercisedb-manager",
@@ -44,7 +45,6 @@ import {
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     TagModule,
     Select,
@@ -64,6 +64,8 @@ import {
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -365,13 +367,7 @@ import {
                       </p>
                     </div>
                   } @else {
-                    <p-button
-                      label="Start Import"
-                      icon="pi pi-download"
-                      [rounded]="true"
-                      (onClick)="startImport()"
-                      styleClass="import-button"
-                    ></p-button>
+                    <app-button iconLeft="pi-download" (clicked)="startImport()">Start Import</app-button>
                   }
 
                   @if (lastImportStats()) {
@@ -503,21 +499,8 @@ import {
                         </div>
                       }
                       <div class="approval-actions">
-                        <p-button
-                          label="Review & Approve"
-                          icon="pi pi-check"
-                          [rounded]="true"
-                          severity="success"
-                          (onClick)="openApprovalDialog(exercise)"
-                        ></p-button>
-                        <p-button
-                          label="Skip"
-                          icon="pi pi-times"
-                          [rounded]="true"
-                          severity="secondary"
-                          [outlined]="true"
-                          (onClick)="skipExercise(exercise)"
-                        ></p-button>
+                        <app-button variant="success" iconLeft="pi-check" (clicked)="openApprovalDialog(exercise)">Review & Approve</app-button>
+                        <app-button variant="outlined" iconLeft="pi-times" (clicked)="skipExercise(exercise)">Skip</app-button>
                       </div>
                     </p-card>
                   }
@@ -540,7 +523,7 @@ import {
           [(visible)]="showDetailDialog"
           [header]="selectedExercise()?.name || 'Exercise Details'"
           [modal]="true"
-          [style]="{ width: '90vw', maxWidth: '800px' }"
+          [style]="dialogStyles.fullWidth"
           [draggable]="false"
           [resizable]="false"
         >
@@ -678,21 +661,9 @@ import {
             </div>
             <ng-template pTemplate="footer">
               @if (!selectedExercise()?.is_approved) {
-                <p-button
-                  label="Approve Exercise"
-                  icon="pi pi-check"
-                  [rounded]="true"
-                  severity="success"
-                  (onClick)="openApprovalDialog(selectedExercise()!)"
-                ></p-button>
+                <app-button variant="success" iconLeft="pi-check" (clicked)="openApprovalDialog(selectedExercise()!)">Approve Exercise</app-button>
               }
-              <p-button
-                label="Close"
-                icon="pi pi-times"
-                [rounded]="true"
-                severity="secondary"
-                (onClick)="showDetailDialog = false"
-              ></p-button>
+              <app-button variant="secondary" iconLeft="pi-times" (clicked)="showDetailDialog = false">Close</app-button>
             </ng-template>
           }
         </p-dialog>
@@ -702,7 +673,7 @@ import {
           [(visible)]="showApprovalDialog"
           header="Approve Exercise"
           [modal]="true"
-          [style]="{ width: '90vw', maxWidth: '600px' }"
+          [style]="dialogStyles.complex"
           [draggable]="false"
           [resizable]="false"
         >
@@ -783,21 +754,8 @@ import {
             </div>
           }
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              icon="pi pi-times"
-              [rounded]="true"
-              severity="secondary"
-              [text]="true"
-              (onClick)="showApprovalDialog = false"
-            ></p-button>
-            <p-button
-              label="Approve"
-              icon="pi pi-check"
-              [rounded]="true"
-              severity="success"
-              (onClick)="approveExercise()"
-            ></p-button>
+            <app-button variant="text" iconLeft="pi-times" (clicked)="showApprovalDialog = false">Cancel</app-button>
+            <app-button variant="success" iconLeft="pi-check" (clicked)="approveExercise()">Approve</app-button>
           </ng-template>
         </p-dialog>
       </div>
@@ -808,6 +766,9 @@ import {
 export class ExerciseDBManagerComponent implements OnInit {
   private exerciseDBService = inject(ExerciseDBService);
   private messageService = inject(MessageService);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
 
   // State
   exercises = signal<ExerciseDBExercise[]>([]);

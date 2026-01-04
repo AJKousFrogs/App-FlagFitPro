@@ -78,12 +78,12 @@
 
   :host ::ng-deep .completion-bar .p-progressbar {
     height: 6px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     background: var(--surface-100);
   }
 
   :host ::ng-deep .completion-bar .p-progressbar-value {
-    background: linear-gradient(90deg, #089949, #0ab85a);
+    background: var(--ds-primary-green-gradient);
   }
 
   .chart-card {
@@ -160,12 +160,12 @@
 
   :host ::ng-deep .type-bar .p-progressbar {
     height: 4px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     background: var(--surface-100);
   }
 
   :host ::ng-deep .type-bar .p-progressbar-value {
-    background: #089949;
+    background: var(--ds-primary-green);
   }
 
   .empty-state {

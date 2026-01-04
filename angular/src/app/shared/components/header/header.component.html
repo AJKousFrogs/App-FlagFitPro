@@ -1,254 +1,153 @@
-<header class="app-header" [class]="headerClass()">
-  <!-- Left Section -->
-  <div class="header-left">
-    <!-- Mobile Menu Toggle -->
-    <button
-      type="button"
-      class="mobile-menu-toggle"
-      (click)="onToggleSidebar()"
-      aria-label="Toggle navigation menu"
-      aria-expanded="false"
-    >
-      <i class="pi pi-bars"></i>
-    </button>
+<p-toolbar styleClass="app-header" [class]="headerClass()" aria-label="Main navigation">
+  <!-- Left Section: Olympics Countdown -->
+  <ng-template #start>
+    <div class="header-start">
+      <!-- Mobile Menu Toggle -->
+      <app-icon-button
+        icon="pi-bars"
+        ariaLabel="Toggle navigation menu"
+        (clicked)="onToggleSidebar()"
+      />
 
-    <!-- Olympic Countdown (replaces logo) -->
-    @if (config().showLogo) {
-      <div class="olympic-countdown-header">
-        <div class="countdown-label-header">
-          <span class="countdown-event">LA28 OLYMPICS</span>
-        </div>
-        <div class="countdown-timer-header">
-          <div class="countdown-segment-header">
-            <span class="countdown-value-header">{{
-              olympicCountdown().days
-            }}</span>
-            <span class="countdown-unit-header">D</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-segment-header">
-            <span class="countdown-value-header">{{
-              formatNumber(olympicCountdown().hours)
-            }}</span>
-            <span class="countdown-unit-header">H</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-segment-header">
-            <span class="countdown-value-header">{{
-              formatNumber(olympicCountdown().minutes)
-            }}</span>
-            <span class="countdown-unit-header">M</span>
-          </div>
-          <span class="countdown-sep">:</span>
-          <div class="countdown-segment-header">
-            <span class="countdown-value-header">{{
-              formatNumber(olympicCountdown().seconds)
-            }}</span>
-            <span class="countdown-unit-header">S</span>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Breadcrumbs (conditional) -->
-    @if (config().showBreadcrumbs) {
-      <nav class="breadcrumbs">
-        <span class="breadcrumb-item">{{ currentSection() }}</span>
-        @if (currentPage()) {
-          <i class="pi pi-chevron-right separator"></i>
-        }
-        @if (currentPage()) {
-          <span class="breadcrumb-item current">{{ currentPage() }}</span>
-        }
-      </nav>
-    }
-
-    <!-- Search (left position) -->
-    @if (config().searchPosition === "left") {
-      <div class="search-container" (click)="onSearch()">
-        <div class="search-trigger">
-          <i class="pi pi-search"></i>
-          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
-          <div class="search-shortcut">
-            <kbd>⌘</kbd><kbd>K</kbd>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <!-- Center Section -->
-  <div class="header-center">
-    <!-- Search (center position) -->
-    @if (config().searchPosition === "center") {
-      <div class="search-container" (click)="onSearch()">
-        <div class="search-trigger">
-          <i class="pi pi-search"></i>
-          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
-          <div class="search-shortcut">
-            <kbd>⌘</kbd><kbd>K</kbd>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <!-- Right Section -->
-  <div class="header-right">
-    <!-- Search (right position) -->
-    @if (config().searchPosition === "right") {
-      <div class="search-container" (click)="onSearch()">
-        <div class="search-trigger">
-          <i class="pi pi-search"></i>
-          <span class="search-placeholder">{{ config().searchPlaceholder || 'Search...' }}</span>
-          <div class="search-shortcut">
-            <kbd>⌘</kbd><kbd>K</kbd>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Notifications -->
-    <p-button
-      icon="pi pi-bell"
-      [text]="true"
-      [rounded]="true"
-      [badge]="
-        notificationCount() > 0 ? notificationCount().toString() : undefined
-      "
-      badgeClass="p-badge-danger"
-      (onClick)="toggleNotifications()"
-      ariaLabel="Notifications"
-      class="header-icon-btn"
-    ></p-button>
-
-    <!-- Settings -->
-    <p-button
-      icon="pi pi-cog"
-      [text]="true"
-      [rounded]="true"
-      (onClick)="openSettings()"
-      ariaLabel="Settings"
-      class="header-icon-btn"
-    ></p-button>
-
-    <!-- Theme Toggle -->
-    <div class="theme-toggle">
-      <p-button
-        [icon]="themeIcon()"
-        [text]="true"
-        [rounded]="true"
-        (onClick)="cycleTheme()"
-        [ariaLabel]="themeAriaLabel()"
-        class="header-icon-btn"
-        [pTooltip]="themeTooltip()"
-        tooltipPosition="bottom"
-      ></p-button>
-      <span class="theme-label">{{ themeLabel() }}</span>
-    </div>
-
-    <!-- User Menu -->
-    <div class="user-menu-container">
-      <button
-        class="user-avatar-wrapper"
-        (click)="toggleUserMenu()"
-        [attr.aria-expanded]="isUserMenuOpen()"
-        aria-haspopup="true"
-        aria-label="User menu"
-      >
-        <p-avatar
-          [label]="userInitials()"
-          shape="circle"
-          size="large"
-          styleClass="user-avatar-inner"
-        ></p-avatar>
-      </button>
-
-      <!-- Custom User Dropdown -->
-      @if (isUserMenuOpen()) {
-        <div class="user-dropdown" (click)="$event.stopPropagation()">
-          <!-- User Info Header -->
-          <div class="user-dropdown-header">
-            <div class="user-dropdown-avatar">
-              <p-avatar
-                [label]="userInitials()"
-                shape="circle"
-                size="xlarge"
-                styleClass="dropdown-avatar-inner"
-              ></p-avatar>
-            </div>
-            <div class="user-dropdown-info">
-              <span class="user-dropdown-name">{{ userName() }}</span>
-              <span class="user-dropdown-email">{{ userEmail() }}</span>
-              <span class="user-dropdown-role">{{ userRole() }}</span>
-            </div>
-          </div>
-
-          <!-- Menu Items -->
-          <div class="user-dropdown-menu">
-            <button class="user-dropdown-item" (click)="navigateTo('/profile')">
-              <i class="pi pi-user"></i>
-              <span>My Profile</span>
-              <i class="pi pi-chevron-right item-arrow"></i>
-            </button>
-            <button
-              class="user-dropdown-item"
-              (click)="navigateTo('/settings')"
-            >
-              <i class="pi pi-cog"></i>
-              <span>Settings</span>
-              <i class="pi pi-chevron-right item-arrow"></i>
-            </button>
-            <button
-              class="user-dropdown-item"
-              (click)="navigateTo('/settings/privacy')"
-            >
-              <i class="pi pi-shield"></i>
-              <span>Privacy & Security</span>
-              <i class="pi pi-chevron-right item-arrow"></i>
-            </button>
-          </div>
-
-          <!-- Quick Stats -->
-          <div class="user-dropdown-stats">
-            <div class="stat-item">
-              <span class="stat-value">{{ userStats().trainingSessions }}</span>
-              <span class="stat-label">Sessions</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ userStats().streak }}</span>
-              <span class="stat-label">Day Streak</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ userStats().level }}</span>
-              <span class="stat-label">Level</span>
-            </div>
-          </div>
-
-          <!-- Logout -->
-          <div class="user-dropdown-footer">
-            <p-button
-              label="Sign Out"
-              icon="pi pi-sign-out"
-              [outlined]="true"
-              severity="danger"
-              styleClass="logout-btn-primeng"
-              (onClick)="logout()"
-            ></p-button>
+      <!-- Olympic Countdown -->
+      @if (config().showLogo) {
+        <div
+          class="olympic-countdown"
+          pTooltip="Countdown to LA 2028 Olympics Opening Ceremony"
+          tooltipPosition="bottom"
+        >
+          <p-tag
+            value="LA28"
+            icon="pi pi-flag"
+            severity="success"
+            styleClass="olympics-badge"
+          />
+          <div class="countdown-timer">
+            <span class="countdown-segment">
+              <span class="countdown-value">{{ olympicCountdown().days }}</span>
+              <span class="countdown-unit">D</span>
+            </span>
+            <span class="countdown-sep">:</span>
+            <span class="countdown-segment">
+              <span class="countdown-value">{{ formatNumber(olympicCountdown().hours) }}</span>
+              <span class="countdown-unit">H</span>
+            </span>
+            <span class="countdown-sep">:</span>
+            <span class="countdown-segment">
+              <span class="countdown-value">{{ formatNumber(olympicCountdown().minutes) }}</span>
+              <span class="countdown-unit">M</span>
+            </span>
+            <span class="countdown-sep">:</span>
+            <span class="countdown-segment">
+              <span class="countdown-value">{{ formatNumber(olympicCountdown().seconds) }}</span>
+              <span class="countdown-unit">S</span>
+            </span>
           </div>
         </div>
       }
-    </div>
-  </div>
-</header>
 
-<!-- Backdrop for closing menu -->
-@if (isUserMenuOpen()) {
-  <div class="user-menu-backdrop" (click)="closeUserMenu()"></div>
-}
+      <!-- Breadcrumbs (conditional) -->
+      @if (config().showBreadcrumbs) {
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <span class="breadcrumb-item">{{ currentSection() }}</span>
+          @if (currentPage()) {
+            <i class="pi pi-chevron-right separator" aria-hidden="true"></i>
+            <span class="breadcrumb-item current">{{ currentPage() }}</span>
+          }
+        </nav>
+      }
+    </div>
+  </ng-template>
+
+  <!-- Center Section: Global Search -->
+  <ng-template #center>
+    <div class="header-center" (click)="onSearch()" (keydown.enter)="onSearch()" tabindex="0" role="button" aria-label="Open search">
+      <p-inputgroup styleClass="search-input-group">
+        <p-inputgroup-addon>
+          <i class="pi pi-search" aria-hidden="true"></i>
+        </p-inputgroup-addon>
+        <input
+          type="text"
+          pInputText
+          [placeholder]="config().searchPlaceholder || 'Search players, exercises, videos...'"
+          readonly
+          class="search-input"
+        />
+        <p-inputgroup-addon styleClass="search-shortcut-addon">
+          <span class="search-shortcut">
+            <kbd>⌘</kbd><kbd>K</kbd>
+          </span>
+        </p-inputgroup-addon>
+      </p-inputgroup>
+    </div>
+  </ng-template>
+
+  <!-- Right Section: Actions -->
+  <ng-template #end>
+    <div class="header-end">
+      <!-- Notifications -->
+      <p-button
+        icon="pi pi-bell"
+        [text]="true"
+        [badge]="notificationCount() > 0 ? (notificationCount() > 9 ? '9+' : notificationCount().toString()) : undefined"
+        badgeClass="p-badge-danger"
+        (onClick)="toggleNotifications()"
+        aria-label="Notifications"
+        pTooltip="Notifications"
+        tooltipPosition="bottom"
+        styleClass="header-icon-btn"
+      />
+
+      <!-- Settings -->
+      <app-icon-button
+        icon="pi-cog"
+        ariaLabel="Settings"
+        tooltip="Settings"
+        (clicked)="openSettings()"
+      />
+
+      <!-- Theme Toggle -->
+      <div class="theme-toggle">
+        <app-icon-button
+          [icon]="themeIcon()"
+          [ariaLabel]="themeAriaLabel()"
+          [tooltip]="themeTooltip()"
+          (clicked)="cycleTheme()"
+        />
+        <span class="theme-label">{{ themeLabel() }}</span>
+      </div>
+
+      <!-- User Avatar with Menu -->
+      <div class="user-menu-container">
+        <p-button
+          [text]="true"
+          (onClick)="toggleUserMenu($event)"
+          [attr.aria-expanded]="isUserMenuOpen()"
+          aria-haspopup="true"
+          aria-label="User menu"
+          styleClass="user-avatar-btn"
+        >
+          <p-avatar
+            [label]="userInitials()"
+            shape="circle"
+            styleClass="user-avatar"
+          />
+        </p-button>
+
+        <p-menu
+          #userMenu
+          [model]="userMenuItems()"
+          [popup]="true"
+          appendTo="body"
+          styleClass="user-dropdown-menu"
+        />
+      </div>
+    </div>
+  </ng-template>
+</p-toolbar>
 
 <!-- Search Panel -->
-<app-search-panel></app-search-panel>
+<app-search-panel />
 
 <!-- Notifications Panel -->
-<app-notifications-panel #notificationsPanel></app-notifications-panel>
+<app-notifications-panel #notificationsPanel />

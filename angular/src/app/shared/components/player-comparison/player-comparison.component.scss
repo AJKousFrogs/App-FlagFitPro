@@ -209,7 +209,7 @@
     display: flex;
     height: 6px;
     background: var(--color-border-secondary);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     margin-top: var(--space-1);
     overflow: hidden;
   }
@@ -221,7 +221,7 @@
 
   .player1-bar {
     background: var(--color-brand-primary);
-    border-radius: 3px 0 0 3px;
+    border-radius: var(--radius-sm) 0 0 3px;
   }
 
   .player2-bar {

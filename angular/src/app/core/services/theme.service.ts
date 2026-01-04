@@ -6,9 +6,10 @@
  * and persistence to localStorage and Supabase.
  */
 
-import { Injectable, signal, effect, computed, inject } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { CHART_PALETTE } from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export type ThemeMode = "light" | "dark" | "auto";
 
@@ -18,8 +19,13 @@ interface ThemeState {
 }
 
 const THEME_STORAGE_KEY = "flagfit_theme";
-const THEME_META_COLOR_LIGHT = "#3B82F6";
-const THEME_META_COLOR_DARK = "#1e293b";
+
+/**
+ * Theme-color meta tag values for mobile browser chrome
+ * Maps to design system but hardcoded for SSR compatibility
+ */
+const THEME_META_COLOR_LIGHT = "#089949"; // --ds-primary-green
+const THEME_META_COLOR_DARK = "#171717"; // --primitive-neutral-900
 
 @Injectable({
   providedIn: "root",
@@ -123,16 +129,23 @@ export class ThemeService {
   /**
    * Get chart color palette from design system
    * Returns array of hex colors for Chart.js
+   *
+   * Prefer using CHART_PALETTE from @core/utils/design-tokens.util directly
+   * for better tree-shaking and type safety
    */
   getChartColors(): string[] {
-    return [
-      this.getCssVariable("--color-chart-1") || "#089949",
-      this.getCssVariable("--color-chart-2") || "#10c96b",
-      this.getCssVariable("--color-chart-3") || "#f1c40f",
-      this.getCssVariable("--color-chart-4") || "#e74c3c",
-      this.getCssVariable("--color-chart-5") || "#3498db",
-      this.getCssVariable("--color-chart-6") || "#9b59b6",
-    ];
+    // Try to read from CSS variables first (respects theming)
+    const cssColors = [
+      this.getCssVariable("--color-chart-1"),
+      this.getCssVariable("--color-chart-2"),
+      this.getCssVariable("--color-chart-3"),
+      this.getCssVariable("--color-chart-4"),
+      this.getCssVariable("--color-chart-5"),
+      this.getCssVariable("--color-chart-6"),
+    ].filter((c) => c);
+
+    // Return CSS values if available, otherwise fallback to design token constants
+    return cssColors.length === 6 ? cssColors : [...CHART_PALETTE.slice(0, 6)];
   }
 
   /**
@@ -297,6 +310,14 @@ export class ThemeService {
 
   /**
    * Update PrimeNG theme dynamically
+   *
+   * These hex values mirror design-system-tokens.scss dark/light mode definitions.
+   * They must be hardcoded here because we're programmatically setting CSS variables
+   * for runtime theme switching (CSS can't reference variables to set other variables).
+   *
+   * Values map to:
+   * - Dark: --primitive-neutral-* scale (reversed for dark mode)
+   * - Light: Standard surface scale from design tokens
    */
   private updatePrimeNGTheme(theme: "light" | "dark"): void {
     // PrimeNG 21 uses CSS variables, so the data-theme attribute should handle it
@@ -304,22 +325,24 @@ export class ThemeService {
     const root = document.documentElement;
 
     if (theme === "dark") {
-      root.style.setProperty("--p-surface-0", "#171717");
+      // Dark mode: --primitive-neutral scale (inverted)
+      root.style.setProperty("--p-surface-0", "#171717"); // --primitive-neutral-900
       root.style.setProperty("--p-surface-50", "#1f1f1f");
-      root.style.setProperty("--p-surface-100", "#262626");
+      root.style.setProperty("--p-surface-100", "#262626"); // --primitive-neutral-800
       root.style.setProperty("--p-surface-200", "#333333");
-      root.style.setProperty("--p-surface-300", "#404040");
+      root.style.setProperty("--p-surface-300", "#404040"); // --primitive-neutral-700
       root.style.setProperty("--p-surface-400", "#525252");
-      root.style.setProperty("--p-surface-500", "#737373");
-      root.style.setProperty("--p-surface-600", "#a3a3a3");
-      root.style.setProperty("--p-surface-700", "#d4d4d4");
-      root.style.setProperty("--p-surface-800", "#e5e5e5");
-      root.style.setProperty("--p-surface-900", "#f5f5f5");
+      root.style.setProperty("--p-surface-500", "#737373"); // --primitive-neutral-600
+      root.style.setProperty("--p-surface-600", "#a3a3a3"); // --primitive-neutral-500
+      root.style.setProperty("--p-surface-700", "#d4d4d4"); // --primitive-neutral-400
+      root.style.setProperty("--p-surface-800", "#e5e5e5"); // --primitive-neutral-300
+      root.style.setProperty("--p-surface-900", "#f5f5f5"); // --primitive-neutral-100
       root.style.setProperty("--p-text-color", "#ffffff");
       root.style.setProperty("--p-text-color-secondary", "#a3a3a3");
     } else {
-      root.style.setProperty("--p-surface-0", "#ffffff");
-      root.style.setProperty("--p-surface-50", "#f8faf9");
+      // Light mode: Standard surface scale from design tokens
+      root.style.setProperty("--p-surface-0", "#ffffff"); // --surface-primary
+      root.style.setProperty("--p-surface-50", "#f8faf9"); // --surface-secondary
       root.style.setProperty("--p-surface-100", "#f1f5f4");
       root.style.setProperty("--p-surface-200", "#e2e8f0");
       root.style.setProperty("--p-surface-300", "#cbd5e1");

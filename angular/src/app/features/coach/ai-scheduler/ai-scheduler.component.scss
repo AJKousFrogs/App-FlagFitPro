@@ -1,0 +1,496 @@
+
+.ai-scheduler-page {
+  padding: var(--space-4);
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Merlin Intro
+.merlin-intro {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--ds-surface-base), var(--ds-surface-elevated));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ds-primary-green);
+  margin-bottom: var(--space-4);
+
+  .merlin-avatar {
+    font-size: var(--font-display-md);
+    flex-shrink: 0;
+  }
+
+  .merlin-message {
+    h3 {
+      margin: 0 0 var(--space-2) 0;
+      font-size: var(--font-body-lg);
+      font-weight: 600;
+      color: var(--ds-primary-green);
+    }
+
+    p {
+      margin: 0;
+      color: var(--ds-text-secondary);
+      font-style: italic;
+    }
+  }
+}
+
+// Form Steps
+.form-step {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  h4 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-body-md);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .step-description {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+  }
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    label {
+      cursor: pointer;
+    }
+  }
+}
+
+.event-selector {
+  margin-top: var(--space-3);
+
+  label {
+    display: block;
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .event-info {
+    margin-top: var(--space-2);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    strong {
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    label {
+      cursor: pointer;
+      font-size: var(--font-body-sm);
+    }
+  }
+}
+
+.days-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .day-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    label {
+      cursor: pointer;
+      font-size: var(--font-body-sm);
+    }
+  }
+}
+
+.constraints-row {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+
+  .constraint-field {
+    flex: 1;
+    min-width: 200px;
+
+    label {
+      display: block;
+      font-size: var(--font-body-sm);
+      font-weight: 500;
+      color: var(--ds-text-primary);
+      margin-bottom: var(--space-1);
+    }
+  }
+}
+
+.special-considerations {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      cursor: pointer;
+      font-size: var(--font-body-sm);
+    }
+  }
+}
+
+.generate-action {
+  text-align: center;
+  padding-top: var(--space-4);
+}
+
+// Schedule View
+.schedule-header-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+// Recommendation Card
+.recommendation-card {
+  .merlin-recommendation {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: linear-gradient(135deg, var(--ds-surface-base), var(--ds-surface-elevated));
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--ds-primary-green);
+
+    .merlin-icon {
+      font-size: var(--font-heading-lg);
+      flex-shrink: 0;
+    }
+
+    .recommendation-content {
+      h3 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-body-md);
+        font-weight: 600;
+        color: var(--ds-primary-green);
+      }
+
+      p {
+        margin: 0;
+        color: var(--ds-text-secondary);
+        font-style: italic;
+      }
+    }
+  }
+}
+
+// Card Headers
+.card-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-body-lg);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+}
+
+// Periodization Timeline
+.periodization-timeline {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+
+.phase-block {
+  flex: 1;
+  min-width: 150px;
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  text-align: center;
+
+  &.current {
+    opacity: 0.5;
+  }
+
+  .phase-header {
+    margin-bottom: var(--space-2);
+
+    .phase-dates {
+      display: block;
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+    }
+
+    .phase-name {
+      display: block;
+      font-size: var(--font-body-sm);
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .phase-load {
+    .load-label {
+      display: block;
+      margin-top: var(--space-1);
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-secondary);
+    }
+  }
+}
+
+// Sessions List
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.session-card {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--ds-primary-green);
+
+  &.rest-day {
+    border-left-color: var(--ds-text-tertiary);
+    opacity: 0.7;
+  }
+}
+
+.session-day {
+  min-width: 80px;
+  text-align: center;
+
+  .day-name {
+    display: block;
+    font-weight: 700;
+    color: var(--ds-text-primary);
+  }
+
+  .day-date {
+    display: block;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+  }
+
+  .day-time {
+    display: block;
+    font-size: var(--font-body-xs);
+    color: var(--ds-text-tertiary);
+  }
+}
+
+.session-content {
+  flex: 1;
+
+  .session-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+
+    .session-icon {
+      font-size: var(--font-heading-sm);
+    }
+
+    h4 {
+      margin: 0;
+      flex: 1;
+      font-size: var(--font-body-md);
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+
+    .session-duration {
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-tertiary);
+    }
+  }
+
+  .session-activities {
+    margin: 0 0 var(--space-2) 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    li {
+      margin-bottom: var(--space-1);
+    }
+  }
+
+  .session-meta {
+    display: flex;
+    gap: var(--space-3);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-tertiary);
+  }
+
+  .session-location {
+    margin: var(--space-2) 0 0 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+  }
+}
+
+.session-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+// Modifications Card
+.modifications-card {
+  border-left: 4px solid var(--primitive-warning-500);
+}
+
+.mod-section {
+  margin-bottom: var(--space-4);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+}
+
+.mod-card {
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+
+  strong {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--ds-text-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    &.cleared {
+      color: var(--ds-primary-green);
+      margin-top: var(--space-1);
+    }
+
+    &.not-cleared {
+      color: var(--primitive-error-500);
+      margin-top: var(--space-1);
+    }
+  }
+}
+
+// Export Actions
+.export-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .ai-scheduler-page {
+    padding: var(--space-3);
+  }
+
+  .merlin-intro {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .constraints-row {
+    flex-direction: column;
+  }
+
+  .session-card {
+    flex-direction: column;
+  }
+
+  .session-day {
+    display: flex;
+    gap: var(--space-2);
+    min-width: auto;
+
+    .day-name,
+    .day-date,
+    .day-time {
+      display: inline;
+    }
+  }
+
+  .periodization-timeline {
+    flex-direction: column;
+  }
+
+  .export-actions {
+    flex-direction: column;
+
+    p-button {
+      width: 100%;
+    }
+  }
+}

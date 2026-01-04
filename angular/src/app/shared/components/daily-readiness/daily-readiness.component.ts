@@ -24,7 +24,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";
 import { SliderModule } from "primeng/slider";
 import { DialogModule } from "primeng/dialog";
@@ -49,12 +49,13 @@ interface DailyState {
   imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
     CardModule,
     SliderModule,
     DialogModule,
     TooltipModule,
     ProgressBarModule,
+  
+    ButtonComponent,
   ],
   template: `
     @if (mode() === "modal") {
@@ -71,19 +72,8 @@ interface DailyState {
 
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <p-button
-              label="Skip for now"
-              [text]="true"
-              severity="secondary"
-              (onClick)="onSkip()"
-            ></p-button>
-            <p-button
-              label="Save Check-in"
-              icon="pi pi-check"
-              [loading]="saving()"
-              [disabled]="saving()"
-              (onClick)="saveState()"
-            ></p-button>
+            <app-button variant="text" (clicked)="onSkip()">Skip for now</app-button>
+            <app-button iconLeft="pi-check" [loading]="saving()" [disabled]="saving()" (clicked)="saveState()">Save Check-in</app-button>
           </div>
         </ng-template>
       </p-dialog>
@@ -105,13 +95,7 @@ interface DailyState {
 
         <ng-template pTemplate="footer">
           <div class="card-footer">
-            <p-button
-              label="Save"
-              icon="pi pi-check"
-              [loading]="saving()"
-              [disabled]="saving()"
-              (onClick)="saveState()"
-            ></p-button>
+            <app-button iconLeft="pi-check" [loading]="saving()" [disabled]="saving()" (clicked)="saveState()">Save</app-button>
           </div>
         </ng-template>
       </p-card>

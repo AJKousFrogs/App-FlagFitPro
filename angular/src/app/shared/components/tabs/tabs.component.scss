@@ -14,7 +14,7 @@
   }
 
   :host ::ng-deep .p-tabview-nav-link {
-    padding: 1rem 1.5rem;
+    padding: var(--space-4) 1.5rem;
     color: var(--color-text-secondary);
     transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
   }
@@ -30,7 +30,7 @@
   }
 
   :host ::ng-deep .p-tabview-panels {
-    padding: 1.5rem;
+    padding: var(--space-6);
     background-color: var(--surface-primary);
   }
 }

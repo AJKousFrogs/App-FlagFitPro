@@ -1,323 +1,349 @@
-# 🚀 LOCAL DEVELOPMENT SETUP - NO AUTHENTICATION REQUIRED
+# Local Development Setup
 
-## ✅ **QUICK START - RUN THE APP IMMEDIATELY**
-
-Your app is already configured for local development with **demo authentication** - no email/password required!
+**Version:** 3.0  
+**Last Updated:** January 2026  
+**Stack:** Angular 21 + PrimeNG 21 + Supabase + Netlify Functions
 
 ---
 
-## 🚀 **IMMEDIATE STARTUP (3 Commands)**
+## Prerequisites
+
+| Requirement | Version | Check Command |
+|-------------|---------|---------------|
+| Node.js | ≥ 20.0.0 | `node --version` |
+| npm | ≥ 10.0.0 | `npm --version` |
+| Angular CLI | 21.x | `ng version` |
+| Git | Any recent | `git --version` |
+| Netlify CLI | Latest | `netlify --version` |
+
+---
+
+## Quick Start (5 Minutes)
+
+### 1. Clone & Install
 
 ```bash
-# 1. Install dependencies
+# Clone repository
+git clone <your-repo-url>
+cd "Flag football HTML - APP"
+
+# Install root dependencies
 npm install
 
-# 2. Copy environment file (optional - for database features)
-cp env.example .env
+# Install Angular dependencies
+cd angular
+npm install
+cd ..
 
-# 3. Start development server
-npm run dev
+# Install Netlify CLI globally
+npm install -g netlify-cli
 ```
 
-**That's it!** Your app will start and you'll be automatically logged in as a demo user.
+### 2. Configure Environment
 
----
+Create `.env` file in project root:
 
-## 🔐 **DEMO AUTHENTICATION SYSTEM**
-
-### **✅ What's Already Configured:**
-
-- **Automatic Login**: No email/password required
-- **Demo User**: Pre-created demo account
-- **Full Access**: All features available immediately
-- **No Database**: Works with mock data out of the box
-
-### **👤 Demo User Credentials:**
-
-```json
-{
-  "id": 1,
-  "name": "Demo User",
-  "email": "demo@flagfit.com",
-  "role": "player"
-}
-```
-
-### **🔑 How It Works:**
-
-1. **App starts** → Automatically creates demo auth token
-2. **User logged in** → Full access to all features
-3. **No login screen** → Goes straight to dashboard
-4. **All components work** → Using mock data for demonstration
-
----
-
-## 🌐 **ACCESSING YOUR APP**
-
-### **Local Development Server:**
-
-- **URL**: `http://localhost:5173` (or port shown in terminal)
-- **Status**: ✅ **Automatically authenticated**
-- **Features**: ✅ **All advanced features working**
-
-### **What You'll See:**
-
-1. **Dashboard Page** with all 6 advanced components
-2. **LA28 Olympic Qualification** tracking
-3. **Advanced Wearables** integration
-4. **Team Chemistry** with AI interventions
-5. **AI Schedule Optimization**
-6. **Advanced Injury Prevention**
-7. **Multilingual Support** interface
-
----
-
-## 🗄️ **DATABASE SETUP (OPTIONAL)**
-
-### **For Full Database Features:**
-
-#### **1. Set Up Supabase Database (Required for Full Features)**
-
-```bash
-# Get your Supabase credentials from supabase.com dashboard
-# Add to .env.local file:
+```env
+# Supabase (Required)
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your_anon_key_here
-SUPABASE_SERVICE_KEY=your_service_key_here
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_KEY=your-service-role-key
 
-# For frontend (Vite):
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key_here
+# AI Chat - Groq (Required for AI Coach)
+# Get free key at: https://console.groq.com/
+# Free tier: 14,400 requests/day
+GROQ_API_KEY=gsk_your_groq_api_key
+
+# Weather - Open-Meteo (No key required)
+# Using https://open-meteo.com - free, open-source, no API key needed
+# Weather endpoints work automatically
+
+# JWT (for custom auth if needed)
+JWT_SECRET=your-secret-key-change-in-production
 ```
 
-#### **2. Run Database Migrations (Optional)**
+Create `angular/.env` for frontend:
+
+```env
+# Frontend environment (used by Angular)
+NG_APP_SUPABASE_URL=https://your-project.supabase.co
+NG_APP_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 3. Start Development Server
 
 ```bash
-# Only if you want real database features
-npm run db:migrate
-npm run db:seed
+# Option A: Full stack (Angular + Netlify Functions)
+netlify dev
+
+# Option B: Angular only (no backend functions)
+cd angular && ng serve
 ```
 
-#### **3. Switch from Mock to Real Data (Optional)**
-
-```jsx
-// In components, change from:
-setData(mockData);
-
-// To:
-const data = await serviceMethod(userId);
-setData(data);
-```
+**Access URLs:**
+- **Full Stack (Netlify Dev):** `http://localhost:8888`
+- **Angular Only:** `http://localhost:4200`
+- **API Functions:** `http://localhost:8888/api/*`
 
 ---
 
-## 🧪 **TESTING FEATURES**
+## Getting API Credentials
 
-### **✅ All Components Working:**
+### Supabase (Database & Auth)
 
-- **LA28 Dashboard**: Olympic qualification tracking
-- **Wearables**: Device management and biometrics
-- **Team Chemistry**: AI interventions and scoring
-- **AI Schedule**: Weather integration and optimization
-- **Injury Prevention**: Movement analysis and recovery
-- **Multilingual**: 5-language support system
+1. Go to [supabase.com](https://supabase.com) and create a project
+2. Navigate to **Settings** → **API**
+3. Copy:
+   - **Project URL** → `SUPABASE_URL`
+   - **anon public key** → `SUPABASE_ANON_KEY`
+   - **service_role key** → `SUPABASE_SERVICE_KEY`
 
-### **🔧 Interactive Features:**
+### Groq (AI Coach)
 
-- **Language Switching**: Click language flags to change
-- **Device Connection**: Simulate device connections
-- **AI Recommendations**: View optimization suggestions
-- **Chemistry Tracking**: Monitor team chemistry scores
-- **Weather Integration**: See weather-based scheduling
+1. Go to [console.groq.com](https://console.groq.com/)
+2. Create free account
+3. Generate API key → `GROQ_API_KEY`
+4. **Free tier:** 14,400 requests/day (sufficient for development)
 
----
+### Open-Meteo (Weather)
 
-## 🐛 **TROUBLESHOOTING**
-
-### **Common Issues & Solutions:**
-
-#### **1. Port Already in Use**
+**No API key required!** Open-Meteo is free and open-source.
 
 ```bash
-# Kill process using port 5173
-lsof -ti:5173 | xargs kill -9
-
-# Or use different port
-npm run dev -- --port 3000
+# Example API call (works immediately)
+curl "https://api.open-meteo.com/v1/forecast?latitude=46.05&longitude=14.51&current=temperature_2m,wind_speed_10m"
 ```
 
-#### **2. Dependencies Not Found**
+Features:
+- 16-day weather forecasts
+- 80+ years historical data
+- 1-11 km resolution
+- Hourly updates
+- No rate limits for reasonable use
+
+---
+
+## Project Structure
+
+```
+Flag football HTML - APP/
+├── angular/                    # Angular 21 Frontend
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/          # Services, guards, interceptors
+│   │   │   ├── features/      # Feature components (49 features)
+│   │   │   └── shared/        # Shared components
+│   │   ├── assets/
+│   │   └── environments/
+│   ├── angular.json
+│   └── package.json
+│
+├── netlify/                    # Netlify Functions (Backend API)
+│   └── functions/
+│       ├── utils/             # Shared utilities
+│       ├── ai-chat.cjs        # AI Coach endpoint
+│       ├── load-management.cjs # ACWR calculations
+│       └── ... (80+ functions)
+│
+├── database/                   # SQL migrations
+│   └── migrations/
+│
+├── docs/                       # Documentation
+│   └── FEATURE_DOCUMENTATION.md  # Source of truth
+│
+├── supabase/                   # Supabase config & edge functions
+├── netlify.toml                # Netlify configuration
+├── package.json                # Root dependencies
+└── .env                        # Environment variables (create this)
+```
+
+---
+
+## Development Commands
+
+### Angular Frontend
 
 ```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
+cd angular
+
+# Start dev server (port 4200)
+ng serve
+
+# Build for production
+ng build
+
+# Run linter
+ng lint
+
+# Run tests
+ng test
 ```
 
-#### **3. Component Not Loading**
+### Full Stack (with Netlify Functions)
 
 ```bash
-# Check browser console for errors
-# Verify all imports are correct
-# Restart development server
+# Start everything (recommended)
+netlify dev
+
+# This starts:
+# - Angular dev server
+# - Netlify Functions locally
+# - Proxy for /api/* routes
 ```
 
-#### **4. Mock Data Not Showing**
+### Database
 
 ```bash
-# Check component console logs
-# Verify useDatabase hook is working
-# Check for JavaScript errors
+# Run migrations (requires Supabase CLI)
+supabase db push
+
+# Generate TypeScript types from schema
+supabase gen types typescript --local > supabase-types.ts
 ```
 
 ---
 
-## 📱 **MOBILE TESTING**
+## Verify Setup
 
-### **Responsive Design:**
-
-- **Desktop**: Full dashboard with all components
-- **Tablet**: Optimized layout for coaching scenarios
-- **Mobile**: Touch-friendly interface with collapsible sections
-
-### **Testing on Mobile:**
+### 1. Health Check
 
 ```bash
-# Start dev server
-npm run dev
+# With netlify dev running:
+curl http://localhost:8888/api/health
 
-# Access from mobile device on same network
-# Use your computer's IP address
-# Example: http://192.168.1.100:5173
+# Expected response:
+# {"success":true,"data":{"status":"healthy","timestamp":"..."}}
 ```
 
----
-
-## 🎯 **DEVELOPMENT WORKFLOW**
-
-### **1. Start Development**
+### 2. Angular Build
 
 ```bash
-npm run dev
+cd angular
+ng build
+
+# Should complete without errors
+# Output in: angular/dist/flagfit-pro/browser/
 ```
 
-### **2. Make Changes**
-
-- Edit component files in `src/components/`
-- Modify pages in `src/pages/`
-- Update styles in `src/styles/`
-
-### **3. See Changes Immediately**
-
-- **Hot Reload**: Changes appear instantly
-- **No Restart**: Server stays running
-- **Error Display**: Errors shown in browser
-
-### **4. Test Features**
-
-- **All Components**: Verify they load correctly
-- **Interactions**: Test buttons and functionality
-- **Responsiveness**: Check on different screen sizes
-
----
-
-## 🚀 **NEXT STEPS AFTER LOCAL SETUP**
-
-### **Phase 2: Testing & Validation**
-
-1. ✅ **Verify all components load**
-2. ✅ **Test interactive features**
-3. ✅ **Check responsive design**
-4. ✅ **Validate mock data display**
-
-### **Phase 3: Code Quality**
-
-1. **Run linting**: `npm run lint`
-2. **Fix issues**: `npm run lint:fix`
-3. **Run tests**: `npm test`
-4. **Format code**: `npm run format`
-
-### **Phase 4: Database Integration**
-
-1. **Set up Supabase database**
-2. **Run migrations**
-3. **Switch from mock to real data**
-4. **Test database operations**
-
----
-
-## 🎉 **SUCCESS INDICATORS**
-
-### **✅ App is Working When:**
-
-- **Dashboard loads** with all 6 advanced components
-- **No authentication errors** in console
-- **All components display** mock data correctly
-- **Interactive features respond** to user input
-- **Responsive design works** on different screen sizes
-
-### **🚨 Issues to Watch For:**
-
-- **Component import errors** in console
-- **Missing dependencies** in package.json
-- **Database connection errors** (if using real DB)
-- **JavaScript runtime errors** in browser console
-
----
-
-## 📋 **QUICK COMMAND REFERENCE**
+### 3. Database Connection
 
 ```bash
-# Essential Commands
-npm install          # Install dependencies
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
+# In Supabase SQL Editor, run:
+SELECT COUNT(*) FROM positions;
 
-# Code Quality
-npm run lint         # Check code quality
-npm run lint:fix     # Fix auto-fixable issues
-npm run format       # Format code with Prettier
-npm test             # Run tests
-
-# Database (Optional)
-npm run db:migrate   # Run database migrations
-npm run db:seed      # Seed database with sample data
-npm run test:db      # Test database connection
+# Expected: 7 (or your seeded count)
 ```
 
 ---
 
-## 🎯 **IMMEDIATE ACTION PLAN**
+## Common Issues & Solutions
 
-### **Right Now:**
+### Port Already in Use
 
-1. **Run**: `npm install && npm run dev`
-2. **Open**: `http://localhost:5173` in browser
-3. **Verify**: All 6 advanced components load
-4. **Test**: Interactive features work correctly
+```bash
+# Kill process on port 4200
+lsof -ti:4200 | xargs kill -9
 
-### **In 5 Minutes:**
+# Kill process on port 8888
+lsof -ti:8888 | xargs kill -9
+```
 
-- **Dashboard**: All components displaying correctly
-- **Navigation**: Moving between sections works
-- **Responsiveness**: Layout adapts to screen size
-- **No Errors**: Clean browser console
+### Angular CLI Not Found
+
+```bash
+npm install -g @angular/cli@21
+```
+
+### Netlify Functions 404
+
+1. Check `netlify.toml` has correct redirect
+2. Ensure function file has `.cjs` extension
+3. Verify `exports.handler` is defined
+
+### Supabase Connection Error
+
+1. Verify `.env` file exists in project root
+2. Check `SUPABASE_URL` format: `https://xxx.supabase.co`
+3. Ensure keys are correct (no extra spaces)
+
+### CORS Errors
+
+CORS is handled automatically by Netlify Dev. If issues persist:
+1. Restart `netlify dev`
+2. Clear browser cache
+3. Check no duplicate servers running
 
 ---
 
-## 🏆 **EXPECTED RESULT**
+## Environment Files Reference
 
-After running the setup commands, you should see:
+### Root `.env` (Backend)
 
-**A fully functional Flag Football LA28 Olympics preparation app with:**
+```env
+# Required
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_KEY=eyJ...
 
-- ✅ **No login required** - automatically authenticated
-- ✅ **All 6 advanced features** working immediately
-- ✅ **Responsive design** on all devices
-- ✅ **Interactive components** with mock data
-- ✅ **Professional interface** ready for development
+# AI Coach
+GROQ_API_KEY=gsk_...
 
-**Status**: ✅ **READY FOR LOCAL DEVELOPMENT** 🎉
+# Optional
+JWT_SECRET=your-secret
+NODE_ENV=development
+```
 
-Your world-class LA28 Olympics preparation platform is now running locally with full access to all features - no authentication barriers!
+### Angular Environment
+
+Located at `angular/src/environments/environment.ts`:
+
+```typescript
+export const environment = {
+  production: false,
+  supabaseUrl: 'https://xxx.supabase.co',
+  supabaseAnonKey: 'eyJ...',
+  apiUrl: 'http://localhost:8888/api'
+};
+```
+
+---
+
+## Next Steps After Setup
+
+1. **Verify all features work:** Navigate through the app
+2. **Check database:** Ensure tables are populated
+3. **Test AI Coach:** Try the chat feature (requires Groq key)
+4. **Review docs:** Read `FEATURE_DOCUMENTATION.md` for all 49 features
+
+---
+
+## External Services Summary
+
+| Service | Purpose | Key Required | Free Tier |
+|---------|---------|--------------|-----------|
+| [Supabase](https://supabase.com) | Database, Auth, Realtime | Yes | 500MB DB, 50K auth users |
+| [Groq](https://console.groq.com) | AI Coach (LLM) | Yes | 14,400 req/day |
+| [Open-Meteo](https://open-meteo.com) | Weather API | No | Unlimited (fair use) |
+| [Netlify](https://netlify.com) | Hosting, Functions | No | 100GB bandwidth, 125K functions |
+| [GitHub](https://github.com) | Version Control | No | Unlimited |
+
+---
+
+## Tech Stack Reference
+
+| Layer | Technology | Version |
+|-------|------------|---------|
+| Frontend | Angular | 21.x |
+| UI Components | PrimeNG | 21.x |
+| State Management | Angular Signals | Built-in |
+| Styling | SCSS + CSS Variables | - |
+| Backend | Netlify Functions | Node.js |
+| Database | Supabase PostgreSQL | - |
+| Auth | Supabase Auth | - |
+| AI | Groq (Llama 3.1 70B) | - |
+| Weather | Open-Meteo | - |
+| Deployment | Netlify | - |
+
+---
+
+**Ready to develop!** Run `netlify dev` and open `http://localhost:8888` 🚀

@@ -130,7 +130,7 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   // Primary nav items (shown in bottom bar)
   // Consolidated to 4 core items as per new architecture
   private athleteNavItems: NavItem[] = [
-    { label: "Today", icon: "pi-calendar", route: "/today" },
+    { label: "Today", icon: "pi-calendar", route: "/todays-practice" },
     { label: "Training", icon: "pi-bolt", route: "/training/advanced" },
     { label: "AI Coach", icon: "pi-sparkles", route: "/chat" },
     { label: "Profile", icon: "pi-user", route: "/profile" },

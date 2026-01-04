@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of, from } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { Observable, from, of } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { SupabaseService } from "./supabase.service";
 
 export interface HealthMetric {
@@ -58,7 +59,7 @@ export class AdminService {
       status: connError ? "error" : "healthy",
       severity: connError ? "danger" : "success",
       icon: connError ? "pi pi-times-circle" : "pi pi-check-circle",
-      color: connError ? "#ef4444" : "#10c96b",
+      color: connError ? STATUS_HEX_COLORS.error : STATUS_HEX_COLORS.success,
     });
 
     // Get user count
@@ -72,7 +73,7 @@ export class AdminService {
       status: "healthy",
       severity: "success",
       icon: "pi pi-users",
-      color: "#10c96b",
+      color: STATUS_HEX_COLORS.success,
     });
 
     // Get training session count (last 7 days)
@@ -89,7 +90,7 @@ export class AdminService {
       status: "healthy",
       severity: "success",
       icon: "pi pi-bolt",
-      color: "#10c96b",
+      color: STATUS_HEX_COLORS.success,
     });
 
     // Get team count
@@ -103,7 +104,7 @@ export class AdminService {
       status: "healthy",
       severity: "success",
       icon: "pi pi-users",
-      color: "#10c96b",
+      color: STATUS_HEX_COLORS.success,
     });
 
     // Get exercise count
@@ -117,7 +118,7 @@ export class AdminService {
       status: "healthy",
       severity: "success",
       icon: "pi pi-list",
-      color: "#10c96b",
+      color: STATUS_HEX_COLORS.success,
     });
 
     // Check for recent activity
@@ -138,7 +139,7 @@ export class AdminService {
       status: "healthy",
       severity: "info",
       icon: "pi pi-clock",
-      color: "#3b82f6",
+      color: STATUS_HEX_COLORS.info,
     });
 
     return metrics;

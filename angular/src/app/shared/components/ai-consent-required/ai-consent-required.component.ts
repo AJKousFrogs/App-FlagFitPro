@@ -7,7 +7,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { RouterLink } from "@angular/router";
 import {
   AI_PROCESSING_MESSAGES,
@@ -35,7 +36,10 @@ import {
   selector: "app-ai-consent-required",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, ButtonModule, RouterLink],
+  imports: [CommonModule, CardModule, RouterLink,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="ai-consent-required" [class]="variant">
       <div class="consent-icon">
@@ -61,20 +65,9 @@ import {
         </p>
         @if (showSettingsLink) {
           <div class="consent-actions">
-            <p-button
-              [label]="getActionLabel()"
-              icon="pi pi-cog"
-              [outlined]="true"
-              size="small"
-              [routerLink]="getHelpLink()"
-            ></p-button>
+            <app-icon-button icon="pi-cog" variant="outlined" size="sm" routerLink="getHelpLink()" ariaLabel="cog" />
             @if (showDismiss) {
-              <p-button
-                label="Continue Without AI"
-                [text]="true"
-                size="small"
-                (onClick)="onDismiss.emit()"
-              ></p-button>
+              <app-button variant="text" size="sm" (clicked)="onDismiss.emit()">Continue Without AI</app-button>
             }
           </div>
         }

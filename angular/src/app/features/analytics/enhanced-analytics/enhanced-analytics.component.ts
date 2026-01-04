@@ -8,7 +8,8 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { ChartModule } from "primeng/chart";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -31,13 +32,15 @@ import {
   imports: [
     RouterModule,
     CardModule,
-    ButtonModule,
     ChartModule,
     Tabs,
     TabPanel,
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -47,12 +50,7 @@ import {
           subtitle="Advanced performance insights and predictions"
           icon="pi-chart-line"
         >
-          <p-button
-            label="Export Report"
-            icon="pi pi-download"
-            [outlined]="true"
-            (onClick)="exportReport()"
-          ></p-button>
+          <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportReport()">Export Report</app-button>
         </app-page-header>
 
         <p-tabs>
@@ -67,11 +65,7 @@ import {
                   <i class="pi {{ noDataMessage.icon }}"></i>
                   <h4>{{ noDataMessage.title }}</h4>
                   <p>{{ noDataMessage.reason }}</p>
-                  <p-button
-                    [label]="noDataMessage.actionLabel"
-                    icon="pi pi-plus"
-                    [routerLink]="noDataMessage.helpLink"
-                  ></p-button>
+                  <app-icon-button icon="pi-plus" routerLink="noDataMessage.helpLink" ariaLabel="plus" />
                 </div>
               } @else if (performanceChartData()) {
                 <p-chart
@@ -94,14 +88,7 @@ import {
                   <i class="pi {{ injuryRiskInsufficientMessage.icon }}"></i>
                   <h4>{{ injuryRiskInsufficientMessage.title }}</h4>
                   <p>{{ injuryRiskInsufficientMessage.reason }}</p>
-                  <p-button
-                    [label]="
-                      injuryRiskInsufficientMessage.actionLabel || 'Learn More'
-                    "
-                    icon="pi pi-info-circle"
-                    [outlined]="true"
-                    [routerLink]="injuryRiskInsufficientMessage.helpLink"
-                  ></p-button>
+                  <app-icon-button icon="pi-info-circle" variant="outlined" routerLink="injuryRiskInsufficientMessage.helpLink" ariaLabel="info-circle" />
                 </div>
               } @else {
                 <div class="risk-analysis">

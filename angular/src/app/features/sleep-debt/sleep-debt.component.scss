@@ -1,0 +1,347 @@
+
+.sleep-debt-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Debt Status Card
+.debt-status-card {
+  text-align: center;
+}
+
+.debt-display {
+  padding: var(--space-4);
+}
+
+.debt-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-4) solid;
+  background: var(--ds-surface-elevated);
+
+  &.debt-none {
+    border-color: var(--ds-primary-green);
+
+    .debt-value,
+    .debt-label {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  &.debt-mild {
+    border-color: var(--primitive-blue-500);
+
+    .debt-value,
+    .debt-label {
+      color: var(--primitive-blue-500);
+    }
+  }
+
+  &.debt-moderate {
+    border-color: var(--primitive-yellow-500);
+
+    .debt-value,
+    .debt-label {
+      color: var(--primitive-yellow-500);
+    }
+  }
+
+  &.debt-severe {
+    border-color: var(--primitive-orange-500);
+
+    .debt-value,
+    .debt-label {
+      color: var(--primitive-orange-500);
+    }
+  }
+
+  &.debt-critical {
+    border-color: var(--primitive-error-500);
+
+    .debt-value,
+    .debt-label {
+      color: var(--primitive-error-500);
+    }
+  }
+
+  .debt-value {
+    font-size: var(--font-display-sm);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .debt-unit {
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  .debt-label {
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    margin-top: var(--space-1);
+    letter-spacing: 1px;
+  }
+}
+
+.debt-description {
+  color: var(--ds-text-secondary);
+  font-size: var(--font-body-sm);
+  margin: 0;
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-card {
+  .stat-content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  .stat-icon {
+    font-size: var(--font-heading-md);
+    color: var(--ds-primary-green);
+    padding: var(--space-2);
+    background: var(--ds-primary-green-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .stat-label {
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+  }
+
+  .stat-value {
+    font-size: var(--font-heading-sm);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .stat-hint {
+    font-size: var(--font-body-xs);
+    color: var(--ds-text-tertiary);
+  }
+}
+
+// Impact Card
+.impact-card {
+  .impact-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .impact-item {
+    .impact-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-2);
+    }
+
+    .impact-label {
+      font-weight: 500;
+      color: var(--ds-text-primary);
+    }
+
+    .impact-value {
+      font-weight: 600;
+      color: var(--ds-text-primary);
+
+      &.danger {
+        color: var(--primitive-error-500);
+      }
+
+      &.warn {
+        color: var(--primitive-orange-500);
+      }
+    }
+
+    .impact-bar {
+      height: var(--space-2);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
+
+      &.danger ::ng-deep .p-progressbar-value {
+        background: linear-gradient(90deg, var(--primitive-error-500), var(--primitive-error-600));
+      }
+
+      &.warn ::ng-deep .p-progressbar-value {
+        background: linear-gradient(90deg, var(--primitive-orange-500), var(--primitive-orange-600));
+      }
+    }
+
+    .impact-description {
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+      margin: 0;
+    }
+
+    &.warning {
+      padding: var(--space-3);
+      background: var(--primitive-error-50);
+      border-radius: var(--radius-md);
+      border: var(--border-1) solid var(--primitive-error-200);
+    }
+  }
+}
+
+// Recommendation Card
+.recommendation-card {
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+
+    i {
+      font-size: var(--font-heading-sm);
+      color: var(--primitive-yellow-500);
+    }
+  }
+
+  .recommendation-content {
+    .rec-intro {
+      margin: 0 0 var(--space-3) 0;
+      color: var(--ds-text-primary);
+    }
+
+    .rec-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-2);
+        background: var(--ds-surface-base);
+        border-radius: var(--radius-md);
+
+        i {
+          color: var(--ds-primary-green);
+          margin-top: var(--space-1);
+        }
+      }
+    }
+  }
+}
+
+// Chart Card
+.chart-card {
+  ::ng-deep .p-card-content {
+    height: 280px;
+  }
+}
+
+// Research Card
+.research-card {
+  .research-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  .research-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .research-item {
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    strong {
+      color: var(--ds-text-primary);
+    }
+
+    .citation {
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+      font-style: italic;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--ds-text-tertiary);
+
+  i {
+    font-size: var(--font-display-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  p {
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .sleep-debt-page {
+    padding: var(--space-3);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .debt-circle {
+    width: 140px;
+    height: 140px;
+
+    .debt-value {
+      font-size: var(--font-heading-lg);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

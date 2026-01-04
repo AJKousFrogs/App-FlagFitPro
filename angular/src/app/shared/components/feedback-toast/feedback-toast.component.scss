@@ -44,16 +44,16 @@
   }
   .error {
     background: var(--color-status-error);
-    border-left: 4px solid var(--primitive-error-600, #dc2626);
+    border-left: 4px solid var(--primitive-error-600);
   }
   .warning {
     background: var(--color-status-warning);
-    border-left: 4px solid var(--primitive-warning-500, #f59e0b);
+    border-left: 4px solid var(--primitive-warning-500);
     color: var(--color-text-primary);
   }
   .info {
     background: var(--color-status-info);
-    border-left: 4px solid var(--primitive-primary-600, #0ab85a);
+    border-left: 4px solid var(--primitive-primary-600);
   }
 
   .toast-content {

@@ -771,20 +771,20 @@
   :host ::ng-deep .hero-btn-primary {
     background: linear-gradient(
       135deg,
-      var(--ds-primary-green-light, #0ab85a) 0%,
+      var(--ds-primary-green-light) 0%,
       var(--ds-primary-green) 100%
     ) !important;
     border: none !important;
     border-radius: var(--radius-full, 9999px) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 30px rgba(8, 153, 73, 0.35);
+    color: var(--color-text-on-primary) !important;
+    box-shadow: 0 10px 30px rgba(var(--primitive-primary-700-rgb), 0.35);
     transition: transform var(--transition-normal), box-shadow var(--transition-normal), background var(--transition-normal) !important;
     padding: 0.875rem 2rem !important;
     font-weight: var(--font-weight-semibold) !important;
 
     .p-button-label,
     .p-button-icon {
-      color: #ffffff !important;
+      color: var(--color-text-on-primary) !important;
     }
 
     &:hover {

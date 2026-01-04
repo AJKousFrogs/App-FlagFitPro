@@ -1,8 +1,7 @@
 import { Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import {
-  FeedbackService,
-  FeedbackMessage,
+    FeedbackMessage,
+    FeedbackService,
 } from "../../../core/services/feedback.service";
 
 /**
@@ -13,34 +12,36 @@ import {
 @Component({
   selector: "app-feedback-toast",
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="toast-container" role="status" aria-live="polite">
-      <div
-        *ngFor="let msg of feedbackService.messages()"
-        class="toast-item"
-        [ngClass]="msg.type"
-        [attr.id]="msg.id"
-      >
-        <div class="toast-content">
-          <span class="toast-icon">{{ getIcon(msg.type) }}</span>
-          <span class="toast-message">{{ msg.message }}</span>
+      @for (msg of feedbackService.messages(); track msg.id) {
+        <div
+          class="toast-item"
+          [class]="msg.type"
+          [attr.id]="msg.id"
+        >
+          <div class="toast-content">
+            <span class="toast-icon">{{ getIcon(msg.type) }}</span>
+            <span class="toast-message">{{ msg.message }}</span>
+            @if (msg.action) {
+              <button
+                class="toast-action-btn"
+                (click)="handleAction(msg)"
+              >
+                {{ msg.action.label }}
+              </button>
+            }
+          </div>
           <button
-            *ngIf="msg.action"
-            class="toast-action-btn"
-            (click)="handleAction(msg)"
+            class="toast-close-btn"
+            (click)="feedbackService.removeMessage(msg.id)"
+            aria-label="Close notification"
           >
-            {{ msg.action.label }}
+            &times;
           </button>
         </div>
-        <button
-          class="toast-close-btn"
-          (click)="feedbackService.removeMessage(msg.id)"
-          aria-label="Close notification"
-        >
-          &times;
-        </button>
-      </div>
+      }
     </div>
   `,
   styleUrl: './feedback-toast.component.scss',

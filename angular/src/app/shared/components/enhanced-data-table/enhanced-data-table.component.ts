@@ -14,7 +14,8 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { TableModule } from "primeng/table";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
@@ -69,11 +70,13 @@ export interface TablePreferences {
     CommonModule,
     FormsModule,
     TableModule,
-    ButtonModule,
     CheckboxModule,
     InputTextModule,
     MultiSelect,
     MenuModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="enhanced-table-container" [class.mobile-view]="isMobileView()">
@@ -113,42 +116,17 @@ export interface TablePreferences {
         <div class="toolbar-right">
           <!-- Bulk actions -->
           @if (selectedRows().length > 0) {
-            <p-button
-              label="Export Selected"
-              icon="pi pi-download"
-              [outlined]="true"
-              size="small"
-              (onClick)="exportSelected()"
-            />
-            <p-button
-              label="Delete Selected"
-              icon="pi pi-trash"
-              severity="danger"
-              [outlined]="true"
-              size="small"
-              (onClick)="deleteSelected()"
-            />
+            <app-button variant="outlined" size="sm" iconLeft="pi-download" (clicked)="exportSelected()">Export Selected</app-button>
+            <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="deleteSelected()">Delete Selected</app-button>
           }
 
           <!-- View toggle -->
           @if (supportsMobileView()) {
-            <p-button
-              [icon]="isMobileView() ? 'pi pi-table' : 'pi pi-th-large'"
-              [outlined]="true"
-              size="small"
-              [pTooltip]="isMobileView() ? 'Table View' : 'Card View'"
-              (onClick)="toggleView()"
-            />
+            <app-button variant="outlined" size="sm" (clicked)="toggleView()"></app-button>
           }
 
           <!-- Reset preferences -->
-          <p-button
-            icon="pi pi-refresh"
-            [outlined]="true"
-            size="small"
-            pTooltip="Reset Table"
-            (onClick)="resetPreferences()"
-          />
+          <app-icon-button icon="pi-refresh" variant="outlined" size="sm" (clicked)="resetPreferences()" ariaLabel="refresh" />
         </div>
       </div>
 
@@ -240,23 +218,8 @@ export interface TablePreferences {
               }
               @if (hasActions()) {
                 <td class="actions-cell">
-                  <p-button
-                    icon="pi pi-pencil"
-                    [text]="true"
-                    [rounded]="true"
-                    size="small"
-                    aria-label="Edit row"
-                    (onClick)="editRow(rowData)"
-                  />
-                  <p-button
-                    icon="pi pi-trash"
-                    [text]="true"
-                    [rounded]="true"
-                    size="small"
-                    severity="danger"
-                    aria-label="Delete row"
-                    (onClick)="deleteRow(rowData)"
-                  />
+                  <app-button variant="text" size="sm" iconLeft="pi-pencil" (clicked)="editRow(rowData)">Edit row</app-button>
+                  <app-button variant="text" size="sm" iconLeft="pi-trash" (clicked)="deleteRow(rowData)">Delete row</app-button>
                 </td>
               }
             </tr>
@@ -309,21 +272,8 @@ export interface TablePreferences {
 
               @if (hasActions()) {
                 <div class="card-actions">
-                  <p-button
-                    label="Edit"
-                    icon="pi pi-pencil"
-                    [outlined]="true"
-                    size="small"
-                    (onClick)="editRow(row)"
-                  />
-                  <p-button
-                    label="Delete"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [outlined]="true"
-                    size="small"
-                    (onClick)="deleteRow(row)"
-                  />
+                  <app-button variant="outlined" size="sm" iconLeft="pi-pencil" (clicked)="editRow(row)">Edit</app-button>
+                  <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="deleteRow(row)">Delete</app-button>
                 </div>
               }
             </div>

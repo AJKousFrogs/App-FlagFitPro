@@ -55,8 +55,8 @@ import { RouterModule } from "@angular/router";
       (touchstart)="onPress()"
       (touchend)="onRelease()"
       (click)="handleClick($event)"
-      (keydown.enter)="handleKeyPress($event)"
-      (keydown.space)="handleKeyPress($event)"
+      (keydown.enter)="handleKeyPress($any($event))"
+      (keydown.space)="handleKeyPress($any($event))"
     >
       <!-- Icon container -->
       <div class="action-icon" [class]="'icon-' + color()">

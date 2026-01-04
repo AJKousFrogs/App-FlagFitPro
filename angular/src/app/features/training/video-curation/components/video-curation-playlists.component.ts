@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { TooltipModule } from "primeng/tooltip";
 import { Chip } from "primeng/chip";
 
@@ -25,7 +25,9 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, ButtonModule, TooltipModule, Chip],
+  imports: [CommonModule, TagModule, TooltipModule, Chip,
+    ButtonComponent,
+  ],
   template: `
     <div class="tab-content">
       <div class="playlists-header">
@@ -80,22 +82,25 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
                 <button
                   pButton
                   icon="pi pi-pencil"
-                  class="p-button-text p-button-rounded"
+                  class="p-button-text"
                   pTooltip="Edit"
+                  aria-label="Edit playlist"
                   (click)="edit.emit(playlist)"
                 ></button>
                 <button
                   pButton
                   icon="pi pi-share-alt"
-                  class="p-button-text p-button-rounded"
+                  class="p-button-text"
                   pTooltip="Share with team"
+                  aria-label="Share playlist"
                   (click)="share.emit(playlist)"
                 ></button>
                 <button
                   pButton
                   icon="pi pi-trash"
-                  class="p-button-text p-button-rounded p-button-danger"
+                  class="p-button-text p-button-danger"
                   pTooltip="Delete"
+                  aria-label="Delete playlist"
                   (click)="delete.emit(playlist)"
                 ></button>
               </div>

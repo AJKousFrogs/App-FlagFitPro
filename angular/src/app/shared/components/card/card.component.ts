@@ -10,6 +10,7 @@ import {
   afterNextRender,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { COLORS } from "../../../core/constants/app.constants";
 
 /**
  * Card Component - Angular 21 Premium Edition
@@ -41,8 +42,8 @@ import { CommonModule } from "@angular/common";
       (mousedown)="onMouseDown()"
       (mouseup)="onMouseUp()"
       (click)="handleClick($event)"
-      (keydown.enter)="handleKeyPress($event)"
-      (keydown.space)="handleKeyPress($event)"
+      (keydown.enter)="handleKeyPress($any($event))"
+      (keydown.space)="handleKeyPress($any($event))"
     >
       <!-- Accent bar for session/feature cards -->
       @if (showAccent()) {
@@ -153,12 +154,12 @@ export class CardComponent {
       primary:
         "linear-gradient(90deg, var(--ds-primary-green) 0%, var(--ds-primary-green-light) 100%)",
       success:
-        "linear-gradient(90deg, var(--color-status-success) 0%, #84cc16 100%)",
+        `linear-gradient(90deg, var(--color-status-success) 0%, ${COLORS.SUCCESS_LIGHT} 100%)`,
       warning:
-        "linear-gradient(90deg, var(--color-status-warning) 0%, #fbbf24 100%)",
+        `linear-gradient(90deg, var(--color-status-warning) 0%, ${COLORS.WARNING_LIGHT} 100%)`,
       error:
-        "linear-gradient(90deg, var(--color-status-error) 0%, #f87171 100%)",
-      info: "linear-gradient(90deg, var(--color-status-info) 0%, #38bdf8 100%)",
+        `linear-gradient(90deg, var(--color-status-error) 0%, ${COLORS.ERROR_LIGHT} 100%)`,
+      info: `linear-gradient(90deg, var(--color-status-info) 0%, ${COLORS.INFO_LIGHT} 100%)`,
     };
     return colorMap[this.accentColor()] || colorMap["primary"];
   });

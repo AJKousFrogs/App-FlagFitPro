@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
@@ -185,14 +185,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Training",
       route: "/training",
       icon: "pi-bolt",
-      ariaLabel: "Training Hub",
+      ariaLabel: "Training Schedule - View and manage your training calendar",
       group: "primary",
     },
     {
       label: "Today's Practice",
-      route: "/training/daily",
+      route: "/todays-practice",
       icon: "pi-play",
-      ariaLabel: "Today's Practice",
+      ariaLabel: "Today's Practice - Your training for today with videos",
       group: "primary",
     },
     {

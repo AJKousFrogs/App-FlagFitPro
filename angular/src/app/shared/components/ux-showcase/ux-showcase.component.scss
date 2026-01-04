@@ -5,7 +5,7 @@
 
 @layer features {
   .ux-showcase {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 
   .info-text {

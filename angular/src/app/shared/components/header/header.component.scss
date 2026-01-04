@@ -1,642 +1,596 @@
 /**
  * Header Component Styles
- * Design System Compliant (DESIGN_SYSTEM_RULES.md)
- *
- * Decisions Applied:
- * - Decision 1: Token-only colors
- * - Decision 2: Spacing tokens
- * - Decision 3: Radius tokens
- * - Decision 19: Specific transitions (no transition: all)
+ * ─────────────────────────────────────────────────────────────
+ * ViewEncapsulation.None - styles apply globally when component loads
+ * Use app-header prefix for all selectors to scope styles
+ * ─────────────────────────────────────────────────────────────
  */
 
-@layer features {
-  .app-header {
-    display: flex;
-    align-items: center;
-    padding: var(--space-3) var(--space-6);
-    background: var(--surface-primary);
-    border-bottom: var(--border-1) solid var(--color-border-primary);
-    height: var(--header-height, 70px);
-    position: sticky;
-    top: 0;
-    z-index: var(--z-index-sticky);
-    transition:
-      background-color var(--motion-base) var(--ease-standard),
-      box-shadow var(--motion-base) var(--ease-standard);
+/* ================================================================
+   HEADER CONTAINER - EXACT 64px HEIGHT
+   ================================================================ */
+
+app-header {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+app-header .p-toolbar.app-header {
+  background: var(--surface-card);
+  border: none;
+  border-bottom: var(--border-1) solid var(--surface-border);
+  border-radius: 0;
+  padding: 0 var(--space-6);
+  height: 64px;
+  min-height: 64px;
+  max-height: 64px;
+  gap: var(--space-6);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+/* Toolbar sections - force vertical centering */
+app-header .p-toolbar.app-header .p-toolbar-start,
+app-header .p-toolbar.app-header .p-toolbar-center,
+app-header .p-toolbar.app-header .p-toolbar-end {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================================================================
+   HEADER SECTIONS
+   ================================================================ */
+
+app-header .header-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 64px;
+}
+
+app-header .header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 400px;
+  height: 64px;
+  cursor: pointer;
+}
+
+app-header .header-center:focus-visible {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+app-header .header-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 64px;
+}
+
+/* ================================================================
+   MOBILE MENU TOGGLE (hidden by default on desktop)
+   ================================================================ */
+
+app-header .mobile-menu-toggle,
+app-header .mobile-menu-toggle.p-button,
+app-header .p-button.mobile-menu-toggle {
+  display: none !important;
+}
+
+/* ================================================================
+   OLYMPICS COUNTDOWN
+   ================================================================ */
+
+app-header .olympic-countdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  background: var(--surface-ground);
+  border: var(--border-1) solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  height: 34px;
+  cursor: default;
+}
+
+app-header .countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+app-header .countdown-segment {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+app-header .countdown-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--font-body-xs);
+  font-weight: 600;
+  color: var(--text-color);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+app-header .countdown-unit {
+  font-size: var(--font-body-2xs);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+app-header .countdown-sep {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--font-body-2xs);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  opacity: 0.6;
+  padding: 0 1px;
+  line-height: 1;
+}
+
+/* Olympics Badge */
+app-header .olympics-badge.p-tag {
+  background: var(--ds-primary-green) !important;
+  color: var(--color-text-on-primary) !important;
+  font-weight: 600;
+  font-size: var(--font-body-2xs);
+  letter-spacing: 0.05em;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xl);
+  line-height: 1;
+  height: auto;
+}
+
+app-header .olympics-badge .p-tag-icon {
+  font-size: var(--font-body-2xs);
+  margin-right: var(--space-1);
+}
+
+/* ================================================================
+   BREADCRUMBS
+   ================================================================ */
+
+app-header .breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-4);
+  height: 100%;
+}
+
+app-header .breadcrumb-item {
+  font-size: var(--font-body-xs);
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+  margin: 0;
+  padding: 0;
+}
+
+app-header .breadcrumb-item.current {
+  color: var(--text-color);
+  font-weight: 500;
+  opacity: 1;
+}
+
+app-header .separator {
+  font-size: var(--font-body-2xs);
+  color: var(--text-color-secondary);
+  opacity: 0.5;
+}
+
+/* ================================================================
+   SEARCH INPUT GROUP - THE VISUAL ANCHOR
+   ================================================================ */
+
+app-header .search-input-group.p-inputgroup,
+app-header .p-inputgroup.search-input-group {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: none;
+  height: var(--space-10);
+  border: var(--border-1) solid rgba(0, 0, 0, 0.1);
+  background: var(--surface-ground);
+  display: flex;
+  align-items: center;
+}
+
+app-header .search-input-group .p-inputgroupaddon,
+app-header .search-input-group .p-inputgroup-addon {
+  background: transparent;
+  border: none;
+  color: var(--text-color-secondary);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-10);
+  flex-shrink: 0;
+}
+
+/* Search icon addon (first) */
+app-header .search-input-group .p-inputgroupaddon:first-child,
+app-header .search-input-group .p-inputgroup-addon:first-child {
+  padding-left: var(--space-3);
+  padding-right: var(--space-2);
+  width: auto;
+}
+
+app-header .search-input-group .p-inputgroupaddon:first-child i,
+app-header .search-input-group .p-inputgroup-addon:first-child i {
+  font-size: var(--font-body-sm);
+  color: var(--text-color-secondary);
+  opacity: 0.6;
+}
+
+/* Shortcut addon (last) */
+app-header .search-input-group .p-inputgroupaddon:last-child,
+app-header .search-input-group .p-inputgroup-addon:last-child,
+app-header .search-input-group .search-shortcut-addon {
+  padding-left: var(--space-2);
+  padding-right: var(--space-3);
+  width: auto;
+}
+
+app-header .search-input-group .p-inputtext {
+  border: none !important;
+  background: transparent !important;
+  height: var(--space-10);
+  font-size: var(--font-body-sm);
+  padding: 0 var(--space-1) !important;
+  margin: 0;
+  line-height: var(--space-10);
+  box-shadow: none !important;
+  flex: 1;
+  min-width: 0;
+}
+
+app-header .search-input-group .p-inputtext::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.6;
+}
+
+app-header .search-input-group .p-inputtext:hover,
+app-header .search-input-group .p-inputtext:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+app-header .search-input {
+  cursor: pointer !important;
+  min-width: 200px;
+}
+
+/* Search shortcut hint */
+app-header .search-shortcut {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  opacity: 0.5;
+}
+
+app-header .search-shortcut kbd {
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-body-2xs);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  line-height: 1;
+}
+
+/* Search hover state */
+app-header .search-input-group:hover .p-inputgroupaddon:first-child i,
+app-header .search-input-group:hover .p-inputgroup-addon:first-child i {
+  opacity: 1;
+  color: var(--text-color);
+}
+
+/* ================================================================
+   THEME TOGGLE
+   ================================================================ */
+
+app-header .theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+}
+
+app-header .theme-label {
+  font-size: var(--font-body-xs);
+  font-weight: 400;
+  color: var(--text-color-secondary);
+  opacity: 0.8;
+  min-width: var(--space-8);
+}
+
+/* ================================================================
+   USER MENU CONTAINER
+   ================================================================ */
+
+app-header .user-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* ================================================================
+   HEADER ICON BUTTONS - 40px UNIFORM
+   Override global PrimeNG button styles
+   ================================================================ */
+
+app-header .header-icon-btn.p-button {
+  width: var(--space-10) !important;
+  height: var(--space-10) !important;
+  min-width: var(--space-10) !important;
+  min-height: var(--space-10) !important;
+  max-width: var(--space-10) !important;
+  max-height: var(--space-10) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: var(--radius-lg) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: none !important; /* Override global translateY */
+}
+
+app-header .header-icon-btn.p-button .p-button-icon {
+  font-size: var(--font-body-lg);
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+  margin: 0;
+}
+
+app-header .header-icon-btn.p-button:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  transform: none !important; /* Override global translateY(-2px) */
+}
+
+app-header .header-icon-btn.p-button:hover .p-button-icon {
+  opacity: 1;
+  color: var(--text-color);
+}
+
+app-header .header-icon-btn.p-button:active {
+  transform: none !important;
+}
+
+app-header .header-icon-btn.p-button:focus-visible {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
+}
+
+/* Remove pseudo-elements from header buttons */
+app-header .header-icon-btn.p-button::before,
+app-header .header-icon-btn.p-button::after {
+  display: none !important;
+}
+
+/* ================================================================
+   USER AVATAR - EXACTLY 36px, PERFECT CIRCLE
+   ================================================================ */
+
+app-header .user-avatar.p-avatar {
+  width: var(--space-10) !important;
+  height: var(--space-10) !important;
+  min-width: var(--space-10) !important;
+  min-height: var(--space-10) !important;
+  max-width: var(--space-10) !important;
+  max-height: var(--space-10) !important;
+  background: var(--ds-primary-green) !important;
+  color: var(--color-text-on-primary) !important;
+  font-weight: 600 !important;
+  font-size: var(--font-body-sm) !important;
+  letter-spacing: 0.02em;
+  border: none;
+  box-shadow: none;
+  border-radius: 50% !important;
+}
+
+app-header .user-avatar-btn.p-button {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: var(--space-10) !important;
+  height: var(--space-10) !important;
+  min-width: var(--space-10) !important;
+  max-width: var(--space-10) !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+app-header .user-avatar-btn.p-button:hover {
+  background: transparent !important;
+  transform: none !important;
+}
+
+app-header .user-avatar-btn.p-button:hover .user-avatar {
+  opacity: 0.85;
+}
+
+app-header .user-avatar-btn.p-button::before,
+app-header .user-avatar-btn.p-button::after {
+  display: none !important;
+}
+
+/* ================================================================
+   USER DROPDOWN MENU
+   ================================================================ */
+
+.user-dropdown-menu.p-menu {
+  min-width: 180px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: var(--border-1) solid var(--surface-border);
+  padding: var(--space-1);
+}
+
+.user-dropdown-menu .p-menu-item-link {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  margin: var(--space-1);
+}
+
+.user-dropdown-menu .p-menu-item-link:hover {
+  background: var(--surface-hover);
+}
+
+.user-dropdown-menu .p-menu-item-icon {
+  color: var(--text-color-secondary);
+  margin-right: var(--space-3);
+  font-size: var(--font-body-sm);
+}
+
+.user-dropdown-menu .p-menu-item-label {
+  font-size: var(--font-body-sm);
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+.user-dropdown-menu .p-menu-separator {
+  margin: var(--space-2) var(--space-2);
+  border-color: var(--surface-border);
+}
+
+/* Sign out item */
+.user-dropdown-menu .p-menu-item:last-child .p-menu-item-link {
+  color: var(--primitive-error-500);
+}
+
+.user-dropdown-menu .p-menu-item:last-child .p-menu-item-icon {
+  color: var(--primitive-error-500);
+}
+
+.user-dropdown-menu .p-menu-item:last-child .p-menu-item-label {
+  color: var(--primitive-error-500);
+}
+
+/* ================================================================
+   RESPONSIVE: TABLET (768px - 1024px)
+   ================================================================ */
+
+@media (max-width: 1024px) {
+  app-header .olympic-countdown {
+    padding: 0 var(--space-2);
+    height: 30px;
   }
 
-  .header-left,
-  .header-center,
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
+  app-header .countdown-value {
+    font-size: var(--font-body-2xs);
   }
 
-  .header-left {
-    flex: 0 0 auto;
-    min-width: 0;
+  app-header .search-input {
+    min-width: 180px;
   }
 
-  .header-center {
-    flex: 1 1 auto;
-    justify-content: center;
-    padding: 0 var(--space-8);
-  }
-
-  .header-right {
-    flex: 0 0 auto;
-    justify-content: flex-end;
-  }
-
-  .mobile-menu-toggle {
+  app-header .theme-label {
     display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: var(--space-2);
-    color: var(--color-text-primary);
-    min-width: var(--touch-target-min);
-    min-height: var(--touch-target-min);
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--focus-ring-color);
-      outline-offset: var(--focus-outline-offset);
-    }
-  }
-
-  /* Olympic Countdown in Header */
-  .olympic-countdown-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-2) var(--space-4);
-    background: var(--gradient-card);
-    border: var(--border-1) solid var(--color-border-subtle);
-    border-radius: var(--radius-lg);
-  }
-
-  .countdown-label-header {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .countdown-event {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
-    color: var(--ds-primary-green);
-    text-transform: uppercase;
-  }
-
-  .countdown-timer-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-
-  .countdown-segment-header {
-    display: flex;
-    align-items: baseline;
-    gap: 2px;
-  }
-
-  .countdown-value-header {
-    font-family: var(--font-family-mono);
-    font-size: var(--font-heading-xs);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    font-variant-numeric: tabular-nums;
-    min-width: 1.5ch;
-  }
-
-  .countdown-unit-header {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-  }
-
-  .countdown-sep {
-    font-family: var(--font-family-mono);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-tertiary);
-    padding: 0 2px;
-  }
-
-  /* Breadcrumbs */
-  .breadcrumbs {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-left: var(--space-4);
-  }
-
-  .breadcrumb-item {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-
-    &.current {
-      color: var(--color-text-primary);
-      font-weight: var(--font-weight-medium);
-    }
-  }
-
-  .separator {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Search Styles */
-  .search-container {
-    position: relative;
-    cursor: pointer;
-  }
-
-  .search-trigger {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    width: 280px;
-    height: var(--button-height-md);
-    padding: 0 var(--space-4);
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--color-border-default);
-    border-radius: var(--radius-xl);
-    color: var(--color-text-muted);
-    transition:
-      border-color var(--motion-fast) var(--ease-standard),
-      box-shadow var(--motion-fast) var(--ease-standard);
-    font-size: var(--font-body-sm);
-    box-shadow: var(--shadow-1);
-
-    &:hover {
-      background: var(--surface-primary);
-      border-color: var(--ds-primary-green);
-      box-shadow: var(--hover-shadow-sm);
-    }
-
-    &:hover i {
-      color: var(--ds-primary-green);
-    }
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--focus-ring-color);
-      outline-offset: var(--focus-outline-offset);
-    }
-
-    i {
-      font-size: var(--icon-md);
-      color: var(--color-text-muted);
-      transition: color var(--motion-fast) var(--ease-standard);
-    }
-  }
-
-  .search-placeholder {
-    flex: 1;
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-normal);
-  }
-
-  .search-shortcut {
-    display: flex;
-    gap: 3px;
-    opacity: 0.8;
-
-    kbd {
-      background: var(--surface-tertiary);
-      border: var(--border-1) solid var(--color-border-default);
-      border-radius: var(--radius-sm);
-      padding: var(--space-1) var(--space-2);
-      font-size: var(--font-body-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-secondary);
-      min-width: 20px;
-      text-align: center;
-      font-family: inherit;
-    }
-  }
-
-  /* Theme Toggle */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .theme-label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    min-width: 35px;
-  }
-
-  /* User Menu Container */
-  .user-menu-container {
-    position: relative;
-  }
-
-  /* User Avatar Button */
-  .user-avatar-wrapper {
-    cursor: pointer;
-    padding: 3px;
-    border-radius: var(--radius-full);
-    background: var(--gradient-primary);
-    transition:
-      transform var(--motion-fast) var(--ease-standard),
-      box-shadow var(--motion-fast) var(--ease-standard);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: var(--space-2);
-    border: none;
-
-    &:hover {
-      transform: var(--transform-hover-lift-subtle);
-      box-shadow: var(--hover-shadow-md);
-    }
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
-    }
-  }
-
-  /* User Dropdown Menu */
-  .user-dropdown {
-    position: absolute;
-    top: calc(100% + var(--space-3));
-    right: 0;
-    width: 320px;
-    background: var(--surface-primary);
-    border-radius: var(--radius-xl);
-    box-shadow:
-      var(--shadow-xl),
-      0 0 0 1px var(--color-border-subtle);
-    z-index: var(--z-index-dropdown);
-    overflow: hidden;
-    animation: dropdownSlideIn var(--motion-base) ease-out;
-  }
-
-  @keyframes dropdownSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-8px) scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  /* Dropdown Header with User Info */
-  .user-dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-5);
-    background: var(--gradient-card);
-    border-bottom: var(--border-1) solid var(--color-border-secondary);
-  }
-
-  .user-dropdown-avatar {
-    flex-shrink: 0;
-  }
-
-  .user-dropdown-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    flex: 1;
-  }
-
-  .user-dropdown-name {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .user-dropdown-email {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .user-dropdown-role {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wide);
-    color: var(--ds-primary-green);
-    background: var(--ds-primary-green-subtle);
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-sm);
-    width: fit-content;
-    margin-top: var(--space-1);
-  }
-
-  /* Dropdown Menu Items */
-  .user-dropdown-menu {
-    padding: var(--space-2);
-  }
-
-  .user-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-    padding: var(--space-3) var(--space-4);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: background-color var(--motion-fast) var(--ease-standard);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-md);
-    color: var(--color-text-primary);
-    text-align: left;
-
-    &:hover {
-      background: var(--surface-secondary);
-    }
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: -2px;
-    }
-
-    i:first-child {
-      width: 20px;
-      font-size: var(--icon-md);
-      color: var(--color-text-secondary);
-    }
-
-    span {
-      flex: 1;
-      font-weight: var(--font-weight-medium);
-    }
-
-    .item-arrow {
-      font-size: var(--font-body-xs);
-      color: var(--color-text-tertiary);
-      opacity: 0;
-      transform: translateX(-4px);
-      transition:
-        opacity var(--motion-fast) var(--ease-standard),
-        transform var(--motion-fast) var(--ease-standard);
-    }
-
-    &:hover .item-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    &:hover i:first-child {
-      color: var(--ds-primary-green);
-    }
-  }
-
-  /* Quick Stats */
-  .user-dropdown-stats {
-    display: flex;
-    justify-content: space-around;
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-top: var(--border-1) solid var(--color-border-secondary);
-    border-bottom: var(--border-1) solid var(--color-border-secondary);
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-
-  .stat-value {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-bold);
-    color: var(--ds-primary-green);
-  }
-
-  .stat-label {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: var(--color-text-secondary);
-  }
-
-  /* Logout Footer */
-  .user-dropdown-footer {
-    padding: var(--space-3) var(--space-4);
-  }
-
-  /* Backdrop */
-  .user-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-index-modal-backdrop);
-    background: transparent;
-  }
-
-  .header-icon-btn {
-    width: var(--touch-target-min);
-    height: var(--touch-target-min);
-    min-width: var(--touch-target-min);
-    min-height: var(--touch-target-min);
-  }
-
-  /* Variants */
-  .app-header.variant-compact {
-    height: 60px;
-    padding: var(--space-2) var(--space-4);
-  }
-
-  .app-header.variant-minimal {
-    height: 50px;
-    padding: var(--space-1) var(--space-4);
-    border-bottom: none;
-    box-shadow: var(--shadow-sm);
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .app-header {
-      padding: var(--space-2) var(--space-4);
-    }
-
-    .header-center {
-      display: none;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-
-    .search-input:focus {
-      width: 250px;
-    }
-
-    .theme-label {
-      display: none;
-    }
-
-    .breadcrumbs {
-      display: none;
-    }
-
-    .mobile-menu-toggle {
-      display: block;
-    }
-
-    /* User Dropdown - Fullscreen on mobile */
-    .user-dropdown {
-      position: fixed;
-      top: auto;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      max-height: 85vh;
-      border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-      animation: dropdownSlideUp var(--motion-slow) ease-out;
-      overflow-y: auto;
-    }
-
-    @keyframes dropdownSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .user-menu-backdrop {
-      background: var(--surface-overlay);
-      backdrop-filter: blur(4px);
-    }
-
-    .user-dropdown-header {
-      padding: var(--space-6);
-    }
-
-    .user-dropdown-name {
-      font-size: var(--font-heading-xs);
-    }
-
-    .user-dropdown-menu {
-      padding: var(--space-3);
-    }
-
-    .user-dropdown-item {
-      padding: var(--space-4) var(--space-5);
-    }
-
-    .user-dropdown-stats {
-      padding: var(--space-5);
-    }
-
-    .stat-value {
-      font-size: var(--font-heading-md);
-    }
-
-    .user-dropdown-footer {
-      padding: var(--space-4) var(--space-5) var(--space-6);
-      padding-bottom: calc(var(--space-6) + var(--safe-area-bottom));
-    }
-
-    .logout-btn {
-      padding: var(--space-4);
-    }
-  }
-
-  @media (max-width: 480px) {
-    .header-left .search-container,
-    .header-right .search-container {
-      display: none;
-    }
-
-    .header-right {
-      gap: var(--space-2);
-    }
-
-    .header-icon-btn {
-      width: var(--touch-target-min);
-      height: var(--touch-target-min);
-      min-width: var(--touch-target-min);
-      min-height: var(--touch-target-min);
-    }
   }
 }
 
-// =============================================
-// PRIMENG OVERRIDES
-// Must be in @layer overrides with documentation
-// =============================================
+/* ================================================================
+   RESPONSIVE: MOBILE (<768px)
+   ================================================================ */
 
-@layer overrides {
-  /*
-   * EXCEPTION: PrimeNG Avatar styling
-   * Ticket: DS-COMP-003
-   * Owner: @design-system
-   * Scope: header component only
-   * Remove by: N/A - Permanent PrimeNG limitation
-   * Reason: PrimeNG Avatar requires ::ng-deep for internal styling
-   */
-  :host ::ng-deep .user-avatar-inner {
-    width: 40px !important;
-    height: 40px !important;
-    background: var(--gradient-primary) !important;
-    color: var(--color-text-on-primary) !important;
-    font-weight: var(--font-weight-bold) !important;
-    font-size: var(--font-body-md) !important;
-    letter-spacing: var(--letter-spacing-wide);
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+@media (max-width: 768px) {
+  app-header .p-toolbar.app-header {
+    padding: 0 var(--space-4);
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
   }
 
-  :host ::ng-deep .user-avatar-inner .p-avatar-text {
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 1px;
+  app-header .header-start,
+  app-header .header-center,
+  app-header .header-end {
+    height: 56px;
   }
 
-  :host ::ng-deep .dropdown-avatar-inner {
-    width: 56px !important;
-    height: 56px !important;
-    background: var(--gradient-primary) !important;
-    color: var(--color-text-on-primary) !important;
-    font-weight: var(--font-weight-bold) !important;
-    font-size: var(--font-heading-sm) !important;
-    letter-spacing: 1px;
-    border: 3px solid rgba(255, 255, 255, 0.95);
-    box-shadow: var(--shadow-md);
+  app-header .mobile-menu-toggle {
+    display: flex !important;
   }
 
-  :host ::ng-deep .logout-btn-primeng {
-    width: 100%;
-    justify-content: center;
+  app-header .header-center {
+    display: none;
   }
 
-  /* Mobile responsive PrimeNG overrides */
-  @media (max-width: 768px) {
-    :host ::ng-deep .dropdown-avatar-inner {
-      width: 64px !important;
-      height: 64px !important;
-      font-size: var(--font-heading-md) !important;
-    }
+  app-header .olympic-countdown {
+    display: none;
+  }
+
+  app-header .breadcrumbs {
+    display: none;
+  }
+
+  app-header .theme-label {
+    display: none;
+  }
+
+  app-header .header-end {
+    gap: var(--space-2);
+  }
+
+  app-header .header-icon-btn.p-button {
+    width: var(--space-10) !important;
+    height: var(--space-10) !important;
+    min-width: var(--space-10) !important;
+    min-height: var(--space-10) !important;
+    max-width: var(--space-10) !important;
+    max-height: var(--space-10) !important;
+  }
+
+  app-header .header-icon-btn.p-button .p-button-icon {
+    font-size: var(--font-body-md);
+  }
+
+  app-header .user-avatar.p-avatar {
+    width: var(--space-8) !important;
+    height: var(--space-8) !important;
+    min-width: var(--space-8) !important;
+    min-height: var(--space-8) !important;
+    font-size: var(--font-body-xs) !important;
+  }
+
+  app-header .user-avatar-btn.p-button {
+    width: var(--space-8) !important;
+    height: var(--space-8) !important;
+    min-width: var(--space-8) !important;
+    max-width: var(--space-8) !important;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE: SMALL MOBILE (<480px)
+   ================================================================ */
+
+@media (max-width: 480px) {
+  app-header .header-end {
+    gap: var(--space-1);
   }
 }

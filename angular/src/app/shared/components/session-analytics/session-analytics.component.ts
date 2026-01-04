@@ -28,6 +28,7 @@ import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { ChartModule } from "primeng/chart";
+import { COLORS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -145,7 +146,7 @@ interface AnalyticsData {
               <h3>Weekly Progress</h3>
               <p-tag
                 [value]="'Last 4 weeks'"
-                [rounded]="true"
+                
                 severity="secondary"
               ></p-tag>
             </div>
@@ -278,13 +279,13 @@ export class SessionAnalyticsComponent implements OnInit {
         {
           label: "Completed",
           data: weeks.map((w) => weekMap.get(w)?.completed || 0),
-          backgroundColor: "#089949",
+          backgroundColor: COLORS.PRIMARY,
           borderRadius: 4,
         },
         {
           label: "Skipped",
           data: weeks.map((w) => weekMap.get(w)?.skipped || 0),
-          backgroundColor: "#f59e0b",
+          backgroundColor: COLORS.AMBER,
           borderRadius: 4,
         },
       ],

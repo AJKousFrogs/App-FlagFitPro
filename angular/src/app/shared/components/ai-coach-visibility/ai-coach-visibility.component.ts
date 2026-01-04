@@ -11,7 +11,8 @@ import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
 import { FormsModule } from "@angular/forms";
@@ -87,12 +88,14 @@ interface CoachVisibilityRecord {
     CardModule,
     TableModule,
     TagModule,
-    ButtonModule,
     DialogModule,
     TextareaModule,
     FormsModule,
     TooltipModule,
     SkeletonModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="ai-coach-visibility">
@@ -153,7 +156,7 @@ interface CoachVisibilityRecord {
                     <p-tag
                       value="High Risk"
                       severity="danger"
-                      [rounded]="true"
+                      
                     ></p-tag>
                   </div>
                   <p class="alert-message">
@@ -177,22 +180,8 @@ interface CoachVisibilityRecord {
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <p-button
-                    icon="pi pi-eye"
-                    [text]="true"
-                    [rounded]="true"
-                    severity="secondary"
-                    pTooltip="View Details"
-                    (onClick)="viewAlert(alert)"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-comment"
-                    [text]="true"
-                    [rounded]="true"
-                    severity="info"
-                    pTooltip="Add Note"
-                    (onClick)="openNoteDialog(alert)"
-                  ></p-button>
+                  <app-icon-button icon="pi-eye" variant="text" (clicked)="viewAlert(alert)" ariaLabel="eye" />
+                  <app-icon-button icon="pi-comment" variant="text" (clicked)="openNoteDialog(alert)" ariaLabel="comment" />
                 </div>
               </div>
             }
@@ -278,23 +267,9 @@ interface CoachVisibilityRecord {
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <p-button
-                      icon="pi pi-eye"
-                      [text]="true"
-                      [rounded]="true"
-                      severity="secondary"
-                      pTooltip="View"
-                      (onClick)="viewRecommendation(rec)"
-                    ></p-button>
+                    <app-icon-button icon="pi-eye" variant="text" (clicked)="viewRecommendation(rec)" ariaLabel="eye" />
                     @if (rec.status === "pending") {
-                      <p-button
-                        icon="pi pi-times"
-                        [text]="true"
-                        [rounded]="true"
-                        severity="danger"
-                        pTooltip="Override"
-                        (onClick)="openOverrideDialog(rec)"
-                      ></p-button>
+                      <app-icon-button icon="pi-times" variant="text" (clicked)="openOverrideDialog(rec)" ariaLabel="times" />
                     }
                   </div>
                 </td>
@@ -326,17 +301,8 @@ interface CoachVisibilityRecord {
           ></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="noteDialogVisible = false"
-          ></p-button>
-          <p-button
-            label="Save Note"
-            icon="pi pi-check"
-            (onClick)="saveNote()"
-            [disabled]="!coachNote.trim()"
-          ></p-button>
+          <app-button variant="text" (clicked)="noteDialogVisible = false">Cancel</app-button>
+          <app-button iconLeft="pi-check" [disabled]="!coachNote.trim()" (clicked)="saveNote()">Save Note</app-button>
         </ng-template>
       </p-dialog>
 
@@ -370,18 +336,8 @@ interface CoachVisibilityRecord {
           ></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="overrideDialogVisible = false"
-          ></p-button>
-          <p-button
-            label="Override"
-            icon="pi pi-times"
-            severity="danger"
-            (onClick)="submitOverride()"
-            [disabled]="!overrideReason.trim()"
-          ></p-button>
+          <app-button variant="text" (clicked)="overrideDialogVisible = false">Cancel</app-button>
+          <app-button variant="danger" iconLeft="pi-times" [disabled]="!overrideReason.trim()" (clicked)="submitOverride()">Override</app-button>
         </ng-template>
       </p-dialog>
     </div>

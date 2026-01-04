@@ -11,7 +11,8 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -52,7 +53,6 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     TableModule,
     TagModule,
     DialogModule,
@@ -64,6 +64,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -74,11 +77,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <p-button
-                label="Add Equipment"
-                icon="pi pi-plus"
-                (onClick)="openAddDialog()"
-              ></p-button>
+              <app-button iconLeft="pi-plus" (clicked)="openAddDialog()">Add Equipment</app-button>
             }
           </div>
         </app-page-header>
@@ -222,26 +221,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   <td>
                     <div class="action-buttons">
                       @if (isCoach()) {
-                        <p-button
-                          icon="pi pi-arrow-right"
-                          [text]="true"
-                          pTooltip="Checkout"
-                          (onClick)="openCheckoutDialog(item)"
-                          [disabled]="item.quantity_available === 0"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-pencil"
-                          [text]="true"
-                          pTooltip="Edit"
-                          (onClick)="openEditDialog(item)"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-trash"
-                          [text]="true"
-                          severity="danger"
-                          pTooltip="Delete"
-                          (onClick)="deleteItem(item)"
-                        ></p-button>
+                        <app-icon-button icon="pi-arrow-right" variant="text" [disabled]="item.quantity_available === 0" (clicked)="openCheckoutDialog(item)" ariaLabel="arrow-right" />
+                        <app-icon-button icon="pi-pencil" variant="text" (clicked)="openEditDialog(item)" ariaLabel="pencil" />
+                        <app-icon-button icon="pi-trash" variant="text" (clicked)="deleteItem(item)" ariaLabel="trash" />
                       }
                     </div>
                   </td>
@@ -300,13 +282,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                       <td>{{ assignment.quantity_assigned }}</td>
                       <td>{{ assignment.assigned_at | date: "shortDate" }}</td>
                       <td>
-                        <p-button
-                          icon="pi pi-arrow-left"
-                          label="Return"
-                          [text]="true"
-                          size="small"
-                          (onClick)="openReturnDialog(assignment)"
-                        ></p-button>
+                        <app-button variant="text" size="sm" iconLeft="pi-arrow-left" (clicked)="openReturnDialog(assignment)">Return</app-button>
                       </td>
                     </tr>
                   </ng-template>
@@ -393,17 +369,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showAddDialog = false"
-            ></p-button>
-            <p-button
-              [label]="editingItem ? 'Save Changes' : 'Add Equipment'"
-              icon="pi pi-check"
-              (onClick)="saveItem()"
-              [disabled]="!canSaveItem()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showAddDialog = false">Cancel</app-button>
+            <app-icon-button icon="pi-check" [disabled]="!canSaveItem()" (clicked)="saveItem()" ariaLabel="check" />
           </ng-template>
         </p-dialog>
 
@@ -456,17 +423,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           }
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showCheckoutDialog = false"
-            ></p-button>
-            <p-button
-              label="Checkout"
-              icon="pi pi-check"
-              (onClick)="checkout()"
-              [disabled]="!checkoutData.player_id"
-            ></p-button>
+            <app-button variant="text" (clicked)="showCheckoutDialog = false">Cancel</app-button>
+            <app-button iconLeft="pi-check" [disabled]="!checkoutData.player_id" (clicked)="checkout()">Checkout</app-button>
           </ng-template>
         </p-dialog>
 
@@ -506,16 +464,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           }
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showReturnDialog = false"
-            ></p-button>
-            <p-button
-              label="Process Return"
-              icon="pi pi-check"
-              (onClick)="processReturn()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showReturnDialog = false">Cancel</app-button>
+            <app-button iconLeft="pi-check" (clicked)="processReturn()">Process Return</app-button>
           </ng-template>
         </p-dialog>
       </div>

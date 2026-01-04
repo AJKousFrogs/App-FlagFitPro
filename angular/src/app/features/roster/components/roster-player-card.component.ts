@@ -19,7 +19,8 @@ import { TitleCasePipe, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -40,13 +41,15 @@ import {
   imports: [
     CardModule,
     TagModule,
-    ButtonModule,
     CheckboxModule,
     TooltipModule,
     ProgressBar,
     FormsModule,
     TitleCasePipe,
     DecimalPipe,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-card class="player-card" [class.selected]="isSelected()" [class.risk-high]="enrichedPlayer().riskLevel === 'high'" [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'">
@@ -86,7 +89,7 @@ import {
           <div class="player-position">{{ player().position }}</div>
           <div class="player-meta">
             <span>{{ player().country }}</span>
-            <span class="separator">ù</span>
+            <span class="separator">ÔøΩ</span>
             <span>Age {{ player().age }}</span>
           </div>
         </div>
@@ -156,54 +159,20 @@ import {
 
       <!-- Action Buttons -->
       <div class="card-actions">
-        <p-button
-          icon="pi pi-eye"
-          [rounded]="true"
-          [text]="true"
-          severity="secondary"
-          (onClick)="viewDetails.emit(player())"
-          pTooltip="View Details"
-        ></p-button>
+        <app-icon-button icon="pi-eye" variant="text" (clicked)="viewDetails.emit(player())" ariaLabel="eye" />
 
         @if (canManage()) {
           @if (enrichedPlayer().riskLevel === 'high' || enrichedPlayer().riskLevel === 'critical') {
-            <p-button
-              icon="pi pi-sliders-h"
-              [rounded]="true"
-              [text]="true"
-              severity="warn"
-              (onClick)="adjustLoad.emit(player())"
-              pTooltip="Adjust Load"
-            ></p-button>
+            <app-icon-button icon="pi-sliders-h" variant="text" (clicked)="adjustLoad.emit(player())" ariaLabel="sliders-h" />
           }
 
-          <p-button
-            icon="pi pi-pencil"
-            [rounded]="true"
-            [text]="true"
-            (onClick)="edit.emit(player())"
-            pTooltip="Edit Player"
-          ></p-button>
+          <app-icon-button icon="pi-pencil" variant="text" (clicked)="edit.emit(player())" ariaLabel="pencil" />
 
-          <p-button
-            icon="pi pi-tag"
-            [rounded]="true"
-            [text]="true"
-            severity="info"
-            (onClick)="changeStatus.emit(player())"
-            pTooltip="Change Status"
-          ></p-button>
+          <app-icon-button icon="pi-tag" variant="text" (clicked)="changeStatus.emit(player())" ariaLabel="tag" />
         }
 
         @if (canDelete()) {
-          <p-button
-            icon="pi pi-trash"
-            [rounded]="true"
-            [text]="true"
-            severity="danger"
-            (onClick)="remove.emit(player())"
-            pTooltip="Remove Player"
-          ></p-button>
+          <app-icon-button icon="pi-trash" variant="text" (clicked)="remove.emit(player())" ariaLabel="trash" />
         }
       </div>
     </p-card>
@@ -248,7 +217,7 @@ export class RosterPlayerCardComponent {
       if (qbStatus) {
         const percentage = Math.round((qbStatus.throwsThisWeek / qbStatus.weeklyLimit) * 100);
         return {
-          text: `Arm Care: ${qbStatus.armCareStatus} ù Throws: ${qbStatus.throwsThisWeek}/${qbStatus.weeklyLimit}`,
+          text: `Arm Care: ${qbStatus.armCareStatus} ÔøΩ Throws: ${qbStatus.throwsThisWeek}/${qbStatus.weeklyLimit}`,
           icon: "pi pi-bolt",
           type: percentage > 80 ? "warning" : "info",
         };

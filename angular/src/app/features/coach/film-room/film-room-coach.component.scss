@@ -1,0 +1,350 @@
+
+.film-room-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  padding-bottom: var(--space-2);
+  overflow-x: auto;
+
+  .tab-btn {
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ds-surface-base);
+      color: var(--ds-text-primary);
+    }
+
+    &.active {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+// Film Stats
+.film-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+
+  .stat-icon {
+    font-size: var(--font-heading-md);
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+
+    .stat-value {
+      font-size: var(--font-heading-sm);
+      font-weight: 700;
+      color: var(--ds-text-primary);
+    }
+
+    .stat-label {
+      font-size: var(--font-body-sm);
+      font-weight: 500;
+      color: var(--ds-text-primary);
+    }
+
+    .stat-sub {
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+    }
+  }
+}
+
+// Film List
+.film-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.film-card {
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ds-border-default);
+  overflow: hidden;
+}
+
+.film-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--ds-surface-base);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  .film-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    .film-icon {
+      font-size: var(--font-heading-sm);
+    }
+
+    h3 {
+      margin: 0;
+      font-size: var(--font-body-md);
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .film-actions-header {
+    display: flex;
+    gap: var(--space-1);
+  }
+}
+
+.film-body {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.film-thumbnail {
+  flex-shrink: 0;
+
+  .thumbnail-placeholder {
+    width: 120px;
+    height: 80px;
+    background: var(--primitive-neutral-800);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: var(--font-heading-lg);
+      color: white;
+    }
+  }
+}
+
+.film-info {
+  flex: 1;
+
+  p {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    strong {
+      color: var(--ds-text-primary);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.film-assignment {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+
+  p {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    strong {
+      color: var(--ds-text-primary);
+    }
+
+    .due-date {
+      margin-left: var(--space-3);
+      color: var(--ds-text-tertiary);
+    }
+  }
+
+  .watch-progress {
+    margin-bottom: var(--space-2);
+
+    .progress-label {
+      display: block;
+      margin-bottom: var(--space-1);
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+    }
+  }
+
+  .not-watched {
+    font-size: var(--font-body-sm);
+    color: var(--primitive-warning-500);
+  }
+}
+
+.film-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  flex-wrap: wrap;
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6);
+  text-align: center;
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-lg);
+
+  i {
+    font-size: var(--font-display-md);
+    color: var(--ds-text-tertiary);
+    margin-bottom: var(--space-3);
+  }
+
+  h3 {
+    margin: 0 0 var(--space-2) 0;
+    color: var(--ds-text-primary);
+  }
+
+  p {
+    margin: 0 0 var(--space-4) 0;
+    color: var(--ds-text-secondary);
+  }
+}
+
+// Form Styles
+.upload-form,
+.tag-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tag-timestamp {
+  margin: 0;
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  font-size: var(--font-body-sm);
+  color: var(--ds-text-secondary);
+
+  strong {
+    color: var(--ds-primary-green);
+  }
+}
+
+.form-field {
+  label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    label {
+      margin: 0;
+      cursor: pointer;
+    }
+  }
+}
+
+.player-checkboxes {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-md);
+  max-height: 200px;
+  overflow-y: auto;
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      cursor: pointer;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .film-room-page {
+    padding: var(--space-3);
+  }
+
+  .film-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .film-body {
+    flex-direction: column;
+
+    .thumbnail-placeholder {
+      width: 100%;
+      height: 150px;
+    }
+  }
+
+  .film-actions {
+    flex-direction: column;
+
+    p-button {
+      width: 100%;
+    }
+  }
+}

@@ -30,7 +30,7 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -44,6 +44,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -139,7 +140,6 @@ interface AutocompleteSuggestion {
   imports: [
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     AvatarModule,
     TagModule,
@@ -151,6 +151,8 @@ interface AutocompleteSuggestion {
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -780,7 +782,7 @@ interface AutocompleteSuggestion {
             [modal]="true"
             [closable]="!microSessionInProgress()"
             [dismissableMask]="!microSessionInProgress()"
-            [style]="{ width: '500px', maxWidth: '95vw' }"
+            [style]="dialogStyles.standard"
             styleClass="micro-session-dialog"
             (onHide)="onMicroSessionDialogHide()"
           >
@@ -807,6 +809,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly destroyRef = inject(DestroyRef);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
 
   // User role check
   isCoach = computed(() => this.authService.getUser()?.role === "coach");

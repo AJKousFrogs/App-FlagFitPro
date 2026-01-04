@@ -20,7 +20,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -34,7 +34,9 @@ import {
   selector: 'app-exercise-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TagModule, TooltipModule,
+    ButtonComponent,
+  ],
   template: `
     <div
       class="exercise-card"
@@ -200,21 +202,8 @@ import {
           <!-- Action Row -->
           <div class="action-row">
             @if (exercise().status !== 'complete') {
-              <p-button
-                label="Mark Complete"
-                icon="pi pi-check"
-                (onClick)="onComplete()"
-                [loading]="isCompleting()"
-                styleClass="complete-btn"
-              ></p-button>
-              <p-button
-                label="Skip"
-                icon="pi pi-forward"
-                [outlined]="true"
-                severity="secondary"
-                (onClick)="onSkip()"
-                styleClass="skip-btn"
-              ></p-button>
+              <app-button iconLeft="pi-check" [loading]="isCompleting()" (clicked)="onComplete()">Mark Complete</app-button>
+              <app-button variant="outlined" iconLeft="pi-forward" (clicked)="onSkip()">Skip</app-button>
             } @else {
               <div class="completed-badge">
                 <i class="pi pi-check-circle"></i>

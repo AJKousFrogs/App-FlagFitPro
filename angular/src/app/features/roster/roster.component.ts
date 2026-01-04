@@ -32,6 +32,8 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { ToastService } from "../../core/services/toast.service";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
@@ -40,6 +42,10 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
+import {
+    COMPONENT_SIZES,
+    DIALOG_STYLES,
+} from "../../core/utils/design-tokens.util";
 import {
     PlayerFormData,
     RosterFiltersComponent,
@@ -75,16 +81,16 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ConfirmationService],
-  imports: [
+imports: [
     // PrimeNG
     CardModule,
     TagModule,
-    ButtonModule,
     ProgressSpinnerModule,
     DialogModule,
     TooltipModule,
     ConfirmDialogModule,
     BadgeModule,
+    ButtonModule,
     Select,
     // Angular
     FormsModule,
@@ -103,6 +109,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
     RosterOverviewComponent,
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -124,7 +132,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
 
       <!-- Content -->
       @else {
-        <div class="roster-page">
+        <div class="roster-page section-stack">
           <!-- Page Header -->
           <app-page-header
             title="Team Roster"
@@ -133,14 +141,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           >
             <div class="header-actions">
               @if (rosterService.canManageRoster()) {
-                <p-button
-                  label="Export"
-                  icon="pi pi-download"
-                  [outlined]="true"
-                  severity="secondary"
-                  (onClick)="exportRoster()"
-                  pTooltip="Export roster to CSV"
-                ></p-button>
+                <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportRoster()">Export</app-button>
 
                 <p-button
                   label="Invitations"
@@ -157,18 +158,9 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
                   badgeSeverity="danger"
                 ></p-button>
 
-                <p-button
-                  label="Invite"
-                  icon="pi pi-user-plus"
-                  [outlined]="true"
-                  (onClick)="openInviteDialog()"
-                ></p-button>
+                <app-button variant="outlined" iconLeft="pi-user-plus" (clicked)="openInviteDialog()">Invite</app-button>
 
-                <p-button
-                  label="Add Player"
-                  icon="pi pi-plus"
-                  (onClick)="openAddPlayer()"
-                ></p-button>
+                <app-button iconLeft="pi-plus" (clicked)="openAddPlayer()">Add Player</app-button>
               }
             </div>
           </app-page-header>
@@ -190,7 +182,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           @if (rosterService.isLoading()) {
             <div class="loading-state">
               <p-progressSpinner
-                [style]="{ width: '50px', height: '50px' }"
+                [style]="{ width: componentSizes.avatar.lg, height: componentSizes.avatar.lg }"
                 strokeWidth="4"
               ></p-progressSpinner>
               <p class="loading-message">Loading roster data...</p>
@@ -231,12 +223,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
               <i class="pi pi-search"></i>
               <h3>No players match your filters</h3>
               <p>Try adjusting your search or filter criteria</p>
-              <p-button
-                label="Clear Filters"
-                icon="pi pi-filter-slash"
-                [outlined]="true"
-                (onClick)="clearFilters()"
-              ></p-button>
+              <app-button variant="outlined" iconLeft="pi-filter-slash" (clicked)="clearFilters()">Clear Filters</app-button>
             </div>
           }
 
@@ -382,7 +369,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           (visibleChange)="showDetailsDialog.set($event)"
           [modal]="true"
           header="Player Details"
-          [style]="{ width: '700px', maxHeight: '90vh' }"
+          [style]="dialogStyles.playerDetail"
           [closable]="true"
         >
           @if (selectedPlayer()) {
@@ -572,17 +559,9 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           }
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Close"
-              [text]="true"
-              (onClick)="showDetailsDialog.set(false)"
-            ></p-button>
+            <app-button variant="text" (clicked)="showDetailsDialog.set(false)">Close</app-button>
             @if (rosterService.canManageRoster()) {
-              <p-button
-                label="Edit Player"
-                icon="pi pi-pencil"
-                (onClick)="editPlayerFromDetails()"
-              ></p-button>
+              <app-button iconLeft="pi-pencil" (clicked)="editPlayerFromDetails()">Edit Player</app-button>
             }
           </ng-template>
         </p-dialog>
@@ -593,7 +572,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           (visibleChange)="showStatusDialog.set($event)"
           [modal]="true"
           header="Change Player Status"
-          [style]="{ width: '400px' }"
+          [style]="dialogStyles.form"
           [closable]="true"
         >
           <div class="status-dialog-content">
@@ -620,17 +599,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showStatusDialog.set(false)"
-            ></p-button>
-            <p-button
-              label="Update Status"
-              icon="pi pi-check"
-              (onClick)="updatePlayerStatus()"
-              [loading]="isSaving()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showStatusDialog.set(false)">Cancel</app-button>
+            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="updatePlayerStatus()">Update Status</app-button>
           </ng-template>
         </p-dialog>
 
@@ -640,7 +610,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           (visibleChange)="showBulkStatusDialog.set($event)"
           [modal]="true"
           header="Change Status for Selected Players"
-          [style]="{ width: '400px' }"
+          [style]="dialogStyles.form"
           [closable]="true"
         >
           <div class="status-dialog-content">
@@ -666,17 +636,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showBulkStatusDialog.set(false)"
-            ></p-button>
-            <p-button
-              label="Update All"
-              icon="pi pi-check"
-              (onClick)="updateBulkStatus()"
-              [loading]="isSaving()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showBulkStatusDialog.set(false)">Cancel</app-button>
+            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="updateBulkStatus()">Update All</app-button>
           </ng-template>
         </p-dialog>
 
@@ -686,7 +647,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           (visibleChange)="showInviteDialog.set($event)"
           [modal]="true"
           header="Invite to Team"
-          [style]="{ width: '450px' }"
+          [style]="dialogStyles.form"
           [closable]="true"
         >
           <div class="invite-form">
@@ -728,18 +689,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showInviteDialog.set(false)"
-            ></p-button>
-            <p-button
-              label="Send Invitation"
-              icon="pi pi-send"
-              (onClick)="sendInvitation()"
-              [disabled]="!inviteEmail || isSaving()"
-              [loading]="isSaving()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showInviteDialog.set(false)">Cancel</app-button>
+            <app-button iconLeft="pi-send" [loading]="isSaving()" [disabled]="!inviteEmail || isSaving()" (clicked)="sendInvitation()">Send Invitation</app-button>
           </ng-template>
         </p-dialog>
 
@@ -749,7 +700,7 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           (visibleChange)="showInvitationsDialog.set($event)"
           [modal]="true"
           header="Pending Invitations"
-          [style]="{ width: '700px', maxHeight: '80vh' }"
+          [style]="dialogStyles.scrollable"
           [closable]="true"
         >
           <div class="invitations-list">
@@ -757,13 +708,9 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
               <div class="empty-invitations">
                 <i class="pi pi-inbox"></i>
                 <p>No pending invitations</p>
-                <p-button
-                  label="Send New Invitation"
-                  icon="pi pi-plus"
-                  (onClick)="
+                <app-button iconLeft="pi-plus" (clicked)="
                     showInvitationsDialog.set(false); openInviteDialog()
-                  "
-                ></p-button>
+                  ">Send New Invitation</app-button>
               </div>
             } @else {
               @for (
@@ -802,22 +749,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
                     }
                   </div>
                   <div class="invitation-actions">
-                    <p-button
-                      icon="pi pi-refresh"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="info"
-                      pTooltip="Resend invitation"
-                      (onClick)="resendInvitation(invitation)"
-                    ></p-button>
-                    <p-button
-                      icon="pi pi-times"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="danger"
-                      pTooltip="Cancel invitation"
-                      (onClick)="cancelInvitation(invitation)"
-                    ></p-button>
+                    <app-icon-button icon="pi-refresh" variant="text" (clicked)="resendInvitation(invitation)" ariaLabel="refresh" />
+                    <app-icon-button icon="pi-times" variant="text" (clicked)="cancelInvitation(invitation)" ariaLabel="times" />
                   </div>
                 </div>
               }
@@ -825,16 +758,8 @@ import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./servi
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Close"
-              [text]="true"
-              (onClick)="showInvitationsDialog.set(false)"
-            ></p-button>
-            <p-button
-              label="Send New Invitation"
-              icon="pi pi-plus"
-              (onClick)="showInvitationsDialog.set(false); openInviteDialog()"
-            ></p-button>
+            <app-button variant="text" (clicked)="showInvitationsDialog.set(false)">Close</app-button>
+            <app-button iconLeft="pi-plus" (clicked)="showInvitationsDialog.set(false); openInviteDialog()">Send New Invitation</app-button>
           </ng-template>
         </p-dialog>
 
@@ -851,6 +776,10 @@ export class RosterComponent implements OnInit {
   private readonly metricsService = inject(PlayerMetricsService);
   private toastService = inject(ToastService);
   private confirmationService = inject(ConfirmationService);
+
+  // Design system tokens
+  protected readonly dialogStyles = DIALOG_STYLES;
+  protected readonly componentSizes = COMPONENT_SIZES;
 
   // Page state
   isPageLoading = signal(true);

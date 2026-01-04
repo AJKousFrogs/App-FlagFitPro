@@ -37,13 +37,14 @@
     color: var(--color-text-secondary, #737373);
   }
 
-  /* Status Card */
+  /* Status Card - Dashboard consistent */
   .status-card {
-    background: linear-gradient(135deg, var(--ds-primary-green-light, #e6f4ec) 0%, var(--surface-primary, #ffffff) 100%);
-    border: 1px solid var(--ds-primary-green, #089949);
-    border-radius: var(--radius-xl, 12px);
-    padding: var(--space-5, 20px);
-    margin-bottom: var(--space-5, 20px);
+    background: var(--surface-primary, #ffffff);
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-sm);
   }
 
   .status-header {
@@ -109,13 +110,14 @@
     color: var(--primitive-warning-500, #f59e0b);
   }
 
-  /* Sections */
+  /* Sections - Dashboard consistent */
   .section {
     background: var(--surface-primary, #ffffff);
-    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-    border-radius: var(--radius-xl, 12px);
-    padding: var(--space-4, 16px);
-    margin-bottom: var(--space-4, 16px);
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-sm);
   }
 
   .section-title {
@@ -181,9 +183,10 @@
   }
 
   .session-card {
-    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-    border-radius: var(--radius-lg, 8px);
-    padding: var(--space-3, 12px);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
   }
 
   .session-main {
@@ -248,7 +251,7 @@
 
   .feeling-scale {
     display: flex;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .feeling-dot {

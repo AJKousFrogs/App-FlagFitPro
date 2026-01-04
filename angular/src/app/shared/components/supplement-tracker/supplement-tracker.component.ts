@@ -11,28 +11,29 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
-import { TooltipModule } from "primeng/tooltip";
-import { TagModule } from "primeng/tag";
-import { SkeletonModule } from "primeng/skeleton";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
+import { SkeletonModule } from "primeng/skeleton";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
-import { ToastService } from "../../../core/services/toast.service";
+import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ToastService } from "../../../core/services/toast.service";
 
 export interface Supplement {
   id: string;
@@ -173,10 +174,9 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   selector: "app-supplement-tracker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
     CheckboxModule,
     TooltipModule,
     TagModule,
@@ -184,6 +184,8 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     DialogModule,
     InputTextModule,
     SelectModule,
+    ButtonComponent,
+    IconButtonComponent,
   ],
   templateUrl: "./supplement-tracker.component.html",
   styleUrls: ["./supplement-tracker.component.scss"],

@@ -1,0 +1,405 @@
+
+.practice-planner-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  padding-bottom: var(--space-2);
+
+  .tab-btn {
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--ds-surface-base);
+      color: var(--ds-text-primary);
+    }
+
+    &.active {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+// Practices List
+.practices-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Practice Card
+.practice-card {
+  border-left: 4px solid var(--ds-primary-green);
+}
+
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  .practice-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    .practice-icon {
+      font-size: var(--font-heading-sm);
+    }
+
+    h4 {
+      margin: 0;
+      font-size: var(--font-body-lg);
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .practice-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+}
+
+.practice-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    i {
+      color: var(--ds-text-tertiary);
+      width: 20px;
+    }
+  }
+}
+
+.practice-focus,
+.practice-equipment {
+  font-size: var(--font-body-sm);
+  margin-bottom: var(--space-2);
+
+  strong {
+    color: var(--ds-text-primary);
+  }
+}
+
+// Timeline Preview
+.timeline-preview {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  h5 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm);
+
+    .time {
+      min-width: 70px;
+      color: var(--ds-text-tertiary);
+      font-family: monospace;
+    }
+
+    .activity {
+      color: var(--ds-text-primary);
+    }
+  }
+}
+
+.attendance-row {
+  font-size: var(--font-body-sm);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--ds-border-subtle);
+
+  .attendance-stats {
+    margin-left: var(--space-2);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+
+    .pending {
+      color: var(--ds-text-tertiary);
+      margin-left: var(--space-1);
+    }
+  }
+}
+
+// Empty State
+.empty-state-card {
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-6);
+    text-align: center;
+
+    i {
+      font-size: var(--font-display-md);
+      color: var(--ds-text-tertiary);
+      margin-bottom: var(--space-3);
+    }
+
+    h3 {
+      margin: 0 0 var(--space-2) 0;
+      color: var(--ds-text-primary);
+    }
+
+    p {
+      margin: 0 0 var(--space-4) 0;
+      color: var(--ds-text-secondary);
+    }
+  }
+}
+
+// Form Styles
+.practice-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-section {
+  padding: var(--space-4);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-lg);
+
+  h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-body-md);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--ds-border-subtle);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--ds-border-subtle);
+
+    h4 {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+  }
+
+  .duration-summary {
+    display: flex;
+    gap: var(--space-3);
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-secondary);
+
+    .warning {
+      color: var(--primitive-error-500);
+    }
+  }
+}
+
+.form-field {
+  margin-bottom: var(--space-3);
+
+  label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+
+  &.three-col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Timeline Editor
+.timeline-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.activity-block {
+  padding: var(--space-3);
+  background: var(--ds-surface-elevated);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--ds-primary-green);
+
+  .activity-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+
+    .activity-time {
+      min-width: 70px;
+      font-family: monospace;
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-tertiary);
+    }
+
+    .activity-icon {
+      font-size: var(--font-heading-sm);
+    }
+
+    .activity-title-input {
+      flex: 1;
+      min-width: 150px;
+    }
+  }
+
+  .activity-details {
+    margin-top: var(--space-2);
+    padding-left: var(--space-4);
+
+    ul {
+      margin: 0;
+      padding-left: var(--space-4);
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+
+      li {
+        margin-bottom: var(--space-1);
+      }
+    }
+  }
+}
+
+// Equipment Grid
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-2);
+
+  .equipment-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--ds-surface-elevated);
+    border-radius: var(--radius-md);
+
+    label {
+      font-size: var(--font-body-sm);
+      cursor: pointer;
+    }
+  }
+}
+
+// Activity Form
+.activity-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+
+  .detail-row {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .practice-planner-page {
+    padding: var(--space-3);
+  }
+
+  .practice-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .practice-actions {
+      width: 100%;
+    }
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+
+    &.three-col {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .activity-block .activity-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .activity-title-input {
+      width: 100%;
+    }
+  }
+
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
+}

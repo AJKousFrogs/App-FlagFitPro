@@ -156,21 +156,74 @@ export const ANIMATIONS = {
 } as const;
 
 /**
- * Chart configuration
- * Colors map to design system tokens:
- * - --color-chart-1 through --color-chart-6
- * - See design-system-tokens.scss for single source of truth
- * Note: Chart.js requires hex values (can't use CSS vars in canvas)
+ * Design system colors
+ *
+ * ⚠️ IMPORTANT: For most use cases, prefer importing from:
+ * `@core/utils/design-tokens.util` which provides CSS variable references
+ *
+ * This COLORS constant contains HEX VALUES for specific scenarios:
+ * - Chart.js/Canvas rendering (cannot read CSS variables)
+ * - Server-side rendering fallbacks
+ * - External APIs that require hex values
+ *
+ * For DOM elements (styles, classes), use CSS variable references instead:
+ * - Import { BRAND_COLORS, STATUS_COLORS } from '@core/utils/design-tokens.util'
+ *
+ * Maps to CSS custom properties in design-system-tokens.scss
  */
-export const CHART = {
-  DEFAULT_COLORS: [
+export const COLORS = {
+  // Brand colors (use BRAND_COLORS from design-tokens.util for DOM)
+  PRIMARY: "#089949", // --ds-primary-green
+  PRIMARY_LIGHT: "#10c96b", // --color-brand-primary-light
+  PRIMARY_DARK: "#036d35", // --ds-primary-green-hover
+
+  // Semantic status colors (use STATUS_COLORS from design-tokens.util for DOM)
+  SUCCESS: "#089949", // --color-status-success (brand green)
+  SUCCESS_LIGHT: "#10c96b", // --color-brand-secondary
+  WARNING: "#f59e0b", // --primitive-warning-500
+  WARNING_LIGHT: "#fbbf24", // --primitive-warning-400
+  ERROR: "#ef4444", // --primitive-error-500
+  ERROR_LIGHT: "#f87171", // --primitive-error-400
+  INFO: "#3b82f6", // --color-chart-tertiary
+  INFO_LIGHT: "#38bdf8", // --primitive-info-400
+
+  // UI accent colors (map to design-system-tokens.scss)
+  BLUE: "#3b82f6", // --color-chart-tertiary
+  CYAN: "#0284c7",
+  PURPLE: "#8b5cf6", // --color-status-help
+  PURPLE_LIGHT: "#a855f7",
+  TEAL: "#14b8a6",
+  GRAY: "#6b7280", // --color-workout-rest
+  SLATE: "#94a3b8",
+  AMBER: "#f59e0b", // --primitive-warning-500
+  ORANGE: "#f97316",
+  LIME: "#84cc16",
+  GREEN: "#22c55e",
+  YELLOW: "#eab308",
+
+  // Chart-specific colors (for canvas rendering only)
+  // Maps to: --color-chart-1 through --color-chart-6
+  CHART: [
     "#089949", // --color-chart-1 (ds-primary-green)
     "#10c96b", // --color-chart-2 (brand secondary)
-    "#f1c40f", // --color-chart-3 (success/gold)
-    "#e74c3c", // --color-chart-4 (error)
-    "#3498db", // --color-chart-5 (info)
+    "#f1c40f", // --color-chart-3 (gold)
+    "#e74c3c", // --color-chart-4 (red)
+    "#3498db", // --color-chart-5 (blue)
     "#9b59b6", // --color-chart-6 (purple)
   ],
+} as const;
+
+/**
+ * Chart configuration
+ *
+ * ⚠️ For Chart.js colors, prefer importing from:
+ * `@core/utils/design-tokens.util` - CHART_COLORS, CHART_PALETTE
+ *
+ * These provide the same hex values but with better organization
+ * and helper functions like hexToRgba() and createChartGradientColors()
+ */
+export const CHART = {
+  DEFAULT_COLORS: COLORS.CHART,
   ANIMATION_DURATION: 750,
   FONT_FAMILY: "'Poppins', sans-serif",
 } as const;

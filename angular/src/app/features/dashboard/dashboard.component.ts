@@ -1,8 +1,8 @@
 import {
-  Component,
-  inject,
-  OnInit,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
@@ -10,7 +10,9 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 
 /**
  * Dashboard Switcher
- * Role-based redirection to the appropriate primary entry point
+ * Role-based redirection to the appropriate dashboard
+ * - Coaches go to /coach/dashboard
+ * - Players/Athletes go to /player-dashboard
  */
 @Component({
   selector: "app-dashboard",
@@ -28,10 +30,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
     
-    if (user?.role === "coach") {
+    if (user?.role === "coach" || user?.role === "assistant_coach" || user?.role === "admin") {
       this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
     } else {
-      this.router.navigate(["/today"], { replaceUrl: true });
+      this.router.navigate(["/player-dashboard"], { replaceUrl: true });
     }
   }
 }

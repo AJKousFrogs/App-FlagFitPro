@@ -20,7 +20,7 @@
 @layer primeng-brand {
   /* ================================================================
      BUTTON COMPONENT ENHANCEMENTS
-     Premium button design system with modern aesthetics
+     Raised button design system with Material Design elevation
      ================================================================ */
 
   .p-button {
@@ -28,10 +28,10 @@
     font-weight: var(--font-weight-semibold);
     font-size: 0.9375rem; /* 15px - slightly larger for better readability */
     letter-spacing: 0.01em;
-    border-radius: var(--radius-full, 9999px); /* Pill-shaped rounded buttons */
+    border-radius: var(--radius-lg, 0.5rem); /* 8px - Raised button style */
     padding: 0.75rem 1.5rem;
     min-height: var(--button-height-md);
-    border: 2px solid transparent;
+    border: none;
     transition:
       transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -140,7 +140,7 @@
 
   /* ================================
      PRIMARY BUTTON - Main CTA
-     Solid green with white text
+     Raised style with elevated shadow
      ================================ */
   .p-button-primary,
   .p-button:not(.p-button-outlined):not(.p-button-text):not(
@@ -153,12 +153,13 @@
       var(--ds-primary-green-light) 0%,
       var(--ds-primary-green) 100%
     );
-    border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);
+    /* Raised button elevation - more pronounced depth */
     box-shadow:
-      0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 1px 5px 0 rgba(var(--ds-primary-green-rgb), 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
@@ -167,26 +168,31 @@
           var(--ds-primary-green) 0%,
           var(--ds-primary-green-hover) 100%
         );
-        border-color: var(--ds-primary-green-hover);
+        /* Elevated hover state - stronger depth */
         box-shadow:
-          0 8px 20px rgba(var(--ds-primary-green-rgb), 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          0 6px 10px 0 rgba(0, 0, 0, 0.14),
+          0 1px 18px 0 rgba(0, 0, 0, 0.12),
+          0 3px 5px -1px rgba(var(--ds-primary-green-rgb), 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
     }
 
     &:active:not(:disabled) {
       background: var(--ds-primary-green-hover);
+      /* Pressed state - reduced elevation */
       box-shadow:
-        0 1px 4px rgba(var(--ds-primary-green-rgb), 0.2),
-        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        0 2px 4px -1px rgba(0, 0, 0, 0.2),
+        0 1px 2px 0 rgba(0, 0, 0, 0.14),
+        inset 0 2px 4px rgba(0, 0, 0, 0.15);
     }
 
     &:focus-visible {
       box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--ds-primary-green),
-        0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25);
+        0 3px 1px -2px rgba(0, 0, 0, 0.2),
+        0 2px 2px 0 rgba(0, 0, 0, 0.14),
+        0 1px 5px 0 rgba(var(--ds-primary-green-rgb), 0.12);
     }
   }
 
@@ -680,13 +686,16 @@
   }
 
   /* ================================
-     ROUNDED BUTTONS
-     Pill-shaped buttons
+     ROUNDED BUTTONS - DESIGN SYSTEM OVERRIDE
+     Per design system rules, rounded buttons should use standard radius, NOT pill shape.
+     [rounded]="true" is FORBIDDEN - all buttons use raised (rectangular) style.
+     We override to standard radius to prevent pill buttons.
      ================================ */
   .p-button-rounded,
   .p-button.p-button-rounded {
-    border-radius: var(--radius-full);
-    padding: 0.75rem 1.75rem;
+    /* Override: Use standard radius instead of pill shape */
+    border-radius: var(--radius-lg); /* 8px - standard raised button style */
+    padding: 0.75rem 1.5rem; /* Standard padding */
   }
 
   /* ================================
@@ -702,7 +711,8 @@
     }
 
     &.p-button-rounded {
-      padding: 0.5rem 1.25rem;
+      /* Override: Standard padding for small buttons */
+      padding: 0.5rem 1rem;
     }
   }
 
@@ -716,7 +726,8 @@
     }
 
     &.p-button-rounded {
-      padding: 1rem 2.25rem;
+      /* Override: Standard padding for large buttons */
+      padding: 1rem 2rem;
     }
   }
 
@@ -730,7 +741,8 @@
     justify-content: center;
 
     &.p-button-rounded {
-      border-radius: 50%;
+      /* Override: Use standard radius instead of circle for icon-only buttons */
+      border-radius: var(--radius-lg);
     }
 
     &.p-button-sm {
@@ -888,7 +900,9 @@
 
   .p-card-header {
     padding: var(--space-5);
-    background: var(--surface-secondary);
+    // Background removed for dashboard-consistent clean header styling
+    // Individual components can add background if needed via styleClass
+    background: transparent;
   }
 
   .p-card-body {
@@ -1649,32 +1663,86 @@
 
   /* ================================================================
      TAG COMPONENT ENHANCEMENTS
+     Design System: Rectangular tags with minimal rounded corners
+     Standard style across all status indicators
      ================================================================ */
 
   .p-tag {
-    border-radius: var(--radius-full);
-    font-weight: var(--font-weight-medium);
-    padding: var(--space-1) var(--space-3);
+    /* Rectangular shape with minimal rounding - sharp corners like "Optimal" tag */
+    border-radius: var(--radius-sm, 4px);
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-body-sm, 0.875rem);
+    padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+    white-space: nowrap;
+    border: none;
+    transition: all 0.15s ease;
   }
 
+  /* Default/Primary tag - Green solid background with white text */
+  .p-tag:not(.p-tag-success):not(.p-tag-info):not(.p-tag-warn):not(.p-tag-warning):not(.p-tag-danger):not(.p-tag-secondary):not(.p-tag-contrast) {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Success tag - Solid green background (same as primary/optimal) */
   .p-tag-success {
-    background: var(--color-status-success-light);
-    color: var(--color-status-success);
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
   }
 
+  /* Info tag - Brand green with white text */
   .p-tag-info {
-    background: var(--ds-primary-green-subtle);
-    color: var(--ds-primary-green);
+    background: var(--color-status-info);
+    color: var(--color-text-on-primary);
   }
 
-  .p-tag-warning {
-    background: var(--color-status-warning-light);
-    color: var(--primitive-warning-800);
+  /* Warning tag - Amber/yellow background with dark text for contrast */
+  .p-tag-warning,
+  .p-tag-warn {
+    background: var(--color-status-warning);
+    color: var(--primitive-warning-900, #78350f);
   }
 
+  /* Danger tag - Red background with white text */
   .p-tag-danger {
-    background: var(--color-status-error-light);
-    color: var(--color-status-error);
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Secondary tag - Subtle gray background */
+  .p-tag-secondary {
+    background: var(--surface-secondary, var(--primitive-neutral-100));
+    color: var(--color-text-secondary, var(--primitive-neutral-600));
+  }
+
+  /* Contrast tag - Dark background with white text */
+  .p-tag-contrast {
+    background: var(--color-text-primary, var(--primitive-neutral-900));
+    color: var(--color-text-on-primary);
+  }
+
+  /* Tag icon styling */
+  .p-tag .p-tag-icon {
+    font-size: 0.75rem;
+  }
+
+  /* Rounded variant - use [rounded]="true" for pill shape when needed */
+  .p-tag-rounded {
+    border-radius: var(--radius-full, 9999px);
+  }
+
+  /* Dark mode adjustments */
+  [data-theme="dark"] .p-tag-secondary,
+  .dark-theme .p-tag-secondary {
+    background: var(--primitive-neutral-700);
+    color: var(--primitive-neutral-200);
   }
 
   /* ================================================================
@@ -2415,18 +2483,25 @@
 
   /* ================================================================
      CHIP COMPONENT ENHANCEMENTS
+     Design System: Sharp rectangular chips (matches "Optimal" tag)
      ================================================================ */
 
   .p-chip {
-    border-radius: var(--radius-full);
-    padding: var(--space-1) var(--space-3);
+    /* Sharp rectangular corners - matches "Optimal" tag exactly */
+    border-radius: var(--radius-sm, 4px);
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0;
+    line-height: 1.2;
     transition:
       transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        transform: scale(1.05);
+        transform: scale(1.02);
         box-shadow: var(--shadow-sm);
       }
     }

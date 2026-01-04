@@ -8,7 +8,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
 import { FileUploadModule } from "primeng/fileupload";
@@ -36,10 +36,11 @@ export interface UploadedFile {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ButtonModule,
     ProgressBarModule,
     MessageModule,
     FileUploadModule,
+  
+    ButtonComponent,
   ],
   template: `
     <div [class]="containerClass()">

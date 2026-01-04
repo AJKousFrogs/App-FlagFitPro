@@ -24,7 +24,8 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
@@ -57,7 +58,6 @@ import {
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     TagModule,
     ProgressBarModule,
     Tabs,
@@ -66,6 +66,9 @@ import {
     PageHeaderComponent,
     SafetyWarningsComponent,
     TrafficLightRiskComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -75,12 +78,7 @@ import {
           subtitle="Monitor your training load, recovery, and injury prevention metrics"
           icon="pi-shield"
         >
-          <p-button
-            label="Log Wellness"
-            icon="pi pi-heart"
-            [outlined]="true"
-            routerLink="/wellness"
-          ></p-button>
+          <app-button variant="outlined" iconLeft="pi-heart" routerLink="/wellness">Log Wellness</app-button>
         </app-page-header>
 
         <!-- Safety Warnings Banner -->
@@ -106,14 +104,7 @@ import {
                   <i class="pi {{ acwrInsufficientMessage.icon }}"></i>
                   <h4>{{ acwrInsufficientMessage.title }}</h4>
                   <p>{{ acwrInsufficientMessage.reason }}</p>
-                  <p-button
-                    [label]="
-                      acwrInsufficientMessage.actionLabel || 'Log Training'
-                    "
-                    icon="pi pi-plus"
-                    [outlined]="true"
-                    routerLink="/training/log"
-                  ></p-button>
+                  <app-icon-button icon="pi-plus" variant="outlined" routerLink="/training/log" ariaLabel="plus" />
                 </div>
               } @else {
                 <div class="metric-display">
@@ -260,12 +251,7 @@ import {
                     <h4>{{ rec.title }}</h4>
                     <p>{{ rec.message }}</p>
                     @if (rec.action) {
-                      <p-button
-                        [label]="rec.action.label"
-                        size="small"
-                        [outlined]="true"
-                        (onClick)="executeAction(rec.action)"
-                      ></p-button>
+                      <app-button variant="outlined" size="sm" (clicked)="executeAction(rec.action)"></app-button>
                     }
                   </div>
                 </div>
@@ -303,23 +289,14 @@ import {
                   </p>
                 </div>
                 <div class="rtp-checkin">
-                  <p-button
-                    label="Daily Check-in"
-                    icon="pi pi-check"
-                    (onClick)="openRTPCheckin()"
-                  ></p-button>
+                  <app-button iconLeft="pi-check" (clicked)="openRTPCheckin()">Daily Check-in</app-button>
                 </div>
               </div>
             } @else {
               <div class="no-rtp">
                 <i class="pi pi-heart"></i>
                 <p>No active return-to-play protocol. Stay healthy!</p>
-                <p-button
-                  label="Report Injury"
-                  icon="pi pi-plus"
-                  [outlined]="true"
-                  (onClick)="reportInjury()"
-                ></p-button>
+                <app-button variant="outlined" iconLeft="pi-plus" (clicked)="reportInjury()">Report Injury</app-button>
               </div>
             }
           </p-tabpanel>

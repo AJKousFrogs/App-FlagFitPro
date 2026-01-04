@@ -628,21 +628,6 @@
       }
     }
 
-    &[data-category="performance"] {
-      border-left: 3px solid var(--ds-primary-green);
-    }
-
-    &[data-category="endurance"] {
-      border-left: 3px solid var(--primitive-blue-500);
-    }
-
-    &[data-category="recovery"] {
-      border-left: 3px solid var(--primitive-purple-500);
-    }
-
-    &[data-category="hydration"] {
-      border-left: 3px solid var(--primitive-cyan-500);
-    }
   }
 
   @for $i from 1 through 24 {
@@ -685,27 +670,28 @@
     margin-bottom: var(--space-2);
   }
 
+  // Evidence tag - Rectangular style consistent with "Optimal" tag design
   .supp-evidence {
     display: inline-flex;
     align-items: center;
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wide);
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-xs);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.2;
+    padding: var(--space-2) var(--space-4);
+    // Sharp rectangular corners - matches "Optimal" tag exactly
+    border-radius: var(--radius-sm, 4px);
 
     &.evidence-strong {
       background: var(--ds-primary-green);
       color: var(--color-text-on-primary);
-      font-weight: var(--font-weight-bold);
     }
 
     &.evidence-conditional {
       background: var(--primitive-orange-500);
       color: var(--color-text-on-primary);
-      font-weight: var(--font-weight-bold);
     }
   }
 
@@ -1072,7 +1058,7 @@
       width: 4px;
       height: var(--space-5);
       background: var(--ds-primary-green);
-      border-radius: 2px;
+      border-radius: var(--radius-sm);
     }
 
     i {

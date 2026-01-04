@@ -25,7 +25,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { AccordionModule } from "primeng/accordion";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { DividerModule } from "primeng/divider";
 import { Chip } from "primeng/chip";
 import { TimelineModule } from "primeng/timeline";
@@ -78,11 +78,12 @@ interface TimelineEvent {
     TabPanels,
     TabPanel,
     TooltipModule,
-    ButtonModule,
     DividerModule,
     Chip,
     TimelineModule,
     BadgeModule,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="periodization-dashboard">

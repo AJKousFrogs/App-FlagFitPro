@@ -15,7 +15,7 @@
 
 import { Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";
 import { RouterModule } from "@angular/router";
 
@@ -149,7 +149,9 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
 @Component({
   selector: "app-no-data-entry",
   standalone: true,
-  imports: [CommonModule, ButtonModule, CardModule, RouterModule],
+  imports: [CommonModule, CardModule, RouterModule,
+    ButtonComponent,
+  ],
   template: `
     <div
       class="no-data-entry"
@@ -202,19 +204,10 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
 
           <div class="no-data-actions">
             @if (showAction()) {
-              <p-button
-                [label]="customActionLabel() || config().actionLabel"
-                [icon]="customActionIcon() || config().actionIcon"
-                [routerLink]="customRoute() || config().route"
-                (onClick)="onAction.emit()"
-              ></p-button>
+              <app-button routerLink="customRoute() || config().route" (clicked)="onAction.emit()"></app-button>
             }
             @if (showSecondaryAction()) {
-              <p-button
-                [label]="secondaryActionLabel()"
-                [outlined]="true"
-                (onClick)="onSecondaryAction.emit()"
-              ></p-button>
+              <app-button variant="outlined" (clicked)="onSecondaryAction.emit()"></app-button>
             }
           </div>
 

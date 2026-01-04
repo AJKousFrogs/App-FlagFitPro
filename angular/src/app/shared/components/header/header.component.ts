@@ -1,23 +1,31 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  HostListener,
-  inject,
-  model,
-  OnDestroy,
-  output,
-  signal,
-  ViewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    HostListener,
+    inject,
+    model,
+    OnDestroy,
+    output,
+    signal,
+    ViewChild,
+    ViewEncapsulation,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
+import { MenuItem } from "primeng/api";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
+import { IconButtonComponent } from "../button/icon-button.component";
+import { InputGroupModule } from "primeng/inputgroup";
+import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { TagModule } from "primeng/tag";
+import { ToolbarModule } from "primeng/toolbar";
 import { TooltipModule } from "primeng/tooltip";
 import { filter } from "rxjs/operators";
 import { AuthService } from "../../../core/services/auth.service";
@@ -34,15 +42,22 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   selector: "app-header",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   imports: [
     RouterModule,
-    ButtonModule,
     InputTextModule,
+    InputGroupModule,
+    InputGroupAddonModule,
     AvatarModule,
     BadgeModule,
     TooltipModule,
+    ToolbarModule,
+    TagModule,
+    MenuModule,
     SearchPanelComponent,
     NotificationsPanelComponent,
+    ButtonModule,
+    IconButtonComponent,
   ],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
@@ -59,6 +74,8 @@ export class HeaderComponent implements OnDestroy {
 
   @ViewChild("notificationsPanel")
   notificationsPanel!: NotificationsPanelComponent;
+
+  @ViewChild("userMenu") userMenu!: import("primeng/menu").Menu;
 
   // Close user menu on Escape
   @HostListener("document:keydown.escape")
@@ -109,6 +126,26 @@ export class HeaderComponent implements OnDestroy {
   userEmail = signal("user@example.com");
   userRole = signal("Player");
   userStats = signal({ trainingSessions: 0, streak: 0, level: 0 });
+
+  // User menu items for p-menu
+  userMenuItems = computed<MenuItem[]>(() => [
+    {
+      label: "View Profile",
+      icon: "pi pi-user",
+      command: () => this.navigateTo("/profile"),
+    },
+    {
+      label: "Settings",
+      icon: "pi pi-cog",
+      command: () => this.navigateTo("/settings"),
+    },
+    { separator: true },
+    {
+      label: "Sign Out",
+      icon: "pi pi-sign-out",
+      command: () => this.logout(),
+    },
+  ]);
 
   // Olympic countdown - LA 2028 Opening Ceremony: July 14, 2028
   olympicCountdown = signal({
@@ -188,11 +225,17 @@ export class HeaderComponent implements OnDestroy {
   }
 
   // User Menu Methods
-  toggleUserMenu(): void {
+  toggleUserMenu(event: Event): void {
+    if (this.userMenu) {
+      this.userMenu.toggle(event);
+    }
     this.isUserMenuOpen.update((v) => !v);
   }
 
   closeUserMenu(): void {
+    if (this.userMenu) {
+      this.userMenu.hide();
+    }
     this.isUserMenuOpen.set(false);
   }
 
@@ -223,11 +266,9 @@ export class HeaderComponent implements OnDestroy {
     const logoContainer = img.parentElement;
     if (logoContainer && !logoContainer.querySelector(".logo-text")) {
       const textLogo = document.createElement("span");
-      textLogo.className = "logo-text";
+      textLogo.className = "logo-text d-flex align-center font-bold text-lg";
       textLogo.innerHTML =
-        '<i class="pi pi-football" style="margin-right: 8px; color: var(--ds-primary-green);"></i>FlagFit Pro';
-      textLogo.style.cssText =
-        "font-weight: 700; font-size: 1.25rem; color: var(--text-primary); display: flex; align-items: center;";
+        '<i class="pi pi-football mr-2 icon-primary"></i>FlagFit Pro';
       logoContainer.appendChild(textLogo);
     }
   }

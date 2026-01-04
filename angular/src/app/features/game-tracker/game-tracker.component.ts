@@ -1,26 +1,25 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { RadioButtonModule } from "primeng/radiobutton";
+import { Radio } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -28,6 +27,8 @@ import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -97,11 +98,10 @@ interface Play {
   selector: "app-game-tracker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+imports: [
     ReactiveFormsModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     Textarea,
     InputNumberModule,
@@ -109,9 +109,11 @@ interface Play {
     Select,
     TableModule,
     TagModule,
-    RadioButtonModule,
+    Radio,
     MainLayoutComponent,
     PageHeaderComponent,
+    ButtonComponent,
+    IconButtonComponent,
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",

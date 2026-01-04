@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ProgressBarModule } from "primeng/progressbar";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -35,7 +35,8 @@ export interface SkillData {
     CardModule,
     ChartModule,
     ProgressBarModule,
-    ButtonModule,
+  
+    ButtonComponent,
   ],
   template: `
     <p-card header="Skills Assessment">
@@ -59,14 +60,7 @@ export interface SkillData {
                     [value]="subSkill.score"
                     [showValue]="true"
                   ></p-progressBar>
-                  <p-button
-                    icon="pi pi-play-circle"
-                    [text]="true"
-                    label="Practice"
-                    size="small"
-                    (onClick)="startSkillDrill(subSkill)"
-                  >
-                  </p-button>
+                  <app-button variant="text" size="sm" iconLeft="pi-play-circle" (clicked)="startSkillDrill(subSkill)">Practice</app-button>
                 </div>
               }
             </div>

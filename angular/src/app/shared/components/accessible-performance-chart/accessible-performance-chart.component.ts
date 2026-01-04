@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { ChartModule } from "primeng/chart";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -24,7 +24,9 @@ export interface AccessibleDataPoint {
   selector: "app-accessible-performance-chart",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ChartModule, ButtonModule, DatePipe],
+  imports: [CommonModule, ChartModule, DatePipe,
+    ButtonComponent,
+  ],
   template: `
     <div
       class="chart-container"
@@ -75,16 +77,7 @@ export interface AccessibleDataPoint {
         aria-live="polite"
         aria-label="Performance insights"
       >
-        <p-button
-          type="button"
-          class="audio-button"
-          (onClick)="playInsight()"
-          [text]="true"
-          icon="pi pi-volume-up"
-          label="Audio Summary"
-          ariaLabel="Play audio summary of performance trends"
-        >
-        </p-button>
+        <app-button variant="text" iconLeft="pi-volume-up" (clicked)="playInsight()">Audio Summary</app-button>
       </div>
 
       <!-- Keyboard Navigation Instructions -->
@@ -96,14 +89,7 @@ export interface AccessibleDataPoint {
           <li><kbd>Space</kbd> - Toggle data series</li>
           <li><kbd>H</kbd> - Toggle this help</li>
         </ul>
-        <p-button
-          label="Close"
-          [text]="true"
-          size="small"
-          (onClick)="showKeyboardHelp.set(false)"
-          class="close-help-btn"
-        >
-        </p-button>
+        <app-button variant="text" size="sm" (clicked)="showKeyboardHelp.set(false)">Close</app-button>
       </div>
 
       <!-- Current Data Point Announcement -->

@@ -76,7 +76,7 @@
 
   .status-warning .stat-icon {
     background: var(--color-status-warning-light);
-    color: #92400e;
+    color: var(--primitive-warning-800);
   }
 
   .status-danger .stat-icon {
@@ -98,7 +98,7 @@
   .stat-content {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .stat-value-row {
@@ -134,7 +134,7 @@
   .stat-trend {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: var(--space-1);
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-semibold);
     margin-left: var(--space-2);

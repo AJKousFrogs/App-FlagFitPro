@@ -8,7 +8,8 @@
 import { Component, inject, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { TooltipModule } from "primeng/tooltip";
 import { DialogModule } from "primeng/dialog";
 import { EvidenceConfigService } from "../../../core/services/evidence-config.service";
@@ -20,9 +21,11 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
   imports: [
     CommonModule,
     CardModule,
-    ButtonModule,
     TooltipModule,
     DialogModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="evidence-preset-indicator">
@@ -39,15 +42,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
               Version {{ activePreset().version }}
             </div>
           </div>
-          <p-button
-            icon="pi pi-info-circle"
-            [text]="true"
-            [rounded]="true"
-            (onClick)="showDetails = true"
-            pTooltip="View evidence details and citations"
-            tooltipPosition="left"
-          >
-          </p-button>
+          <app-icon-button icon="pi-info-circle" variant="text" (clicked)="showDetails = true" ariaLabel="info-circle" />
         </div>
 
         <div class="preset-population mt-3 text-xs text-text-secondary">
@@ -288,13 +283,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
         </div>
 
         <ng-template pTemplate="footer">
-          <p-button
-            label="Close"
-            icon="pi pi-times"
-            (onClick)="showDetails = false"
-            [text]="true"
-          >
-          </p-button>
+          <app-button variant="text" iconLeft="pi-times" (clicked)="showDetails = false">Close</app-button>
         </ng-template>
       </p-dialog>
     </div>

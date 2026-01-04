@@ -1,0 +1,941 @@
+/* ================================================================
+   FLAGFIT PRO - UI STANDARDIZATION LAYER
+   Enterprise / Calm Clinical Style
+   ================================================================
+   
+   PURPOSE:
+   This file provides standardized PrimeNG design token overrides
+   and utility classes that ensure visual consistency across the app.
+   
+   DESIGN SYSTEM RULES:
+   1. 8pt spacing rhythm enforced via CSS custom properties
+   2. Consistent card, button, form, dialog, and message tokens
+   3. Utility classes for common layout patterns
+   4. NO ad-hoc CSS overrides in feature components
+   5. Enterprise aesthetic: calm, clinical, professional
+   
+   USAGE:
+   Import this file AFTER primeng-theme.scss in styles.scss
+   ================================================================ */
+
+/* ================================================================
+   STEP 2: GLOBAL PRIMENG TOKEN OVERRIDES
+   Single source of truth for all PrimeNG component tokens
+   Enterprise / Calm Clinical values
+   ================================================================ */
+
+:root {
+  /* ================================
+     8PT SPACING RHYTHM (ENFORCED)
+     All spacing values are multiples of 8px
+     ================================ */
+  
+  /* Base unit: 8px */
+  --space-unit: 8px;
+  
+  /* Standard spacing scale */
+  --space-0: 0;
+  --space-1: calc(var(--space-unit) * 0.5);   /* 4px */
+  --space-2: var(--space-unit);                /* 8px */
+  --space-3: calc(var(--space-unit) * 1.5);   /* 12px */
+  --space-4: calc(var(--space-unit) * 2);     /* 16px */
+  --space-5: calc(var(--space-unit) * 2.5);   /* 20px */
+  --space-6: calc(var(--space-unit) * 3);     /* 24px */
+  --space-8: calc(var(--space-unit) * 4);     /* 32px */
+  --space-10: calc(var(--space-unit) * 5);    /* 40px */
+  --space-12: calc(var(--space-unit) * 6);    /* 48px */
+
+  /* ================================
+     CARD TOKENS (p-card)
+     Enterprise: 14px radius, 16px padding, 12px gap
+     ================================ */
+  
+  --p-card-border-radius: 14px;
+  --p-card-body-padding: 16px;
+  --p-card-body-gap: 12px;
+  --p-card-shadow: var(--shadow-sm);
+  --p-card-header-padding: 16px;
+  --p-card-footer-padding: 16px;
+  --p-card-content-padding: 0;
+
+  /* ================================
+     BUTTON TOKENS (p-button)
+     Enterprise: 10px radius, 44px icon-only width
+     ================================ */
+  
+  --p-button-border-radius: 10px;
+  --p-button-padding-x: var(--space-6);       /* 24px */
+  --p-button-padding-y: var(--space-3);       /* 12px */
+  --p-button-icon-only-width: 44px;
+  --p-button-icon-only-height: 44px;
+  --p-button-raised-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --p-button-sm-padding-x: var(--space-4);    /* 16px */
+  --p-button-sm-padding-y: var(--space-2);    /* 8px */
+  --p-button-lg-padding-x: var(--space-8);    /* 32px */
+  --p-button-lg-padding-y: var(--space-4);    /* 16px */
+  --p-button-gap: var(--space-2);             /* 8px between icon and label */
+
+  /* ================================
+     FORM CONTROL TOKENS (p-inputtext, p-select)
+     Enterprise: 10px radius, calm focus ring
+     ================================ */
+  
+  /* InputText */
+  --p-inputtext-padding-x: var(--space-4);    /* 16px */
+  --p-inputtext-padding-y: var(--space-3);    /* 12px */
+  --p-inputtext-border-radius: 10px;
+  --p-inputtext-min-height: 44px;
+  
+  /* Select/Dropdown */
+  --p-select-padding-x: var(--space-4);       /* 16px */
+  --p-select-padding-y: var(--space-3);       /* 12px */
+  --p-select-border-radius: 10px;
+  
+  /* Focus Ring - Calm, consistent, low-intensity */
+  --p-focus-ring-width: 2px;
+  --p-focus-ring-offset: 2px;
+  --p-focus-ring-style: solid;
+  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
+  --p-inputtext-focus-ring-width: 2px;
+  --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
+  --p-inputtext-focus-ring-offset: 2px;
+  --p-inputtext-focus-border-color: var(--ds-primary-green);
+
+  /* ================================
+     DIALOG TOKENS (p-dialog)
+     Enterprise: 14px radius, 16px padding throughout
+     ================================ */
+  
+  --p-dialog-border-radius: 14px;
+  --p-dialog-header-padding: 16px;
+  --p-dialog-content-padding: 16px;
+  --p-dialog-footer-padding: 16px;
+  --p-dialog-footer-gap: var(--space-3);      /* 12px between buttons */
+
+  /* ================================
+     MESSAGE/TOAST TOKENS
+     Enterprise: 12px radius, 12x14 padding
+     ================================ */
+  
+  /* Message */
+  --p-message-border-radius: 12px;
+  --p-message-content-padding: 12px 14px;
+  
+  /* Toast */
+  --p-toast-border-radius: 12px;
+  --p-toast-content-padding: 12px 14px;
+
+  /* ================================
+     CHECKBOX/TOGGLE TOKENS
+     Consistent control sizing - no layout shift
+     ================================ */
+  
+  --p-checkbox-width: 20px;
+  --p-checkbox-height: 20px;
+  --p-checkbox-border-radius: 4px;
+  --p-toggleswitch-width: 44px;
+  --p-toggleswitch-height: 24px;
+  --p-control-row-min-height: 44px;
+}
+
+/* ================================================================
+   STEP 3: SHARED UTILITY CLASSES
+   Reusable layout primitives used everywhere
+   ================================================================ */
+
+/* ================================
+   PAGE CONTAINER
+   Max width + consistent gutters
+   ================================ */
+.page-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  
+  @media (max-width: 768px) {
+    padding: 0 var(--space-4);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 var(--space-3);
+  }
+}
+
+/* Narrow variant for content-heavy pages */
+.page-container--narrow {
+  max-width: 800px;
+}
+
+/* Wide variant for dashboard layouts */
+.page-container--wide {
+  max-width: 1600px;
+}
+
+/* ================================
+   SECTION STACK
+   24px spacing between major sections
+   ================================ */
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* 24px */
+}
+
+/* Compact variant: 16px spacing */
+.section-stack--compact {
+  gap: var(--space-4);
+}
+
+/* Loose variant: 32px spacing */
+.section-stack--loose {
+  gap: var(--space-8);
+}
+
+/* ================================
+   CARD STACK
+   12-16px internal stack spacing
+   ================================ */
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* 12px default */
+}
+
+/* Default variant: 16px */
+.card-stack--default {
+  gap: var(--space-4);
+}
+
+/* Tight variant: 8px */
+.card-stack--tight {
+  gap: var(--space-2);
+}
+
+/* ================================
+   TOOLBAR ROW
+   Baseline aligned icon + title + actions
+   ================================ */
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 44px; /* Touch target minimum */
+  padding: var(--space-3) 0;
+}
+
+.toolbar-row__start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.toolbar-row__title {
+  font-size: var(--font-heading-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar-row__subtitle {
+  font-size: var(--font-body-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.toolbar-row__end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ================================
+   CONTROL ROW
+   Flex row for checkbox/toggle alignment
+   44px min-height for touch targets
+   ================================ */
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--p-control-row-min-height); /* 44px */
+  padding: var(--space-3) 0;
+}
+
+.control-row__label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.control-row__title {
+  font-size: var(--font-body-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.control-row__description {
+  font-size: var(--font-body-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.control-row__control {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px; /* Touch target */
+  min-height: 44px;
+}
+
+/* ================================
+   ICON BUTTON
+   44x44 hit area, no layout shift
+   ================================ */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  
+  /* Icon sizing */
+  i, .pi, svg {
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  
+  &:hover {
+    background: var(--surface-secondary);
+    color: var(--ds-primary-green);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  /* Disabled state */
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* Small variant: 36px */
+.icon-btn--sm {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  
+  i, .pi, svg {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* Large variant: 52px */
+.icon-btn--lg {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  
+  i, .pi, svg {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+/* Primary variant */
+.icon-btn--primary {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  
+  &:hover {
+    background: var(--ds-primary-green-hover);
+    color: var(--color-text-on-primary);
+  }
+}
+
+/* Ghost variant */
+.icon-btn--ghost {
+  background: transparent;
+  
+  &:hover {
+    background: var(--ds-primary-green-subtle);
+    color: var(--ds-primary-green);
+  }
+}
+
+/* ================================
+   FORM FIELD CONSISTENCY
+   Standardized form field wrapper
+   ================================ */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-field__label {
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.form-field__helper {
+  font-size: var(--font-body-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.form-field__error {
+  font-size: var(--font-body-xs);
+  color: var(--color-status-error);
+  line-height: 1.4;
+}
+
+/* ================================
+   LIST ROW CONSISTENCY
+   Standardized list item layout
+   ================================ */
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  min-height: 56px;
+  border-bottom: 1px solid var(--color-border-secondary);
+  transition: background-color 0.15s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: var(--surface-secondary);
+  }
+}
+
+.list-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+  flex-shrink: 0;
+  
+  i, .pi {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+.list-row__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.list-row__title {
+  font-size: var(--font-body-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-row__subtitle {
+  font-size: var(--font-body-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.list-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ================================
+   STATUS TAG ALIGNMENT
+   Consistent status indicator sizing
+   ================================ */
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-body-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.status-tag--success {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+}
+
+.status-tag--warning {
+  background: var(--color-status-warning);
+  color: var(--primitive-warning-900);
+}
+
+.status-tag--danger {
+  background: var(--color-status-error);
+  color: var(--color-text-on-primary);
+}
+
+.status-tag--info {
+  background: var(--color-status-info);
+  color: var(--color-text-on-primary);
+}
+
+.status-tag--neutral {
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+}
+
+/* ================================
+   DIALOG FOOTER CONSISTENCY
+   Secondary left, primary right
+   ================================ */
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+  margin-top: var(--space-4);
+}
+
+/* When there's a left-aligned action (e.g., "Delete") */
+.dialog-footer--split {
+  justify-content: space-between;
+}
+
+.dialog-footer__start {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.dialog-footer__end {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* ================================================================
+   STEP 4: PRIMENG COMPONENT CONSISTENCY OVERRIDES
+   Enterprise / Calm Clinical - Ensure PrimeNG uses standardized tokens
+   ================================================================ */
+
+/* ================================
+   CARD - Enterprise styling
+   ================================ */
+.p-card {
+  border-radius: var(--p-card-border-radius) !important;
+  box-shadow: var(--p-card-shadow) !important;
+}
+
+.p-card .p-card-body {
+  padding: var(--p-card-body-padding) !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-card-body-gap);
+}
+
+.p-card .p-card-header {
+  padding: var(--p-card-header-padding) !important;
+}
+
+.p-card .p-card-content {
+  padding: var(--p-card-content-padding) !important;
+}
+
+.p-card .p-card-footer {
+  padding: var(--p-card-footer-padding) !important;
+}
+
+/* ================================
+   BUTTON - Enterprise styling
+   ================================ */
+.p-button {
+  border-radius: var(--p-button-border-radius) !important;
+}
+
+.p-button.p-button-icon-only {
+  width: var(--p-button-icon-only-width) !important;
+  height: var(--p-button-icon-only-height) !important;
+  min-width: var(--p-button-icon-only-width) !important;
+  min-height: var(--p-button-icon-only-height) !important;
+  flex-shrink: 0;
+}
+
+/* ================================
+   DIALOG - Enterprise styling
+   ================================ */
+.p-dialog {
+  border-radius: var(--p-dialog-border-radius) !important;
+}
+
+.p-dialog .p-dialog-header {
+  padding: var(--p-dialog-header-padding) !important;
+  border-radius: var(--p-dialog-border-radius) var(--p-dialog-border-radius) 0 0 !important;
+}
+
+.p-dialog .p-dialog-content {
+  padding: var(--p-dialog-content-padding) !important;
+}
+
+.p-dialog .p-dialog-footer {
+  padding: var(--p-dialog-footer-padding) !important;
+  gap: var(--p-dialog-footer-gap) !important;
+  border-radius: 0 0 var(--p-dialog-border-radius) var(--p-dialog-border-radius) !important;
+}
+
+/* ================================
+   INPUT/SELECT - Enterprise styling
+   ================================ */
+.p-inputtext {
+  min-height: var(--p-inputtext-min-height) !important;
+  padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x) !important;
+  border-radius: var(--p-inputtext-border-radius) !important;
+}
+
+.p-select {
+  border-radius: var(--p-select-border-radius) !important;
+}
+
+.p-select .p-select-label {
+  padding: var(--p-select-padding-y) var(--p-select-padding-x) !important;
+}
+
+.p-select-overlay {
+  border-radius: var(--p-select-border-radius) !important;
+}
+
+/* Textarea consistent with inputs */
+.p-textarea {
+  border-radius: var(--p-inputtext-border-radius) !important;
+  padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x) !important;
+}
+
+/* ================================
+   MESSAGE/TOAST - Enterprise styling
+   ================================ */
+.p-message {
+  border-radius: var(--p-message-border-radius) !important;
+}
+
+.p-message .p-message-content {
+  padding: var(--p-message-content-padding) !important;
+}
+
+.p-toast-message {
+  border-radius: var(--p-toast-border-radius) !important;
+}
+
+.p-toast-message-content {
+  padding: var(--p-toast-content-padding) !important;
+}
+
+/* ================================
+   CHECKBOX/TOGGLE - No layout shift
+   ================================ */
+.p-checkbox,
+.p-toggleswitch {
+  flex-shrink: 0;
+}
+
+.p-checkbox .p-checkbox-box {
+  width: var(--p-checkbox-width) !important;
+  height: var(--p-checkbox-height) !important;
+  min-width: var(--p-checkbox-width) !important;
+  min-height: var(--p-checkbox-height) !important;
+  border-radius: var(--p-checkbox-border-radius) !important;
+}
+
+.p-toggleswitch {
+  width: var(--p-toggleswitch-width) !important;
+  height: var(--p-toggleswitch-height) !important;
+  min-width: var(--p-toggleswitch-width) !important;
+  min-height: var(--p-toggleswitch-height) !important;
+}
+
+/* ================================
+   FOCUS RING - Calm, consistent
+   ================================ */
+.p-button:focus-visible,
+.p-inputtext:focus-visible,
+.p-select:focus-visible,
+.p-textarea:focus-visible,
+.p-checkbox:focus-visible .p-checkbox-box,
+.p-toggleswitch:focus-visible {
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  outline-offset: var(--p-focus-ring-offset) !important;
+}
+
+/* Input focus border */
+.p-inputtext:focus,
+.p-select.p-focus,
+.p-textarea:focus {
+  border-color: var(--p-inputtext-focus-border-color) !important;
+  box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color) !important;
+}
+
+/* ================================
+   PANEL/ACCORDION - Consistent radius
+   ================================ */
+.p-panel {
+  border-radius: var(--p-card-border-radius) !important;
+}
+
+.p-accordion .p-accordion-header a,
+.p-accordion .p-accordion-header button {
+  border-radius: var(--p-card-border-radius) !important;
+}
+
+.p-accordion .p-accordion-content {
+  border-radius: 0 0 var(--p-card-border-radius) var(--p-card-border-radius) !important;
+}
+
+/* ================================
+   MENU/DROPDOWN - Consistent radius
+   ================================ */
+.p-menu {
+  border-radius: var(--p-card-border-radius) !important;
+}
+
+.p-contextmenu,
+.p-tieredmenu {
+  border-radius: var(--p-card-border-radius) !important;
+}
+
+/* ================================
+   TAG/BADGE - Consistent styling
+   ================================ */
+.p-tag {
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+}
+
+/* ================================================================
+   RESPONSIVE ADJUSTMENTS
+   Mobile-friendly spacing and touch targets
+   ================================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    /* Reduce card padding on mobile - maintain 12px minimum */
+    --p-card-body-padding: 14px;
+    --p-card-header-padding: 14px;
+    --p-card-footer-padding: 14px;
+    
+    /* Reduce dialog padding on mobile */
+    --p-dialog-header-padding: 14px;
+    --p-dialog-content-padding: 14px;
+    --p-dialog-footer-padding: 14px;
+  }
+  
+  .section-stack {
+    gap: var(--space-5); /* 20px */
+  }
+  
+  .toolbar-row {
+    flex-wrap: wrap;
+  }
+  
+  .toolbar-row__end {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --p-card-body-padding: 12px;
+    --p-card-header-padding: 12px;
+    --p-card-footer-padding: 12px;
+    --p-card-body-gap: 10px;
+  }
+  
+  .section-stack {
+    gap: var(--space-4); /* 16px */
+  }
+  
+  .list-row {
+    padding: var(--space-3); /* 12px */
+  }
+  
+  .page-container {
+    padding: 0 12px;
+  }
+}
+
+/* ================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   Focus rings, reduced motion, contrast
+   ================================================================ */
+
+/* Consistent focus rings - using calm, low-intensity style */
+.icon-btn:focus-visible {
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  outline-offset: var(--p-focus-ring-offset) !important;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn,
+  .list-row,
+  .control-row,
+  .p-button,
+  .p-card,
+  .p-dialog,
+  .p-toast {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ================================================================
+   EMPTY/LOADING/ERROR STATE STANDARDIZATION
+   Consistent states across all components
+   ================================================================ */
+
+/* Empty state container */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  min-height: 200px;
+}
+
+.empty-state__icon {
+  font-size: 3rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.empty-state__title {
+  font-size: var(--font-body-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.empty-state__description {
+  font-size: var(--font-body-md);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  max-width: 300px;
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  min-height: 200px;
+}
+
+.loading-state__spinner {
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-4);
+}
+
+.loading-state__text {
+  font-size: var(--font-body-md);
+  color: var(--color-text-secondary);
+}
+
+/* Error state */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  min-height: 200px;
+}
+
+.error-state__icon {
+  font-size: 3rem;
+  color: var(--color-status-error);
+  margin-bottom: var(--space-4);
+}
+
+.error-state__title {
+  font-size: var(--font-body-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.error-state__description {
+  font-size: var(--font-body-md);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  max-width: 300px;
+}
+
+/* ================================================================
+   END OF UI STANDARDIZATION LAYER
+   ================================================================ */

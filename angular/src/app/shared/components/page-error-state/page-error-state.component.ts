@@ -3,57 +3,55 @@
  *
  * Displays a user-friendly error state with retry functionality.
  * Use this in page-level components when API calls fail.
+ * 
+ * Uses standardized .error-state utility classes from ui-standardization.scss
  *
  * @author FlagFit Pro Team
- * @version 1.0.0
+ * @version 2.0.0 - Angular 21 Signals
  */
 
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    input,
+    output,
+} from "@angular/core";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-page-error-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule,
+    ButtonComponent,
+  ],
   template: `
-    <div class="error-state-container" role="alert" aria-live="polite">
-      <div class="error-icon">
-        <i [class]="'pi ' + icon"></i>
+    <div class="error-state" role="alert" aria-live="polite">
+      <div class="error-state__icon">
+        <i [class]="'pi ' + icon()"></i>
       </div>
-      <h3 class="error-title">{{ title }}</h3>
-      <p class="error-message">{{ message }}</p>
-      @if (showRetry) {
-        <p-button
-          label="Try Again"
-          icon="pi pi-refresh"
-          (onClick)="onRetry()"
-          styleClass="p-button-primary"
-        ></p-button>
+      <h3 class="error-state__title">{{ title() }}</h3>
+      <p class="error-state__description">{{ message() }}</p>
+      @if (showRetry()) {
+        <app-button iconLeft="pi-refresh" (clicked)="onRetry()">Try Again</app-button>
       }
-      @if (helpText) {
-        <p class="error-help">{{ helpText }}</p>
+      @if (helpText()) {
+        <p class="error-state__help">{{ helpText() }}</p>
       }
     </div>
   `,
   styleUrl: './page-error-state.component.scss',
 })
 export class PageErrorStateComponent {
-  @Input() title = "Unable to load data";
-  @Input() message =
-    "Something went wrong while loading this page. Please try again.";
-  @Input() icon = "pi-exclamation-circle";
-  @Input() showRetry = true;
-  @Input() helpText?: string;
+  // Angular 21 Signals
+  title = input<string>("Unable to load data");
+  message = input<string>("Something went wrong while loading this page. Please try again.");
+  icon = input<string>("pi-exclamation-circle");
+  showRetry = input<boolean>(true);
+  helpText = input<string | null>(null);
 
-  @Output() retry = new EventEmitter<void>();
+  retry = output<void>();
 
   onRetry(): void {
     this.retry.emit();

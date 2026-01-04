@@ -92,18 +92,18 @@
     width: 40px;
     height: 40px;
     border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
+    background: linear-gradient(135deg, var(--ds-primary-green-light) 0%, var(--ds-primary-green) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-    box-shadow: 0 2px 8px rgba(8, 153, 73, 0.2);
+    box-shadow: 0 2px 8px rgba(var(--primitive-primary-700-rgb), 0.2);
     flex-shrink: 0;
   }
 
   .logo-icon-wrapper i {
     font-size: var(--font-heading-sm);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
   }
 
   .logo-text {

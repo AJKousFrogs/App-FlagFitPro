@@ -1,3 +1,4 @@
+import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -8,16 +9,16 @@ import {
     inject,
     signal,
 } from "@angular/core";
-import { DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChartModule, UIChart } from "primeng/chart";
+import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
+import { COLORS } from "../../core/constants/app.constants";
 import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -30,6 +31,8 @@ import {
 } from "../../core/services/player-statistics.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -53,16 +56,31 @@ interface Metric {
   trendType: "positive" | "negative" | "neutral";
 }
 
+interface DevelopmentGoal {
+  id: string;
+  metricType: 'speed' | 'agility' | 'strength' | 'power' | 'skill';
+  metricName: string;
+  targetValue: number;
+  targetUnit: string;
+  currentValue: number;
+  startValue: number;
+  deadline: Date;
+  coachNote: string;
+  status: 'active' | 'achieved' | 'missed';
+}
+
 @Component({
   selector: "app-analytics",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DatePipe,
     DecimalPipe,
+    TitleCasePipe,
     FormsModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     ChartModule,
+    ProgressBarModule,
     TableModule,
     TagModule,
     Tabs,
@@ -72,6 +90,9 @@ interface Metric {
     PageHeaderComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -99,6 +120,71 @@ interface Metric {
             subtitle="Advanced Performance Analytics & Team Insights"
             icon="pi-chart-bar"
           ></app-page-header>
+
+          <!-- My Development Goals (Coach Assigned) -->
+          <p-card class="development-goals-card">
+            <ng-template pTemplate="header">
+              <div class="goals-header">
+                <div class="goals-title">
+                  <i class="pi pi-bullseye"></i>
+                  <h3>My Development Goals</h3>
+                  <span class="coach-label">(Coach Assigned)</span>
+                </div>
+                <a routerLink="/goals" class="view-all-link">
+                  View All <i class="pi pi-arrow-right"></i>
+                </a>
+              </div>
+            </ng-template>
+
+            @if (developmentGoals().length === 0) {
+              <div class="goals-empty-state">
+                <i class="pi pi-bullseye empty-icon"></i>
+                <h4>No goals assigned yet</h4>
+                <p>Your coach will assign development goals here. Check back soon or ask your coach to set goals for you.</p>
+              </div>
+            } @else {
+              <div class="goals-grid">
+                @for (goal of developmentGoals().slice(0, 3); track goal.id) {
+                  <div class="goal-card" [class.achieved]="goal.status === 'achieved'">
+                    <div class="goal-header">
+                      <i [class]="getGoalIcon(goal.metricType)"></i>
+                      <span class="goal-name">{{ goal.metricName }}</span>
+                    </div>
+                    <div class="goal-targets">
+                      <div class="target-row">
+                        <span class="target-label">Target:</span>
+                        <span class="target-value">{{ goal.targetValue }}{{ goal.targetUnit }} by {{ goal.deadline | date:'MMM d' }}</span>
+                      </div>
+                      <div class="target-row">
+                        <span class="target-label">Current:</span>
+                        <span class="current-value">{{ goal.currentValue }}{{ goal.targetUnit }}</span>
+                      </div>
+                    </div>
+                    <div class="goal-progress">
+                      <p-progressBar 
+                        [value]="calculateGoalProgress(goal)" 
+                        [showValue]="false"
+                        styleClass="goal-progress-bar"
+                      ></p-progressBar>
+                      <span class="progress-percent">{{ calculateGoalProgress(goal) }}%</span>
+                    </div>
+                    <div class="goal-meta">
+                      <span class="days-remaining">
+                        <i class="pi pi-calendar"></i>
+                        {{ getDaysRemaining(goal.deadline) }} days remaining
+                      </span>
+                    </div>
+                    @if (goal.coachNote) {
+                      <div class="coach-note">
+                        <i class="pi pi-comment"></i>
+                        <span>"{{ goal.coachNote }}"</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </p-card>
 
           <!-- Key Metrics Overview -->
           <div class="metrics-grid">
@@ -132,21 +218,8 @@ interface Metric {
                     </div>
                     @if (performanceChartData()) {
                       <div class="chart-actions">
-                        <p-button
-                          icon="pi pi-refresh"
-                          [text]="true"
-                          [rounded]="true"
-                          size="small"
-                          aria-label="Reset zoom"
-                          pTooltip="Reset Zoom"
-                          (onClick)="resetChartZoom('performance')"
-                        ></p-button>
-                        <p-button
-                          icon="pi pi-download"
-                          [outlined]="true"
-                          size="small"
-                          (onClick)="exportChart('performance')"
-                        ></p-button>
+                        <app-button variant="text" size="sm" iconLeft="pi-refresh" (clicked)="resetChartZoom('performance')">Reset zoom</app-button>
+                        <app-icon-button icon="pi-download" variant="outlined" size="sm" (clicked)="exportChart('performance')" ariaLabel="download" />
                       </div>
                     }
                   </div>
@@ -174,11 +247,7 @@ interface Metric {
                     <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
                     <h4>{{ noDataMessage.title }}</h4>
                     <p>{{ noDataMessage.reason }}</p>
-                    <p-button
-                      [label]="noDataMessage.actionLabel"
-                      icon="pi pi-bolt"
-                      [routerLink]="noDataMessage.helpLink"
-                    ></p-button>
+                    <app-icon-button icon="pi-bolt" routerLink="noDataMessage.helpLink" ariaLabel="bolt" />
                   </div>
                 }
               </p-card>
@@ -729,6 +798,7 @@ export class AnalyticsComponent implements AfterViewInit {
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   metrics = signal<Metric[]>([]);
+  developmentGoals = signal<DevelopmentGoal[]>([]);
   performanceChartData = signal<any>(null);
   chemistryChartData = signal<any>(null);
   distributionChartData = signal<any>(null);
@@ -808,6 +878,7 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadAnalyticsData();
       this.loadPlayerStatistics();
       this.loadTrainingStatistics();
+      this.loadDevelopmentGoals();
 
       // Set loading to false after initial data load starts
       setTimeout(() => this.isPageLoading.set(false), 500);
@@ -844,8 +915,8 @@ export class AnalyticsComponent implements AfterViewInit {
             return {
               ...metric,
               value: stats.totalSessions.toString(),
-              trend: `+${stats.sessionsThisWeek || 0} this week`,
-              trendType: (stats.sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
+              trend: `+${(stats as any).sessionsThisWeek || 0} this week`,
+              trendType: ((stats as any).sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
             };
           }
           return metric;
@@ -861,13 +932,7 @@ export class AnalyticsComponent implements AfterViewInit {
             datasets: [
               {
                 data: values,
-                backgroundColor: [
-                  "#089949",
-                  "#10c89b",
-                  "#f1c40f",
-                  "#e74c3c",
-                  "#3498db",
-                ],
+                backgroundColor: COLORS.CHART.slice(0, 5),
                 borderWidth: 0,
                 hoverOffset: 10
               },
@@ -1042,13 +1107,7 @@ export class AnalyticsComponent implements AfterViewInit {
               datasets: [
                 {
                   data: (response.data as any).values,
-                  backgroundColor: [
-                    "#089949", // var(--ds-primary-green)
-                    "#10c89b", // var(--color-brand-primary-light)
-                    "#f1c40f", // var(--color-status-success)
-                    "#e74c3c", // var(--color-status-error)
-                    "#3498db", // Blue
-                  ],
+                  backgroundColor: COLORS.CHART.slice(0, 5),
                 },
               ],
             });
@@ -1113,7 +1172,7 @@ export class AnalyticsComponent implements AfterViewInit {
                 ...ds,
                 borderColor: ds.label.includes("40")
                   ? "var(--ds-primary-green)"
-                  : "#10c96b",
+                  : COLORS.PRIMARY_LIGHT,
                 backgroundColor: ds.label.includes("40")
                   ? "var(--ds-primary-green-subtle)"
                   : "rgba(16, 201, 107, 0.1)",
@@ -1331,5 +1390,69 @@ export class AnalyticsComponent implements AfterViewInit {
       default:
         return { error: "Unknown chart type" };
     }
+  }
+
+  /**
+   * Get icon class for goal metric type
+   */
+  getGoalIcon(metricType: DevelopmentGoal['metricType']): string {
+    const icons: Record<string, string> = {
+      speed: 'pi pi-bolt',
+      agility: 'pi pi-arrows-alt',
+      strength: 'pi pi-heart-fill',
+      power: 'pi pi-lightning',
+      skill: 'pi pi-star',
+    };
+    return icons[metricType] || 'pi pi-bullseye';
+  }
+
+  /**
+   * Calculate goal progress percentage
+   */
+  calculateGoalProgress(goal: DevelopmentGoal): number {
+    const startValue = goal.startValue || goal.currentValue * 1.1;
+    const improvement = startValue - goal.currentValue;
+    const totalNeeded = startValue - goal.targetValue;
+    if (totalNeeded === 0) return 100;
+    return Math.min(100, Math.max(0, Math.round((improvement / totalNeeded) * 100)));
+  }
+
+  /**
+   * Get days remaining until goal deadline
+   */
+  getDaysRemaining(deadline: Date): number {
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+    const diff = deadlineDate.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }
+
+  /**
+   * Load development goals from API
+   */
+  private loadDevelopmentGoals(): void {
+    const currentUser = this.authService.getUser();
+    if (!currentUser?.id) return;
+
+    this.apiService
+      .get(API_ENDPOINTS.analytics.summary, { type: 'goals', userId: currentUser.id })
+      .subscribe({
+        next: (response) => {
+          if (response.success && Array.isArray((response.data as any)?.goals)) {
+            const goals = (response.data as any).goals.map((g: any) => ({
+              ...g,
+              deadline: new Date(g.deadline),
+            }));
+            this.developmentGoals.set(goals);
+          } else {
+            // Set empty array if no goals
+            this.developmentGoals.set([]);
+          }
+        },
+        error: () => {
+          // Fallback to empty goals
+          this.developmentGoals.set([]);
+        },
+      });
   }
 }

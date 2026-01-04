@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { Select } from "primeng/select";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TagModule } from "primeng/tag";
 import {
   TrainingPlanService,
@@ -31,9 +31,10 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
     FormsModule,
     CardModule,
     Select,
-    ButtonModule,
     TagModule,
     TrafficLightRiskComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="goal-planner bg-surface-primary rounded-lg shadow-medium p-6">
@@ -261,21 +262,8 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
       <!-- Generate Button -->
       @if (selectedGoal()) {
         <div class="actions mt-6 flex justify-end gap-3">
-          <p-button
-            label="Save to Schedule"
-            icon="pi pi-save"
-            [outlined]="true"
-            [loading]="saving()"
-            (onClick)="savePlan()"
-          >
-          </p-button>
-          <p-button
-            label="Generate Plan"
-            icon="pi pi-calculator"
-            [loading]="loading()"
-            (onClick)="generatePlan()"
-          >
-          </p-button>
+          <app-button variant="outlined" iconLeft="pi-save" [loading]="saving()" (clicked)="savePlan()">Save to Schedule</app-button>
+          <app-button iconLeft="pi-calculator" [loading]="loading()" (clicked)="generatePlan()">Generate Plan</app-button>
         </div>
       }
     </div>

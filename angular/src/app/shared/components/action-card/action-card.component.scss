@@ -15,7 +15,7 @@
     gap: var(--space-4);
     padding: var(--space-4);
     background: var(--surface-primary);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     border-radius: var(--radius-xl);
     cursor: pointer;
     overflow: hidden;
@@ -61,8 +61,8 @@
   /* Icon */
   .action-icon {
     position: relative;
-    width: 48px;
-    height: 48px;
+    width: var(--space-12);
+    height: var(--space-12);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
@@ -73,8 +73,8 @@
   }
 
   .compact .action-icon {
-    width: 40px;
-    height: 40px;
+    width: var(--space-10);
+    height: var(--space-10);
     font-size: var(--font-body-md);
   }
 
@@ -100,7 +100,7 @@
     background: linear-gradient(
       135deg,
       var(--color-status-success) 0%,
-      #34d399 100%
+      var(--primitive-success-400) 100%
     );
     color: white;
   }
@@ -109,7 +109,7 @@
     background: linear-gradient(
       135deg,
       var(--color-status-warning) 0%,
-      #fbbf24 100%
+      var(--primitive-warning-400) 100%
     );
     color: white;
   }
@@ -118,7 +118,7 @@
     background: linear-gradient(
       135deg,
       var(--color-status-error) 0%,
-      #f87171 100%
+      var(--primitive-error-400) 100%
     );
     color: white;
   }
@@ -127,31 +127,31 @@
     background: linear-gradient(
       135deg,
       var(--color-status-info) 0%,
-      #38bdf8 100%
+      var(--primitive-blue-400) 100%
     );
     color: white;
   }
 
   .icon-purple {
-    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    background: linear-gradient(135deg, var(--primitive-purple-500) 0%, var(--primitive-purple-400) 100%);
     color: white;
   }
 
   .icon-orange {
-    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    background: linear-gradient(135deg, var(--primitive-orange-500) 0%, var(--primitive-orange-400) 100%);
     color: white;
   }
 
   /* Badge */
   .action-badge {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
+    top: calc(-1 * var(--space-2));
+    right: calc(-1 * var(--space-2));
+    min-width: var(--space-5);
+    height: var(--space-5);
+    padding: 0 var(--space-2);
     background: var(--color-status-error);
-    color: white;
+    color: var(--color-text-on-primary);
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-bold);
     border-radius: var(--radius-full);
@@ -164,13 +164,13 @@
   /* Notification dot */
   .notification-dot {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 12px;
-    height: 12px;
+    top: calc(-1 * var(--space-1));
+    right: calc(-1 * var(--space-1));
+    width: var(--space-3);
+    height: var(--space-3);
     background: var(--color-status-error);
     border-radius: 50%;
-    border: 2px solid var(--surface-primary);
+    border: var(--border-2) solid var(--surface-primary);
     animation: pulse-dot 2s ease-in-out infinite;
   }
 
@@ -192,7 +192,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .action-label {

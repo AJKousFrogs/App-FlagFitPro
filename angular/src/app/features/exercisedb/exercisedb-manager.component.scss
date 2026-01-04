@@ -24,7 +24,7 @@
 
   :host ::ng-deep .stat-card {
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--surface-border);
     transition:
       transform 0.2s,
@@ -85,7 +85,7 @@
 
   :host ::ng-deep .exercise-tabs .p-tabview-nav {
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
 
   .tab-content {
@@ -96,7 +96,7 @@
   :host ::ng-deep .filters-card {
     margin-bottom: var(--space-5);
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
   }
 
   .filters-row {
@@ -141,7 +141,7 @@
       transform 0.2s,
       box-shadow 0.2s;
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     overflow: hidden;
   }
 
@@ -260,7 +260,7 @@
 
   :host ::ng-deep .import-card {
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
   }
 
   .import-title {
@@ -346,7 +346,7 @@
     text-align: center;
     padding: var(--space-3);
     background: var(--surface-ground);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-md);
   }
 
   .result-item.success {
@@ -380,7 +380,7 @@
   /* History */
   :host ::ng-deep .history-card {
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
   }
 
   .history-title {
@@ -404,7 +404,7 @@
     gap: var(--space-4);
     padding: var(--space-3);
     background: var(--surface-ground);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-md);
   }
 
   .history-details {
@@ -465,7 +465,7 @@
 
   :host ::ng-deep .approval-card {
     background: var(--surface-card);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
   }
 
   .approval-header {
@@ -478,7 +478,7 @@
     width: 120px;
     height: 120px;
     object-fit: cover;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-md);
   }
 
   .approval-info {
@@ -499,7 +499,7 @@
   .auto-categorization {
     padding: var(--space-3);
     background: var(--surface-ground);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-md);
     margin-bottom: var(--space-4);
     font-size: var(--font-body-sm);
   }
@@ -549,7 +549,7 @@
 
   .detail-gif {
     width: 100%;
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
   }
 
   .detail-section {
@@ -590,7 +590,7 @@
   .detail-section.safety {
     background: var(--yellow-50);
     padding: var(--space-3);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-md);
     border-left: 4px solid var(--yellow-500);
   }
 

@@ -18,7 +18,7 @@
 
   .progress-bar {
     width: 60px;
-    height: 6px;
+    height: var(--space-2);
     background: var(--surface-tertiary);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -112,7 +112,7 @@
 
   .item-time {
     text-align: right;
-    padding-top: 2px;
+    padding-top: 0.125rem; // 2px fine adjustment
   }
 
   .time-value {
@@ -130,17 +130,17 @@
   }
 
   .marker-dot {
-    width: 20px;
-    height: 20px;
+    width: var(--space-5);
+    height: var(--space-5);
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--surface-primary);
-    border: 2px solid var(--color-border-primary);
+    border: var(--border-2) solid var(--color-border-primary);
 
     i {
-      font-size: 10px;
+      font-size: var(--font-body-2xs);
     }
 
     &.completed {
@@ -180,7 +180,7 @@
 
   .item-content {
     background: var(--surface-secondary);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     border-radius: var(--radius-lg);
     padding: var(--space-3);
     transition: background-color var(--transition-fast), border-color var(--transition-fast);
@@ -202,11 +202,11 @@
   }
 
   .item-type {
-    font-size: 10px;
+    font-size: var(--font-body-2xs);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-secondary);
     background: var(--surface-tertiary);
-    padding: 2px var(--space-2);
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -228,7 +228,7 @@
     color: var(--color-text-tertiary);
 
     i {
-      font-size: 12px;
+      font-size: var(--font-body-xs);
     }
   }
 
@@ -237,7 +237,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) 0;
-    margin-left: 62px;
+    margin-left: 3.875rem; // 62px - aligns with timeline marker
   }
 
   .now-line {
@@ -251,11 +251,11 @@
   }
 
   .now-label {
-    font-size: 10px;
+    font-size: var(--font-body-2xs);
     font-weight: var(--font-weight-bold);
     color: var(--color-status-error);
     background: var(--color-status-error-light);
-    padding: 2px var(--space-2);
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     letter-spacing: 1px;
   }
@@ -264,7 +264,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--font-body-sm);
     color: var(--ds-primary-green);
     text-decoration: none;
@@ -293,28 +293,28 @@
 
   @media (max-width: 640px) {
     .timeline-item {
-      grid-template-columns: 40px 20px 1fr;
-      gap: 6px;
+      grid-template-columns: var(--space-10) var(--space-5) 1fr; // 40px 20px
+      gap: var(--space-2);
     }
 
     .timeline-track {
-      left: 59px;
+      left: 3.6875rem; // 59px
     }
 
     .time-value {
-      font-size: 11px;
+      font-size: var(--font-body-2xs);
     }
 
     .marker-dot {
-      width: 16px;
-      height: 16px;
+      width: var(--space-4);
+      height: var(--space-4);
     }
 
     .now-indicator {
-      margin-left: 52px;
+      margin-left: 3.25rem; // 52px
     }
   }
-}
+
 
   @media (prefers-reduced-motion: reduce) {
     .progress-fill,

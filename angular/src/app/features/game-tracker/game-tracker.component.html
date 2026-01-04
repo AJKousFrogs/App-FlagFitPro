@@ -10,17 +10,14 @@
       icon="pi-list"
     >
       <div class="header-actions">
-        <p-button
-          label="View Games"
-          icon="pi pi-list"
-          [outlined]="true"
-          (onClick)="viewGames()"
-        ></p-button>
-        <p-button
-          [label]="getNewGameButtonLabel()"
-          icon="pi pi-plus"
-          (onClick)="openNewGame()"
-        ></p-button>
+        <app-button
+          iconLeft="pi-list"
+          (clicked)="viewGames()"
+        >View Games</app-button>
+        <app-button
+          iconLeft="pi-plus"
+          (clicked)="openNewGame()"
+        >{{ getNewGameButtonLabel() }}</app-button>
       </div>
     </app-page-header>
 
@@ -165,16 +162,14 @@
             </div>
           </div>
           <div class="form-actions">
-            <p-button
-              label="Cancel"
-              [outlined]="true"
-              (onClick)="cancelGame()"
-            ></p-button>
-            <p-button
-              label="Start Game"
+            <app-button
+              variant="outlined"
+              (clicked)="cancelGame()"
+            >Cancel</app-button>
+            <app-button
               type="submit"
               [disabled]="gameForm.invalid"
-            ></p-button>
+            >Start Game</app-button>
           </div>
         </form>
       </p-card>
@@ -641,17 +636,15 @@
             </div>
           </div>
           <div class="form-actions">
-            <p-button
-              label="Cancel"
-              [outlined]="true"
+            <app-button
+              variant="outlined"
               type="button"
-              (onClick)="cancelPlay()"
-            ></p-button>
-            <p-button
-              label="Save Play"
+              (clicked)="cancelPlay()"
+            >Cancel</app-button>
+            <app-button
               type="submit"
               [disabled]="playForm.invalid"
-            ></p-button>
+            >Save Play</app-button>
           </div>
         </form>
       </p-card>
@@ -686,14 +679,12 @@
               </td>
               <td>{{ getPlayDetails(play) }}</td>
               <td>
-                <p-button
-                  icon="pi pi-trash"
-                  [text]="true"
-                  [rounded]="true"
-                  (onClick)="deletePlay(play.id)"
+                <app-icon-button
+                  icon="pi-trash"
                   ariaLabel="Delete play"
-                >
-                </p-button>
+                  variant="danger"
+                  (clicked)="deletePlay(play.id)"
+                />
               </td>
             </tr>
           </ng-template>
@@ -748,21 +739,16 @@
               </p-tag>
             </td>
             <td>
-              <p-button
-                icon="pi pi-play"
-                [text]="true"
-                [rounded]="true"
-                (onClick)="startTrackingGame(game.id)"
+              <app-icon-button
+                icon="pi-play"
                 ariaLabel="Start tracking"
-              >
-              </p-button>
-              <p-button
-                icon="pi pi-eye"
-                [text]="true"
-                [rounded]="true"
+                (clicked)="startTrackingGame(game.id)"
+              />
+              <app-icon-button
+                icon="pi-eye"
                 ariaLabel="View details"
-                (onClick)="viewGameDetails(game)"
-              ></p-button>
+                (clicked)="viewGameDetails(game)"
+              />
             </td>
           </tr>
         </ng-template>

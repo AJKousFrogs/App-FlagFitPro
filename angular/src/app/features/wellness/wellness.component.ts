@@ -3,30 +3,43 @@ import {
     Component,
     DestroyRef,
     inject,
-    signal,
+    signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { InputNumberModule } from "primeng/inputnumber";
+import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
+import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
+import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,
 } from "../../shared/components/ui-components";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+
+interface WellnessAlert {
+  id: string;
+  severity: 'danger' | 'warn' | 'info';
+  title: string;
+  message: string;
+  recommendations?: string[];
+  actionLabel?: string;
+  actionRoute?: string;
+}
 
 interface WellnessMetric {
   label: string;
@@ -44,9 +57,9 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     ChartModule,
     InputNumberModule,
+    MessageModule,
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,
@@ -54,7 +67,9 @@ interface WellnessMetric {
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
-    AppLoadingComponent,
+    BodyCompositionCardComponent,
+    SupplementTrackerComponent,
+    HydrationTrackerComponent,
   ],
   template: `
     <app-main-layout>
@@ -88,43 +103,115 @@ interface WellnessMetric {
             >Log Check-in</app-button>
           </app-page-header>
 
-          <!-- Wellness Metrics -->
+          <!-- Wellness Metrics (4 Cards) -->
           <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
 
           <!-- Wellness Charts - Lazy loaded for performance -->
           <div class="charts-grid">
             @defer (on viewport) {
-              <app-card title="Sleep Quality">
+              <app-card title="Sleep Quality (7-day)">
                 @if (sleepChartData()) {
                   <p-chart
                     type="line"
                     [data]="sleepChartData()"
                     [options]="chartOptions"
                   ></p-chart>
+                } @else {
+                  <div class="chart-empty">No sleep data yet. Start logging daily check-ins.</div>
                 }
               </app-card>
             } @placeholder {
-              <app-card title="Sleep Quality" [loading]="true">
+              <app-card title="Sleep Quality (7-day)" [loading]="true">
                 <div class="loading-text">Loading sleep data...</div>
               </app-card>
             }
 
             @defer (on viewport) {
-              <app-card title="Recovery Score">
+              <app-card title="Recovery Score (7-day)">
                 @if (recoveryChartData()) {
                   <p-chart
                     type="bar"
                     [data]="recoveryChartData()"
                     [options]="chartOptions"
                   ></p-chart>
+                } @else {
+                  <div class="chart-empty">No recovery data yet. Start logging daily check-ins.</div>
                 }
               </app-card>
             } @placeholder {
-              <app-card title="Recovery Score" [loading]="true">
+              <app-card title="Recovery Score (7-day)" [loading]="true">
                 <div class="loading-text">Loading recovery data...</div>
               </app-card>
             }
           </div>
+
+          <!-- Body Composition Card -->
+          @defer (on viewport) {
+            <app-body-composition-card></app-body-composition-card>
+          } @placeholder {
+            <app-card title="Body Composition" [loading]="true">
+              <div class="loading-text">Loading body composition data...</div>
+            </app-card>
+          }
+
+          <!-- Supplement Tracker -->
+          @defer (on viewport) {
+            <app-supplement-tracker></app-supplement-tracker>
+          } @placeholder {
+            <app-card title="Supplement Tracker" [loading]="true">
+              <div class="loading-text">Loading supplements...</div>
+            </app-card>
+          }
+
+          <!-- Weight & Wellness Alerts (if triggered) -->
+          @if (wellnessAlerts().length > 0) {
+            <app-card title="Weight & Wellness Alerts" headerIcon="pi-exclamation-triangle" headerIconColor="warning">
+              <div class="alerts-section">
+                @for (alert of wellnessAlerts(); track alert.id) {
+                  <div class="wellness-alert" [class]="'alert-' + alert.severity">
+                    <div class="alert-header">
+                      <i [class]="getAlertIcon(alert.severity)"></i>
+                      <span class="alert-title">{{ alert.title }}</span>
+                    </div>
+                    <p class="alert-message">{{ alert.message }}</p>
+                    @if (alert.recommendations && alert.recommendations.length > 0) {
+                      <div class="alert-recommendations">
+                        <span class="rec-label">Possible causes:</span>
+                        <ul>
+                          @for (rec of alert.recommendations; track rec) {
+                            <li>{{ rec }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                    <div class="alert-actions">
+                      <app-button 
+                        variant="text" 
+                        size="sm"
+                        (clicked)="dismissAlert(alert.id)"
+                      >Dismiss</app-button>
+                      @if (alert.actionLabel && alert.actionRoute) {
+                        <app-button 
+                          variant="outlined" 
+                          size="sm"
+                          [routerLink]="alert.actionRoute"
+                        >{{ alert.actionLabel }}</app-button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </app-card>
+          }
+
+          <!-- Hydration Tracker -->
+          @defer (on viewport) {
+            <app-hydration-tracker></app-hydration-tracker>
+          } @placeholder {
+            <app-card title="Hydration Tracker" [loading]="true">
+              <div class="loading-text">Loading hydration data...</div>
+            </app-card>
+          }
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
           <app-card 
@@ -140,8 +227,9 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label>Sleep Hours</label>
+                    <label for="sleepHours">Sleep Hours</label>
                     <p-inputNumber
+                      inputId="sleepHours"
                       [(ngModel)]="checkInData.sleepHours"
                       [min]="0"
                       [max]="24"
@@ -152,8 +240,9 @@ interface WellnessMetric {
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
-                    <label>Sleep Quality (1-10)</label>
+                    <label for="sleepQuality">Sleep Quality (1-10)</label>
                     <p-inputNumber
+                      inputId="sleepQuality"
                       [(ngModel)]="checkInData.sleepQuality"
                       [min]="1"
                       [max]="10"
@@ -171,8 +260,9 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label>Energy Level (1-10)</label>
+                    <label for="energyLevel">Energy Level (1-10)</label>
                     <p-inputNumber
+                      inputId="energyLevel"
                       [(ngModel)]="checkInData.energyLevel"
                       [min]="1"
                       [max]="10"
@@ -181,8 +271,9 @@ interface WellnessMetric {
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
-                    <label>Muscle Soreness (1-10)</label>
+                    <label for="soreness">Muscle Soreness (1-10)</label>
                     <p-inputNumber
+                      inputId="soreness"
                       [(ngModel)]="checkInData.soreness"
                       [min]="1"
                       [max]="10"
@@ -196,8 +287,9 @@ interface WellnessMetric {
                 </div>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label>Hydration (glasses of water)</label>
+                    <label for="hydrationGlasses">Hydration (glasses of water)</label>
                     <p-inputNumber
+                      inputId="hydrationGlasses"
                       [(ngModel)]="checkInData.hydration"
                       [min]="0"
                       [max]="20"
@@ -207,8 +299,9 @@ interface WellnessMetric {
                     <small class="help-text">Target: 8+ glasses daily</small>
                   </div>
                   <div class="checkin-item">
-                    <label>Resting Heart Rate (BPM)</label>
+                    <label for="restingHR">Resting Heart Rate (BPM)</label>
                     <p-inputNumber
+                      inputId="restingHR"
                       [(ngModel)]="checkInData.restingHR"
                       [min]="40"
                       [max]="120"
@@ -229,8 +322,9 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label>Mood (1-10)</label>
+                    <label for="mood">Mood (1-10)</label>
                     <p-inputNumber
+                      inputId="mood"
                       [(ngModel)]="checkInData.mood"
                       [min]="1"
                       [max]="10"
@@ -239,8 +333,9 @@ interface WellnessMetric {
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
-                    <label>Stress Level (1-10)</label>
+                    <label for="stress">Stress Level (1-10)</label>
                     <p-inputNumber
+                      inputId="stress"
                       [(ngModel)]="checkInData.stress"
                       [min]="1"
                       [max]="10"
@@ -254,8 +349,9 @@ interface WellnessMetric {
                 </div>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label>Training Motivation (1-10)</label>
+                    <label for="motivation">Training Motivation (1-10)</label>
                     <p-inputNumber
+                      inputId="motivation"
                       [(ngModel)]="checkInData.motivation"
                       [min]="1"
                       [max]="10"
@@ -264,8 +360,9 @@ interface WellnessMetric {
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
-                    <label>Readiness to Train (1-10)</label>
+                    <label for="readiness">Readiness to Train (1-10)</label>
                     <p-inputNumber
+                      inputId="readiness"
                       [(ngModel)]="checkInData.readiness"
                       [min]="1"
                       [max]="10"
@@ -316,6 +413,8 @@ export class WellnessComponent {
   readonly wellnessStats = signal<any[]>([]);
   readonly sleepChartData = signal<any>(null);
   readonly recoveryChartData = signal<any>(null);
+  readonly wellnessAlerts = signal<WellnessAlert[]>([]);
+
   checkInData = {
     sleepHours: 7,
     sleepQuality: 7,
@@ -452,6 +551,9 @@ export class WellnessComponent {
                 },
               ],
             });
+
+            // Generate wellness alerts based on the data
+            this.generateWellnessAlerts(response.data);
           } else {
             // Fallback to default data if no data available
             this.loadFallbackData();
@@ -614,5 +716,83 @@ export class WellnessComponent {
 
   trackByMetricLabel(index: number, metric: WellnessMetric): string {
     return metric.label;
+  }
+
+  /**
+   * Generate wellness alerts based on current data
+   */
+  private generateWellnessAlerts(data: any[]): void {
+    const alerts: WellnessAlert[] = [];
+    
+    if (data.length >= 2) {
+      const latest = data[0];
+      const previous = data[1];
+      
+      // Check for rapid weight loss
+      if (latest.weight && previous.weight) {
+        const weightDiff = previous.weight - latest.weight;
+        if (weightDiff > 2) {
+          alerts.push({
+            id: 'rapid-weight-loss',
+            severity: 'danger',
+            title: 'RAPID WEIGHT LOSS DETECTED',
+            message: `You've lost ${weightDiff.toFixed(1)}kg recently. This may indicate dehydration or undereating.`,
+            recommendations: ['Dehydration', 'Undereating', 'Illness'],
+            actionLabel: 'Talk to AI Coach',
+            actionRoute: '/ai-coach'
+          });
+        }
+      }
+      
+      // Check for elevated resting HR
+      if (latest.resting_hr && latest.resting_hr > 70) {
+        const baseline = 60; // typical athletic baseline
+        const diff = latest.resting_hr - baseline;
+        if (diff > 10) {
+          alerts.push({
+            id: 'elevated-hr',
+            severity: 'warn',
+            title: 'ELEVATED RESTING HEART RATE',
+            message: `Your resting HR (${latest.resting_hr} BPM) is ${diff} BPM above baseline. This may indicate fatigue, stress, or illness.`,
+            recommendations: ['Consider a lighter training day'],
+          });
+        }
+      }
+    }
+    
+    // Check for high soreness + magnesium gap
+    const latestData = data[0];
+    if (latestData?.soreness >= 7) {
+      alerts.push({
+        id: 'supplement-rec',
+        severity: 'info',
+        title: 'SUPPLEMENT RECOMMENDATION',
+        message: `Your muscle soreness has been elevated (${latestData.soreness}/10). Consider magnesium supplementation for muscle recovery.`,
+        actionLabel: 'Log Magnesium Now',
+        actionRoute: '/wellness'
+      });
+    }
+    
+    this.wellnessAlerts.set(alerts);
+  }
+
+  /**
+   * Get icon class for alert severity
+   */
+  getAlertIcon(severity: 'danger' | 'warn' | 'info'): string {
+    switch (severity) {
+      case 'danger': return 'pi pi-exclamation-circle';
+      case 'warn': return 'pi pi-exclamation-triangle';
+      case 'info': return 'pi pi-lightbulb';
+      default: return 'pi pi-info-circle';
+    }
+  }
+
+  /**
+   * Dismiss an alert
+   */
+  dismissAlert(alertId: string): void {
+    this.wellnessAlerts.update(alerts => alerts.filter(a => a.id !== alertId));
+    this.toastService.info('Alert dismissed');
   }
 }

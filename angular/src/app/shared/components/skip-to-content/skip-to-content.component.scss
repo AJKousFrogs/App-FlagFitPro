@@ -20,15 +20,15 @@
     border-radius: 0 0 9999px 9999px;
 
     /* Brand gradient background */
-    background: linear-gradient(180deg, #0ab85a 0%, #089949 100%);
+    background: linear-gradient(180deg, var(--ds-primary-green-light) 0%, var(--ds-primary-green) 100%);
     border: 2px solid var(--ds-primary-green);
     border-top: none;
     box-shadow:
-      0 4px 20px rgba(8, 153, 73, 0.35),
+      0 4px 20px rgba(var(--primitive-primary-700-rgb), 0.35),
       0 8px 32px rgba(0, 0, 0, 0.15);
 
     /* Typography */
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     font-family: var(
       --font-family-sans,
       "Poppins",
@@ -66,9 +66,9 @@
 
   /* Hover state (while focused) */
   .skip-link:hover {
-    background: linear-gradient(180deg, #089949 0%, #067a3a 100%);
+    background: linear-gradient(180deg, var(--ds-primary-green) 0%, var(--ds-primary-green-hover) 100%);
     box-shadow:
-      0 10px 40px rgba(8, 153, 73, 0.5),
+      0 10px 40px rgba(var(--primitive-primary-700-rgb), 0.5),
       0 16px 56px rgba(0, 0, 0, 0.25),
       0 0 0 3px rgba(241, 196, 15, 0.6);
   }
@@ -88,7 +88,7 @@
 
   /* Main text */
   .skip-link__text {
-    color: #ffffff;
+    color: var(--color-text-on-primary);
   }
 
   /* Keyboard hint badge */

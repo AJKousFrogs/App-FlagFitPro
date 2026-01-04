@@ -5,267 +5,122 @@
  * Features:
  * - Real-time search with debouncing
  * - Recent searches
- * - Categorized results
+ * - Categorized results with highlighting
  * - Keyboard navigation
+ * - Instant suggestions
  */
 
 import {
-  Component,
-  inject,
-  signal,
-  effect,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ViewChild,
-  HostListener,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    effect,
+    ElementRef,
+    HostListener,
+    inject,
+    OnDestroy,
+    signal,
+    ViewChild,
+    ViewEncapsulation
 } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { InputTextModule } from "primeng/inputtext";
-import { ButtonModule } from "primeng/button";
+import { Router, RouterModule } from "@angular/router";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
 import { TooltipModule } from "primeng/tooltip";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import {
-  SearchService,
-  SearchResult,
+    SearchResult,
+    SearchService,
 } from "../../../core/services/search.service";
+
+/** Debounce delay for search input in milliseconds */
+const SEARCH_DEBOUNCE_MS = 300;
+
+/** Debounce delay for suggestions (shorter for responsiveness) */
+const SUGGESTION_DEBOUNCE_MS = 150;
 
 @Component({
   selector: "app-search-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  encapsulation: ViewEncapsulation.None,
+imports: [
     RouterModule,
     FormsModule,
     InputTextModule,
-    ButtonModule,
     DialogModule,
     TooltipModule,
-    ProgressSpinnerModule,
+    IconButtonComponent,
   ],
-  template: `
-    <p-dialog
-      [(visible)]="visible"
-      [modal]="true"
-      [style]="{ width: '700px', maxWidth: '95vw', top: '10%' }"
-      [showHeader]="false"
-      [dismissableMask]="true"
-      [closable]="true"
-      position="top"
-      styleClass="command-palette-dialog"
-    >
-      <div class="search-panel">
-        <!-- Search Input -->
-        <div class="search-input-wrapper">
-          <i class="pi pi-search search-icon"></i>
-          <input
-            #searchInput
-            type="text"
-            pInputText
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="onSearchChange($event)"
-            (keydown.enter)="onEnter()"
-            (keydown.escape)="close()"
-            (keydown.arrowdown)="onArrowDown($event)"
-            (keydown.arrowup)="onArrowUp($event)"
-            placeholder="Search exercises, programs, players..."
-            class="search-input"
-            autocomplete="off"
-          />
-          <div class="input-actions">
-            @if (searchQuery) {
-              <p-button
-                icon="pi pi-times"
-                [text]="true"
-                [rounded]="true"
-                (onClick)="clearSearch()"
-                class="clear-btn"
-                pTooltip="Clear search (Esc)"
-                tooltipPosition="bottom"
-              ></p-button>
-            } @else {
-              <div class="esc-hint">ESC</div>
-            }
-          </div>
-        </div>
-
-        <div class="panel-content custom-scrollbar">
-          <!-- Loading State -->
-          @if (searchService.loading()) {
-            <div class="loading-state">
-              <p-progressSpinner
-                [style]="{ width: '32px', height: '32px' }"
-                strokeWidth="4"
-              ></p-progressSpinner>
-              <span>Searching across everything...</span>
-            </div>
-          }
-
-          <!-- Results -->
-          @if (!searchService.loading() && searchService.hasResults()) {
-            <div class="search-results">
-              <div class="section-label">Search Results</div>
-              @for (
-                result of searchService.results();
-                track result.id;
-                let i = $index
-              ) {
-                <div
-                  class="search-result-item"
-                  [class.selected]="selectedIndex() === i"
-                  (click)="selectResult(result); $event.stopPropagation()"
-                  (mouseenter)="selectedIndex.set(i)"
-                >
-                  <div class="result-icon-box" [class]="'type-' + result.type">
-                    <i [class]="result.icon"></i>
-                  </div>
-                  <div class="result-info">
-                    <div class="result-main">
-                      <span class="result-title">{{ result.title }}</span>
-                      <span class="result-badge">{{ getTypeLabel(result.type) }}</span>
-                    </div>
-                    @if (result.subtitle) {
-                      <div class="result-subtitle">{{ result.subtitle }}</div>
-                    }
-                  </div>
-                  <i class="pi pi-chevron-right enter-icon"></i>
-                </div>
-              }
-            </div>
-          }
-
-          <!-- No Results -->
-          @if (
-            !searchService.loading() && searchQuery && !searchService.hasResults()
-          ) {
-            <div class="no-results">
-              <div class="no-results-icon">
-                <i class="pi pi-search"></i>
-              </div>
-              <h3>No results found</h3>
-              <p>We couldn't find anything matching "<strong>{{ searchQuery }}</strong>"</p>
-              <div class="no-results-suggestions">
-                <span>Try searching for:</span>
-                <div class="suggestion-chips">
-                  <span class="suggestion-chip" (click)="searchFor('Sprint'); $event.stopPropagation()">Sprint</span>
-                  <span class="suggestion-chip" (click)="searchFor('Quarterback'); $event.stopPropagation()">Quarterback</span>
-                  <span class="suggestion-chip" (click)="searchFor('Drills'); $event.stopPropagation()">Drills</span>
-                </div>
-              </div>
-            </div>
-          }
-
-          <!-- Recent Searches (when no query) -->
-          @if (!searchQuery && searchService.recentSearches().length > 0) {
-            <div class="recent-searches">
-              <div class="section-header">
-                <div class="section-title">
-                  <i class="pi pi-history"></i>
-                  <span>Recent Searches</span>
-                </div>
-                <button class="clear-recent-link" (click)="clearRecentSearches(); $event.stopPropagation()">
-                  Clear history
-                </button>
-              </div>
-              <div class="recent-grid">
-                @for (recent of searchService.recentSearches(); track recent) {
-                  <div class="recent-tag" (click)="searchFor(recent); $event.stopPropagation()">
-                    <span>{{ recent }}</span>
-                    <i class="pi pi-arrow-up-left"></i>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-
-          <!-- Quick Links (when no query) -->
-          @if (!searchQuery) {
-            <div class="quick-links">
-              <div class="section-header">
-                <div class="section-title">
-                  <i class="pi pi-bolt"></i>
-                  <span>Quick Actions</span>
-                </div>
-              </div>
-              <div class="quick-links-grid">
-                <div class="quick-link-card" (click)="navigateTo('/training'); $event.stopPropagation()">
-                  <div class="quick-link-icon training">
-                    <i class="pi pi-calendar"></i>
-                  </div>
-                  <div class="quick-link-text">
-                    <span class="link-label">Training</span>
-                    <span class="link-desc">Today's plan</span>
-                  </div>
-                </div>
-                <div class="quick-link-card" (click)="navigateTo('/exercise-library'); $event.stopPropagation()">
-                  <div class="quick-link-icon exercises">
-                    <i class="pi pi-bolt"></i>
-                  </div>
-                  <div class="quick-link-text">
-                    <span class="link-label">Exercises</span>
-                    <span class="link-desc">Browse library</span>
-                  </div>
-                </div>
-                <div class="quick-link-card" (click)="navigateTo('/analytics'); $event.stopPropagation()">
-                  <div class="quick-link-icon analytics">
-                    <i class="pi pi-chart-line"></i>
-                  </div>
-                  <div class="quick-link-text">
-                    <span class="link-label">Analytics</span>
-                    <span class="link-desc">View trends</span>
-                  </div>
-                </div>
-                <div class="quick-link-card" (click)="navigateTo('/roster'); $event.stopPropagation()">
-                  <div class="quick-link-icon roster">
-                    <i class="pi pi-users"></i>
-                  </div>
-                  <div class="quick-link-text">
-                    <span class="link-label">Roster</span>
-                    <span class="link-desc">Team members</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-
-        <!-- Keyboard Hints -->
-        <div class="command-palette-footer">
-          <div class="keyboard-hint">
-            <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
-            <span>Navigate</span>
-          </div>
-          <div class="keyboard-hint">
-            <span class="key-combo"><kbd>↵</kbd></span>
-            <span>Select</span>
-          </div>
-          <div class="keyboard-hint">
-            <span class="key-combo"><kbd>Esc</kbd></span>
-            <span>Close</span>
-          </div>
-          <div class="keyboard-hint search-type-hint">
-            <span>Searching <strong>Global Content</strong></span>
-          </div>
-        </div>
-      </div>
-    </p-dialog>
-  `,
-  styleUrl: './search-panel.component.scss',
+  templateUrl: "./search-panel.component.html",
+  styleUrl: "./search-panel.component.scss",
 })
-export class SearchPanelComponent {
+export class SearchPanelComponent implements OnDestroy {
   @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
 
-  searchService = inject(SearchService);
-  private router = inject(Router);
+  readonly searchService = inject(SearchService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   visible = false;
   searchQuery = "";
-  selectedIndex = signal(0);
+  readonly selectedIndex = signal(0);
 
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Whether to show suggestions dropdown */
+  readonly showSuggestions = signal(false);
+
+  /** Subject for debounced search */
+  private readonly searchSubject = new Subject<string>();
+
+  /** Subject for debounced suggestions */
+  private readonly suggestionSubject = new Subject<string>();
+
+  /** Type labels for result badges */
+  private readonly typeLabels: Record<string, string> = {
+    exercise: "Exercise",
+    program: "Program",
+    player: "Player",
+    team: "Team",
+    video: "Video",
+    article: "Article",
+  };
 
   constructor() {
+    // Setup debounced search stream
+    this.searchSubject
+      .pipe(
+        debounceTime(SEARCH_DEBOUNCE_MS),
+        distinctUntilChanged(),
+        tap((query) => {
+          this.showSuggestions.set(false);
+          this.searchService.search(query);
+          this.selectedIndex.set(0);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    // Setup debounced suggestions stream
+    this.suggestionSubject
+      .pipe(
+        debounceTime(SUGGESTION_DEBOUNCE_MS),
+        distinctUntilChanged(),
+        tap((query) => {
+          if (query.length >= 2) {
+            this.searchService.getInstantSuggestions(query);
+            this.showSuggestions.set(true);
+          } else {
+            this.showSuggestions.set(false);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
     // Sync visibility with service
     effect(() => {
       const isOpen = this.searchService.isOpen();
@@ -276,6 +131,11 @@ export class SearchPanelComponent {
         }
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+    this.suggestionSubject.complete();
   }
 
   @HostListener("document:keydown.meta.k", ["$event"])
@@ -294,6 +154,7 @@ export class SearchPanelComponent {
   close(): void {
     this.visible = false;
     this.searchService.close();
+    this.showSuggestions.set(false);
   }
 
   private focusInput(): void {
@@ -303,28 +164,44 @@ export class SearchPanelComponent {
   }
 
   onSearchChange(query: string): void {
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-    }
+    // Emit to suggestion stream for fast feedback
+    this.suggestionSubject.next(query);
 
-    this.debounceTimer = setTimeout(() => {
-      this.searchService.search(query);
-      this.selectedIndex.set(0);
-    }, 300);
+    // Emit to search stream for actual search
+    this.searchSubject.next(query);
   }
 
   clearSearch(): void {
     this.searchQuery = "";
     this.searchService.clearResults();
+    this.showSuggestions.set(false);
     this.focusInput();
   }
 
   searchFor(query: string): void {
     this.searchQuery = query;
+    this.showSuggestions.set(false);
     this.searchService.search(query);
   }
 
+  selectSuggestion(suggestion: string): void {
+    this.searchQuery = suggestion;
+    this.showSuggestions.set(false);
+    this.searchService.search(suggestion);
+    this.focusInput();
+  }
+
   onEnter(): void {
+    // If suggestions are showing, select the first suggestion
+    if (
+      this.showSuggestions() &&
+      this.searchService.suggestions().length > 0
+    ) {
+      this.selectSuggestion(this.searchService.suggestions()[0]);
+      return;
+    }
+
+    // Otherwise select the current result
     const results = this.searchService.results();
     if (results.length > 0) {
       this.selectResult(results[this.selectedIndex()]);
@@ -362,14 +239,20 @@ export class SearchPanelComponent {
   }
 
   getTypeLabel(type: string): string {
-    const labels: Record<string, string> = {
-      exercise: "Exercise",
-      program: "Program",
-      player: "Player",
-      team: "Team",
-      video: "Video",
-      article: "Article",
-    };
-    return labels[type] || type;
+    return this.typeLabels[type] || type;
+  }
+
+  /**
+   * Highlight matching text in suggestion
+   */
+  highlightSuggestion(suggestion: string): string {
+    if (!this.searchQuery) return suggestion;
+
+    const escapedQuery = this.searchQuery.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&",
+    );
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
+    return suggestion.replace(regex, "<mark>$1</mark>");
   }
 }

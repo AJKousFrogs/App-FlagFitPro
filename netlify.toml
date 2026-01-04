@@ -525,6 +525,58 @@
   status = 200
   force = true
 
+# API Routes for Staff - Nutritionist
+[[redirects]]
+  from = "/api/staff-nutritionist/*"
+  to = "/.netlify/functions/staff-nutritionist"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff-nutritionist"
+  to = "/.netlify/functions/staff-nutritionist"
+  status = 200
+  force = true
+
+# API Routes for Staff - Physiotherapist
+[[redirects]]
+  from = "/api/staff-physiotherapist/*"
+  to = "/.netlify/functions/staff-physiotherapist"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff-physiotherapist"
+  to = "/.netlify/functions/staff-physiotherapist"
+  status = 200
+  force = true
+
+# API Routes for Staff - Psychology
+[[redirects]]
+  from = "/api/staff-psychology/*"
+  to = "/.netlify/functions/staff-psychology"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff-psychology"
+  to = "/.netlify/functions/staff-psychology"
+  status = 200
+  force = true
+
+# API Routes for Scouting
+[[redirects]]
+  from = "/api/scouting/*"
+  to = "/.netlify/functions/scouting"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/scouting"
+  to = "/.netlify/functions/scouting"
+  status = 200
+  force = true
+
 # API Routes for Tournaments
 [[redirects]]
   from = "/api/tournaments"

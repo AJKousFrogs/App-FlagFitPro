@@ -1,21 +1,25 @@
 /**
- * Global Error Handler Service
+ * Error Handler Utility Service
  *
- * Provides centralized error handling, logging, and recovery for the Angular app.
- * Prevents "white screen" crashes during Friday testing by catching unhandled errors.
+ * Provides error handling utilities for component-level error boundaries.
+ * Used by ErrorBoundaryComponent to display user-friendly error messages.
+ *
+ * Note: This is NOT Angular's global ErrorHandler (that's GlobalErrorHandler in error-tracking.service.ts).
+ * This service provides utility methods for error processing and display.
  *
  * Features:
- * - Catches unhandled errors and promise rejections
- * - Redacted logging (no PII in logs)
- * - User-friendly error messages
- * - Recovery suggestions
+ * - PII redaction from error messages (emails, UUIDs, tokens, etc.)
+ * - User-friendly error message generation
+ * - Error log buffer for debugging
+ * - Critical error detection
  *
  * @author FlagFit Pro Team
  * @version 1.0.0
  */
 
-import { ErrorHandler, Injectable, inject, NgZone } from "@angular/core";
+import { Injectable, inject, NgZone } from "@angular/core";
 import { Router } from "@angular/router";
+import { LoggerService } from "./logger.service";
 
 export interface RedactedError {
   timestamp: string;
@@ -30,9 +34,10 @@ export interface RedactedError {
 @Injectable({
   providedIn: "root",
 })
-export class GlobalErrorHandlerService implements ErrorHandler {
+export class GlobalErrorHandlerService {
   private zone = inject(NgZone);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   // Error log buffer (in-memory, no PII)
   private errorLog: RedactedError[] = [];
@@ -48,7 +53,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
   ];
 
   /**
-   * Angular's global error handler hook
+   * Process and log an error (called by ErrorBoundaryComponent)
    */
   handleError(error: unknown): void {
     // Run outside Angular zone to prevent change detection loops
@@ -56,18 +61,18 @@ export class GlobalErrorHandlerService implements ErrorHandler {
       const redactedError = this.createRedactedError(error);
       this.logError(redactedError);
 
-      // Log to console in development (redacted)
-      console.error(
-        "[GlobalErrorHandler] Caught error:",
+      // Log using LoggerService (redacted for PII safety)
+      this.logger.error(
+        "[ErrorHandler] Caught error:",
         redactedError.message,
+        "Type:", redactedError.errorType,
+        "Route:", redactedError.route
       );
-      console.error("[GlobalErrorHandler] Type:", redactedError.errorType);
-      console.error("[GlobalErrorHandler] Route:", redactedError.route);
 
       // Check if this is a critical error that should show recovery UI
       if (this.isCriticalError(error)) {
-        console.error(
-          "[GlobalErrorHandler] Critical error detected - recovery may be needed",
+        this.logger.error(
+          "[ErrorHandler] Critical error detected - recovery may be needed"
         );
       }
     });

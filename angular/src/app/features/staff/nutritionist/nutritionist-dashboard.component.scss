@@ -1,0 +1,568 @@
+
+.nutritionist-dashboard {
+  padding: var(--ds-spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-spacing-3xl);
+  gap: var(--ds-spacing-md);
+  color: var(--text-color-secondary);
+
+  i {
+    font-size: var(--font-heading-lg);
+  }
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ds-spacing-md);
+  margin-bottom: var(--ds-spacing-xl);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-md);
+  padding: var(--ds-spacing-lg);
+  background: var(--surface-card);
+  border-radius: var(--ds-radius-lg);
+  border: var(--border-1) solid var(--surface-border);
+
+  .stat-icon {
+    width: var(--space-12);
+    height: var(--space-12);
+    border-radius: var(--ds-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: var(--font-heading-sm);
+      color: var(--surface-0);
+    }
+
+    &.athletes {
+      background: var(--primary-color);
+    }
+    &.compliance {
+      background: var(--green-500);
+    }
+    &.alerts {
+      background: var(--orange-500);
+    }
+    &.hydration {
+      background: var(--cyan-500);
+    }
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+
+    .stat-value {
+      font-size: var(--font-heading-md);
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .stat-label {
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// Section styles
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ds-spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--ds-spacing-md);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-heading-sm);
+    font-weight: 600;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-spacing-sm);
+    background: var(--surface-ground);
+    padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+    border-radius: var(--ds-radius-md);
+
+    i {
+      color: var(--text-color-secondary);
+    }
+
+    input {
+      border: none;
+      background: transparent;
+      outline: none;
+      min-width: 200px;
+    }
+  }
+}
+
+// Athletes Table
+.athletes-section {
+  .athlete-cell {
+    display: flex;
+    flex-direction: column;
+
+    .athlete-name {
+      font-weight: 600;
+    }
+
+    .athlete-age {
+      font-size: var(--font-body-xs);
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .target-weight {
+    font-size: var(--font-body-xs);
+    color: var(--text-color-secondary);
+  }
+
+  .no-data {
+    color: var(--text-color-secondary);
+    font-style: italic;
+  }
+
+  .compliance-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-spacing-sm);
+
+    :host ::ng-deep .compliance-bar {
+      width: 60px;
+      height: var(--space-2);
+    }
+
+    span {
+      font-size: var(--font-body-sm);
+      font-weight: 500;
+    }
+  }
+
+  .alert-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-6);
+    height: var(--space-6);
+    border-radius: 50%;
+    background: var(--red-500);
+    color: var(--surface-0);
+    font-size: var(--font-body-xs);
+    font-weight: 600;
+  }
+
+  .ok-icon {
+    color: var(--green-500);
+  }
+
+  .empty-message {
+    text-align: center;
+    padding: var(--ds-spacing-xl);
+    color: var(--text-color-secondary);
+  }
+}
+
+// Body Composition
+.body-composition-section {
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--ds-spacing-lg);
+    margin-bottom: var(--ds-spacing-lg);
+
+    :host ::ng-deep p-chart {
+      height: 250px;
+    }
+  }
+
+  .alerts-section {
+    background: var(--orange-50);
+    border: var(--border-1) solid var(--orange-200);
+    border-radius: var(--ds-radius-md);
+    padding: var(--ds-spacing-md);
+
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+      margin: 0 0 var(--ds-spacing-sm);
+      color: var(--orange-700);
+
+      i {
+        font-size: var(--font-body-md);
+      }
+    }
+
+    .alert-list {
+      margin: 0;
+      padding-left: var(--ds-spacing-lg);
+
+      .alert-item {
+        color: var(--orange-800);
+        margin-bottom: var(--ds-spacing-xs);
+      }
+    }
+  }
+
+  .select-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ds-spacing-3xl);
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: var(--font-display-md);
+      margin-bottom: var(--ds-spacing-md);
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// Supplement Compliance
+.supplement-section {
+  .compliance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--ds-spacing-lg);
+  }
+
+  :host ::ng-deep .compliance-card {
+    .p-card-header {
+      padding: var(--ds-spacing-md);
+      border-bottom: var(--border-1) solid var(--surface-border);
+    }
+
+    .p-card-body {
+      padding: var(--ds-spacing-md);
+    }
+  }
+
+  .compliance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .athlete-name {
+      font-weight: 600;
+    }
+  }
+
+  .supplement-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-sm);
+  }
+
+  .supplement-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: var(--ds-spacing-sm);
+    padding: var(--ds-spacing-sm) 0;
+    border-bottom: var(--border-1) solid var(--surface-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .supplement-name {
+      font-weight: 500;
+    }
+
+    .supplement-stats {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-xs);
+
+      :host ::ng-deep .supplement-bar {
+        width: 60px;
+        height: var(--space-2);
+      }
+
+      span {
+        font-size: var(--font-body-xs);
+        min-width: 35px;
+        text-align: right;
+      }
+    }
+
+    .missed-days {
+      font-size: var(--font-body-xs);
+      color: var(--red-500);
+    }
+  }
+
+  .timing-issues {
+    margin-top: var(--ds-spacing-md);
+    padding-top: var(--ds-spacing-md);
+    border-top: var(--border-1) solid var(--surface-border);
+
+    strong {
+      display: block;
+      margin-bottom: var(--ds-spacing-xs);
+      color: var(--orange-600);
+      font-size: var(--font-body-sm);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: var(--ds-spacing-lg);
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// Tournament Section
+.tournament-section {
+  .tournament-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: var(--ds-spacing-lg);
+  }
+
+  :host ::ng-deep .tournament-card {
+    .p-card-header {
+      padding: var(--ds-spacing-md);
+      background: var(--surface-ground);
+    }
+  }
+
+  .tournament-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h4 {
+      margin: 0;
+      font-size: var(--font-body-md);
+    }
+  }
+
+  .tournament-details {
+    margin-bottom: var(--ds-spacing-md);
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+      padding: var(--ds-spacing-xs) 0;
+      color: var(--text-color-secondary);
+
+      i {
+        width: var(--space-5);
+        text-align: center;
+      }
+    }
+  }
+
+  .nutrition-needs {
+    background: var(--surface-ground);
+    border-radius: var(--ds-radius-md);
+    padding: var(--ds-spacing-md);
+
+    h5 {
+      margin: 0 0 var(--ds-spacing-sm);
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+    }
+
+    .needs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--ds-spacing-sm);
+
+      .need-item {
+        display: flex;
+        flex-direction: column;
+
+        .need-value {
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+
+        .need-label {
+          font-size: var(--font-body-xs);
+          color: var(--text-color-secondary);
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--ds-spacing-3xl);
+
+    i {
+      font-size: var(--font-display-md);
+      color: var(--text-color-secondary);
+      opacity: 0.5;
+      margin-bottom: var(--ds-spacing-md);
+    }
+
+    h4 {
+      margin: 0 0 var(--ds-spacing-sm);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// Dialogs
+.athlete-details {
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--ds-spacing-lg);
+
+    .athlete-info {
+      h3 {
+        margin: 0 0 var(--ds-spacing-xs);
+      }
+
+      p {
+        margin: 0;
+        color: var(--text-color-secondary);
+      }
+    }
+
+    .weight-info {
+      text-align: right;
+
+      .current-weight {
+        display: block;
+        font-size: var(--font-heading-md);
+        font-weight: 700;
+      }
+
+      .target {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ds-spacing-md);
+    margin-bottom: var(--ds-spacing-lg);
+
+    .metric-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--ds-spacing-md);
+      background: var(--surface-ground);
+      border-radius: var(--ds-radius-md);
+
+      .metric-label {
+        font-size: var(--font-body-xs);
+        color: var(--text-color-secondary);
+        margin-bottom: var(--ds-spacing-xs);
+      }
+
+      .metric-value {
+        font-size: var(--font-heading-sm);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .recommendations-section {
+    h4 {
+      margin: 0 0 var(--ds-spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+    }
+
+    .recommendations-list {
+      margin: 0;
+      padding-left: var(--ds-spacing-lg);
+
+      li {
+        margin-bottom: var(--ds-spacing-xs);
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
+
+// Forms
+.report-form,
+.tournament-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-md);
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-xs);
+
+    label {
+      font-weight: 500;
+      font-size: var(--font-body-sm);
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-spacing-md);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .nutritionist-dashboard {
+    padding: var(--ds-spacing-md);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .body-composition-section .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tournament-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .athlete-details .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

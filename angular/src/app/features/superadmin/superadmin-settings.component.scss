@@ -271,7 +271,7 @@
     bottom: 0;
     background-color: var(--color-border-primary);
     transition: 0.3s;
-    border-radius: 26px;
+    border-radius: var(--radius-full);
   }
 
   .toggle-slider:before {

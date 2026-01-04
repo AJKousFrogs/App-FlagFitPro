@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ToastModule } from "primeng/toast";
@@ -38,7 +38,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardModule,
-    ButtonModule,
     TagModule,
     ProgressBarModule,
     ToastModule,
@@ -48,6 +47,8 @@ import {
     StatsGridComponent,
     TrainingBuilderComponent,
     SwipeGestureDirective,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -109,12 +110,7 @@ import {
             <div class="alert-content">
               <span>{{ wellnessAlert()!.message }}</span>
             </div>
-            <p-button
-              label="Update"
-              size="small"
-              [outlined]="true"
-              (onClick)="goToWellnessCheckin()"
-            ></p-button>
+            <app-button variant="outlined" size="sm" (clicked)="goToWellnessCheckin()">Update</app-button>
             <button class="alert-dismiss" (click)="dismissWellnessAlert()">✕</button>
           </div>
         }
@@ -203,13 +199,7 @@ import {
               }
             </div>
             <div class="card-footer">
-              <p-button
-                label="Full Schedule"
-                icon="pi pi-th-large"
-                [text]="true"
-                size="small"
-                (onClick)="toggleScheduleView()"
-              ></p-button>
+              <app-button variant="text" size="sm" iconLeft="pi-th-large" (clicked)="toggleScheduleView()">Full Schedule</app-button>
             </div>
           </p-card>
 
@@ -244,13 +234,7 @@ import {
             </div>
             @if (workouts().length > 4) {
               <div class="card-footer">
-                <p-button
-                  label="View All {{ workouts().length }} Workouts"
-                  icon="pi pi-list"
-                  [text]="true"
-                  size="small"
-                  (onClick)="showAllWorkouts()"
-                ></p-button>
+                <app-button variant="text" size="sm" iconLeft="pi-list" (clicked)="showAllWorkouts()">View All {{ workouts().length }} Workouts</app-button>
               </div>
             }
           </p-card>
@@ -261,12 +245,7 @@ import {
           <div class="achievements-strip">
             <div class="strip-header">
               <h3>🏆 Recent Achievements</h3>
-              <p-button
-                label="View All"
-                [text]="true"
-                size="small"
-                (onClick)="goToAchievements()"
-              ></p-button>
+              <app-button variant="text" size="sm" (clicked)="goToAchievements()">View All</app-button>
             </div>
             <div class="achievements-scroll">
               @for (achievement of recentAchievements(); track achievement.id) {

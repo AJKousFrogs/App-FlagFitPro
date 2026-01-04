@@ -1,7 +1,5 @@
 import {
   Component,
-  OnInit,
-  OnDestroy,
   inject,
   computed,
   signal,
@@ -9,7 +7,8 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
 import { PerformanceMonitorService } from "../../../core/services/performance-monitor.service";
@@ -21,20 +20,16 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   selector: "app-performance-monitor",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, ProgressBarModule, MessageModule],
+  imports: [CommonModule, ProgressBarModule, MessageModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     @if (showMonitor()) {
       <div class="performance-monitor">
         <div class="monitor-header">
           <h4>Performance Monitor</h4>
-          <p-button
-            icon="pi pi-times"
-            [text]="true"
-            size="small"
-            (onClick)="hideMonitor()"
-            ariaLabel="Close performance monitor"
-          >
-          </p-button>
+          <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="hideMonitor()" ariaLabel="Close performance monitor" />
         </div>
 
         <div class="performance-metrics">
@@ -75,22 +70,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
             >
             </p-message>
             <div class="action-buttons">
-              <p-button
-                label="Optimize Now"
-                icon="pi pi-cog"
-                size="small"
-                (onClick)="optimizePerformance()"
-              >
-              </p-button>
-              <p-button
-                label="Report Issue"
-                icon="pi pi-flag"
-                severity="secondary"
-                [outlined]="true"
-                size="small"
-                (onClick)="reportIssue()"
-              >
-              </p-button>
+              <app-button size="sm" iconLeft="pi-cog" (clicked)="optimizePerformance()">Optimize Now</app-button>
+              <app-button variant="outlined" size="sm" iconLeft="pi-flag" (clicked)="reportIssue()">Report Issue</app-button>
             </div>
           </div>
         }
@@ -99,7 +80,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   `,
   styleUrl: './performance-monitor.component.scss',
 })
-export class PerformanceMonitorComponent implements OnInit, OnDestroy {
+export class PerformanceMonitorComponent {
   private performanceMonitorService = inject(PerformanceMonitorService);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
@@ -108,8 +89,8 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   performanceMetrics = computed(() => this.performanceMonitorService.metrics());
   hasIssues = computed(() => this.performanceMonitorService.hasIssues());
 
-  ngOnInit(): void {
-    // Show monitor if there are issues
+  constructor() {
+    // Initialize on construction (Angular 21 pattern)
     this.checkAndShowMonitor();
 
     // Subscribe to metrics changes using RxJS timer with automatic cleanup
@@ -120,11 +101,6 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.checkAndShowMonitor();
       });
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup is handled automatically by takeUntilDestroyed
-    // Service cleanup is handled by the service itself
   }
 
   private checkAndShowMonitor(): void {

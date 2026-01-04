@@ -18,9 +18,9 @@
   .page-header {
     background: linear-gradient(
       135deg,
-      #667eea 0%,
-      #764ba2 50%,
-      #f093fb 100%
+      var(--primitive-purple-500) 0%,
+      var(--primitive-purple-700) 50%,
+      var(--primitive-pink-400) 100%
     );
     padding: var(--space-8) var(--space-6);
     margin: calc(-1 * var(--space-6));
@@ -219,7 +219,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-1) var(--space-3);
-    background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);
+    background: linear-gradient(45deg, var(--primitive-purple-600), var(--primitive-error-500), var(--primitive-orange-400));
     color: white;
     border-radius: var(--radius-full);
     font-size: var(--font-body-xs);
@@ -489,12 +489,12 @@
 
   .approved-videos-scroll::-webkit-scrollbar-track {
     background: var(--color-border-primary);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
   }
 
   .approved-videos-scroll::-webkit-scrollbar-thumb {
     background: var(--color-brand-primary);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
   }
 
   .approved-video-card {
@@ -565,7 +565,7 @@
   }
 
   .mini-tag {
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     background: var(--color-brand-primary-subtle);
     color: var(--color-brand-primary);
     border-radius: var(--radius-sm);

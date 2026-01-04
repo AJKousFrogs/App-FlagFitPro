@@ -2,7 +2,7 @@ import { Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 
 /**
  * Empty State Component - Enhanced
@@ -20,7 +20,9 @@ import { ButtonModule } from "primeng/button";
 @Component({
   selector: "app-empty-state",
   standalone: true,
-  imports: [CommonModule, RouterModule, CardModule, ButtonModule],
+  imports: [CommonModule, RouterModule, CardModule,
+    ButtonComponent,
+  ],
   template: `
     <div class="empty-state" [class.compact]="compact()">
       @if (icon()) {
@@ -50,38 +52,18 @@ import { ButtonModule } from "primeng/button";
         <!-- Primary action -->
         @if (actionLabel()) {
           @if (actionLink()) {
-            <p-button
-              [label]="actionLabel()!"
-              [icon]="actionIcon() || undefined"
-              [severity]="actionSeverity()"
-              [routerLink]="actionLink()!"
-            ></p-button>
+            <app-button routerLink="actionLink()!"></app-button>
           } @else if (actionHandler()) {
-            <p-button
-              [label]="actionLabel()!"
-              [icon]="actionIcon() || undefined"
-              [severity]="actionSeverity()"
-              (onClick)="handleAction()"
-            ></p-button>
+            <app-button (clicked)="handleAction()"></app-button>
           }
         }
 
         <!-- Secondary action (optional) -->
         @if (secondaryActionLabel()) {
           @if (secondaryActionLink()) {
-            <p-button
-              [label]="secondaryActionLabel()!"
-              [icon]="secondaryActionIcon() || undefined"
-              [outlined]="true"
-              [routerLink]="secondaryActionLink()!"
-            ></p-button>
+            <app-button variant="outlined" routerLink="secondaryActionLink()!"></app-button>
           } @else {
-            <p-button
-              [label]="secondaryActionLabel()!"
-              [icon]="secondaryActionIcon() || undefined"
-              [outlined]="true"
-              (onClick)="handleSecondaryAction()"
-            ></p-button>
+            <app-button variant="outlined" (clicked)="handleSecondaryAction()"></app-button>
           }
         }
       </div>

@@ -21,7 +21,8 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 export interface PlayerFormData {
@@ -47,7 +48,9 @@ export interface PlayerFormData {
     InputTextModule,
     Select,
     InputNumberModule,
-    ButtonModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-dialog
@@ -199,19 +202,8 @@ export interface PlayerFormData {
       </form>
 
       <ng-template pTemplate="footer">
-        <p-button
-          label="Cancel"
-          icon="pi pi-times"
-          [text]="true"
-          (onClick)="visibleChange.emit(false)"
-        ></p-button>
-        <p-button
-          [label]="editingPlayer() ? 'Save Changes' : 'Add Player'"
-          icon="pi pi-check"
-          (onClick)="onSave()"
-          [disabled]="!playerForm.valid || isSaving()"
-          [loading]="isSaving()"
-        ></p-button>
+        <app-button variant="text" iconLeft="pi-times" (clicked)="visibleChange.emit(false)">Cancel</app-button>
+        <app-icon-button icon="pi-check" [loading]="isSaving()" [disabled]="!playerForm.valid || isSaving()" (clicked)="onSave()" ariaLabel="check" />
       </ng-template>
     </p-dialog>
   `,

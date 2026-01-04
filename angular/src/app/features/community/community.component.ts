@@ -14,13 +14,14 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -86,7 +87,6 @@ interface Post {
     RouterModule,
     ScrollingModule,
     CardModule,
-    ButtonModule,
     DialogModule,
     Textarea,
     AvatarModule,
@@ -96,6 +96,8 @@ interface Post {
     TooltipModule,
     MainLayoutComponent,
     AnnouncementsBannerComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -155,17 +157,8 @@ interface Post {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="cancelPoll()"
-          ></p-button>
-          <p-button
-            label="Add Poll"
-            icon="pi pi-check"
-            (onClick)="confirmPoll()"
-            [disabled]="!isPollValid"
-          ></p-button>
+          <app-button variant="text" (clicked)="cancelPoll()">Cancel</app-button>
+          <app-button iconLeft="pi-check" [disabled]="!isPollValid" (clicked)="confirmPoll()">Add Poll</app-button>
         </ng-template>
       </p-dialog>
 
@@ -192,17 +185,8 @@ interface Post {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <p-button
-            label="Cancel"
-            [text]="true"
-            (onClick)="cancelLocation()"
-          ></p-button>
-          <p-button
-            label="Add Location"
-            icon="pi pi-map-marker"
-            (onClick)="confirmLocation()"
-            [disabled]="!locationInput.trim()"
-          ></p-button>
+          <app-button variant="text" (clicked)="cancelLocation()">Cancel</app-button>
+          <app-button iconLeft="pi-map-marker" [disabled]="!locationInput.trim()" (clicked)="confirmLocation()">Add Location</app-button>
         </ng-template>
       </p-dialog>
 
@@ -219,20 +203,8 @@ interface Post {
             </div>
           </div>
           <div class="header-actions">
-            <p-button
-              label="Team Chat"
-              icon="pi pi-comments"
-              [outlined]="true"
-              [rounded]="true"
-              routerLink="/team-chat"
-              pTooltip="Join team discussions"
-            ></p-button>
-            <p-button
-              label="Create Post"
-              icon="pi pi-plus"
-              [rounded]="true"
-              (onClick)="scrollToCreatePost()"
-            ></p-button>
+            <app-button variant="outlined" iconLeft="pi-comments" routerLink="/team-chat">Team Chat</app-button>
+            <app-button iconLeft="pi-plus" (clicked)="scrollToCreatePost()">Create Post</app-button>
           </div>
         </div>
 
@@ -306,14 +278,7 @@ interface Post {
                     <span>Location</span>
                   </button>
                 </div>
-                <p-button
-                  label="Post"
-                  icon="pi pi-send"
-                  [rounded]="true"
-                  (onClick)="createPost()"
-                  [disabled]="!newPostContent.trim()"
-                  styleClass="post-btn"
-                ></p-button>
+                <app-button iconLeft="pi-send" [disabled]="!newPostContent.trim()" (clicked)="createPost()">Post</app-button>
               </div>
             </div>
 
@@ -612,13 +577,7 @@ interface Post {
                     No posts match the topic
                     <strong>#{{ selectedTopic() }}</strong>
                   </p>
-                  <p-button
-                    label="Clear Filter"
-                    icon="pi pi-times"
-                    [outlined]="true"
-                    [rounded]="true"
-                    (onClick)="clearTopicFilter()"
-                  ></p-button>
+                  <app-button variant="outlined" iconLeft="pi-times" (clicked)="clearTopicFilter()">Clear Filter</app-button>
                 </div>
               }
             </div>
@@ -830,18 +789,8 @@ export class CommunityComponent implements OnInit {
 
   // Avatar color generator based on initials
   getAvatarColor(initials: string): string {
-    const colors = [
-      "#089949",
-      "#3b82f6",
-      "#8b5cf6",
-      "#ec4899",
-      "#f59e0b",
-      "#10b981",
-      "#06b6d4",
-      "#6366f1",
-    ];
-    const index = initials.charCodeAt(0) % colors.length;
-    return colors[index];
+    const index = initials.charCodeAt(0) % COLORS.CHART.length;
+    return COLORS.CHART[index];
   }
 
   ngOnInit(): void {

@@ -23,24 +23,24 @@
     padding: var(--space-4);
     border-radius: var(--radius-md);
     background: var(--surface-primary);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
   }
 
   .stat-card.risk-high {
-    border-left: 4px solid var(--color-status-error);
+    border-left: var(--border-4) solid var(--color-status-error);
   }
 
   .stat-card.pending {
-    border-left: 4px solid var(--color-status-warning);
+    border-left: var(--border-4) solid var(--color-status-warning);
   }
 
   .stat-card.total {
-    border-left: 4px solid var(--color-status-info);
+    border-left: var(--border-4) solid var(--color-status-info);
   }
 
   .stat-icon {
-    width: 40px;
-    height: 40px;
+    width: var(--space-10);
+    height: var(--space-10);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -98,7 +98,7 @@
   .alert-count {
     background: var(--color-status-error);
     color: var(--color-text-on-primary);
-    padding: 2px 8px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-xl);
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-semibold);
@@ -116,18 +116,18 @@
     padding: var(--space-4);
     border-radius: var(--radius-md);
     background: var(--surface-secondary);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     transition: transform var(--transition-fast), opacity var(--transition-fast);
   }
 
   .alert-item.unviewed {
-    border-left: 3px solid var(--color-status-error);
+    border-left: var(--border-3) solid var(--color-status-error);
     background: var(--color-status-error-subtle);
   }
 
   .alert-icon {
-    width: 36px;
-    height: 36px;
+    width: var(--space-10);
+    height: var(--space-10);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,8 +210,8 @@
   }
 
   .player-avatar {
-    width: 28px;
-    height: 28px;
+    width: var(--space-8);
+    height: var(--space-8);
     border-radius: var(--radius-full);
     background: var(--color-brand-primary);
     color: var(--color-text-on-primary);

@@ -79,7 +79,7 @@ interface BodyCompositionData {
             size="md"
             icon="plus"
             routerLink="/dashboard"
-            [rounded]="true"
+            
             [queryParams]="{ action: 'log-metrics' }"
           >
             Log Measurement

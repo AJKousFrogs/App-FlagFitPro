@@ -74,8 +74,8 @@ JWT_SECRET=your-secret-key-change-in-production
 # Get your key at: https://console.groq.com/
 GROQ_API_KEY=gsk_your_groq_api_key_here
 
-# Optional: Weather API
-OPENWEATHERMAP_API_KEY=your-weather-api-key
+# Weather API - Open-Meteo (FREE, no key required)
+# https://open-meteo.com - works automatically, no configuration needed
 ```
 
 ### 3. Get Your Supabase Credentials

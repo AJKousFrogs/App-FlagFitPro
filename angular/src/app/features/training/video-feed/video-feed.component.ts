@@ -19,16 +19,13 @@
  * @angular 21
  */
 
-import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  afterNextRender,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    afterNextRender,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -36,7 +33,7 @@ import { Router } from "@angular/router";
 // PrimeNG Components
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -50,15 +47,15 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import {
-  InstagramCreator,
-  InstagramVideo,
-  InstagramVideoService,
+    InstagramCreator,
+    InstagramVideo,
+    InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-  FlagPosition,
-  TrainingFocus,
+    FlagPosition,
+    TrainingFocus,
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -77,10 +74,8 @@ interface FilterChip {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     BadgeModule,
     SkeletonModule,
     TooltipModule,
@@ -91,6 +86,8 @@ interface FilterChip {
     TagModule,
     RippleModule,
     MainLayoutComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -149,9 +146,10 @@ interface FilterChip {
               <button
                 pButton
                 icon="pi pi-times"
-                class="p-button-text p-button-rounded clear-btn"
+                class="p-button-text clear-btn"
                 (click)="clearSearch()"
                 pTooltip="Clear search"
+                aria-label="Clear search"
               ></button>
             }
           </div>
@@ -206,7 +204,7 @@ interface FilterChip {
               @for (filter of activeFilterLabels(); track filter) {
                 <p-tag
                   [value]="filter"
-                  [rounded]="true"
+                  
                   severity="success"
                 ></p-tag>
               }
@@ -280,10 +278,12 @@ interface FilterChip {
                   <div class="video-thumbnail">
                     <div class="thumbnail-placeholder">
                       <i class="pi pi-play-circle play-icon"></i>
-                      <div class="reel-badge" *ngIf="video.isReel">
+                      @if (video.isReel) {
+                      <div class="reel-badge">
                         <i class="pi pi-instagram"></i>
                         Reel
                       </div>
+                    }
                     </div>
 
                     <!-- Overlay Actions -->
@@ -464,35 +464,19 @@ interface FilterChip {
 
                 <!-- Action Buttons -->
                 <div class="dialog-actions">
-                  <button
-                    pButton
-                    [label]="isBookmarked(video.id) ? 'Saved' : 'Save'"
-                    [icon]="
-                      isBookmarked(video.id)
-                        ? 'pi pi-bookmark-fill'
-                        : 'pi pi-bookmark'
-                    "
-                    [class]="
-                      isBookmarked(video.id)
-                        ? 'p-button-success'
-                        : 'p-button-outlined'
-                    "
-                    (click)="toggleBookmark($event, video)"
-                  ></button>
-                  <button
-                    pButton
-                    label="Open in Instagram"
-                    icon="pi pi-external-link"
-                    class="p-button-outlined"
-                    (click)="openInInstagram(video)"
-                  ></button>
-                  <button
-                    pButton
-                    label="Copy Link"
-                    icon="pi pi-copy"
-                    class="p-button-outlined"
-                    (click)="shareVideo($event, video)"
-                  ></button>
+                  <app-button
+                    [iconLeft]="isBookmarked(video.id) ? 'pi-bookmark-fill' : 'pi-bookmark'"
+                    [variant]="isBookmarked(video.id) ? 'success' : 'outlined'"
+                    (clicked)="toggleBookmark($event, video)"
+                  >{{ isBookmarked(video.id) ? 'Saved' : 'Save' }}</app-button>
+                  <app-button
+                    iconLeft="pi-external-link"
+                    (clicked)="openInInstagram(video)"
+                  >Open in Instagram</app-button>
+                  <app-button
+                    iconLeft="pi-copy"
+                    (clicked)="shareVideo($event, video)"
+                  >Copy Link</app-button>
                 </div>
               </div>
             </div>
@@ -503,7 +487,7 @@ interface FilterChip {
   `,
   styleUrl: "./video-feed.component.scss",
 })
-export class VideoFeedComponent implements OnInit, OnDestroy {
+export class VideoFeedComponent {
   private instagramService = inject(InstagramVideoService);
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
@@ -645,18 +629,11 @@ export class VideoFeedComponent implements OnInit, OnDestroy {
   constructor() {
     afterNextRender(() => {
       this.loadBookmarks();
+      // Simulate loading completion
+      setTimeout(() => {
+        this.isLoading.set(false);
+      }, 800);
     });
-  }
-
-  ngOnInit(): void {
-    // Simulate loading
-    setTimeout(() => {
-      this.isLoading.set(false);
-    }, 800);
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup if needed
   }
 
   // Filter methods

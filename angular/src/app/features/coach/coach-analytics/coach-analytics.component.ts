@@ -13,31 +13,24 @@
  * - Feedback statistics
  */
 
-import { CommonModule } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
+import { COLORS } from "../../../core/constants/app.constants";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "../../../core/services/api.service";
-import { LoggerService } from "../../../core/services/logger.service";
-import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 
 interface OverviewMetrics {
@@ -104,12 +97,9 @@ interface TeamOption {
   selector: "app-coach-analytics",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
+imports: [
+    DecimalPipe,
     FormsModule,
-    AvatarModule,
-    BadgeModule,
-    ButtonModule,
     CardModule,
     ChartModule,
     DividerModule,
@@ -118,8 +108,8 @@ interface TeamOption {
     SkeletonModule,
     TableModule,
     TagModule,
-    TooltipModule,
     MainLayoutComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -148,13 +138,7 @@ interface TeamOption {
               placeholder="Select Period"
               (onChange)="loadAnalytics()"
             ></p-select>
-            <p-button
-              icon="pi pi-refresh"
-              [rounded]="true"
-              [outlined]="true"
-              (onClick)="loadAnalytics()"
-              [loading]="loading()"
-            ></p-button>
+            <app-icon-button icon="pi-refresh" variant="outlined" [loading]="loading()" (clicked)="loadAnalytics()" ariaLabel="refresh" />
           </div>
         </div>
 
@@ -386,51 +370,53 @@ interface TeamOption {
 
             <!-- Feedback Stats -->
             <p-card header="Feedback Overview" styleClass="analytics-card">
-              <div class="feedback-stats" *ngIf="feedbackStats()">
-                <div class="feedback-section">
-                  <h5>Athlete Feedback</h5>
-                  <div class="flex justify-between mb-2">
-                    <span>Helpful</span>
-                    <span class="font-bold">{{
-                      feedbackStats().athleteFeedback?.helpful || 0
-                    }}</span>
+              @if (feedbackStats(); as stats) {
+                <div class="feedback-stats">
+                  <div class="feedback-section">
+                    <h5>Athlete Feedback</h5>
+                    <div class="flex justify-between mb-2">
+                      <span>Helpful</span>
+                      <span class="font-bold">{{
+                        stats.athleteFeedback?.helpful || 0
+                      }}</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                      <span>Not Helpful</span>
+                      <span class="font-bold">{{
+                        stats.athleteFeedback?.notHelpful || 0
+                      }}</span>
+                    </div>
+                    <p-progressBar
+                      [value]="stats.athleteFeedback?.helpfulRate || 0"
+                      styleClass="mb-4"
+                    ></p-progressBar>
                   </div>
-                  <div class="flex justify-between mb-2">
-                    <span>Not Helpful</span>
-                    <span class="font-bold">{{
-                      feedbackStats().athleteFeedback?.notHelpful || 0
-                    }}</span>
-                  </div>
-                  <p-progressBar
-                    [value]="feedbackStats().athleteFeedback?.helpfulRate || 0"
-                    styleClass="mb-4"
-                  ></p-progressBar>
-                </div>
 
-                <p-divider></p-divider>
+                  <p-divider></p-divider>
 
-                <div class="feedback-section mt-4">
-                  <h5>Coach Review Accuracy</h5>
-                  <div class="flex justify-between mb-2">
-                    <span>Appropriate</span>
-                    <span>{{
-                      feedbackStats().coachFeedback?.appropriate || 0
-                    }}</span>
+                  <div class="feedback-section mt-4">
+                    <h5>Coach Review Accuracy</h5>
+                    <div class="flex justify-between mb-2">
+                      <span>Appropriate</span>
+                      <span>{{
+                        stats.coachFeedback?.appropriate || 0
+                      }}</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                      <span>Inaccurate</span>
+                      <span>{{
+                        (stats.coachFeedback?.tooStrict || 0) +
+                          (stats.coachFeedback?.tooLenient || 0) +
+                          (stats.coachFeedback?.wrongIntent || 0)
+                      }}</span>
+                    </div>
+                    <p-progressBar
+                      [value]="stats.coachFeedback?.accuracyRate || 0"
+                      severity="info"
+                    ></p-progressBar>
                   </div>
-                  <div class="flex justify-between mb-2">
-                    <span>Inaccurate</span>
-                    <span>{{
-                      (feedbackStats().coachFeedback?.tooStrict || 0) +
-                        (feedbackStats().coachFeedback?.tooLenient || 0) +
-                        (feedbackStats().coachFeedback?.wrongIntent || 0)
-                    }}</span>
-                  </div>
-                  <p-progressBar
-                    [value]="feedbackStats().coachFeedback?.accuracyRate || 0"
-                    severity="info"
-                  ></p-progressBar>
                 </div>
-              </div>
+              }
             </p-card>
           </div>
         </div>
@@ -439,12 +425,7 @@ interface TeamOption {
   `,
   styleUrl: './coach-analytics.component.scss',
 })
-export class CoachAnalyticsComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
-
+export class CoachAnalyticsComponent {
   loading = signal(false);
   overview = signal<OverviewMetrics | null>(null);
   classification = signal<ClassificationBreakdown | null>(null);
@@ -469,7 +450,7 @@ export class CoachAnalyticsComponent implements OnInit {
   trendChartData: any;
   lineChartOptions: any;
 
-  ngOnInit(): void {
+  constructor() {
     this.initChartOptions();
     this.loadAnalytics();
   }
@@ -527,10 +508,10 @@ export class CoachAnalyticsComponent implements OnInit {
         {
           label: "Queries",
           data: [65, 82, 74, 95],
-          borderColor: "#0284c7",
+          borderColor: COLORS.CYAN,
           tension: 0.4,
           fill: true,
-          backgroundColor: "rgba(2, 132, 199, 0.1)",
+          backgroundColor: `${COLORS.CYAN}1a`,
         },
       ],
     };

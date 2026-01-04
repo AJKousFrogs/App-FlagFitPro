@@ -11,7 +11,6 @@ import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DatePicker } from "primeng/datepicker";
@@ -69,7 +68,6 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
     CardModule,
     TableModule,
     TagModule,
-    ButtonModule,
     ChartModule,
     DialogModule,
     TooltipModule,
@@ -108,7 +106,7 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
 
       <!-- Content -->
       @else {
-        <div class="dashboard-content">
+        <div class="dashboard-content section-stack">
           <!-- Lead with Coach Priority Command & Merlin Insight -->
           <section class="priority-command-center">
             <div class="merlin-coach-card">
@@ -149,13 +147,13 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
           </section>
 
           <!-- Header with Team Name & Quick Actions -->
-          <div class="dashboard-header compact-header">
-            <div class="header-info">
-              <h1 class="team-name">
+          <div class="dashboard-header compact-header toolbar-row">
+            <div class="header-info toolbar-row__start">
+              <h1 class="team-name toolbar-row__title">
                 <i class="team-icon pi pi-flag"></i>
                 {{ teamOverview().teamName }}
               </h1>
-              <p class="header-subtitle">
+              <p class="header-subtitle toolbar-row__subtitle">
                 {{ teamOverview().season }} •
                 {{ teamOverview().wins }}-{{ teamOverview().losses }}
                 <span class="streak-badge" [class.winning]="teamOverview().streak.startsWith('W')">
@@ -163,7 +161,7 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
                 </span>
               </p>
             </div>
-            <div class="header-actions">
+            <div class="header-actions toolbar-row__end">
               <app-button icon="plus" size="sm" (clicked)="openCreateSession()">Practice</app-button>
               <app-button icon="send" size="sm" variant="outlined" (clicked)="openTeamMessage()">Message</app-button>
             </div>
@@ -173,7 +171,7 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
           <div class="stats-compact-row">
             <div class="sc-item" pTooltip="Average Team Readiness">
               <span class="sc-label">Team Readiness</span>
-              <span class="sc-value" [class]="getWellnessClass()">{{ teamOverview().practiceAttendanceRate }}%</span>
+              <span class="sc-value">{{ teamOverview().practiceAttendanceRate }}%</span>
             </div>
             <div class="sc-divider"></div>
             <div class="sc-item" pTooltip="Players in Danger Zone">
@@ -227,7 +225,7 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
                     </button>
                   </div>
                   <div class="tab-actions">
-                    <app-button variant="text" size="sm" icon="external-link" (clicked)="navigateToAnalytics()"></app-button>
+                    <app-button variant="text" size="sm" icon="external-link" ariaLabel="Open analytics" (clicked)="navigateToAnalytics()"></app-button>
                   </div>
                 </div>
 
@@ -241,7 +239,7 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
                           (clicked)="setPlayerFilter('all')"
                         >All</app-button>
                         <app-button
-                          [variant]="playerFilter() === 'at_risk' ? 'warning' : 'text'"
+                          [variant]="playerFilter() === 'at_risk' ? 'danger' : 'text'"
                           size="sm"
                           (clicked)="setPlayerFilter('at_risk')"
                         >At Risk</app-button>
@@ -365,7 +363,6 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
               </div>
             </div>
           </div>
-        </div>
         </div>
 
         <!-- Create Session Dialog -->

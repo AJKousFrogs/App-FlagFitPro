@@ -12,7 +12,8 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -51,7 +52,6 @@ interface InjuryEntry {
     RouterModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     Select,
     StepsModule,
@@ -63,6 +63,9 @@ interface InjuryEntry {
     ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -198,19 +201,137 @@ interface InjuryEntry {
                 </div>
               </div>
             } @else if (currentStep() === 1) {
-              <!-- Step 2: Team & Position -->
+              <!-- Step 2: User Type & Role -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-users step-icon"></i>
                   <div>
-                    <h3>Team & Position</h3>
+                    <h3>Your Role</h3>
                     <p class="step-description">
-                      Tell us about your role on the field
+                      Tell us how you'll be using FlagFit Pro
                     </p>
                   </div>
                 </div>
 
                 <div class="form-grid">
+                  <!-- User Type Selection -->
+                  <div class="form-group span-2">
+                    <label id="userType-label"
+                      >I am a... <span class="required">*</span></label
+                    >
+                    <div
+                      class="user-type-toggle"
+                      role="radiogroup"
+                      aria-labelledby="userType-label"
+                    >
+                      @for (type of userTypeOptions; track type.value) {
+                        <button
+                          type="button"
+                          role="radio"
+                          class="user-type-option"
+                          [class.selected]="
+                            onboardingData.userType === type.value
+                          "
+                          [attr.aria-checked]="
+                            onboardingData.userType === type.value
+                          "
+                          [attr.data-cy]="'user-type-' + type.value"
+                          (click)="selectUserType(type.value)"
+                          (keydown.enter)="selectUserType(type.value)"
+                          (keydown.space)="
+                            selectUserType(type.value);
+                            $event.preventDefault()
+                          "
+                        >
+                          <span class="type-radio">
+                            @if (onboardingData.userType === type.value) {
+                              <i class="pi pi-check"></i>
+                            }
+                          </span>
+                          <i [class]="type.icon" class="type-icon"></i>
+                          <div class="type-content">
+                            <span class="type-label">{{ type.label }}</span>
+                            <span class="type-description">{{
+                              type.description
+                            }}</span>
+                          </div>
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Staff Role Selection (only shown if coaching staff) -->
+                  @if (onboardingData.userType === 'staff') {
+                    <div class="form-group span-2">
+                      <label for="onboarding-staffRole"
+                        >Staff Role <span class="required">*</span></label
+                      >
+                      <p-select
+                        inputId="onboarding-staffRole"
+                        [options]="staffRoleOptions"
+                        [(ngModel)]="onboardingData.staffRole"
+                        placeholder="Select your role"
+                        class="w-full"
+                      ></p-select>
+                    </div>
+
+                    <!-- Staff Visibility Options -->
+                    <div class="form-group span-2">
+                      <label id="staffVisibility-label"
+                        >App Sections to Access</label
+                      >
+                      <p class="field-hint">
+                        Select which parts of the app you need access to
+                      </p>
+                      <div
+                        class="checkbox-grid staff-visibility"
+                        role="group"
+                        aria-labelledby="staffVisibility-label"
+                      >
+                        @for (
+                          option of staffVisibilityOptions;
+                          track option.value
+                        ) {
+                          <button
+                            type="button"
+                            role="checkbox"
+                            class="checkbox-card"
+                            [class.selected]="
+                              onboardingData.staffVisibility.includes(
+                                option.value
+                              )
+                            "
+                            [attr.aria-checked]="
+                              onboardingData.staffVisibility.includes(
+                                option.value
+                              )
+                            "
+                            [attr.data-cy]="'visibility-' + option.value"
+                            (click)="toggleStaffVisibility(option.value)"
+                            (keydown.enter)="toggleStaffVisibility(option.value)"
+                            (keydown.space)="
+                              toggleStaffVisibility(option.value);
+                              $event.preventDefault()
+                            "
+                          >
+                            <span class="checkbox-indicator">
+                              @if (
+                                onboardingData.staffVisibility.includes(
+                                  option.value
+                                )
+                              ) {
+                                <i class="pi pi-check"></i>
+                              }
+                            </span>
+                            <i [class]="option.icon" class="checkbox-icon"></i>
+                            <span class="checkbox-label">{{ option.label }}</span>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Team Selection (for both players and staff) -->
                   <div class="form-group">
                     <label for="onboarding-team"
                       >Team <span class="required">*</span></label
@@ -225,104 +346,107 @@ interface InjuryEntry {
                     ></p-select>
                   </div>
 
-                  <div class="form-group jersey-input">
-                    <label for="onboarding-jerseyNumber">Jersey #</label>
-                    <input
-                      id="onboarding-jerseyNumber"
-                      name="jerseyNumber"
-                      type="number"
-                      pInputText
-                      [(ngModel)]="onboardingData.jerseyNumber"
-                      placeholder="#"
-                      min="0"
-                      max="99"
-                      class="w-full jersey-field"
-                      autocomplete="off"
-                    />
-                  </div>
+                  <!-- Player-specific fields -->
+                  @if (onboardingData.userType === 'player') {
+                    <div class="form-group jersey-input">
+                      <label for="onboarding-jerseyNumber">Jersey #</label>
+                      <input
+                        id="onboarding-jerseyNumber"
+                        name="jerseyNumber"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.jerseyNumber"
+                        placeholder="#"
+                        min="0"
+                        max="99"
+                        class="w-full jersey-field"
+                        autocomplete="off"
+                      />
+                    </div>
 
-                  <div class="form-group">
-                    <label for="onboarding-position"
-                      >Primary Position <span class="required">*</span></label
-                    >
-                    <p-select
-                      inputId="onboarding-position"
-                      [options]="positions"
-                      [(ngModel)]="onboardingData.position"
-                      placeholder="Select position"
-                      class="w-full"
-                    ></p-select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="onboarding-secondaryPosition"
-                      >Secondary Position</label
-                    >
-                    <p-select
-                      inputId="onboarding-secondaryPosition"
-                      [options]="positions"
-                      [(ngModel)]="onboardingData.secondaryPosition"
-                      placeholder="Optional"
-                      [showClear]="true"
-                      class="w-full"
-                    ></p-select>
-                  </div>
-
-                  @if (isQBSelected()) {
-                    <div class="form-group span-2">
-                      <label id="throwingArm-label"
-                        >Throwing Arm <span class="required">*</span></label
+                    <div class="form-group">
+                      <label for="onboarding-position"
+                        >Primary Position <span class="required">*</span></label
                       >
-                      <div
-                        class="arm-toggle"
-                        role="radiogroup"
-                        aria-labelledby="throwingArm-label"
+                      <p-select
+                        inputId="onboarding-position"
+                        [options]="positions"
+                        [(ngModel)]="onboardingData.position"
+                        placeholder="Select position"
+                        class="w-full"
+                      ></p-select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="onboarding-secondaryPosition"
+                        >Secondary Position</label
                       >
-                        @for (arm of throwingArmOptions; track arm.value) {
-                          <button
-                            type="button"
-                            role="radio"
-                            class="arm-option"
-                            [class.selected]="
-                              onboardingData.throwingArm === arm.value
-                            "
-                            [attr.aria-checked]="
-                              onboardingData.throwingArm === arm.value
-                            "
-                            [attr.data-cy]="'throwing-arm-' + arm.value"
-                            (click)="onboardingData.throwingArm = arm.value"
-                            (keydown.enter)="
-                              onboardingData.throwingArm = arm.value
-                            "
-                            (keydown.space)="
-                              onboardingData.throwingArm = arm.value;
-                              $event.preventDefault()
-                            "
-                          >
-                            <span class="arm-radio">
-                              @if (onboardingData.throwingArm === arm.value) {
-                                <i class="pi pi-check"></i>
-                              }
-                            </span>
-                            <span class="arm-label">{{ arm.label }}</span>
-                          </button>
-                        }
+                      <p-select
+                        inputId="onboarding-secondaryPosition"
+                        [options]="positions"
+                        [(ngModel)]="onboardingData.secondaryPosition"
+                        placeholder="Optional"
+                        [showClear]="true"
+                        class="w-full"
+                      ></p-select>
+                    </div>
+
+                    @if (isQBSelected()) {
+                      <div class="form-group span-2">
+                        <label id="throwingArm-label"
+                          >Throwing Arm <span class="required">*</span></label
+                        >
+                        <div
+                          class="arm-toggle"
+                          role="radiogroup"
+                          aria-labelledby="throwingArm-label"
+                        >
+                          @for (arm of throwingArmOptions; track arm.value) {
+                            <button
+                              type="button"
+                              role="radio"
+                              class="arm-option"
+                              [class.selected]="
+                                onboardingData.throwingArm === arm.value
+                              "
+                              [attr.aria-checked]="
+                                onboardingData.throwingArm === arm.value
+                              "
+                              [attr.data-cy]="'throwing-arm-' + arm.value"
+                              (click)="onboardingData.throwingArm = arm.value"
+                              (keydown.enter)="
+                                onboardingData.throwingArm = arm.value
+                              "
+                              (keydown.space)="
+                                onboardingData.throwingArm = arm.value;
+                                $event.preventDefault()
+                              "
+                            >
+                              <span class="arm-radio">
+                                @if (onboardingData.throwingArm === arm.value) {
+                                  <i class="pi pi-check"></i>
+                                }
+                              </span>
+                              <span class="arm-label">{{ arm.label }}</span>
+                            </button>
+                          }
+                        </div>
                       </div>
+                    }
+
+                    <div class="form-group span-2">
+                      <label for="onboarding-experience"
+                        >Experience Level <span class="required">*</span></label
+                      >
+                      <p-select
+                        inputId="onboarding-experience"
+                        [options]="experienceLevels"
+                        [(ngModel)]="onboardingData.experience"
+                        placeholder="Select your experience"
+                        class="w-full"
+                      ></p-select>
                     </div>
                   }
-
-                  <div class="form-group span-2">
-                    <label for="onboarding-experience"
-                      >Experience Level <span class="required">*</span></label
-                    >
-                    <p-select
-                      inputId="onboarding-experience"
-                      [options]="experienceLevels"
-                      [(ngModel)]="onboardingData.experience"
-                      placeholder="Select your experience"
-                      class="w-full"
-                    ></p-select>
-                  </div>
                 </div>
               </div>
             } @else if (currentStep() === 2) {
@@ -538,12 +662,7 @@ interface InjuryEntry {
                       placeholder="Severity"
                       class="injury-severity-select"
                     ></p-select>
-                    <p-button
-                      icon="pi pi-plus"
-                      [rounded]="true"
-                      [disabled]="!newInjury.area"
-                      (onClick)="addCurrentInjury()"
-                    ></p-button>
+                    <app-icon-button icon="pi-plus" [disabled]="!newInjury.area" (clicked)="addCurrentInjury()" ariaLabel="plus" />
                   </div>
 
                   @if (onboardingData.currentInjuries.length > 0) {
@@ -1195,27 +1314,12 @@ interface InjuryEntry {
 
             <div class="onboarding-actions">
               @if (currentStep() > 0) {
-                <p-button
-                  label="Back"
-                  [outlined]="true"
-                  (onClick)="previousStep()"
-                  icon="pi pi-arrow-left"
-                ></p-button>
+                <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
               }
               @if (currentStep() < steps().length - 1) {
-                <p-button
-                  label="Next"
-                  (onClick)="nextStep()"
-                  icon="pi pi-arrow-right"
-                  iconPos="right"
-                ></p-button>
+                <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()">Next</app-button>
               } @else {
-                <p-button
-                  label="Complete Setup"
-                  (onClick)="completeOnboarding()"
-                  [loading]="isCompleting()"
-                  icon="pi pi-check"
-                ></p-button>
+                <app-button iconLeft="pi-check" [loading]="isCompleting()" (clicked)="completeOnboarding()">Complete Setup</app-button>
               }
             </div>
           </div>
@@ -1617,6 +1721,53 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "Ambidextrous", value: "both" },
   ];
 
+  // User type options
+  userTypeOptions: { label: string; value: "player" | "staff"; icon: string; description: string }[] = [
+    {
+      label: "Player",
+      value: "player",
+      icon: "pi pi-user",
+      description: "I play on the team and want to track my training",
+    },
+    {
+      label: "Coaching Staff",
+      value: "staff",
+      icon: "pi pi-briefcase",
+      description: "I'm part of the coaching or support staff",
+    },
+  ];
+
+  // Staff role options
+  staffRoleOptions = [
+    { label: "Head Coach", value: "head_coach" },
+    { label: "Assistant Coach", value: "assistant_coach" },
+    { label: "Offensive Coordinator", value: "offensive_coordinator" },
+    { label: "Defensive Coordinator", value: "defensive_coordinator" },
+    { label: "Strength & Conditioning Coach", value: "strength_coach" },
+    { label: "Athletic Trainer", value: "athletic_trainer" },
+    { label: "Physiotherapist", value: "physiotherapist" },
+    { label: "Nutritionist / Dietitian", value: "nutritionist" },
+    { label: "Sports Psychologist", value: "sports_psychologist" },
+    { label: "Team Manager", value: "team_manager" },
+    { label: "Video Analyst", value: "video_analyst" },
+    { label: "Equipment Manager", value: "equipment_manager" },
+    { label: "Other Staff", value: "other_staff" },
+  ];
+
+  // Staff visibility options - what parts of the app they can access
+  staffVisibilityOptions = [
+    { label: "Team Roster", value: "roster", icon: "pi pi-users" },
+    { label: "Training Programs", value: "training", icon: "pi pi-calendar" },
+    { label: "Player Analytics", value: "analytics", icon: "pi pi-chart-line" },
+    { label: "Injury Management", value: "injuries", icon: "pi pi-heart" },
+    { label: "Nutrition Data", value: "nutrition", icon: "pi pi-apple" },
+    { label: "Game Statistics", value: "game_stats", icon: "pi pi-flag" },
+    { label: "Playbook", value: "playbook", icon: "pi pi-book" },
+    { label: "Film Room", value: "film", icon: "pi pi-video" },
+    { label: "Team Chat", value: "chat", icon: "pi pi-comments" },
+    { label: "Wellness Data", value: "wellness", icon: "pi pi-sun" },
+  ];
+
   // Injury areas
   injuryAreas = [
     { label: "Hamstring", value: "hamstring" },
@@ -1729,7 +1880,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     phone: "",
     profilePhotoUrl: null as string | null,
 
-    // Step 2: Team & Position
+    // Step 2: User Type & Role
+    userType: "player" as "player" | "staff",
+    staffRole: null as string | null,
+    staffVisibility: [] as string[],
+    
+    // Step 2: Team & Position (for players)
     jerseyNumber: null as number | null,
     team: null as string | null,
     position: null as string | null,
@@ -1936,6 +2092,28 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     }
   }
 
+  selectUserType(type: "player" | "staff"): void {
+    this.onboardingData.userType = type;
+    // Reset staff-specific fields when switching to player
+    if (type === "player") {
+      this.onboardingData.staffRole = null;
+      this.onboardingData.staffVisibility = [];
+    }
+    // Set default visibility for staff based on their role
+    if (type === "staff") {
+      this.onboardingData.staffVisibility = ["roster", "chat"];
+    }
+  }
+
+  toggleStaffVisibility(option: string): void {
+    const index = this.onboardingData.staffVisibility.indexOf(option);
+    if (index > -1) {
+      this.onboardingData.staffVisibility.splice(index, 1);
+    } else {
+      this.onboardingData.staffVisibility.push(option);
+    }
+  }
+
   toggleGoal(goalId: string): void {
     const index = this.onboardingData.goals.indexOf(goalId);
     if (index > -1) {
@@ -2053,10 +2231,18 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         return { valid: true };
 
-      case 1: // Team & Position
+      case 1: // User Type & Role
         if (!this.onboardingData.team) {
           return { valid: false, message: "Please select your team" };
         }
+        // Staff validation
+        if (this.onboardingData.userType === "staff") {
+          if (!this.onboardingData.staffRole) {
+            return { valid: false, message: "Please select your staff role" };
+          }
+          return { valid: true };
+        }
+        // Player validation
         if (!this.onboardingData.position) {
           return {
             valid: false,

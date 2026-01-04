@@ -20,7 +20,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { Slider } from 'primeng/slider';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Textarea } from 'primeng/textarea';
@@ -38,10 +38,11 @@ export interface SessionLogData {
   imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
     Slider,
     InputNumberModule,
     Textarea,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="session-log-form">
@@ -124,14 +125,7 @@ export interface SessionLogData {
 
       <!-- Submit Button -->
       <div class="form-actions">
-        <p-button
-          label="Log Session & Complete"
-          icon="pi pi-check"
-          (onClick)="onSubmit()"
-          [loading]="isSubmitting()"
-          [disabled]="!isValid()"
-          styleClass="submit-btn"
-        ></p-button>
+        <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="!isValid()" (clicked)="onSubmit()">Log Session & Complete</app-button>
       </div>
     </div>
   `,

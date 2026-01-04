@@ -10,7 +10,8 @@ import {
   OnInit,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { TooltipModule } from "primeng/tooltip";
 import { BadgeModule } from "primeng/badge";
 
@@ -35,36 +36,21 @@ export interface WorkoutEntry {
   selector: "app-workout-calendar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, TooltipModule, BadgeModule],
+  imports: [CommonModule, TooltipModule, BadgeModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="workout-calendar">
       <!-- Calendar Header -->
       <div class="calendar-header">
-        <p-button
-          icon="pi pi-chevron-left"
-          [text]="true"
-          [rounded]="true"
-          (onClick)="previousMonth()"
-          pTooltip="Previous month"
-        ></p-button>
+        <app-icon-button icon="pi-chevron-left" variant="text" (clicked)="previousMonth()" ariaLabel="chevron-left" />
 
         <h3 class="month-title">{{ monthYearLabel() }}</h3>
 
-        <p-button
-          icon="pi pi-chevron-right"
-          [text]="true"
-          [rounded]="true"
-          (onClick)="nextMonth()"
-          pTooltip="Next month"
-        ></p-button>
+        <app-icon-button icon="pi-chevron-right" variant="text" (clicked)="nextMonth()" ariaLabel="chevron-right" />
 
-        <p-button
-          label="Today"
-          [text]="true"
-          size="small"
-          (onClick)="goToToday()"
-          class="today-btn"
-        ></p-button>
+        <app-button variant="text" size="sm" (clicked)="goToToday()">Today</app-button>
       </div>
 
       <!-- View Toggle -->

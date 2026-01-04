@@ -52,8 +52,8 @@
   }
 
   .block-icon {
-    width: 48px;
-    height: 48px;
+    width: var(--icon-container-lg); // 48px
+    height: var(--icon-container-lg); // 48px
     border-radius: var(--radius-lg, 8px);
     display: flex;
     align-items: center;
@@ -101,8 +101,8 @@
   }
 
   .expand-toggle {
-    width: 36px;
-    height: 36px;
+    width: var(--icon-container-sm); // 36px
+    height: var(--icon-container-sm); // 36px
     border: none;
     background: var(--primitive-neutral-100, #f5f5f5);
     border-radius: var(--radius-full, 9999px);
@@ -111,7 +111,7 @@
     align-items: center;
     justify-content: center;
     color: var(--color-text-secondary, #737373);
-    transition: background-color 150ms ease;
+    transition: background-color var(--transition-fast);
   }
 
   .expand-toggle:hover {
@@ -125,7 +125,7 @@
 
   /* Progress Bar */
   .progress-bar-container {
-    height: 4px;
+    height: var(--progress-sm); // 4px
     background: var(--primitive-neutral-100, #f5f5f5);
   }
 
@@ -154,7 +154,7 @@
 
   .block-ai-note i {
     color: var(--primitive-info-500, #3b82f6);
-    margin-top: 2px;
+    margin-top: var(--space-1);
   }
 
   .block-ai-note span {
@@ -212,8 +212,8 @@
     }
 
     .block-icon {
-      width: 40px;
-      height: 40px;
+      width: var(--icon-container-md); // 40px
+      height: var(--icon-container-md); // 40px
       font-size: var(--font-body-lg);
     }
 

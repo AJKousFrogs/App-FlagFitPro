@@ -18,13 +18,13 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { PasswordModule } from "primeng/password";
 import { ToastModule } from "primeng/toast";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
@@ -42,7 +42,7 @@ import {
     ReactiveFormsModule,
     FormsModule,
     CardModule,
-    ButtonModule,
+    ButtonComponent,
     InputTextModule,
     CheckboxModule,
     MessageModule,
@@ -141,17 +141,14 @@ import {
             </a>
           </div>
 
-          <p-button
+          <app-button
             type="submit"
-            label="Sign in"
-            icon="pi pi-lock"
-            [rounded]="true"
+            iconLeft="pi-lock"
             [loading]="isLoading()"
             [disabled]="!isFormValid()"
-            data-testid="login-submit"
-            styleClass="w-full login-submit-btn"
-          >
-          </p-button>
+            [fullWidth]="true"
+            testId="login-submit"
+          >Sign in</app-button>
         </form>
 
         <div class="login-divider">

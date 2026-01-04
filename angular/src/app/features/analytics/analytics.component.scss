@@ -118,7 +118,7 @@
   .metric-trend {
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-medium);
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     border-radius: var(--radius-full);
     display: inline-block;
   }
@@ -164,7 +164,7 @@
   .title-group {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .chart-title {
@@ -328,6 +328,208 @@
     .chart-help-note {
       flex-direction: column;
       text-align: center;
+    }
+  }
+
+  // ===== Development Goals Section =====
+  .development-goals-card {
+    margin-bottom: var(--space-6);
+  }
+
+  .goals-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+
+  .goals-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: var(--ds-primary-green);
+      font-size: var(--font-body-lg);
+    }
+
+    h3 {
+      margin: 0;
+      font-size: var(--font-heading-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .coach-label {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .view-all-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-body-sm);
+    color: var(--ds-primary-green);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .goals-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-10);
+    text-align: center;
+
+    .empty-icon {
+      font-size: var(--font-display-sm);
+      color: var(--color-border-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    h4 {
+      margin: 0 0 var(--space-2) 0;
+      font-size: var(--font-body-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+      max-width: 320px;
+    }
+  }
+
+  .goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+
+  .goal-card {
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+
+    &.achieved {
+      border-color: var(--color-status-success);
+      background: var(--color-status-success-subtle);
+    }
+  }
+
+  .goal-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+
+    i {
+      color: var(--ds-primary-green);
+      font-size: var(--font-body-lg);
+    }
+
+    .goal-name {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .goal-targets {
+    margin-bottom: var(--space-3);
+  }
+
+  .target-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-body-sm);
+    margin-bottom: var(--space-1);
+
+    .target-label {
+      color: var(--color-text-secondary);
+    }
+
+    .target-value {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+
+    .current-value {
+      font-weight: var(--font-weight-bold);
+      color: var(--ds-primary-green);
+    }
+  }
+
+  .goal-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+
+    ::ng-deep .goal-progress-bar {
+      flex: 1;
+      height: 8px;
+    }
+
+    .progress-percent {
+      font-size: var(--font-body-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--ds-primary-green);
+      min-width: 36px;
+    }
+  }
+
+  .goal-meta {
+    margin-bottom: var(--space-2);
+
+    .days-remaining {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .coach-note {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: var(--surface-primary);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-body-xs);
+    font-style: italic;
+    color: var(--color-text-secondary);
+
+    i {
+      color: var(--ds-primary-green);
+      flex-shrink: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .goals-grid {
+      grid-template-columns: 1fr;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      -webkit-overflow-scrolling: touch;
+
+      .goal-card {
+        min-width: 280px;
+        flex-shrink: 0;
+      }
     }
   }
 }

@@ -11,32 +11,32 @@
  * - Visual feedback and animations
  */
 
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    EventEmitter,
+    inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { ProgressBarModule } from "primeng/progressbar";
-import { CheckboxModule } from "primeng/checkbox";
 import { SliderModule } from "primeng/slider";
 import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
 import { TextareaModule } from "primeng/textarea";
+import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../../core/services/api.service";
-import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../button/button.component";
 
 export interface MicroSessionStep {
   order: number;
@@ -75,7 +75,6 @@ type SessionStatus =
   imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
     CardModule,
     DialogModule,
     ProgressBarModule,
@@ -84,6 +83,8 @@ type SessionStatus =
     TagModule,
     TooltipModule,
     TextareaModule,
+  
+    ButtonComponent,
   ],
   template: `
     <!-- Session Card / Modal -->
@@ -107,7 +108,7 @@ type SessionStatus =
               <p-tag
                 [value]="getSessionTypeLabel(session().session_type)"
                 [severity]="getSessionTypeSeverity(session().session_type)"
-                [rounded]="true"
+                
               ></p-tag>
               <span class="duration-badge">
                 <i class="pi pi-clock"></i>
@@ -170,18 +171,8 @@ type SessionStatus =
 
             <!-- Start Button -->
             <div class="action-buttons">
-              <p-button
-                label="Start Session"
-                icon="pi pi-play"
-                (onClick)="startSession()"
-                styleClass="start-button"
-              ></p-button>
-              <p-button
-                label="Skip"
-                [text]="true"
-                severity="secondary"
-                (onClick)="skipSession()"
-              ></p-button>
+              <app-button iconLeft="pi-play" (clicked)="startSession()">Start Session</app-button>
+              <app-button variant="text" (clicked)="skipSession()">Skip</app-button>
             </div>
           </div>
         }
@@ -207,18 +198,8 @@ type SessionStatus =
               }
             </div>
             <div class="action-buttons">
-              <p-button
-                label="Continue"
-                icon="pi pi-arrow-right"
-                (onClick)="confirmEquipment()"
-                [disabled]="!allEquipmentChecked()"
-              ></p-button>
-              <p-button
-                label="Don't have equipment"
-                [text]="true"
-                severity="secondary"
-                (onClick)="skipEquipmentCheck()"
-              ></p-button>
+              <app-button iconLeft="pi-arrow-right" [disabled]="!allEquipmentChecked()" (clicked)="confirmEquipment()">Continue</app-button>
+              <app-button variant="text" (clicked)="skipEquipmentCheck()">Don't have equipment</app-button>
             </div>
           </div>
         }
@@ -273,34 +254,19 @@ type SessionStatus =
             <!-- Controls -->
             <div class="session-controls">
               @if (currentStatus() === "paused") {
-                <p-button
-                  icon="pi pi-play"
-                  label="Resume"
-                  (onClick)="resumeSession()"
-                ></p-button>
+                <app-button iconLeft="pi-play" (clicked)="resumeSession()">Resume</app-button>
               } @else {
-                <p-button
-                  icon="pi pi-pause"
-                  label="Pause"
-                  severity="secondary"
-                  (onClick)="pauseSession()"
-                ></p-button>
+                <app-button variant="secondary" iconLeft="pi-pause" (clicked)="pauseSession()">Pause</app-button>
               }
 
-              <p-button
-                icon="pi pi-forward"
-                label="Next Step"
-                severity="secondary"
+              <app-button
+                iconLeft="pi-forward"
+                variant="secondary"
                 [disabled]="currentStepIndex() >= session().steps.length - 1"
-                (onClick)="nextStep()"
-              ></p-button>
+                (clicked)="nextStep()"
+              >Next Step</app-button>
 
-              <p-button
-                icon="pi pi-check"
-                label="Complete"
-                severity="success"
-                (onClick)="completeSession()"
-              ></p-button>
+              <app-button variant="success" iconLeft="pi-check" (clicked)="completeSession()">Complete</app-button>
             </div>
 
             <!-- Elapsed Time -->
@@ -354,12 +320,7 @@ type SessionStatus =
                   [rows]="2"
                   class="follow-up-notes"
                 ></textarea>
-                <p-button
-                  label="Submit Feedback"
-                  icon="pi pi-send"
-                  (onClick)="submitFollowUp()"
-                  [loading]="submitting()"
-                ></p-button>
+                <app-button iconLeft="pi-send" [loading]="submitting()" (clicked)="submitFollowUp()">Submit Feedback</app-button>
               </div>
             } @else if (followUpSubmitted()) {
               <div class="follow-up-submitted">
@@ -368,7 +329,7 @@ type SessionStatus =
               </div>
             }
 
-            <p-button label="Done" [text]="true" (onClick)="close()"></p-button>
+            <app-button variant="text" (clicked)="close()">Done</app-button>
           </div>
         }
       </div>

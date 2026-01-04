@@ -1,560 +1,659 @@
-import { animate, style, transition, trigger } from "@angular/animations";
+/**
+ * Today's Practice Component
+ *
+ * The primary daily training hub for athletes. Displays:
+ * - Personalized greeting based on time of day
+ * - Key metrics (ACWR, Readiness)
+ * - Weekly progress overview
+ * - Phase-aware content (check-in → protocol → wrap-up)
+ * - Daily schedule timeline
+ *
+ * Design System: PrimeNG 21+ with Aura preset
+ * @see docs/PRIMENG_DESIGN_SYSTEM_RULES.md
+ *
+ * @author FlagFit Pro Team
+ * @version 2.0.0 - Angular 21 Signals Architecture
+ */
+
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     computed,
-    effect,
     inject,
-    signal
-} from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { RouterModule } from "@angular/router";
-import { MessageService } from "primeng/api";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+    signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, RouterModule } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardModule } from 'primeng/card';
+import { MessageModule } from 'primeng/message';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 
 // Layout & Components
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PostTrainingRecoveryComponent } from "../../shared/components/post-training-recovery/post-training-recovery.component";
-import { TodaysScheduleComponent } from "../../shared/components/todays-schedule/todays-schedule.component";
-import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
-import { WellnessCheckinComponent } from "../training/daily-protocol/components/wellness-checkin.component";
-import { WeekProgressStripComponent, WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
+import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PostTrainingRecoveryComponent } from '../../shared/components/post-training-recovery/post-training-recovery.component';
+import { TodaysScheduleComponent } from '../../shared/components/todays-schedule/todays-schedule.component';
+import { ProtocolBlockComponent } from '../training/daily-protocol/components/protocol-block.component';
+import {
+    WeekDay,
+    WeekProgressStripComponent,
+} from '../training/daily-protocol/components/week-progress-strip.component';
+import { WellnessCheckinComponent } from '../training/daily-protocol/components/wellness-checkin.component';
+import { DailyProtocol } from '../training/daily-protocol/daily-protocol.models';
 
 // Services
-import { DataSourceService } from "../../core/services/data-source.service";
-import { HeaderService } from "../../core/services/header.service";
-import { LoggerService } from "../../core/services/logger.service";
-import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { DataSourceService } from '../../core/services/data-source.service';
+import { HeaderService } from '../../core/services/header.service';
+import { LoggerService } from '../../core/services/logger.service';
+import { UnifiedTrainingService } from '../../core/services/unified-training.service';
 
-import {
-    AppLoadingComponent,
-    ButtonComponent,
-    CardComponent,
-} from "../../shared/components/ui-components";
+// Types
+type DayPhase = 'morning' | 'midday' | 'evening';
+type ActiveFocus = 'checkin' | 'protocol' | 'wrapup';
+type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contrast';
 
 @Component({
-  selector: "app-today",
+  selector: 'app-today',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger("slideDown", [
-      transition(":enter", [
-        style({ opacity: 0, transform: "translateY(-20px)" }),
-        animate("400ms ease-out", style({ opacity: 1, transform: "translateY(0)" })),
-      ]),
-    ]),
-  ],
   imports: [
     RouterModule,
-    ButtonModule,
     CardModule,
-    ToastModule,
+    MessageModule,
+    ProgressBarModule,
+    SkeletonModule,
     TagModule,
+    ToastModule,
     MainLayoutComponent,
     TodaysScheduleComponent,
     WellnessCheckinComponent,
     ProtocolBlockComponent,
     PostTrainingRecoveryComponent,
     WeekProgressStripComponent,
-    AppLoadingComponent,
+  
     ButtonComponent,
-    CardComponent
   ],
   providers: [MessageService],
-  template: `
-    <app-main-layout>
-      <p-toast></p-toast>
-      
-      <app-loading [visible]="isLoading()" variant="skeleton" message="Optimizing your day..."></app-loading>
-
-      <!-- Smart Onboarding Overlay for New Users -->
-      @if (isFirstTimeUser() && !hasCheckedInToday()) {
-        <div class="onboarding-overlay" @slideDown>
-          <div class="onboarding-card">
-            <div class="merlin-welcome">
-              <div class="avatar-ring">
-                <i class="pi pi-sparkles"></i>
-              </div>
-              <div class="welcome-text">
-                <h2>Welcome, {{ userName() || 'Athlete' }}!</h2>
-                <p>I'm Merlin, your AI coach. To build your optimized training plan for today, I need to know how you're feeling.</p>
-              </div>
-            </div>
-            <div class="onboarding-action">
-              <app-button icon="arrow-down" (clicked)="scrollToWellness()">Start Your First Check-in</app-button>
-            </div>
-          </div>
-        </div>
-      }
-
-      @if (!isLoading()) {
-      <div class="today-container">
-        <!-- Smart Greeting -->
-        <header class="today-header">
-          <div class="greeting-section">
-            <span class="greeting-label">{{ greetingPrefix() }}</span>
-            <h1 class="user-name">{{ userName() || 'Athlete' }}!</h1>
-            <p class="day-hint">{{ dayPhaseMessage() }}</p>
-          </div>
-          
-          <div class="status-summary-bar">
-            <div class="metric-summary" [routerLink]="['/acwr']">
-              <span class="label">ACWR</span>
-              <span class="value" [class]="acwrRiskZone()">{{ acwrValue().toFixed(2) }}</span>
-              <i class="pi pi-chevron-right"></i>
-            </div>
-            <div class="metric-summary" [routerLink]="['/wellness']">
-              <span class="label">Readiness</span>
-              <span class="value" [class]="readinessLevel()">{{ readinessScore() }}%</span>
-              <i class="pi pi-chevron-right"></i>
-            </div>
-          </div>
-        </header>
-
-        <!-- Week Progress (Collapsible) -->
-        <div class="week-summary-container">
-          <app-week-progress-strip
-            [weekDays]="weekDays()"
-            [stats]="weekStats()"
-          ></app-week-progress-strip>
-        </div>
-
-        <!-- Dynamic Content Based on Phase -->
-        <main class="today-content">
-          
-          <!-- PHASE 1: Morning / Needs Check-in -->
-          @if (activeFocus() === 'checkin') {
-            <section class="action-section highlight">
-              <div class="section-header">
-                <h2 class="section-title">Morning Check-in</h2>
-                <span class="priority-badge">Required</span>
-              </div>
-              <p class="section-desc">Start your day by logging your readiness. This optimizes your training protocol.</p>
-              <app-wellness-checkin
-                [date]="currentDate()"
-                (checkinComplete)="onWellnessComplete($event)"
-              ></app-wellness-checkin>
-            </section>
-          }
-
-          <!-- Merlin's Insight (Always present but contextual) -->
-          @if (aiInsight()) {
-          <div class="ai-companion-card">
-            <div class="ai-avatar">
-              <i class="pi pi-sparkles"></i>
-            </div>
-            <div class="ai-content">
-              <h3 class="ai-title">Merlin's Insight</h3>
-              <p class="ai-message">{{ aiInsight() }}</p>
-              <div class="ai-actions">
-                <button pButton 
-                        label="Discuss with Merlin" 
-                        icon="pi pi-comments"
-                        class="p-button-sm p-button-outlined"
-                        [routerLink]="['/chat']"
-                        [queryParams]="{ query: 'Tell me more about: ' + aiInsight() }"></button>
-              </div>
-            </div>
-          </div>
-          }
-
-          <!-- PHASE 2: Midday / Training Focus -->
-          @if (activeFocus() === 'protocol') {
-            <section class="action-section">
-              <div class="section-header">
-                <h2 class="section-title">Today's Protocol</h2>
-                @if (protocol()?.overallProgress === 100) {
-                  <p-tag severity="success" value="Done" icon="pi pi-check"></p-tag>
-                }
-              </div>
-              
-              @if (protocol()) {
-              <div class="protocol-progress">
-                <div class="progress-bar-container">
-                  <div class="progress-fill" [style.width.%]="protocol()?.overallProgress"></div>
-                </div>
-                <div class="progress-meta">
-                  <span class="progress-text">{{ protocol()?.completedExercises }}/{{ protocol()?.totalExercises }} Exercises</span>
-                  <span class="progress-percent">{{ protocol()?.overallProgress }}%</span>
-                </div>
-              </div>
-              }
-
-              @if (protocol()) {
-              <div class="protocol-blocks">
-                 <app-protocol-block
-                  [block]="protocol()!.morningMobility"
-                  (exerciseComplete)="loadProtocol()"
-                ></app-protocol-block>
-
-                @if (protocol()!.foamRoll?.totalCount > 0) {
-                  <app-protocol-block
-                    [block]="protocol()!.foamRoll"
-                    (exerciseComplete)="loadProtocol()"
-                  ></app-protocol-block>
-                }
-                
-                <app-protocol-block
-                  [block]="protocol()!.mainSession"
-                  (exerciseComplete)="loadProtocol()"
-                ></app-protocol-block>
-
-                @if (protocol()!.eveningRecovery?.totalCount > 0) {
-                  <app-protocol-block
-                    [block]="protocol()!.eveningRecovery"
-                    (exerciseComplete)="loadProtocol()"
-                  ></app-protocol-block>
-                }
-                
-                <div class="section-footer">
-                  <button pButton label="Advanced Training Workspace" icon="pi pi-external-link" class="p-button-text" routerLink="/training/advanced"></button>
-                </div>
-              </div>
-              }
-
-              @if (!protocol() && !isLoading()) {
-              <div class="empty-state-card">
-                <i class="pi pi-calendar-plus"></i>
-                <h3>No Training Plan Yet</h3>
-                <p>We're still calculating your optimized path for today.</p>
-                <button pButton label="Refresh Protocol" icon="pi pi-refresh" (click)="loadProtocol()"></button>
-              </div>
-              }
-            </section>
-          }
-
-          <!-- PHASE 3: Evening / Wrap-up Focus -->
-          @if (activeFocus() === 'wrapup') {
-            <section class="action-section highlight">
-              <div class="section-header">
-                <h2 class="section-title">Evening Wrap-up</h2>
-                <p-tag severity="info" value="Recovery Time"></p-tag>
-              </div>
-              <p class="section-desc">Great job today! How did your training feel? Log your effort to keep your ACWR accurate.</p>
-              
-              <div class="wrapup-card">
-                <div class="wrapup-item" (click)="openRecoveryDialog()">
-                  <div class="item-icon"><i class="pi pi-book"></i></div>
-                  <div class="item-text">
-                    <h4>Log Session Effort (RPE)</h4>
-                    <p>Tell Merlin how hard you worked.</p>
-                  </div>
-                  <i class="pi pi-chevron-right"></i>
-                </div>
-                <div class="wrapup-item" routerLink="/wellness">
-                  <div class="item-icon"><i class="pi pi-heart"></i></div>
-                  <div class="item-text">
-                    <h4>Review Recovery Stats</h4>
-                    <p>Check your trends and sleep debt.</p>
-                  </div>
-                  <i class="pi pi-chevron-right"></i>
-                </div>
-              </div>
-            </section>
-          }
-
-          <!-- Global Secondary: Today schedule -->
-          <section class="action-section secondary">
-            <h2 class="section-title">Today schedule</h2>
-            <app-todays-schedule></app-todays-schedule>
-          </section>
-        </main>
-      </div>
-      }
-
-      <!-- Recovery Dialog (Triggered manually or via wrap-up) -->
-      @if (showRecoveryDialog()) {
-        <app-post-training-recovery
-          [sessionName]="'Today\'s Training'"
-          (closed)="closeRecoveryDialog()"
-          (saved)="onRecoverySaved($event)"
-        ></app-post-training-recovery>
-      }
-    </app-main-layout>
-  `,
+  animations: [
+    trigger('fadeSlideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-12px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
+  templateUrl: './today.component.html',
   styles: [`
-    .today-container {
-      padding: var(--spacing-4);
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .today-header {
-      margin-bottom: var(--spacing-8);
-    }
-    .greeting-section {
-      margin-bottom: var(--spacing-6);
-    }
-    .greeting-label {
-      font-size: var(--font-size-sm);
-      color: var(--text-color-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    .user-name {
-      font-size: var(--font-size-3xl);
-      font-weight: 800;
-      margin: 0;
-      color: var(--text-primary);
-    }
-    .day-hint {
-      color: var(--text-color-secondary);
-      margin-top: var(--spacing-1);
-      font-size: var(--font-size-md);
-    }
-    .status-summary-bar {
+    /* ==========================================================================
+       TODAY'S PRACTICE - Design System Compliant Styles
+       Uses tokens from: assets/styles/design-system-tokens.scss
+       ========================================================================== */
+
+    /* --------------------------------------------------------------------------
+       LAYOUT CONTAINER
+       -------------------------------------------------------------------------- */
+    .today-page {
       display: flex;
-      gap: var(--spacing-4);
-      margin-top: var(--spacing-6);
+      flex-direction: column;
+      gap: var(--space-6);
+      padding: var(--space-5) var(--space-4);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
     }
-    .metric-summary {
-      flex: 1;
-      background: var(--surface-card);
-      padding: var(--spacing-4);
+
+    /* --------------------------------------------------------------------------
+       ONBOARDING BANNER (First-time users)
+       -------------------------------------------------------------------------- */
+    .onboarding-banner {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    :host ::ng-deep .onboarding-card {
+      background: var(--color-brand-primary) !important;
+      border: none;
       border-radius: var(--radius-lg);
+    }
+
+    :host ::ng-deep .onboarding-card .p-card-body {
+      padding: var(--space-5);
+    }
+
+    :host ::ng-deep .onboarding-card .p-card-content {
+      padding: 0;
+    }
+
+    .onboarding-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: var(--shadow-sm);
-      cursor: pointer;
-      border: 1px solid var(--surface-border);
-      transition: border-color var(--transition-fast), transform var(--transition-fast);
+      gap: var(--space-6);
+      color: var(--color-text-on-primary);
     }
-    .metric-summary:hover {
-      border-color: var(--ds-primary-green);
-      transform: translateY(-2px);
-    }
-    .metric-summary .label {
-      font-size: var(--font-size-xs);
-      color: var(--text-color-secondary);
-    }
-    .metric-summary .value {
-      font-weight: 700;
-      font-size: var(--font-size-lg);
-    }
-    .ai-companion-card {
-      background: var(--ds-primary-green-gradient, linear-gradient(135deg, #089949 0%, #036d35 100%));
-      color: white;
-      padding: var(--spacing-6);
-      border-radius: var(--radius-xl);
+
+    .onboarding-info {
       display: flex;
-      gap: var(--spacing-4);
-      margin-bottom: var(--spacing-8);
-      box-shadow: var(--shadow-md);
+      align-items: center;
+      gap: var(--space-4);
     }
-    .ai-avatar {
-      width: 48px;
-      height: 48px;
-      background: rgba(255,255,255,0.2);
+
+    .onboarding-avatar {
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      background: rgba(255, 255, 255, 0.2);
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
+      font-size: var(--font-heading-sm);
     }
-    .ai-title {
-      margin: 0 0 var(--spacing-2) 0;
-      font-size: var(--font-size-md);
-      font-weight: 700;
-    }
-    .ai-message {
-      margin: 0 0 var(--spacing-4) 0;
-      font-size: var(--font-size-sm);
-      line-height: 1.6;
-      opacity: 0.95;
-    }
-    .action-section {
-      margin-bottom: var(--spacing-6);
-      background: var(--surface-card);
-      padding: var(--spacing-4);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--surface-border);
-    }
-    .action-section.highlight {
-      border-left: 4px solid var(--ds-primary-green);
-      background: var(--surface-primary);
-    }
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--spacing-4);
-    }
-    .section-title {
+
+    .onboarding-text h2 {
       margin: 0;
-      font-size: var(--font-size-xl);
-      font-weight: 700;
+      font-size: var(--font-heading-sm);
+      font-weight: var(--font-weight-semibold);
     }
-    .section-desc {
-      color: var(--text-color-secondary);
-      margin-bottom: var(--spacing-6);
-      font-size: var(--font-size-sm);
+
+    .onboarding-text p {
+      margin: var(--space-1) 0 0;
+      font-size: var(--font-body-sm);
+      opacity: 0.9;
     }
-    .priority-badge {
-      background: var(--color-status-error-subtle);
-      color: var(--color-status-error);
-      padding: var(--spacing-1) var(--spacing-3);
-      border-radius: var(--radius-full);
-      font-size: var(--font-size-xs);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .protocol-progress {
-      margin-bottom: var(--spacing-6);
-      background: var(--surface-ground);
-      padding: var(--spacing-4);
+
+    /* --------------------------------------------------------------------------
+       WELCOME CARD
+       -------------------------------------------------------------------------- */
+    :host ::ng-deep .welcome-card {
       border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border-secondary);
     }
-    .progress-bar-container {
-      height: 10px;
-      background: var(--surface-200);
-      border-radius: var(--radius-full);
-      overflow: hidden;
-      margin-bottom: var(--spacing-3);
+
+    :host ::ng-deep .welcome-card .p-card-body {
+      padding: var(--space-4);
     }
-    .progress-fill {
-      height: 100%;
-      background: var(--ds-primary-green);
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    :host ::ng-deep .welcome-card .p-card-content {
+      padding: 0;
     }
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: var(--font-size-xs);
-      font-weight: 600;
-      color: var(--text-color-secondary);
-    }
-    .wrapup-card {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-3);
-    }
-    .wrapup-item {
+
+    .welcome-row {
       display: flex;
       align-items: center;
-      gap: var(--spacing-4);
-      padding: var(--spacing-4);
-      background: var(--surface-ground);
+      gap: var(--space-4);
+    }
+
+    .user-avatar {
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      background: var(--surface-tertiary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      font-size: var(--font-heading-sm);
+      border: 2px solid var(--color-border-secondary);
+    }
+
+    .welcome-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .welcome-label {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .welcome-name {
+      font-size: var(--font-heading-sm);
+      font-weight: var(--font-weight-semibold);
+      margin: 0;
+      color: var(--color-text-primary);
+    }
+
+    .welcome-hint {
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+      margin: var(--space-1) 0 0;
+    }
+
+    /* --------------------------------------------------------------------------
+       STATS GRID
+       -------------------------------------------------------------------------- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    :host ::ng-deep .stat-card {
       border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border-secondary);
       cursor: pointer;
-      transition: background-color var(--transition-fast), border-color var(--transition-fast);
-      border: 1px solid transparent;
+      transition: transform var(--hover-transition-fast), box-shadow var(--hover-transition-fast);
     }
-    .wrapup-item:hover {
-      background: var(--surface-hover);
-      border-color: var(--ds-primary-green);
+
+    :host ::ng-deep .stat-card:hover {
+      transform: var(--transform-hover-lift-subtle);
+      box-shadow: var(--hover-shadow-sm);
     }
-    .item-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+
+    :host ::ng-deep .stat-card .p-card-body {
+      padding: var(--space-3);
+    }
+
+    :host ::ng-deep .stat-card .p-card-content {
+      padding: 0;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .stat-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      min-width: 2.5rem;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
-    .item-text {
+
+    .stat-icon.acwr {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .stat-icon.readiness {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .stat-info {
       flex: 1;
+      min-width: 0;
     }
-    .item-text h4 {
-      margin: 0;
-      font-size: var(--font-size-sm);
-      font-weight: 700;
+
+    .stat-value {
+      font-size: var(--font-heading-sm);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.2;
+      color: var(--color-text-primary);
     }
-    .item-text p {
-      margin: 0;
-      font-size: var(--font-size-xs);
-      color: var(--text-color-secondary);
+
+    .stat-value.optimal,
+    .stat-value.high { color: var(--color-brand-primary); }
+    .stat-value.moderate { color: var(--color-status-warning); }
+    .stat-value.risk,
+    .stat-value.low { color: var(--color-status-error); }
+
+    .stat-label {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.25px;
     }
-    .empty-state-card {
-      text-align: center;
-      padding: var(--spacing-12) var(--spacing-4);
-      background: var(--surface-ground);
-      border: 2px dashed var(--surface-border);
+
+    /* --------------------------------------------------------------------------
+       WEEK PROGRESS CARD
+       -------------------------------------------------------------------------- */
+    :host ::ng-deep .week-card {
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border-secondary);
+    }
+
+    :host ::ng-deep .week-card .p-card-body {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    :host ::ng-deep .week-card .p-card-content {
+      padding: 0;
+    }
+
+    /* --------------------------------------------------------------------------
+       CONTENT CARDS (Check-in, Protocol, Wrap-up)
+       -------------------------------------------------------------------------- */
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    :host ::ng-deep .content-card {
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border-secondary);
+    }
+
+    :host ::ng-deep .content-card .p-card-body {
+      padding: var(--space-4);
+    }
+
+    :host ::ng-deep .content-card .p-card-content {
+      padding: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding-bottom: var(--space-3);
+      margin-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    .card-header-icon {
+      font-size: 1rem;
+      color: var(--color-brand-primary);
+    }
+
+    .card-header-title {
+      flex: 1;
+      font-size: var(--font-body-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .card-description {
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+      margin: 0 0 var(--space-4);
+      line-height: 1.5;
+    }
+
+    /* --------------------------------------------------------------------------
+       MERLIN INSIGHT CARD
+       -------------------------------------------------------------------------- */
+    :host ::ng-deep .insight-card {
+      background: var(--color-brand-primary) !important;
+      border: none;
       border-radius: var(--radius-lg);
     }
-    .section-footer {
-      margin-top: var(--spacing-6);
-      padding-top: var(--spacing-4);
-      border-top: 1px solid var(--surface-border);
-      display: flex;
-      justify-content: center;
+
+    :host ::ng-deep .insight-card .p-card-body {
+      padding: var(--space-4);
     }
-    
-    /* Onboarding Styles */
-    .onboarding-overlay {
-      background: var(--surface-primary);
-      padding: var(--spacing-6);
-      border-bottom: 1px solid var(--surface-border);
-      display: flex;
-      justify-content: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow-md);
+
+    :host ::ng-deep .insight-card .p-card-content {
+      padding: 0;
     }
-    .onboarding-card {
-      max-width: 600px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--spacing-6);
-      
-      @media (max-width: 640px) {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-4);
-      }
+
+    :host ::ng-deep .insight-card .p-button-outlined {
+      color: var(--color-text-on-primary);
+      border-color: rgba(255, 255, 255, 0.5);
     }
-    .merlin-welcome {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      
-      @media (max-width: 640px) {
-        flex-direction: column;
-      }
+
+    :host ::ng-deep .insight-card .p-button-outlined:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
     }
-    .avatar-ring {
-      width: 56px;
-      height: 56px;
-      background: var(--ds-primary-green-gradient);
+
+    .insight-content {
+      display: flex;
+      gap: var(--space-4);
+      color: var(--color-text-on-primary);
+    }
+
+    .insight-avatar {
+      width: 2.75rem;
+      height: 2.75rem;
+      min-width: 2.75rem;
+      background: rgba(255, 255, 255, 0.2);
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      animation: pulse 2s infinite;
+      font-size: var(--font-heading-xs);
     }
-    .welcome-text h2 {
+
+    .insight-text {
+      flex: 1;
+    }
+
+    .insight-title {
+      margin: 0 0 var(--space-2);
+      font-size: var(--font-body-md);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .insight-message {
+      margin: 0 0 var(--space-3);
+      font-size: var(--font-body-sm);
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    /* --------------------------------------------------------------------------
+       PROTOCOL SECTION
+       -------------------------------------------------------------------------- */
+    .protocol-progress-wrapper {
+      background: var(--surface-tertiary);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-4);
+    }
+
+    :host ::ng-deep .protocol-bar {
+      height: 6px;
+    }
+
+    :host ::ng-deep .protocol-bar .p-progressbar-value {
+      background: var(--color-brand-primary);
+    }
+
+    .protocol-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--space-2);
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .protocol-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .card-footer {
+      margin-top: var(--space-4);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-border-secondary);
+      text-align: center;
+    }
+
+    /* --------------------------------------------------------------------------
+       WRAP-UP ACTION CARDS
+       -------------------------------------------------------------------------- */
+    .action-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    :host ::ng-deep .action-card {
+      cursor: pointer;
+      border: 1px solid var(--color-border-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: none;
+      transition: border-color var(--hover-transition-fast), background var(--hover-transition-fast);
+    }
+
+    :host ::ng-deep .action-card:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--hover-bg-secondary);
+    }
+
+    :host ::ng-deep .action-card .p-card-body {
+      padding: var(--space-3);
+    }
+
+    :host ::ng-deep .action-card .p-card-content {
+      padding: 0;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .action-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      min-width: 2.5rem;
+      background: var(--ds-primary-green-ultra-subtle);
+      color: var(--color-brand-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .action-text {
+      flex: 1;
+    }
+
+    .action-text h4 {
       margin: 0;
-      font-size: var(--font-size-lg);
-      font-weight: 800;
+      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
     }
-    .welcome-text p {
-      margin: var(--spacing-1) 0 0 0;
-      font-size: var(--font-size-sm);
-      color: var(--text-color-secondary);
-      line-height: 1.4;
+
+    .action-text p {
+      margin: var(--space-1) 0 0;
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
     }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(8, 153, 73, 0.4); }
-      70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(8, 153, 73, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(8, 153, 73, 0); }
+
+    .action-chevron {
+      color: var(--color-text-muted);
+      opacity: 0.5;
     }
-  `]
+
+    /* --------------------------------------------------------------------------
+       EMPTY STATE
+       -------------------------------------------------------------------------- */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-8) var(--space-4);
+      background: var(--surface-tertiary);
+      border: 2px dashed var(--color-border-secondary);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      color: var(--color-text-muted);
+      opacity: 0.5;
+      margin-bottom: var(--space-3);
+    }
+
+    .empty-state h3 {
+      margin: 0 0 var(--space-2);
+      font-size: var(--font-body-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .empty-state p {
+      margin: 0 0 var(--space-4);
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* --------------------------------------------------------------------------
+       SKELETON LOADING
+       -------------------------------------------------------------------------- */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    /* --------------------------------------------------------------------------
+       RESPONSIVE ADJUSTMENTS
+       -------------------------------------------------------------------------- */
+    @media (max-width: 640px) {
+      .today-page {
+        padding: var(--space-3);
+        gap: var(--space-4);
+      }
+
+      .welcome-row {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .user-avatar {
+        margin: 0 auto;
+      }
+
+      .welcome-cta {
+        margin-top: var(--space-2);
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .onboarding-info {
+        flex-direction: column;
+      }
+
+      .insight-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .insight-avatar {
+        margin: 0 auto;
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       ACCESSIBILITY - Reduced Motion
+       -------------------------------------------------------------------------- */
+    @media (prefers-reduced-motion: reduce) {
+      :host ::ng-deep .stat-card,
+      :host ::ng-deep .action-card {
+        transition: none;
+      }
+    }
+  `],
 })
 export class TodayComponent {
+  // Dependency Injection (Angular 21 pattern)
+  private readonly router = inject(Router);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly headerService = inject(HeaderService);
   private readonly logger = inject(LoggerService);
@@ -562,61 +661,17 @@ export class TodayComponent {
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
 
-  // State Signals
-  readonly protocol = signal<any>(null);
-  readonly wellnessCompleted = signal(false);
-  readonly currentDate = signal(new Date().toISOString().split('T')[0]);
+  // ============================================================================
+  // STATE SIGNALS
+  // ============================================================================
+  readonly protocol = signal<Partial<DailyProtocol> | null>(null);
   readonly showRecoveryDialog = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly currentTime = signal(new Date());
 
-  // Week data logic
-  readonly weekDays = computed(() => {
-    const schedule = this.trainingService.weeklySchedule();
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    
-    const days: WeekDay[] = [];
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(monday);
-      date.setDate(monday.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
-      const isToday = dateStr === new Date().toISOString().split('T')[0];
-      
-      const daySchedule = schedule.find(s => s.date && new Date(s.date).toISOString().split('T')[0] === dateStr);
-      
-      let status: WeekDay['status'] = 'empty';
-      if (daySchedule) {
-        status = daySchedule.sessions.length > 0 ? 'planned' : 'rest';
-      }
-
-      days.push({
-        date: dateStr,
-        dayName: dayNames[i],
-        dayNumber: date.getDate(),
-        status,
-        isToday,
-      });
-    }
-    return days;
-  });
-  
-  readonly weekStats = computed(() => {
-    const stats = this.trainingService.trainingStats();
-    const streak = stats.find(s => s.label === 'Current Streak')?.value || '0';
-    const compliance = stats.find(s => s.label === 'This Week')?.value || '0';
-    
-    return {
-      completedDays: parseInt(compliance),
-      totalTrainingDays: 7,
-      weeklyLoadAu: 0,
-      targetLoadAu: 2000,
-      currentStreak: parseInt(streak),
-    };
-  });
-  
-  // Facade Signals from Unified Service
+  // ============================================================================
+  // DERIVED STATE FROM SERVICES
+  // ============================================================================
   readonly userName = this.trainingService.userName;
   readonly acwrValue = this.trainingService.acwrRatio;
   readonly acwrRiskZone = this.trainingService.acwrRiskZone;
@@ -625,12 +680,14 @@ export class TodayComponent {
   readonly aiInsight = this.trainingService.aiInsight;
   readonly isLoading = this.trainingService.isRefreshing;
   readonly hasCheckedInToday = this.trainingService.hasCheckedInToday;
-  
+  readonly currentDate = signal(new Date().toISOString().split('T')[0]);
+
+  // ============================================================================
+  // COMPUTED VALUES
+  // ============================================================================
   readonly isFirstTimeUser = computed(() => this.dataSourceService.isFirstTimeUser());
 
-  // Time-of-day logic
-  readonly currentTime = signal(new Date());
-  readonly dayPhase = computed(() => {
+  readonly dayPhase = computed<DayPhase>(() => {
     const hour = this.currentTime().getHours();
     if (hour < 11) return 'morning';
     if (hour < 17) return 'midday';
@@ -638,83 +695,192 @@ export class TodayComponent {
   });
 
   readonly greetingPrefix = computed(() => {
-    switch(this.dayPhase()) {
-      case 'morning': return 'Good Morning,';
-      case 'midday': return 'Time to Train,';
-      case 'evening': return 'Good Evening,';
-      default: return 'Hello,';
-    }
+    const greetings: Record<DayPhase, string> = {
+      morning: 'Good Morning,',
+      midday: 'Time to Train,',
+      evening: 'Good Evening,',
+    };
+    return greetings[this.dayPhase()];
   });
 
   readonly dayPhaseMessage = computed(() => {
-    if (!this.hasCheckedInToday()) return 'Let\'s start with your readiness check.';
+    if (!this.hasCheckedInToday()) return "Let's start with your readiness check.";
     if (this.dayPhase() === 'evening') return 'Time to review and recover.';
     return 'Follow your personalized protocol below.';
   });
 
-  // Smart focus logic
-  readonly activeFocus = computed(() => {
+  readonly activeFocus = computed<ActiveFocus>(() => {
     if (!this.hasCheckedInToday()) return 'checkin';
     if (this.dayPhase() === 'evening') return 'wrapup';
     return 'protocol';
   });
 
+  readonly weekDays = computed<WeekDay[]>(() => {
+    const schedule = this.trainingService.weeklySchedule();
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    return dayNames.map((dayName, i) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      const dateStr = date.toISOString().split('T')[0];
+      const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+      const daySchedule = schedule.find(
+        (s) => s.date && new Date(s.date).toISOString().split('T')[0] === dateStr
+      );
+
+      let status: WeekDay['status'] = 'empty';
+      if (daySchedule) {
+        status = daySchedule.sessions.length > 0 ? 'planned' : 'rest';
+      }
+
+      return {
+        date: dateStr,
+        dayName,
+        dayNumber: date.getDate(),
+        status,
+        isToday,
+      };
+    });
+  });
+
+  readonly weekStats = computed(() => {
+    const stats = this.trainingService.trainingStats();
+    const streak = stats.find((s) => s.label === 'Current Streak')?.value || '0';
+    const compliance = stats.find((s) => s.label === 'This Week')?.value || '0';
+
+    return {
+      completedDays: parseInt(compliance, 10),
+      totalTrainingDays: 7,
+      weeklyLoadAu: 0,
+      targetLoadAu: 2000,
+      currentStreak: parseInt(streak, 10),
+    };
+  });
+
+  // ============================================================================
+  // COMPUTED STATUS HELPERS
+  // ============================================================================
+  readonly acwrStatusLabel = computed(() => this.acwrRiskZone()?.label || 'Unknown');
+
+  readonly acwrSeverity = computed<TagSeverity>(() => {
+    const level = this.acwrRiskZone()?.level;
+    const severityMap: Record<string, TagSeverity> = {
+      'sweet-spot': 'success',
+      'under-training': 'warn',
+      'elevated-risk': 'warn',
+      'danger-zone': 'danger',
+      'no-data': 'secondary',
+    };
+    return severityMap[level ?? ''] ?? 'secondary';
+  });
+
+  readonly acwrClass = computed(() => {
+    const level = this.acwrRiskZone()?.level;
+    const classMap: Record<string, string> = {
+      'sweet-spot': 'optimal',
+      'under-training': 'moderate',
+      'elevated-risk': 'moderate',
+      'danger-zone': 'risk',
+    };
+    return classMap[level ?? ''] ?? '';
+  });
+
+  readonly readinessStatusLabel = computed(() => {
+    const labelMap: Record<string, string> = {
+      high: 'Great',
+      moderate: 'Good',
+      low: 'Low',
+    };
+    return labelMap[this.readinessLevel()] ?? 'Unknown';
+  });
+
+  readonly readinessSeverity = computed<TagSeverity>(() => {
+    const severityMap: Record<string, TagSeverity> = {
+      high: 'success',
+      moderate: 'warn',
+      low: 'danger',
+    };
+    return severityMap[this.readinessLevel()] ?? 'secondary';
+  });
+
+  // ============================================================================
+  // CONSTRUCTOR
+  // ============================================================================
   constructor() {
-    // Initialize on construction (Angular 21 pattern)
     this.headerService.setDashboardHeader();
     this.loadTodayData();
-    
-    // Update time every minute using effect for cleanup
-    const interval = setInterval(() => {
-      this.currentTime.set(new Date());
-    }, 60000);
-    
+
+    // Update time every minute
+    const interval = setInterval(() => this.currentTime.set(new Date()), 60000);
     this.destroyRef.onDestroy(() => clearInterval(interval));
   }
 
-  private loadTodayData() {
-    this.trainingService.getTodayOverview()
+  // ============================================================================
+  // DATA LOADING
+  // ============================================================================
+  private loadTodayData(): void {
+    this.trainingService
+      .getTodayOverview()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(data => {
-        if (data) {
-          this.protocol.set(data.protocol?.data);
-        }
+      .subscribe({
+        next: (data) => {
+          this.protocol.set((data?.protocol?.data as Partial<DailyProtocol>) ?? null);
+          this.error.set(null);
+        },
+        error: (err) => {
+          this.logger.error('Failed to load today data', err);
+          this.error.set('Failed to load your training data. Please try again.');
+        },
       });
   }
 
-  loadProtocol() {
+  refreshProtocol(): void {
     this.loadTodayData();
   }
 
-  onWellnessComplete(result: any) {
-    this.wellnessCompleted.set(true);
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'Wellness Logged', 
-      detail: `Readiness: ${result.readinessScore}. Let's optimize your session.` 
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  onWellnessComplete(result: { readinessScore: number }): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Wellness Logged',
+      detail: `Readiness: ${result.readinessScore}. Let's optimize your session.`,
     });
-    this.loadProtocol();
+    this.refreshProtocol();
   }
 
-  async generateProtocol() {
-    this.trainingService.getTodayOverview().subscribe();
-  }
-
-  openRecoveryDialog() {
+  openRecoveryDialog(): void {
     this.showRecoveryDialog.set(true);
   }
 
-  closeRecoveryDialog() {
+  closeRecoveryDialog(): void {
     this.showRecoveryDialog.set(false);
   }
 
-  onRecoverySaved(data: any) {
+  onRecoverySaved(): void {
     this.showRecoveryDialog.set(false);
-    this.loadTodayData(); // Refresh to update ACWR after logging
+    this.loadTodayData();
   }
 
-  scrollToWellness() {
-    const el = document.getElementById('wellness-section');
-    el?.scrollIntoView({ behavior: 'smooth' });
+  scrollToWellness(): void {
+    document.getElementById('wellness-section')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ============================================================================
+  // NAVIGATION
+  // ============================================================================
+  navigateToAcwr(): void {
+    this.router.navigate(['/acwr']);
+  }
+
+  navigateToWellness(): void {
+    this.router.navigate(['/wellness']);
   }
 }

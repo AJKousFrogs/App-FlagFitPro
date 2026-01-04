@@ -1,11 +1,13 @@
 import { Component, input } from "@angular/core";
 
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-page-header",
   standalone: true,
-  imports: [ButtonModule],
+  imports: [
+    ButtonComponent,
+  ],
   template: `
     <div class="page-header">
       <div class="header-content">

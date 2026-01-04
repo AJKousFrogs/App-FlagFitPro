@@ -1,7 +1,8 @@
-import { Component, signal, inject, output, input, effect } from "@angular/core";
+import { Component, signal, inject, output, input, effect, OnInit } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Slider } from "primeng/slider";
 import { Checkbox } from "primeng/checkbox";
 import { Textarea } from "primeng/textarea";
@@ -34,13 +35,15 @@ export interface ReadinessResult {
   selector: "app-wellness-checkin",
   imports: [
     FormsModule, 
-    ButtonModule, 
     Slider, 
     Checkbox, 
     Textarea, 
     DialogModule, 
     TagModule, 
     TooltipModule
+  ,
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <!-- Quick Checkin Button -->
@@ -73,7 +76,7 @@ export interface ReadinessResult {
             <span>{{ getSorenessLabel(wellnessData().muscleSoreness) }}</span>
           </div>
         </div>
-        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" />
+        <app-icon-button icon="pi-pencil" variant="text" size="sm" ariaLabel="pencil" />
       </div>
     }
 
@@ -198,8 +201,8 @@ export interface ReadinessResult {
       </div>
 
       <ng-template pTemplate="footer">
-        <p-button label="Cancel" [text]="true" (onClick)="showDialog = false" />
-        <p-button label="Save Check-in" icon="pi pi-check" (onClick)="saveCheckin()" [loading]="isSaving()" />
+        <app-button variant="text" (clicked)="showDialog = false">Cancel</app-button>
+        <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="saveCheckin()">Save Check-in</app-button>
       </ng-template>
     </p-dialog>
   `,

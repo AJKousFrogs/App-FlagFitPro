@@ -1,0 +1,733 @@
+/**
+ * Tournament Management Component (Coach View)
+ *
+ * Manage team tournament registrations, track RSVPs, handle payments,
+ * set lineups, and monitor tournament progress.
+ *
+ * Design System Compliant (DESIGN_SYSTEM_RULES.md)
+ */
+
+import { CommonModule } from "@angular/common";
+import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { MessageService } from "primeng/api";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressBarModule } from "primeng/progressbar";
+import { Select } from "primeng/select";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { Textarea } from "primeng/textarea";
+import { ToastModule } from "primeng/toast";
+import { firstValueFrom } from "rxjs";
+
+import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+
+// ===== Interfaces =====
+interface Tournament {
+  id: string;
+  name: string;
+  dates: string;
+  location: string;
+  division: string;
+  entryFee: string;
+  registrationStatus: "confirmed" | "pending" | "auto-qualified";
+  paymentStatus: "paid" | "partial" | "unpaid";
+  status: "upcoming" | "active" | "past" | "available";
+  rsvpSummary: RsvpSummary;
+  paymentSummary: PaymentSummary;
+  rsvpDeadline?: string;
+  games?: TournamentGame[];
+}
+
+interface RsvpSummary {
+  going: number;
+  cantGo: number;
+  pending: number;
+  minimum: number;
+}
+
+interface PaymentSummary {
+  collected: number;
+  total: number;
+  outstanding: string;
+}
+
+interface TournamentRsvp {
+  id: string;
+  playerName: string;
+  position: string;
+  status: "going" | "pending" | "cant-go";
+  paymentStatus: "paid" | "owes" | "na";
+  amountOwed?: number;
+  amountPaid?: number;
+  guests: number;
+  guestDetails?: string;
+  reason?: string;
+}
+
+interface LineupSlot {
+  position: string;
+  playerId: string | null;
+  note?: string;
+  isStarter: boolean;
+}
+
+interface TournamentGame {
+  id: string;
+  gameNum: number;
+  type: "pool" | "quarterfinal" | "semifinal" | "final";
+  time: string;
+  field: string;
+  opponent: string;
+  ourScore?: number;
+  theirScore?: number;
+  result?: "win" | "loss" | "pending";
+  day: number;
+}
+
+// ===== Constants =====
+const POSITIONS = [
+  { label: "QB", value: "QB" },
+  { label: "WR1", value: "WR1" },
+  { label: "WR2", value: "WR2" },
+  { label: "WR3", value: "WR3" },
+  { label: "WR4", value: "WR4" },
+  { label: "C", value: "C" },
+  { label: "C2", value: "C2" },
+  { label: "DB1", value: "DB1" },
+  { label: "DB2", value: "DB2" },
+  { label: "DB3", value: "DB3" },
+  { label: "DB4", value: "DB4" },
+  { label: "Rush1", value: "Rush1" },
+  { label: "Rush2", value: "Rush2" },
+];
+
+@Component({
+  selector: "app-tournament-management",
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    CardModule,
+    DialogModule,
+    InputTextModule,
+    ProgressBarModule,
+    Select,
+    TableModule,
+    TagModule,
+    Textarea,
+    ToastModule,
+    MainLayoutComponent,
+    PageHeaderComponent,
+  
+    ButtonComponent,
+  ],
+  providers: [MessageService],
+  template: `
+    <app-main-layout>
+      <p-toast></p-toast>
+
+      <div class="tournament-management-page">
+        <app-page-header
+          title="Tournament Management"
+          subtitle="Manage registrations and lineups"
+          icon="pi-trophy"
+        >
+          <app-button iconLeft="pi-plus" (clicked)="registerTeam()">Register Team</app-button>
+        </app-page-header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'upcoming'"
+            (click)="activeTab.set('upcoming')"
+          >
+            Upcoming
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'active'"
+            (click)="activeTab.set('active')"
+          >
+            Active
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'past'"
+            (click)="activeTab.set('past')"
+          >
+            Past
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'available'"
+            (click)="activeTab.set('available')"
+          >
+            Available
+          </button>
+        </div>
+
+        <!-- Tournaments List -->
+        @if (filteredTournaments().length > 0) {
+          <div class="tournaments-list">
+            @for (tournament of filteredTournaments(); track tournament.id) {
+              <div class="tournament-card">
+                <div class="tournament-header">
+                  <div class="tournament-title">
+                    <span class="tournament-icon">🏆</span>
+                    <h3>{{ tournament.name }}</h3>
+                  </div>
+                  <div class="tournament-actions">
+                    <app-button size="sm" (clicked)="manageTournament(tournament)">Manage</app-button>
+                    <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v">More options</app-button>
+                  </div>
+                </div>
+
+                <div class="tournament-details">
+                  <div class="detail-row">
+                    <span class="detail-item">📅 {{ tournament.dates }}</span>
+                    <span class="detail-item">📍 {{ tournament.location }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-item">Division: {{ tournament.division }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-item">
+                      Registration:
+                      <p-tag
+                        [value]="getRegistrationLabel(tournament.registrationStatus)"
+                        [severity]="getRegistrationSeverity(tournament.registrationStatus)"
+                      ></p-tag>
+                    </span>
+                    <span class="detail-item">Entry Fee: {{ tournament.entryFee }}</span>
+                  </div>
+                </div>
+
+                <div class="tournament-status-sections">
+                  <!-- RSVP Status -->
+                  <div class="status-section rsvp-section">
+                    <h4>👥 ROSTER STATUS</h4>
+                    <div class="rsvp-summary">
+                      <span class="rsvp-item going">✅ Going: {{ tournament.rsvpSummary.going }}</span>
+                      <span class="rsvp-item cant-go">❌ Can't Go: {{ tournament.rsvpSummary.cantGo }}</span>
+                      <span class="rsvp-item pending">❓ Pending: {{ tournament.rsvpSummary.pending }}</span>
+                    </div>
+                    <div class="minimum-check">
+                      Minimum Required: {{ tournament.rsvpSummary.minimum }}
+                      <span class="current-count" [class.met]="tournament.rsvpSummary.going >= tournament.rsvpSummary.minimum">
+                        Current: {{ tournament.rsvpSummary.going }}
+                        @if (tournament.rsvpSummary.going >= tournament.rsvpSummary.minimum) {
+                          ✓
+                        }
+                      </span>
+                    </div>
+                    @if (tournament.rsvpSummary.pending > 0) {
+                      <div class="pending-warning">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ tournament.rsvpSummary.pending }} player RSVP pending
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Payment Status -->
+                  @if (tournament.paymentSummary.total > 0) {
+                    <div class="status-section payment-section">
+                      <h4>💰 PAYMENT STATUS</h4>
+                      <div class="payment-info">
+                        <span>Collected: \${{ tournament.paymentSummary.collected }} / \${{ tournament.paymentSummary.total }} ({{ getPaymentPercent(tournament) }}%)</span>
+                        @if (tournament.paymentSummary.outstanding) {
+                          <span class="outstanding">Outstanding: {{ tournament.paymentSummary.outstanding }}</span>
+                        }
+                      </div>
+                      <p-progressBar [value]="getPaymentPercent(tournament)" [showValue]="false" [style]="{ height: '12px' }"></p-progressBar>
+                    </div>
+                  }
+                </div>
+
+                <div class="tournament-quick-actions">
+                  <app-button variant="secondary" size="sm" (clicked)="viewRsvps(tournament)">View RSVPs</app-button>
+                  <app-button variant="secondary" size="sm" (clicked)="setLineup(tournament)">Set Lineup</app-button>
+                  <app-button variant="text" size="sm" (clicked)="sendReminders(tournament)">Send Reminders</app-button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p-card styleClass="empty-state-card">
+            <div class="empty-state">
+              <i class="pi pi-trophy"></i>
+              <h3>No {{ activeTab() }} Tournaments</h3>
+              <p>{{ getEmptyMessage() }}</p>
+              @if (activeTab() === 'available' || activeTab() === 'upcoming') {
+                <app-button iconLeft="pi-search" (clicked)="browseTournaments()">Browse Available</app-button>
+              }
+            </div>
+          </p-card>
+        }
+      </div>
+
+      <!-- Tournament Detail Dialog -->
+      <p-dialog
+        [(visible)]="showDetailDialog"
+        [header]="selectedTournament()?.name || 'Tournament'"
+        [modal]="true"
+        [style]="{ width: '95vw', maxWidth: '900px' }"
+        styleClass="tournament-detail-dialog"
+      >
+        @if (selectedTournament()) {
+          <div class="detail-tabs">
+            <button
+              class="detail-tab"
+              [class.active]="detailTab() === 'overview'"
+              (click)="detailTab.set('overview')"
+            >Overview</button>
+            <button
+              class="detail-tab"
+              [class.active]="detailTab() === 'rsvps'"
+              (click)="detailTab.set('rsvps')"
+            >RSVPs</button>
+            <button
+              class="detail-tab"
+              [class.active]="detailTab() === 'lineup'"
+              (click)="detailTab.set('lineup')"
+            >Lineup</button>
+            <button
+              class="detail-tab"
+              [class.active]="detailTab() === 'schedule'"
+              (click)="detailTab.set('schedule')"
+            >Schedule</button>
+          </div>
+
+          @switch (detailTab()) {
+            @case ('overview') {
+              <div class="overview-content">
+                <div class="overview-info">
+                  <p><strong>Dates:</strong> {{ selectedTournament()?.dates }}</p>
+                  <p><strong>Location:</strong> {{ selectedTournament()?.location }}</p>
+                  <p><strong>Division:</strong> {{ selectedTournament()?.division }}</p>
+                  <p><strong>Entry Fee:</strong> {{ selectedTournament()?.entryFee }}</p>
+                </div>
+              </div>
+            }
+            @case ('rsvps') {
+              <div class="rsvps-content">
+                <div class="rsvps-header">
+                  <span>RSVP Deadline: {{ selectedTournament()?.rsvpDeadline }}</span>
+                  <app-button size="sm" (clicked)="sendPendingReminders()">Send Reminder to Pending</app-button>
+                </div>
+
+                <h4>Going ({{ goingRsvps().length }})</h4>
+                <div class="rsvp-list">
+                  @for (rsvp of goingRsvps(); track rsvp.id) {
+                    <div class="rsvp-row">
+                      <span class="rsvp-status">✅</span>
+                      <span class="rsvp-name">{{ rsvp.playerName }}</span>
+                      <span class="rsvp-position">{{ rsvp.position }}</span>
+                      <span class="rsvp-payment" [class.owes]="rsvp.paymentStatus === 'owes'">
+                        @if (rsvp.paymentStatus === 'paid') {
+                          Paid: \${{ rsvp.amountPaid }}
+                        } @else if (rsvp.paymentStatus === 'owes') {
+                          OWES: \${{ rsvp.amountOwed }} ⚠️
+                        }
+                      </span>
+                      <span class="rsvp-guests">Guests: {{ rsvp.guests }} {{ rsvp.guestDetails || '' }}</span>
+                    </div>
+                  }
+                </div>
+
+                @if (pendingRsvps().length > 0) {
+                  <h4>Pending ({{ pendingRsvps().length }})</h4>
+                  <div class="rsvp-list">
+                    @for (rsvp of pendingRsvps(); track rsvp.id) {
+                      <div class="rsvp-row pending">
+                        <span class="rsvp-status">❓</span>
+                        <span class="rsvp-name">{{ rsvp.playerName }}</span>
+                        <span class="rsvp-position">{{ rsvp.position }}</span>
+                        <span class="no-response">No response</span>
+                        <app-button size="sm" (clicked)="sendNudge(rsvp)">Send Nudge</app-button>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (cantGoRsvps().length > 0) {
+                  <h4>Can't Go ({{ cantGoRsvps().length }})</h4>
+                  <div class="rsvp-list">
+                    @for (rsvp of cantGoRsvps(); track rsvp.id) {
+                      <div class="rsvp-row cant-go">
+                        <span class="rsvp-status">❌</span>
+                        <span class="rsvp-name">{{ rsvp.playerName }}</span>
+                        <span class="rsvp-position">{{ rsvp.position }}</span>
+                        <span class="rsvp-reason">{{ rsvp.reason || 'No reason given' }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+            @case ('lineup') {
+              <div class="lineup-content">
+                <div class="lineup-header">
+                  <span>Tournament Lineup</span>
+                  <app-button size="sm" iconLeft="pi-save" (clicked)="saveLineup()">Save Lineup</app-button>
+                </div>
+
+                <h4>Starting 5</h4>
+                <div class="lineup-grid">
+                  @for (slot of starterSlots(); track slot.position) {
+                    <div class="lineup-slot">
+                      <span class="slot-position">{{ slot.position }}</span>
+                      <p-select
+                        [options]="availablePlayers()"
+                        [(ngModel)]="slot.playerId"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select Player"
+                        styleClass="w-full"
+                      ></p-select>
+                      @if (slot.note) {
+                        <span class="slot-note">{{ slot.note }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <h4>Rotations</h4>
+                <div class="lineup-grid">
+                  @for (slot of rotationSlots(); track slot.position) {
+                    <div class="lineup-slot">
+                      <span class="slot-position">{{ slot.position }}</span>
+                      <p-select
+                        [options]="availablePlayers()"
+                        [(ngModel)]="slot.playerId"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select Player"
+                        styleClass="w-full"
+                      ></p-select>
+                      @if (slot.note) {
+                        <span class="slot-note" [class.warning]="slot.note.includes('Limited')">{{ slot.note }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="lineup-notes">
+                  <h5>💡 Lineup Notes</h5>
+                  <textarea pTextarea [(ngModel)]="lineupNotes" rows="3" placeholder="Add lineup notes..."></textarea>
+                </div>
+              </div>
+            }
+            @case ('schedule') {
+              <div class="schedule-content">
+                @if (selectedTournament()?.games && selectedTournament()!.games!.length > 0) {
+                  @for (day of [1, 2]; track day) {
+                    @if (getGamesForDay(day).length > 0) {
+                      <h4>Day {{ day }}</h4>
+                      <div class="games-list">
+                        @for (game of getGamesForDay(day); track game.id) {
+                          <div class="game-card" [class.win]="game.result === 'win'" [class.loss]="game.result === 'loss'">
+                            <div class="game-info">
+                              <span class="game-type">{{ getGameTypeLabel(game.type) }}</span>
+                              <span class="game-time">{{ game.time }}, {{ game.field }}</span>
+                            </div>
+                            <div class="game-matchup">
+                              Panthers vs {{ game.opponent }}
+                            </div>
+                            <div class="game-result">
+                              @if (game.result === 'pending') {
+                                <span class="pending">Result: Pending</span>
+                              } @else {
+                                <span [class.win]="game.result === 'win'" [class.loss]="game.result === 'loss'">
+                                  Panthers {{ game.ourScore }} - {{ game.opponent }} {{ game.theirScore }}
+                                  @if (game.result === 'win') { ✅ WIN }
+                                  @if (game.result === 'loss') { ❌ LOSS }
+                                </span>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  }
+                  <div class="bracket-link">
+                    <app-button variant="secondary" iconLeft="pi-external-link">View Full Bracket</app-button>
+                  </div>
+                } @else {
+                  <div class="no-schedule">
+                    <p>Schedule not yet available. Check back closer to the tournament date.</p>
+                  </div>
+                }
+              </div>
+            }
+          }
+        }
+      </p-dialog>
+    </app-main-layout>
+  `,
+  styleUrl: "./tournament-management.component.scss",
+})
+export class TournamentManagementComponent implements OnInit {
+  private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly messageService = inject(MessageService);
+
+  // State
+  readonly tournaments = signal<Tournament[]>([]);
+  readonly rsvps = signal<TournamentRsvp[]>([]);
+  readonly lineupSlots = signal<LineupSlot[]>([]);
+  readonly selectedTournament = signal<Tournament | null>(null);
+  readonly activeTab = signal<"upcoming" | "active" | "past" | "available">("upcoming");
+  readonly detailTab = signal<"overview" | "rsvps" | "lineup" | "schedule">("overview");
+  readonly isLoading = signal(true);
+
+  lineupNotes = "";
+
+  // Dialog state
+  showDetailDialog = false;
+
+  // Options
+  readonly positionOptions = POSITIONS;
+
+  // Computed
+  readonly filteredTournaments = computed(() =>
+    this.tournaments().filter((t) => t.status === this.activeTab())
+  );
+
+  readonly goingRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "going")
+  );
+
+  readonly pendingRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "pending")
+  );
+
+  readonly cantGoRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "cant-go")
+  );
+
+  readonly starterSlots = computed(() =>
+    this.lineupSlots().filter((s) => s.isStarter)
+  );
+
+  readonly rotationSlots = computed(() =>
+    this.lineupSlots().filter((s) => !s.isStarter)
+  );
+
+  readonly availablePlayers = computed(() =>
+    this.goingRsvps().map((r) => ({ id: r.id, name: r.playerName }))
+  );
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  async loadData(): Promise<void> {
+    this.isLoading.set(true);
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await firstValueFrom(this.api.get("/api/coach/tournaments"));
+      if (response?.success && response.data?.tournaments) {
+        this.tournaments.set(response.data.tournaments);
+      }
+    } catch (err) {
+      this.logger.error("Failed to load tournaments", err);
+      // No data available - show empty state
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  private loadDemoData(): void {
+    this.tournaments.set([
+      {
+        id: "1",
+        name: "SPRING CHAMPIONSHIP 2026",
+        dates: "Jan 18-19, 2026 (Sat-Sun)",
+        location: "City Sports Complex",
+        division: "Adult Mixed Comp",
+        entryFee: "$400 (PAID)",
+        registrationStatus: "confirmed",
+        paymentStatus: "partial",
+        status: "upcoming",
+        rsvpDeadline: "Jan 10, 2026 (5 days away)",
+        rsvpSummary: { going: 13, cantGo: 1, pending: 1, minimum: 10 },
+        paymentSummary: { collected: 1040, total: 1170, outstanding: "$130 (Chris M. - $85, Jake R. - $45 guest fee)" },
+        games: [
+          { id: "g1", gameNum: 1, type: "pool", time: "9:00 AM", field: "Field 3", opponent: "Eagles", ourScore: 21, theirScore: 14, result: "win", day: 1 },
+          { id: "g2", gameNum: 2, type: "pool", time: "11:30 AM", field: "Field 5", opponent: "Hawks", ourScore: 28, theirScore: 7, result: "win", day: 1 },
+          { id: "g3", gameNum: 3, type: "pool", time: "2:00 PM", field: "Field 3", opponent: "Lions", result: "pending", day: 1 },
+          { id: "g4", gameNum: 4, type: "quarterfinal", time: "TBD", field: "TBD", opponent: "TBD", result: "pending", day: 2 },
+        ],
+      },
+      {
+        id: "2",
+        name: "WINTER LEAGUE FINALS",
+        dates: "Feb 8, 2026 (Sat)",
+        location: "Downtown Stadium",
+        division: "Adult Mixed Comp",
+        entryFee: "Included in league",
+        registrationStatus: "auto-qualified",
+        paymentStatus: "paid",
+        status: "upcoming",
+        rsvpSummary: { going: 12, cantGo: 0, pending: 3, minimum: 10 },
+        paymentSummary: { collected: 0, total: 0, outstanding: "" },
+      },
+    ]);
+
+    this.rsvps.set([
+      { id: "r1", playerName: "Sarah Johnson", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 1, guestDetails: "(Sarah Sr)" },
+      { id: "r2", playerName: "Emily Chen", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r3", playerName: "Jake Rodriguez", position: "C", status: "going", paymentStatus: "owes", amountOwed: 45, amountPaid: 40, guests: 1, guestDetails: "(OWES $45) ⚠️" },
+      { id: "r4", playerName: "Chris Martinez", position: "WR", status: "going", paymentStatus: "owes", amountOwed: 85, guests: 0 },
+      { id: "r5", playerName: "Taylor Smith", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r6", playerName: "Jordan Lee", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r7", playerName: "Riley Brown", position: "Rush", status: "going", paymentStatus: "paid", amountPaid: 175, guests: 2, guestDetails: "($90 paid)" },
+      { id: "r8", playerName: "Morgan Davis", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r9", playerName: "Casey Wilson", position: "C", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r10", playerName: "Quinn Parker", position: "QB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r11", playerName: "Drew Anderson", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r12", playerName: "Jamie Foster", position: "Rush", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r13", playerName: "Avery Garcia", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
+      { id: "r14", playerName: "Marcus Williams", position: "QB", status: "pending", paymentStatus: "na", guests: 0 },
+      { id: "r15", playerName: "Alex Thompson", position: "Rush", status: "cant-go", paymentStatus: "na", guests: 0, reason: "RTP (injury)" },
+    ]);
+
+    this.lineupSlots.set([
+      { position: "QB", playerId: "r10", note: "Marcus pending", isStarter: true },
+      { position: "WR1", playerId: "r1", isStarter: true },
+      { position: "WR2", playerId: "r4", note: "⚠️ Owes payment", isStarter: true },
+      { position: "C", playerId: "r3", isStarter: true },
+      { position: "DB1", playerId: "r5", isStarter: true },
+      { position: "WR3", playerId: "r6", isStarter: false },
+      { position: "WR4", playerId: "r11", isStarter: false },
+      { position: "DB2", playerId: "r2", note: "⚠️ Limited (hip tightness)", isStarter: false },
+      { position: "DB3", playerId: "r8", isStarter: false },
+      { position: "DB4", playerId: "r13", isStarter: false },
+      { position: "Rush1", playerId: "r7", isStarter: false },
+      { position: "Rush2", playerId: "r12", isStarter: false },
+      { position: "C2", playerId: "r9", isStarter: false },
+    ]);
+  }
+
+  // Actions
+  registerTeam(): void {
+    this.messageService.add({
+      severity: "info",
+      summary: "Register Team",
+      detail: "Opening tournament registration form",
+    });
+  }
+
+  manageTournament(tournament: Tournament): void {
+    this.selectedTournament.set(tournament);
+    this.detailTab.set("overview");
+    this.showDetailDialog = true;
+  }
+
+  viewRsvps(tournament: Tournament): void {
+    this.selectedTournament.set(tournament);
+    this.detailTab.set("rsvps");
+    this.showDetailDialog = true;
+  }
+
+  setLineup(tournament: Tournament): void {
+    this.selectedTournament.set(tournament);
+    this.detailTab.set("lineup");
+    this.showDetailDialog = true;
+  }
+
+  sendReminders(tournament: Tournament): void {
+    this.messageService.add({
+      severity: "success",
+      summary: "Reminders Sent",
+      detail: `Reminders sent for ${tournament.name}`,
+    });
+  }
+
+  sendPendingReminders(): void {
+    this.messageService.add({
+      severity: "success",
+      summary: "Reminders Sent",
+      detail: `Reminders sent to ${this.pendingRsvps().length} pending players`,
+    });
+  }
+
+  sendNudge(rsvp: TournamentRsvp): void {
+    this.messageService.add({
+      severity: "success",
+      summary: "Nudge Sent",
+      detail: `Reminder sent to ${rsvp.playerName}`,
+    });
+  }
+
+  saveLineup(): void {
+    this.messageService.add({
+      severity: "success",
+      summary: "Lineup Saved",
+      detail: "Tournament lineup has been saved",
+    });
+  }
+
+  browseTournaments(): void {
+    this.activeTab.set("available");
+  }
+
+  getGamesForDay(day: number): TournamentGame[] {
+    return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];
+  }
+
+  // Helpers
+  getPaymentPercent(tournament: Tournament): number {
+    if (tournament.paymentSummary.total === 0) return 100;
+    return Math.round(
+      (tournament.paymentSummary.collected / tournament.paymentSummary.total) * 100
+    );
+  }
+
+  getRegistrationLabel(status: string): string {
+    const labels: Record<string, string> = {
+      confirmed: "Confirmed",
+      pending: "Pending",
+      "auto-qualified": "Auto-qualified",
+    };
+    return labels[status] || status;
+  }
+
+  getRegistrationSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+      confirmed: "success",
+      pending: "warn",
+      "auto-qualified": "info",
+    };
+    return severities[status] || "secondary";
+  }
+
+  getGameTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      pool: "Pool Play",
+      quarterfinal: "Quarterfinal",
+      semifinal: "Semifinal",
+      final: "Final",
+    };
+    return labels[type] || type;
+  }
+
+  getEmptyMessage(): string {
+    const messages: Record<string, string> = {
+      upcoming: "No upcoming tournaments registered",
+      active: "No tournaments currently active",
+      past: "No past tournament history",
+      available: "No tournaments available for registration",
+    };
+    return messages[this.activeTab()] || "";
+  }
+}

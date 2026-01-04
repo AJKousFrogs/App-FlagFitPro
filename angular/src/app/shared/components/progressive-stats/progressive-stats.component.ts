@@ -8,7 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
@@ -49,10 +49,11 @@ export interface ProgressiveStatItem extends StatItem {
     CommonModule,
     CardModule,
     ChartModule,
-    ButtonModule,
     TagModule,
     Tabs,
     TabPanel,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="progressive-stats">
@@ -168,22 +169,9 @@ export interface ProgressiveStatItem extends StatItem {
                 }
 
                 <div class="action-buttons">
-                  <p-button
-                    label="Deep Dive"
-                    icon="pi pi-search-plus"
-                    [text]="true"
-                    (onClick)="toggleDeepDive(stat.id)"
-                    [disabled]="!hasChartData(stat)"
-                  >
-                  </p-button>
+                  <app-button variant="text" iconLeft="pi-search-plus" [disabled]="!hasChartData(stat)" (clicked)="toggleDeepDive(stat.id)">Deep Dive</app-button>
 
-                  <p-button
-                    label="Set Goal"
-                    icon="pi pi-flag"
-                    [outlined]="true"
-                    (onClick)="setGoal(stat)"
-                  >
-                  </p-button>
+                  <app-button variant="outlined" iconLeft="pi-flag" (clicked)="setGoal(stat)">Set Goal</app-button>
                 </div>
               </div>
             }

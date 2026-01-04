@@ -191,6 +191,7 @@ interface TodaysPlan {
             <app-button 
               variant="text" 
               icon="times"
+              ariaLabel="Collapse briefing"
               (clicked)="collapse()"
             ></app-button>
           </div>
@@ -735,7 +736,7 @@ export class MorningBriefingComponent implements OnInit {
       }
 
       const result = await this.trainingService.submitWellness(wellnessData);
-      if (result.success) {
+      if (result?.success) {
         this.toastService.success("Quick check-in saved! 💪");
         this.checkInComplete.emit();
       } else {

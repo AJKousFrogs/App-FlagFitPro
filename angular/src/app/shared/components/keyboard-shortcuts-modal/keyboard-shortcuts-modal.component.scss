@@ -49,12 +49,12 @@
 
   .shortcuts-content::-webkit-scrollbar-track {
     background: var(--surface-secondary);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
   }
 
   .shortcuts-content::-webkit-scrollbar-thumb {
     background: var(--color-border-primary);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
   }
 
   /* Category */

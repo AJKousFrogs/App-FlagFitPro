@@ -13,7 +13,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { Select } from "primeng/select";
 import { ChartModule } from "primeng/chart";
 import { AvatarModule } from "primeng/avatar";
@@ -67,13 +67,14 @@ interface StatComparison {
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     Select,
     ChartModule,
     AvatarModule,
     TagModule,
     TooltipModule,
     DialogModule,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="player-comparison">
@@ -105,7 +106,7 @@ interface StatComparison {
                   <p-tag
                     [value]="selected.position"
                     severity="secondary"
-                    [rounded]="true"
+                    
                   ></p-tag>
                 </div>
               }
@@ -122,7 +123,7 @@ interface StatComparison {
                 <p-tag
                   [value]="player.position"
                   severity="secondary"
-                  [rounded]="true"
+                  
                 ></p-tag>
               </div>
             </ng-template>
@@ -157,7 +158,7 @@ interface StatComparison {
                   <p-tag
                     [value]="selected.position"
                     severity="secondary"
-                    [rounded]="true"
+                    
                   ></p-tag>
                 </div>
               }
@@ -174,7 +175,7 @@ interface StatComparison {
                 <p-tag
                   [value]="player.position"
                   severity="secondary"
-                  [rounded]="true"
+                  
                 ></p-tag>
               </div>
             </ng-template>

@@ -20,7 +20,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 
@@ -37,10 +37,11 @@ import { ExerciseCardComponent } from './exercise-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ButtonModule,
     ProgressBarModule,
     TagModule,
     ExerciseCardComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <div
@@ -84,13 +85,13 @@ import { ExerciseCardComponent } from './exercise-card.component';
         <div class="header-right">
           <!-- Status Tag -->
           @if (block().status === 'complete') {
-            <p-tag value="Done" severity="success" [rounded]="true"></p-tag>
+            <p-tag value="Done" severity="success" ></p-tag>
           } @else if (block().status === 'in_progress') {
-            <p-tag value="In Progress" severity="info" [rounded]="true"></p-tag>
+            <p-tag value="In Progress" severity="info" ></p-tag>
           } @else if (block().status === 'skipped') {
-            <p-tag value="Skipped" severity="secondary" [rounded]="true"></p-tag>
+            <p-tag value="Skipped" severity="secondary" ></p-tag>
           } @else {
-            <p-tag value="Pending" severity="warn" [rounded]="true"></p-tag>
+            <p-tag value="Pending" severity="warn" ></p-tag>
           }
 
           <!-- Progress -->
@@ -151,21 +152,8 @@ import { ExerciseCardComponent } from './exercise-card.component';
           <!-- Block Actions -->
           @if (block().status !== 'complete' && block().totalCount > 0) {
             <div class="block-actions">
-              <p-button
-                label="Mark All Complete"
-                icon="pi pi-check-circle"
-                (onClick)="onMarkAllComplete()"
-                [outlined]="true"
-                styleClass="mark-all-btn"
-              ></p-button>
-              <p-button
-                label="Skip Block"
-                icon="pi pi-forward"
-                severity="secondary"
-                [outlined]="true"
-                (onClick)="onSkipBlock()"
-                styleClass="skip-block-btn"
-              ></p-button>
+              <app-button variant="outlined" iconLeft="pi-check-circle" (clicked)="onMarkAllComplete()">Mark All Complete</app-button>
+              <app-button variant="outlined" iconLeft="pi-forward" (clicked)="onSkipBlock()">Skip Block</app-button>
             </div>
           }
 

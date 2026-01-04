@@ -11,15 +11,16 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
-import { SelectButtonModule } from "primeng/selectbutton";
+import { Select} from "primeng/selectbutton";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
+import { COLORS } from "../../../core/constants/app.constants";
 import {
   RecoveryService,
   RecoveryProtocol as ServiceRecoveryProtocol,
@@ -88,16 +89,17 @@ interface ChartOptions {
     FormsModule,
     CardModule,
     ChartModule,
-    ButtonModule,
     TagModule,
     KnobModule,
     ProgressBarModule,
     Tabs,
     TimelineModule,
-    SelectButtonModule,
+    Select
     DialogModule,
     TooltipModule,
     CountdownTimerComponent,
+  
+    ButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -113,7 +115,7 @@ interface ChartOptions {
               [size]="150"
               [strokeWidth]="12"
               [valueColor]="getRecoveryColor()"
-              [rangeColor]="'#e5e7eb'"
+              [rangeColor]="'var(--p-surface-200)'"
               [readonly]="true"
             >
             </p-knob>
@@ -267,26 +269,13 @@ interface ChartOptions {
                 }
 
                 <div class="protocol-actions">
-                  <p-button
-                    label="Start Protocol"
-                    icon="pi pi-play"
-                    size="small"
-                    (onClick)="
+                  <app-button size="sm" iconLeft="pi-play" (clicked)="
                       startProtocol(protocol); $event.stopPropagation()
-                    "
-                  >
-                  </p-button>
+                    ">Start Protocol</app-button>
 
-                  <p-button
-                    label="Details"
-                    icon="pi pi-info-circle"
-                    [outlined]="true"
-                    size="small"
-                    (onClick)="
+                  <app-button variant="outlined" size="sm" iconLeft="pi-info-circle" (clicked)="
                       showProtocolDetails(protocol); $event.stopPropagation()
-                    "
-                  >
-                  </p-button>
+                    ">Details</app-button>
                 </div>
               </div>
             }
@@ -438,21 +427,11 @@ interface ChartOptions {
             }
 
             <div class="detail-actions">
-              <p-button
-                label="Start This Protocol"
-                icon="pi pi-play"
-                (onClick)="
+              <app-button iconLeft="pi-play" (clicked)="
                   startProtocol(selectedProtocolDetails()!);
                   showProtocolDialog = false
-                "
-              >
-              </p-button>
-              <p-button
-                label="Close"
-                [outlined]="true"
-                (onClick)="showProtocolDialog = false"
-              >
-              </p-button>
+                ">Start This Protocol</app-button>
+              <app-button variant="outlined" (clicked)="showProtocolDialog = false">Close</app-button>
             </div>
           </div>
         }
@@ -509,29 +488,11 @@ interface ChartOptions {
             </div>
 
             <div class="session-controls">
-              <p-button
-                [label]="sessionPaused() ? 'Resume' : 'Pause'"
-                [icon]="sessionPaused() ? 'pi pi-play' : 'pi pi-pause'"
-                (onClick)="toggleSession()"
-              >
-              </p-button>
+              <app-button (clicked)="toggleSession()"></app-button>
 
-              <p-button
-                label="Complete Session"
-                icon="pi pi-check"
-                severity="success"
-                (onClick)="completeSession()"
-              >
-              </p-button>
+              <app-button variant="success" iconLeft="pi-check" (clicked)="completeSession()">Complete Session</app-button>
 
-              <p-button
-                label="Stop Session"
-                icon="pi pi-stop"
-                severity="danger"
-                [outlined]="true"
-                (onClick)="stopSession()"
-              >
-              </p-button>
+              <app-button variant="outlined" iconLeft="pi-stop" (clicked)="stopSession()">Stop Session</app-button>
             </div>
           </div>
         </p-card>
@@ -569,14 +530,7 @@ interface ChartOptions {
                   <p>{{ insight.summary }}</p>
                   <div class="research-meta">
                     <span>{{ insight.authors }} ({{ insight.year }})</span>
-                    <p-button
-                      label="Read Study"
-                      icon="pi pi-external-link"
-                      [text]="true"
-                      size="small"
-                      (onClick)="openStudy(insight.doi)"
-                    >
-                    </p-button>
+                    <app-button variant="text" size="sm" iconLeft="pi-external-link" (clicked)="openStudy(insight.doi)">Read Study</app-button>
                   </div>
                 </div>
               }
@@ -644,9 +598,9 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   getRecoveryColor(): string {
     const score = this.recoveryScoreValue;
-    if (score >= 80) return "#10c96b";
-    if (score >= 60) return "#f1c40f";
-    return "#ef4444";
+    if (score >= 80) return COLORS.PRIMARY_LIGHT;
+    if (score >= 60) return COLORS.WARNING;
+    return COLORS.ERROR;
   }
 
   getRecoveryStatus(): string {
@@ -796,8 +750,8 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
         {
           label: "Recovery Score",
           data: [75, 78, 72, 85, 80, 77, 82],
-          borderColor: "#10c96b",
-          backgroundColor: "rgba(16, 201, 107, 0.1)",
+          borderColor: COLORS.PRIMARY_LIGHT,
+          backgroundColor: `${COLORS.PRIMARY_LIGHT}1a`,
         },
       ],
     };
@@ -808,7 +762,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
         {
           label: "Effectiveness Rating",
           data: [8.5, 7.8, 8.2, 7.5],
-          backgroundColor: ["#10c96b", "#f1c40f", "#ef4444", "#8b5cf6"],
+          backgroundColor: [COLORS.PRIMARY_LIGHT, COLORS.WARNING, COLORS.ERROR, COLORS.PURPLE_LIGHT],
         },
       ],
     };

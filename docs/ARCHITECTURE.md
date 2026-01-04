@@ -82,7 +82,7 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 ┌─────────────────────────────────────────────────────────────────┐
 │                   EXTERNAL SERVICES                             │
 │  ├── Groq LLM (FREE 14,400 req/day)                            │
-│  ├── OpenWeatherMap API                                         │
+│  ├── Open-Meteo Weather API (FREE, no key required)            │
 │  └── Supabase Auth (OAuth providers)                           │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -491,7 +491,7 @@ export abstract class BaseViewModel {
 ┌─────────────────────────────────────────────────────────────────┐
 │                  EXTERNAL APIS                                  │
 │  ├── Groq LLM (FREE 14,400 req/day)                            │
-│  └── OpenWeatherMap                                            │
+│  └── Open-Meteo (FREE, no API key required)                    │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -499,11 +499,13 @@ export abstract class BaseViewModel {
 
 ## 📚 Related Documentation
 
-- [UTILITIES.md](./UTILITIES.md) - Angular services API reference
-- [AI_COACHING_SYSTEM_REVAMP.md](./AI_COACHING_SYSTEM_REVAMP.md) - AI safety documentation
-- [angular/README.md](../angular/README.md) - Angular-specific docs
-- [ANGULAR_PRIMENG_GUIDE.md](../ANGULAR_PRIMENG_GUIDE.md) - Best practices
+- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Complete feature & business logic guide
+- [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) - Angular 21 + PrimeNG 21 patterns
+- [API.md](./API.md) - API reference
+- [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database schema
+- [SECURITY.md](./SECURITY.md) - Security architecture
+- [AI_GOVERNANCE.md](./AI_GOVERNANCE.md) - AI safety documentation
 
 ---
 
-**Last Updated:** 29. December 2025
+**Last Updated:** January 2026

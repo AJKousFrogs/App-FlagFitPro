@@ -22,7 +22,7 @@ import { RouterModule } from "@angular/router";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -40,11 +40,12 @@ import { ToastService } from "../../../core/services/toast.service";
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     ProgressBarModule,
     TagModule,
     TooltipModule,
     BadgeModule,
+  
+    ButtonComponent,
   ],
   template: `
     @if (isInTournament()) {
@@ -207,18 +208,8 @@ import { ToastService } from "../../../core/services/toast.service";
 
         <!-- Actions -->
         <div class="widget-actions">
-          <p-button
-            label="Nutrition Plan"
-            icon="pi pi-apple"
-            styleClass="p-button-sm"
-            routerLink="/game/nutrition"
-          ></p-button>
-          <p-button
-            label="End Tournament"
-            icon="pi pi-stop"
-            styleClass="p-button-sm p-button-text p-button-danger"
-            (onClick)="confirmEndTournament()"
-          ></p-button>
+          <app-button iconLeft="pi-apple" routerLink="/game/nutrition">Nutrition Plan</app-button>
+          <app-button iconLeft="pi-stop" (clicked)="confirmEndTournament()">End Tournament</app-button>
         </div>
       </div>
     }

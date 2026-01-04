@@ -16,7 +16,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import {
@@ -33,9 +33,10 @@ import { LoggerService } from "../../../core/services/logger.service";
     CommonModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     MessageModule,
+  
+    ButtonComponent,
   ],
   template: `
     <p-card header="Angular 21 Signal Form (model() API)">
@@ -159,14 +160,7 @@ import { LoggerService } from "../../../core/services/logger.service";
         </div>
 
         <!-- Submit Button -->
-        <p-button
-          type="submit"
-          label="Submit"
-          [disabled]="!isFormValid()"
-          [attr.aria-describedby]="
-            !isFormValid() ? 'form-validation-info' : null
-          "
-        />
+        <app-button [disabled]="!isFormValid()">Submit</app-button>
         @if (!isFormValid()) {
           <div id="form-validation-info" class="sr-only">
             Please fix the errors above before submitting

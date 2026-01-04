@@ -1,6 +1,10 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
+import {
+    getInvertedStatusHexColor,
+    getStatusHexColor
+} from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
@@ -369,12 +373,7 @@ export class RecoveryService {
               unit: "/10",
               percentage: sleepQuality * 10,
               icon: "pi pi-moon",
-              color:
-                sleepQuality >= 7
-                  ? "#10c96b"
-                  : sleepQuality >= 5
-                    ? "#f1c40f"
-                    : "#e74c3c",
+              color: getStatusHexColor(sleepQuality, 7, 5), // ≥7 green, ≥5 warning, <5 error
             },
             {
               name: "Energy Level",
@@ -382,12 +381,7 @@ export class RecoveryService {
               unit: "/10",
               percentage: energyLevel * 10,
               icon: "pi pi-bolt",
-              color:
-                energyLevel >= 7
-                  ? "#10c96b"
-                  : energyLevel >= 5
-                    ? "#f1c40f"
-                    : "#e74c3c",
+              color: getStatusHexColor(energyLevel, 7, 5), // ≥7 green, ≥5 warning, <5 error
             },
             {
               name: "Muscle Soreness",
@@ -395,12 +389,7 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - soreness) * 10, // Invert: lower soreness = better
               icon: "pi pi-exclamation-circle",
-              color:
-                soreness <= 3
-                  ? "#10c96b"
-                  : soreness <= 6
-                    ? "#f1c40f"
-                    : "#e74c3c",
+              color: getInvertedStatusHexColor(soreness, 3, 6), // ≤3 green, ≤6 warning, >6 error
             },
             {
               name: "Stress Level",
@@ -408,12 +397,7 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - stressLevel) * 10, // Invert: lower stress = better
               icon: "pi pi-info-circle",
-              color:
-                stressLevel <= 3
-                  ? "#10c96b"
-                  : stressLevel <= 6
-                    ? "#f1c40f"
-                    : "#e74c3c",
+              color: getInvertedStatusHexColor(stressLevel, 3, 6), // ≤3 green, ≤6 warning, >6 error
             },
           ],
         };

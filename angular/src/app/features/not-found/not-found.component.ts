@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 
 @Component({
   selector: "app-not-found",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, ButtonModule],
+  imports: [RouterModule,
+    ButtonComponent,
+  ],
   template: `
     <div class="not-found-page">
       <div class="not-found-content">
@@ -16,21 +18,8 @@ import { ButtonModule } from "primeng/button";
           Oops! The page you're looking for doesn't exist or has been moved.
         </p>
         <div class="error-actions">
-          <p-button
-            label="Go to Dashboard"
-            icon="pi pi-home"
-            [rounded]="true"
-            size="large"
-            [routerLink]="['/dashboard']"
-          ></p-button>
-          <p-button
-            label="Go Back"
-            icon="pi pi-arrow-left"
-            [rounded]="true"
-            [outlined]="true"
-            size="large"
-            (onClick)="goBack()"
-          ></p-button>
+          <app-button size="lg" iconLeft="pi-home" routerLink="/dashboard">Go to Dashboard</app-button>
+          <app-button variant="outlined" size="lg" iconLeft="pi-arrow-left" (clicked)="goBack()">Go Back</app-button>
         </div>
         <div class="helpful-links">
           <p>Here are some helpful links:</p>

@@ -1,0 +1,295 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '700px', maxWidth: '95vw', top: '10%' }"
+  [showHeader]="false"
+  [dismissableMask]="true"
+  [closable]="true"
+  position="top"
+  styleClass="command-palette-dialog"
+>
+  <div class="search-panel">
+    <!-- Search Input -->
+    <div class="search-input-wrapper">
+      <i class="pi pi-search search-icon"></i>
+      <input
+        #searchInput
+        type="text"
+        pInputText
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange($event)"
+        (keydown.enter)="onEnter()"
+        (keydown.escape)="close()"
+        (keydown.arrowdown)="onArrowDown($event)"
+        (keydown.arrowup)="onArrowUp($event)"
+        placeholder="Search exercises, programs, players..."
+        class="search-input"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        [attr.aria-expanded]="showSuggestions() || searchService.hasResults()"
+        aria-controls="search-results-list"
+      />
+      <div class="input-actions">
+        @if (searchQuery) {
+          <app-icon-button
+            icon="pi-times"
+            ariaLabel="Clear search"
+            tooltip="Clear search (Esc)"
+            (clicked)="clearSearch()"
+          />
+        } @else {
+          <div class="esc-hint">ESC</div>
+        }
+      </div>
+    </div>
+
+    <!-- Suggestions Dropdown -->
+    @if (showSuggestions() && searchService.suggestions().length > 0) {
+      <div class="suggestions-dropdown">
+        <div class="suggestions-label">Suggestions</div>
+        @for (suggestion of searchService.suggestions(); track suggestion) {
+          <button
+            type="button"
+            class="suggestion-item"
+            (click)="selectSuggestion(suggestion)"
+          >
+            <i class="pi pi-search"></i>
+            <span [innerHTML]="highlightSuggestion(suggestion)"></span>
+            <i class="pi pi-corner-down-left"></i>
+          </button>
+        }
+      </div>
+    }
+
+    <div class="panel-content custom-scrollbar">
+      <!-- Loading State -->
+      @if (searchService.loading()) {
+        <div class="loading-state">
+          <div class="loading-skeleton">
+            @for (i of [1, 2, 3]; track i) {
+              <div class="skeleton-item">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text">
+                  <div class="skeleton-line skeleton-title"></div>
+                  <div class="skeleton-line skeleton-subtitle"></div>
+                </div>
+              </div>
+            }
+          </div>
+          <span class="loading-text">Searching across everything...</span>
+        </div>
+      }
+
+      <!-- Results -->
+      @if (!searchService.loading() && searchService.hasResults()) {
+        <div class="search-results" id="search-results-list" role="listbox">
+          <div class="section-label">
+            <span>Search Results</span>
+            <span class="results-count">{{ searchService.totalResults() }} found</span>
+          </div>
+          @for (
+            result of searchService.results();
+            track result.id;
+            let i = $index
+          ) {
+            <div
+              class="search-result-item"
+              [class.selected]="selectedIndex() === i"
+              (click)="selectResult(result)"
+              (mouseenter)="selectedIndex.set(i)"
+              role="option"
+              [attr.aria-selected]="selectedIndex() === i"
+              tabindex="-1"
+            >
+              <div class="result-icon-box" [class]="'type-' + result.type">
+                <i [class]="result.icon"></i>
+              </div>
+              <div class="result-info">
+                <div class="result-main">
+                  <span
+                    class="result-title"
+                    [innerHTML]="result.highlightedTitle || result.title"
+                  ></span>
+                  <span class="result-badge">{{ getTypeLabel(result.type) }}</span>
+                </div>
+                @if (result.subtitle) {
+                  <div
+                    class="result-subtitle"
+                    [innerHTML]="result.highlightedSubtitle || result.subtitle"
+                  ></div>
+                }
+              </div>
+              <i class="pi pi-chevron-right enter-icon"></i>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- No Results -->
+      @if (
+        !searchService.loading() && searchQuery && !searchService.hasResults()
+      ) {
+        <div class="no-results">
+          <div class="no-results-icon">
+            <i class="pi pi-search"></i>
+          </div>
+          <h3>No results found</h3>
+          <p>
+            We couldn't find anything matching "<strong>{{ searchQuery }}</strong
+            >"
+          </p>
+          <div class="no-results-suggestions">
+            <span>Try searching for:</span>
+            <div class="suggestion-chips">
+              <button
+                type="button"
+                class="suggestion-chip"
+                (click)="searchFor('Sprint')"
+              >
+                Sprint
+              </button>
+              <button
+                type="button"
+                class="suggestion-chip"
+                (click)="searchFor('Quarterback')"
+              >
+                Quarterback
+              </button>
+              <button
+                type="button"
+                class="suggestion-chip"
+                (click)="searchFor('Drills')"
+              >
+                Drills
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Recent Searches (when no query) -->
+      @if (!searchQuery && searchService.recentSearches().length > 0) {
+        <div class="recent-searches">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="pi pi-history"></i>
+              <span>Recent Searches</span>
+            </div>
+            <button
+              type="button"
+              class="clear-recent-link"
+              (click)="clearRecentSearches()"
+            >
+              Clear history
+            </button>
+          </div>
+          <div class="recent-grid">
+            @for (recent of searchService.recentSearches(); track recent) {
+              <button
+                type="button"
+                class="recent-tag"
+                (click)="searchFor(recent)"
+              >
+                <span>{{ recent }}</span>
+                <i class="pi pi-arrow-up-left"></i>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Quick Links (when no query) -->
+      @if (!searchQuery) {
+        <div class="quick-links">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="pi pi-bolt"></i>
+              <span>Quick Actions</span>
+            </div>
+          </div>
+          <div class="quick-links-grid">
+            <button
+              type="button"
+              class="quick-link-card"
+              (click)="navigateTo('/training')"
+            >
+              <div class="quick-link-icon training">
+                <i class="pi pi-calendar"></i>
+              </div>
+              <div class="quick-link-text">
+                <span class="link-label">Training</span>
+                <span class="link-desc">Today's plan</span>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="quick-link-card"
+              (click)="navigateTo('/exercise-library')"
+            >
+              <div class="quick-link-icon exercises">
+                <i class="pi pi-bolt"></i>
+              </div>
+              <div class="quick-link-text">
+                <span class="link-label">Exercises</span>
+                <span class="link-desc">Browse library</span>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="quick-link-card"
+              (click)="navigateTo('/analytics')"
+            >
+              <div class="quick-link-icon analytics">
+                <i class="pi pi-chart-line"></i>
+              </div>
+              <div class="quick-link-text">
+                <span class="link-label">Analytics</span>
+                <span class="link-desc">View trends</span>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="quick-link-card"
+              (click)="navigateTo('/roster')"
+            >
+              <div class="quick-link-icon roster">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="quick-link-text">
+                <span class="link-label">Roster</span>
+                <span class="link-desc">Team members</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Keyboard Hints -->
+    <div class="command-palette-footer">
+      <div class="keyboard-hint">
+        <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
+        <span>Navigate</span>
+      </div>
+      <div class="keyboard-hint">
+        <span class="key-combo"><kbd>↵</kbd></span>
+        <span>Select</span>
+      </div>
+      <div class="keyboard-hint">
+        <span class="key-combo"><kbd>Esc</kbd></span>
+        <span>Close</span>
+      </div>
+      <div class="keyboard-hint search-type-hint">
+        @if (searchService.loading()) {
+          <span class="searching-indicator">
+            <i class="pi pi-spin pi-spinner"></i>
+            Searching...
+          </span>
+        } @else {
+          <span>Searching <strong>Global Content</strong></span>
+        }
+      </div>
+    </div>
+  </div>
+</p-dialog>

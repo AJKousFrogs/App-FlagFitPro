@@ -17,7 +17,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { DividerModule } from "primeng/divider";
 import {
   KeyboardShortcutsService,
@@ -29,7 +29,9 @@ import {
   selector: "app-keyboard-shortcuts-modal",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, ButtonModule, DividerModule],
+  imports: [CommonModule, DialogModule, DividerModule,
+    ButtonComponent,
+  ],
   template: `
     <p-dialog
       [visible]="shortcutsService.isHelpModalOpen()"
@@ -213,12 +215,7 @@ import {
 
       <ng-template pTemplate="footer">
         <div class="modal-footer">
-          <p-button
-            label="Close"
-            icon="pi pi-times"
-            [text]="true"
-            (onClick)="shortcutsService.closeHelpModal()"
-          ></p-button>
+          <app-button variant="text" iconLeft="pi-times" (clicked)="shortcutsService.closeHelpModal()">Close</app-button>
         </div>
       </ng-template>
     </p-dialog>

@@ -23,7 +23,7 @@ import {
         <app-button
           icon="refresh"
           variant="text"
-          [rounded]="true"
+          
           [loading]="loading()"
           (clicked)="refresh()"
           [disabled]="loading()"

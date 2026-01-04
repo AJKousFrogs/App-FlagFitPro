@@ -1,0 +1,542 @@
+.team-management-page {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  padding-bottom: var(--space-2);
+  overflow-x: auto;
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ds-surface-base);
+      color: var(--ds-text-primary);
+    }
+
+    &.active {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+
+    .badge {
+      padding: var(--space-1) 8px;
+      border-radius: var(--radius-full);
+      background: var(--ds-primary-green);
+      color: white;
+      font-size: var(--font-body-xs);
+    }
+  }
+}
+
+.tab-content-card {
+  min-height: 400px;
+}
+
+// Filters Row
+.filters-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+
+  .filter-search {
+    flex: 1;
+    min-width: 200px;
+
+    input {
+      width: 100%;
+    }
+  }
+}
+
+// Player Name Cell
+.player-name-cell {
+  strong {
+    color: var(--ds-text-primary);
+  }
+}
+
+.no-data {
+  color: var(--ds-text-tertiary);
+}
+
+.empty-message {
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--ds-text-tertiary);
+}
+
+// ACWR Classes
+.acwr-optimal {
+  color: var(--ds-primary-green);
+  font-weight: 500;
+}
+
+.acwr-moderate {
+  color: var(--primitive-blue-500);
+  font-weight: 500;
+}
+
+.acwr-high {
+  color: var(--primitive-warning-500);
+  font-weight: 500;
+}
+
+.acwr-danger {
+  color: var(--primitive-error-500);
+  font-weight: 500;
+}
+
+// Position Summary
+.position-summary {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--ds-border-subtle);
+
+  h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-body-md);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+
+  .position-cards {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .pos-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-3);
+    background: var(--ds-surface-base);
+    border-radius: var(--radius-md);
+    min-width: 80px;
+
+    .pos-name {
+      font-weight: 600;
+      color: var(--ds-text-primary);
+    }
+
+    .pos-count {
+      font-size: var(--font-heading-md);
+      font-weight: 700;
+      color: var(--ds-primary-green);
+    }
+
+    .pos-label {
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+    }
+  }
+}
+
+// Depth Chart
+.depth-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-body-lg);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+}
+
+.depth-chart-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dc-section {
+  .section-title {
+    margin: 0 0 var(--space-3) 0;
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--ds-primary-green);
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-secondary);
+    letter-spacing: 1px;
+  }
+}
+
+.position-group {
+  margin-bottom: var(--space-4);
+
+  .position-label {
+    font-weight: 600;
+    color: var(--ds-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .players-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+.depth-player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--ds-border-default);
+
+  &.starter {
+    border-left-color: var(--ds-primary-green);
+    background: var(--ds-primary-green-subtle);
+  }
+
+  .rank {
+    min-width: 30px;
+    font-weight: 600;
+    color: var(--ds-text-secondary);
+  }
+
+  .name {
+    flex: 1;
+    color: var(--ds-text-primary);
+  }
+
+  .player-note {
+    font-size: var(--font-body-sm);
+    color: var(--ds-text-tertiary);
+    font-style: italic;
+  }
+}
+
+// Invitations
+.invitations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-body-lg);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+  }
+}
+
+.invitations-section {
+  margin-bottom: var(--space-4);
+
+  h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--ds-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.invitation-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+
+  &.pending {
+    border-color: var(--primitive-warning-500);
+  }
+
+  &.accepted {
+    border-color: var(--ds-primary-green);
+  }
+
+  .inv-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    i {
+      font-size: var(--font-heading-sm);
+      color: var(--ds-text-tertiary);
+    }
+
+    .inv-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .inv-email {
+      font-weight: 500;
+      color: var(--ds-text-primary);
+    }
+
+    .inv-meta {
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-tertiary);
+    }
+
+    .inv-role {
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+    }
+  }
+
+  .inv-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+}
+
+.empty-invitations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6);
+  text-align: center;
+
+  i {
+    font-size: var(--font-display-md);
+    color: var(--ds-text-tertiary);
+    margin-bottom: var(--space-3);
+  }
+
+  p {
+    margin: 0 0 var(--space-3) 0;
+    color: var(--ds-text-secondary);
+  }
+}
+
+// Settings
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.settings-section {
+  padding: var(--space-4);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-lg);
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4) 0;
+    font-size: var(--font-body-md);
+    font-weight: 600;
+    color: var(--ds-text-primary);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+.form-field {
+  margin-bottom: var(--space-3);
+
+  label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--font-body-sm);
+    font-weight: 500;
+    color: var(--ds-text-primary);
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.color-code {
+  margin-left: var(--space-2);
+  font-size: var(--font-body-sm);
+  color: var(--ds-text-tertiary);
+  font-family: monospace;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+
+  label {
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// Invite Form
+.invite-form,
+.edit-player-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.role-options,
+.status-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .role-option,
+  .status-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+
+    label {
+      margin: 0;
+      cursor: pointer;
+    }
+  }
+}
+
+.invite-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--font-body-sm);
+  color: var(--ds-text-tertiary);
+
+  i {
+    color: var(--ds-primary-green);
+  }
+}
+
+// Edit Player
+.player-header {
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  margin-bottom: var(--space-3);
+
+  .player-info {
+    h4 {
+      margin: 0;
+      font-size: var(--font-body-lg);
+      color: var(--ds-text-primary);
+    }
+
+    p {
+      margin: var(--space-1) 0 0 0;
+      font-size: var(--font-body-sm);
+      color: var(--ds-text-secondary);
+    }
+
+    .join-date {
+      font-size: var(--font-body-xs);
+      color: var(--ds-text-tertiary);
+    }
+  }
+}
+
+.danger-zone {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: var(--primitive-error-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primitive-error-200);
+
+  h5 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-body-sm);
+    font-weight: 600;
+    color: var(--primitive-error-500);
+  }
+
+  .danger-note {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--font-body-xs);
+    color: var(--ds-text-tertiary);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .team-management-page {
+    padding: var(--space-3);
+  }
+
+  .filters-row {
+    flex-direction: column;
+
+    .filter-search {
+      width: 100%;
+    }
+
+    p-select {
+      width: 100% !important;
+    }
+  }
+
+  .position-cards {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+  }
+
+  .invitation-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+
+    .inv-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

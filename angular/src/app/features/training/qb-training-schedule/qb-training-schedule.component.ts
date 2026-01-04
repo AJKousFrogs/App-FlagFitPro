@@ -8,7 +8,7 @@ import {
 
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -21,11 +21,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   imports: [
     FormsModule,
     CardModule,
-    ButtonModule,
     DatePicker,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="qb-training-schedule-page">
@@ -44,12 +45,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               This is a specialized training schedule for quarterbacks focusing
               on throwing volume periodization.
             </p>
-            <p-button
-              label="View Full Program"
-              icon="pi pi-book"
-              [outlined]="true"
-              class="mt-4"
-            ></p-button>
+            <app-button variant="outlined" iconLeft="pi-book">View Full Program</app-button>
           </div>
         </p-card>
 

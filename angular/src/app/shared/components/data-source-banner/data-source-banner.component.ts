@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataState } from "../../../core/services/data-source.service";
@@ -35,7 +35,9 @@ import {
   selector: "app-data-source-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TagModule, TooltipModule,
+    ButtonComponent,
+  ],
   template: `
     @if (shouldShow()) {
       <div class="data-source-banner" [class]="bannerClass()">

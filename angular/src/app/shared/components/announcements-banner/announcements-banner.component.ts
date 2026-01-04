@@ -28,14 +28,18 @@ import {
   TeamNotificationService,
   UnreadAnnouncement,
 } from "../../../core/services/team-notification.service";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { TagModule } from "primeng/tag";
 
 @Component({
   selector: "app-announcements-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonModule, TagModule],
+  imports: [CommonModule, RouterModule, TagModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     @if (visible() && currentAnnouncement(); as announcement) {
       <div
@@ -56,7 +60,7 @@ import { TagModule } from "primeng/tag";
               <p-tag
                 severity="danger"
                 value="Important"
-                [rounded]="true"
+                
               ></p-tag>
             }
             <span class="announcement-channel">
@@ -78,27 +82,9 @@ import { TagModule } from "primeng/tag";
           @if (unreadCount() > 1) {
             <span class="more-count">+{{ unreadCount() - 1 }} more</span>
           }
-          <p-button
-            label="View"
-            [text]="true"
-            size="small"
-            routerLink="/chat"
-            (onClick)="onViewClick()"
-          ></p-button>
-          <p-button
-            icon="pi pi-check"
-            [text]="true"
-            [rounded]="true"
-            severity="success"
-            pTooltip="Mark as read"
-            (onClick)="acknowledgeAnnouncement()"
-          ></p-button>
-          <p-button
-            icon="pi pi-times"
-            [text]="true"
-            [rounded]="true"
-            (onClick)="dismiss()"
-          ></p-button>
+          <app-button variant="text" size="sm" routerLink="/chat" (clicked)="onViewClick()">View</app-button>
+          <app-icon-button icon="pi-check" variant="text" (clicked)="acknowledgeAnnouncement()" ariaLabel="check" />
+          <app-icon-button icon="pi-times" variant="text" (clicked)="dismiss()" ariaLabel="times" />
         </div>
       </div>
     }

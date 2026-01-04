@@ -16,7 +16,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -25,7 +25,8 @@ import { Slider } from "primeng/slider";
 import { StepsModule } from "primeng/steps";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { ToggleButtonModule } from "primeng/togglebutton";
+import { Toggle} from "primeng/togglebutton";
+import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
@@ -64,14 +65,15 @@ interface Goal {
     FormsModule,
     CardModule,
     StepsModule,
-    ButtonModule,
     Select,
     Slider,
     InputTextModule,
     TagModule,
     TimelineModule,
     DialogModule,
-    ToggleButtonModule,
+    Toggle
+  ,
+    ButtonComponent,
   ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
@@ -105,13 +107,7 @@ interface Goal {
               }
             </div>
             <div class="step-actions">
-              <p-button
-                label="Next"
-                icon="pi pi-arrow-right"
-                [disabled]="selectedGoals().length === 0"
-                (onClick)="activeStep = 1"
-              >
-              </p-button>
+              <app-button iconLeft="pi-arrow-right" [disabled]="selectedGoals().length === 0" (clicked)="activeStep = 1">Next</app-button>
             </div>
           </div>
         }
@@ -181,21 +177,8 @@ interface Goal {
               }
             </form>
             <div class="step-actions">
-              <p-button
-                label="Previous"
-                icon="pi pi-arrow-left"
-                severity="secondary"
-                [outlined]="true"
-                (onClick)="activeStep = 0"
-              >
-              </p-button>
-              <p-button
-                label="Generate Session"
-                icon="pi pi-sparkles"
-                [disabled]="sessionForm.invalid"
-                (onClick)="generateSession(); activeStep = 2"
-              >
-              </p-button>
+              <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="activeStep = 0">Previous</app-button>
+              <app-button iconLeft="pi-sparkles" [disabled]="sessionForm.invalid" (clicked)="generateSession(); activeStep = 2">Generate Session</app-button>
             </div>
           </div>
         }
@@ -252,52 +235,16 @@ interface Goal {
                   </div>
                   <p class="exercise-description">{{ event.description }}</p>
                   <div class="exercise-actions">
-                    <p-button
-                      icon="pi pi-play"
-                      label="Preview"
-                      size="small"
-                      [text]="true"
-                      (onClick)="previewExercise(event)"
-                    >
-                    </p-button>
-                    <p-button
-                      icon="pi pi-pencil"
-                      label="Modify"
-                      size="small"
-                      [text]="true"
-                      (onClick)="modifyExercise(event)"
-                    >
-                    </p-button>
+                    <app-button variant="text" size="sm" iconLeft="pi-play" (clicked)="previewExercise(event)">Preview</app-button>
+                    <app-button variant="text" size="sm" iconLeft="pi-pencil" (clicked)="modifyExercise(event)">Modify</app-button>
                   </div>
                 </p-card>
               </ng-template>
             </p-timeline>
             <div class="step-actions">
-              <p-button
-                label="Previous"
-                icon="pi pi-arrow-left"
-                severity="secondary"
-                [outlined]="true"
-                (onClick)="activeStep = 1"
-              >
-              </p-button>
-              <p-button
-                label="Start Session"
-                icon="pi pi-play"
-                severity="success"
-                [loading]="isSaving()"
-                (onClick)="startSession()"
-              >
-              </p-button>
-              <p-button
-                label="Save for Later"
-                icon="pi pi-bookmark"
-                severity="secondary"
-                [outlined]="true"
-                [loading]="isSaving()"
-                (onClick)="saveSession()"
-              >
-              </p-button>
+              <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="activeStep = 1">Previous</app-button>
+              <app-button variant="success" iconLeft="pi-play" [loading]="isSaving()" (clicked)="startSession()">Start Session</app-button>
+              <app-button variant="outlined" iconLeft="pi-bookmark" [loading]="isSaving()" (clicked)="saveSession()">Save for Later</app-button>
             </div>
           </div>
         }
@@ -345,7 +292,7 @@ export class TrainingBuilderComponent {
       name: "Speed Development",
       description: "Improve sprint speed and acceleration",
       icon: "pi pi-bolt",
-      color: "#10c96b",
+      color: COLORS.PRIMARY_LIGHT,
       aiRecommended: true,
     },
     {
@@ -353,7 +300,7 @@ export class TrainingBuilderComponent {
       name: "Agility Training",
       description: "Enhance quick direction changes",
       icon: "pi pi-refresh",
-      color: "#f1c40f",
+      color: COLORS.WARNING,
       aiRecommended: false,
     },
     {
@@ -361,7 +308,7 @@ export class TrainingBuilderComponent {
       name: "Endurance Building",
       description: "Build cardiovascular stamina",
       icon: "pi pi-heart",
-      color: "#ef4444",
+      color: COLORS.ERROR,
       aiRecommended: false,
     },
     {
@@ -369,7 +316,7 @@ export class TrainingBuilderComponent {
       name: "Skill Development",
       description: "Practice position-specific skills",
       icon: "pi pi-star",
-      color: "#8b5cf6",
+      color: COLORS.PURPLE_LIGHT,
       aiRecommended: true,
     },
   ];

@@ -1,40 +1,41 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
+    CdkDragDrop,
+    DragDropModule,
+    moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { DialogModule } from "primeng/dialog";
-import { Select } from "primeng/select";
-import { InputTextModule } from "primeng/inputtext";
-import { TooltipModule } from "primeng/tooltip";
+import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { AuthService } from "../../core/services/auth.service";
+import {
+    DepthChartEntry,
+    DepthChartService,
+    DepthChartTemplate,
+    DepthChartWithEntries,
+} from "../../core/services/depth-chart.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { ToastService } from "../../core/services/toast.service";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import {
-  DepthChartService,
-  DepthChartTemplate,
-  DepthChartEntry,
-  DepthChartWithEntries,
-} from "../../core/services/depth-chart.service";
-import { AuthService } from "../../core/services/auth.service";
-import { ToastService } from "../../core/services/toast.service";
-import { LoggerService } from "../../core/services/logger.service";
 
 interface PositionGroup {
   position: string;
@@ -51,7 +52,6 @@ interface PositionGroup {
     FormsModule,
     DragDropModule,
     CardModule,
-    ButtonModule,
     Tabs,
     TabList,
     Tab,
@@ -65,6 +65,9 @@ interface PositionGroup {
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -75,13 +78,11 @@ interface PositionGroup {
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <p-button
-                label="Initialize Charts"
-                icon="pi pi-refresh"
-                [outlined]="true"
-                (onClick)="initializeDepthCharts()"
+              <app-button
+                iconLeft="pi-refresh"
+                (clicked)="initializeDepthCharts()"
                 [disabled]="depthCharts().length > 0"
-              ></p-button>
+              >Initialize Charts</app-button>
             }
           </div>
         </app-page-header>
@@ -97,11 +98,7 @@ interface PositionGroup {
                   positions.
                 </p>
                 @if (isCoach()) {
-                  <p-button
-                    label="Initialize Depth Charts"
-                    icon="pi pi-plus"
-                    (onClick)="initializeDepthCharts()"
-                  ></p-button>
+                  <app-button iconLeft="pi-plus" (clicked)="initializeDepthCharts()">Initialize Depth Charts</app-button>
                 }
               </div>
             </p-card>
@@ -176,15 +173,7 @@ interface PositionGroup {
                                         }
                                       </div>
                                       @if (isCoach()) {
-                                        <p-button
-                                          icon="pi pi-times"
-                                          [text]="true"
-                                          [rounded]="true"
-                                          size="small"
-                                          severity="danger"
-                                          pTooltip="Remove player"
-                                          (onClick)="removePlayer(entry)"
-                                        ></p-button>
+                                        <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="removePlayer(entry)" ariaLabel="times" />
                                       }
                                     } @else {
                                       <div
@@ -201,14 +190,7 @@ interface PositionGroup {
                                   </div>
                                 }
                                 @if (isCoach()) {
-                                  <p-button
-                                    label="Add Backup"
-                                    icon="pi pi-plus"
-                                    [text]="true"
-                                    size="small"
-                                    styleClass="add-backup-btn"
-                                    (onClick)="addBackupSlot(group)"
-                                  ></p-button>
+                                  <app-button variant="text" size="sm" iconLeft="pi-plus" (clicked)="addBackupSlot(group)">Add Backup</app-button>
                                 }
                               </div>
                             </div>
@@ -274,17 +256,8 @@ interface PositionGroup {
             ></p-select>
           </div>
           <ng-template pTemplate="footer">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="showAssignDialog = false"
-            ></p-button>
-            <p-button
-              label="Assign"
-              icon="pi pi-check"
-              (onClick)="assignPlayer()"
-              [disabled]="!selectedPlayerId"
-            ></p-button>
+            <app-button variant="text" (clicked)="showAssignDialog = false">Cancel</app-button>
+            <app-button iconLeft="pi-check" [disabled]="!selectedPlayerId" (clicked)="assignPlayer()">Assign</app-button>
           </ng-template>
         </p-dialog>
       </div>

@@ -15,7 +15,7 @@
 import { Component, OnInit, inject, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { RouterModule } from "@angular/router";
 import {
@@ -28,7 +28,9 @@ import { AuthService } from "../../../core/services/auth.service";
 @Component({
   selector: "app-safety-warnings",
   standalone: true,
-  imports: [CommonModule, CardModule, ButtonModule, TagModule, RouterModule],
+  imports: [CommonModule, CardModule, TagModule, RouterModule,
+    ButtonComponent,
+  ],
   template: `
     @if (hasWarnings()) {
       <div class="safety-warnings-container">
@@ -47,7 +49,7 @@ import { AuthService } from "../../../core/services/auth.service";
             <p-tag
               value="CRITICAL"
               severity="danger"
-              [rounded]="true"
+              
               styleClass="critical-tag"
             ></p-tag>
           }
@@ -71,7 +73,7 @@ import { AuthService } from "../../../core/services/auth.service";
                   <p-tag
                     [value]="getSeverityLabel(warning.severity)"
                     [severity]="getSeverityTagType(warning.severity)"
-                    [rounded]="true"
+                    
                   ></p-tag>
                 </div>
                 <p class="warning-message">{{ warning.message }}</p>
@@ -121,18 +123,9 @@ import { AuthService } from "../../../core/services/auth.service";
         }
 
         <div class="warnings-actions">
-          <p-button
-            label="View Full Safety Report"
-            icon="pi pi-chart-bar"
-            [outlined]="true"
-            routerLink="/training/safety"
-          ></p-button>
+          <app-button variant="outlined" iconLeft="pi-chart-bar" routerLink="/training/safety">View Full Safety Report</app-button>
           @if (!hasAgeData()) {
-            <p-button
-              label="Set Birth Date"
-              icon="pi pi-user-edit"
-              routerLink="/settings/profile"
-            ></p-button>
+            <app-button iconLeft="pi-user-edit" routerLink="/settings/profile">Set Birth Date</app-button>
           }
         </div>
       </div>

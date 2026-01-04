@@ -110,12 +110,9 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
             @if (validationState() === "validating") {
               <i class="pi pi-spin pi-spinner"></i>
             } @else if (validationState() === "valid") {
-              <i
-                class="pi pi-check-circle"
-                style="color: var(--green-600);"
-              ></i>
+              <i class="pi pi-check-circle icon-success"></i>
             } @else if (validationState() === "invalid") {
-              <i class="pi pi-times-circle" style="color: var(--red-600);"></i>
+              <i class="pi pi-times-circle icon-error"></i>
             }
           </div>
         }

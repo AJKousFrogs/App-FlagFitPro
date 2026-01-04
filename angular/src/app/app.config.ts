@@ -4,6 +4,7 @@ import {
   isDevMode,
   provideZonelessChangeDetection,
 } from "@angular/core";
+import { provideAnimations } from "@angular/platform-browser/animations";
 import {
   provideRouter,
   withComponentInputBinding,
@@ -12,7 +13,6 @@ import {
   withViewTransitions,
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
-// Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
 import {
   provideHttpClient,
   withFetch,
@@ -55,8 +55,9 @@ export const appConfig: ApplicationConfig = {
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
       ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector - only in development
     ),
-    // Note: No provideAnimations() - PrimeNG v21 migrated to native CSS animations
-    // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS
+    // Angular animations support
+    // Required for components using @angular/animations (e.g., @slideDown in TodayComponent)
+    provideAnimations(),
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
       withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),

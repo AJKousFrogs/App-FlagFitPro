@@ -23,14 +23,14 @@
             [style]="{ width: '200px' }"
           ></p-select>
         }
-        <p-button
-          icon="pi pi-refresh"
-          [rounded]="true"
-          severity="secondary"
-          pTooltip="Refresh Data"
-          (onClick)="refreshData()"
+        <app-icon-button
+          icon="pi-refresh"
+          variant="secondary"
+          tooltip="Refresh Data"
+          ariaLabel="Refresh Data"
           [loading]="refreshing()"
-        ></p-button>
+          (clicked)="refreshData()"
+        />
       </div>
     </div>
 

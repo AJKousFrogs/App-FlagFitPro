@@ -1,18 +1,18 @@
 import {
-  Component,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  OnInit,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 
-import { Router, RouterModule, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
-import { ToastService } from "../../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
  * Verify Email Component
@@ -31,7 +31,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
+  imports: [RouterModule, CardModule, ButtonComponent, MessageModule, ToastModule],
 
   template: `
     <p-toast></p-toast>
@@ -60,13 +60,11 @@ import { SupabaseService } from "../../../core/services/supabase.service";
             <p class="verified-message">
               Your email has been verified. You can now access all features.
             </p>
-            <p-button
-              label="Go to Dashboard"
-              icon="pi pi-home"
-              [rounded]="true"
-              [routerLink]="['/dashboard']"
-              styleClass="w-full mt-4"
-            ></p-button>
+            <app-button
+              iconLeft="pi-home"
+              routerLink="/dashboard"
+              [fullWidth]="true"
+            >Go to Dashboard</app-button>
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
@@ -74,15 +72,13 @@ import { SupabaseService } from "../../../core/services/supabase.service";
               severity="error"
               [text]="verificationError()"
             ></p-message>
-            <p-button
-              label="Resend Verification Email"
-              icon="pi pi-send"
-              [outlined]="true"
-              [rounded]="true"
-              (onClick)="resendVerification()"
+            <app-button
+              iconLeft="pi-send"
+              variant="outlined"
+              (clicked)="resendVerification()"
               [loading]="isResending()"
-              styleClass="w-full mt-4"
-            ></p-button>
+              [fullWidth]="true"
+            >Resend Verification Email</app-button>
             <a [routerLink]="['/login']" class="back-to-login-link mt-4"
               >Back to Sign In</a
             >
@@ -97,15 +93,13 @@ import { SupabaseService } from "../../../core/services/supabase.service";
               We've sent a verification link to your email address. Please click
               the link to verify your account.
             </p>
-            <p-button
-              label="Resend Verification Email"
-              icon="pi pi-send"
-              [outlined]="true"
-              [rounded]="true"
-              (onClick)="resendVerification()"
+            <app-button
+              iconLeft="pi-send"
+              variant="outlined"
+              (clicked)="resendVerification()"
               [loading]="isResending()"
-              styleClass="w-full mt-4"
-            ></p-button>
+              [fullWidth]="true"
+            >Resend Verification Email</app-button>
             <a [routerLink]="['/login']" class="back-to-login-link mt-4"
               >Back to Sign In</a
             >

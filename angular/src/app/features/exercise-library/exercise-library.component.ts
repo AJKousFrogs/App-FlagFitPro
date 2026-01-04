@@ -10,7 +10,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { IconFieldModule } from "primeng/iconfield";
@@ -21,6 +21,7 @@ import { RippleModule } from "primeng/ripple";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { Workout } from "../../core/models/training.models";
@@ -49,7 +50,6 @@ interface Category {
   imports: [
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     IconFieldModule,
     InputIconModule,
@@ -61,6 +61,8 @@ interface Category {
     DialogModule,
     ToastModule,
     MainLayoutComponent,
+  
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -331,20 +333,10 @@ interface Category {
           </div>
 
           <ng-template pTemplate="footer">
-            <p-button
-              label="Add to Workout"
-              icon="pi pi-plus"
-              (onClick)="
+            <app-button iconLeft="pi-plus" (clicked)="
                 addToWorkout(selectedExercise()!); showDetailsDialog.set(false)
-              "
-              styleClass="p-button-success"
-            />
-            <p-button
-              label="Close"
-              icon="pi pi-times"
-              (onClick)="showDetailsDialog.set(false)"
-              styleClass="p-button-secondary"
-            />
+              ">Add to Workout</app-button>
+            <app-button iconLeft="pi-times" (clicked)="showDetailsDialog.set(false)">Close</app-button>
           </ng-template>
         }
       </p-dialog>
@@ -366,12 +358,12 @@ export class ExerciseLibraryComponent implements OnInit {
   selectedExercise = signal<Exercise | null>(null);
 
   categoryList: Category[] = [
-    { name: "all", icon: "pi-th-large", color: "#6b7280" },
-    { name: "Strength", icon: "pi-bolt", color: "#ef4444" },
-    { name: "Cardio", icon: "pi-heart", color: "#f59e0b" },
-    { name: "Flexibility", icon: "pi-arrows-alt", color: "#8b5cf6" },
-    { name: "Speed", icon: "pi-forward", color: "#3b82f6" },
-    { name: "Agility", icon: "pi-sync", color: "#10b981" },
+    { name: "all", icon: "pi-th-large", color: COLORS.GRAY },
+    { name: "Strength", icon: "pi-bolt", color: COLORS.ERROR },
+    { name: "Cardio", icon: "pi-heart", color: COLORS.AMBER },
+    { name: "Flexibility", icon: "pi-arrows-alt", color: COLORS.PURPLE_LIGHT },
+    { name: "Speed", icon: "pi-forward", color: COLORS.BLUE },
+    { name: "Agility", icon: "pi-sync", color: COLORS.SUCCESS },
   ];
 
   categories = ["all", "Strength", "Cardio", "Flexibility", "Speed", "Agility"];
@@ -558,7 +550,7 @@ export class ExerciseLibraryComponent implements OnInit {
       intensity: exercise.difficulty === "advanced" ? "high" : exercise.difficulty === "intermediate" ? "medium" : "low",
       location: "Gym",
       icon: this.getCategoryIcon(exercise.category),
-      iconBg: "#089949"
+      iconBg: COLORS.PRIMARY
     };
 
     this.trainingService.logTrainingSession({

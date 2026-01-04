@@ -367,10 +367,10 @@ The following scripts mentioned in previous documentation do NOT exist:
 
 ## Related Documentation
 
-- [README-TRAINING-DATABASE.md](../database/README-TRAINING-DATABASE.md) - Training schema details
-- [LOAD_MANAGEMENT_QUICK_START.md](LOAD_MANAGEMENT_QUICK_START.md) - ACWR implementation
-- [RLS_POLICY_SPECIFICATION.md](RLS_POLICY_SPECIFICATION.md) - Security policies
-- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
+- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Complete feature & business logic (includes ACWR)
+- [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) - Row Level Security policies
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
+- [API.md](./API.md) - API reference
 
 ## Changelog
 

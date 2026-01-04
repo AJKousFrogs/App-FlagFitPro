@@ -409,7 +409,7 @@
   .author-badge {
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-medium);
-    padding: 2px var(--space-2);
+    padding: var(--space-1) var(--space-2);
     background: var(--ds-primary-green-subtle);
     color: var(--ds-primary-green);
     border-radius: var(--radius-full);

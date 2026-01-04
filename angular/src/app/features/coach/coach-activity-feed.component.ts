@@ -27,7 +27,8 @@ import {
   ActivityType,
 } from "../../core/services/team-notification.service";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { TagModule } from "primeng/tag";
@@ -42,13 +43,15 @@ import { LoggerService } from "../../core/services/logger.service";
   imports: [
     RouterModule,
     CardModule,
-    ButtonModule,
     AvatarModule,
     BadgeModule,
     TagModule,
     SkeletonModule,
     TooltipModule,
     ScrollPanelModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="activity-feed" [class.compact]="compact()">
@@ -63,21 +66,9 @@ import { LoggerService } from "../../core/services/logger.service";
         </div>
         <div class="header-actions">
           @if (unreadCount() > 0) {
-            <p-button
-              label="Mark all read"
-              [text]="true"
-              size="small"
-              (onClick)="markAllRead()"
-            ></p-button>
+            <app-button variant="text" size="sm" (clicked)="markAllRead()">Mark all read</app-button>
           }
-          <p-button
-            icon="pi pi-refresh"
-            [text]="true"
-            [rounded]="true"
-            pTooltip="Refresh"
-            (onClick)="refresh()"
-            [loading]="loading()"
-          ></p-button>
+          <app-icon-button icon="pi-refresh" variant="text" [loading]="loading()" (clicked)="refresh()" ariaLabel="refresh" />
         </div>
       </div>
 
@@ -161,7 +152,7 @@ import { LoggerService } from "../../core/services/logger.service";
                         @if (activity.player?.position) {
                           <p-tag
                             [value]="activity.player?.position ?? ''"
-                            [rounded]="true"
+                            
                             severity="info"
                           ></p-tag>
                         }
@@ -180,12 +171,7 @@ import { LoggerService } from "../../core/services/logger.service";
             <!-- Load More -->
             @if (hasMore()) {
               <div class="load-more">
-                <p-button
-                  label="Load more"
-                  [text]="true"
-                  (onClick)="loadMore()"
-                  [loading]="loadingMore()"
-                ></p-button>
+                <app-button variant="text" [loading]="loadingMore()" (clicked)="loadMore()">Load more</app-button>
               </div>
             }
           </div>

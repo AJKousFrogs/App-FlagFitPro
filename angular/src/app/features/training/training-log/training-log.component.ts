@@ -29,8 +29,9 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -57,9 +58,9 @@ interface SessionType {
   selector: "app-training-log",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
     Slider,
     InputNumberModule,
     InputTextModule,
@@ -68,6 +69,8 @@ interface SessionType {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -78,12 +81,7 @@ interface SessionType {
           subtitle="Record your training to track load and prevent injuries"
           icon="pi-plus-circle"
         >
-          <p-button
-            label="Cancel"
-            icon="pi pi-times"
-            [outlined]="true"
-            (onClick)="cancel()"
-          ></p-button>
+          <app-button variant="outlined" iconLeft="pi-times" (clicked)="cancel()">Cancel</app-button>
         </app-page-header>
 
         <form [formGroup]="sessionForm" (ngSubmit)="submitSession()">
@@ -255,13 +253,7 @@ interface SessionType {
 
           <!-- Submit Button -->
           <div class="form-actions">
-            <p-button
-              type="submit"
-              label="Log Session"
-              icon="pi pi-check"
-              [loading]="isSubmitting()"
-              [disabled]="sessionForm.invalid"
-            ></p-button>
+            <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="sessionForm.invalid">Log Session</app-button>
           </div>
         </form>
       </div>

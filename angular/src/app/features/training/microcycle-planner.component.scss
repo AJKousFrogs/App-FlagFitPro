@@ -40,7 +40,7 @@
 
   .intensity-badge {
     display: inline-block;
-    padding: 2px 8px;
+    padding: var(--space-1) 8px;
     border-radius: var(--radius-full);
     font-size: var(--font-body-xs);
     font-weight: 600;

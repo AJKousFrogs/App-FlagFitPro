@@ -26,7 +26,7 @@ import { RouterModule } from "@angular/router";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -59,10 +59,11 @@ interface UpcomingGame {
     CommonModule,
     RouterModule,
     CardModule,
-    ButtonModule,
     ProgressBarModule,
     TagModule,
     TooltipModule,
+  
+    ButtonComponent,
   ],
   template: `
     @if (game()) {
@@ -167,20 +168,8 @@ interface UpcomingGame {
 
         <!-- Action Buttons -->
         <div class="widget-actions">
-          <p-button
-            label="Game Day Check-in"
-            icon="pi pi-check-square"
-            styleClass="p-button-sm"
-            [styleClass]="hoursRemaining() < 24 ? 'p-button-warning' : ''"
-            routerLink="/game/readiness"
-          ></p-button>
-          <p-button
-            label="Fuel Plan"
-            icon="pi pi-apple"
-            [outlined]="true"
-            styleClass="p-button-sm"
-            routerLink="/game/nutrition"
-          ></p-button>
+          <app-button iconLeft="pi-check-square" routerLink="/game/readiness">Game Day Check-in</app-button>
+          <app-button variant="outlined" iconLeft="pi-apple" routerLink="/game/nutrition">Fuel Plan</app-button>
         </div>
       </div>
     }

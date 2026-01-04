@@ -271,7 +271,7 @@
     width: 4px;
     height: var(--space-5);
     background: var(--ds-primary-green);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
   .score-display {
@@ -648,7 +648,7 @@
     width: 4px;
     height: var(--space-5);
     background: var(--ds-primary-green);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
   /*

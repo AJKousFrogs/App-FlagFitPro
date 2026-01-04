@@ -77,8 +77,8 @@
 
   kbd {
     background: var(--color-border-secondary);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
     font-family: monospace;
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-semibold);

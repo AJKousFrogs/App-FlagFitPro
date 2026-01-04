@@ -11,10 +11,11 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { Select } from "primeng/select";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { DataViewModule } from "primeng/dataview";
 import { ProgressBarModule } from "primeng/progressbar";
+import { COLORS } from "../../../core/constants/app.constants";
 import {
   NutritionService,
   NutritionGoal,
@@ -53,10 +54,11 @@ interface Meal {
     ChartModule,
     AutoCompleteModule,
     Select,
-    ButtonModule,
     TagModule,
     DataViewModule,
     ProgressBarModule,
+  
+    ButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -88,13 +90,7 @@ interface Meal {
             </ng-template>
           </p-autoComplete>
 
-          <p-button
-            icon="pi pi-plus"
-            label="Add Food"
-            [disabled]="!selectedFood"
-            (onClick)="addFoodToMeal()"
-          >
-          </p-button>
+          <app-button iconLeft="pi-plus" [disabled]="!selectedFood" (clicked)="addFoodToMeal()">Add Food</app-button>
         </div>
 
         <!-- Quick Add Suggestions (AI-powered) -->
@@ -240,13 +236,7 @@ interface Meal {
                   <h5>{{ insight.title }}</h5>
                   <p>{{ insight.description }}</p>
                   @if (insight.actionLabel) {
-                    <p-button
-                      [label]="insight.actionLabel"
-                      size="small"
-                      [text]="true"
-                      (onClick)="executeInsightAction(insight)"
-                    >
-                    </p-button>
+                    <app-button variant="text" size="sm" (clicked)="executeInsightAction(insight)"></app-button>
                   }
                 </div>
               </div>
@@ -356,11 +346,11 @@ export class NutritionDashboardComponent {
 
   getProgressStyle(goal: NutritionGoal): Record<string, string> {
     const percentage = (goal.current / goal.target) * 100;
-    let color = "#10c96b"; // Green for achieved
+    let color = COLORS.PRIMARY_LIGHT; // Green for achieved
 
     if (percentage < 50)
-      color = "#ef4444"; // Red for low
-    else if (percentage < 80) color = "#f1c40f"; // Yellow for medium
+      color = COLORS.ERROR; // Red for low
+    else if (percentage < 80) color = COLORS.WARNING; // Yellow for medium
 
     return { "--p-progressbar-value-bg": color };
   }
@@ -376,9 +366,9 @@ export class NutritionDashboardComponent {
       datasets: [
         {
           data: [meal.carbs, meal.protein, meal.fat],
-          backgroundColor: ["#f1c40f", "#10c96b", "#ef4444"],
+          backgroundColor: [COLORS.WARNING, COLORS.PRIMARY_LIGHT, COLORS.ERROR],
           borderWidth: 2,
-          borderColor: "#ffffff",
+          borderColor: "var(--surface-0)",
         },
       ],
     };

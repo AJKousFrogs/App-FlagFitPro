@@ -14,7 +14,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
@@ -44,7 +43,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     ReactiveFormsModule,
     FormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     Select,
     ToastModule,

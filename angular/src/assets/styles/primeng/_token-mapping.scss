@@ -26,9 +26,10 @@
     --p-button-primary-active-background: var(--primitive-primary-800);
     --p-button-primary-color: var(--color-text-on-primary);
 
-    // IMPORTANT: Decision 9A says standard radius default.
-    // PrimeNG "rounded" should map to radius-full only when [rounded]="true".
-    // Default token for button radius should be radius-lg.
+    // DESIGN SYSTEM: Decision 9A - Standard radius default.
+    // [rounded]="true" is FORBIDDEN per design system rules.
+    // All buttons use raised (rectangular) style with --radius-lg.
+    // Pill shape buttons are no longer allowed.
     --p-button-border-radius: var(--radius-lg);
 
     // Default button padding

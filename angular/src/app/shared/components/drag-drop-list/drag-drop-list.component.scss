@@ -6,8 +6,8 @@
 @layer features {
   .drag-drop-container {
     display: flex;
-    gap: 1.5rem;
-    padding: 1rem;
+    gap: var(--space-6);
+    padding: var(--space-4);
   }
 
   .list-section {
@@ -18,15 +18,15 @@
   .list-title {
     font-size: var(--font-heading-sm);
     font-weight: var(--font-weight-semibold);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     color: var(--color-text-primary);
   }
 
   .drop-list {
     min-height: 200px;
-    border: 2px dashed var(--color-border-primary);
+    border: var(--border-2) dashed var(--color-border-primary);
     border-radius: var(--radius-md);
-    padding: 0.75rem;
+    padding: var(--space-3);
     background: var(--surface-tertiary);
     transition: border-color 0.2s ease;
   }
@@ -43,11 +43,11 @@
   .drag-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    margin-bottom: var(--space-2);
     background: var(--surface-card);
-    border: 1px solid var(--color-border-primary);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-md);
     cursor: move;
     transition:
@@ -73,7 +73,7 @@
     cursor: grab;
     display: flex;
     align-items: center;
-    padding: 0.25rem;
+    padding: var(--space-1);
   }
 
   .drag-handle:active {
@@ -87,7 +87,7 @@
   .item-title {
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--space-1);
   }
 
   .item-description {
@@ -97,7 +97,7 @@
 
   .empty-state {
     text-align: center;
-    padding: 2rem;
+    padding: var(--space-8);
     color: var(--color-text-secondary);
     font-style: italic;
   }

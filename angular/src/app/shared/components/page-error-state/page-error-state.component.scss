@@ -1,45 +1,64 @@
 // ============================================================================
 // page-error-state.component Styles
-// Design System Compliant
+// Design System Compliant - Uses utility class patterns
 // ============================================================================
 
 @layer features {
-  .error-state-container {
+  /* Extends .error-state from ui-standardization.scss */
+  .error-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--space-10, 2.5rem);
+    padding: var(--space-8);
     text-align: center;
-    min-height: 300px;
+    min-height: 200px;
   }
 
-  .error-icon {
-    font-size: var(--font-display-sm);
-    color: var(--color-status-error, #ef4444);
-    margin-bottom: var(--space-4, 1rem);
-    opacity: 0.8;
+  .error-state__icon {
+    font-size: 3rem;
+    color: var(--color-status-error);
+    margin-bottom: var(--space-4);
+    opacity: 0.9;
   }
 
-  .error-title {
-    font-size: var(--font-heading-md, 1.25rem);
-    font-weight: var(--font-weight-semibold, 600);
+  .error-state__title {
+    font-size: var(--font-body-lg);
+    font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
-    margin: 0 0 var(--space-2, 0.5rem) 0;
+    margin: 0 0 var(--space-2) 0;
   }
 
-  .error-message {
-    font-size: var(--font-body-md, 1rem);
+  .error-state__description {
+    font-size: var(--font-body-md);
     color: var(--color-text-secondary);
-    margin: 0 0 var(--space-6, 1.5rem) 0;
-    max-width: 400px;
-    line-height: 1.5;
+    margin: 0 0 var(--space-4) 0;
+    max-width: 300px;
+    line-height: 1.4;
   }
 
-  .error-help {
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--color-text-muted);
-    margin: var(--space-4, 1rem) 0 0 0;
+  .error-state__help {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-tertiary);
+    margin: var(--space-4) 0 0 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .error-state {
+      padding: var(--space-6);
+    }
+
+    .error-state__icon {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .error-state {
+      transition: none;
+    }
   }
 }
 

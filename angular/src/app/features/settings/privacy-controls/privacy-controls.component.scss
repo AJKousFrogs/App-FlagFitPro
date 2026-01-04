@@ -45,32 +45,32 @@
   }
 
   .ai-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primitive-purple-500) 0%, var(--primitive-purple-700) 100%);
     color: white;
   }
 
   .team-icon {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background: linear-gradient(135deg, var(--primitive-teal-500) 0%, var(--primitive-success-400) 100%);
     color: white;
   }
 
   .emergency-icon {
-    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    background: linear-gradient(135deg, var(--primitive-error-500) 0%, var(--primitive-error-400) 100%);
     color: white;
   }
 
   .research-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, var(--primitive-blue-400) 0%, var(--primitive-cyan-400) 100%);
     color: white;
   }
 
   .parental-icon {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background: linear-gradient(135deg, var(--primitive-pink-400) 0%, var(--primitive-yellow-300) 100%);
     color: white;
   }
 
   .rights-icon {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, var(--primitive-teal-200) 0%, var(--primitive-pink-200) 100%);
     color: var(--color-text-primary);
   }
 
@@ -228,7 +228,7 @@
     width: 100%;
     height: 4px;
     background: var(--color-border-secondary);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
   }
 
@@ -239,7 +239,7 @@
       var(--color-brand-primary),
       var(--color-brand-secondary, var(--color-brand-primary))
     );
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     transition: width 0.3s ease;
   }
 

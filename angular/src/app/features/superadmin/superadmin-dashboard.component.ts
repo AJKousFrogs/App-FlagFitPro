@@ -3,7 +3,8 @@ import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -22,11 +23,13 @@ import {
     RouterLink,
     FormsModule,
     CardModule,
-    ButtonModule,
     TagModule,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -108,13 +111,7 @@ import {
                 <i class="pi pi-inbox"></i>
                 Pending Approvals
               </h3>
-              <p-button
-                icon="pi pi-refresh"
-                [text]="true"
-                [rounded]="true"
-                (onClick)="refreshData()"
-                ariaLabel="Refresh"
-              ></p-button>
+              <app-icon-button icon="pi-refresh" variant="text" (clicked)="refreshData()" ariaLabel="Refresh" />
             </div>
           </ng-template>
 
@@ -203,19 +200,8 @@ import {
                   </div>
 
                   <div class="approval-actions">
-                    <p-button
-                      label="Approve"
-                      icon="pi pi-check"
-                      severity="success"
-                      (onClick)="handleApprove(approval)"
-                    ></p-button>
-                    <p-button
-                      label="Reject"
-                      icon="pi pi-times"
-                      severity="danger"
-                      [outlined]="true"
-                      (onClick)="openRejectModal(approval)"
-                    ></p-button>
+                    <app-button variant="success" iconLeft="pi-check" (clicked)="handleApprove(approval)">Approve</app-button>
+                    <app-button variant="outlined" iconLeft="pi-times" (clicked)="openRejectModal(approval)">Reject</app-button>
                   </div>
                 </div>
               }
@@ -262,17 +248,8 @@ import {
               ></textarea>
             </div>
             <div class="modal-footer">
-              <p-button
-                label="Cancel"
-                [text]="true"
-                (onClick)="closeRejectModal()"
-              ></p-button>
-              <p-button
-                label="Confirm Rejection"
-                severity="danger"
-                (onClick)="confirmReject()"
-                [disabled]="!rejectReason.trim()"
-              ></p-button>
+              <app-button variant="text" (clicked)="closeRejectModal()">Cancel</app-button>
+              <app-button variant="danger" [disabled]="!rejectReason.trim()" (clicked)="confirmReject()">Confirm Rejection</app-button>
             </div>
           </div>
         </div>

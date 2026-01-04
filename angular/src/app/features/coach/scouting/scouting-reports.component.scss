@@ -1,0 +1,608 @@
+
+.scouting-reports {
+  padding: var(--ds-spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-spacing-3xl);
+  gap: var(--ds-spacing-md);
+  color: var(--text-color-secondary);
+
+  i {
+    font-size: var(--font-heading-lg);
+  }
+}
+
+// Section styles
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ds-spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--ds-spacing-md);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-heading-sm);
+    font-weight: 600;
+  }
+}
+
+// Reports Section
+.reports-section {
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--ds-spacing-lg);
+  }
+
+  :host ::ng-deep .report-card {
+    .p-card-header {
+      padding: var(--ds-spacing-md);
+      background: var(--surface-ground);
+    }
+
+    .p-card-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--ds-spacing-xs);
+    }
+  }
+
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .opponent-info {
+      display: flex;
+      flex-direction: column;
+
+      .opponent-name {
+        font-weight: 600;
+        font-size: var(--font-body-lg);
+      }
+
+      .game-date {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+
+  .report-summary {
+    p {
+      margin: 0;
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+
+  .report-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-spacing-md);
+    margin-top: var(--ds-spacing-md);
+    padding-top: var(--ds-spacing-md);
+    border-top: var(--border-1) solid var(--surface-border);
+
+    .created-by,
+    .read-count {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-xs);
+      font-size: var(--font-body-xs);
+      color: var(--text-color-secondary);
+    }
+
+    .required-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-xs);
+      font-size: var(--font-body-xs);
+      color: var(--red-600);
+      font-weight: 500;
+    }
+  }
+}
+
+// Opponents Section
+.opponents-section {
+  .opponents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--ds-spacing-lg);
+  }
+
+  :host ::ng-deep .opponent-card {
+    .p-card-header {
+      padding: var(--ds-spacing-md);
+      background: var(--surface-ground);
+    }
+  }
+
+  .opponent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .team-info {
+      display: flex;
+      flex-direction: column;
+
+      .team-name {
+        font-weight: 600;
+      }
+
+      .conference {
+        font-size: var(--font-body-xs);
+        color: var(--text-color-secondary);
+      }
+    }
+
+    .record {
+      font-size: var(--font-heading-sm);
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+
+  .opponent-details {
+    .detail-row {
+      display: flex;
+      gap: var(--ds-spacing-sm);
+      padding: var(--ds-spacing-xs) 0;
+
+      .label {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+
+      .value {
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+      }
+    }
+
+    .key-players {
+      margin-top: var(--ds-spacing-md);
+
+      .label {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+        display: block;
+        margin-bottom: var(--ds-spacing-xs);
+      }
+
+      .player-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--ds-spacing-xs);
+
+        .player-badge {
+          font-size: var(--font-body-xs);
+          padding: var(--space-1) var(--space-2);
+          border-radius: var(--ds-radius-sm);
+          background: var(--surface-ground);
+          cursor: help;
+
+          &.high {
+            background: var(--red-50);
+            color: var(--red-700);
+          }
+
+          &.medium {
+            background: var(--orange-50);
+            color: var(--orange-700);
+          }
+
+          &.low {
+            background: var(--green-50);
+            color: var(--green-700);
+          }
+        }
+
+        .more-players {
+          font-size: var(--font-body-xs);
+          color: var(--text-color-secondary);
+        }
+      }
+    }
+
+    .last-meeting {
+      margin-top: var(--ds-spacing-md);
+      padding-top: var(--ds-spacing-md);
+      border-top: var(--border-1) solid var(--surface-border);
+      display: flex;
+      gap: var(--ds-spacing-sm);
+
+      .label {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+
+      .value {
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Tendencies Section
+.tendencies-section {
+  .tendencies-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--ds-spacing-lg);
+  }
+
+  .tendency-section {
+    margin-bottom: var(--ds-spacing-lg);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h5 {
+      margin: 0 0 var(--ds-spacing-sm);
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+    }
+
+    &.weaknesses {
+      background: var(--green-50);
+      padding: var(--ds-spacing-md);
+      border-radius: var(--ds-radius-md);
+
+      h5 {
+        color: var(--green-700);
+
+        i {
+          color: var(--green-500);
+        }
+      }
+
+      .tendency-list li {
+        color: var(--green-800);
+      }
+    }
+  }
+
+  .formation-bars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-sm);
+
+    .formation-bar {
+      display: grid;
+      grid-template-columns: 100px 1fr 50px;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+
+      .formation-name {
+        font-size: var(--font-body-sm);
+        font-weight: 500;
+      }
+
+      .bar-container {
+        height: var(--space-5);
+        background: var(--surface-ground);
+        border-radius: var(--ds-radius-sm);
+        overflow: hidden;
+
+        .bar-fill {
+          height: 100%;
+          background: var(--primary-color);
+          border-radius: var(--ds-radius-sm);
+          transition: width 0.3s ease;
+
+          &.defensive {
+            background: var(--orange-500);
+          }
+        }
+      }
+
+      .percentage {
+        font-size: var(--font-body-sm);
+        font-weight: 600;
+        text-align: right;
+      }
+    }
+  }
+
+  .play-distribution {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--ds-spacing-sm);
+
+    .play-type {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--ds-spacing-sm);
+      background: var(--surface-ground);
+      border-radius: var(--ds-radius-sm);
+
+      .type-name {
+        font-size: var(--font-body-sm);
+      }
+
+      .type-value {
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .tendency-list {
+    margin: 0;
+    padding-left: var(--ds-spacing-lg);
+
+    li {
+      margin-bottom: var(--ds-spacing-xs);
+      font-size: var(--font-body-sm);
+    }
+  }
+
+  .targets-list {
+    .target-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--ds-spacing-xs) 0;
+      border-bottom: var(--border-1) solid var(--surface-border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .target-name {
+        font-weight: 500;
+      }
+
+      .target-share {
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+
+  .blitz-rate {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ds-spacing-sm);
+    margin-bottom: var(--ds-spacing-sm);
+
+    .rate-value {
+      font-size: var(--font-heading-lg);
+      font-weight: 700;
+      color: var(--red-600);
+    }
+
+    .rate-label {
+      font-size: var(--font-body-sm);
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .select-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ds-spacing-3xl);
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: var(--font-display-md);
+      margin-bottom: var(--ds-spacing-md);
+      opacity: 0.5;
+    }
+  }
+}
+
+// View Report Dialog
+.view-report {
+  .report-meta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--ds-spacing-lg);
+    padding-bottom: var(--ds-spacing-lg);
+    border-bottom: var(--border-1) solid var(--surface-border);
+
+    h3 {
+      margin: 0 0 var(--ds-spacing-xs);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .report-section {
+    margin-bottom: var(--ds-spacing-lg);
+
+    h4 {
+      margin: 0 0 var(--ds-spacing-sm);
+      color: var(--primary-color);
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.6;
+    }
+  }
+
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--ds-spacing-lg);
+
+    .plan-item {
+      h5 {
+        margin: 0 0 var(--ds-spacing-sm);
+        font-size: var(--font-body-sm);
+        color: var(--text-color-secondary);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: var(--ds-spacing-lg);
+
+        li {
+          margin-bottom: var(--ds-spacing-xs);
+        }
+      }
+    }
+  }
+
+  .matchups-list {
+    .matchup {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+      padding: var(--ds-spacing-sm);
+      background: var(--surface-ground);
+      border-radius: var(--ds-radius-sm);
+      margin-bottom: var(--ds-spacing-sm);
+
+      .our-player {
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+
+      .vs {
+        color: var(--text-color-secondary);
+      }
+
+      .their-player {
+        font-weight: 600;
+        color: var(--red-600);
+      }
+
+      .matchup-notes {
+        margin-left: auto;
+        font-size: var(--font-body-xs);
+        color: var(--text-color-secondary);
+        font-style: italic;
+      }
+    }
+  }
+}
+
+// Forms
+.report-form,
+.opponent-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-md);
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-xs);
+
+    label {
+      font-weight: 500;
+      font-size: var(--font-body-sm);
+    }
+  }
+
+  .form-section {
+    padding: var(--ds-spacing-md);
+    background: var(--surface-ground);
+    border-radius: var(--ds-radius-md);
+
+    h4 {
+      margin: 0 0 var(--ds-spacing-md);
+      font-size: var(--font-body-md);
+    }
+
+    .form-group {
+      margin-bottom: var(--ds-spacing-md);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-spacing-md);
+  }
+
+  .checkbox-group {
+    justify-content: center;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--ds-spacing-sm);
+      cursor: pointer;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: var(--ds-spacing-3xl);
+
+  i {
+    font-size: var(--font-display-md);
+    color: var(--text-color-secondary);
+    opacity: 0.5;
+    margin-bottom: var(--ds-spacing-md);
+  }
+
+  h4 {
+    margin: 0 0 var(--ds-spacing-sm);
+  }
+
+  p {
+    margin: 0 0 var(--ds-spacing-lg);
+    color: var(--text-color-secondary);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .scouting-reports {
+    padding: var(--ds-spacing-md);
+  }
+
+  .reports-section .reports-grid,
+  .opponents-section .opponents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tendencies-section .tendencies-content {
+    grid-template-columns: 1fr;
+  }
+
+  .view-report .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-form .form-row,
+  .opponent-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}

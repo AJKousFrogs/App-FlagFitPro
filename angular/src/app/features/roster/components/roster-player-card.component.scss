@@ -10,7 +10,7 @@
       transform 0.2s,
       box-shadow 0.2s,
       border-color 0.2s;
-    border: 2px solid transparent;
+    border: var(--border-2) solid transparent;
   }
 
   .player-card:hover {
@@ -19,8 +19,8 @@
   }
 
   .player-card.selected {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 2px;
+    outline: var(--border-2) solid var(--color-brand-primary);
+    outline-offset: var(--space-1);
   }
 
   // Risk level card styling
@@ -36,83 +36,93 @@
 
   .card-checkbox {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: var(--space-3);
+    left: var(--space-3);
     z-index: 1;
   }
 
   // Badge row for status + risk
   .badge-row {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: var(--space-3);
+    right: var(--space-3);
     display: flex;
     gap: var(--space-2);
     align-items: center;
   }
 
+  // Status badge - Sharp rectangular style (matches "Optimal" tag exactly)
   .status-badge {
-    padding: 4px 10px;
-    border-radius: var(--radius-lg);
-    font-size: var(--font-body-xs);
+    padding: var(--space-2) var(--space-4);
+    // Sharp rectangular corners - matches "Optimal" tag exactly
+    border-radius: var(--radius-sm, 4px);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-sm);
     font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.2;
   }
 
+  // Status variants - Solid backgrounds with appropriate text colors
   .status-active {
-    background: var(--color-status-success-bg);
-    color: var(--color-status-success);
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
   }
 
   .status-limited {
-    background: var(--color-status-warning-bg);
-    color: var(--color-status-warning);
+    background: var(--color-status-warning);
+    color: var(--primitive-warning-900, #78350f);
   }
 
   .status-returning {
-    background: var(--color-status-info-bg);
-    color: var(--color-status-info);
+    background: var(--color-status-info);
+    color: var(--color-text-on-primary);
   }
 
   .status-injured {
-    background: var(--color-status-error-bg);
-    color: var(--color-status-error);
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
   }
 
   .status-inactive {
-    background: var(--color-border-secondary);
-    color: var(--color-text-secondary);
+    background: var(--surface-secondary, var(--primitive-neutral-100));
+    color: var(--color-text-secondary, var(--primitive-neutral-600));
   }
 
-  // Risk badge
+  // Risk badge - Sharp rectangular style (matches "Optimal" tag exactly)
   .risk-badge {
-    padding: 4px 8px;
-    border-radius: var(--radius-lg);
-    font-size: var(--font-body-xs);
+    padding: var(--space-2) var(--space-4);
+    // Sharp rectangular corners - matches "Optimal" tag exactly
+    border-radius: var(--radius-sm, 4px);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-sm);
     font-weight: var(--font-weight-semibold);
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.2;
     display: flex;
     align-items: center;
     gap: var(--space-1);
 
     i {
-      font-size: 10px;
+      font-size: var(--font-body-xs);
     }
   }
 
   .risk-moderate {
-    background: var(--color-status-warning-bg);
-    color: var(--color-status-warning);
+    background: var(--color-status-warning);
+    color: var(--primitive-warning-900, #78350f);
   }
 
   .risk-high {
     background: var(--color-status-warning);
-    color: white;
+    color: var(--primitive-warning-900, #78350f);
   }
 
   .risk-critical {
     background: var(--color-status-error);
-    color: white;
+    color: var(--color-text-on-primary);
     animation: pulse-risk 2s infinite;
   }
 
@@ -232,7 +242,7 @@
   // ACWR indicator
   .acwr-indicator {
     position: relative;
-    height: 6px;
+    height: var(--space-2);
     background: linear-gradient(to right, 
       var(--color-status-info) 0%, 
       var(--color-status-success) 40%, 
@@ -247,10 +257,10 @@
   .acwr-marker {
     position: absolute;
     top: -2px;
-    width: 10px;
-    height: 10px;
+    width: var(--space-3);
+    height: var(--space-3);
     background: var(--color-text-primary);
-    border: 2px solid white;
+    border: var(--border-2) solid white;
     border-radius: 50%;
     transform: translateX(-50%);
     box-shadow: var(--shadow-sm);
@@ -275,7 +285,7 @@
     margin-bottom: var(--space-3);
 
     i {
-      font-size: 12px;
+      font-size: var(--font-body-xs);
     }
 
     &.info {
@@ -293,7 +303,7 @@
     display: flex;
     gap: var(--space-4);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border-secondary);
+    border-top: var(--border-1) solid var(--color-border-secondary);
   }
 
   .detail-item {
@@ -316,7 +326,7 @@
   .player-stats {
     margin-top: var(--space-4);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
+    border-top: var(--border-1) solid var(--color-border-secondary);
   }
 
   .card-actions {
@@ -325,7 +335,7 @@
     gap: var(--space-1);
     margin-top: var(--space-3);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border-secondary);
+    border-top: var(--border-1) solid var(--color-border-secondary);
   }
 
   /* Responsive */
@@ -341,8 +351,8 @@
     }
 
     .player-jersey {
-      width: 48px;
-      height: 48px;
+      width: var(--space-12);
+      height: var(--space-12);
       font-size: var(--font-body-md);
     }
 
@@ -360,8 +370,8 @@
 
   @media (max-width: 480px) {
     .player-jersey {
-      width: 40px;
-      height: 40px;
+      width: var(--space-10);
+      height: var(--space-10);
       font-size: var(--font-body-sm);
     }
 
@@ -384,4 +394,3 @@
     }
   }
 }
-

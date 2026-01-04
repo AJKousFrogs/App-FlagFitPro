@@ -8,7 +8,8 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 
 export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
 
@@ -16,7 +17,7 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
   selector: "app-offline-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonComponent, IconButtonComponent],
   template: `
     @if (showBanner()) {
       <div
@@ -49,22 +50,10 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
         </div>
         <div class="banner-actions">
           @if (connectionStatus() === "offline") {
-            <p-button
-              label="Retry"
-              icon="pi pi-refresh"
-              size="small"
-              [text]="true"
-              (onClick)="retry()"
-            ></p-button>
+            <app-button variant="text" size="sm" iconLeft="pi-refresh" (clicked)="retry()">Retry</app-button>
           }
           @if (connectionStatus() === "online" && showBanner()) {
-            <p-button
-              icon="pi pi-times"
-              size="small"
-              [text]="true"
-              [rounded]="true"
-              (onClick)="dismiss()"
-            ></p-button>
+            <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="dismiss()" ariaLabel="times" />
           }
         </div>
       </div>

@@ -28,8 +28,10 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
+import { COLORS } from "../../../core/constants/app.constants";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -56,14 +58,15 @@ export interface WellnessMetric {
   selector: "app-wellness-score-display",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+imports: [
     CommonModule,
     CardModule,
-    ButtonModule,
     ProgressBarModule,
     TagModule,
     TooltipModule,
     SkeletonModule,
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <!-- Loading State -->
@@ -192,14 +195,7 @@ export interface WellnessMetric {
                 <h3>Wellness Status</h3>
               </div>
               @if (clickable()) {
-                <p-button
-                  icon="pi pi-external-link"
-                  [text]="true"
-                  [rounded]="true"
-                  size="small"
-                  (onClick)="handleClick()"
-                  [attr.aria-label]="'View full wellness details'"
-                ></p-button>
+                <app-icon-button icon="pi-external-link" variant="text" size="sm" (clicked)="handleClick()" ariaLabel="external-link" />
               }
             </div>
           </ng-template>
@@ -246,12 +242,7 @@ export interface WellnessMetric {
               <div class="no-data">
                 <i class="pi pi-info-circle"></i>
                 <p>No wellness data yet</p>
-                <p-button
-                  label="Log Check-in"
-                  icon="pi pi-plus"
-                  size="small"
-                  (onClick)="handleClick()"
-                ></p-button>
+                <app-button size="sm" iconLeft="pi-plus" (clicked)="handleClick()">Log Check-in</app-button>
               </div>
             }
           </div>
@@ -326,7 +317,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-moon",
               label: "Sleep",
               value: `${latestData.sleep}h`,
-              color: "#3498db",
+              color: COLORS.INFO,
               score: latestData.sleep,
             });
           }
@@ -336,7 +327,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-bolt",
               label: "Energy",
               value: `${latestData.energy}/10`,
-              color: "#f1c40f",
+              color: COLORS.WARNING,
               score: latestData.energy,
             });
           }
@@ -352,7 +343,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-shield",
               label: "Stress",
               value: stressLabel,
-              color: latestData.stress <= 3 ? "#10c96b" : "#f39c12",
+              color: latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
               score: 10 - latestData.stress, // Invert for display
             });
           }
@@ -362,7 +353,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-heart",
               label: "Soreness",
               value: `${latestData.soreness}/10`,
-              color: latestData.soreness <= 3 ? "#10c96b" : "#ef4444",
+              color: latestData.soreness <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.ERROR,
               score: 10 - latestData.soreness,
             });
           }
@@ -372,7 +363,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-cloud",
               label: "Hydration",
               value: `${latestData.hydration}/10`,
-              color: "#3498db",
+              color: COLORS.INFO,
               score: latestData.hydration,
             });
           }
@@ -394,7 +385,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
   private setNoDataState(): void {
     this.overallScore.set(0);
     this.statusLabel.set("No data");
-    this.statusColor.set("#94a3b8");
+    this.statusColor.set(COLORS.SLATE);
     this.metrics.set([]);
   }
 

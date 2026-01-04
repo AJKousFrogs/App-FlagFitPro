@@ -10,7 +10,8 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from 'primeng/checkbox';
 import { DatePicker } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -53,7 +54,6 @@ interface EventTypeOption {
   selector: 'app-tournament-calendar',
   imports: [
     FormsModule,
-    ButtonModule,
     DialogModule,
     InputTextModule,
     InputNumberModule,
@@ -62,6 +62,9 @@ interface EventTypeOption {
     Checkbox,
     TagModule,
     TooltipModule,
+  
+    ButtonComponent,
+    IconButtonComponent,
   ],
   template: `
     <div class="tournament-calendar">
@@ -70,13 +73,7 @@ interface EventTypeOption {
           <i class="pi pi-trophy"></i>
           Tournament Calendar
         </h3>
-        <p-button
-          icon="pi pi-plus"
-          label="Add Tournament"
-          [outlined]="true"
-          size="small"
-          (onClick)="openAddDialog()"
-        ></p-button>
+        <app-button variant="outlined" size="sm" iconLeft="pi-plus" (clicked)="openAddDialog()">Add Tournament</app-button>
       </div>
 
       @if (isLoading()) {
@@ -88,11 +85,7 @@ interface EventTypeOption {
         <div class="empty-state">
           <i class="pi pi-calendar-times"></i>
           <p>No upcoming tournaments</p>
-          <p-button
-            label="Add Your First Tournament"
-            icon="pi pi-plus"
-            (onClick)="openAddDialog()"
-          ></p-button>
+          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()">Add Your First Tournament</app-button>
         </div>
       } @else {
         <div class="tournament-list">
@@ -107,10 +100,10 @@ interface EventTypeOption {
                   <div class="tournament-name">
                     {{ tournament.name }}
                     @if (tournament.isPeakEvent) {
-                      <p-tag value="PEAK" severity="danger" [rounded]="true"></p-tag>
+                      <p-tag value="PEAK" severity="danger" ></p-tag>
                     }
                     @if (tournament.isNationalTeamEvent) {
-                      <p-tag value="National Team" severity="info" [rounded]="true"></p-tag>
+                      <p-tag value="National Team" severity="info" ></p-tag>
                     }
                   </div>
                   <div class="tournament-details">
@@ -161,29 +154,10 @@ interface EventTypeOption {
 
               <div class="tournament-actions">
                 @if (tournament.externalUrl) {
-                  <p-button
-                    icon="pi pi-external-link"
-                    [text]="true"
-                    size="small"
-                    (onClick)="openExternalUrl(tournament.externalUrl)"
-                    pTooltip="Tournament Info"
-                  ></p-button>
+                  <app-icon-button icon="pi-external-link" variant="text" size="sm" (clicked)="openExternalUrl(tournament.externalUrl)" ariaLabel="external-link" />
                 }
-                <p-button
-                  icon="pi pi-pencil"
-                  [text]="true"
-                  size="small"
-                  (onClick)="editTournament(tournament)"
-                  pTooltip="Edit"
-                ></p-button>
-                <p-button
-                  icon="pi pi-trash"
-                  [text]="true"
-                  severity="danger"
-                  size="small"
-                  (onClick)="deleteTournament(tournament)"
-                  pTooltip="Delete"
-                ></p-button>
+                <app-icon-button icon="pi-pencil" variant="text" size="sm" (clicked)="editTournament(tournament)" ariaLabel="pencil" />
+                <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="deleteTournament(tournament)" ariaLabel="trash" />
               </div>
             </div>
           }
@@ -345,18 +319,8 @@ interface EventTypeOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <p-button
-          label="Cancel"
-          [outlined]="true"
-          (onClick)="closeDialog()"
-        ></p-button>
-        <p-button
-          [label]="isEditing() ? 'Save Changes' : 'Add Tournament'"
-          icon="pi pi-check"
-          (onClick)="saveTournament()"
-          [loading]="isSaving()"
-          [disabled]="!isFormValid()"
-        ></p-button>
+        <app-button variant="outlined" (clicked)="closeDialog()">Cancel</app-button>
+        <app-icon-button icon="pi-check" [loading]="isSaving()" [disabled]="!isFormValid()" (clicked)="saveTournament()" ariaLabel="check" />
       </ng-template>
     </p-dialog>
   `,

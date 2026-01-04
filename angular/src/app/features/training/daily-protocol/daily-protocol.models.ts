@@ -177,6 +177,13 @@ export interface DailyProtocol {
 // DISPLAY HELPERS
 // ============================================================================
 
+import { BLOCK_COLORS } from '../../../core/utils/design-tokens.util';
+
+/**
+ * Block configuration for protocol display
+ * Colors use CSS variable references from design-system-tokens.scss
+ * This ensures consistency with the design system and theme support
+ */
 export const BLOCK_CONFIG: Record<
   BlockType,
   { title: string; icon: string; color: string }
@@ -184,32 +191,32 @@ export const BLOCK_CONFIG: Record<
   morning_mobility: {
     title: 'Morning Mobility',
     icon: 'pi-sun',
-    color: '#f59e0b', // amber
+    color: BLOCK_COLORS.morning_mobility, // --primitive-warning-500 (amber)
   },
   foam_roll: {
     title: 'Pre-Training: Foam Roll',
     icon: 'pi-circle-fill',
-    color: '#ef4444', // red
+    color: BLOCK_COLORS.foam_roll, // --primitive-error-500 (red)
   },
   warm_up: {
     title: 'Warm-Up',
     icon: 'pi-bolt',
-    color: '#f97316', // orange
+    color: BLOCK_COLORS.warm_up, // --color-workout-cardio (orange)
   },
   main_session: {
     title: 'Main Session',
     icon: 'pi-play',
-    color: '#089949', // green
+    color: BLOCK_COLORS.main_session, // --ds-primary-green (brand green)
   },
   cool_down: {
     title: 'Cool-Down',
     icon: 'pi-stop',
-    color: '#3b82f6', // blue
+    color: BLOCK_COLORS.cool_down, // --color-chart-tertiary (blue)
   },
   evening_recovery: {
     title: 'Evening Recovery',
     icon: 'pi-moon',
-    color: '#8b5cf6', // purple
+    color: BLOCK_COLORS.evening_recovery, // --color-status-help (purple)
   },
 };
 

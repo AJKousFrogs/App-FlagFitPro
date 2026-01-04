@@ -10,7 +10,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
@@ -64,7 +64,6 @@ interface AthleteMetrics {
     FormsModule,
     CommonModule,
     CardModule,
-    ButtonModule,
     DatePicker,
     TagModule,
     SkeletonModule,
@@ -73,6 +72,8 @@ interface AthleteMetrics {
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -83,13 +84,7 @@ interface AthleteMetrics {
           subtitle="AI-powered training schedule optimization based on your readiness and performance"
           icon="pi-sparkles"
         >
-          <p-button
-            label="Generate New Plan"
-            icon="pi pi-refresh"
-            (onClick)="generateNewPlan()"
-            [loading]="isGenerating()"
-            [disabled]="!aiEnabled()"
-          ></p-button>
+          <app-button iconLeft="pi-refresh" [loading]="isGenerating()" [disabled]="!aiEnabled()" (clicked)="generateNewPlan()">Generate New Plan</app-button>
         </app-page-header>
 
         <!-- AI Consent Required Banner -->
@@ -212,20 +207,8 @@ interface AthleteMetrics {
                     </div>
                     <div class="suggestion-actions">
                       @if (!suggestion.accepted && !suggestion.dismissed) {
-                        <p-button
-                          label="Apply"
-                          icon="pi pi-check"
-                          size="small"
-                          (onClick)="applySuggestion(suggestion)"
-                          [loading]="applyingId() === suggestion.id"
-                        ></p-button>
-                        <p-button
-                          label="Dismiss"
-                          [outlined]="true"
-                          severity="secondary"
-                          size="small"
-                          (onClick)="dismissSuggestion(suggestion)"
-                        ></p-button>
+                        <app-button size="sm" iconLeft="pi-check" [loading]="applyingId() === suggestion.id" (clicked)="applySuggestion(suggestion)">Apply</app-button>
+                        <app-button variant="outlined" size="sm" (clicked)="dismissSuggestion(suggestion)">Dismiss</app-button>
                       } @else if (suggestion.accepted) {
                         <p-tag value="Applied" severity="success"></p-tag>
                       }
@@ -257,12 +240,7 @@ interface AthleteMetrics {
               @if (selectedDateSessions().length === 0) {
                 <div class="empty-sessions">
                   <p>No sessions scheduled for this date</p>
-                  <p-button
-                    label="Add Session"
-                    icon="pi pi-plus"
-                    [outlined]="true"
-                    size="small"
-                  ></p-button>
+                  <app-button variant="outlined" size="sm" iconLeft="pi-plus">Add Session</app-button>
                 </div>
               } @else {
                 <div class="sessions-list">

@@ -7,13 +7,16 @@
  * Features:
  * - Real-time search with debouncing
  * - Multi-entity search (exercises, programs, users, etc.)
+ * - Parallel API calls for faster results
+ * - Search result caching with TTL
+ * - Request cancellation to prevent race conditions
  * - Recent searches history
  * - Search suggestions
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
+import { computed, inject, Injectable, OnDestroy, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface SearchResult {
   id: string;
@@ -24,6 +27,10 @@ export interface SearchResult {
   icon: string;
   route: string;
   relevance: number;
+  /** Highlighted title with <mark> tags around matched text */
+  highlightedTitle?: string;
+  /** Highlighted subtitle with <mark> tags around matched text */
+  highlightedSubtitle?: string;
 }
 
 export interface SearchState {
@@ -34,10 +41,18 @@ export interface SearchState {
   totalResults: number;
 }
 
+interface CacheEntry {
+  results: SearchResult[];
+  timestamp: number;
+}
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache TTL
+const MAX_CACHE_SIZE = 50; // Maximum number of cached queries
+
 @Injectable({
   providedIn: "root",
 })
-export class SearchService {
+export class SearchService implements OnDestroy {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
 
@@ -48,6 +63,7 @@ export class SearchService {
   private readonly _error = signal<string | null>(null);
   private readonly _recentSearches = signal<string[]>([]);
   private readonly _isOpen = signal<boolean>(false);
+  private readonly _suggestions = signal<string[]>([]);
 
   // Public readonly signals
   readonly query = this._query.asReadonly();
@@ -56,6 +72,7 @@ export class SearchService {
   readonly error = this._error.asReadonly();
   readonly recentSearches = this._recentSearches.asReadonly();
   readonly isOpen = this._isOpen.asReadonly();
+  readonly suggestions = this._suggestions.asReadonly();
 
   // Computed
   readonly hasResults = computed(() => this._results().length > 0);
@@ -69,8 +86,21 @@ export class SearchService {
     totalResults: this._results().length,
   }));
 
+  // Cache for search results
+  private searchCache = new Map<string, CacheEntry>();
+
+  // AbortController for cancelling in-flight requests
+  private currentAbortController: AbortController | null = null;
+
+  // Track current search version to handle race conditions
+  private searchVersion = 0;
+
   constructor() {
     this.loadRecentSearches();
+  }
+
+  ngOnDestroy(): void {
+    this.cancelCurrentSearch();
   }
 
   /**
@@ -85,6 +115,7 @@ export class SearchService {
    */
   close(): void {
     this._isOpen.set(false);
+    this.cancelCurrentSearch();
   }
 
   /**
@@ -92,42 +123,76 @@ export class SearchService {
    */
   toggle(): void {
     this._isOpen.update((v) => !v);
+    if (!this._isOpen()) {
+      this.cancelCurrentSearch();
+    }
   }
 
   /**
-   * Perform global search
+   * Cancel any in-flight search request
+   */
+  private cancelCurrentSearch(): void {
+    if (this.currentAbortController) {
+      this.currentAbortController.abort();
+      this.currentAbortController = null;
+    }
+  }
+
+  /**
+   * Perform global search with caching and parallel requests
    */
   async search(query: string): Promise<SearchResult[]> {
-    const trimmedQuery = query.trim();
+    const trimmedQuery = query.trim().toLowerCase();
 
     if (!trimmedQuery || trimmedQuery.length < 2) {
       this._results.set([]);
       this._query.set("");
+      this._suggestions.set([]);
       return [];
     }
+
+    // Check cache first
+    const cached = this.getCachedResults(trimmedQuery);
+    if (cached) {
+      this._query.set(trimmedQuery);
+      this._results.set(cached);
+      this.addToRecentSearches(query.trim());
+      return cached;
+    }
+
+    // Cancel any previous search
+    this.cancelCurrentSearch();
+
+    // Create new abort controller for this search
+    this.currentAbortController = new AbortController();
+    const searchId = ++this.searchVersion;
 
     this._query.set(trimmedQuery);
     this._loading.set(true);
     this._error.set(null);
 
     try {
-      const results: SearchResult[] = [];
+      // Execute all searches in parallel for better performance
+      const [exerciseResults, programResults, playerResults, videoResults] =
+        await Promise.all([
+          this.searchExercises(trimmedQuery),
+          this.searchPrograms(trimmedQuery),
+          this.searchPlayers(trimmedQuery),
+          this.searchVideos(trimmedQuery),
+        ]);
 
-      // Search exercises
-      const exerciseResults = await this.searchExercises(trimmedQuery);
-      results.push(...exerciseResults);
+      // Check if this search is still the current one (handles race conditions)
+      if (searchId !== this.searchVersion) {
+        return [];
+      }
 
-      // Search training programs
-      const programResults = await this.searchPrograms(trimmedQuery);
-      results.push(...programResults);
-
-      // Search players (team members)
-      const playerResults = await this.searchPlayers(trimmedQuery);
-      results.push(...playerResults);
-
-      // Search training videos
-      const videoResults = await this.searchVideos(trimmedQuery);
-      results.push(...videoResults);
+      // Combine all results
+      const results: SearchResult[] = [
+        ...exerciseResults,
+        ...programResults,
+        ...playerResults,
+        ...videoResults,
+      ];
 
       // Sort by relevance
       results.sort((a, b) => b.relevance - a.relevance);
@@ -135,14 +200,32 @@ export class SearchService {
       // Limit to top 20 results
       const limitedResults = results.slice(0, 20);
 
-      this._results.set(limitedResults);
+      // Add highlighting to results
+      const highlightedResults = limitedResults.map((result) =>
+        this.addHighlighting(result, trimmedQuery),
+      );
+
+      // Cache the results
+      this.cacheResults(trimmedQuery, highlightedResults);
+
+      this._results.set(highlightedResults);
       this._loading.set(false);
 
       // Save to recent searches
-      this.addToRecentSearches(trimmedQuery);
+      this.addToRecentSearches(query.trim());
 
-      return limitedResults;
+      return highlightedResults;
     } catch (error) {
+      // Ignore abort errors
+      if (error instanceof Error && error.name === "AbortError") {
+        return [];
+      }
+
+      // Check if still current search
+      if (searchId !== this.searchVersion) {
+        return [];
+      }
+
       const errorMessage =
         error instanceof Error ? error.message : "Search failed";
       this._error.set(errorMessage);
@@ -150,6 +233,119 @@ export class SearchService {
       this.logger.error("Search error:", error);
       return [];
     }
+  }
+
+  /**
+   * Get instant suggestions based on partial input
+   */
+  async getInstantSuggestions(partial: string): Promise<string[]> {
+    const trimmed = partial.trim().toLowerCase();
+    if (trimmed.length < 2) {
+      this._suggestions.set([]);
+      return [];
+    }
+
+    const suggestions: string[] = [];
+
+    // Add from recent searches that match
+    const matchingRecent = this._recentSearches().filter((s) =>
+      s.toLowerCase().includes(trimmed),
+    );
+    suggestions.push(...matchingRecent);
+
+    // Add common search terms
+    const commonTerms = [
+      "sprint training",
+      "agility drills",
+      "quarterback exercises",
+      "receiver routes",
+      "defensive back",
+      "strength training",
+      "recovery protocol",
+      "warm up",
+      "cool down",
+      "flag pulling",
+      "speed drills",
+      "conditioning",
+      "footwork",
+      "catching drills",
+    ];
+
+    const matchingCommon = commonTerms.filter((t) =>
+      t.toLowerCase().includes(trimmed),
+    );
+    suggestions.push(...matchingCommon);
+
+    // Return unique suggestions, limited to 6
+    const uniqueSuggestions = [...new Set(suggestions)].slice(0, 6);
+    this._suggestions.set(uniqueSuggestions);
+    return uniqueSuggestions;
+  }
+
+  /**
+   * Add highlight markers to search results
+   */
+  private addHighlighting(result: SearchResult, query: string): SearchResult {
+    return {
+      ...result,
+      highlightedTitle: this.highlightText(result.title, query),
+      highlightedSubtitle: result.subtitle
+        ? this.highlightText(result.subtitle, query)
+        : undefined,
+    };
+  }
+
+  /**
+   * Highlight matching text with <mark> tags
+   */
+  private highlightText(text: string, query: string): string {
+    if (!query) return text;
+
+    // Escape special regex characters in query
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
+    return text.replace(regex, "<mark>$1</mark>");
+  }
+
+  /**
+   * Get cached results if valid
+   */
+  private getCachedResults(query: string): SearchResult[] | null {
+    const cached = this.searchCache.get(query);
+    if (!cached) return null;
+
+    // Check if cache is still valid
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) {
+      this.searchCache.delete(query);
+      return null;
+    }
+
+    return cached.results;
+  }
+
+  /**
+   * Cache search results
+   */
+  private cacheResults(query: string, results: SearchResult[]): void {
+    // Evict oldest entries if cache is full
+    if (this.searchCache.size >= MAX_CACHE_SIZE) {
+      const oldestKey = this.searchCache.keys().next().value;
+      if (oldestKey) {
+        this.searchCache.delete(oldestKey);
+      }
+    }
+
+    this.searchCache.set(query, {
+      results,
+      timestamp: Date.now(),
+    });
+  }
+
+  /**
+   * Clear the search cache
+   */
+  clearCache(): void {
+    this.searchCache.clear();
   }
 
   /**
@@ -307,13 +503,22 @@ export class SearchService {
     if (lowerText.startsWith(lowerQuery)) return 90;
 
     // Contains query as whole word
-    if (new RegExp(`\\b${lowerQuery}\\b`).test(lowerText)) return 80;
+    if (new RegExp(`\\b${this.escapeRegex(lowerQuery)}\\b`).test(lowerText)) {
+      return 80;
+    }
 
     // Contains query
     if (lowerText.includes(lowerQuery)) return 70;
 
     // Partial match
     return 50;
+  }
+
+  /**
+   * Escape special regex characters
+   */
+  private escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   /**
@@ -374,42 +579,13 @@ export class SearchService {
     this._results.set([]);
     this._query.set("");
     this._error.set(null);
+    this._suggestions.set([]);
   }
 
   /**
-   * Get suggestions based on partial input
+   * Get suggestions based on partial input (legacy method - use getInstantSuggestions)
    */
   async getSuggestions(partial: string): Promise<string[]> {
-    if (partial.length < 2) return [];
-
-    const suggestions: string[] = [];
-
-    // Add from recent searches that match
-    const matchingRecent = this._recentSearches().filter((s) =>
-      s.toLowerCase().includes(partial.toLowerCase()),
-    );
-    suggestions.push(...matchingRecent);
-
-    // Add common search terms
-    const commonTerms = [
-      "sprint training",
-      "agility drills",
-      "quarterback exercises",
-      "receiver routes",
-      "defensive back",
-      "strength training",
-      "recovery protocol",
-      "warm up",
-      "cool down",
-      "flag pulling",
-    ];
-
-    const matchingCommon = commonTerms.filter((t) =>
-      t.toLowerCase().includes(partial.toLowerCase()),
-    );
-    suggestions.push(...matchingCommon);
-
-    // Return unique suggestions
-    return [...new Set(suggestions)].slice(0, 8);
+    return this.getInstantSuggestions(partial);
   }
 }

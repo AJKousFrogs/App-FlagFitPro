@@ -26,9 +26,10 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { COLORS } from "../../../core/constants/app.constants";
 
 // PrimeNG
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -64,11 +65,12 @@ interface RecoveryRecommendation {
     FormsModule,
     RouterModule,
     DialogModule,
-    ButtonModule,
     InputNumberModule,
     CheckboxModule,
     TagModule,
     ProgressBarModule,
+  
+    ButtonComponent,
   ],
   template: `
     <p-dialog
@@ -241,31 +243,15 @@ interface RecoveryRecommendation {
         <!-- Navigation Buttons -->
         <div class="dialog-actions">
           @if (currentStep() > 1) {
-            <p-button
-              label="Back"
-              icon="pi pi-arrow-left"
-              [text]="true"
-              (onClick)="previousStep()"
-            ></p-button>
+            <app-button variant="text" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
           }
 
           <div class="action-spacer"></div>
 
           @if (currentStep() < 3) {
-            <p-button
-              label="Next"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              [disabled]="!canProceed()"
-              (onClick)="nextStep()"
-            ></p-button>
+            <app-button iconLeft="pi-arrow-right" [disabled]="!canProceed()" (clicked)="nextStep()">Next</app-button>
           } @else {
-            <p-button
-              label="Save & View Recovery"
-              icon="pi pi-check"
-              [loading]="isSaving()"
-              (onClick)="saveAndClose()"
-            ></p-button>
+            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="saveAndClose()">Save & View Recovery</app-button>
           }
         </div>
 
@@ -307,11 +293,11 @@ export class PostTrainingRecoveryComponent implements OnInit {
 
   // RPE Scale with Borg CR-10
   rpeScale = [
-    { value: 1, label: "Very Easy", color: "#22c55e" },
-    { value: 3, label: "Easy", color: "#84cc16" },
-    { value: 5, label: "Moderate", color: "#eab308" },
-    { value: 7, label: "Hard", color: "#f97316" },
-    { value: 9, label: "Max", color: "#ef4444" },
+    { value: 1, label: "Very Easy", color: COLORS.GREEN },
+    { value: 3, label: "Easy", color: COLORS.LIME },
+    { value: 5, label: "Moderate", color: COLORS.YELLOW },
+    { value: 7, label: "Hard", color: COLORS.ORANGE },
+    { value: 9, label: "Max", color: COLORS.ERROR },
   ];
 
   // Soreness areas

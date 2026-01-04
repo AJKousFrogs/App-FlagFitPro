@@ -33,6 +33,9 @@
 /* PrimeNG Theme - Premium component styling (legacy overrides) */
 @use "./assets/styles/primeng-theme.scss" as *;
 
+/* UI Standardization Layer - Single source of truth for consistent UI */
+@use "./assets/styles/ui-standardization.scss" as *;
+
 /* Color Contrast Fixes - WCAG 2.1 AA Compliance */
 @use "./assets/styles/color-contrast-fixes.scss" as *;
 
@@ -350,13 +353,13 @@ html.no-transitions * {
    ================================================================ */
 
 @layer overrides {
-  /* Force pill-shaped (fully rounded) buttons globally */
+  /* Raised button style (8px border-radius) - NOT pill-shaped */
   .p-button,
   .p-button.p-component,
   button.p-button,
   p-button .p-button,
   p-button > .p-button {
-    border-radius: var(--radius-full) !important;
+    border-radius: var(--radius-lg) !important; /* 8px - raised style */
     padding: 0.875rem 1.75rem !important;
     gap: 0.625rem !important;
     font-weight: var(--font-weight-semibold) !important;
@@ -419,10 +422,10 @@ html.no-transitions * {
     font-size: var(--font-body-md, 1rem) !important;
   }
 
-  /* Icon-only buttons should be circles */
+  /* Icon-only buttons - rounded square (consistent with raised style) */
   .p-button.p-button-icon-only,
   .p-button-icon-only {
-    border-radius: var(--radius-full) !important;
+    border-radius: var(--radius-lg) !important; /* 8px - raised style */
   }
 
   /* Primary buttons - GREEN background, WHITE text (light & dark mode) */
@@ -431,10 +434,10 @@ html.no-transitions * {
     ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
       .p-button-success
     ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
-    background: var(--gradient-primary) !important;
-    border: 2px solid var(--ds-primary-green) !important;
-    color: var(--color-text-on-primary) !important;
-    box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.3) !important;
+    background: var(--ds-primary-green) !important; /* Solid green - raised style */
+    border: none !important;
+    color: var(--color-text-on-primary) !important; /* White text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(var(--ds-primary-green-rgb), 0.2) !important; /* Raised shadow */
     padding: 0.875rem 1.75rem !important;
     gap: 0.625rem !important;
   }
@@ -460,22 +463,19 @@ html.no-transitions * {
     color: var(--color-text-on-primary) !important;
   }
 
-  /* Hover state for primary buttons */
+  /* Hover state for primary buttons - raised style */
   .p-button:not(.p-button-outlined):not(.p-button-text):not(
       .p-button-secondary
     ):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(
       .p-button-success
     ):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
-    background: linear-gradient(
-      180deg,
-      var(--ds-primary-green) 0%,
-      var(--primitive-primary-800) 100%
-    ) !important;
-    box-shadow: 0 6px 20px rgba(var(--ds-primary-green-rgb), 0.4) !important;
-    transform: translateY(-2px);
+    background: var(--ds-primary-green-hover) !important; /* Darker green on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(var(--ds-primary-green-rgb), 0.25) !important;
+    transform: translateY(-1px); /* Subtle lift */
   }
 
   /* Outlined buttons - transparent background, GREEN border & text */
+  /* Outlined buttons - raised style with green border */
   .p-button.p-button-outlined {
     background: transparent !important;
     border: 2px solid var(--ds-primary-green) !important;
@@ -483,6 +483,7 @@ html.no-transitions * {
     padding: 0.75rem 1.5rem !important;
     min-width: 120px !important;
     justify-content: center !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important; /* Subtle raised shadow */
   }
 
   .p-button.p-button-outlined .p-button-label,
@@ -524,11 +525,12 @@ html.no-transitions * {
     color: var(--ds-primary-green) !important;
   }
 
-  /* Secondary buttons - subtle background */
+  /* Secondary buttons - raised style with subtle background */
   .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
     background: var(--surface-secondary) !important;
-    border: 2px solid var(--color-border-primary) !important;
+    border: 1px solid var(--color-border-primary) !important;
     color: var(--color-text-primary) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important; /* Subtle raised shadow */
   }
 
   .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text)
@@ -538,15 +540,12 @@ html.no-transitions * {
     color: var(--color-text-primary) !important;
   }
 
-  /* Danger buttons */
+  /* Danger buttons - raised style */
   .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) {
-    background: linear-gradient(
-      180deg,
-      var(--primitive-error-400) 0%,
-      var(--color-status-error) 100%
-    ) !important;
-    border: 2px solid var(--color-status-error) !important;
+    background: var(--color-status-error) !important; /* Solid red - raised style */
+    border: none !important;
     color: var(--color-text-on-primary) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(239, 68, 68, 0.2) !important; /* Raised shadow */
   }
 
   .p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text)

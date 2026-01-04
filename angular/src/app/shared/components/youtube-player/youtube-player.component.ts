@@ -15,7 +15,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { timer, Subscription } from "rxjs";
 
 // YouTube IFrame Player API Type Definitions
@@ -82,7 +83,10 @@ interface WindowWithYouTubeAPI {
   selector: "app-youtube-player",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, ButtonModule],
+  imports: [CommonModule, CardModule,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="youtube-player-container">
       @if (loading()) {
@@ -101,24 +105,9 @@ interface WindowWithYouTubeAPI {
 
       @if (showControls()) {
         <div class="player-controls">
-          <p-button
-            [icon]="isPlaying() ? 'pi pi-pause' : 'pi pi-play'"
-            [label]="isPlaying() ? 'Pause' : 'Play'"
-            (onClick)="togglePlay()"
-            [disabled]="!playerReady()"
-          />
-          <p-button
-            icon="pi pi-stop"
-            label="Stop"
-            (onClick)="stop()"
-            [disabled]="!playerReady()"
-          />
-          <p-button
-            icon="pi pi-volume-up"
-            [label]="'Volume: ' + volume() + '%'"
-            (onClick)="toggleMute()"
-            [disabled]="!playerReady()"
-          />
+          <app-button [disabled]="!playerReady()" (clicked)="togglePlay()"></app-button>
+          <app-button iconLeft="pi-stop" [disabled]="!playerReady()" (clicked)="stop()">Stop</app-button>
+          <app-icon-button icon="pi-volume-up" [disabled]="!playerReady()" (clicked)="toggleMute()" ariaLabel="volume-up" />
         </div>
       }
 

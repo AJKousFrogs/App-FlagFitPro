@@ -9,7 +9,7 @@ import {
 
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
 import { TagModule } from "primeng/tag";
@@ -48,13 +48,14 @@ interface Workout {
   imports: [
     FormsModule,
     CardModule,
-    ButtonModule,
     InputNumberModule,
     CheckboxModule,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -64,11 +65,7 @@ interface Workout {
           subtitle="Track your workouts and monitor your progress"
           icon="pi-bolt"
         >
-          <p-button
-            label="New Workout"
-            icon="pi pi-plus"
-            (onClick)="createNewWorkout()"
-          ></p-button>
+          <app-button iconLeft="pi-plus" (clicked)="createNewWorkout()">New Workout</app-button>
         </app-page-header>
 
         <!-- Active Workout -->
@@ -117,15 +114,8 @@ interface Workout {
               }
             </div>
             <div class="workout-actions">
-              <p-button
-                label="Save Progress"
-                [outlined]="true"
-                (onClick)="saveWorkout()"
-              ></p-button>
-              <p-button
-                label="Complete Workout"
-                (onClick)="completeWorkout()"
-              ></p-button>
+              <app-button variant="outlined" (clicked)="saveWorkout()">Save Progress</app-button>
+              <app-button (clicked)="completeWorkout()">Complete Workout</app-button>
             </div>
           </p-card>
         }

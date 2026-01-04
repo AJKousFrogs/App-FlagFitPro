@@ -30,7 +30,7 @@
   }
 
   .readiness-badge {
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-xl);
     font-size: var(--font-body-xs);
     font-weight: var(--font-weight-semibold);
@@ -42,8 +42,8 @@
   }
 
   .readiness-badge.good {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
+    background: var(--primitive-success-50);
+    color: var(--primitive-success-500);
   }
 
   .readiness-badge.moderate {
@@ -68,15 +68,15 @@
   }
 
   .score-circle {
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 0 auto var(--space-3);
-    border: 3px solid;
+    border: var(--border-3) solid;
   }
 
   .score-circle.excellent {
@@ -198,24 +198,32 @@
     padding-top: var(--space-3);
   }
 
+  /*
+   * EXCEPTION: PrimeNG Slider Override
+   * Ticket: DESIGN-SYSTEM-PRIMENG-001
+   * Reason: PrimeNG slider component requires specific sizing for proper UI/UX
+   * Scope: .p-slider within daily-readiness component only
+   * Owner: @design-system
+   * Remove by: When PrimeNG provides design token support
+   */
   :host ::ng-deep .p-slider {
-    height: 6px;
+    height: var(--space-2);
   }
 
   :host ::ng-deep .p-slider .p-slider-range {
-    background: var(--ds-primary-green, #089949);
+    background: var(--ds-primary-green);
   }
 
   :host ::ng-deep .p-slider .p-slider-handle {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--ds-primary-green, #089949);
-    background: white;
+    width: calc(var(--space-4) + 2px);
+    height: calc(var(--space-4) + 2px);
+    border: var(--border-2) solid var(--ds-primary-green);
+    background: var(--color-text-on-primary);
   }
 
   :host ::ng-deep .p-slider .p-slider-handle:hover {
-    background: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
   }
 }
 

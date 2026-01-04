@@ -354,6 +354,13 @@
   --font-body-sm: 0.875rem; /* 14px */
   --font-body-xs: 0.75rem; /* 12px */
   --font-body-2xs: 0.625rem; /* 10px - use sparingly for very small labels */
+  --font-body-3xs: 0.5rem; /* 8px - micro labels only (calendar dots, etc.) */
+
+  /* Font Sizes - Compact/Dense UI (for data-heavy components) */
+  --font-compact-lg: 0.8125rem; /* 13px - compact headings */
+  --font-compact-md: 0.6875rem; /* 11px - compact body text */
+  --font-compact-sm: 0.625rem; /* 10px - compact labels */
+  --font-compact-xs: 0.5rem; /* 8px - micro labels */
 
   /* Legacy Font Size Aliases */
   --text-xs: var(--font-body-xs);
@@ -430,11 +437,12 @@
   --radius-none: 0;
   --radius-sm: 0.125rem; /* 2px */
   --radius-md: 0.375rem; /* 6px */
-  --radius-lg: 0.5rem; /* 8px */
+  --radius-lg: 0.5rem; /* 8px - DEFAULT for buttons, cards, inputs */
   --radius-xl: 0.75rem; /* 12px */
   --radius-2xl: 1rem; /* 16px */
   --radius-3xl: 1.5rem; /* 24px */
-  --radius-full: 9999px;
+  /* ⚠️ DEPRECATED: radius-full (pill shape) - DO NOT USE for buttons, tags, badges */
+  --radius-full: 9999px; /* Only for avatars/profile images */
 
   /* Component Radius Aliases */
   --radius-component-sm: var(--radius-sm);
@@ -584,7 +592,8 @@
      COMPONENT SPECIFIC TOKENS
      ================================ */
 
-  /* Button Heights */
+  /* Button Style - Raised (8px border-radius, not pill-shaped) */
+  --button-radius: var(--radius-lg); /* 8px - raised button style */
   --button-height-sm: 36px;
   --button-height-md: 44px;
   --button-height-lg: 52px;
@@ -670,6 +679,58 @@
   --icon-xl: 1.5rem; /* 24px - large icons, metric icons */
   --icon-2xl: 2rem; /* 32px - feature icons */
   --icon-3xl: 3rem; /* 48px - hero/empty state icons */
+
+  /* ================================
+     COMPONENT SIZING TOKENS
+     Standardized sizes for UI elements
+     ================================ */
+
+  /* Avatar Sizes */
+  --avatar-xs: 1.5rem; /* 24px */
+  --avatar-sm: 2rem; /* 32px */
+  --avatar-md: 2.5rem; /* 40px */
+  --avatar-lg: 3rem; /* 48px */
+  --avatar-xl: 4rem; /* 64px */
+  --avatar-2xl: 5rem; /* 80px */
+
+  /* Icon Container Sizes (for background circles/squares) */
+  --icon-container-sm: 2.25rem; /* 36px */
+  --icon-container-md: 2.5rem; /* 40px */
+  --icon-container-lg: 3rem; /* 48px */
+  --icon-container-xl: 3.5rem; /* 56px */
+
+  /* Touch Target Sizes */
+  --touch-target-sm: 2.25rem; /* 36px - minimum for secondary actions */
+  --touch-target-md: 2.75rem; /* 44px - recommended minimum */
+  --touch-target-lg: 3.25rem; /* 52px - comfortable touch */
+
+  /* Progress Bar Heights */
+  --progress-xs: 0.125rem; /* 2px - subtle progress */
+  --progress-sm: 0.25rem; /* 4px - standard progress */
+  --progress-md: 0.5rem; /* 8px - emphasized progress */
+  --progress-lg: 0.75rem; /* 12px - large progress */
+
+  /* Badge/Chip Heights */
+  --badge-sm: 1.25rem; /* 20px */
+  --badge-md: 1.5rem; /* 24px */
+  --badge-lg: 1.75rem; /* 28px */
+
+  /* Input/Button Heights (already defined but aliased for clarity) */
+  --input-height-sm: 2.25rem; /* 36px */
+  --input-height-md: 2.75rem; /* 44px */
+  --input-height-lg: 3.25rem; /* 52px */
+
+  /* Card/Panel Min Heights */
+  --card-min-height-sm: 5rem; /* 80px */
+  --card-min-height-md: 7.5rem; /* 120px */
+  --card-min-height-lg: 10rem; /* 160px */
+
+  /* Container Max Widths (already defined, aliased) */
+  --content-max-width-sm: 40rem; /* 640px */
+  --content-max-width-md: 48rem; /* 768px */
+  --content-max-width-lg: 56.25rem; /* 900px */
+  --content-max-width-xl: 80rem; /* 1280px */
+  --content-max-width-2xl: 90rem; /* 1440px */
 
   /* Font Aliases */
   --font-family: var(--font-family-sans);

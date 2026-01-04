@@ -16,7 +16,7 @@
     padding: var(--space-4);
     background: var(--surface-primary);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
@@ -43,13 +43,13 @@
   /* Badge container */
   .badge-container {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
   }
 
   .compact .badge-container {
-    width: 48px;
-    height: 48px;
+    width: var(--space-12);
+    height: var(--space-12);
   }
 
   /* Glow effect */
@@ -62,6 +62,16 @@
     transition: opacity 0.3s ease;
   }
 
+  /*
+   * EXCEPTION: Achievement Badge Metallic Colors
+   * Ticket: DESIGN-SYSTEM-002
+   * Reason: Metallic tier colors (bronze, silver, gold, platinum, diamond)
+   *         require specific hex values to achieve realistic metallic gradients.
+   *         These are industry-standard colors for gamification tiers.
+   * Scope: .tier-bronze, .tier-silver, .tier-gold, .tier-platinum, .tier-diamond
+   * Owner: @design-system
+   * Remove by: Never - metallic colors are permanent visual effects
+   */
   .tier-bronze .badge-glow {
     background: radial-gradient(circle, #cd7f32 0%, transparent 70%);
   }
@@ -104,6 +114,7 @@
     transform: scale(1.1);
   }
 
+  /* Metallic badge shapes - see EXCEPTION comment above for .badge-glow */
   .tier-bronze .badge-shape {
     background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
     box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
@@ -179,9 +190,9 @@
   /* Tier indicator */
   .tier-indicator {
     position: absolute;
-    bottom: -4px;
+    bottom: calc(-1 * var(--space-1));
     display: flex;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .star {
@@ -197,9 +208,9 @@
   /* Rarity border */
   .rarity-border {
     position: absolute;
-    inset: -3px;
+    inset: calc(-1 * var(--space-1));
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: var(--border-2) solid transparent;
     animation: rarity-pulse 2s ease-in-out infinite;
   }
 
@@ -283,7 +294,7 @@
 
   .progress-bar {
     flex: 1;
-    height: 6px;
+    height: var(--space-2);
     background: var(--color-border-secondary);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -331,8 +342,8 @@
 
   .particle {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: var(--space-2);
+    height: var(--space-2);
     background: var(--color-brand-primary);
     border-radius: 50%;
     top: 50%;

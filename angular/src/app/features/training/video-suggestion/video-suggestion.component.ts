@@ -41,7 +41,7 @@ import {
 // PrimeNG Components
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
@@ -97,7 +97,6 @@ interface VideoSuggestion {
     FormsModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
     InputTextModule,
     TextareaModule,
     MultiSelect,
@@ -113,6 +112,8 @@ interface VideoSuggestion {
     Chip,
     DividerModule,
     MainLayoutComponent,
+  
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -303,15 +304,12 @@ interface VideoSuggestion {
 
                 <!-- Submit Button -->
                 <div class="form-actions">
-                  <button
-                    pButton
+                  <app-button
                     type="submit"
-                    label="Submit for Review"
-                    icon="pi pi-send"
+                    iconLeft="pi-send"
                     [loading]="isSubmitting()"
                     [disabled]="suggestionForm.invalid || isSubmitting()"
-                    class="submit-btn"
-                  ></button>
+                  >Submit for Review</app-button>
                 </div>
               </form>
             </p-card>
@@ -435,16 +433,18 @@ interface VideoSuggestion {
                       <button
                         pButton
                         icon="pi pi-external-link"
-                        class="p-button-text p-button-rounded"
+                        class="p-button-text"
                         pTooltip="Open in Instagram"
+                        aria-label="Open in Instagram"
                         (click)="openInInstagram(suggestion)"
                       ></button>
                       @if (suggestion.status === "pending") {
                         <button
                           pButton
                           icon="pi pi-trash"
-                          class="p-button-text p-button-rounded p-button-danger"
+                          class="p-button-text p-button-danger"
                           pTooltip="Delete submission"
+                          aria-label="Delete submission"
                           (click)="deleteSuggestion(suggestion)"
                         ></button>
                       }

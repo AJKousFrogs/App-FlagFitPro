@@ -8,7 +8,7 @@
     background: var(--surface-primary);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
   }
 
   /* Header */
@@ -57,7 +57,7 @@
     padding: var(--space-4);
     background: var(--surface-secondary);
     border-radius: var(--radius-lg);
-    border-left: 4px solid var(--color-border-secondary);
+    border-left: var(--border-4) solid var(--color-border-secondary);
     position: relative;
     transition: transform var(--transition-fast), opacity var(--transition-fast);
   }
@@ -102,8 +102,8 @@
 
   /* Icon */
   .insight-icon {
-    width: 44px;
-    height: 44px;
+    width: var(--space-12);
+    height: var(--space-12);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
@@ -230,8 +230,8 @@
     position: absolute;
     top: var(--space-2);
     right: var(--space-2);
-    width: 28px;
-    height: 28px;
+    width: var(--space-8);
+    height: var(--space-8);
     border: none;
     background: transparent;
     border-radius: 50%;

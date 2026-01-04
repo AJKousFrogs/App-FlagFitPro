@@ -80,14 +80,6 @@ export const publicRoutes: Routes = [
         (m) => m.AcceptInvitationComponent,
       ),
   },
-  {
-    path: "parent",
-    loadComponent: () =>
-      import("../../features/parent-dashboard/parent-dashboard.component").then(
-        (m) => m.ParentDashboardComponent,
-      ),
-    canActivate: [authGuard],
-  },
 ];
 
 /**
@@ -95,7 +87,7 @@ export const publicRoutes: Routes = [
  */
 export const dashboardRoutes: Routes = [
   {
-    path: "today",
+    path: "todays-practice",
     loadComponent: () =>
       import("../../features/today/today.component").then(
         (m) => m.TodayComponent,
@@ -112,8 +104,17 @@ export const dashboardRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "player-dashboard",
+    loadComponent: () =>
+      import("../../features/dashboard/player-dashboard.component").then(
+        (m) => m.PlayerDashboardComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: true, priority: "high" },
+  },
+  {
     path: "athlete-dashboard",
-    redirectTo: "today",
+    redirectTo: "player-dashboard",
     pathMatch: "full"
   }
 ];
@@ -122,25 +123,30 @@ export const dashboardRoutes: Routes = [
  * Training Routes (High Priority)
  */
 export const trainingRoutes: Routes = [
-  // Redirrect primary training entry points to today
+  // Main training page - monthly calendar view for managing/logging sessions
   {
     path: "training",
-    redirectTo: "today",
-    pathMatch: "full"
+    loadComponent: () =>
+      import("../../features/training/training-schedule/training-schedule.component").then(
+        (m) => m.TrainingScheduleComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: true, priority: "high" },
   },
+  // Today's practice redirects to /todays-practice
   {
     path: "training/daily",
-    redirectTo: "today",
+    redirectTo: "/todays-practice",
     pathMatch: "full"
   },
   {
     path: "training/protocol",
-    redirectTo: "today",
+    redirectTo: "/todays-practice",
     pathMatch: "full"
   },
   {
     path: "training/protocol/:date",
-    redirectTo: "today",
+    redirectTo: "/todays-practice",
     pathMatch: "full"
   },
   // Keep advanced training routes under a consolidated workspace
@@ -417,6 +423,118 @@ export const teamRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "coach/team",
+    loadComponent: () =>
+      import("../../features/coach/team-management/team-management.component").then(
+        (m) => m.TeamManagementComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/programs",
+    loadComponent: () =>
+      import("../../features/coach/program-builder/program-builder.component").then(
+        (m) => m.ProgramBuilderComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/practice",
+    loadComponent: () =>
+      import("../../features/coach/practice-planner/practice-planner.component").then(
+        (m) => m.PracticePlannerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/injuries",
+    loadComponent: () =>
+      import("../../features/coach/injury-management/injury-management.component").then(
+        (m) => m.InjuryManagementComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/playbook",
+    loadComponent: () =>
+      import("../../features/coach/playbook-manager/playbook-manager.component").then(
+        (m) => m.PlaybookManagerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/development",
+    loadComponent: () =>
+      import("../../features/coach/player-development/player-development.component").then(
+        (m) => m.PlayerDevelopmentComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/tournaments",
+    loadComponent: () =>
+      import("../../features/coach/tournament-management/tournament-management.component").then(
+        (m) => m.TournamentManagementComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/payments",
+    loadComponent: () =>
+      import("../../features/coach/payment-management/payment-management.component").then(
+        (m) => m.PaymentManagementComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/ai-scheduler",
+    loadComponent: () =>
+      import("../../features/coach/ai-scheduler/ai-scheduler.component").then(
+        (m) => m.AiSchedulerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/knowledge",
+    loadComponent: () =>
+      import("../../features/coach/knowledge-base/knowledge-base.component").then(
+        (m) => m.KnowledgeBaseComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/film",
+    loadComponent: () =>
+      import("../../features/coach/film-room/film-room-coach.component").then(
+        (m) => m.FilmRoomCoachComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/calendar",
+    loadComponent: () =>
+      import("../../features/coach/calendar/calendar-coach.component").then(
+        (m) => m.CalendarCoachComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/scouting",
+    loadComponent: () =>
+      import("../../features/coach/scouting/scouting-reports.component").then(
+        (m) => m.ScoutingReportsComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "admin",
+    loadComponent: () =>
+      import("../../features/admin/superadmin-dashboard.component").then(
+        (m) => m.SuperadminDashboardComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: "team/create",
     loadComponent: () =>
       import("../../features/team/team-create/team-create.component").then(
@@ -540,6 +658,87 @@ export const wellnessRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "return-to-play",
+    loadComponent: () =>
+      import("../../features/return-to-play/return-to-play.component").then(
+        (m) => m.ReturnToPlayComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand - not frequently accessed
+  },
+  {
+    path: "cycle-tracking",
+    loadComponent: () =>
+      import("../../features/cycle-tracking/cycle-tracking.component").then(
+        (m) => m.CycleTrackingComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand - female athletes only
+  },
+  {
+    path: "sleep-debt",
+    loadComponent: () =>
+      import("../../features/sleep-debt/sleep-debt.component").then(
+        (m) => m.SleepDebtComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "achievements",
+    loadComponent: () =>
+      import("../../features/achievements/achievements.component").then(
+        (m) => m.AchievementsComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "playbook",
+    loadComponent: () =>
+      import("../../features/playbook/playbook.component").then(
+        (m) => m.PlaybookComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "film",
+    loadComponent: () =>
+      import("../../features/film-room/film-room.component").then(
+        (m) => m.FilmRoomComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "calendar",
+    loadComponent: () =>
+      import("../../features/team-calendar/team-calendar.component").then(
+        (m) => m.TeamCalendarComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "payments",
+    loadComponent: () =>
+      import("../../features/payments/payments.component").then(
+        (m) => m.PaymentsComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
+    path: "import",
+    loadComponent: () =>
+      import("../../features/data-import/data-import.component").then(
+        (m) => m.DataImportComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Load on demand
+  },
+  {
     path: "load-monitoring",
     redirectTo: "acwr",
   },
@@ -583,6 +782,39 @@ export const socialRoutes: Routes = [
     loadComponent: () =>
       import("../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
+  },
+];
+
+/**
+ * Staff Dashboard Routes (Nutritionist, Physiotherapist, Psychology)
+ */
+export const staffRoutes: Routes = [
+  {
+    path: "staff/nutritionist",
+    loadComponent: () =>
+      import("../../features/staff/nutritionist/nutritionist-dashboard.component").then(
+        (m) => m.NutritionistDashboardComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
+  },
+  {
+    path: "staff/physiotherapist",
+    loadComponent: () =>
+      import("../../features/staff/physiotherapist/physiotherapist-dashboard.component").then(
+        (m) => m.PhysiotherapistDashboardComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
+  },
+  {
+    path: "staff/psychology",
+    loadComponent: () =>
+      import("../../features/staff/psychology/psychology-reports.component").then(
+        (m) => m.PsychologyReportsComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
   },
 ];
 
@@ -734,6 +966,7 @@ export const featureRoutes: Routes = [
   ...gameRoutes,
   ...wellnessRoutes,
   ...socialRoutes,
+  ...staffRoutes, // Staff dashboards (nutritionist, physio, psychology)
   ...profileRoutes,
   ...helpRoutes, // Help redirects before wildcard
   {

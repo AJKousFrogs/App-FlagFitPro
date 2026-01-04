@@ -206,7 +206,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
           <div class="zones-grid">
             <div class="zone-card zone-under">
               <div class="zone-header">
-                <span class="zone-dot" style="background: orange"></span>
+                <span class="zone-dot zone-dot--under"></span>
                 <span class="zone-range">&lt; 0.80</span>
               </div>
               <div class="zone-label">Under-Training</div>
@@ -217,7 +217,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
 
             <div class="zone-card zone-sweet">
               <div class="zone-header">
-                <span class="zone-dot" style="background: green"></span>
+                <span class="zone-dot zone-dot--sweet"></span>
                 <span class="zone-range">0.80 - 1.30</span>
               </div>
               <div class="zone-label">Sweet Spot</div>
@@ -228,7 +228,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
 
             <div class="zone-card zone-elevated">
               <div class="zone-header">
-                <span class="zone-dot" style="background: yellow"></span>
+                <span class="zone-dot zone-dot--elevated"></span>
                 <span class="zone-range">1.30 - 1.50</span>
               </div>
               <div class="zone-label">Elevated Risk</div>
@@ -239,7 +239,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
 
             <div class="zone-card zone-danger">
               <div class="zone-header">
-                <span class="zone-dot" style="background: red"></span>
+                <span class="zone-dot zone-dot--danger"></span>
                 <span class="zone-range">&gt; 1.50</span>
               </div>
               <div class="zone-label">Danger Zone</div>
@@ -456,8 +456,14 @@ export class AcwrDashboardComponent implements OnInit {
 
       this.toastService.info("Generating ACWR report...");
 
-      // Get current ACWR data from the service's computed signal
-      const acwrData = this.acwrService.acwrData();
+      // Get current ACWR data from the training service
+      const acwrData = {
+        ratio: this.acwrRatio(),
+        riskZone: this.riskZone(),
+        acute: this.acuteLoad(),
+        chronic: this.chronicLoad(),
+        weeklyProgression: this.weeklyProgression(),
+      };
       const alerts = this.alerts();
 
       // Build report data

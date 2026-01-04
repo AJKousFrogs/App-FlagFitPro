@@ -1,42 +1,42 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
+import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { Select } from "primeng/select";
-import { Slider } from "primeng/slider";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { Chip } from "primeng/chip";
-import { TagModule } from "primeng/tag";
+import { Select } from "primeng/select";
 import { SelectButtonModule } from "primeng/selectbutton";
+import { Slider } from "primeng/slider";
+import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import {
+    AIService,
+    TrainingSuggestion,
+} from "../../../core/services/ai.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-  AIService,
-  TrainingSuggestion,
-} from "../../../core/services/ai.service";
-import {
-  WeatherService,
-  WeatherData,
+    WeatherData,
+    WeatherService,
 } from "../../../core/services/weather.service";
-import { LoggerService } from "../../../core/services/logger.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
-import { Router } from "@angular/router";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 interface SessionTypeOption {
   label: string;
@@ -55,11 +55,10 @@ interface EquipmentOption {
   selector: "app-smart-training-form",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+imports: [
     CommonModule,
     ReactiveFormsModule,
     CardModule,
-    ButtonModule,
     Select,
     Slider,
     ToggleSwitch,
@@ -67,6 +66,7 @@ interface EquipmentOption {
     TagModule,
     SelectButtonModule,
     ToastModule,
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -179,18 +179,8 @@ interface EquipmentOption {
 
         <!-- Form Actions -->
         <div class="form-actions">
-          <p-button
-            label="Create Session"
-            icon="pi pi-check"
-            (onClick)="onSubmit()"
-            [disabled]="trainingForm.invalid"
-          ></p-button>
-          <p-button
-            label="Cancel"
-            icon="pi pi-times"
-            [outlined]="true"
-            (onClick)="onCancel()"
-          ></p-button>
+          <app-button iconLeft="pi-check" [disabled]="trainingForm.invalid" (clicked)="onSubmit()">Create Session</app-button>
+          <app-button variant="outlined" iconLeft="pi-times" (clicked)="onCancel()">Cancel</app-button>
         </div>
       </form>
     </p-card>

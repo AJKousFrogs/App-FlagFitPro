@@ -18,7 +18,7 @@ import { FormsModule } from "@angular/forms";
 // PrimeNG
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TooltipModule } from "primeng/tooltip";
@@ -45,11 +45,12 @@ import {
     FormsModule,
     TableModule,
     TagModule,
-    ButtonModule,
     InputTextModule,
     Select,
     TooltipModule,
     AvatarModule,
+  
+    ButtonComponent,
   ],
   template: `
     <div class="tab-content">
@@ -178,16 +179,18 @@ import {
                 <button
                   pButton
                   icon="pi pi-eye"
-                  class="p-button-text p-button-rounded"
+                  class="p-button-text"
                   pTooltip="Preview"
+                  aria-label="Preview video"
                   (click)="preview.emit(video)"
                 ></button>
                 @if (getVideoStatusValue(video.id) !== "approved") {
                   <button
                     pButton
                     icon="pi pi-check"
-                    class="p-button-text p-button-rounded p-button-success"
+                    class="p-button-text p-button-success"
                     pTooltip="Approve"
+                    aria-label="Approve video"
                     (click)="approve.emit(video)"
                   ></button>
                 }
@@ -195,16 +198,18 @@ import {
                   <button
                     pButton
                     icon="pi pi-times"
-                    class="p-button-text p-button-rounded p-button-danger"
+                    class="p-button-text p-button-danger"
                     pTooltip="Reject"
+                    aria-label="Reject video"
                     (click)="reject.emit(video)"
                   ></button>
                 }
                 <button
                   pButton
                   icon="pi pi-plus"
-                  class="p-button-text p-button-rounded"
+                  class="p-button-text"
                   pTooltip="Add to Playlist"
+                  aria-label="Add to playlist"
                   (click)="addToPlaylist.emit(video)"
                 ></button>
               </div>
