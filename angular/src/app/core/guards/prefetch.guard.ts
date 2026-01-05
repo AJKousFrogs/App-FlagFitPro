@@ -27,4 +27,3 @@ export const prefetchGuard: CanActivateFn = (_route, state) => {
 
   return true;
 };
-

@@ -121,7 +121,7 @@ interface ScoutingReport {
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -133,7 +133,11 @@ interface ScoutingReport {
           subtitle="Analyze opponents and prepare game plans"
           icon="pi-search"
         >
-          <app-button iconLeft="pi-plus" (clicked)="showNewReportDialog.set(true)">New Report</app-button>
+          <app-button
+            iconLeft="pi-plus"
+            (clicked)="showNewReportDialog.set(true)"
+            >New Report</app-button
+          >
         </app-page-header>
 
         @if (loading()) {
@@ -189,8 +193,16 @@ interface ScoutingReport {
                                 }}</span>
                               </div>
                               <p-tag
-                                [value]="report.sharedWith === 'team' ? 'Team' : 'Coaches'"
-                                [severity]="report.sharedWith === 'team' ? 'info' : 'secondary'"
+                                [value]="
+                                  report.sharedWith === 'team'
+                                    ? 'Team'
+                                    : 'Coaches'
+                                "
+                                [severity]="
+                                  report.sharedWith === 'team'
+                                    ? 'info'
+                                    : 'secondary'
+                                "
                               ></p-tag>
                             </div>
                           </ng-template>
@@ -217,9 +229,24 @@ interface ScoutingReport {
                           </div>
 
                           <ng-template #footer>
-                            <app-button variant="text" iconLeft="pi-eye" (clicked)="viewReport(report)">View Full Report</app-button>
-                            <app-button variant="text" iconLeft="pi-share-alt" (clicked)="shareToChat(report)">Share to Chat</app-button>
-                            <app-icon-button icon="pi-pencil" variant="text" (clicked)="editReport(report)" ariaLabel="pencil" />
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-eye"
+                              (clicked)="viewReport(report)"
+                              >View Full Report</app-button
+                            >
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-share-alt"
+                              (clicked)="shareToChat(report)"
+                              >Share to Chat</app-button
+                            >
+                            <app-icon-button
+                              icon="pi-pencil"
+                              variant="text"
+                              (clicked)="editReport(report)"
+                              ariaLabel="pencil"
+                            />
                           </ng-template>
                         </p-card>
                       }
@@ -228,8 +255,14 @@ interface ScoutingReport {
                     <div class="empty-state">
                       <i class="pi pi-file"></i>
                       <h4>No Scouting Reports</h4>
-                      <p>Create a report to prepare your team for upcoming games.</p>
-                      <app-button iconLeft="pi-plus" (clicked)="showNewReportDialog.set(true)">Create Report</app-button>
+                      <p>
+                        Create a report to prepare your team for upcoming games.
+                      </p>
+                      <app-button
+                        iconLeft="pi-plus"
+                        (clicked)="showNewReportDialog.set(true)"
+                        >Create Report</app-button
+                      >
                     </div>
                   }
                 </div>
@@ -240,7 +273,12 @@ interface ScoutingReport {
                 <div class="opponents-section">
                   <div class="section-header">
                     <h3>Opponent Database</h3>
-                    <app-button variant="outlined" iconLeft="pi-plus" (clicked)="showAddOpponentDialog.set(true)">Add Opponent</app-button>
+                    <app-button
+                      variant="outlined"
+                      iconLeft="pi-plus"
+                      (clicked)="showAddOpponentDialog.set(true)"
+                      >Add Opponent</app-button
+                    >
                   </div>
 
                   <div class="opponents-grid">
@@ -261,7 +299,10 @@ interface ScoutingReport {
                             <div class="record">
                               {{ opponent.record.wins }}-{{
                                 opponent.record.losses
-                              }}@if (opponent.record.ties > 0) {-{{ opponent.record.ties }}}
+                              }}
+                              @if (opponent.record.ties > 0) {
+                                -{{ opponent.record.ties }}
+                              }
                             </div>
                           </div>
                         </ng-template>
@@ -270,7 +311,9 @@ interface ScoutingReport {
                           @if (opponent.headCoach) {
                             <div class="detail-row">
                               <span class="label">Head Coach:</span>
-                              <span class="value">{{ opponent.headCoach }}</span>
+                              <span class="value">{{
+                                opponent.headCoach
+                              }}</span>
                             </div>
                           }
                           @if (opponent.offensiveStyle) {
@@ -310,7 +353,9 @@ interface ScoutingReport {
                                 }
                                 @if (opponent.keyPlayers.length > 3) {
                                   <span class="more-players"
-                                    >+{{ opponent.keyPlayers.length - 3 }}
+                                    >+{{
+                                      opponent.keyPlayers.length - 3
+                                    }}
                                     more</span
                                   >
                                 }
@@ -329,8 +374,18 @@ interface ScoutingReport {
                         </div>
 
                         <ng-template #footer>
-                          <app-button variant="text" iconLeft="pi-eye" (clicked)="viewOpponent(opponent)">View Profile</app-button>
-                          <app-button variant="text" iconLeft="pi-file" (clicked)="createReportForOpponent(opponent)">Create Report</app-button>
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-eye"
+                            (clicked)="viewOpponent(opponent)"
+                            >View Profile</app-button
+                          >
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-file"
+                            (clicked)="createReportForOpponent(opponent)"
+                            >Create Report</app-button
+                          >
                         </ng-template>
                       </p-card>
                     }
@@ -458,7 +513,8 @@ interface ScoutingReport {
                                     target.player
                                   }}</span>
                                   <span class="target-share"
-                                    >{{ target.targetShare }}% target share</span
+                                    >{{ target.targetShare }}% target
+                                    share</span
                                   >
                                 </div>
                               }
@@ -720,8 +776,14 @@ interface ScoutingReport {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showNewReportDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-check" (clicked)="createReport()">Create Report</app-button>
+            <app-button
+              variant="text"
+              (clicked)="showNewReportDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="createReport()"
+              >Create Report</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -741,8 +803,14 @@ interface ScoutingReport {
                   <p>{{ viewingReport()!.gameDate | date: "fullDate" }}</p>
                 </div>
                 <p-tag
-                  [value]="viewingReport()!.requiredReading ? 'Required Reading' : 'Optional'"
-                  [severity]="viewingReport()!.requiredReading ? 'danger' : 'info'"
+                  [value]="
+                    viewingReport()!.requiredReading
+                      ? 'Required Reading'
+                      : 'Optional'
+                  "
+                  [severity]="
+                    viewingReport()!.requiredReading ? 'danger' : 'info'
+                  "
                 ></p-tag>
               </div>
 
@@ -758,7 +826,8 @@ interface ScoutingReport {
                     <h5>Attack Points</h5>
                     <ul>
                       @for (
-                        point of viewingReport()!.offensiveGamePlan.attackPoints;
+                        point of viewingReport()!.offensiveGamePlan
+                          .attackPoints;
                         track $index
                       ) {
                         <li>{{ point }}</li>
@@ -836,8 +905,17 @@ interface ScoutingReport {
             </div>
           }
           <ng-template #footer>
-            <app-button variant="text" iconLeft="pi-share-alt" (clicked)="shareToChat(viewingReport()!)">Share to Chat</app-button>
-            <app-button iconLeft="pi-download" (clicked)="exportReport(viewingReport()!)">Export PDF</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-share-alt"
+              (clicked)="shareToChat(viewingReport()!)"
+              >Share to Chat</app-button
+            >
+            <app-button
+              iconLeft="pi-download"
+              (clicked)="exportReport(viewingReport()!)"
+              >Export PDF</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -921,8 +999,14 @@ interface ScoutingReport {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showAddOpponentDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-plus" (clicked)="addOpponent()">Add Opponent</app-button>
+            <app-button
+              variant="text"
+              (clicked)="showAddOpponentDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-plus" (clicked)="addOpponent()"
+              >Add Opponent</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
@@ -1018,49 +1102,53 @@ export class ScoutingReportsComponent implements OnInit {
     try {
       // Load scouting reports from API
       const [reportsRes, opponentsRes] = await Promise.all([
-        this.api.get<{
-          reports: Array<{
-            id: string;
-            opponent_name: string;
-            opponent_profile: {
-              city?: string;
-              conference?: string;
-              coach?: string;
-              record?: string;
-            };
-            game_date: string;
-            offensive_notes: string;
-            defensive_notes: string;
-            key_players: Array<{
-              name: string;
-              number: string;
-              position: string;
-              notes: string;
+        this.api
+          .get<{
+            reports: Array<{
+              id: string;
+              opponent_name: string;
+              opponent_profile: {
+                city?: string;
+                conference?: string;
+                coach?: string;
+                record?: string;
+              };
+              game_date: string;
+              offensive_notes: string;
+              defensive_notes: string;
+              key_players: Array<{
+                name: string;
+                number: string;
+                position: string;
+                notes: string;
+              }>;
+              tendencies: Record<string, unknown>;
+              game_plan: Record<string, unknown>;
+              status: string;
+              created_at: string;
+              created_by_user?: { full_name: string };
             }>;
-            tendencies: Record<string, unknown>;
-            game_plan: Record<string, unknown>;
-            status: string;
-            created_at: string;
-            created_by_user?: { full_name: string };
-          }>;
-        }>("/api/scouting/reports").toPromise(),
-        this.api.get<{
-          opponents: Array<{
-            name: string;
-            opponentTeamId?: string;
-            profile: {
-              city?: string;
-              conference?: string;
-              coach?: string;
-              notes?: string;
-            };
-            tendencies: Record<string, unknown>;
-            gamesPlayed: number;
-            wins: number;
-            losses: number;
-            lastPlayed: string;
-          }>;
-        }>("/api/scouting/opponents").toPromise(),
+          }>("/api/scouting/reports")
+          .toPromise(),
+        this.api
+          .get<{
+            opponents: Array<{
+              name: string;
+              opponentTeamId?: string;
+              profile: {
+                city?: string;
+                conference?: string;
+                coach?: string;
+                notes?: string;
+              };
+              tendencies: Record<string, unknown>;
+              gamesPlayed: number;
+              wins: number;
+              losses: number;
+              lastPlayed: string;
+            }>;
+          }>("/api/scouting/opponents")
+          .toPromise(),
       ]);
 
       // Transform reports
@@ -1094,24 +1182,32 @@ export class ScoutingReportsComponent implements OnInit {
 
       // Transform opponents
       if (opponentsRes?.data?.opponents) {
-        const opponents: OpponentProfile[] = opponentsRes.data.opponents.map((o) => ({
-          id: o.name.toLowerCase().replace(/\s+/g, "-"),
-          teamName: o.name,
-          conference: o.profile?.conference || "Unknown",
-          record: {
-            wins: o.wins || 0,
-            losses: o.losses || 0,
-            ties: 0,
-          },
-          lastMeetingResult: o.lastPlayed ? `Last played: ${o.lastPlayed}` : undefined,
-          headCoach: o.profile?.coach,
-          offensiveStyle: (o.tendencies as { offensiveStyle?: string })?.offensiveStyle || "Unknown",
-          defensiveStyle: (o.tendencies as { defensiveStyle?: string })?.defensiveStyle || "Unknown",
-          keyPlayers: [],
-          generalNotes: o.profile?.notes,
-          lastUpdated: o.lastPlayed ? new Date(o.lastPlayed) : new Date(),
-          updatedBy: "System",
-        }));
+        const opponents: OpponentProfile[] = opponentsRes.data.opponents.map(
+          (o) => ({
+            id: o.name.toLowerCase().replace(/\s+/g, "-"),
+            teamName: o.name,
+            conference: o.profile?.conference || "Unknown",
+            record: {
+              wins: o.wins || 0,
+              losses: o.losses || 0,
+              ties: 0,
+            },
+            lastMeetingResult: o.lastPlayed
+              ? `Last played: ${o.lastPlayed}`
+              : undefined,
+            headCoach: o.profile?.coach,
+            offensiveStyle:
+              (o.tendencies as { offensiveStyle?: string })?.offensiveStyle ||
+              "Unknown",
+            defensiveStyle:
+              (o.tendencies as { defensiveStyle?: string })?.defensiveStyle ||
+              "Unknown",
+            keyPlayers: [],
+            generalNotes: o.profile?.notes,
+            lastUpdated: o.lastPlayed ? new Date(o.lastPlayed) : new Date(),
+            updatedBy: "System",
+          }),
+        );
         this.opponents.set(opponents);
       }
 
@@ -1127,26 +1223,30 @@ export class ScoutingReportsComponent implements OnInit {
 
   async loadTendencies(opponentName: string): Promise<void> {
     try {
-      const response = await this.api.get<{
-        tendencies: {
-          offensive: {
-            formations: Record<string, number>;
-            playTypes: Record<string, number>;
-            notes?: string[];
+      const response = await this.api
+        .get<{
+          tendencies: {
+            offensive: {
+              formations: Record<string, number>;
+              playTypes: Record<string, number>;
+              notes?: string[];
+            };
+            defensive: {
+              coverages: Record<string, number>;
+              notes?: string[];
+            };
           };
-          defensive: {
-            coverages: Record<string, number>;
-            notes?: string[];
-          };
-        };
-      }>(`/api/scouting/tendencies/${encodeURIComponent(opponentName)}`).toPromise();
+        }>(`/api/scouting/tendencies/${encodeURIComponent(opponentName)}`)
+        .toPromise();
 
       if (response?.data?.tendencies) {
         const t = response.data.tendencies;
         const tendencyData: TeamTendencies = {
           opponentId: opponentName,
           offensive: {
-            formationFrequency: Object.entries(t.offensive.formations || {}).map(([formation, count]) => ({
+            formationFrequency: Object.entries(
+              t.offensive.formations || {},
+            ).map(([formation, count]) => ({
               formation,
               percentage: count as number,
             })),
@@ -1161,10 +1261,12 @@ export class ScoutingReportsComponent implements OnInit {
             favoriteTargets: [],
           },
           defensive: {
-            coverageFrequency: Object.entries(t.defensive.coverages || {}).map(([coverage, count]) => ({
-              coverage,
-              percentage: count as number,
-            })),
+            coverageFrequency: Object.entries(t.defensive.coverages || {}).map(
+              ([coverage, count]) => ({
+                coverage,
+                percentage: count as number,
+              }),
+            ),
             blitzRate: 30,
             blitzTendencies: [],
             weaknesses: t.defensive.notes || [],
@@ -1177,7 +1279,10 @@ export class ScoutingReportsComponent implements OnInit {
         };
 
         const currentTendencies = new Map(this.tendenciesMap());
-        currentTendencies.set(opponentName.toLowerCase().replace(/\s+/g, "-"), tendencyData);
+        currentTendencies.set(
+          opponentName.toLowerCase().replace(/\s+/g, "-"),
+          tendencyData,
+        );
         this.tendenciesMap.set(currentTendencies);
       }
     } catch (error) {
@@ -1187,11 +1292,15 @@ export class ScoutingReportsComponent implements OnInit {
 
   onTendencyOpponentChange(): void {
     if (this.selectedTendencyOpponent) {
-      const opponent = this.opponents().find((o) => o.id === this.selectedTendencyOpponent);
+      const opponent = this.opponents().find(
+        (o) => o.id === this.selectedTendencyOpponent,
+      );
       if (opponent) {
         this.loadTendencies(opponent.teamName);
       }
-      const tendencies = this.tendenciesMap().get(this.selectedTendencyOpponent);
+      const tendencies = this.tendenciesMap().get(
+        this.selectedTendencyOpponent,
+      );
       this.currentTendencies.set(tendencies || null);
     }
   }
@@ -1203,8 +1312,12 @@ export class ScoutingReportsComponent implements OnInit {
 
   async shareToChat(report: ScoutingReport): Promise<void> {
     try {
-      await this.api.post(`/api/scouting/reports/${report.id}/share`).toPromise();
-      this.toast.success(`"${report.opponentName}" report shared to team chat!`);
+      await this.api
+        .post(`/api/scouting/reports/${report.id}/share`)
+        .toPromise();
+      this.toast.success(
+        `"${report.opponentName}" report shared to team chat!`,
+      );
     } catch {
       this.toast.error("Failed to share report");
     }
@@ -1242,18 +1355,28 @@ export class ScoutingReportsComponent implements OnInit {
     );
 
     try {
-      const response = await this.api.post<{ report: { id: string } }>("/api/scouting/reports", {
-        opponentName: opponent?.teamName || "Unknown",
-        gameDate: this.newReport.gameDate,
-        offensiveNotes: this.newReport.executiveSummary,
-        defensiveNotes: this.newReport.coverageAdjustments,
-        gamePlan: {
-          attackPoints: this.newReport.attackPoints.split("\n").filter((p) => p.trim()),
-          playsToRun: this.newReport.playsToRun.split("\n").filter((p) => p.trim()),
-          coverageAdjustments: this.newReport.coverageAdjustments.split("\n").filter((p) => p.trim()),
-          blitzPlan: this.newReport.blitzPlan.split("\n").filter((p) => p.trim()),
-        },
-      }).toPromise();
+      const response = await this.api
+        .post<{ report: { id: string } }>("/api/scouting/reports", {
+          opponentName: opponent?.teamName || "Unknown",
+          gameDate: this.newReport.gameDate,
+          offensiveNotes: this.newReport.executiveSummary,
+          defensiveNotes: this.newReport.coverageAdjustments,
+          gamePlan: {
+            attackPoints: this.newReport.attackPoints
+              .split("\n")
+              .filter((p) => p.trim()),
+            playsToRun: this.newReport.playsToRun
+              .split("\n")
+              .filter((p) => p.trim()),
+            coverageAdjustments: this.newReport.coverageAdjustments
+              .split("\n")
+              .filter((p) => p.trim()),
+            blitzPlan: this.newReport.blitzPlan
+              .split("\n")
+              .filter((p) => p.trim()),
+          },
+        })
+        .toPromise();
 
       // Add to local list
       const report: ScoutingReport = {
@@ -1264,13 +1387,21 @@ export class ScoutingReportsComponent implements OnInit {
         createdBy: "Current User",
         executiveSummary: this.newReport.executiveSummary,
         offensiveGamePlan: {
-          attackPoints: this.newReport.attackPoints.split("\n").filter((p) => p.trim()),
-          playsToRun: this.newReport.playsToRun.split("\n").filter((p) => p.trim()),
+          attackPoints: this.newReport.attackPoints
+            .split("\n")
+            .filter((p) => p.trim()),
+          playsToRun: this.newReport.playsToRun
+            .split("\n")
+            .filter((p) => p.trim()),
           avoidAreas: [],
         },
         defensiveGamePlan: {
-          coverageAdjustments: this.newReport.coverageAdjustments.split("\n").filter((p) => p.trim()),
-          blitzPlan: this.newReport.blitzPlan.split("\n").filter((p) => p.trim()),
+          coverageAdjustments: this.newReport.coverageAdjustments
+            .split("\n")
+            .filter((p) => p.trim()),
+          blitzPlan: this.newReport.blitzPlan
+            .split("\n")
+            .filter((p) => p.trim()),
           playerMatchups: [],
         },
         sharedWith: this.newReport.sharedWith,
@@ -1295,11 +1426,13 @@ export class ScoutingReportsComponent implements OnInit {
     }
 
     try {
-      await this.api.post("/api/scouting/opponents", {
-        name: this.newOpponent.teamName,
-        conference: this.newOpponent.conference,
-        coach: this.newOpponent.headCoach,
-      }).toPromise();
+      await this.api
+        .post("/api/scouting/opponents", {
+          name: this.newOpponent.teamName,
+          conference: this.newOpponent.conference,
+          coach: this.newOpponent.headCoach,
+        })
+        .toPromise();
 
       const opponent: OpponentProfile = {
         id: `opp${Date.now()}`,

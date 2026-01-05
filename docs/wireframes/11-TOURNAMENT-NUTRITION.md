@@ -185,14 +185,14 @@
 
 ## Nutrition Window Types
 
-| Type | Timing | Priority | Purpose |
-|------|--------|----------|---------|
-| Morning | Pre-tournament | Critical | Breakfast, pre-load |
-| Pre-game | 60-90 min before | High | Energy loading |
-| Halftime | 10-15 min | Medium | Quick sips/bites only |
-| Post-game | 30 min after | High | Recovery |
-| Between-games | Variable | High | Recovery + refuel |
-| Referee-duty | During officiating | Medium | Modified fueling |
+| Type          | Timing             | Priority | Purpose               |
+| ------------- | ------------------ | -------- | --------------------- |
+| Morning       | Pre-tournament     | Critical | Breakfast, pre-load   |
+| Pre-game      | 60-90 min before   | High     | Energy loading        |
+| Halftime      | 10-15 min          | Medium   | Quick sips/bites only |
+| Post-game     | 30 min after       | High     | Recovery              |
+| Between-games | Variable           | High     | Recovery + refuel     |
+| Referee-duty  | During officiating | Medium   | Modified fueling      |
 
 ---
 
@@ -200,10 +200,10 @@
 
 ```typescript
 function calculateDailyHydrationTarget(
-  athleteWeight: number,  // kg
+  athleteWeight: number, // kg
   numberOfGames: number,
-  temperature: number,    // °C
-  humidity: number        // %
+  temperature: number, // °C
+  humidity: number, // %
 ): number {
   // Base: 35ml per kg body weight
   let baseHydration = athleteWeight * 35;
@@ -236,37 +236,37 @@ function calculateDailyHydrationTarget(
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Tournament overview banner | ✅ |
-| Game schedule editor | ✅ |
-| Add/edit game times | ✅ |
-| Referee duty toggle | ✅ |
-| Auto-generate nutrition windows | ✅ |
-| Quick hydration logger (one-tap) | ✅ |
-| Hydration progress bar | ✅ |
-| Morning window | ✅ |
-| Pre-game window | ✅ |
-| Halftime window | ✅ |
-| Post-game window | ✅ |
-| Between-games window | ✅ |
-| Referee-duty window | ✅ |
-| Food recommendations | ✅ |
-| Drink recommendations | ✅ |
-| Supplement timing | ✅ |
-| Per-window hydration target | ✅ |
-| Mark window complete | ✅ |
-| Cramp prevention protocol | ✅ |
-| Hydration history log | ✅ |
-| Daily target calculation | ✅ |
-| Next game countdown | ✅ |
+| Feature                          | Status |
+| -------------------------------- | ------ |
+| Tournament overview banner       | ✅     |
+| Game schedule editor             | ✅     |
+| Add/edit game times              | ✅     |
+| Referee duty toggle              | ✅     |
+| Auto-generate nutrition windows  | ✅     |
+| Quick hydration logger (one-tap) | ✅     |
+| Hydration progress bar           | ✅     |
+| Morning window                   | ✅     |
+| Pre-game window                  | ✅     |
+| Halftime window                  | ✅     |
+| Post-game window                 | ✅     |
+| Between-games window             | ✅     |
+| Referee-duty window              | ✅     |
+| Food recommendations             | ✅     |
+| Drink recommendations            | ✅     |
+| Supplement timing                | ✅     |
+| Per-window hydration target      | ✅     |
+| Mark window complete             | ✅     |
+| Cramp prevention protocol        | ✅     |
+| Hydration history log            | ✅     |
+| Daily target calculation         | ✅     |
+| Next game countdown              | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| Hydration log | `NutritionService` | Local state / Supabase |
-| Nutrition windows | Generated | Based on game schedule |
-| Daily target | Calculated | From weight/games/weather |
+| Data              | Service            | Method                    |
+| ----------------- | ------------------ | ------------------------- |
+| Hydration log     | `NutritionService` | Local state / Supabase    |
+| Nutrition windows | Generated          | Based on game schedule    |
+| Daily target      | Calculated         | From weight/games/weather |

@@ -67,7 +67,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './checkbox.component.scss',
+  styleUrl: "./checkbox.component.scss",
 })
 export class CheckboxComponent implements ControlValueAccessor {
   // Configuration

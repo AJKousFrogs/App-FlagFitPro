@@ -75,7 +75,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './rating.component.scss',
+  styleUrl: "./rating.component.scss",
 })
 export class RatingComponent implements ControlValueAccessor {
   // Configuration

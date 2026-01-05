@@ -280,38 +280,38 @@ AI-powered training schedule generator that creates optimized training programs 
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Target Event Selection | Prepare for specific competition |
-| Focus Priority | Select training emphasis |
-| Constraint Input | Practice days, duration, facility |
-| Player Considerations | Auto-adjust for ACWR/RTP |
-| Periodization | AI-designed load progression |
-| Session Details | Full practice plans |
-| Player Mods | Individual adjustments |
-| Export | PDF, calendar integration |
+| Feature                | Description                       |
+| ---------------------- | --------------------------------- |
+| Target Event Selection | Prepare for specific competition  |
+| Focus Priority         | Select training emphasis          |
+| Constraint Input       | Practice days, duration, facility |
+| Player Considerations  | Auto-adjust for ACWR/RTP          |
+| Periodization          | AI-designed load progression      |
+| Session Details        | Full practice plans               |
+| Player Mods            | Individual adjustments            |
+| Export                 | PDF, calendar integration         |
 
 ---
 
 ## AI Considerations
 
-| Factor | How AI Uses It |
-|--------|----------------|
-| Days to Event | Determines phase structure |
-| Player ACWR | Reduces load for high-risk |
-| RTP Status | Limits activities for injured |
-| Focus Areas | Weights session content |
-| Available Days | Distributes load across days |
-| Facility | Adjusts for indoor/outdoor |
+| Factor         | How AI Uses It                |
+| -------------- | ----------------------------- |
+| Days to Event  | Determines phase structure    |
+| Player ACWR    | Reduces load for high-risk    |
+| RTP Status     | Limits activities for injured |
+| Focus Areas    | Weights session content       |
+| Available Days | Distributes load across days  |
+| Facility       | Adjusts for indoor/outdoor    |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Events | `CalendarService` | `team_events` |
+| Data        | Service                 | Table               |
+| ----------- | ----------------------- | ------------------- |
+| Events      | `CalendarService`       | `team_events`       |
 | Player ACWR | `LoadMonitoringService` | `acwr_calculations` |
-| RTP Status | `InjuryService` | `rtp_protocols` |
-| Facilities | `FacilityService` | `team_facilities` |
-| Sessions | `TrainingService` | `training_sessions` |
+| RTP Status  | `InjuryService`         | `rtp_protocols`     |
+| Facilities  | `FacilityService`       | `team_facilities`   |
+| Sessions    | `TrainingService`       | `training_sessions` |

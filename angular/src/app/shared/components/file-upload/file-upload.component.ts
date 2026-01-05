@@ -39,7 +39,7 @@ export interface UploadedFile {
     ProgressBarModule,
     MessageModule,
     FileUploadModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -134,7 +134,7 @@ export interface UploadedFile {
       }
     </div>
   `,
-  styleUrl: './file-upload.component.scss',
+  styleUrl: "./file-upload.component.scss",
 })
 export class FileUploadComponent {
   private http = inject(HttpClient);

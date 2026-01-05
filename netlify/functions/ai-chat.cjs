@@ -325,7 +325,8 @@ async function getUserContext(userId) {
     // 4. Get today's protocol and exercises
     const { data: protocol } = await supabaseAdmin
       .from("daily_protocols")
-      .select(`
+      .select(
+        `
         *,
         exercises:protocol_exercises(
           exercise_id,
@@ -336,7 +337,8 @@ async function getUserContext(userId) {
           ai_note,
           exercises(name)
         )
-      `)
+      `,
+      )
       .eq("user_id", userId)
       .eq("protocol_date", today)
       .single();
@@ -346,25 +348,27 @@ async function getUserContext(userId) {
         focus: protocol.training_focus,
         progress: protocol.overall_progress,
         rationale: protocol.ai_rationale,
-        exercises: protocol.exercises?.map(e => ({
+        exercises: protocol.exercises?.map((e) => ({
           name: e.exercises?.name,
           block: e.block_type,
           status: e.status,
           sets: e.prescribed_sets,
           reps: e.prescribed_reps,
-          note: e.ai_note
-        }))
+          note: e.ai_note,
+        })),
       };
     }
 
     // 5. Get recent session history (last 3)
     const { data: recentSessions } = await supabaseAdmin
       .from("training_sessions")
-      .select("session_date, session_type, duration_minutes, intensity_level, performance_score")
+      .select(
+        "session_date, session_type, duration_minutes, intensity_level, performance_score",
+      )
       .eq("user_id", userId)
       .order("session_date", { ascending: false })
       .limit(3);
-    
+
     context.recentSessions = recentSessions || [];
 
     // 6. Get latest wellness entry
@@ -374,7 +378,7 @@ async function getUserContext(userId) {
       .eq("user_id", userId)
       .eq("state_date", today)
       .single();
-    
+
     context.latestWellness = wellness;
 
     // 7. Get user profile and body comp
@@ -402,7 +406,7 @@ async function getUserContext(userId) {
         weight: measurement?.weight_kg || profile.weight_kg,
         bodyFat: measurement?.body_fat_percentage,
         muscleMass: measurement?.muscle_mass_kg,
-        hydration: wellness?.hydration_level
+        hydration: wellness?.hydration_level,
       };
     }
 

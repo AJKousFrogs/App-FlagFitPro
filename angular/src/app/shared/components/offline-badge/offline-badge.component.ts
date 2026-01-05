@@ -52,7 +52,7 @@ export type OfflineCapability = "full" | "partial" | "none" | "syncing";
       }
     </div>
   `,
-  styleUrl: './offline-badge.component.scss',
+  styleUrl: "./offline-badge.component.scss",
 })
 export class OfflineBadgeComponent implements OnInit, OnDestroy {
   private logger = inject(LoggerService);

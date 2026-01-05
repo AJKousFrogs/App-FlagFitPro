@@ -39,7 +39,7 @@ export interface TrendData {
       </div>
     </app-card>
   `,
-  styleUrl: './trend-card.component.scss',
+  styleUrl: "./trend-card.component.scss",
 })
 export class TrendCardComponent {
   // Angular 21: Use input() signal with required() instead of @Input() with !

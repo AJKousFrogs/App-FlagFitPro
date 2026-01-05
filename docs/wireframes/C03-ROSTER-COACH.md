@@ -201,37 +201,37 @@ Enhanced roster view for coaches with detailed player metrics, health status, an
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Player Cards | Visual overview with key metrics |
-| Risk Indicators | ACWR warnings, injury status |
-| Quick Actions | Message, view profile, adjust load |
-| Detailed Profile | Full metrics, benchmarks, notes |
-| Coach Notes | Private notes on players |
-| Export | Download roster data |
+| Feature          | Description                        |
+| ---------------- | ---------------------------------- |
+| Player Cards     | Visual overview with key metrics   |
+| Risk Indicators  | ACWR warnings, injury status       |
+| Quick Actions    | Message, view profile, adjust load |
+| Detailed Profile | Full metrics, benchmarks, notes    |
+| Coach Notes      | Private notes on players           |
+| Export           | Download roster data               |
 
 ---
 
 ## Card Menu Actions ([⋮])
 
-| Action | Description |
-|--------|-------------|
-| View Full Profile | Navigate to detailed view |
-| Edit Player | Update position, status, jersey |
-| Send Message | Direct message to player |
-| Adjust Training Load | Modify weekly load target |
-| Start RTP Protocol | Begin injury recovery |
-| View Training History | Past sessions |
-| Add Note | Add private coach note |
+| Action                | Description                     |
+| --------------------- | ------------------------------- |
+| View Full Profile     | Navigate to detailed view       |
+| Edit Player           | Update position, status, jersey |
+| Send Message          | Direct message to player        |
+| Adjust Training Load  | Modify weekly load target       |
+| Start RTP Protocol    | Begin injury recovery           |
+| View Training History | Past sessions                   |
+| Add Note              | Add private coach note          |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Player info | `RosterService` | `team_members` |
-| Wellness | `WellnessService` | `wellness_checkins` |
-| ACWR | `LoadMonitoringService` | `acwr_calculations` |
-| Performance | `PlayerMetricsService` | `performance_records` |
-| Notes | `NotesService` | `coach_notes` |
+| Data        | Service                 | Table                 |
+| ----------- | ----------------------- | --------------------- |
+| Player info | `RosterService`         | `team_members`        |
+| Wellness    | `WellnessService`       | `wellness_checkins`   |
+| ACWR        | `LoadMonitoringService` | `acwr_calculations`   |
+| Performance | `PlayerMetricsService`  | `performance_records` |
+| Notes       | `NotesService`          | `coach_notes`         |

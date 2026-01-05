@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
@@ -20,7 +20,10 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AppLoadingComponent],
   template: `
-    <app-loading [visible]="true" message="Directing you to your dashboard..."></app-loading>
+    <app-loading
+      [visible]="true"
+      message="Directing you to your dashboard..."
+    ></app-loading>
   `,
 })
 export class DashboardComponent implements OnInit {
@@ -29,8 +32,12 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    
-    if (user?.role === "coach" || user?.role === "assistant_coach" || user?.role === "admin") {
+
+    if (
+      user?.role === "coach" ||
+      user?.role === "assistant_coach" ||
+      user?.role === "admin"
+    ) {
       this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
     } else {
       this.router.navigate(["/player-dashboard"], { replaceUrl: true });

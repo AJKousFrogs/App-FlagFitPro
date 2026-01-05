@@ -17,13 +17,13 @@ import {
   output,
   signal,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { Slider } from 'primeng/slider';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { Textarea } from 'primeng/textarea';
+import { Slider } from "primeng/slider";
+import { InputNumberModule } from "primeng/inputnumber";
+import { Textarea } from "primeng/textarea";
 
 export interface SessionLogData {
   actualDurationMinutes: number;
@@ -32,7 +32,7 @@ export interface SessionLogData {
 }
 
 @Component({
-  selector: 'app-session-log-form',
+  selector: "app-session-log-form",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -41,7 +41,7 @@ export interface SessionLogData {
     Slider,
     InputNumberModule,
     Textarea,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -56,7 +56,9 @@ export interface SessionLogData {
         <div class="form-field">
           <label for="rpe">
             Session RPE (Rate of Perceived Exertion)
-            <span class="rpe-description">{{ getRpeDescription(rpeValue()) }}</span>
+            <span class="rpe-description">{{
+              getRpeDescription(rpeValue())
+            }}</span>
           </label>
           <div class="rpe-slider-container">
             <span class="rpe-emoji">😌</span>
@@ -91,7 +93,8 @@ export interface SessionLogData {
                 Expected: {{ expectedDuration() }} min
                 @if (durationDiff() !== 0) {
                   <span [class]="durationDiff() > 0 ? 'over' : 'under'">
-                    ({{ durationDiff() > 0 ? '+' : '' }}{{ durationDiff() }} min)
+                    ({{ durationDiff() > 0 ? "+" : ""
+                    }}{{ durationDiff() }} min)
                   </span>
                 }
               </span>
@@ -119,17 +122,24 @@ export interface SessionLogData {
           <span class="load-value">{{ calculatedLoad() }} AU</span>
         </div>
         <div class="load-formula">
-          Duration × RPE = {{ durationValue() }} × {{ rpeValue() }} = {{ calculatedLoad() }}
+          Duration × RPE = {{ durationValue() }} × {{ rpeValue() }} =
+          {{ calculatedLoad() }}
         </div>
       </div>
 
       <!-- Submit Button -->
       <div class="form-actions">
-        <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="!isValid()" (clicked)="onSubmit()">Log Session & Complete</app-button>
+        <app-button
+          iconLeft="pi-check"
+          [loading]="isSubmitting()"
+          [disabled]="!isValid()"
+          (clicked)="onSubmit()"
+          >Log Session & Complete</app-button
+        >
       </div>
     </div>
   `,
-  styleUrl: './session-log-form.component.scss',
+  styleUrl: "./session-log-form.component.scss",
 })
 export class SessionLogFormComponent {
   // Inputs
@@ -142,7 +152,7 @@ export class SessionLogFormComponent {
   // Form state
   rpeValue = signal(6);
   durationValue = signal(60);
-  notesValue = signal('');
+  notesValue = signal("");
   isSubmitting = signal(false);
 
   // Computed
@@ -156,27 +166,25 @@ export class SessionLogFormComponent {
 
   isValid = () => {
     return (
-      this.rpeValue() >= 1 &&
-      this.rpeValue() <= 10 &&
-      this.durationValue() > 0
+      this.rpeValue() >= 1 && this.rpeValue() <= 10 && this.durationValue() > 0
     );
   };
 
   // Methods
   getRpeDescription(rpe: number): string {
     const descriptions: Record<number, string> = {
-      1: 'Very Light',
-      2: 'Light',
-      3: 'Light',
-      4: 'Moderate',
-      5: 'Moderate',
-      6: 'Hard',
-      7: 'Hard',
-      8: 'Very Hard',
-      9: 'Very Hard',
-      10: 'Maximum',
+      1: "Very Light",
+      2: "Light",
+      3: "Light",
+      4: "Moderate",
+      5: "Moderate",
+      6: "Hard",
+      7: "Hard",
+      8: "Very Hard",
+      9: "Very Hard",
+      10: "Maximum",
     };
-    return descriptions[rpe] || '';
+    return descriptions[rpe] || "";
   }
 
   onRpeChange(event: { value?: number | number[] }): void {
@@ -187,7 +195,7 @@ export class SessionLogFormComponent {
   }
 
   onDurationChange(event: { value: number | null | string }): void {
-    const val = typeof event.value === 'number' ? event.value : null;
+    const val = typeof event.value === "number" ? event.value : null;
     if (val !== null) {
       this.durationValue.set(val);
     }

@@ -153,42 +153,42 @@ Allows players to view their current balance, see what fees are owed, track paym
 
 ## Fee Types
 
-| Type | Icon | Examples |
-|------|------|----------|
-| Team Dues | 📋 | Monthly/seasonal dues |
-| Tournament Fee | 🏆 | Tournament entry + costs |
-| Equipment | 🎽 | Jersey, gear |
-| Travel | ✈️ | Hotel, flights |
-| Team Event | 🎉 | Team dinner |
-| Registration | 📝 | Season signup |
+| Type           | Icon | Examples                 |
+| -------------- | ---- | ------------------------ |
+| Team Dues      | 📋   | Monthly/seasonal dues    |
+| Tournament Fee | 🏆   | Tournament entry + costs |
+| Equipment      | 🎽   | Jersey, gear             |
+| Travel         | ✈️   | Hotel, flights           |
+| Team Event     | 🎉   | Team dinner              |
+| Registration   | 📝   | Season signup            |
 
 ---
 
 ## Payment Status
 
-| Status | Color | Description |
-|--------|-------|-------------|
-| Paid | 🟢 Green | Fully paid |
-| Partial | 🟡 Yellow | Partially paid |
-| Unpaid | ⚪ Gray | Not yet due |
+| Status   | Color     | Description       |
+| -------- | --------- | ----------------- |
+| Paid     | 🟢 Green  | Fully paid        |
+| Partial  | 🟡 Yellow | Partially paid    |
+| Unpaid   | ⚪ Gray   | Not yet due       |
 | Due Soon | 🟠 Orange | Due within 7 days |
-| Overdue | 🔴 Red | Past due date |
+| Overdue  | 🔴 Red    | Past due date     |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Account Balance Summary | ❌ | HIGH |
-| Outstanding Fees List | ❌ | HIGH |
-| Cost Breakdown | ❌ | MEDIUM |
-| Payment Instructions | ❌ | HIGH |
-| Payment History | ❌ | MEDIUM |
-| Season Summary | ❌ | LOW |
-| Guest Fee Calculation | ❌ | MEDIUM |
-| Overdue Alerts | ❌ | MEDIUM |
-| Link to Events | ❌ | LOW |
+| Feature                 | Status | Priority |
+| ----------------------- | ------ | -------- |
+| Account Balance Summary | ❌     | HIGH     |
+| Outstanding Fees List   | ❌     | HIGH     |
+| Cost Breakdown          | ❌     | MEDIUM   |
+| Payment Instructions    | ❌     | HIGH     |
+| Payment History         | ❌     | MEDIUM   |
+| Season Summary          | ❌     | LOW      |
+| Guest Fee Calculation   | ❌     | MEDIUM   |
+| Overdue Alerts          | ❌     | MEDIUM   |
+| Link to Events          | ❌     | LOW      |
 
 ---
 
@@ -199,11 +199,11 @@ Allows players to view their current balance, see what fees are owed, track paym
 function calculatePlayerCost(fee: Fee, guestCount: number): PlayerCost {
   const baseCost = fee.amount;
   const guestCost = (fee.guestFee || 0) * guestCount;
-  
+
   return {
     baseCost,
     guestCost,
-    totalCost: baseCost + guestCost
+    totalCost: baseCost + guestCost,
   };
 }
 ```
@@ -212,19 +212,19 @@ function calculatePlayerCost(fee: Fee, guestCount: number): PlayerCost {
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Fees | `PaymentService` | `team_fees` |
-| Player balance | `PaymentService` | `player_balances` |
-| Payments | `PaymentService` | `payments` |
-| RSVP (for guests) | `CalendarService` | `event_rsvps` |
+| Data              | Service           | Table             |
+| ----------------- | ----------------- | ----------------- |
+| Fees              | `PaymentService`  | `team_fees`       |
+| Player balance    | `PaymentService`  | `player_balances` |
+| Payments          | `PaymentService`  | `payments`        |
+| RSVP (for guests) | `CalendarService` | `event_rsvps`     |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Team Calendar | `/calendar` | Event fees |
-| Tournaments | `/tournaments` | Tournament costs |
-| Settings | `/settings` | Payment preferences |
+| Page          | Route          | Relationship        |
+| ------------- | -------------- | ------------------- |
+| Team Calendar | `/calendar`    | Event fees          |
+| Tournaments   | `/tournaments` | Tournament costs    |
+| Settings      | `/settings`    | Payment preferences |

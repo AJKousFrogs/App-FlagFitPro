@@ -535,7 +535,7 @@ app-card-shell {
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   text-align: center;
-  
+
   .stat-value {
     font-size: var(--font-size-h3);
     font-weight: var(--font-weight-bold);
@@ -543,22 +543,22 @@ app-card-shell {
     line-height: 1;
     margin-bottom: 0.25rem;
   }
-  
+
   .stat-label {
     font-size: var(--font-compact-md);
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
-  
+
   &.completed .stat-value {
     color: var(--primitive-success-600);
   }
-  
+
   &.missed .stat-value {
     color: var(--primitive-error-600);
   }
-  
+
   &.completion .stat-value {
     color: var(--p-primary-600);
   }
@@ -599,9 +599,9 @@ app-card-shell {
 // Date cell with session marker
 .p-datepicker .has-session {
   position: relative;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 2px;
     left: 50%;
@@ -610,19 +610,19 @@ app-card-shell {
     height: 4px;
     border-radius: 50%;
   }
-  
+
   &.session-completed::after {
     background: var(--primitive-success-500);
   }
-  
+
   &.session-scheduled::after {
     background: var(--primitive-blue-500);
   }
-  
+
   &.session-in_progress::after {
     background: var(--primitive-warning-500);
   }
-  
+
   &.session-missed::after {
     background: var(--primitive-error-500);
   }
@@ -635,7 +635,7 @@ app-card-shell {
   .monthly-stats {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .view-toggle {
     justify-content: center;
   }

@@ -69,7 +69,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -82,7 +82,12 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
           subtitle="Manage how your data is used and shared"
           icon="pi-shield"
         >
-          <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportData()">Export My Data</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-download"
+            (clicked)="exportData()"
+            >Export My Data</app-button
+          >
         </app-page-header>
 
         @if (loading()) {
@@ -353,12 +358,22 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                       }}</span>
                       <span class="contact-phone">{{ contact.phone }}</span>
                     </div>
-                    <app-icon-button icon="pi-trash" variant="text" (clicked)="removeEmergencyContact($index)" ariaLabel="trash" />
+                    <app-icon-button
+                      icon="pi-trash"
+                      variant="text"
+                      (clicked)="removeEmergencyContact($index)"
+                      ariaLabel="trash"
+                    />
                   </div>
                 }
 
                 @if (emergencyContacts().length < 3) {
-                  <app-button variant="outlined" iconLeft="pi-plus" (clicked)="showAddContactDialog = true">Add Emergency Contact</app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-plus"
+                    (clicked)="showAddContactDialog = true"
+                    >Add Emergency Contact</app-button
+                  >
                 }
               </div>
             </p-card>
@@ -444,7 +459,12 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                       </div>
                     </div>
                   } @else {
-                    <app-button variant="outlined" size="sm" (clicked)="exportData()">Export</app-button>
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      (clicked)="exportData()"
+                      >Export</app-button
+                    >
                   }
                 </div>
 
@@ -458,11 +478,22 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                         Deletion scheduled in
                         {{ deletionStatus()?.daysUntilDeletion }} days
                       </p>
-                      <app-button variant="outlined" size="sm" [loading]="deletionLoading()" (clicked)="cancelDeletion()">Cancel Deletion</app-button>
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        [loading]="deletionLoading()"
+                        (clicked)="cancelDeletion()"
+                        >Cancel Deletion</app-button
+                      >
                     </div>
                   } @else {
                     <p>Permanently delete your account and all data.</p>
-                    <app-button variant="outlined" size="sm" (clicked)="showDeleteAccountDialog = true">Delete</app-button>
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      (clicked)="showDeleteAccountDialog = true"
+                      >Delete</app-button
+                    >
                   }
                 </div>
 
@@ -470,7 +501,9 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                   <i class="pi pi-history"></i>
                   <h5>View Audit Log</h5>
                   <p>See a history of how your data has been accessed.</p>
-                  <app-button variant="outlined" size="sm" [disabled]="true">Coming Soon</app-button>
+                  <app-button variant="outlined" size="sm" [disabled]="true"
+                    >Coming Soon</app-button
+                  >
                 </div>
               </div>
             </p-card>
@@ -517,8 +550,15 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="showAddContactDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-plus" [disabled]="!isContactValid()" (clicked)="addEmergencyContact()">Add Contact</app-button>
+          <app-button variant="text" (clicked)="showAddContactDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-plus"
+            [disabled]="!isContactValid()"
+            (clicked)="addEmergencyContact()"
+            >Add Contact</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -573,13 +613,22 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="showDeleteAccountDialog = false">Cancel</app-button>
-          <app-button variant="danger" iconLeft="pi-trash" [loading]="deletionLoading()" [disabled]="deleteConfirmText !== 'DELETE'" (clicked)="deleteAccount()">Delete My Account</app-button>
+          <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            variant="danger"
+            iconLeft="pi-trash"
+            [loading]="deletionLoading()"
+            [disabled]="deleteConfirmText !== 'DELETE'"
+            (clicked)="deleteAccount()"
+            >Delete My Account</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
   `,
-  styleUrl: './privacy-controls.component.scss',
+  styleUrl: "./privacy-controls.component.scss",
 })
 export class PrivacyControlsComponent implements OnInit {
   private privacyService = inject(PrivacySettingsService);

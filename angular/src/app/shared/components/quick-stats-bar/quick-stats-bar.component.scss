@@ -37,7 +37,10 @@
   border: 1px solid var(--color-border-secondary);
   flex-shrink: 0;
   min-width: 120px;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .stat-item:hover {
@@ -243,4 +246,3 @@
     transition: none;
   }
 }
-

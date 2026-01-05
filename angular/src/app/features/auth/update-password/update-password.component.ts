@@ -1,17 +1,17 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import {
-    AbstractControl,
-    FormBuilder,
-    FormGroup,
-    ReactiveFormsModule,
-    ValidationErrors,
-    Validators,
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -118,7 +118,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               [loading]="isLoading()"
               [disabled]="passwordForm.invalid"
               [fullWidth]="true"
-            >Update Password</app-button>
+              >Update Password</app-button
+            >
           </form>
         } @else if (isCheckingSession()) {
           <div class="checking-session">
@@ -149,7 +150,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
       </p-card>
     </div>
   `,
-  styleUrl: './update-password.component.scss',
+  styleUrl: "./update-password.component.scss",
 })
 export class UpdatePasswordComponent implements OnInit {
   private fb = inject(FormBuilder);

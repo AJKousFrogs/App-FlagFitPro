@@ -1,4 +1,10 @@
-import { Injectable, inject, computed, signal, DestroyRef } from "@angular/core";
+import {
+  Injectable,
+  inject,
+  computed,
+  signal,
+  DestroyRef,
+} from "@angular/core";
 import { Observable, combineLatest, of, from } from "rxjs";
 import { map, shareReplay, tap, catchError } from "rxjs/operators";
 
@@ -6,7 +12,10 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { TrainingDataService } from "./training-data.service";
 import { WellnessService } from "./wellness.service";
-import { PerformanceDataService, PhysicalMeasurement } from "./performance-data.service";
+import {
+  PerformanceDataService,
+  PhysicalMeasurement,
+} from "./performance-data.service";
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
@@ -76,9 +85,9 @@ export class UnifiedTrainingService {
   // ============================================================================
   // CORE REACTIVE STATE (Signals)
   // ============================================================================
-  
+
   private userId = computed(() => this.authService.getUser()?.id);
-  
+
   // Expose key metrics as signals (facade pattern)
   readonly acwrRatio = this.acwrService.acwrRatio;
   readonly acuteLoad = this.acwrService.acuteLoad;
@@ -100,9 +109,13 @@ export class UnifiedTrainingService {
     return this.acwrService.acwrData();
   }
 
-  readonly readinessScore = computed(() => this.readinessService.current()?.score || 0);
-  readonly readinessLevel = computed(() => this.readinessService.current()?.level || "moderate");
-  
+  readonly readinessScore = computed(
+    () => this.readinessService.current()?.score || 0,
+  );
+  readonly readinessLevel = computed(
+    () => this.readinessService.current()?.level || "moderate",
+  );
+
   /**
    * Get severity color for PrimeNG Tag
    */
@@ -111,7 +124,7 @@ export class UnifiedTrainingService {
     if (level === "moderate") return "warn";
     return "danger";
   }
-  
+
   readonly hasCheckedInToday = computed(() => {
     const current = this.readinessService.current();
     if (!current) return false;
@@ -124,7 +137,9 @@ export class UnifiedTrainingService {
 
   // Hydration Facade
   readonly latestWellness = this.wellnessService.latestWellnessEntry;
-  readonly hydrationLevel = computed(() => this.latestWellness()?.hydration || 0);
+  readonly hydrationLevel = computed(
+    () => this.latestWellness()?.hydration || 0,
+  );
 
   // Training specific state moved from TrainingStateService
   private readonly _userName = signal<string>("");
@@ -143,43 +158,79 @@ export class UnifiedTrainingService {
     const weekly = this._weeklySchedule();
     const today = weekly.find((day) => day.isToday);
     const sessions = today?.sessions || [];
-    
+
     // Attempt to get user routine from settings
     const user = this.authService.getUser();
     const metadata = (user?.user_metadata || {}) as UserMetadata;
-    
-    const defaultRoutine: DailyRoutineSlot[] = [
-      { id: 'wake', label: 'Wake Up', time: '07:00', icon: 'pi-sun' },
-      { id: 'breakfast', label: 'Breakfast', time: '08:15', icon: 'pi-apple' },
-      { id: 'mobility', label: 'Daily Mobility Routine', time: '07:10', icon: 'pi-bolt' },
-      { id: 'rolling', label: 'Morning Foam Rolling', time: '07:30', icon: 'pi-refresh' },
-      { id: 'work_start', label: 'Work/Study Start', time: '09:00', icon: 'pi-briefcase' },
-      { id: 'lunch', label: 'Lunch', time: '12:30', icon: 'pi-utensils' },
-      { id: 'work_end', label: 'Work/Study End', time: '17:00', icon: 'pi-home' },
-      { id: 'training', label: 'Daily Training', time: '18:00', icon: 'pi-bolt' },
-      { id: 'shower', label: 'Shower (Hot)', time: '20:00', icon: 'pi-info-circle' },
-      { id: 'sleep', label: 'Sleep', time: '22:30', icon: 'pi-moon' },
-    ];
-    
-    const userRoutine: DailyRoutineSlot[] = metadata.dailyRoutine || defaultRoutine;
 
-    const todaysSupplements = this.performanceDataService.todaysSupplements() as SupplementEntry[];
+    const defaultRoutine: DailyRoutineSlot[] = [
+      { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
+      { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
+      {
+        id: "mobility",
+        label: "Daily Mobility Routine",
+        time: "07:10",
+        icon: "pi-bolt",
+      },
+      {
+        id: "rolling",
+        label: "Morning Foam Rolling",
+        time: "07:30",
+        icon: "pi-refresh",
+      },
+      {
+        id: "work_start",
+        label: "Work/Study Start",
+        time: "09:00",
+        icon: "pi-briefcase",
+      },
+      { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+      {
+        id: "work_end",
+        label: "Work/Study End",
+        time: "17:00",
+        icon: "pi-home",
+      },
+      {
+        id: "training",
+        label: "Daily Training",
+        time: "18:00",
+        icon: "pi-bolt",
+      },
+      {
+        id: "shower",
+        label: "Shower (Hot)",
+        time: "20:00",
+        icon: "pi-info-circle",
+      },
+      { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
+    ];
+
+    const userRoutine: DailyRoutineSlot[] =
+      metadata.dailyRoutine || defaultRoutine;
+
+    const todaysSupplements =
+      this.performanceDataService.todaysSupplements() as SupplementEntry[];
 
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
-    const getStatus = (itemTime: string): "completed" | "in-progress" | "upcoming" => {
+    const getStatus = (
+      itemTime: string,
+    ): "completed" | "in-progress" | "upcoming" => {
       const [h, m] = itemTime.split(":").map(Number);
-      if (currentHour > h || (currentHour === h && currentMinute >= m + 30)) return "completed";
-      if (currentHour === h || (currentHour === h - 1 && currentMinute >= 45)) return "in-progress";
+      if (currentHour > h || (currentHour === h && currentMinute >= m + 30))
+        return "completed";
+      if (currentHour === h || (currentHour === h - 1 && currentMinute >= 45))
+        return "in-progress";
       return "upcoming";
     };
 
     const getItemType = (slotId: string): TodayScheduleItem["type"] => {
-      if (slotId === 'breakfast' || slotId === 'lunch') return 'nutrition';
-      if (slotId === 'wake' || slotId === 'sleep') return 'wellness';
-      return 'recovery';
+      if (slotId === "breakfast" || slotId === "lunch") return "nutrition";
+      if (slotId === "wake" || slotId === "sleep") return "wellness";
+      return "recovery";
     };
 
     const items: TodayScheduleItem[] = [];
@@ -187,20 +238,22 @@ export class UnifiedTrainingService {
     // 1. Add User Routine Items
     userRoutine.forEach((slot: DailyRoutineSlot) => {
       // Skip the 'training' slot from routine if we have actual sessions to add later
-      if (slot.id === 'training' && sessions.length > 0) return;
+      if (slot.id === "training" && sessions.length > 0) return;
 
       const item: TodayScheduleItem = {
         id: `routine-${slot.id}`,
         time: slot.time,
         title: slot.label,
         type: getItemType(slot.id),
-        duration: slot.id === 'work_start' ? 480 : 30,
+        duration: slot.id === "work_start" ? 480 : 30,
         status: getStatus(slot.time),
-        description: slot.id === 'breakfast' ? 'Include supplements' : slot.label,
+        description:
+          slot.id === "breakfast" ? "Include supplements" : slot.label,
         icon: slot.icon,
-        supplements: slot.id === 'breakfast' && todaysSupplements.length > 0 
-          ? todaysSupplements.filter(s => s.timeOfDay === 'morning') 
-          : undefined
+        supplements:
+          slot.id === "breakfast" && todaysSupplements.length > 0
+            ? todaysSupplements.filter((s) => s.timeOfDay === "morning")
+            : undefined,
       };
 
       items.push(item);
@@ -252,29 +305,33 @@ export class UnifiedTrainingService {
     if (!id) return of(null);
 
     this._isRefreshing.set(true);
-    const targetDate = date || new Date().toISOString().split('T')[0];
+    const targetDate = date || new Date().toISOString().split("T")[0];
 
     return combineLatest({
       protocol: this.api.get(`/api/daily-protocol?date=${targetDate}`),
       readiness: this.readinessService.calculateToday(id),
-      recommendations: this.api.get(`/api/smart-training-recommendations?athleteId=${id}`),
-      trainingData: from(this.loadAllTrainingData())
+      recommendations: this.api.get(
+        `/api/smart-training-recommendations?athleteId=${id}`,
+      ),
+      trainingData: from(this.loadAllTrainingData()),
     }).pipe(
-      map(data => {
-        const insight = this.generateAiInsight(data as unknown as TodayOverviewData);
+      map((data) => {
+        const insight = this.generateAiInsight(
+          data as unknown as TodayOverviewData,
+        );
         this._aiInsight.set(insight);
         return {
           ...data,
-          aiInsight: insight
+          aiInsight: insight,
         };
       }),
       tap(() => this._isRefreshing.set(false)),
-      catchError(err => {
+      catchError((err) => {
         this.logger.error("Error in getTodayOverview", err);
         this._isRefreshing.set(false);
         return of(null);
       }),
-      shareReplay(1)
+      shareReplay(1),
     );
   }
 
@@ -283,8 +340,8 @@ export class UnifiedTrainingService {
    * This creates the exercises with videos for the protocol blocks
    */
   generateDailyProtocol(date?: string): Observable<unknown> {
-    const targetDate = date || new Date().toISOString().split('T')[0];
-    return this.api.post('/api/daily-protocol/generate', { date: targetDate });
+    const targetDate = date || new Date().toISOString().split("T")[0];
+    return this.api.post("/api/daily-protocol/generate", { date: targetDate });
   }
 
   /**
@@ -311,7 +368,11 @@ export class UnifiedTrainingService {
 
       const stats = this.calculateTrainingStats(sessions);
       const streak = this.calculateStreak(sessions);
-      const achievements = this.loadAchievements(userId, streak, sessions.length);
+      const achievements = this.loadAchievements(
+        userId,
+        streak,
+        sessions.length,
+      );
       const userName = await this.getUserDisplayName(userId);
 
       // Update Signals
@@ -346,15 +407,21 @@ export class UnifiedTrainingService {
    */
   async logTrainingSession(sessionData: Record<string, unknown>) {
     this.logger.info("Logging training session via Unified Service");
-    const result = await this.trainingDataService.createTrainingSession(sessionData as Parameters<typeof this.trainingDataService.createTrainingSession>[0]).toPromise();
-    
+    const result = await this.trainingDataService
+      .createTrainingSession(
+        sessionData as Parameters<
+          typeof this.trainingDataService.createTrainingSession
+        >[0],
+      )
+      .toPromise();
+
     // Trigger updates
     const currentUserId = this.userId();
     if (currentUserId) {
       this.readinessService.calculateToday(currentUserId).subscribe();
       this.loadAllTrainingData(); // Refresh signals
     }
-    
+
     return result;
   }
 
@@ -362,7 +429,11 @@ export class UnifiedTrainingService {
    * Unified wellness submission
    */
   async submitWellness(data: Record<string, unknown>) {
-    const result = await this.wellnessService.logWellness(data as Parameters<typeof this.wellnessService.logWellness>[0]).toPromise();
+    const result = await this.wellnessService
+      .logWellness(
+        data as Parameters<typeof this.wellnessService.logWellness>[0],
+      )
+      .toPromise();
     const currentUserId = this.userId();
     if (currentUserId) {
       this.readinessService.calculateToday(currentUserId).subscribe();
@@ -376,28 +447,34 @@ export class UnifiedTrainingService {
    */
   async addHydration(amountMl: number) {
     const current = this.latestWellness();
-    const currentLevel = (current as { hydration?: number } | null)?.hydration || 0;
-    // Assuming hydration_level in DB is glasses or ml? 
+    const currentLevel =
+      (current as { hydration?: number } | null)?.hydration || 0;
+    // Assuming hydration_level in DB is glasses or ml?
     // WellnessService.logWellness uses hydration_level.
     // Let's assume it's glasses/units for now or ml depending on the component logic.
     // In hydration-tracker.component.ts it was adding fixed amounts like 250ml.
-    
+
     // We'll just pass through the update
     return this.submitWellness({
-      ...(current as unknown as Record<string, unknown> ?? {}),
+      ...((current as unknown as Record<string, unknown>) ?? {}),
       hydration: currentLevel + amountMl,
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split("T")[0],
     });
   }
 
   /**
    * Log supplement intake
    */
-  logSupplement(supplement: { 
-    name: string; 
-    taken: boolean; 
-    timeOfDay: 'morning' | 'afternoon' | 'evening' | 'pre-workout' | 'post-workout'; 
-    date: string 
+  logSupplement(supplement: {
+    name: string;
+    taken: boolean;
+    timeOfDay:
+      | "morning"
+      | "afternoon"
+      | "evening"
+      | "pre-workout"
+      | "post-workout";
+    date: string;
   }) {
     return this.performanceDataService.logSupplement(supplement);
   }
@@ -406,7 +483,9 @@ export class UnifiedTrainingService {
    * Log body composition measurement
    */
   async logBodyComp(measurement: Partial<PhysicalMeasurement>) {
-    const result = await this.performanceDataService.logMeasurement(measurement).toPromise();
+    const result = await this.performanceDataService
+      .logMeasurement(measurement)
+      .toPromise();
     if (result && result.success) {
       this.loadAllTrainingData();
     }
@@ -424,7 +503,9 @@ export class UnifiedTrainingService {
   // INTERNAL CALCULATORS & TRANSFORMERS (Ported from Loader)
   // ============================================================================
 
-  private async loadTrainingSessions(userId: string): Promise<TrainingSessionRecord[]> {
+  private async loadTrainingSessions(
+    userId: string,
+  ): Promise<TrainingSessionRecord[]> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -438,7 +519,9 @@ export class UnifiedTrainingService {
     return (data as TrainingSessionRecord[]) || [];
   }
 
-  private async loadWeeklySchedule(userId: string): Promise<WeeklyScheduleDay[]> {
+  private async loadWeeklySchedule(
+    userId: string,
+  ): Promise<WeeklyScheduleDay[]> {
     const startOfWeek = this.getStartOfWeek();
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(endOfWeek.getDate() + 6);
@@ -468,7 +551,7 @@ export class UnifiedTrainingService {
       .order("start_time", { ascending: true, nullsFirst: false });
 
     if (!data || data.length === 0) return this.getDefaultWorkouts();
-    return data.map(w => this.transformToWorkout(w));
+    return data.map((w) => this.transformToWorkout(w));
   }
 
   private async checkWellnessForTraining(userId: string) {
@@ -480,7 +563,12 @@ export class UnifiedTrainingService {
       .limit(1)
       .single();
 
-    if (!data) return { alert: null, readinessScore: 0, readinessStatus: "good" as ReadinessStatus };
+    if (!data)
+      return {
+        alert: null,
+        readinessScore: 0,
+        readinessStatus: "good" as ReadinessStatus,
+      };
 
     const wellnessData = data as WellnessCheckinRecord;
     const score = this.calculateReadinessScore(wellnessData);
@@ -488,7 +576,7 @@ export class UnifiedTrainingService {
     return {
       alert: this.generateWellnessAlert(score, status),
       readinessScore: score,
-      readinessStatus: status
+      readinessStatus: status,
     };
   }
 
@@ -499,7 +587,13 @@ export class UnifiedTrainingService {
     const soreness = wellness.soreness_level ?? wellness.soreness ?? 10;
     const motivation = wellness.motivation_level ?? wellness.motivation ?? 0;
 
-    const score = (sleep * 2 + energy * 2 + (10 - stress) * 1.5 + (10 - soreness) * 1.5 + motivation * 1) / 8;
+    const score =
+      (sleep * 2 +
+        energy * 2 +
+        (10 - stress) * 1.5 +
+        (10 - soreness) * 1.5 +
+        motivation * 1) /
+      8;
     return Math.round(score * 10);
   }
 
@@ -510,39 +604,82 @@ export class UnifiedTrainingService {
     return "rest";
   }
 
-  private generateWellnessAlert(score: number, status: ReadinessStatus): WellnessAlert | null {
-    if (status === "rest") return {
-      severity: "critical",
-      message: "Your body needs rest. Consider light recovery work today.",
-      recommendations: ["Focus on sleep", "Light stretching", "Proper hydration"],
-      icon: "pi-exclamation-triangle"
-    };
-    if (status === "caution") return {
-      severity: "warning",
-      message: "Signs of fatigue detected. Train with caution.",
-      recommendations: ["Reduce intensity 20%", "Extra warm-up"],
-      icon: "pi-info-circle"
-    };
+  private generateWellnessAlert(
+    score: number,
+    status: ReadinessStatus,
+  ): WellnessAlert | null {
+    if (status === "rest")
+      return {
+        severity: "critical",
+        message: "Your body needs rest. Consider light recovery work today.",
+        recommendations: [
+          "Focus on sleep",
+          "Light stretching",
+          "Proper hydration",
+        ],
+        icon: "pi-exclamation-triangle",
+      };
+    if (status === "caution")
+      return {
+        severity: "warning",
+        message: "Signs of fatigue detected. Train with caution.",
+        recommendations: ["Reduce intensity 20%", "Extra warm-up"],
+        icon: "pi-info-circle",
+      };
     return null;
   }
 
-  private calculateTrainingStats(sessions: TrainingSessionRecord[]): TrainingStatCard[] {
-    const thisWeek = sessions.filter(s => this.isThisWeek(new Date(s.date)));
-    const totalDuration = thisWeek.reduce((sum, s) => sum + (s.duration ?? 0), 0);
+  private calculateTrainingStats(
+    sessions: TrainingSessionRecord[],
+  ): TrainingStatCard[] {
+    const thisWeek = sessions.filter((s) => this.isThisWeek(new Date(s.date)));
+    const totalDuration = thisWeek.reduce(
+      (sum, s) => sum + (s.duration ?? 0),
+      0,
+    );
     const streak = this.calculateStreak(sessions);
 
     return [
-      { label: "This Week", value: `${thisWeek.length} sessions`, icon: "pi-calendar", color: COLORS.BLUE, trend: "Active", trendType: "neutral" },
-      { label: "Total Duration", value: `${totalDuration} min`, icon: "pi-clock", color: COLORS.SUCCESS, trend: "This week", trendType: "neutral" },
-      { label: "Current Streak", value: `${streak} days`, icon: "pi-bolt", color: COLORS.ERROR, trend: "Keep it up!", trendType: "positive" }
+      {
+        label: "This Week",
+        value: `${thisWeek.length} sessions`,
+        icon: "pi-calendar",
+        color: COLORS.BLUE,
+        trend: "Active",
+        trendType: "neutral",
+      },
+      {
+        label: "Total Duration",
+        value: `${totalDuration} min`,
+        icon: "pi-clock",
+        color: COLORS.SUCCESS,
+        trend: "This week",
+        trendType: "neutral",
+      },
+      {
+        label: "Current Streak",
+        value: `${streak} days`,
+        icon: "pi-bolt",
+        color: COLORS.ERROR,
+        trend: "Keep it up!",
+        trendType: "positive",
+      },
     ];
   }
 
   private calculateStreak(sessions: TrainingSessionRecord[]): number {
     if (sessions.length === 0) return 0;
-    const uniqueDates = [...new Set(sessions.map(s => new Date(s.date).toISOString().split("T")[0]))].sort().reverse();
+    const uniqueDates = [
+      ...new Set(
+        sessions.map((s) => new Date(s.date).toISOString().split("T")[0]),
+      ),
+    ]
+      .sort()
+      .reverse();
     const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000)
+      .toISOString()
+      .split("T")[0];
 
     if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
 
@@ -556,20 +693,42 @@ export class UnifiedTrainingService {
     return streak;
   }
 
-  private loadAchievements(_userId: string, streak: number, total: number): Achievement[] {
+  private loadAchievements(
+    _userId: string,
+    streak: number,
+    total: number,
+  ): Achievement[] {
     const list: Achievement[] = [];
-    if (streak >= 7) list.push({ icon: "pi-bolt", title: "7-Day Streak", date: new Date().toISOString(), level: "bronze" });
-    if (total >= 10) list.push({ icon: "pi-check-circle", title: "10 Sessions", date: new Date().toISOString(), level: "bronze" });
+    if (streak >= 7)
+      list.push({
+        icon: "pi-bolt",
+        title: "7-Day Streak",
+        date: new Date().toISOString(),
+        level: "bronze",
+      });
+    if (total >= 10)
+      list.push({
+        icon: "pi-check-circle",
+        title: "10 Sessions",
+        date: new Date().toISOString(),
+        level: "bronze",
+      });
     return list;
   }
 
   private async getUserDisplayName(userId: string): Promise<string> {
-    const { data } = await this.supabase.client.from("users").select("first_name").eq("id", userId).single();
+    const { data } = await this.supabase.client
+      .from("users")
+      .select("first_name")
+      .eq("id", userId)
+      .single();
     return (data as { first_name?: string } | null)?.first_name || "Athlete";
   }
 
   private generateAiInsight(data: TodayOverviewData): string {
-    const recommendations = data.recommendations?.data as SmartRecommendationsResponse | undefined;
+    const recommendations = data.recommendations?.data as
+      | SmartRecommendationsResponse
+      | undefined;
     const acwr = this.acwrRatio();
     const readiness = this.readinessScore();
     const hydration = this.hydrationLevel();
@@ -577,37 +736,45 @@ export class UnifiedTrainingService {
 
     // 1. Critical Performance/Safety Insights (from Smart Recommendations)
     if (recommendations) {
-      if (recommendations.overallStatus === 'injured') {
-        return `Hey ${userName}, let's take it easy. ${recommendations.warnings[0] || 'Focus on recovery exercises today.'}`;
+      if (recommendations.overallStatus === "injured") {
+        return `Hey ${userName}, let's take it easy. ${recommendations.warnings[0] || "Focus on recovery exercises today."}`;
       }
-      if (recommendations.overallStatus === 'caution') {
-        return `Watch out, ${userName}! ${recommendations.warnings[0] || 'Your training load is high. Reduce intensity to stay safe.'}`;
+      if (recommendations.overallStatus === "caution") {
+        return `Watch out, ${userName}! ${recommendations.warnings[0] || "Your training load is high. Reduce intensity to stay safe."}`;
       }
-      if (recommendations.overallStatus === 'taper') {
-        return `Tournament mode on! ${recommendations.suggestions[0] || 'Keep intensity high but volume low.'}`;
+      if (recommendations.overallStatus === "taper") {
+        return `Tournament mode on! ${recommendations.suggestions[0] || "Keep intensity high but volume low."}`;
       }
     }
 
     // 2. High Priority Rule-Based Insights
-    if (acwr > 1.5) return `Your injury risk is very high (ACWR: ${acwr.toFixed(2)}). Merlin recommends immediate rest today.`;
-    if (readiness < 40) return `Readiness is low (${readiness}%). Focus heavily on recovery and extra sleep tonight.`;
-    if (hydration < 5 && hydration > 0) return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
-    
+    if (acwr > 1.5)
+      return `Your injury risk is very high (ACWR: ${acwr.toFixed(2)}). Merlin recommends immediate rest today.`;
+    if (readiness < 40)
+      return `Readiness is low (${readiness}%). Focus heavily on recovery and extra sleep tonight.`;
+    if (hydration < 5 && hydration > 0)
+      return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
+
     // 3. Protocol-Specific Insights
-    const protocolData = data.protocol?.data as DailyProtocolResponse | undefined;
+    const protocolData = data.protocol?.data as
+      | DailyProtocolResponse
+      | undefined;
     if (protocolData?.aiRationale) {
       return protocolData.aiRationale;
     }
 
     // 4. Achievement/Streak Insights
-    const streak = this.trainingStats().find(s => s.label === 'Current Streak')?.value;
+    const streak = this.trainingStats().find(
+      (s) => s.label === "Current Streak",
+    )?.value;
     if (streak && parseInt(streak) >= 3) {
       return `${streak} streak! You're building amazing momentum, ${userName}. Keep it rolling!`;
     }
 
     // 5. General Performance Insights
-    if (readiness > 80 && acwr < 1.3) return "Physiological green light! You're perfectly primed for a high-intensity session.";
-    
+    if (readiness > 80 && acwr < 1.3)
+      return "Physiological green light! You're perfectly primed for a high-intensity session.";
+
     return "Consistency is your superpower. Follow today's protocol to stay on track.";
   }
 
@@ -631,18 +798,34 @@ export class UnifiedTrainingService {
     return date >= start && date <= end;
   }
 
-  private transformToWeeklySchedule(sessions: TrainingSessionRecord[]): WeeklyScheduleDay[] {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  private transformToWeeklySchedule(
+    sessions: TrainingSessionRecord[],
+  ): WeeklyScheduleDay[] {
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const start = this.getStartOfWeek();
     return days.map((name, i) => {
       const d = new Date(start);
       d.setDate(d.getDate() + i);
-      const daySessions = sessions.filter(s => new Date(s.date).toDateString() === d.toDateString());
+      const daySessions = sessions.filter(
+        (s) => new Date(s.date).toDateString() === d.toDateString(),
+      );
       return {
         name,
         date: d,
-        sessions: daySessions.map(s => ({ time: s.scheduled_time || "TBD", title: s.title || "Session", type: s.session_type as WeeklyScheduleDay["sessions"][0]["type"] })),
-        isToday: d.toDateString() === new Date().toDateString()
+        sessions: daySessions.map((s) => ({
+          time: s.scheduled_time || "TBD",
+          title: s.title || "Session",
+          type: s.session_type as WeeklyScheduleDay["sessions"][0]["type"],
+        })),
+        isToday: d.toDateString() === new Date().toDateString(),
       };
     });
   }
@@ -654,17 +837,40 @@ export class UnifiedTrainingService {
       title: w.title || "Workout",
       description: w.description || "",
       duration: `${w.duration ?? 60} min`,
-      intensity: (w.intensity ?? 5) > 6 ? "high" : (w.intensity ?? 5) > 3 ? "medium" : "low",
+      intensity:
+        (w.intensity ?? 5) > 6
+          ? "high"
+          : (w.intensity ?? 5) > 3
+            ? "medium"
+            : "low",
       location: w.location || "Gym",
       icon: "pi-bolt",
-      iconBg: COLORS.ERROR
+      iconBg: COLORS.ERROR,
     };
   }
 
   private getDefaultWorkouts(): Workout[] {
     return [
-      { type: "speed", title: "Speed Work", description: "Acceleration focus", duration: "45 min", intensity: "high", location: "Track", icon: "pi-bolt", iconBg: COLORS.ERROR },
-      { type: "strength", title: "Strength", description: "Power focus", duration: "60 min", intensity: "medium", location: "Gym", icon: "pi-shield", iconBg: COLORS.BLUE }
+      {
+        type: "speed",
+        title: "Speed Work",
+        description: "Acceleration focus",
+        duration: "45 min",
+        intensity: "high",
+        location: "Track",
+        icon: "pi-bolt",
+        iconBg: COLORS.ERROR,
+      },
+      {
+        type: "strength",
+        title: "Strength",
+        description: "Power focus",
+        duration: "60 min",
+        intensity: "medium",
+        location: "Gym",
+        icon: "pi-shield",
+        iconBg: COLORS.BLUE,
+      },
     ];
   }
 
@@ -683,13 +889,18 @@ export class UnifiedTrainingService {
           date: new Date().toISOString(),
           session_type: workout.type,
           duration: parseInt(workout.duration) || 60,
-          intensity: workout.intensity === "high" ? 9 : workout.intensity === "medium" ? 6 : 3,
+          intensity:
+            workout.intensity === "high"
+              ? 9
+              : workout.intensity === "medium"
+                ? 6
+                : 3,
           completed: true,
           notes: `Completed: ${workout.title}`,
         });
 
       if (error) return false;
-      
+
       // Refresh state
       await this.getTodayOverview().toPromise();
       return true;
@@ -712,12 +923,12 @@ export class UnifiedTrainingService {
         .from("training_sessions")
         .update({
           session_date: tomorrow.toISOString().split("T")[0],
-          notes: "[Postponed]"
+          notes: "[Postponed]",
         })
         .eq("id", workout.id);
 
       if (error) return false;
-      
+
       // Refresh state
       await this.getTodayOverview().toPromise();
       return true;
@@ -737,7 +948,9 @@ export class UnifiedTrainingService {
    * Remove a workout from the local list
    */
   removeWorkout(workoutTitle: string) {
-    this._workouts.update(list => list.filter(w => w.title !== workoutTitle));
+    this._workouts.update((list) =>
+      list.filter((w) => w.title !== workoutTitle),
+    );
   }
 
   private getFallbackData(): TrainingDataResult {
@@ -748,7 +961,7 @@ export class UnifiedTrainingService {
       achievements: [],
       wellnessData: { alert: null, readinessScore: 0, readinessStatus: "good" },
       userName: "Athlete",
-      lastRefresh: new Date()
+      lastRefresh: new Date(),
     };
   }
 }

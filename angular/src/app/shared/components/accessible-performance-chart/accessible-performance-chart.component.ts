@@ -24,9 +24,7 @@ export interface AccessibleDataPoint {
   selector: "app-accessible-performance-chart",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ChartModule, DatePipe,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, ChartModule, DatePipe, ButtonComponent],
   template: `
     <div
       class="chart-container"
@@ -77,7 +75,12 @@ export interface AccessibleDataPoint {
         aria-live="polite"
         aria-label="Performance insights"
       >
-        <app-button variant="text" iconLeft="pi-volume-up" (clicked)="playInsight()">Audio Summary</app-button>
+        <app-button
+          variant="text"
+          iconLeft="pi-volume-up"
+          (clicked)="playInsight()"
+          >Audio Summary</app-button
+        >
       </div>
 
       <!-- Keyboard Navigation Instructions -->
@@ -89,7 +92,12 @@ export interface AccessibleDataPoint {
           <li><kbd>Space</kbd> - Toggle data series</li>
           <li><kbd>H</kbd> - Toggle this help</li>
         </ul>
-        <app-button variant="text" size="sm" (clicked)="showKeyboardHelp.set(false)">Close</app-button>
+        <app-button
+          variant="text"
+          size="sm"
+          (clicked)="showKeyboardHelp.set(false)"
+          >Close</app-button
+        >
       </div>
 
       <!-- Current Data Point Announcement -->
@@ -103,7 +111,7 @@ export interface AccessibleDataPoint {
       </div>
     </div>
   `,
-  styleUrl: './accessible-performance-chart.component.scss',
+  styleUrl: "./accessible-performance-chart.component.scss",
 })
 export class AccessiblePerformanceChartComponent {
   // Angular 21: Use input() signal instead of @Input()

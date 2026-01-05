@@ -107,7 +107,9 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: 4px solid transparent;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .suggestion-item.priority-high {
@@ -206,4 +208,3 @@
 .empty-sessions p {
   margin-bottom: var(--space-4);
 }
-

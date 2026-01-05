@@ -10,7 +10,11 @@
 }
 
 .ai-suggestions {
-  background: linear-gradient(135deg, var(--primitive-primary-50) 0%, var(--primitive-primary-100) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-primary-50) 0%,
+    var(--primitive-primary-100) 100%
+  );
   padding: var(--space-4);
   border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
@@ -156,4 +160,3 @@
     width: 100%;
   }
 }
-

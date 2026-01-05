@@ -61,7 +61,7 @@ interface Category {
     DialogModule,
     ToastModule,
     MainLayoutComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -333,10 +333,18 @@ interface Category {
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button iconLeft="pi-plus" (clicked)="
+            <app-button
+              iconLeft="pi-plus"
+              (clicked)="
                 addToWorkout(selectedExercise()!); showDetailsDialog.set(false)
-              ">Add to Workout</app-button>
-            <app-button iconLeft="pi-times" (clicked)="showDetailsDialog.set(false)">Close</app-button>
+              "
+              >Add to Workout</app-button
+            >
+            <app-button
+              iconLeft="pi-times"
+              (clicked)="showDetailsDialog.set(false)"
+              >Close</app-button
+            >
           </ng-template>
         }
       </p-dialog>
@@ -547,34 +555,47 @@ export class ExerciseLibraryComponent implements OnInit {
       title: exercise.name,
       description: exercise.description,
       duration: "30 min", // Default duration
-      intensity: exercise.difficulty === "advanced" ? "high" : exercise.difficulty === "intermediate" ? "medium" : "low",
+      intensity:
+        exercise.difficulty === "advanced"
+          ? "high"
+          : exercise.difficulty === "intermediate"
+            ? "medium"
+            : "low",
       location: "Gym",
       icon: this.getCategoryIcon(exercise.category),
-      iconBg: COLORS.PRIMARY
+      iconBg: COLORS.PRIMARY,
     };
 
-    this.trainingService.logTrainingSession({
-      session_type: workout.type,
-      title: workout.title,
-      duration: 30,
-      intensity: exercise.difficulty === "advanced" ? 9 : exercise.difficulty === "intermediate" ? 6 : 3,
-      completed: true,
-      notes: `Added from Exercise Library: ${exercise.description}`
-    }).then(() => {
-      this.messageService.add({
-        severity: "success",
-        summary: "Added to Workout",
-        detail: `"${exercise.name}" has been logged to your daily protocol`,
-        life: 3000,
+    this.trainingService
+      .logTrainingSession({
+        session_type: workout.type,
+        title: workout.title,
+        duration: 30,
+        intensity:
+          exercise.difficulty === "advanced"
+            ? 9
+            : exercise.difficulty === "intermediate"
+              ? 6
+              : 3,
+        completed: true,
+        notes: `Added from Exercise Library: ${exercise.description}`,
+      })
+      .then(() => {
+        this.messageService.add({
+          severity: "success",
+          summary: "Added to Workout",
+          detail: `"${exercise.name}" has been logged to your daily protocol`,
+          life: 3000,
+        });
+      })
+      .catch((_err) => {
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to add exercise to workout",
+          life: 3000,
+        });
       });
-    }).catch(_err => {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to add exercise to workout",
-        life: 3000,
-      });
-    });
   }
 
   resetFilters(): void {

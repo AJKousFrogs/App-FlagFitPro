@@ -514,7 +514,8 @@ export class NutritionService {
             calories: totals.calories + (log.calories || 0),
             protein: totals.protein + (log.protein || 0),
             carbs:
-              totals.carbs + (log.carbohydrates || (log as { carbs?: number }).carbs || 0),
+              totals.carbs +
+              (log.carbohydrates || (log as { carbs?: number }).carbs || 0),
             fat: totals.fat + (log.fat || 0),
           }),
           { calories: 0, protein: 0, carbs: 0, fat: 0 },

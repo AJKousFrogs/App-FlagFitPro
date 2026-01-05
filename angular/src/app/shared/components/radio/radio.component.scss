@@ -44,7 +44,10 @@
   border: 2px solid var(--color-border-primary);
   border-radius: 50%;
   background-color: var(--surface-primary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
   flex-shrink: 0;
   position: relative;
 }
@@ -95,4 +98,3 @@
   color: var(--color-status-error);
   margin-left: 2rem;
 }
-

@@ -25,7 +25,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { DIALOG_STYLES, DROPDOWN_WIDTHS } from "../../core/utils/design-tokens.util";
+import {
+  DIALOG_STYLES,
+  DROPDOWN_WIDTHS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -65,7 +68,14 @@ type EventType = "practice" | "game" | "team-event" | "meeting" | "tournament";
 type RsvpStatus = "going" | "not-going" | "maybe" | "pending";
 
 // ===== Constants =====
-const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severity: "success" | "info" | "warn" | "danger" | "secondary" }> = {
+const EVENT_TYPE_CONFIG: Record<
+  EventType,
+  {
+    label: string;
+    icon: string;
+    severity: "success" | "info" | "warn" | "danger" | "secondary";
+  }
+> = {
   practice: { label: "Practice", icon: "pi-flag", severity: "success" },
   game: { label: "Game", icon: "pi-star", severity: "danger" },
   "team-event": { label: "Team Event", icon: "pi-users", severity: "info" },
@@ -91,7 +101,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -118,7 +128,12 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
             [style]="{ width: dropdownWidths.md }"
           ></p-select>
 
-          <app-button variant="secondary" iconLeft="pi-calendar-plus" (clicked)="syncToCalendar()">Sync to Calendar</app-button>
+          <app-button
+            variant="secondary"
+            iconLeft="pi-calendar-plus"
+            (clicked)="syncToCalendar()"
+            >Sync to Calendar</app-button
+          >
         </div>
 
         <!-- Pending RSVPs Alert -->
@@ -127,7 +142,9 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
             <div class="alert-content">
               <i class="pi pi-exclamation-circle"></i>
               <span>
-                You have <strong>{{ pendingCount() }}</strong> pending RSVP{{ pendingCount() > 1 ? 's' : '' }}
+                You have <strong>{{ pendingCount() }}</strong> pending RSVP{{
+                  pendingCount() > 1 ? "s" : ""
+                }}
               </span>
             </div>
           </p-card>
@@ -188,17 +205,20 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
 
                     <div class="event-actions">
                       <!-- Current RSVP Status -->
-                      <div class="current-rsvp" [class]="'status-' + event.myRsvp">
+                      <div
+                        class="current-rsvp"
+                        [class]="'status-' + event.myRsvp"
+                      >
                         @switch (event.myRsvp) {
-                          @case ('going') {
+                          @case ("going") {
                             <i class="pi pi-check-circle"></i>
                             <span>Going</span>
                           }
-                          @case ('not-going') {
+                          @case ("not-going") {
                             <i class="pi pi-times-circle"></i>
                             <span>Can't Go</span>
                           }
-                          @case ('maybe') {
+                          @case ("maybe") {
                             <i class="pi pi-question-circle"></i>
                             <span>Maybe</span>
                           }
@@ -209,7 +229,10 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
                         }
                       </div>
 
-                      <app-button size="sm" (clicked)="openRsvpDialog(event)"></app-button>
+                      <app-button
+                        size="sm"
+                        (clicked)="openRsvpDialog(event)"
+                      ></app-button>
                     </div>
                   </div>
                 </p-card>
@@ -225,7 +248,9 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
               <h3>No upcoming events</h3>
               <p>
                 @if (selectedType) {
-                  No {{ getEventTypeConfig(selectedType).label.toLowerCase() }} events scheduled
+                  No
+                  {{ getEventTypeConfig(selectedType).label.toLowerCase() }}
+                  events scheduled
                 } @else {
                   Check back later for team events
                 }
@@ -248,8 +273,14 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
           <div class="rsvp-form">
             <!-- Event Summary -->
             <div class="event-summary">
-              <p><i class="pi pi-calendar"></i> {{ event.date | date:'EEEE, MMMM d' }}</p>
-              <p><i class="pi pi-clock"></i> {{ event.startTime }} - {{ event.endTime }}</p>
+              <p>
+                <i class="pi pi-calendar"></i>
+                {{ event.date | date: "EEEE, MMMM d" }}
+              </p>
+              <p>
+                <i class="pi pi-clock"></i> {{ event.startTime }} -
+                {{ event.endTime }}
+              </p>
               <p><i class="pi pi-map-marker"></i> {{ event.location }}</p>
             </div>
 
@@ -311,7 +342,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
             </div>
 
             <!-- Additional Options (shown if going) -->
-            @if (rsvpForm.status === 'going') {
+            @if (rsvpForm.status === "going") {
               <div class="additional-options">
                 <!-- Guests -->
                 @if (event.guestsAllowed) {
@@ -346,7 +377,12 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
                     [binary]="true"
                     inputId="canProvideRide"
                   ></p-checkbox>
-                  <label for="canProvideRide">I can provide a ride ({{ rsvpForm.rideSeats }} seats)</label>
+                  <label for="canProvideRide"
+                    >I can provide a ride ({{
+                      rsvpForm.rideSeats
+                    }}
+                    seats)</label
+                  >
                   @if (rsvpForm.canProvideRide) {
                     <p-inputNumber
                       [(ngModel)]="rsvpForm.rideSeats"
@@ -374,8 +410,15 @@ const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; severi
 
             <!-- Submit -->
             <div class="rsvp-actions">
-              <app-button variant="secondary" (clicked)="showRsvpDialog = false">Cancel</app-button>
-              <app-button iconLeft="pi-check" [disabled]="!rsvpForm.status" (clicked)="submitRsvp()">Submit RSVP</app-button>
+              <app-button variant="secondary" (clicked)="showRsvpDialog = false"
+                >Cancel</app-button
+              >
+              <app-button
+                iconLeft="pi-check"
+                [disabled]="!rsvpForm.status"
+                (clicked)="submitRsvp()"
+                >Submit RSVP</app-button
+              >
             </div>
           </div>
         }
@@ -420,10 +463,12 @@ export class TeamCalendarComponent implements OnInit {
   };
 
   // Options
-  readonly typeFilterOptions = Object.entries(EVENT_TYPE_CONFIG).map(([value, config]) => ({
-    label: config.label,
-    value: value as EventType,
-  }));
+  readonly typeFilterOptions = Object.entries(EVENT_TYPE_CONFIG).map(
+    ([value, config]) => ({
+      label: config.label,
+      value: value as EventType,
+    }),
+  );
 
   // Computed values
   readonly filteredEvents = computed(() => {
@@ -434,7 +479,9 @@ export class TeamCalendarComponent implements OnInit {
     }
 
     // Sort by date
-    return result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return result.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
   });
 
   readonly groupedEvents = computed(() => {
@@ -454,8 +501,8 @@ export class TeamCalendarComponent implements OnInit {
     return groups;
   });
 
-  readonly pendingCount = computed(() =>
-    this.events().filter((e) => e.myRsvp === "pending").length
+  readonly pendingCount = computed(
+    () => this.events().filter((e) => e.myRsvp === "pending").length,
   );
 
   ngOnInit(): void {
@@ -467,7 +514,9 @@ export class TeamCalendarComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/team-calendar"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/team-calendar"),
+      );
       if (response?.success && response.data?.events) {
         this.events.set(response.data.events);
       }
@@ -515,8 +564,8 @@ export class TeamCalendarComponent implements OnInit {
               myRsvp: this.rsvpForm.status!,
               needsRide: this.rsvpForm.needsRide,
             }
-          : e
-      )
+          : e,
+      ),
     );
 
     this.api.post("/api/team-calendar/rsvp", submission).subscribe({

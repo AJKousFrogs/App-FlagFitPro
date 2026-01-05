@@ -71,7 +71,7 @@ export interface Insight {
     ProgressBarModule,
     TooltipModule,
     SkeletonModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -88,7 +88,12 @@ export interface Insight {
             size="small"
           ></p-tag>
         </div>
-        <app-icon-button icon="pi-refresh" variant="text" (clicked)="refreshInsights()" ariaLabel="refresh" />
+        <app-icon-button
+          icon="pi-refresh"
+          variant="text"
+          (clicked)="refreshInsights()"
+          ariaLabel="refresh"
+        />
       </div>
 
       <!-- Loading State -->
@@ -166,9 +171,15 @@ export interface Insight {
                 @if (insight.action) {
                   <div class="insight-action">
                     @if (insight.action.route) {
-                      <app-button size="sm" routerLink="insight.action.route"></app-button>
+                      <app-button
+                        size="sm"
+                        routerLink="insight.action.route"
+                      ></app-button>
                     } @else {
-                      <app-button size="sm" (clicked)="executeAction(insight)"></app-button>
+                      <app-button
+                        size="sm"
+                        (clicked)="executeAction(insight)"
+                      ></app-button>
                     }
                   </div>
                 }
@@ -206,7 +217,7 @@ export interface Insight {
       }
     </div>
   `,
-  styleUrl: './actionable-insights.component.scss',
+  styleUrl: "./actionable-insights.component.scss",
 })
 export class ActionableInsightsComponent implements OnInit {
   private logger = inject(LoggerService);

@@ -37,7 +37,9 @@
   cursor: pointer;
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,4 +106,3 @@
   font-size: var(--font-size-badge);
   color: var(--color-status-error);
 }
-

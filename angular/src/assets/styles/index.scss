@@ -18,25 +18,23 @@
 // 1. IMPORTS (MUST BE AT TOP)
 // ============================================
 
-@import 'design-system-tokens';
-@import 'primeng/token-mapping';
-@import 'primeng/brand-overrides';
-@import 'primitives/typography';
-@import 'primitives/layout';
-@import 'primitives/cards';
-@import 'primitives/forms';
-@import 'primitives/tables';
-@import 'primitives/feedback';
-@import 'primitives/dialogs';
-@import 'overrides/exceptions';
-
+@import "design-system-tokens";
+@import "primeng/token-mapping";
+@import "primeng/brand-overrides";
+@import "primitives/typography";
+@import "primitives/layout";
+@import "primitives/cards";
+@import "primitives/forms";
+@import "primitives/tables";
+@import "primitives/feedback";
+@import "primitives/dialogs";
+@import "overrides/exceptions";
 
 // ============================================
 // 2. LAYER ORDER DECLARATION
 // ============================================
 
 @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
-
 
 // ============================================
 // 3. RESET LAYER
@@ -64,12 +62,19 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  img, picture, video, canvas, svg {
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
     display: block;
     max-width: 100%;
   }
 
-  input, button, textarea, select {
+  input,
+  button,
+  textarea,
+  select {
     font: inherit;
     color: inherit;
   }
@@ -85,7 +90,8 @@
     text-decoration: none;
   }
 
-  ul, ol {
+  ul,
+  ol {
     list-style: none;
   }
 
@@ -110,7 +116,6 @@
   }
 }
 
-
 // ============================================
 // 4. GLOBAL ROOT STYLES
 // ============================================
@@ -131,7 +136,6 @@ body {
   color: var(--color-text-primary);
 }
 
-
 // ============================================
 // 5. HIGH CONTRAST MODE
 // ============================================
@@ -147,7 +151,6 @@ body {
     outline: 3px solid CanvasText;
   }
 }
-
 
 // ============================================
 // 6. REDUCED MOTION (in overrides layer)

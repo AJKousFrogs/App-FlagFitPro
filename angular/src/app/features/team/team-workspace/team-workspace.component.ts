@@ -18,7 +18,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     TabList,
     Tab,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -31,11 +31,17 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
         <p-tabs value="0">
           <p-tablist>
-            <p-tab value="0"><i class="pi pi-users mr-2"></i> Roster & Squad</p-tab>
-            <p-tab value="1"><i class="pi pi-calendar mr-2"></i> Ops & Logistics</p-tab>
-            <p-tab value="2"><i class="pi pi-cog mr-2"></i> Team Settings</p-tab>
+            <p-tab value="0"
+              ><i class="pi pi-users mr-2"></i> Roster & Squad</p-tab
+            >
+            <p-tab value="1"
+              ><i class="pi pi-calendar mr-2"></i> Ops & Logistics</p-tab
+            >
+            <p-tab value="2"
+              ><i class="pi pi-cog mr-2"></i> Team Settings</p-tab
+            >
           </p-tablist>
-          
+
           <p-tabpanels>
             <!-- Tab 0: Roster & Depth -->
             <p-tabpanel value="0">
@@ -99,56 +105,60 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       </div>
     </app-main-layout>
   `,
-  styles: [`
-    .team-workspace-page {
-      padding: var(--spacing-4);
-    }
+  styles: [
+    `
+      .team-workspace-page {
+        padding: var(--spacing-4);
+      }
 
-    .tab-content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: var(--spacing-4);
-      padding: var(--spacing-6) 0;
-    }
+      .tab-content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: var(--spacing-4);
+        padding: var(--spacing-6) 0;
+      }
 
-    .tool-card {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-6);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+      .tool-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
 
-    .tool-card:hover {
-      border-color: var(--ds-primary-green);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
+      .tool-card:hover {
+        border-color: var(--ds-primary-green);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
 
-    .tool-card i {
-      font-size: var(--icon-2xl); /* 32px - feature icon */
-      color: var(--ds-primary-green);
-      margin-bottom: var(--spacing-4);
-    }
+      .tool-card i {
+        font-size: var(--icon-2xl); /* 32px - feature icon */
+        color: var(--ds-primary-green);
+        margin-bottom: var(--spacing-4);
+      }
 
-    .tool-card h3 {
-      font-size: var(--font-size-h2); /* H2: Card titles - 18px */
-      margin: 0 0 var(--spacing-2) 0;
-      font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
-    }
+      .tool-card h3 {
+        font-size: var(--font-size-h2); /* H2: Card titles - 18px */
+        margin: 0 0 var(--spacing-2) 0;
+        font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
+      }
 
-    .tool-card p {
-      font-size: var(--font-size-sm);
-      color: var(--text-color-secondary);
-      margin: 0;
-    }
+      .tool-card p {
+        font-size: var(--font-size-sm);
+        color: var(--text-color-secondary);
+        margin: 0;
+      }
 
-    .mr-2 { margin-right: 0.5rem; }
-  `]
+      .mr-2 {
+        margin-right: 0.5rem;
+      }
+    `,
+  ],
 })
 export class TeamWorkspaceComponent {}

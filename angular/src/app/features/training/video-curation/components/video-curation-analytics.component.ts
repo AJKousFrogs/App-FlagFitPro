@@ -87,7 +87,7 @@ import { formatFocus } from "../video-curation-utils";
       </div>
     </div>
   `,
-  styleUrl: './video-curation-analytics.component.scss',
+  styleUrl: "./video-curation-analytics.component.scss",
 })
 export class VideoCurationAnalyticsComponent {
   videosByPosition = input.required<PositionStat[]>();

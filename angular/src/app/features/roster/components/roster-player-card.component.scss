@@ -119,8 +119,13 @@
 }
 
 @keyframes pulse-risk {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .player-header {
@@ -214,32 +219,53 @@
 }
 
 // Readiness colors
-.readiness-high { color: var(--color-status-success); }
-.readiness-medium { color: var(--color-status-warning); }
-.readiness-low { color: var(--color-status-error); }
+.readiness-high {
+  color: var(--color-status-success);
+}
+.readiness-medium {
+  color: var(--color-status-warning);
+}
+.readiness-low {
+  color: var(--color-status-error);
+}
 
 // Progress bar override for readiness
 .readiness-bar {
-  &.readiness-high .p-progressbar-value { background: var(--color-status-success); }
-  &.readiness-medium .p-progressbar-value { background: var(--color-status-warning); }
-  &.readiness-low .p-progressbar-value { background: var(--color-status-error); }
+  &.readiness-high .p-progressbar-value {
+    background: var(--color-status-success);
+  }
+  &.readiness-medium .p-progressbar-value {
+    background: var(--color-status-warning);
+  }
+  &.readiness-low .p-progressbar-value {
+    background: var(--color-status-error);
+  }
 }
 
 // ACWR colors
-.acwr-safe { color: var(--color-status-success); }
-.acwr-elevated { color: var(--color-status-warning); }
-.acwr-danger { color: var(--color-status-error); }
-.acwr-low { color: var(--color-status-info); }
+.acwr-safe {
+  color: var(--color-status-success);
+}
+.acwr-elevated {
+  color: var(--color-status-warning);
+}
+.acwr-danger {
+  color: var(--color-status-error);
+}
+.acwr-low {
+  color: var(--color-status-info);
+}
 
 // ACWR indicator
 .acwr-indicator {
   position: relative;
   height: var(--space-2);
-  background: linear-gradient(to right, 
-    var(--color-status-info) 0%, 
-    var(--color-status-success) 40%, 
-    var(--color-status-success) 65%, 
-    var(--color-status-warning) 75%, 
+  background: linear-gradient(
+    to right,
+    var(--color-status-info) 0%,
+    var(--color-status-success) 40%,
+    var(--color-status-success) 65%,
+    var(--color-status-warning) 75%,
     var(--color-status-error) 100%
   );
   border-radius: var(--radius-sm);
@@ -259,10 +285,18 @@
 }
 
 // Performance colors
-.perf-excellent { color: var(--ds-primary-green); }
-.perf-good { color: var(--color-status-success); }
-.perf-average { color: var(--color-status-warning); }
-.perf-poor { color: var(--color-status-error); }
+.perf-excellent {
+  color: var(--ds-primary-green);
+}
+.perf-good {
+  color: var(--color-status-success);
+}
+.perf-average {
+  color: var(--color-status-warning);
+}
+.perf-poor {
+  color: var(--color-status-error);
+}
 
 // =========================================================================
 // POSITION INSIGHT

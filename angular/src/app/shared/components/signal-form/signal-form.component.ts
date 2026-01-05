@@ -5,13 +5,7 @@
  * Enhanced with accessibility features and improved DX
  */
 
-import {
-  Component,
-  model,
-  computed,
-  output,
-  inject,
-} from "@angular/core";
+import { Component, model, computed, output, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -34,7 +28,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     CardModule,
     InputTextModule,
     MessageModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -168,7 +162,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       </form>
     </p-card>
   `,
-  styleUrl: './signal-form.component.scss',
+  styleUrl: "./signal-form.component.scss",
 })
 export class SignalFormComponent {
   // Form fields using Angular 21 model() API for two-way binding

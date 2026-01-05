@@ -48,13 +48,13 @@ a.btn {
   align-items: center;
   justify-content: center;
   gap: var(--space-2, 8px);
-  
+
   // FIXED HEIGHT - exactly 44px, not min-height
   height: 44px;
-  
+
   // FIXED PADDING - identical for all variants
   padding: 0 var(--space-6, 24px);
-  
+
   // FIXED TYPOGRAPHY - identical for all variants
   font-size: var(--font-body-md, 16px);
   font-weight: var(--font-weight-semibold, 600);
@@ -62,10 +62,10 @@ a.btn {
   line-height: 1;
   text-decoration: none;
   text-align: center;
-  
+
   // FIXED SHAPE - identical for all variants
   border-radius: var(--radius-button, 8px);
-  
+
   // FIXED INTERACTION PROPERTIES
   cursor: pointer;
   overflow: hidden;
@@ -82,7 +82,7 @@ a.btn {
   background-color: var(--ds-primary-green, #089949);
   color: var(--color-text-on-primary, #ffffff);
   border: 2px solid transparent;
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
 
@@ -95,9 +95,12 @@ a.btn {
     color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
     opacity 150ms ease;
   will-change: transform, box-shadow;
-  
+
   // Ensure icons inherit color
-  i, .pi, svg, .btn-icon {
+  i,
+  .pi,
+  svg,
+  .btn-icon {
     color: inherit;
   }
 }
@@ -125,7 +128,7 @@ a.btn {
 
 .btn:active:not(:disabled):not(.btn-disabled) {
   transform: translateY(0) scale(0.98);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.15),
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -137,7 +140,7 @@ a.btn {
 .btn:focus-visible {
   outline: 3px solid rgba(8, 153, 73, 0.5);
   outline-offset: 2px;
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.15),
     0 0 0 4px rgba(8, 153, 73, 0.25);
 }
@@ -216,7 +219,7 @@ a.btn {
   color: var(--ds-primary-green, #089949);
   border-color: var(--ds-primary-green, #089949);
   box-shadow: none;
-  
+
   // Ensure text is visible
   .btn-content,
   .btn-icon,
@@ -231,7 +234,7 @@ a.btn {
     color: var(--color-text-on-primary, #ffffff);
     border-color: var(--ds-primary-green, #089949);
     box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
-    
+
     .btn-content,
     .btn-icon,
     i {
@@ -248,7 +251,7 @@ a.btn {
   color: var(--ds-primary-green, #089949);
   border-color: transparent;
   box-shadow: none;
-  
+
   .btn-content,
   .btn-icon,
   i {
@@ -260,7 +263,7 @@ a.btn {
   .btn.btn-text:hover:not(:disabled):not(.btn-disabled) {
     background-color: rgba(8, 153, 73, 0.08);
     color: var(--ds-primary-green-hover, #036d35);
-    
+
     .btn-content,
     .btn-icon,
     i {
@@ -286,7 +289,7 @@ a.btn {
 
 .btn.btn-danger:focus-visible {
   outline-color: var(--color-status-error, #dc2626);
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.15),
     0 0 0 4px rgba(220, 38, 38, 0.25);
 }

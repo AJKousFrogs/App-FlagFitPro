@@ -112,7 +112,7 @@ const PRACTICE_DURATIONS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -134,7 +134,11 @@ const PRACTICE_DURATIONS = [
               <div class="merlin-avatar">🤖</div>
               <div class="merlin-message">
                 <h3>MERLIN - Training Scheduler</h3>
-                <p>"I'll create an optimized training schedule based on your team's calendar, player readiness, and your goals. Just tell me what you need to prepare for."</p>
+                <p>
+                  "I'll create an optimized training schedule based on your
+                  team's calendar, player readiness, and your goals. Just tell
+                  me what you need to prepare for."
+                </p>
               </div>
             </div>
 
@@ -152,12 +156,17 @@ const PRACTICE_DURATIONS = [
                       [(ngModel)]="formData.targetType"
                       [inputId]="'target-' + type.value"
                     ></p-radioButton>
-                    <label [for]="'target-' + type.value">{{ type.label }}</label>
+                    <label [for]="'target-' + type.value">{{
+                      type.label
+                    }}</label>
                   </div>
                 }
               </div>
 
-              @if (formData.targetType === 'tournament' || formData.targetType === 'game') {
+              @if (
+                formData.targetType === "tournament" ||
+                formData.targetType === "game"
+              ) {
                 <div class="event-selector">
                   <label>Select event:</label>
                   <p-select
@@ -169,7 +178,10 @@ const PRACTICE_DURATIONS = [
                     styleClass="w-full"
                   ></p-select>
                   @if (selectedEvent()) {
-                    <p class="event-info">Time until event: <strong>{{ selectedEvent()?.daysUntil }} days</strong></p>
+                    <p class="event-info">
+                      Time until event:
+                      <strong>{{ selectedEvent()?.daysUntil }} days</strong>
+                    </p>
                   }
                 </div>
               }
@@ -178,7 +190,9 @@ const PRACTICE_DURATIONS = [
             <!-- Step 2: Training Focus -->
             <div class="form-step">
               <h4>STEP 2: Training Focus</h4>
-              <p class="step-description">What should we prioritize? (Select up to 3)</p>
+              <p class="step-description">
+                What should we prioritize? (Select up to 3)
+              </p>
 
               <div class="checkbox-grid">
                 @for (area of focusAreas; track area.value) {
@@ -187,9 +201,14 @@ const PRACTICE_DURATIONS = [
                       [value]="area.value"
                       [(ngModel)]="formData.focusAreas"
                       [inputId]="'focus-' + area.value"
-                      [disabled]="formData.focusAreas.length >= 3 && !formData.focusAreas.includes(area.value)"
+                      [disabled]="
+                        formData.focusAreas.length >= 3 &&
+                        !formData.focusAreas.includes(area.value)
+                      "
                     ></p-checkbox>
-                    <label [for]="'focus-' + area.value">{{ area.icon }} {{ area.label }}</label>
+                    <label [for]="'focus-' + area.value"
+                      >{{ area.icon }} {{ area.label }}</label
+                    >
                   </div>
                 }
               </div>
@@ -238,30 +257,69 @@ const PRACTICE_DURATIONS = [
               <div class="special-considerations">
                 <p class="step-description">Special considerations:</p>
                 <div class="checkbox-option">
-                  <p-checkbox [(ngModel)]="formData.considerRtp" [binary]="true" inputId="considerRtp"></p-checkbox>
-                  <label for="considerRtp">🏥 {{ rtpPlayerCount() }} players in RTP ({{ rtpPlayerNames() }})</label>
+                  <p-checkbox
+                    [(ngModel)]="formData.considerRtp"
+                    [binary]="true"
+                    inputId="considerRtp"
+                  ></p-checkbox>
+                  <label for="considerRtp"
+                    >🏥 {{ rtpPlayerCount() }} players in RTP ({{
+                      rtpPlayerNames()
+                    }})</label
+                  >
                 </div>
                 <div class="checkbox-option">
-                  <p-checkbox [(ngModel)]="formData.considerAcwr" [binary]="true" inputId="considerAcwr"></p-checkbox>
-                  <label for="considerAcwr">⚠️ {{ highAcwrCount() }} players with elevated ACWR (reduce their load)</label>
+                  <p-checkbox
+                    [(ngModel)]="formData.considerAcwr"
+                    [binary]="true"
+                    inputId="considerAcwr"
+                  ></p-checkbox>
+                  <label for="considerAcwr"
+                    >⚠️ {{ highAcwrCount() }} players with elevated ACWR (reduce
+                    their load)</label
+                  >
                 </div>
                 <div class="checkbox-option">
-                  <p-checkbox [(ngModel)]="formData.weatherAdjust" [binary]="true" inputId="weatherAdjust"></p-checkbox>
-                  <label for="weatherAdjust">🌧️ Weather-adjusted (indoor alternatives)</label>
+                  <p-checkbox
+                    [(ngModel)]="formData.weatherAdjust"
+                    [binary]="true"
+                    inputId="weatherAdjust"
+                  ></p-checkbox>
+                  <label for="weatherAdjust"
+                    >🌧️ Weather-adjusted (indoor alternatives)</label
+                  >
                 </div>
               </div>
             </div>
 
             <div class="generate-action">
-              <app-button iconLeft="pi-bolt" [loading]="isGenerating()" [disabled]="!canGenerate()" (clicked)="generateSchedule()">Generate Schedule</app-button>
+              <app-button
+                iconLeft="pi-bolt"
+                [loading]="isGenerating()"
+                [disabled]="!canGenerate()"
+                (clicked)="generateSchedule()"
+                >Generate Schedule</app-button
+              >
             </div>
           </p-card>
         } @else {
           <!-- Generated Schedule View -->
           <div class="schedule-header-actions">
-            <app-button variant="secondary" iconLeft="pi-arrow-left" (clicked)="resetSchedule()">Back</app-button>
-            <app-button variant="secondary" iconLeft="pi-refresh" (clicked)="regenerateSchedule()">Regenerate</app-button>
-            <app-button variant="secondary" iconLeft="pi-pencil">Edit</app-button>
+            <app-button
+              variant="secondary"
+              iconLeft="pi-arrow-left"
+              (clicked)="resetSchedule()"
+              >Back</app-button
+            >
+            <app-button
+              variant="secondary"
+              iconLeft="pi-refresh"
+              (clicked)="regenerateSchedule()"
+              >Regenerate</app-button
+            >
+            <app-button variant="secondary" iconLeft="pi-pencil"
+              >Edit</app-button
+            >
           </div>
 
           <!-- Merlin Recommendation -->
@@ -284,13 +342,20 @@ const PRACTICE_DURATIONS = [
             </ng-template>
             <div class="periodization-timeline">
               @for (phase of periodizationPhases(); track phase.name) {
-                <div class="phase-block" [class.current]="phase.name === 'CURRENT'">
+                <div
+                  class="phase-block"
+                  [class.current]="phase.name === 'CURRENT'"
+                >
                   <div class="phase-header">
                     <span class="phase-dates">{{ phase.dateRange }}</span>
                     <span class="phase-name">{{ phase.name }}</span>
                   </div>
                   <div class="phase-load">
-                    <p-progressBar [value]="phase.loadPercent" [showValue]="false" [style]="{ height: '16px' }"></p-progressBar>
+                    <p-progressBar
+                      [value]="phase.loadPercent"
+                      [showValue]="false"
+                      [style]="{ height: '16px' }"
+                    ></p-progressBar>
                     <span class="load-label">{{ phase.description }}</span>
                   </div>
                 </div>
@@ -308,7 +373,10 @@ const PRACTICE_DURATIONS = [
               </ng-template>
               <div class="sessions-list">
                 @for (session of week.sessions; track session.id) {
-                  <div class="session-card" [class.rest-day]="session.isRestDay">
+                  <div
+                    class="session-card"
+                    [class.rest-day]="session.isRestDay"
+                  >
                     <div class="session-day">
                       <span class="day-name">{{ session.day }}</span>
                       <span class="day-date">{{ session.date }}</span>
@@ -321,12 +389,17 @@ const PRACTICE_DURATIONS = [
                         <span class="session-icon">{{ session.icon }}</span>
                         <h4>{{ session.title }}</h4>
                         @if (!session.isRestDay) {
-                          <span class="session-duration">{{ session.duration }}</span>
+                          <span class="session-duration">{{
+                            session.duration
+                          }}</span>
                         }
                       </div>
                       @if (!session.isRestDay) {
                         <ul class="session-activities">
-                          @for (activity of session.activities; track activity) {
+                          @for (
+                            activity of session.activities;
+                            track activity
+                          ) {
                             <li>{{ activity }}</li>
                           }
                         </ul>
@@ -336,14 +409,23 @@ const PRACTICE_DURATIONS = [
                           <span>Focus: {{ session.focus }}</span>
                         </div>
                         @if (session.location) {
-                          <p class="session-location">📍 {{ session.location }}</p>
+                          <p class="session-location">
+                            📍 {{ session.location }}
+                          </p>
                         }
                       }
                     </div>
                     @if (!session.isRestDay) {
                       <div class="session-actions">
-                        <app-button variant="text" size="sm" iconLeft="pi-pencil">Edit session</app-button>
-                        <app-button variant="text" size="sm" iconLeft="pi-times">Remove session</app-button>
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-pencil"
+                          >Edit session</app-button
+                        >
+                        <app-button variant="text" size="sm" iconLeft="pi-times"
+                          >Remove session</app-button
+                        >
                       </div>
                     }
                   </div>
@@ -366,7 +448,10 @@ const PRACTICE_DURATIONS = [
                   <h4>🔴 HIGH ACWR - Load Reduction</h4>
                   @for (mod of highAcwrMods(); track mod.playerId) {
                     <div class="mod-card">
-                      <strong>{{ mod.playerName }} (ACWR: {{ mod.acwr?.toFixed(2) }})</strong>
+                      <strong
+                        >{{ mod.playerName }} (ACWR:
+                        {{ mod.acwr?.toFixed(2) }})</strong
+                      >
                       <p>{{ mod.modification }}</p>
                     </div>
                   }
@@ -378,13 +463,22 @@ const PRACTICE_DURATIONS = [
                   <h4>🏥 RETURN-TO-PLAY - Modified Activities</h4>
                   @for (mod of rtpMods(); track mod.playerId) {
                     <div class="mod-card">
-                      <strong>{{ mod.playerName }} (RTP Stage {{ mod.rtpStage }})</strong>
+                      <strong
+                        >{{ mod.playerName }} (RTP Stage
+                        {{ mod.rtpStage }})</strong
+                      >
                       <p>{{ mod.modification }}</p>
                       @if (mod.clearedFor && mod.clearedFor.length > 0) {
-                        <p class="cleared"><strong>Cleared for:</strong> {{ mod.clearedFor.join(', ') }}</p>
+                        <p class="cleared">
+                          <strong>Cleared for:</strong>
+                          {{ mod.clearedFor.join(", ") }}
+                        </p>
                       }
                       @if (mod.notClearedFor && mod.notClearedFor.length > 0) {
-                        <p class="not-cleared"><strong>NOT cleared:</strong> {{ mod.notClearedFor.join(', ') }}</p>
+                        <p class="not-cleared">
+                          <strong>NOT cleared:</strong>
+                          {{ mod.notClearedFor.join(", ") }}
+                        </p>
                       }
                     </div>
                   }
@@ -395,9 +489,21 @@ const PRACTICE_DURATIONS = [
 
           <!-- Export Actions -->
           <div class="export-actions">
-            <app-button variant="secondary" iconLeft="pi-file-pdf" (clicked)="exportPdf()">Export to PDF</app-button>
-            <app-button variant="secondary" iconLeft="pi-calendar" (clicked)="addToCalendar()">Add to Calendar</app-button>
-            <app-button iconLeft="pi-check" (clicked)="applySchedule()">Apply Schedule</app-button>
+            <app-button
+              variant="secondary"
+              iconLeft="pi-file-pdf"
+              (clicked)="exportPdf()"
+              >Export to PDF</app-button
+            >
+            <app-button
+              variant="secondary"
+              iconLeft="pi-calendar"
+              (clicked)="addToCalendar()"
+              >Add to Calendar</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="applySchedule()"
+              >Apply Schedule</app-button
+            >
           </div>
         }
       </div>
@@ -447,8 +553,8 @@ export class AiSchedulerComponent implements OnInit {
   // Computed
   readonly upcomingEvents = computed(() => this.events());
 
-  readonly selectedEvent = computed(() =>
-    this.events().find((e) => e.id === this.formData.eventId) || null
+  readonly selectedEvent = computed(
+    () => this.events().find((e) => e.id === this.formData.eventId) || null,
   );
 
   readonly facilities = computed(() => [
@@ -461,12 +567,15 @@ export class AiSchedulerComponent implements OnInit {
   readonly rtpPlayerNames = computed(() => "Alex, Emily");
   readonly highAcwrCount = computed(() => 3);
 
-  readonly canGenerate = computed(() =>
-    this.formData.focusAreas.length > 0 && this.formData.availableDays.length > 0
+  readonly canGenerate = computed(
+    () =>
+      this.formData.focusAreas.length > 0 &&
+      this.formData.availableDays.length > 0,
   );
 
-  readonly merlinRecommendation = computed(() =>
-    "Based on 15 days until Spring Championship, I've designed a 2-phase plan: Week 1 focuses on high-intensity game prep, Week 2 tapers for peak performance. I've reduced load for Chris, Morgan, and Riley (high ACWR) and created modified sessions for Alex and Emily (RTP)."
+  readonly merlinRecommendation = computed(
+    () =>
+      "Based on 15 days until Spring Championship, I've designed a 2-phase plan: Week 1 focuses on high-intensity game prep, Week 2 tapers for peak performance. I've reduced load for Chris, Morgan, and Riley (high ACWR) and created modified sessions for Alex and Emily (RTP).",
   );
 
   readonly periodizationPhases = computed(() => this.periodization());
@@ -490,11 +599,11 @@ export class AiSchedulerComponent implements OnInit {
   readonly playerModifications = computed(() => this.modifications());
 
   readonly highAcwrMods = computed(() =>
-    this.modifications().filter((m) => m.reason === "acwr")
+    this.modifications().filter((m) => m.reason === "acwr"),
   );
 
   readonly rtpMods = computed(() =>
-    this.modifications().filter((m) => m.reason === "rtp")
+    this.modifications().filter((m) => m.reason === "rtp"),
   );
 
   ngOnInit(): void {
@@ -504,7 +613,9 @@ export class AiSchedulerComponent implements OnInit {
   async loadData(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/events/upcoming"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/events/upcoming"),
+      );
       if (response?.success && response.data?.events) {
         this.events.set(response.data.events);
       }
@@ -521,10 +632,30 @@ export class AiSchedulerComponent implements OnInit {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     this.periodization.set([
-      { name: "CURRENT", dateRange: "Jan 3-5", loadPercent: 0, description: "0%" },
-      { name: "PEAK INTENSITY", dateRange: "Jan 6-12", loadPercent: 100, description: "100% Load" },
-      { name: "TAPER", dateRange: "Jan 13-17", loadPercent: 60, description: "60% Load" },
-      { name: "COMPETE", dateRange: "Jan 18-19", loadPercent: 0, description: "🏆 Tournament" },
+      {
+        name: "CURRENT",
+        dateRange: "Jan 3-5",
+        loadPercent: 0,
+        description: "0%",
+      },
+      {
+        name: "PEAK INTENSITY",
+        dateRange: "Jan 6-12",
+        loadPercent: 100,
+        description: "100% Load",
+      },
+      {
+        name: "TAPER",
+        dateRange: "Jan 13-17",
+        loadPercent: 60,
+        description: "60% Load",
+      },
+      {
+        name: "COMPETE",
+        dateRange: "Jan 18-19",
+        loadPercent: 0,
+        description: "🏆 Tournament",
+      },
     ]);
 
     this.generatedSchedule.set([
@@ -668,7 +799,8 @@ export class AiSchedulerComponent implements OnInit {
         playerName: "Chris Martinez",
         reason: "acwr",
         acwr: 1.42,
-        modification: "-25% load. Skip Saturday max-intensity scrimmage. Instead: Light position work + film study",
+        modification:
+          "-25% load. Skip Saturday max-intensity scrimmage. Instead: Light position work + film study",
       },
       {
         playerId: "2",

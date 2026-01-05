@@ -87,7 +87,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ error: "Internal server error", message: err.message }),
+      body: JSON.stringify({
+        error: "Internal server error",
+        message: err.message,
+      }),
     };
   }
 };
@@ -98,9 +101,12 @@ exports.handler = async (event) => {
  */
 async function getThrowingData(supabase, userId, headers) {
   // Get progression status using the function
-  const { data: progressionData } = await supabase.rpc("get_qb_throwing_progression", {
-    p_user_id: userId,
-  });
+  const { data: progressionData } = await supabase.rpc(
+    "get_qb_throwing_progression",
+    {
+      p_user_id: userId,
+    },
+  );
 
   let progression = null;
   if (progressionData && progressionData.length > 0) {
@@ -121,23 +127,31 @@ async function getThrowingData(supabase, userId, headers) {
       progressionPhase: "Foundation (100-150/session)",
       daysSinceLastSession: 999,
       weeklyCompliancePct: 0,
-      recommendation: "Start tracking your throws to build toward tournament capacity!",
+      recommendation:
+        "Start tracking your throws to build toward tournament capacity!",
     };
   }
 
   // Get weekly stats (last 8 weeks)
   const { data: weeklyData } = await supabase
     .from("qb_throwing_sessions")
-    .select("session_date, total_throws, pre_throwing_warmup_done, post_throwing_arm_care_done, ice_applied, arm_feeling_after")
+    .select(
+      "session_date, total_throws, pre_throwing_warmup_done, post_throwing_arm_care_done, ice_applied, arm_feeling_after",
+    )
     .eq("user_id", userId)
-    .gte("session_date", new Date(Date.now() - 56 * 24 * 60 * 60 * 1000).toISOString().split("T")[0])
+    .gte(
+      "session_date",
+      new Date(Date.now() - 56 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+    )
     .order("session_date", { ascending: false });
 
   // Group by week
   const weeklyStats = [];
   if (weeklyData && weeklyData.length > 0) {
     const weekMap = new Map();
-    
+
     weeklyData.forEach((session) => {
       const date = new Date(session.session_date);
       const weekStart = new Date(date);
@@ -160,9 +174,15 @@ async function getThrowingData(supabase, userId, headers) {
       week.weeklyThrows += session.total_throws || 0;
       week.sessionsCount += 1;
       week.totalArmFeeling += session.arm_feeling_after || 0;
-      if (session.pre_throwing_warmup_done) {week.warmupCount += 1;}
-      if (session.post_throwing_arm_care_done) {week.armCareCount += 1;}
-      if (session.ice_applied) {week.iceSessions += 1;}
+      if (session.pre_throwing_warmup_done) {
+        week.warmupCount += 1;
+      }
+      if (session.post_throwing_arm_care_done) {
+        week.armCareCount += 1;
+      }
+      if (session.ice_applied) {
+        week.iceSessions += 1;
+      }
     });
 
     // Convert to array and calculate averages
@@ -171,9 +191,18 @@ async function getThrowingData(supabase, userId, headers) {
         weekStart: week.weekStart,
         weeklyThrows: week.weeklyThrows,
         sessionsCount: week.sessionsCount,
-        avgArmFeeling: week.sessionsCount > 0 ? Math.round(week.totalArmFeeling / week.sessionsCount * 10) / 10 : 0,
-        warmupCompliancePct: week.sessionsCount > 0 ? Math.round((week.warmupCount / week.sessionsCount) * 100) : 0,
-        armCareCompliancePct: week.sessionsCount > 0 ? Math.round((week.armCareCount / week.sessionsCount) * 100) : 0,
+        avgArmFeeling:
+          week.sessionsCount > 0
+            ? Math.round((week.totalArmFeeling / week.sessionsCount) * 10) / 10
+            : 0,
+        warmupCompliancePct:
+          week.sessionsCount > 0
+            ? Math.round((week.warmupCount / week.sessionsCount) * 100)
+            : 0,
+        armCareCompliancePct:
+          week.sessionsCount > 0
+            ? Math.round((week.armCareCount / week.sessionsCount) * 100)
+            : 0,
         iceSessions: week.iceSessions,
       });
     });
@@ -300,7 +329,9 @@ async function logThrowingSession(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     result = data;
   } else {
     // Insert new
@@ -330,14 +361,17 @@ async function logThrowingSession(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     result = data;
   }
 
   // Check if ice reminder needed
   let iceReminder = null;
   if (totalThrows >= 100 && !iceApplied) {
-    iceReminder = "You threw 100+ balls. Consider icing your arm for 15-20 minutes.";
+    iceReminder =
+      "You threw 100+ balls. Consider icing your arm for 15-20 minutes.";
   }
 
   return {
@@ -376,7 +410,9 @@ async function markArmCareDone(supabase, userId, payload, headers) {
     .eq("id", sessionId)
     .eq("user_id", userId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return {
     statusCode: 200,

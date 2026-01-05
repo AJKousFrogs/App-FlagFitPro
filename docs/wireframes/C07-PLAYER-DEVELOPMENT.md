@@ -245,48 +245,48 @@ Track individual player progress over time, set development goals, compare again
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Player Selector | Switch between players |
-| Spider Chart | Visual benchmark comparison |
-| Development Goals | Track measurable goals |
-| Performance History | Metric trends over time |
-| Skill Assessments | Position-specific ratings |
-| Coach Notes | Private development notes |
-| Team Overview | All players at a glance |
-| Export | PDF development reports |
+| Feature             | Description                 |
+| ------------------- | --------------------------- |
+| Player Selector     | Switch between players      |
+| Spider Chart        | Visual benchmark comparison |
+| Development Goals   | Track measurable goals      |
+| Performance History | Metric trends over time     |
+| Skill Assessments   | Position-specific ratings   |
+| Coach Notes         | Private development notes   |
+| Team Overview       | All players at a glance     |
+| Export              | PDF development reports     |
 
 ---
 
 ## Goal Categories
 
-| Category | Examples |
-|----------|----------|
-| Physical Performance | 40-yard, vertical jump, strength |
-| Position Skill | Route running, catching, tackling |
-| Game Statistics | Catch rate, QBR, interceptions |
-| Training Compliance | Check-in rate, session completion |
+| Category             | Examples                          |
+| -------------------- | --------------------------------- |
+| Physical Performance | 40-yard, vertical jump, strength  |
+| Position Skill       | Route running, catching, tackling |
+| Game Statistics      | Catch rate, QBR, interceptions    |
+| Training Compliance  | Check-in rate, session completion |
 
 ---
 
 ## Assessment Grades
 
-| Grade | Score | Description |
-|-------|-------|-------------|
-| Elite | 90-100 | Top tier, exceeds benchmarks |
-| Excellent | 80-89 | Above average |
-| Good | 70-79 | Meets expectations |
-| Developing | 60-69 | Progressing |
-| Needs Work | <60 | Focus area |
+| Grade      | Score  | Description                  |
+| ---------- | ------ | ---------------------------- |
+| Elite      | 90-100 | Top tier, exceeds benchmarks |
+| Excellent  | 80-89  | Above average                |
+| Good       | 70-79  | Meets expectations           |
+| Developing | 60-69  | Progressing                  |
+| Needs Work | <60    | Focus area                   |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Goals | `DevelopmentService` | `player_goals` |
+| Data        | Service                | Table                 |
+| ----------- | ---------------------- | --------------------- |
+| Goals       | `DevelopmentService`   | `player_goals`        |
 | Performance | `PlayerMetricsService` | `performance_records` |
-| Assessments | `AssessmentService` | `skill_assessments` |
-| Notes | `NotesService` | `coach_notes` |
-| Benchmarks | `BenchmarkService` | `position_benchmarks` |
+| Assessments | `AssessmentService`    | `skill_assessments`   |
+| Notes       | `NotesService`         | `coach_notes`         |
+| Benchmarks  | `BenchmarkService`     | `position_benchmarks` |

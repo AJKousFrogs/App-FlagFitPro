@@ -7,22 +7,22 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, input, output, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, input, output, signal } from "@angular/core";
+import { firstValueFrom } from "rxjs";
+import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { Checkbox } from 'primeng/checkbox';
-import { DatePicker } from 'primeng/datepicker';
-import { DialogModule } from 'primeng/dialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
+import { Checkbox } from "primeng/checkbox";
+import { DatePicker } from "primeng/datepicker";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
 
-import { ApiService } from '../../../../core/services/api.service';
-import { LoggerService } from '../../../../core/services/logger.service';
+import { ApiService } from "../../../../core/services/api.service";
+import { LoggerService } from "../../../../core/services/logger.service";
 
 export interface Tournament {
   id: string;
@@ -34,7 +34,7 @@ export interface Tournament {
   isPeakEvent: boolean;
   gamesExpected: number;
   throwsPerGameQb: number;
-  eventType: 'club' | 'national_team' | 'international' | 'friendly';
+  eventType: "club" | "national_team" | "international" | "friendly";
   isNationalTeamEvent: boolean;
   taperWeeksBefore: number;
   notes?: string;
@@ -51,7 +51,7 @@ interface EventTypeOption {
 }
 
 @Component({
-  selector: 'app-tournament-calendar',
+  selector: "app-tournament-calendar",
   imports: [
     FormsModule,
     DialogModule,
@@ -62,7 +62,7 @@ interface EventTypeOption {
     Checkbox,
     TagModule,
     TooltipModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -73,7 +73,13 @@ interface EventTypeOption {
           <i class="pi pi-trophy"></i>
           Tournament Calendar
         </h3>
-        <app-button variant="outlined" size="sm" iconLeft="pi-plus" (clicked)="openAddDialog()">Add Tournament</app-button>
+        <app-button
+          variant="outlined"
+          size="sm"
+          iconLeft="pi-plus"
+          (clicked)="openAddDialog()"
+          >Add Tournament</app-button
+        >
       </div>
 
       @if (isLoading()) {
@@ -85,13 +91,15 @@ interface EventTypeOption {
         <div class="empty-state">
           <i class="pi pi-calendar-times"></i>
           <p>No upcoming tournaments</p>
-          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()">Add Your First Tournament</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()"
+            >Add Your First Tournament</app-button
+          >
         </div>
       } @else {
         <div class="tournament-list">
           @for (tournament of tournaments(); track tournament.id) {
-            <div 
-              class="tournament-card" 
+            <div
+              class="tournament-card"
               [class.peak-event]="tournament.isPeakEvent"
               [class.in-taper]="tournament.isInTaperPeriod"
             >
@@ -100,21 +108,27 @@ interface EventTypeOption {
                   <div class="tournament-name">
                     {{ tournament.name }}
                     @if (tournament.isPeakEvent) {
-                      <p-tag value="PEAK" severity="danger" ></p-tag>
+                      <p-tag value="PEAK" severity="danger"></p-tag>
                     }
                     @if (tournament.isNationalTeamEvent) {
-                      <p-tag value="National Team" severity="info" ></p-tag>
+                      <p-tag value="National Team" severity="info"></p-tag>
                     }
                   </div>
                   <div class="tournament-details">
                     <span class="detail">
                       <i class="pi pi-calendar"></i>
-                      {{ formatDateRange(tournament.startDate, tournament.endDate) }}
+                      {{
+                        formatDateRange(
+                          tournament.startDate,
+                          tournament.endDate
+                        )
+                      }}
                     </span>
                     @if (tournament.country) {
                       <span class="detail">
                         <i class="pi pi-map-marker"></i>
-                        {{ tournament.city ? tournament.city + ', ' : '' }}{{ tournament.country }}
+                        {{ tournament.city ? tournament.city + ", " : ""
+                        }}{{ tournament.country }}
                       </span>
                     }
                     <span class="detail">
@@ -125,8 +139,13 @@ interface EventTypeOption {
                 </div>
 
                 <div class="tournament-countdown">
-                  @if (tournament.daysUntil !== undefined && tournament.daysUntil >= 0) {
-                    <div class="countdown-number">{{ tournament.daysUntil }}</div>
+                  @if (
+                    tournament.daysUntil !== undefined &&
+                    tournament.daysUntil >= 0
+                  ) {
+                    <div class="countdown-number">
+                      {{ tournament.daysUntil }}
+                    </div>
                     <div class="countdown-label">days</div>
                   } @else {
                     <div class="countdown-label past">Past</div>
@@ -138,26 +157,52 @@ interface EventTypeOption {
                 <div class="taper-banner">
                   <i class="pi pi-info-circle"></i>
                   <span>
-                    <strong>Taper Period Active</strong> - Training volume reduced to peak for this event.
-                    Started {{ tournament.taperStartDate | date:'MMM d' }}.
+                    <strong>Taper Period Active</strong> - Training volume
+                    reduced to peak for this event. Started
+                    {{ tournament.taperStartDate | date: "MMM d" }}.
                   </span>
                 </div>
-              } @else if (tournament.daysUntil !== undefined && tournament.daysUntil > 0 && tournament.daysUntil <= 21) {
+              } @else if (
+                tournament.daysUntil !== undefined &&
+                tournament.daysUntil > 0 &&
+                tournament.daysUntil <= 21
+              ) {
                 <div class="taper-info">
                   <i class="pi pi-clock"></i>
                   <span>
-                    Taper starts {{ tournament.taperStartDate | date:'MMM d' }} 
-                    ({{ getTaperDaysUntil(tournament) }} days)
+                    Taper starts
+                    {{ tournament.taperStartDate | date: "MMM d" }} ({{
+                      getTaperDaysUntil(tournament)
+                    }}
+                    days)
                   </span>
                 </div>
               }
 
               <div class="tournament-actions">
                 @if (tournament.externalUrl) {
-                  <app-icon-button icon="pi-external-link" variant="text" size="sm" (clicked)="openExternalUrl(tournament.externalUrl)" ariaLabel="external-link" />
+                  <app-icon-button
+                    icon="pi-external-link"
+                    variant="text"
+                    size="sm"
+                    (clicked)="openExternalUrl(tournament.externalUrl)"
+                    ariaLabel="external-link"
+                  />
                 }
-                <app-icon-button icon="pi-pencil" variant="text" size="sm" (clicked)="editTournament(tournament)" ariaLabel="pencil" />
-                <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="deleteTournament(tournament)" ariaLabel="trash" />
+                <app-icon-button
+                  icon="pi-pencil"
+                  variant="text"
+                  size="sm"
+                  (clicked)="editTournament(tournament)"
+                  ariaLabel="pencil"
+                />
+                <app-icon-button
+                  icon="pi-trash"
+                  variant="text"
+                  size="sm"
+                  (clicked)="deleteTournament(tournament)"
+                  ariaLabel="trash"
+                />
               </div>
             </div>
           }
@@ -319,12 +364,20 @@ interface EventTypeOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outlined" (clicked)="closeDialog()">Cancel</app-button>
-        <app-icon-button icon="pi-check" [loading]="isSaving()" [disabled]="!isFormValid()" (clicked)="saveTournament()" ariaLabel="check" />
+        <app-button variant="outlined" (clicked)="closeDialog()"
+          >Cancel</app-button
+        >
+        <app-icon-button
+          icon="pi-check"
+          [loading]="isSaving()"
+          [disabled]="!isFormValid()"
+          (clicked)="saveTournament()"
+          ariaLabel="check"
+        />
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './tournament-calendar.component.scss',
+  styleUrl: "./tournament-calendar.component.scss",
 })
 export class TournamentCalendarComponent {
   private readonly api = inject(ApiService);
@@ -346,10 +399,10 @@ export class TournamentCalendarComponent {
   formData: Partial<Tournament> = this.getEmptyForm();
 
   readonly eventTypes: EventTypeOption[] = [
-    { label: 'Club Tournament', value: 'club' },
-    { label: 'International', value: 'international' },
-    { label: 'National Team', value: 'national_team' },
-    { label: 'Friendly', value: 'friendly' },
+    { label: "Club Tournament", value: "club" },
+    { label: "International", value: "international" },
+    { label: "National Team", value: "national_team" },
+    { label: "Friendly", value: "friendly" },
   ];
 
   constructor() {
@@ -362,12 +415,14 @@ export class TournamentCalendarComponent {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/tournament-calendar'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/tournament-calendar"),
+      );
       if (response?.success && response.data) {
         this.tournaments.set(response.data);
       }
     } catch (err) {
-      this.logger.error('Failed to load tournaments', err);
+      this.logger.error("Failed to load tournaments", err);
     } finally {
       this.isLoading.set(false);
     }
@@ -409,13 +464,13 @@ export class TournamentCalendarComponent {
         id: this.editingId(),
       };
 
-      await firstValueFrom(this.api.post('/api/tournament-calendar', payload));
+      await firstValueFrom(this.api.post("/api/tournament-calendar", payload));
 
       await this.loadTournaments();
       this.tournamentChanged.emit();
       this.closeDialog();
     } catch (err) {
-      this.logger.error('Failed to save tournament', err);
+      this.logger.error("Failed to save tournament", err);
     } finally {
       this.isSaving.set(false);
     }
@@ -426,68 +481,80 @@ export class TournamentCalendarComponent {
 
     try {
       await firstValueFrom(
-        this.api.post('/api/tournament-calendar/delete', { id: tournament.id })
+        this.api.post("/api/tournament-calendar/delete", { id: tournament.id }),
       );
       await this.loadTournaments();
       this.tournamentChanged.emit();
     } catch (err) {
-      this.logger.error('Failed to delete tournament', err);
+      this.logger.error("Failed to delete tournament", err);
     }
   }
 
   openExternalUrl(url: string): void {
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }
 
   // Helpers
   getEmptyForm(): Partial<Tournament> {
     return {
-      name: '',
+      name: "",
       startDate: undefined,
       endDate: undefined,
-      country: '',
-      city: '',
+      country: "",
+      city: "",
       isPeakEvent: false,
       gamesExpected: 8,
       throwsPerGameQb: 40,
-      eventType: 'club',
+      eventType: "club",
       isNationalTeamEvent: false,
       taperWeeksBefore: 1,
-      notes: '',
-      externalUrl: '',
+      notes: "",
+      externalUrl: "",
     };
   }
 
   isFormValid(): boolean {
-    return !!(this.formData.name && this.formData.startDate && this.formData.endDate);
+    return !!(
+      this.formData.name &&
+      this.formData.startDate &&
+      this.formData.endDate
+    );
   }
 
   formatDate(date: string | Date | undefined): string | undefined {
     if (!date) return undefined;
-    if (typeof date === 'string') return date;
-    return date.toISOString().split('T')[0];
+    if (typeof date === "string") return date;
+    return date.toISOString().split("T")[0];
   }
 
   formatDateRange(start: string, end: string): string {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
 
     if (start === end) {
-      return startDate.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+      return startDate.toLocaleDateString("en-US", {
+        ...options,
+        year: "numeric",
+      });
     }
 
     if (startDate.getMonth() === endDate.getMonth()) {
-      return `${startDate.toLocaleDateString('en-US', options)}-${endDate.getDate()}, ${endDate.getFullYear()}`;
+      return `${startDate.toLocaleDateString("en-US", options)}-${endDate.getDate()}, ${endDate.getFullYear()}`;
     }
 
-    return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+    return `${startDate.toLocaleDateString("en-US", options)} - ${endDate.toLocaleDateString("en-US", { ...options, year: "numeric" })}`;
   }
 
   getTaperDaysUntil(tournament: Tournament): number {
     if (!tournament.taperStartDate) return 0;
     const today = new Date();
     const taperStart = new Date(tournament.taperStartDate);
-    return Math.ceil((taperStart.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.ceil(
+      (taperStart.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
   }
 }

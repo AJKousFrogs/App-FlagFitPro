@@ -155,16 +155,20 @@ async function getUserContext(userId) {
     const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
     // Get today's and tomorrow's scheduled sessions
-    const { data: scheduledSessions, error: scheduledError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("session_type, session_date, status")
-      .eq("user_id", userId)
-      .gte("session_date", today.toISOString().split("T")[0])
-      .lte("session_date", tomorrowStr)
-      .order("session_date", { ascending: true });
+    const { data: scheduledSessions, error: scheduledError } =
+      await supabaseAdmin
+        .from("training_sessions")
+        .select("session_type, session_date, status")
+        .eq("user_id", userId)
+        .gte("session_date", today.toISOString().split("T")[0])
+        .lte("session_date", tomorrowStr)
+        .order("session_date", { ascending: true });
 
     if (scheduledError) {
-      console.warn("[DailyTraining] Error fetching scheduled sessions:", scheduledError);
+      console.warn(
+        "[DailyTraining] Error fetching scheduled sessions:",
+        scheduledError,
+      );
     }
 
     // Calculate ACWR
@@ -541,10 +545,20 @@ async function buildDailyTrainingPlan(userId, userContext) {
   const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
   const gameToday = userContext.games.find((g) => g.game_date === todayStr);
-  const gameTomorrow = userContext.games.find((g) => g.game_date === tomorrowStr);
-  const scheduledToday = userContext.scheduledSessions.find((s) => s.session_date === todayStr);
+  const gameTomorrow = userContext.games.find(
+    (g) => g.game_date === tomorrowStr,
+  );
+  const scheduledToday = userContext.scheduledSessions.find(
+    (s) => s.session_date === todayStr,
+  );
 
-  const sessionType = scheduledToday ? scheduledToday.session_type : (gameToday ? "Game Day" : (gameTomorrow ? "Rest" : "Rest"));
+  const sessionType = scheduledToday
+    ? scheduledToday.session_type
+    : gameToday
+      ? "Game Day"
+      : gameTomorrow
+        ? "Rest"
+        : "Rest";
 
   // Get greeting based on time of day
   let greeting;
@@ -565,9 +579,11 @@ async function buildDailyTrainingPlan(userId, userContext) {
 
   // Get exercises (only if not a rest day)
   const isRestDay = sessionType === "Rest";
-  const plyometrics = !isRestDay ? await getPlyometricExercises(
-    userContext.profile?.experience_level || "intermediate",
-  ) : [];
+  const plyometrics = !isRestDay
+    ? await getPlyometricExercises(
+        userContext.profile?.experience_level || "intermediate",
+      )
+    : [];
   const isometrics = !isRestDay ? await getIsometricExercises() : [];
 
   // Calculate total contacts and duration
@@ -581,47 +597,49 @@ async function buildDailyTrainingPlan(userId, userContext) {
   );
 
   // Build schedule blocks
-  const schedule = isRestDay ? [] : [
-    {
-      block: "Warm-Up",
-      duration: 20,
-      completed: false,
-      protocol: buildWarmupProtocol(),
-    },
-    {
-      block: "Plyometrics",
-      duration: 15,
-      completed: false,
-      exercises: plyometrics,
-      totalContacts,
-      notes: "Focus on quality over quantity",
-    },
-    {
-      block: "Isometrics",
-      duration: 10,
-      completed: false,
-      exercises: isometrics,
-      totalDuration: totalIsoDuration,
-      purpose: "Pre-activation and stability",
-    },
-    {
-      block: "Main Session",
-      duration: 35,
-      completed: false,
-      type: sessionType.toLowerCase(),
-      focus: getFocusAreas(sessionType),
-    },
-    {
-      block: "Cool-Down",
-      duration: 10,
-      completed: false,
-      activities: [
-        "Light jog (2 min)",
-        "Static stretching (5 min)",
-        "Foam rolling (3 min)",
-      ],
-    },
-  ];
+  const schedule = isRestDay
+    ? []
+    : [
+        {
+          block: "Warm-Up",
+          duration: 20,
+          completed: false,
+          protocol: buildWarmupProtocol(),
+        },
+        {
+          block: "Plyometrics",
+          duration: 15,
+          completed: false,
+          exercises: plyometrics,
+          totalContacts,
+          notes: "Focus on quality over quantity",
+        },
+        {
+          block: "Isometrics",
+          duration: 10,
+          completed: false,
+          exercises: isometrics,
+          totalDuration: totalIsoDuration,
+          purpose: "Pre-activation and stability",
+        },
+        {
+          block: "Main Session",
+          duration: 35,
+          completed: false,
+          type: sessionType.toLowerCase(),
+          focus: getFocusAreas(sessionType),
+        },
+        {
+          block: "Cool-Down",
+          duration: 10,
+          completed: false,
+          activities: [
+            "Light jog (2 min)",
+            "Static stretching (5 min)",
+            "Foam rolling (3 min)",
+          ],
+        },
+      ];
 
   return {
     greeting: `${greeting}, ${userName}!`,
@@ -647,7 +665,10 @@ async function buildDailyTrainingPlan(userId, userContext) {
     todaysPractice: {
       sessionType,
       focus: getFocusAreas(sessionType),
-      totalDuration: schedule.length > 0 ? schedule.reduce((sum, block) => sum + block.duration, 0) : 0,
+      totalDuration:
+        schedule.length > 0
+          ? schedule.reduce((sum, block) => sum + block.duration, 0)
+          : 0,
       schedule,
     },
     motivationalMessage:

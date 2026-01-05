@@ -54,7 +54,7 @@ interface Workout {
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -65,7 +65,9 @@ interface Workout {
           subtitle="Track your workouts and monitor your progress"
           icon="pi-bolt"
         >
-          <app-button iconLeft="pi-plus" (clicked)="createNewWorkout()">New Workout</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="createNewWorkout()"
+            >New Workout</app-button
+          >
         </app-page-header>
 
         <!-- Active Workout -->
@@ -114,8 +116,12 @@ interface Workout {
               }
             </div>
             <div class="workout-actions">
-              <app-button variant="outlined" (clicked)="saveWorkout()">Save Progress</app-button>
-              <app-button (clicked)="completeWorkout()">Complete Workout</app-button>
+              <app-button variant="outlined" (clicked)="saveWorkout()"
+                >Save Progress</app-button
+              >
+              <app-button (clicked)="completeWorkout()"
+                >Complete Workout</app-button
+              >
             </div>
           </p-card>
         }
@@ -167,7 +173,7 @@ interface Workout {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './workout.component.scss',
+  styleUrl: "./workout.component.scss",
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);

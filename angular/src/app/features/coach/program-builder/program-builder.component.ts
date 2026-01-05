@@ -93,10 +93,22 @@ interface TeamMemberOption {
   selected: boolean;
 }
 
-type ProgramType = "competition-prep" | "off-season" | "in-season" | "rtp" | "position-specific";
+type ProgramType =
+  | "competition-prep"
+  | "off-season"
+  | "in-season"
+  | "rtp"
+  | "position-specific";
 type ProgramStatus = "draft" | "active" | "completed" | "archived";
 type DayOfWeek = "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
-type SessionType = "speed" | "strength" | "recovery" | "agility" | "position" | "team" | "rest";
+type SessionType =
+  | "speed"
+  | "strength"
+  | "recovery"
+  | "agility"
+  | "position"
+  | "team"
+  | "rest";
 
 // ===== Constants =====
 const PROGRAM_TYPES: { label: string; value: ProgramType }[] = [
@@ -148,7 +160,7 @@ const PHASE_PRESETS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -162,7 +174,9 @@ const PHASE_PRESETS = [
           subtitle="Build and assign training plans"
           icon="pi-list-check"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Program</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+            >Create Program</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -199,12 +213,24 @@ const PHASE_PRESETS = [
                 <p-card styleClass="program-card">
                   <div class="program-header">
                     <div class="program-title">
-                      <span class="program-icon">{{ getProgramIcon(program.type) }}</span>
+                      <span class="program-icon">{{
+                        getProgramIcon(program.type)
+                      }}</span>
                       <h4>{{ program.name }}</h4>
                     </div>
                     <div class="program-actions">
-                      <app-button variant="text" iconLeft="pi-pencil" (clicked)="editProgram(program)">Edit program</app-button>
-                      <app-button variant="text" iconLeft="pi-ellipsis-v" (clicked)="openProgramMenu($event, program)">More actions</app-button>
+                      <app-button
+                        variant="text"
+                        iconLeft="pi-pencil"
+                        (clicked)="editProgram(program)"
+                        >Edit program</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        iconLeft="pi-ellipsis-v"
+                        (clicked)="openProgramMenu($event, program)"
+                        >More actions</app-button
+                      >
                     </div>
                   </div>
 
@@ -220,9 +246,12 @@ const PHASE_PRESETS = [
                     </div>
                     <div class="detail-row">
                       <span class="detail-label">Start:</span>
-                      <span>{{ program.startDate | date:'MMM d, y' }}</span>
+                      <span>{{ program.startDate | date: "MMM d, y" }}</span>
                       <span class="detail-label">Current:</span>
-                      <span>Week {{ program.currentWeek }} of {{ program.durationWeeks }}</span>
+                      <span
+                        >Week {{ program.currentWeek }} of
+                        {{ program.durationWeeks }}</span
+                      >
                     </div>
                     <div class="detail-row">
                       <span class="detail-label">Phase:</span>
@@ -232,7 +261,11 @@ const PHASE_PRESETS = [
                       <span class="detail-label">Assigned:</span>
                       <span>{{ program.assignedCount }} players</span>
                       <span class="detail-label">Compliance:</span>
-                      <span class="compliance" [class.good]="program.compliance >= 80">{{ program.compliance }}%</span>
+                      <span
+                        class="compliance"
+                        [class.good]="program.compliance >= 80"
+                        >{{ program.compliance }}%</span
+                      >
                     </div>
                   </div>
 
@@ -241,7 +274,10 @@ const PHASE_PRESETS = [
                       [value]="getProgressPercent(program)"
                       [showValue]="false"
                     ></p-progressBar>
-                    <span class="progress-label">{{ getProgressPercent(program) | number:'1.0-0' }}% complete</span>
+                    <span class="progress-label"
+                      >{{ getProgressPercent(program) | number: "1.0-0" }}%
+                      complete</span
+                    >
                   </div>
 
                   <div class="phase-timeline">
@@ -259,9 +295,24 @@ const PHASE_PRESETS = [
                   </div>
 
                   <div class="program-footer">
-                    <app-button variant="secondary" size="sm" (clicked)="viewProgramDetails(program)">View Details</app-button>
-                    <app-button variant="secondary" size="sm" (clicked)="viewCompliance(program)">View Compliance</app-button>
-                    <app-button variant="text" size="sm" (clicked)="duplicateProgram(program)">Duplicate</app-button>
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="viewProgramDetails(program)"
+                      >View Details</app-button
+                    >
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="viewCompliance(program)"
+                      >View Compliance</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="duplicateProgram(program)"
+                      >Duplicate</app-button
+                    >
                   </div>
                 </p-card>
               }
@@ -282,7 +333,12 @@ const PHASE_PRESETS = [
                       <h4>{{ program.name }} (Draft)</h4>
                     </div>
                     <div class="program-actions">
-                      <app-button variant="text" iconLeft="pi-pencil" (clicked)="editProgram(program)">Edit program</app-button>
+                      <app-button
+                        variant="text"
+                        iconLeft="pi-pencil"
+                        (clicked)="editProgram(program)"
+                        >Edit program</app-button
+                      >
                     </div>
                   </div>
 
@@ -291,14 +347,29 @@ const PHASE_PRESETS = [
                       <span class="detail-label">Duration:</span>
                       <span>{{ program.durationWeeks }} weeks</span>
                       <span class="detail-label">Last edited:</span>
-                      <span>{{ program.updatedAt | date:'MMM d, y' }}</span>
+                      <span>{{ program.updatedAt | date: "MMM d, y" }}</span>
                     </div>
                   </div>
 
                   <div class="program-footer">
-                    <app-button variant="secondary" size="sm" (clicked)="editProgram(program)">Continue Editing</app-button>
-                    <app-button size="sm" iconLeft="pi-check" (clicked)="publishProgram(program)">Publish</app-button>
-                    <app-button variant="text" size="sm" (clicked)="deleteProgram(program)">Delete</app-button>
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="editProgram(program)"
+                      >Continue Editing</app-button
+                    >
+                    <app-button
+                      size="sm"
+                      iconLeft="pi-check"
+                      (clicked)="publishProgram(program)"
+                      >Publish</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="deleteProgram(program)"
+                      >Delete</app-button
+                    >
                   </div>
                 </p-card>
               }
@@ -313,7 +384,9 @@ const PHASE_PRESETS = [
               <i class="pi pi-list-check"></i>
               <h3>No Programs Yet</h3>
               <p>Create your first training program to get started</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Program</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+                >Create Program</app-button
+              >
             </div>
           </p-card>
         }
@@ -406,17 +479,31 @@ const PHASE_PRESETS = [
           <div class="form-section">
             <h4>Periodization Phases</h4>
             <div class="phases-timeline">
-              @for (phase of formData.phases; track phase.name; let i = $index) {
+              @for (
+                phase of formData.phases;
+                track phase.name;
+                let i = $index
+              ) {
                 <div class="phase-block">
                   <div class="phase-header">
                     <span class="phase-name">{{ phase.name }}</span>
-                    <span class="phase-weeks">Wk {{ phase.weekStart }}-{{ phase.weekEnd }}</span>
+                    <span class="phase-weeks"
+                      >Wk {{ phase.weekStart }}-{{ phase.weekEnd }}</span
+                    >
                   </div>
-                  <div class="phase-load">Load: {{ phase.loadPercentage }}%</div>
+                  <div class="phase-load">
+                    Load: {{ phase.loadPercentage }}%
+                  </div>
                 </div>
               }
             </div>
-            <app-button variant="text" size="sm" iconLeft="pi-plus" (clicked)="addPhase()">Add Phase</app-button>
+            <app-button
+              variant="text"
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="addPhase()"
+              >Add Phase</app-button
+            >
           </div>
 
           <!-- Weekly Schedule (Simplified) -->
@@ -464,7 +551,9 @@ const PHASE_PRESETS = [
                   inputId="selectAll"
                   (onChange)="toggleSelectAll()"
                 ></p-checkbox>
-                <label for="selectAll">Select All Active Players ({{ activePlayerCount() }})</label>
+                <label for="selectAll"
+                  >Select All Active Players ({{ activePlayerCount() }})</label
+                >
               </div>
 
               <div class="players-grid">
@@ -481,23 +570,37 @@ const PHASE_PRESETS = [
                     ></p-checkbox>
                     <label [for]="'player-' + player.id">
                       {{ player.name }} ({{ player.position }})
-                      @if (player.status !== 'active') {
-                        <span class="player-status">- {{ getPlayerStatusLabel(player.status) }}</span>
+                      @if (player.status !== "active") {
+                        <span class="player-status"
+                          >- {{ getPlayerStatusLabel(player.status) }}</span
+                        >
                       }
                     </label>
                   </div>
                 }
               </div>
 
-              <p class="selected-count">Selected: {{ selectedPlayerCount() }} of {{ teamMembers().length }} players</p>
+              <p class="selected-count">
+                Selected: {{ selectedPlayerCount() }} of
+                {{ teamMembers().length }} players
+              </p>
             </div>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="saveDraft()">Save as Draft</app-button>
-          <app-button variant="secondary" (clicked)="previewProgram()">Preview</app-button>
-          <app-button iconLeft="pi-check" [disabled]="!formData.name" (clicked)="publishNewProgram()">Publish Program</app-button>
+          <app-button variant="secondary" (clicked)="saveDraft()"
+            >Save as Draft</app-button
+          >
+          <app-button variant="secondary" (clicked)="previewProgram()"
+            >Preview</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="!formData.name"
+            (clicked)="publishNewProgram()"
+            >Publish Program</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -533,7 +636,10 @@ export class ProgramBuilderComponent implements OnInit {
     durationWeeks: number;
     goalEvent: string;
     phases: ProgramPhase[];
-    weekTemplate: Record<DayOfWeek, { sessionType: SessionType; duration: number; targetRpe: number }>;
+    weekTemplate: Record<
+      DayOfWeek,
+      { sessionType: SessionType; duration: number; targetRpe: number }
+    >;
   } = this.getEmptyFormData();
 
   // Options
@@ -549,19 +655,19 @@ export class ProgramBuilderComponent implements OnInit {
 
   // Computed
   readonly activePrograms = computed(() =>
-    this.programs().filter((p) => p.status === "active")
+    this.programs().filter((p) => p.status === "active"),
   );
 
   readonly draftPrograms = computed(() =>
-    this.programs().filter((p) => p.status === "draft")
+    this.programs().filter((p) => p.status === "draft"),
   );
 
-  readonly activePlayerCount = computed(() =>
-    this.teamMembers().filter((m) => m.status === "active").length
+  readonly activePlayerCount = computed(
+    () => this.teamMembers().filter((m) => m.status === "active").length,
   );
 
-  readonly selectedPlayerCount = computed(() =>
-    this.teamMembers().filter((m) => m.selected).length
+  readonly selectedPlayerCount = computed(
+    () => this.teamMembers().filter((m) => m.selected).length,
   );
 
   ngOnInit(): void {
@@ -573,10 +679,13 @@ export class ProgramBuilderComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/programs"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/programs"),
+      );
       if (response?.success && response.data) {
         if (response.data.programs) this.programs.set(response.data.programs);
-        if (response.data.teamMembers) this.teamMembers.set(response.data.teamMembers);
+        if (response.data.teamMembers)
+          this.teamMembers.set(response.data.teamMembers);
       }
     } catch (err) {
       this.logger.error("Failed to load programs", err);
@@ -592,7 +701,8 @@ export class ProgramBuilderComponent implements OnInit {
       {
         id: "1",
         name: "Spring Championship Prep",
-        description: "8-week periodized program preparing team for Spring Championship",
+        description:
+          "8-week periodized program preparing team for Spring Championship",
         type: "competition-prep",
         status: "active",
         startDate: "2026-01-06",
@@ -603,10 +713,38 @@ export class ProgramBuilderComponent implements OnInit {
         assignedCount: 12,
         compliance: 87,
         phases: [
-          { id: "p1", name: "Foundation", weekStart: 1, weekEnd: 2, loadPercentage: 70, focus: "Base fitness" },
-          { id: "p2", name: "Building", weekStart: 3, weekEnd: 4, loadPercentage: 85, focus: "Progressive overload" },
-          { id: "p3", name: "Peak Load", weekStart: 5, weekEnd: 6, loadPercentage: 100, focus: "Maximum stress" },
-          { id: "p4", name: "Taper", weekStart: 7, weekEnd: 8, loadPercentage: 50, focus: "Recovery" },
+          {
+            id: "p1",
+            name: "Foundation",
+            weekStart: 1,
+            weekEnd: 2,
+            loadPercentage: 70,
+            focus: "Base fitness",
+          },
+          {
+            id: "p2",
+            name: "Building",
+            weekStart: 3,
+            weekEnd: 4,
+            loadPercentage: 85,
+            focus: "Progressive overload",
+          },
+          {
+            id: "p3",
+            name: "Peak Load",
+            weekStart: 5,
+            weekEnd: 6,
+            loadPercentage: 100,
+            focus: "Maximum stress",
+          },
+          {
+            id: "p4",
+            name: "Taper",
+            weekStart: 7,
+            weekEnd: 8,
+            loadPercentage: 50,
+            focus: "Recovery",
+          },
         ],
         createdAt: "2025-12-20",
         updatedAt: "2026-01-03",
@@ -624,10 +762,38 @@ export class ProgramBuilderComponent implements OnInit {
         assignedCount: 1,
         compliance: 92,
         phases: [
-          { id: "rp1", name: "Stage 1-2", weekStart: 1, weekEnd: 2, loadPercentage: 30, focus: "Initial rehab" },
-          { id: "rp2", name: "Stage 3", weekStart: 3, weekEnd: 3, loadPercentage: 50, focus: "Strength building" },
-          { id: "rp3", name: "Stage 4", weekStart: 4, weekEnd: 4, loadPercentage: 70, focus: "Sport-specific" },
-          { id: "rp4", name: "Stage 5-7", weekStart: 5, weekEnd: 6, loadPercentage: 90, focus: "Return to play" },
+          {
+            id: "rp1",
+            name: "Stage 1-2",
+            weekStart: 1,
+            weekEnd: 2,
+            loadPercentage: 30,
+            focus: "Initial rehab",
+          },
+          {
+            id: "rp2",
+            name: "Stage 3",
+            weekStart: 3,
+            weekEnd: 3,
+            loadPercentage: 50,
+            focus: "Strength building",
+          },
+          {
+            id: "rp3",
+            name: "Stage 4",
+            weekStart: 4,
+            weekEnd: 4,
+            loadPercentage: 70,
+            focus: "Sport-specific",
+          },
+          {
+            id: "rp4",
+            name: "Stage 5-7",
+            weekStart: 5,
+            weekEnd: 6,
+            loadPercentage: 90,
+            focus: "Return to play",
+          },
         ],
         createdAt: "2025-12-10",
         updatedAt: "2026-01-02",
@@ -650,18 +816,63 @@ export class ProgramBuilderComponent implements OnInit {
 
     // Demo team members
     this.teamMembers.set([
-      { id: "1", name: "Sarah Johnson", position: "WR", status: "active", selected: false },
-      { id: "2", name: "Marcus Williams", position: "QB", status: "active", selected: false },
-      { id: "3", name: "Emily Chen", position: "DB", status: "minor-injury", selected: false },
-      { id: "4", name: "Jake Rodriguez", position: "C", status: "active", selected: false },
-      { id: "5", name: "Alex Thompson", position: "Rusher", status: "rtp", selected: false },
-      { id: "6", name: "Chris Martinez", position: "WR", status: "active", selected: false },
-      { id: "7", name: "Taylor Smith", position: "DB", status: "active", selected: false },
+      {
+        id: "1",
+        name: "Sarah Johnson",
+        position: "WR",
+        status: "active",
+        selected: false,
+      },
+      {
+        id: "2",
+        name: "Marcus Williams",
+        position: "QB",
+        status: "active",
+        selected: false,
+      },
+      {
+        id: "3",
+        name: "Emily Chen",
+        position: "DB",
+        status: "minor-injury",
+        selected: false,
+      },
+      {
+        id: "4",
+        name: "Jake Rodriguez",
+        position: "C",
+        status: "active",
+        selected: false,
+      },
+      {
+        id: "5",
+        name: "Alex Thompson",
+        position: "Rusher",
+        status: "rtp",
+        selected: false,
+      },
+      {
+        id: "6",
+        name: "Chris Martinez",
+        position: "WR",
+        status: "active",
+        selected: false,
+      },
+      {
+        id: "7",
+        name: "Taylor Smith",
+        position: "DB",
+        status: "active",
+        selected: false,
+      },
     ]);
   }
 
   private getEmptyFormData() {
-    const weekTemplate: Record<DayOfWeek, { sessionType: SessionType; duration: number; targetRpe: number }> = {
+    const weekTemplate: Record<
+      DayOfWeek,
+      { sessionType: SessionType; duration: number; targetRpe: number }
+    > = {
       MON: { sessionType: "speed", duration: 60, targetRpe: 7 },
       TUE: { sessionType: "strength", duration: 75, targetRpe: 8 },
       WED: { sessionType: "recovery", duration: 30, targetRpe: 4 },
@@ -694,7 +905,9 @@ export class ProgramBuilderComponent implements OnInit {
   openCreateDialog(): void {
     this.isEditing.set(false);
     this.formData = this.getEmptyFormData();
-    this.teamMembers.update((members) => members.map((m) => ({ ...m, selected: false })));
+    this.teamMembers.update((members) =>
+      members.map((m) => ({ ...m, selected: false })),
+    );
     this.selectAllPlayers = false;
     this.showCreateDialog = true;
   }
@@ -720,7 +933,7 @@ export class ProgramBuilderComponent implements OnInit {
       members.map((m) => ({
         ...m,
         selected: m.status !== "rtp" ? this.selectAllPlayers : false,
-      }))
+      })),
     );
   }
 
@@ -871,8 +1084,13 @@ export class ProgramBuilderComponent implements OnInit {
     return labels[status];
   }
 
-  getStatusSeverity(status: ProgramStatus): "success" | "info" | "warn" | "secondary" {
-    const severities: Record<ProgramStatus, "success" | "info" | "warn" | "secondary"> = {
+  getStatusSeverity(
+    status: ProgramStatus,
+  ): "success" | "info" | "warn" | "secondary" {
+    const severities: Record<
+      ProgramStatus,
+      "success" | "info" | "warn" | "secondary"
+    > = {
       draft: "secondary",
       active: "success",
       completed: "info",

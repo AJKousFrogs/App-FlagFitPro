@@ -60,7 +60,9 @@
   border-radius: var(--radius-md);
   color: var(--color-text-on-primary);
   opacity: 0.7;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
 }
 
 .dismiss-btn:hover {
@@ -154,4 +156,3 @@
     font-size: var(--font-size-badge);
   }
 }
-

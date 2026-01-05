@@ -1,17 +1,17 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-    FormBuilder,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -25,9 +25,9 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import {
-    getFormControlError,
-    isFormControlInvalid,
-    markFormGroupTouched,
+  getFormControlError,
+  isFormControlInvalid,
+  markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -220,7 +220,8 @@ import {
             [disabled]="registerForm.invalid"
             [fullWidth]="true"
             testId="register-submit"
-          >Create Account</app-button>
+            >Create Account</app-button
+          >
         </form>
 
         <div class="register-divider my-4">
@@ -306,8 +307,16 @@ export class RegisterComponent {
     try {
       const password = this.registerForm.value.password;
       const supabaseUrl =
-        (window as { _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string } })._env?.SUPABASE_URL ||
-        (window as { _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string } })._env?.VITE_SUPABASE_URL;
+        (
+          window as {
+            _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string };
+          }
+        )._env?.SUPABASE_URL ||
+        (
+          window as {
+            _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string };
+          }
+        )._env?.VITE_SUPABASE_URL;
 
       if (supabaseUrl) {
         // Get auth token if available

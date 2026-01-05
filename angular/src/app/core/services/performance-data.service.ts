@@ -391,7 +391,7 @@ export class PerformanceDataService {
       bodyFat: data.body_fat_percentage,
       muscleMass: data.muscle_mass_kg,
       notes: data.notes,
-      timestamp: data.measurement_date as string || new Date().toISOString(),
+      timestamp: (data.measurement_date as string) || new Date().toISOString(),
     };
   }
 
@@ -479,7 +479,8 @@ export class PerformanceDataService {
             bodyFat: m.body_fat_percentage,
             muscleMass: m.muscle_mass_kg,
             notes: m.notes,
-            timestamp: m.measurement_date || m.created_at || new Date().toISOString(),
+            timestamp:
+              m.measurement_date || m.created_at || new Date().toISOString(),
           }),
         );
 

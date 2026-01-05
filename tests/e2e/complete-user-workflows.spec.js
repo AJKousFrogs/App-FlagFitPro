@@ -143,24 +143,30 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
       test.setTimeout(120000);
 
       // Mock leaked password check
-      await page.route("**/functions/v1/enable-leaked-password-protection", (route) => {
-        route.fulfill({
-          status: 200,
-          body: JSON.stringify({ leaked: false }),
-        });
-      });
+      await page.route(
+        "**/functions/v1/enable-leaked-password-protection",
+        (route) => {
+          route.fulfill({
+            status: 200,
+            body: JSON.stringify({ leaked: false }),
+          });
+        },
+      );
 
       // Mock registration response
       await page.route("**/auth/v1/signup*", (route) => {
         route.fulfill({
           status: 200,
           body: JSON.stringify({
-            user: { 
-              id: "test-uuid", 
+            user: {
+              id: "test-uuid",
               email: "newuser@flagfit.com",
-              user_metadata: { full_name: "New Athlete", name: "New Athlete" }
+              user_metadata: { full_name: "New Athlete", name: "New Athlete" },
             },
-            session: { access_token: "test-token", refresh_token: "test-refresh" }
+            session: {
+              access_token: "test-token",
+              refresh_token: "test-refresh",
+            },
           }),
         });
       });
@@ -172,11 +178,19 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
           body: JSON.stringify({
             success: true,
             data: {
-              trainingProgress: { percentage: 0, completed: 0, trend: "No trend" },
+              trainingProgress: {
+                percentage: 0,
+                completed: 0,
+                trend: "No trend",
+              },
               performanceScore: { score: "0.0", total: 0, status: "Ready" },
               teamChemistry: { overall: "0.0", status: "Neutral" },
-              nextSession: { type: "Introduction", time: "10:00 AM", duration: 30 }
-            }
+              nextSession: {
+                type: "Introduction",
+                time: "10:00 AM",
+                duration: 30,
+              },
+            },
           }),
         });
       });
@@ -192,7 +206,10 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
       await page.fill('[data-testid="name-input"]', "New Athlete");
       await page.fill('[data-testid="email-input"]', "newuser@flagfit.com");
       await page.fill('[data-testid="password-input"]', "securePass123!");
-      await page.fill('[data-testid="confirm-password-input"]', "securePass123!");
+      await page.fill(
+        '[data-testid="confirm-password-input"]',
+        "securePass123!",
+      );
       await page.click('[data-testid="age-checkbox"]');
       await page.click('[data-testid="terms-checkbox"]');
 
@@ -201,13 +218,15 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
 
       // Manual check - did we land on onboarding?
       await page.waitForTimeout(5000);
-      console.log('Current URL after registration:', page.url());
-      
+      console.log("Current URL after registration:", page.url());
+
       // Navigate to dashboard
-      await page.goto("/dashboard", { waitUntil: 'networkidle' });
+      await page.goto("/dashboard", { waitUntil: "networkidle" });
 
       // Final check - is dashboard header present?
-      await expect(page.locator('h1, h2, h3').first()).toBeVisible({ timeout: 20000 });
+      await expect(page.locator("h1, h2, h3").first()).toBeVisible({
+        timeout: 20000,
+      });
     });
 
     test("login with existing credentials", async ({ page }) => {
@@ -219,12 +238,18 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
         route.fulfill({
           status: 200,
           body: JSON.stringify({
-            user: { 
-              id: "test-uuid", 
+            user: {
+              id: "test-uuid",
               email: "test@flagfit.com",
-              user_metadata: { full_name: "Test Athlete", name: "Test Athlete" }
+              user_metadata: {
+                full_name: "Test Athlete",
+                name: "Test Athlete",
+              },
             },
-            session: { access_token: "test-token", refresh_token: "test-refresh" }
+            session: {
+              access_token: "test-token",
+              refresh_token: "test-refresh",
+            },
           }),
         });
       });
@@ -235,12 +260,12 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
           status: 200,
           body: JSON.stringify({
             success: true,
-            data: { 
-              id: "test-uuid", 
-              email: "test@flagfit.com", 
+            data: {
+              id: "test-uuid",
+              email: "test@flagfit.com",
               name: "Test Athlete",
-              role: "athlete"
-            }
+              role: "athlete",
+            },
           }),
         });
       });
@@ -255,15 +280,19 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
               trainingProgress: { percentage: 85, completed: 12, trend: "+5%" },
               performanceScore: { score: "8.4", total: 15, status: "Peak" },
               teamChemistry: { overall: "9.1", status: "Excellent" },
-              nextSession: { type: "Team Practice", time: "4:00 PM", duration: 90 }
-            }
+              nextSession: {
+                type: "Team Practice",
+                time: "4:00 PM",
+                duration: 90,
+              },
+            },
           }),
         });
       });
 
       // Mock user role specifically if checked via cookie or other method
       await page.addInitScript(() => {
-        window.localStorage.setItem('user_role', 'athlete');
+        window.localStorage.setItem("user_role", "athlete");
       });
 
       await page.goto("/login");
@@ -273,7 +302,9 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
       await page.click('[data-testid="login-submit"]');
 
       await expect(page).toHaveURL(/.*dashboard/, { timeout: 30000 });
-      await expect(page.locator('h1, h2, h3').first()).toBeVisible({ timeout: 20000 });
+      await expect(page.locator("h1, h2, h3").first()).toBeVisible({
+        timeout: 20000,
+      });
     });
 
     test("handle login errors gracefully", async ({ page }) => {

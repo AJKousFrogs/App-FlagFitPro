@@ -14,12 +14,12 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -48,7 +48,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
     InputNumberModule,
     CheckboxModule,
     Textarea,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -152,7 +152,13 @@ import { WellnessService } from "../../../core/services/wellness.service";
 
         <!-- Actions -->
         <div class="checkin-actions">
-          <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="!canSubmit()" (clicked)="submit()">Submit Check-in</app-button>
+          <app-button
+            iconLeft="pi-check"
+            [loading]="isSubmitting()"
+            [disabled]="!canSubmit()"
+            (clicked)="submit()"
+            >Submit Check-in</app-button
+          >
 
           <a
             routerLink="/wellness"
@@ -173,7 +179,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
       </div>
     </p-dialog>
   `,
-  styleUrl: './quick-wellness-checkin.component.scss',
+  styleUrl: "./quick-wellness-checkin.component.scss",
 })
 export class QuickWellnessCheckinComponent {
   private router = inject(Router);

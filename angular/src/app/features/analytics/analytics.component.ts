@@ -1,13 +1,13 @@
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    HostListener,
-    QueryList,
-    ViewChildren,
-    inject,
-    signal,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  QueryList,
+  ViewChildren,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -26,10 +26,10 @@ import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    PlayerGameStats,
-    PlayerMultiSeasonStats,
-    PlayerSeasonStats,
-    PlayerStatisticsService,
+  PlayerGameStats,
+  PlayerMultiSeasonStats,
+  PlayerSeasonStats,
+  PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -41,13 +41,13 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    ENHANCED_BAR_CHART_OPTIONS,
-    ENHANCED_DOUGHNUT_CHART_OPTIONS,
-    ENHANCED_LINE_CHART_OPTIONS,
-    ENHANCED_RADAR_CHART_OPTIONS,
-    exportChartAsPNG,
-    resetChartZoom,
-    updateChartFontSizes,
+  ENHANCED_BAR_CHART_OPTIONS,
+  ENHANCED_DOUGHNUT_CHART_OPTIONS,
+  ENHANCED_LINE_CHART_OPTIONS,
+  ENHANCED_RADAR_CHART_OPTIONS,
+  exportChartAsPNG,
+  resetChartZoom,
+  updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
@@ -61,7 +61,7 @@ interface Metric {
 
 interface DevelopmentGoal {
   id: string;
-  metricType: 'speed' | 'agility' | 'strength' | 'power' | 'skill';
+  metricType: "speed" | "agility" | "strength" | "power" | "skill";
   metricName: string;
   targetValue: number;
   targetUnit: string;
@@ -69,7 +69,7 @@ interface DevelopmentGoal {
   startValue: number;
   deadline: Date;
   coachNote: string;
-  status: 'active' | 'achieved' | 'missed';
+  status: "active" | "achieved" | "missed";
 }
 
 @Component({
@@ -129,11 +129,11 @@ interface DevelopmentGoal {
                 variant="outlined"
                 icon="share-alt"
                 (clicked)="showShareDialog.set(true)"
-              >Share with Coach</app-button>
-              <app-button
-                icon="file-pdf"
-                (clicked)="exportAnalyticsPDF()"
-              >Export PDF</app-button>
+                >Share with Coach</app-button
+              >
+              <app-button icon="file-pdf" (clicked)="exportAnalyticsPDF()"
+                >Export PDF</app-button
+              >
             </div>
           </app-page-header>
 
@@ -156,12 +156,18 @@ interface DevelopmentGoal {
               <div class="goals-empty-state">
                 <i class="pi pi-bullseye empty-icon"></i>
                 <h4>No goals assigned yet</h4>
-                <p>Your coach will assign development goals here. Check back soon or ask your coach to set goals for you.</p>
+                <p>
+                  Your coach will assign development goals here. Check back soon
+                  or ask your coach to set goals for you.
+                </p>
               </div>
             } @else {
               <div class="goals-grid">
                 @for (goal of developmentGoals().slice(0, 3); track goal.id) {
-                  <div class="goal-card" [class.achieved]="goal.status === 'achieved'">
+                  <div
+                    class="goal-card"
+                    [class.achieved]="goal.status === 'achieved'"
+                  >
                     <div class="goal-header">
                       <i [class]="getGoalIcon(goal.metricType)"></i>
                       <span class="goal-name">{{ goal.metricName }}</span>
@@ -169,20 +175,27 @@ interface DevelopmentGoal {
                     <div class="goal-targets">
                       <div class="target-row">
                         <span class="target-label">Target:</span>
-                        <span class="target-value">{{ goal.targetValue }}{{ goal.targetUnit }} by {{ goal.deadline | date:'MMM d' }}</span>
+                        <span class="target-value"
+                          >{{ goal.targetValue }}{{ goal.targetUnit }} by
+                          {{ goal.deadline | date: "MMM d" }}</span
+                        >
                       </div>
                       <div class="target-row">
                         <span class="target-label">Current:</span>
-                        <span class="current-value">{{ goal.currentValue }}{{ goal.targetUnit }}</span>
+                        <span class="current-value"
+                          >{{ goal.currentValue }}{{ goal.targetUnit }}</span
+                        >
                       </div>
                     </div>
                     <div class="goal-progress">
-                      <p-progressBar 
-                        [value]="calculateGoalProgress(goal)" 
+                      <p-progressBar
+                        [value]="calculateGoalProgress(goal)"
                         [showValue]="false"
                         styleClass="goal-progress-bar"
                       ></p-progressBar>
-                      <span class="progress-percent">{{ calculateGoalProgress(goal) }}%</span>
+                      <span class="progress-percent"
+                        >{{ calculateGoalProgress(goal) }}%</span
+                      >
                     </div>
                     <div class="goal-meta">
                       <span class="days-remaining">
@@ -230,12 +243,26 @@ interface DevelopmentGoal {
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Load vs Performance</h3>
-                      <p class="chart-subtitle">Acute/Chronic Workload vs Subjective Wellness</p>
+                      <p class="chart-subtitle">
+                        Acute/Chronic Workload vs Subjective Wellness
+                      </p>
                     </div>
                     @if (performanceChartData()) {
                       <div class="chart-actions">
-                        <app-button variant="text" size="sm" iconLeft="pi-refresh" (clicked)="resetChartZoom('performance')">Reset zoom</app-button>
-                        <app-icon-button icon="pi-download" variant="outlined" size="sm" (clicked)="exportChart('performance')" ariaLabel="download" />
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-refresh"
+                          (clicked)="resetChartZoom('performance')"
+                          >Reset zoom</app-button
+                        >
+                        <app-icon-button
+                          icon="pi-download"
+                          variant="outlined"
+                          size="sm"
+                          (clicked)="exportChart('performance')"
+                          ariaLabel="download"
+                        />
                       </div>
                     }
                   </div>
@@ -250,11 +277,15 @@ interface DevelopmentGoal {
                   </div>
                   <div class="chart-insights">
                     <div class="insight-item">
-                      <div class="insight-value">{{ acwrData()?.acwr || '0.00' }}</div>
+                      <div class="insight-value">
+                        {{ acwrData()?.acwr || "0.00" }}
+                      </div>
                       <div class="insight-label">Current ACWR</div>
                     </div>
                     <div class="insight-item">
-                      <div class="insight-value" [class]="acwrData()?.riskZone">{{ acwrData()?.riskZone || 'N/A' | titlecase }}</div>
+                      <div class="insight-value" [class]="acwrData()?.riskZone">
+                        {{ acwrData()?.riskZone || "N/A" | titlecase }}
+                      </div>
                       <div class="insight-label">Safety Zone</div>
                     </div>
                   </div>
@@ -263,7 +294,11 @@ interface DevelopmentGoal {
                     <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
                     <h4>{{ noDataMessage.title }}</h4>
                     <p>{{ noDataMessage.reason }}</p>
-                    <app-icon-button icon="pi-bolt" routerLink="noDataMessage.helpLink" ariaLabel="bolt" />
+                    <app-icon-button
+                      icon="pi-bolt"
+                      routerLink="noDataMessage.helpLink"
+                      ariaLabel="bolt"
+                    />
                   </div>
                 }
               </p-card>
@@ -282,7 +317,9 @@ interface DevelopmentGoal {
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Skill Proficiency Radar</h3>
-                      <p class="chart-subtitle">Comparative assessment across core competencies</p>
+                      <p class="chart-subtitle">
+                        Comparative assessment across core competencies
+                      </p>
                     </div>
                   </div>
                 </ng-template>
@@ -299,7 +336,8 @@ interface DevelopmentGoal {
                     <i class="pi pi-users empty-icon"></i>
                     <h4>Proficiency Data Coming Soon</h4>
                     <p>
-                      Log more varied training sessions to populate your skill proficiency radar.
+                      Log more varied training sessions to populate your skill
+                      proficiency radar.
                     </p>
                   </div>
                 }
@@ -319,7 +357,9 @@ interface DevelopmentGoal {
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Training Mix</h3>
-                      <p class="chart-subtitle">Distribution of focus areas over 30 days</p>
+                      <p class="chart-subtitle">
+                        Distribution of focus areas over 30 days
+                      </p>
                     </div>
                   </div>
                 </ng-template>
@@ -344,9 +384,7 @@ interface DevelopmentGoal {
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading training mix...
-                </div>
+                <div class="loading-placeholder">Loading training mix...</div>
               </p-card>
             }
 
@@ -357,7 +395,9 @@ interface DevelopmentGoal {
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Benchmark Comparison</h3>
-                      <p class="chart-subtitle">Your metrics vs Olympic standard benchmarks</p>
+                      <p class="chart-subtitle">
+                        Your metrics vs Olympic standard benchmarks
+                      </p>
                     </div>
                   </div>
                 </ng-template>
@@ -374,16 +414,15 @@ interface DevelopmentGoal {
                     <i class="pi pi-chart-bar empty-icon"></i>
                     <h4>Benchmarks Coming Soon</h4>
                     <p>
-                      Complete your profile and log tests to see comparative analytics.
+                      Complete your profile and log tests to see comparative
+                      analytics.
                     </p>
                   </div>
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading benchmarks...
-                </div>
+                <div class="loading-placeholder">Loading benchmarks...</div>
               </p-card>
             }
           </div>
@@ -395,7 +434,9 @@ interface DevelopmentGoal {
                 <div class="chart-header">
                   <div class="title-group">
                     <h3 class="chart-title">Gap Analysis</h3>
-                    <p class="chart-subtitle">Your performance vs Olympic benchmarks</p>
+                    <p class="chart-subtitle">
+                      Your performance vs Olympic benchmarks
+                    </p>
                   </div>
                 </div>
               </ng-template>
@@ -416,25 +457,38 @@ interface DevelopmentGoal {
                       <div class="gap-bar-row">
                         <div class="gap-metric-label">
                           <span class="metric-name">{{ item.metric }}</span>
-                          <span class="gap-value" [class.positive]="item.gap >= 0" [class.negative]="item.gap < 0">
-                            {{ item.gap >= 0 ? '+' : '' }}{{ item.gap }}{{ item.unit }}
+                          <span
+                            class="gap-value"
+                            [class.positive]="item.gap >= 0"
+                            [class.negative]="item.gap < 0"
+                          >
+                            {{ item.gap >= 0 ? "+" : "" }}{{ item.gap
+                            }}{{ item.unit }}
                           </span>
                         </div>
                         <div class="gap-bar-container">
                           <div class="gap-bar-track">
-                            <div 
-                              class="gap-bar-fill your-level" 
-                              [style.width.%]="(item.current / item.benchmark) * 100"
+                            <div
+                              class="gap-bar-fill your-level"
+                              [style.width.%]="
+                                (item.current / item.benchmark) * 100
+                              "
                             ></div>
-                            <div 
-                              class="benchmark-marker" 
+                            <div
+                              class="benchmark-marker"
                               [style.left.%]="100"
-                              pTooltip="Olympic Benchmark: {{ item.benchmark }}{{ item.unit }}"
+                              pTooltip="Olympic Benchmark: {{
+                                item.benchmark
+                              }}{{ item.unit }}"
                             ></div>
                           </div>
                           <div class="gap-bar-values">
-                            <span class="current-value">{{ item.current }}{{ item.unit }}</span>
-                            <span class="benchmark-value">{{ item.benchmark }}{{ item.unit }}</span>
+                            <span class="current-value"
+                              >{{ item.current }}{{ item.unit }}</span
+                            >
+                            <span class="benchmark-value"
+                              >{{ item.benchmark }}{{ item.unit }}</span
+                            >
                           </div>
                         </div>
                         <div class="gap-status">
@@ -451,19 +505,27 @@ interface DevelopmentGoal {
                   </div>
                   <div class="gap-summary">
                     <div class="summary-item">
-                      <span class="summary-value">{{ gapAnalysisSummary().achieved }}</span>
+                      <span class="summary-value">{{
+                        gapAnalysisSummary().achieved
+                      }}</span>
                       <span class="summary-label">Benchmarks Met</span>
                     </div>
                     <div class="summary-item">
-                      <span class="summary-value">{{ gapAnalysisSummary().close }}</span>
+                      <span class="summary-value">{{
+                        gapAnalysisSummary().close
+                      }}</span>
                       <span class="summary-label">Almost There</span>
                     </div>
                     <div class="summary-item">
-                      <span class="summary-value">{{ gapAnalysisSummary().needsWork }}</span>
+                      <span class="summary-value">{{
+                        gapAnalysisSummary().needsWork
+                      }}</span>
                       <span class="summary-label">Needs Improvement</span>
                     </div>
                     <div class="summary-item overall">
-                      <span class="summary-value">{{ gapAnalysisSummary().overallScore }}%</span>
+                      <span class="summary-value"
+                        >{{ gapAnalysisSummary().overallScore }}%</span
+                      >
                       <span class="summary-label">Overall Score</span>
                     </div>
                   </div>
@@ -472,15 +534,16 @@ interface DevelopmentGoal {
                 <div class="empty-chart-state">
                   <i class="pi pi-chart-bar empty-icon"></i>
                   <h4>Gap Analysis Coming Soon</h4>
-                  <p>Complete fitness tests and log training to see how you compare to Olympic benchmarks.</p>
+                  <p>
+                    Complete fitness tests and log training to see how you
+                    compare to Olympic benchmarks.
+                  </p>
                 </div>
               }
             </p-card>
           } @placeholder {
             <p-card class="chart-card full-width">
-              <div class="loading-placeholder">
-                Loading gap analysis...
-              </div>
+              <div class="loading-placeholder">Loading gap analysis...</div>
             </p-card>
           }
 
@@ -902,25 +965,37 @@ interface DevelopmentGoal {
               <h4>Include in Report</h4>
               <div class="option-item">
                 <label>
-                  <input type="checkbox" [(ngModel)]="shareOptions.includeCharts" />
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="shareOptions.includeCharts"
+                  />
                   <span>Performance Charts</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>
-                  <input type="checkbox" [(ngModel)]="shareOptions.includeGoals" />
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="shareOptions.includeGoals"
+                  />
                   <span>Development Goals</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>
-                  <input type="checkbox" [(ngModel)]="shareOptions.includeStats" />
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="shareOptions.includeStats"
+                  />
                   <span>Player Statistics</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>
-                  <input type="checkbox" [(ngModel)]="shareOptions.includeComments" />
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="shareOptions.includeComments"
+                  />
                   <span>Include My Notes</span>
                 </label>
               </div>
@@ -940,15 +1015,15 @@ interface DevelopmentGoal {
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button
-              variant="text"
-              (clicked)="showShareDialog.set(false)"
-            >Cancel</app-button>
+            <app-button variant="text" (clicked)="showShareDialog.set(false)"
+              >Cancel</app-button
+            >
             <app-button
               icon="send"
               [loading]="isSharing()"
               (clicked)="shareWithCoach()"
-            >Send to Coach</app-button>
+              >Send to Coach</app-button
+            >
           </ng-template>
         </p-dialog>
       }
@@ -962,7 +1037,9 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly apiService = inject(ApiService);
   private readonly playerStatsService = inject(PlayerStatisticsService);
   private readonly authService = inject(AuthService);
-  private readonly trainingStatsService = inject(TrainingStatsCalculationService);
+  private readonly trainingStatsService = inject(
+    TrainingStatsCalculationService,
+  );
   private readonly trainingDataService = inject(TrainingDataService);
   private readonly logger = inject(LoggerService);
   private readonly acwrService = inject(AcwrService);
@@ -994,16 +1071,18 @@ export class AnalyticsComponent implements AfterViewInit {
   // Training statistics
   trainingStats = signal<any>(null);
   acwrData = signal<any>(null);
-  
+
   // Gap Analysis data
-  gapAnalysisData = signal<Array<{
-    metric: string;
-    current: number;
-    benchmark: number;
-    gap: number;
-    unit: string;
-  }>>([]);
-  
+  gapAnalysisData = signal<
+    Array<{
+      metric: string;
+      current: number;
+      benchmark: number;
+      gap: number;
+      unit: string;
+    }>
+  >([]);
+
   gapAnalysisSummary = signal<{
     achieved: number;
     close: number;
@@ -1142,7 +1221,11 @@ export class AnalyticsComponent implements AfterViewInit {
               ...metric,
               value: stats.totalSessions.toString(),
               trend: `+${(stats as { sessionsThisWeek?: number }).sessionsThisWeek || 0} this week`,
-              trendType: ((stats as { sessionsThisWeek?: number }).sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
+              trendType:
+                ((stats as { sessionsThisWeek?: number }).sessionsThisWeek ||
+                  0) > 0
+                  ? ("positive" as const)
+                  : ("neutral" as const),
             };
           }
           return metric;
@@ -1154,13 +1237,13 @@ export class AnalyticsComponent implements AfterViewInit {
           const labels = Object.keys(stats.sessionsByType);
           const values = labels.map((key) => stats.sessionsByType[key].count);
           this.distributionChartData.set({
-            labels: labels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
+            labels: labels.map((l) => l.charAt(0).toUpperCase() + l.slice(1)),
             datasets: [
               {
                 data: values,
                 backgroundColor: COLORS.CHART.slice(0, 5),
                 borderWidth: 0,
-                hoverOffset: 10
+                hoverOffset: 10,
               },
             ],
           });
@@ -1249,7 +1332,10 @@ export class AnalyticsComponent implements AfterViewInit {
       .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
       .subscribe({
         next: (response) => {
-          if (response.success && (response.data as { metrics?: Metric[] })?.metrics) {
+          if (
+            response.success &&
+            (response.data as { metrics?: Metric[] })?.metrics
+          ) {
             this.metrics.set((response.data as { metrics: Metric[] }).metrics);
           } else {
             this.loadFallbackMetrics();
@@ -1270,11 +1356,14 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.performanceChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] }).labels,
+              labels: (response.data as { labels: string[]; values: number[] })
+                .labels,
               datasets: [
                 {
                   label: "Performance Score",
-                  data: (response.data as { labels: string[]; values: number[] }).values,
+                  data: (
+                    response.data as { labels: string[]; values: number[] }
+                  ).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "var(--ds-primary-green-subtle)",
                   borderWidth: 3,
@@ -1299,11 +1388,14 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.chemistryChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] }).labels,
+              labels: (response.data as { labels: string[]; values: number[] })
+                .labels,
               datasets: [
                 {
                   label: "Team Chemistry",
-                  data: (response.data as { labels: string[]; values: number[] }).values,
+                  data: (
+                    response.data as { labels: string[]; values: number[] }
+                  ).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "rgba(16, 201, 107, 0.2)", // Using rgba for specific opacity
                   borderWidth: 2,
@@ -1329,10 +1421,13 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.distributionChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] }).labels,
+              labels: (response.data as { labels: string[]; values: number[] })
+                .labels,
               datasets: [
                 {
-                  data: (response.data as { labels: string[]; values: number[] }).values,
+                  data: (
+                    response.data as { labels: string[]; values: number[] }
+                  ).values,
                   backgroundColor: COLORS.CHART.slice(0, 5),
                 },
               ],
@@ -1355,11 +1450,14 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.positionChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] }).labels,
+              labels: (response.data as { labels: string[]; values: number[] })
+                .labels,
               datasets: [
                 {
                   label: "Performance",
-                  data: (response.data as { labels: string[]; values: number[] }).values,
+                  data: (
+                    response.data as { labels: string[]; values: number[] }
+                  ).values,
                   backgroundColor: "var(--ds-primary-green)",
                 },
               ],
@@ -1628,15 +1726,15 @@ export class AnalyticsComponent implements AfterViewInit {
   /**
    * Get icon class for goal metric type
    */
-  getGoalIcon(metricType: DevelopmentGoal['metricType']): string {
+  getGoalIcon(metricType: DevelopmentGoal["metricType"]): string {
     const icons: Record<string, string> = {
-      speed: 'pi pi-bolt',
-      agility: 'pi pi-arrows-alt',
-      strength: 'pi pi-heart-fill',
-      power: 'pi pi-lightning',
-      skill: 'pi pi-star',
+      speed: "pi pi-bolt",
+      agility: "pi pi-arrows-alt",
+      strength: "pi pi-heart-fill",
+      power: "pi pi-lightning",
+      skill: "pi pi-star",
     };
-    return icons[metricType] || 'pi pi-bullseye';
+    return icons[metricType] || "pi pi-bullseye";
   }
 
   /**
@@ -1647,7 +1745,10 @@ export class AnalyticsComponent implements AfterViewInit {
     const improvement = startValue - goal.currentValue;
     const totalNeeded = startValue - goal.targetValue;
     if (totalNeeded === 0) return 100;
-    return Math.min(100, Math.max(0, Math.round((improvement / totalNeeded) * 100)));
+    return Math.min(
+      100,
+      Math.max(0, Math.round((improvement / totalNeeded) * 100)),
+    );
   }
 
   /**
@@ -1668,10 +1769,22 @@ export class AnalyticsComponent implements AfterViewInit {
     if (!currentUser?.id) return;
 
     this.apiService
-      .get(API_ENDPOINTS.analytics.summary, { type: 'goals', userId: currentUser.id })
+      .get(API_ENDPOINTS.analytics.summary, {
+        type: "goals",
+        userId: currentUser.id,
+      })
       .subscribe({
         next: (response) => {
-          const data = response.data as { goals?: { id: string; title: string; progress: number; deadline: string }[] } | undefined;
+          const data = response.data as
+            | {
+                goals?: {
+                  id: string;
+                  title: string;
+                  progress: number;
+                  deadline: string;
+                }[];
+              }
+            | undefined;
           if (response.success && Array.isArray(data?.goals)) {
             const goals = data.goals.map((g) => ({
               ...g,
@@ -1722,22 +1835,26 @@ export class AnalyticsComponent implements AfterViewInit {
         // Include actual data based on options
         metrics: this.shareOptions.includeCharts ? this.metrics() : [],
         goals: this.shareOptions.includeGoals ? this.developmentGoals() : [],
-        seasonStats: this.shareOptions.includeStats ? this.playerSeasonStats() : null,
+        seasonStats: this.shareOptions.includeStats
+          ? this.playerSeasonStats()
+          : null,
         acwr: this.acwrData(),
       };
 
       // Send to coach via API
       this.apiService
-        .post(API_ENDPOINTS.analytics.summary, { 
-          action: 'share_with_coach',
-          ...reportData 
+        .post(API_ENDPOINTS.analytics.summary, {
+          action: "share_with_coach",
+          ...reportData,
         })
         .subscribe({
           next: (_response) => {
             this.isSharing.set(false);
             this.showShareDialog.set(false);
             this.shareMessage.set("");
-            this.toastService.success("Analytics report sent to your coach! 📊");
+            this.toastService.success(
+              "Analytics report sent to your coach! 📊",
+            );
           },
           error: (error) => {
             this.isSharing.set(false);
@@ -1745,8 +1862,10 @@ export class AnalyticsComponent implements AfterViewInit {
             // Still show success for demo purposes (API might not exist yet)
             this.showShareDialog.set(false);
             this.shareMessage.set("");
-            this.toastService.success("Analytics report sent to your coach! 📊");
-          }
+            this.toastService.success(
+              "Analytics report sent to your coach! 📊",
+            );
+          },
         });
     } catch (error) {
       this.isSharing.set(false);
@@ -1763,14 +1882,14 @@ export class AnalyticsComponent implements AfterViewInit {
 
     try {
       const currentUser = this.authService.getUser();
-      const playerName = currentUser?.name || currentUser?.email || 'Player';
-      const dateStr = new Date().toISOString().split('T')[0];
+      const playerName = currentUser?.name || currentUser?.email || "Player";
+      const dateStr = new Date().toISOString().split("T")[0];
 
       // Build PDF content as HTML (for print-to-PDF)
       const content = this.generatePDFContent(playerName, dateStr);
 
       // Create a new window for printing
-      const printWindow = window.open('', '_blank');
+      const printWindow = window.open("", "_blank");
       if (!printWindow) {
         this.toastService.error("Please allow pop-ups to export PDF");
         return;
@@ -1786,7 +1905,9 @@ export class AnalyticsComponent implements AfterViewInit {
         }, 500);
       };
 
-      this.toastService.success("PDF export ready! Use your browser's print dialog to save.");
+      this.toastService.success(
+        "PDF export ready! Use your browser's print dialog to save.",
+      );
     } catch (error) {
       this.logger.error("Error exporting PDF:", error);
       this.toastService.error("Failed to export PDF. Please try again.");
@@ -1805,17 +1926,22 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load from API or use fallback data
     this.apiService
-      .get(API_ENDPOINTS.analytics.summary, { type: 'gap_analysis', userId: currentUser.id })
+      .get(API_ENDPOINTS.analytics.summary, {
+        type: "gap_analysis",
+        userId: currentUser.id,
+      })
       .subscribe({
         next: (response) => {
-          const data = response.data as { gaps?: { area: string; current: number; target: number }[] } | undefined;
+          const data = response.data as
+            | { gaps?: { area: string; current: number; target: number }[] }
+            | undefined;
           if (response.success && Array.isArray(data?.gaps)) {
             // Map API response to expected format
-            const mappedGaps = data.gaps.map(g => ({
+            const mappedGaps = data.gaps.map((g) => ({
               metric: g.area,
               current: g.current,
               benchmark: g.target,
-              unit: ''
+              unit: "",
             }));
             this.processGapAnalysisData(mappedGaps);
           } else {
@@ -1835,42 +1961,49 @@ export class AnalyticsComponent implements AfterViewInit {
   private loadSampleGapAnalysis(): void {
     // Olympic-level benchmarks for flag football
     const sampleData = [
-      { metric: '40-Yard Dash', current: 4.65, benchmark: 4.40, unit: 's' },
-      { metric: '10-Yard Split', current: 1.58, benchmark: 1.50, unit: 's' },
-      { metric: 'Pro Agility', current: 4.35, benchmark: 4.10, unit: 's' },
-      { metric: 'Vertical Jump', current: 32, benchmark: 36, unit: '"' },
-      { metric: 'Broad Jump', current: 9.2, benchmark: 10.0, unit: 'ft' },
-      { metric: 'Completion %', current: 72, benchmark: 85, unit: '%' },
+      { metric: "40-Yard Dash", current: 4.65, benchmark: 4.4, unit: "s" },
+      { metric: "10-Yard Split", current: 1.58, benchmark: 1.5, unit: "s" },
+      { metric: "Pro Agility", current: 4.35, benchmark: 4.1, unit: "s" },
+      { metric: "Vertical Jump", current: 32, benchmark: 36, unit: '"' },
+      { metric: "Broad Jump", current: 9.2, benchmark: 10.0, unit: "ft" },
+      { metric: "Completion %", current: 72, benchmark: 85, unit: "%" },
     ];
-    
+
     this.processGapAnalysisData(sampleData);
   }
 
   /**
    * Process gap analysis data and calculate summary
    */
-  private processGapAnalysisData(data: Array<{ metric: string; current: number; benchmark: number; unit: string }>): void {
-    const processedData = data.map(item => {
+  private processGapAnalysisData(
+    data: Array<{
+      metric: string;
+      current: number;
+      benchmark: number;
+      unit: string;
+    }>,
+  ): void {
+    const processedData = data.map((item) => {
       // For time-based metrics (lower is better), invert the gap
-      const isTimeBased = item.unit === 's';
-      const gap = isTimeBased 
-        ? item.benchmark - item.current  // Positive means faster than benchmark
+      const isTimeBased = item.unit === "s";
+      const gap = isTimeBased
+        ? item.benchmark - item.current // Positive means faster than benchmark
         : item.current - item.benchmark; // Positive means higher than benchmark
-      
+
       return {
         ...item,
         gap: Number(gap.toFixed(2)),
       };
     });
-    
+
     this.gapAnalysisData.set(processedData);
-    
+
     // Calculate summary
     let achieved = 0;
     let close = 0;
     let needsWork = 0;
-    
-    processedData.forEach(item => {
+
+    processedData.forEach((item) => {
       if (item.gap >= 0) {
         achieved++;
       } else if (item.gap > -10) {
@@ -1879,13 +2012,14 @@ export class AnalyticsComponent implements AfterViewInit {
         needsWork++;
       }
     });
-    
+
     // Calculate overall score as percentage of benchmarks met or exceeded
     const totalMetrics = processedData.length;
-    const overallScore = totalMetrics > 0 
-      ? Math.round(((achieved + (close * 0.5)) / totalMetrics) * 100)
-      : 0;
-    
+    const overallScore =
+      totalMetrics > 0
+        ? Math.round(((achieved + close * 0.5) / totalMetrics) * 100)
+        : 0;
+
     this.gapAnalysisSummary.set({
       achieved,
       close,
@@ -2011,16 +2145,22 @@ export class AnalyticsComponent implements AfterViewInit {
         <div class="section">
           <h2>📊 Key Metrics</h2>
           <div class="metrics-grid">
-            ${metrics.map(m => `
+            ${metrics
+              .map(
+                (m) => `
               <div class="metric-card">
                 <div class="metric-value">${m.value}</div>
                 <div class="metric-label">${m.label}</div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
 
-        ${acwr ? `
+        ${
+          acwr
+            ? `
           <div class="section">
             <h2>⚡ Training Load (ACWR)</h2>
             <div class="metrics-grid">
@@ -2029,17 +2169,23 @@ export class AnalyticsComponent implements AfterViewInit {
                 <div class="metric-label">Current ACWR</div>
               </div>
               <div class="metric-card">
-                <div class="metric-value">${acwr.riskZone || 'N/A'}</div>
+                <div class="metric-value">${acwr.riskZone || "N/A"}</div>
                 <div class="metric-label">Risk Zone</div>
               </div>
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${goals.length > 0 ? `
+        ${
+          goals.length > 0
+            ? `
           <div class="section">
             <h2>🎯 Development Goals</h2>
-            ${goals.map(g => `
+            ${goals
+              .map(
+                (g) => `
               <div class="goal-item">
                 <div class="goal-name">${g.metricName}</div>
                 <div class="goal-progress">
@@ -2048,11 +2194,17 @@ export class AnalyticsComponent implements AfterViewInit {
                   Progress: ${this.calculateGoalProgress(g)}%
                 </div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${seasonStats ? `
+        ${
+          seasonStats
+            ? `
           <div class="section">
             <h2>📈 Season Statistics</h2>
             <table class="stats-table">
@@ -2065,7 +2217,9 @@ export class AnalyticsComponent implements AfterViewInit {
               <tr><td>Flag Pulls</td><td>${seasonStats.totalFlagPulls}</td></tr>
             </table>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="footer">
           <p>Generated by FlagFit Pro • ${new Date().toLocaleString()}</p>

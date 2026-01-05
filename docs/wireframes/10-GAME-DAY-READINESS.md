@@ -145,41 +145,42 @@
 
 ## Readiness Metrics
 
-| Metric | Icon | Weight | Scale | Inverted? |
-|--------|------|--------|-------|-----------|
-| Sleep Quality | 🌙 | 20% | 1-10 | No |
-| Energy Level | ⚡ | 15% | 1-10 | No |
-| Muscle Soreness | 💪 | 20% | 1-10 | Yes (lower is better) |
-| Hydration | 💧 | 15% | 1-10 | No |
-| Mental Focus | 🧠 | 15% | 1-10 | No |
-| Confidence | 💚 | 15% | 1-10 | No |
+| Metric          | Icon | Weight | Scale | Inverted?             |
+| --------------- | ---- | ------ | ----- | --------------------- |
+| Sleep Quality   | 🌙   | 20%    | 1-10  | No                    |
+| Energy Level    | ⚡   | 15%    | 1-10  | No                    |
+| Muscle Soreness | 💪   | 20%    | 1-10  | Yes (lower is better) |
+| Hydration       | 💧   | 15%    | 1-10  | No                    |
+| Mental Focus    | 🧠   | 15%    | 1-10  | No                    |
+| Confidence      | 💚   | 15%    | 1-10  | No                    |
 
 ---
 
 ## Readiness Score Categories
 
-| Score Range | Label | Color | Message |
-|-------------|-------|-------|---------|
-| 85-100 | Excellent | 🟢 Green | Competition Ready |
-| 70-84 | Good | 🔵 Blue | Good to Compete |
-| 55-69 | Caution | 🟡 Yellow | Proceed with Caution |
-| 0-54 | Concern | 🔴 Red | Concerns Identified |
+| Score Range | Label     | Color     | Message              |
+| ----------- | --------- | --------- | -------------------- |
+| 85-100      | Excellent | 🟢 Green  | Competition Ready    |
+| 70-84       | Good      | 🔵 Blue   | Good to Compete      |
+| 55-69       | Caution   | 🟡 Yellow | Proceed with Caution |
+| 0-54        | Concern   | 🔴 Red    | Concerns Identified  |
 
 ---
 
 ## Business Logic
 
 ### Readiness Score Calculation
+
 ```typescript
 function calculateReadinessScore(metrics, acwr): number {
   let totalWeightedScore = 0;
   let totalWeight = 0;
 
-  metrics.forEach(metric => {
+  metrics.forEach((metric) => {
     let normalizedValue = metric.value;
-    
+
     // Invert soreness (lower is better for competition)
-    if (metric.key === 'soreness') {
+    if (metric.key === "soreness") {
       normalizedValue = 11 - metric.value;
     }
 
@@ -189,9 +190,11 @@ function calculateReadinessScore(metrics, acwr): number {
 
   // ACWR penalty for danger zones
   let acwrPenalty = 0;
-  if (acwr > 1.5) acwrPenalty = 15;       // Severe overtraining
-  else if (acwr > 1.3) acwrPenalty = 5;   // Elevated load
-  else if (acwr < 0.8 && acwr > 0) acwrPenalty = 10;  // Undertrained
+  if (acwr > 1.5)
+    acwrPenalty = 15; // Severe overtraining
+  else if (acwr > 1.3)
+    acwrPenalty = 5; // Elevated load
+  else if (acwr < 0.8 && acwr > 0) acwrPenalty = 10; // Undertrained
 
   const baseScore = Math.round((totalWeightedScore / totalWeight) * 100);
   return Math.max(0, baseScore - acwrPenalty);
@@ -199,6 +202,7 @@ function calculateReadinessScore(metrics, acwr): number {
 ```
 
 ### Recommendation Engine
+
 ```typescript
 function generateRecommendations(metrics, acwr): string[] {
   const recs = [];
@@ -230,24 +234,24 @@ function generateRecommendations(metrics, acwr): string[] {
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| 6 readiness sliders | ✅ |
-| Real-time score preview | ✅ |
-| ACWR badge display | ✅ |
-| Low score warnings (per metric) | ✅ |
-| Notes/concerns text field | ✅ |
-| Coach notification warning | ✅ |
-| Post-submission recommendations | ✅ |
-| Links to Tournament Nutrition | ✅ |
-| Links to Game Plan | ✅ |
+| Feature                         | Status |
+| ------------------------------- | ------ |
+| 6 readiness sliders             | ✅     |
+| Real-time score preview         | ✅     |
+| ACWR badge display              | ✅     |
+| Low score warnings (per metric) | ✅     |
+| Notes/concerns text field       | ✅     |
+| Coach notification warning      | ✅     |
+| Post-submission recommendations | ✅     |
+| Links to Tournament Nutrition   | ✅     |
+| Links to Game Plan              | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| ACWR value | `UnifiedTrainingService` | Current ACWR |
-| Submission | `SupabaseService` | `game_day_readiness` table |
-| Coach notification | Auto-triggered | On score < 70 |
+| Data               | Service                  | Method                     |
+| ------------------ | ------------------------ | -------------------------- |
+| ACWR value         | `UnifiedTrainingService` | Current ACWR               |
+| Submission         | `SupabaseService`        | `game_day_readiness` table |
+| Coach notification | Auto-triggered           | On score < 70              |

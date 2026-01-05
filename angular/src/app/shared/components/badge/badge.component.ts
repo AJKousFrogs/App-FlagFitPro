@@ -26,7 +26,7 @@ import { CommonModule } from "@angular/common";
       }
     </span>
   `,
-  styleUrl: './badge.component.scss',
+  styleUrl: "./badge.component.scss",
 })
 export class BadgeComponent {
   // Configuration

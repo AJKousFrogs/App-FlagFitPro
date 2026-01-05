@@ -51,7 +51,11 @@ interface TrainingLoadData {
   athleteId: string;
   weeklyTrainingLoad: number;
   acwrRatio: number;
-  trainingIntensityDistribution: { low: number; moderate: number; high: number };
+  trainingIntensityDistribution: {
+    low: number;
+    moderate: number;
+    high: number;
+  };
   upcomingTournament?: { name: string; daysUntil: number };
   trainingPhase: "off-season" | "pre-season" | "in-season" | "tournament";
 }
@@ -142,7 +146,7 @@ interface TournamentNutritionBrief {
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -154,7 +158,11 @@ interface TournamentNutritionBrief {
           subtitle="Monitor athlete nutrition, body composition, and supplement compliance"
           icon="pi-apple"
         >
-          <app-button iconLeft="pi-file-pdf" (clicked)="showReportDialog.set(true)">Generate Report</app-button>
+          <app-button
+            iconLeft="pi-file-pdf"
+            (clicked)="showReportDialog.set(true)"
+            >Generate Report</app-button
+          >
         </app-page-header>
 
         @if (loading()) {
@@ -314,8 +322,18 @@ interface TournamentNutritionBrief {
                           }
                         </td>
                         <td>
-                          <app-icon-button icon="pi-eye" variant="text" (clicked)="viewAthleteDetails(athlete)" ariaLabel="eye" />
-                          <app-icon-button icon="pi-file" variant="text" (clicked)="generateAthleteReport(athlete)" ariaLabel="file" />
+                          <app-icon-button
+                            icon="pi-eye"
+                            variant="text"
+                            (clicked)="viewAthleteDetails(athlete)"
+                            ariaLabel="eye"
+                          />
+                          <app-icon-button
+                            icon="pi-file"
+                            variant="text"
+                            (clicked)="generateAthleteReport(athlete)"
+                            ariaLabel="file"
+                          />
                         </td>
                       </tr>
                     </ng-template>
@@ -391,7 +409,10 @@ interface TournamentNutritionBrief {
                   </div>
 
                   <div class="compliance-grid">
-                    @for (compliance of supplementCompliance(); track compliance.athleteId) {
+                    @for (
+                      compliance of supplementCompliance();
+                      track compliance.athleteId
+                    ) {
                       <p-card styleClass="compliance-card">
                         <ng-template #header>
                           <div class="compliance-header">
@@ -400,7 +421,11 @@ interface TournamentNutritionBrief {
                             }}</span>
                             <p-tag
                               [value]="compliance.overallComplianceRate + '%'"
-                              [severity]="getComplianceSeverity(compliance.overallComplianceRate)"
+                              [severity]="
+                                getComplianceSeverity(
+                                  compliance.overallComplianceRate
+                                )
+                              "
                             ></p-tag>
                           </div>
                         </ng-template>
@@ -453,7 +478,11 @@ interface TournamentNutritionBrief {
                 <div class="tournament-section">
                   <div class="section-header">
                     <h3>Tournament Nutrition Briefs</h3>
-                    <app-button iconLeft="pi-plus" (clicked)="showTournamentDialog.set(true)">Create Brief</app-button>
+                    <app-button
+                      iconLeft="pi-plus"
+                      (clicked)="showTournamentDialog.set(true)"
+                      >Create Brief</app-button
+                    >
                   </div>
 
                   @if (upcomingTournaments().length > 0) {
@@ -467,7 +496,9 @@ interface TournamentNutritionBrief {
                             <div class="tournament-header">
                               <h4>{{ tournament.tournament.name }}</h4>
                               <p-tag
-                                value="{{ tournament.tournament.expectedGames }} games"
+                                value="{{
+                                  tournament.tournament.expectedGames
+                                }} games"
                                 severity="info"
                               ></p-tag>
                             </div>
@@ -494,7 +525,10 @@ interface TournamentNutritionBrief {
                             <div class="detail-row">
                               <i class="pi pi-sun"></i>
                               <span
-                                >{{ tournament.tournament.climate.temperature }}°C, {{ tournament.tournament.climate.humidity }}%
+                                >{{
+                                  tournament.tournament.climate.temperature
+                                }}°C,
+                                {{ tournament.tournament.climate.humidity }}%
                                 humidity</span
                               >
                             </div>
@@ -513,13 +547,17 @@ interface TournamentNutritionBrief {
                               </div>
                               <div class="need-item">
                                 <span class="need-value"
-                                  >{{ tournament.calculatedNeeds.dailyProtein }}g</span
+                                  >{{
+                                    tournament.calculatedNeeds.dailyProtein
+                                  }}g</span
                                 >
                                 <span class="need-label">Protein</span>
                               </div>
                               <div class="need-item">
                                 <span class="need-value"
-                                  >{{ tournament.calculatedNeeds.dailyCarbs }}g</span
+                                  >{{
+                                    tournament.calculatedNeeds.dailyCarbs
+                                  }}g</span
                                 >
                                 <span class="need-label">Carbs</span>
                               </div>
@@ -535,8 +573,18 @@ interface TournamentNutritionBrief {
                             </div>
                           </div>
                           <ng-template #footer>
-                            <app-button variant="text" iconLeft="pi-eye" (clicked)="viewTournamentBrief(tournament)">View Full Brief</app-button>
-                            <app-button variant="text" iconLeft="pi-download" (clicked)="exportTournamentBrief(tournament)">Export PDF</app-button>
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-eye"
+                              (clicked)="viewTournamentBrief(tournament)"
+                              >View Full Brief</app-button
+                            >
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-download"
+                              (clicked)="exportTournamentBrief(tournament)"
+                              >Export PDF</app-button
+                            >
                           </ng-template>
                         </p-card>
                       }
@@ -570,7 +618,10 @@ interface TournamentNutritionBrief {
               <div class="detail-header">
                 <div class="athlete-info">
                   <h3>{{ selectedAthlete()!.name }}</h3>
-                  <p>{{ selectedAthlete()!.position }} • {{ selectedAthlete()!.age }} years</p>
+                  <p>
+                    {{ selectedAthlete()!.position }} •
+                    {{ selectedAthlete()!.age }} years
+                  </p>
                 </div>
                 <div class="weight-info">
                   <span class="current-weight"
@@ -600,7 +651,9 @@ interface TournamentNutritionBrief {
                 <div class="metric-card">
                   <span class="metric-label">Body Water</span>
                   <span class="metric-value"
-                    >{{ selectedAthlete()!.bodyWaterPercentage || "N/A" }}%</span
+                    >{{
+                      selectedAthlete()!.bodyWaterPercentage || "N/A"
+                    }}%</span
                   >
                 </div>
               </div>
@@ -616,7 +669,11 @@ interface TournamentNutritionBrief {
             </div>
           }
           <ng-template #footer>
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateAthleteReport(selectedAthlete()!)">Generate Full Report</app-button>
+            <app-button
+              iconLeft="pi-file-pdf"
+              (clicked)="generateAthleteReport(selectedAthlete()!)"
+              >Generate Full Report</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -658,8 +715,12 @@ interface TournamentNutritionBrief {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showReportDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()">Generate</app-button>
+            <app-button variant="text" (clicked)="showReportDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
+              >Generate</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -728,8 +789,14 @@ interface TournamentNutritionBrief {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showTournamentDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-plus" (clicked)="createTournamentBrief()">Create Brief</app-button>
+            <app-button
+              variant="text"
+              (clicked)="showTournamentDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-plus" (clicked)="createTournamentBrief()"
+              >Create Brief</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
@@ -849,9 +916,7 @@ export class NutritionistDashboardComponent implements OnInit {
 
   compositionAlerts = computed(() => {
     if (!this.selectedAthleteId) return [];
-    return (
-      this.bodyCompositionData().get(this.selectedAthleteId)?.alerts || []
-    );
+    return this.bodyCompositionData().get(this.selectedAthleteId)?.alerts || [];
   });
 
   weightChartData = computed(() => {
@@ -900,21 +965,23 @@ export class NutritionistDashboardComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load real data from API
-      const response = await this.api.get<{
-        athletes: Array<{
-          id: string;
-          name: string;
-          position: string;
-          weight: number;
-          bodyFat: number;
-          leanMass: number;
-          hydrationStatus: string;
-          supplementCompliance: number;
-          dailyCalories: number;
-          proteinTarget: number;
-          lastUpdated: string;
-        }>;
-      }>("/api/staff-nutritionist/athletes").toPromise();
+      const response = await this.api
+        .get<{
+          athletes: Array<{
+            id: string;
+            name: string;
+            position: string;
+            weight: number;
+            bodyFat: number;
+            leanMass: number;
+            hydrationStatus: string;
+            supplementCompliance: number;
+            dailyCalories: number;
+            proteinTarget: number;
+            lastUpdated: string;
+          }>;
+        }>("/api/staff-nutritionist/athletes")
+        .toPromise();
 
       if (response?.data?.athletes) {
         const athletes = response.data.athletes.map((a) => ({
@@ -946,14 +1013,23 @@ export class NutritionistDashboardComponent implements OnInit {
     }
   }
 
-  private async loadBodyCompositionData(athletes: AthleteNutritionData[]): Promise<void> {
+  private async loadBodyCompositionData(
+    athletes: AthleteNutritionData[],
+  ): Promise<void> {
     const compData = new Map<string, BodyCompositionData>();
 
     for (const athlete of athletes) {
       try {
-        const response = await this.api.get<{
-          trends: Array<{ date: string; weight: number; bodyFat: number; leanMass: number }>;
-        }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`).toPromise();
+        const response = await this.api
+          .get<{
+            trends: Array<{
+              date: string;
+              weight: number;
+              bodyFat: number;
+              leanMass: number;
+            }>;
+          }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`)
+          .toPromise();
 
         if (response?.data?.trends) {
           compData.set(athlete.id, {
@@ -988,15 +1064,21 @@ export class NutritionistDashboardComponent implements OnInit {
     this.bodyCompositionData.set(compData);
   }
 
-  private detectAlerts(trends: Array<{ date: string; weight: number }>): string[] {
+  private detectAlerts(
+    trends: Array<{ date: string; weight: number }>,
+  ): string[] {
     const alerts: string[] = [];
     if (trends.length >= 3) {
       const recent = trends.slice(-3);
       const weightChange = recent[recent.length - 1].weight - recent[0].weight;
       if (weightChange < -1.5) {
-        alerts.push(`Rapid weight loss detected (${weightChange.toFixed(1)}kg in 3 days)`);
+        alerts.push(
+          `Rapid weight loss detected (${weightChange.toFixed(1)}kg in 3 days)`,
+        );
       } else if (weightChange > 2) {
-        alerts.push(`Rapid weight gain detected (+${weightChange.toFixed(1)}kg in 3 days)`);
+        alerts.push(
+          `Rapid weight gain detected (+${weightChange.toFixed(1)}kg in 3 days)`,
+        );
       }
     }
     return alerts;
@@ -1004,29 +1086,32 @@ export class NutritionistDashboardComponent implements OnInit {
 
   private async loadSupplementCompliance(): Promise<void> {
     try {
-      const response = await this.api.get<{
-        compliance: Array<{
-          athleteId: string;
-          athleteName: string;
-          supplements: string[];
-          compliance: number;
-          takenCount: number;
-          missedCount: number;
-        }>;
-      }>("/api/staff-nutritionist/supplements").toPromise();
+      const response = await this.api
+        .get<{
+          compliance: Array<{
+            athleteId: string;
+            athleteName: string;
+            supplements: string[];
+            compliance: number;
+            takenCount: number;
+            missedCount: number;
+          }>;
+        }>("/api/staff-nutritionist/supplements")
+        .toPromise();
 
       if (response?.data?.compliance) {
-        const supplements: SupplementCompliance[] = response.data.compliance.map((c) => ({
-          athleteId: c.athleteId,
-          overallComplianceRate: c.compliance,
-          supplements: c.supplements.map((name) => ({
-            name,
-            complianceRate: c.compliance,
-            missedDays: c.missedCount,
-            timingAdherence: c.compliance,
-          })),
-          timingIssues: [],
-        }));
+        const supplements: SupplementCompliance[] =
+          response.data.compliance.map((c) => ({
+            athleteId: c.athleteId,
+            overallComplianceRate: c.compliance,
+            supplements: c.supplements.map((name) => ({
+              name,
+              complianceRate: c.compliance,
+              missedDays: c.missedCount,
+              timingAdherence: c.compliance,
+            })),
+            timingIssues: [],
+          }));
         this.supplementCompliance.set(supplements);
       }
     } catch {
@@ -1035,11 +1120,14 @@ export class NutritionistDashboardComponent implements OnInit {
   }
 
   private loadWellnessFromAthletes(
-    athletes: Array<{ id: string; hydrationStatus: string }>
+    athletes: Array<{ id: string; hydrationStatus: string }>,
   ): void {
     const wellness = new Map<string, WellnessMetrics>();
     athletes.forEach((athlete) => {
-      const hydrationMap: Record<string, "poor" | "adequate" | "good" | "optimal"> = {
+      const hydrationMap: Record<
+        string,
+        "poor" | "adequate" | "good" | "optimal"
+      > = {
         critical: "poor",
         warning: "adequate",
         adequate: "good",
@@ -1144,7 +1232,9 @@ export class NutritionistDashboardComponent implements OnInit {
       this.toast.warn("Please enter a tournament name");
       return;
     }
-    this.toast.success(`Tournament brief created for ${this.newTournament.name}`);
+    this.toast.success(
+      `Tournament brief created for ${this.newTournament.name}`,
+    );
     this.showTournamentDialog.set(false);
     this.newTournament = {
       name: "",

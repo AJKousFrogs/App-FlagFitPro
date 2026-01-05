@@ -31,7 +31,6 @@
 
 @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
 
-
 // ============================================
 // RESET LAYER
 // ============================================
@@ -147,7 +146,6 @@
   }
 }
 
-
 // ============================================
 // TOKENS LAYER
 // ============================================
@@ -158,7 +156,6 @@
   // Tokens are imported from design-system-tokens.scss
   // This layer ensures proper cascade order
 }
-
 
 // ============================================
 // PRIMENG LAYERS
@@ -173,7 +170,6 @@
   // Token mapping and brand overrides imported here
 }
 
-
 // ============================================
 // PRIMITIVES LAYER
 // ============================================
@@ -183,7 +179,6 @@
   // Typography, layout, cards, forms, tables, feedback
 }
 
-
 // ============================================
 // FEATURES LAYER
 // ============================================
@@ -192,7 +187,6 @@
 @layer features {
   // Feature styles come from component .scss files
 }
-
 
 // ============================================
 // OVERRIDES LAYER

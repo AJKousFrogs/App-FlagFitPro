@@ -11,7 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
-import { Radio} from "primeng/radiobutton";
+import { Radio } from "primeng/radiobutton";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -188,13 +188,20 @@ interface FeedbackData {
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="dialogVisible = false">Cancel</app-button>
-          <app-button iconLeft="pi-send" [disabled]="!detailedFeedbackType" (clicked)="submitDetailedFeedback()">Submit Feedback</app-button>
+          <app-button variant="text" (clicked)="dialogVisible = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-send"
+            [disabled]="!detailedFeedbackType"
+            (clicked)="submitDetailedFeedback()"
+            >Submit Feedback</app-button
+          >
         </ng-template>
       </p-dialog>
     </div>
   `,
-  styleUrl: './ai-feedback.component.scss',
+  styleUrl: "./ai-feedback.component.scss",
 })
 export class AiFeedbackComponent {
   private apiService = inject(ApiService);

@@ -231,47 +231,47 @@ Manage team tournament registrations, track RSVPs, handle payments, set lineups,
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Registration | Register team for tournaments |
-| RSVP Tracking | Track player attendance |
-| Payment Collection | Monitor fee collection |
-| Lineup Builder | Set starting 5 and rotations |
-| Guest Management | Track player guests |
-| Schedule View | Tournament game times |
-| Results | Track game outcomes |
-| Reminders | Send RSVP/payment nudges |
+| Feature            | Description                   |
+| ------------------ | ----------------------------- |
+| Registration       | Register team for tournaments |
+| RSVP Tracking      | Track player attendance       |
+| Payment Collection | Monitor fee collection        |
+| Lineup Builder     | Set starting 5 and rotations  |
+| Guest Management   | Track player guests           |
+| Schedule View      | Tournament game times         |
+| Results            | Track game outcomes           |
+| Reminders          | Send RSVP/payment nudges      |
 
 ---
 
 ## RSVP Status
 
-| Status | Icon | Description |
-|--------|------|-------------|
-| Going | ✅ | Confirmed attendance |
-| Pending | ❓ | No response yet |
-| Can't Go | ❌ | Declined |
-| Maybe | 🤔 | Tentative |
+| Status   | Icon | Description          |
+| -------- | ---- | -------------------- |
+| Going    | ✅   | Confirmed attendance |
+| Pending  | ❓   | No response yet      |
+| Can't Go | ❌   | Declined             |
+| Maybe    | 🤔   | Tentative            |
 
 ---
 
 ## Payment Status
 
-| Status | Indicator | Action |
-|--------|-----------|--------|
-| Paid | ✓ Green | None |
-| Partial | ⚠️ Yellow | Reminder |
-| Owes | ⚠️ Red | Nudge |
-| N/A | -- | Free/included |
+| Status  | Indicator | Action        |
+| ------- | --------- | ------------- |
+| Paid    | ✓ Green   | None          |
+| Partial | ⚠️ Yellow | Reminder      |
+| Owes    | ⚠️ Red    | Nudge         |
+| N/A     | --        | Free/included |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Tournaments | `TournamentService` | `tournaments` |
+| Data          | Service             | Table                      |
+| ------------- | ------------------- | -------------------------- |
+| Tournaments   | `TournamentService` | `tournaments`              |
 | Registrations | `TournamentService` | `tournament_registrations` |
-| RSVPs | `CalendarService` | `event_rsvps` |
-| Payments | `PaymentService` | `tournament_payments` |
-| Lineups | `LineupService` | `tournament_lineups` |
+| RSVPs         | `CalendarService`   | `event_rsvps`              |
+| Payments      | `PaymentService`    | `tournament_payments`      |
+| Lineups       | `LineupService`     | `tournament_lineups`       |

@@ -60,7 +60,7 @@ export type DrawerPosition = "left" | "right" | "top" | "bottom";
       </div>
     }
   `,
-  styleUrl: './drawer.component.scss',
+  styleUrl: "./drawer.component.scss",
 })
 export class DrawerComponent {
   // Configuration

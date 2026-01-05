@@ -43,7 +43,9 @@
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-3, 12px);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 // .tournament-card:hover REMOVED - use app-card-shell with state="interactive"
@@ -230,4 +232,3 @@
     align-self: flex-start;
   }
 }
-

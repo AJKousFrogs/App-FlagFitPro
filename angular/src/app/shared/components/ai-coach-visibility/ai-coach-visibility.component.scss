@@ -116,7 +116,9 @@
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
   border: var(--border-1) solid var(--color-border-secondary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .alert-item.unviewed {
@@ -290,4 +292,3 @@
     justify-content: flex-end;
   }
 }
-

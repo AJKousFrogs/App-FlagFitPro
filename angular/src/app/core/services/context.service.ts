@@ -1,4 +1,4 @@
-import { Injectable,  inject } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { filter, map } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -428,12 +428,12 @@ export class ContextService {
     let currentPath = "";
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      
+
       // Skip dashboard as we already added it
       if (currentPath === "/dashboard") {
         return;
       }
-      
+
       const metadata = this.routeMetadata[currentPath];
 
       if (metadata) {

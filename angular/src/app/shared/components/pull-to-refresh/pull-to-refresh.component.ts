@@ -56,7 +56,7 @@ import { CommonModule } from "@angular/common";
       </div>
     </div>
   `,
-  styleUrl: './pull-to-refresh.component.scss',
+  styleUrl: "./pull-to-refresh.component.scss",
 })
 export class PullToRefreshComponent implements OnDestroy {
   private document = inject(DOCUMENT);

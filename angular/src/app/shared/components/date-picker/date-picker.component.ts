@@ -69,7 +69,7 @@ import { DatePicker } from "primeng/datepicker";
       }
     </div>
   `,
-  styleUrl: './date-picker.component.scss',
+  styleUrl: "./date-picker.component.scss",
 })
 export class DatePickerComponent implements ControlValueAccessor {
   // Configuration

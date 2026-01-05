@@ -64,7 +64,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './time-picker.component.scss',
+  styleUrl: "./time-picker.component.scss",
 })
 export class TimePickerComponent implements ControlValueAccessor {
   // Configuration

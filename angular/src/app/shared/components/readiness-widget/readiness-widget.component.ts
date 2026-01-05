@@ -1,29 +1,24 @@
 import { CommonModule } from "@angular/common";
-import {
-    Component,
-    effect,
-    inject,
-    input
-} from "@angular/core";
-import {
-    ReadinessService
-} from "../../../core/services/readiness.service";
-import {
-    ButtonComponent,
-    CardComponent
-} from "../ui-components";
+import { Component, effect, inject, input } from "@angular/core";
+import { ReadinessService } from "../../../core/services/readiness.service";
+import { ButtonComponent, CardComponent } from "../ui-components";
 
 @Component({
   selector: "app-readiness-widget",
   standalone: true,
-  imports: [CommonModule, CardComponent, TagModule, SkeletonModule, ButtonComponent],
+  imports: [
+    CommonModule,
+    CardComponent,
+    TagModule,
+    SkeletonModule,
+    ButtonComponent,
+  ],
   template: `
     <app-card title="Readiness Today">
       <div header-actions>
         <app-button
           icon="refresh"
           variant="text"
-          
           [loading]="loading()"
           (clicked)="refresh()"
           [disabled]="loading()"
@@ -46,7 +41,8 @@ import {
             icon="refresh"
             (clicked)="refresh()"
             class="mt-3"
-          >Retry</app-button>
+            >Retry</app-button
+          >
         </div>
       } @else if (readiness()) {
         <div class="readiness-content">
@@ -231,15 +227,14 @@ import {
       } @else {
         <div class="no-data-state p-4 text-center">
           <p class="text-text-secondary mb-4">No readiness data available</p>
-          <app-button
-            icon="calculator"
-            (clicked)="refresh()"
-          >Calculate Readiness</app-button>
+          <app-button icon="calculator" (clicked)="refresh()"
+            >Calculate Readiness</app-button
+          >
         </div>
       }
     </app-card>
   `,
-  styleUrl: './readiness-widget.component.scss',
+  styleUrl: "./readiness-widget.component.scss",
 })
 export class ReadinessWidgetComponent {
   // Angular 21: Use input.required() for required inputs instead of @Input() with !

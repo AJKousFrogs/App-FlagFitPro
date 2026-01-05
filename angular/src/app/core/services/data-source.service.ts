@@ -240,10 +240,7 @@ export class DataSourceService {
   ): DataWithState<T> {
     const { lastUpdated = null, metadata } = options;
     const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
-    const dataState = this.evaluateDataState(
-      currentDataPoints,
-      metricType,
-    );
+    const dataState = this.evaluateDataState(currentDataPoints, metricType);
 
     const warnings: string[] = [];
 

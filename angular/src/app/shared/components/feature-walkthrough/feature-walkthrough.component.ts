@@ -54,7 +54,7 @@ interface WalkthroughStep {
   selector: "app-feature-walkthrough",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-imports: [
+  imports: [
     CommonModule,
     RouterModule,
     DialogModule,
@@ -136,31 +136,46 @@ imports: [
           <!-- Interactive Action -->
           @if (currentStep().action) {
             <div class="action-section">
-              <app-icon-button icon="pi-arrow-right" (clicked)="executeAction()" ariaLabel="arrow-right" />
+              <app-icon-button
+                icon="pi-arrow-right"
+                (clicked)="executeAction()"
+                ariaLabel="arrow-right"
+              />
             </div>
           }
         </div>
 
         <!-- Navigation -->
         <div class="navigation-section">
-          <app-button variant="text" (clicked)="skipTour()">Skip Tour</app-button>
+          <app-button variant="text" (clicked)="skipTour()"
+            >Skip Tour</app-button
+          >
 
           <div class="nav-buttons">
             @if (currentStepIndex() > 0) {
-              <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-arrow-left"
+                (clicked)="previousStep()"
+                >Back</app-button
+              >
             }
 
             @if (currentStepIndex() < steps.length - 1) {
-              <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()">Next</app-button>
+              <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()"
+                >Next</app-button
+              >
             } @else {
-              <app-button iconLeft="pi-check" (clicked)="completeTour()">Get Started!</app-button>
+              <app-button iconLeft="pi-check" (clicked)="completeTour()"
+                >Get Started!</app-button
+              >
             }
           </div>
         </div>
       </div>
     </p-dialog>
   `,
-  styleUrl: './feature-walkthrough.component.scss',
+  styleUrl: "./feature-walkthrough.component.scss",
 })
 export class FeatureWalkthroughComponent {
   private router = inject(Router);

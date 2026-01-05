@@ -27,8 +27,7 @@ import {
   selector: "app-video-curation-suggestions",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule,
-  ],
+  imports: [CommonModule, TagModule, TooltipModule],
   template: `
     <div class="tab-content">
       <div class="suggestions-header">
@@ -127,7 +126,7 @@ import {
       }
     </div>
   `,
-  styleUrl: './video-curation-suggestions.component.scss',
+  styleUrl: "./video-curation-suggestions.component.scss",
 })
 export class VideoCurationSuggestionsComponent {
   suggestions = input.required<PlayerSuggestion[]>();

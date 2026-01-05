@@ -400,7 +400,7 @@
     background: var(--surface-tertiary);
     color: var(--color-text-muted);
     border: 2px solid transparent;
-    transition: 
+    transition:
       background-color var(--motion-fast) var(--ease-standard),
       border-color var(--motion-fast) var(--ease-standard);
 
@@ -614,4 +614,3 @@
     }
   }
 }
-

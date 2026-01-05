@@ -28,7 +28,7 @@ import { TooltipModule } from "primeng/tooltip";
       <ng-content></ng-content>
     </span>
   `,
-  styleUrl: './tooltip.component.scss',
+  styleUrl: "./tooltip.component.scss",
 })
 export class TooltipComponent {
   // Configuration

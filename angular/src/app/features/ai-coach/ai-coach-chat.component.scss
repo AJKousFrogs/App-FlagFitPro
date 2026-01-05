@@ -158,7 +158,10 @@
   border-radius: var(--radius-lg);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
   position: relative;
 }
 
@@ -358,7 +361,10 @@
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
   text-align: left;
   width: 100%;
 }
@@ -402,7 +408,9 @@
   color: var(--ds-primary-green);
   opacity: 0;
   transform: translateX(-8px);
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .capabilities-section {
@@ -753,7 +761,9 @@
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .citations-toggle:hover {
@@ -781,7 +791,9 @@
   border-radius: var(--radius-lg);
   font-size: var(--font-size-h4);
   text-decoration: none;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .citation-item.clickable {
@@ -869,7 +881,9 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   border: none;
 }
 
@@ -940,7 +954,9 @@
   border-radius: var(--radius-lg);
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .mini-btn:hover {
@@ -983,7 +999,10 @@
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-3);
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
   z-index: 5;
 }
 
@@ -1024,7 +1043,11 @@
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: border-style var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    border-style var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .context-chip:hover {
@@ -1096,7 +1119,9 @@
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-3xl);
   padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .input-container:focus-within {
@@ -1142,7 +1167,9 @@
   border-radius: var(--radius-full);
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .input-icon-btn:hover:not(:disabled) {
@@ -1195,7 +1222,10 @@
   border-radius: var(--radius-full);
   color: var(--color-text-muted);
   cursor: not-allowed;
-  transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   flex-shrink: 0;
 }
 

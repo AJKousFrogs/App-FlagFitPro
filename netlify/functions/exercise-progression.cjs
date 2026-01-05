@@ -176,7 +176,7 @@ exports.handler = async (event) => {
         actual_hold_seconds,
         status,
         daily_protocols!inner(protocol_date, user_id)
-      `
+      `,
       )
       .eq("daily_protocols.user_id", user.id)
       .eq("daily_protocols.protocol_date", yesterdayStr)
@@ -206,12 +206,7 @@ exports.handler = async (event) => {
     const progressions = exercises.map((exercise) => {
       const yesterdayPerf = yesterdayMap.get(exercise.id);
 
-      return calculateProgression(
-        exercise,
-        yesterdayPerf,
-        acwr,
-        readiness
-      );
+      return calculateProgression(exercise, yesterdayPerf, acwr, readiness);
     });
 
     return {
@@ -287,7 +282,10 @@ function calculateProgression(exercise, yesterdayPerf, acwr, readiness) {
     const increment = Math.round(rules.increment * adjustmentFactor);
 
     if (increment > 0 && prescribedHoldSeconds) {
-      const newHold = Math.min(prescribedHoldSeconds + increment, rules.maxHold);
+      const newHold = Math.min(
+        prescribedHoldSeconds + increment,
+        rules.maxHold,
+      );
 
       if (newHold > prescribedHoldSeconds) {
         progressionNote = `+${newHold - prescribedHoldSeconds}s hold from yesterday`;
@@ -301,7 +299,7 @@ function calculateProgression(exercise, yesterdayPerf, acwr, readiness) {
     if (increment > 0 && prescribedDurationSeconds) {
       const newDuration = Math.min(
         prescribedDurationSeconds + increment,
-        rules.maxDuration
+        rules.maxDuration,
       );
 
       if (newDuration > prescribedDurationSeconds) {

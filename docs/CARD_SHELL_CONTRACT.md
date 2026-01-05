@@ -36,9 +36,9 @@ This contract defines the **single source of truth** for card visual styling acr
 
 ### 2.1 Radius Token
 
-| Property | Token | Value | Notes |
-|----------|-------|-------|-------|
-| `border-radius` | `--radius-lg` | 8px | All cards use this radius |
+| Property        | Token         | Value | Notes                     |
+| --------------- | ------------- | ----- | ------------------------- |
+| `border-radius` | `--radius-lg` | 8px   | All cards use this radius |
 
 ```scss
 // ✅ LOCKED
@@ -54,11 +54,11 @@ border-radius: 16px;
 
 ### 2.2 Shadow Tokens
 
-| State | Token | Value |
-|-------|-------|-------|
-| **Rest** | `--shadow-sm` | `0 1px 3px rgba(0,0,0,0.1)` |
+| State                        | Token         | Value                         |
+| ---------------------------- | ------------- | ----------------------------- |
+| **Rest**                     | `--shadow-sm` | `0 1px 3px rgba(0,0,0,0.1)`   |
 | **Hover (interactive only)** | `--shadow-md` | `0 4px 12px rgba(0,0,0,0.15)` |
-| **Active/Pressed** | `--shadow-sm` | Back to rest |
+| **Active/Pressed**           | `--shadow-sm` | Back to rest                  |
 
 ```scss
 // ✅ LOCKED
@@ -74,7 +74,7 @@ box-shadow: var(--shadow-sm);
 }
 
 // ❌ FORBIDDEN - Raw shadows
-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 box-shadow: var(--shadow-1); // Old alias
 box-shadow: var(--shadow-2); // Old alias
 ```
@@ -83,9 +83,9 @@ box-shadow: var(--shadow-2); // Old alias
 
 ### 2.3 Border Usage
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Width | `--border-1` | 1px |
+| Property     | Token                   | Value              |
+| ------------ | ----------------------- | ------------------ |
+| Width        | `--border-1`            | 1px                |
 | Color (rest) | `--color-border-subtle` | `rgba(0,0,0,0.05)` |
 
 ```scss
@@ -104,25 +104,37 @@ border: 2px solid var(--color-border-primary);
 
 ### 2.4 Padding Tokens
 
-| Zone | Token | Value | Notes |
-|------|-------|-------|-------|
-| **Header** (default) | `--space-4` | 16px | All sides |
-| **Header** (compact) | `--space-3` | 12px | Compact density |
-| **Body** (default) | `--space-4` | 16px | All sides |
-| **Body** (compact) | `--space-3` | 12px | Compact density |
+| Zone                 | Token                 | Value     | Notes                 |
+| -------------------- | --------------------- | --------- | --------------------- |
+| **Header** (default) | `--space-4`           | 16px      | All sides             |
+| **Header** (compact) | `--space-3`           | 12px      | Compact density       |
+| **Body** (default)   | `--space-4`           | 16px      | All sides             |
+| **Body** (compact)   | `--space-3`           | 12px      | Compact density       |
 | **Footer** (default) | `--space-3 --space-4` | 12px 16px | Vertical / Horizontal |
-| **Footer** (compact) | `--space-2 --space-3` | 8px 12px | Compact density |
+| **Footer** (compact) | `--space-2 --space-3` | 8px 12px  | Compact density       |
 
 ```scss
 // ✅ REQUIRED - Default density
-.card-header { padding: var(--space-4); }
-.card-body { padding: var(--space-4); }
-.card-footer { padding: var(--space-3) var(--space-4); }
+.card-header {
+  padding: var(--space-4);
+}
+.card-body {
+  padding: var(--space-4);
+}
+.card-footer {
+  padding: var(--space-3) var(--space-4);
+}
 
 // ✅ REQUIRED - Compact density
-.card-header--compact { padding: var(--space-3); }
-.card-body--compact { padding: var(--space-3); }
-.card-footer--compact { padding: var(--space-2) var(--space-3); }
+.card-header--compact {
+  padding: var(--space-3);
+}
+.card-body--compact {
+  padding: var(--space-3);
+}
+.card-footer--compact {
+  padding: var(--space-2) var(--space-3);
+}
 
 // ❌ FORBIDDEN
 padding: 20px;
@@ -147,27 +159,27 @@ The card header follows a strict inline layout matching the Player Dashboard:
 
 #### Header Structure
 
-| Zone | Position | Contents | Required |
-|------|----------|----------|----------|
-| **Leading Icon** | Left | Raw icon (no container) | Optional |
-| **Title** | After icon | Title text only | Required |
-| **Actions** | Right | Buttons, links, badges | Optional |
+| Zone             | Position   | Contents                | Required |
+| ---------------- | ---------- | ----------------------- | -------- |
+| **Leading Icon** | Left       | Raw icon (no container) | Optional |
+| **Title**        | After icon | Title text only         | Required |
+| **Actions**      | Right      | Buttons, links, badges  | Optional |
 
 #### Header Spacing
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Padding | `--space-3 --space-4 --space-2` | 12px 16px 8px (top/sides/bottom) |
-| Padding (compact) | `--space-2 --space-3 --space-1` | 8px 12px 4px |
-| Gap (icon to title) | `--space-2` | 8px |
+| Property            | Token                           | Value                            |
+| ------------------- | ------------------------------- | -------------------------------- |
+| Padding             | `--space-3 --space-4 --space-2` | 12px 16px 8px (top/sides/bottom) |
+| Padding (compact)   | `--space-2 --space-3 --space-1` | 8px 12px 4px                     |
+| Gap (icon to title) | `--space-2`                     | 8px                              |
 
 #### Icon Specs (NO Container)
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Font size | `--font-body-md` | 16px |
-| Color | `--color-brand-primary` | Primary green |
-| Opacity | `0.85` | Slightly muted |
+| Property  | Token                   | Value          |
+| --------- | ----------------------- | -------------- |
+| Font size | `--font-body-md`        | 16px           |
+| Color     | `--color-brand-primary` | Primary green  |
+| Opacity   | `0.85`                  | Slightly muted |
 
 ```scss
 // ✅ CANONICAL - Player Dashboard style
@@ -200,7 +212,7 @@ The Player Dashboard cards do NOT use a separator line between header and body. 
 .card-shell__header {
   padding: var(--space-3) var(--space-4) var(--space-2);
   background: transparent; // Same as card body
-  border-bottom: none;     // NO separator
+  border-bottom: none; // NO separator
 }
 
 // ❌ FORBIDDEN
@@ -227,13 +239,13 @@ All typography MUST align with the Unified Typography System and match the Playe
 
 #### Card Title (CANONICAL)
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Size | `--font-size-h2` | 18px |
-| Weight | `--font-weight-semibold` | 600 |
-| Line-height | `--line-height-tight` | 1.2 |
-| Color | `--color-text-primary` | Dark text |
-| Margin-bottom | `--space-3` | 12px (creates separation from body) |
+| Property      | Token                    | Value                               |
+| ------------- | ------------------------ | ----------------------------------- |
+| Size          | `--font-size-h2`         | 18px                                |
+| Weight        | `--font-weight-semibold` | 600                                 |
+| Line-height   | `--line-height-tight`    | 1.2                                 |
+| Color         | `--color-text-primary`   | Dark text                           |
+| Margin-bottom | `--space-3`              | 12px (creates separation from body) |
 
 ```scss
 // ✅ CANONICAL - Player Dashboard title style
@@ -255,11 +267,11 @@ All typography MUST align with the Unified Typography System and match the Playe
 
 Subtitles are **NOT used** in the Player Dashboard canonical pattern. If needed:
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Size | `--font-body-sm-size` | 14px |
-| Weight | `--font-weight-regular` | 400 |
-| Color | `--color-text-muted` | Muted gray |
+| Property | Token                   | Value      |
+| -------- | ----------------------- | ---------- |
+| Size     | `--font-body-sm-size`   | 14px       |
+| Weight   | `--font-weight-regular` | 400        |
+| Color    | `--color-text-muted`    | Muted gray |
 
 ```scss
 .card-shell__subtitle {
@@ -273,22 +285,22 @@ Subtitles are **NOT used** in the Player Dashboard canonical pattern. If needed:
 
 #### Body Text
 
-| Context | Token | Value |
-|---------|-------|-------|
-| Default body | `--font-body-size` | 16px |
-| Secondary text | `--font-body-sm-size` | 14px |
-| Captions | `--font-caption-size` | 12px |
+| Context        | Token                 | Value |
+| -------------- | --------------------- | ----- |
+| Default body   | `--font-body-size`    | 16px  |
+| Secondary text | `--font-body-sm-size` | 14px  |
+| Captions       | `--font-caption-size` | 12px  |
 
 ---
 
 ### 2.8 Hover Behavior
 
-| Property | Token | Specification |
-|----------|-------|---------------|
-| Transform | `translateY(-2px)` | Subtle lift (interactive cards only) |
-| Shadow | `--shadow-2` | Elevated shadow |
-| Border | `rgba(--ds-primary-green-rgb, 0.2)` | Green tint |
-| Transition | `--motion-base --ease-standard` | 200ms cubic-bezier |
+| Property   | Token                               | Specification                        |
+| ---------- | ----------------------------------- | ------------------------------------ |
+| Transform  | `translateY(-2px)`                  | Subtle lift (interactive cards only) |
+| Shadow     | `--shadow-2`                        | Elevated shadow                      |
+| Border     | `rgba(--ds-primary-green-rgb, 0.2)` | Green tint                           |
+| Transition | `--motion-base --ease-standard`     | 200ms cubic-bezier                   |
 
 ```scss
 // ✅ REQUIRED - Hover behavior
@@ -317,46 +329,57 @@ Subtitles are **NOT used** in the Player Dashboard canonical pattern. If needed:
 }
 
 // ❌ FORBIDDEN
-transform: translateY(-4px);  // Too aggressive
-transform: translateY(-8px);  // Way too aggressive
+transform: translateY(-4px); // Too aggressive
+transform: translateY(-8px); // Way too aggressive
 transform: translateY(-12px); // Never
-transform: scale(1.02);       // Never use scale on cards
+transform: scale(1.02); // Never use scale on cards
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Raw shadow values
 ```
 
 #### Interaction Enforcement Rules (STRICT)
 
 **Non-interactive cards:**
+
 - Shadow change on hover: ✅ `--shadow-2`
 - Border tint on hover: ✅ `rgba(--ds-primary-green-rgb, 0.2)`
 - Transform on hover: ❌ NEVER
 - Cursor: `default`
 
 **Interactive cards (`state="interactive"`):**
+
 - Shadow change on hover: ✅ `--shadow-2`
 - Border color on hover: ✅ `--ds-primary-green`
 - Transform on hover: ✅ `translateY(-2px)` ONLY
 - Cursor: `pointer`
 
 **Forbidden in feature SCSS:**
+
 ```scss
 // ❌ ALL of these are forbidden in feature SCSS files
-.my-card:hover { transform: translateY(-4px); }
-.my-card:hover { box-shadow: var(--shadow-lg); }
-.my-card { transition: transform 0.2s; }
-.my-card:hover .icon { transform: scale(1.1); }
+.my-card:hover {
+  transform: translateY(-4px);
+}
+.my-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+.my-card {
+  transition: transform 0.2s;
+}
+.my-card:hover .icon {
+  transform: scale(1.1);
+}
 ```
 
 ---
 
 ### 2.9 Focus Ring Behavior
 
-| Property | Token | Value |
-|----------|-------|-------|
-| Outline width | `--focus-outline-width` | 2px |
-| Outline offset | `--focus-outline-offset` | 2px |
-| Outline color | `--ds-primary-green` | Brand green |
-| Ring shadow | `--focus-ring-shadow` | Green glow |
+| Property       | Token                    | Value       |
+| -------------- | ------------------------ | ----------- |
+| Outline width  | `--focus-outline-width`  | 2px         |
+| Outline offset | `--focus-outline-offset` | 2px         |
+| Outline color  | `--ds-primary-green`     | Brand green |
+| Ring shadow    | `--focus-ring-shadow`    | Green glow  |
 
 ```scss
 // ✅ REQUIRED - Focus visible only
@@ -379,11 +402,11 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Raw shadow values
 
 ## 3. Background Colors
 
-| Context | Token | Value |
-|---------|-------|-------|
-| Card background | `--surface-primary` | White |
-| Header | `transparent` | Same as card body |
-| Footer | `--surface-secondary` | Off-white (when present) |
+| Context         | Token                 | Value                    |
+| --------------- | --------------------- | ------------------------ |
+| Card background | `--surface-primary`   | White                    |
+| Header          | `transparent`         | Same as card body        |
+| Footer          | `--surface-secondary` | Off-white (when present) |
 
 ```scss
 // ✅ CANONICAL - Transparent header
@@ -408,11 +431,11 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Raw shadow values
 
 The card shell supports **three** padding modes:
 
-| Mode | Input | Header Padding | Body Padding | Use Case |
-|------|-------|----------------|--------------|----------|
+| Mode        | Input               | Header Padding                  | Body Padding       | Use Case                   |
+| ----------- | ------------------- | ------------------------------- | ------------------ | -------------------------- |
 | **Default** | `density="default"` | `--space-3 --space-4 --space-2` | `--space-4` (16px) | Standard cards, dashboards |
-| **Compact** | `density="compact"` | `--space-2 --space-3 --space-1` | `--space-3` (12px) | Data tables, dense lists |
-| **Flush** | `[flush]="true"` | (unchanged) | `0` | Tables, charts, media |
+| **Compact** | `density="compact"` | `--space-2 --space-3 --space-1` | `--space-3` (12px) | Data tables, dense lists   |
+| **Flush**   | `[flush]="true"`    | (unchanged)                     | `0`                | Tables, charts, media      |
 
 ### Enforcement Rules
 
@@ -423,23 +446,29 @@ The card shell supports **three** padding modes:
 <app-card-shell [flush]="true">...</app-card-shell>
 
 // ❌ FORBIDDEN - Feature SCSS padding overrides
-::ng-deep .p-card-body { padding: var(--space-5); }
-::ng-deep .p-card-content { padding: 0; }
-.my-card { padding: 20px; }
+::ng-deep .p-card-body {
+  padding: var(--space-5);
+}
+::ng-deep .p-card-content {
+  padding: 0;
+}
+.my-card {
+  padding: 20px;
+}
 ```
 
 ### Classification Guide
 
-| Card Type | Density | Flush |
-|-----------|---------|-------|
-| Dashboard cards | default | false |
-| Stat/metric cards | default | false |
-| Schedule cards | default | false |
-| Data tables | compact | true |
-| Dense lists | compact | false |
-| Charts/graphs | default | true |
-| Media cards (thumbnails) | default | true |
-| Form cards | default | false |
+| Card Type                | Density | Flush |
+| ------------------------ | ------- | ----- |
+| Dashboard cards          | default | false |
+| Stat/metric cards        | default | false |
+| Schedule cards           | default | false |
+| Data tables              | compact | true  |
+| Dense lists              | compact | false |
+| Charts/graphs            | default | true  |
+| Media cards (thumbnails) | default | true  |
+| Form cards               | default | false |
 
 Both densities maintain the same visual language (radius, shadow, border, typography ratios).
 
@@ -447,11 +476,11 @@ Both densities maintain the same visual language (radius, shadow, border, typogr
 
 ## 5. State Options
 
-| State | Visual Treatment | Interactive |
-|-------|------------------|-------------|
-| **Default** | Standard styling | No |
-| **Interactive** | Cursor pointer, hover lift | Yes |
-| **Disabled** | Opacity 0.5, no hover | No |
+| State           | Visual Treatment           | Interactive |
+| --------------- | -------------------------- | ----------- |
+| **Default**     | Standard styling           | No          |
+| **Interactive** | Cursor pointer, hover lift | Yes         |
+| **Disabled**    | Opacity 0.5, no hover      | No          |
 
 ```scss
 .card-shell--disabled {
@@ -467,6 +496,7 @@ Both densities maintain the same visual language (radius, shadow, border, typogr
 Before merging any card-related code, verify:
 
 ### Shell Tokens
+
 - [ ] Uses `--radius-xl` (12px) for border-radius
 - [ ] Uses `--shadow-1` at rest, `--shadow-2` on hover
 - [ ] Uses `--border-1` with `--color-border-default`
@@ -474,6 +504,7 @@ Before merging any card-related code, verify:
 - [ ] Uses `--surface-secondary` for header/footer
 
 ### Spacing (STRICT)
+
 - [ ] Uses `density="default"` OR `density="compact"` - no other values
 - [ ] Uses `[flush]="true"` for zero-padding content (tables, charts)
 - [ ] **NO** `::ng-deep .p-card-body { padding: ... }` in feature SCSS
@@ -482,17 +513,20 @@ Before merging any card-related code, verify:
 - [ ] **NO** inline style padding on card elements
 
 ### Typography
+
 - [ ] Title uses `--font-h3-size` + `--font-weight-semibold`
 - [ ] Subtitle uses `--font-body-sm-size` + `--color-text-muted`
 - [ ] No raw font sizes
 
 ### Hover/Focus
+
 - [ ] Hover uses `--shadow-2` + green border tint
 - [ ] Interactive cards use `translateY(-2px)` lift
 - [ ] Focus uses `:focus-visible` only
 - [ ] Focus ring uses `--ds-primary-green`
 
 ### Forbidden Patterns
+
 - [ ] No `::ng-deep` for card styling in feature components
 - [ ] No `.p-card`, `.p-card-body`, `.p-card-content` overrides in feature SCSS
 - [ ] No raw box-shadow values
@@ -528,10 +562,7 @@ The canonical card header (Player Dashboard reference):
 
 ```html
 <!-- CANONICAL: app-card-shell usage -->
-<app-card-shell
-  title="Today's Schedule"
-  headerIcon="pi-calendar"
->
+<app-card-shell title="Today's Schedule" headerIcon="pi-calendar">
   <!-- Body content -->
 </app-card-shell>
 
@@ -557,6 +588,7 @@ The canonical card header (Player Dashboard reference):
 ```
 
 **Key characteristics:**
+
 - Icon is a raw `<span>` with `<i>` inside (no container background)
 - Icon uses `--font-body-md` (16px), `--color-brand-primary`, `opacity: 0.85`
 - Title uses `--font-size-h2` (18px), `--font-weight-semibold`
@@ -574,11 +606,11 @@ No feature may define its own `.empty-state`, `.no-data`, or similar styles.
 
 ### 8.1 Empty State Variants
 
-| Variant | Class | Use Case |
-|---------|-------|----------|
-| **Default** | `.card-empty-state` | Standard cards (180px min-height) |
+| Variant     | Class                        | Use Case                                 |
+| ----------- | ---------------------------- | ---------------------------------------- |
+| **Default** | `.card-empty-state`          | Standard cards (180px min-height)        |
 | **Compact** | `.card-empty-state--compact` | Small cards, sidebars (120px min-height) |
-| **Inline** | `.card-empty-state--inline` | Horizontal layout, minimal space |
+| **Inline**  | `.card-empty-state--inline`  | Horizontal layout, minimal space         |
 
 ### 8.2 Empty State Structure
 
@@ -599,22 +631,22 @@ No feature may define its own `.empty-state`, `.no-data`, or similar styles.
 
 ### 8.3 Empty State Tokens
 
-| Element | Token | Default | Compact |
-|---------|-------|---------|---------|
-| Container padding | `--space-6` / `--space-4` | 24px | 16px |
-| Container min-height | `180px` / `120px` | 180px | 120px |
-| Icon size | `--icon-3xl` / `--icon-2xl` | 48px | 32px |
-| Icon color | `--color-text-muted` | Muted gray | Same |
-| Icon opacity | `0.5` | 50% | Same |
-| Icon margin-bottom | `--space-3` / `--space-2` | 12px | 8px |
-| Title size | `--font-body-md` / `--font-body-sm` | 16px | 14px |
-| Title weight | `--font-weight-medium` | 500 | Same |
-| Title color | `--color-text-primary` | Dark text | Same |
-| Title margin-bottom | `--space-1` | 4px | Same |
-| Text size | `--font-body-sm` / `--font-caption` | 14px | 12px |
-| Text color | `--color-text-muted` | Muted gray | Same |
-| Text max-width | `280px` / `240px` | 280px | 240px |
-| Action margin-top | `--space-3` / `--space-2` | 12px | 8px |
+| Element              | Token                               | Default    | Compact |
+| -------------------- | ----------------------------------- | ---------- | ------- |
+| Container padding    | `--space-6` / `--space-4`           | 24px       | 16px    |
+| Container min-height | `180px` / `120px`                   | 180px      | 120px   |
+| Icon size            | `--icon-3xl` / `--icon-2xl`         | 48px       | 32px    |
+| Icon color           | `--color-text-muted`                | Muted gray | Same    |
+| Icon opacity         | `0.5`                               | 50%        | Same    |
+| Icon margin-bottom   | `--space-3` / `--space-2`           | 12px       | 8px     |
+| Title size           | `--font-body-md` / `--font-body-sm` | 16px       | 14px    |
+| Title weight         | `--font-weight-medium`              | 500        | Same    |
+| Title color          | `--color-text-primary`              | Dark text  | Same    |
+| Title margin-bottom  | `--space-1`                         | 4px        | Same    |
+| Text size            | `--font-body-sm` / `--font-caption` | 14px       | 12px    |
+| Text color           | `--color-text-muted`                | Muted gray | Same    |
+| Text max-width       | `280px` / `240px`                   | 280px      | 240px   |
+| Action margin-top    | `--space-3` / `--space-2`           | 12px       | 8px     |
 
 ### 8.4 Empty State Markup (CANONICAL)
 
@@ -768,7 +800,9 @@ No feature may define its own `.empty-state`, `.no-data`, or similar styles.
       Complete more sessions to see your performance trend over time.
     </p>
     <div class="card-empty-state__action">
-      <app-button variant="text" routerLink="/training">View Training</app-button>
+      <app-button variant="text" routerLink="/training"
+        >View Training</app-button
+      >
     </div>
   </div>
 </app-card-shell>
@@ -793,30 +827,30 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 
 ### 9.2 Stat Block Tokens (LOCKED)
 
-| Element | Token | Value | Notes |
-|---------|-------|-------|-------|
-| **Value (default)** | `--font-size-metric-md` | 24px | Primary KPI display |
-| **Value (large)** | `--font-size-metric-lg` | 32px | Hero stats only |
-| **Value weight** | `--font-weight-bold` | 700 | Always bold |
-| **Value color** | `--color-text-primary` | Dark text | Default |
-| **Value line-height** | `--line-height-tight` | 1.2 | Compact |
-| **Label** | `--font-size-caption` | 13px | Helper text |
-| **Label weight** | `--font-weight-regular` | 400 | Regular |
-| **Label color** | `--color-text-muted` | Muted gray | Subdued |
-| **Label letter-spacing** | `--letter-spacing-caption` | 0.04em | Uppercase labels |
-| **Label text-transform** | `uppercase` | UPPERCASE | Always |
-| **Icon container** | `--space-10` (40px) | 40px | Square icon bg |
-| **Icon border-radius** | `--radius-md` | 8px | Rounded corners |
-| **Gap (icon to content)** | `--space-3` | 12px | Consistent |
-| **Gap (value to label)** | `--space-1` | 4px | Tight |
+| Element                   | Token                      | Value      | Notes               |
+| ------------------------- | -------------------------- | ---------- | ------------------- |
+| **Value (default)**       | `--font-size-metric-md`    | 24px       | Primary KPI display |
+| **Value (large)**         | `--font-size-metric-lg`    | 32px       | Hero stats only     |
+| **Value weight**          | `--font-weight-bold`       | 700        | Always bold         |
+| **Value color**           | `--color-text-primary`     | Dark text  | Default             |
+| **Value line-height**     | `--line-height-tight`      | 1.2        | Compact             |
+| **Label**                 | `--font-size-caption`      | 13px       | Helper text         |
+| **Label weight**          | `--font-weight-regular`    | 400        | Regular             |
+| **Label color**           | `--color-text-muted`       | Muted gray | Subdued             |
+| **Label letter-spacing**  | `--letter-spacing-caption` | 0.04em     | Uppercase labels    |
+| **Label text-transform**  | `uppercase`                | UPPERCASE  | Always              |
+| **Icon container**        | `--space-10` (40px)        | 40px       | Square icon bg      |
+| **Icon border-radius**    | `--radius-md`              | 8px        | Rounded corners     |
+| **Gap (icon to content)** | `--space-3`                | 12px       | Consistent          |
+| **Gap (value to label)**  | `--space-1`                | 4px        | Tight               |
 
 ### 9.3 Stat Block Variants
 
-| Variant | Value Size | Use Case |
-|---------|------------|----------|
+| Variant     | Value Size                     | Use Case               |
+| ----------- | ------------------------------ | ---------------------- |
 | **Default** | `--font-size-metric-md` (24px) | Dashboard stats, cards |
-| **Large** | `--font-size-metric-lg` (32px) | Hero/highlight stats |
-| **Compact** | `--font-size-h2` (18px) | Dense grids, tables |
+| **Large**   | `--font-size-metric-lg` (32px) | Hero/highlight stats   |
+| **Compact** | `--font-size-h2` (18px)        | Dense grids, tables    |
 
 ### 9.4 Canonical Stat Block Markup
 
@@ -830,7 +864,11 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
     <span class="stat-block__value">85%</span>
     <span class="stat-block__label">READINESS</span>
   </div>
-  <p-tag value="Optimal" severity="success" styleClass="stat-block__tag"></p-tag>
+  <p-tag
+    value="Optimal"
+    severity="success"
+    styleClass="stat-block__tag"
+  ></p-tag>
 </div>
 
 <!-- LARGE variant for hero stats -->
@@ -865,7 +903,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 }
 
 .stat-block__icon {
-  width: var(--space-10);  // 40px
+  width: var(--space-10); // 40px
   height: var(--space-10);
   min-width: var(--space-10);
   border-radius: var(--radius-md);
@@ -903,14 +941,14 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 }
 
 .stat-block__value {
-  font-size: var(--font-size-metric-md);  // 24px
+  font-size: var(--font-size-metric-md); // 24px
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
 }
 
 .stat-block__label {
-  font-size: var(--font-size-caption);  // 13px
+  font-size: var(--font-size-caption); // 13px
   font-weight: var(--font-weight-regular);
   color: var(--color-text-muted);
   line-height: var(--line-height-base);
@@ -920,12 +958,12 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 
 // Large variant (hero stats)
 .stat-block--large .stat-block__value {
-  font-size: var(--font-size-metric-lg);  // 32px
+  font-size: var(--font-size-metric-lg); // 32px
 }
 
 // Compact variant (dense layouts)
 .stat-block--compact .stat-block__value {
-  font-size: var(--font-size-h2);  // 18px
+  font-size: var(--font-size-h2); // 18px
 }
 
 .stat-block__tag {
@@ -938,27 +976,31 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ```scss
 // ❌ FORBIDDEN: Custom stat typography in feature SCSS
 .stat-value {
-  font-size: var(--font-size-h1);     // Wrong token
-  font-size: var(--text-3xl);          // Non-standard token
-  font-size: var(--font-size-h2);      // Should use metric tokens
+  font-size: var(--font-size-h1); // Wrong token
+  font-size: var(--text-3xl); // Non-standard token
+  font-size: var(--font-size-h2); // Should use metric tokens
   font-weight: var(--font-weight-semibold); // Should be bold
 }
 
 .metric-value {
-  font-size: 1.5rem;  // Raw value - forbidden
-  font-size: 24px;    // Raw value - forbidden
+  font-size: 1.5rem; // Raw value - forbidden
+  font-size: 24px; // Raw value - forbidden
 }
 
 // ❌ FORBIDDEN: Inconsistent label styles
 .stat-label {
-  text-transform: capitalize;  // Should be uppercase
-  letter-spacing: normal;      // Should use caption spacing
-  font-size: var(--font-size-h4);  // Wrong token
+  text-transform: capitalize; // Should be uppercase
+  letter-spacing: normal; // Should use caption spacing
+  font-size: var(--font-size-h4); // Wrong token
 }
 
 // ✅ REQUIRED: Use stat-block classes
-.stat-block__value { font-size: var(--font-size-metric-md); }
-.stat-block__label { font-size: var(--font-size-caption); }
+.stat-block__value {
+  font-size: var(--font-size-metric-md);
+}
+.stat-block__label {
+  font-size: var(--font-size-caption);
+}
 ```
 
 ### 9.7 PR Review Checklist - Stats
@@ -1093,6 +1135,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ### 10.1 From `p-card` with styleClass
 
 **Before:**
+
 ```html
 <p-card styleClass="custom-card schedule-card">
   <ng-template pTemplate="header">
@@ -1106,16 +1149,15 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ```
 
 **After:**
+
 ```html
-<app-card-shell
-  title="Today's Schedule"
-  headerIcon="pi-calendar"
->
+<app-card-shell title="Today's Schedule" headerIcon="pi-calendar">
   <div class="schedule-content">...</div>
 </app-card-shell>
 ```
 
 **Delete from SCSS:**
+
 ```scss
 // DELETE ALL OF THIS
 :host ::ng-deep .custom-card { ... }
@@ -1126,6 +1168,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ### 10.2 From `div` with card styling
 
 **Before:**
+
 ```html
 <div class="stat-card">
   <div class="stat-header">
@@ -1139,6 +1182,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ```
 
 **After:**
+
 ```html
 <app-card-shell
   title="Readiness"
@@ -1153,6 +1197,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ### 10.3 From feature-specific panel
 
 **Before:**
+
 ```html
 <div class="analytics-panel">
   <div class="panel-header">
@@ -1166,11 +1211,9 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ```
 
 **After:**
+
 ```html
-<app-card-shell
-  title="Performance Trend"
-  headerIcon="pi-trending-up"
->
+<app-card-shell title="Performance Trend" headerIcon="pi-trending-up">
   <ng-container header-actions>
     <app-button variant="text" size="sm" icon="pi-download">Export</app-button>
   </ng-container>
@@ -1205,24 +1248,24 @@ No feature may define custom table padding, header spacing, or density overrides
 
 ### 12.2 Table-in-Card Rules
 
-| Rule | Token/Value | Notes |
-|------|-------------|-------|
-| **Card body padding** | `0` (flush) | Table fills card body edge-to-edge |
-| **Table header bg** | `--surface-secondary` | Matches card header |
-| **Table header padding** | `--space-3 --space-4` | Default density |
-| **Table header typography** | `--font-label-size` (14px) | Uppercase, `--letter-spacing-wide` |
-| **Table body padding** | `--space-4` | Default density |
-| **Table body padding (compact)** | `--space-2 --space-3` | Compact density |
-| **Row hover** | `--ds-primary-green-ultra-subtle` | Subtle brand tint |
-| **Row border** | `--border-1 solid --color-border-secondary` | Bottom border only |
-| **First/last row radius** | Inherit from card | Rounded corners |
+| Rule                             | Token/Value                                 | Notes                              |
+| -------------------------------- | ------------------------------------------- | ---------------------------------- |
+| **Card body padding**            | `0` (flush)                                 | Table fills card body edge-to-edge |
+| **Table header bg**              | `--surface-secondary`                       | Matches card header                |
+| **Table header padding**         | `--space-3 --space-4`                       | Default density                    |
+| **Table header typography**      | `--font-label-size` (14px)                  | Uppercase, `--letter-spacing-wide` |
+| **Table body padding**           | `--space-4`                                 | Default density                    |
+| **Table body padding (compact)** | `--space-2 --space-3`                       | Compact density                    |
+| **Row hover**                    | `--ds-primary-green-ultra-subtle`           | Subtle brand tint                  |
+| **Row border**                   | `--border-1 solid --color-border-secondary` | Bottom border only                 |
+| **First/last row radius**        | Inherit from card                           | Rounded corners                    |
 
 ### 12.3 Density Variants
 
-| Density | Header Padding | Body Padding | Row Height | Use Case |
-|---------|----------------|--------------|------------|----------|
-| **Default** | `--space-3 --space-4` | `--space-4` | 52px | Standard tables |
-| **Compact** | `--space-2 --space-3` | `--space-2 --space-3` | 40px | Dense data, many rows |
+| Density     | Header Padding        | Body Padding          | Row Height | Use Case              |
+| ----------- | --------------------- | --------------------- | ---------- | --------------------- |
+| **Default** | `--space-3 --space-4` | `--space-4`           | 52px       | Standard tables       |
+| **Compact** | `--space-2 --space-3` | `--space-2 --space-3` | 40px       | Dense data, many rows |
 
 ### 12.4 Table-in-Card Markup (CANONICAL)
 
@@ -1263,10 +1306,7 @@ No feature may define custom table padding, header spacing, or density overrides
   [flush]="true"
   density="compact"
 >
-  <p-table
-    [value]="games()"
-    styleClass="table-compact"
-  >
+  <p-table [value]="games()" styleClass="table-compact">
     <!-- ... -->
   </p-table>
 </app-card-shell>
@@ -1335,9 +1375,9 @@ These styles are defined in `_tables.scss` and `primeng-theme.scss`:
 
 ### 13.1 Allowed Exceptions
 
-| Component | Deviation | Reason | Ticket |
-|-----------|-----------|--------|--------|
-| *None currently* | — | — | — |
+| Component        | Deviation | Reason | Ticket |
+| ---------------- | --------- | ------ | ------ |
+| _None currently_ | —         | —      | —      |
 
 **Default assumption:** No exceptions are needed. If you believe an exception is required, document it with:
 
@@ -1357,18 +1397,23 @@ These styles are defined in `_tables.scss` and `primeng-theme.scss`:
 **Requested by:** @developer
 
 ### Deviation
+
 [What styling differs from Card Shell Contract]
 
 ### Reason
+
 [Why the standard card shell doesn't work]
 
 ### Scope
+
 [Which specific component/feature only]
 
 ### Proposed removal date
+
 [When we expect to remove this exception]
 
 ### Approval
+
 - [ ] Design System Lead
 - [ ] Tech Lead
 ```

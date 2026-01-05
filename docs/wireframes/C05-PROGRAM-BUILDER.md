@@ -248,49 +248,49 @@ Create and manage multi-week training programs with periodization phases, assign
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Program List | View active, draft, archived programs |
-| Program Builder | Create multi-week programs |
-| Periodization | Define training phases |
-| Weekly Schedule | Configure daily sessions |
-| Exercise Library | Add exercises to sessions |
-| Player Assignment | Assign to individual or team |
-| Templates | Save and reuse program templates |
-| Compliance Tracking | Monitor completion rates |
+| Feature             | Description                           |
+| ------------------- | ------------------------------------- |
+| Program List        | View active, draft, archived programs |
+| Program Builder     | Create multi-week programs            |
+| Periodization       | Define training phases                |
+| Weekly Schedule     | Configure daily sessions              |
+| Exercise Library    | Add exercises to sessions             |
+| Player Assignment   | Assign to individual or team          |
+| Templates           | Save and reuse program templates      |
+| Compliance Tracking | Monitor completion rates              |
 
 ---
 
 ## Program Types
 
-| Type | Description |
-|------|-------------|
-| Competition Prep | Tournament/game preparation |
-| Off-Season | General fitness building |
-| In-Season | Maintenance during competition |
-| Return-to-Play | Injury recovery protocol |
-| Position-Specific | Role-focused training |
+| Type              | Description                    |
+| ----------------- | ------------------------------ |
+| Competition Prep  | Tournament/game preparation    |
+| Off-Season        | General fitness building       |
+| In-Season         | Maintenance during competition |
+| Return-to-Play    | Injury recovery protocol       |
+| Position-Specific | Role-focused training          |
 
 ---
 
 ## Periodization Phases
 
-| Phase | Load % | Focus |
-|-------|--------|-------|
-| Foundation | 60-70% | Base fitness, technique |
-| Building | 80-90% | Progressive overload |
-| Peak Load | 95-100% | Maximum training stress |
-| Taper | 40-60% | Recovery before competition |
-| Competition | Variable | Game-day performance |
+| Phase       | Load %   | Focus                       |
+| ----------- | -------- | --------------------------- |
+| Foundation  | 60-70%   | Base fitness, technique     |
+| Building    | 80-90%   | Progressive overload        |
+| Peak Load   | 95-100%  | Maximum training stress     |
+| Taper       | 40-60%   | Recovery before competition |
+| Competition | Variable | Game-day performance        |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Programs | `ProgramService` | `training_programs` |
-| Phases | `ProgramService` | `training_phases` |
-| Weeks | `ProgramService` | `training_weeks` |
-| Sessions | `TrainingService` | `training_sessions` |
-| Exercises | `ExerciseService` | `exercises` |
+| Data      | Service           | Table               |
+| --------- | ----------------- | ------------------- |
+| Programs  | `ProgramService`  | `training_programs` |
+| Phases    | `ProgramService`  | `training_phases`   |
+| Weeks     | `ProgramService`  | `training_weeks`    |
+| Sessions  | `TrainingService` | `training_sessions` |
+| Exercises | `ExerciseService` | `exercises`         |

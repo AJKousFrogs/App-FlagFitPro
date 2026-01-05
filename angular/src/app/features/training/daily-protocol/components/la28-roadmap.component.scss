@@ -280,7 +280,11 @@
 
   /* Ukraine/Olympic colors - intentional brand styling */
   .olympic-countdown {
-    background: linear-gradient(135deg, var(--primitive-blue-600), var(--primitive-yellow-400));
+    background: linear-gradient(
+      135deg,
+      var(--primitive-blue-600),
+      var(--primitive-yellow-400)
+    );
     border-radius: var(--radius-lg);
     padding: var(--space-8);
     text-align: center;

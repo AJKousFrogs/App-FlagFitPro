@@ -83,10 +83,7 @@ interface WindowWithYouTubeAPI {
   selector: "app-youtube-player",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule,
-    ButtonComponent,
-    IconButtonComponent,
-  ],
+  imports: [CommonModule, CardModule, ButtonComponent, IconButtonComponent],
   template: `
     <div class="youtube-player-container">
       @if (loading()) {
@@ -105,9 +102,22 @@ interface WindowWithYouTubeAPI {
 
       @if (showControls()) {
         <div class="player-controls">
-          <app-button [disabled]="!playerReady()" (clicked)="togglePlay()"></app-button>
-          <app-button iconLeft="pi-stop" [disabled]="!playerReady()" (clicked)="stop()">Stop</app-button>
-          <app-icon-button icon="pi-volume-up" [disabled]="!playerReady()" (clicked)="toggleMute()" ariaLabel="volume-up" />
+          <app-button
+            [disabled]="!playerReady()"
+            (clicked)="togglePlay()"
+          ></app-button>
+          <app-button
+            iconLeft="pi-stop"
+            [disabled]="!playerReady()"
+            (clicked)="stop()"
+            >Stop</app-button
+          >
+          <app-icon-button
+            icon="pi-volume-up"
+            [disabled]="!playerReady()"
+            (clicked)="toggleMute()"
+            ariaLabel="volume-up"
+          />
         </div>
       }
 
@@ -125,7 +135,7 @@ interface WindowWithYouTubeAPI {
       }
     </div>
   `,
-  styleUrl: './youtube-player.component.scss',
+  styleUrl: "./youtube-player.component.scss",
 })
 export class YoutubePlayerComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);

@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
@@ -141,7 +141,7 @@ interface NavItem {
       aria-hidden="true"
     ></div>
   `,
-  styleUrl: './sidebar.component.scss',
+  styleUrl: "./sidebar.component.scss",
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   private router = inject(Router);

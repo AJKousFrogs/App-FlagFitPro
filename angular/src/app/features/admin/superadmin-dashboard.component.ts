@@ -92,7 +92,7 @@ interface AdminTeam {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -114,7 +114,9 @@ interface AdminTeam {
             <div class="stat-content">
               <span class="stat-value">{{ stats().totalUsers | number }}</span>
               <span class="stat-label">Total Users</span>
-              <span class="stat-change positive">▲ +{{ stats().usersGrowth }} this mo</span>
+              <span class="stat-change positive"
+                >▲ +{{ stats().usersGrowth }} this mo</span
+              >
             </div>
           </div>
           <div class="stat-card">
@@ -122,7 +124,9 @@ interface AdminTeam {
             <div class="stat-content">
               <span class="stat-value">{{ stats().activeTeams }}</span>
               <span class="stat-label">Active Teams</span>
-              <span class="stat-change positive">▲ +{{ stats().teamsGrowth }} this mo</span>
+              <span class="stat-change positive"
+                >▲ +{{ stats().teamsGrowth }} this mo</span
+              >
             </div>
           </div>
           <div class="stat-card">
@@ -130,7 +134,9 @@ interface AdminTeam {
             <div class="stat-content">
               <span class="stat-value">{{ stats().dailyActive }}</span>
               <span class="stat-label">Daily Active</span>
-              <span class="stat-sub">{{ stats().dailyActivePercent }}% of users</span>
+              <span class="stat-sub"
+                >{{ stats().dailyActivePercent }}% of users</span
+              >
             </div>
           </div>
           <div class="stat-card" [class.warning]="stats().openIssues > 0">
@@ -149,7 +155,9 @@ interface AdminTeam {
             <div class="stat-content">
               <span class="stat-value">{{ stats().dbSize }}</span>
               <span class="stat-label">DB Size</span>
-              <span class="stat-sub" [class.warning]="stats().dbPercent > 70">{{ stats().dbPercent }}% of limit</span>
+              <span class="stat-sub" [class.warning]="stats().dbPercent > 70"
+                >{{ stats().dbPercent }}% of limit</span
+              >
             </div>
           </div>
           <div class="stat-card">
@@ -157,7 +165,9 @@ interface AdminTeam {
             <div class="stat-content">
               <span class="stat-value">{{ stats().apiRequests | number }}</span>
               <span class="stat-label">API Requests (24h)</span>
-              <span class="stat-change positive">▲ +{{ stats().apiGrowth }}% vs avg</span>
+              <span class="stat-change positive"
+                >▲ +{{ stats().apiGrowth }}% vs avg</span
+              >
             </div>
           </div>
           <div class="stat-card">
@@ -231,20 +241,29 @@ interface AdminTeam {
           <div class="activity-list">
             @for (log of recentActivity(); track log.id) {
               <div class="activity-item" [class]="'type-' + log.type">
-                <span class="activity-icon">{{ getActivityIcon(log.type) }}</span>
+                <span class="activity-icon">{{
+                  getActivityIcon(log.type)
+                }}</span>
                 <div class="activity-content">
                   <strong>{{ log.title }}</strong>
                   <p>{{ log.description }}</p>
                 </div>
                 <span class="activity-time">{{ log.timestamp }}</span>
-                @if (log.type === 'error' || log.type === 'ticket') {
-                  <app-button variant="text" size="sm" (clicked)="viewActivityDetails(log)">View Details</app-button>
+                @if (log.type === "error" || log.type === "ticket") {
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    (clicked)="viewActivityDetails(log)"
+                    >View Details</app-button
+                  >
                 }
               </div>
             }
           </div>
           <div class="activity-footer">
-            <app-button variant="text" (clicked)="viewAllActivity()">View All Activity →</app-button>
+            <app-button variant="text" (clicked)="viewAllActivity()"
+              >View All Activity →</app-button
+            >
           </div>
         </p-card>
 
@@ -258,11 +277,20 @@ interface AdminTeam {
           <div class="service-list">
             @for (service of services(); track service.name) {
               <div class="service-row">
-                <span class="service-status" [class]="'status-' + service.status">
+                <span
+                  class="service-status"
+                  [class]="'status-' + service.status"
+                >
                   @switch (service.status) {
-                    @case ('healthy') { 🟢 }
-                    @case ('warning') { 🟡 }
-                    @case ('error') { 🔴 }
+                    @case ("healthy") {
+                      🟢
+                    }
+                    @case ("warning") {
+                      🟡
+                    }
+                    @case ("error") {
+                      🔴
+                    }
                   }
                 </span>
                 <span class="service-name">{{ service.name }}</span>
@@ -271,9 +299,15 @@ interface AdminTeam {
             }
           </div>
           <div class="service-actions">
-            <app-button variant="secondary" (clicked)="viewMetrics()">View Detailed Metrics</app-button>
-            <app-button variant="secondary" (clicked)="viewLogs()">View Logs</app-button>
-            <app-button variant="secondary" (clicked)="runHealthCheck()">Run Health Check</app-button>
+            <app-button variant="secondary" (clicked)="viewMetrics()"
+              >View Detailed Metrics</app-button
+            >
+            <app-button variant="secondary" (clicked)="viewLogs()"
+              >View Logs</app-button
+            >
+            <app-button variant="secondary" (clicked)="runHealthCheck()"
+              >Run Health Check</app-button
+            >
           </div>
         </p-card>
       </div>
@@ -288,10 +322,27 @@ interface AdminTeam {
         <div class="management-filters">
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
-            <input type="text" pInputText [(ngModel)]="userSearch" placeholder="Search users..." />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="userSearch"
+              placeholder="Search users..."
+            />
           </span>
-          <p-select [options]="roleOptions" [(ngModel)]="roleFilter" optionLabel="label" optionValue="value" placeholder="Role"></p-select>
-          <p-select [options]="statusOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Status"></p-select>
+          <p-select
+            [options]="roleOptions"
+            [(ngModel)]="roleFilter"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Role"
+          ></p-select>
+          <p-select
+            [options]="statusOptions"
+            [(ngModel)]="statusFilter"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Status"
+          ></p-select>
         </div>
 
         <p-table [value]="filteredUsers()" [paginator]="true" [rows]="10">
@@ -309,11 +360,19 @@ interface AdminTeam {
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>
-                <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"></p-tag>
+                <p-tag
+                  [value]="user.role"
+                  [severity]="getRoleSeverity(user.role)"
+                ></p-tag>
               </td>
-              <td>{{ user.team || '--' }}</td>
+              <td>{{ user.team || "--" }}</td>
               <td>
-                <app-button variant="text" iconLeft="pi-ellipsis-v" (clicked)="openUserMenu(user)">User actions</app-button>
+                <app-button
+                  variant="text"
+                  iconLeft="pi-ellipsis-v"
+                  (clicked)="openUserMenu(user)"
+                  >User actions</app-button
+                >
               </td>
             </tr>
           </ng-template>
@@ -345,10 +404,15 @@ interface AdminTeam {
               <td>{{ team.playerCount }}</td>
               <td>{{ team.createdDate }}</td>
               <td>
-                <p-tag [value]="team.status" [severity]="getTeamStatusSeverity(team.status)"></p-tag>
+                <p-tag
+                  [value]="team.status"
+                  [severity]="getTeamStatusSeverity(team.status)"
+                ></p-tag>
               </td>
               <td>
-                <app-button variant="text" iconLeft="pi-ellipsis-v">Team actions</app-button>
+                <app-button variant="text" iconLeft="pi-ellipsis-v"
+                  >Team actions</app-button
+                >
               </td>
             </tr>
           </ng-template>
@@ -420,8 +484,7 @@ export class SuperadminDashboardComponent implements OnInit {
       const q = this.userSearch.toLowerCase();
       result = result.filter(
         (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q)
+          u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q),
       );
     }
 
@@ -445,7 +508,9 @@ export class SuperadminDashboardComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/admin/dashboard"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/admin/dashboard"),
+      );
       if (response?.success && response.data) {
         this.stats.set(response.data.stats || {});
         this.recentActivity.set(response.data.activity || []);
@@ -505,7 +570,7 @@ export class SuperadminDashboardComponent implements OnInit {
       {
         id: "4",
         type: "ticket",
-        title: "Support ticket opened: \"Can't login\" - Priority High",
+        title: 'Support ticket opened: "Can\'t login" - Priority High',
         description: "User: confused.user@email.com",
         timestamp: "3 hours ago",
         priority: "high",
@@ -513,27 +578,110 @@ export class SuperadminDashboardComponent implements OnInit {
     ]);
 
     this.services.set([
-      { name: "API Server", status: "healthy", detail: "Healthy • 142ms avg response" },
-      { name: "Database (Supabase)", status: "healthy", detail: "Healthy • 2.4GB / 8GB" },
-      { name: "Authentication", status: "healthy", detail: "Healthy • 0 failed auth (last hour)" },
-      { name: "Edge Functions", status: "healthy", detail: "Healthy • 23 active functions" },
+      {
+        name: "API Server",
+        status: "healthy",
+        detail: "Healthy • 142ms avg response",
+      },
+      {
+        name: "Database (Supabase)",
+        status: "healthy",
+        detail: "Healthy • 2.4GB / 8GB",
+      },
+      {
+        name: "Authentication",
+        status: "healthy",
+        detail: "Healthy • 0 failed auth (last hour)",
+      },
+      {
+        name: "Edge Functions",
+        status: "healthy",
+        detail: "Healthy • 23 active functions",
+      },
       { name: "Storage", status: "warning", detail: "Warning • 78% capacity" },
-      { name: "Real-time", status: "healthy", detail: "Healthy • 156 active connections" },
+      {
+        name: "Real-time",
+        status: "healthy",
+        detail: "Healthy • 156 active connections",
+      },
     ]);
 
     this.users.set([
-      { id: "1", name: "Mike Johnson", email: "mike@team.com", role: "coach", team: "Panthers", status: "active" },
-      { id: "2", name: "Sarah Chen", email: "sarah@email.com", role: "player", team: "Panthers", status: "active" },
-      { id: "3", name: "John Smith", email: "john@newteam.com", role: "coach", team: "Thunder", status: "active" },
-      { id: "4", name: "Emily Brown", email: "emily@email.com", role: "player", team: "Eagles", status: "active" },
-      { id: "5", name: "Admin User", email: "admin@flagfit.com", role: "admin", team: "", status: "active" },
+      {
+        id: "1",
+        name: "Mike Johnson",
+        email: "mike@team.com",
+        role: "coach",
+        team: "Panthers",
+        status: "active",
+      },
+      {
+        id: "2",
+        name: "Sarah Chen",
+        email: "sarah@email.com",
+        role: "player",
+        team: "Panthers",
+        status: "active",
+      },
+      {
+        id: "3",
+        name: "John Smith",
+        email: "john@newteam.com",
+        role: "coach",
+        team: "Thunder",
+        status: "active",
+      },
+      {
+        id: "4",
+        name: "Emily Brown",
+        email: "emily@email.com",
+        role: "player",
+        team: "Eagles",
+        status: "active",
+      },
+      {
+        id: "5",
+        name: "Admin User",
+        email: "admin@flagfit.com",
+        role: "admin",
+        team: "",
+        status: "active",
+      },
     ]);
 
     this.teams.set([
-      { id: "1", name: "Panthers", coach: "Mike Johnson", playerCount: 15, createdDate: "Sep 2025", status: "active" },
-      { id: "2", name: "Eagles", coach: "Sarah Williams", playerCount: 12, createdDate: "Oct 2025", status: "active" },
-      { id: "3", name: "Thunder Bolts", coach: "John Smith", playerCount: 3, createdDate: "Today", status: "new" },
-      { id: "4", name: "Hawks", coach: "Lisa Davis", playerCount: 18, createdDate: "Aug 2025", status: "active" },
+      {
+        id: "1",
+        name: "Panthers",
+        coach: "Mike Johnson",
+        playerCount: 15,
+        createdDate: "Sep 2025",
+        status: "active",
+      },
+      {
+        id: "2",
+        name: "Eagles",
+        coach: "Sarah Williams",
+        playerCount: 12,
+        createdDate: "Oct 2025",
+        status: "active",
+      },
+      {
+        id: "3",
+        name: "Thunder Bolts",
+        coach: "John Smith",
+        playerCount: 3,
+        createdDate: "Today",
+        status: "new",
+      },
+      {
+        id: "4",
+        name: "Hawks",
+        coach: "Lisa Davis",
+        playerCount: 18,
+        createdDate: "Aug 2025",
+        status: "active",
+      },
     ]);
   }
 
@@ -547,54 +695,102 @@ export class SuperadminDashboardComponent implements OnInit {
   }
 
   openAnalytics(): void {
-    this.messageService.add({ severity: "info", summary: "Analytics", detail: "Opening analytics dashboard" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Analytics",
+      detail: "Opening analytics dashboard",
+    });
   }
 
   openSettings(): void {
-    this.messageService.add({ severity: "info", summary: "Settings", detail: "Opening system settings" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Settings",
+      detail: "Opening system settings",
+    });
   }
 
   openAuditLogs(): void {
-    this.messageService.add({ severity: "info", summary: "Audit Logs", detail: "Opening audit logs" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Audit Logs",
+      detail: "Opening audit logs",
+    });
   }
 
   openSupportTickets(): void {
-    this.messageService.add({ severity: "info", summary: "Support", detail: "Opening support tickets" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Support",
+      detail: "Opening support tickets",
+    });
   }
 
   openBroadcasts(): void {
-    this.messageService.add({ severity: "info", summary: "Broadcasts", detail: "Opening broadcast system" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Broadcasts",
+      detail: "Opening broadcast system",
+    });
   }
 
   openBackups(): void {
-    this.messageService.add({ severity: "info", summary: "Backups", detail: "Opening backup management" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Backups",
+      detail: "Opening backup management",
+    });
   }
 
   // Activity
   viewActivityDetails(log: ActivityLog): void {
-    this.messageService.add({ severity: "info", summary: "Details", detail: log.title });
+    this.messageService.add({
+      severity: "info",
+      summary: "Details",
+      detail: log.title,
+    });
   }
 
   viewAllActivity(): void {
-    this.messageService.add({ severity: "info", summary: "Activity", detail: "Opening all activity log" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Activity",
+      detail: "Opening all activity log",
+    });
   }
 
   // Services
   viewMetrics(): void {
-    this.messageService.add({ severity: "info", summary: "Metrics", detail: "Opening detailed metrics" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Metrics",
+      detail: "Opening detailed metrics",
+    });
   }
 
   viewLogs(): void {
-    this.messageService.add({ severity: "info", summary: "Logs", detail: "Opening system logs" });
+    this.messageService.add({
+      severity: "info",
+      summary: "Logs",
+      detail: "Opening system logs",
+    });
   }
 
   runHealthCheck(): void {
-    this.messageService.add({ severity: "success", summary: "Health Check", detail: "All systems operational" });
+    this.messageService.add({
+      severity: "success",
+      summary: "Health Check",
+      detail: "All systems operational",
+    });
   }
 
   // User Management
   openUserMenu(user: AdminUser): void {
-    this.messageService.add({ severity: "info", summary: "User Actions", detail: `Actions for ${user.name}` });
+    this.messageService.add({
+      severity: "info",
+      summary: "User Actions",
+      detail: `Actions for ${user.name}`,
+    });
   }
 
   // Helpers
@@ -608,8 +804,13 @@ export class SuperadminDashboardComponent implements OnInit {
     return icons[type] || "📋";
   }
 
-  getRoleSeverity(role: string): "success" | "info" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary"> = {
+  getRoleSeverity(
+    role: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary"
+    > = {
       coach: "success",
       player: "info",
       parent: "secondary",
@@ -618,8 +819,13 @@ export class SuperadminDashboardComponent implements OnInit {
     return severities[role] || "secondary";
   }
 
-  getTeamStatusSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary"> = {
+  getTeamStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary"
+    > = {
       active: "success",
       inactive: "secondary",
       new: "warn",

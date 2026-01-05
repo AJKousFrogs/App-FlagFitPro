@@ -109,7 +109,7 @@ const ROUTES = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -123,7 +123,9 @@ const ROUTES = [
           subtitle="Create and manage team plays"
           icon="pi-book"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">New Play</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+            >New Play</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -231,7 +233,9 @@ const ROUTES = [
               <div class="play-card">
                 <div class="play-diagram">
                   <div class="diagram-placeholder">
-                    <span class="formation-label">{{ getFormationLabel(play.formation) }}</span>
+                    <span class="formation-label">{{
+                      getFormationLabel(play.formation)
+                    }}</span>
                     <div class="mini-field">
                       <div class="end-zone"></div>
                       <div class="player-positions">
@@ -249,12 +253,15 @@ const ROUTES = [
                 <div class="play-info">
                   <h4>{{ play.name }}</h4>
                   <p class="play-details">
-                    {{ getFormationLabel(play.formation) }} • {{ getSituationLabel(play.situation) }}
+                    {{ getFormationLabel(play.formation) }} •
+                    {{ getSituationLabel(play.situation) }}
                   </p>
                 </div>
 
                 <div class="memorization-bar">
-                  <span class="mem-label">Team Memorized: {{ play.teamMemorized }}%</span>
+                  <span class="mem-label"
+                    >Team Memorized: {{ play.teamMemorized }}%</span
+                  >
                   <p-progressBar
                     [value]="play.teamMemorized"
                     [showValue]="false"
@@ -266,10 +273,34 @@ const ROUTES = [
                 </div>
 
                 <div class="play-actions">
-                  <app-button variant="secondary" size="sm" iconLeft="pi-pencil" (clicked)="editPlay(play)">Edit</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-eye" (clicked)="viewPlay(play)">View</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-chart-bar" (clicked)="viewStats(play)">Stats</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-archive" (clicked)="archivePlay(play)">Archive play</app-button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    iconLeft="pi-pencil"
+                    (clicked)="editPlay(play)"
+                    >Edit</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-eye"
+                    (clicked)="viewPlay(play)"
+                    >View</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-chart-bar"
+                    (clicked)="viewStats(play)"
+                    >Stats</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-archive"
+                    (clicked)="archivePlay(play)"
+                    >Archive play</app-button
+                  >
                 </div>
               </div>
             }
@@ -280,7 +311,9 @@ const ROUTES = [
               <i class="pi pi-book"></i>
               <h3>No Plays Found</h3>
               <p>Create your first play to get started</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Play</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+                >Create Play</app-button
+              >
             </div>
           </p-card>
         }
@@ -313,11 +346,27 @@ const ROUTES = [
                 </div>
                 <div class="designer-tools">
                   <span class="tool-label">Tools:</span>
-                  <app-button variant="secondary" size="sm" iconLeft="pi-arrows-alt">Select</app-button>
-                  <app-button variant="secondary" size="sm" iconLeft="pi-pencil">Draw</app-button>
-                  <app-button variant="secondary" size="sm" iconLeft="pi-map-marker">Add player</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-trash">Delete</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-undo">Undo</app-button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    iconLeft="pi-arrows-alt"
+                    >Select</app-button
+                  >
+                  <app-button variant="secondary" size="sm" iconLeft="pi-pencil"
+                    >Draw</app-button
+                  >
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    iconLeft="pi-map-marker"
+                    >Add player</app-button
+                  >
+                  <app-button variant="text" size="sm" iconLeft="pi-trash"
+                    >Delete</app-button
+                  >
+                  <app-button variant="text" size="sm" iconLeft="pi-undo"
+                    >Undo</app-button
+                  >
                 </div>
                 <div class="route-buttons">
                   <span class="tool-label">Routes:</span>
@@ -373,11 +422,21 @@ const ROUTES = [
                 <label>Type</label>
                 <div class="radio-group">
                   <div class="radio-option">
-                    <p-radioButton name="type" value="offense" [(ngModel)]="playForm.type" inputId="typeOff"></p-radioButton>
+                    <p-radioButton
+                      name="type"
+                      value="offense"
+                      [(ngModel)]="playForm.type"
+                      inputId="typeOff"
+                    ></p-radioButton>
                     <label for="typeOff">Offense</label>
                   </div>
                   <div class="radio-option">
-                    <p-radioButton name="type" value="defense" [(ngModel)]="playForm.type" inputId="typeDef"></p-radioButton>
+                    <p-radioButton
+                      name="type"
+                      value="defense"
+                      [(ngModel)]="playForm.type"
+                      inputId="typeDef"
+                    ></p-radioButton>
                     <label for="typeDef">Defense</label>
                   </div>
                 </div>
@@ -385,12 +444,22 @@ const ROUTES = [
 
               <h4>Assignments</h4>
               <div class="assignments-section">
-                @for (assignment of playForm.assignments; track assignment.position) {
-                  <div class="assignment-item" [class.primary]="assignment.isPrimary">
+                @for (
+                  assignment of playForm.assignments;
+                  track assignment.position
+                ) {
+                  <div
+                    class="assignment-item"
+                    [class.primary]="assignment.isPrimary"
+                  >
                     <div class="assignment-header">
                       <strong>{{ assignment.position }}</strong>
                       @if (assignment.isPrimary) {
-                        <p-tag value="PRIMARY" severity="success" [style]="{ fontSize: '0.6rem' }"></p-tag>
+                        <p-tag
+                          value="PRIMARY"
+                          severity="success"
+                          [style]="{ fontSize: '0.6rem' }"
+                        ></p-tag>
                       }
                     </div>
                     <textarea
@@ -415,8 +484,15 @@ const ROUTES = [
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showPlayDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" [disabled]="!playForm.name" (clicked)="savePlay()">Save Play</app-button>
+          <app-button variant="secondary" (clicked)="showPlayDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="!playForm.name"
+            (clicked)="savePlay()"
+            >Save Play</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -431,7 +507,11 @@ const ROUTES = [
           <div class="stats-content">
             <div class="stats-header">
               <h3>{{ selectedPlay()?.name }}</h3>
-              <p>Team Memorization: {{ selectedPlay()?.teamMemorized }}% ({{ memorizedCount() }}/{{ totalPlayers() }} players)</p>
+              <p>
+                Team Memorization: {{ selectedPlay()?.teamMemorized }}% ({{
+                  memorizedCount()
+                }}/{{ totalPlayers() }} players)
+              </p>
             </div>
 
             <div class="memorization-section">
@@ -441,8 +521,12 @@ const ROUTES = [
                   <div class="player-row">
                     <span class="status-icon">✅</span>
                     <span class="player-name">{{ status.playerName }}</span>
-                    <span class="memorized-date">Memorized {{ status.memorizedAt }}</span>
-                    <span class="quiz-score">Quiz: {{ status.quizScore }}%</span>
+                    <span class="memorized-date"
+                      >Memorized {{ status.memorizedAt }}</span
+                    >
+                    <span class="quiz-score"
+                      >Quiz: {{ status.quizScore }}%</span
+                    >
                   </div>
                 }
               </div>
@@ -456,8 +540,15 @@ const ROUTES = [
                     <div class="player-row">
                       <span class="status-icon">🔄</span>
                       <span class="player-name">{{ status.playerName }}</span>
-                      <span class="last-studied">{{ status.lastStudied || 'Never studied' }}</span>
-                      <app-button variant="secondary" size="sm" (clicked)="sendReminder(status)">Send Reminder</app-button>
+                      <span class="last-studied">{{
+                        status.lastStudied || "Never studied"
+                      }}</span>
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        (clicked)="sendReminder(status)"
+                        >Send Reminder</app-button
+                      >
                     </div>
                   }
                 </div>
@@ -465,7 +556,13 @@ const ROUTES = [
             }
 
             <div class="stats-actions">
-              <app-button variant="secondary" iconLeft="pi-bell" [disabled]="needsReviewPlayers().length === 0" (clicked)="sendAllReminders()">Send Reminder to All Unmemorized</app-button>
+              <app-button
+                variant="secondary"
+                iconLeft="pi-bell"
+                [disabled]="needsReviewPlayers().length === 0"
+                (clicked)="sendAllReminders()"
+                >Send Reminder to All Unmemorized</app-button
+              >
             </div>
           </div>
         }
@@ -480,7 +577,9 @@ export class PlaybookManagerComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   // State
-  readonly activeTab = signal<"all" | "offense" | "defense" | "special" | "archived">("all");
+  readonly activeTab = signal<
+    "all" | "offense" | "defense" | "special" | "archived"
+  >("all");
   readonly plays = signal<Play[]>([]);
   readonly memorizationData = signal<MemorizationStatus[]>([]);
   readonly selectedPlay = signal<Play | null>(null);
@@ -537,30 +636,36 @@ export class PlaybookManagerComponent implements OnInit {
     return result;
   });
 
-  readonly totalPlays = computed(() =>
-    this.plays().filter((p) => p.status === "active").length
+  readonly totalPlays = computed(
+    () => this.plays().filter((p) => p.status === "active").length,
   );
 
-  readonly offensePlays = computed(() =>
-    this.plays().filter((p) => p.type === "offense" && p.status === "active").length
+  readonly offensePlays = computed(
+    () =>
+      this.plays().filter((p) => p.type === "offense" && p.status === "active")
+        .length,
   );
 
-  readonly defensePlays = computed(() =>
-    this.plays().filter((p) => p.type === "defense" && p.status === "active").length
+  readonly defensePlays = computed(
+    () =>
+      this.plays().filter((p) => p.type === "defense" && p.status === "active")
+        .length,
   );
 
   readonly avgMemorized = computed(() => {
     const active = this.plays().filter((p) => p.status === "active");
     if (active.length === 0) return 0;
-    return Math.round(active.reduce((sum, p) => sum + p.teamMemorized, 0) / active.length);
+    return Math.round(
+      active.reduce((sum, p) => sum + p.teamMemorized, 0) / active.length,
+    );
   });
 
   readonly memorizedPlayers = computed(() =>
-    this.memorizationData().filter((m) => m.status === "memorized")
+    this.memorizationData().filter((m) => m.status === "memorized"),
   );
 
   readonly needsReviewPlayers = computed(() =>
-    this.memorizationData().filter((m) => m.status !== "memorized")
+    this.memorizationData().filter((m) => m.status !== "memorized"),
   );
 
   readonly memorizedCount = computed(() => this.memorizedPlayers().length);
@@ -576,7 +681,9 @@ export class PlaybookManagerComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/playbook"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/playbook"),
+      );
       if (response?.success && response.data?.plays) {
         this.plays.set(response.data.plays);
       }
@@ -622,7 +729,10 @@ export class PlaybookManagerComponent implements OnInit {
       formation: play.formation,
       situation: play.situation,
       type: play.type,
-      assignments: play.assignments.map((a) => ({ ...a, instructions: [...a.instructions] })),
+      assignments: play.assignments.map((a) => ({
+        ...a,
+        instructions: [...a.instructions],
+      })),
       coachNotes: play.coachNotes,
     };
     this.showPlayDialog = true;
@@ -655,7 +765,9 @@ export class PlaybookManagerComponent implements OnInit {
 
   archivePlay(play: Play): void {
     this.plays.update((plays) =>
-      plays.map((p) => (p.id === play.id ? { ...p, status: "archived" as const } : p))
+      plays.map((p) =>
+        p.id === play.id ? { ...p, status: "archived" as const } : p,
+      ),
     );
     this.messageService.add({
       severity: "info",

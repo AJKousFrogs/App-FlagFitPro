@@ -99,7 +99,10 @@ input.has-suffix {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .password-toggle:hover {
@@ -159,4 +162,3 @@ input.has-suffix {
     transition: none;
   }
 }
-

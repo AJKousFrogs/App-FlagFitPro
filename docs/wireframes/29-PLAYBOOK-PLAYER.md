@@ -255,52 +255,52 @@ Allows players to study team plays, memorize their assignments, and track their 
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Play Cards | Visual diagram + formation + situation |
-| Progress Tracking | Memorized count, % complete |
-| Position Filter | See only plays for your position |
-| My Assignment | Highlighted view of your specific route |
-| Key Points | Coach-provided tips for execution |
-| Common Mistakes | What to avoid |
-| QB Reads | Understand where you fit in progression |
-| Quiz Mode | Test your knowledge |
-| Review Reminders | Plays not studied in 7+ days |
+| Feature           | Description                             |
+| ----------------- | --------------------------------------- |
+| Play Cards        | Visual diagram + formation + situation  |
+| Progress Tracking | Memorized count, % complete             |
+| Position Filter   | See only plays for your position        |
+| My Assignment     | Highlighted view of your specific route |
+| Key Points        | Coach-provided tips for execution       |
+| Common Mistakes   | What to avoid                           |
+| QB Reads          | Understand where you fit in progression |
+| Quiz Mode         | Test your knowledge                     |
+| Review Reminders  | Plays not studied in 7+ days            |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Play Card Grid | ❌ | HIGH |
-| Progress Stats | ❌ | HIGH |
-| Play Detail View | ❌ | HIGH |
-| My Assignment Section | ❌ | HIGH |
-| All Assignments Table | ❌ | MEDIUM |
-| QB Reads Display | ❌ | MEDIUM |
-| Coach Notes | ❌ | MEDIUM |
-| Quiz Mode | ❌ | LOW |
-| Mark as Memorized | ❌ | HIGH |
-| Review Reminders | ❌ | MEDIUM |
-| Formation Filters | ❌ | MEDIUM |
+| Feature               | Status | Priority |
+| --------------------- | ------ | -------- |
+| Play Card Grid        | ❌     | HIGH     |
+| Progress Stats        | ❌     | HIGH     |
+| Play Detail View      | ❌     | HIGH     |
+| My Assignment Section | ❌     | HIGH     |
+| All Assignments Table | ❌     | MEDIUM   |
+| QB Reads Display      | ❌     | MEDIUM   |
+| Coach Notes           | ❌     | MEDIUM   |
+| Quiz Mode             | ❌     | LOW      |
+| Mark as Memorized     | ❌     | HIGH     |
+| Review Reminders      | ❌     | MEDIUM   |
+| Formation Filters     | ❌     | MEDIUM   |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Plays | `PlaybookService` | `playbook_plays` |
-| Assignments | `PlaybookService` | `play_assignments` |
+| Data            | Service           | Table                      |
+| --------------- | ----------------- | -------------------------- |
+| Plays           | `PlaybookService` | `playbook_plays`           |
+| Assignments     | `PlaybookService` | `play_assignments`         |
 | Player progress | `PlaybookService` | `player_playbook_progress` |
-| Quiz scores | `PlaybookService` | `playbook_quiz_scores` |
+| Quiz scores     | `PlaybookService` | `playbook_quiz_scores`     |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Training Videos | `/videos` | Position-specific technique videos |
-| Today's Practice | `/today` | Practice may include specific plays |
+| Page             | Route     | Relationship                        |
+| ---------------- | --------- | ----------------------------------- |
+| Training Videos  | `/videos` | Position-specific technique videos  |
+| Today's Practice | `/today`  | Practice may include specific plays |

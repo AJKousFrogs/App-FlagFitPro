@@ -144,11 +144,7 @@ interface AnalyticsData {
           <ng-template pTemplate="header">
             <div class="chart-header">
               <h3>Weekly Progress</h3>
-              <p-tag
-                [value]="'Last 4 weeks'"
-                
-                severity="secondary"
-              ></p-tag>
+              <p-tag [value]="'Last 4 weeks'" severity="secondary"></p-tag>
             </div>
           </ng-template>
           <div class="chart-container">
@@ -206,7 +202,7 @@ interface AnalyticsData {
       }
     </div>
   `,
-  styleUrl: './session-analytics.component.scss',
+  styleUrl: "./session-analytics.component.scss",
 })
 export class SessionAnalyticsComponent implements OnInit {
   private apiService = inject(ApiService);

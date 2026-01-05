@@ -1,13 +1,13 @@
-import { 
-  Component, 
-  signal, 
-  inject, 
-  output, 
-  input, 
+import {
+  Component,
+  signal,
+  inject,
+  output,
+  input,
   computed,
   effect,
   ChangeDetectionStrategy,
-  OnInit 
+  OnInit,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
@@ -45,11 +45,11 @@ export interface ReadinessResult {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule, 
-    Slider, 
-    Checkbox, 
-    DialogModule, 
-    TagModule, 
+    FormsModule,
+    Slider,
+    Checkbox,
+    DialogModule,
+    TagModule,
     TooltipModule,
     ButtonComponent,
     IconButtonComponent,
@@ -68,7 +68,11 @@ export interface ReadinessResult {
     } @else {
       <div class="checkin-complete" (click)="showDialog.set(true)">
         <div class="readiness-display">
-          <span class="readiness-score" [class]="getReadinessClass(readinessScore())">{{ readinessScore() }}</span>
+          <span
+            class="readiness-score"
+            [class]="getReadinessClass(readinessScore())"
+            >{{ readinessScore() }}</span
+          >
           <span class="readiness-label">Readiness</span>
         </div>
         <div class="wellness-summary">
@@ -85,7 +89,12 @@ export interface ReadinessResult {
             <span>{{ getSorenessLabel(wellnessData().muscleSoreness) }}</span>
           </div>
         </div>
-        <app-icon-button icon="pi-pencil" variant="text" size="sm" ariaLabel="Edit check-in" />
+        <app-icon-button
+          icon="pi-pencil"
+          variant="text"
+          size="sm"
+          ariaLabel="Edit check-in"
+        />
       </div>
     }
 
@@ -104,17 +113,19 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">😴</span>
             <span>Sleep Quality</span>
-            <span class="value-badge">{{ getSleepLabel(formData().sleepQuality) }}</span>
+            <span class="value-badge">{{
+              getSleepLabel(formData().sleepQuality)
+            }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Poor</span>
-            <p-slider 
-              [ngModel]="formData().sleepQuality" 
+            <p-slider
+              [ngModel]="formData().sleepQuality"
               (ngModelChange)="updateFormField('sleepQuality', $event)"
-              [min]="1" 
-              [max]="5" 
-              [step]="1" 
-              styleClass="flex-1" 
+              [min]="1"
+              [max]="5"
+              [step]="1"
+              styleClass="flex-1"
             />
             <span class="slider-label">Excellent</span>
           </div>
@@ -129,13 +140,13 @@ export interface ReadinessResult {
           </label>
           <div class="slider-row">
             <span class="slider-label">4h</span>
-            <p-slider 
-              [ngModel]="formData().sleepHours" 
+            <p-slider
+              [ngModel]="formData().sleepHours"
               (ngModelChange)="updateFormField('sleepHours', $event)"
-              [min]="4" 
-              [max]="12" 
-              [step]="0.5" 
-              styleClass="flex-1" 
+              [min]="4"
+              [max]="12"
+              [step]="0.5"
+              styleClass="flex-1"
             />
             <span class="slider-label">12h</span>
           </div>
@@ -146,17 +157,19 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">⚡</span>
             <span>Energy Level</span>
-            <span class="value-badge">{{ getEnergyLabel(formData().energyLevel) }}</span>
+            <span class="value-badge">{{
+              getEnergyLabel(formData().energyLevel)
+            }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Exhausted</span>
-            <p-slider 
-              [ngModel]="formData().energyLevel" 
+            <p-slider
+              [ngModel]="formData().energyLevel"
               (ngModelChange)="updateFormField('energyLevel', $event)"
-              [min]="1" 
-              [max]="5" 
-              [step]="1" 
-              styleClass="flex-1" 
+              [min]="1"
+              [max]="5"
+              [step]="1"
+              styleClass="flex-1"
             />
             <span class="slider-label">Energized</span>
           </div>
@@ -167,17 +180,19 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">💪</span>
             <span>Muscle Soreness</span>
-            <span class="value-badge">{{ getSorenessLabel(formData().muscleSoreness) }}</span>
+            <span class="value-badge">{{
+              getSorenessLabel(formData().muscleSoreness)
+            }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Very Sore</span>
-            <p-slider 
-              [ngModel]="formData().muscleSoreness" 
+            <p-slider
+              [ngModel]="formData().muscleSoreness"
               (ngModelChange)="updateFormField('muscleSoreness', $event)"
-              [min]="1" 
-              [max]="5" 
-              [step]="1" 
-              styleClass="flex-1" 
+              [min]="1"
+              [max]="5"
+              [step]="1"
+              styleClass="flex-1"
             />
             <span class="slider-label">No Soreness</span>
           </div>
@@ -210,17 +225,19 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">🧠</span>
             <span>Stress Level</span>
-            <span class="value-badge">{{ getStressLabel(formData().stressLevel) }}</span>
+            <span class="value-badge">{{
+              getStressLabel(formData().stressLevel)
+            }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Very High</span>
-            <p-slider 
-              [ngModel]="formData().stressLevel" 
+            <p-slider
+              [ngModel]="formData().stressLevel"
               (ngModelChange)="updateFormField('stressLevel', $event)"
-              [min]="1" 
-              [max]="5" 
-              [step]="1" 
-              styleClass="flex-1" 
+              [min]="1"
+              [max]="5"
+              [step]="1"
+              styleClass="flex-1"
             />
             <span class="slider-label">Very Low</span>
           </div>
@@ -232,11 +249,11 @@ export interface ReadinessResult {
             <span class="label-icon">📝</span>
             <span>Notes (optional)</span>
           </label>
-          <textarea 
-            p-textarea 
-            [ngModel]="formData().notes || ''" 
+          <textarea
+            p-textarea
+            [ngModel]="formData().notes || ''"
             (ngModelChange)="updateFormField('notes', $event)"
-            rows="2" 
+            rows="2"
             placeholder="Any additional notes..."
           ></textarea>
         </div>
@@ -244,20 +261,32 @@ export interface ReadinessResult {
         <!-- Preview Score -->
         <div class="readiness-preview">
           <div class="preview-label">Estimated Readiness Score</div>
-          <div class="preview-score" [class]="getReadinessClass(previewScore())">
+          <div
+            class="preview-score"
+            [class]="getReadinessClass(previewScore())"
+          >
             {{ previewScore() }}
           </div>
-          <div class="preview-recommendation">{{ getRecommendation(previewScore()) }}</div>
+          <div class="preview-recommendation">
+            {{ getRecommendation(previewScore()) }}
+          </div>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="text" (clicked)="showDialog.set(false)">Cancel</app-button>
-        <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="saveCheckin()">Save Check-in</app-button>
+        <app-button variant="text" (clicked)="showDialog.set(false)"
+          >Cancel</app-button
+        >
+        <app-button
+          iconLeft="pi-check"
+          [loading]="isSaving()"
+          (clicked)="saveCheckin()"
+          >Save Check-in</app-button
+        >
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './wellness-checkin.component.scss',
+  styleUrl: "./wellness-checkin.component.scss",
 })
 export class WellnessCheckinComponent implements OnInit {
   // Dependency Injection (Angular 21 pattern)
@@ -271,7 +300,7 @@ export class WellnessCheckinComponent implements OnInit {
   // State from Unified Service
   readonly hasCheckedIn = this.trainingService.hasCheckedInToday;
   readonly readinessScore = this.trainingService.readinessScore;
-  
+
   // Local State Signals
   readonly isSaving = signal(false);
   readonly showDialog = signal(false);
@@ -313,7 +342,7 @@ export class WellnessCheckinComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadExistingCheckin();
-    
+
     // Update preview score when form data changes
     effect(() => {
       this.formData(); // Track formData signal
@@ -324,7 +353,9 @@ export class WellnessCheckinComponent implements OnInit {
   async loadExistingCheckin(): Promise<void> {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      const response: any = await firstValueFrom(this.trainingService.getWellnessForDay(targetDate));
+      const response: any = await firstValueFrom(
+        this.trainingService.getWellnessForDay(targetDate),
+      );
 
       if (response?.success && response.data) {
         this.wellnessData.set(response.data);
@@ -401,7 +432,10 @@ export class WellnessCheckinComponent implements OnInit {
     }
   }
 
-  updateFormField<K extends keyof WellnessData>(field: K, value: WellnessData[K]): void {
+  updateFormField<K extends keyof WellnessData>(
+    field: K,
+    value: WellnessData[K],
+  ): void {
     this.formData.set({
       ...this.formData(),
       [field]: value,

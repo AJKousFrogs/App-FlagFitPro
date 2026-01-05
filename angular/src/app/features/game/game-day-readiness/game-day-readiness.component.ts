@@ -62,7 +62,7 @@ interface ReadinessMetric {
     ProgressBarModule,
     TooltipModule,
     TagModule,
-  
+
     ButtonComponent,
   ],
   styleUrl: "./game-day-readiness.component.scss",
@@ -149,7 +149,13 @@ interface ReadinessMetric {
 
           <!-- Submit Button -->
           <div class="submit-section">
-            <app-button size="lg" iconLeft="pi-check" [loading]="isSubmitting()" (clicked)="submitReadiness()">Submit Readiness Check</app-button>
+            <app-button
+              size="lg"
+              iconLeft="pi-check"
+              [loading]="isSubmitting()"
+              (clicked)="submitReadiness()"
+              >Submit Readiness Check</app-button
+            >
             <p class="submit-note">
               <i class="pi pi-info-circle"></i>
               Complete this check-in at least 2 hours before competition
@@ -196,9 +202,21 @@ interface ReadinessMetric {
           }
 
           <div class="action-buttons">
-            <app-button variant="outlined" iconLeft="pi-home" (clicked)="goToDashboard()">Back to Dashboard</app-button>
-            <app-button variant="outlined" iconLeft="pi-heart" routerLink="/game/nutrition">Tournament Nutrition</app-button>
-            <app-button iconLeft="pi-file" (clicked)="viewGamePlan()">View Game Plan</app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-home"
+              (clicked)="goToDashboard()"
+              >Back to Dashboard</app-button
+            >
+            <app-button
+              variant="outlined"
+              iconLeft="pi-heart"
+              routerLink="/game/nutrition"
+              >Tournament Nutrition</app-button
+            >
+            <app-button iconLeft="pi-file" (clicked)="viewGamePlan()"
+              >View Game Plan</app-button
+            >
           </div>
         </div>
       }
@@ -456,13 +474,13 @@ export class GameDayReadinessComponent implements OnInit {
           "[GameDayReadiness] Table not found, saving as wellness entry",
         );
         await this.trainingService.submitWellness({
-            sleep: readinessData.sleep_quality,
-            energy: readinessData.energy_level,
-            soreness: readinessData.muscle_soreness,
-            hydration: readinessData.hydration_level,
-            motivation: readinessData.confidence_level,
-            notes: `[Game Day Check-in] Score: ${readinessData.readiness_score}. ${this.notes}`,
-          });
+          sleep: readinessData.sleep_quality,
+          energy: readinessData.energy_level,
+          soreness: readinessData.muscle_soreness,
+          hydration: readinessData.hydration_level,
+          motivation: readinessData.confidence_level,
+          notes: `[Game Day Check-in] Score: ${readinessData.readiness_score}. ${this.notes}`,
+        });
       }
 
       // Alert coach if readiness is low

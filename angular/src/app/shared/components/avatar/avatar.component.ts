@@ -35,7 +35,7 @@ import {
       <ng-content></ng-content>
     </div>
   `,
-  styleUrl: './avatar.component.scss',
+  styleUrl: "./avatar.component.scss",
 })
 export class AvatarComponent {
   // Configuration

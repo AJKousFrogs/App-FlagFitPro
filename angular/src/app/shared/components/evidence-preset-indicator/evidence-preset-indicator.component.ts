@@ -23,7 +23,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
     CardModule,
     TooltipModule,
     DialogModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -42,7 +42,12 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
               Version {{ activePreset().version }}
             </div>
           </div>
-          <app-icon-button icon="pi-info-circle" variant="text" (clicked)="showDetails = true" ariaLabel="info-circle" />
+          <app-icon-button
+            icon="pi-info-circle"
+            variant="text"
+            (clicked)="showDetails = true"
+            ariaLabel="info-circle"
+          />
         </div>
 
         <div class="preset-population mt-3 text-xs text-text-secondary">
@@ -283,12 +288,17 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="text" iconLeft="pi-times" (clicked)="showDetails = false">Close</app-button>
+          <app-button
+            variant="text"
+            iconLeft="pi-times"
+            (clicked)="showDetails = false"
+            >Close</app-button
+          >
         </ng-template>
       </p-dialog>
     </div>
   `,
-  styleUrl: './evidence-preset-indicator.component.scss',
+  styleUrl: "./evidence-preset-indicator.component.scss",
 })
 export class EvidencePresetIndicatorComponent {
   private evidenceConfigService = inject(EvidenceConfigService);

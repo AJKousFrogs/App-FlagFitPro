@@ -33,9 +33,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { SafetyWarningsComponent } from "../../../shared/components/safety-warnings/safety-warnings.component";
 import { TrafficLightRiskComponent } from "../../../shared/components/traffic-light-risk/traffic-light-risk.component";
-import {
-  TrainingSafetyService,
-} from "../../../core/services/training-safety.service";
+import { TrainingSafetyService } from "../../../core/services/training-safety.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AgeAdjustedRecoveryService } from "../../../core/services/age-adjusted-recovery.service";
 import { SleepDebtService } from "../../../core/services/sleep-debt.service";
@@ -65,7 +63,7 @@ import {
     PageHeaderComponent,
     SafetyWarningsComponent,
     TrafficLightRiskComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -77,7 +75,12 @@ import {
           subtitle="Monitor your training load, recovery, and injury prevention metrics"
           icon="pi-shield"
         >
-          <app-button variant="outlined" iconLeft="pi-heart" routerLink="/wellness">Log Wellness</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-heart"
+            routerLink="/wellness"
+            >Log Wellness</app-button
+          >
         </app-page-header>
 
         <!-- Safety Warnings Banner -->
@@ -103,7 +106,12 @@ import {
                   <i class="pi {{ acwrInsufficientMessage.icon }}"></i>
                   <h4>{{ acwrInsufficientMessage.title }}</h4>
                   <p>{{ acwrInsufficientMessage.reason }}</p>
-                  <app-icon-button icon="pi-plus" variant="outlined" routerLink="/training/log" ariaLabel="plus" />
+                  <app-icon-button
+                    icon="pi-plus"
+                    variant="outlined"
+                    routerLink="/training/log"
+                    ariaLabel="plus"
+                  />
                 </div>
               } @else {
                 <div class="metric-display">
@@ -250,7 +258,11 @@ import {
                     <h4>{{ rec.title }}</h4>
                     <p>{{ rec.message }}</p>
                     @if (rec.action) {
-                      <app-button variant="outlined" size="sm" (clicked)="executeAction(rec.action)"></app-button>
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        (clicked)="executeAction(rec.action)"
+                      ></app-button>
                     }
                   </div>
                 </div>
@@ -288,14 +300,21 @@ import {
                   </p>
                 </div>
                 <div class="rtp-checkin">
-                  <app-button iconLeft="pi-check" (clicked)="openRTPCheckin()">Daily Check-in</app-button>
+                  <app-button iconLeft="pi-check" (clicked)="openRTPCheckin()"
+                    >Daily Check-in</app-button
+                  >
                 </div>
               </div>
             } @else {
               <div class="no-rtp">
                 <i class="pi pi-heart"></i>
                 <p>No active return-to-play protocol. Stay healthy!</p>
-                <app-button variant="outlined" iconLeft="pi-plus" (clicked)="reportInjury()">Report Injury</app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-plus"
+                  (clicked)="reportInjury()"
+                  >Report Injury</app-button
+                >
               </div>
             }
           </p-tabpanel>
@@ -335,7 +354,7 @@ import {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './training-safety.component.scss',
+  styleUrl: "./training-safety.component.scss",
 })
 export class TrainingSafetyComponent implements OnInit {
   private safetyService = inject(TrainingSafetyService);

@@ -84,7 +84,7 @@ export interface KanbanColumn {
       }
     </div>
   `,
-  styleUrl: './kanban.component.scss',
+  styleUrl: "./kanban.component.scss",
 })
 export class KanbanComponent {
   columns = input.required<KanbanColumn[]>();

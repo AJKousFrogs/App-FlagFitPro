@@ -66,7 +66,13 @@ export type ButtonSize = "sm" | "md" | "lg";
   selector: "app-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonModule, RippleModule, TooltipModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ButtonModule,
+    RippleModule,
+    TooltipModule,
+  ],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {
@@ -121,11 +127,17 @@ export type ButtonSize = "sm" | "md" | "lg";
 
       <!-- Left icon -->
       @if (iconLeft() && !loading()) {
-        <i [class]="'btn-icon pi ' + normalizeIcon(iconLeft())" aria-hidden="true"></i>
+        <i
+          [class]="'btn-icon pi ' + normalizeIcon(iconLeft())"
+          aria-hidden="true"
+        ></i>
       }
       <!-- Legacy icon support (left position) -->
-      @if (icon() && iconPosition() === 'left' && !iconLeft() && !loading()) {
-        <i [class]="'btn-icon pi ' + normalizeIcon(icon())" aria-hidden="true"></i>
+      @if (icon() && iconPosition() === "left" && !iconLeft() && !loading()) {
+        <i
+          [class]="'btn-icon pi ' + normalizeIcon(icon())"
+          aria-hidden="true"
+        ></i>
       }
 
       <!-- Button content -->
@@ -141,11 +153,17 @@ export type ButtonSize = "sm" | "md" | "lg";
 
       <!-- Right icon -->
       @if (iconRight() && !loading()) {
-        <i [class]="'btn-icon pi ' + normalizeIcon(iconRight())" aria-hidden="true"></i>
+        <i
+          [class]="'btn-icon pi ' + normalizeIcon(iconRight())"
+          aria-hidden="true"
+        ></i>
       }
       <!-- Legacy icon support (right position) -->
-      @if (icon() && iconPosition() === 'right' && !iconRight() && !loading()) {
-        <i [class]="'btn-icon pi ' + normalizeIcon(icon())" aria-hidden="true"></i>
+      @if (icon() && iconPosition() === "right" && !iconRight() && !loading()) {
+        <i
+          [class]="'btn-icon pi ' + normalizeIcon(icon())"
+          aria-hidden="true"
+        ></i>
       }
     </ng-template>
   `,
@@ -211,7 +229,9 @@ export class ButtonComponent {
   ariaPressed = input<boolean | null>(null);
 
   /** ARIA haspopup for popup triggers */
-  ariaHasPopup = input<"menu" | "listbox" | "dialog" | "grid" | "tree" | null>(null);
+  ariaHasPopup = input<"menu" | "listbox" | "dialog" | "grid" | "tree" | null>(
+    null,
+  );
 
   // ============================================
   // TOOLTIP INPUTS
@@ -285,7 +305,7 @@ export class ButtonComponent {
     // Icon-only buttons must have an aria-label
     if (this.iconOnly()) {
       console.warn(
-        "[app-button] Icon-only buttons require an ariaLabel for accessibility."
+        "[app-button] Icon-only buttons require an ariaLabel for accessibility.",
       );
     }
     return undefined;

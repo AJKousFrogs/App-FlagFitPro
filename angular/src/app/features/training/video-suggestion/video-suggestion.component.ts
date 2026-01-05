@@ -304,7 +304,8 @@ interface VideoSuggestion {
                     iconLeft="pi-send"
                     [loading]="isSubmitting()"
                     [disabled]="suggestionForm.invalid || isSubmitting()"
-                  >Submit for Review</app-button>
+                    >Submit for Review</app-button
+                  >
                 </div>
               </form>
             </app-card-shell>
@@ -346,7 +347,9 @@ interface VideoSuggestion {
                 </div>
                 <div class="card-empty-state__content">
                   <p class="card-empty-state__title">No submissions yet</p>
-                  <p class="card-empty-state__text">Your submitted videos will appear here</p>
+                  <p class="card-empty-state__text">
+                    Your submitted videos will appear here
+                  </p>
                 </div>
               </div>
             } @else {
@@ -591,7 +594,7 @@ interface VideoSuggestion {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './video-suggestion.component.scss',
+  styleUrl: "./video-suggestion.component.scss",
 })
 export class VideoSuggestionComponent implements OnInit {
   private fb = inject(FormBuilder);

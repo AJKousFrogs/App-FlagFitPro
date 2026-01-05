@@ -58,7 +58,7 @@ export interface WellnessMetric {
   selector: "app-wellness-score-display",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-imports: [
+  imports: [
     CommonModule,
     CardModule,
     ProgressBarModule,
@@ -195,7 +195,13 @@ imports: [
                 <h3>Wellness Status</h3>
               </div>
               @if (clickable()) {
-                <app-icon-button icon="pi-external-link" variant="text" size="sm" (clicked)="handleClick()" ariaLabel="external-link" />
+                <app-icon-button
+                  icon="pi-external-link"
+                  variant="text"
+                  size="sm"
+                  (clicked)="handleClick()"
+                  ariaLabel="external-link"
+                />
               }
             </div>
           </ng-template>
@@ -242,7 +248,12 @@ imports: [
               <div class="no-data">
                 <i class="pi pi-info-circle"></i>
                 <p>No wellness data yet</p>
-                <app-button size="sm" iconLeft="pi-plus" (clicked)="handleClick()">Log Check-in</app-button>
+                <app-button
+                  size="sm"
+                  iconLeft="pi-plus"
+                  (clicked)="handleClick()"
+                  >Log Check-in</app-button
+                >
               </div>
             }
           </div>
@@ -250,7 +261,7 @@ imports: [
       }
     }
   `,
-  styleUrl: './wellness-score-display.component.scss',
+  styleUrl: "./wellness-score-display.component.scss",
 })
 export class WellnessScoreDisplayComponent implements OnInit {
   // Inputs
@@ -343,7 +354,8 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-shield",
               label: "Stress",
               value: stressLabel,
-              color: latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
+              color:
+                latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
               score: 10 - latestData.stress, // Invert for display
             });
           }
@@ -353,7 +365,8 @@ export class WellnessScoreDisplayComponent implements OnInit {
               icon: "pi-heart",
               label: "Soreness",
               value: `${latestData.soreness}/10`,
-              color: latestData.soreness <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.ERROR,
+              color:
+                latestData.soreness <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.ERROR,
               score: 10 - latestData.soreness,
             });
           }

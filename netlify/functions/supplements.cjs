@@ -155,8 +155,7 @@ async function getUserSupplements(userId) {
     if (userSupplements && userSupplements.length > 0) {
       const supplements = userSupplements.map((s) => {
         const takenToday = todayLogs?.some(
-          (log) =>
-            log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+          (log) => log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
         );
         return {
           id: s.id,
@@ -168,7 +167,7 @@ async function getUserSupplements(userId) {
           takenAt: takenToday
             ? todayLogs.find(
                 (log) =>
-                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
               )?.created_at
             : null,
         };

@@ -14,11 +14,7 @@
  */
 
 import { DecimalPipe } from "@angular/common";
-import {
-    ChangeDetectionStrategy,
-    Component,
-    signal,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -97,7 +93,7 @@ interface TeamOption {
   selector: "app-coach-analytics",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-imports: [
+  imports: [
     DecimalPipe,
     FormsModule,
     CardModule,
@@ -138,7 +134,13 @@ imports: [
               placeholder="Select Period"
               (onChange)="loadAnalytics()"
             ></p-select>
-            <app-icon-button icon="pi-refresh" variant="outlined" [loading]="loading()" (clicked)="loadAnalytics()" ariaLabel="refresh" />
+            <app-icon-button
+              icon="pi-refresh"
+              variant="outlined"
+              [loading]="loading()"
+              (clicked)="loadAnalytics()"
+              ariaLabel="refresh"
+            />
           </div>
         </div>
 
@@ -240,7 +242,9 @@ imports: [
                       <span class="stat-value">
                         {{
                           classification()?.avgConfidence
-                            ? ((classification()?.avgConfidence || 0) * 100).toFixed(0) + "%"
+                            ? (
+                                (classification()?.avgConfidence || 0) * 100
+                              ).toFixed(0) + "%"
                             : "N/A"
                         }}
                       </span>
@@ -314,7 +318,7 @@ imports: [
                   <div class="trend-metric">
                     <span class="trend-label">Daily Average</span>
                     <span class="trend-value">{{
-                      trends()?.summary?.avgQueriesPerDay || 0 | number: '1.1-1'
+                      trends()?.summary?.avgQueriesPerDay || 0 | number: "1.1-1"
                     }}</span>
                   </div>
                   <div class="trend-metric">
@@ -398,9 +402,7 @@ imports: [
                     <h5>Coach Review Accuracy</h5>
                     <div class="flex justify-between mb-2">
                       <span>Appropriate</span>
-                      <span>{{
-                        stats.coachFeedback?.appropriate || 0
-                      }}</span>
+                      <span>{{ stats.coachFeedback?.appropriate || 0 }}</span>
                     </div>
                     <div class="flex justify-between mb-2">
                       <span>Inaccurate</span>
@@ -423,7 +425,7 @@ imports: [
       </div>
     </app-main-layout>
   `,
-  styleUrl: './coach-analytics.component.scss',
+  styleUrl: "./coach-analytics.component.scss",
 })
 export class CoachAnalyticsComponent {
   loading = signal(false);
@@ -435,8 +437,18 @@ export class CoachAnalyticsComponent {
     positive: number;
     negative: number;
     neutral: number;
-    athleteFeedback?: { helpful?: number; notHelpful?: number; helpfulRate?: number };
-    coachFeedback?: { appropriate?: number; tooStrict?: number; tooLenient?: number; wrongIntent?: number; accuracyRate?: number };
+    athleteFeedback?: {
+      helpful?: number;
+      notHelpful?: number;
+      helpfulRate?: number;
+    };
+    coachFeedback?: {
+      appropriate?: number;
+      tooStrict?: number;
+      tooLenient?: number;
+      wrongIntent?: number;
+      accuracyRate?: number;
+    };
   } | null>(null);
 
   teamOptions: TeamOption[] = [
@@ -453,8 +465,18 @@ export class CoachAnalyticsComponent {
   ];
   selectedTimeRange = "30d";
 
-  trendChartData: { labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null = null;
-  lineChartOptions: ChartOptions<'line'> | null = null;
+  trendChartData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor?: string;
+      backgroundColor?: string;
+      fill?: boolean;
+      tension?: number;
+    }[];
+  } | null = null;
+  lineChartOptions: ChartOptions<"line"> | null = null;
 
   constructor() {
     this.initChartOptions();

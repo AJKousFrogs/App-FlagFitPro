@@ -91,7 +91,9 @@
         <div class="search-results" id="search-results-list" role="listbox">
           <div class="section-label">
             <span>Search Results</span>
-            <span class="results-count">{{ searchService.totalResults() }} found</span>
+            <span class="results-count"
+              >{{ searchService.totalResults() }} found</span
+            >
           </div>
           @for (
             result of searchService.results();
@@ -116,7 +118,9 @@
                     class="result-title"
                     [innerHTML]="result.highlightedTitle || result.title"
                   ></span>
-                  <span class="result-badge">{{ getTypeLabel(result.type) }}</span>
+                  <span class="result-badge">{{
+                    getTypeLabel(result.type)
+                  }}</span>
                 </div>
                 @if (result.subtitle) {
                   <div
@@ -141,7 +145,9 @@
           </div>
           <h3>No results found</h3>
           <p>
-            We couldn't find anything matching "<strong>{{ searchQuery }}</strong
+            We couldn't find anything matching "<strong>{{
+              searchQuery
+            }}</strong
             >"
           </p>
           <div class="no-results-suggestions">
@@ -291,7 +297,9 @@
     <div class="command-palette-footer">
       <div class="keyboard-hint">
         @if (!searchQuery && !searchService.hasResults()) {
-          <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></span>
+          <span class="key-combo"
+            ><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></span
+          >
         } @else {
           <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
         }

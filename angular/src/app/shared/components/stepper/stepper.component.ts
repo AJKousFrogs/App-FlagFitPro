@@ -29,10 +29,7 @@ export interface StepperStep {
   selector: "app-stepper",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StepsModule,
-    ButtonComponent,
-    IconButtonComponent,
-  ],
+  imports: [CommonModule, StepsModule, ButtonComponent, IconButtonComponent],
   template: `
     <div class="stepper-group">
       <p-steps
@@ -60,20 +57,36 @@ export interface StepperStep {
       @if (showNavigation()) {
         <div class="stepper-actions">
           @if (currentStepIndex() > 0) {
-            <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="previous()">Previous</app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-arrow-left"
+              (clicked)="previous()"
+              >Previous</app-button
+            >
           }
           <div class="stepper-actions-right">
             @if (currentStepIndex() < steps().length - 1) {
-              <app-button iconLeft="pi-arrow-right" [disabled]="!canProceed()" (clicked)="next()">Next</app-button>
+              <app-button
+                iconLeft="pi-arrow-right"
+                [disabled]="!canProceed()"
+                (clicked)="next()"
+                >Next</app-button
+              >
             } @else {
-              <app-icon-button icon="pi-check" variant="success" [disabled]="!canProceed()" (clicked)="finish()" ariaLabel="check" />
+              <app-icon-button
+                icon="pi-check"
+                variant="success"
+                [disabled]="!canProceed()"
+                (clicked)="finish()"
+                ariaLabel="check"
+              />
             }
           </div>
         </div>
       }
     </div>
   `,
-  styleUrl: './stepper.component.scss',
+  styleUrl: "./stepper.component.scss",
 })
 export class StepperComponent {
   // Configuration

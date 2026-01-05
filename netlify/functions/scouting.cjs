@@ -16,7 +16,13 @@ async function verifyCoachAccess(userId) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", ["coach", "assistant_coach", "offensive_coordinator", "defensive_coordinator", "admin"])
+    .in("role", [
+      "coach",
+      "assistant_coach",
+      "offensive_coordinator",
+      "defensive_coordinator",
+      "admin",
+    ])
     .limit(1)
     .single();
 
@@ -35,10 +41,12 @@ async function getScoutingReports(teamId, options = {}) {
 
   let query = supabaseAdmin
     .from("scouting_reports")
-    .select(`
+    .select(
+      `
       *,
       created_by_user:created_by(full_name)
-    `)
+    `,
+    )
     .eq("team_id", teamId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -48,7 +56,9 @@ async function getScoutingReports(teamId, options = {}) {
   }
 
   const { data, error } = await query;
-  if (error && error.code !== "42P01") {throw error;} // Ignore table not exists
+  if (error && error.code !== "42P01") {
+    throw error;
+  } // Ignore table not exists
   return data || [];
 }
 
@@ -58,14 +68,18 @@ async function getScoutingReports(teamId, options = {}) {
 async function getScoutingReport(reportId) {
   const { data, error } = await supabaseAdmin
     .from("scouting_reports")
-    .select(`
+    .select(
+      `
       *,
       created_by_user:created_by(full_name)
-    `)
+    `,
+    )
     .eq("id", reportId)
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -96,7 +110,9 @@ async function createScoutingReport(teamId, userId, reportData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -114,7 +130,9 @@ async function updateScoutingReport(reportId, updates) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -127,7 +145,9 @@ async function deleteScoutingReport(reportId) {
     .delete()
     .eq("id", reportId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return { success: true };
 }
 
@@ -144,7 +164,8 @@ async function getOpponents(teamId) {
   // Also check games for opponents
   const { data: games } = await supabaseAdmin
     .from("games")
-    .select(`
+    .select(
+      `
       id,
       home_team_id,
       away_team_id,
@@ -153,7 +174,8 @@ async function getOpponents(teamId) {
       home_score,
       away_score,
       game_date
-    `)
+    `,
+    )
     .or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`)
     .order("game_date", { ascending: false });
 
@@ -180,7 +202,9 @@ async function getOpponents(teamId) {
   for (const game of games || []) {
     const isHome = game.home_team_id === teamId;
     const opponent = isHome ? game.away_team : game.home_team;
-    if (!opponent) {continue;}
+    if (!opponent) {
+      continue;
+    }
 
     const opponentName = opponent.name;
     const entry = opponentMap.get(opponentName) || {
@@ -198,8 +222,11 @@ async function getOpponents(teamId) {
     const ourScore = isHome ? game.home_score : game.away_score;
     const theirScore = isHome ? game.away_score : game.home_score;
 
-    if (ourScore > theirScore) {entry.wins++;}
-    else if (theirScore > ourScore) {entry.losses++;}
+    if (ourScore > theirScore) {
+      entry.wins++;
+    } else if (theirScore > ourScore) {
+      entry.losses++;
+    }
 
     if (!entry.lastPlayed || game.game_date > entry.lastPlayed) {
       entry.lastPlayed = game.game_date;
@@ -236,7 +263,9 @@ async function addOpponent(teamId, opponentData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -275,14 +304,18 @@ async function analyzeTendencies(teamId, opponentName) {
     const tendencies = report.tendencies || {};
 
     // Aggregate offensive formations
-    for (const [formation, count] of Object.entries(tendencies.offensiveFormations || {})) {
-      aggregated.offensive.formations[formation] = 
+    for (const [formation, count] of Object.entries(
+      tendencies.offensiveFormations || {},
+    )) {
+      aggregated.offensive.formations[formation] =
         (aggregated.offensive.formations[formation] || 0) + count;
     }
 
     // Aggregate defensive coverages
-    for (const [coverage, count] of Object.entries(tendencies.defensiveCoverages || {})) {
-      aggregated.defensive.coverages[coverage] = 
+    for (const [coverage, count] of Object.entries(
+      tendencies.defensiveCoverages || {},
+    )) {
+      aggregated.defensive.coverages[coverage] =
         (aggregated.defensive.coverages[coverage] || 0) + count;
     }
 
@@ -310,7 +343,8 @@ async function shareReportToChat(reportId, teamId, userId) {
   const { error } = await supabaseAdmin.from("chat_messages").insert({
     user_id: userId,
     channel: `team_${teamId}`,
-    message: `📋 **Scouting Report: ${report.opponent_name}**\n\n` +
+    message:
+      `📋 **Scouting Report: ${report.opponent_name}**\n\n` +
       `Game Date: ${report.game_date || "TBD"}\n` +
       `Key Notes: ${report.offensive_notes?.substring(0, 200) || "No notes"}...\n\n` +
       `_View full report in Scouting section_`,
@@ -319,7 +353,9 @@ async function shareReportToChat(reportId, teamId, userId) {
     created_at: new Date().toISOString(),
   });
 
-  if (error && error.code !== "42P01") {throw error;}
+  if (error && error.code !== "42P01") {
+    throw error;
+  }
 
   // Update report as shared
   await updateScoutingReport(reportId, { status: "shared" });
@@ -343,7 +379,10 @@ async function handler(event) {
     const teamId = access.team_id;
 
     // GET /reports - Get all scouting reports
-    if (method === "GET" && (path === "" || path === "/" || path === "/reports")) {
+    if (
+      method === "GET" &&
+      (path === "" || path === "/" || path === "/reports")
+    ) {
       const reports = await getScoutingReports(teamId, {
         status: params.status,
         limit: parseInt(params.limit || "50"),
@@ -410,7 +449,10 @@ async function handler(event) {
     if (method === "POST" && path.match(/^\/reports\/[\w-]+\/share$/)) {
       const reportId = path.split("/")[2];
       await shareReportToChat(reportId, teamId, userId);
-      return createSuccessResponse({ success: true, message: "Report shared to team chat" });
+      return createSuccessResponse({
+        success: true,
+        message: "Report shared to team chat",
+      });
     }
 
     return createErrorResponse(404, "Endpoint not found");

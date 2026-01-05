@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
@@ -96,7 +96,7 @@ interface NavItem {
       </div>
     }
   `,
-  styleUrl: './bottom-nav.component.scss',
+  styleUrl: "./bottom-nav.component.scss",
 })
 export class BottomNavComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -144,18 +144,34 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   ];
 
   private secondaryNavItems: NavItem[] = [
-    { label: "Wellness", icon: "pi-heart", route: "/wellness", roles: ["player"] },
+    {
+      label: "Wellness",
+      icon: "pi-heart",
+      route: "/wellness",
+      roles: ["player"],
+    },
     { label: "ACWR", icon: "pi-chart-bar", route: "/acwr", roles: ["player"] },
-    { label: "Tests", icon: "pi-list-check", route: "/tests", roles: ["player", "coach"] },
-    { label: "Library", icon: "pi-book", route: "/knowledge-base", roles: ["player", "coach"] },
+    {
+      label: "Tests",
+      icon: "pi-list-check",
+      route: "/tests",
+      roles: ["player", "coach"],
+    },
+    {
+      label: "Library",
+      icon: "pi-book",
+      route: "/knowledge-base",
+      roles: ["player", "coach"],
+    },
     { label: "Settings", icon: "pi-cog", route: "/settings" },
   ];
 
   visibleNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
-    const items = userRole === "coach" ? this.coachNavItems : this.athleteNavItems;
-    
+    const items =
+      userRole === "coach" ? this.coachNavItems : this.athleteNavItems;
+
     return items.map((item) => ({
       ...item,
       badge: item.route === "/chat" ? unreadCount : undefined,

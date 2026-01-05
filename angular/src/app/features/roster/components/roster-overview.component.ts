@@ -29,7 +29,7 @@ import { TeamStat } from "../roster.models";
       </div>
     </p-card>
   `,
-  styleUrl: './roster-overview.component.scss',
+  styleUrl: "./roster-overview.component.scss",
 })
 export class RosterOverviewComponent {
   stats = input.required<TeamStat[]>();

@@ -12,7 +12,9 @@
   font-size: var(--font-size-badge);
   font-weight: var(--font-weight-medium);
   cursor: help;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .offline-badge i {
@@ -91,4 +93,3 @@
 .badge-label {
   white-space: nowrap;
 }
-

@@ -8,7 +8,9 @@
   bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
   right: var(--space-4);
   z-index: var(--z-index-dropdown);
-  transition: transform var(--transition-slow), opacity var(--transition-slow);
+  transition:
+    transform var(--transition-slow),
+    opacity var(--transition-slow);
 }
 
 .ai-avatar {
@@ -368,4 +370,3 @@
 .ai-enable-link:hover {
   background: var(--color-brand-primary-hover);
 }
-

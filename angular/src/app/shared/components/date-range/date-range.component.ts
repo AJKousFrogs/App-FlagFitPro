@@ -25,9 +25,7 @@ export interface DateRange {
   selector: "app-date-range",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, DatePicker,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, FormsModule, DatePicker, ButtonComponent],
   template: `
     <div class="date-range-group">
       @if (label()) {
@@ -38,7 +36,11 @@ export interface DateRange {
       @if (showPresets()) {
         <div class="date-range-presets">
           @for (preset of presets(); track preset.value) {
-            <app-button variant="text" size="sm" (clicked)="applyPreset(preset.value)"></app-button>
+            <app-button
+              variant="text"
+              size="sm"
+              (clicked)="applyPreset(preset.value)"
+            ></app-button>
           }
         </div>
       }
@@ -101,7 +103,7 @@ export interface DateRange {
       }
     </div>
   `,
-  styleUrl: './date-range.component.scss',
+  styleUrl: "./date-range.component.scss",
 })
 export class DateRangeComponent {
   // Configuration

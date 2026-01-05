@@ -132,12 +132,20 @@
 }
 
 .icon-purple {
-  background: linear-gradient(135deg, var(--primitive-purple-500) 0%, var(--primitive-purple-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-purple-500) 0%,
+    var(--primitive-purple-400) 100%
+  );
   color: white;
 }
 
 .icon-orange {
-  background: linear-gradient(135deg, var(--primitive-orange-500) 0%, var(--primitive-orange-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-orange-500) 0%,
+    var(--primitive-orange-400) 100%
+  );
   color: white;
 }
 
@@ -311,4 +319,3 @@
     animation: none;
   }
 }
-

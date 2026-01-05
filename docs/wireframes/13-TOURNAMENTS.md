@@ -152,48 +152,48 @@
 
 ## Player Availability Status
 
-| Status | Icon | Description |
-|--------|------|-------------|
-| Confirmed | ✅ | Player is attending |
-| Declined | ❌ | Player cannot attend |
-| Tentative | ❓ | Player is unsure |
-| Pending | ⏳ | Hasn't responded yet |
+| Status    | Icon | Description          |
+| --------- | ---- | -------------------- |
+| Confirmed | ✅   | Player is attending  |
+| Declined  | ❌   | Player cannot attend |
+| Tentative | ❓   | Player is unsure     |
+| Pending   | ⏳   | Hasn't responded yet |
 
 ## Payment Status
 
-| Status | Icon | Description |
-|--------|------|-------------|
-| Paid | ✅ | Full payment received |
-| Partial | 💳 | Partial payment |
-| Pending | ⏳ | No payment yet |
-| Not Required | - | No payment needed |
+| Status       | Icon | Description           |
+| ------------ | ---- | --------------------- |
+| Paid         | ✅   | Full payment received |
+| Partial      | 💳   | Partial payment       |
+| Pending      | ⏳   | No payment yet        |
+| Not Required | -    | No payment needed     |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Tournament list (tabbed: upcoming/completed/my RSVPs) | ✅ |
-| Tournament cards with details | ✅ |
-| Create tournament dialog (coach) | ✅ |
-| RSVP for tournament | ✅ |
-| Team availability tracker | ✅ |
-| Progress bar for availability | ✅ |
-| Payment tracking per player | ✅ |
-| Budget overview (coach) | ✅ |
-| RSVP deadline display | ✅ |
-| Link to Tournament Nutrition | ✅ |
-| Tournament visibility (team/public) | ✅ |
-| Games guaranteed | ✅ |
-| Format display | ✅ |
+| Feature                                               | Status |
+| ----------------------------------------------------- | ------ |
+| Tournament list (tabbed: upcoming/completed/my RSVPs) | ✅     |
+| Tournament cards with details                         | ✅     |
+| Create tournament dialog (coach)                      | ✅     |
+| RSVP for tournament                                   | ✅     |
+| Team availability tracker                             | ✅     |
+| Progress bar for availability                         | ✅     |
+| Payment tracking per player                           | ✅     |
+| Budget overview (coach)                               | ✅     |
+| RSVP deadline display                                 | ✅     |
+| Link to Tournament Nutrition                          | ✅     |
+| Tournament visibility (team/public)                   | ✅     |
+| Games guaranteed                                      | ✅     |
+| Format display                                        | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Tournaments | `TournamentService` | `tournaments` |
+| Data         | Service             | Table                     |
+| ------------ | ------------------- | ------------------------- |
+| Tournaments  | `TournamentService` | `tournaments`             |
 | Availability | `TournamentService` | `tournament_availability` |
-| Payments | `TournamentService` | `tournament_payments` |
+| Payments     | `TournamentService` | `tournament_payments`     |

@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -57,7 +57,10 @@ interface PositionBenchmark {
   gapFromElite: string;
 }
 
-const POSITION_BENCHMARKS: Record<string, Record<string, { elite: number; good: number; average: number }>> = {
+const POSITION_BENCHMARKS: Record<
+  string,
+  Record<string, { elite: number; good: number; average: number }>
+> = {
   WR: {
     sprint40: { elite: 4.4, good: 4.6, average: 4.8 },
     proAgility: { elite: 3.9, good: 4.1, average: 4.3 },
@@ -86,27 +89,26 @@ const POSITION_BENCHMARKS: Record<string, Record<string, { elite: number; good: 
 
 const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   proAgility: [
-    'Lateral change of direction drills (2x/week)',
-    'Hip mobility work before training',
-    'Deceleration/re-acceleration mechanics',
+    "Lateral change of direction drills (2x/week)",
+    "Hip mobility work before training",
+    "Deceleration/re-acceleration mechanics",
   ],
   sprint40: [
-    'Sprint mechanics drills',
-    'Acceleration work (10-20m)',
-    'Hip flexor strength development',
+    "Sprint mechanics drills",
+    "Acceleration work (10-20m)",
+    "Hip flexor strength development",
   ],
   verticalJump: [
-    'Plyometric training (box jumps, depth jumps)',
-    'Hip flexor power development',
-    'Reactive strength (RSI) training',
+    "Plyometric training (box jumps, depth jumps)",
+    "Hip flexor power development",
+    "Reactive strength (RSI) training",
   ],
   relativeSquat: [
-    'Progressive squat program (3x/week, 85% 1RM)',
-    'Single-leg variations (split squats, lunges)',
-    'Core stability work',
+    "Progressive squat program (3x/week, 85% 1RM)",
+    "Single-leg variations (split squats, lunges)",
+    "Core stability work",
   ],
 };
-
 
 @Component({
   selector: "app-performance-tracking",
@@ -129,7 +131,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     PageErrorStateComponent,
     AppLoadingComponent,
     RouterModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -159,7 +161,9 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             subtitle="Track and analyze your performance metrics over time"
             icon="pi-bullseye"
           >
-            <app-button iconLeft="pi-plus" (clicked)="openLogDialog()">Log Performance</app-button>
+            <app-button iconLeft="pi-plus" (clicked)="openLogDialog()"
+              >Log Performance</app-button
+            >
           </app-page-header>
 
           <!-- Performance Metrics -->
@@ -231,16 +235,20 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <div class="benchmark-metric">
                     <span class="metric-name">{{ benchmark.metric }}</span>
                     <span class="metric-values">
-                      You: {{ benchmark.current }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite: {{ benchmark.elite }}{{ benchmark.unit }}
+                      You: {{ benchmark.current
+                      }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite:
+                      {{ benchmark.elite }}{{ benchmark.unit }}
                     </span>
                   </div>
                   <div class="benchmark-progress">
-                    <p-progressBar 
-                      [value]="benchmark.percentOfElite" 
+                    <p-progressBar
+                      [value]="benchmark.percentOfElite"
                       [showValue]="false"
                       styleClass="benchmark-bar"
                     ></p-progressBar>
-                    <span class="gap-text">({{ benchmark.gapFromElite }} away)</span>
+                    <span class="gap-text"
+                      >({{ benchmark.gapFromElite }} away)</span
+                    >
                   </div>
                 </div>
               }
@@ -259,7 +267,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <div class="empty-state">
                 <i class="pi pi-chart-bar empty-icon"></i>
                 <h4>No Gap Analysis Available</h4>
-                <p>Log performance metrics to see your training priorities and recommendations.</p>
+                <p>
+                  Log performance metrics to see your training priorities and
+                  recommendations.
+                </p>
               </div>
             } @else {
               <p-accordion>
@@ -267,19 +278,31 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <p-accordionpanel [value]="'gap-' + i">
                     <ng-template pTemplate="header">
                       <div class="priority-header">
-                        <span class="priority-number">Priority #{{ i + 1 }}:</span>
+                        <span class="priority-number"
+                          >Priority #{{ i + 1 }}:</span
+                        >
                         <span class="priority-metric">{{ gap.metric }}</span>
-                        <p-tag 
+                        <p-tag
                           [value]="gap.gapPercentage.toFixed(1) + '% gap'"
-                          [severity]="gap.gapPercentage > 10 ? 'danger' : gap.gapPercentage > 5 ? 'warn' : 'info'"
+                          [severity]="
+                            gap.gapPercentage > 10
+                              ? 'danger'
+                              : gap.gapPercentage > 5
+                                ? 'warn'
+                                : 'info'
+                          "
                         ></p-tag>
                       </div>
                     </ng-template>
                     <ng-template pTemplate="content">
                       <div class="priority-content">
                         <div class="gap-stats">
-                          <span class="gap-stat">Gap: {{ gap.gap.toFixed(2) }} from elite</span>
-                          <span class="gap-stat">Current: {{ gap.current }}</span>
+                          <span class="gap-stat"
+                            >Gap: {{ gap.gap.toFixed(2) }} from elite</span
+                          >
+                          <span class="gap-stat"
+                            >Current: {{ gap.current }}</span
+                          >
                           <span class="gap-stat">Target: {{ gap.target }}</span>
                         </div>
                         <div class="recommendations">
@@ -290,8 +313,13 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                             }
                           </ul>
                         </div>
-                        <a routerLink="/training/videos" [queryParams]="{ category: gap.metric }" class="video-link">
-                          <i class="pi pi-video"></i> View Related Training Videos →
+                        <a
+                          routerLink="/training/videos"
+                          [queryParams]="{ category: gap.metric }"
+                          class="video-link"
+                        >
+                          <i class="pi pi-video"></i> View Related Training
+                          Videos →
                         </a>
                       </div>
                     </ng-template>
@@ -311,7 +339,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
                 <h4>{{ noDataMessage.title }}</h4>
                 <p>{{ noDataMessage.reason }}</p>
-                <app-icon-button icon="pi-plus" (clicked)="openLogDialog()" ariaLabel="plus" />
+                <app-icon-button
+                  icon="pi-plus"
+                  (clicked)="openLogDialog()"
+                  ariaLabel="plus"
+                />
               </div>
             } @else {
               <p-table
@@ -337,14 +369,14 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 <ng-template pTemplate="body" let-record>
                   <tr>
                     <td>{{ record.date }}</td>
-                    <td>{{ record.sprint10 || '-' }}</td>
-                    <td>{{ record.sprint20 || '-' }}</td>
+                    <td>{{ record.sprint10 || "-" }}</td>
+                    <td>{{ record.sprint20 || "-" }}</td>
                     <td>{{ record.dash40 }}</td>
-                    <td>{{ record.proAgility || '-' }}</td>
+                    <td>{{ record.proAgility || "-" }}</td>
                     <td>{{ record.vertical }}</td>
                     <td>{{ record.broad }}</td>
-                    <td>{{ record.squat || '-' }}</td>
-                    <td>{{ record.deadlift || '-' }}</td>
+                    <td>{{ record.squat || "-" }}</td>
+                    <td>{{ record.deadlift || "-" }}</td>
                     <td>
                       <p-tag
                         [value]="record.score + '%'"
@@ -373,15 +405,39 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <div class="form-grid">
               <div class="p-field">
                 <label for="sprint10">10m Sprint (sec)</label>
-                <p-inputNumber id="sprint10" [(ngModel)]="newPerformance.sprint10" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 1.54" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="sprint10"
+                  [(ngModel)]="newPerformance.sprint10"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 1.54"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="sprint20">20m Sprint (sec)</label>
-                <p-inputNumber id="sprint20" [(ngModel)]="newPerformance.sprint20" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 2.89" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="sprint20"
+                  [(ngModel)]="newPerformance.sprint20"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 2.89"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="dash40">40-Yard Dash (sec)</label>
-                <p-inputNumber id="dash40" [(ngModel)]="newPerformance.dash40" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 4.45" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="dash40"
+                  [(ngModel)]="newPerformance.dash40"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 4.45"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
             </div>
 
@@ -390,15 +446,39 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <div class="form-grid">
               <div class="p-field">
                 <label for="proAgility">Pro Agility 5-10-5 (sec)</label>
-                <p-inputNumber id="proAgility" [(ngModel)]="newPerformance.proAgility" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 4.12" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="proAgility"
+                  [(ngModel)]="newPerformance.proAgility"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 4.12"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="lDrill">L-Drill (sec)</label>
-                <p-inputNumber id="lDrill" [(ngModel)]="newPerformance.lDrill" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 6.85" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="lDrill"
+                  [(ngModel)]="newPerformance.lDrill"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 6.85"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="reactiveAgility">Reactive Agility (sec)</label>
-                <p-inputNumber id="reactiveAgility" [(ngModel)]="newPerformance.reactiveAgility" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 1.24" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="reactiveAgility"
+                  [(ngModel)]="newPerformance.reactiveAgility"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 1.24"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
             </div>
 
@@ -407,15 +487,35 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <div class="form-grid">
               <div class="p-field">
                 <label for="vertical">Vertical Jump (in)</label>
-                <p-inputNumber id="vertical" [(ngModel)]="newPerformance.vertical" mode="decimal" placeholder="e.g., 38" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="vertical"
+                  [(ngModel)]="newPerformance.vertical"
+                  mode="decimal"
+                  placeholder="e.g., 38"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="broad">Broad Jump (in)</label>
-                <p-inputNumber id="broad" [(ngModel)]="newPerformance.broad" mode="decimal" placeholder="e.g., 122" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="broad"
+                  [(ngModel)]="newPerformance.broad"
+                  mode="decimal"
+                  placeholder="e.g., 122"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="rsi">RSI (ratio)</label>
-                <p-inputNumber id="rsi" [(ngModel)]="newPerformance.rsi" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" placeholder="e.g., 2.45" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="rsi"
+                  [(ngModel)]="newPerformance.rsi"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 2.45"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
             </div>
 
@@ -424,15 +524,33 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <div class="form-grid">
               <div class="p-field">
                 <label for="bench">Bench Press 1RM (lbs)</label>
-                <p-inputNumber id="bench" [(ngModel)]="newPerformance.bench" mode="decimal" placeholder="e.g., 225" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="bench"
+                  [(ngModel)]="newPerformance.bench"
+                  mode="decimal"
+                  placeholder="e.g., 225"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="squat">Back Squat 1RM (lbs)</label>
-                <p-inputNumber id="squat" [(ngModel)]="newPerformance.squat" mode="decimal" placeholder="e.g., 315" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="squat"
+                  [(ngModel)]="newPerformance.squat"
+                  mode="decimal"
+                  placeholder="e.g., 315"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
               <div class="p-field">
                 <label for="deadlift">Deadlift 1RM (lbs)</label>
-                <p-inputNumber id="deadlift" [(ngModel)]="newPerformance.deadlift" mode="decimal" placeholder="e.g., 365" styleClass="w-full"></p-inputNumber>
+                <p-inputNumber
+                  id="deadlift"
+                  [(ngModel)]="newPerformance.deadlift"
+                  mode="decimal"
+                  placeholder="e.g., 365"
+                  styleClass="w-full"
+                ></p-inputNumber>
               </div>
             </div>
 
@@ -441,27 +559,49 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <div class="form-grid">
               <div class="p-field">
                 <label for="bodyWeight">Body Weight (lbs)</label>
-                <p-inputNumber id="bodyWeight" [(ngModel)]="newPerformance.bodyWeight" mode="decimal" placeholder="For relative strength" styleClass="w-full"></p-inputNumber>
-                <small class="help-text">Used for relative strength calculations</small>
+                <p-inputNumber
+                  id="bodyWeight"
+                  [(ngModel)]="newPerformance.bodyWeight"
+                  mode="decimal"
+                  placeholder="For relative strength"
+                  styleClass="w-full"
+                ></p-inputNumber>
+                <small class="help-text"
+                  >Used for relative strength calculations</small
+                >
               </div>
             </div>
 
             <!-- Notes -->
             <div class="p-field mt-4">
               <label for="notes">Notes (optional)</label>
-              <input id="notes" type="text" pInputText [(ngModel)]="newPerformance.notes" placeholder="Any notes about this session" class="w-full" />
+              <input
+                id="notes"
+                type="text"
+                pInputText
+                [(ngModel)]="newPerformance.notes"
+                placeholder="Any notes about this session"
+                class="w-full"
+              />
             </div>
           </div>
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showLogDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="savePerformance()">Save Performance</app-button>
+            <app-button variant="text" (clicked)="showLogDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSaving()"
+              (clicked)="savePerformance()"
+              >Save Performance</app-button
+            >
           </ng-template>
         </p-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>
   `,
-  styleUrl: './performance-tracking.component.scss',
+  styleUrl: "./performance-tracking.component.scss",
 })
 export class PerformanceTrackingComponent {
   private readonly apiService = inject(ApiService);
@@ -485,15 +625,15 @@ export class PerformanceTrackingComponent {
   readonly performanceHistory = signal<any[]>([]);
   readonly positionBenchmarks = signal<PositionBenchmark[]>([]);
   readonly gapAnalysis = signal<GapAnalysis[]>([]);
-  readonly selectedPosition = signal<string>('WR');
+  readonly selectedPosition = signal<string>("WR");
 
   // Position selector
-  selectedPositionValue = 'WR';
+  selectedPositionValue = "WR";
   positionOptions = [
-    { label: 'Wide Receiver (WR)', value: 'WR' },
-    { label: 'Quarterback (QB)', value: 'QB' },
-    { label: 'Defensive Back (DB)', value: 'DB' },
-    { label: 'Rusher', value: 'Rusher' },
+    { label: "Wide Receiver (WR)", value: "WR" },
+    { label: "Quarterback (QB)", value: "QB" },
+    { label: "Defensive Back (DB)", value: "DB" },
+    { label: "Rusher", value: "Rusher" },
   ];
 
   // Dialog state
@@ -657,35 +797,47 @@ export class PerformanceTrackingComponent {
 
     const positionBenchmarksList: PositionBenchmark[] = [
       {
-        metric: '40-Yard Dash',
+        metric: "40-Yard Dash",
         current: currentMetrics.sprint40,
         elite: benchmarks.sprint40.elite,
-        unit: 's',
-        percentOfElite: Math.min(100, (benchmarks.sprint40.elite / currentMetrics.sprint40) * 100),
+        unit: "s",
+        percentOfElite: Math.min(
+          100,
+          (benchmarks.sprint40.elite / currentMetrics.sprint40) * 100,
+        ),
         gapFromElite: `${(currentMetrics.sprint40 - benchmarks.sprint40.elite).toFixed(2)}s`,
       },
       {
-        metric: 'Pro Agility',
+        metric: "Pro Agility",
         current: currentMetrics.proAgility,
         elite: benchmarks.proAgility.elite,
-        unit: 's',
-        percentOfElite: Math.min(100, (benchmarks.proAgility.elite / currentMetrics.proAgility) * 100),
+        unit: "s",
+        percentOfElite: Math.min(
+          100,
+          (benchmarks.proAgility.elite / currentMetrics.proAgility) * 100,
+        ),
         gapFromElite: `${(currentMetrics.proAgility - benchmarks.proAgility.elite).toFixed(2)}s`,
       },
       {
-        metric: 'Vertical Jump',
+        metric: "Vertical Jump",
         current: currentMetrics.verticalJump,
         elite: benchmarks.verticalJump.elite,
         unit: '"',
-        percentOfElite: Math.min(100, (currentMetrics.verticalJump / benchmarks.verticalJump.elite) * 100),
+        percentOfElite: Math.min(
+          100,
+          (currentMetrics.verticalJump / benchmarks.verticalJump.elite) * 100,
+        ),
         gapFromElite: `${(benchmarks.verticalJump.elite - currentMetrics.verticalJump).toFixed(0)}"`,
       },
       {
-        metric: 'Relative Squat (× BW)',
+        metric: "Relative Squat (× BW)",
         current: currentMetrics.relativeSquat,
         elite: benchmarks.relativeSquat.elite,
-        unit: '×',
-        percentOfElite: Math.min(100, (currentMetrics.relativeSquat / benchmarks.relativeSquat.elite) * 100),
+        unit: "×",
+        percentOfElite: Math.min(
+          100,
+          (currentMetrics.relativeSquat / benchmarks.relativeSquat.elite) * 100,
+        ),
         gapFromElite: `${(benchmarks.relativeSquat.elite - currentMetrics.relativeSquat).toFixed(2)}×`,
       },
     ];
@@ -696,7 +848,12 @@ export class PerformanceTrackingComponent {
     const gaps: GapAnalysis[] = positionBenchmarksList
       .map((b, index) => {
         const gapPercentage = 100 - b.percentOfElite;
-        const metricKey = ['sprint40', 'proAgility', 'verticalJump', 'relativeSquat'][index];
+        const metricKey = [
+          "sprint40",
+          "proAgility",
+          "verticalJump",
+          "relativeSquat",
+        ][index];
         return {
           metric: b.metric,
           current: b.current,
@@ -707,7 +864,7 @@ export class PerformanceTrackingComponent {
           recommendations: TRAINING_RECOMMENDATIONS[metricKey] || [],
         };
       })
-      .filter(g => g.gapPercentage > 0)
+      .filter((g) => g.gapPercentage > 0)
       .sort((a, b) => b.gapPercentage - a.gapPercentage)
       .slice(0, 3); // Top 3 priorities
 
@@ -737,7 +894,7 @@ export class PerformanceTrackingComponent {
 
   async savePerformance(): Promise<void> {
     // Validate at least one metric is entered
-    const hasAnyMetric = 
+    const hasAnyMetric =
       this.newPerformance.sprint10 ||
       this.newPerformance.sprint20 ||
       this.newPerformance.dash40 ||
@@ -798,19 +955,35 @@ export class PerformanceTrackingComponent {
       // Add to local history
       const newRecord = {
         date: new Date().toISOString().split("T")[0],
-        sprint10: this.newPerformance.sprint10 ? `${this.newPerformance.sprint10}s` : '-',
-        sprint20: this.newPerformance.sprint20 ? `${this.newPerformance.sprint20}s` : '-',
-        dash40: this.newPerformance.dash40 ? `${this.newPerformance.dash40}s` : "-",
-        proAgility: this.newPerformance.proAgility ? `${this.newPerformance.proAgility}s` : '-',
-        vertical: this.newPerformance.vertical ? `${this.newPerformance.vertical}"` : "-",
-        broad: this.newPerformance.broad ? `${this.newPerformance.broad}"` : "-",
-        squat: this.newPerformance.squat ? `${this.newPerformance.squat}lb` : '-',
-        deadlift: this.newPerformance.deadlift ? `${this.newPerformance.deadlift}lb` : '-',
+        sprint10: this.newPerformance.sprint10
+          ? `${this.newPerformance.sprint10}s`
+          : "-",
+        sprint20: this.newPerformance.sprint20
+          ? `${this.newPerformance.sprint20}s`
+          : "-",
+        dash40: this.newPerformance.dash40
+          ? `${this.newPerformance.dash40}s`
+          : "-",
+        proAgility: this.newPerformance.proAgility
+          ? `${this.newPerformance.proAgility}s`
+          : "-",
+        vertical: this.newPerformance.vertical
+          ? `${this.newPerformance.vertical}"`
+          : "-",
+        broad: this.newPerformance.broad
+          ? `${this.newPerformance.broad}"`
+          : "-",
+        squat: this.newPerformance.squat
+          ? `${this.newPerformance.squat}lb`
+          : "-",
+        deadlift: this.newPerformance.deadlift
+          ? `${this.newPerformance.deadlift}lb`
+          : "-",
         score: score,
       };
 
       this.performanceHistory.update((history) => [newRecord, ...history]);
-      
+
       // Update benchmarks after new record
       this.updatePositionBenchmarks();
 

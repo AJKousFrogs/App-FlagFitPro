@@ -379,7 +379,12 @@ export interface TodayScheduleItem {
 export interface SupplementEntry {
   name: string;
   taken: boolean;
-  timeOfDay: "morning" | "afternoon" | "evening" | "pre-workout" | "post-workout";
+  timeOfDay:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "pre-workout"
+    | "post-workout";
   dosage?: string;
 }
 

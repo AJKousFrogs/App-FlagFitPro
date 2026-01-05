@@ -199,7 +199,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
   box-shadow: var(--shadow-md);
 }
 
@@ -225,7 +227,11 @@
 .profile-page .jersey-badge {
   margin-top: var(--space-3);
   padding: var(--space-2) var(--space-5);
-  background: linear-gradient(135deg, var(--primitive-neutral-900) 0%, var(--primitive-neutral-700) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-neutral-900) 0%,
+    var(--primitive-neutral-700) 100%
+  );
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-sm);
 }
@@ -390,12 +396,17 @@
   transition: color 0.2s ease;
 }
 
-.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) {
+.profile-page
+  .profile-tabs-container
+  .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) {
   background: var(--surface-primary);
   color: var(--color-text-primary);
 }
 
-.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) i {
+.profile-page
+  .profile-tabs-container
+  .p-tab:hover:not(.p-tab-active):not([data-p-active="true"])
+  i {
   color: var(--ds-primary-green);
 }
 
@@ -587,7 +598,9 @@
 
 .profile-page .stat-block__value {
   font-size: var(--font-size-metric-md); // 24px - matches Dashboard
-  font-weight: var(--font-weight-semibold); // Reduced from bold to not compete with card title
+  font-weight: var(
+    --font-weight-semibold
+  ); // Reduced from bold to not compete with card title
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
 }

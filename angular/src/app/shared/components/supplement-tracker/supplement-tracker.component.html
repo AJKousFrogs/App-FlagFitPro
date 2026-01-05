@@ -60,7 +60,11 @@
               tabindex="0"
               role="checkbox"
               [attr.aria-checked]="supp.taken"
-              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+              [attr.aria-label]="
+                supp.name +
+                (supp.dosage ? ' - ' + supp.dosage : '') +
+                (supp.taken ? ' (taken)' : ' (not taken)')
+              "
             >
               <div class="item-checkbox">
                 <p-checkbox
@@ -80,7 +84,6 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -105,7 +108,11 @@
               tabindex="0"
               role="checkbox"
               [attr.aria-checked]="supp.taken"
-              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+              [attr.aria-label]="
+                supp.name +
+                (supp.dosage ? ' - ' + supp.dosage : '') +
+                (supp.taken ? ' (taken)' : ' (not taken)')
+              "
             >
               <div class="item-checkbox">
                 <p-checkbox
@@ -125,7 +132,6 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -150,7 +156,11 @@
               tabindex="0"
               role="checkbox"
               [attr.aria-checked]="supp.taken"
-              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+              [attr.aria-label]="
+                supp.name +
+                (supp.dosage ? ' - ' + supp.dosage : '') +
+                (supp.taken ? ' (taken)' : ' (not taken)')
+              "
             >
               <div class="item-checkbox">
                 <p-checkbox
@@ -170,7 +180,6 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -195,7 +204,11 @@
               tabindex="0"
               role="checkbox"
               [attr.aria-checked]="supp.taken"
-              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+              [attr.aria-label]="
+                supp.name +
+                (supp.dosage ? ' - ' + supp.dosage : '') +
+                (supp.taken ? ' (taken)' : ' (not taken)')
+              "
             >
               <div class="item-checkbox">
                 <p-checkbox
@@ -215,7 +228,6 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -240,7 +252,11 @@
               tabindex="0"
               role="checkbox"
               [attr.aria-checked]="supp.taken"
-              [attr.aria-label]="supp.name + (supp.dosage ? ' - ' + supp.dosage : '') + (supp.taken ? ' (taken)' : ' (not taken)')"
+              [attr.aria-label]="
+                supp.name +
+                (supp.dosage ? ' - ' + supp.dosage : '') +
+                (supp.taken ? ' (taken)' : ' (not taken)')
+              "
             >
               <div class="item-checkbox">
                 <p-checkbox
@@ -260,7 +276,6 @@
               <p-tag
                 [value]="supp.category | titlecase"
                 [severity]="getCategoryColor(supp.category)"
-                
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -274,11 +289,9 @@
       <div class="supplement-empty">
         <i class="pi pi-inbox"></i>
         <p>No supplements configured</p>
-        <app-button
-          iconLeft="pi-plus"
-          size="sm"
-          (clicked)="openAddDialog()"
-        >Add Your First Supplement</app-button>
+        <app-button iconLeft="pi-plus" size="sm" (clicked)="openAddDialog()"
+          >Add Your First Supplement</app-button
+        >
       </div>
     }
   }
@@ -343,13 +356,9 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <app-button
-      variant="text"
-      (clicked)="closeAddDialog()"
-    >Cancel</app-button>
-    <app-button
-      iconLeft="pi-plus"
-      (clicked)="addSupplement()"
-    >Add Supplement</app-button>
+    <app-button variant="text" (clicked)="closeAddDialog()">Cancel</app-button>
+    <app-button iconLeft="pi-plus" (clicked)="addSupplement()"
+      >Add Supplement</app-button
+    >
   </ng-template>
 </p-dialog>

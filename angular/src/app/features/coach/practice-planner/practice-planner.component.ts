@@ -65,7 +65,15 @@ interface EquipmentItem {
   checked: boolean;
 }
 
-type ActivityType = "warmup" | "position" | "offense" | "defense" | "scrimmage" | "cooldown" | "conditioning" | "film";
+type ActivityType =
+  | "warmup"
+  | "position"
+  | "offense"
+  | "defense"
+  | "scrimmage"
+  | "cooldown"
+  | "conditioning"
+  | "film";
 
 // ===== Constants =====
 const ACTIVITY_TYPES: { value: ActivityType; label: string; icon: string }[] = [
@@ -109,7 +117,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -123,7 +131,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           subtitle="Design detailed practice sessions"
           icon="pi-calendar"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">New Practice Plan</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+            >New Practice Plan</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -166,20 +176,43 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     ></p-tag>
                   </div>
                   <div class="practice-actions">
-                    <app-button variant="secondary" size="sm" iconLeft="pi-pencil" (clicked)="editPractice(practice)">Edit</app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-copy" (clicked)="copyPractice(practice)">Copy</app-button>
-                    <app-button size="sm" iconLeft="pi-play" [disabled]="practice.status !== 'scheduled'" (clicked)="startPractice(practice)">Start</app-button>
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      iconLeft="pi-pencil"
+                      (clicked)="editPractice(practice)"
+                      >Edit</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-copy"
+                      (clicked)="copyPractice(practice)"
+                      >Copy</app-button
+                    >
+                    <app-button
+                      size="sm"
+                      iconLeft="pi-play"
+                      [disabled]="practice.status !== 'scheduled'"
+                      (clicked)="startPractice(practice)"
+                      >Start</app-button
+                    >
                   </div>
                 </div>
 
                 <div class="practice-info">
                   <div class="info-row">
                     <i class="pi pi-calendar"></i>
-                    <span>{{ practice.date | date:'EEEE, MMM d, y' }}</span>
+                    <span>{{ practice.date | date: "EEEE, MMM d, y" }}</span>
                   </div>
                   <div class="info-row">
                     <i class="pi pi-clock"></i>
-                    <span>{{ practice.startTime }} - {{ practice.endTime }} ({{ practice.durationMinutes }} min)</span>
+                    <span
+                      >{{ practice.startTime }} - {{ practice.endTime }} ({{
+                        practice.durationMinutes
+                      }}
+                      min)</span
+                    >
                   </div>
                   <div class="info-row">
                     <i class="pi pi-map-marker"></i>
@@ -214,9 +247,14 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <div class="attendance-row">
                   <span>Attendance:</span>
                   <span class="attendance-stats">
-                    {{ practice.attendance.confirmed }}/{{ practice.attendance.total }} confirmed
+                    {{ practice.attendance.confirmed }}/{{
+                      practice.attendance.total
+                    }}
+                    confirmed
                     @if (practice.attendance.pending > 0) {
-                      <span class="pending">({{ practice.attendance.pending }} pending)</span>
+                      <span class="pending"
+                        >({{ practice.attendance.pending }} pending)</span
+                      >
                     }
                   </span>
                 </div>
@@ -229,7 +267,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               <i class="pi pi-calendar"></i>
               <h3>No Practices Found</h3>
               <p>Create your first practice plan</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Practice</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+                >Create Practice</app-button
+              >
             </div>
           </p-card>
         }
@@ -331,11 +371,17 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             </div>
 
             <div class="timeline-editor">
-              @for (activity of formData.activities; track activity.id; let i = $index) {
+              @for (
+                activity of formData.activities;
+                track activity.id;
+                let i = $index
+              ) {
                 <div class="activity-block">
                   <div class="activity-header">
                     <span class="activity-time">{{ activity.startTime }}</span>
-                    <span class="activity-icon">{{ getActivityIcon(activity.type) }}</span>
+                    <span class="activity-icon">{{
+                      getActivityIcon(activity.type)
+                    }}</span>
                     <input
                       type="text"
                       pInputText
@@ -350,8 +396,18 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       [style]="{ width: '90px' }"
                       (ngModelChange)="updateActivityTimes()"
                     ></p-inputNumber>
-                    <app-button variant="text" iconLeft="pi-pencil" (clicked)="editActivity(activity)">Edit activity</app-button>
-                    <app-button variant="text" iconLeft="pi-times" (clicked)="removeActivity(i)">Remove activity</app-button>
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-pencil"
+                      (clicked)="editActivity(activity)"
+                      >Edit activity</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-times"
+                      (clicked)="removeActivity(i)"
+                      >Remove activity</app-button
+                    >
                   </div>
                   @if (activity.details.length > 0) {
                     <div class="activity-details">
@@ -366,7 +422,12 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               }
             </div>
 
-            <app-button variant="text" iconLeft="pi-plus" (clicked)="addActivity()">Add Activity Block</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-plus"
+              (clicked)="addActivity()"
+              >Add Activity Block</app-button
+            >
           </div>
 
           <!-- Equipment Section -->
@@ -380,7 +441,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     [binary]="true"
                     [inputId]="'eq-' + item.name"
                   ></p-checkbox>
-                  <label [for]="'eq-' + item.name">{{ item.name }} ({{ item.quantity }})</label>
+                  <label [for]="'eq-' + item.name"
+                    >{{ item.name }} ({{ item.quantity }})</label
+                  >
                 </div>
               }
             </div>
@@ -399,10 +462,21 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="saveDraft()">Save as Draft</app-button>
-          <app-button variant="text" (clicked)="saveAsTemplate()">Save as Template</app-button>
-          <app-button variant="text" (clicked)="showDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" [disabled]="!formData.title" (clicked)="saveAndNotify()">Save & Notify Team</app-button>
+          <app-button variant="secondary" (clicked)="saveDraft()"
+            >Save as Draft</app-button
+          >
+          <app-button variant="text" (clicked)="saveAsTemplate()"
+            >Save as Template</app-button
+          >
+          <app-button variant="text" (clicked)="showDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="!formData.title"
+            (clicked)="saveAndNotify()"
+            >Save & Notify Team</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -440,7 +514,11 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <div class="form-field">
               <label>Activity Details</label>
               <div class="details-list">
-                @for (detail of editingActivity.details; track detail; let i = $index) {
+                @for (
+                  detail of editingActivity.details;
+                  track detail;
+                  let i = $index
+                ) {
                   <div class="detail-row">
                     <input
                       type="text"
@@ -448,19 +526,35 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       [(ngModel)]="editingActivity.details[i]"
                       class="w-full"
                     />
-                    <app-button variant="text" iconLeft="pi-times" (clicked)="removeDetail(i)">Remove</app-button>
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-times"
+                      (clicked)="removeDetail(i)"
+                      >Remove</app-button
+                    >
                   </div>
                 }
               </div>
-              <app-button variant="text" size="sm" iconLeft="pi-plus" (clicked)="addDetail()">Add Detail</app-button>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-plus"
+                (clicked)="addDetail()"
+                >Add Detail</app-button
+              >
             </div>
 
-            @if (editingActivity.type === 'offense') {
+            @if (editingActivity.type === "offense") {
               <div class="form-field">
                 <label>Plays to Run</label>
                 <textarea
                   pTextarea
-                  [ngModel]="editingActivity.plays?.join('\n')"
+                  [ngModel]="
+                    editingActivity.plays?.join(
+                      '
+'
+                    )
+                  "
                   (ngModelChange)="updatePlays($event)"
                   placeholder="One play per line"
                   rows="4"
@@ -471,7 +565,12 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label>Key Coaching Points</label>
                 <textarea
                   pTextarea
-                  [ngModel]="editingActivity.keyPoints?.join('\n')"
+                  [ngModel]="
+                    editingActivity.keyPoints?.join(
+                      '
+'
+                    )
+                  "
                   (ngModelChange)="updateKeyPoints($event)"
                   placeholder="One point per line"
                   rows="3"
@@ -481,8 +580,14 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="secondary" (clicked)="showActivityDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" (clicked)="saveActivity()">Save Activity</app-button>
+            <app-button
+              variant="secondary"
+              (clicked)="showActivityDialog = false"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="saveActivity()"
+              >Save Activity</app-button
+            >
           </ng-template>
         }
       </p-dialog>
@@ -525,19 +630,23 @@ export class PracticePlannerComponent implements OnInit {
     const now = new Date().toISOString().split("T")[0];
 
     if (tab === "upcoming") {
-      return this.practices().filter((p) => p.date >= now && p.status !== "cancelled");
+      return this.practices().filter(
+        (p) => p.date >= now && p.status !== "cancelled",
+      );
     } else if (tab === "past") {
-      return this.practices().filter((p) => p.date < now || p.status === "completed");
+      return this.practices().filter(
+        (p) => p.date < now || p.status === "completed",
+      );
     }
     return [];
   });
 
   readonly allocatedMinutes = computed(() =>
-    this.formData.activities.reduce((sum, a) => sum + a.durationMinutes, 0)
+    this.formData.activities.reduce((sum, a) => sum + a.durationMinutes, 0),
   );
 
-  readonly remainingMinutes = computed(() =>
-    this.formData.durationMinutes - this.allocatedMinutes()
+  readonly remainingMinutes = computed(
+    () => this.formData.durationMinutes - this.allocatedMinutes(),
   );
 
   ngOnInit(): void {
@@ -549,7 +658,9 @@ export class PracticePlannerComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/practices"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/practices"),
+      );
       if (response?.success && response.data?.practices) {
         this.practices.set(response.data.practices);
       }
@@ -578,14 +689,71 @@ export class PracticePlannerComponent implements OnInit {
           { name: "Flag belts", quantity: 30, checked: true },
         ],
         activities: [
-          { id: "a1", startTime: "6:00 PM", type: "warmup", title: "Warm-up & Dynamic Stretching", durationMinutes: 15, details: ["Jogging laps (2)", "Dynamic stretches", "Arm circles, hip rotations"] },
-          { id: "a2", startTime: "6:15 PM", type: "position", title: "Individual Position Work", durationMinutes: 20, details: ["QB: Footwork drills", "WR: Route trees", "DB: Backpedal drills"] },
-          { id: "a3", startTime: "6:35 PM", type: "offense", title: "Red Zone Offense (7v7)", durationMinutes: 30, details: [], plays: ["Red Zone Fade", "Corner Route", "Mesh Red Zone"], keyPoints: ["Timing on fade routes", "Back shoulder throws"] },
-          { id: "a4", startTime: "7:05 PM", type: "defense", title: "Defensive Rotations", durationMinutes: 25, details: ["Zone coverage assignments", "Man-to-man switches", "Communication drills"] },
-          { id: "a5", startTime: "7:30 PM", type: "scrimmage", title: "Live Scrimmage", durationMinutes: 20, details: ["Full 5v5 simulation", "Rotate every 5 plays"] },
-          { id: "a6", startTime: "7:50 PM", type: "cooldown", title: "Cool Down & Team Talk", durationMinutes: 10, details: ["Static stretching", "Hydration", "Team announcements"] },
+          {
+            id: "a1",
+            startTime: "6:00 PM",
+            type: "warmup",
+            title: "Warm-up & Dynamic Stretching",
+            durationMinutes: 15,
+            details: [
+              "Jogging laps (2)",
+              "Dynamic stretches",
+              "Arm circles, hip rotations",
+            ],
+          },
+          {
+            id: "a2",
+            startTime: "6:15 PM",
+            type: "position",
+            title: "Individual Position Work",
+            durationMinutes: 20,
+            details: [
+              "QB: Footwork drills",
+              "WR: Route trees",
+              "DB: Backpedal drills",
+            ],
+          },
+          {
+            id: "a3",
+            startTime: "6:35 PM",
+            type: "offense",
+            title: "Red Zone Offense (7v7)",
+            durationMinutes: 30,
+            details: [],
+            plays: ["Red Zone Fade", "Corner Route", "Mesh Red Zone"],
+            keyPoints: ["Timing on fade routes", "Back shoulder throws"],
+          },
+          {
+            id: "a4",
+            startTime: "7:05 PM",
+            type: "defense",
+            title: "Defensive Rotations",
+            durationMinutes: 25,
+            details: [
+              "Zone coverage assignments",
+              "Man-to-man switches",
+              "Communication drills",
+            ],
+          },
+          {
+            id: "a5",
+            startTime: "7:30 PM",
+            type: "scrimmage",
+            title: "Live Scrimmage",
+            durationMinutes: 20,
+            details: ["Full 5v5 simulation", "Rotate every 5 plays"],
+          },
+          {
+            id: "a6",
+            startTime: "7:50 PM",
+            type: "cooldown",
+            title: "Cool Down & Team Talk",
+            durationMinutes: 10,
+            details: ["Static stretching", "Hydration", "Team announcements"],
+          },
         ],
-        coachNotes: "Emily Chen limited to non-contact drills (hip tightness)\nSarah showing great progress on out routes",
+        coachNotes:
+          "Emily Chen limited to non-contact drills (hip tightness)\nSarah showing great progress on out routes",
         attendance: { confirmed: 13, pending: 2, total: 15 },
         status: "scheduled",
       },
@@ -603,8 +771,22 @@ export class PracticePlannerComponent implements OnInit {
           { name: "Footballs", quantity: 5, checked: true },
         ],
         activities: [
-          { id: "b1", startTime: "6:00 PM", type: "warmup", title: "Warm-up", durationMinutes: 15, details: [] },
-          { id: "b2", startTime: "6:15 PM", type: "defense", title: "Rush Defense Drills", durationMinutes: 45, details: ["Gap assignments", "Contain techniques"] },
+          {
+            id: "b1",
+            startTime: "6:00 PM",
+            type: "warmup",
+            title: "Warm-up",
+            durationMinutes: 15,
+            details: [],
+          },
+          {
+            id: "b2",
+            startTime: "6:15 PM",
+            type: "defense",
+            title: "Rush Defense Drills",
+            durationMinutes: 45,
+            details: ["Gap assignments", "Contain techniques"],
+          },
         ],
         coachNotes: "",
         attendance: { confirmed: 11, pending: 4, total: 15 },
@@ -661,7 +843,10 @@ export class PracticePlannerComponent implements OnInit {
       location: practice.location,
       focus: practice.focus,
       equipment: [...practice.equipment],
-      activities: practice.activities.map((a) => ({ ...a, details: [...a.details] })),
+      activities: practice.activities.map((a) => ({
+        ...a,
+        details: [...a.details],
+      })),
       coachNotes: practice.coachNotes,
     };
     this.showDialog = true;
@@ -699,10 +884,13 @@ export class PracticePlannerComponent implements OnInit {
 
   // Activity management
   addActivity(): void {
-    const lastActivity = this.formData.activities[this.formData.activities.length - 1];
+    const lastActivity =
+      this.formData.activities[this.formData.activities.length - 1];
     const newActivity: ActivityBlock = {
       id: `new-${Date.now()}`,
-      startTime: lastActivity ? this.calculateNextTime(lastActivity) : this.formData.startTime,
+      startTime: lastActivity
+        ? this.calculateNextTime(lastActivity)
+        : this.formData.startTime,
       type: "position",
       title: "New Activity",
       durationMinutes: 15,
@@ -724,7 +912,9 @@ export class PracticePlannerComponent implements OnInit {
   saveActivity(): void {
     if (!this.editingActivity) return;
 
-    const index = this.formData.activities.findIndex((a) => a.id === this.editingActivity?.id);
+    const index = this.formData.activities.findIndex(
+      (a) => a.id === this.editingActivity?.id,
+    );
     if (index >= 0) {
       this.formData.activities[index] = { ...this.editingActivity };
     }
@@ -752,7 +942,9 @@ export class PracticePlannerComponent implements OnInit {
 
   updateKeyPoints(value: string): void {
     if (this.editingActivity) {
-      this.editingActivity.keyPoints = value.split("\n").filter((p) => p.trim());
+      this.editingActivity.keyPoints = value
+        .split("\n")
+        .filter((p) => p.trim());
     }
   }
 
@@ -760,7 +952,10 @@ export class PracticePlannerComponent implements OnInit {
     let currentTime = this.formData.startTime;
     for (const activity of this.formData.activities) {
       activity.startTime = currentTime;
-      currentTime = this.addMinutesToTime(currentTime, activity.durationMinutes);
+      currentTime = this.addMinutesToTime(
+        currentTime,
+        activity.durationMinutes,
+      );
     }
   }
 

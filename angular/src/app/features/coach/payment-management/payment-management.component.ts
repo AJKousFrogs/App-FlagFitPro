@@ -123,7 +123,7 @@ const BALANCE_FILTERS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -137,7 +137,9 @@ const BALANCE_FILTERS = [
           subtitle="Track team dues and payments"
           icon="pi-dollar"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openCreateFeeDialog()">Create Fee</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateFeeDialog()"
+            >Create Fee</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -173,7 +175,7 @@ const BALANCE_FILTERS = [
         </div>
 
         @switch (activeTab()) {
-          @case ('overview') {
+          @case ("overview") {
             <!-- Financial Overview -->
             <div class="financial-overview">
               <div class="stat-card balance">
@@ -215,7 +217,9 @@ const BALANCE_FILTERS = [
               <ng-template pTemplate="header">
                 <div class="card-header">
                   <h3>Active Fees</h3>
-                  <app-button variant="text" (clicked)="activeTab.set('fees')">View All</app-button>
+                  <app-button variant="text" (clicked)="activeTab.set('fees')"
+                    >View All</app-button
+                  >
                 </div>
               </ng-template>
               <div class="fees-preview">
@@ -229,8 +233,16 @@ const BALANCE_FILTERS = [
                       }
                     </div>
                     <div class="fee-progress">
-                      <p-progressBar [value]="getCollectionPercent(fee)" [showValue]="false" [style]="{ height: '12px' }"></p-progressBar>
-                      <span class="progress-text">\${{ fee.collected }} / \${{ fee.total }} ({{ getCollectionPercent(fee) }}%)</span>
+                      <p-progressBar
+                        [value]="getCollectionPercent(fee)"
+                        [showValue]="false"
+                        [style]="{ height: '12px' }"
+                      ></p-progressBar>
+                      <span class="progress-text"
+                        >\${{ fee.collected }} / \${{ fee.total }} ({{
+                          getCollectionPercent(fee)
+                        }}%)</span
+                      >
                     </div>
                   </div>
                 }
@@ -238,7 +250,7 @@ const BALANCE_FILTERS = [
             </p-card>
           }
 
-          @case ('fees') {
+          @case ("fees") {
             <!-- Active Fees List -->
             <div class="fees-list">
               @for (fee of fees(); track fee.id) {
@@ -249,18 +261,29 @@ const BALANCE_FILTERS = [
                       <h3>{{ fee.name }}</h3>
                     </div>
                     <div class="fee-actions">
-                      <app-button variant="text" size="sm" iconLeft="pi-pencil">Edit fee</app-button>
-                      <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v">More options</app-button>
+                      <app-button variant="text" size="sm" iconLeft="pi-pencil"
+                        >Edit fee</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        iconLeft="pi-ellipsis-v"
+                        >More options</app-button
+                      >
                     </div>
                   </div>
 
                   <div class="fee-details">
-                    <p><strong>Base Fee:</strong> \${{ fee.amount }}/player
+                    <p>
+                      <strong>Base Fee:</strong> \${{ fee.amount }}/player
                       @if (fee.guestFee) {
-                        <span class="guest-fee">Guest Fee: \${{ fee.guestFee }}/guest</span>
+                        <span class="guest-fee"
+                          >Guest Fee: \${{ fee.guestFee }}/guest</span
+                        >
                       }
                     </p>
-                    <p><strong>Due Date:</strong> {{ fee.dueDate }}
+                    <p>
+                      <strong>Due Date:</strong> {{ fee.dueDate }}
                       @if (fee.isOverdue) {
                         <span class="overdue-badge">⚠️ OVERDUE</span>
                       }
@@ -269,9 +292,21 @@ const BALANCE_FILTERS = [
 
                   <div class="fee-progress-section">
                     <h4>Collection Progress:</h4>
-                    <p-progressBar [value]="getCollectionPercent(fee)" [showValue]="false" [style]="{ height: '16px' }"></p-progressBar>
-                    <span class="progress-detail">\${{ fee.collected }} / \${{ fee.total }} ({{ getCollectionPercent(fee) }}%)</span>
-                    <p class="status-counts">{{ fee.paidCount }} paid full • {{ fee.partialCount }} partial • {{ fee.unpaidCount }} unpaid</p>
+                    <p-progressBar
+                      [value]="getCollectionPercent(fee)"
+                      [showValue]="false"
+                      [style]="{ height: '16px' }"
+                    ></p-progressBar>
+                    <span class="progress-detail"
+                      >\${{ fee.collected }} / \${{ fee.total }} ({{
+                        getCollectionPercent(fee)
+                      }}%)</span
+                    >
+                    <p class="status-counts">
+                      {{ fee.paidCount }} paid full •
+                      {{ fee.partialCount }} partial •
+                      {{ fee.unpaidCount }} unpaid
+                    </p>
                   </div>
 
                   @if (fee.outstanding.length > 0) {
@@ -279,23 +314,40 @@ const BALANCE_FILTERS = [
                       <h4>Outstanding:</h4>
                       <ul class="outstanding-list">
                         @for (item of fee.outstanding; track item.playerId) {
-                          <li>{{ item.playerName }}: \${{ item.amount }} {{ item.note || '' }}</li>
+                          <li>
+                            {{ item.playerName }}: \${{ item.amount }}
+                            {{ item.note || "" }}
+                          </li>
                         }
                       </ul>
                     </div>
                   }
 
                   <div class="fee-card-actions">
-                    <app-button variant="secondary" size="sm" (clicked)="viewFeeDetails(fee)">View Details</app-button>
-                    <app-button variant="secondary" size="sm" (clicked)="sendFeeReminders(fee)">Send Reminders</app-button>
-                    <app-button size="sm" (clicked)="openRecordPaymentDialog(fee)">Mark Paid</app-button>
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="viewFeeDetails(fee)"
+                      >View Details</app-button
+                    >
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="sendFeeReminders(fee)"
+                      >Send Reminders</app-button
+                    >
+                    <app-button
+                      size="sm"
+                      (clicked)="openRecordPaymentDialog(fee)"
+                      >Mark Paid</app-button
+                    >
                   </div>
                 </div>
               }
             </div>
           }
 
-          @case ('balances') {
+          @case ("balances") {
             <!-- Player Balances -->
             <p-card>
               <ng-template pTemplate="header">
@@ -304,9 +356,19 @@ const BALANCE_FILTERS = [
                   <div class="balance-filters">
                     <span class="p-input-icon-left">
                       <i class="pi pi-search"></i>
-                      <input type="text" pInputText [(ngModel)]="balanceSearch" placeholder="Search players..." />
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="balanceSearch"
+                        placeholder="Search players..."
+                      />
                     </span>
-                    <p-select [options]="balanceFilters" [(ngModel)]="balanceFilter" optionLabel="label" optionValue="value"></p-select>
+                    <p-select
+                      [options]="balanceFilters"
+                      [(ngModel)]="balanceFilter"
+                      optionLabel="label"
+                      optionValue="value"
+                    ></p-select>
                   </div>
                 </div>
               </ng-template>
@@ -324,7 +386,9 @@ const BALANCE_FILTERS = [
                 <ng-template pTemplate="body" let-balance>
                   <tr>
                     <td>{{ balance.playerName }}</td>
-                    <td [class.owes]="balance.balance > 0">\${{ balance.balance }}</td>
+                    <td [class.owes]="balance.balance > 0">
+                      \${{ balance.balance }}
+                    </td>
                     <td>
                       <p-tag
                         [value]="getStatusLabel(balance.status)"
@@ -333,17 +397,35 @@ const BALANCE_FILTERS = [
                     </td>
                     <td>
                       @if (balance.lastPaymentDate) {
-                        {{ balance.lastPaymentDate }}, \${{ balance.lastPaymentAmount }}
+                        {{ balance.lastPaymentDate }}, \${{
+                          balance.lastPaymentAmount
+                        }}
                       } @else {
                         --
                       }
                     </td>
                     <td>
                       @if (balance.balance > 0) {
-                        <app-button variant="text" size="sm" iconLeft="pi-comment" (clicked)="sendPlayerReminder(balance)">Send reminder</app-button>
-                        <app-button variant="secondary" size="sm" (clicked)="markPlayerPaid(balance)">Mark</app-button>
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-comment"
+                          (clicked)="sendPlayerReminder(balance)"
+                          >Send reminder</app-button
+                        >
+                        <app-button
+                          variant="secondary"
+                          size="sm"
+                          (clicked)="markPlayerPaid(balance)"
+                          >Mark</app-button
+                        >
                       } @else {
-                        <app-button variant="text" size="sm" (clicked)="viewPlayerHistory(balance)">View</app-button>
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          (clicked)="viewPlayerHistory(balance)"
+                          >View</app-button
+                        >
                       }
                     </td>
                   </tr>
@@ -351,13 +433,20 @@ const BALANCE_FILTERS = [
               </p-table>
 
               <div class="balance-actions">
-                <app-button variant="secondary" iconLeft="pi-download" (clicked)="exportCSV()">Export CSV</app-button>
-                <app-button iconLeft="pi-bell" (clicked)="sendAllReminders()">Send All Reminders</app-button>
+                <app-button
+                  variant="secondary"
+                  iconLeft="pi-download"
+                  (clicked)="exportCSV()"
+                  >Export CSV</app-button
+                >
+                <app-button iconLeft="pi-bell" (clicked)="sendAllReminders()"
+                  >Send All Reminders</app-button
+                >
               </div>
             </p-card>
           }
 
-          @case ('history') {
+          @case ("history") {
             <!-- Payment History -->
             <p-card>
               <ng-template pTemplate="header">
@@ -384,7 +473,7 @@ const BALANCE_FILTERS = [
                     <td>{{ payment.feeName }}</td>
                     <td>\${{ payment.amount }}</td>
                     <td>{{ payment.method }}</td>
-                    <td>{{ payment.reference || '--' }}</td>
+                    <td>{{ payment.reference || "--" }}</td>
                   </tr>
                 </ng-template>
               </p-table>
@@ -403,7 +492,12 @@ const BALANCE_FILTERS = [
         <div class="fee-form">
           <div class="form-field">
             <label>Fee Name</label>
-            <input type="text" pInputText [(ngModel)]="feeForm.name" placeholder="e.g., February Team Dues" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="feeForm.name"
+              placeholder="e.g., February Team Dues"
+            />
           </div>
 
           <div class="form-field">
@@ -411,8 +505,15 @@ const BALANCE_FILTERS = [
             <div class="radio-group">
               @for (type of feeTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton name="feeType" [value]="type.value" [(ngModel)]="feeForm.type" [inputId]="'feeType-' + type.value"></p-radioButton>
-                  <label [for]="'feeType-' + type.value">{{ type.label }}</label>
+                  <p-radioButton
+                    name="feeType"
+                    [value]="type.value"
+                    [(ngModel)]="feeForm.type"
+                    [inputId]="'feeType-' + type.value"
+                  ></p-radioButton>
+                  <label [for]="'feeType-' + type.value">{{
+                    type.label
+                  }}</label>
                 </div>
               }
             </div>
@@ -421,33 +522,64 @@ const BALANCE_FILTERS = [
           <div class="form-row">
             <div class="form-field">
               <label>Amount per Player</label>
-              <p-inputNumber [(ngModel)]="feeForm.amount" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+              <p-inputNumber
+                [(ngModel)]="feeForm.amount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
             </div>
             <div class="form-field">
               <label>Guest Fee (optional)</label>
-              <p-inputNumber [(ngModel)]="feeForm.guestFee" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+              <p-inputNumber
+                [(ngModel)]="feeForm.guestFee"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
             </div>
           </div>
 
           <div class="form-field">
             <label>Due Date</label>
-            <p-datepicker [(ngModel)]="feeForm.dueDate" [showIcon]="true" styleClass="w-full"></p-datepicker>
+            <p-datepicker
+              [(ngModel)]="feeForm.dueDate"
+              [showIcon]="true"
+              styleClass="w-full"
+            ></p-datepicker>
           </div>
 
           <div class="form-field">
             <label>Description / Breakdown</label>
-            <textarea pTextarea [(ngModel)]="feeForm.description" rows="4" placeholder="What this fee covers..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="feeForm.description"
+              rows="4"
+              placeholder="What this fee covers..."
+            ></textarea>
           </div>
 
           <div class="form-field">
             <label>Apply To</label>
             <div class="radio-group">
               <div class="radio-option">
-                <p-radioButton name="applyTo" value="all" [(ngModel)]="feeForm.applyTo" inputId="applyAll"></p-radioButton>
-                <label for="applyAll">All active players ({{ totalPlayers() }})</label>
+                <p-radioButton
+                  name="applyTo"
+                  value="all"
+                  [(ngModel)]="feeForm.applyTo"
+                  inputId="applyAll"
+                ></p-radioButton>
+                <label for="applyAll"
+                  >All active players ({{ totalPlayers() }})</label
+                >
               </div>
               <div class="radio-option">
-                <p-radioButton name="applyTo" value="select" [(ngModel)]="feeForm.applyTo" inputId="applySelect"></p-radioButton>
+                <p-radioButton
+                  name="applyTo"
+                  value="select"
+                  [(ngModel)]="feeForm.applyTo"
+                  inputId="applySelect"
+                ></p-radioButton>
                 <label for="applySelect">Select specific players...</label>
               </div>
             </div>
@@ -457,15 +589,27 @@ const BALANCE_FILTERS = [
             <label>Reminders</label>
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <p-checkbox [(ngModel)]="feeForm.notifyOnCreate" [binary]="true" inputId="notifyCreate"></p-checkbox>
+                <p-checkbox
+                  [(ngModel)]="feeForm.notifyOnCreate"
+                  [binary]="true"
+                  inputId="notifyCreate"
+                ></p-checkbox>
                 <label for="notifyCreate">Send notification when created</label>
               </div>
               <div class="checkbox-option">
-                <p-checkbox [(ngModel)]="feeForm.remind3Days" [binary]="true" inputId="remind3"></p-checkbox>
+                <p-checkbox
+                  [(ngModel)]="feeForm.remind3Days"
+                  [binary]="true"
+                  inputId="remind3"
+                ></p-checkbox>
                 <label for="remind3">Send reminder 3 days before due</label>
               </div>
               <div class="checkbox-option">
-                <p-checkbox [(ngModel)]="feeForm.remindOverdue" [binary]="true" inputId="remindOverdue"></p-checkbox>
+                <p-checkbox
+                  [(ngModel)]="feeForm.remindOverdue"
+                  [binary]="true"
+                  inputId="remindOverdue"
+                ></p-checkbox>
                 <label for="remindOverdue">Send reminder when overdue</label>
               </div>
             </div>
@@ -473,8 +617,12 @@ const BALANCE_FILTERS = [
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showFeeDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="createFee()">Create Fee</app-button>
+          <app-button variant="secondary" (clicked)="showFeeDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="createFee()"
+            >Create Fee</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -500,40 +648,71 @@ const BALANCE_FILTERS = [
 
           @if (paymentForm.playerId) {
             <div class="current-balance">
-              Current Balance: <strong>\${{ getPlayerBalance(paymentForm.playerId) }} owed</strong>
+              Current Balance:
+              <strong
+                >\${{ getPlayerBalance(paymentForm.playerId) }} owed</strong
+              >
             </div>
           }
 
           <div class="form-row">
             <div class="form-field">
               <label>Amount Received</label>
-              <p-inputNumber [(ngModel)]="paymentForm.amount" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+              <p-inputNumber
+                [(ngModel)]="paymentForm.amount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
             </div>
             <div class="form-field">
               <label>Payment Method</label>
-              <p-select [options]="paymentMethods" [(ngModel)]="paymentForm.method" optionLabel="label" optionValue="value" styleClass="w-full"></p-select>
+              <p-select
+                [options]="paymentMethods"
+                [(ngModel)]="paymentForm.method"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="w-full"
+              ></p-select>
             </div>
           </div>
 
           <div class="form-field">
             <label>Date Received</label>
-            <p-datepicker [(ngModel)]="paymentForm.date" [showIcon]="true" styleClass="w-full"></p-datepicker>
+            <p-datepicker
+              [(ngModel)]="paymentForm.date"
+              [showIcon]="true"
+              styleClass="w-full"
+            ></p-datepicker>
           </div>
 
           <div class="form-field">
             <label>Reference / Notes (optional)</label>
-            <input type="text" pInputText [(ngModel)]="paymentForm.reference" placeholder="e.g., Venmo txn #12345" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="paymentForm.reference"
+              placeholder="e.g., Venmo txn #12345"
+            />
           </div>
 
           <div class="checkbox-option">
-            <p-checkbox [(ngModel)]="paymentForm.sendConfirmation" [binary]="true" inputId="sendConfirm"></p-checkbox>
+            <p-checkbox
+              [(ngModel)]="paymentForm.sendConfirmation"
+              [binary]="true"
+              inputId="sendConfirm"
+            ></p-checkbox>
             <label for="sendConfirm">Send confirmation to player</label>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showPaymentDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="recordPayment()">Record Payment</app-button>
+          <app-button variant="secondary" (clicked)="showPaymentDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="recordPayment()"
+            >Record Payment</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -549,7 +728,9 @@ export class PaymentManagementComponent implements OnInit {
   readonly fees = signal<TeamFee[]>([]);
   readonly balances = signal<PlayerBalance[]>([]);
   readonly payments = signal<Payment[]>([]);
-  readonly activeTab = signal<"overview" | "fees" | "balances" | "history">("overview");
+  readonly activeTab = signal<"overview" | "fees" | "balances" | "history">(
+    "overview",
+  );
   readonly isLoading = signal(true);
 
   // Filter state
@@ -571,31 +752,35 @@ export class PaymentManagementComponent implements OnInit {
 
   // Computed
   readonly totalOutstanding = computed(() =>
-    this.balances().reduce((sum, b) => sum + b.balance, 0)
+    this.balances().reduce((sum, b) => sum + b.balance, 0),
   );
 
-  readonly playersOwing = computed(() =>
-    this.balances().filter((b) => b.balance > 0).length
+  readonly playersOwing = computed(
+    () => this.balances().filter((b) => b.balance > 0).length,
   );
 
   readonly totalCollected = computed(() =>
-    this.payments().reduce((sum, p) => sum + p.amount, 0)
+    this.payments().reduce((sum, p) => sum + p.amount, 0),
   );
 
   readonly dueThisMonth = computed(() =>
-    this.balances().filter((b) => b.status === "due").reduce((sum, b) => sum + b.balance, 0)
+    this.balances()
+      .filter((b) => b.status === "due")
+      .reduce((sum, b) => sum + b.balance, 0),
   );
 
-  readonly playersDueCount = computed(() =>
-    this.balances().filter((b) => b.status === "due").length
+  readonly playersDueCount = computed(
+    () => this.balances().filter((b) => b.status === "due").length,
   );
 
   readonly totalOverdue = computed(() =>
-    this.balances().filter((b) => b.status === "overdue").reduce((sum, b) => sum + b.balance, 0)
+    this.balances()
+      .filter((b) => b.status === "overdue")
+      .reduce((sum, b) => sum + b.balance, 0),
   );
 
-  readonly playersOverdue = computed(() =>
-    this.balances().filter((b) => b.status === "overdue").length
+  readonly playersOverdue = computed(
+    () => this.balances().filter((b) => b.status === "overdue").length,
   );
 
   readonly filteredBalances = computed(() => {
@@ -604,7 +789,9 @@ export class PaymentManagementComponent implements OnInit {
     // Search filter
     if (this.balanceSearch) {
       const search = this.balanceSearch.toLowerCase();
-      result = result.filter((b) => b.playerName.toLowerCase().includes(search));
+      result = result.filter((b) =>
+        b.playerName.toLowerCase().includes(search),
+      );
     }
 
     // Status filter
@@ -620,7 +807,9 @@ export class PaymentManagementComponent implements OnInit {
   });
 
   readonly playerOptions = computed(() =>
-    this.balances().filter((b) => b.balance > 0).map((b) => ({ id: b.id, name: b.playerName }))
+    this.balances()
+      .filter((b) => b.balance > 0)
+      .map((b) => ({ id: b.id, name: b.playerName })),
   );
 
   readonly totalPlayers = computed(() => this.balances().length);
@@ -634,7 +823,9 @@ export class PaymentManagementComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/payments"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/payments"),
+      );
       if (response?.success && response.data) {
         this.fees.set(response.data.fees || []);
         this.balances.set(response.data.balances || []);
@@ -664,8 +855,18 @@ export class PaymentManagementComponent implements OnInit {
         unpaidCount: 2,
         isOverdue: false,
         outstanding: [
-          { playerId: "p1", playerName: "Chris Martinez", amount: 85, note: "(not paid)" },
-          { playerId: "p2", playerName: "Jake Rodriguez", amount: 45, note: "(guest fee)" },
+          {
+            playerId: "p1",
+            playerName: "Chris Martinez",
+            amount: 85,
+            note: "(not paid)",
+          },
+          {
+            playerId: "p2",
+            playerName: "Jake Rodriguez",
+            amount: 45,
+            note: "(guest fee)",
+          },
         ],
       },
       {
@@ -681,28 +882,137 @@ export class PaymentManagementComponent implements OnInit {
         unpaidCount: 1,
         isOverdue: true,
         outstanding: [
-          { playerId: "p3", playerName: "Avery Garcia", amount: 35, note: "(7 days overdue)" },
+          {
+            playerId: "p3",
+            playerName: "Avery Garcia",
+            amount: 35,
+            note: "(7 days overdue)",
+          },
         ],
       },
     ]);
 
     this.balances.set([
-      { id: "p1", playerName: "Chris Martinez", balance: 85, status: "overdue", lastPaymentDate: "Dec 28", lastPaymentAmount: 35, daysOverdue: 5 },
-      { id: "p2", playerName: "Jake Rodriguez", balance: 45, status: "due", lastPaymentDate: "Dec 30", lastPaymentAmount: 85 },
-      { id: "p3", playerName: "Avery Garcia", balance: 35, status: "overdue", lastPaymentDate: "Dec 1", lastPaymentAmount: 35, daysOverdue: 7 },
-      { id: "p4", playerName: "Morgan Davis", balance: 0, status: "paid", lastPaymentDate: "Jan 2", lastPaymentAmount: 120 },
-      { id: "p5", playerName: "Sarah Johnson", balance: 0, status: "paid", lastPaymentDate: "Jan 1", lastPaymentAmount: 130 },
-      { id: "p6", playerName: "Marcus Williams", balance: 0, status: "paid", lastPaymentDate: "Dec 28", lastPaymentAmount: 85 },
-      { id: "p7", playerName: "Emily Chen", balance: 0, status: "paid", lastPaymentDate: "Dec 30", lastPaymentAmount: 85 },
-      { id: "p8", playerName: "Taylor Smith", balance: 0, status: "paid", lastPaymentDate: "Jan 2", lastPaymentAmount: 85 },
+      {
+        id: "p1",
+        playerName: "Chris Martinez",
+        balance: 85,
+        status: "overdue",
+        lastPaymentDate: "Dec 28",
+        lastPaymentAmount: 35,
+        daysOverdue: 5,
+      },
+      {
+        id: "p2",
+        playerName: "Jake Rodriguez",
+        balance: 45,
+        status: "due",
+        lastPaymentDate: "Dec 30",
+        lastPaymentAmount: 85,
+      },
+      {
+        id: "p3",
+        playerName: "Avery Garcia",
+        balance: 35,
+        status: "overdue",
+        lastPaymentDate: "Dec 1",
+        lastPaymentAmount: 35,
+        daysOverdue: 7,
+      },
+      {
+        id: "p4",
+        playerName: "Morgan Davis",
+        balance: 0,
+        status: "paid",
+        lastPaymentDate: "Jan 2",
+        lastPaymentAmount: 120,
+      },
+      {
+        id: "p5",
+        playerName: "Sarah Johnson",
+        balance: 0,
+        status: "paid",
+        lastPaymentDate: "Jan 1",
+        lastPaymentAmount: 130,
+      },
+      {
+        id: "p6",
+        playerName: "Marcus Williams",
+        balance: 0,
+        status: "paid",
+        lastPaymentDate: "Dec 28",
+        lastPaymentAmount: 85,
+      },
+      {
+        id: "p7",
+        playerName: "Emily Chen",
+        balance: 0,
+        status: "paid",
+        lastPaymentDate: "Dec 30",
+        lastPaymentAmount: 85,
+      },
+      {
+        id: "p8",
+        playerName: "Taylor Smith",
+        balance: 0,
+        status: "paid",
+        lastPaymentDate: "Jan 2",
+        lastPaymentAmount: 85,
+      },
     ]);
 
     this.payments.set([
-      { id: "pay1", playerId: "p4", playerName: "Morgan Davis", feeId: "f1", feeName: "Spring Championship", amount: 120, method: "Venmo", date: "Jan 2, 2026" },
-      { id: "pay2", playerId: "p5", playerName: "Sarah Johnson", feeId: "f1", feeName: "Spring Championship", amount: 130, method: "Zelle", date: "Jan 1, 2026", reference: "Includes guest" },
-      { id: "pay3", playerId: "p6", playerName: "Marcus Williams", feeId: "f1", feeName: "Spring Championship", amount: 85, method: "Venmo", date: "Dec 28, 2025" },
-      { id: "pay4", playerId: "p7", playerName: "Emily Chen", feeId: "f1", feeName: "Spring Championship", amount: 85, method: "Cash", date: "Dec 30, 2025" },
-      { id: "pay5", playerId: "p8", playerName: "Taylor Smith", feeId: "f1", feeName: "Spring Championship", amount: 85, method: "Venmo", date: "Jan 2, 2026" },
+      {
+        id: "pay1",
+        playerId: "p4",
+        playerName: "Morgan Davis",
+        feeId: "f1",
+        feeName: "Spring Championship",
+        amount: 120,
+        method: "Venmo",
+        date: "Jan 2, 2026",
+      },
+      {
+        id: "pay2",
+        playerId: "p5",
+        playerName: "Sarah Johnson",
+        feeId: "f1",
+        feeName: "Spring Championship",
+        amount: 130,
+        method: "Zelle",
+        date: "Jan 1, 2026",
+        reference: "Includes guest",
+      },
+      {
+        id: "pay3",
+        playerId: "p6",
+        playerName: "Marcus Williams",
+        feeId: "f1",
+        feeName: "Spring Championship",
+        amount: 85,
+        method: "Venmo",
+        date: "Dec 28, 2025",
+      },
+      {
+        id: "pay4",
+        playerId: "p7",
+        playerName: "Emily Chen",
+        feeId: "f1",
+        feeName: "Spring Championship",
+        amount: 85,
+        method: "Cash",
+        date: "Dec 30, 2025",
+      },
+      {
+        id: "pay5",
+        playerId: "p8",
+        playerName: "Taylor Smith",
+        feeId: "f1",
+        feeName: "Spring Championship",
+        amount: 85,
+        method: "Venmo",
+        date: "Jan 2, 2026",
+      },
     ]);
   }
 
@@ -839,8 +1149,13 @@ export class PaymentManagementComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       paid: "success",
       due: "warn",
       overdue: "danger",

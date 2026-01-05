@@ -96,7 +96,7 @@ interface TimezoneOption {
     BadgeModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -108,7 +108,12 @@ interface TimezoneOption {
           icon="pi-globe"
         >
           @if (hasActivePlan() || hasActiveCarPlan()) {
-            <app-button variant="outlined" iconLeft="pi-plus" (clicked)="startNewPlan()">New Trip</app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-plus"
+              (clicked)="startNewPlan()"
+              >New Trip</app-button
+            >
           }
         </app-page-header>
 
@@ -297,7 +302,12 @@ interface TimezoneOption {
               </div>
 
               <div class="form-actions">
-                <app-button iconLeft="pi-bolt" [disabled]="!canCreatePlan()" (clicked)="createPlan()">Generate Recovery Protocol</app-button>
+                <app-button
+                  iconLeft="pi-bolt"
+                  [disabled]="!canCreatePlan()"
+                  (clicked)="createPlan()"
+                  >Generate Recovery Protocol</app-button
+                >
               </div>
             </p-card>
           </div>
@@ -554,7 +564,6 @@ interface TimezoneOption {
                         <p-tag
                           [value]="rec.importance"
                           [severity]="getImportanceColor(rec.importance)"
-                          
                         ></p-tag>
                       </div>
                     }
@@ -625,7 +634,6 @@ interface TimezoneOption {
                         <p-tag
                           [value]="protocol.phase"
                           [severity]="getPhaseColor(protocol.phase)"
-                          
                         ></p-tag>
                         @if (isToday(protocol.date)) {
                           <p-badge value="Today" severity="info"></p-badge>
@@ -797,7 +805,12 @@ interface TimezoneOption {
                 </div>
 
                 <div class="form-actions">
-                  <app-button iconLeft="pi-bolt" [disabled]="!canCreateCarPlan()" (clicked)="createCarPlan()">Generate Car Travel Protocol</app-button>
+                  <app-button
+                    iconLeft="pi-bolt"
+                    [disabled]="!canCreateCarPlan()"
+                    (clicked)="createCarPlan()"
+                    >Generate Car Travel Protocol</app-button
+                  >
                 </div>
               </p-card>
 
@@ -1077,7 +1090,6 @@ interface TimezoneOption {
                           <p-tag
                             [value]="exercise.targetArea | titlecase"
                             [severity]="getTargetAreaColor(exercise.targetArea)"
-                            
                           ></p-tag>
                         </div>
                         <p class="exercise-description">
@@ -1144,7 +1156,6 @@ interface TimezoneOption {
                                   @if (rec.duration) {
                                     <p-tag
                                       [value]="rec.duration + ' min'"
-                                      
                                       severity="secondary"
                                     ></p-tag>
                                   }

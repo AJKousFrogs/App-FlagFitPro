@@ -25,7 +25,11 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--ds-primary-green), var(--ds-primary-green-light));
+  background: linear-gradient(
+    90deg,
+    var(--ds-primary-green),
+    var(--ds-primary-green-light)
+  );
   border-radius: var(--radius-full);
   transition: width 300ms ease;
 }
@@ -61,7 +65,7 @@
 
 .timeline-track {
   position: absolute;
-  left: 69px; 
+  left: 69px;
   top: var(--space-2);
   bottom: var(--space-2);
   width: 2px;
@@ -173,8 +177,14 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 .item-content {
@@ -182,7 +192,9 @@
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .content-row {
@@ -242,10 +254,18 @@
 .now-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, var(--color-status-error) 0%, var(--color-status-error-subtle) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-status-error) 0%,
+    var(--color-status-error-subtle) 100%
+  );
 
   &:last-child {
-    background: linear-gradient(90deg, var(--color-status-error-subtle) 0%, var(--color-status-error) 100%);
+    background: linear-gradient(
+      90deg,
+      var(--color-status-error-subtle) 0%,
+      var(--color-status-error) 100%
+    );
   }
 }
 
@@ -313,7 +333,6 @@
     margin-left: 3.25rem; // 52px
   }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .progress-fill,

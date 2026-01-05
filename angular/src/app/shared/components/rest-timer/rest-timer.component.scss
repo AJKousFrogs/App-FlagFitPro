@@ -20,7 +20,10 @@
   cursor: pointer;
   box-shadow: var(--shadow-lg);
   min-width: 100px;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .floating-timer:hover {
@@ -182,7 +185,10 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .preset-btn:hover {
@@ -232,7 +238,10 @@
   font-size: var(--font-size-h4);
   cursor: pointer;
   border-radius: var(--radius-md);
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .sound-btn:hover {
@@ -248,4 +257,3 @@
     bottom: 140px;
   }
 }
-

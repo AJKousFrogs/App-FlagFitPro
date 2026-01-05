@@ -81,7 +81,9 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--surface-border);
   cursor: grab;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 
   &:hover {
     border-color: var(--primary-color);
@@ -190,4 +192,3 @@
   margin: 0;
   color: var(--color-text-secondary);
 }
-

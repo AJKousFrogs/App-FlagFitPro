@@ -77,8 +77,10 @@
 
 .metric-card {
   text-align: left;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-2);
@@ -172,7 +174,8 @@
   width: 100%;
   position: relative;
 
-  &.radar, &.doughnut {
+  &.radar,
+  &.doughnut {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -186,9 +189,18 @@
   color: var(--ds-primary-green);
   margin-bottom: var(--space-1);
 
-  &.danger, &.red { color: var(--color-status-error); }
-  &.warning, &.yellow { color: var(--color-status-warning); }
-  &.success, &.green { color: var(--ds-primary-green); }
+  &.danger,
+  &.red {
+    color: var(--color-status-error);
+  }
+  &.warning,
+  &.yellow {
+    color: var(--color-status-warning);
+  }
+  &.success,
+  &.green {
+    color: var(--ds-primary-green);
+  }
 }
 
 .insight-label {
@@ -591,7 +603,9 @@
     font-size: var(--font-size-body);
     resize: vertical;
     min-height: 80px;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
 
     &:focus {
       outline: none;
@@ -732,7 +746,11 @@
 }
 
 .gap-bar-fill.your-level {
-  background: linear-gradient(90deg, var(--ds-primary-green), var(--ds-primary-green-light));
+  background: linear-gradient(
+    90deg,
+    var(--ds-primary-green),
+    var(--ds-primary-green-light)
+  );
 }
 
 .benchmark-marker {
@@ -747,7 +765,7 @@
 }
 
 .benchmark-marker::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -6px;
   left: 50%;
@@ -834,21 +852,21 @@
     grid-template-columns: 1fr;
     gap: var(--space-2);
   }
-  
+
   .gap-metric-label {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .gap-status {
     display: none;
   }
-  
+
   .gap-summary {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .gap-legend {
     flex-direction: column;
     align-items: center;

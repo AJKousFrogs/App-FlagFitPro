@@ -39,7 +39,7 @@ export interface TimelineItem {
       }
     </div>
   `,
-  styleUrl: './timeline.component.scss',
+  styleUrl: "./timeline.component.scss",
 })
 export class TimelineComponent {
   items = input.required<TimelineItem[]>();

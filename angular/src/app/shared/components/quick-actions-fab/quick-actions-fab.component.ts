@@ -80,7 +80,7 @@ interface QuickActionItem {
       </div>
     }
   `,
-  styleUrl: './quick-actions-fab.component.scss',
+  styleUrl: "./quick-actions-fab.component.scss",
 })
 export class QuickActionsFABComponent implements OnInit, OnDestroy {
   private router = inject(Router);

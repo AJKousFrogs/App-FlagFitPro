@@ -7,24 +7,24 @@
 
 ## Summary
 
-| Coach Action | Player View | Status |
-|--------------|-------------|--------|
-| Creates training program | Sees program in Training Schedule | ✅ |
-| Assigns specific workouts | Sees workouts in Today's Practice | ✅ |
-| Creates plays in Playbook | Sees plays in Playbook (Player View) | ✅ |
-| Tags player in Film | Sees tags in Film Room (Player View) | ✅ |
-| Assigns film to watch | Sees assigned film with due dates | ✅ |
-| Creates team event | Sees event in Team Calendar | ✅ |
-| Sends RSVP request | Can RSVP in Team Calendar | ✅ |
-| Creates fee/payment | Sees balance in My Payments | ✅ |
-| Sends announcement | Sees in Team Chat + Notifications | ✅ |
-| Direct messages player | Sees in Team Chat | ✅ |
-| Starts RTP protocol for player | Sees in Return-to-Play page | ✅ |
-| Sets development goals | Sees goals (needs verification) | ⚠️ |
-| Creates practice script | Sees practice activities in Today | ✅ |
-| Sends tournament RSVP | Sees in Tournaments + Calendar | ✅ |
-| Adds coach notes | Player doesn't see (internal) | ✅ |
-| Updates depth chart | Player sees position in Roster | ✅ |
+| Coach Action                   | Player View                          | Status |
+| ------------------------------ | ------------------------------------ | ------ |
+| Creates training program       | Sees program in Training Schedule    | ✅     |
+| Assigns specific workouts      | Sees workouts in Today's Practice    | ✅     |
+| Creates plays in Playbook      | Sees plays in Playbook (Player View) | ✅     |
+| Tags player in Film            | Sees tags in Film Room (Player View) | ✅     |
+| Assigns film to watch          | Sees assigned film with due dates    | ✅     |
+| Creates team event             | Sees event in Team Calendar          | ✅     |
+| Sends RSVP request             | Can RSVP in Team Calendar            | ✅     |
+| Creates fee/payment            | Sees balance in My Payments          | ✅     |
+| Sends announcement             | Sees in Team Chat + Notifications    | ✅     |
+| Direct messages player         | Sees in Team Chat                    | ✅     |
+| Starts RTP protocol for player | Sees in Return-to-Play page          | ✅     |
+| Sets development goals         | Sees goals (needs verification)      | ⚠️     |
+| Creates practice script        | Sees practice activities in Today    | ✅     |
+| Sends tournament RSVP          | Sees in Tournaments + Calendar       | ✅     |
+| Adds coach notes               | Player doesn't see (internal)        | ✅     |
+| Updates depth chart            | Player sees position in Roster       | ✅     |
 
 ---
 
@@ -33,11 +33,13 @@
 ### 1. Training Programs & Schedules
 
 **Coach Creates:**
+
 - Programs in `C05-PROGRAM-BUILDER.md`
 - Practice sessions in `C06-PRACTICE-PLANNER.md`
 - AI-generated schedules in `C11-AI-SCHEDULER.md`
 
 **Player Sees:**
+
 - `02-TRAINING-SCHEDULE.md` → Full calendar with scheduled sessions ✅
 - `03-TODAY-PRACTICE.md` → Today's specific activities ✅
 - `01-PLAYER-DASHBOARD.md` → Today's schedule preview ✅
@@ -50,11 +52,13 @@
 ### 2. Playbook
 
 **Coach Creates:**
+
 - Plays in `C13-PLAYBOOK-MANAGER.md`
 - Play diagrams with formations
 - Player-specific assignments
 
 **Player Sees:**
+
 - `29-PLAYBOOK-PLAYER.md` → Full play cards with diagrams ✅
 - `29-PLAYBOOK-PLAYER.md` → "Your Assignment" section highlighted ✅
 - `29-PLAYBOOK-PLAYER.md` → Quiz mode for memorization ✅
@@ -67,11 +71,13 @@
 ### 3. Film & Video Analysis
 
 **Coach Creates:**
+
 - Film sessions in `C14-FILM-ROOM-COACH.md`
 - Timestamps & tags (positive, correction)
 - Assigns film to players
 
 **Player Sees:**
+
 - `30-FILM-ROOM-PLAYER.md` → Assigned film with due dates ✅
 - `30-FILM-ROOM-PLAYER.md` → "My Tagged Moments" section ✅
 - `30-FILM-ROOM-PLAYER.md` → Jump-to-timestamp feature ✅
@@ -85,11 +91,13 @@
 ### 4. Team Events & Calendar
 
 **Coach Creates:**
+
 - Events in `C15-CALENDAR-COACH.md`
 - Practices, games, tournaments, meetings
 - RSVP requests with deadlines
 
 **Player Sees:**
+
 - `31-TEAM-CALENDAR.md` → Full calendar view ✅
 - `31-TEAM-CALENDAR.md` → RSVP dialog with options ✅
 - `31-TEAM-CALENDAR.md` → Ride coordination ✅
@@ -104,11 +112,13 @@
 ### 5. Payments & Fees
 
 **Coach Creates:**
+
 - Fees in `C16-PAYMENT-MANAGEMENT.md`
 - Tournament costs, dues, equipment
 - Payment reminders
 
 **Player Sees:**
+
 - `32-MY-PAYMENTS.md` → Current balance ✅
 - `32-MY-PAYMENTS.md` → Outstanding fees with breakdown ✅
 - `32-MY-PAYMENTS.md` → Payment history ✅
@@ -122,11 +132,13 @@
 ### 6. Communications
 
 **Coach Creates:**
+
 - Announcements in `C09-TEAM-COMMUNICATIONS.md`
 - Direct messages to players
 - Position-group messages
 
 **Player Sees:**
+
 - `17-TEAM-CHAT.md` → Announcements channel (read-only) ✅
 - `17-TEAM-CHAT.md` → Direct messages ✅
 - `17-TEAM-CHAT.md` → Position group channels ✅
@@ -140,11 +152,13 @@
 ### 7. Injury & Return-to-Play
 
 **Coach Creates:**
+
 - Injury records in `C08-INJURY-MANAGEMENT.md`
 - RTP protocols for players
 - Medical notes
 
 **Player Sees:**
+
 - `22-RETURN-TO-PLAY.md` → Active recovery protocol ✅
 - `22-RETURN-TO-PLAY.md` → 7-stage progress ✅
 - `22-RETURN-TO-PLAY.md` → Daily check-in form ✅
@@ -158,11 +172,13 @@
 ### 8. Tournaments
 
 **Coach Creates:**
+
 - Tournament registrations in `C10-TOURNAMENT-MANAGEMENT.md`
 - Lineup assignments
 - RSVP requests
 
 **Player Sees:**
+
 - `13-TOURNAMENTS.md` → Team tournaments list ✅
 - `13-TOURNAMENTS.md` → RSVP for tournaments ✅
 - `31-TEAM-CALENDAR.md` → Tournament events ✅
@@ -175,11 +191,13 @@
 ### 9. Player Development
 
 **Coach Creates:**
+
 - Development goals in `C07-PLAYER-DEVELOPMENT.md`
 - Skill assessments
 - Position benchmarks
 
 **Player Sees:**
+
 - `20-PERFORMANCE-TRACKING.md` → Performance metrics ✅
 - `06-ANALYTICS.md` → Gap analysis vs benchmarks ✅
 - ⚠️ **Missing:** Dedicated "My Development Goals" view
@@ -189,11 +207,13 @@
 ### 10. Roster & Team
 
 **Coach Creates:**
+
 - Depth chart in `C02-TEAM-MANAGEMENT.md`
 - Position assignments
 - Player status changes
 
 **Player Sees:**
+
 - `14-ROSTER.md` → Full team roster ✅
 - `14-ROSTER.md` → Their position assignment ✅
 - `07-PROFILE.md` → Their own profile ✅
@@ -206,11 +226,11 @@
 
 ### ✅ All Gaps Fixed
 
-| Coach Action | Expected Player View | Current Status |
-|--------------|---------------------|----------------|
-| Sets development goals | "My Goals" section in Analytics | ✅ Fixed in `06-ANALYTICS.md` |
-| Adds coach notes about player | Private (OK) | ✅ Intentional |
-| Team announcement banner | Dashboard banner | ✅ Fixed in `01-PLAYER-DASHBOARD.md` |
+| Coach Action                  | Expected Player View            | Current Status                       |
+| ----------------------------- | ------------------------------- | ------------------------------------ |
+| Sets development goals        | "My Goals" section in Analytics | ✅ Fixed in `06-ANALYTICS.md`        |
+| Adds coach notes about player | Private (OK)                    | ✅ Intentional                       |
+| Team announcement banner      | Dashboard banner                | ✅ Fixed in `01-PLAYER-DASHBOARD.md` |
 
 ### Fixes Applied
 
@@ -231,14 +251,14 @@
 
 ## Data Tables Reference
 
-| Coach Table | Player Table | Relationship |
-|-------------|--------------|--------------|
-| `training_programs` | `training_sessions` | Program → Sessions |
-| `playbook_plays` | `player_playbook_progress` | Plays → Player progress |
-| `film_sessions` | `film_watch_progress` | Film → Watch tracking |
-| `team_events` | `event_rsvps` | Events → RSVPs |
-| `team_fees` | `player_balances` | Fees → Balances |
-| `injury_records` | `rtp_daily_log` | Injuries → Daily logs |
+| Coach Table         | Player Table               | Relationship            |
+| ------------------- | -------------------------- | ----------------------- |
+| `training_programs` | `training_sessions`        | Program → Sessions      |
+| `playbook_plays`    | `player_playbook_progress` | Plays → Player progress |
+| `film_sessions`     | `film_watch_progress`      | Film → Watch tracking   |
+| `team_events`       | `event_rsvps`              | Events → RSVPs          |
+| `team_fees`         | `player_balances`          | Fees → Balances         |
+| `injury_records`    | `rtp_daily_log`            | Injuries → Daily logs   |
 
 ---
 
@@ -262,5 +282,6 @@
 **Coverage: 100%** ✅
 
 All coach→player data flows are properly wired. All gaps have been fixed:
+
 - ✅ Development goals visible in Analytics page
 - ✅ Announcements banner added to Player Dashboard

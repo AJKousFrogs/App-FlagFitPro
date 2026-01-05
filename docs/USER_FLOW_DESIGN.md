@@ -2,7 +2,7 @@
 
 ## Complete User Journey & Navigation Architecture
 
-*Version 1.0 | January 2026*
+_Version 1.0 | January 2026_
 
 ---
 
@@ -22,18 +22,18 @@
 
 ### Role Definitions
 
-| Role | Description | Entry Point | Primary Focus |
-|------|-------------|-------------|---------------|
-| **Player/Athlete** | Individual athletes | `/player-dashboard` | Personal training, wellness, performance |
-| **Coach** | Team coaches | `/coach/dashboard` | Team management, player monitoring |
-| **Parent** | Parent of minor athlete | `/parent-dashboard` | Child monitoring, communication |
-| **Assistant Coach** | Support coaching staff | `/coach/dashboard` | Limited team management |
-| **Admin** | Team administrator | `/coach/dashboard` | Team settings, roster |
-| **Superadmin** | Platform administrator | `/superadmin` | System-wide management |
-| **Nutritionist** | Nutrition specialist | `/nutritionist` | Nutrition reports, meal plans |
-| **Physiotherapist** | Physical therapist | `/physiotherapist` | Injury management, RTP |
-| **Psychologist** | Mental performance | `/psychology` | Mental wellness reports |
-| **Official** | Game official/referee | `/officials` | Game assignments, certifications |
+| Role                | Description             | Entry Point         | Primary Focus                            |
+| ------------------- | ----------------------- | ------------------- | ---------------------------------------- |
+| **Player/Athlete**  | Individual athletes     | `/player-dashboard` | Personal training, wellness, performance |
+| **Coach**           | Team coaches            | `/coach/dashboard`  | Team management, player monitoring       |
+| **Parent**          | Parent of minor athlete | `/parent-dashboard` | Child monitoring, communication          |
+| **Assistant Coach** | Support coaching staff  | `/coach/dashboard`  | Limited team management                  |
+| **Admin**           | Team administrator      | `/coach/dashboard`  | Team settings, roster                    |
+| **Superadmin**      | Platform administrator  | `/superadmin`       | System-wide management                   |
+| **Nutritionist**    | Nutrition specialist    | `/nutritionist`     | Nutrition reports, meal plans            |
+| **Physiotherapist** | Physical therapist      | `/physiotherapist`  | Injury management, RTP                   |
+| **Psychologist**    | Mental performance      | `/psychology`       | Mental wellness reports                  |
+| **Official**        | Game official/referee   | `/officials`        | Game assignments, certifications         |
 
 ### Authentication Flow
 
@@ -261,132 +261,132 @@ Post-Game
 
 ### Core Features
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 1 | Dashboard | `/player-dashboard`, `/coach/dashboard` | All | ✅ Implemented |
-| 2 | Training Schedule | `/training` | Player, Coach | ✅ Implemented |
-| 3 | Today's Practice | `/today` | Player | ✅ Implemented |
-| 4 | Wellness & Recovery | `/wellness` | Player | ✅ Implemented |
-| 5 | ACWR Dashboard | `/acwr-dashboard` | Player, Coach | ✅ Implemented |
+| #   | Feature             | Route                                   | Primary Users | Status         |
+| --- | ------------------- | --------------------------------------- | ------------- | -------------- |
+| 1   | Dashboard           | `/player-dashboard`, `/coach/dashboard` | All           | ✅ Implemented |
+| 2   | Training Schedule   | `/training`                             | Player, Coach | ✅ Implemented |
+| 3   | Today's Practice    | `/today`                                | Player        | ✅ Implemented |
+| 4   | Wellness & Recovery | `/wellness`                             | Player        | ✅ Implemented |
+| 5   | ACWR Dashboard      | `/acwr-dashboard`                       | Player, Coach | ✅ Implemented |
 
 ### Competition Features
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 6 | Travel Recovery | `/travel-recovery` | Player, Coach | ✅ Implemented |
-| 7 | Game Day Readiness | `/game-day-readiness` | Coach | ✅ Implemented |
-| 8 | Tournament Nutrition | `/tournament-nutrition` | Player, Coach | ✅ Implemented |
-| 9 | Game Tracker | `/games/tracker`, `/games/live` | Coach | ✅ Implemented |
-| 10 | Tournaments | `/tournaments` | Coach | ✅ Implemented |
+| #   | Feature              | Route                           | Primary Users | Status         |
+| --- | -------------------- | ------------------------------- | ------------- | -------------- |
+| 6   | Travel Recovery      | `/travel-recovery`              | Player, Coach | ✅ Implemented |
+| 7   | Game Day Readiness   | `/game-day-readiness`           | Coach         | ✅ Implemented |
+| 8   | Tournament Nutrition | `/tournament-nutrition`         | Player, Coach | ✅ Implemented |
+| 9   | Game Tracker         | `/games/tracker`, `/games/live` | Coach         | ✅ Implemented |
+| 10  | Tournaments          | `/tournaments`                  | Coach         | ✅ Implemented |
 
 ### Team Management
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 11 | Roster Management | `/roster` | Coach | ✅ Implemented |
-| 12 | Depth Chart | `/depth-chart` | Coach | ✅ Implemented |
-| 13 | Attendance Tracking | `/attendance` | Coach | ✅ Implemented |
-| 14 | Equipment Management | `/equipment` | Coach | ✅ Implemented |
-| 15 | Officials Management | `/officials` | Official, Admin | ✅ Implemented |
+| #   | Feature              | Route          | Primary Users   | Status         |
+| --- | -------------------- | -------------- | --------------- | -------------- |
+| 11  | Roster Management    | `/roster`      | Coach           | ✅ Implemented |
+| 12  | Depth Chart          | `/depth-chart` | Coach           | ✅ Implemented |
+| 13  | Attendance Tracking  | `/attendance`  | Coach           | ✅ Implemented |
+| 14  | Equipment Management | `/equipment`   | Coach           | ✅ Implemented |
+| 15  | Officials Management | `/officials`   | Official, Admin | ✅ Implemented |
 
 ### Analytics & Intelligence
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 16 | Analytics | `/analytics` | All | ✅ Implemented |
-| 17 | AI Coach (Merlin) | `/chat`, `/ai-coach` | All | ✅ Implemented |
+| #   | Feature           | Route                | Primary Users | Status         |
+| --- | ----------------- | -------------------- | ------------- | -------------- |
+| 16  | Analytics         | `/analytics`         | All           | ✅ Implemented |
+| 17  | AI Coach (Merlin) | `/chat`, `/ai-coach` | All           | ✅ Implemented |
 
 ### User Experience
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 18 | Global Search | Header Component | All | ✅ Implemented |
-| 19 | Notification Center | Header Component | All | ✅ Implemented |
-| 20 | Achievements System | `/profile` (section) | Player | ⚠️ Partial |
+| #   | Feature             | Route                | Primary Users | Status         |
+| --- | ------------------- | -------------------- | ------------- | -------------- |
+| 18  | Global Search       | Header Component     | All           | ✅ Implemented |
+| 19  | Notification Center | Header Component     | All           | ✅ Implemented |
+| 20  | Achievements System | `/profile` (section) | Player        | ⚠️ Partial     |
 
 ### Account & Settings
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 21 | User Profile | `/profile` | All | ✅ Implemented |
-| 22 | Settings | `/settings` | All | ✅ Implemented |
-| 23 | Onboarding | `/onboarding` | New Users | ✅ Implemented |
+| #   | Feature      | Route         | Primary Users | Status         |
+| --- | ------------ | ------------- | ------------- | -------------- |
+| 21  | User Profile | `/profile`    | All           | ✅ Implemented |
+| 22  | Settings     | `/settings`   | All           | ✅ Implemented |
+| 23  | Onboarding   | `/onboarding` | New Users     | ✅ Implemented |
 
 ### Physical & Supplement Tracking
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 24 | Body Composition | `/wellness` (section) | Player | ⚠️ Partial |
-| 25 | Supplement Tracker | `/wellness` (section) | Player | ⚠️ Partial |
-| 26 | Sprint Benchmarks | `/performance-tracking` | Player | ✅ Implemented |
+| #   | Feature            | Route                   | Primary Users | Status         |
+| --- | ------------------ | ----------------------- | ------------- | -------------- |
+| 24  | Body Composition   | `/wellness` (section)   | Player        | ⚠️ Partial     |
+| 25  | Supplement Tracker | `/wellness` (section)   | Player        | ⚠️ Partial     |
+| 26  | Sprint Benchmarks  | `/performance-tracking` | Player        | ✅ Implemented |
 
 ### Position-Specific Training
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 27 | QB Hub | `/qb-hub` | QB Players, Coach | ✅ Implemented |
-| 28 | Position Stats | `/analytics` (section) | All | ⚠️ Partial |
-| 29 | Position Training | `/training` (filtered) | Player | ⚠️ Partial |
+| #   | Feature           | Route                  | Primary Users     | Status         |
+| --- | ----------------- | ---------------------- | ----------------- | -------------- |
+| 27  | QB Hub            | `/qb-hub`              | QB Players, Coach | ✅ Implemented |
+| 28  | Position Stats    | `/analytics` (section) | All               | ⚠️ Partial     |
+| 29  | Position Training | `/training` (filtered) | Player            | ⚠️ Partial     |
 
 ### Professional Reports
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 30 | Nutritionist Dashboard | `/nutritionist` | Nutritionist | ⚠️ Partial |
-| 31 | Physiotherapist Dashboard | `/physiotherapist` | Physiotherapist | ⚠️ Partial |
-| 32 | Psychology Reports | `/psychology` | Psychologist | ⚠️ Partial |
+| #   | Feature                   | Route              | Primary Users   | Status     |
+| --- | ------------------------- | ------------------ | --------------- | ---------- |
+| 30  | Nutritionist Dashboard    | `/nutritionist`    | Nutritionist    | ⚠️ Partial |
+| 31  | Physiotherapist Dashboard | `/physiotherapist` | Physiotherapist | ⚠️ Partial |
+| 32  | Psychology Reports        | `/psychology`      | Psychologist    | ⚠️ Partial |
 
 ### Data Exchange
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 33 | Data Import/Export | `/settings` (section) | Coach, Admin | ⚠️ Partial |
-| 34 | Knowledge Drop-In | `/settings` (section) | Coach | ❌ Not Implemented |
+| #   | Feature            | Route                 | Primary Users | Status             |
+| --- | ------------------ | --------------------- | ------------- | ------------------ |
+| 33  | Data Import/Export | `/settings` (section) | Coach, Admin  | ⚠️ Partial         |
+| 34  | Knowledge Drop-In  | `/settings` (section) | Coach         | ❌ Not Implemented |
 
 ### Communication
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 35 | Team Chat | `/chat` | All | ✅ Implemented |
-| 36 | Community Feed | `/community` | All | ✅ Implemented |
+| #   | Feature        | Route        | Primary Users | Status         |
+| --- | -------------- | ------------ | ------------- | -------------- |
+| 35  | Team Chat      | `/chat`      | All           | ✅ Implemented |
+| 36  | Community Feed | `/community` | All           | ✅ Implemented |
 
 ### Recovery & Injury
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 37 | Return-to-Play | `/rtp-protocol` | Coach, Physio | ⚠️ Partial |
-| 38 | Sleep Debt | `/wellness` (section) | Player | ⚠️ Partial |
-| 39 | Hydration Tracker | `/wellness` (section) | Player | ⚠️ Partial |
-| 40 | Menstrual Tracking | `/wellness` (section) | Female Athletes | ⚠️ Partial |
+| #   | Feature            | Route                 | Primary Users   | Status     |
+| --- | ------------------ | --------------------- | --------------- | ---------- |
+| 37  | Return-to-Play     | `/rtp-protocol`       | Coach, Physio   | ⚠️ Partial |
+| 38  | Sleep Debt         | `/wellness` (section) | Player          | ⚠️ Partial |
+| 39  | Hydration Tracker  | `/wellness` (section) | Player          | ⚠️ Partial |
+| 40  | Menstrual Tracking | `/wellness` (section) | Female Athletes | ⚠️ Partial |
 
 ### Administration
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 41 | Superadmin Dashboard | `/superadmin` | Superadmin | ✅ Implemented |
+| #   | Feature              | Route         | Primary Users | Status         |
+| --- | -------------------- | ------------- | ------------- | -------------- |
+| 41  | Superadmin Dashboard | `/superadmin` | Superadmin    | ✅ Implemented |
 
 ### Playbook & Strategy
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 42 | Playbook Library | `/playbook` | Coach | ⚠️ Partial |
-| 43 | Video Analysis | `/video-analysis`, `/training/videos` | Coach, Player | ✅ Implemented |
-| 44 | Scouting Reports | `/scouting` | Coach | ❌ Not Implemented |
-| 45 | Practice Planning | `/practice-planning` | Coach | ⚠️ Partial |
+| #   | Feature           | Route                                 | Primary Users | Status             |
+| --- | ----------------- | ------------------------------------- | ------------- | ------------------ |
+| 42  | Playbook Library  | `/playbook`                           | Coach         | ⚠️ Partial         |
+| 43  | Video Analysis    | `/video-analysis`, `/training/videos` | Coach, Player | ✅ Implemented     |
+| 44  | Scouting Reports  | `/scouting`                           | Coach         | ❌ Not Implemented |
+| 45  | Practice Planning | `/practice-planning`                  | Coach         | ⚠️ Partial         |
 
 ### Scheduling & Logistics
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 46 | Team Calendar | `/calendar` | All | ⚠️ Partial |
-| 47 | Financial Tracking | `/payments` | Admin | ❌ Not Implemented |
-| 48 | Weather Integration | Dashboard (widget) | All | ⚠️ Partial |
+| #   | Feature             | Route              | Primary Users | Status             |
+| --- | ------------------- | ------------------ | ------------- | ------------------ |
+| 46  | Team Calendar       | `/calendar`        | All           | ⚠️ Partial         |
+| 47  | Financial Tracking  | `/payments`        | Admin         | ❌ Not Implemented |
+| 48  | Weather Integration | Dashboard (widget) | All           | ⚠️ Partial         |
 
 ### Specialized
 
-| # | Feature | Route | Primary Users | Status |
-|---|---------|-------|---------------|--------|
-| 49 | Exercise Library | `/exercise-library` | All | ✅ Implemented |
+| #   | Feature          | Route               | Primary Users | Status         |
+| --- | ---------------- | ------------------- | ------------- | -------------- |
+| 49  | Exercise Library | `/exercise-library` | All           | ✅ Implemented |
 
 ---
 
@@ -611,29 +611,29 @@ Training Log
 
 ### Shared Components
 
-| Component | Used By Features |
-|-----------|------------------|
-| `WellnessScore` | Dashboard, Wellness, ACWR, Game Day Readiness |
-| `ACWRIndicator` | Dashboard, ACWR, Training, Analytics |
-| `PlayerCard` | Roster, Depth Chart, Coach Dashboard |
-| `TrainingCalendar` | Training Schedule, Today, Calendar |
-| `SessionLogger` | Training Log, Today's Practice |
-| `NotificationBell` | All pages (header) |
-| `SearchPanel` | All pages (header) |
-| `AIInsight` | Dashboard, Wellness, Training |
+| Component          | Used By Features                              |
+| ------------------ | --------------------------------------------- |
+| `WellnessScore`    | Dashboard, Wellness, ACWR, Game Day Readiness |
+| `ACWRIndicator`    | Dashboard, ACWR, Training, Analytics          |
+| `PlayerCard`       | Roster, Depth Chart, Coach Dashboard          |
+| `TrainingCalendar` | Training Schedule, Today, Calendar            |
+| `SessionLogger`    | Training Log, Today's Practice                |
+| `NotificationBell` | All pages (header)                            |
+| `SearchPanel`      | All pages (header)                            |
+| `AIInsight`        | Dashboard, Wellness, Training                 |
 
 ### Navigation Shortcuts
 
-| From | To | Trigger |
-|------|-----|---------|
-| Dashboard | Wellness | "Check-in" button |
-| Dashboard | Today | "Today's Training" card |
-| Dashboard | Training | "Schedule" quick action |
-| Dashboard | Chat | "AI Coach" quick action |
-| Wellness | ACWR Dashboard | "View Load Details" link |
-| Training | Today | Date click (today) |
-| Roster | Player Profile | Player row click |
-| Game Tracker | Analytics | "View Stats" button |
+| From         | To             | Trigger                  |
+| ------------ | -------------- | ------------------------ |
+| Dashboard    | Wellness       | "Check-in" button        |
+| Dashboard    | Today          | "Today's Training" card  |
+| Dashboard    | Training       | "Schedule" quick action  |
+| Dashboard    | Chat           | "AI Coach" quick action  |
+| Wellness     | ACWR Dashboard | "View Load Details" link |
+| Training     | Today          | Date click (today)       |
+| Roster       | Player Profile | Player row click         |
+| Game Tracker | Analytics      | "View Stats" button      |
 
 ---
 
@@ -648,6 +648,7 @@ Training Log
 ## Appendix: Route Registry
 
 ### Player Routes
+
 ```
 /player-dashboard     - Main dashboard
 /training             - Training schedule
@@ -665,6 +666,7 @@ Training Log
 ```
 
 ### Coach Routes
+
 ```
 /coach/dashboard      - Coach dashboard
 /coach/analytics      - Team analytics
@@ -683,12 +685,14 @@ Training Log
 ```
 
 ### Admin Routes
+
 ```
 /superadmin           - Superadmin dashboard
 /officials            - Officials management
 ```
 
 ### Auth Routes
+
 ```
 /login                - Login page
 /register             - Registration

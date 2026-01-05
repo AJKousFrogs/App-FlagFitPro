@@ -19,22 +19,19 @@
 
 @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
 
-
 // ============================================
 // 2. RESET LAYER
 // ============================================
 
-@use 'layers' as *;  // Contains reset layer styles
-
+@use "layers" as *; // Contains reset layer styles
 
 // ============================================
 // 3. TOKENS LAYER
 // ============================================
 
 @layer tokens {
-  @import 'design-system-tokens';
+  @import "design-system-tokens";
 }
-
 
 // ============================================
 // 4. PRIMENG LAYERS
@@ -44,29 +41,25 @@
 // @import 'primeng/resources/themes/lara-light-green/theme.css';
 
 // PrimeNG token mapping and brand overrides
-@use 'primeng/index' as primeng;
-
+@use "primeng/index" as primeng;
 
 // ============================================
 // 5. PRIMITIVES LAYER
 // ============================================
 
-@use 'primitives/index' as primitives;
-
+@use "primitives/index" as primitives;
 
 // ============================================
 // 6. OVERRIDES LAYER
 // ============================================
 
-@use 'overrides/index' as overrides;
-
+@use "overrides/index" as overrides;
 
 // ============================================
 // 7. PRIMEICONS (External CSS)
 // ============================================
 
-@import 'primeicons/primeicons.css';
-
+@import "primeicons/primeicons.css";
 
 // ============================================
 // 8. GLOBAL STYLES (Outside layers)
@@ -91,7 +84,6 @@ body {
   color: var(--color-text-primary);
 }
 
-
 // ============================================
 // 9. HIGH CONTRAST MODE SUPPORT (Decision 51)
 // ============================================
@@ -107,7 +99,6 @@ body {
     outline: 3px solid CanvasText !important;
   }
 }
-
 
 // ============================================
 // 10. CROSS-BROWSER FIXES

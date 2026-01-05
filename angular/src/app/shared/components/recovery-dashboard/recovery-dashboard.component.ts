@@ -17,7 +17,7 @@ import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
-import { Select} from "primeng/selectbutton";
+import { Select } from "primeng/selectbutton";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -268,13 +268,24 @@ interface ChartOptions {
                 }
 
                 <div class="protocol-actions">
-                  <app-button size="sm" iconLeft="pi-play" (clicked)="
+                  <app-button
+                    size="sm"
+                    iconLeft="pi-play"
+                    (clicked)="
                       startProtocol(protocol); $event.stopPropagation()
-                    ">Start Protocol</app-button>
+                    "
+                    >Start Protocol</app-button
+                  >
 
-                  <app-button variant="outlined" size="sm" iconLeft="pi-info-circle" (clicked)="
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    iconLeft="pi-info-circle"
+                    (clicked)="
                       showProtocolDetails(protocol); $event.stopPropagation()
-                    ">Details</app-button>
+                    "
+                    >Details</app-button
+                  >
                 </div>
               </div>
             }
@@ -426,11 +437,19 @@ interface ChartOptions {
             }
 
             <div class="detail-actions">
-              <app-button iconLeft="pi-play" (clicked)="
+              <app-button
+                iconLeft="pi-play"
+                (clicked)="
                   startProtocol(selectedProtocolDetails()!);
                   showProtocolDialog = false
-                ">Start This Protocol</app-button>
-              <app-button variant="outlined" (clicked)="showProtocolDialog = false">Close</app-button>
+                "
+                >Start This Protocol</app-button
+              >
+              <app-button
+                variant="outlined"
+                (clicked)="showProtocolDialog = false"
+                >Close</app-button
+              >
             </div>
           </div>
         }
@@ -489,9 +508,19 @@ interface ChartOptions {
             <div class="session-controls">
               <app-button (clicked)="toggleSession()"></app-button>
 
-              <app-button variant="success" iconLeft="pi-check" (clicked)="completeSession()">Complete Session</app-button>
+              <app-button
+                variant="success"
+                iconLeft="pi-check"
+                (clicked)="completeSession()"
+                >Complete Session</app-button
+              >
 
-              <app-button variant="outlined" iconLeft="pi-stop" (clicked)="stopSession()">Stop Session</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-stop"
+                (clicked)="stopSession()"
+                >Stop Session</app-button
+              >
             </div>
           </div>
         </p-card>
@@ -529,7 +558,13 @@ interface ChartOptions {
                   <p>{{ insight.summary }}</p>
                   <div class="research-meta">
                     <span>{{ insight.authors }} ({{ insight.year }})</span>
-                    <app-button variant="text" size="sm" iconLeft="pi-external-link" (clicked)="openStudy(insight.doi)">Read Study</app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-external-link"
+                      (clicked)="openStudy(insight.doi)"
+                      >Read Study</app-button
+                    >
                   </div>
                 </div>
               }
@@ -539,7 +574,7 @@ interface ChartOptions {
       </p-card>
     </div>
   `,
-  styleUrl: './recovery-dashboard.component.scss',
+  styleUrl: "./recovery-dashboard.component.scss",
 })
 export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   private recoveryService = inject(RecoveryService);
@@ -761,7 +796,12 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
         {
           label: "Effectiveness Rating",
           data: [8.5, 7.8, 8.2, 7.5],
-          backgroundColor: [COLORS.PRIMARY_LIGHT, COLORS.WARNING, COLORS.ERROR, COLORS.PURPLE_LIGHT],
+          backgroundColor: [
+            COLORS.PRIMARY_LIGHT,
+            COLORS.WARNING,
+            COLORS.ERROR,
+            COLORS.PURPLE_LIGHT,
+          ],
         },
       ],
     };

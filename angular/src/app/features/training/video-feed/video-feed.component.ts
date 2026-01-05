@@ -20,12 +20,12 @@
  */
 
 import {
-    ChangeDetectionStrategy,
-    Component,
-    afterNextRender,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -47,15 +47,15 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import {
-    InstagramCreator,
-    InstagramVideo,
-    InstagramVideoService,
+  InstagramCreator,
+  InstagramVideo,
+  InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-    FlagPosition,
-    TrainingFocus,
+  FlagPosition,
+  TrainingFocus,
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -86,7 +86,7 @@ interface FilterChip {
     TagModule,
     RippleModule,
     MainLayoutComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -202,11 +202,7 @@ interface FilterChip {
             <div class="active-filters">
               <span class="active-label">Active:</span>
               @for (filter of activeFilterLabels(); track filter) {
-                <p-tag
-                  [value]="filter"
-                  
-                  severity="success"
-                ></p-tag>
+                <p-tag [value]="filter" severity="success"></p-tag>
               }
               <button
                 pButton
@@ -279,11 +275,11 @@ interface FilterChip {
                     <div class="thumbnail-placeholder">
                       <i class="pi pi-play-circle play-icon"></i>
                       @if (video.isReel) {
-                      <div class="reel-badge">
-                        <i class="pi pi-instagram"></i>
-                        Reel
-                      </div>
-                    }
+                        <div class="reel-badge">
+                          <i class="pi pi-instagram"></i>
+                          Reel
+                        </div>
+                      }
                     </div>
 
                     <!-- Overlay Actions -->
@@ -465,18 +461,25 @@ interface FilterChip {
                 <!-- Action Buttons -->
                 <div class="dialog-actions">
                   <app-button
-                    [iconLeft]="isBookmarked(video.id) ? 'pi-bookmark-fill' : 'pi-bookmark'"
+                    [iconLeft]="
+                      isBookmarked(video.id)
+                        ? 'pi-bookmark-fill'
+                        : 'pi-bookmark'
+                    "
                     [variant]="isBookmarked(video.id) ? 'success' : 'outlined'"
                     (clicked)="toggleBookmark($event, video)"
-                  >{{ isBookmarked(video.id) ? 'Saved' : 'Save' }}</app-button>
+                    >{{ isBookmarked(video.id) ? "Saved" : "Save" }}</app-button
+                  >
                   <app-button
                     iconLeft="pi-external-link"
                     (clicked)="openInInstagram(video)"
-                  >Open in Instagram</app-button>
+                    >Open in Instagram</app-button
+                  >
                   <app-button
                     iconLeft="pi-copy"
                     (clicked)="shareVideo($event, video)"
-                  >Copy Link</app-button>
+                    >Copy Link</app-button
+                  >
                 </div>
               </div>
             </div>

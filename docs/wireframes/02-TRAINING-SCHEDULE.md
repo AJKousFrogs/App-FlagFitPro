@@ -114,61 +114,67 @@
 ## Component Breakdown
 
 ### 1. Page Header ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title "Training Schedule" | ✅ | With calendar icon |
-| Subtitle | ✅ | "View and manage your training sessions" |
-| "New Session" button | ✅ | Navigates to `/training/smart-form` |
+
+| Element                   | Status | Notes                                    |
+| ------------------------- | ------ | ---------------------------------------- |
+| Title "Training Schedule" | ✅     | With calendar icon                       |
+| Subtitle                  | ✅     | "View and manage your training sessions" |
+| "New Session" button      | ✅     | Navigates to `/training/smart-form`      |
 
 ---
 
 ### 2. Calendar Card ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Monthly calendar view | ✅ | PrimeNG DatePicker inline |
-| Week numbers | ✅ | `showWeek="true"` |
-| Date selection | ✅ | Click to filter sessions |
-| Month navigation | ✅ | Left/right arrows |
-| Today highlight | ✅ | Built-in DatePicker feature |
+
+| Element               | Status | Notes                       |
+| --------------------- | ------ | --------------------------- |
+| Monthly calendar view | ✅     | PrimeNG DatePicker inline   |
+| Week numbers          | ✅     | `showWeek="true"`           |
+| Date selection        | ✅     | Click to filter sessions    |
+| Month navigation      | ✅     | Left/right arrows           |
+| Today highlight       | ✅     | Built-in DatePicker feature |
 
 ---
 
 ### 3. Sessions List Card ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Card header "Upcoming Sessions" | ✅ | |
-| Session items | ✅ | Clickable rows |
-| Session type title | ✅ | e.g., "Speed & Agility Training" |
-| Date/time display | ✅ | "Jan 6, 2026 at 9:00 AM" |
-| Duration | ✅ | "Duration: 45 min" |
-| Status tag | ✅ | Color-coded badge |
-| Mark complete button | ✅ | Only for "scheduled" status |
+
+| Element                         | Status | Notes                            |
+| ------------------------------- | ------ | -------------------------------- |
+| Card header "Upcoming Sessions" | ✅     |                                  |
+| Session items                   | ✅     | Clickable rows                   |
+| Session type title              | ✅     | e.g., "Speed & Agility Training" |
+| Date/time display               | ✅     | "Jan 6, 2026 at 9:00 AM"         |
+| Duration                        | ✅     | "Duration: 45 min"               |
+| Status tag                      | ✅     | Color-coded badge                |
+| Mark complete button            | ✅     | Only for "scheduled" status      |
 
 ---
 
 ### 4. Status Tags ✅
-| Status | Color | DB Status Mapping |
-|--------|-------|-------------------|
-| `scheduled` | Info (blue) | `planned`, `scheduled` |
-| `completed` | Success (green) | `completed` |
-| `in_progress` | Warning (yellow) | `in_progress` |
-| `missed` | Danger (red) | `cancelled` |
+
+| Status        | Color            | DB Status Mapping      |
+| ------------- | ---------------- | ---------------------- |
+| `scheduled`   | Info (blue)      | `planned`, `scheduled` |
+| `completed`   | Success (green)  | `completed`            |
+| `in_progress` | Warning (yellow) | `in_progress`          |
+| `missed`      | Danger (red)     | `cancelled`            |
 
 ---
 
 ### 5. States ✅
-| State | Status | Notes |
-|-------|--------|-------|
-| Loading state | ✅ | Skeleton placeholders |
-| Empty state | ✅ | Icon + message + guidance |
-| Error state | ✅ | With retry button |
-| Data state | ✅ | Session list |
+
+| State         | Status | Notes                     |
+| ------------- | ------ | ------------------------- |
+| Loading state | ✅     | Skeleton placeholders     |
+| Empty state   | ✅     | Icon + message + guidance |
+| Error state   | ✅     | With retry button         |
+| Data state    | ✅     | Session list              |
 
 ---
 
 ## Business Logic
 
 ### Session Status Mapping (Implemented)
+
 ```typescript
 DB Status → UI Status:
 - 'planned' → 'scheduled'
@@ -179,6 +185,7 @@ DB Status → UI Status:
 ```
 
 ### Session Filtering (Implemented)
+
 ```typescript
 // Shows sessions for selected week
 const startOfWeek = new Date(selected);
@@ -191,6 +198,7 @@ endOfWeek.setDate(startOfWeek.getDate() + 7);
 ```
 
 ### Training Load Calculation (Documented, Not in This Component)
+
 ```typescript
 Session Load (AU) = Duration (min) × RPE × Type Multiplier
 
@@ -206,53 +214,57 @@ Type Multipliers:
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| User ID | `AuthService` | `getUser()` |
+| Data              | Service           | Method                              |
+| ----------------- | ----------------- | ----------------------------------- |
+| User ID           | `AuthService`     | `getUser()`                         |
 | Training sessions | `SupabaseService` | Direct query to `training_sessions` |
 
 ### Database Query
+
 ```typescript
 supabaseService.client
   .from("training_sessions")
-  .select(`id, scheduled_date, session_type, duration_minutes, status, notes, created_at`)
+  .select(
+    `id, scheduled_date, session_type, duration_minutes, status, notes, created_at`,
+  )
   .eq("user_id", user.id)
   .gte("scheduled_date", sevenDaysAgo)
-  .order("scheduled_date", { ascending: true })
+  .order("scheduled_date", { ascending: true });
 ```
 
 ---
 
 ## Navigation Paths
 
-| From | To | Trigger |
-|------|-----|---------|
-| Training Schedule | Smart Training Form | "New Session" button |
-| Training Schedule | Session Detail | Click on session row |
-| Training Schedule | (Stay) | Date selection (filters list) |
+| From              | To                  | Trigger                       |
+| ----------------- | ------------------- | ----------------------------- |
+| Training Schedule | Smart Training Form | "New Session" button          |
+| Training Schedule | Session Detail      | Click on session row          |
+| Training Schedule | (Stay)              | Date selection (filters list) |
 
 ---
 
 ## Feature Comparison: Documented vs Implemented
 
-| Documented Feature | Status | Notes |
-|-------------------|--------|-------|
-| Calendar View (monthly) | ✅ | Inline DatePicker |
-| Color-coded by session type | ⚠️ | Status colors only, not type colors |
-| Click date for details | ✅ | Filters to week view |
-| Session type display | ✅ | In session cards |
-| Duration display | ✅ | In session cards |
-| Completion status | ✅ | Tag + checkmark button |
-| Training Log form | ❌ | Separate page (`/training/log`) |
-| Historical View | ⚠️ | Shows 7 days back only |
-| Load progression over time | ❌ | Not in this component |
-| Movement volume tracking | ❌ | In log form, not here |
+| Documented Feature          | Status | Notes                               |
+| --------------------------- | ------ | ----------------------------------- |
+| Calendar View (monthly)     | ✅     | Inline DatePicker                   |
+| Color-coded by session type | ⚠️     | Status colors only, not type colors |
+| Click date for details      | ✅     | Filters to week view                |
+| Session type display        | ✅     | In session cards                    |
+| Duration display            | ✅     | In session cards                    |
+| Completion status           | ✅     | Tag + checkmark button              |
+| Training Log form           | ❌     | Separate page (`/training/log`)     |
+| Historical View             | ⚠️     | Shows 7 days back only              |
+| Load progression over time  | ❌     | Not in this component               |
+| Movement volume tracking    | ❌     | In log form, not here               |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Clean two-column layout (calendar + sessions)
 - Week number display for planning
 - Quick mark complete action
@@ -260,12 +272,14 @@ supabaseService.client
 - Good loading/empty/error states
 
 ### ⚠️ Friction Points
+
 - Only shows sessions for selected week (not full month view with markers)
 - No visual indicators on calendar dates for scheduled sessions
 - Limited historical view (7 days back only)
 - No inline training log - requires navigation
 
 ### 🔧 Suggested Improvements
+
 1. Add colored dots on calendar dates with sessions
 2. Extend historical view beyond 7 days
 3. Add inline session logging modal
@@ -277,12 +291,12 @@ supabaseService.client
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Smart Training Form | `/training/smart-form` | Create new sessions |
-| Session Detail | `/training/session/:id` | View/edit session |
-| Training Log | `/training/log` | Log completed sessions |
-| Today's Practice | `/today` | Today's specific sessions |
+| Page                | Route                   | Relationship              |
+| ------------------- | ----------------------- | ------------------------- |
+| Smart Training Form | `/training/smart-form`  | Create new sessions       |
+| Session Detail      | `/training/session/:id` | View/edit session         |
+| Training Log        | `/training/log`         | Log completed sessions    |
+| Today's Practice    | `/today`                | Today's specific sessions |
 
 ---
 

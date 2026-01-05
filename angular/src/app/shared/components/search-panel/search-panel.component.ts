@@ -11,17 +11,17 @@
  */
 
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    effect,
-    ElementRef,
-    HostListener,
-    inject,
-    OnDestroy,
-    signal,
-    ViewChild,
-    ViewEncapsulation
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  OnDestroy,
+  signal,
+  ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -33,8 +33,8 @@ import { TooltipModule } from "primeng/tooltip";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import {
-    SearchResult,
-    SearchService,
+  SearchResult,
+  SearchService,
 } from "../../../core/services/search.service";
 
 /** Debounce delay for search input in milliseconds */
@@ -48,7 +48,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-imports: [
+  imports: [
     RouterModule,
     FormsModule,
     InputTextModule,
@@ -75,10 +75,10 @@ export class SearchPanelComponent implements OnDestroy {
 
   /** Quick action routes for keyboard navigation */
   private readonly quickActionRoutes = [
-    '/training',
-    '/exercise-library',
-    '/analytics',
-    '/roster'
+    "/training",
+    "/exercise-library",
+    "/analytics",
+    "/roster",
   ];
 
   /** Whether to show suggestions dropdown */
@@ -209,10 +209,7 @@ export class SearchPanelComponent implements OnDestroy {
 
   onEnter(): void {
     // If suggestions are showing, select the first suggestion
-    if (
-      this.showSuggestions() &&
-      this.searchService.suggestions().length > 0
-    ) {
+    if (this.showSuggestions() && this.searchService.suggestions().length > 0) {
       this.selectSuggestion(this.searchService.suggestions()[0]);
       return;
     }
@@ -235,7 +232,7 @@ export class SearchPanelComponent implements OnDestroy {
 
   onArrowDown(event: Event): void {
     event.preventDefault();
-    
+
     // If we have search results, navigate results
     const results = this.searchService.results();
     if (results.length > 0) {
@@ -257,7 +254,7 @@ export class SearchPanelComponent implements OnDestroy {
 
   onArrowUp(event: Event): void {
     event.preventDefault();
-    
+
     // If we have search results, navigate results
     const results = this.searchService.results();
     if (results.length > 0) {

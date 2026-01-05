@@ -149,9 +149,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
 @Component({
   selector: "app-no-data-entry",
   standalone: true,
-  imports: [CommonModule, CardModule, RouterModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, CardModule, RouterModule, ButtonComponent],
   template: `
     <div
       class="no-data-entry"
@@ -204,10 +202,16 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
 
           <div class="no-data-actions">
             @if (showAction()) {
-              <app-button routerLink="customRoute() || config().route" (clicked)="onAction.emit()"></app-button>
+              <app-button
+                routerLink="customRoute() || config().route"
+                (clicked)="onAction.emit()"
+              ></app-button>
             }
             @if (showSecondaryAction()) {
-              <app-button variant="outlined" (clicked)="onSecondaryAction.emit()"></app-button>
+              <app-button
+                variant="outlined"
+                (clicked)="onSecondaryAction.emit()"
+              ></app-button>
             }
           </div>
 
@@ -224,7 +228,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       </ng-template>
     </div>
   `,
-  styleUrl: './no-data-entry.component.scss',
+  styleUrl: "./no-data-entry.component.scss",
 })
 export class NoDataEntryComponent {
   // Context determines the type of data we're showing empty state for

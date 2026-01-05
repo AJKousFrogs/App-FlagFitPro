@@ -510,7 +510,10 @@ class HydrationResearchSeeder {
         "Group stage + knockout",
         true,
         true,
-        ["IV fluids for severe dehydration", "cooling protocols for heat illness"],
+        [
+          "IV fluids for severe dehydration",
+          "cooling protocols for heat illness",
+        ],
       ],
     );
 
@@ -523,7 +526,14 @@ class HydrationResearchSeeder {
       ) VALUES ($1, $2, $3, $4, $5, $6)
       ON CONFLICT DO NOTHING
     `,
-      [2028, "Los Angeles", "demonstration", ["WADA compliance", "no banned substances"], true, true],
+      [
+        2028,
+        "Los Angeles",
+        "demonstration",
+        ["WADA compliance", "no banned substances"],
+        true,
+        true,
+      ],
     );
 
     console.log("✅ Seeded competition-specific protocols");
@@ -535,26 +545,43 @@ class HydrationResearchSeeder {
     const preventionProtocols = [
       {
         injury_type: "cramps",
-        risk_factors: ["dehydration", "electrolyte imbalance", "muscle fatigue", "high intensity"],
+        risk_factors: [
+          "dehydration",
+          "electrolyte imbalance",
+          "muscle fatigue",
+          "high intensity",
+        ],
         hydration_prevention_protocols: [
           "Maintain hydration at 2-3% body weight loss limit",
           "Include 500-700mg sodium per liter in sports drinks",
           "Monitor urine color (target: 3-4 on 8-point scale)",
           "Pre-hydrate 2-4 hours before exercise",
         ],
-        flag_football_specific: ["repeated sprinting", "sudden direction changes", "high intensity periods"],
+        flag_football_specific: [
+          "repeated sprinting",
+          "sudden direction changes",
+          "high intensity periods",
+        ],
         prevention_effectiveness_percentage: 85.0,
       },
       {
         injury_type: "heat_exhaustion",
-        risk_factors: ["high temperature", "high humidity", "dehydration", "overexertion"],
+        risk_factors: [
+          "high temperature",
+          "high humidity",
+          "dehydration",
+          "overexertion",
+        ],
         hydration_prevention_protocols: [
           "Acclimate to heat over 10-14 days",
           "Monitor core temperature during exercise",
           "Implement cooling strategies (ice towels, cold drinks)",
           "Adjust intensity based on heat index",
         ],
-        flag_football_specific: ["tournament play in hot climates", "multiple games per day"],
+        flag_football_specific: [
+          "tournament play in hot climates",
+          "multiple games per day",
+        ],
         prevention_effectiveness_percentage: 90.0,
       },
     ];

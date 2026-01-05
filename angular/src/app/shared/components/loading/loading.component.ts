@@ -1,8 +1,4 @@
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
@@ -11,7 +7,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
 
 /**
  * Unified Loading Component - Angular 21 Premium Edition
- * 
+ *
  * Replaces both legacy app-loading and app-loading-state.
  * Uses Angular 21 signals and premium skeleton loaders.
  */
@@ -23,13 +19,12 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
   template: `
     @if (visible()) {
       <div [ngClass]="['loading-container', variant()]">
-        
         <!-- Overlay Variant -->
-        @if (variant() === 'overlay') {
+        @if (variant() === "overlay") {
           <div class="loading-overlay">
-            <p-progressSpinner 
-              strokeWidth="4" 
-              fill="transparent" 
+            <p-progressSpinner
+              strokeWidth="4"
+              fill="transparent"
               animationDuration=".5s"
               [style]="{ width: size() + 'px', height: size() + 'px' }"
             ></p-progressSpinner>
@@ -40,10 +35,10 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
         }
 
         <!-- Spinner/Inline Variant -->
-        @if (variant() === 'spinner' || variant() === 'inline') {
+        @if (variant() === "spinner" || variant() === "inline") {
           <div class="loading-spinner" [class.compact]="compact()">
-            <p-progressSpinner 
-              strokeWidth="4" 
+            <p-progressSpinner
+              strokeWidth="4"
               [style]="{ width: size() + 'px', height: size() + 'px' }"
             ></p-progressSpinner>
             @if (message()) {
@@ -53,20 +48,39 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
         }
 
         <!-- Skeleton Variant -->
-        @if (variant() === 'skeleton') {
+        @if (variant() === "skeleton") {
           <div class="loading-skeleton">
-            @if (skeletonVariant() === 'dashboard-widget') {
-              <app-skeleton-loader variant="dashboard-widget"></app-skeleton-loader>
+            @if (skeletonVariant() === "dashboard-widget") {
+              <app-skeleton-loader
+                variant="dashboard-widget"
+              ></app-skeleton-loader>
             } @else {
               <!-- Default structured skeleton -->
               <div class="skeleton-structure">
-                <app-skeleton-loader variant="title" width="30%" class="mb-4"></app-skeleton-loader>
-                <app-skeleton-loader variant="card" height="200px"></app-skeleton-loader>
+                <app-skeleton-loader
+                  variant="title"
+                  width="30%"
+                  class="mb-4"
+                ></app-skeleton-loader>
+                <app-skeleton-loader
+                  variant="card"
+                  height="200px"
+                ></app-skeleton-loader>
                 <div class="flex-row mt-6 gap-4">
-                  <app-skeleton-loader variant="avatar" size="48px"></app-skeleton-loader>
+                  <app-skeleton-loader
+                    variant="avatar"
+                    size="48px"
+                  ></app-skeleton-loader>
                   <div class="flex-grow">
-                    <app-skeleton-loader variant="text" width="100%" class="mb-2"></app-skeleton-loader>
-                    <app-skeleton-loader variant="text" width="75%"></app-skeleton-loader>
+                    <app-skeleton-loader
+                      variant="text"
+                      width="100%"
+                      class="mb-2"
+                    ></app-skeleton-loader>
+                    <app-skeleton-loader
+                      variant="text"
+                      width="75%"
+                    ></app-skeleton-loader>
                   </div>
                 </div>
               </div>
@@ -79,7 +93,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
       </div>
     }
   `,
-  styleUrl: './loading.component.scss',
+  styleUrl: "./loading.component.scss",
 })
 export class AppLoadingComponent {
   // Angular 21 Signals

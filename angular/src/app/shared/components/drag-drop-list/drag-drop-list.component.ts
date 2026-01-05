@@ -148,7 +148,7 @@ export interface DragDropItem {
       </div>
     </div>
   `,
-  styleUrl: './drag-drop-list.component.scss',
+  styleUrl: "./drag-drop-list.component.scss",
 })
 export class DragDropListComponent {
   // Angular 21: Use input() signal instead of @Input() with signal assignment

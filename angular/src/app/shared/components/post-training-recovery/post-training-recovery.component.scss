@@ -73,7 +73,9 @@
   justify-content: center;
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-h4);
-  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 }
 
 .step.active .step-number {
@@ -160,7 +162,9 @@
   border-radius: var(--radius-lg);
   background: white;
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .rpe-button:hover {
@@ -241,7 +245,9 @@
   border-radius: var(--radius-lg);
   background: white;
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   min-height: 70px;
 }
 
@@ -430,4 +436,3 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
-

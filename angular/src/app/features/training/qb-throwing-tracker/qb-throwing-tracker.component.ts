@@ -7,26 +7,26 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { firstValueFrom } from "rxjs";
+import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from 'primeng/card';
-import { Checkbox } from 'primeng/checkbox';
-import { DialogModule } from 'primeng/dialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { Select } from 'primeng/select';
-import { Slider } from 'primeng/slider';
-import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
-import { MessageService } from 'primeng/api';
+import { CardModule } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressBarModule } from "primeng/progressbar";
+import { Select } from "primeng/select";
+import { Slider } from "primeng/slider";
+import { TagModule } from "primeng/tag";
+import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
+import { MessageService } from "primeng/api";
 
-import { ApiService } from '../../../core/services/api.service';
-import { LoggerService } from '../../../core/services/logger.service';
+import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 interface ThrowingSession {
   id: string;
@@ -75,7 +75,7 @@ interface SessionTypeOption {
 }
 
 @Component({
-  selector: 'app-qb-throwing-tracker',
+  selector: "app-qb-throwing-tracker",
   imports: [
     CommonModule,
     FormsModule,
@@ -90,7 +90,7 @@ interface SessionTypeOption {
     TagModule,
     ToastModule,
     TooltipModule,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -106,27 +106,36 @@ interface SessionTypeOption {
               {{ progressionStatus()!.progressionPhase }}
             </div>
             @if (progressionStatus()!.daysSinceLastSession <= 3) {
-              <p-tag value="Active" severity="success" ></p-tag>
+              <p-tag value="Active" severity="success"></p-tag>
             } @else {
-              <p-tag 
-                [value]="progressionStatus()!.daysSinceLastSession + ' days ago'" 
-                severity="warn" 
-                
+              <p-tag
+                [value]="
+                  progressionStatus()!.daysSinceLastSession + ' days ago'
+                "
+                severity="warn"
               ></p-tag>
             }
           </div>
 
           <div class="status-metrics">
             <div class="metric">
-              <div class="metric-value">{{ progressionStatus()!.currentWeekAvg }}</div>
+              <div class="metric-value">
+                {{ progressionStatus()!.currentWeekAvg }}
+              </div>
               <div class="metric-label">Avg/Session</div>
             </div>
             <div class="metric target">
-              <div class="metric-value">{{ progressionStatus()!.targetThrows }}</div>
+              <div class="metric-value">
+                {{ progressionStatus()!.targetThrows }}
+              </div>
               <div class="metric-label">Target</div>
             </div>
             <div class="metric">
-              <div class="metric-value">{{ progressionStatus()!.weeklyCompliancePct | number:'1.0-0' }}%</div>
+              <div class="metric-value">
+                {{
+                  progressionStatus()!.weeklyCompliancePct | number: "1.0-0"
+                }}%
+              </div>
               <div class="metric-label">Arm Care</div>
             </div>
           </div>
@@ -136,8 +145,8 @@ interface SessionTypeOption {
               <span>Progress to Target</span>
               <span>{{ getProgressPercent() }}%</span>
             </div>
-            <p-progressBar 
-              [value]="getProgressPercent()" 
+            <p-progressBar
+              [value]="getProgressPercent()"
               [showValue]="false"
               styleClass="progress-bar"
             ></p-progressBar>
@@ -162,16 +171,22 @@ interface SessionTypeOption {
           <div class="weekly-chart">
             @for (week of weeklyStats(); track week.weekStart) {
               <div class="week-bar">
-                <div 
-                  class="bar-fill" 
+                <div
+                  class="bar-fill"
                   [style.height.%]="getBarHeight(week.weeklyThrows)"
                   [class.high]="week.weeklyThrows >= 600"
-                  [class.medium]="week.weeklyThrows >= 300 && week.weeklyThrows < 600"
-                  pTooltip="{{ week.weeklyThrows }} throws in {{ week.sessionsCount }} sessions"
+                  [class.medium]="
+                    week.weeklyThrows >= 300 && week.weeklyThrows < 600
+                  "
+                  pTooltip="{{ week.weeklyThrows }} throws in {{
+                    week.sessionsCount
+                  }} sessions"
                 >
                   <span class="bar-value">{{ week.weeklyThrows }}</span>
                 </div>
-                <div class="bar-label">{{ formatWeekLabel(week.weekStart) }}</div>
+                <div class="bar-label">
+                  {{ formatWeekLabel(week.weekStart) }}
+                </div>
               </div>
             }
           </div>
@@ -193,29 +208,50 @@ interface SessionTypeOption {
                 <div class="session-main">
                   <div class="session-info">
                     <div class="session-date">
-                      {{ session.sessionDate | date:'EEE, MMM d' }}
-                      <p-tag 
-                        [value]="formatSessionType(session.sessionType)" 
+                      {{ session.sessionDate | date: "EEE, MMM d" }}
+                      <p-tag
+                        [value]="formatSessionType(session.sessionType)"
                         [severity]="getSessionTypeSeverity(session.sessionType)"
-                        
                       ></p-tag>
                     </div>
                     <div class="throw-breakdown">
-                      <span class="throw-total">{{ session.totalThrows }} throws</span>
-                      @if (session.shortThrows || session.mediumThrows || session.longThrows) {
+                      <span class="throw-total"
+                        >{{ session.totalThrows }} throws</span
+                      >
+                      @if (
+                        session.shortThrows ||
+                        session.mediumThrows ||
+                        session.longThrows
+                      ) {
                         <span class="throw-detail">
-                          ({{ session.shortThrows || 0 }}S / {{ session.mediumThrows || 0 }}M / {{ session.longThrows || 0 }}L)
+                          ({{ session.shortThrows || 0 }}S /
+                          {{ session.mediumThrows || 0 }}M /
+                          {{ session.longThrows || 0 }}L)
                         </span>
                       }
                     </div>
                   </div>
                   <div class="session-compliance">
-                    <div class="compliance-item" [class.done]="session.preThrowingWarmupDone">
-                      <i class="pi" [class.pi-check]="session.preThrowingWarmupDone" [class.pi-times]="!session.preThrowingWarmupDone"></i>
+                    <div
+                      class="compliance-item"
+                      [class.done]="session.preThrowingWarmupDone"
+                    >
+                      <i
+                        class="pi"
+                        [class.pi-check]="session.preThrowingWarmupDone"
+                        [class.pi-times]="!session.preThrowingWarmupDone"
+                      ></i>
                       <span>Warm-up</span>
                     </div>
-                    <div class="compliance-item" [class.done]="session.postThrowingArmCareDone">
-                      <i class="pi" [class.pi-check]="session.postThrowingArmCareDone" [class.pi-times]="!session.postThrowingArmCareDone"></i>
+                    <div
+                      class="compliance-item"
+                      [class.done]="session.postThrowingArmCareDone"
+                    >
+                      <i
+                        class="pi"
+                        [class.pi-check]="session.postThrowingArmCareDone"
+                        [class.pi-times]="!session.postThrowingArmCareDone"
+                      ></i>
                       <span>Arm Care</span>
                     </div>
                     @if (session.iceApplied) {
@@ -230,9 +266,9 @@ interface SessionTypeOption {
                   <div class="arm-feeling">
                     <span class="feeling-label">Arm feeling:</span>
                     <div class="feeling-scale">
-                      @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
-                        <div 
-                          class="feeling-dot" 
+                      @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+                        <div
+                          class="feeling-dot"
                           [class.active]="i <= (session.armFeelingAfter || 0)"
                           [class.good]="i <= 3"
                           [class.moderate]="i > 3 && i <= 6"
@@ -240,7 +276,9 @@ interface SessionTypeOption {
                         ></div>
                       }
                     </div>
-                    <span class="feeling-value">{{ session.armFeelingAfter }}/10</span>
+                    <span class="feeling-value"
+                      >{{ session.armFeelingAfter }}/10</span
+                    >
                   </div>
                 }
                 @if (session.notes) {
@@ -261,9 +299,17 @@ interface SessionTypeOption {
           <div class="reminder-icon">💪</div>
           <div class="reminder-content">
             <h4>Arm Care Reminder</h4>
-            <p>You threw {{ lastSessionThrows() }} balls. Don't forget your post-throwing arm care routine!</p>
+            <p>
+              You threw {{ lastSessionThrows() }} balls. Don't forget your
+              post-throwing arm care routine!
+            </p>
           </div>
-          <app-button size="sm" iconLeft="pi-check" (clicked)="markArmCareDone()">Mark Complete</app-button>
+          <app-button
+            size="sm"
+            iconLeft="pi-check"
+            (clicked)="markArmCareDone()"
+            >Mark Complete</app-button
+          >
         </div>
       }
     </div>
@@ -305,7 +351,8 @@ interface SessionTypeOption {
             placeholder="0"
           ></p-inputNumber>
           <small class="field-hint">
-            Target: {{ progressionStatus()?.targetThrows || 150 }} throws/session
+            Target:
+            {{ progressionStatus()?.targetThrows || 150 }} throws/session
           </small>
         </div>
 
@@ -351,7 +398,9 @@ interface SessionTypeOption {
           ></p-slider>
           <div class="slider-labels">
             <span>Fresh</span>
-            <span class="current-value">{{ formData.armFeelingAfter || 5 }}</span>
+            <span class="current-value">{{
+              formData.armFeelingAfter || 5
+            }}</span>
             <span>Fatigued</span>
           </div>
         </div>
@@ -402,12 +451,20 @@ interface SessionTypeOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outlined" (clicked)="closeLogDialog()">Cancel</app-button>
-        <app-button iconLeft="pi-check" [loading]="isSaving()" [disabled]="!isFormValid()" (clicked)="saveSession()">Save Session</app-button>
+        <app-button variant="outlined" (clicked)="closeLogDialog()"
+          >Cancel</app-button
+        >
+        <app-button
+          iconLeft="pi-check"
+          [loading]="isSaving()"
+          [disabled]="!isFormValid()"
+          (clicked)="saveSession()"
+          >Save Session</app-button
+        >
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './qb-throwing-tracker.component.scss',
+  styleUrl: "./qb-throwing-tracker.component.scss",
 })
 export class QbThrowingTrackerComponent {
   private readonly api = inject(ApiService);
@@ -425,12 +482,12 @@ export class QbThrowingTrackerComponent {
   formData: Partial<ThrowingSession> = this.getEmptyForm();
 
   readonly sessionTypes: SessionTypeOption[] = [
-    { label: 'Practice', value: 'practice' },
-    { label: 'Warm-up Only', value: 'warm_up' },
-    { label: 'Drill Work', value: 'drill_work' },
-    { label: 'Game', value: 'game' },
-    { label: 'Tournament', value: 'tournament' },
-    { label: '320 Simulation', value: 'simulation' },
+    { label: "Practice", value: "practice" },
+    { label: "Warm-up Only", value: "warm_up" },
+    { label: "Drill Work", value: "drill_work" },
+    { label: "Game", value: "game" },
+    { label: "Tournament", value: "tournament" },
+    { label: "320 Simulation", value: "simulation" },
   ];
 
   constructor() {
@@ -441,14 +498,16 @@ export class QbThrowingTrackerComponent {
   async loadData(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/qb-throwing'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/qb-throwing"),
+      );
       if (response?.success) {
         this.progressionStatus.set(response.data.progression);
         this.weeklyStats.set(response.data.weeklyStats || []);
         this.recentSessions.set(response.data.recentSessions || []);
       }
     } catch (err) {
-      this.logger.error('Failed to load QB throwing data', err);
+      this.logger.error("Failed to load QB throwing data", err);
     }
   }
 
@@ -467,11 +526,11 @@ export class QbThrowingTrackerComponent {
     this.isSaving.set(true);
 
     try {
-      await firstValueFrom(this.api.post('/api/qb-throwing', this.formData));
+      await firstValueFrom(this.api.post("/api/qb-throwing", this.formData));
 
       this.messageService.add({
-        severity: 'success',
-        summary: 'Session Logged',
+        severity: "success",
+        summary: "Session Logged",
         detail: `${this.formData.totalThrows} throws recorded!`,
         life: 3000,
       });
@@ -479,11 +538,11 @@ export class QbThrowingTrackerComponent {
       await this.loadData();
       this.closeLogDialog();
     } catch (err) {
-      this.logger.error('Failed to save throwing session', err);
+      this.logger.error("Failed to save throwing session", err);
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to save session. Please try again.',
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save session. Please try again.",
       });
     } finally {
       this.isSaving.set(false);
@@ -492,7 +551,7 @@ export class QbThrowingTrackerComponent {
 
   getEmptyForm(): Partial<ThrowingSession> {
     return {
-      sessionType: 'practice',
+      sessionType: "practice",
       totalThrows: 0,
       shortThrows: 0,
       mediumThrows: 0,
@@ -501,25 +560,30 @@ export class QbThrowingTrackerComponent {
       preThrowingWarmupDone: false,
       postThrowingArmCareDone: false,
       iceApplied: false,
-      notes: '',
+      notes: "",
     };
   }
 
   isFormValid(): boolean {
-    return !!(this.formData.sessionType && (this.formData.totalThrows || 0) > 0);
+    return !!(
+      this.formData.sessionType && (this.formData.totalThrows || 0) > 0
+    );
   }
 
   getProgressPercent(): number {
     const status = this.progressionStatus();
     if (!status || !status.targetThrows) return 0;
-    return Math.min(100, Math.round((status.currentWeekAvg / status.targetThrows) * 100));
+    return Math.min(
+      100,
+      Math.round((status.currentWeekAvg / status.targetThrows) * 100),
+    );
   }
 
   getPhaseClass(): string {
-    const phase = this.progressionStatus()?.progressionPhase || '';
-    if (phase.includes('Tournament')) return 'phase-tournament';
-    if (phase.includes('Building')) return 'phase-building';
-    return 'phase-foundation';
+    const phase = this.progressionStatus()?.progressionPhase || "";
+    if (phase.includes("Tournament")) return "phase-tournament";
+    if (phase.includes("Building")) return "phase-building";
+    return "phase-foundation";
   }
 
   getBarHeight(throws: number): number {
@@ -529,41 +593,48 @@ export class QbThrowingTrackerComponent {
 
   formatWeekLabel(weekStart: string): string {
     const date = new Date(weekStart);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   formatSessionType(type: string): string {
     const labels: Record<string, string> = {
-      practice: 'Practice',
-      warm_up: 'Warm-up',
-      drill_work: 'Drills',
-      game: 'Game',
-      tournament: 'Tournament',
-      simulation: 'Simulation',
+      practice: "Practice",
+      warm_up: "Warm-up",
+      drill_work: "Drills",
+      game: "Game",
+      tournament: "Tournament",
+      simulation: "Simulation",
     };
     return labels[type] || type;
   }
 
-  getSessionTypeSeverity(type: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
-    const severities: Record<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary'> = {
-      practice: 'info',
-      warm_up: 'secondary',
-      drill_work: 'info',
-      game: 'success',
-      tournament: 'danger',
-      simulation: 'warn',
+  getSessionTypeSeverity(
+    type: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary"
+    > = {
+      practice: "info",
+      warm_up: "secondary",
+      drill_work: "info",
+      game: "success",
+      tournament: "danger",
+      simulation: "warn",
     };
-    return severities[type] || 'secondary';
+    return severities[type] || "secondary";
   }
 
   showArmCareReminder(): boolean {
     const sessions = this.recentSessions();
     if (sessions.length === 0) return false;
     const lastSession = sessions[0];
-    const today = new Date().toISOString().split('T')[0];
-    return lastSession.sessionDate === today && 
-           !lastSession.postThrowingArmCareDone && 
-           lastSession.totalThrows >= 50;
+    const today = new Date().toISOString().split("T")[0];
+    return (
+      lastSession.sessionDate === today &&
+      !lastSession.postThrowingArmCareDone &&
+      lastSession.totalThrows >= 50
+    );
   }
 
   lastSessionThrows(): number {
@@ -575,20 +646,22 @@ export class QbThrowingTrackerComponent {
     if (!lastSession) return;
 
     try {
-      await firstValueFrom(this.api.post('/api/qb-throwing/arm-care', {
-        sessionId: lastSession.id,
-      }));
+      await firstValueFrom(
+        this.api.post("/api/qb-throwing/arm-care", {
+          sessionId: lastSession.id,
+        }),
+      );
 
       this.messageService.add({
-        severity: 'success',
-        summary: 'Arm Care Complete',
-        detail: 'Great job taking care of your arm!',
+        severity: "success",
+        summary: "Arm Care Complete",
+        detail: "Great job taking care of your arm!",
         life: 2000,
       });
 
       await this.loadData();
     } catch (err) {
-      this.logger.error('Failed to mark arm care done', err);
+      this.logger.error("Failed to mark arm care done", err);
     }
   }
 }

@@ -36,7 +36,7 @@ export interface Exercise {
   defaultDurationSeconds?: number;
 
   // Metadata
-  difficultyLevel: 'beginner' | 'intermediate' | 'advanced';
+  difficultyLevel: "beginner" | "intermediate" | "advanced";
   equipmentRequired?: string[];
   targetMuscles?: string[];
   positionSpecific?: string[];
@@ -45,15 +45,15 @@ export interface Exercise {
 }
 
 export type ExerciseCategory =
-  | 'mobility'
-  | 'foam_roll'
-  | 'warm_up'
-  | 'strength'
-  | 'skill'
-  | 'conditioning'
-  | 'plyometric'
-  | 'recovery'
-  | 'cool_down';
+  | "mobility"
+  | "foam_roll"
+  | "warm_up"
+  | "strength"
+  | "skill"
+  | "conditioning"
+  | "plyometric"
+  | "recovery"
+  | "cool_down";
 
 // ============================================================================
 // PRESCRIBED EXERCISE (with today's prescription)
@@ -99,19 +99,19 @@ export interface PrescribedExercise {
   loadContributionAu: number;
 }
 
-export type ExerciseStatus = 'pending' | 'complete' | 'skipped';
+export type ExerciseStatus = "pending" | "complete" | "skipped";
 
 // ============================================================================
 // PROTOCOL BLOCKS
 // ============================================================================
 
 export type BlockType =
-  | 'morning_mobility'
-  | 'foam_roll'
-  | 'warm_up'
-  | 'main_session'
-  | 'cool_down'
-  | 'evening_recovery';
+  | "morning_mobility"
+  | "foam_roll"
+  | "warm_up"
+  | "main_session"
+  | "cool_down"
+  | "evening_recovery";
 
 export interface ProtocolBlock {
   type: BlockType;
@@ -131,7 +131,7 @@ export interface ProtocolBlock {
   aiNote?: string;
 }
 
-export type BlockStatus = 'pending' | 'in_progress' | 'complete' | 'skipped';
+export type BlockStatus = "pending" | "in_progress" | "complete" | "skipped";
 
 // ============================================================================
 // DAILY PROTOCOL
@@ -177,7 +177,7 @@ export interface DailyProtocol {
 // DISPLAY HELPERS
 // ============================================================================
 
-import { BLOCK_COLORS } from '../../../core/utils/design-tokens.util';
+import { BLOCK_COLORS } from "../../../core/utils/design-tokens.util";
 
 /**
  * Block configuration for protocol display
@@ -189,33 +189,33 @@ export const BLOCK_CONFIG: Record<
   { title: string; icon: string; color: string }
 > = {
   morning_mobility: {
-    title: 'Morning Mobility',
-    icon: 'pi-sun',
+    title: "Morning Mobility",
+    icon: "pi-sun",
     color: BLOCK_COLORS.morning_mobility, // --primitive-warning-500 (amber)
   },
   foam_roll: {
-    title: 'Pre-Training: Foam Roll',
-    icon: 'pi-circle-fill',
+    title: "Pre-Training: Foam Roll",
+    icon: "pi-circle-fill",
     color: BLOCK_COLORS.foam_roll, // --primitive-error-500 (red)
   },
   warm_up: {
-    title: 'Warm-Up',
-    icon: 'pi-bolt',
+    title: "Warm-Up",
+    icon: "pi-bolt",
     color: BLOCK_COLORS.warm_up, // --color-workout-cardio (orange)
   },
   main_session: {
-    title: 'Main Session',
-    icon: 'pi-play',
+    title: "Main Session",
+    icon: "pi-play",
     color: BLOCK_COLORS.main_session, // --ds-primary-green (brand green)
   },
   cool_down: {
-    title: 'Cool-Down',
-    icon: 'pi-stop',
+    title: "Cool-Down",
+    icon: "pi-stop",
     color: BLOCK_COLORS.cool_down, // --color-chart-tertiary (blue)
   },
   evening_recovery: {
-    title: 'Evening Recovery',
-    icon: 'pi-moon',
+    title: "Evening Recovery",
+    icon: "pi-moon",
     color: BLOCK_COLORS.evening_recovery, // --color-status-help (purple)
   },
 };
@@ -228,11 +228,15 @@ export function formatPrescription(exercise: PrescribedExercise): string {
   const parts: string[] = [];
 
   if (exercise.prescribedSets) {
-    parts.push(`${exercise.prescribedSets} set${exercise.prescribedSets > 1 ? 's' : ''}`);
+    parts.push(
+      `${exercise.prescribedSets} set${exercise.prescribedSets > 1 ? "s" : ""}`,
+    );
   }
 
   if (exercise.prescribedReps) {
-    parts.push(`${exercise.prescribedReps} rep${exercise.prescribedReps > 1 ? 's' : ''}`);
+    parts.push(
+      `${exercise.prescribedReps} rep${exercise.prescribedReps > 1 ? "s" : ""}`,
+    );
   }
 
   if (exercise.prescribedHoldSeconds) {
@@ -243,7 +247,7 @@ export function formatPrescription(exercise: PrescribedExercise): string {
     const mins = Math.floor(exercise.prescribedDurationSeconds / 60);
     const secs = exercise.prescribedDurationSeconds % 60;
     if (mins > 0) {
-      parts.push(`${mins}m${secs > 0 ? ` ${secs}s` : ''}`);
+      parts.push(`${mins}m${secs > 0 ? ` ${secs}s` : ""}`);
     } else {
       parts.push(`${secs}s`);
     }
@@ -253,7 +257,7 @@ export function formatPrescription(exercise: PrescribedExercise): string {
     parts.push(`${exercise.prescribedWeightKg}kg`);
   }
 
-  return parts.join(' × ');
+  return parts.join(" × ");
 }
 
 // ============================================================================

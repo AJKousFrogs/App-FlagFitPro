@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import {
-    FeedbackMessage,
-    FeedbackService,
+  FeedbackMessage,
+  FeedbackService,
 } from "../../../core/services/feedback.service";
 
 /**
@@ -16,19 +16,12 @@ import {
   template: `
     <div class="toast-container" role="status" aria-live="polite">
       @for (msg of feedbackService.messages(); track msg.id) {
-        <div
-          class="toast-item"
-          [class]="msg.type"
-          [attr.id]="msg.id"
-        >
+        <div class="toast-item" [class]="msg.type" [attr.id]="msg.id">
           <div class="toast-content">
             <span class="toast-icon">{{ getIcon(msg.type) }}</span>
             <span class="toast-message">{{ msg.message }}</span>
             @if (msg.action) {
-              <button
-                class="toast-action-btn"
-                (click)="handleAction(msg)"
-              >
+              <button class="toast-action-btn" (click)="handleAction(msg)">
                 {{ msg.action.label }}
               </button>
             }
@@ -44,7 +37,7 @@ import {
       }
     </div>
   `,
-  styleUrl: './feedback-toast.component.scss',
+  styleUrl: "./feedback-toast.component.scss",
 })
 export class FeedbackToastComponent {
   public feedbackService = inject(FeedbackService);

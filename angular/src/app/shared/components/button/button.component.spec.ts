@@ -14,6 +14,7 @@ import {
   tick,
 } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import { ButtonComponent } from "./button.component";
 
@@ -37,69 +38,69 @@ describe("ButtonComponent", () => {
 
   describe("Variants", () => {
     it("should apply primary variant by default", () => {
-      expect(component.buttonClass()).toContain("btn-primary");
+      expect(component.buttonClasses()).toContain("btn-primary");
     });
 
     it("should apply secondary variant", () => {
       fixture.componentRef.setInput("variant", "secondary");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-secondary");
+      expect(component.buttonClasses()).toContain("btn-secondary");
     });
 
     it("should apply outlined variant", () => {
       fixture.componentRef.setInput("variant", "outlined");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-outlined");
+      expect(component.buttonClasses()).toContain("btn-outlined");
     });
 
     it("should apply text variant", () => {
       fixture.componentRef.setInput("variant", "text");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-text");
+      expect(component.buttonClasses()).toContain("btn-text");
     });
 
     it("should apply danger variant", () => {
       fixture.componentRef.setInput("variant", "danger");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-danger");
+      expect(component.buttonClasses()).toContain("btn-danger");
     });
 
     it("should apply success variant", () => {
       fixture.componentRef.setInput("variant", "success");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-success");
+      expect(component.buttonClasses()).toContain("btn-success");
     });
   });
 
   describe("Sizes", () => {
     it("should not add size class for default md size", () => {
-      expect(component.buttonClass()).not.toContain("btn-md");
+      expect(component.buttonClasses()).not.toContain("btn-md");
     });
 
     it("should apply small size", () => {
       fixture.componentRef.setInput("size", "sm");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-sm");
+      expect(component.buttonClasses()).toContain("btn-sm");
     });
 
     it("should apply large size", () => {
       fixture.componentRef.setInput("size", "lg");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-lg");
+      expect(component.buttonClasses()).toContain("btn-lg");
     });
 
     it("should apply extra large size", () => {
       fixture.componentRef.setInput("size", "xl");
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-xl");
+      expect(component.buttonClasses()).toContain("btn-xl");
     });
   });
 
@@ -133,22 +134,20 @@ describe("ButtonComponent", () => {
       expect(spinner).toBeTruthy();
     });
 
-    it("should hide content when loading and showLabelOnLoading is false", () => {
+    it("should apply loading class to content when loading", () => {
       fixture.componentRef.setInput("loading", true);
-      fixture.componentRef.setInput("showLabelOnLoading", false);
       fixture.detectChanges();
 
       const content = fixture.nativeElement.querySelector(".btn-content");
-      expect(content.classList.contains("btn-content-hidden")).toBe(true);
+      expect(content.classList.contains("btn-content-loading")).toBe(true);
     });
 
-    it("should show content when loading and showLabelOnLoading is true", () => {
-      fixture.componentRef.setInput("loading", true);
-      fixture.componentRef.setInput("showLabelOnLoading", true);
+    it("should not apply loading class when not loading", () => {
+      fixture.componentRef.setInput("loading", false);
       fixture.detectChanges();
 
       const content = fixture.nativeElement.querySelector(".btn-content");
-      expect(content.classList.contains("btn-content-hidden")).toBe(false);
+      expect(content.classList.contains("btn-content-loading")).toBe(false);
     });
   });
 
@@ -203,31 +202,29 @@ describe("ButtonComponent", () => {
       fixture.componentRef.setInput("iconOnly", true);
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-icon-only");
+      expect(component.buttonClasses()).toContain("btn-icon-only");
     });
   });
 
-  describe("Rounded", () => {
-    it("should apply rounded class when true", () => {
-      fixture.componentRef.setInput("rounded", true);
+  describe("Full Width", () => {
+    it("should apply full-width class when fullWidth is true", () => {
+      fixture.componentRef.setInput("fullWidth", true);
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-rounded");
+      expect(component.buttonClasses()).toContain("btn-full-width");
     });
-  });
 
-  describe("Block", () => {
-    it("should apply block class when true", () => {
+    it("should apply full-width class when block is true (deprecated)", () => {
       fixture.componentRef.setInput("block", true);
       fixture.detectChanges();
 
-      expect(component.buttonClass()).toContain("btn-block");
+      expect(component.buttonClasses()).toContain("btn-full-width");
     });
   });
 
   describe("Click Handling", () => {
     it("should emit click event when clicked", () => {
-      const clickSpy = spyOn(component.clicked, "emit");
+      const clickSpy = vi.spyOn(component.clicked, "emit");
 
       const button = fixture.nativeElement.querySelector("button");
       button.click();
@@ -239,7 +236,7 @@ describe("ButtonComponent", () => {
       fixture.componentRef.setInput("disabled", true);
       fixture.detectChanges();
 
-      const clickSpy = spyOn(component.clicked, "emit");
+      const clickSpy = vi.spyOn(component.clicked, "emit");
 
       const button = fixture.nativeElement.querySelector("button");
       button.click();
@@ -251,7 +248,7 @@ describe("ButtonComponent", () => {
       fixture.componentRef.setInput("loading", true);
       fixture.detectChanges();
 
-      const clickSpy = spyOn(component.clicked, "emit");
+      const clickSpy = vi.spyOn(component.clicked, "emit");
 
       const button = fixture.nativeElement.querySelector("button");
       button.click();
@@ -260,61 +257,20 @@ describe("ButtonComponent", () => {
     });
   });
 
-  describe("Ripple Effect", () => {
-    it("should create ripple on click", fakeAsync(() => {
+  // Ripple effect is handled via CSS, no runtime ripple array exists
+
+  describe("ARIA Pressed State", () => {
+    it("should have aria-pressed attribute when set", () => {
+      fixture.componentRef.setInput("ariaPressed", true);
+      fixture.detectChanges();
+
       const button = fixture.nativeElement.querySelector("button");
-
-      // Create a mock click event with coordinates
-      const clickEvent = new MouseEvent("click", {
-        clientX: 50,
-        clientY: 50,
-        bubbles: true,
-      });
-
-      button.dispatchEvent(clickEvent);
-      fixture.detectChanges();
-
-      expect(component.ripples().length).toBeGreaterThan(0);
-
-      // Wait for ripple to be removed
-      tick(700);
-      fixture.detectChanges();
-
-      expect(component.ripples().length).toBe(0);
-    }));
-  });
-
-  describe("Press State", () => {
-    it("should set pressed state on mousedown", () => {
-      component.onMouseDown();
-      expect(component.isPressed()).toBe(true);
+      expect(button.getAttribute("aria-pressed")).toBe("true");
     });
 
-    it("should clear pressed state on mouseup", () => {
-      component.onMouseDown();
-      component.onMouseUp();
-      expect(component.isPressed()).toBe(false);
-    });
-
-    it("should clear pressed state on mouseleave", () => {
-      component.onMouseDown();
-      component.onMouseUp(); // mouseleave calls onMouseUp
-      expect(component.isPressed()).toBe(false);
-    });
-
-    it("should not set pressed state when disabled", () => {
-      fixture.componentRef.setInput("disabled", true);
-      fixture.detectChanges();
-
-      component.onMouseDown();
-      expect(component.isPressed()).toBe(false);
-    });
-
-    it("should apply pressed class when pressed", () => {
-      component.onMouseDown();
-      fixture.detectChanges();
-
-      expect(component.buttonClass()).toContain("btn-pressed");
+    it("should not have aria-pressed attribute by default", () => {
+      const button = fixture.nativeElement.querySelector("button");
+      expect(button.getAttribute("aria-pressed")).toBeNull();
     });
   });
 
@@ -361,16 +317,14 @@ describe("ButtonComponent", () => {
     it("should combine multiple modifier classes", () => {
       fixture.componentRef.setInput("variant", "danger");
       fixture.componentRef.setInput("size", "lg");
-      fixture.componentRef.setInput("rounded", true);
-      fixture.componentRef.setInput("block", true);
+      fixture.componentRef.setInput("fullWidth", true);
       fixture.detectChanges();
 
-      const classes = component.buttonClass();
+      const classes = component.buttonClasses();
       expect(classes).toContain("btn");
       expect(classes).toContain("btn-danger");
       expect(classes).toContain("btn-lg");
-      expect(classes).toContain("btn-rounded");
-      expect(classes).toContain("btn-block");
+      expect(classes).toContain("btn-full-width");
     });
   });
 });

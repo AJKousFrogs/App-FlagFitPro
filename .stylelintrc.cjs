@@ -1,7 +1,7 @@
 /**
  * Stylelint Configuration for FlagFit Pro Design System
  * ======================================================
- * 
+ *
  * Enforces DESIGN_SYSTEM_RULES.md decisions via automated linting.
  * See the referenced decisions for full context.
  */
@@ -97,17 +97,42 @@ module.exports = {
     "scss/at-rule-no-unknown": [
       true,
       {
-        ignoreAtRules: ["tailwind", "apply", "variants", "responsive", "screen", "layer"],
+        ignoreAtRules: [
+          "tailwind",
+          "apply",
+          "variants",
+          "responsive",
+          "screen",
+          "layer",
+        ],
       },
     ],
     "at-rule-no-unknown": [
       true,
       {
         ignoreAtRules: [
-          "tailwind", "apply", "variants", "responsive", "screen", "layer",
-          "use", "forward", "mixin", "include", "function", "return",
-          "if", "else", "each", "for", "while", "extend", "at-root",
-          "debug", "warn", "error"
+          "tailwind",
+          "apply",
+          "variants",
+          "responsive",
+          "screen",
+          "layer",
+          "use",
+          "forward",
+          "mixin",
+          "include",
+          "function",
+          "return",
+          "if",
+          "else",
+          "each",
+          "for",
+          "while",
+          "extend",
+          "at-root",
+          "debug",
+          "warn",
+          "error",
         ],
       },
     ],
@@ -116,7 +141,13 @@ module.exports = {
     "selector-pseudo-class-no-unknown": [
       true,
       {
-        ignorePseudoClasses: ["global", "local", "host", "host-context", "ng-deep"],
+        ignorePseudoClasses: [
+          "global",
+          "local",
+          "host",
+          "host-context",
+          "ng-deep",
+        ],
       },
     ],
 
@@ -125,7 +156,15 @@ module.exports = {
       4,
       {
         ignore: ["pseudo-classes"],
-        ignoreAtRules: ["media", "supports", "include", "if", "else", "each", "for"],
+        ignoreAtRules: [
+          "media",
+          "supports",
+          "include",
+          "if",
+          "else",
+          "each",
+          "for",
+        ],
       },
     ],
 
@@ -153,16 +192,14 @@ module.exports = {
     // Allow !important only in overrides layer
     // ====================================
     {
-      files: [
-        "**/overrides/**/*.scss",
-        "**/overrides/*.scss",
-      ],
+      files: ["**/overrides/**/*.scss", "**/overrides/*.scss"],
       rules: {
         "declaration-no-important": [
           true,
           {
             severity: "warning",
-            message: "⚠️ !important allowed here, but MUST include exception ticket comment.",
+            message:
+              "⚠️ !important allowed here, but MUST include exception ticket comment.",
           },
         ],
       },
@@ -172,10 +209,7 @@ module.exports = {
     // PrimeNG files: warn instead of error for hex
     // ====================================
     {
-      files: [
-        "**/primeng/**/*.scss",
-        "**/primeng-*.scss",
-      ],
+      files: ["**/primeng/**/*.scss", "**/primeng-*.scss"],
       rules: {
         "color-no-hex": [
           true,

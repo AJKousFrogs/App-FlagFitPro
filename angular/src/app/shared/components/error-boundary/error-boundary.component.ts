@@ -16,11 +16,11 @@
  */
 
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    input,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
@@ -31,9 +31,7 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
   selector: "app-error-boundary",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ CardModule,
-    ButtonComponent,
-  ],
+  imports: [CardModule, ButtonComponent],
   template: `
     @if (hasError()) {
       <div class="error-boundary-container">
@@ -47,13 +45,18 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
               {{ errorMessage() }}
             </p>
             @if (componentName()) {
-              <p class="error-component">
-                Component: {{ componentName() }}
-              </p>
+              <p class="error-component">Component: {{ componentName() }}</p>
             }
             <div class="error-actions">
-              <app-button iconLeft="pi-refresh" (clicked)="retry()">Try Again</app-button>
-              <app-button variant="outlined" iconLeft="pi-home" (clicked)="goToDashboard()">Go to Dashboard</app-button>
+              <app-button iconLeft="pi-refresh" (clicked)="retry()"
+                >Try Again</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-home"
+                (clicked)="goToDashboard()"
+                >Go to Dashboard</app-button
+              >
             </div>
             <p class="error-help">
               If this problem persists, please contact support.
@@ -65,7 +68,7 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
       <ng-content></ng-content>
     }
   `,
-  styleUrl: './error-boundary.component.scss',
+  styleUrl: "./error-boundary.component.scss",
 })
 export class ErrorBoundaryComponent {
   componentName = input<string>();

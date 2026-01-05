@@ -274,41 +274,41 @@ Plan detailed practice sessions with timing, drills, plays to run, equipment nee
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Practice List | View upcoming and past practices |
-| Detailed Planner | Timeline with activities |
-| Activity Blocks | Configurable drill segments |
-| Play Integration | Link plays from playbook |
-| Equipment Checklist | Track required equipment |
-| Position-Specific | Different drills per position |
-| Live Mode | Real-time practice execution |
-| Templates | Save and reuse practice plans |
-| Weather Integration | Auto-fetch weather for outdoor |
+| Feature             | Description                      |
+| ------------------- | -------------------------------- |
+| Practice List       | View upcoming and past practices |
+| Detailed Planner    | Timeline with activities         |
+| Activity Blocks     | Configurable drill segments      |
+| Play Integration    | Link plays from playbook         |
+| Equipment Checklist | Track required equipment         |
+| Position-Specific   | Different drills per position    |
+| Live Mode           | Real-time practice execution     |
+| Templates           | Save and reuse practice plans    |
+| Weather Integration | Auto-fetch weather for outdoor   |
 
 ---
 
 ## Activity Types
 
-| Type | Icon | Description |
-|------|------|-------------|
-| Warm-up | 🏃 | Dynamic stretching, jogging |
-| Position Work | 🎯 | Position-specific drills |
-| Team Offense | 🏈 | Offensive plays, 7v7 |
-| Team Defense | 🛡️ | Defensive schemes |
-| Scrimmage | ⚔️ | Game simulation |
-| Cool Down | 😌 | Stretching, team talk |
-| Conditioning | 💪 | Fitness work |
-| Film Review | 📹 | On-field video review |
+| Type          | Icon | Description                 |
+| ------------- | ---- | --------------------------- |
+| Warm-up       | 🏃   | Dynamic stretching, jogging |
+| Position Work | 🎯   | Position-specific drills    |
+| Team Offense  | 🏈   | Offensive plays, 7v7        |
+| Team Defense  | 🛡️   | Defensive schemes           |
+| Scrimmage     | ⚔️   | Game simulation             |
+| Cool Down     | 😌   | Stretching, team talk       |
+| Conditioning  | 💪   | Fitness work                |
+| Film Review   | 📹   | On-field video review       |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Practice plans | `PracticeService` | `practice_plans` |
-| Activities | `PracticeService` | `practice_activities` |
-| Plays | `PlaybookService` | `playbook_plays` |
-| Equipment | `EquipmentService` | `equipment_inventory` |
-| Attendance | `CalendarService` | `event_rsvps` |
+| Data           | Service            | Table                 |
+| -------------- | ------------------ | --------------------- |
+| Practice plans | `PracticeService`  | `practice_plans`      |
+| Activities     | `PracticeService`  | `practice_activities` |
+| Plays          | `PlaybookService`  | `playbook_plays`      |
+| Equipment      | `EquipmentService` | `equipment_inventory` |
+| Attendance     | `CalendarService`  | `event_rsvps`         |

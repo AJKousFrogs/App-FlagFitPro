@@ -109,7 +109,7 @@ import { LoggerService } from "../../core/services/logger.service";
       </div>
     </div>
   `,
-  styleUrl: './flag-load.component.scss',
+  styleUrl: "./flag-load.component.scss",
 })
 export class FlagLoadComponent implements OnInit {
   // Angular 21: Use input() signal instead of @Input()

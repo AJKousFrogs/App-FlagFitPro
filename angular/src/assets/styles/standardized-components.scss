@@ -155,7 +155,7 @@
   background-color: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   border-color: transparent;
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
 
@@ -177,13 +177,13 @@
     color: var(--color-text-on-primary);
     border-color: transparent;
     transform: translateY(0) scale(0.98);
-    box-shadow: 
+    box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.15),
       0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   &:focus-visible {
-    box-shadow: 
+    box-shadow:
       0 0 0 3px var(--surface-primary),
       0 0 0 5px var(--color-brand-primary);
   }
@@ -649,15 +649,15 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  
+
   /* Fixed height - 30px, no vertical growth */
   height: 30px;
   min-height: 30px;
   max-height: 30px;
-  
+
   /* Padding: 13px horizontal */
   padding: 0 13px;
-  
+
   /* Typography - Semibold */
   font-family: var(--font-family-sans);
   font-size: 14px;
@@ -666,15 +666,15 @@
   white-space: nowrap;
   text-transform: none;
   text-decoration: none;
-  
+
   /* Shape: PILL (full rounded) */
   border-radius: 9999px;
-  
+
   /* NO borders, shadows, outlines */
   border: none;
   box-shadow: none;
   outline: none;
-  
+
   /* Prevent flex row stretching */
   flex-shrink: 0;
 

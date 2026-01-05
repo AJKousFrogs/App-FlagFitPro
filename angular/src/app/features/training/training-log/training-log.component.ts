@@ -80,15 +80,17 @@ interface SessionType {
           subtitle="Record your training to track load and prevent injuries"
           icon="pi-plus-circle"
         >
-          <app-button variant="outlined" iconLeft="pi-times" (clicked)="cancel()">Cancel</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-times"
+            (clicked)="cancel()"
+            >Cancel</app-button
+          >
         </app-page-header>
 
         <form [formGroup]="sessionForm" (ngSubmit)="submitSession()">
           <!-- Session Type Selection -->
-          <app-card-shell
-            title="Session Type"
-            headerIcon="pi-tag"
-          >
+          <app-card-shell title="Session Type" headerIcon="pi-tag">
             <div class="session-types-grid">
               @for (type of sessionTypes; track type.value) {
                 <div
@@ -107,10 +109,7 @@ interface SessionType {
           </app-card-shell>
 
           <!-- Duration and Intensity -->
-          <app-card-shell
-            title="Duration & Intensity"
-            headerIcon="pi-clock"
-          >
+          <app-card-shell title="Duration & Intensity" headerIcon="pi-clock">
             <div class="form-grid">
               <div class="form-field">
                 <label for="duration">Duration (minutes)</label>
@@ -220,10 +219,7 @@ interface SessionType {
           </app-card-shell>
 
           <!-- Notes -->
-          <app-card-shell
-            title="Notes"
-            headerIcon="pi-pencil"
-          >
+          <app-card-shell title="Notes" headerIcon="pi-pencil">
             <div class="form-field">
               <textarea
                 pTextarea
@@ -236,13 +232,18 @@ interface SessionType {
 
           <!-- Submit Button -->
           <div class="form-actions">
-            <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="sessionForm.invalid">Log Session</app-button>
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSubmitting()"
+              [disabled]="sessionForm.invalid"
+              >Log Session</app-button
+            >
           </div>
         </form>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './training-log.component.scss',
+  styleUrl: "./training-log.component.scss",
 })
 export class TrainingLogComponent {
   private readonly fb = inject(FormBuilder);
@@ -377,7 +378,7 @@ export class TrainingLogComponent {
           duration_minutes: sessionData.duration_minutes,
           rpe: sessionData.rpe,
           notes: sessionData.notes,
-        })
+        }),
       );
 
       // Update ACWR calculations

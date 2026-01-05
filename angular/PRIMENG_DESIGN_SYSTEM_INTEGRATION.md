@@ -45,10 +45,10 @@ All PrimeNG components in this application are customized to match the FlagFit P
 --ds-primary-green: #089949;
 
 /* Common Patterns */
---color-text-on-primary: #ffffff;  /* Always use on green backgrounds */
---color-text-primary: #1a1a1a;      /* Use on white backgrounds */
---radius-lg: 0.5rem;                 /* 8px - Raised buttons, cards */
---space-4: 1rem;                     /* 16px - Default spacing */
+--color-text-on-primary: #ffffff; /* Always use on green backgrounds */
+--color-text-primary: #1a1a1a; /* Use on white backgrounds */
+--radius-lg: 0.5rem; /* 8px - Raised buttons, cards */
+--space-4: 1rem; /* 16px - Default spacing */
 --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15); /* Medium elevation */
 ```
 
@@ -79,59 +79,52 @@ All PrimeNG components in this application are customized to match the FlagFit P
 
 ```scss
 /* Use these for text on white backgrounds */
---color-text-primary: #1a1a1a;     /* Contrast: 16.1:1 ✅ */
---color-text-secondary: #4a4a4a;   /* Contrast: 8.6:1 ✅ */
---color-text-muted: #525252;       /* Contrast: 7.5:1 ✅ */
---color-text-disabled: #9ca3af;    /* Decorative only */
+--color-text-primary: #1a1a1a; /* Contrast: 16.1:1 ✅ */
+--color-text-secondary: #4a4a4a; /* Contrast: 8.6:1 ✅ */
+--color-text-muted: #525252; /* Contrast: 7.5:1 ✅ */
+--color-text-disabled: #9ca3af; /* Decorative only */
 
 /* Use this for text on green backgrounds */
---color-text-on-primary: #ffffff;  /* Contrast: 4.7:1 ✅ */
+--color-text-on-primary: #ffffff; /* Contrast: 4.7:1 ✅ */
 ```
 
 ### Status Colors & Severity Mappings
 
 For PrimeNG components with `severity` attribute (Tag, Badge, Message, Toast):
 
-| Severity | Background | Text | Token | Use Case |
-|----------|-----------|------|-------|----------|
-| `success` | #63ad0e | #ffffff | `--color-status-success` | Completed, Active, Positive |
-| `info` | #0ea5e9 | #ffffff | `--color-status-info` | Informational, Neutral |
-| `warning` | #ffc000 | #92400e | `--color-status-warning` | Caution, Pending |
-| `danger` | #ff003c | #ffffff | `--color-status-error` | Error, Critical, Delete |
-| `help` | #8b5cf6 | #ffffff | `--color-status-help` | Tips, Help content |
+| Severity  | Background | Text    | Token                    | Use Case                    |
+| --------- | ---------- | ------- | ------------------------ | --------------------------- |
+| `success` | #63ad0e    | #ffffff | `--color-status-success` | Completed, Active, Positive |
+| `info`    | #0ea5e9    | #ffffff | `--color-status-info`    | Informational, Neutral      |
+| `warning` | #ffc000    | #92400e | `--color-status-warning` | Caution, Pending            |
+| `danger`  | #ff003c    | #ffffff | `--color-status-error`   | Error, Critical, Delete     |
+| `help`    | #8b5cf6    | #ffffff | `--color-status-help`    | Tips, Help content          |
 
 **Contrast Compliance**: All combinations meet WCAG AA standards (4.5:1 minimum for normal text).
 
 ### Component Color Examples
 
 **Button - Primary**:
+
 ```html
 <!-- ✅ Correct: White text on green button -->
-<p-button
-  label="Save Changes"
-  styleClass="p-button-primary">
-</p-button>
+<p-button label="Save Changes" styleClass="p-button-primary"> </p-button>
 
 <!-- Uses: background: #089949, color: #ffffff -->
 ```
 
 **Tag - Success**:
+
 ```html
 <!-- ✅ Correct: White text on green tag -->
-<p-tag
-  value="Active"
-  severity="success"
-  [rounded]="true">
-</p-tag>
+<p-tag value="Active" severity="success" [rounded]="true"> </p-tag>
 ```
 
 **Badge - Danger**:
+
 ```html
 <!-- ✅ Correct: White text on red badge -->
-<p-badge
-  [value]="notificationCount"
-  severity="danger">
-</p-badge>
+<p-badge [value]="notificationCount" severity="danger"> </p-badge>
 ```
 
 ---
@@ -143,57 +136,62 @@ For PrimeNG components with `severity` attribute (Tag, Badge, Message, Toast):
 All PrimeNG components use **Poppins** font:
 
 ```scss
---font-family-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+--font-family-sans:
+  "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
 ```
 
 ### Font Weights
 
 ```scss
---font-weight-normal: 400;    /* Body text */
---font-weight-medium: 500;    /* Labels, emphasized text */
---font-weight-semibold: 600;  /* Buttons, headings */
---font-weight-bold: 700;      /* Strong emphasis */
+--font-weight-normal: 400; /* Body text */
+--font-weight-medium: 500; /* Labels, emphasized text */
+--font-weight-semibold: 600; /* Buttons, headings */
+--font-weight-bold: 700; /* Strong emphasis */
 ```
 
 ### Font Sizes (Type Scale)
 
 ```scss
 /* Display Sizes */
---font-display-lg: 3rem;      /* 48px - Hero headings */
---font-display-md: 2.5rem;    /* 40px - Page titles */
---font-display-sm: 2rem;      /* 32px - Section headers */
+--font-display-lg: 3rem; /* 48px - Hero headings */
+--font-display-md: 2.5rem; /* 40px - Page titles */
+--font-display-sm: 2rem; /* 32px - Section headers */
 
 /* Heading Sizes */
---font-heading-xl: 1.875rem;  /* 30px - h1 */
---font-heading-lg: 1.5rem;    /* 24px - h2 */
---font-heading-md: 1.25rem;   /* 20px - h3 */
---font-heading-sm: 1.125rem;  /* 18px - h4 */
---font-heading-xs: 1rem;      /* 16px - h5 */
+--font-heading-xl: 1.875rem; /* 30px - h1 */
+--font-heading-lg: 1.5rem; /* 24px - h2 */
+--font-heading-md: 1.25rem; /* 20px - h3 */
+--font-heading-sm: 1.125rem; /* 18px - h4 */
+--font-heading-xs: 1rem; /* 16px - h5 */
 
 /* Body Sizes */
---font-body-lg: 1.125rem;     /* 18px - Large text */
---font-body-md: 1rem;         /* 16px - Default text */
---font-body-sm: 0.875rem;     /* 14px - Small text */
---font-body-xs: 0.75rem;      /* 12px - Captions, labels */
+--font-body-lg: 1.125rem; /* 18px - Large text */
+--font-body-md: 1rem; /* 16px - Default text */
+--font-body-sm: 0.875rem; /* 14px - Small text */
+--font-body-xs: 0.75rem; /* 12px - Captions, labels */
 ```
 
 ### Component Typography
 
 **Buttons**:
+
 - Font Weight: 600 (semibold)
 - Font Size: 15px (0.9375rem)
 - Letter Spacing: 0.01em
 
 **Input Labels**:
+
 - Font Weight: 500 (medium)
 - Font Size: 14px (0.875rem)
 
 **Helper Text / Error Messages**:
+
 - Font Weight: 400 (normal)
 - Font Size: 12px (0.75rem)
 - Color: `--color-status-error` for errors
 
 **Card Headers**:
+
 - Font Weight: 600 (semibold)
 - Font Size: 18px (1.125rem)
 
@@ -204,9 +202,9 @@ All PrimeNG components use **Poppins** font:
 ### Button Heights
 
 ```scss
---button-height-sm: 36px;  /* Small - desktop only */
---button-height-md: 44px;  /* Default - recommended minimum */
---button-height-lg: 52px;  /* Large - enhanced touch target */
+--button-height-sm: 36px; /* Small - desktop only */
+--button-height-md: 44px; /* Default - recommended minimum */
+--button-height-lg: 52px; /* Large - enhanced touch target */
 ```
 
 **Touch Target Minimum**: 44px
@@ -235,7 +233,7 @@ All PrimeNG components use **Poppins** font:
 ```scss
 /* Input fields automatically match button sizing */
 --input-height-sm: 36px;
---input-height-md: 44px;  /* Default */
+--input-height-md: 44px; /* Default */
 --input-height-lg: 52px;
 ```
 
@@ -249,49 +247,49 @@ All spacing follows 8px increments:
 
 ```scss
 --space-0: 0;
---space-1: 0.25rem;  /* 4px */
---space-2: 0.5rem;   /* 8px */
---space-3: 0.75rem;  /* 12px */
---space-4: 1rem;     /* 16px */
---space-5: 1.25rem;  /* 20px */
---space-6: 1.5rem;   /* 24px */
---space-8: 2rem;     /* 32px */
---space-10: 2.5rem;  /* 40px */
---space-12: 3rem;    /* 48px */
---space-16: 4rem;    /* 64px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-5: 1.25rem; /* 20px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+--space-10: 2.5rem; /* 40px */
+--space-12: 3rem; /* 48px */
+--space-16: 4rem; /* 64px */
 ```
 
 ### Semantic Aliases
 
 ```scss
---space-xs: var(--space-1);  /* 4px */
---space-sm: var(--space-2);  /* 8px */
---space-md: var(--space-4);  /* 16px */
---space-lg: var(--space-6);  /* 24px */
---space-xl: var(--space-8);  /* 32px */
+--space-xs: var(--space-1); /* 4px */
+--space-sm: var(--space-2); /* 8px */
+--space-md: var(--space-4); /* 16px */
+--space-lg: var(--space-6); /* 24px */
+--space-xl: var(--space-8); /* 32px */
 ```
 
 ### Component Padding Standards
 
-| Component | Padding | Token |
-|-----------|---------|-------|
-| Button | 12px 24px | `--space-3` / `--space-6` |
-| Input | 12px | `--space-3` |
-| Card | 24px | `--space-6` |
-| Dialog | 32px | `--space-8` |
-| Tag/Chip | 4px 12px | `--space-1` / `--space-3` |
+| Component | Padding   | Token                     |
+| --------- | --------- | ------------------------- |
+| Button    | 12px 24px | `--space-3` / `--space-6` |
+| Input     | 12px      | `--space-3`               |
+| Card      | 24px      | `--space-6`               |
+| Dialog    | 32px      | `--space-8`               |
+| Tag/Chip  | 4px 12px  | `--space-1` / `--space-3` |
 
 ### Gap Between Elements
 
 ```scss
 /* Tight spacing - related items */
---gap-tight: var(--space-2);    /* 8px */
+--gap-tight: var(--space-2); /* 8px */
 
 /* Default spacing - standard separation */
---gap-default: var(--space-4);  /* 16px */
+--gap-default: var(--space-4); /* 16px */
 
 /* Relaxed spacing - distinct sections */
---gap-relaxed: var(--space-6);  /* 24px */
+--gap-relaxed: var(--space-6); /* 24px */
 ```
 
 ---
@@ -302,29 +300,30 @@ All spacing follows 8px increments:
 
 ```scss
 --radius-none: 0;
---radius-sm: 0.125rem;   /* 2px - Tight corners */
---radius-md: 0.375rem;   /* 6px - Input fields */
---radius-lg: 0.5rem;     /* 8px - Cards, raised buttons */
---radius-xl: 0.75rem;    /* 12px - Dialogs */
---radius-2xl: 1rem;      /* 16px - Large cards */
---radius-full: 9999px;   /* Pill - Tags, badges */
+--radius-sm: 0.125rem; /* 2px - Tight corners */
+--radius-md: 0.375rem; /* 6px - Input fields */
+--radius-lg: 0.5rem; /* 8px - Cards, raised buttons */
+--radius-xl: 0.75rem; /* 12px - Dialogs */
+--radius-2xl: 1rem; /* 16px - Large cards */
+--radius-full: 9999px; /* Pill - Tags, badges */
 ```
 
 ### Component Radius Standards
 
-| Component | Radius | Value | Use Case |
-|-----------|--------|-------|----------|
-| Button (Raised) | `--radius-lg` | 8px | Primary, secondary buttons |
-| Input Field | `--radius-md` | 6px | All text inputs |
-| Card | `--radius-lg` | 8px | Content cards |
-| Dialog | `--radius-xl` | 12px | Modal dialogs |
-| Tag | `--radius-full` | Pill | Status tags |
-| Badge | `--radius-full` | Pill | Notification badges |
-| Chip | `--radius-full` | Pill | Removable chips |
-| Select Dropdown | `--radius-md` | 6px | Dropdown trigger |
-| Toast | `--radius-lg` | 8px | Notifications |
+| Component       | Radius          | Value | Use Case                   |
+| --------------- | --------------- | ----- | -------------------------- |
+| Button (Raised) | `--radius-lg`   | 8px   | Primary, secondary buttons |
+| Input Field     | `--radius-md`   | 6px   | All text inputs            |
+| Card            | `--radius-lg`   | 8px   | Content cards              |
+| Dialog          | `--radius-xl`   | 12px  | Modal dialogs              |
+| Tag             | `--radius-full` | Pill  | Status tags                |
+| Badge           | `--radius-full` | Pill  | Notification badges        |
+| Chip            | `--radius-full` | Pill  | Removable chips            |
+| Select Dropdown | `--radius-md`   | 6px   | Dropdown trigger           |
+| Toast           | `--radius-lg`   | 8px   | Notifications              |
 
 **Example**:
+
 ```html
 <!-- Button - Raised style with 8px radius -->
 <p-button label="Save"></p-button>
@@ -356,25 +355,27 @@ The app uses Material Design-inspired elevation for raised components:
 
 ### Elevation Levels
 
-| Level | Shadow | Components | Use Case |
-|-------|--------|------------|----------|
-| **Level 1** | `--shadow-sm` | Card (resting), Input (focus) | Subtle depth |
-| **Level 2** | `--shadow-md` | Dialog, Card (hover) | Medium elevation |
-| **Level 3** | `--shadow-lg` | Toast, Tooltip, Menu | High elevation |
-| **Level 4** | `--shadow-xl` | Modal backdrop, SpeedDial | Maximum elevation |
+| Level       | Shadow        | Components                    | Use Case          |
+| ----------- | ------------- | ----------------------------- | ----------------- |
+| **Level 1** | `--shadow-sm` | Card (resting), Input (focus) | Subtle depth      |
+| **Level 2** | `--shadow-md` | Dialog, Card (hover)          | Medium elevation  |
+| **Level 3** | `--shadow-lg` | Toast, Tooltip, Menu          | High elevation    |
+| **Level 4** | `--shadow-xl` | Modal backdrop, SpeedDial     | Maximum elevation |
 
 ### Raised Button Shadows
 
 **Resting State**:
+
 ```scss
 box-shadow:
-  0 3px 1px -2px rgba(0, 0, 0, 0.2),      /* Umbra */
-  0 2px 2px 0 rgba(0, 0, 0, 0.14),        /* Penumbra */
-  0 1px 5px 0 rgba(8, 153, 73, 0.12),     /* Green ambient */
-  inset 0 1px 0 rgba(255, 255, 255, 0.2); /* Inner highlight */
+  0 3px 1px -2px rgba(0, 0, 0, 0.2),
+  /* Umbra */ 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+  /* Penumbra */ 0 1px 5px 0 rgba(8, 153, 73, 0.12),
+  /* Green ambient */ inset 0 1px 0 rgba(255, 255, 255, 0.2); /* Inner highlight */
 ```
 
 **Hover State** (elevated):
+
 ```scss
 box-shadow:
   0 6px 10px 0 rgba(0, 0, 0, 0.14),
@@ -384,6 +385,7 @@ box-shadow:
 ```
 
 **Active State** (pressed):
+
 ```scss
 box-shadow:
   0 2px 4px -1px rgba(0, 0, 0, 0.2),
@@ -421,20 +423,21 @@ For brand consistency, hover shadows include green tint:
 
 ### Component Z-Index Values
 
-| Component | Z-Index | Token |
-|-----------|---------|-------|
-| Select Dropdown | 1000 | `--z-index-dropdown` |
-| Sticky Header | 1020 | `--z-index-sticky` |
-| Fixed Navigation | 1030 | `--z-index-fixed` |
-| Dialog Backdrop | 1040 | `--z-index-modal-backdrop` |
-| Dialog | 1050 | `--z-index-modal` |
-| ConfirmDialog | 1050 | `--z-index-modal` |
-| Menu/ContextMenu | 1060 | `--z-index-popover` |
-| Tooltip | 1070 | `--z-index-tooltip` |
-| Toast | 1080 | `--z-index-notification` |
-| SpeedDial | 1060 | `--z-index-popover` |
+| Component        | Z-Index | Token                      |
+| ---------------- | ------- | -------------------------- |
+| Select Dropdown  | 1000    | `--z-index-dropdown`       |
+| Sticky Header    | 1020    | `--z-index-sticky`         |
+| Fixed Navigation | 1030    | `--z-index-fixed`          |
+| Dialog Backdrop  | 1040    | `--z-index-modal-backdrop` |
+| Dialog           | 1050    | `--z-index-modal`          |
+| ConfirmDialog    | 1050    | `--z-index-modal`          |
+| Menu/ContextMenu | 1060    | `--z-index-popover`        |
+| Tooltip          | 1070    | `--z-index-tooltip`        |
+| Toast            | 1080    | `--z-index-notification`   |
+| SpeedDial        | 1060    | `--z-index-popover`        |
 
 **Layering Order** (bottom to top):
+
 1. Base content (z-index: 1)
 2. Dropdowns (1000)
 3. Sticky elements (1020)
@@ -452,39 +455,44 @@ For brand consistency, hover shadows include green tint:
 ### Button State Transformations
 
 **Default (Resting)**:
+
 ```scss
 transform: none;
 box-shadow: /* Raised elevation */;
 ```
 
 **Hover** (desktop only):
+
 ```scss
-transform: translateY(-2px);  /* Subtle lift */
+transform: translateY(-2px); /* Subtle lift */
 box-shadow: /* Enhanced elevation */;
 transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 ```
 
 **Active (Pressed)**:
+
 ```scss
-transform: translateY(0) scale(0.98);  /* Press down */
+transform: translateY(0) scale(0.98); /* Press down */
 box-shadow: /* Reduced elevation */;
 ```
 
 **Focus (Keyboard)**:
+
 ```scss
 outline: none;
 box-shadow:
-  0 0 0 3px var(--surface-primary),  /* White ring */
-  0 0 0 5px var(--ds-primary-green), /* Green focus ring */
-  /* + raised elevation */;
+  0 0 0 3px var(--surface-primary),
+  /* White ring */ 0 0 0 5px var(--ds-primary-green),
+  /* Green focus ring */ /* + raised elevation */;
 ```
 
 **Disabled**:
+
 ```scss
 opacity: 0.5;
 cursor: not-allowed;
-transform: none !important;  /* Locked position */
-box-shadow: none !important;  /* No elevation */
+transform: none !important; /* Locked position */
+box-shadow: none !important; /* No elevation */
 ```
 
 ### State Opacity Modifiers
@@ -520,9 +528,9 @@ Buttons include Material Design ripple on click:
 ### Duration Guidelines
 
 ```scss
---motion-fast: 120ms;    /* Icon rotations, opacity changes */
---motion-base: 200ms;    /* Transforms, color transitions */
---motion-slow: 320ms;    /* Dialogs, dropdowns */
+--motion-fast: 120ms; /* Icon rotations, opacity changes */
+--motion-base: 200ms; /* Transforms, color transitions */
+--motion-slow: 320ms; /* Dialogs, dropdowns */
 ```
 
 ### Easing Functions
@@ -544,17 +552,20 @@ Buttons include Material Design ripple on click:
 ### Animation Use Cases
 
 **Fast (120ms)**:
+
 - Icon rotations (dropdown arrows)
 - Opacity changes
 - Color transitions
 
 **Normal (200ms)**:
+
 - Button transforms (hover lift)
 - Shadow changes
 - Background colors
 - Border colors
 
 **Slow (320ms)**:
+
 - Dialog open/close
 - Dropdown expand/collapse
 - Panel animations
@@ -581,10 +592,10 @@ All animations are disabled for users who prefer reduced motion.
 ### Breakpoints
 
 ```scss
---breakpoint-sm: 640px;   /* Small tablets */
---breakpoint-md: 768px;   /* Tablets */
---breakpoint-lg: 1024px;  /* Desktop */
---breakpoint-xl: 1280px;  /* Large desktop */
+--breakpoint-sm: 640px; /* Small tablets */
+--breakpoint-md: 768px; /* Tablets */
+--breakpoint-lg: 1024px; /* Desktop */
+--breakpoint-xl: 1280px; /* Large desktop */
 --breakpoint-2xl: 1536px; /* Extra large */
 ```
 
@@ -595,21 +606,25 @@ All components are designed mobile-first, progressively enhancing for larger scr
 ### Component Adaptations
 
 **Dialog**:
+
 - Mobile (< 768px): Full width, bottom sheet style
 - Tablet (≥ 768px): Max 90vw width
 - Desktop (≥ 1024px): Fixed pixel widths (440px, 600px, 800px)
 
 **Table**:
+
 - Mobile: Horizontal scroll with sticky first column
 - Tablet: Responsive columns, some hidden
 - Desktop: All columns visible
 
 **Button**:
+
 - Mobile: Min height 44px (touch target)
 - Desktop: Min height 36px acceptable
 - All: Raised style with 8px radius
 
 **Select/Dropdown**:
+
 - Mobile: Full-screen overlay
 - Desktop: Dropdown positioned near trigger
 
@@ -625,6 +640,7 @@ For iOS/Android notches and home indicators:
 ```
 
 Apply to:
+
 - Fixed headers: `padding-top: var(--safe-area-top)`
 - Bottom navigation: `padding-bottom: var(--safe-area-bottom)`
 - Full-screen dialogs
@@ -636,6 +652,7 @@ Apply to:
 ### Activation
 
 Dark mode activates via:
+
 1. System preference: `@media (prefers-color-scheme: dark)`
 2. Manual toggle: `[data-theme="dark"]` on `<html>`
 3. Class toggle: `.dark-theme` on `<html>` or `<body>`
@@ -644,33 +661,35 @@ Dark mode activates via:
 
 ```scss
 @media (prefers-color-scheme: dark) {
-  --surface-primary: #171717;           /* Dark background */
-  --color-text-primary: #ffffff;        /* White text */
+  --surface-primary: #171717; /* Dark background */
+  --color-text-primary: #ffffff; /* White text */
   --color-border-primary: rgba(255, 255, 255, 0.1); /* Subtle borders */
 }
 ```
 
 ### Component-Specific Changes
 
-| Component | Light Mode | Dark Mode |
-|-----------|------------|-----------|
-| Card Background | `#ffffff` | `#262626` |
-| Input Background | `#ffffff` | `#171717` |
-| Border Color | `#e5e7eb` | `rgba(255,255,255,0.1)` |
-| Text Primary | `#1a1a1a` | `#ffffff` |
-| Text Secondary | `#4a4a4a` | `#d4d4d4` |
+| Component        | Light Mode | Dark Mode               |
+| ---------------- | ---------- | ----------------------- |
+| Card Background  | `#ffffff`  | `#262626`               |
+| Input Background | `#ffffff`  | `#171717`               |
+| Border Color     | `#e5e7eb`  | `rgba(255,255,255,0.1)` |
+| Text Primary     | `#1a1a1a`  | `#ffffff`               |
+| Text Secondary   | `#4a4a4a`  | `#d4d4d4`               |
 
 **Brand Green Remains Constant**: `#089949` stays the same in both modes for brand consistency.
 
 ### Testing Dark Mode
 
 **Browser DevTools**:
+
 ```javascript
 // Toggle dark mode preference
-window.matchMedia('(prefers-color-scheme: dark)').matches
+window.matchMedia("(prefers-color-scheme: dark)").matches;
 ```
 
 **Manual Toggle**:
+
 ```html
 <html data-theme="dark">
   <!-- Dark mode active -->
@@ -686,12 +705,14 @@ window.matchMedia('(prefers-color-scheme: dark)').matches
 All text/background combinations meet **WCAG AA** standards:
 
 **Normal Text** (4.5:1 minimum):
+
 - Black on White: 16.1:1 ✅
 - White on Green: 4.7:1 ✅
 - Dark Gray on White: 8.6:1 ✅
 - Medium Gray on White: 7.5:1 ✅
 
 **Large Text** (3:1 minimum):
+
 - All combinations exceed minimum by significant margin
 
 ### Keyboard Navigation
@@ -699,6 +720,7 @@ All text/background combinations meet **WCAG AA** standards:
 All interactive PrimeNG components support full keyboard navigation:
 
 **Global**:
+
 - `Tab`: Move focus forward
 - `Shift + Tab`: Move focus backward
 - `Enter`: Activate primary action
@@ -706,16 +728,19 @@ All interactive PrimeNG components support full keyboard navigation:
 - `Escape`: Close dialog, cancel action
 
 **Select Dropdown**:
+
 - `Arrow Up/Down`: Navigate options
 - `Home/End`: First/last option
 - `Enter`: Select option
 - `Escape`: Close without selecting
 
 **Radio Group**:
+
 - `Arrow Up/Down`: Navigate options
 - `Space`: Select option
 
 **Dialog**:
+
 - `Escape`: Close dialog
 - `Tab`: Trap focus within dialog
 - `Enter`: Confirm action (if button focused)
@@ -723,16 +748,18 @@ All interactive PrimeNG components support full keyboard navigation:
 ### Focus Indicators
 
 **Always Visible**:
+
 ```scss
 .p-button:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px var(--surface-primary),  /* White gap */
-    0 0 0 5px var(--ds-primary-green); /* Green ring */
+    0 0 0 3px var(--surface-primary),
+    /* White gap */ 0 0 0 5px var(--ds-primary-green); /* Green ring */
 }
 ```
 
 **Specifications**:
+
 - Ring Width: 2px
 - Ring Offset: 2px (white gap)
 - Ring Color: Brand green (#089949)
@@ -744,26 +771,27 @@ All interactive PrimeNG components support full keyboard navigation:
 All components include proper ARIA attributes:
 
 **Icon-Only Buttons**:
+
 ```html
-<p-button
-  icon="pi pi-search"
-  aria-label="Search exercises"
-  [rounded]="true">
+<p-button icon="pi pi-search" aria-label="Search exercises" [rounded]="true">
 </p-button>
 ```
 
 **Form Fields**:
+
 ```html
 <label for="email">Email Address</label>
 <input
   id="email"
   pInputText
   aria-describedby="email-help"
-  [attr.aria-invalid]="emailInvalid">
+  [attr.aria-invalid]="emailInvalid"
+/>
 <small id="email-help">We'll never share your email</small>
 ```
 
 **Dialogs**:
+
 ```html
 <p-dialog
   header="Confirm Delete"
@@ -771,15 +799,15 @@ All components include proper ARIA attributes:
   [modal]="true"
   role="dialog"
   aria-labelledby="dialog-title"
-  aria-describedby="dialog-description">
+  aria-describedby="dialog-description"
+>
 </p-dialog>
 ```
 
 **Dynamic Content**:
+
 ```html
-<div aria-live="polite" aria-atomic="true">
-  {{ statusMessage }}
-</div>
+<div aria-live="polite" aria-atomic="true">{{ statusMessage }}</div>
 ```
 
 ---
@@ -789,27 +817,30 @@ All components include proper ARIA attributes:
 ### Button
 
 **Raised Style**:
+
 - Border Radius: `--radius-lg` (8px)
 - Material Design elevation with multi-layer shadows
 - Gradient background for depth
 - Inner highlight for gloss effect
 
 **Example**:
+
 ```html
 <!-- Primary raised button -->
-<p-button
-  label="Save Changes"
-  icon="pi pi-save"
-  styleClass="p-button-primary">
+<p-button label="Save Changes" icon="pi pi-save" styleClass="p-button-primary">
 </p-button>
 
 <!-- Size variants -->
-<p-button label="Small" size="small"></p-button>      <!-- 36px height -->
-<p-button label="Default"></p-button>                  <!-- 44px height -->
-<p-button label="Large" size="large"></p-button>      <!-- 52px height -->
+<p-button label="Small" size="small"></p-button>
+<!-- 36px height -->
+<p-button label="Default"></p-button>
+<!-- 44px height -->
+<p-button label="Large" size="large"></p-button>
+<!-- 52px height -->
 ```
 
 **States**:
+
 ```scss
 /* Resting: Raised elevation */
 /* Hover: Lift 2px + enhanced shadow */
@@ -823,16 +854,19 @@ All components include proper ARIA attributes:
 ### Tag
 
 **Pill-Shaped with Rounded Corners**:
+
 ```html
 <p-tag
   value="Active"
   severity="success"
   [rounded]="true"
-  styleClass="category-tag">
+  styleClass="category-tag"
+>
 </p-tag>
 ```
 
 **Severity Colors**:
+
 - `success`: Green (#63ad0e)
 - `info`: Blue (#0ea5e9)
 - `warning`: Yellow (#ffc000) with dark text
@@ -844,6 +878,7 @@ All components include proper ARIA attributes:
 ### Dialog
 
 **Elevated Modal with Backdrop**:
+
 ```html
 <p-dialog
   [(visible)]="showDialog"
@@ -851,8 +886,8 @@ All components include proper ARIA attributes:
   [modal]="true"
   [style]="{ width: '440px' }"
   [closable]="true"
-  styleClass="confirm-dialog">
-
+  styleClass="confirm-dialog"
+>
   <p>Are you sure you want to proceed?</p>
 
   <ng-template pTemplate="footer">
@@ -860,18 +895,17 @@ All components include proper ARIA attributes:
       label="Cancel"
       icon="pi pi-times"
       (onClick)="showDialog = false"
-      styleClass="p-button-text">
+      styleClass="p-button-text"
+    >
     </p-button>
-    <p-button
-      label="Confirm"
-      icon="pi pi-check"
-      (onClick)="confirmAction()">
+    <p-button label="Confirm" icon="pi pi-check" (onClick)="confirmAction()">
     </p-button>
   </ng-template>
 </p-dialog>
 ```
 
 **Specifications**:
+
 - Border Radius: 12px (`--radius-xl`)
 - Shadow: `--shadow-lg`
 - Z-Index: 1050
@@ -882,6 +916,7 @@ All components include proper ARIA attributes:
 ### Toast
 
 **Notification Overlays**:
+
 ```html
 <p-toast></p-toast>
 ```
@@ -902,6 +937,7 @@ showSuccess() {
 ```
 
 **Specifications**:
+
 - Z-Index: 1080 (appears above all other overlays)
 - Position: Top-right by default
 - Border Radius: 8px (`--radius-lg`)
@@ -919,9 +955,9 @@ showSuccess() {
 --color-text-primary: #1a1a1a;
 
 /* Spacing */
---space-2: 0.5rem;   /* 8px - Tight */
---space-4: 1rem;     /* 16px - Default */
---space-6: 1.5rem;   /* 24px - Relaxed */
+--space-2: 0.5rem; /* 8px - Tight */
+--space-4: 1rem; /* 16px - Default */
+--space-6: 1.5rem; /* 24px - Relaxed */
 
 /* Sizing */
 --button-height-md: 44px;
@@ -940,37 +976,27 @@ showSuccess() {
 ### Common Patterns
 
 **Primary Action Button**:
+
 ```html
-<p-button
-  label="Submit"
-  icon="pi pi-check">
-</p-button>
+<p-button label="Submit" icon="pi pi-check"> </p-button>
 ```
 
 **Status Tag**:
+
 ```html
-<p-tag
-  value="Active"
-  severity="success"
-  [rounded]="true">
-</p-tag>
+<p-tag value="Active" severity="success" [rounded]="true"> </p-tag>
 ```
 
 **Notification Badge**:
+
 ```html
-<p-badge
-  [value]="5"
-  severity="danger">
-</p-badge>
+<p-badge [value]="5" severity="danger"> </p-badge>
 ```
 
 **Modal Dialog**:
+
 ```html
-<p-dialog
-  [(visible)]="show"
-  header="Title"
-  [modal]="true">
-</p-dialog>
+<p-dialog [(visible)]="show" header="Title" [modal]="true"> </p-dialog>
 ```
 
 ---

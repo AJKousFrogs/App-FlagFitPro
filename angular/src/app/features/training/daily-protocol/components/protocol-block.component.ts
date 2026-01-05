@@ -18,22 +18,22 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { ProgressBarModule } from 'primeng/progressbar';
-import { TagModule } from 'primeng/tag';
+import { ProgressBarModule } from "primeng/progressbar";
+import { TagModule } from "primeng/tag";
 
 import {
   ProtocolBlock,
   PrescribedExercise,
   getBlockConfig,
   formatPrescription,
-} from '../daily-protocol.models';
-import { ExerciseCardComponent } from './exercise-card.component';
+} from "../daily-protocol.models";
+import { ExerciseCardComponent } from "./exercise-card.component";
 
 @Component({
-  selector: 'app-protocol-block',
+  selector: "app-protocol-block",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -41,7 +41,7 @@ import { ExerciseCardComponent } from './exercise-card.component';
     ProgressBarModule,
     TagModule,
     ExerciseCardComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -63,7 +63,7 @@ import { ExerciseCardComponent } from './exercise-card.component';
       >
         <div class="header-left">
           <div class="block-icon" [style.background]="blockConfig().color">
-            @if (block().status === 'complete') {
+            @if (block().status === "complete") {
               <i class="pi pi-check"></i>
             } @else {
               <i class="pi" [class]="blockConfig().icon"></i>
@@ -77,7 +77,9 @@ import { ExerciseCardComponent } from './exercise-card.component';
               </span>
               @if (block().estimatedDurationMinutes) {
                 <span class="separator">•</span>
-                <span class="duration">~{{ block().estimatedDurationMinutes }} min</span>
+                <span class="duration"
+                  >~{{ block().estimatedDurationMinutes }} min</span
+                >
               }
             </div>
           </div>
@@ -86,20 +88,22 @@ import { ExerciseCardComponent } from './exercise-card.component';
         <div class="header-right">
           @if (!simpleView()) {
             <!-- Status Tag -->
-            @if (block().status === 'complete') {
-              <p-tag value="Done" severity="success" ></p-tag>
-            } @else if (block().status === 'in_progress') {
-              <p-tag value="In Progress" severity="info" ></p-tag>
-            } @else if (block().status === 'skipped') {
-              <p-tag value="Skipped" severity="secondary" ></p-tag>
+            @if (block().status === "complete") {
+              <p-tag value="Done" severity="success"></p-tag>
+            } @else if (block().status === "in_progress") {
+              <p-tag value="In Progress" severity="info"></p-tag>
+            } @else if (block().status === "skipped") {
+              <p-tag value="Skipped" severity="secondary"></p-tag>
             } @else {
-              <p-tag value="Pending" severity="warn" ></p-tag>
+              <p-tag value="Pending" severity="warn"></p-tag>
             }
 
             <!-- Progress -->
-            @if (block().status !== 'complete' && block().totalCount > 0) {
+            @if (block().status !== "complete" && block().totalCount > 0) {
               <div class="progress-indicator">
-                <span class="progress-text">{{ block().progressPercent }}%</span>
+                <span class="progress-text"
+                  >{{ block().progressPercent }}%</span
+                >
               </div>
             }
           }
@@ -117,7 +121,10 @@ import { ExerciseCardComponent } from './exercise-card.component';
 
       <!-- Progress Bar (only in detailed view) -->
       @if (!simpleView() && block().totalCount > 0) {
-        <div class="progress-bar-container" [style.--block-color]="blockConfig().color">
+        <div
+          class="progress-bar-container"
+          [style.--block-color]="blockConfig().color"
+        >
           <div
             class="progress-bar-fill"
             [style.width.%]="block().progressPercent"
@@ -148,11 +155,21 @@ import { ExerciseCardComponent } from './exercise-card.component';
                       [checked]="exercise.status === 'complete'"
                       (change)="onExerciseToggle(exercise)"
                     />
-                    <span class="exercise-name">{{ exercise.exercise.name }}</span>
-                    <span class="exercise-prescription">– {{ formatPrescriptionText(exercise) }}</span>
-                    @if (exercise.exercise.videoUrl || exercise.exercise.videoId) {
+                    <span class="exercise-name">{{
+                      exercise.exercise.name
+                    }}</span>
+                    <span class="exercise-prescription"
+                      >– {{ formatPrescriptionText(exercise) }}</span
+                    >
+                    @if (
+                      exercise.exercise.videoUrl || exercise.exercise.videoId
+                    ) {
                       <a
-                        [href]="exercise.exercise.videoUrl || 'https://www.youtube.com/watch?v=' + exercise.exercise.videoId"
+                        [href]="
+                          exercise.exercise.videoUrl ||
+                          'https://www.youtube.com/watch?v=' +
+                            exercise.exercise.videoId
+                        "
                         target="_blank"
                         rel="noopener noreferrer"
                         class="video-link"
@@ -166,7 +183,11 @@ import { ExerciseCardComponent } from './exercise-card.component';
               }
             } @else {
               <!-- Detailed card view -->
-              @for (exercise of block().exercises; track exercise.id; let i = $index) {
+              @for (
+                exercise of block().exercises;
+                track exercise.id;
+                let i = $index
+              ) {
                 <app-exercise-card
                   [exercise]="exercise"
                   [sequenceNumber]="i + 1"
@@ -178,15 +199,25 @@ import { ExerciseCardComponent } from './exercise-card.component';
           </div>
 
           <!-- Block Actions -->
-          @if (block().status !== 'complete' && block().totalCount > 0) {
+          @if (block().status !== "complete" && block().totalCount > 0) {
             <div class="block-actions">
-              <app-button variant="outlined" iconLeft="pi-check-circle" (clicked)="onMarkAllComplete()">Mark All Complete</app-button>
-              <app-button variant="outlined" iconLeft="pi-forward" (clicked)="onSkipBlock()">Skip Block</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-check-circle"
+                (clicked)="onMarkAllComplete()"
+                >Mark All Complete</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-forward"
+                (clicked)="onSkipBlock()"
+                >Skip Block</app-button
+              >
             </div>
           }
 
           <!-- Completion Info -->
-          @if (block().status === 'complete' && block().completedAt) {
+          @if (block().status === "complete" && block().completedAt) {
             <div class="completion-info">
               <i class="pi pi-check-circle"></i>
               <span>Completed at {{ formatTime(block().completedAt!) }}</span>
@@ -196,7 +227,7 @@ import { ExerciseCardComponent } from './exercise-card.component';
       }
     </div>
   `,
-  styleUrl: './protocol-block.component.scss',
+  styleUrl: "./protocol-block.component.scss",
 })
 export class ProtocolBlockComponent {
   // Inputs
@@ -225,7 +256,7 @@ export class ProtocolBlockComponent {
 
   ngOnInit(): void {
     // Auto-expand if in progress
-    if (this.block().status === 'in_progress') {
+    if (this.block().status === "in_progress") {
       this.isExpanded.set(true);
     }
   }
@@ -252,7 +283,7 @@ export class ProtocolBlockComponent {
   }
 
   onExerciseToggle(exercise: PrescribedExercise): void {
-    if (exercise.status === 'complete') {
+    if (exercise.status === "complete") {
       // Toggle off - mark as pending (or emit skip if needed)
       // For now, we'll just emit complete again to toggle
       this.exerciseComplete.emit(exercise);
@@ -267,8 +298,8 @@ export class ProtocolBlockComponent {
 
   formatTime(date: Date): string {
     return new Date(date).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 }

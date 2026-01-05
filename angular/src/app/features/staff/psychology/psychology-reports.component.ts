@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -143,7 +143,7 @@ interface ReportPrivacySettings {
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -155,7 +155,11 @@ interface ReportPrivacySettings {
           subtitle="Generate reports to share with sports psychologists or mental performance coaches"
           icon="pi-heart"
         >
-          <app-button iconLeft="pi-plus" (clicked)="showGenerateDialog.set(true)">Generate New Report</app-button>
+          <app-button
+            iconLeft="pi-plus"
+            (clicked)="showGenerateDialog.set(true)"
+            >Generate New Report</app-button
+          >
         </app-page-header>
 
         <div class="privacy-notice">
@@ -163,9 +167,9 @@ interface ReportPrivacySettings {
           <div class="notice-content">
             <strong>Privacy First</strong>
             <p>
-              You control exactly what data is included in your reports.
-              Reports are generated for you to download and share externally -
-              they are never automatically shared with coaches or staff.
+              You control exactly what data is included in your reports. Reports
+              are generated for you to download and share externally - they are
+              never automatically shared with coaches or staff.
             </p>
           </div>
         </div>
@@ -216,8 +220,9 @@ interface ReportPrivacySettings {
                         </ng-template>
                         <div class="report-details">
                           <p class="report-period">
-                            Period: {{ report.periodStart | date: "shortDate" }}
-                            - {{ report.periodEnd | date: "shortDate" }}
+                            Period:
+                            {{ report.periodStart | date: "shortDate" }} -
+                            {{ report.periodEnd | date: "shortDate" }}
                           </p>
                           <div class="included-sections">
                             <span class="section-label"
@@ -234,9 +239,24 @@ interface ReportPrivacySettings {
                           </div>
                         </div>
                         <ng-template #footer>
-                          <app-button variant="text" iconLeft="pi-download" (clicked)="downloadReport(report, 'pdf')">Download PDF</app-button>
-                          <app-button variant="text" iconLeft="pi-file-excel" (clicked)="downloadReport(report, 'csv')">Download CSV</app-button>
-                          <app-icon-button icon="pi-trash" variant="text" (clicked)="deleteReport(report)" ariaLabel="trash" />
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-download"
+                            (clicked)="downloadReport(report, 'pdf')"
+                            >Download PDF</app-button
+                          >
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-file-excel"
+                            (clicked)="downloadReport(report, 'csv')"
+                            >Download CSV</app-button
+                          >
+                          <app-icon-button
+                            icon="pi-trash"
+                            variant="text"
+                            (clicked)="deleteReport(report)"
+                            ariaLabel="trash"
+                          />
                         </ng-template>
                       </p-card>
                     }
@@ -249,7 +269,11 @@ interface ReportPrivacySettings {
                       Generate a report to share your mental wellness data with
                       your sports psychologist or counselor.
                     </p>
-                    <app-button iconLeft="pi-plus" (clicked)="showGenerateDialog.set(true)">Generate Report</app-button>
+                    <app-button
+                      iconLeft="pi-plus"
+                      (clicked)="showGenerateDialog.set(true)"
+                      >Generate Report</app-button
+                    >
                   </div>
                 }
               </div>
@@ -275,17 +299,28 @@ interface ReportPrivacySettings {
                         <div class="metric-header">
                           <span class="metric-label">Mood</span>
                           <p-tag
-                            [value]="currentWellnessData()!.wellnessTrends.moodTrend"
-                            [severity]="getTrendSeverity(currentWellnessData()!.wellnessTrends.moodTrend)"
+                            [value]="
+                              currentWellnessData()!.wellnessTrends.moodTrend
+                            "
+                            [severity]="
+                              getTrendSeverity(
+                                currentWellnessData()!.wellnessTrends.moodTrend
+                              )
+                            "
                           ></p-tag>
                         </div>
                         <span class="metric-value"
                           >{{
-                            currentWellnessData()!.wellnessTrends.avgMoodScore.toFixed(1)
+                            currentWellnessData()!.wellnessTrends.avgMoodScore.toFixed(
+                              1
+                            )
                           }}/10</span
                         >
                         <p-progressBar
-                          [value]="currentWellnessData()!.wellnessTrends.avgMoodScore * 10"
+                          [value]="
+                            currentWellnessData()!.wellnessTrends.avgMoodScore *
+                            10
+                          "
                           [showValue]="false"
                         ></p-progressBar>
                       </div>
@@ -294,17 +329,30 @@ interface ReportPrivacySettings {
                         <div class="metric-header">
                           <span class="metric-label">Stress Level</span>
                           <p-tag
-                            [value]="currentWellnessData()!.wellnessTrends.stressTrend"
-                            [severity]="getTrendSeverity(currentWellnessData()!.wellnessTrends.stressTrend, true)"
+                            [value]="
+                              currentWellnessData()!.wellnessTrends.stressTrend
+                            "
+                            [severity]="
+                              getTrendSeverity(
+                                currentWellnessData()!.wellnessTrends
+                                  .stressTrend,
+                                true
+                              )
+                            "
                           ></p-tag>
                         </div>
                         <span class="metric-value"
                           >{{
-                            currentWellnessData()!.wellnessTrends.avgStressLevel.toFixed(1)
+                            currentWellnessData()!.wellnessTrends.avgStressLevel.toFixed(
+                              1
+                            )
                           }}/10</span
                         >
                         <p-progressBar
-                          [value]="currentWellnessData()!.wellnessTrends.avgStressLevel * 10"
+                          [value]="
+                            currentWellnessData()!.wellnessTrends
+                              .avgStressLevel * 10
+                          "
                           [showValue]="false"
                           styleClass="stress-bar"
                         ></p-progressBar>
@@ -316,11 +364,16 @@ interface ReportPrivacySettings {
                         </div>
                         <span class="metric-value"
                           >{{
-                            currentWellnessData()!.wellnessTrends.avgMotivation.toFixed(1)
+                            currentWellnessData()!.wellnessTrends.avgMotivation.toFixed(
+                              1
+                            )
                           }}/10</span
                         >
                         <p-progressBar
-                          [value]="currentWellnessData()!.wellnessTrends.avgMotivation * 10"
+                          [value]="
+                            currentWellnessData()!.wellnessTrends
+                              .avgMotivation * 10
+                          "
                           [showValue]="false"
                         ></p-progressBar>
                       </div>
@@ -331,11 +384,16 @@ interface ReportPrivacySettings {
                         </div>
                         <span class="metric-value"
                           >{{
-                            currentWellnessData()!.wellnessTrends.avgConfidence.toFixed(1)
+                            currentWellnessData()!.wellnessTrends.avgConfidence.toFixed(
+                              1
+                            )
                           }}/10</span
                         >
                         <p-progressBar
-                          [value]="currentWellnessData()!.wellnessTrends.avgConfidence * 10"
+                          [value]="
+                            currentWellnessData()!.wellnessTrends
+                              .avgConfidence * 10
+                          "
                           [showValue]="false"
                         ></p-progressBar>
                       </div>
@@ -357,7 +415,9 @@ interface ReportPrivacySettings {
                           <div class="sleep-stat">
                             <span class="stat-value"
                               >{{
-                                currentWellnessData()!.sleepPatterns.avgSleepHours.toFixed(1)
+                                currentWellnessData()!.sleepPatterns.avgSleepHours.toFixed(
+                                  1
+                                )
                               }}h</span
                             >
                             <span class="stat-label">Avg Sleep</span>
@@ -365,7 +425,9 @@ interface ReportPrivacySettings {
                           <div class="sleep-stat">
                             <span class="stat-value"
                               >{{
-                                currentWellnessData()!.sleepPatterns.sleepQualityAvg.toFixed(1)
+                                currentWellnessData()!.sleepPatterns.sleepQualityAvg.toFixed(
+                                  1
+                                )
                               }}/10</span
                             >
                             <span class="stat-label">Quality</span>
@@ -425,7 +487,9 @@ interface ReportPrivacySettings {
                           <div class="recovery-stat">
                             <span class="stat-value"
                               >{{
-                                currentWellnessData()!.recoveryBehaviors.avgRecoveryScore.toFixed(1)
+                                currentWellnessData()!.recoveryBehaviors.avgRecoveryScore.toFixed(
+                                  1
+                                )
                               }}/10</span
                             >
                             <span class="stat-label">Avg Recovery Score</span>
@@ -441,8 +505,16 @@ interface ReportPrivacySettings {
                         <div class="screen-time">
                           <span>Screen time before bed:</span>
                           <p-tag
-                            [value]="currentWellnessData()!.recoveryBehaviors.screenTimeBeforeBed"
-                            [severity]="getScreenTimeSeverity(currentWellnessData()!.recoveryBehaviors.screenTimeBeforeBed)"
+                            [value]="
+                              currentWellnessData()!.recoveryBehaviors
+                                .screenTimeBeforeBed
+                            "
+                            [severity]="
+                              getScreenTimeSeverity(
+                                currentWellnessData()!.recoveryBehaviors
+                                  .screenTimeBeforeBed
+                              )
+                            "
                           ></p-tag>
                         </div>
                         <div class="activities-list">
@@ -537,7 +609,12 @@ interface ReportPrivacySettings {
               <div class="precomp-section">
                 <div class="section-header">
                   <h3>Pre-Competition Mental State</h3>
-                  <app-button variant="outlined" iconLeft="pi-plus" (clicked)="showPreCompDialog.set(true)">New Assessment</app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-plus"
+                    (clicked)="showPreCompDialog.set(true)"
+                    >New Assessment</app-button
+                  >
                 </div>
 
                 @if (preCompReports().length > 0) {
@@ -556,7 +633,11 @@ interface ReportPrivacySettings {
                             </div>
                             <p-tag
                               [value]="report.competition.significance"
-                              [severity]="getSignificanceSeverity(report.competition.significance)"
+                              [severity]="
+                                getSignificanceSeverity(
+                                  report.competition.significance
+                                )
+                              "
                             ></p-tag>
                           </div>
                         </ng-template>
@@ -570,7 +651,9 @@ interface ReportPrivacySettings {
                                 <div class="metric-with-trend">
                                   <span class="metric-value"
                                     >{{
-                                      report.leadUpPeriod.avgConfidence.toFixed(1)
+                                      report.leadUpPeriod.avgConfidence.toFixed(
+                                        1
+                                      )
                                     }}/10</span
                                   >
                                   <i
@@ -663,8 +746,18 @@ interface ReportPrivacySettings {
                         </div>
 
                         <ng-template #footer>
-                          <app-button variant="text" iconLeft="pi-eye" (clicked)="viewPreCompReport(report)">View Full Report</app-button>
-                          <app-button variant="text" iconLeft="pi-download" (clicked)="downloadPreCompReport(report)">Download</app-button>
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-eye"
+                            (clicked)="viewPreCompReport(report)"
+                            >View Full Report</app-button
+                          >
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-download"
+                            (clicked)="downloadPreCompReport(report)"
+                            >Download</app-button
+                          >
                         </ng-template>
                       </p-card>
                     }
@@ -677,7 +770,11 @@ interface ReportPrivacySettings {
                       Create a pre-competition assessment to track your mental
                       state before important events.
                     </p>
-                    <app-button iconLeft="pi-plus" (clicked)="showPreCompDialog.set(true)">New Assessment</app-button>
+                    <app-button
+                      iconLeft="pi-plus"
+                      (clicked)="showPreCompDialog.set(true)"
+                      >New Assessment</app-button
+                    >
                   </div>
                 }
               </div>
@@ -715,9 +812,7 @@ interface ReportPrivacySettings {
             </div>
 
             <div class="privacy-settings">
-              <h4>
-                <i class="pi pi-shield"></i> Privacy Settings
-              </h4>
+              <h4><i class="pi pi-shield"></i> Privacy Settings</h4>
               <p class="privacy-hint">
                 Select what data to include in your report:
               </p>
@@ -823,8 +918,12 @@ interface ReportPrivacySettings {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showGenerateDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()">Generate Report</app-button>
+            <app-button variant="text" (clicked)="showGenerateDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
+              >Generate Report</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -879,8 +978,14 @@ interface ReportPrivacySettings {
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showPreCompDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-check" (clicked)="createPreCompAssessment()">Create Assessment</app-button>
+            <app-button variant="text" (clicked)="showPreCompDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              (clicked)="createPreCompAssessment()"
+              >Create Assessment</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
@@ -1019,29 +1124,31 @@ export class PsychologyReportsComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load wellness data from API
-      const response = await this.api.get<{
-        mentalLogs: Array<{
-          log_date: string;
-          confidence_level: number;
-          focus_level: number;
-          motivation_level: number;
-          anxiety_level: number;
-        }>;
-        wellness: Array<{
-          date: string;
-          mood: number;
-          stress_level: number;
-          sleep_quality: number;
-          motivation_level: number;
-          energy_level: number;
-        }>;
-        assessments: Array<{
-          assessment_type: string;
-          score: number;
-          created_at: string;
-          requires_professional_review: boolean;
-        }>;
-      }>("/api/staff-psychology/my-data").toPromise();
+      const response = await this.api
+        .get<{
+          mentalLogs: Array<{
+            log_date: string;
+            confidence_level: number;
+            focus_level: number;
+            motivation_level: number;
+            anxiety_level: number;
+          }>;
+          wellness: Array<{
+            date: string;
+            mood: number;
+            stress_level: number;
+            sleep_quality: number;
+            motivation_level: number;
+            energy_level: number;
+          }>;
+          assessments: Array<{
+            assessment_type: string;
+            score: number;
+            created_at: string;
+            requires_professional_review: boolean;
+          }>;
+        }>("/api/staff-psychology/my-data")
+        .toPromise();
 
       if (response?.data) {
         this.processWellnessData(response.data);
@@ -1084,7 +1191,9 @@ export class PsychologyReportsComponent implements OnInit {
     const avgMood = this.calcAverage(wellness, "mood");
     const avgStress = this.calcAverage(wellness, "stress_level");
     const avgSleep = this.calcAverage(wellness, "sleep_quality");
-    const avgMotivation = this.calcAverage(mentalLogs, "motivation_level") || this.calcAverage(wellness, "motivation_level");
+    const avgMotivation =
+      this.calcAverage(mentalLogs, "motivation_level") ||
+      this.calcAverage(wellness, "motivation_level");
     const avgConfidence = this.calcAverage(mentalLogs, "confidence_level");
     const avgAnxiety = this.calcAverage(mentalLogs, "anxiety_level");
 
@@ -1104,7 +1213,10 @@ export class PsychologyReportsComponent implements OnInit {
         avgMoodScore: avgMood || 5,
         moodTrend: this.calculateTrend(wellness.map((w) => w.mood)),
         avgStressLevel: avgStress || 5,
-        stressTrend: this.calculateTrend(wellness.map((w) => w.stress_level), true),
+        stressTrend: this.calculateTrend(
+          wellness.map((w) => w.stress_level),
+          true,
+        ),
         avgMotivation: avgMotivation || 5,
         avgConfidence: avgConfidence || 5,
         anxietyIndicators: avgAnxiety || 5,
@@ -1137,7 +1249,10 @@ export class PsychologyReportsComponent implements OnInit {
       },
       observedPatterns: {
         stressTriggers: this.identifyStressTriggers(wellness, mentalLogs),
-        positiveCorrelations: this.identifyPositiveCorrelations(wellness, mentalLogs),
+        positiveCorrelations: this.identifyPositiveCorrelations(
+          wellness,
+          mentalLogs,
+        ),
         concerningPatterns: this.identifyConcerns(wellness, mentalLogs),
       },
       athleteNotes: "",
@@ -1150,13 +1265,24 @@ export class PsychologyReportsComponent implements OnInit {
     this.preCompReports.set([]);
   }
 
-  private calcAverage(data: Array<Record<string, unknown>>, field: string): number | null {
-    const values = data.map((d) => d[field] as number).filter((v) => v !== null && v !== undefined);
+  private calcAverage(
+    data: Array<Record<string, unknown>>,
+    field: string,
+  ): number | null {
+    const values = data
+      .map((d) => d[field] as number)
+      .filter((v) => v !== null && v !== undefined);
     if (values.length === 0) return null;
-    return Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10;
+    return (
+      Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) /
+      10
+    );
   }
 
-  private calculateTrend(values: (number | undefined)[], invertForStress = false): "improving" | "stable" | "declining" {
+  private calculateTrend(
+    values: (number | undefined)[],
+    invertForStress = false,
+  ): "improving" | "stable" | "declining" {
     const filtered = values.filter((v): v is number => v !== undefined);
     if (filtered.length < 3) return "stable";
 
@@ -1180,7 +1306,7 @@ export class PsychologyReportsComponent implements OnInit {
 
   private identifyStressTriggers(
     wellness: Array<{ stress_level: number; sleep_quality: number }>,
-    _mentalLogs: Array<{ anxiety_level: number }>
+    _mentalLogs: Array<{ anxiety_level: number }>,
   ): string[] {
     const triggers: string[] = [];
     const highStressDays = wellness.filter((w) => w.stress_level >= 7);
@@ -1197,10 +1323,12 @@ export class PsychologyReportsComponent implements OnInit {
 
   private identifyPositiveCorrelations(
     wellness: Array<{ mood: number; sleep_quality: number }>,
-    _mentalLogs: Array<{ confidence_level: number }>
+    _mentalLogs: Array<{ confidence_level: number }>,
   ): string[] {
     const correlations: string[] = [];
-    const goodSleepGoodMood = wellness.filter((w) => w.sleep_quality >= 7 && w.mood >= 7);
+    const goodSleepGoodMood = wellness.filter(
+      (w) => w.sleep_quality >= 7 && w.mood >= 7,
+    );
     if (goodSleepGoodMood.length > 3) {
       correlations.push("Better mood correlates with quality sleep (7+ hours)");
     }
@@ -1209,11 +1337,17 @@ export class PsychologyReportsComponent implements OnInit {
 
   private identifyConcerns(
     wellness: Array<{ stress_level: number; mood: number }>,
-    mentalLogs: Array<{ anxiety_level: number }>
+    mentalLogs: Array<{ anxiety_level: number }>,
   ): string[] {
     const concerns: string[] = [];
-    const avgStress = this.calcAverage(wellness as Array<Record<string, unknown>>, "stress_level");
-    const avgAnxiety = this.calcAverage(mentalLogs as Array<Record<string, unknown>>, "anxiety_level");
+    const avgStress = this.calcAverage(
+      wellness as Array<Record<string, unknown>>,
+      "stress_level",
+    );
+    const avgAnxiety = this.calcAverage(
+      mentalLogs as Array<Record<string, unknown>>,
+      "anxiety_level",
+    );
 
     if (avgStress && avgStress > 6) {
       concerns.push("Consistently elevated stress levels");
@@ -1265,7 +1399,10 @@ export class PsychologyReportsComponent implements OnInit {
   getScreenTimeSeverity(
     level: string,
   ): "success" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "warn" | "danger" | "secondary"> = {
+    const severities: Record<
+      string,
+      "success" | "warn" | "danger" | "secondary"
+    > = {
       low: "success",
       moderate: "warn",
       high: "danger",
@@ -1395,6 +1532,11 @@ export class PsychologyReportsComponent implements OnInit {
     this.preCompReports.set([newReport, ...this.preCompReports()]);
     this.toast.success("Assessment created!");
     this.showPreCompDialog.set(false);
-    this.newPreComp = { name: "", significance: "regular", readiness: 7, concern: "" };
+    this.newPreComp = {
+      name: "",
+      significance: "regular",
+      readiness: 7,
+      concern: "",
+    };
   }
 }

@@ -97,7 +97,7 @@ const TAG_TYPES = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -111,7 +111,9 @@ const TAG_TYPES = [
           subtitle="Manage game and practice film"
           icon="pi-video"
         >
-          <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()">Upload Film</app-button>
+          <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()"
+            >Upload Film</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -199,8 +201,12 @@ const TAG_TYPES = [
                   <h3>{{ session.title }}</h3>
                 </div>
                 <div class="film-actions-header">
-                  <app-button variant="text" size="sm" iconLeft="pi-pencil">Edit</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v">More options</app-button>
+                  <app-button variant="text" size="sm" iconLeft="pi-pencil"
+                    >Edit</app-button
+                  >
+                  <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v"
+                    >More options</app-button
+                  >
                 </div>
               </div>
 
@@ -215,26 +221,62 @@ const TAG_TYPES = [
                   <p><strong>Type:</strong> {{ getTypeLabel(session.type) }}</p>
                   <p><strong>Duration:</strong> {{ session.duration }}</p>
                   <p><strong>Uploaded:</strong> {{ session.uploadDate }}</p>
-                  <p><strong>Tags:</strong> {{ session.tagCount }} timestamps</p>
+                  <p>
+                    <strong>Tags:</strong> {{ session.tagCount }} timestamps
+                  </p>
                 </div>
               </div>
 
               <div class="film-assignment">
-                <p><strong>Assignment:</strong> {{ session.assignment }} <span class="due-date">Due: {{ session.dueDate }}</span></p>
+                <p>
+                  <strong>Assignment:</strong> {{ session.assignment }}
+                  <span class="due-date">Due: {{ session.dueDate }}</span>
+                </p>
                 <div class="watch-progress">
-                  <span class="progress-label">Watch Status: {{ session.watchedCount }}/{{ session.totalAssigned }} complete ({{ getWatchPercent(session) }}%)</span>
-                  <p-progressBar [value]="getWatchPercent(session)" [showValue]="false" [style]="{ height: '12px' }"></p-progressBar>
+                  <span class="progress-label"
+                    >Watch Status: {{ session.watchedCount }}/{{
+                      session.totalAssigned
+                    }}
+                    complete ({{ getWatchPercent(session) }}%)</span
+                  >
+                  <p-progressBar
+                    [value]="getWatchPercent(session)"
+                    [showValue]="false"
+                    [style]="{ height: '12px' }"
+                  ></p-progressBar>
                 </div>
                 @if (session.notWatched.length > 0) {
-                  <p class="not-watched">Not watched: {{ session.notWatched.join(', ') }}</p>
+                  <p class="not-watched">
+                    Not watched: {{ session.notWatched.join(", ") }}
+                  </p>
                 }
               </div>
 
               <div class="film-actions">
-                <app-button size="sm" iconLeft="pi-play" (clicked)="watchFilm(session)">Watch</app-button>
-                <app-button variant="secondary" size="sm" (clicked)="editTags(session)">Edit Tags</app-button>
-                <app-button variant="text" size="sm" (clicked)="viewCompliance(session)">View Compliance</app-button>
-                <app-button variant="text" size="sm" (clicked)="sendReminder(session)">Send Reminder</app-button>
+                <app-button
+                  size="sm"
+                  iconLeft="pi-play"
+                  (clicked)="watchFilm(session)"
+                  >Watch</app-button
+                >
+                <app-button
+                  variant="secondary"
+                  size="sm"
+                  (clicked)="editTags(session)"
+                  >Edit Tags</app-button
+                >
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="viewCompliance(session)"
+                  >View Compliance</app-button
+                >
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="sendReminder(session)"
+                  >Send Reminder</app-button
+                >
               </div>
             </div>
           } @empty {
@@ -242,7 +284,9 @@ const TAG_TYPES = [
               <i class="pi pi-video"></i>
               <h3>No Film Found</h3>
               <p>Upload your first film to get started</p>
-              <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()">Upload Film</app-button>
+              <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()"
+                >Upload Film</app-button
+              >
             </div>
           }
         </div>
@@ -260,26 +304,46 @@ const TAG_TYPES = [
             <label>Source</label>
             <div class="radio-group">
               <div class="radio-option">
-                <p-radioButton name="source" value="url" [(ngModel)]="uploadForm.source" inputId="sourceUrl"></p-radioButton>
+                <p-radioButton
+                  name="source"
+                  value="url"
+                  [(ngModel)]="uploadForm.source"
+                  inputId="sourceUrl"
+                ></p-radioButton>
                 <label for="sourceUrl">YouTube / Vimeo URL</label>
               </div>
               <div class="radio-option">
-                <p-radioButton name="source" value="file" [(ngModel)]="uploadForm.source" inputId="sourceFile"></p-radioButton>
+                <p-radioButton
+                  name="source"
+                  value="file"
+                  [(ngModel)]="uploadForm.source"
+                  inputId="sourceFile"
+                ></p-radioButton>
                 <label for="sourceFile">Upload File</label>
               </div>
             </div>
           </div>
 
-          @if (uploadForm.source === 'url') {
+          @if (uploadForm.source === "url") {
             <div class="form-field">
               <label>Video URL</label>
-              <input type="text" pInputText [(ngModel)]="uploadForm.url" placeholder="https://youtube.com/watch?v=..." />
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="uploadForm.url"
+                placeholder="https://youtube.com/watch?v=..."
+              />
             </div>
           }
 
           <div class="form-field">
             <label>Title</label>
-            <input type="text" pInputText [(ngModel)]="uploadForm.title" placeholder="Week 3 vs Panthers - Offense" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="uploadForm.title"
+              placeholder="Week 3 vs Panthers - Offense"
+            />
           </div>
 
           <div class="form-field">
@@ -287,8 +351,15 @@ const TAG_TYPES = [
             <div class="radio-group">
               @for (type of filmTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton name="filmType" [value]="type.value" [(ngModel)]="uploadForm.type" [inputId]="'filmType-' + type.value"></p-radioButton>
-                  <label [for]="'filmType-' + type.value">{{ type.label }}</label>
+                  <p-radioButton
+                    name="filmType"
+                    [value]="type.value"
+                    [(ngModel)]="uploadForm.type"
+                    [inputId]="'filmType-' + type.value"
+                  ></p-radioButton>
+                  <label [for]="'filmType-' + type.value">{{
+                    type.label
+                  }}</label>
                 </div>
               }
             </div>
@@ -296,13 +367,22 @@ const TAG_TYPES = [
 
           <div class="form-field">
             <label>Description</label>
-            <textarea pTextarea [(ngModel)]="uploadForm.description" rows="3" placeholder="Brief description of the film..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="uploadForm.description"
+              rows="3"
+              placeholder="Brief description of the film..."
+            ></textarea>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showUploadDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-upload" (clicked)="uploadFilm()">Upload & Open</app-button>
+          <app-button variant="secondary" (clicked)="showUploadDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-upload" (clicked)="uploadFilm()"
+            >Upload & Open</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -314,15 +394,24 @@ const TAG_TYPES = [
         [style]="{ width: '90vw', maxWidth: '500px' }"
       >
         <div class="tag-form">
-          <p class="tag-timestamp">Adding tag at <strong>{{ tagForm.timestamp }}</strong></p>
+          <p class="tag-timestamp">
+            Adding tag at <strong>{{ tagForm.timestamp }}</strong>
+          </p>
 
           <div class="form-field">
             <label>Tag Type</label>
             <div class="radio-group">
               @for (type of tagTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton name="tagType" [value]="type.value" [(ngModel)]="tagForm.type" [inputId]="'tagType-' + type.value"></p-radioButton>
-                  <label [for]="'tagType-' + type.value">{{ type.label }}</label>
+                  <p-radioButton
+                    name="tagType"
+                    [value]="type.value"
+                    [(ngModel)]="tagForm.type"
+                    [inputId]="'tagType-' + type.value"
+                  ></p-radioButton>
+                  <label [for]="'tagType-' + type.value">{{
+                    type.label
+                  }}</label>
                 </div>
               }
             </div>
@@ -332,20 +421,36 @@ const TAG_TYPES = [
             <label>Tag Player(s)</label>
             <div class="radio-group">
               <div class="radio-option">
-                <p-radioButton name="tagTarget" value="everyone" [(ngModel)]="tagForm.target" inputId="tagEveryone"></p-radioButton>
+                <p-radioButton
+                  name="tagTarget"
+                  value="everyone"
+                  [(ngModel)]="tagForm.target"
+                  inputId="tagEveryone"
+                ></p-radioButton>
                 <label for="tagEveryone">Everyone (team)</label>
               </div>
               <div class="radio-option">
-                <p-radioButton name="tagTarget" value="specific" [(ngModel)]="tagForm.target" inputId="tagSpecific"></p-radioButton>
+                <p-radioButton
+                  name="tagTarget"
+                  value="specific"
+                  [(ngModel)]="tagForm.target"
+                  inputId="tagSpecific"
+                ></p-radioButton>
                 <label for="tagSpecific">Specific player(s):</label>
               </div>
             </div>
-            @if (tagForm.target === 'specific') {
+            @if (tagForm.target === "specific") {
               <div class="player-checkboxes">
                 @for (player of players(); track player.id) {
                   <div class="checkbox-option">
-                    <p-checkbox [value]="player.id" [(ngModel)]="tagForm.playerIds" [inputId]="'player-' + player.id"></p-checkbox>
-                    <label [for]="'player-' + player.id">{{ player.name }} (#{{ player.number }})</label>
+                    <p-checkbox
+                      [value]="player.id"
+                      [(ngModel)]="tagForm.playerIds"
+                      [inputId]="'player-' + player.id"
+                    ></p-checkbox>
+                    <label [for]="'player-' + player.id"
+                      >{{ player.name }} (#{{ player.number }})</label
+                    >
                   </div>
                 }
               </div>
@@ -367,13 +472,22 @@ const TAG_TYPES = [
 
           <div class="form-field">
             <label>Comment</label>
-            <textarea pTextarea [(ngModel)]="tagForm.comment" rows="4" placeholder="What should the player learn from this moment?"></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="tagForm.comment"
+              rows="4"
+              placeholder="What should the player learn from this moment?"
+            ></textarea>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showTagDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="saveTag()">Save Tag</app-button>
+          <app-button variant="secondary" (clicked)="showTagDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="saveTag()"
+            >Save Tag</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -390,7 +504,9 @@ export class FilmRoomCoachComponent implements OnInit {
   readonly tags = signal<VideoTag[]>([]);
   readonly players = signal<Player[]>([]);
   readonly plays = signal<{ id: string; name: string }[]>([]);
-  readonly activeTab = signal<"all" | "games" | "practices" | "scouting" | "assigned">("all");
+  readonly activeTab = signal<
+    "all" | "games" | "practices" | "scouting" | "assigned"
+  >("all");
   readonly selectedSession = signal<FilmSession | null>(null);
   readonly isLoading = signal(true);
 
@@ -411,8 +527,8 @@ export class FilmRoomCoachComponent implements OnInit {
 
   readonly totalDuration = computed(() => "4h 32m");
 
-  readonly assignedThisWeek = computed(() =>
-    this.sessions().filter((s) => s.assignment).length
+  readonly assignedThisWeek = computed(
+    () => this.sessions().filter((s) => s.assignment).length,
   );
 
   readonly avgWatchRate = computed(() => {
@@ -436,7 +552,9 @@ export class FilmRoomCoachComponent implements OnInit {
     } else if (tab === "scouting") {
       result = result.filter((s) => s.type === "scouting");
     } else if (tab === "assigned") {
-      result = result.filter((s) => s.assignment && s.watchedCount < s.totalAssigned);
+      result = result.filter(
+        (s) => s.assignment && s.watchedCount < s.totalAssigned,
+      );
     }
 
     return result;
@@ -451,7 +569,9 @@ export class FilmRoomCoachComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/film"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/film"),
+      );
       if (response?.success && response.data) {
         this.sessions.set(response.data.sessions || []);
         this.players.set(response.data.players || []);

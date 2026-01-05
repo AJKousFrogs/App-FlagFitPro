@@ -177,38 +177,38 @@ Comprehensive team-wide analytics dashboard showing aggregate performance metric
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Team Health Cards | Readiness, ACWR, check-ins, availability |
-| Trend Charts | 7/30/90 day performance trends |
-| Load Distribution | ACWR pie chart, per-player bars |
-| Risk Matrix | 2D plot of wellness vs ACWR |
-| Wellness Breakdown | Team average by metric |
-| Position Comparison | Group performance vs benchmarks |
-| AI Insights | Merlin's team analysis |
-| Export | PDF reports, shareable links |
+| Feature             | Description                              |
+| ------------------- | ---------------------------------------- |
+| Team Health Cards   | Readiness, ACWR, check-ins, availability |
+| Trend Charts        | 7/30/90 day performance trends           |
+| Load Distribution   | ACWR pie chart, per-player bars          |
+| Risk Matrix         | 2D plot of wellness vs ACWR              |
+| Wellness Breakdown  | Team average by metric                   |
+| Position Comparison | Group performance vs benchmarks          |
+| AI Insights         | Merlin's team analysis                   |
+| Export              | PDF reports, shareable links             |
 
 ---
 
 ## Time Period Options
 
-| Period | Description |
-|--------|-------------|
-| Last 7 Days | Default view |
-| Last 14 Days | Two-week trend |
-| Last 30 Days | Monthly view |
-| Last 90 Days | Quarterly view |
-| This Season | Full season data |
-| Custom Range | Date picker |
+| Period       | Description      |
+| ------------ | ---------------- |
+| Last 7 Days  | Default view     |
+| Last 14 Days | Two-week trend   |
+| Last 30 Days | Monthly view     |
+| Last 90 Days | Quarterly view   |
+| This Season  | Full season data |
+| Custom Range | Date picker      |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Team metrics | `TeamAnalyticsService` | Aggregated |
-| Player wellness | `WellnessService` | `wellness_checkins` |
-| ACWR data | `LoadMonitoringService` | `acwr_calculations` |
-| Performance | `PlayerMetricsService` | `performance_records` |
-| AI insights | `AiCoachService` | Generated |
+| Data            | Service                 | Table                 |
+| --------------- | ----------------------- | --------------------- |
+| Team metrics    | `TeamAnalyticsService`  | Aggregated            |
+| Player wellness | `WellnessService`       | `wellness_checkins`   |
+| ACWR data       | `LoadMonitoringService` | `acwr_calculations`   |
+| Performance     | `PlayerMetricsService`  | `performance_records` |
+| AI insights     | `AiCoachService`        | Generated             |

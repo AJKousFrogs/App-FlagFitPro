@@ -21,7 +21,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { DIALOG_STYLES, TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
+import {
+  DIALOG_STYLES,
+  TABLE_COLUMN_WIDTHS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -74,14 +77,20 @@ type FeeStatus = "paid" | "pending" | "overdue" | "partial";
 type PaymentMethod = "check" | "cash" | "online" | "transfer";
 
 // ===== Constants =====
-const FEE_STATUS_CONFIG: Record<FeeStatus, { label: string; severity: "success" | "warn" | "danger" | "info" }> = {
+const FEE_STATUS_CONFIG: Record<
+  FeeStatus,
+  { label: string; severity: "success" | "warn" | "danger" | "info" }
+> = {
   paid: { label: "Paid", severity: "success" },
   pending: { label: "Pending", severity: "warn" },
   overdue: { label: "Overdue", severity: "danger" },
   partial: { label: "Partial", severity: "info" },
 };
 
-const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string }> = {
+const PAYMENT_METHOD_CONFIG: Record<
+  PaymentMethod,
+  { label: string; icon: string }
+> = {
   check: { label: "Check", icon: "pi-file" },
   cash: { label: "Cash", icon: "pi-dollar" },
   online: { label: "Online", icon: "pi-globe" },
@@ -103,7 +112,7 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -125,7 +134,9 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
               <i class="pi pi-dollar summary-icon"></i>
               <div class="summary-details">
                 <span class="summary-label">Balance Due</span>
-                <span class="summary-value">{{ accountSummary().totalOwed | currency }}</span>
+                <span class="summary-value">{{
+                  accountSummary().totalOwed | currency
+                }}</span>
               </div>
             </div>
           </p-card>
@@ -135,7 +146,9 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
               <i class="pi pi-check-circle summary-icon"></i>
               <div class="summary-details">
                 <span class="summary-label">Total Paid</span>
-                <span class="summary-value">{{ accountSummary().totalPaid | currency }}</span>
+                <span class="summary-value">{{
+                  accountSummary().totalPaid | currency
+                }}</span>
               </div>
             </div>
           </p-card>
@@ -146,8 +159,12 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
                 <i class="pi pi-calendar summary-icon"></i>
                 <div class="summary-details">
                   <span class="summary-label">Next Due</span>
-                  <span class="summary-value">{{ accountSummary().nextPaymentDue | date:'MMM d' }}</span>
-                  <span class="summary-amount">{{ accountSummary().nextPaymentAmount | currency }}</span>
+                  <span class="summary-value">{{
+                    accountSummary().nextPaymentDue | date: "MMM d"
+                  }}</span>
+                  <span class="summary-amount">{{
+                    accountSummary().nextPaymentAmount | currency
+                  }}</span>
                 </div>
               </div>
             </p-card>
@@ -159,20 +176,32 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
           <ng-template pTemplate="header">
             <div class="card-header">
               <h3><i class="pi pi-list"></i> Outstanding Fees</h3>
-              <app-button variant="secondary" size="sm" iconLeft="pi-info-circle" (clicked)="showInstructions = true">Payment Instructions</app-button>
+              <app-button
+                variant="secondary"
+                size="sm"
+                iconLeft="pi-info-circle"
+                (clicked)="showInstructions = true"
+                >Payment Instructions</app-button
+              >
             </div>
           </ng-template>
 
           @if (outstandingFees().length > 0) {
             <div class="fees-list">
               @for (fee of outstandingFees(); track fee.id) {
-                <div class="fee-item" [class.overdue]="fee.status === 'overdue'">
+                <div
+                  class="fee-item"
+                  [class.overdue]="fee.status === 'overdue'"
+                >
                   <div class="fee-main">
                     <div class="fee-info">
                       <h4>{{ fee.name }}</h4>
                       <p>{{ fee.description }}</p>
-                      <span class="due-date" [class.overdue]="isOverdue(fee.dueDate)">
-                        Due: {{ fee.dueDate | date:'MMM d, y' }}
+                      <span
+                        class="due-date"
+                        [class.overdue]="isOverdue(fee.dueDate)"
+                      >
+                        Due: {{ fee.dueDate | date: "MMM d, y" }}
                       </span>
                     </div>
                     <div class="fee-amount">
@@ -190,7 +219,14 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
                         class="breakdown-toggle"
                         (click)="toggleBreakdown(fee.id)"
                       >
-                        <i class="pi" [ngClass]="expandedFee() === fee.id ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+                        <i
+                          class="pi"
+                          [ngClass]="
+                            expandedFee() === fee.id
+                              ? 'pi-chevron-up'
+                              : 'pi-chevron-down'
+                          "
+                        ></i>
                         View breakdown
                       </button>
 
@@ -243,11 +279,15 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
               </ng-template>
               <ng-template pTemplate="body" let-payment>
                 <tr>
-                  <td>{{ payment.date | date:'MMM d, y' }}</td>
+                  <td>{{ payment.date | date: "MMM d, y" }}</td>
                   <td>{{ payment.feeName }}</td>
                   <td>
                     <span class="payment-method">
-                      <i [class]="'pi ' + getPaymentMethodConfig(payment.method).icon"></i>
+                      <i
+                        [class]="
+                          'pi ' + getPaymentMethodConfig(payment.method).icon
+                        "
+                      ></i>
                       {{ getPaymentMethodConfig(payment.method).label }}
                     </span>
                   </td>
@@ -256,7 +296,13 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
                   </td>
                   <td>
                     @if (payment.receiptUrl) {
-                      <app-button variant="text" size="sm" iconLeft="pi-download" (clicked)="downloadReceipt(payment)">Download receipt</app-button>
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        iconLeft="pi-download"
+                        (clicked)="downloadReceipt(payment)"
+                        >Download receipt</app-button
+                      >
                     }
                   </td>
                 </tr>
@@ -291,7 +337,9 @@ const PAYMENT_METHOD_CONFIG: Record<PaymentMethod, { label: string; icon: string
           @for (method of paymentInstructions().methods; track method.method) {
             <div class="method-card">
               <div class="method-header">
-                <i [class]="'pi ' + getPaymentMethodConfig(method.method).icon"></i>
+                <i
+                  [class]="'pi ' + getPaymentMethodConfig(method.method).icon"
+                ></i>
                 <h4>{{ method.label }}</h4>
               </div>
               <p class="method-instructions">{{ method.instructions }}</p>
@@ -343,7 +391,7 @@ export class PaymentsComponent implements OnInit {
 
   // Computed values
   readonly outstandingFees = computed(() =>
-    this.fees().filter((f) => f.status !== "paid")
+    this.fees().filter((f) => f.status !== "paid"),
   );
 
   ngOnInit(): void {
@@ -412,7 +460,9 @@ export class PaymentsComponent implements OnInit {
     return FEE_STATUS_CONFIG[status];
   }
 
-  getPaymentMethodConfig(method: PaymentMethod): (typeof PAYMENT_METHOD_CONFIG)[PaymentMethod] {
+  getPaymentMethodConfig(
+    method: PaymentMethod,
+  ): (typeof PAYMENT_METHOD_CONFIG)[PaymentMethod] {
     return PAYMENT_METHOD_CONFIG[method];
   }
 }

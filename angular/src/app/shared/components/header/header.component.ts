@@ -1,16 +1,16 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    HostListener,
-    inject,
-    model,
-    OnDestroy,
-    output,
-    signal,
-    ViewChild,
-    ViewEncapsulation,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  model,
+  OnDestroy,
+  output,
+  signal,
+  ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";

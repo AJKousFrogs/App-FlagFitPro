@@ -125,120 +125,132 @@
 ## Component Breakdown
 
 ### 1. Deletion Pending Banner (Conditional) ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Warning icon | ✅ | From centralized UX copy |
-| Title | ✅ | "Account Deletion Pending" |
-| Days remaining | ✅ | Dynamic countdown |
-| Cancel Deletion button | ✅ | With loading state |
-| Learn More link | ✅ | Links to help |
+
+| Element                | Status | Notes                      |
+| ---------------------- | ------ | -------------------------- |
+| Warning icon           | ✅     | From centralized UX copy   |
+| Title                  | ✅     | "Account Deletion Pending" |
+| Days remaining         | ✅     | Dynamic countdown          |
+| Cancel Deletion button | ✅     | With loading state         |
+| Learn More link        | ✅     | Links to help              |
 
 ---
 
 ### 2. Profile Header Card ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Background pattern | ✅ | Decorative gradient |
-| Avatar image/fallback | ✅ | User initials if no image |
-| Camera upload button | ✅ | With loading spinner |
-| Jersey number badge | ✅ | Shows if set |
-| Display name | ✅ | Large heading |
-| Position tag | ✅ | With icon |
-| Team name tag | ✅ | With icon |
-| Email | ✅ | Secondary text |
-| Member since | ✅ | Calendar icon + date |
-| Edit Profile button | ✅ | Links to `/settings` |
-| Share button | ✅ | Native share or clipboard |
+
+| Element               | Status | Notes                     |
+| --------------------- | ------ | ------------------------- |
+| Background pattern    | ✅     | Decorative gradient       |
+| Avatar image/fallback | ✅     | User initials if no image |
+| Camera upload button  | ✅     | With loading spinner      |
+| Jersey number badge   | ✅     | Shows if set              |
+| Display name          | ✅     | Large heading             |
+| Position tag          | ✅     | With icon                 |
+| Team name tag         | ✅     | With icon                 |
+| Email                 | ✅     | Secondary text            |
+| Member since          | ✅     | Calendar icon + date      |
+| Edit Profile button   | ✅     | Links to `/settings`      |
+| Share button          | ✅     | Native share or clipboard |
 
 ---
 
 ### 3. Stats Grid (4 Cards) ✅
-| Stat | Source | Status |
-|------|--------|--------|
-| Training Sessions | Supabase training_sessions | ✅ |
-| Performance Score | Calculated from wellness | ✅ |
-| Day Streak | Calculated from sessions | ✅ |
-| Games Played | Placeholder | ⚠️ |
+
+| Stat              | Source                     | Status |
+| ----------------- | -------------------------- | ------ |
+| Training Sessions | Supabase training_sessions | ✅     |
+| Performance Score | Calculated from wellness   | ✅     |
+| Day Streak        | Calculated from sessions   | ✅     |
+| Games Played      | Placeholder                | ⚠️     |
 
 ---
 
 ### 4. Tabbed Content ✅
 
 #### Overview Tab
-| Element | Status | Notes |
-|---------|--------|-------|
-| Recent Activity card | ✅ | |
-| Activity list | ✅ | Last 5 sessions |
-| Empty state | ✅ | "No Recent Activity" |
+
+| Element              | Status | Notes                |
+| -------------------- | ------ | -------------------- |
+| Recent Activity card | ✅     |                      |
+| Activity list        | ✅     | Last 5 sessions      |
+| Empty state          | ✅     | "No Recent Activity" |
 
 **Activity Item:**
+
 - Icon (pi-play)
 - Title ("Completed X min training")
 - Time ago ("2 hours ago")
 
 #### Achievements Tab
-| Element | Status | Notes |
-|---------|--------|-------|
-| Achievement cards grid | ✅ | |
-| Achievement icon | ✅ | |
-| Achievement title | ✅ | |
-| Achievement description | ✅ | |
-| Achievement date | ✅ | "Current" or "Achieved" |
-| Empty state | ✅ | "No Achievements Yet" |
+
+| Element                 | Status | Notes                   |
+| ----------------------- | ------ | ----------------------- |
+| Achievement cards grid  | ✅     |                         |
+| Achievement icon        | ✅     |                         |
+| Achievement title       | ✅     |                         |
+| Achievement description | ✅     |                         |
+| Achievement date        | ✅     | "Current" or "Achieved" |
+| Empty state             | ✅     | "No Achievements Yet"   |
 
 **Achievement Triggers:**
+
 - Streak ≥ 7 days
 - 10 sessions complete
 - 25 sessions complete
 - 50 sessions complete
 
 #### Statistics Tab
-| Element | Status | Notes |
-|---------|--------|-------|
-| Performance Statistics card | ✅ | |
-| Performance Score stat | ✅ | With trend tag |
-| Avg Session Length stat | ✅ | With trend tag |
-| Total Training Hours stat | ✅ | With trend tag |
+
+| Element                     | Status | Notes          |
+| --------------------------- | ------ | -------------- |
+| Performance Statistics card | ✅     |                |
+| Performance Score stat      | ✅     | With trend tag |
+| Avg Session Length stat     | ✅     | With trend tag |
+| Total Training Hours stat   | ✅     | With trend tag |
 
 **Trend Types:**
+
 - `success` - Green tag
 - `info` - Blue tag
 - `warn` - Yellow tag
 - `secondary` - Gray tag
 
 #### Invitations Tab
-| Element | Status | Notes |
-|---------|--------|-------|
-| Badge count on tab | ✅ | Shows pending count |
-| Invitation cards list | ✅ | |
-| Team name | ✅ | |
-| Role tag | ✅ | Player/Coach/etc |
-| Invitation message | ✅ | Or default text |
-| Invited by | ✅ | |
-| Created date | ✅ | |
-| Expiration date | ✅ | |
-| Expired tag | ✅ | If past expiration |
-| Accept button | ✅ | With loading state |
-| Decline button | ✅ | With loading state |
-| Request New button | ✅ | For expired invitations |
-| Empty state | ✅ | "No Pending Invitations" |
-| Loading state | ✅ | Spinner |
+
+| Element               | Status | Notes                    |
+| --------------------- | ------ | ------------------------ |
+| Badge count on tab    | ✅     | Shows pending count      |
+| Invitation cards list | ✅     |                          |
+| Team name             | ✅     |                          |
+| Role tag              | ✅     | Player/Coach/etc         |
+| Invitation message    | ✅     | Or default text          |
+| Invited by            | ✅     |                          |
+| Created date          | ✅     |                          |
+| Expiration date       | ✅     |                          |
+| Expired tag           | ✅     | If past expiration       |
+| Accept button         | ✅     | With loading state       |
+| Decline button        | ✅     | With loading state       |
+| Request New button    | ✅     | For expired invitations  |
+| Empty state           | ✅     | "No Pending Invitations" |
+| Loading state         | ✅     | Spinner                  |
 
 ---
 
 ### 5. States ✅
-| State | Status | Notes |
-|-------|--------|-------|
-| Loading state | ✅ | Full page spinner |
-| Error state | ✅ | With retry button |
-| Empty data state | ✅ | Graceful fallbacks |
-| Avatar uploading | ✅ | Button spinner |
+
+| State            | Status | Notes              |
+| ---------------- | ------ | ------------------ |
+| Loading state    | ✅     | Full page spinner  |
+| Error state      | ✅     | With retry button  |
+| Empty data state | ✅     | Graceful fallbacks |
+| Avatar uploading | ✅     | Button spinner     |
 
 ---
 
 ## Business Logic
 
 ### Performance Score Calculation (Implemented)
+
 ```typescript
 // From last 7 wellness checkins
 const avgEnergy = sum(energy_levels) / count;
@@ -246,10 +258,13 @@ const avgMotivation = sum(motivation_levels) / count;
 const avgSleep = sum(sleep_quality) / count;
 
 // Score out of 100 (each metric is 1-10 scale)
-performanceScore = Math.round(((avgEnergy + avgMotivation + avgSleep) / 30) * 100);
+performanceScore = Math.round(
+  ((avgEnergy + avgMotivation + avgSleep) / 30) * 100,
+);
 ```
 
 ### Streak Calculation (Implemented)
+
 ```typescript
 // Count consecutive training days from today backward
 let streak = 0;
@@ -258,7 +273,7 @@ let checkDate = new Date();
 for (const session of sortedSessionsByDateDesc) {
   const sessionDate = new Date(session.completed_at);
   const daysDiff = floor((checkDate - sessionDate) / DAY_MS);
-  
+
   if (daysDiff <= 1) {
     streak++;
     checkDate = sessionDate;
@@ -269,6 +284,7 @@ for (const session of sortedSessionsByDateDesc) {
 ```
 
 ### Avatar Upload (Implemented)
+
 ```typescript
 // Validation
 - Max file size: 5MB
@@ -284,13 +300,14 @@ for (const session of sortedSessionsByDateDesc) {
 ```
 
 ### Invitation Accept/Decline (Implemented)
+
 ```typescript
 // Accept
-await supabaseService.rpc('accept_team_invitation', { p_invitation_id });
+await supabaseService.rpc("accept_team_invitation", { p_invitation_id });
 // → Creates team_member record, updates invitation status
 
 // Decline
-await supabaseService.rpc('decline_team_invitation', { p_invitation_id });
+await supabaseService.rpc("decline_team_invitation", { p_invitation_id });
 // → Updates invitation status only
 ```
 
@@ -298,52 +315,53 @@ await supabaseService.rpc('decline_team_invitation', { p_invitation_id });
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| User info | `AuthService` | `getUser()` |
-| Training sessions | `SupabaseService` | Direct query |
-| Wellness checkins | `SupabaseService` | Direct query |
-| Team membership | `SupabaseService` | Query team_members table |
-| Pending invitations | `SupabaseService` | Query team_invitations table |
-| Deletion status | `AccountDeletionService` | `hasPendingDeletion` signal |
+| Data                | Service                  | Method                       |
+| ------------------- | ------------------------ | ---------------------------- |
+| User info           | `AuthService`            | `getUser()`                  |
+| Training sessions   | `SupabaseService`        | Direct query                 |
+| Wellness checkins   | `SupabaseService`        | Direct query                 |
+| Team membership     | `SupabaseService`        | Query team_members table     |
+| Pending invitations | `SupabaseService`        | Query team_invitations table |
+| Deletion status     | `AccountDeletionService` | `hasPendingDeletion` signal  |
 
 ---
 
 ## Navigation Paths
 
-| From | To | Trigger |
-|------|-----|---------|
-| Profile | Settings | "Edit Profile" button |
-| Profile | (Share) | Share button → native share or clipboard |
-| Profile | Team | Accept invitation → refresh profile |
+| From    | To       | Trigger                                  |
+| ------- | -------- | ---------------------------------------- |
+| Profile | Settings | "Edit Profile" button                    |
+| Profile | (Share)  | Share button → native share or clipboard |
+| Profile | Team     | Accept invitation → refresh profile      |
 
 ---
 
 ## Feature Comparison: Documented vs Implemented
 
-| Documented Feature | Status | Notes |
-|-------------------|--------|-------|
-| Avatar image | ✅ | With upload |
-| Name and email | ✅ | |
-| Role badge | ⚠️ | Position shown, not role |
-| Team membership | ✅ | From team_members table |
-| Overview tab | ✅ | Recent activity |
-| Teams tab | ⚠️ | Invitations tab instead |
-| Stats tab | ✅ | Performance statistics |
-| Settings tab | ⚠️ | Edit button links to /settings |
-| Pending invitations | ✅ | Full CRUD |
-| Accept/Decline buttons | ✅ | With loading states |
-| Expiration countdown | ✅ | Shows date |
-| Edit profile | ✅ | Links to /settings |
-| Upload avatar | ✅ | Full upload flow |
-| View deletion status | ✅ | Banner with cancel |
-| Cancel deletion | ✅ | With confirmation |
+| Documented Feature     | Status | Notes                          |
+| ---------------------- | ------ | ------------------------------ |
+| Avatar image           | ✅     | With upload                    |
+| Name and email         | ✅     |                                |
+| Role badge             | ⚠️     | Position shown, not role       |
+| Team membership        | ✅     | From team_members table        |
+| Overview tab           | ✅     | Recent activity                |
+| Teams tab              | ⚠️     | Invitations tab instead        |
+| Stats tab              | ✅     | Performance statistics         |
+| Settings tab           | ⚠️     | Edit button links to /settings |
+| Pending invitations    | ✅     | Full CRUD                      |
+| Accept/Decline buttons | ✅     | With loading states            |
+| Expiration countdown   | ✅     | Shows date                     |
+| Edit profile           | ✅     | Links to /settings             |
+| Upload avatar          | ✅     | Full upload flow               |
+| View deletion status   | ✅     | Banner with cancel             |
+| Cancel deletion        | ✅     | With confirmation              |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Clean profile header with jersey number badge
 - Avatar upload with validation and feedback
 - Tabbed organization reduces cognitive load
@@ -352,12 +370,14 @@ await supabaseService.rpc('decline_team_invitation', { p_invitation_id });
 - Deletion pending banner is prominent but not intrusive
 
 ### ⚠️ Friction Points
+
 - Games Played always shows 0 (not connected to data)
 - No way to edit position/jersey from profile
 - Team name only shows one team (no multi-team support)
 - Statistics tab is basic (only 3 metrics)
 
 ### 🔧 Suggested Improvements
+
 1. Add "Quick Edit" for position/jersey number
 2. Connect Games Played to actual game data
 3. Support multiple team memberships view
@@ -369,11 +389,11 @@ await supabaseService.rpc('decline_team_invitation', { p_invitation_id });
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Settings | `/settings` | Edit profile details |
+| Page      | Route        | Relationship               |
+| --------- | ------------ | -------------------------- |
+| Settings  | `/settings`  | Edit profile details       |
 | Analytics | `/analytics` | Detailed performance stats |
-| Roster | `/roster` | Team member list |
+| Roster    | `/roster`    | Team member list           |
 
 ---
 

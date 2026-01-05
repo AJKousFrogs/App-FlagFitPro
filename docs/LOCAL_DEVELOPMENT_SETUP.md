@@ -8,13 +8,13 @@
 
 ## Prerequisites
 
-| Requirement | Version | Check Command |
-|-------------|---------|---------------|
-| Node.js | ≥ 20.0.0 | `node --version` |
-| npm | ≥ 10.0.0 | `npm --version` |
-| Angular CLI | 21.x | `ng version` |
-| Git | Any recent | `git --version` |
-| Netlify CLI | Latest | `netlify --version` |
+| Requirement | Version    | Check Command       |
+| ----------- | ---------- | ------------------- |
+| Node.js     | ≥ 20.0.0   | `node --version`    |
+| npm         | ≥ 10.0.0   | `npm --version`     |
+| Angular CLI | 21.x       | `ng version`        |
+| Git         | Any recent | `git --version`     |
+| Netlify CLI | Latest     | `netlify --version` |
 
 ---
 
@@ -81,6 +81,7 @@ cd angular && ng serve
 ```
 
 **Access URLs:**
+
 - **Full Stack (Netlify Dev):** `http://localhost:8888`
 - **Angular Only:** `http://localhost:4200`
 - **API Functions:** `http://localhost:8888/api/*`
@@ -115,6 +116,7 @@ curl "https://api.open-meteo.com/v1/forecast?latitude=46.05&longitude=14.51&curr
 ```
 
 Features:
+
 - 16-day weather forecasts
 - 80+ years historical data
 - 1-11 km resolution
@@ -269,6 +271,7 @@ npm install -g @angular/cli@21
 ### CORS Errors
 
 CORS is handled automatically by Netlify Dev. If issues persist:
+
 1. Restart `netlify dev`
 2. Clear browser cache
 3. Check no duplicate servers running
@@ -300,9 +303,9 @@ Located at `angular/src/environments/environment.ts`:
 ```typescript
 export const environment = {
   production: false,
-  supabaseUrl: 'https://xxx.supabase.co',
-  supabaseAnonKey: 'eyJ...',
-  apiUrl: 'http://localhost:8888/api'
+  supabaseUrl: "https://xxx.supabase.co",
+  supabaseAnonKey: "eyJ...",
+  apiUrl: "http://localhost:8888/api",
 };
 ```
 
@@ -319,30 +322,30 @@ export const environment = {
 
 ## External Services Summary
 
-| Service | Purpose | Key Required | Free Tier |
-|---------|---------|--------------|-----------|
-| [Supabase](https://supabase.com) | Database, Auth, Realtime | Yes | 500MB DB, 50K auth users |
-| [Groq](https://console.groq.com) | AI Coach (LLM) | Yes | 14,400 req/day |
-| [Open-Meteo](https://open-meteo.com) | Weather API | No | Unlimited (fair use) |
-| [Netlify](https://netlify.com) | Hosting, Functions | No | 100GB bandwidth, 125K functions |
-| [GitHub](https://github.com) | Version Control | No | Unlimited |
+| Service                              | Purpose                  | Key Required | Free Tier                       |
+| ------------------------------------ | ------------------------ | ------------ | ------------------------------- |
+| [Supabase](https://supabase.com)     | Database, Auth, Realtime | Yes          | 500MB DB, 50K auth users        |
+| [Groq](https://console.groq.com)     | AI Coach (LLM)           | Yes          | 14,400 req/day                  |
+| [Open-Meteo](https://open-meteo.com) | Weather API              | No           | Unlimited (fair use)            |
+| [Netlify](https://netlify.com)       | Hosting, Functions       | No           | 100GB bandwidth, 125K functions |
+| [GitHub](https://github.com)         | Version Control          | No           | Unlimited                       |
 
 ---
 
 ## Tech Stack Reference
 
-| Layer | Technology | Version |
-|-------|------------|---------|
-| Frontend | Angular | 21.x |
-| UI Components | PrimeNG | 21.x |
-| State Management | Angular Signals | Built-in |
-| Styling | SCSS + CSS Variables | - |
-| Backend | Netlify Functions | Node.js |
-| Database | Supabase PostgreSQL | - |
-| Auth | Supabase Auth | - |
-| AI | Groq (Llama 3.1 70B) | - |
-| Weather | Open-Meteo | - |
-| Deployment | Netlify | - |
+| Layer            | Technology           | Version  |
+| ---------------- | -------------------- | -------- |
+| Frontend         | Angular              | 21.x     |
+| UI Components    | PrimeNG              | 21.x     |
+| State Management | Angular Signals      | Built-in |
+| Styling          | SCSS + CSS Variables | -        |
+| Backend          | Netlify Functions    | Node.js  |
+| Database         | Supabase PostgreSQL  | -        |
+| Auth             | Supabase Auth        | -        |
+| AI               | Groq (Llama 3.1 70B) | -        |
+| Weather          | Open-Meteo           | -        |
+| Deployment       | Netlify              | -        |
 
 ---
 

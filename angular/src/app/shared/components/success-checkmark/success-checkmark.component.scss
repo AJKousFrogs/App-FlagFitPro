@@ -51,8 +51,7 @@
 }
 
 .animated .success-circle {
-  animation: circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1)
-    forwards;
+  animation: circle-expand 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .success-circle.pulse {
@@ -131,8 +130,7 @@
 }
 
 .animated .checkmark-check {
-  animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms
-    forwards;
+  animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms forwards;
 }
 
 @keyframes check-draw {
@@ -168,8 +166,7 @@
 }
 
 .animated.visible {
-  animation: container-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1)
-    forwards;
+  animation: container-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes container-pop {
@@ -267,4 +264,3 @@
     transform: translateY(0);
   }
 }
-

@@ -8,7 +8,9 @@
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
   border-radius: var(--radius-lg, 8px);
   overflow: hidden;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 // .exercise-card:hover REMOVED - use app-card-shell
@@ -361,4 +363,3 @@
   outline: 2px solid var(--ds-primary-green, #089949);
   outline-offset: 2px;
 }
-

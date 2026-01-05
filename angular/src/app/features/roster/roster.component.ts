@@ -14,12 +14,12 @@
  */
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ConfirmationService } from "primeng/api";
@@ -43,45 +43,48 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 import {
-    COMPONENT_SIZES,
-    DIALOG_STYLES,
+  COMPONENT_SIZES,
+  DIALOG_STYLES,
 } from "../../core/utils/design-tokens.util";
 import {
-    PlayerFormData,
-    RosterFiltersComponent,
-    RosterOverviewComponent,
-    RosterPlayerCardComponent,
-    RosterPlayerFormDialogComponent,
-    RosterStaffCardComponent,
+  PlayerFormData,
+  RosterFiltersComponent,
+  RosterOverviewComponent,
+  RosterPlayerCardComponent,
+  RosterPlayerFormDialogComponent,
+  RosterStaffCardComponent,
 } from "./components";
 import {
-    formatHeight,
-    formatWeight,
-    getJerseyColor,
-    getPlayerStats,
-    getPositionFullName,
-    getPositionIcon,
-    getStatusSeverity,
+  formatHeight,
+  formatWeight,
+  getJerseyColor,
+  getPlayerStats,
+  getPositionFullName,
+  getPositionIcon,
+  getStatusSeverity,
 } from "./roster-utils";
 import {
-    Player,
-    PlayerRiskLevel,
-    PlayerStatus,
-    PositionGroup,
-    ROLE_OPTIONS,
-    STATUS_OPTIONS,
-    TeamInvitation,
+  Player,
+  PlayerRiskLevel,
+  PlayerStatus,
+  PositionGroup,
+  ROLE_OPTIONS,
+  STATUS_OPTIONS,
+  TeamInvitation,
 } from "./roster.models";
 import { RosterService } from "./roster.service";
-import { PlayerMetricsService, PlayerWithMetrics, RiskAssessment } from "./services/player-metrics.service";
-
+import {
+  PlayerMetricsService,
+  PlayerWithMetrics,
+  RiskAssessment,
+} from "./services/player-metrics.service";
 
 @Component({
   selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ConfirmationService],
-imports: [
+  imports: [
     // PrimeNG
     CardModule,
     TagModule,
@@ -141,7 +144,12 @@ imports: [
           >
             <div class="header-actions">
               @if (rosterService.canManageRoster()) {
-                <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportRoster()">Export</app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-download"
+                  (clicked)="exportRoster()"
+                  >Export</app-button
+                >
 
                 <p-button
                   label="Invitations"
@@ -158,9 +166,16 @@ imports: [
                   badgeSeverity="danger"
                 ></p-button>
 
-                <app-button variant="outlined" iconLeft="pi-user-plus" (clicked)="openInviteDialog()">Invite</app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-user-plus"
+                  (clicked)="openInviteDialog()"
+                  >Invite</app-button
+                >
 
-                <app-button iconLeft="pi-plus" (clicked)="openAddPlayer()">Add Player</app-button>
+                <app-button iconLeft="pi-plus" (clicked)="openAddPlayer()"
+                  >Add Player</app-button
+                >
               }
             </div>
           </app-page-header>
@@ -182,7 +197,10 @@ imports: [
           @if (rosterService.isLoading()) {
             <div class="loading-state">
               <p-progressSpinner
-                [style]="{ width: componentSizes.avatar.lg, height: componentSizes.avatar.lg }"
+                [style]="{
+                  width: componentSizes.avatar.lg,
+                  height: componentSizes.avatar.lg,
+                }"
                 strokeWidth="4"
               ></p-progressSpinner>
               <p class="loading-message">Loading roster data...</p>
@@ -223,7 +241,12 @@ imports: [
               <i class="pi pi-search"></i>
               <h3>No players match your filters</h3>
               <p>Try adjusting your search or filter criteria</p>
-              <app-button variant="outlined" iconLeft="pi-filter-slash" (clicked)="clearFilters()">Clear Filters</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-filter-slash"
+                (clicked)="clearFilters()"
+                >Clear Filters</app-button
+              >
             </div>
           }
 
@@ -393,10 +416,18 @@ imports: [
                       [value]="selectedPlayer()!.status | titlecase"
                       [severity]="getStatusSeverity(selectedPlayer()!.status)"
                     ></p-tag>
-                    @if (enrichedSelectedPlayer()?.riskLevel && enrichedSelectedPlayer()!.riskLevel !== 'low') {
+                    @if (
+                      enrichedSelectedPlayer()?.riskLevel &&
+                      enrichedSelectedPlayer()!.riskLevel !== "low"
+                    ) {
                       <p-tag
-                        [value]="'Risk: ' + (enrichedSelectedPlayer()!.riskLevel | titlecase)"
-                        [severity]="getRiskSeverity(enrichedSelectedPlayer()!.riskLevel!)"
+                        [value]="
+                          'Risk: ' +
+                          (enrichedSelectedPlayer()!.riskLevel | titlecase)
+                        "
+                        [severity]="
+                          getRiskSeverity(enrichedSelectedPlayer()!.riskLevel!)
+                        "
                       ></p-tag>
                     }
                   </div>
@@ -408,19 +439,34 @@ imports: [
                 <div class="details-metrics-summary">
                   <div class="metric-card">
                     <span class="metric-label">Readiness</span>
-                    <span class="metric-value" [class]="getReadinessClass(enrichedSelectedPlayer()!.readiness)">
+                    <span
+                      class="metric-value"
+                      [class]="
+                        getReadinessClass(enrichedSelectedPlayer()!.readiness)
+                      "
+                    >
                       {{ enrichedSelectedPlayer()!.readiness }}%
                     </span>
                   </div>
                   <div class="metric-card">
                     <span class="metric-label">ACWR</span>
-                    <span class="metric-value" [class]="getACWRClass(enrichedSelectedPlayer()!.acwr)">
-                      {{ enrichedSelectedPlayer()!.acwr | number:'1.2-2' }}
+                    <span
+                      class="metric-value"
+                      [class]="getACWRClass(enrichedSelectedPlayer()!.acwr)"
+                    >
+                      {{ enrichedSelectedPlayer()!.acwr | number: "1.2-2" }}
                     </span>
                   </div>
                   <div class="metric-card">
                     <span class="metric-label">Performance</span>
-                    <span class="metric-value" [class]="getPerformanceClass(enrichedSelectedPlayer()!.performanceScore)">
+                    <span
+                      class="metric-value"
+                      [class]="
+                        getPerformanceClass(
+                          enrichedSelectedPlayer()!.performanceScore
+                        )
+                      "
+                    >
                       {{ enrichedSelectedPlayer()!.performanceScore }}%
                     </span>
                   </div>
@@ -477,21 +523,35 @@ imports: [
                 <div class="details-benchmarks">
                   <h3><i class="pi pi-chart-bar"></i> Position Benchmarks</h3>
                   <div class="benchmarks-grid">
-                    @for (benchmark of enrichedSelectedPlayer()!.benchmarkComparison; track benchmark.metric) {
+                    @for (
+                      benchmark of enrichedSelectedPlayer()!
+                        .benchmarkComparison;
+                      track benchmark.metric
+                    ) {
                       <div class="benchmark-item">
                         <div class="benchmark-header">
-                          <span class="benchmark-name">{{ benchmark.metric }}</span>
-                          <span class="benchmark-rating" [class]="'rating-' + benchmark.rating">
+                          <span class="benchmark-name">{{
+                            benchmark.metric
+                          }}</span>
+                          <span
+                            class="benchmark-rating"
+                            [class]="'rating-' + benchmark.rating"
+                          >
                             {{ benchmark.rating | titlecase }}
                           </span>
                         </div>
                         @if (benchmark.value !== null) {
                           <div class="benchmark-value">
                             {{ benchmark.value }}{{ benchmark.unit }}
-                            <span class="benchmark-target">(Target: {{ benchmark.target }}{{ benchmark.unit }})</span>
+                            <span class="benchmark-target"
+                              >(Target: {{ benchmark.target
+                              }}{{ benchmark.unit }})</span
+                            >
                           </div>
                         } @else {
-                          <div class="benchmark-value not-tested">Not tested</div>
+                          <div class="benchmark-value not-tested">
+                            Not tested
+                          </div>
                         }
                       </div>
                     }
@@ -512,9 +572,17 @@ imports: [
               }
 
               <!-- Risk Assessment (for coaches) -->
-              @if (rosterService.canManageRoster() && riskAssessment()?.factors?.length) {
-                <div class="details-risk" [class]="'risk-level-' + riskAssessment()!.level">
-                  <h3><i class="pi pi-exclamation-triangle"></i> Risk Assessment</h3>
+              @if (
+                rosterService.canManageRoster() &&
+                riskAssessment()?.factors?.length
+              ) {
+                <div
+                  class="details-risk"
+                  [class]="'risk-level-' + riskAssessment()!.level"
+                >
+                  <h3>
+                    <i class="pi pi-exclamation-triangle"></i> Risk Assessment
+                  </h3>
                   <div class="risk-factors">
                     @for (factor of riskAssessment()!.factors; track factor) {
                       <div class="risk-factor">
@@ -527,7 +595,10 @@ imports: [
                     <div class="risk-recommendations">
                       <strong>Recommendations:</strong>
                       <ul>
-                        @for (rec of riskAssessment()!.recommendations; track rec) {
+                        @for (
+                          rec of riskAssessment()!.recommendations;
+                          track rec
+                        ) {
                           <li>{{ rec }}</li>
                         }
                       </ul>
@@ -559,9 +630,15 @@ imports: [
           }
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showDetailsDialog.set(false)">Close</app-button>
+            <app-button variant="text" (clicked)="showDetailsDialog.set(false)"
+              >Close</app-button
+            >
             @if (rosterService.canManageRoster()) {
-              <app-button iconLeft="pi-pencil" (clicked)="editPlayerFromDetails()">Edit Player</app-button>
+              <app-button
+                iconLeft="pi-pencil"
+                (clicked)="editPlayerFromDetails()"
+                >Edit Player</app-button
+              >
             }
           </ng-template>
         </p-dialog>
@@ -599,8 +676,15 @@ imports: [
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showStatusDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="updatePlayerStatus()">Update Status</app-button>
+            <app-button variant="text" (clicked)="showStatusDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSaving()"
+              (clicked)="updatePlayerStatus()"
+              >Update Status</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -636,8 +720,17 @@ imports: [
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showBulkStatusDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="updateBulkStatus()">Update All</app-button>
+            <app-button
+              variant="text"
+              (clicked)="showBulkStatusDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSaving()"
+              (clicked)="updateBulkStatus()"
+              >Update All</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -689,8 +782,16 @@ imports: [
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showInviteDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-send" [loading]="isSaving()" [disabled]="!inviteEmail || isSaving()" (clicked)="sendInvitation()">Send Invitation</app-button>
+            <app-button variant="text" (clicked)="showInviteDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-send"
+              [loading]="isSaving()"
+              [disabled]="!inviteEmail || isSaving()"
+              (clicked)="sendInvitation()"
+              >Send Invitation</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -708,9 +809,13 @@ imports: [
               <div class="empty-invitations">
                 <i class="pi pi-inbox"></i>
                 <p>No pending invitations</p>
-                <app-button iconLeft="pi-plus" (clicked)="
+                <app-button
+                  iconLeft="pi-plus"
+                  (clicked)="
                     showInvitationsDialog.set(false); openInviteDialog()
-                  ">Send New Invitation</app-button>
+                  "
+                  >Send New Invitation</app-button
+                >
               </div>
             } @else {
               @for (
@@ -749,8 +854,18 @@ imports: [
                     }
                   </div>
                   <div class="invitation-actions">
-                    <app-icon-button icon="pi-refresh" variant="text" (clicked)="resendInvitation(invitation)" ariaLabel="refresh" />
-                    <app-icon-button icon="pi-times" variant="text" (clicked)="cancelInvitation(invitation)" ariaLabel="times" />
+                    <app-icon-button
+                      icon="pi-refresh"
+                      variant="text"
+                      (clicked)="resendInvitation(invitation)"
+                      ariaLabel="refresh"
+                    />
+                    <app-icon-button
+                      icon="pi-times"
+                      variant="text"
+                      (clicked)="cancelInvitation(invitation)"
+                      ariaLabel="times"
+                    />
                   </div>
                 </div>
               }
@@ -758,8 +873,16 @@ imports: [
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showInvitationsDialog.set(false)">Close</app-button>
-            <app-button iconLeft="pi-plus" (clicked)="showInvitationsDialog.set(false); openInviteDialog()">Send New Invitation</app-button>
+            <app-button
+              variant="text"
+              (clicked)="showInvitationsDialog.set(false)"
+              >Close</app-button
+            >
+            <app-button
+              iconLeft="pi-plus"
+              (clicked)="showInvitationsDialog.set(false); openInviteDialog()"
+              >Send New Invitation</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -918,13 +1041,20 @@ export class RosterComponent implements OnInit {
     return "perf-poor";
   }
 
-  getRiskSeverity(level: PlayerRiskLevel): "success" | "info" | "warn" | "danger" {
+  getRiskSeverity(
+    level: PlayerRiskLevel,
+  ): "success" | "info" | "warn" | "danger" {
     switch (level) {
-      case "low": return "success";
-      case "moderate": return "warn";
-      case "high": return "warn";
-      case "critical": return "danger";
-      default: return "info";
+      case "low":
+        return "success";
+      case "moderate":
+        return "warn";
+      case "high":
+        return "warn";
+      case "critical":
+        return "danger";
+      default:
+        return "info";
     }
   }
 

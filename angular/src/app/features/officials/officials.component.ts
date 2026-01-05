@@ -1,12 +1,12 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -24,9 +24,9 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    GameOfficial,
-    Official,
-    OfficialsService,
+  GameOfficial,
+  Official,
+  OfficialsService,
 } from "../../core/services/officials.service";
 import { ToastService } from "../../core/services/toast.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
@@ -63,7 +63,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     PageHeaderComponent,
     DatePipe,
     CurrencyPipe,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -76,7 +76,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <app-button iconLeft="pi-plus" (clicked)="openAddOfficialDialog()">Add Official</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openAddOfficialDialog()"
+                >Add Official</app-button
+              >
             }
           </div>
         </app-page-header>
@@ -170,8 +172,18 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   <td>
                     <div class="action-buttons">
                       @if (isCoach()) {
-                        <app-icon-button icon="pi-calendar-plus" variant="text" (clicked)="openScheduleDialog(official)" ariaLabel="calendar-plus" />
-                        <app-icon-button icon="pi-pencil" variant="text" (clicked)="openEditOfficialDialog(official)" ariaLabel="pencil" />
+                        <app-icon-button
+                          icon="pi-calendar-plus"
+                          variant="text"
+                          (clicked)="openScheduleDialog(official)"
+                          ariaLabel="calendar-plus"
+                        />
+                        <app-icon-button
+                          icon="pi-pencil"
+                          variant="text"
+                          (clicked)="openEditOfficialDialog(official)"
+                          ariaLabel="pencil"
+                        />
                       }
                     </div>
                   </td>
@@ -246,10 +258,21 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     </div>
                     @if (isCoach()) {
                       <div class="assignment-actions">
-                        <app-icon-button icon="pi-check" variant="text" [disabled]="assignment.status === 'confirmed'" (clicked)="
+                        <app-icon-button
+                          icon="pi-check"
+                          variant="text"
+                          [disabled]="assignment.status === 'confirmed'"
+                          (clicked)="
                             updateAssignmentStatus(assignment, 'confirmed')
-                          " ariaLabel="check" />
-                        <app-icon-button icon="pi-times" variant="text" (clicked)="removeAssignment(assignment)" ariaLabel="times" />
+                          "
+                          ariaLabel="check"
+                        />
+                        <app-icon-button
+                          icon="pi-times"
+                          variant="text"
+                          (clicked)="removeAssignment(assignment)"
+                          ariaLabel="times"
+                        />
                       </div>
                     }
                   </div>
@@ -360,8 +383,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showOfficialDialog = false">Cancel</app-button>
-            <app-icon-button icon="pi-check" [disabled]="!officialForm.name" (clicked)="saveOfficial()" ariaLabel="check" />
+            <app-button variant="text" (clicked)="showOfficialDialog = false"
+              >Cancel</app-button
+            >
+            <app-icon-button
+              icon="pi-check"
+              [disabled]="!officialForm.name"
+              (clicked)="saveOfficial()"
+              ariaLabel="check"
+            />
           </ng-template>
         </p-dialog>
 
@@ -413,14 +443,21 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           }
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showScheduleDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" [disabled]="!scheduleForm.game_id || !scheduleForm.role" (clicked)="scheduleOfficial()">Schedule</app-button>
+            <app-button variant="text" (clicked)="showScheduleDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [disabled]="!scheduleForm.game_id || !scheduleForm.role"
+              (clicked)="scheduleOfficial()"
+              >Schedule</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './officials.component.scss',
+  styleUrl: "./officials.component.scss",
 })
 export class OfficialsComponent implements OnInit {
   private officialsService = inject(OfficialsService);
@@ -502,18 +539,19 @@ export class OfficialsComponent implements OnInit {
     const user = this.authService.getUser();
     const teamId = user?.id || "default"; // Use user ID as team ID for now
 
-    this.officialsService.getUpcomingGames(teamId)
+    this.officialsService
+      .getUpcomingGames(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (games) => {
           this.upcomingGames.set(
-            games.map(g => ({
+            games.map((g) => ({
               label: `${new Date(g.date).toLocaleDateString()} vs ${g.opponent}`,
-              value: g.value
-            }))
+              value: g.value,
+            })),
           );
         },
-        error: (err) => this.logger.error("Failed to load upcoming games", err)
+        error: (err) => this.logger.error("Failed to load upcoming games", err),
       });
   }
 

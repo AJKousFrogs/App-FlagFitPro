@@ -127,25 +127,30 @@ textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
+
   /* Geometry - Match PrimeNG form controls */
   font-family: var(--font-family-sans);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  
+
   /* Colors */
   background: var(--surface-primary, #ffffff);
   border: 1px solid var(--color-border-primary, #e5e7eb);
   color: var(--color-text-primary, #1a1a1a);
   border-radius: 8px;
-  
+
   /* Transitions */
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
 
 /* Single-line inputs: 44px height */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="file"]
+  ),
 select {
   height: 44px;
   min-height: 44px;
@@ -466,7 +471,9 @@ html.no-transitions * {
   }
 
   /* Force green background on primary buttons */
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary) {
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ) {
     background: #089949;
   }
 
@@ -551,7 +558,9 @@ html.no-transitions * {
     border-radius: var(--radius-full);
     box-shadow: var(--shadow-md);
     cursor: grab;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   .p-slider .p-slider-handle:hover {
@@ -608,7 +617,9 @@ html.no-transitions * {
     border-radius: 8px;
     background: var(--surface-primary);
     padding: 0 16px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .p-select:hover:not(.p-disabled):not(.p-focus) {
@@ -644,7 +655,9 @@ html.no-transitions * {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.15s ease, transform 0.2s ease;
+    transition:
+      color 0.15s ease,
+      transform 0.2s ease;
   }
 
   .p-select.p-focus .p-select-dropdown {
@@ -710,7 +723,9 @@ html.no-transitions * {
     font-weight: 400;
     color: var(--color-text-primary);
     background: transparent;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
     display: flex;
     align-items: center;
     opacity: 1;
@@ -1090,7 +1105,9 @@ html.no-transitions * {
     background: var(--surface-primary);
     border: 1px solid var(--color-border-primary);
     border-radius: 8px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .p-password input:hover:not(:focus):not(:disabled),

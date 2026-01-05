@@ -223,7 +223,7 @@ import {
       </p-table>
     </div>
   `,
-  styleUrl: './video-curation-video-table.component.scss',
+  styleUrl: "./video-curation-video-table.component.scss",
 })
 export class VideoCurationVideoTableComponent {
   videos = input.required<InstagramVideo[]>();

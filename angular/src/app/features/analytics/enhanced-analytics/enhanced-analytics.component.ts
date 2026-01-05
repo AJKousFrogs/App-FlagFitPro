@@ -38,7 +38,7 @@ import {
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -50,7 +50,12 @@ import {
           subtitle="Advanced performance insights and predictions"
           icon="pi-chart-line"
         >
-          <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportReport()">Export Report</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-download"
+            (clicked)="exportReport()"
+            >Export Report</app-button
+          >
         </app-page-header>
 
         <p-tabs>
@@ -65,7 +70,11 @@ import {
                   <i class="pi {{ noDataMessage.icon }}"></i>
                   <h4>{{ noDataMessage.title }}</h4>
                   <p>{{ noDataMessage.reason }}</p>
-                  <app-icon-button icon="pi-plus" routerLink="noDataMessage.helpLink" ariaLabel="plus" />
+                  <app-icon-button
+                    icon="pi-plus"
+                    routerLink="noDataMessage.helpLink"
+                    ariaLabel="plus"
+                  />
                 </div>
               } @else if (performanceChartData()) {
                 <p-chart
@@ -88,7 +97,12 @@ import {
                   <i class="pi {{ injuryRiskInsufficientMessage.icon }}"></i>
                   <h4>{{ injuryRiskInsufficientMessage.title }}</h4>
                   <p>{{ injuryRiskInsufficientMessage.reason }}</p>
-                  <app-icon-button icon="pi-info-circle" variant="outlined" routerLink="injuryRiskInsufficientMessage.helpLink" ariaLabel="info-circle" />
+                  <app-icon-button
+                    icon="pi-info-circle"
+                    variant="outlined"
+                    routerLink="injuryRiskInsufficientMessage.helpLink"
+                    ariaLabel="info-circle"
+                  />
                 </div>
               } @else {
                 <div class="risk-analysis">
@@ -124,7 +138,7 @@ import {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './enhanced-analytics.component.scss',
+  styleUrl: "./enhanced-analytics.component.scss",
 })
 export class EnhancedAnalyticsComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
@@ -133,7 +147,17 @@ export class EnhancedAnalyticsComponent implements OnInit {
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
 
-  performanceChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null>(null);
+  performanceChartData = signal<{
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor?: string;
+      backgroundColor?: string;
+      fill?: boolean;
+      tension?: number;
+    }[];
+  } | null>(null);
   injuryRisk = signal(15);
   isLoading = signal(false);
   sessionCount = signal(0);
@@ -214,7 +238,23 @@ export class EnhancedAnalyticsComponent implements OnInit {
     }
   }
 
-  private calculateWeeklyPerformance(sessions: { scheduled_date: string; status: string; duration_minutes?: number }[]): { labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } {
+  private calculateWeeklyPerformance(
+    sessions: {
+      scheduled_date: string;
+      status: string;
+      duration_minutes?: number;
+    }[],
+  ): {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor?: string;
+      backgroundColor?: string;
+      fill?: boolean;
+      tension?: number;
+    }[];
+  } {
     const weeks: Map<
       number,
       { completed: number; total: number; duration: number }
@@ -283,7 +323,13 @@ export class EnhancedAnalyticsComponent implements OnInit {
     return Math.ceil((days + startOfYear.getDay() + 1) / 7);
   }
 
-  private calculateInjuryRisk(sessions: { scheduled_date: string; status: string; intensity_level?: string }[]): void {
+  private calculateInjuryRisk(
+    sessions: {
+      scheduled_date: string;
+      status: string;
+      intensity_level?: string;
+    }[],
+  ): void {
     // Simple injury risk calculation based on training intensity and frequency
     const recentSessions = sessions.filter((s) => {
       const date = new Date(s.scheduled_date);

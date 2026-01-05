@@ -13,16 +13,16 @@
 
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
-    AfterViewChecked,
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    ElementRef,
-    HostListener,
-    ViewChild,
-    computed,
-    inject,
-    signal,
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
@@ -153,7 +153,11 @@ interface AutocompleteSuggestion {
   ],
   template: `
     <app-main-layout>
-      <div class="chat-container" [class.has-messages]="messages().length > 0" [class.is-coach-mode]="isCoach()">
+      <div
+        class="chat-container"
+        [class.has-messages]="messages().length > 0"
+        [class.is-coach-mode]="isCoach()"
+      >
         <!-- Daily Readiness Component (Modal) -->
         <app-daily-readiness
           [showOnInit]="true"
@@ -283,15 +287,17 @@ interface AutocompleteSuggestion {
                 <h2>Hey{{ userName() ? ", " + userName() : "" }}! 👋</h2>
                 <p>
                   @if (isCoach()) {
-                    I'm Merlin, your Team Strategy assistant. Ask me about your roster, practice planning, or injury risk analysis.
+                    I'm Merlin, your Team Strategy assistant. Ask me about your
+                    roster, practice planning, or injury risk analysis.
                   } @else {
-                    I'm Merlin, your AI-powered flag football coach. Ask me anything!
+                    I'm Merlin, your AI-powered flag football coach. Ask me
+                    anything!
                   }
                 </p>
               </div>
 
               <div class="suggestions-section">
-                <h3>{{ isCoach() ? 'Command Center' : 'Quick Start' }}</h3>
+                <h3>{{ isCoach() ? "Command Center" : "Quick Start" }}</h3>
                 <div class="suggestion-grid">
                   @for (
                     suggestion of quickSuggestions();
@@ -905,27 +911,31 @@ export class AiCoachChatComponent implements AfterViewChecked {
         {
           icon: "pi-users",
           label: "Team Health Report",
-          query: "Merlin, give me a briefing on current team injury risks and readiness.",
+          query:
+            "Merlin, give me a briefing on current team injury risks and readiness.",
           category: "Roster",
         },
         {
           icon: "pi-calendar-plus",
           label: "Plan Practice",
-          query: "Help me design a 90-minute high-intensity practice for today.",
+          query:
+            "Help me design a 90-minute high-intensity practice for today.",
           category: "Planning",
         },
         {
           icon: "pi-chart-line",
           label: "Performance Trends",
-          query: "Which athletes have shown the most improvement in speed this month?",
+          query:
+            "Which athletes have shown the most improvement in speed this month?",
           category: "Analytics",
         },
         {
           icon: "pi-shield",
           label: "Injury Prevention",
-          query: "Show me the best warm-up routines to prevent hamstring strains.",
+          query:
+            "Show me the best warm-up routines to prevent hamstring strains.",
           category: "Safety",
-        }
+        },
       ];
     }
 
@@ -941,7 +951,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
         label: "Pre-game nutrition",
         query: "What should I eat before a game?",
         category: "Nutrition",
-      }
+      },
     ];
 
     // Add load-based suggestion
@@ -964,7 +974,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
     // Add position-based suggestion
     const position = this.trainingService.userPosition();
-    if (position === 'QB') {
+    if (position === "QB") {
       suggestions.push({
         icon: "pi-star",
         label: "QB arm care",
@@ -975,11 +985,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
     // Add health-based suggestion
     const readinessLevel = this.trainingService.readinessLevel();
-    if (readinessLevel === 'low') {
+    if (readinessLevel === "low") {
       suggestions.push({
         icon: "pi-info-circle",
         label: "Recover better",
-        query: "My readiness is low today. What recovery techniques do you suggest?",
+        query:
+          "My readiness is low today. What recovery techniques do you suggest?",
         category: "Recovery",
       });
     }
@@ -992,15 +1003,20 @@ export class AiCoachChatComponent implements AfterViewChecked {
     const msgs = this.messages();
     const isCoach = this.isCoach();
     const chips: string[] = [];
-    
+
     // If no messages, show some helpful starters based on current state
     if (msgs.length === 0) {
       if (isCoach) {
-        chips.push("Team load summary", "Next opponent strategy", "Injury report");
+        chips.push(
+          "Team load summary",
+          "Next opponent strategy",
+          "Injury report",
+        );
       } else {
         const acwr = this.trainingService.acwrRatio();
         if (acwr > 1.3) chips.push("Explain my high ACWR");
-        if (this.trainingService.readinessScore() < 60) chips.push("Why is my readiness low?");
+        if (this.trainingService.readinessScore() < 60)
+          chips.push("Why is my readiness low?");
       }
       return chips.slice(0, 3);
     }
@@ -1016,10 +1032,18 @@ export class AiCoachChatComponent implements AfterViewChecked {
     if (isCoach) {
       switch (intent) {
         case "team_report":
-          chips.push("Detailed roster view", "Export health PDF", "Message at-risk players");
+          chips.push(
+            "Detailed roster view",
+            "Export health PDF",
+            "Message at-risk players",
+          );
           break;
         case "practice_plan":
-          chips.push("Reduce intensity", "Add position drills", "Save to calendar");
+          chips.push(
+            "Reduce intensity",
+            "Add position drills",
+            "Save to calendar",
+          );
           break;
         default:
           chips.push("Compare with last week", "Specific player deep-dive");
@@ -1027,7 +1051,10 @@ export class AiCoachChatComponent implements AfterViewChecked {
     } else {
       switch (intent) {
         case "pain_injury":
-          chips.push("What exercises can I still do?", "How long should I rest?");
+          chips.push(
+            "What exercises can I still do?",
+            "How long should I rest?",
+          );
           break;
         case "technique_correction":
           chips.push("Show me video examples", "Create a drill plan");
@@ -1040,7 +1067,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
           break;
         default:
           // Fallback to state-based context
-          if (this.trainingService.acwrRatio() > 1.2) chips.push("Injury prevention tips");
+          if (this.trainingService.acwrRatio() > 1.2)
+            chips.push("Injury prevention tips");
           if (msgs.length === 2) {
             chips.push("Tell me more", "Give me a routine");
           }
@@ -1082,13 +1110,15 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   private handleRouteParams(): void {
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      if (params['query']) {
-        this.currentMessage = params['query'];
-        // Small delay to ensure initialization is complete
-        setTimeout(() => this.sendMessage(), 100);
-      }
-    });
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        if (params["query"]) {
+          this.currentMessage = params["query"];
+          // Small delay to ensure initialization is complete
+          setTimeout(() => this.sendMessage(), 100);
+        }
+      });
   }
 
   /**
@@ -1374,11 +1404,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
     );
 
     try {
-      await firstValueFrom(this.apiService
-        .post("/api/response-feedback", {
+      await firstValueFrom(
+        this.apiService.post("/api/response-feedback", {
           messageId: message.id,
           wasHelpful: helpful,
-        }));
+        }),
+      );
 
       this.toast.success(
         helpful ? "Thanks for the feedback!" : "Thanks, we'll improve!",

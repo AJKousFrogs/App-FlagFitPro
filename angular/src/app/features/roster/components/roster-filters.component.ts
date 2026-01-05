@@ -20,7 +20,10 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   selector: "app-roster-filters",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, InputTextModule, Select,
+  imports: [
+    FormsModule,
+    InputTextModule,
+    Select,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -67,16 +70,34 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
       @if (canManage() && selectedCount() > 0) {
         <div class="bulk-actions">
           <span class="selected-count">{{ selectedCount() }} selected</span>
-          <app-button variant="outlined" size="sm" iconLeft="pi-tag" (clicked)="bulkStatusChange.emit()">Change Status</app-button>
+          <app-button
+            variant="outlined"
+            size="sm"
+            iconLeft="pi-tag"
+            (clicked)="bulkStatusChange.emit()"
+            >Change Status</app-button
+          >
           @if (canDelete()) {
-            <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="bulkRemove.emit()">Remove</app-button>
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-trash"
+              (clicked)="bulkRemove.emit()"
+              >Remove</app-button
+            >
           }
-          <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="clearSelection.emit()" ariaLabel="times" />
+          <app-icon-button
+            icon="pi-times"
+            variant="text"
+            size="sm"
+            (clicked)="clearSelection.emit()"
+            ariaLabel="times"
+          />
         </div>
       }
     </div>
   `,
-  styleUrl: './roster-filters.component.scss',
+  styleUrl: "./roster-filters.component.scss",
 })
 export class RosterFiltersComponent {
   // Two-way bindings

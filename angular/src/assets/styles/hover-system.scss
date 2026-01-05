@@ -35,9 +35,15 @@
      ================================ */
 
   /* Background colors on hover */
-  --hover-bg-primary: var(--primitive-primary-900); /* Darkened green for solid buttons */
-  --hover-bg-primary-light: var(--primitive-primary-800); /* Slightly darkened green */
-  --hover-bg-secondary: var(--primitive-primary-50); /* Light green tint for cards/lists */
+  --hover-bg-primary: var(
+    --primitive-primary-900
+  ); /* Darkened green for solid buttons */
+  --hover-bg-primary-light: var(
+    --primitive-primary-800
+  ); /* Slightly darkened green */
+  --hover-bg-secondary: var(
+    --primitive-primary-50
+  ); /* Light green tint for cards/lists */
   --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
   --hover-bg-ultra-light: rgba(
     8,
@@ -51,8 +57,12 @@
   --hover-border-subtle: rgba(8, 153, 73, 0.3); /* Subtle green border */
 
   /* Text colors on hover */
-  --hover-text-primary: var(--primitive-primary-900); /* Darker green for links */
-  --hover-text-on-primary: var(--color-text-on-primary); /* White text on green hover */
+  --hover-text-primary: var(
+    --primitive-primary-900
+  ); /* Darker green for links */
+  --hover-text-on-primary: var(
+    --color-text-on-primary
+  ); /* White text on green hover */
 
   /* Shadow on hover - green-tinted for brand consistency */
   --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);

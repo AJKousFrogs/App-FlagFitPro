@@ -13,11 +13,11 @@
 
 import { DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
@@ -87,7 +87,7 @@ interface InboxStats {
     SkeletonModule,
     AvatarModule,
     MainLayoutComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -96,14 +96,25 @@ interface InboxStats {
         <div class="inbox-header">
           <div class="header-content">
             <h1>Coach Inbox</h1>
-            <p class="subtitle">Review and approve AI-powered training interactions</p>
+            <p class="subtitle">
+              Review and approve AI-powered training interactions
+            </p>
           </div>
           <div class="header-actions">
-            <app-button variant="text" iconLeft="pi-refresh" [loading]="loading()" (clicked)="loadInbox()">Refresh</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-refresh"
+              [loading]="loading()"
+              (clicked)="loadInbox()"
+              >Refresh</app-button
+            >
           </div>
         </div>
 
-        <p-tabs [value]="activeTabIndex" (valueChange)="onTabChange($any($event))">
+        <p-tabs
+          [value]="activeTabIndex"
+          (valueChange)="onTabChange($any($event))"
+        >
           <p-tabpanel value="0">
             <ng-template pTemplate="header">
               <span>Safety Alerts</span>
@@ -124,19 +135,29 @@ interface InboxStats {
                 @for (item of safetyAlerts(); track item.id) {
                   <div class="inbox-item-card">
                     <div class="item-header">
-                      <p-avatar [label]="item.player?.name?.charAt(0) || 'A'" shape="circle"></p-avatar>
+                      <p-avatar
+                        [label]="item.player?.name?.charAt(0) || 'A'"
+                        shape="circle"
+                      ></p-avatar>
                       <div class="item-meta">
-                        <h3>{{ item.player?.name || 'Athlete' }}</h3>
-                        <span class="timestamp">{{ item.created_at | date:'short' }}</span>
+                        <h3>{{ item.player?.name || "Athlete" }}</h3>
+                        <span class="timestamp">{{
+                          item.created_at | date: "short"
+                        }}</span>
                       </div>
-                      <p-tag [value]="item.priority" [severity]="getPrioritySeverity(item.priority)"></p-tag>
+                      <p-tag
+                        [value]="item.priority"
+                        [severity]="getPrioritySeverity(item.priority)"
+                      ></p-tag>
                     </div>
                     <div class="item-body">
                       <h4>{{ item.title }}</h4>
                       <p>{{ item.summary }}</p>
                     </div>
                     <div class="item-actions">
-                      <app-button iconLeft="pi-eye" (clicked)="openItem(item)">Review</app-button>
+                      <app-button iconLeft="pi-eye" (clicked)="openItem(item)"
+                        >Review</app-button
+                      >
                     </div>
                   </div>
                 }
@@ -179,7 +200,7 @@ interface InboxStats {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './coach-inbox.component.scss',
+  styleUrl: "./coach-inbox.component.scss",
 })
 export class CoachInboxComponent {
   private toastService = inject(ToastService);
@@ -195,8 +216,12 @@ export class CoachInboxComponent {
     critical_count: 0,
   });
 
-  safetyAlerts = computed(() => this.items().filter((i) => i.inbox_type === "safety_alert"));
-  reviewNeeded = computed(() => this.items().filter((i) => i.inbox_type === "review_needed"));
+  safetyAlerts = computed(() =>
+    this.items().filter((i) => i.inbox_type === "safety_alert"),
+  );
+  reviewNeeded = computed(() =>
+    this.items().filter((i) => i.inbox_type === "review_needed"),
+  );
   wins = computed(() => this.items().filter((i) => i.inbox_type === "win"));
 
   constructor() {
@@ -220,7 +245,7 @@ export class CoachInboxComponent {
   }
 
   onTabChange(event: number | { index: number }): void {
-    if (typeof event === 'number') {
+    if (typeof event === "number") {
       this.activeTabIndex = event;
     } else {
       this.activeTabIndex = event.index;
@@ -231,7 +256,9 @@ export class CoachInboxComponent {
     this.toastService.info(`Reviewing item: ${item.title}`);
   }
 
-  getPrioritySeverity(priority: string): "danger" | "warn" | "info" | "secondary" {
+  getPrioritySeverity(
+    priority: string,
+  ): "danger" | "warn" | "info" | "secondary" {
     switch (priority) {
       case "critical":
       case "high":

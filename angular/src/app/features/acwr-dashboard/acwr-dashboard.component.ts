@@ -13,12 +13,12 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ChartModule } from "primeng/chart";
@@ -32,7 +32,6 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
-
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -301,9 +300,9 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
           <div class="trend-chart-section">
             <h3>ACWR Trend (Last 28 Days)</h3>
             <div class="chart-container">
-              <p-chart 
-                type="line" 
-                [data]="trendChartData()" 
+              <p-chart
+                type="line"
+                [data]="trendChartData()"
                 [options]="trendChartOptions"
               ></p-chart>
             </div>
@@ -371,7 +370,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
     }
     <!-- End of @else for content -->
   `,
-  styleUrl: './acwr-dashboard.component.scss',
+  styleUrl: "./acwr-dashboard.component.scss",
 })
 export class AcwrDashboardComponent implements OnInit {
   // Inject services using Angular's inject() function
@@ -421,8 +420,21 @@ export class AcwrDashboardComponent implements OnInit {
   public readonly insufficientDataMessage = METRIC_INSUFFICIENT_DATA.acwr;
 
   // Trend chart data
-  trendChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number; pointRadius?: number; pointHoverRadius?: number; borderDash?: number[] }[] } | null>(null);
-  
+  trendChartData = signal<{
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor?: string;
+      backgroundColor?: string;
+      fill?: boolean;
+      tension?: number;
+      pointRadius?: number;
+      pointHoverRadius?: number;
+      borderDash?: number[];
+    }[];
+  } | null>(null);
+
   // Chart options for trend visualization
   trendChartOptions = {
     responsive: true,
@@ -430,10 +442,10 @@ export class AcwrDashboardComponent implements OnInit {
     plugins: {
       legend: {
         display: true,
-        position: 'top' as const,
+        position: "top" as const,
       },
       tooltip: {
-        mode: 'index' as const,
+        mode: "index" as const,
         intersect: false,
       },
     },
@@ -446,13 +458,13 @@ export class AcwrDashboardComponent implements OnInit {
         },
         title: {
           display: true,
-          text: 'ACWR',
+          text: "ACWR",
         },
       },
       x: {
         title: {
           display: true,
-          text: 'Date',
+          text: "Date",
         },
       },
     },
@@ -660,8 +672,8 @@ export class AcwrDashboardComponent implements OnInit {
         .from("training_sessions")
         .select("session_date, duration_minutes, rpe, status")
         .eq("user_id", user.id)
-        .gte("session_date", startDate.toISOString().split('T')[0])
-        .lte("session_date", endDate.toISOString().split('T')[0])
+        .gte("session_date", startDate.toISOString().split("T")[0])
+        .lte("session_date", endDate.toISOString().split("T")[0])
         .eq("status", "completed")
         .order("session_date", { ascending: true });
 
@@ -671,40 +683,57 @@ export class AcwrDashboardComponent implements OnInit {
       }
 
       // Generate daily ACWR values
-      const _dailyData: { date: string; acwr: number; acute: number; chronic: number }[] = [];
+      const _dailyData: {
+        date: string;
+        acwr: number;
+        acute: number;
+        chronic: number;
+      }[] = [];
       const labels: string[] = [];
       const acwrValues: number[] = [];
-      
+
       // Calculate rolling ACWR for each day
       for (let i = 0; i < 28; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
-        const _dateStr = currentDate.toISOString().split('T')[0];
-        
+        const _dateStr = currentDate.toISOString().split("T")[0];
+
         // Calculate acute (7-day) and chronic (28-day) loads up to this date
         const acuteStart = new Date(currentDate);
         acuteStart.setDate(currentDate.getDate() - 7);
-        
+
         const chronicStart = new Date(currentDate);
         chronicStart.setDate(currentDate.getDate() - 28);
-        
+
         const acuteLoad = (sessions || [])
-          .filter(s => {
+          .filter((s) => {
             const sDate = new Date(s.session_date);
             return sDate >= acuteStart && sDate <= currentDate;
           })
-          .reduce((sum, s) => sum + ((s.duration_minutes || 0) * (s.rpe || 5)), 0);
-        
-        const chronicLoad = (sessions || [])
-          .filter(s => {
-            const sDate = new Date(s.session_date);
-            return sDate >= chronicStart && sDate <= currentDate;
-          })
-          .reduce((sum, s) => sum + ((s.duration_minutes || 0) * (s.rpe || 5)), 0) / 4; // Average over 4 weeks
-        
+          .reduce(
+            (sum, s) => sum + (s.duration_minutes || 0) * (s.rpe || 5),
+            0,
+          );
+
+        const chronicLoad =
+          (sessions || [])
+            .filter((s) => {
+              const sDate = new Date(s.session_date);
+              return sDate >= chronicStart && sDate <= currentDate;
+            })
+            .reduce(
+              (sum, s) => sum + (s.duration_minutes || 0) * (s.rpe || 5),
+              0,
+            ) / 4; // Average over 4 weeks
+
         const acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
-        
-        labels.push(currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+
+        labels.push(
+          currentDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+        );
         acwrValues.push(Number(acwr.toFixed(2)));
       }
 
@@ -713,34 +742,34 @@ export class AcwrDashboardComponent implements OnInit {
         labels,
         datasets: [
           {
-            label: 'ACWR',
+            label: "ACWR",
             data: acwrValues,
-            borderColor: 'var(--ds-primary-green)',
-            backgroundColor: 'rgba(var(--ds-primary-green-rgb), 0.1)',
+            borderColor: "var(--ds-primary-green)",
+            backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
             fill: true,
             pointRadius: 3,
             pointHoverRadius: 6,
           },
           {
-            label: 'Sweet Spot Upper (1.3)',
+            label: "Sweet Spot Upper (1.3)",
             data: new Array(28).fill(1.3),
-            borderColor: 'var(--color-status-warning)',
+            borderColor: "var(--color-status-warning)",
             borderDash: [5, 5],
             pointRadius: 0,
             fill: false,
           },
           {
-            label: 'Sweet Spot Lower (0.8)',
+            label: "Sweet Spot Lower (0.8)",
             data: new Array(28).fill(0.8),
-            borderColor: 'var(--color-status-warning)',
+            borderColor: "var(--color-status-warning)",
             borderDash: [5, 5],
             pointRadius: 0,
             fill: false,
           },
           {
-            label: 'Danger Zone (1.5)',
+            label: "Danger Zone (1.5)",
             data: new Array(28).fill(1.5),
-            borderColor: 'var(--color-status-error)',
+            borderColor: "var(--color-status-error)",
             borderDash: [2, 2],
             pointRadius: 0,
             fill: false,
@@ -758,54 +787,60 @@ export class AcwrDashboardComponent implements OnInit {
   async exportPDF(): Promise<void> {
     try {
       this.toastService.info("Generating PDF report...");
-      
+
       // Dynamically import jspdf and html2canvas
       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import('jspdf'),
-        import('html2canvas'),
+        import("jspdf"),
+        import("html2canvas"),
       ]);
-      
-      const dashboard = document.querySelector('.acwr-dashboard') as HTMLElement;
+
+      const dashboard = document.querySelector(
+        ".acwr-dashboard",
+      ) as HTMLElement;
       if (!dashboard) {
         this.toastService.error("Dashboard not found");
         return;
       }
-      
+
       // Create canvas from dashboard
       const canvas = await html2canvas(dashboard, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
       });
-      
+
       // Create PDF
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
-      
+
       const imgWidth = 210; // A4 width in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
+
       // Add title
       pdf.setFontSize(20);
-      pdf.text('ACWR Dashboard Report', 105, 15, { align: 'center' });
+      pdf.text("ACWR Dashboard Report", 105, 15, { align: "center" });
       pdf.setFontSize(10);
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
-      
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 22, {
+        align: "center",
+      });
+
       // Add dashboard image
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, Math.min(imgHeight, 250));
-      
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", 0, 30, imgWidth, Math.min(imgHeight, 250));
+
       // Save PDF
-      pdf.save(`acwr-report-${new Date().toISOString().split('T')[0]}.pdf`);
-      
+      pdf.save(`acwr-report-${new Date().toISOString().split("T")[0]}.pdf`);
+
       this.toastService.success("PDF report downloaded successfully");
     } catch (error) {
       this.logger.error("Error generating PDF:", error);
-      this.toastService.error("Failed to generate PDF. Make sure jspdf and html2canvas are installed.");
+      this.toastService.error(
+        "Failed to generate PDF. Make sure jspdf and html2canvas are installed.",
+      );
     }
   }
 }

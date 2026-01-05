@@ -206,7 +206,7 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
       }
     </div>
   `,
-  styleUrl: './import-dataset.component.scss',
+  styleUrl: "./import-dataset.component.scss",
 })
 export class ImportDatasetComponent {
   private metricsService = inject(TrainingMetricsService);

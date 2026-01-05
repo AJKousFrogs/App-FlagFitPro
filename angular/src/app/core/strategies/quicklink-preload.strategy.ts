@@ -143,7 +143,11 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
 
     // Check for data saver mode
     if ("connection" in navigator) {
-      const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+      const connection = (
+        navigator as Navigator & {
+          connection?: { saveData?: boolean; effectiveType?: string };
+        }
+      ).connection;
       if (connection?.saveData) {
         return true;
       }

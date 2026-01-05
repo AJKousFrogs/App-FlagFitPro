@@ -72,7 +72,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './toggle-switch.component.scss',
+  styleUrl: "./toggle-switch.component.scss",
 })
 export class ToggleSwitchComponent implements ControlValueAccessor {
   // Configuration

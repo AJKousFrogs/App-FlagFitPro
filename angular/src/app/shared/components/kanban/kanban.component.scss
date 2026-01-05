@@ -64,7 +64,10 @@
   border-radius: var(--radius-md);
   padding: var(--space-4);
   cursor: move;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .kanban-card:hover {

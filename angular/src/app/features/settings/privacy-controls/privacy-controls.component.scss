@@ -44,32 +44,56 @@
 }
 
 .ai-icon {
-  background: linear-gradient(135deg, var(--primitive-purple-500) 0%, var(--primitive-purple-700) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-purple-500) 0%,
+    var(--primitive-purple-700) 100%
+  );
   color: white;
 }
 
 .team-icon {
-  background: linear-gradient(135deg, var(--primitive-teal-500) 0%, var(--primitive-success-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-teal-500) 0%,
+    var(--primitive-success-400) 100%
+  );
   color: white;
 }
 
 .emergency-icon {
-  background: linear-gradient(135deg, var(--primitive-error-500) 0%, var(--primitive-error-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-error-500) 0%,
+    var(--primitive-error-400) 100%
+  );
   color: white;
 }
 
 .research-icon {
-  background: linear-gradient(135deg, var(--primitive-blue-400) 0%, var(--primitive-cyan-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-blue-400) 0%,
+    var(--primitive-cyan-400) 100%
+  );
   color: white;
 }
 
 .parental-icon {
-  background: linear-gradient(135deg, var(--primitive-pink-400) 0%, var(--primitive-yellow-300) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-pink-400) 0%,
+    var(--primitive-yellow-300) 100%
+  );
   color: white;
 }
 
 .rights-icon {
-  background: linear-gradient(135deg, var(--primitive-teal-200) 0%, var(--primitive-pink-200) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-teal-200) 0%,
+    var(--primitive-pink-200) 100%
+  );
   color: var(--color-text-primary);
 }
 
@@ -317,7 +341,10 @@
 
 .category-chips p-chip {
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .category-chips p-chip:hover {
@@ -560,4 +587,3 @@
     width: 100%;
   }
 }
-

@@ -24,8 +24,12 @@
 }
 
 @keyframes fabBackdropFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ================================================================
@@ -89,13 +93,19 @@
   padding: var(--space-4) var(--space-5);
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-semibold);
   color: var(--text-color);
   white-space: nowrap;
   text-align: center;
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.08),
     0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.15s ease;
@@ -105,7 +115,7 @@
 .action-item:hover .action-label {
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.12),
     0 6px 16px rgba(var(--ds-primary-green-rgb), 0.25);
 }
@@ -121,7 +131,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ds-primary-green);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
   transition: all 0.15s ease;
@@ -138,7 +148,7 @@
 
 .action-item:hover .action-icon {
   transform: scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.15),
     0 6px 16px rgba(var(--ds-primary-green-rgb), 0.4);
 }
@@ -155,7 +165,7 @@
   padding: 0;
   cursor: pointer;
   background: var(--ds-primary-green);
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.12),
     0 6px 20px rgba(var(--ds-primary-green-rgb), 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -165,7 +175,7 @@
 
 .main-fab:hover {
   transform: scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 6px 12px rgba(0, 0, 0, 0.15),
     0 8px 28px rgba(var(--ds-primary-green-rgb), 0.4);
 }
@@ -234,7 +244,7 @@
   .quick-actions-container {
     display: none;
   }
-  
+
   .fab-backdrop {
     display: none;
   }
@@ -248,7 +258,7 @@
 .dark-theme .action-label {
   background: var(--surface-800);
   color: var(--text-color);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 4px 12px rgba(0, 0, 0, 0.3);
 }

@@ -19,7 +19,11 @@ import { FormsModule } from "@angular/forms";
   selector: "app-rest-timer",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, Slider, FormsModule,
+  imports: [
+    CommonModule,
+    DialogModule,
+    Slider,
+    FormsModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -59,8 +63,20 @@ import { FormsModule } from "@angular/forms";
             Rest Timer
           </span>
           <div class="header-actions">
-            <app-icon-button icon="pi-minus" variant="text" size="sm" (clicked)="minimize()" ariaLabel="minus" />
-            <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="close()" ariaLabel="times" />
+            <app-icon-button
+              icon="pi-minus"
+              variant="text"
+              size="sm"
+              (clicked)="minimize()"
+              ariaLabel="minus"
+            />
+            <app-icon-button
+              icon="pi-times"
+              variant="text"
+              size="sm"
+              (clicked)="close()"
+              ariaLabel="times"
+            />
           </div>
         </div>
       </ng-template>
@@ -129,11 +145,26 @@ import { FormsModule } from "@angular/forms";
         <!-- Controls -->
         <div class="timer-controls">
           @if (!isRunning()) {
-            <app-button iconLeft="pi-play" (clicked)="start()">Start</app-button>
+            <app-button iconLeft="pi-play" (clicked)="start()"
+              >Start</app-button
+            >
           } @else {
-            <app-button variant="outlined" (clicked)="togglePause()"></app-button>
-            <app-button variant="outlined" iconLeft="pi-refresh" (clicked)="reset()">Reset</app-button>
-            <app-button variant="text" iconLeft="pi-plus" (clicked)="addTime(30)">+30s</app-button>
+            <app-button
+              variant="outlined"
+              (clicked)="togglePause()"
+            ></app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-refresh"
+              (clicked)="reset()"
+              >Reset</app-button
+            >
+            <app-button
+              variant="text"
+              iconLeft="pi-plus"
+              (clicked)="addTime(30)"
+              >+30s</app-button
+            >
           }
         </div>
 
@@ -151,7 +182,7 @@ import { FormsModule } from "@angular/forms";
       </div>
     </p-dialog>
   `,
-  styleUrl: './rest-timer.component.scss',
+  styleUrl: "./rest-timer.component.scss",
 })
 export class RestTimerComponent implements OnDestroy {
   @Input() defaultDuration = 60; // seconds

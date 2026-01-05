@@ -19,11 +19,7 @@
  * />
  */
 
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 export interface TimelineItem {
@@ -114,7 +110,7 @@ export interface TimelineItem {
       }
     </div>
   `,
-  styleUrl: './status-timeline.component.scss',
+  styleUrl: "./status-timeline.component.scss",
 })
 export class StatusTimelineComponent {
   // Inputs

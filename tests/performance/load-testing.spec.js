@@ -74,7 +74,7 @@ class PerformanceTestRunner {
           }
         }
         // Await all requests for this scenario step (needs sequential processing per scenario)
-         
+
         await Promise.all(requests);
       }
     } catch (error) {
@@ -462,7 +462,6 @@ describe("Performance and Load Testing", () => {
 
       // Need to run tests sequentially to detect breaking point
       for (const userCount of userCounts) {
-         
         const result = await runTest(userCount);
         results.push(result);
 

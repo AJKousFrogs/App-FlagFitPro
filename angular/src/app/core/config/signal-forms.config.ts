@@ -14,12 +14,7 @@
  * @version 1.0.0 - Angular 21 Signal Forms
  */
 
-import {
-  signal,
-  computed,
-  WritableSignal,
-  untracked,
-} from "@angular/core";
+import { signal, computed, WritableSignal, untracked } from "@angular/core";
 import type { Signal } from "@angular/core";
 
 // ============================================================================

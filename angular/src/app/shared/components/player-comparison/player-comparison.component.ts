@@ -72,7 +72,7 @@ interface StatComparison {
     TagModule,
     TooltipModule,
     DialogModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -105,7 +105,6 @@ interface StatComparison {
                   <p-tag
                     [value]="selected.position"
                     severity="secondary"
-                    
                   ></p-tag>
                 </div>
               }
@@ -119,11 +118,7 @@ interface StatComparison {
                   size="small"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag
-                  [value]="player.position"
-                  severity="secondary"
-                  
-                ></p-tag>
+                <p-tag [value]="player.position" severity="secondary"></p-tag>
               </div>
             </ng-template>
           </p-select>
@@ -157,7 +152,6 @@ interface StatComparison {
                   <p-tag
                     [value]="selected.position"
                     severity="secondary"
-                    
                   ></p-tag>
                 </div>
               }
@@ -171,11 +165,7 @@ interface StatComparison {
                   size="small"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag
-                  [value]="player.position"
-                  severity="secondary"
-                  
-                ></p-tag>
+                <p-tag [value]="player.position" severity="secondary"></p-tag>
               </div>
             </ng-template>
           </p-select>
@@ -339,7 +329,7 @@ interface StatComparison {
       }
     </div>
   `,
-  styleUrl: './player-comparison.component.scss',
+  styleUrl: "./player-comparison.component.scss",
 })
 export class PlayerComparisonComponent implements OnChanges {
   @Input() players: PlayerStats[] = [];

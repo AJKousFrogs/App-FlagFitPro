@@ -146,7 +146,9 @@ export class CalibrationLoggingService {
   /**
    * Get calibration statistics for a preset
    */
-  getPresetCalibrationStats(presetId: string): Observable<PresetCalibrationStats> {
+  getPresetCalibrationStats(
+    presetId: string,
+  ): Observable<PresetCalibrationStats> {
     return this.apiService
       .get(`/api/calibration-logs/preset-stats/${presetId}`)
       .pipe(map((response) => response.data as PresetCalibrationStats));

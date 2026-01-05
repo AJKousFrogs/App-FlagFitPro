@@ -13,16 +13,16 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from "@angular/common";
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
@@ -41,17 +41,20 @@ import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    Channel,
-    ChannelMemberDetails,
-    ChannelMembersResponse,
-    ChannelService,
-    ChannelType,
-    ChatMessage,
+  Channel,
+  ChannelMemberDetails,
+  ChannelMembersResponse,
+  ChannelService,
+  ChannelType,
+  ChatMessage,
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
-import { DIALOG_STYLES, DROPDOWN_WIDTHS } from "../../core/utils/design-tokens.util";
+import {
+  DIALOG_STYLES,
+  DROPDOWN_WIDTHS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
 @Component({
@@ -74,7 +77,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
     MenuModule,
     TagModule,
     MainLayoutComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -120,11 +123,26 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
           </div>
           <div class="chat-actions">
             @if (pinnedMessages().length > 0) {
-              <app-icon-button icon="pi-bookmark" variant="text" (clicked)="showPinnedMessages = true" ariaLabel="bookmark" />
+              <app-icon-button
+                icon="pi-bookmark"
+                variant="text"
+                (clicked)="showPinnedMessages = true"
+                ariaLabel="bookmark"
+              />
             }
-            <app-icon-button icon="pi-users" variant="text" (clicked)="showMembersDialog = true" ariaLabel="users" />
+            <app-icon-button
+              icon="pi-users"
+              variant="text"
+              (clicked)="showMembersDialog = true"
+              ariaLabel="users"
+            />
             @if (isCoach()) {
-              <app-icon-button icon="pi-cog" variant="text" (clicked)="openChannelSettings()" ariaLabel="cog" />
+              <app-icon-button
+                icon="pi-cog"
+                variant="text"
+                (clicked)="openChannelSettings()"
+                ariaLabel="cog"
+              />
             }
           </div>
         </div>
@@ -134,7 +152,12 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
           <div class="channels-sidebar">
             <!-- Create Channel Button (Coaches Only) -->
             @if (isCoach()) {
-              <app-button variant="outlined" iconLeft="pi-plus" (clicked)="showCreateChannelDialog = true">New Channel</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-plus"
+                (clicked)="showCreateChannelDialog = true"
+                >New Channel</app-button
+              >
             }
 
             <!-- Announcements Section -->
@@ -272,7 +295,13 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                     <strong>Important:</strong>
                     {{ currentImportantMessage()?.message }}
                   </span>
-                  <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="dismissImportantBanner()" ariaLabel="times" />
+                  <app-icon-button
+                    icon="pi-times"
+                    variant="text"
+                    size="sm"
+                    (clicked)="dismissImportantBanner()"
+                    ariaLabel="times"
+                  />
                 </div>
               }
 
@@ -331,7 +360,6 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                               <p-tag
                                 severity="danger"
                                 value="Important"
-                                
                               ></p-tag>
                             }
                             <span class="message-time">{{
@@ -347,14 +375,34 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                           <!-- Message Actions -->
                           <div class="message-actions">
                             @if (canPinMessages()) {
-                              <app-button variant="text" size="sm" (clicked)="togglePin(message)"></app-button>
+                              <app-button
+                                variant="text"
+                                size="sm"
+                                (clicked)="togglePin(message)"
+                              ></app-button>
                             }
                             @if (canMarkImportant()) {
-                              <app-button variant="text" size="sm" (clicked)="toggleImportant(message)"></app-button>
+                              <app-button
+                                variant="text"
+                                size="sm"
+                                (clicked)="toggleImportant(message)"
+                              ></app-button>
                             }
                             @if (message.sender_id === currentUserId()) {
-                              <app-icon-button icon="pi-pencil" variant="text" size="sm" (clicked)="startEditing(message)" ariaLabel="pencil" />
-                              <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="deleteMessage(message)" ariaLabel="trash" />
+                              <app-icon-button
+                                icon="pi-pencil"
+                                variant="text"
+                                size="sm"
+                                (clicked)="startEditing(message)"
+                                ariaLabel="pencil"
+                              />
+                              <app-icon-button
+                                icon="pi-trash"
+                                variant="text"
+                                size="sm"
+                                (clicked)="deleteMessage(message)"
+                                ariaLabel="trash"
+                              />
                             }
                           </div>
                         </div>
@@ -394,7 +442,10 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                   @if (newMessage.trim().length === 0) {
                     <div class="quick-replies-row">
                       @for (reply of quickReplyOptions(); track reply) {
-                        <button class="quick-reply-btn" (click)="sendQuickReply(reply)">
+                        <button
+                          class="quick-reply-btn"
+                          (click)="sendQuickReply(reply)"
+                        >
                           {{ reply }}
                         </button>
                       }
@@ -406,7 +457,10 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                       isCoach() &&
                       currentChannel()?.channel_type === "announcements"
                     ) {
-                      <app-button variant="text" (clicked)="markAsImportant = !markAsImportant"></app-button>
+                      <app-button
+                        variant="text"
+                        (clicked)="markAsImportant = !markAsImportant"
+                      ></app-button>
                     }
 
                     <input
@@ -421,9 +475,19 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                       autocomplete="off"
                     />
 
-                    <app-icon-button icon="pi-at" variant="text" (clicked)="triggerMentionPicker()" ariaLabel="at" />
+                    <app-icon-button
+                      icon="pi-at"
+                      variant="text"
+                      (clicked)="triggerMentionPicker()"
+                      ariaLabel="at"
+                    />
 
-                    <app-icon-button icon="pi-send" [disabled]="!newMessage.trim()" (clicked)="sendMessage()" ariaLabel="send" />
+                    <app-icon-button
+                      icon="pi-send"
+                      [disabled]="!newMessage.trim()"
+                      (clicked)="sendMessage()"
+                      ariaLabel="send"
+                    />
                   </div>
                 }
               </div>
@@ -495,8 +559,15 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="text" (clicked)="showCreateChannelDialog = false">Cancel</app-button>
-        <app-button iconLeft="pi-check" [disabled]="!newChannelName.trim()" (clicked)="createChannel()">Create Channel</app-button>
+        <app-button variant="text" (clicked)="showCreateChannelDialog = false"
+          >Cancel</app-button
+        >
+        <app-button
+          iconLeft="pi-check"
+          [disabled]="!newChannelName.trim()"
+          (clicked)="createChannel()"
+          >Create Channel</app-button
+        >
       </ng-template>
     </p-dialog>
 
@@ -518,7 +589,13 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
             </div>
             <p>{{ message.message }}</p>
             @if (canPinMessages()) {
-              <app-button variant="text" size="sm" iconLeft="pi-bookmark" (clicked)="togglePin(message)">Unpin</app-button>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-bookmark"
+                (clicked)="togglePin(message)"
+                >Unpin</app-button
+              >
             }
           </div>
         } @empty {
@@ -542,7 +619,6 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
             <p-tag
               [value]="channelMembersData()!.total_count.toString()"
               severity="info"
-              
             ></p-tag>
           }
         </div>
@@ -617,11 +693,16 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                             member.role === 'coach' ? 'Head Coach' : 'Assistant'
                           "
                           severity="success"
-                          
                         ></p-tag>
                       </div>
                     </div>
-                    <app-icon-button icon="pi-comment" variant="text" size="sm" (clicked)="startDirectMessage(member)" ariaLabel="comment" />
+                    <app-icon-button
+                      icon="pi-comment"
+                      variant="text"
+                      size="sm"
+                      (clicked)="startDirectMessage(member)"
+                      ariaLabel="comment"
+                    />
                   </div>
                 }
               </div>
@@ -674,7 +755,6 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                           <p-tag
                             [value]="member.position"
                             severity="secondary"
-                            
                           ></p-tag>
                         }
                         @if (!member.can_post) {
@@ -684,7 +764,13 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                         }
                       </div>
                     </div>
-                    <app-icon-button icon="pi-comment" variant="text" size="sm" (clicked)="startDirectMessage(member)" ariaLabel="comment" />
+                    <app-icon-button
+                      icon="pi-comment"
+                      variant="text"
+                      size="sm"
+                      (clicked)="startDirectMessage(member)"
+                      ariaLabel="comment"
+                    />
                   </div>
                 }
               </div>
@@ -857,12 +943,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         "Remember to log your readiness!",
       ];
     }
-    return [
-      "Copy that, Coach!",
-      "I'll be there.",
-      "Got it, thanks!",
-      "On it!",
-    ];
+    return ["Copy that, Coach!", "I'll be there.", "Got it, thanks!", "On it!"];
   });
 
   // Presence state

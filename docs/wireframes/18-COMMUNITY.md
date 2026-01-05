@@ -135,57 +135,57 @@
 
 ## Post Types
 
-| Type | Description |
-|------|-------------|
-| Text | Plain text content |
-| Image | Photo attachment |
-| Video | Video attachment |
-| Poll | Interactive poll with options |
+| Type  | Description                   |
+| ----- | ----------------------------- |
+| Text  | Plain text content            |
+| Image | Photo attachment              |
+| Video | Video attachment              |
+| Poll  | Interactive poll with options |
 
 ---
 
 ## Post Actions
 
-| Action | Description |
-|--------|-------------|
-| Like | Heart reaction |
-| Comment | Add comment |
-| Share | Share to others |
-| Bookmark | Save post |
+| Action   | Description     |
+| -------- | --------------- |
+| Like     | Heart reaction  |
+| Comment  | Add comment     |
+| Share    | Share to others |
+| Bookmark | Save post       |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Announcements banner | ✅ |
-| Posts feed | ✅ |
-| Create post | ✅ |
-| Like posts | ✅ |
-| Comment on posts | ✅ |
-| Share posts | ✅ |
-| Bookmark posts | ✅ |
-| Image posts | ✅ |
-| Video posts | ✅ |
-| Poll posts | ✅ |
-| Poll voting | ✅ |
-| Poll results | ✅ |
-| Poll expiration | ✅ |
-| Author info (name, role, position) | ✅ |
-| Location tag | ✅ |
-| Time ago display | ✅ |
-| Virtual scrolling | ✅ |
-| Like comments | ✅ |
+| Feature                            | Status |
+| ---------------------------------- | ------ |
+| Announcements banner               | ✅     |
+| Posts feed                         | ✅     |
+| Create post                        | ✅     |
+| Like posts                         | ✅     |
+| Comment on posts                   | ✅     |
+| Share posts                        | ✅     |
+| Bookmark posts                     | ✅     |
+| Image posts                        | ✅     |
+| Video posts                        | ✅     |
+| Poll posts                         | ✅     |
+| Poll voting                        | ✅     |
+| Poll results                       | ✅     |
+| Poll expiration                    | ✅     |
+| Author info (name, role, position) | ✅     |
+| Location tag                       | ✅     |
+| Time ago display                   | ✅     |
+| Virtual scrolling                  | ✅     |
+| Like comments                      | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Posts | `ApiService` | `community_posts` |
-| Comments | `ApiService` | `community_comments` |
-| Likes | `ApiService` | `community_likes` |
-| Polls | `ApiService` | `community_polls` |
-| Announcements | `TeamNotificationService` | Team announcements |
+| Data          | Service                   | Table                |
+| ------------- | ------------------------- | -------------------- |
+| Posts         | `ApiService`              | `community_posts`    |
+| Comments      | `ApiService`              | `community_comments` |
+| Likes         | `ApiService`              | `community_likes`    |
+| Polls         | `ApiService`              | `community_polls`    |
+| Announcements | `TeamNotificationService` | Team announcements   |

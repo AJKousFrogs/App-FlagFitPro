@@ -93,7 +93,7 @@ const VISIBILITY_OPTIONS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -107,14 +107,22 @@ const VISIBILITY_OPTIONS = [
           subtitle="Coaching resources and team knowledge"
           icon="pi-book"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()">Add Resource</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()"
+            >Add Resource</app-button
+          >
         </app-page-header>
 
         <!-- Search -->
         <div class="search-bar">
           <span class="p-input-icon-left search-input">
             <i class="pi pi-search"></i>
-            <input type="text" pInputText [(ngModel)]="searchQuery" placeholder="Search knowledge base..." (input)="onSearch()" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="searchQuery"
+              placeholder="Search knowledge base..."
+              (input)="onSearch()"
+            />
           </span>
         </div>
 
@@ -172,13 +180,15 @@ const VISIBILITY_OPTIONS = [
         </div>
 
         <!-- Featured Resources -->
-        @if (activeTab() === 'all' && featuredResources().length > 0) {
+        @if (activeTab() === "all" && featuredResources().length > 0) {
           <div class="section">
             <h3 class="section-title">Featured Resources</h3>
             <div class="featured-grid">
               @for (resource of featuredResources(); track resource.id) {
                 <div class="resource-card featured">
-                  <div class="resource-icon">{{ getTypeIcon(resource.type) }}</div>
+                  <div class="resource-icon">
+                    {{ getTypeIcon(resource.type) }}
+                  </div>
                   <div class="resource-content">
                     <h4>{{ resource.title }}</h4>
                     <p class="resource-meta">
@@ -188,14 +198,31 @@ const VISIBILITY_OPTIONS = [
                       }
                     </p>
                     @if (resource.duration) {
-                      <p class="resource-duration">📺 {{ resource.duration }}</p>
+                      <p class="resource-duration">
+                        📺 {{ resource.duration }}
+                      </p>
                     }
                     <p class="resource-desc">{{ resource.description }}</p>
                   </div>
                   <div class="resource-actions">
-                    <app-button size="sm" (clicked)="openResource(resource)"></app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-star" (clicked)="toggleFavorite(resource)">Favorite</app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-share-alt" (clicked)="shareResource(resource)">Share</app-button>
+                    <app-button
+                      size="sm"
+                      (clicked)="openResource(resource)"
+                    ></app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-star"
+                      (clicked)="toggleFavorite(resource)"
+                      >Favorite</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-share-alt"
+                      (clicked)="shareResource(resource)"
+                      >Share</app-button
+                    >
                   </div>
                 </div>
               }
@@ -204,16 +231,21 @@ const VISIBILITY_OPTIONS = [
         }
 
         <!-- Categories Grid -->
-        @if (activeTab() === 'all') {
+        @if (activeTab() === "all") {
           <div class="section">
             <h3 class="section-title">Categories</h3>
             <div class="categories-grid">
               @for (category of categories(); track category.id) {
-                <div class="category-card" (click)="filterByCategory(category.id)">
+                <div
+                  class="category-card"
+                  (click)="filterByCategory(category.id)"
+                >
                   <span class="category-icon">{{ category.icon }}</span>
                   <div class="category-info">
                     <span class="category-name">{{ category.name }}</span>
-                    <span class="category-count">{{ category.count }} resources</span>
+                    <span class="category-count"
+                      >{{ category.count }} resources</span
+                    >
                   </div>
                 </div>
               }
@@ -224,9 +256,9 @@ const VISIBILITY_OPTIONS = [
         <!-- Recent Additions -->
         <div class="section">
           <h3 class="section-title">
-            @if (activeTab() === 'all') {
+            @if (activeTab() === "all") {
               Recent Additions
-            } @else if (activeTab() === 'saved') {
+            } @else if (activeTab() === "saved") {
               Saved Resources
             } @else {
               {{ getCategoryLabel(activeTab()) }}
@@ -234,12 +266,18 @@ const VISIBILITY_OPTIONS = [
           </h3>
           <div class="resources-list">
             @for (resource of filteredResources(); track resource.id) {
-              <div class="resource-row" [class.team-resource]="resource.isTeamResource">
-                <div class="resource-icon-small">{{ getTypeIcon(resource.type) }}</div>
+              <div
+                class="resource-row"
+                [class.team-resource]="resource.isTeamResource"
+              >
+                <div class="resource-icon-small">
+                  {{ getTypeIcon(resource.type) }}
+                </div>
                 <div class="resource-info">
                   <h4>{{ resource.title }}</h4>
                   <p class="resource-meta">
-                    Added {{ resource.addedDate }} • Category: {{ resource.category }}
+                    Added {{ resource.addedDate }} • Category:
+                    {{ resource.category }}
                     @if (resource.readTime) {
                       • {{ resource.readTime }} read
                     }
@@ -253,9 +291,25 @@ const VISIBILITY_OPTIONS = [
                   <p class="resource-desc">{{ resource.description }}</p>
                 </div>
                 <div class="resource-actions">
-                  <app-button variant="secondary" size="sm" (clicked)="openResource(resource)"></app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-star" (clicked)="toggleFavorite(resource)">Favorite</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-share-alt" (clicked)="shareResource(resource)">Share</app-button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="openResource(resource)"
+                  ></app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-star"
+                    (clicked)="toggleFavorite(resource)"
+                    >Favorite</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-share-alt"
+                    (clicked)="shareResource(resource)"
+                    >Share</app-button
+                  >
                 </div>
               </div>
             } @empty {
@@ -267,17 +321,24 @@ const VISIBILITY_OPTIONS = [
           </div>
           @if (hasMoreResources()) {
             <div class="load-more">
-              <app-button variant="text" (clicked)="loadMore()">View All →</app-button>
+              <app-button variant="text" (clicked)="loadMore()"
+                >View All →</app-button
+              >
             </div>
           }
         </div>
 
         <!-- Team Resources -->
-        @if (activeTab() === 'all' && teamResources().length > 0) {
+        @if (activeTab() === "all" && teamResources().length > 0) {
           <div class="section team-section">
             <div class="section-header">
               <h3 class="section-title">Team Resources</h3>
-              <app-button size="sm" iconLeft="pi-plus" (clicked)="openAddDialog(true)">Add Team Resource</app-button>
+              <app-button
+                size="sm"
+                iconLeft="pi-plus"
+                (clicked)="openAddDialog(true)"
+                >Add Team Resource</app-button
+              >
             </div>
             <p class="section-description">Created by your team</p>
             <div class="resources-list">
@@ -288,13 +349,29 @@ const VISIBILITY_OPTIONS = [
                     <h4>{{ resource.title }}</h4>
                     <p class="resource-desc">{{ resource.description }}</p>
                     <p class="resource-meta">
-                      Created by: {{ resource.createdBy }} • Last updated: {{ resource.lastUpdated }}
+                      Created by: {{ resource.createdBy }} • Last updated:
+                      {{ resource.lastUpdated }}
                     </p>
                   </div>
                   <div class="resource-actions">
-                    <app-button variant="secondary" size="sm" (clicked)="openResource(resource)">View</app-button>
-                    <app-button variant="text" size="sm" (clicked)="editResource(resource)">Edit</app-button>
-                    <app-button variant="text" size="sm" (clicked)="shareToTeam(resource)">Share to Team</app-button>
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="openResource(resource)"
+                      >View</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="editResource(resource)"
+                      >Edit</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="shareToTeam(resource)"
+                      >Share to Team</app-button
+                    >
                   </div>
                 </div>
               }
@@ -330,7 +407,12 @@ const VISIBILITY_OPTIONS = [
 
           <div class="form-field">
             <label>Title</label>
-            <input type="text" pInputText [(ngModel)]="resourceForm.title" placeholder="Resource title" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="resourceForm.title"
+              placeholder="Resource title"
+            />
           </div>
 
           <div class="form-field">
@@ -345,16 +427,26 @@ const VISIBILITY_OPTIONS = [
             ></p-select>
           </div>
 
-          @if (resourceForm.type === 'link' || resourceForm.type === 'video') {
+          @if (resourceForm.type === "link" || resourceForm.type === "video") {
             <div class="form-field">
               <label>URL</label>
-              <input type="text" pInputText [(ngModel)]="resourceForm.url" placeholder="https://..." />
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="resourceForm.url"
+                placeholder="https://..."
+              />
             </div>
           }
 
           <div class="form-field">
             <label>Content / Description</label>
-            <textarea pTextarea [(ngModel)]="resourceForm.content" rows="6" placeholder="Describe the resource or enter content (Markdown supported)..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="resourceForm.content"
+              rows="6"
+              placeholder="Describe the resource or enter content (Markdown supported)..."
+            ></textarea>
           </div>
 
           <div class="form-field">
@@ -376,13 +468,22 @@ const VISIBILITY_OPTIONS = [
 
           <div class="form-field">
             <label>Tags (comma separated)</label>
-            <input type="text" pInputText [(ngModel)]="resourceForm.tags" placeholder="playbook, strategy, defense" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="resourceForm.tags"
+              placeholder="playbook, strategy, defense"
+            />
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showAddDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="saveResource()">Save Resource</app-button>
+          <app-button variant="secondary" (clicked)="showAddDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="saveResource()"
+            >Save Resource</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -413,11 +514,13 @@ export class KnowledgeBaseComponent implements OnInit {
 
   // Computed
   readonly featuredResources = computed(() =>
-    this.resources().filter((r) => r.isStaffPick).slice(0, 2)
+    this.resources()
+      .filter((r) => r.isStaffPick)
+      .slice(0, 2),
   );
 
   readonly teamResources = computed(() =>
-    this.resources().filter((r) => r.isTeamResource)
+    this.resources().filter((r) => r.isTeamResource),
   );
 
   readonly filteredResources = computed(() => {
@@ -435,7 +538,9 @@ export class KnowledgeBaseComponent implements OnInit {
     } else if (tab === "rules") {
       result = result.filter((r) => r.category.toLowerCase() === "rules");
     } else if (tab === "position") {
-      result = result.filter((r) => r.category.toLowerCase() === "position guides");
+      result = result.filter(
+        (r) => r.category.toLowerCase() === "position guides",
+      );
     } else if (tab !== "all") {
       result = result.filter((r) => r.category.toLowerCase() === tab);
     }
@@ -446,14 +551,16 @@ export class KnowledgeBaseComponent implements OnInit {
         (r) =>
           r.title.toLowerCase().includes(q) ||
           r.description.toLowerCase().includes(q) ||
-          r.tags?.some((t) => t.toLowerCase().includes(q))
+          r.tags?.some((t) => t.toLowerCase().includes(q)),
       );
     }
 
     return result.filter((r) => !r.isTeamResource).slice(0, 10);
   });
 
-  readonly hasMoreResources = computed(() => this.filteredResources().length >= 10);
+  readonly hasMoreResources = computed(
+    () => this.filteredResources().length >= 10,
+  );
 
   ngOnInit(): void {
     this.loadData();
@@ -464,7 +571,9 @@ export class KnowledgeBaseComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/knowledge"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/knowledge"),
+      );
       if (response?.success && response.data) {
         this.resources.set(response.data.resources || []);
         this.categories.set(response.data.categories || []);

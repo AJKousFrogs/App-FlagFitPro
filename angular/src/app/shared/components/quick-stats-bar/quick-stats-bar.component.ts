@@ -21,11 +21,7 @@
  * />
  */
 
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 export interface QuickStat {
@@ -99,7 +95,7 @@ export interface QuickStat {
       </div>
     </div>
   `,
-  styleUrl: './quick-stats-bar.component.scss',
+  styleUrl: "./quick-stats-bar.component.scss",
 })
 export class QuickStatsBarComponent {
   // Inputs

@@ -67,7 +67,14 @@ const meta: Meta<ButtonComponent> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "outlined", "text", "danger", "success"],
+      options: [
+        "primary",
+        "secondary",
+        "outlined",
+        "text",
+        "danger",
+        "success",
+      ],
       description: "Visual style variant of the button",
       table: {
         type: { summary: "ButtonVariant" },
@@ -399,7 +406,14 @@ const iconButtonMeta: Meta<IconButtonComponent> = {
     },
     variant: {
       control: "select",
-      options: ["primary", "secondary", "outlined", "text", "danger", "success"],
+      options: [
+        "primary",
+        "secondary",
+        "outlined",
+        "text",
+        "danger",
+        "success",
+      ],
       description: "Visual style variant",
     },
     size: {

@@ -162,8 +162,15 @@ interface Post {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="cancelPoll()">Cancel</app-button>
-          <app-button iconLeft="pi-check" [disabled]="!isPollValid" (clicked)="confirmPoll()">Add Poll</app-button>
+          <app-button variant="text" (clicked)="cancelPoll()"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="!isPollValid"
+            (clicked)="confirmPoll()"
+            >Add Poll</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -190,8 +197,15 @@ interface Post {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="cancelLocation()">Cancel</app-button>
-          <app-button iconLeft="pi-map-marker" [disabled]="!locationInput.trim()" (clicked)="confirmLocation()">Add Location</app-button>
+          <app-button variant="text" (clicked)="cancelLocation()"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-map-marker"
+            [disabled]="!locationInput.trim()"
+            (clicked)="confirmLocation()"
+            >Add Location</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -208,8 +222,15 @@ interface Post {
             </div>
           </div>
           <div class="header-actions">
-            <app-button variant="outlined" iconLeft="pi-comments" routerLink="/team-chat">Team Chat</app-button>
-            <app-button iconLeft="pi-plus" (clicked)="scrollToCreatePost()">Create Post</app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-comments"
+              routerLink="/team-chat"
+              >Team Chat</app-button
+            >
+            <app-button iconLeft="pi-plus" (clicked)="scrollToCreatePost()"
+              >Create Post</app-button
+            >
           </div>
         </div>
 
@@ -283,7 +304,12 @@ interface Post {
                     <span>Location</span>
                   </button>
                 </div>
-                <app-button iconLeft="pi-send" [disabled]="!newPostContent.trim()" (clicked)="createPost()">Post</app-button>
+                <app-button
+                  iconLeft="pi-send"
+                  [disabled]="!newPostContent.trim()"
+                  (clicked)="createPost()"
+                  >Post</app-button
+                >
               </div>
             </div>
 
@@ -587,11 +613,17 @@ interface Post {
                   <div class="card-empty-state__content">
                     <h3 class="card-empty-state__title">No posts found</h3>
                     <p class="card-empty-state__text">
-                      No posts match the topic <strong>#{{ selectedTopic() }}</strong>
+                      No posts match the topic
+                      <strong>#{{ selectedTopic() }}</strong>
                     </p>
                   </div>
                   <div class="card-empty-state__action">
-                    <app-button variant="outlined" iconLeft="pi-times" (clicked)="clearTopicFilter()">Clear Filter</app-button>
+                    <app-button
+                      variant="outlined"
+                      iconLeft="pi-times"
+                      (clicked)="clearTopicFilter()"
+                      >Clear Filter</app-button
+                    >
                   </div>
                 </div>
               }
@@ -666,15 +698,14 @@ interface Post {
                 }
               </div>
               <ng-container footer>
-                <app-button variant="text" block>View Full Leaderboard</app-button>
+                <app-button variant="text" block
+                  >View Full Leaderboard</app-button
+                >
               </ng-container>
             </app-card-shell>
 
             <!-- Trending Topics Card -->
-            <app-card-shell
-              title="Trending Topics"
-              headerIcon="pi-bolt"
-            >
+            <app-card-shell title="Trending Topics" headerIcon="pi-bolt">
               <div class="topics-list">
                 @for (topic of trendingTopics(); track topic.name) {
                   <div
@@ -703,26 +734,29 @@ interface Post {
             </app-card-shell>
 
             <!-- Quick Stats Card -->
-            <app-card-shell
-              title="Your Activity"
-              headerIcon="pi-chart-line"
-            >
+            <app-card-shell title="Your Activity" headerIcon="pi-chart-line">
               <div class="quick-stats">
                 <div class="stat-block">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{ userStats().posts }}</span>
+                    <span class="stat-block__value">{{
+                      userStats().posts
+                    }}</span>
                     <span class="stat-block__label">Posts</span>
                   </div>
                 </div>
                 <div class="stat-block">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{ userStats().likes }}</span>
+                    <span class="stat-block__value">{{
+                      userStats().likes
+                    }}</span>
                     <span class="stat-block__label">Likes</span>
                   </div>
                 </div>
                 <div class="stat-block">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{ userStats().comments }}</span>
+                    <span class="stat-block__value">{{
+                      userStats().comments
+                    }}</span>
                     <span class="stat-block__label">Comments</span>
                   </div>
                 </div>
@@ -865,7 +899,9 @@ export class CommunityComponent implements OnInit {
             const newPosts = response.data.posts.map((p: any) => ({
               id: p.id,
               author: p.authorName || p.author || "Unknown",
-              authorInitials: this.getInitials(p.authorName || p.author || "??"),
+              authorInitials: this.getInitials(
+                p.authorName || p.author || "??",
+              ),
               authorRole: p.postType === "announcement" ? "Coach" : undefined,
               timeAgo: this.getRelativeTime(new Date(p.timestamp)),
               location: p.location,
@@ -1044,7 +1080,9 @@ export class CommunityComponent implements OnInit {
           mediaType = uploadResult.type;
         }
       } catch (err) {
-        this.toastService.error("Failed to upload media. Post will be created without it.");
+        this.toastService.error(
+          "Failed to upload media. Post will be created without it.",
+        );
         this.logger.error("Media upload failed:", err);
       }
     }
@@ -1058,17 +1096,62 @@ export class CommunityComponent implements OnInit {
     };
 
     // Call API to create post
-    this.apiService.post<{ id?: string; authorName?: string; location?: string; content?: string }>("/api/community", postData).subscribe({
-      next: (response) => {
-        const data = response?.data;
-        if (data) {
+    this.apiService
+      .post<{
+        id?: string;
+        authorName?: string;
+        location?: string;
+        content?: string;
+      }>("/api/community", postData)
+      .subscribe({
+        next: (response) => {
+          const data = response?.data;
+          if (data) {
+            const newPost: Post = {
+              id: data.id || Date.now().toString(),
+              author: data.authorName || "You",
+              authorInitials: this.currentUserInitials(),
+              timeAgo: "Just now",
+              location: data.location,
+              content: data.content || content,
+              likes: 0,
+              comments: 0,
+              shares: 0,
+              isLiked: false,
+              isBookmarked: false,
+              showComments: false,
+              commentsList: [],
+              newComment: "",
+              media: mediaUrl
+                ? { type: mediaType as "image" | "video", url: mediaUrl }
+                : undefined,
+              poll: this.pendingPoll || undefined,
+            };
+
+            // Update posts signal with new post at the beginning
+            this.posts.update((posts) => [newPost, ...posts]);
+            this.toastService.success("Your post has been published!");
+
+            // Update user stats
+            this.userStats.update((stats) => ({
+              ...stats,
+              posts: stats.posts + 1,
+            }));
+          }
+          this.newPostContent = "";
+          this.pendingPoll = null;
+          this.pendingMedia = null;
+        },
+        error: (err) => {
+          this.logger.error("Error creating post:", err);
+          // Fallback to optimistic update if API fails
           const newPost: Post = {
-            id: data.id || Date.now().toString(),
-            author: data.authorName || "You",
+            id: Date.now().toString(),
+            author: "You",
             authorInitials: this.currentUserInitials(),
             timeAgo: "Just now",
-            location: data.location,
-            content: data.content || content,
+            location: location || undefined,
+            content: content,
             likes: 0,
             comments: 0,
             shares: 0,
@@ -1077,54 +1160,18 @@ export class CommunityComponent implements OnInit {
             showComments: false,
             commentsList: [],
             newComment: "",
-            media: mediaUrl ? { type: mediaType as "image" | "video", url: mediaUrl } : undefined,
+            media: mediaUrl
+              ? { type: mediaType as "image" | "video", url: mediaUrl }
+              : undefined,
             poll: this.pendingPoll || undefined,
           };
-
-          // Update posts signal with new post at the beginning
           this.posts.update((posts) => [newPost, ...posts]);
-          this.toastService.success("Your post has been published!");
-
-          // Update user stats
-          this.userStats.update((stats) => ({
-            ...stats,
-            posts: stats.posts + 1,
-          }));
-        }
-        this.newPostContent = "";
-        this.pendingPoll = null;
-        this.pendingMedia = null;
-      },
-      error: (err) => {
-        this.logger.error("Error creating post:", err);
-        // Fallback to optimistic update if API fails
-        const newPost: Post = {
-          id: Date.now().toString(),
-          author: "You",
-          authorInitials: this.currentUserInitials(),
-          timeAgo: "Just now",
-          location: location || undefined,
-          content: content,
-          likes: 0,
-          comments: 0,
-          shares: 0,
-          isLiked: false,
-          isBookmarked: false,
-          showComments: false,
-          commentsList: [],
-          newComment: "",
-          media: mediaUrl ? { type: mediaType as "image" | "video", url: mediaUrl } : undefined,
-          poll: this.pendingPoll || undefined,
-        };
-        this.posts.update((posts) => [newPost, ...posts]);
-        this.newPostContent = "";
-        this.pendingPoll = null;
-        this.pendingMedia = null;
-        this.toastService.warn(
-          "Post saved locally. Will sync when online.",
-        );
-      },
-    });
+          this.newPostContent = "";
+          this.pendingPoll = null;
+          this.pendingMedia = null;
+          this.toastService.warn("Post saved locally. Will sync when online.");
+        },
+      });
   }
 
   toggleLike(post: Post): void {
@@ -1144,7 +1191,9 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist like
     this.apiService
-      .post<{ success: boolean }>(`/api/community?postId=${post.id}&like=true`, {})
+      .post<{
+        success: boolean;
+      }>(`/api/community?postId=${post.id}&like=true`, {})
       .subscribe({
         next: (_response) => {
           // Update user stats if we liked
@@ -1191,7 +1240,9 @@ export class CommunityComponent implements OnInit {
     // Load comments from API when expanding
     if (willShow && post.commentsList.length === 0 && post.comments > 0) {
       this.apiService
-        .get<{ comments?: Comment[] }>(`/api/community?postId=${post.id}&comment=true`)
+        .get<{
+          comments?: Comment[];
+        }>(`/api/community?postId=${post.id}&comment=true`)
         .subscribe({
           next: (response) => {
             const comments = response?.data?.comments;
@@ -1350,8 +1401,11 @@ export class CommunityComponent implements OnInit {
   }
 
   // Pending media for post
-  pendingMedia: { file: File; type: "image" | "video"; preview: string } | null =
-    null;
+  pendingMedia: {
+    file: File;
+    type: "image" | "video";
+    preview: string;
+  } | null = null;
 
   // Post attachment methods
   attachPhoto(): void {

@@ -93,7 +93,7 @@ interface CoachVisibilityRecord {
     FormsModule,
     TooltipModule,
     SkeletonModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -153,11 +153,7 @@ interface CoachVisibilityRecord {
                     <span class="player-name">{{
                       alert.player_name || "Player"
                     }}</span>
-                    <p-tag
-                      value="High Risk"
-                      severity="danger"
-                      
-                    ></p-tag>
+                    <p-tag value="High Risk" severity="danger"></p-tag>
                   </div>
                   <p class="alert-message">
                     {{
@@ -180,8 +176,18 @@ interface CoachVisibilityRecord {
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <app-icon-button icon="pi-eye" variant="text" (clicked)="viewAlert(alert)" ariaLabel="eye" />
-                  <app-icon-button icon="pi-comment" variant="text" (clicked)="openNoteDialog(alert)" ariaLabel="comment" />
+                  <app-icon-button
+                    icon="pi-eye"
+                    variant="text"
+                    (clicked)="viewAlert(alert)"
+                    ariaLabel="eye"
+                  />
+                  <app-icon-button
+                    icon="pi-comment"
+                    variant="text"
+                    (clicked)="openNoteDialog(alert)"
+                    ariaLabel="comment"
+                  />
                 </div>
               </div>
             }
@@ -267,9 +273,19 @@ interface CoachVisibilityRecord {
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <app-icon-button icon="pi-eye" variant="text" (clicked)="viewRecommendation(rec)" ariaLabel="eye" />
+                    <app-icon-button
+                      icon="pi-eye"
+                      variant="text"
+                      (clicked)="viewRecommendation(rec)"
+                      ariaLabel="eye"
+                    />
                     @if (rec.status === "pending") {
-                      <app-icon-button icon="pi-times" variant="text" (clicked)="openOverrideDialog(rec)" ariaLabel="times" />
+                      <app-icon-button
+                        icon="pi-times"
+                        variant="text"
+                        (clicked)="openOverrideDialog(rec)"
+                        ariaLabel="times"
+                      />
                     }
                   </div>
                 </td>
@@ -301,8 +317,15 @@ interface CoachVisibilityRecord {
           ></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="noteDialogVisible = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" [disabled]="!coachNote.trim()" (clicked)="saveNote()">Save Note</app-button>
+          <app-button variant="text" (clicked)="noteDialogVisible = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="!coachNote.trim()"
+            (clicked)="saveNote()"
+            >Save Note</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -336,13 +359,21 @@ interface CoachVisibilityRecord {
           ></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="overrideDialogVisible = false">Cancel</app-button>
-          <app-button variant="danger" iconLeft="pi-times" [disabled]="!overrideReason.trim()" (clicked)="submitOverride()">Override</app-button>
+          <app-button variant="text" (clicked)="overrideDialogVisible = false"
+            >Cancel</app-button
+          >
+          <app-button
+            variant="danger"
+            iconLeft="pi-times"
+            [disabled]="!overrideReason.trim()"
+            (clicked)="submitOverride()"
+            >Override</app-button
+          >
         </ng-template>
       </p-dialog>
     </div>
   `,
-  styleUrl: './ai-coach-visibility.component.scss',
+  styleUrl: "./ai-coach-visibility.component.scss",
 })
 export class AiCoachVisibilityComponent implements OnInit {
   private supabaseService = inject(SupabaseService);

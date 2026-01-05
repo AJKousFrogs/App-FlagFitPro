@@ -124,7 +124,7 @@ declare global {
     CardModule,
     CarouselModule,
     KnobModule,
-  
+
     ButtonComponent,
   ],
   animations: [scaleInOut],
@@ -168,7 +168,11 @@ declare global {
               @if (hasQuickActions()) {
                 <div class="bubble-actions">
                   @for (action of quickActions(); track action.label) {
-                    <app-button variant="text" size="sm" (clicked)="executeAction(action)"></app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="executeAction(action)"
+                    ></app-button>
                   }
                 </div>
               }
@@ -200,7 +204,10 @@ declare global {
                     @if (insight.actions) {
                       <div class="insight-actions">
                         @for (action of insight.actions; track action.label) {
-                          <app-button size="sm" (clicked)="executeInsightAction(action)"></app-button>
+                          <app-button
+                            size="sm"
+                            (clicked)="executeInsightAction(action)"
+                          ></app-button>
                         }
                       </div>
                     }
@@ -211,7 +218,10 @@ declare global {
 
             <!-- Voice Commands -->
             <div class="voice-controls">
-              <app-button [loading]="processingVoice()" (clicked)="toggleVoiceRecognition()"></app-button>
+              <app-button
+                [loading]="processingVoice()"
+                (clicked)="toggleVoiceRecognition()"
+              ></app-button>
 
               @if (lastVoiceCommand()) {
                 <div class="voice-feedback">
@@ -264,9 +274,18 @@ declare global {
                     </div>
 
                     <div class="recommendation-actions">
-                      <app-button iconLeft="pi-play" (clicked)="applyRecommendation(recommendation)">Try It</app-button>
+                      <app-button
+                        iconLeft="pi-play"
+                        (clicked)="applyRecommendation(recommendation)"
+                        >Try It</app-button
+                      >
 
-                      <app-button variant="outlined" iconLeft="pi-info-circle" (clicked)="showRecommendationDetails(recommendation)">More Info</app-button>
+                      <app-button
+                        variant="outlined"
+                        iconLeft="pi-info-circle"
+                        (clicked)="showRecommendationDetails(recommendation)"
+                        >More Info</app-button
+                      >
                     </div>
                   </div>
                 </ng-template>
@@ -306,7 +325,7 @@ declare global {
     }
     <!-- End of aiEnabled() check -->
   `,
-  styleUrl: './ai-training-companion.component.scss',
+  styleUrl: "./ai-training-companion.component.scss",
 })
 export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   private aiService = inject(AIService);

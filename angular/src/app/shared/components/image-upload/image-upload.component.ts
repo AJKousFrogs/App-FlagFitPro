@@ -32,9 +32,7 @@ export interface ImageUploadResult {
   selector: "app-image-upload",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarModule, MessageModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, ProgressBarModule, MessageModule, ButtonComponent],
   template: `
     <div [class]="containerClass()">
       <!-- Upload Area -->
@@ -108,7 +106,9 @@ export interface ImageUploadResult {
           <!-- Crop Controls -->
           @if (allowCrop() && uploadedImage()) {
             <div class="crop-controls">
-              <app-button size="sm" iconLeft="pi-crop" (clicked)="enableCrop()">Crop Image</app-button>
+              <app-button size="sm" iconLeft="pi-crop" (clicked)="enableCrop()"
+                >Crop Image</app-button
+              >
             </div>
           }
 
@@ -131,7 +131,9 @@ export interface ImageUploadResult {
                 [min]="minHeight()"
                 [max]="maxHeight()"
               />
-              <app-button size="sm" (clicked)="resizeImage()">Resize</app-button>
+              <app-button size="sm" (clicked)="resizeImage()"
+                >Resize</app-button
+              >
             </div>
           }
         </div>
@@ -151,7 +153,7 @@ export interface ImageUploadResult {
       }
     </div>
   `,
-  styleUrl: './image-upload.component.scss',
+  styleUrl: "./image-upload.component.scss",
 })
 export class ImageUploadComponent {
   fileInput = viewChild<HTMLInputElement>("fileInput");
@@ -263,8 +265,10 @@ export class ImageUploadComponent {
       };
 
       // Add dimensions to file object (for display)
-      (result.file as File & { width?: number; height?: number }).width = dimensions.width;
-      (result.file as File & { width?: number; height?: number }).height = dimensions.height;
+      (result.file as File & { width?: number; height?: number }).width =
+        dimensions.width;
+      (result.file as File & { width?: number; height?: number }).height =
+        dimensions.height;
 
       this.uploadedImage.set(result);
       this.resizeWidth.set(dimensions.width);

@@ -1,15 +1,15 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    forwardRef,
-    input,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  input,
+  signal,
 } from "@angular/core";
 import {
-    ControlValueAccessor,
-    FormsModule,
-    NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
 } from "@angular/forms";
 
 /**
@@ -66,7 +66,7 @@ import {
       }
     </div>
   `,
-  styleUrl: './textarea.component.scss',
+  styleUrl: "./textarea.component.scss",
 })
 export class TextareaComponent implements ControlValueAccessor {
   // Configuration

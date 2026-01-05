@@ -10,6 +10,7 @@
 ## Purpose
 
 Enables female athletes to log and track their menstrual cycles, with the app automatically adapting:
+
 - Training recommendations by phase
 - Recovery protocols
 - Nutrition guidance
@@ -256,25 +257,25 @@ Enables female athletes to log and track their menstrual cycles, with the app au
 
 ## Phase Training Adaptations
 
-| Phase | Days | Intensity | Focus Areas | Avoid | Recovery |
-|-------|------|-----------|-------------|-------|----------|
-| Menstrual | 1-5 | 70% | Recovery, mobility, light cardio | High intensity, heavy lifting, plyos | 130% |
-| Follicular | 6-13 | 100% | Strength, skill work, endurance | None | 90% |
-| Ovulation | 14-16 | 110% | Power, speed, max strength, competition | None (but warm-up crucial) | 85% |
-| Luteal Early | 17-22 | 95% | Endurance, moderate strength | Extreme heat training | 100% |
-| Luteal Late | 23-28 | 80% | Technique, flexibility, light conditioning | High intensity, heavy plyos | 120% |
+| Phase        | Days  | Intensity | Focus Areas                                | Avoid                                | Recovery |
+| ------------ | ----- | --------- | ------------------------------------------ | ------------------------------------ | -------- |
+| Menstrual    | 1-5   | 70%       | Recovery, mobility, light cardio           | High intensity, heavy lifting, plyos | 130%     |
+| Follicular   | 6-13  | 100%      | Strength, skill work, endurance            | None                                 | 90%      |
+| Ovulation    | 14-16 | 110%      | Power, speed, max strength, competition    | None (but warm-up crucial)           | 85%      |
+| Luteal Early | 17-22 | 95%       | Endurance, moderate strength               | Extreme heat training                | 100%     |
+| Luteal Late  | 23-28 | 80%       | Technique, flexibility, light conditioning | High intensity, heavy plyos          | 120%     |
 
 ---
 
 ## Phase Nutrition Adaptations
 
-| Phase | Calories | Priority Nutrients | Hydration | Notes |
-|-------|----------|-------------------|-----------|-------|
-| Menstrual | 100% | Iron, Vitamin C, Magnesium | +10% | Iron loss - increase iron-rich foods |
-| Follicular | 95% | Protein, Complex Carbs | 100% | Higher insulin sensitivity |
-| Ovulation | 100% | Omega-3, Protein, Antioxidants | +5% | Support peak performance |
-| Luteal Early | 105% | Complex Carbs, Magnesium, B Vitamins | +15% | Metabolism increasing |
-| Luteal Late | 110% | Magnesium, Calcium, Omega-3, B6 | +10% | Peak metabolism, cravings |
+| Phase        | Calories | Priority Nutrients                   | Hydration | Notes                                |
+| ------------ | -------- | ------------------------------------ | --------- | ------------------------------------ |
+| Menstrual    | 100%     | Iron, Vitamin C, Magnesium           | +10%      | Iron loss - increase iron-rich foods |
+| Follicular   | 95%      | Protein, Complex Carbs               | 100%      | Higher insulin sensitivity           |
+| Ovulation    | 100%     | Omega-3, Protein, Antioxidants       | +5%       | Support peak performance             |
+| Luteal Early | 105%     | Complex Carbs, Magnesium, B Vitamins | +15%      | Metabolism increasing                |
+| Luteal Late  | 110%     | Magnesium, Calcium, Omega-3, B6      | +10%      | Peak metabolism, cravings            |
 
 ---
 
@@ -282,11 +283,11 @@ Enables female athletes to log and track their menstrual cycles, with the app au
 
 ```typescript
 const adjustedSweetSpot = {
-  menstrual:     { min: 0.6, max: 1.0 },   // More conservative
-  follicular:    { min: 0.8, max: 1.3 },   // Standard
-  ovulation:     { min: 0.9, max: 1.5 },   // Can push harder
-  luteal_early:  { min: 0.75, max: 1.2 },  // Slightly conservative
-  luteal_late:   { min: 0.65, max: 1.1 }   // Conservative
+  menstrual: { min: 0.6, max: 1.0 }, // More conservative
+  follicular: { min: 0.8, max: 1.3 }, // Standard
+  ovulation: { min: 0.9, max: 1.5 }, // Can push harder
+  luteal_early: { min: 0.75, max: 1.2 }, // Slightly conservative
+  luteal_late: { min: 0.65, max: 1.1 }, // Conservative
 };
 ```
 
@@ -294,21 +295,21 @@ const adjustedSweetSpot = {
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Current Cycle Status Display | ❌ | HIGH |
-| Phase Visualization | ❌ | HIGH |
-| Training Recommendations | ❌ | HIGH |
-| Nutrition Recommendations | ❌ | MEDIUM |
-| ACWR Adjustment Display | ❌ | HIGH |
-| Injury Risk Awareness | ❌ | HIGH |
-| Symptom Tracking | ❌ | MEDIUM |
-| Log Period Dialog | ❌ | HIGH |
-| Cycle History Table | ❌ | MEDIUM |
-| Prediction Algorithm | ❌ | MEDIUM |
-| Privacy Controls | ❌ | HIGH |
-| Data Export | ❌ | LOW |
-| Data Delete | ❌ | LOW |
+| Feature                      | Status | Priority |
+| ---------------------------- | ------ | -------- |
+| Current Cycle Status Display | ❌     | HIGH     |
+| Phase Visualization          | ❌     | HIGH     |
+| Training Recommendations     | ❌     | HIGH     |
+| Nutrition Recommendations    | ❌     | MEDIUM   |
+| ACWR Adjustment Display      | ❌     | HIGH     |
+| Injury Risk Awareness        | ❌     | HIGH     |
+| Symptom Tracking             | ❌     | MEDIUM   |
+| Log Period Dialog            | ❌     | HIGH     |
+| Cycle History Table          | ❌     | MEDIUM   |
+| Prediction Algorithm         | ❌     | MEDIUM   |
+| Privacy Controls             | ❌     | HIGH     |
+| Data Export                  | ❌     | LOW      |
+| Data Delete                  | ❌     | LOW      |
 
 ---
 
@@ -323,19 +324,19 @@ const adjustedSweetSpot = {
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Cycle entries | `CycleService` | `menstrual_cycles` |
-| Symptom logs | `CycleService` | `cycle_symptoms` |
-| User preferences | `SettingsService` | `user_settings` |
+| Data             | Service           | Table              |
+| ---------------- | ----------------- | ------------------ |
+| Cycle entries    | `CycleService`    | `menstrual_cycles` |
+| Symptom logs     | `CycleService`    | `cycle_symptoms`   |
+| User preferences | `SettingsService` | `user_settings`    |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Wellness | `/wellness` | Recovery metrics integration |
-| ACWR Dashboard | `/acwr-dashboard` | Adjusted sweet spot |
-| Training Schedule | `/training` | Phase-based recommendations |
-| Tournament Nutrition | `/game/nutrition` | Cycle-aware hydration |
+| Page                 | Route             | Relationship                 |
+| -------------------- | ----------------- | ---------------------------- |
+| Wellness             | `/wellness`       | Recovery metrics integration |
+| ACWR Dashboard       | `/acwr-dashboard` | Adjusted sweet spot          |
+| Training Schedule    | `/training`       | Phase-based recommendations  |
+| Tournament Nutrition | `/game/nutrition` | Cycle-aware hydration        |

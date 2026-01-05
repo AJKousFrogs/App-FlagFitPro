@@ -25,7 +25,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { DIALOG_STYLES, DROPDOWN_WIDTHS } from "../../core/utils/design-tokens.util";
+import {
+  DIALOG_STYLES,
+  DROPDOWN_WIDTHS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -88,7 +91,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -122,7 +125,12 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                 <span class="stat-label">Complete</span>
               </div>
             </div>
-            <app-button iconLeft="pi-question-circle" [disabled]="plays().length === 0" (clicked)="startQuiz()">Quiz Mode</app-button>
+            <app-button
+              iconLeft="pi-question-circle"
+              [disabled]="plays().length === 0"
+              (clicked)="startQuiz()"
+              >Quiz Mode</app-button
+            >
           </div>
           <p-progressBar
             [value]="progressPercent()"
@@ -178,18 +186,22 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                     ></p-tag>
                   </div>
                   @if (play.isMemorized) {
-                    <i class="pi pi-check-circle memorized-icon" title="Memorized"></i>
+                    <i
+                      class="pi pi-check-circle memorized-icon"
+                      title="Memorized"
+                    ></i>
                   }
                 </div>
 
                 <p class="play-formation">{{ play.formationName }}</p>
                 <p class="play-assignment">
-                  <strong>Your Assignment:</strong> {{ play.personalAssignment.responsibility }}
+                  <strong>Your Assignment:</strong>
+                  {{ play.personalAssignment.responsibility }}
                 </p>
 
                 @if (play.lastStudied) {
                   <span class="last-studied">
-                    Last studied: {{ play.lastStudied | date:'MMM d' }}
+                    Last studied: {{ play.lastStudied | date: "MMM d" }}
                   </span>
                 }
               </p-card>
@@ -237,28 +249,40 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
             <!-- My Assignment -->
             <div class="section assignment-section">
-              <h4><i class="pi pi-user"></i> My Assignment ({{ play.personalAssignment.position }})</h4>
+              <h4>
+                <i class="pi pi-user"></i> My Assignment ({{
+                  play.personalAssignment.position
+                }})
+              </h4>
               <div class="assignment-details">
                 @if (play.personalAssignment.route) {
                   <div class="detail-row">
                     <span class="label">Route:</span>
-                    <span class="value">{{ play.personalAssignment.route }}</span>
+                    <span class="value">{{
+                      play.personalAssignment.route
+                    }}</span>
                   </div>
                 }
                 <div class="detail-row">
                   <span class="label">Responsibility:</span>
-                  <span class="value">{{ play.personalAssignment.responsibility }}</span>
+                  <span class="value">{{
+                    play.personalAssignment.responsibility
+                  }}</span>
                 </div>
                 @if (play.personalAssignment.preSnapRead) {
                   <div class="detail-row">
                     <span class="label">Pre-Snap Read:</span>
-                    <span class="value">{{ play.personalAssignment.preSnapRead }}</span>
+                    <span class="value">{{
+                      play.personalAssignment.preSnapRead
+                    }}</span>
                   </div>
                 }
                 @if (play.personalAssignment.postSnapRead) {
                   <div class="detail-row">
                     <span class="label">Post-Snap Read:</span>
-                    <span class="value">{{ play.personalAssignment.postSnapRead }}</span>
+                    <span class="value">{{
+                      play.personalAssignment.postSnapRead
+                    }}</span>
                   </div>
                 }
               </div>
@@ -285,7 +309,9 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             <!-- Common Mistakes -->
             @if (play.commonMistakes.length > 0) {
               <div class="section warning-section">
-                <h4><i class="pi pi-exclamation-triangle"></i> Common Mistakes</h4>
+                <h4>
+                  <i class="pi pi-exclamation-triangle"></i> Common Mistakes
+                </h4>
                 <ul class="mistakes-list">
                   @for (mistake of play.commonMistakes; track mistake) {
                     <li><i class="pi pi-times"></i> {{ mistake }}</li>
@@ -315,9 +341,14 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
           <div class="quiz-content">
             <!-- Progress -->
             <div class="quiz-progress">
-              <span>Question {{ currentQuestionIndex() + 1 }} of {{ quizQuestions().length }}</span>
+              <span
+                >Question {{ currentQuestionIndex() + 1 }} of
+                {{ quizQuestions().length }}</span
+              >
               <p-progressBar
-                [value]="((currentQuestionIndex() + 1) / quizQuestions().length) * 100"
+                [value]="
+                  ((currentQuestionIndex() + 1) / quizQuestions().length) * 100
+                "
                 [showValue]="false"
               ></p-progressBar>
             </div>
@@ -333,12 +364,20 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                     <button
                       class="option-btn"
                       [class.selected]="selectedAnswer() === i"
-                      [class.correct]="answerSubmitted() && i === q.correctIndex"
-                      [class.incorrect]="answerSubmitted() && selectedAnswer() === i && i !== q.correctIndex"
+                      [class.correct]="
+                        answerSubmitted() && i === q.correctIndex
+                      "
+                      [class.incorrect]="
+                        answerSubmitted() &&
+                        selectedAnswer() === i &&
+                        i !== q.correctIndex
+                      "
                       [disabled]="answerSubmitted()"
                       (click)="selectAnswer(i)"
                     >
-                      <span class="option-letter">{{ getOptionLetter(i) }}</span>
+                      <span class="option-letter">{{
+                        getOptionLetter(i)
+                      }}</span>
                       <span class="option-text">{{ option }}</span>
                     </button>
                   }
@@ -346,8 +385,15 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
                 @if (answerSubmitted()) {
                   <p-message
-                    [severity]="selectedAnswer() === q.correctIndex ? 'success' : 'error'"
-                    [text]="selectedAnswer() === q.correctIndex ? 'Correct!' : 'Incorrect. The correct answer is: ' + q.options[q.correctIndex]"
+                    [severity]="
+                      selectedAnswer() === q.correctIndex ? 'success' : 'error'
+                    "
+                    [text]="
+                      selectedAnswer() === q.correctIndex
+                        ? 'Correct!'
+                        : 'Incorrect. The correct answer is: ' +
+                          q.options[q.correctIndex]
+                    "
                   ></p-message>
                 }
               </div>
@@ -356,11 +402,22 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             <!-- Quiz Actions -->
             <div class="quiz-actions">
               @if (!answerSubmitted()) {
-                <app-button iconLeft="pi-check" [disabled]="selectedAnswer() === null" (clicked)="submitAnswer()">Submit Answer</app-button>
+                <app-button
+                  iconLeft="pi-check"
+                  [disabled]="selectedAnswer() === null"
+                  (clicked)="submitAnswer()"
+                  >Submit Answer</app-button
+                >
               } @else if (currentQuestionIndex() < quizQuestions().length - 1) {
-                <app-button iconLeft="pi-arrow-right" (clicked)="nextQuestion()">Next Question</app-button>
+                <app-button iconLeft="pi-arrow-right" (clicked)="nextQuestion()"
+                  >Next Question</app-button
+                >
               } @else {
-                <app-button iconLeft="pi-chart-bar" (clicked)="showQuizResults()">See Results</app-button>
+                <app-button
+                  iconLeft="pi-chart-bar"
+                  (clicked)="showQuizResults()"
+                  >See Results</app-button
+                >
               }
             </div>
           </div>
@@ -384,16 +441,32 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             </p>
 
             @if (quizScore() >= 80) {
-              <p-message severity="success" text="Great job! You know your plays well."></p-message>
+              <p-message
+                severity="success"
+                text="Great job! You know your plays well."
+              ></p-message>
             } @else if (quizScore() >= 60) {
-              <p-message severity="warn" text="Good effort! Keep studying to improve."></p-message>
+              <p-message
+                severity="warn"
+                text="Good effort! Keep studying to improve."
+              ></p-message>
             } @else {
-              <p-message severity="info" text="Keep studying! Review the plays you missed."></p-message>
+              <p-message
+                severity="info"
+                text="Keep studying! Review the plays you missed."
+              ></p-message>
             }
 
             <div class="results-actions">
-              <app-button iconLeft="pi-refresh" (clicked)="startQuiz()">Try Again</app-button>
-              <app-button variant="secondary" iconLeft="pi-times" (clicked)="showQuiz = false">Close</app-button>
+              <app-button iconLeft="pi-refresh" (clicked)="startQuiz()"
+                >Try Again</app-button
+              >
+              <app-button
+                variant="secondary"
+                iconLeft="pi-times"
+                (clicked)="showQuiz = false"
+                >Close</app-button
+              >
             </div>
           </div>
         }
@@ -451,7 +524,7 @@ export class PlaybookComponent implements OnInit {
         (p) =>
           p.name.toLowerCase().includes(query) ||
           p.formationName.toLowerCase().includes(query) ||
-          p.personalAssignment.responsibility.toLowerCase().includes(query)
+          p.personalAssignment.responsibility.toLowerCase().includes(query),
       );
     }
 
@@ -463,15 +536,15 @@ export class PlaybookComponent implements OnInit {
     // Status filter
     if (this.selectedStatus) {
       result = result.filter((p) =>
-        this.selectedStatus === "memorized" ? p.isMemorized : !p.isMemorized
+        this.selectedStatus === "memorized" ? p.isMemorized : !p.isMemorized,
       );
     }
 
     return result;
   });
 
-  readonly memorizedCount = computed(() =>
-    this.plays().filter((p) => p.isMemorized).length
+  readonly memorizedCount = computed(
+    () => this.plays().filter((p) => p.isMemorized).length,
   );
 
   readonly totalPlays = computed(() => this.plays().length);
@@ -482,12 +555,14 @@ export class PlaybookComponent implements OnInit {
     return Math.round((this.memorizedCount() / total) * 100);
   });
 
-  readonly currentQuestion = computed(() =>
-    this.quizQuestions()[this.currentQuestionIndex()]
+  readonly currentQuestion = computed(
+    () => this.quizQuestions()[this.currentQuestionIndex()],
   );
 
-  readonly correctAnswers = computed(() =>
-    this.quizQuestions().filter((q) => q.userAnswer === q.correctIndex).length
+  readonly correctAnswers = computed(
+    () =>
+      this.quizQuestions().filter((q) => q.userAnswer === q.correctIndex)
+        .length,
   );
 
   readonly quizScore = computed(() => {
@@ -534,26 +609,36 @@ export class PlaybookComponent implements OnInit {
     this.plays.update((plays) =>
       plays.map((p) =>
         p.id === play.id
-          ? { ...p, isMemorized: newStatus, lastStudied: new Date().toISOString() }
-          : p
-      )
+          ? {
+              ...p,
+              isMemorized: newStatus,
+              lastStudied: new Date().toISOString(),
+            }
+          : p,
+      ),
     );
 
     // Update selected play too
     this.selectedPlay.update((p) =>
-      p?.id === play.id ? { ...p, isMemorized: newStatus } : p
+      p?.id === play.id ? { ...p, isMemorized: newStatus } : p,
     );
 
-    this.api.post("/api/playbook/memorized", { playId: play.id, memorized: newStatus }).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: newStatus ? "Marked as Memorized" : "Marked as Learning",
-          detail: play.name,
-        });
-      },
-      error: (err) => this.logger.error("Failed to update memorized status", err),
-    });
+    this.api
+      .post("/api/playbook/memorized", {
+        playId: play.id,
+        memorized: newStatus,
+      })
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: "success",
+            summary: newStatus ? "Marked as Memorized" : "Marked as Learning",
+            detail: play.name,
+          });
+        },
+        error: (err) =>
+          this.logger.error("Failed to update memorized status", err),
+      });
   }
 
   // Quiz Methods
@@ -585,7 +670,7 @@ export class PlaybookComponent implements OnInit {
     return plays.slice(0, Math.min(5, plays.length)).map((play) => {
       const otherPlays = plays.filter((p) => p.id !== play.id);
       const wrongAnswers = this.shuffle(
-        otherPlays.map((p) => p.personalAssignment.responsibility)
+        otherPlays.map((p) => p.personalAssignment.responsibility),
       ).slice(0, 3);
 
       const options = this.shuffle([
@@ -626,8 +711,8 @@ export class PlaybookComponent implements OnInit {
       questions.map((q, i) =>
         i === this.currentQuestionIndex()
           ? { ...q, userAnswer: this.selectedAnswer()! }
-          : q
-      )
+          : q,
+      ),
     );
 
     this.answerSubmitted.set(true);
@@ -653,7 +738,9 @@ export class PlaybookComponent implements OnInit {
     return found?.label || category;
   }
 
-  getCategorySeverity(category: PlayCategory): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  getCategorySeverity(
+    category: PlayCategory,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     switch (category) {
       case "offense":
         return "success";

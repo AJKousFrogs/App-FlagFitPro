@@ -92,7 +92,9 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .scale-btn:hover {
@@ -258,4 +260,3 @@
     width: 100%;
   }
 }
-

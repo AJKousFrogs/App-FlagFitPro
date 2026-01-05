@@ -20,6 +20,7 @@ npm run refactor:find-dark
 ```
 
 **What to look for:**
+
 - Actual CSS variables starting with `--dark-*` (not class names)
 - Files that need manual review vs auto-fix
 - False positives (class names like `.dark-theme` are OK)
@@ -34,6 +35,7 @@ npm run storybook
 ```
 
 **What to do:**
+
 1. Navigate to **Design System → Showcase**
 2. Review colors, buttons, cards, spacing, typography
 3. Verify design tokens are working correctly
@@ -52,6 +54,7 @@ npm run refactor:component -- --component=today
 ```
 
 **Manual steps:**
+
 1. Open `angular/src/app/features/today/today.component.ts`
 2. Check inline styles for hardcoded values
 3. Replace with design tokens:
@@ -61,6 +64,7 @@ npm run refactor:component -- --component=today
    - `12px` → `var(--radius-lg)`
 
 4. Verify in Storybook:
+
    ```bash
    npm run storybook
    # Navigate to Features → Today
@@ -75,6 +79,7 @@ npm run refactor:component -- --component=today
 ### Step 4: Verify & Commit
 
 **Before committing:**
+
 - [ ] Component works in Storybook
 - [ ] Component works in app (`npm start`)
 - [ ] No visual regressions
@@ -82,6 +87,7 @@ npm run refactor:component -- --component=today
 - [ ] No console errors
 
 **Commit message:**
+
 ```
 refactor(today): migrate to design system tokens
 
@@ -97,11 +103,13 @@ refactor(today): migrate to design system tokens
 For each component:
 
 ### Pre-Refactor
+
 - [ ] Run `npm run refactor:find-dark` to check for legacy variables
 - [ ] Create/update Storybook story
 - [ ] Test component in Storybook (baseline)
 
 ### During Refactor
+
 - [ ] Replace hardcoded spacing values
 - [ ] Replace hardcoded font sizes
 - [ ] Replace hardcoded colors
@@ -110,6 +118,7 @@ For each component:
 - [ ] Wrap new styles in `@layer design-system`
 
 ### Post-Refactor
+
 - [ ] Test in Storybook
 - [ ] Test in app (`npm start`)
 - [ ] Verify in DevTools
@@ -120,24 +129,28 @@ For each component:
 ## 🔄 Systematic Approach
 
 ### Phase 1: High-Impact Components (Week 1)
+
 1. `today` - Main dashboard
 2. `player-dashboard` - Already compliant (benchmark)
 3. `coach-dashboard` - Coach view
 4. `training-schedule` - Schedule view
 
 ### Phase 2: Feature Components (Week 2)
+
 1. `analytics` - Analytics pages
 2. `wellness` - Wellness tracking
 3. `community` - Community features
 4. `chat` - Chat interface
 
 ### Phase 3: Shared Components (Week 3)
+
 1. `button` - Button component
 2. `card` - Card component
 3. `input` - Form inputs
 4. `dialog` - Dialogs/modals
 
 ### Phase 4: Polish & Documentation (Week 4)
+
 1. Final visual regression testing
 2. Update all component documentation
 3. Create component library in Storybook
@@ -146,12 +159,14 @@ For each component:
 ## 🛠️ Tools & Commands
 
 ### Debugging
+
 ```bash
 npm run refactor:find-dark          # Find legacy variables
 npm run refactor:find-dark:fix      # Auto-fix (use carefully)
 ```
 
 ### Refactoring
+
 ```bash
 npm run refactor:component -- --component=<name> --dry-run
 npm run refactor:component -- --component=<name>
@@ -159,12 +174,14 @@ npm run refactor:all                # All components
 ```
 
 ### Storybook
+
 ```bash
 npm run storybook                   # Start Storybook
 npm run storybook:build            # Build Storybook
 ```
 
 ### Development
+
 ```bash
 npm start                           # Start Angular app
 npm run lint:css                   # Lint CSS/SCSS
@@ -182,6 +199,7 @@ npm run lint:ds                    # Design system check
 ## 🎨 Design Token Quick Reference
 
 ### Colors
+
 ```scss
 --ds-primary-green: #089949;
 --color-text-on-primary: #ffffff;
@@ -190,6 +208,7 @@ npm run lint:ds                    # Design system check
 ```
 
 ### Spacing (8px grid)
+
 ```scss
 --space-1: 4px;
 --space-2: 8px;
@@ -199,6 +218,7 @@ npm run lint:ds                    # Design system check
 ```
 
 ### Typography
+
 ```scss
 --font-heading-lg: 1.5rem;
 --font-heading-sm: 1.125rem;
@@ -207,6 +227,7 @@ npm run lint:ds                    # Design system check
 ```
 
 ### Border Radius
+
 ```scss
 --radius-lg: 12px;
 --radius-md: 8px;
@@ -216,16 +237,21 @@ npm run lint:ds                    # Design system check
 ## ⚠️ Common Issues & Solutions
 
 ### Issue: Legacy CSS Overriding New Styles
+
 **Solution:** Use `@layer design-system` or increase specificity
 
 ### Issue: ViewEncapsulation Blocking Styles
+
 **Solution:** Use `:host ::ng-deep` for PrimeNG overrides
 
 ### Issue: Black Text on Green Buttons
+
 **Solution:** Use `@layer overrides` with `!important`
 
 ### Issue: Storybook Not Starting
+
 **Solution:** Check if Storybook dependencies are installed:
+
 ```bash
 cd angular
 npm install --save-dev @storybook/angular @storybook/addon-essentials
@@ -234,6 +260,7 @@ npm install --save-dev @storybook/angular @storybook/addon-essentials
 ## 🎯 Success Metrics
 
 After refactoring, you should see:
+
 - ✅ No hardcoded pixel/rem values
 - ✅ All colors use design tokens
 - ✅ Consistent spacing (8px grid)

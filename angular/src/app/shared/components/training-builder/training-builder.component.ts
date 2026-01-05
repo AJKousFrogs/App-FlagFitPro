@@ -25,7 +25,7 @@ import { Slider } from "primeng/slider";
 import { StepsModule } from "primeng/steps";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { Toggle} from "primeng/togglebutton";
+import { Toggle } from "primeng/togglebutton";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -71,8 +71,7 @@ interface Goal {
     TagModule,
     TimelineModule,
     DialogModule,
-    Toggle
-  ,
+    Toggle,
     ButtonComponent,
   ],
   template: `
@@ -107,7 +106,12 @@ interface Goal {
               }
             </div>
             <div class="step-actions">
-              <app-button iconLeft="pi-arrow-right" [disabled]="selectedGoals().length === 0" (clicked)="activeStep = 1">Next</app-button>
+              <app-button
+                iconLeft="pi-arrow-right"
+                [disabled]="selectedGoals().length === 0"
+                (clicked)="activeStep = 1"
+                >Next</app-button
+              >
             </div>
           </div>
         }
@@ -177,8 +181,18 @@ interface Goal {
               }
             </form>
             <div class="step-actions">
-              <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="activeStep = 0">Previous</app-button>
-              <app-button iconLeft="pi-sparkles" [disabled]="sessionForm.invalid" (clicked)="generateSession(); activeStep = 2">Generate Session</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-arrow-left"
+                (clicked)="activeStep = 0"
+                >Previous</app-button
+              >
+              <app-button
+                iconLeft="pi-sparkles"
+                [disabled]="sessionForm.invalid"
+                (clicked)="generateSession(); activeStep = 2"
+                >Generate Session</app-button
+              >
             </div>
           </div>
         }
@@ -235,23 +249,52 @@ interface Goal {
                   </div>
                   <p class="exercise-description">{{ event.description }}</p>
                   <div class="exercise-actions">
-                    <app-button variant="text" size="sm" iconLeft="pi-play" (clicked)="previewExercise(event)">Preview</app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-pencil" (clicked)="modifyExercise(event)">Modify</app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-play"
+                      (clicked)="previewExercise(event)"
+                      >Preview</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-pencil"
+                      (clicked)="modifyExercise(event)"
+                      >Modify</app-button
+                    >
                   </div>
                 </p-card>
               </ng-template>
             </p-timeline>
             <div class="step-actions">
-              <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="activeStep = 1">Previous</app-button>
-              <app-button variant="success" iconLeft="pi-play" [loading]="isSaving()" (clicked)="startSession()">Start Session</app-button>
-              <app-button variant="outlined" iconLeft="pi-bookmark" [loading]="isSaving()" (clicked)="saveSession()">Save for Later</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-arrow-left"
+                (clicked)="activeStep = 1"
+                >Previous</app-button
+              >
+              <app-button
+                variant="success"
+                iconLeft="pi-play"
+                [loading]="isSaving()"
+                (clicked)="startSession()"
+                >Start Session</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-bookmark"
+                [loading]="isSaving()"
+                (clicked)="saveSession()"
+                >Save for Later</app-button
+              >
             </div>
           </div>
         }
       </div>
     </p-card>
   `,
-  styleUrl: './training-builder.component.scss',
+  styleUrl: "./training-builder.component.scss",
 })
 export class TrainingBuilderComponent {
   private fb = inject(FormBuilder);

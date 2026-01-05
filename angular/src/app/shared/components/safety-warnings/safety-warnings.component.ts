@@ -27,9 +27,7 @@ import { AuthService } from "../../../core/services/auth.service";
 @Component({
   selector: "app-safety-warnings",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule, RouterModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, CardModule, TagModule, RouterModule, ButtonComponent],
   template: `
     @if (hasWarnings()) {
       <div class="safety-warnings-container">
@@ -48,7 +46,6 @@ import { AuthService } from "../../../core/services/auth.service";
             <p-tag
               value="CRITICAL"
               severity="danger"
-              
               styleClass="critical-tag"
             ></p-tag>
           }
@@ -72,7 +69,6 @@ import { AuthService } from "../../../core/services/auth.service";
                   <p-tag
                     [value]="getSeverityLabel(warning.severity)"
                     [severity]="getSeverityTagType(warning.severity)"
-                    
                   ></p-tag>
                 </div>
                 <p class="warning-message">{{ warning.message }}</p>
@@ -122,15 +118,22 @@ import { AuthService } from "../../../core/services/auth.service";
         }
 
         <div class="warnings-actions">
-          <app-button variant="outlined" iconLeft="pi-chart-bar" routerLink="/training/safety">View Full Safety Report</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-chart-bar"
+            routerLink="/training/safety"
+            >View Full Safety Report</app-button
+          >
           @if (!hasAgeData()) {
-            <app-button iconLeft="pi-user-edit" routerLink="/settings/profile">Set Birth Date</app-button>
+            <app-button iconLeft="pi-user-edit" routerLink="/settings/profile"
+              >Set Birth Date</app-button
+            >
           }
         </div>
       </div>
     }
   `,
-  styleUrl: './safety-warnings.component.scss',
+  styleUrl: "./safety-warnings.component.scss",
 })
 export class SafetyWarningsComponent implements OnInit {
   private safetyService = inject(TrainingSafetyService);

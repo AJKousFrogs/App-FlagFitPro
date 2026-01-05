@@ -25,8 +25,13 @@
   --p-primary-200: rgba(var(--ds-primary-green-rgb), 0.2);
   --p-primary-300: rgba(var(--ds-primary-green-rgb), 0.3);
   --p-primary-400: rgba(var(--ds-primary-green-rgb), 0.4);
-  --p-primary-500: var(--ds-primary-green); /* var(--ds-primary-green) - Main brand color */
-  --p-primary-600: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-primary-500: var(
+    --ds-primary-green
+  ); /* var(--ds-primary-green) - Main brand color */
+  --p-primary-600: var(
+    --color-brand-primary-dark,
+    var(--primitive-primary-800)
+  );
   --p-primary-700: var(--primitive-primary-900);
   --p-primary-800: var(--primitive-primary-900);
   --p-primary-900: var(--primitive-primary-900);
@@ -34,8 +39,13 @@
 
   /* PrimeNG Primary Color - Main */
   --p-primary-color: var(--ds-primary-green);
-  --p-primary-contrast-color: var(--color-text-on-primary); /* CRITICAL: White text on green */
-  --p-primary-hover-color: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-primary-contrast-color: var(
+    --color-text-on-primary
+  ); /* CRITICAL: White text on green */
+  --p-primary-hover-color: var(
+    --color-brand-primary-dark,
+    var(--primitive-primary-800)
+  );
   --p-primary-active-color: var(--primitive-primary-900);
 
   /* ================================================================
@@ -44,11 +54,19 @@
 
   /* Default text colors (light mode) */
   --p-text-color: var(--color-text-primary, var(--primitive-neutral-900));
-  --p-text-muted-color: var(--color-text-secondary, var(--primitive-neutral-500));
-  --p-text-hover-muted-color: var(--color-text-primary, var(--primitive-neutral-900));
+  --p-text-muted-color: var(
+    --color-text-secondary,
+    var(--primitive-neutral-500)
+  );
+  --p-text-hover-muted-color: var(
+    --color-text-primary,
+    var(--primitive-neutral-900)
+  );
 
   /* Text on colored backgrounds */
-  --p-highlight-text-color: var(--color-text-on-primary); /* White text on primary/success/etc */
+  --p-highlight-text-color: var(
+    --color-text-on-primary
+  ); /* White text on primary/success/etc */
   --p-primary-text-color: var(--ds-primary-green);
 
   /* ================================================================
@@ -74,7 +92,10 @@
   --p-surface-section: var(--surface-card, var(--color-text-on-primary));
   --p-surface-card: var(--surface-card, var(--color-text-on-primary));
   --p-surface-overlay: var(--surface-card, var(--color-text-on-primary));
-  --p-surface-border: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-surface-border: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
   --p-surface-hover: var(--surface-secondary, var(--primitive-neutral-50));
 
   /* ================================================================
@@ -116,8 +137,13 @@
   /* Button */
   --p-button-primary-background: var(--ds-primary-green);
   --p-button-primary-border-color: var(--ds-primary-green);
-  --p-button-primary-color: var(--color-text-on-primary); /* CRITICAL: White text */
-  --p-button-primary-hover-background: var(--color-brand-primary-dark, var(--primitive-primary-800));
+  --p-button-primary-color: var(
+    --color-text-on-primary
+  ); /* CRITICAL: White text */
+  --p-button-primary-hover-background: var(
+    --color-brand-primary-dark,
+    var(--primitive-primary-800)
+  );
   --p-button-primary-hover-border-color: var(
     --color-brand-primary-dark,
     var(--primitive-primary-800)
@@ -142,7 +168,10 @@
 
   --p-button-padding-y: var(--space-3, 0.75rem);
   --p-button-padding-x: var(--space-4, 1rem);
-  --p-button-border-radius: var(--radius-lg, 0.5rem); /* 8px - Design System standard */
+  --p-button-border-radius: var(
+    --radius-lg,
+    0.5rem
+  ); /* 8px - Design System standard */
   --p-button-font-weight: var(--font-weight-medium, 500);
   --p-button-sm-font-size: var(--font-body-sm, 0.875rem);
   --p-button-sm-padding-y: var(--space-2, 0.5rem);
@@ -153,14 +182,26 @@
 
   /* Card - Typography aligned to unified system */
   --p-card-background: var(--surface-card, var(--color-text-on-primary));
-  --p-card-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
-  --p-card-border-radius: var(--radius-lg, 0.5rem); /* 8px - Design System standard */
+  --p-card-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
+  --p-card-border-radius: var(
+    --radius-lg,
+    0.5rem
+  ); /* 8px - Design System standard */
   --p-card-body-padding: var(--space-5, 1.25rem);
-  --p-card-title-font-size: var(--font-h3-size, 1.25rem); /* 20px - H3 for card titles */
+  --p-card-title-font-size: var(
+    --font-h3-size,
+    1.25rem
+  ); /* 20px - H3 for card titles */
   --p-card-title-font-weight: 600; /* semibold for card headers */
   --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
-  --p-card-subtitle-color: var(--color-text-secondary, var(--primitive-neutral-500));
+  --p-card-subtitle-color: var(
+    --color-text-secondary,
+    var(--primitive-neutral-500)
+  );
   --p-card-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1));
 
   /* ================================================================
@@ -186,7 +227,10 @@
 
   /* Input */
   --p-input-background: var(--surface-primary, #ffffff);
-  --p-input-border-color: var(--color-border-primary, var(--primitive-neutral-300));
+  --p-input-border-color: var(
+    --color-border-primary,
+    var(--primitive-neutral-300)
+  );
   --p-input-border-width: 1px;
   --p-input-hover-border-color: var(--primitive-neutral-400, #a3a3a3);
   --p-input-focus-border-color: var(--ds-primary-green);
@@ -195,15 +239,24 @@
   --p-input-padding-y: var(--p-form-control-padding-y);
   --p-input-padding-x: var(--p-form-control-padding-x);
   --p-input-border-radius: var(--p-form-control-border-radius);
-  --p-input-placeholder-color: var(--color-text-muted, var(--primitive-neutral-500));
+  --p-input-placeholder-color: var(
+    --color-text-muted,
+    var(--primitive-neutral-500)
+  );
   --p-input-placeholder-font-size: 14px;
   --p-input-text-color: var(--color-text-primary, var(--primitive-neutral-900));
 
   /* Input States */
   --p-input-invalid-border-color: var(--color-status-error, #ef4444);
   --p-input-invalid-focus-ring-color: rgba(239, 68, 68, 0.15);
-  --p-input-disabled-background: var(--surface-secondary, var(--primitive-neutral-100));
-  --p-input-disabled-border-color: var(--color-border-primary, var(--primitive-neutral-200));
+  --p-input-disabled-background: var(
+    --surface-secondary,
+    var(--primitive-neutral-100)
+  );
+  --p-input-disabled-border-color: var(
+    --color-border-primary,
+    var(--primitive-neutral-200)
+  );
   --p-input-disabled-opacity: 0.6;
 
   /* Dropdown/Select - Inherits form control tokens */
@@ -240,14 +293,18 @@
 
   /* Dropdown Panel Tokens */
   --p-dropdown-panel-border-radius: 8px;
-  --p-dropdown-panel-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --p-dropdown-panel-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
   --p-dropdown-option-padding: 12px 16px;
   --p-dropdown-option-border-radius: 6px;
   --p-dropdown-option-min-height: 40px;
   --p-dropdown-option-font-size: 16px;
 
   /* Checkbox/Radio */
-  --p-checkbox-border-color: var(--color-border-primary, var(--primitive-neutral-300));
+  --p-checkbox-border-color: var(
+    --color-border-primary,
+    var(--primitive-neutral-300)
+  );
   --p-checkbox-checked-background: var(--ds-primary-green);
   --p-checkbox-checked-border-color: var(--ds-primary-green);
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
@@ -265,9 +322,15 @@
   --p-tag-info-color: var(--color-text-on-primary);
 
   /* Dialog/Modal - Typography aligned to unified system */
-  --p-dialog-border-radius: var(--radius-lg, 0.5rem); /* 8px - Design System standard */
+  --p-dialog-border-radius: var(
+    --radius-lg,
+    0.5rem
+  ); /* 8px - Design System standard */
   --p-dialog-header-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
-  --p-dialog-header-font-size: var(--font-h2-size, 1.5rem); /* 24px - H2 for dialog titles */
+  --p-dialog-header-font-size: var(
+    --font-h2-size,
+    1.5rem
+  ); /* 24px - H2 for dialog titles */
   --p-dialog-header-font-weight: var(--font-h2-weight, 600); /* semibold */
   --p-dialog-header-line-height: var(--font-h2-line-height, 1.25);
   --p-dialog-content-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
@@ -288,7 +351,10 @@
 
   /* Menu */
   --p-menu-background: var(--surface-card, var(--color-text-on-primary));
-  --p-menu-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-menu-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
   --p-menu-border-radius: var(--radius-lg, 0.5rem);
   --p-menu-item-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
   --p-menu-item-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
@@ -296,20 +362,41 @@
   --p-menu-item-active-color: var(--ds-primary-green);
 
   /* Datatable - Typography aligned to unified system */
-  --p-datatable-header-background: var(--surface-secondary, var(--primitive-neutral-50));
-  --p-datatable-header-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
-  --p-datatable-header-font-size: var(--font-label-size, 0.875rem); /* 14px - label */
-  --p-datatable-header-font-weight: var(--font-label-weight, 600); /* semibold */
+  --p-datatable-header-background: var(
+    --surface-secondary,
+    var(--primitive-neutral-50)
+  );
+  --p-datatable-header-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
+  --p-datatable-header-font-size: var(
+    --font-label-size,
+    0.875rem
+  ); /* 14px - label */
+  --p-datatable-header-font-weight: var(
+    --font-label-weight,
+    600
+  ); /* semibold */
   --p-datatable-header-line-height: var(--font-label-line-height, 1.2);
   --p-datatable-body-font-size: var(--font-body-size, 1rem); /* 16px - body */
   --p-datatable-body-font-weight: var(--font-body-weight, 400);
-  --p-datatable-row-hover-background: var(--surface-secondary, var(--primitive-neutral-50));
+  --p-datatable-row-hover-background: var(
+    --surface-secondary,
+    var(--primitive-neutral-50)
+  );
   --p-datatable-row-selected-background: rgba(var(--ds-primary-green-rgb), 0.1);
-  --p-datatable-row-selected-color: var(--color-text-primary, var(--primitive-neutral-900));
+  --p-datatable-row-selected-color: var(
+    --color-text-primary,
+    var(--primitive-neutral-900)
+  );
 
   /* Paginator */
   --p-paginator-background: var(--surface-card, var(--color-text-on-primary));
-  --p-paginator-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-paginator-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
   --p-paginator-element-hover-background: rgba(
     var(--ds-primary-green-rgb),
     0.04
@@ -319,8 +406,14 @@
 
   /* Tabs - Typography aligned to unified system */
   --p-tabview-nav-background: transparent;
-  --p-tabview-nav-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
-  --p-tabview-tab-font-size: var(--font-body-sm-size, 0.875rem); /* 14px - body-sm */
+  --p-tabview-nav-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
+  --p-tabview-tab-font-size: var(
+    --font-body-sm-size,
+    0.875rem
+  ); /* 14px - body-sm */
   --p-tabview-tab-font-weight: 600; /* semibold for tab labels */
   --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
@@ -329,15 +422,27 @@
   --p-tabview-tab-hover-border-color: var(--ds-primary-green);
 
   /* Panel - Typography aligned to unified system */
-  --p-panel-header-background: var(--surface-secondary, var(--primitive-neutral-50));
-  --p-panel-header-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-panel-header-background: var(
+    --surface-secondary,
+    var(--primitive-neutral-50)
+  );
+  --p-panel-header-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
   --p-panel-header-font-size: var(--font-h3-size, 1.25rem); /* 20px - H3 */
   --p-panel-header-font-weight: 600; /* semibold */
   --p-panel-header-line-height: var(--font-h3-line-height, 1.3);
-  --p-panel-content-border-color: var(--color-border-secondary, var(--primitive-neutral-200));
+  --p-panel-content-border-color: var(
+    --color-border-secondary,
+    var(--primitive-neutral-200)
+  );
 
   /* Progress Bar */
-  --p-progressbar-background: var(--surface-tertiary, var(--primitive-neutral-100));
+  --p-progressbar-background: var(
+    --surface-tertiary,
+    var(--primitive-neutral-100)
+  );
   --p-progressbar-value-background: var(--ds-primary-green);
   --p-progressbar-border-radius: var(--radius-full, 9999px);
 
@@ -367,7 +472,10 @@
      ================================================================ */
 
   --p-disabled-opacity: 0.6;
-  --p-disabled-background: var(--surface-tertiary, var(--primitive-neutral-100));
+  --p-disabled-background: var(
+    --surface-tertiary,
+    var(--primitive-neutral-100)
+  );
   --p-disabled-color: var(--color-text-muted, var(--primitive-neutral-400));
 }
 
@@ -399,18 +507,42 @@
   --p-surface-900: var(--primitive-neutral-50);
   --p-surface-950: var(--color-text-on-primary);
 
-  --p-content-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
-  --p-card-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
-  --p-surface-ground: var(--primitive-neutral-950, var(--primitive-neutral-950));
+  --p-content-background: var(
+    --primitive-neutral-800,
+    var(--primitive-neutral-800)
+  );
+  --p-card-background: var(
+    --primitive-neutral-800,
+    var(--primitive-neutral-800)
+  );
+  --p-surface-ground: var(
+    --primitive-neutral-950,
+    var(--primitive-neutral-950)
+  );
   --p-surface-card: var(--primitive-neutral-800, var(--primitive-neutral-800));
-  --p-surface-border: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  --p-surface-border: var(
+    --primitive-neutral-700,
+    var(--primitive-neutral-700)
+  );
   --p-surface-hover: var(--primitive-neutral-700, var(--primitive-neutral-700));
 
   /* Component backgrounds */
-  --p-datatable-header-background: var(--primitive-neutral-900, var(--primitive-neutral-900));
-  --p-panel-header-background: var(--primitive-neutral-900, var(--primitive-neutral-900));
-  --p-menu-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
-  --p-paginator-background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-datatable-header-background: var(
+    --primitive-neutral-900,
+    var(--primitive-neutral-900)
+  );
+  --p-panel-header-background: var(
+    --primitive-neutral-900,
+    var(--primitive-neutral-900)
+  );
+  --p-menu-background: var(
+    --primitive-neutral-800,
+    var(--primitive-neutral-800)
+  );
+  --p-paginator-background: var(
+    --primitive-neutral-800,
+    var(--primitive-neutral-800)
+  );
 
   /* Inputs in dark mode */
   --p-input-background: var(--primitive-neutral-800);
@@ -631,14 +763,18 @@ p-button[severity="primary"] .p-button {
   height: var(--p-form-control-height, 44px);
   min-height: var(--p-form-control-min-height, 44px);
   border-radius: var(--p-form-control-border-radius, 8px);
-  padding: var(--p-form-control-padding-y, 10px) var(--p-form-control-padding-x, 16px);
+  padding: var(--p-form-control-padding-y, 10px)
+    var(--p-form-control-padding-x, 16px);
   font-size: var(--p-form-control-font-size, 16px);
   font-weight: var(--p-form-control-font-weight, 400);
   line-height: var(--p-form-control-line-height, 1.5);
   background: var(--p-input-background, var(--surface-primary));
   border: var(--p-input-border-width, 1px) solid var(--p-input-border-color);
   color: var(--p-input-text-color, var(--color-text-primary));
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
 
 /* Placeholder styling */
@@ -675,7 +811,8 @@ p-button[severity="primary"] .p-button {
 .p-datepicker .p-inputtext:focus,
 .p-inputnumber .p-inputtext:focus {
   border-color: var(--p-input-focus-border-color);
-  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px) var(--p-input-focus-ring-color);
+  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px)
+    var(--p-input-focus-ring-color);
   outline: none;
 }
 
@@ -695,7 +832,8 @@ p-button[severity="primary"] .p-button {
 .p-select.p-invalid.p-focus,
 .p-multiselect.p-invalid.p-focus {
   border-color: var(--p-input-invalid-border-color);
-  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px) var(--p-input-invalid-focus-ring-color);
+  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px)
+    var(--p-input-invalid-focus-ring-color);
 }
 
 /* Disabled state - muted appearance */
@@ -743,7 +881,9 @@ p-button[severity="primary"] .p-button {
   align-items: center;
   justify-content: center;
   color: var(--color-text-secondary);
-  transition: color 0.15s ease, transform 0.2s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.2s ease;
 }
 
 .p-dropdown.p-focus .p-dropdown-trigger,
@@ -799,7 +939,9 @@ p-button[severity="primary"] .p-button {
   display: flex;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 /* Option hover */
@@ -857,7 +999,8 @@ p-button[severity="primary"] .p-button {
   color: var(--color-text-secondary);
   background: transparent;
   border: none;
-  border-radius: 0 var(--p-form-control-border-radius, 8px) var(--p-form-control-border-radius, 8px) 0;
+  border-radius: 0 var(--p-form-control-border-radius, 8px)
+    var(--p-form-control-border-radius, 8px) 0;
   cursor: pointer;
   transition: color 0.15s ease;
 }
@@ -880,14 +1023,17 @@ p-button[severity="primary"] .p-button {
 }
 
 .p-inputnumber-buttons-stacked .p-inputtext {
-  border-radius: var(--p-form-control-border-radius, 8px) 0 0 var(--p-form-control-border-radius, 8px);
+  border-radius: var(--p-form-control-border-radius, 8px) 0 0
+    var(--p-form-control-border-radius, 8px);
 }
 
 .p-inputnumber-button {
   background: var(--surface-secondary);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-secondary);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .p-inputnumber-button:hover {

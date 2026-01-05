@@ -65,14 +65,16 @@ export class GlobalErrorHandlerService {
       this.logger.error(
         "[ErrorHandler] Caught error:",
         redactedError.message,
-        "Type:", redactedError.errorType,
-        "Route:", redactedError.route
+        "Type:",
+        redactedError.errorType,
+        "Route:",
+        redactedError.route,
       );
 
       // Check if this is a critical error that should show recovery UI
       if (this.isCriticalError(error)) {
         this.logger.error(
-          "[ErrorHandler] Critical error detected - recovery may be needed"
+          "[ErrorHandler] Critical error detected - recovery may be needed",
         );
       }
     });

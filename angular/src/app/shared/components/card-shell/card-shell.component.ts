@@ -79,7 +79,9 @@ import { CommonModule } from "@angular/common";
             @if (headerIcon()) {
               <span
                 class="card-shell__header-icon"
-                [class.card-shell__header-icon--compact]="density() === 'compact'"
+                [class.card-shell__header-icon--compact]="
+                  density() === 'compact'
+                "
               >
                 <i [class]="'pi ' + headerIcon()"></i>
               </span>

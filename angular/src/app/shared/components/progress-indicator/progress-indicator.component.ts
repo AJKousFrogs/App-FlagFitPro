@@ -103,7 +103,7 @@ import { ProgressBarModule } from "primeng/progressbar";
       }
     </div>
   `,
-  styleUrl: './progress-indicator.component.scss',
+  styleUrl: "./progress-indicator.component.scss",
 })
 export class ProgressIndicatorComponent {
   // Configuration

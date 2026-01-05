@@ -10,6 +10,7 @@
 ## Overview
 
 Travel Recovery provides evidence-based protocols for:
+
 1. **Flight Travel** - Jet lag management for international competitions (LA28, Brisbane 2032)
 2. **Car Travel** - Blood circulation management for long drives (6-12+ hours)
 
@@ -361,79 +362,80 @@ Travel Recovery provides evidence-based protocols for:
 
 ### Flight Travel Features
 
-| Documented Feature | Status | Location |
-|-------------------|--------|----------|
-| Olympic Quick Select (LA28, Brisbane) | ✅ | Planning form |
-| Timezone selector with filter | ✅ | Planning form |
-| Departure/arrival dates | ✅ | Planning form |
-| Competition date | ✅ | Planning form |
-| Flight duration input | ✅ | Planning form |
-| Layovers input | ✅ | Planning form |
-| Jet lag severity score | ✅ | Active dashboard |
-| Time zones crossed display | ✅ | Chips |
-| Travel direction (east/west) | ✅ | Chips |
-| Estimated recovery days | ✅ | Severity card |
-| Expected symptoms list | ✅ | Severity card |
-| Days until competition countdown | ✅ | Severity card |
-| Competition readiness warning | ✅ | Severity card |
-| Today's protocol card | ✅ | Active dashboard |
-| Sleep window (bed/wake time) | ✅ | Protocol section |
-| Light exposure windows (seek/avoid) | ✅ | Protocol section |
-| Training guidelines | ✅ | Protocol section |
-| Recommended activities | ✅ | Protocol section |
-| Avoid activities | ✅ | Protocol section |
-| Max training duration | ✅ | Protocol section |
-| Hydration target | ✅ | Protocol section |
-| Key actions timeline | ✅ | Recommendations |
-| Supplements (melatonin, caffeine) | ✅ | Supplements section |
-| Full recovery timeline accordion | ✅ | Timeline card |
-| Day-by-day protocol expansion | ✅ | Accordion panels |
-| Travel checklist | ✅ | Checklist card |
-| Essential items badge | ✅ | Checklist items |
-| Packed checkbox | ✅ | Checklist items |
+| Documented Feature                    | Status | Location            |
+| ------------------------------------- | ------ | ------------------- |
+| Olympic Quick Select (LA28, Brisbane) | ✅     | Planning form       |
+| Timezone selector with filter         | ✅     | Planning form       |
+| Departure/arrival dates               | ✅     | Planning form       |
+| Competition date                      | ✅     | Planning form       |
+| Flight duration input                 | ✅     | Planning form       |
+| Layovers input                        | ✅     | Planning form       |
+| Jet lag severity score                | ✅     | Active dashboard    |
+| Time zones crossed display            | ✅     | Chips               |
+| Travel direction (east/west)          | ✅     | Chips               |
+| Estimated recovery days               | ✅     | Severity card       |
+| Expected symptoms list                | ✅     | Severity card       |
+| Days until competition countdown      | ✅     | Severity card       |
+| Competition readiness warning         | ✅     | Severity card       |
+| Today's protocol card                 | ✅     | Active dashboard    |
+| Sleep window (bed/wake time)          | ✅     | Protocol section    |
+| Light exposure windows (seek/avoid)   | ✅     | Protocol section    |
+| Training guidelines                   | ✅     | Protocol section    |
+| Recommended activities                | ✅     | Protocol section    |
+| Avoid activities                      | ✅     | Protocol section    |
+| Max training duration                 | ✅     | Protocol section    |
+| Hydration target                      | ✅     | Protocol section    |
+| Key actions timeline                  | ✅     | Recommendations     |
+| Supplements (melatonin, caffeine)     | ✅     | Supplements section |
+| Full recovery timeline accordion      | ✅     | Timeline card       |
+| Day-by-day protocol expansion         | ✅     | Accordion panels    |
+| Travel checklist                      | ✅     | Checklist card      |
+| Essential items badge                 | ✅     | Checklist items     |
+| Packed checkbox                       | ✅     | Checklist items     |
 
 ### Car Travel Features
 
-| Documented Feature | Status | Location |
-|-------------------|--------|----------|
-| Trip name input | ✅ | Planning form |
-| Duration input (hours) | ✅ | Planning form |
-| Driver/passenger toggle | ✅ | Planning form |
-| Competition date (optional) | ✅ | Planning form |
-| Blood circulation risk score | ✅ | Risk card |
-| Risk level tag | ✅ | Risk card |
-| Risk factors list | ✅ | Risk card |
-| Key recommendations | ✅ | Risk card |
-| Warning symptoms (stop & seek help) | ✅ | Active dashboard |
-| Compression garment guidelines | ✅ | Compression card |
-| Garment type recommendation | ✅ | Compression card |
-| Pressure (mmHg) | ✅ | Compression card |
-| When to wear/remove | ✅ | Compression card |
-| Compression cautions | ✅ | Compression card |
-| Evidence base note | ✅ | Compression card |
-| Massage gun protocol | ✅ | Massage card |
-| Pre-travel routine | ✅ | Accordion |
-| Rest stop routine | ✅ | Accordion |
-| Post-arrival routine | ✅ | Accordion |
-| Target muscles with duration | ✅ | Protocol content |
-| Technique description | ✅ | Protocol content |
-| Massage cautions | ✅ | Protocol content |
-| Seated circulation exercises | ✅ | Exercises card |
-| Exercise cards (4 exercises) | ✅ | Grid layout |
-| Sets, reps, hold duration | ✅ | Exercise details |
-| Rest stop protocol timeline | ✅ | Rest stop card |
-| Hour markers | ✅ | Timeline |
-| Actions per stop | ✅ | Rest stop items |
-| Research evidence accordion | ✅ | Research card |
-| Topic/finding/source/recommendation | ✅ | Research items |
-| PubMed links | ✅ | Research items |
-| Car travel checklist | ✅ | Checklist card |
+| Documented Feature                  | Status | Location         |
+| ----------------------------------- | ------ | ---------------- |
+| Trip name input                     | ✅     | Planning form    |
+| Duration input (hours)              | ✅     | Planning form    |
+| Driver/passenger toggle             | ✅     | Planning form    |
+| Competition date (optional)         | ✅     | Planning form    |
+| Blood circulation risk score        | ✅     | Risk card        |
+| Risk level tag                      | ✅     | Risk card        |
+| Risk factors list                   | ✅     | Risk card        |
+| Key recommendations                 | ✅     | Risk card        |
+| Warning symptoms (stop & seek help) | ✅     | Active dashboard |
+| Compression garment guidelines      | ✅     | Compression card |
+| Garment type recommendation         | ✅     | Compression card |
+| Pressure (mmHg)                     | ✅     | Compression card |
+| When to wear/remove                 | ✅     | Compression card |
+| Compression cautions                | ✅     | Compression card |
+| Evidence base note                  | ✅     | Compression card |
+| Massage gun protocol                | ✅     | Massage card     |
+| Pre-travel routine                  | ✅     | Accordion        |
+| Rest stop routine                   | ✅     | Accordion        |
+| Post-arrival routine                | ✅     | Accordion        |
+| Target muscles with duration        | ✅     | Protocol content |
+| Technique description               | ✅     | Protocol content |
+| Massage cautions                    | ✅     | Protocol content |
+| Seated circulation exercises        | ✅     | Exercises card   |
+| Exercise cards (4 exercises)        | ✅     | Grid layout      |
+| Sets, reps, hold duration           | ✅     | Exercise details |
+| Rest stop protocol timeline         | ✅     | Rest stop card   |
+| Hour markers                        | ✅     | Timeline         |
+| Actions per stop                    | ✅     | Rest stop items  |
+| Research evidence accordion         | ✅     | Research card    |
+| Topic/finding/source/recommendation | ✅     | Research items   |
+| PubMed links                        | ✅     | Research items   |
+| Car travel checklist                | ✅     | Checklist card   |
 
 ---
 
 ## Business Logic
 
 ### Jet Lag Severity Calculation
+
 ```typescript
 // Jet Lag Score = |Timezone Difference| × Direction Multiplier
 // Eastward: × 1.5 (harder)
@@ -442,6 +444,7 @@ Travel Recovery provides evidence-based protocols for:
 ```
 
 ### Blood Circulation Risk Assessment
+
 ```typescript
 // Risk Score = Base Score + Duration Factor + Mobility Factor
 // Low: 4-6 hours, Score 1-3
@@ -454,25 +457,26 @@ Travel Recovery provides evidence-based protocols for:
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| Timezones | `TravelRecoveryService` | `getAvailableTimezones()` |
-| Travel plan | `TravelRecoveryService` | `currentPlan` signal |
-| Recovery protocols | `TravelRecoveryService` | `recoveryProtocol` signal |
-| Jet lag severity | `TravelRecoveryService` | `jetLagSeverity` signal |
-| Today's protocol | `TravelRecoveryService` | `getCurrentProtocolDay()` |
-| Olympic venue info | `TravelRecoveryService` | `getOlympicVenueInfo()` |
-| Car travel risk | `TravelRecoveryService` | `calculateCarTravelRisk()` |
-| Seated exercises | `TravelRecoveryService` | `getSeatedExercises()` |
-| Massage protocols | `TravelRecoveryService` | `getMassageGunProtocol()` |
+| Data                   | Service                 | Method                       |
+| ---------------------- | ----------------------- | ---------------------------- |
+| Timezones              | `TravelRecoveryService` | `getAvailableTimezones()`    |
+| Travel plan            | `TravelRecoveryService` | `currentPlan` signal         |
+| Recovery protocols     | `TravelRecoveryService` | `recoveryProtocol` signal    |
+| Jet lag severity       | `TravelRecoveryService` | `jetLagSeverity` signal      |
+| Today's protocol       | `TravelRecoveryService` | `getCurrentProtocolDay()`    |
+| Olympic venue info     | `TravelRecoveryService` | `getOlympicVenueInfo()`      |
+| Car travel risk        | `TravelRecoveryService` | `calculateCarTravelRisk()`   |
+| Seated exercises       | `TravelRecoveryService` | `getSeatedExercises()`       |
+| Massage protocols      | `TravelRecoveryService` | `getMassageGunProtocol()`    |
 | Compression guidelines | `TravelRecoveryService` | `getCompressionGuidelines()` |
-| Travel checklist | `TravelRecoveryService` | `getTravelChecklist()` |
+| Travel checklist       | `TravelRecoveryService` | `getTravelChecklist()`       |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Clear flight/car toggle
 - Olympic quick select for common destinations
 - Comprehensive jet lag protocols with daily breakdown
@@ -481,6 +485,7 @@ Travel Recovery provides evidence-based protocols for:
 - Expandable timeline for day-by-day details
 
 ### 🔧 Suggested Improvements
+
 1. Add wearable integration for sleep tracking during recovery
 2. Push notifications for protocol reminders
 3. Integration with wellness check-in post-travel

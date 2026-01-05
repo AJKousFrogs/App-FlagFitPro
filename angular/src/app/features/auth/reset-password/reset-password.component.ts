@@ -1,15 +1,15 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
 } from "@angular/core";
 
 import {
-    FormBuilder,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -76,7 +76,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
             [fullWidth]="true"
-          >Send Reset Link</app-button>
+            >Send Reset Link</app-button
+          >
         </form>
 
         <div class="reset-password-divider my-4">
@@ -89,7 +90,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
       </p-card>
     </div>
   `,
-  styleUrl: './reset-password.component.scss',
+  styleUrl: "./reset-password.component.scss",
 })
 export class ResetPasswordComponent {
   private fb = inject(FormBuilder);

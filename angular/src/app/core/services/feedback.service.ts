@@ -134,7 +134,7 @@ export class FeedbackService {
     let message = "Something went wrong. Please try again.";
 
     const err = error as { status?: number; message?: string };
-    
+
     if (err.status === 401) {
       message = "Your session has expired. Please log in again.";
       // Logic for redirecting to login should ideally be in AuthService or a Guard

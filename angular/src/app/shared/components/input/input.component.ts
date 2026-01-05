@@ -72,7 +72,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './input.component.scss',
+  styleUrl: "./input.component.scss",
 })
 export class InputComponent implements ControlValueAccessor {
   // Angular 21: Use input() signals instead of @Input()

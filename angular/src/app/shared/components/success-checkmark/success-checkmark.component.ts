@@ -71,7 +71,7 @@ export type SuccessVariant = "default" | "filled" | "outlined" | "minimal";
       }
     </div>
   `,
-  styleUrl: './success-checkmark.component.scss',
+  styleUrl: "./success-checkmark.component.scss",
 })
 export class SuccessCheckmarkComponent implements OnInit, OnDestroy {
   // Inputs

@@ -45,7 +45,13 @@ export class ViewTransitionHelper {
       return Promise.resolve();
     }
 
-    return (document as Document & { startViewTransition: (callback: () => void) => { finished: Promise<void> } }).startViewTransition(callback).finished;
+    return (
+      document as Document & {
+        startViewTransition: (callback: () => void) => {
+          finished: Promise<void>;
+        };
+      }
+    ).startViewTransition(callback).finished;
   }
 
   /**
@@ -80,7 +86,13 @@ export class ViewTransitionHelper {
       );
     }
 
-    return (document as Document & { startViewTransition: (callback: () => void) => { finished: Promise<void> } })
+    return (
+      document as Document & {
+        startViewTransition: (callback: () => void) => {
+          finished: Promise<void>;
+        };
+      }
+    )
       .startViewTransition(callback)
       .finished.finally(() => {
         // Clean up attributes after transition

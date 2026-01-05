@@ -62,7 +62,7 @@ interface UpcomingGame {
     ProgressBarModule,
     TagModule,
     TooltipModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -168,13 +168,20 @@ interface UpcomingGame {
 
         <!-- Action Buttons -->
         <div class="widget-actions">
-          <app-button iconLeft="pi-check-square" routerLink="/game/readiness">Game Day Check-in</app-button>
-          <app-button variant="outlined" iconLeft="pi-apple" routerLink="/game/nutrition">Fuel Plan</app-button>
+          <app-button iconLeft="pi-check-square" routerLink="/game/readiness"
+            >Game Day Check-in</app-button
+          >
+          <app-button
+            variant="outlined"
+            iconLeft="pi-apple"
+            routerLink="/game/nutrition"
+            >Fuel Plan</app-button
+          >
         </div>
       </div>
     }
   `,
-  styleUrl: './game-day-countdown.component.scss',
+  styleUrl: "./game-day-countdown.component.scss",
 })
 export class GameDayCountdownComponent implements OnInit, OnDestroy {
   private logger = inject(LoggerService);

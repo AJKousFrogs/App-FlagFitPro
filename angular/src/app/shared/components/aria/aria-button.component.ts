@@ -76,7 +76,7 @@ export type ButtonSize = "sm" | "md" | "lg";
       <ng-content />
     </button>
   `,
-  styleUrl: './aria-button.component.scss',
+  styleUrl: "./aria-button.component.scss",
 })
 export class AriaButtonComponent {
   private elementRef = inject(ElementRef);

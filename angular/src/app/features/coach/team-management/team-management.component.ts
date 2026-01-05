@@ -96,7 +96,14 @@ const POSITIONS = [
   { label: "Defensive Back (DB)", value: "DB" },
 ];
 
-const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severity: "success" | "warn" | "danger" | "secondary" }> = {
+const STATUS_CONFIG: Record<
+  PlayerStatus,
+  {
+    label: string;
+    icon: string;
+    severity: "success" | "warn" | "danger" | "secondary";
+  }
+> = {
   active: { label: "Active", icon: "🟢", severity: "success" },
   "minor-injury": { label: "Minor Injury", icon: "🟡", severity: "warn" },
   rtp: { label: "RTP", icon: "🔴", severity: "danger" },
@@ -126,7 +133,7 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -140,7 +147,9 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
           subtitle="Manage roster, depth chart, invitations, and team settings"
           icon="pi-users"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()">Invite Player</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()"
+            >Invite Player</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -183,7 +192,7 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
         </div>
 
         <!-- Roster Tab -->
-        @if (activeTab() === 'roster') {
+        @if (activeTab() === "roster") {
           <p-card styleClass="tab-content-card">
             <!-- Filters -->
             <div class="filters-row">
@@ -236,7 +245,9 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                   <td>
                     <p-avatar
                       [image]="member.avatarUrl"
-                      [label]="!member.avatarUrl ? getInitials(member.name) : ''"
+                      [label]="
+                        !member.avatarUrl ? getInitials(member.name) : ''
+                      "
                       shape="circle"
                     ></p-avatar>
                   </td>
@@ -255,21 +266,26 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                   </td>
                   <td>
                     @if (member.acwr) {
-                      <span [class]="getAcwrClass(member.acwr)">{{ member.acwr | number:'1.2-2' }}</span>
+                      <span [class]="getAcwrClass(member.acwr)">{{
+                        member.acwr | number: "1.2-2"
+                      }}</span>
                     } @else {
                       <span class="no-data">--</span>
                     }
                   </td>
                   <td>
-                    <app-button variant="text" iconLeft="pi-ellipsis-v" (clicked)="openPlayerMenu($event, member)">Player actions</app-button>
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-ellipsis-v"
+                      (clicked)="openPlayerMenu($event, member)"
+                      >Player actions</app-button
+                    >
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="7" class="empty-message">
-                    No players found
-                  </td>
+                  <td colspan="7" class="empty-message">No players found</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -291,11 +307,16 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
         }
 
         <!-- Depth Chart Tab -->
-        @if (activeTab() === 'depth-chart') {
+        @if (activeTab() === "depth-chart") {
           <p-card styleClass="tab-content-card">
             <div class="depth-chart-header">
               <h3>Team Depth Chart</h3>
-              <app-button variant="secondary" iconLeft="pi-pencil" (clicked)="editDepthChart()">Edit Depth Chart</app-button>
+              <app-button
+                variant="secondary"
+                iconLeft="pi-pencil"
+                (clicked)="editDepthChart()"
+                >Edit Depth Chart</app-button
+              >
             </div>
 
             <div class="depth-chart-sections">
@@ -307,12 +328,21 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                     <div class="position-label">{{ entry.position }}</div>
                     <div class="players-list">
                       @for (p of entry.players; track p.player.id) {
-                        <div class="depth-player" [class.starter]="p.rank === 1">
+                        <div
+                          class="depth-player"
+                          [class.starter]="p.rank === 1"
+                        >
                           <span class="rank">{{ getRankLabel(p.rank) }}</span>
-                          <span class="name">{{ p.player.name }} #{{ p.player.jerseyNumber }}</span>
+                          <span class="name"
+                            >{{ p.player.name }} #{{
+                              p.player.jerseyNumber
+                            }}</span
+                          >
                           <p-tag
                             [value]="getStatusConfig(p.player.status).label"
-                            [severity]="getStatusConfig(p.player.status).severity"
+                            [severity]="
+                              getStatusConfig(p.player.status).severity
+                            "
                             [style]="{ fontSize: '0.7rem' }"
                           ></p-tag>
                           @if (p.note) {
@@ -333,12 +363,21 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                     <div class="position-label">{{ entry.position }}</div>
                     <div class="players-list">
                       @for (p of entry.players; track p.player.id) {
-                        <div class="depth-player" [class.starter]="p.rank === 1">
+                        <div
+                          class="depth-player"
+                          [class.starter]="p.rank === 1"
+                        >
                           <span class="rank">{{ getRankLabel(p.rank) }}</span>
-                          <span class="name">{{ p.player.name }} #{{ p.player.jerseyNumber }}</span>
+                          <span class="name"
+                            >{{ p.player.name }} #{{
+                              p.player.jerseyNumber
+                            }}</span
+                          >
                           <p-tag
                             [value]="getStatusConfig(p.player.status).label"
-                            [severity]="getStatusConfig(p.player.status).severity"
+                            [severity]="
+                              getStatusConfig(p.player.status).severity
+                            "
                             [style]="{ fontSize: '0.7rem' }"
                           ></p-tag>
                           @if (p.note) {
@@ -355,11 +394,13 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
         }
 
         <!-- Invitations Tab -->
-        @if (activeTab() === 'invitations') {
+        @if (activeTab() === "invitations") {
           <p-card styleClass="tab-content-card">
             <div class="invitations-header">
               <h3>Player Invitations</h3>
-              <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()">Send New Invitation</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()"
+                >Send New Invitation</app-button
+              >
             </div>
 
             @if (pendingInvitations().length > 0) {
@@ -372,15 +413,29 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                       <div class="inv-details">
                         <span class="inv-email">{{ inv.email }}</span>
                         <span class="inv-meta">
-                          Sent: {{ inv.sentAt | date:'MMM d, y' }} •
-                          Expires: {{ inv.expiresAt | date:'MMM d, y' }}
+                          Sent: {{ inv.sentAt | date: "MMM d, y" }} • Expires:
+                          {{ inv.expiresAt | date: "MMM d, y" }}
                         </span>
-                        <span class="inv-role">Role: {{ getRoleLabel(inv.role) }}</span>
+                        <span class="inv-role"
+                          >Role: {{ getRoleLabel(inv.role) }}</span
+                        >
                       </div>
                     </div>
                     <div class="inv-actions">
-                      <app-button variant="secondary" size="sm" iconLeft="pi-refresh" (clicked)="resendInvitation(inv)">Resend</app-button>
-                      <app-button variant="text" size="sm" iconLeft="pi-times" (clicked)="cancelInvitation(inv)">Cancel</app-button>
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        iconLeft="pi-refresh"
+                        (clicked)="resendInvitation(inv)"
+                        >Resend</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        iconLeft="pi-times"
+                        (clicked)="cancelInvitation(inv)"
+                        >Cancel</app-button
+                      >
                     </div>
                   </div>
                 }
@@ -395,8 +450,12 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                     <div class="inv-info">
                       <i class="pi pi-check-circle"></i>
                       <div class="inv-details">
-                        <span class="inv-email">{{ inv.email }} → {{ inv.acceptedBy }}</span>
-                        <span class="inv-meta">Accepted: {{ inv.sentAt | date:'MMM d, y' }}</span>
+                        <span class="inv-email"
+                          >{{ inv.email }} → {{ inv.acceptedBy }}</span
+                        >
+                        <span class="inv-meta"
+                          >Accepted: {{ inv.sentAt | date: "MMM d, y" }}</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -408,14 +467,16 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
               <div class="empty-invitations">
                 <i class="pi pi-envelope"></i>
                 <p>No invitations sent yet</p>
-                <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()">Invite Your First Player</app-button>
+                <app-button iconLeft="pi-plus" (clicked)="openInviteDialog()"
+                  >Invite Your First Player</app-button
+                >
               </div>
             }
           </p-card>
         }
 
         <!-- Settings Tab -->
-        @if (activeTab() === 'settings') {
+        @if (activeTab() === "settings") {
           <p-card styleClass="tab-content-card">
             <div class="settings-form">
               <!-- Team Information -->
@@ -436,13 +497,21 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                 <div class="form-row">
                   <div class="form-field">
                     <label>Primary Color</label>
-                    <p-colorPicker [(ngModel)]="teamSettings().primaryColor"></p-colorPicker>
-                    <span class="color-code">{{ teamSettings().primaryColor }}</span>
+                    <p-colorPicker
+                      [(ngModel)]="teamSettings().primaryColor"
+                    ></p-colorPicker>
+                    <span class="color-code">{{
+                      teamSettings().primaryColor
+                    }}</span>
                   </div>
                   <div class="form-field">
                     <label>Secondary Color</label>
-                    <p-colorPicker [(ngModel)]="teamSettings().secondaryColor"></p-colorPicker>
-                    <span class="color-code">{{ teamSettings().secondaryColor }}</span>
+                    <p-colorPicker
+                      [(ngModel)]="teamSettings().secondaryColor"
+                    ></p-colorPicker>
+                    <span class="color-code">{{
+                      teamSettings().secondaryColor
+                    }}</span>
                   </div>
                 </div>
 
@@ -475,43 +544,61 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
 
                 <div class="preference-item">
                   <p-checkbox
-                    [(ngModel)]="teamSettings().preferences.requireWellnessCheckin"
+                    [(ngModel)]="
+                      teamSettings().preferences.requireWellnessCheckin
+                    "
                     [binary]="true"
                     inputId="reqWellness"
                   ></p-checkbox>
-                  <label for="reqWellness">Require wellness check-in before practice</label>
+                  <label for="reqWellness"
+                    >Require wellness check-in before practice</label
+                  >
                 </div>
 
                 <div class="preference-item">
                   <p-checkbox
-                    [(ngModel)]="teamSettings().preferences.autoSendRsvpReminders"
+                    [(ngModel)]="
+                      teamSettings().preferences.autoSendRsvpReminders
+                    "
                     [binary]="true"
                     inputId="autoRsvp"
                   ></p-checkbox>
-                  <label for="autoRsvp">Auto-send RSVP reminders 24 hours before events</label>
+                  <label for="autoRsvp"
+                    >Auto-send RSVP reminders 24 hours before events</label
+                  >
                 </div>
 
                 <div class="preference-item">
                   <p-checkbox
-                    [(ngModel)]="teamSettings().preferences.allowPlayersViewAnalytics"
+                    [(ngModel)]="
+                      teamSettings().preferences.allowPlayersViewAnalytics
+                    "
                     [binary]="true"
                     inputId="allowAnalytics"
                   ></p-checkbox>
-                  <label for="allowAnalytics">Allow players to see team analytics</label>
+                  <label for="allowAnalytics"
+                    >Allow players to see team analytics</label
+                  >
                 </div>
 
                 <div class="preference-item">
                   <p-checkbox
-                    [(ngModel)]="teamSettings().preferences.requireCoachApprovalPosts"
+                    [(ngModel)]="
+                      teamSettings().preferences.requireCoachApprovalPosts
+                    "
                     [binary]="true"
                     inputId="reqApproval"
                   ></p-checkbox>
-                  <label for="reqApproval">Require coach approval for community posts</label>
+                  <label for="reqApproval"
+                    >Require coach approval for community posts</label
+                  >
                 </div>
               </div>
 
               <div class="settings-actions">
-                <app-button iconLeft="pi-check" (clicked)="saveSettings()">Save Changes</app-button>
+                <app-button iconLeft="pi-check" (clicked)="saveSettings()"
+                  >Save Changes</app-button
+                >
               </div>
             </div>
           </p-card>
@@ -589,8 +676,15 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showInviteDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-send" [disabled]="!inviteForm.email" (clicked)="sendInvitation()">Send Invitation</app-button>
+          <app-button variant="secondary" (clicked)="showInviteDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-send"
+            [disabled]="!inviteForm.email"
+            (clicked)="sendInvitation()"
+            >Send Invitation</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -613,7 +707,9 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
               <div class="player-info">
                 <h4>{{ player.name }}</h4>
                 <p>{{ player.email }}</p>
-                <p class="join-date">Joined: {{ player.joinedAt | date:'MMM d, y' }}</p>
+                <p class="join-date">
+                  Joined: {{ player.joinedAt | date: "MMM d, y" }}
+                </p>
               </div>
             </div>
 
@@ -674,7 +770,9 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
                       [(ngModel)]="editForm.status"
                       [inputId]="'status-' + status.value"
                     ></p-radioButton>
-                    <label [for]="'status-' + status.value">{{ status.label }}</label>
+                    <label [for]="'status-' + status.value">{{
+                      status.label
+                    }}</label>
                   </div>
                 }
               </div>
@@ -693,14 +791,27 @@ const STATUS_CONFIG: Record<PlayerStatus, { label: string; icon: string; severit
 
             <div class="danger-zone">
               <h5>Danger Zone</h5>
-              <app-button variant="text" iconLeft="pi-trash" (clicked)="removePlayer(player)">Remove from Team</app-button>
-              <span class="danger-note">This will archive the player's membership</span>
+              <app-button
+                variant="text"
+                iconLeft="pi-trash"
+                (clicked)="removePlayer(player)"
+                >Remove from Team</app-button
+              >
+              <span class="danger-note"
+                >This will archive the player's membership</span
+              >
             </div>
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="secondary" (clicked)="showEditPlayerDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" (clicked)="savePlayerChanges()">Save Changes</app-button>
+            <app-button
+              variant="secondary"
+              (clicked)="showEditPlayerDialog = false"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="savePlayerChanges()"
+              >Save Changes</app-button
+            >
           </ng-template>
         }
       </p-dialog>
@@ -714,7 +825,9 @@ export class TeamManagementComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   // State
-  readonly activeTab = signal<"roster" | "depth-chart" | "invitations" | "settings">("roster");
+  readonly activeTab = signal<
+    "roster" | "depth-chart" | "invitations" | "settings"
+  >("roster");
   readonly teamMembers = signal<TeamMember[]>([]);
   readonly depthChart = signal<DepthChartEntry[]>([]);
   readonly invitations = signal<Invitation[]>([]);
@@ -774,8 +887,7 @@ export class TeamManagementComponent implements OnInit {
       const q = this.searchQuery.toLowerCase();
       result = result.filter(
         (m) =>
-          m.name.toLowerCase().includes(q) ||
-          m.email.toLowerCase().includes(q)
+          m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q),
       );
     }
 
@@ -803,23 +915,19 @@ export class TeamManagementComponent implements OnInit {
   });
 
   readonly offenseDepthChart = computed(() =>
-    this.depthChart().filter((e) =>
-      ["QB", "WR", "C"].includes(e.position)
-    )
+    this.depthChart().filter((e) => ["QB", "WR", "C"].includes(e.position)),
   );
 
   readonly defenseDepthChart = computed(() =>
-    this.depthChart().filter((e) =>
-      ["Rusher", "DB"].includes(e.position)
-    )
+    this.depthChart().filter((e) => ["Rusher", "DB"].includes(e.position)),
   );
 
   readonly pendingInvitations = computed(() =>
-    this.invitations().filter((i) => i.status === "pending")
+    this.invitations().filter((i) => i.status === "pending"),
   );
 
   readonly acceptedInvitations = computed(() =>
-    this.invitations().filter((i) => i.status === "accepted")
+    this.invitations().filter((i) => i.status === "accepted"),
   );
 
   ngOnInit(): void {
@@ -831,12 +939,17 @@ export class TeamManagementComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/team-management"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/team-management"),
+      );
       if (response?.success && response.data) {
         if (response.data.members) this.teamMembers.set(response.data.members);
-        if (response.data.depthChart) this.depthChart.set(response.data.depthChart);
-        if (response.data.invitations) this.invitations.set(response.data.invitations);
-        if (response.data.settings) this.teamSettings.set(response.data.settings);
+        if (response.data.depthChart)
+          this.depthChart.set(response.data.depthChart);
+        if (response.data.invitations)
+          this.invitations.set(response.data.invitations);
+        if (response.data.settings)
+          this.teamSettings.set(response.data.settings);
       }
     } catch (err) {
       this.logger.error("Failed to load team management data", err);
@@ -896,16 +1009,18 @@ export class TeamManagementComponent implements OnInit {
   }
 
   resendInvitation(inv: Invitation): void {
-    this.api.post("/api/team/invite/resend", { invitationId: inv.id }).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Invitation Resent",
-          detail: `Invitation resent to ${inv.email}`,
-        });
-      },
-      error: (err) => this.logger.error("Failed to resend invitation", err),
-    });
+    this.api
+      .post("/api/team/invite/resend", { invitationId: inv.id })
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: "success",
+            summary: "Invitation Resent",
+            detail: `Invitation resent to ${inv.email}`,
+          });
+        },
+        error: (err) => this.logger.error("Failed to resend invitation", err),
+      });
   }
 
   cancelInvitation(inv: Invitation): void {
@@ -951,8 +1066,8 @@ export class TeamManagementComponent implements OnInit {
               status: this.editForm.status,
               coachNotes: this.editForm.coachNotes,
             }
-          : m
-      )
+          : m,
+      ),
     );
 
     this.api.put(`/api/team/members/${player.id}`, this.editForm).subscribe({
@@ -972,7 +1087,9 @@ export class TeamManagementComponent implements OnInit {
   removePlayer(player: TeamMember): void {
     if (!confirm(`Remove ${player.name} from the team?`)) return;
 
-    this.teamMembers.update((members) => members.filter((m) => m.id !== player.id));
+    this.teamMembers.update((members) =>
+      members.filter((m) => m.id !== player.id),
+    );
 
     this.api.delete(`/api/team/members/${player.id}`).subscribe({
       next: () => {

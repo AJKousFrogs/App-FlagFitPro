@@ -7,11 +7,15 @@
  * @author FlagFit Pro Team
  */
 
-import { TestBed, fakeAsync, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { ThemeService } from "./theme.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+
+// Helper to wait for async operations
+const waitFor = (ms: number = 50) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 describe("ThemeService", () => {
   let service: ThemeService;
@@ -200,42 +204,42 @@ describe("ThemeService", () => {
   });
 
   describe("DOM Updates", () => {
-    it("should set data-theme attribute on root", fakeAsync(() => {
+    it("should set data-theme attribute on root", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    }));
+    });
 
-    it("should set data-theme attribute on body", fakeAsync(() => {
+    it("should set data-theme attribute on body", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       expect(document.body.getAttribute("data-theme")).toBe("dark");
-    }));
+    });
 
-    it("should add theme class to body", fakeAsync(() => {
+    it("should add theme class to body", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       expect(document.body.classList.contains("dark-theme")).toBe(true);
       expect(document.body.classList.contains("light-theme")).toBe(false);
-    }));
+    });
 
-    it("should remove old theme class when switching", fakeAsync(() => {
+    it("should remove old theme class when switching", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       service.setMode("light");
-      tick();
+      await waitFor();
 
       expect(document.body.classList.contains("light-theme")).toBe(true);
       expect(document.body.classList.contains("dark-theme")).toBe(false);
-    }));
+    });
   });
 
   describe("Meta Theme Color", () => {
-    it("should update meta theme-color for dark mode", fakeAsync(() => {
+    it("should update meta theme-color for dark mode", async () => {
       // Create meta tag if it doesn't exist
       let metaTag = document.querySelector('meta[name="theme-color"]');
       if (!metaTag) {
@@ -245,11 +249,11 @@ describe("ThemeService", () => {
       }
 
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       const content = metaTag.getAttribute("content");
       expect(content).toBeTruthy();
-    }));
+    });
   });
 
   describe("System Preference Detection", () => {
@@ -260,18 +264,18 @@ describe("ThemeService", () => {
       );
     });
 
-    it("should respond to system preference changes", fakeAsync(() => {
+    it("should respond to system preference changes", async () => {
       service.setMode("auto");
 
       // Simulate system preference change to dark
       const mockEvent = { matches: true } as MediaQueryListEvent;
       mediaQueryListeners.forEach((listener) => listener(mockEvent));
 
-      tick();
+      await waitFor();
 
       // When auto, should now resolve to dark
       expect(service.resolvedTheme()).toBe("dark");
-    }));
+    });
   });
 
   describe("Get State", () => {
@@ -293,62 +297,63 @@ describe("ThemeService", () => {
       );
     });
 
-    it("should log when theme is applied", fakeAsync(() => {
+    it("should log when theme is applied", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       expect(mockLoggerService.debug).toHaveBeenCalledWith(
         expect.stringContaining("Applied theme"),
       );
-    }));
+    });
   });
 
   describe("PrimeNG Theme Updates", () => {
-    it("should update PrimeNG surface variables for dark mode", fakeAsync(() => {
+    it("should update PrimeNG surface variables for dark mode", async () => {
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       const root = document.documentElement;
       const surfaceValue = root.style.getPropertyValue("--p-surface-0");
 
       // Should have set dark surface colors
       expect(surfaceValue).toBeTruthy();
-    }));
+    });
 
-    it("should update PrimeNG surface variables for light mode", fakeAsync(() => {
+    it("should update PrimeNG surface variables for light mode", async () => {
       service.setMode("light");
-      tick();
+      await waitFor();
 
       const root = document.documentElement;
       const surfaceValue = root.style.getPropertyValue("--p-surface-0");
 
       // Should have set light surface colors
       expect(surfaceValue).toBeTruthy();
-    }));
+    });
   });
 
   describe("Supabase Sync", () => {
-    it("should attempt to save to Supabase when user is authenticated", fakeAsync(() => {
+    it("should attempt to save to Supabase when user is authenticated", async () => {
       const mockUser = { id: "test-user-id" };
       mockSupabaseService.currentUser.mockReturnValue(mockUser as any);
 
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       // The service should attempt to save to Supabase
       // (We can't easily verify the actual call without more setup)
-    }));
+      expect(service.mode()).toBe("dark");
+    });
 
-    it("should handle Supabase errors gracefully", fakeAsync(() => {
+    it("should handle Supabase errors gracefully", async () => {
       const mockUser = { id: "test-user-id" };
       mockSupabaseService.currentUser.mockReturnValue(mockUser as any);
 
       // Even if Supabase fails, localStorage should work
       service.setMode("dark");
-      tick();
+      await waitFor();
 
       expect(localStorage.getItem("flagfit_theme")).toBe("dark");
-    }));
+    });
   });
 
   describe("No Transitions Class", () => {

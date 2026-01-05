@@ -6,17 +6,16 @@
       subtitle="Manage your account and application preferences"
       icon="pi-cog"
     >
-      <app-button
-        icon="save"
-        (clicked)="saveSettings()"
-      >Save Changes</app-button>
+      <app-button icon="save" (clicked)="saveSettings()"
+        >Save Changes</app-button
+      >
     </app-page-header>
 
     <!-- Settings Grid -->
     <div class="settings-grid">
       <!-- Profile Settings -->
-      <app-card 
-        title="Profile Settings" 
+      <app-card
+        title="Profile Settings"
         headerIcon="pi-user"
         headerIconColor="primary"
       >
@@ -120,19 +119,24 @@
       </app-card>
 
       <!-- Notification Settings -->
-      <app-card 
-        title="Notification Settings" 
+      <app-card
+        title="Notification Settings"
         headerIcon="pi-bell"
         headerIconColor="warning"
       >
-        <form [formGroup]="notificationForm" class="notification-form card-stack">
+        <form
+          [formGroup]="notificationForm"
+          class="notification-form card-stack"
+        >
           <div class="notification-item control-row">
             <div class="notification-info control-row__label">
               <div class="notification-icon">
                 <i class="pi pi-envelope"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Email Notifications</span>
+                <span class="notification-label control-row__title"
+                  >Email Notifications</span
+                >
                 <span class="notification-desc control-row__description"
                   >Receive updates and alerts via email</span
                 >
@@ -151,7 +155,9 @@
                 <i class="pi pi-mobile"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Push Notifications</span>
+                <span class="notification-label control-row__title"
+                  >Push Notifications</span
+                >
                 <span class="notification-desc control-row__description"
                   >Get instant alerts on your device</span
                 >
@@ -170,7 +176,9 @@
                 <i class="pi pi-clock"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Training Reminders</span>
+                <span class="notification-label control-row__title"
+                  >Training Reminders</span
+                >
                 <span class="notification-desc control-row__description"
                   >Daily reminders for scheduled workouts</span
                 >
@@ -189,7 +197,9 @@
                 <i class="pi pi-heart"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Wellness Reminders</span>
+                <span class="notification-label control-row__title"
+                  >Wellness Reminders</span
+                >
                 <span class="notification-desc control-row__description"
                   >Daily wellness check-in reminders</span
                 >
@@ -208,16 +218,16 @@
                 <i class="pi pi-flag"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Game Alerts</span>
+                <span class="notification-label control-row__title"
+                  >Game Alerts</span
+                >
                 <span class="notification-desc control-row__description"
                   >Notifications about upcoming games</span
                 >
               </div>
             </div>
             <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="gameAlerts"
-              ></p-toggleswitch>
+              <p-toggleswitch formControlName="gameAlerts"></p-toggleswitch>
             </div>
           </div>
 
@@ -227,7 +237,9 @@
                 <i class="pi pi-megaphone"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Team Announcements</span>
+                <span class="notification-label control-row__title"
+                  >Team Announcements</span
+                >
                 <span class="notification-desc control-row__description"
                   >Important team news and updates</span
                 >
@@ -246,16 +258,16 @@
                 <i class="pi pi-user"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Coach Messages</span>
+                <span class="notification-label control-row__title"
+                  >Coach Messages</span
+                >
                 <span class="notification-desc control-row__description"
                   >Direct messages from your coach</span
                 >
               </div>
             </div>
             <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="coachMessages"
-              ></p-toggleswitch>
+              <p-toggleswitch formControlName="coachMessages"></p-toggleswitch>
             </div>
           </div>
 
@@ -265,7 +277,9 @@
                 <i class="pi pi-trophy"></i>
               </div>
               <div class="notification-text">
-                <span class="notification-label control-row__title">Achievement Alerts</span>
+                <span class="notification-label control-row__title"
+                  >Achievement Alerts</span
+                >
                 <span class="notification-desc control-row__description"
                   >Celebrate your milestones and badges</span
                 >
@@ -281,8 +295,8 @@
       </app-card>
 
       <!-- Privacy Settings -->
-      <app-card 
-        title="Privacy Settings" 
+      <app-card
+        title="Privacy Settings"
         headerIcon="pi-lock"
         headerIconColor="error"
       >
@@ -332,29 +346,31 @@
           <app-button
             variant="outlined"
             icon="shield"
-            
             routerLink="/settings/privacy"
-          >Privacy Controls</app-button>
+            >Privacy Controls</app-button
+          >
         </div>
         <p-divider></p-divider>
         <div class="privacy-controls-link">
           <div class="link-info">
             <h4>Export Your Data</h4>
             <p>
-              Download a copy of all your data including training sessions, wellness logs, and achievements.
+              Download a copy of all your data including training sessions,
+              wellness logs, and achievements.
             </p>
           </div>
           <app-button
             variant="outlined"
             icon="download"
             (clicked)="showDataExportDialog = true"
-          >Export Data</app-button>
+            >Export Data</app-button
+          >
         </div>
       </app-card>
 
       <!-- App Preferences -->
-      <app-card 
-        title="App Preferences" 
+      <app-card
+        title="App Preferences"
         headerIcon="pi-cog"
         headerIconColor="info"
       >
@@ -437,8 +453,8 @@
       </app-card>
 
       <!-- Security Settings -->
-      <app-card 
-        title="Security" 
+      <app-card
+        title="Security"
         headerIcon="pi-shield"
         headerIconColor="primary"
       >
@@ -452,7 +468,8 @@
               variant="outlined"
               icon="key"
               (clicked)="showChangePasswordDialog = true"
-            >Change</app-button>
+              >Change</app-button
+            >
           </div>
           <p-divider></p-divider>
 
@@ -475,13 +492,15 @@
                 variant="outlined"
                 icon="times"
                 (clicked)="showDisable2FADialog = true"
-              >Disable</app-button>
+                >Disable</app-button
+              >
             } @else {
               <app-button
                 variant="outlined"
                 icon="shield"
                 (clicked)="startSetup2FA()"
-              >Enable</app-button>
+                >Enable</app-button
+              >
             }
           </div>
           <p-divider></p-divider>
@@ -496,7 +515,8 @@
               variant="outlined"
               icon="desktop"
               (clicked)="showSessionsDialog = true; loadSessions()"
-            >View</app-button>
+              >View</app-button
+            >
           </div>
           <p-divider></p-divider>
 
@@ -509,7 +529,8 @@
               variant="danger"
               icon="trash"
               (clicked)="showDeleteAccountDialog = true"
-            >Delete</app-button>
+              >Delete</app-button
+            >
           </div>
         </div>
       </app-card>
@@ -534,14 +555,14 @@
           <h2>Change Password</h2>
           <p>Update your account password</p>
         </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showChangePasswordDialog = false"
-      ></app-button>
+        <app-button
+          icon="times"
+          variant="text"
+          ariaLabel="Close dialog"
+          severity="secondary"
+          class="dialog-close-btn"
+          (clicked)="showChangePasswordDialog = false"
+        ></app-button>
       </div>
 
       <!-- Form Content -->
@@ -659,17 +680,16 @@
       </form>
 
       <div class="dialog-actions">
-        <app-button
-          variant="text"
-          (clicked)="showChangePasswordDialog = false"
-        >Cancel</app-button>
+        <app-button variant="text" (clicked)="showChangePasswordDialog = false"
+          >Cancel</app-button
+        >
         <app-button
           icon="check"
-          
           [loading]="isChangingPassword()"
           [disabled]="passwordForm.invalid"
           (clicked)="changePassword()"
-        >Update Password</app-button>
+          >Update Password</app-button
+        >
       </div>
     </div>
   </p-dialog>
@@ -743,18 +763,17 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <app-button
-          variant="text"
-          (clicked)="showDeleteAccountDialog = false"
-        >Cancel</app-button>
+        <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
+          >Cancel</app-button
+        >
         <app-button
           variant="danger"
           icon="trash"
-          
           [loading]="isDeletingAccount()"
           [disabled]="deleteConfirmText !== 'DELETE'"
           (clicked)="deleteAccount()"
-        >Delete My Account</app-button>
+          >Delete My Account</app-button
+        >
       </div>
     </div>
   </p-dialog>
@@ -914,7 +933,8 @@
                   icon="download"
                   [fullWidth]="true"
                   (clicked)="downloadBackupCodes()"
-                >Download Codes</app-button>
+                  >Download Codes</app-button
+                >
               </div>
             </div>
           }
@@ -924,38 +944,40 @@
       <!-- Footer Actions -->
       <div class="dialog-actions">
         @if (twoFAStep() < 4) {
-          <app-button
-            variant="text"
-            (clicked)="close2FASetup()"
-          >Cancel</app-button>
+          <app-button variant="text" (clicked)="close2FASetup()"
+            >Cancel</app-button
+          >
 
           @if (twoFAStep() === 1) {
             <app-button
               icon="arrow-right"
               iconPosition="right"
               (clicked)="twoFAStep.set(2)"
-            >I have an app</app-button>
+              >I have an app</app-button
+            >
           } @else if (twoFAStep() === 2) {
             <app-button
               icon="arrow-right"
               iconPosition="right"
               (clicked)="twoFAStep.set(3)"
-            >Next</app-button>
+              >Next</app-button
+            >
           } @else if (twoFAStep() === 3) {
             <app-button
               icon="shield"
-              
               [loading]="isEnabling2FA()"
               [disabled]="twoFAVerificationCode.length !== 6"
               (clicked)="verify2FA()"
-            >Verify & Enable</app-button>
+              >Verify & Enable</app-button
+            >
           }
         } @else {
           <app-button
             iconLeft="check"
             [fullWidth]="true"
             (clicked)="close2FASetup()"
-          >Done</app-button>
+            >Done</app-button
+          >
         }
       </div>
     </div>
@@ -991,9 +1013,14 @@
 
       <div class="twofa-content">
         <div class="step-section">
-          <i class="pi pi-exclamation-triangle success-icon error-warning-icon"></i>
-          <p class="step-desc">Disabling 2FA will make your account less secure. Please confirm with your authenticator code.</p>
-          
+          <i
+            class="pi pi-exclamation-triangle success-icon error-warning-icon"
+          ></i>
+          <p class="step-desc">
+            Disabling 2FA will make your account less secure. Please confirm
+            with your authenticator code.
+          </p>
+
           <div class="code-input-wrapper">
             <input
               id="settings-disable2FACode"
@@ -1012,18 +1039,17 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <app-button
-          variant="text"
-          (clicked)="showDisable2FADialog = false"
-        >Cancel</app-button>
+        <app-button variant="text" (clicked)="showDisable2FADialog = false"
+          >Cancel</app-button
+        >
         <app-button
           variant="danger"
           icon="times"
-          
           [loading]="isDisabling2FA()"
           [disabled]="disable2FACode.length !== 6"
           (clicked)="disable2FA()"
-        >Disable 2FA</app-button>
+          >Disable 2FA</app-button
+        >
       </div>
     </div>
   </p-dialog>
@@ -1109,17 +1135,16 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <app-button
-          variant="text"
-          (clicked)="showSessionsDialog = false"
-        >Close</app-button>
+        <app-button variant="text" (clicked)="showSessionsDialog = false"
+          >Close</app-button
+        >
         <app-button
           variant="danger"
           icon="sign-out"
-          
           [loading]="isRevokingAll()"
           (clicked)="revokeAllSessions()"
-        >Sign out all others</app-button>
+          >Sign out all others</app-button
+        >
       </div>
     </div>
   </p-dialog>
@@ -1188,42 +1213,55 @@
                 <i class="pi pi-user"></i>
                 <span>Profile Information</span>
               </div>
-              <p-toggleswitch [(ngModel)]="exportOptions.profile"></p-toggleswitch>
+              <p-toggleswitch
+                [(ngModel)]="exportOptions.profile"
+              ></p-toggleswitch>
             </div>
             <div class="data-option">
               <div class="option-info">
                 <i class="pi pi-calendar"></i>
                 <span>Training Sessions</span>
               </div>
-              <p-toggleswitch [(ngModel)]="exportOptions.training"></p-toggleswitch>
+              <p-toggleswitch
+                [(ngModel)]="exportOptions.training"
+              ></p-toggleswitch>
             </div>
             <div class="data-option">
               <div class="option-info">
                 <i class="pi pi-heart"></i>
                 <span>Wellness Check-ins</span>
               </div>
-              <p-toggleswitch [(ngModel)]="exportOptions.wellness"></p-toggleswitch>
+              <p-toggleswitch
+                [(ngModel)]="exportOptions.wellness"
+              ></p-toggleswitch>
             </div>
             <div class="data-option">
               <div class="option-info">
                 <i class="pi pi-trophy"></i>
                 <span>Achievements</span>
               </div>
-              <p-toggleswitch [(ngModel)]="exportOptions.achievements"></p-toggleswitch>
+              <p-toggleswitch
+                [(ngModel)]="exportOptions.achievements"
+              ></p-toggleswitch>
             </div>
             <div class="data-option">
               <div class="option-info">
                 <i class="pi pi-cog"></i>
                 <span>Settings & Preferences</span>
               </div>
-              <p-toggleswitch [(ngModel)]="exportOptions.settings"></p-toggleswitch>
+              <p-toggleswitch
+                [(ngModel)]="exportOptions.settings"
+              ></p-toggleswitch>
             </div>
           </div>
         </div>
 
         @if (isExportingData()) {
           <div class="export-progress-section">
-            <p-progressBar [value]="exportProgress()" [showValue]="true"></p-progressBar>
+            <p-progressBar
+              [value]="exportProgress()"
+              [showValue]="true"
+            ></p-progressBar>
             <span class="progress-label">Preparing your data...</span>
           </div>
         }
@@ -1231,15 +1269,15 @@
 
       <!-- Footer Actions -->
       <div class="dialog-actions">
-        <app-button
-          variant="text"
-          (clicked)="showDataExportDialog = false"
-        >Cancel</app-button>
+        <app-button variant="text" (clicked)="showDataExportDialog = false"
+          >Cancel</app-button
+        >
         <app-button
           icon="download"
           [loading]="isExportingData()"
           (clicked)="exportUserData()"
-        >Export Data</app-button>
+          >Export Data</app-button
+        >
       </div>
     </div>
   </p-dialog>

@@ -20,8 +20,7 @@ import { InstagramVideo } from "../video-curation.models";
   selector: "app-video-curation-pending",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule,
-  ],
+  imports: [CommonModule, TagModule],
   template: `
     <div class="tab-content">
       @if (videos().length === 0) {
@@ -85,7 +84,7 @@ import { InstagramVideo } from "../video-curation.models";
       }
     </div>
   `,
-  styleUrl: './video-curation-pending.component.scss',
+  styleUrl: "./video-curation-pending.component.scss",
 })
 export class VideoCurationPendingComponent {
   videos = input.required<InstagramVideo[]>();

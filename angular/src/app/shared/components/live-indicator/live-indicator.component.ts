@@ -19,7 +19,7 @@ import { CommonModule } from "@angular/common";
       <span class="live-text">LIVE</span>
     </div>
   `,
-  styleUrl: './live-indicator.component.scss',
+  styleUrl: "./live-indicator.component.scss",
 })
 export class LiveIndicatorComponent {
   // Angular 21: Use input() signal instead of @Input()

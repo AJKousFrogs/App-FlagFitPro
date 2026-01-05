@@ -59,10 +59,7 @@ import {
         (pullToRefresh)="refreshTrainingData()"
       >
         <!-- Back to Daily Protocol Banner -->
-        <app-card-shell
-          state="interactive"
-          (cardClick)="goToDailyProtocol()"
-        >
+        <app-card-shell state="interactive" (cardClick)="goToDailyProtocol()">
           <div class="protocol-banner-content">
             <div class="banner-icon">📋</div>
             <div class="banner-content">
@@ -87,7 +84,10 @@ import {
               <span class="position-label">{{ positionLabel() }}</span>
             </div>
             <h1 class="page-title">Custom Session Builder</h1>
-            <p class="page-subtitle">Build additional {{ positionLabel().toLowerCase() }}-specific training sessions</p>
+            <p class="page-subtitle">
+              Build additional {{ positionLabel().toLowerCase() }}-specific
+              training sessions
+            </p>
           </div>
           @if (readinessScore() > 0) {
             <div class="readiness-badge-compact" [class]="readinessStatus()">
@@ -113,8 +113,15 @@ import {
             <div class="alert-content">
               <span>{{ wellnessAlert()!.message }}</span>
             </div>
-            <app-button variant="outlined" size="sm" (clicked)="goToWellnessCheckin()">Update</app-button>
-            <button class="alert-dismiss" (click)="dismissWellnessAlert()">✕</button>
+            <app-button
+              variant="outlined"
+              size="sm"
+              (clicked)="goToWellnessCheckin()"
+              >Update</app-button
+            >
+            <button class="alert-dismiss" (click)="dismissWellnessAlert()">
+              ✕
+            </button>
           </div>
         }
 
@@ -129,7 +136,9 @@ import {
               <div class="action-card-content" [pTooltip]="action.tooltip">
                 <span class="action-icon">{{ action.icon }}</span>
                 <span class="action-label">{{ action.label }}</span>
-                @if (action.label === 'Achievements' && totalAchievements() > 0) {
+                @if (
+                  action.label === "Achievements" && totalAchievements() > 0
+                ) {
                   <span class="action-badge">{{ totalAchievements() }}</span>
                 }
               </div>
@@ -140,7 +149,9 @@ import {
         <!-- Position Priority Workouts -->
         @if (positionWorkouts().length > 0) {
           <app-card-shell
-            [title]="positionIcon() + ' ' + positionLabel() + ' Priority Training'"
+            [title]="
+              positionIcon() + ' ' + positionLabel() + ' Priority Training'
+            "
           >
             <ng-container header-actions>
               <p-tag value="Position-Specific" severity="info" />
@@ -152,17 +163,19 @@ import {
                   density="compact"
                   (cardClick)="startPriorityWorkout(workout)"
                 >
-                  <div 
-                    class="priority-card-content" 
+                  <div
+                    class="priority-card-content"
                     [class.high]="workout.priority === 'high'"
                     [class.medium]="workout.priority === 'medium'"
                   >
                     <span class="priority-icon">{{ workout.icon }}</span>
                     <div class="priority-info">
                       <span class="priority-title">{{ workout.title }}</span>
-                      <span class="priority-desc">{{ workout.description }}</span>
+                      <span class="priority-desc">{{
+                        workout.description
+                      }}</span>
                     </div>
-                    @if (workout.priority === 'high') {
+                    @if (workout.priority === "high") {
                       <span class="priority-badge">Priority</span>
                     }
                   </div>
@@ -187,10 +200,18 @@ import {
             [hasFooter]="true"
           >
             <div class="weekly-schedule-compact">
-              @for (day of weeklySchedule(); track trackByDayName($index, day)) {
-                <div class="schedule-day-compact" [class.today]="isToday(day.name)">
+              @for (
+                day of weeklySchedule();
+                track trackByDayName($index, day)
+              ) {
+                <div
+                  class="schedule-day-compact"
+                  [class.today]="isToday(day.name)"
+                >
                   <div class="day-indicator">
-                    <span class="day-abbrev">{{ day.name.substring(0, 3) }}</span>
+                    <span class="day-abbrev">{{
+                      day.name.substring(0, 3)
+                    }}</span>
                     @if (day.sessions.length > 0) {
                       <span class="session-dot"></span>
                     }
@@ -206,7 +227,13 @@ import {
               }
             </div>
             <ng-container footer>
-              <app-button variant="text" size="sm" iconLeft="pi-th-large" (clicked)="toggleScheduleView()">Full Schedule</app-button>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-th-large"
+                (clicked)="toggleScheduleView()"
+                >Full Schedule</app-button
+              >
             </ng-container>
           </app-card-shell>
 
@@ -226,12 +253,17 @@ import {
                   [style.border-left-color]="workout.iconBg"
                   (click)="startWorkout(workout)"
                 >
-                  <div class="workout-icon-small" [style.background]="workout.iconBg">
+                  <div
+                    class="workout-icon-small"
+                    [style.background]="workout.iconBg"
+                  >
                     <i [class]="workout.icon"></i>
                   </div>
                   <div class="workout-info">
                     <span class="workout-name">{{ workout.title }}</span>
-                    <span class="workout-meta-compact">{{ workout.duration }} • {{ workout.intensity }}</span>
+                    <span class="workout-meta-compact"
+                      >{{ workout.duration }} • {{ workout.intensity }}</span
+                    >
                   </div>
                   <i class="pi pi-play"></i>
                 </div>
@@ -239,7 +271,13 @@ import {
             </div>
             @if (workouts().length > 4) {
               <ng-container footer>
-                <app-button variant="text" size="sm" iconLeft="pi-list" (clicked)="showAllWorkouts()">View All {{ workouts().length }} Workouts</app-button>
+                <app-button
+                  variant="text"
+                  size="sm"
+                  iconLeft="pi-list"
+                  (clicked)="showAllWorkouts()"
+                  >View All {{ workouts().length }} Workouts</app-button
+                >
               </ng-container>
             }
           </app-card-shell>
@@ -247,15 +285,21 @@ import {
 
         <!-- Recent Achievements -->
         @if (recentAchievements().length > 0) {
-          <app-card-shell
-            title="🏆 Recent Achievements"
-          >
+          <app-card-shell title="🏆 Recent Achievements">
             <ng-container header-actions>
-              <app-button variant="text" size="sm" (clicked)="goToAchievements()">View All</app-button>
+              <app-button
+                variant="text"
+                size="sm"
+                (clicked)="goToAchievements()"
+                >View All</app-button
+              >
             </ng-container>
             <div class="achievements-scroll">
               @for (achievement of recentAchievements(); track achievement.id) {
-                <div class="achievement-chip" [pTooltip]="achievement.description">
+                <div
+                  class="achievement-chip"
+                  [pTooltip]="achievement.description"
+                >
                   <span class="ach-icon">{{ achievement.icon }}</span>
                   <span class="ach-name">{{ achievement.title }}</span>
                 </div>
@@ -265,16 +309,15 @@ import {
         }
 
         <!-- LA28 Progress Teaser -->
-        <app-card-shell
-          state="interactive"
-          (cardClick)="goToRoadmap()"
-        >
+        <app-card-shell state="interactive" (cardClick)="goToRoadmap()">
           <div class="la28-teaser-content">
             <div class="teaser-content">
               <span class="teaser-icon">🏅</span>
               <div class="teaser-text">
                 <span class="teaser-title">Road to LA28</span>
-                <span class="teaser-subtitle">{{ daysUntilOlympics() }} days until Olympics</span>
+                <span class="teaser-subtitle"
+                  >{{ daysUntilOlympics() }} days until Olympics</span
+                >
               </div>
             </div>
             <div class="teaser-progress">
@@ -288,7 +331,7 @@ import {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './training.component.scss',
+  styleUrl: "./training.component.scss",
 })
 export class TrainingComponent {
   private readonly trainingService = inject(UnifiedTrainingService);
@@ -310,21 +353,34 @@ export class TrainingComponent {
 
   // Computed signals from state service
   readonly hasWorkouts = computed(() => this.workouts().length > 0);
-  readonly shouldShowWellnessAlert = computed(() => this.wellnessAlert() !== null);
+  readonly shouldShowWellnessAlert = computed(
+    () => this.wellnessAlert() !== null,
+  );
 
   // New signals for achievements/streaks integration
   readonly streakCount = signal(0);
   readonly totalAchievements = signal(0);
-  readonly recentAchievements = signal<Array<{ id: string; icon: string; title: string; description: string }>>([]);
+  readonly recentAchievements = signal<
+    Array<{ id: string; icon: string; title: string; description: string }>
+  >([]);
   readonly daysUntilOlympics = signal(0);
   readonly overallProgress = signal(0);
 
   // Position-specific signals
   readonly playerPosition = signal<string | null>(null);
-  readonly positionLabel = signal('Athlete');
-  readonly positionIcon = signal('🏈');
-  readonly positionQuickActions = signal<Array<{ icon: string; label: string; route: string; tooltip: string }>>([]);
-  readonly positionWorkouts = signal<Array<{ title: string; description: string; icon: string; priority: 'high' | 'medium' | 'low' }>>([]);
+  readonly positionLabel = signal("Athlete");
+  readonly positionIcon = signal("🏈");
+  readonly positionQuickActions = signal<
+    Array<{ icon: string; label: string; route: string; tooltip: string }>
+  >([]);
+  readonly positionWorkouts = signal<
+    Array<{
+      title: string;
+      description: string;
+      icon: string;
+      priority: "high" | "medium" | "low";
+    }>
+  >([]);
 
   // Computed for readiness badge status
   readonly readinessStatus = computed(() => this.readinessLevel());
@@ -343,10 +399,10 @@ export class TrainingComponent {
 
     // Load all training data using data loader service
     await this.loadData();
-    
+
     // Load achievements data
     await this.loadAchievementsData();
-    
+
     // Calculate Olympics countdown
     this.calculateOlympicsCountdown();
   }
@@ -370,31 +426,47 @@ export class TrainingComponent {
   private async loadAchievementsData(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/achievements'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/achievements"),
+      );
       if (response?.success && response.data) {
-        const earned = response.data.achievements?.filter((a: { earned: boolean }) => a.earned) || [];
+        const earned =
+          response.data.achievements?.filter(
+            (a: { earned: boolean }) => a.earned,
+          ) || [];
         this.totalAchievements.set(earned.length);
         this.recentAchievements.set(
           earned
-            .sort((a: { earnedAt: string }, b: { earnedAt: string }) => 
-              new Date(b.earnedAt || 0).getTime() - new Date(a.earnedAt || 0).getTime()
+            .sort(
+              (a: { earnedAt: string }, b: { earnedAt: string }) =>
+                new Date(b.earnedAt || 0).getTime() -
+                new Date(a.earnedAt || 0).getTime(),
             )
             .slice(0, 5)
-            .map((a: { id: string; icon: string; name: string; description: string }) => ({
-              id: a.id,
-              icon: a.icon,
-              title: a.name,
-              description: a.description,
-            }))
+            .map(
+              (a: {
+                id: string;
+                icon: string;
+                name: string;
+                description: string;
+              }) => ({
+                id: a.id,
+                icon: a.icon,
+                title: a.name,
+                description: a.description,
+              }),
+            ),
         );
       }
 
       // Load streaks
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const streaksResponse: any = await firstValueFrom(this.api.get('/api/achievements/streaks'));
+      const streaksResponse: any = await firstValueFrom(
+        this.api.get("/api/achievements/streaks"),
+      );
       if (streaksResponse?.success && streaksResponse.data?.streaks) {
         const trainingStreak = streaksResponse.data.streaks.find(
-          (s: { streak_type: string }) => s.streak_type === 'training'
+          (s: { streak_type: string }) => s.streak_type === "training",
         );
         this.streakCount.set(trainingStreak?.current_streak || 0);
       }
@@ -407,15 +479,17 @@ export class TrainingComponent {
    * Calculate days until LA 2028 Olympics
    */
   private calculateOlympicsCountdown(): void {
-    const olympicsDate = new Date('2028-07-14');
+    const olympicsDate = new Date("2028-07-14");
     const now = new Date();
     const diff = olympicsDate.getTime() - now.getTime();
     this.daysUntilOlympics.set(Math.ceil(diff / (1000 * 60 * 60 * 24)));
-    
+
     // Calculate rough progress (from 2025 to 2028 = ~1277 days)
     const totalDays = 1277;
     const daysCompleted = totalDays - this.daysUntilOlympics();
-    this.overallProgress.set(Math.min(100, Math.max(0, Math.round((daysCompleted / totalDays) * 100))));
+    this.overallProgress.set(
+      Math.min(100, Math.max(0, Math.round((daysCompleted / totalDays) * 100))),
+    );
   }
 
   /**
@@ -424,18 +498,20 @@ export class TrainingComponent {
   private async loadPlayerPosition(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/player-settings'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/player-settings"),
+      );
       if (response?.success && response.data?.position) {
         const position = response.data.position;
         this.playerPosition.set(position);
         this.configurePositionUI(position);
       } else {
         // Default to generic athlete
-        this.configurePositionUI('athlete');
+        this.configurePositionUI("athlete");
       }
     } catch (error) {
       console.error("Error loading player position:", error);
-      this.configurePositionUI('athlete');
+      this.configurePositionUI("athlete");
     }
   }
 
@@ -443,182 +519,596 @@ export class TrainingComponent {
    * Configure UI based on player position
    */
   private configurePositionUI(position: string): void {
-    const positionConfig: Record<string, {
-      label: string;
-      icon: string;
-      quickActions: Array<{ icon: string; label: string; route: string; tooltip: string }>;
-      priorityWorkouts: Array<{ title: string; description: string; icon: string; priority: 'high' | 'medium' | 'low' }>;
-    }> = {
+    const positionConfig: Record<
+      string,
+      {
+        label: string;
+        icon: string;
+        quickActions: Array<{
+          icon: string;
+          label: string;
+          route: string;
+          tooltip: string;
+        }>;
+        priorityWorkouts: Array<{
+          title: string;
+          description: string;
+          icon: string;
+          priority: "high" | "medium" | "low";
+        }>;
+      }
+    > = {
       // Quarterback
       qb: {
-        label: 'Quarterback',
-        icon: '🎯',
+        label: "Quarterback",
+        icon: "🎯",
         quickActions: [
-          { icon: '🎯', label: 'Throwing', route: '/training/qb/throwing', tooltip: 'Track throwing sessions & arm care' },
-          { icon: '💪', label: 'Arm Care', route: '/training/qb/throwing', tooltip: 'Rotator cuff & arm health' },
-          { icon: '🦵', label: 'Hip Mobility', route: '/training', tooltip: 'Hip & shoulder mobility' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🎯",
+            label: "Throwing",
+            route: "/training/qb/throwing",
+            tooltip: "Track throwing sessions & arm care",
+          },
+          {
+            icon: "💪",
+            label: "Arm Care",
+            route: "/training/qb/throwing",
+            tooltip: "Rotator cuff & arm health",
+          },
+          {
+            icon: "🦵",
+            label: "Hip Mobility",
+            route: "/training",
+            tooltip: "Hip & shoulder mobility",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Throwing Progression', description: 'Structured throw count with arm care', icon: '🎯', priority: 'high' },
-          { title: 'Hip 90/90 Mobility', description: 'QB-specific hip rotation', icon: '🦵', priority: 'high' },
-          { title: 'Rotator Cuff Warm-up', description: 'Pre-throwing arm prep', icon: '💪', priority: 'high' },
-          { title: 'Footwork Drills', description: 'Drop-back & pocket movement', icon: '👟', priority: 'medium' },
+          {
+            title: "Throwing Progression",
+            description: "Structured throw count with arm care",
+            icon: "🎯",
+            priority: "high",
+          },
+          {
+            title: "Hip 90/90 Mobility",
+            description: "QB-specific hip rotation",
+            icon: "🦵",
+            priority: "high",
+          },
+          {
+            title: "Rotator Cuff Warm-up",
+            description: "Pre-throwing arm prep",
+            icon: "💪",
+            priority: "high",
+          },
+          {
+            title: "Footwork Drills",
+            description: "Drop-back & pocket movement",
+            icon: "👟",
+            priority: "medium",
+          },
         ],
       },
       quarterback: {
-        label: 'Quarterback',
-        icon: '🎯',
+        label: "Quarterback",
+        icon: "🎯",
         quickActions: [
-          { icon: '🎯', label: 'Throwing', route: '/training/qb/throwing', tooltip: 'Track throwing sessions & arm care' },
-          { icon: '💪', label: 'Arm Care', route: '/training/qb/throwing', tooltip: 'Rotator cuff & arm health' },
-          { icon: '🦵', label: 'Hip Mobility', route: '/training', tooltip: 'Hip & shoulder mobility' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🎯",
+            label: "Throwing",
+            route: "/training/qb/throwing",
+            tooltip: "Track throwing sessions & arm care",
+          },
+          {
+            icon: "💪",
+            label: "Arm Care",
+            route: "/training/qb/throwing",
+            tooltip: "Rotator cuff & arm health",
+          },
+          {
+            icon: "🦵",
+            label: "Hip Mobility",
+            route: "/training",
+            tooltip: "Hip & shoulder mobility",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Throwing Progression', description: 'Structured throw count with arm care', icon: '🎯', priority: 'high' },
-          { title: 'Hip 90/90 Mobility', description: 'QB-specific hip rotation', icon: '🦵', priority: 'high' },
-          { title: 'Rotator Cuff Warm-up', description: 'Pre-throwing arm prep', icon: '💪', priority: 'high' },
-          { title: 'Footwork Drills', description: 'Drop-back & pocket movement', icon: '👟', priority: 'medium' },
+          {
+            title: "Throwing Progression",
+            description: "Structured throw count with arm care",
+            icon: "🎯",
+            priority: "high",
+          },
+          {
+            title: "Hip 90/90 Mobility",
+            description: "QB-specific hip rotation",
+            icon: "🦵",
+            priority: "high",
+          },
+          {
+            title: "Rotator Cuff Warm-up",
+            description: "Pre-throwing arm prep",
+            icon: "💪",
+            priority: "high",
+          },
+          {
+            title: "Footwork Drills",
+            description: "Drop-back & pocket movement",
+            icon: "👟",
+            priority: "medium",
+          },
         ],
       },
       // Center
       center: {
-        label: 'Center',
-        icon: '🎯',
+        label: "Center",
+        icon: "🎯",
         quickActions: [
-          { icon: '🎯', label: 'Snap Drills', route: '/training', tooltip: 'Snap mechanics & accuracy' },
-          { icon: '💪', label: 'Core Work', route: '/training', tooltip: 'Core stability for snapping' },
-          { icon: '🏃', label: 'Blocking', route: '/training', tooltip: 'Pass protection drills' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🎯",
+            label: "Snap Drills",
+            route: "/training",
+            tooltip: "Snap mechanics & accuracy",
+          },
+          {
+            icon: "💪",
+            label: "Core Work",
+            route: "/training",
+            tooltip: "Core stability for snapping",
+          },
+          {
+            icon: "🏃",
+            label: "Blocking",
+            route: "/training",
+            tooltip: "Pass protection drills",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Snap Mechanics', description: 'Shotgun & under-center snaps', icon: '🎯', priority: 'high' },
-          { title: 'Core Stability', description: 'Anti-rotation & bracing', icon: '💪', priority: 'high' },
-          { title: 'Hip Hinge Drills', description: 'Proper snap position', icon: '🦵', priority: 'high' },
-          { title: 'Hand-Eye Coordination', description: 'Snap accuracy under pressure', icon: '👁️', priority: 'medium' },
+          {
+            title: "Snap Mechanics",
+            description: "Shotgun & under-center snaps",
+            icon: "🎯",
+            priority: "high",
+          },
+          {
+            title: "Core Stability",
+            description: "Anti-rotation & bracing",
+            icon: "💪",
+            priority: "high",
+          },
+          {
+            title: "Hip Hinge Drills",
+            description: "Proper snap position",
+            icon: "🦵",
+            priority: "high",
+          },
+          {
+            title: "Hand-Eye Coordination",
+            description: "Snap accuracy under pressure",
+            icon: "👁️",
+            priority: "medium",
+          },
         ],
       },
       // Blitzer (Rusher who chases QB)
       blitzer: {
-        label: 'Blitzer',
-        icon: '⚡',
+        label: "Blitzer",
+        icon: "⚡",
         quickActions: [
-          { icon: '⚡', label: 'Decel Drills', route: '/training', tooltip: 'Deceleration & change of direction' },
-          { icon: '🏃', label: 'Sprint Work', route: '/training', tooltip: 'Acceleration & top speed' },
-          { icon: '🦵', label: 'Agility', route: '/training', tooltip: 'Lateral movement & cuts' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "⚡",
+            label: "Decel Drills",
+            route: "/training",
+            tooltip: "Deceleration & change of direction",
+          },
+          {
+            icon: "🏃",
+            label: "Sprint Work",
+            route: "/training",
+            tooltip: "Acceleration & top speed",
+          },
+          {
+            icon: "🦵",
+            label: "Agility",
+            route: "/training",
+            tooltip: "Lateral movement & cuts",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: '3-Step Deceleration', description: 'Controlled stopping at speed', icon: '⚡', priority: 'high' },
-          { title: 'Change of Direction', description: 'Quick cuts & redirects', icon: '↩️', priority: 'high' },
-          { title: 'Sprint Mechanics', description: 'Acceleration technique', icon: '🏃', priority: 'high' },
-          { title: 'Reactive Agility', description: 'Read & react drills', icon: '👁️', priority: 'medium' },
+          {
+            title: "3-Step Deceleration",
+            description: "Controlled stopping at speed",
+            icon: "⚡",
+            priority: "high",
+          },
+          {
+            title: "Change of Direction",
+            description: "Quick cuts & redirects",
+            icon: "↩️",
+            priority: "high",
+          },
+          {
+            title: "Sprint Mechanics",
+            description: "Acceleration technique",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Reactive Agility",
+            description: "Read & react drills",
+            icon: "👁️",
+            priority: "medium",
+          },
         ],
       },
       rusher: {
-        label: 'Rusher',
-        icon: '⚡',
+        label: "Rusher",
+        icon: "⚡",
         quickActions: [
-          { icon: '⚡', label: 'Decel Drills', route: '/training', tooltip: 'Deceleration & change of direction' },
-          { icon: '🏃', label: 'Sprint Work', route: '/training', tooltip: 'Acceleration & top speed' },
-          { icon: '🦵', label: 'Agility', route: '/training', tooltip: 'Lateral movement & cuts' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "⚡",
+            label: "Decel Drills",
+            route: "/training",
+            tooltip: "Deceleration & change of direction",
+          },
+          {
+            icon: "🏃",
+            label: "Sprint Work",
+            route: "/training",
+            tooltip: "Acceleration & top speed",
+          },
+          {
+            icon: "🦵",
+            label: "Agility",
+            route: "/training",
+            tooltip: "Lateral movement & cuts",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: '3-Step Deceleration', description: 'Controlled stopping at speed', icon: '⚡', priority: 'high' },
-          { title: 'Change of Direction', description: 'Quick cuts & redirects', icon: '↩️', priority: 'high' },
-          { title: 'Sprint Mechanics', description: 'Acceleration technique', icon: '🏃', priority: 'high' },
-          { title: 'Reactive Agility', description: 'Read & react drills', icon: '👁️', priority: 'medium' },
+          {
+            title: "3-Step Deceleration",
+            description: "Controlled stopping at speed",
+            icon: "⚡",
+            priority: "high",
+          },
+          {
+            title: "Change of Direction",
+            description: "Quick cuts & redirects",
+            icon: "↩️",
+            priority: "high",
+          },
+          {
+            title: "Sprint Mechanics",
+            description: "Acceleration technique",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Reactive Agility",
+            description: "Read & react drills",
+            icon: "👁️",
+            priority: "medium",
+          },
         ],
       },
       // Wide Receiver
       wr: {
-        label: 'Wide Receiver',
-        icon: '🏃',
+        label: "Wide Receiver",
+        icon: "🏃",
         quickActions: [
-          { icon: '🏃', label: 'Route Running', route: '/training', tooltip: 'Route technique & timing' },
-          { icon: '⚡', label: 'Speed Work', route: '/training', tooltip: 'Sprint & acceleration' },
-          { icon: '🤲', label: 'Catching', route: '/training', tooltip: 'Hand-eye coordination' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🏃",
+            label: "Route Running",
+            route: "/training",
+            tooltip: "Route technique & timing",
+          },
+          {
+            icon: "⚡",
+            label: "Speed Work",
+            route: "/training",
+            tooltip: "Sprint & acceleration",
+          },
+          {
+            icon: "🤲",
+            label: "Catching",
+            route: "/training",
+            tooltip: "Hand-eye coordination",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Route Trees', description: 'Full route combinations', icon: '🗺️', priority: 'high' },
-          { title: 'Release Moves', description: 'Off the line techniques', icon: '💨', priority: 'high' },
-          { title: 'Sprint Training', description: 'Top-end speed development', icon: '🏃', priority: 'high' },
-          { title: 'Catching Drills', description: 'Contested & over-shoulder', icon: '🤲', priority: 'medium' },
+          {
+            title: "Route Trees",
+            description: "Full route combinations",
+            icon: "🗺️",
+            priority: "high",
+          },
+          {
+            title: "Release Moves",
+            description: "Off the line techniques",
+            icon: "💨",
+            priority: "high",
+          },
+          {
+            title: "Sprint Training",
+            description: "Top-end speed development",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Catching Drills",
+            description: "Contested & over-shoulder",
+            icon: "🤲",
+            priority: "medium",
+          },
         ],
       },
-      'wide receiver': {
-        label: 'Wide Receiver',
-        icon: '🏃',
+      "wide receiver": {
+        label: "Wide Receiver",
+        icon: "🏃",
         quickActions: [
-          { icon: '🏃', label: 'Route Running', route: '/training', tooltip: 'Route technique & timing' },
-          { icon: '⚡', label: 'Speed Work', route: '/training', tooltip: 'Sprint & acceleration' },
-          { icon: '🤲', label: 'Catching', route: '/training', tooltip: 'Hand-eye coordination' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🏃",
+            label: "Route Running",
+            route: "/training",
+            tooltip: "Route technique & timing",
+          },
+          {
+            icon: "⚡",
+            label: "Speed Work",
+            route: "/training",
+            tooltip: "Sprint & acceleration",
+          },
+          {
+            icon: "🤲",
+            label: "Catching",
+            route: "/training",
+            tooltip: "Hand-eye coordination",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Route Trees', description: 'Full route combinations', icon: '🗺️', priority: 'high' },
-          { title: 'Release Moves', description: 'Off the line techniques', icon: '💨', priority: 'high' },
-          { title: 'Sprint Training', description: 'Top-end speed development', icon: '🏃', priority: 'high' },
-          { title: 'Catching Drills', description: 'Contested & over-shoulder', icon: '🤲', priority: 'medium' },
+          {
+            title: "Route Trees",
+            description: "Full route combinations",
+            icon: "🗺️",
+            priority: "high",
+          },
+          {
+            title: "Release Moves",
+            description: "Off the line techniques",
+            icon: "💨",
+            priority: "high",
+          },
+          {
+            title: "Sprint Training",
+            description: "Top-end speed development",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Catching Drills",
+            description: "Contested & over-shoulder",
+            icon: "🤲",
+            priority: "medium",
+          },
         ],
       },
       // Defensive Back
       db: {
-        label: 'Defensive Back',
-        icon: '🛡️',
+        label: "Defensive Back",
+        icon: "🛡️",
         quickActions: [
-          { icon: '🛡️', label: 'Coverage', route: '/training', tooltip: 'Man & zone techniques' },
-          { icon: '🏃', label: 'Backpedal', route: '/training', tooltip: 'Backpedal & transition' },
-          { icon: '👁️', label: 'Ball Drills', route: '/training', tooltip: 'Interception technique' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🛡️",
+            label: "Coverage",
+            route: "/training",
+            tooltip: "Man & zone techniques",
+          },
+          {
+            icon: "🏃",
+            label: "Backpedal",
+            route: "/training",
+            tooltip: "Backpedal & transition",
+          },
+          {
+            icon: "👁️",
+            label: "Ball Drills",
+            route: "/training",
+            tooltip: "Interception technique",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Backpedal & Break', description: 'Hip turn & transition', icon: '↩️', priority: 'high' },
-          { title: 'Mirror Drills', description: 'Shadowing receivers', icon: '🪞', priority: 'high' },
-          { title: 'Sprint Training', description: 'Recovery speed', icon: '🏃', priority: 'high' },
-          { title: 'Ball Skills', description: 'High-point & intercept', icon: '🏈', priority: 'medium' },
+          {
+            title: "Backpedal & Break",
+            description: "Hip turn & transition",
+            icon: "↩️",
+            priority: "high",
+          },
+          {
+            title: "Mirror Drills",
+            description: "Shadowing receivers",
+            icon: "🪞",
+            priority: "high",
+          },
+          {
+            title: "Sprint Training",
+            description: "Recovery speed",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Ball Skills",
+            description: "High-point & intercept",
+            icon: "🏈",
+            priority: "medium",
+          },
         ],
       },
-      'defensive back': {
-        label: 'Defensive Back',
-        icon: '🛡️',
+      "defensive back": {
+        label: "Defensive Back",
+        icon: "🛡️",
         quickActions: [
-          { icon: '🛡️', label: 'Coverage', route: '/training', tooltip: 'Man & zone techniques' },
-          { icon: '🏃', label: 'Backpedal', route: '/training', tooltip: 'Backpedal & transition' },
-          { icon: '👁️', label: 'Ball Drills', route: '/training', tooltip: 'Interception technique' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🛡️",
+            label: "Coverage",
+            route: "/training",
+            tooltip: "Man & zone techniques",
+          },
+          {
+            icon: "🏃",
+            label: "Backpedal",
+            route: "/training",
+            tooltip: "Backpedal & transition",
+          },
+          {
+            icon: "👁️",
+            label: "Ball Drills",
+            route: "/training",
+            tooltip: "Interception technique",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Backpedal & Break', description: 'Hip turn & transition', icon: '↩️', priority: 'high' },
-          { title: 'Mirror Drills', description: 'Shadowing receivers', icon: '🪞', priority: 'high' },
-          { title: 'Sprint Training', description: 'Recovery speed', icon: '🏃', priority: 'high' },
-          { title: 'Ball Skills', description: 'High-point & intercept', icon: '🏈', priority: 'medium' },
+          {
+            title: "Backpedal & Break",
+            description: "Hip turn & transition",
+            icon: "↩️",
+            priority: "high",
+          },
+          {
+            title: "Mirror Drills",
+            description: "Shadowing receivers",
+            icon: "🪞",
+            priority: "high",
+          },
+          {
+            title: "Sprint Training",
+            description: "Recovery speed",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Ball Skills",
+            description: "High-point & intercept",
+            icon: "🏈",
+            priority: "medium",
+          },
         ],
       },
       // Default/Athlete
       athlete: {
-        label: 'Athlete',
-        icon: '🏈',
+        label: "Athlete",
+        icon: "🏈",
         quickActions: [
-          { icon: '🏃', label: 'Speed', route: '/training', tooltip: 'Sprint & acceleration' },
-          { icon: '📊', label: 'Periodization', route: '/periodization', tooltip: 'View your training plan' },
-          { icon: '💚', label: 'Recovery', route: '/recovery', tooltip: 'Recovery protocols' },
-          { icon: '🏆', label: 'Achievements', route: '/training', tooltip: 'View all achievements' },
+          {
+            icon: "🏃",
+            label: "Speed",
+            route: "/training",
+            tooltip: "Sprint & acceleration",
+          },
+          {
+            icon: "📊",
+            label: "Periodization",
+            route: "/periodization",
+            tooltip: "View your training plan",
+          },
+          {
+            icon: "💚",
+            label: "Recovery",
+            route: "/recovery",
+            tooltip: "Recovery protocols",
+          },
+          {
+            icon: "🏆",
+            label: "Achievements",
+            route: "/training",
+            tooltip: "View all achievements",
+          },
         ],
         priorityWorkouts: [
-          { title: 'Sprint Training', description: 'Speed development', icon: '🏃', priority: 'high' },
-          { title: 'Agility Drills', description: 'Change of direction', icon: '↩️', priority: 'high' },
-          { title: 'Core Stability', description: 'Athletic foundation', icon: '💪', priority: 'medium' },
-          { title: 'Mobility Work', description: 'Flexibility & range', icon: '🧘', priority: 'medium' },
+          {
+            title: "Sprint Training",
+            description: "Speed development",
+            icon: "🏃",
+            priority: "high",
+          },
+          {
+            title: "Agility Drills",
+            description: "Change of direction",
+            icon: "↩️",
+            priority: "high",
+          },
+          {
+            title: "Core Stability",
+            description: "Athletic foundation",
+            icon: "💪",
+            priority: "medium",
+          },
+          {
+            title: "Mobility Work",
+            description: "Flexibility & range",
+            icon: "🧘",
+            priority: "medium",
+          },
         ],
       },
     };
 
     const normalizedPosition = position.toLowerCase().trim();
-    const config = positionConfig[normalizedPosition] || positionConfig['athlete'];
+    const config =
+      positionConfig[normalizedPosition] || positionConfig["athlete"];
 
     this.positionLabel.set(config.label);
     this.positionIcon.set(config.icon);
@@ -630,7 +1120,7 @@ export class TrainingComponent {
    * Check if a day name is today
    */
   isToday(dayName: string): boolean {
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
     return dayName.toLowerCase() === today.toLowerCase();
   }
 
@@ -639,7 +1129,7 @@ export class TrainingComponent {
    */
   isQB(): boolean {
     const pos = this.playerPosition()?.toLowerCase();
-    return pos === 'qb' || pos === 'quarterback';
+    return pos === "qb" || pos === "quarterback";
   }
 
   // ============================================================================
@@ -699,12 +1189,17 @@ export class TrainingComponent {
   /**
    * Start a position-priority workout
    */
-  startPriorityWorkout(workout: { title: string; description: string; icon: string; priority: string }): void {
+  startPriorityWorkout(workout: {
+    title: string;
+    description: string;
+    icon: string;
+    priority: string;
+  }): void {
     this.toastService.info(`Starting ${workout.title}`);
     // Navigate to daily protocol which will handle the workout
     this.router.navigate(["/training"], {
       queryParams: {
-        focus: workout.title.toLowerCase().replace(/\s+/g, '-'),
+        focus: workout.title.toLowerCase().replace(/\s+/g, "-"),
       },
     });
   }

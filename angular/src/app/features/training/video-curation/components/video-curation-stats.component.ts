@@ -54,7 +54,7 @@ import { CommonModule } from "@angular/common";
       </div>
     </section>
   `,
-  styleUrl: './video-curation-stats.component.scss',
+  styleUrl: "./video-curation-stats.component.scss",
 })
 export class VideoCurationStatsComponent {
   totalVideos = input.required<number>();

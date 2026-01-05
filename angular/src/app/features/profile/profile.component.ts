@@ -88,7 +88,12 @@ interface PendingInvitation {
                 <p>{{ getDeletionReason() }}</p>
               </div>
               <div class="deletion-banner-actions">
-                <app-icon-button icon="pi-times" [loading]="cancellingDeletion()" (clicked)="cancelDeletion()" ariaLabel="times" />
+                <app-icon-button
+                  icon="pi-times"
+                  [loading]="cancellingDeletion()"
+                  (clicked)="cancelDeletion()"
+                  ariaLabel="times"
+                />
                 <a
                   [routerLink]="deletionMessage.helpLink"
                   class="deletion-help-link"
@@ -202,19 +207,26 @@ interface PendingInvitation {
               <div class="profile-completion-card">
                 <div class="completion-header">
                   <span class="completion-label">Profile Completion</span>
-                  <span class="completion-percentage">{{ profileCompletion().percentage }}%</span>
+                  <span class="completion-percentage"
+                    >{{ profileCompletion().percentage }}%</span
+                  >
                 </div>
-                <p-progressBar 
-                  [value]="profileCompletion().percentage" 
+                <p-progressBar
+                  [value]="profileCompletion().percentage"
                   [showValue]="false"
                   styleClass="completion-progress"
                 ></p-progressBar>
                 @if (profileCompletion().missingFields.length > 0) {
                   <div class="completion-hint">
                     <i class="pi pi-info-circle"></i>
-                    <span>Complete your profile: {{ profileCompletion().missingFields.slice(0, 2).join(', ') }}
+                    <span
+                      >Complete your profile:
+                      {{
+                        profileCompletion().missingFields.slice(0, 2).join(", ")
+                      }}
                       @if (profileCompletion().missingFields.length > 2) {
-                        and {{ profileCompletion().missingFields.length - 2 }} more
+                        and
+                        {{ profileCompletion().missingFields.length - 2 }} more
                       }
                     </span>
                   </div>
@@ -233,7 +245,8 @@ interface PendingInvitation {
                 iconLeft="pi-cog"
                 routerLink="/settings"
                 [disabled]="deletionPending()"
-              >Edit Profile</app-button>
+                >Edit Profile</app-button
+              >
               <app-icon-button
                 icon="pi-share-alt"
                 variant="outlined"
@@ -283,8 +296,13 @@ interface PendingInvitation {
                         <div class="card-empty-state card-empty-state--compact">
                           <i class="pi pi-clock card-empty-state__icon"></i>
                           <div class="card-empty-state__content">
-                            <p class="card-empty-state__title">No Recent Activity</p>
-                            <p class="card-empty-state__text">Your activity will appear here once you start training.</p>
+                            <p class="card-empty-state__title">
+                              No Recent Activity
+                            </p>
+                            <p class="card-empty-state__text">
+                              Your activity will appear here once you start
+                              training.
+                            </p>
                           </div>
                         </div>
                       } @else {
@@ -317,8 +335,13 @@ interface PendingInvitation {
                     <div class="card-empty-state">
                       <i class="pi pi-trophy card-empty-state__icon"></i>
                       <div class="card-empty-state__content">
-                        <p class="card-empty-state__title">No Achievements Yet</p>
-                        <p class="card-empty-state__text">Complete training sessions and reach milestones to earn achievements.</p>
+                        <p class="card-empty-state__title">
+                          No Achievements Yet
+                        </p>
+                        <p class="card-empty-state__text">
+                          Complete training sessions and reach milestones to
+                          earn achievements.
+                        </p>
                       </div>
                     </div>
                   } @else {
@@ -359,8 +382,12 @@ interface PendingInvitation {
                       ) {
                         <div class="stat-block">
                           <div class="stat-block__content">
-                            <span class="stat-block__value">{{ stat.value }}</span>
-                            <span class="stat-block__label">{{ stat.label }}</span>
+                            <span class="stat-block__value">{{
+                              stat.value
+                            }}</span>
+                            <span class="stat-block__label">{{
+                              stat.label
+                            }}</span>
                           </div>
                           <p-tag
                             class="stat-block__tag"
@@ -386,8 +413,12 @@ interface PendingInvitation {
                       <div class="card-empty-state">
                         <i class="pi pi-envelope card-empty-state__icon"></i>
                         <div class="card-empty-state__content">
-                          <p class="card-empty-state__title">No Pending Invitations</p>
-                          <p class="card-empty-state__text">You don't have any team invitations at the moment.</p>
+                          <p class="card-empty-state__title">
+                            No Pending Invitations
+                          </p>
+                          <p class="card-empty-state__text">
+                            You don't have any team invitations at the moment.
+                          </p>
                         </div>
                       </div>
                     } @else {
@@ -440,14 +471,30 @@ interface PendingInvitation {
                               </div>
                               <div class="invitation-actions">
                                 @if (!invitation.isExpired) {
-                                  <app-button iconLeft="pi-check" [loading]="
+                                  <app-button
+                                    iconLeft="pi-check"
+                                    [loading]="
                                       processingInvitation() === invitation.id
-                                    " (clicked)="acceptInvitation(invitation)">Accept</app-button>
-                                  <app-button variant="outlined" iconLeft="pi-times" [loading]="
+                                    "
+                                    (clicked)="acceptInvitation(invitation)"
+                                    >Accept</app-button
+                                  >
+                                  <app-button
+                                    variant="outlined"
+                                    iconLeft="pi-times"
+                                    [loading]="
                                       processingInvitation() === invitation.id
-                                    " (clicked)="declineInvitation(invitation)">Decline</app-button>
+                                    "
+                                    (clicked)="declineInvitation(invitation)"
+                                    >Decline</app-button
+                                  >
                                 } @else {
-                                  <app-button variant="outlined" iconLeft="pi-refresh" (clicked)="requestNewInvitation(invitation)">Request New Invitation</app-button>
+                                  <app-button
+                                    variant="outlined"
+                                    iconLeft="pi-refresh"
+                                    (clicked)="requestNewInvitation(invitation)"
+                                    >Request New Invitation</app-button
+                                  >
                                 }
                               </div>
                             </div>
@@ -501,14 +548,16 @@ export class ProfileComponent implements OnInit {
   isUploadingAvatar = signal(false);
   userInitials = signal("U");
   activeTab = signal<string>("overview");
-  stats = signal<Array<{ 
-    value: string; 
-    label: string;
-    icon?: string;
-    iconType?: "primary" | "error" | "warning" | "info";
-    trend?: string;
-    trendType?: "positive" | "negative" | "neutral";
-  }>>([]);
+  stats = signal<
+    Array<{
+      value: string;
+      label: string;
+      icon?: string;
+      iconType?: "primary" | "error" | "warning" | "info";
+      trend?: string;
+      trendType?: "positive" | "negative" | "neutral";
+    }>
+  >([]);
   activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
   achievements = signal<
     Array<{ icon: string; title: string; description: string; date: string }>
@@ -563,23 +612,24 @@ export class ProfileComponent implements OnInit {
    */
   private calculateProfileCompletion(): void {
     const fields = [
-      { name: 'Display Name', value: this.userName(), required: true },
-      { name: 'Email', value: this.userEmail(), required: true },
-      { name: 'Profile Photo', value: this.avatarUrl(), required: false },
-      { name: 'Position', value: this.userPosition(), required: false },
-      { name: 'Jersey Number', value: this.jerseyNumber(), required: false },
-      { name: 'Team', value: this.teamName(), required: false },
+      { name: "Display Name", value: this.userName(), required: true },
+      { name: "Email", value: this.userEmail(), required: true },
+      { name: "Profile Photo", value: this.avatarUrl(), required: false },
+      { name: "Position", value: this.userPosition(), required: false },
+      { name: "Jersey Number", value: this.jerseyNumber(), required: false },
+      { name: "Team", value: this.teamName(), required: false },
     ];
 
     const completedFields: string[] = [];
     const missingFields: string[] = [];
 
-    fields.forEach(field => {
-      const hasValue = field.value && 
-        field.value !== 'Loading...' && 
-        field.value !== 'User' &&
+    fields.forEach((field) => {
+      const hasValue =
+        field.value &&
+        field.value !== "Loading..." &&
+        field.value !== "User" &&
         field.value !== null;
-      
+
       if (hasValue) {
         completedFields.push(field.name);
       } else {
@@ -587,7 +637,9 @@ export class ProfileComponent implements OnInit {
       }
     });
 
-    const percentage = Math.round((completedFields.length / fields.length) * 100);
+    const percentage = Math.round(
+      (completedFields.length / fields.length) * 100,
+    );
 
     this.profileCompletion.set({
       percentage,
@@ -632,7 +684,7 @@ export class ProfileComponent implements OnInit {
 
     // Load extended profile data from Supabase
     await this.loadExtendedProfileData(user.id);
-    
+
     // Recalculate profile completion after extended data loads
     this.calculateProfileCompletion();
 
@@ -644,7 +696,7 @@ export class ProfileComponent implements OnInit {
           .from("training_sessions")
           .select("id, status, completed_at, session_date, duration_minutes")
           .eq("user_id", user.id);
-      
+
       // Load games played count from game_participations table
       let gamesPlayed = 0;
       try {
@@ -654,7 +706,7 @@ export class ProfileComponent implements OnInit {
             .select("id, game_id, status")
             .eq("player_id", user.id)
             .eq("status", "played");
-        
+
         if (!gamesError && gameParticipations) {
           gamesPlayed = gameParticipations.length;
         } else {
@@ -664,7 +716,7 @@ export class ProfileComponent implements OnInit {
               .from("games")
               .select("id")
               .contains("participants", [user.id]);
-          
+
           if (!altError && games) {
             gamesPlayed = games.length;
           }
@@ -767,37 +819,68 @@ export class ProfileComponent implements OnInit {
 
       // Load stats with real data - matches Dashboard stat cards
       this.stats.set([
-        { 
-          value: totalSessions.toString(), 
+        {
+          value: totalSessions.toString(),
           label: "Training Sessions",
           icon: "pi-calendar-plus",
           iconType: "primary",
           trend: totalSessions > 0 ? "Active" : "Start training",
-          trendType: totalSessions > 0 ? "positive" : "neutral" as "positive" | "negative" | "neutral",
+          trendType:
+            totalSessions > 0
+              ? "positive"
+              : ("neutral" as "positive" | "negative" | "neutral"),
         },
         {
           value: performanceScore > 0 ? `${performanceScore}%` : "—",
           label: "Performance Score",
           icon: "pi-heart",
           iconType: "error",
-          trend: performanceScore >= 70 ? "Good" : performanceScore >= 50 ? "Moderate" : "Building",
-          trendType: performanceScore >= 70 ? "positive" : performanceScore >= 50 ? "neutral" : "neutral" as "positive" | "negative" | "neutral",
+          trend:
+            performanceScore >= 70
+              ? "Good"
+              : performanceScore >= 50
+                ? "Moderate"
+                : "Building",
+          trendType:
+            performanceScore >= 70
+              ? "positive"
+              : performanceScore >= 50
+                ? "neutral"
+                : ("neutral" as "positive" | "negative" | "neutral"),
         },
-        { 
-          value: streak.toString(), 
+        {
+          value: streak.toString(),
           label: "Day Streak",
           icon: "pi-bolt",
           iconType: "warning",
-          trend: streak >= 7 ? "On fire!" : streak > 0 ? "Keep going" : "Start streak",
-          trendType: streak >= 7 ? "positive" : streak > 0 ? "neutral" : "neutral" as "positive" | "negative" | "neutral",
+          trend:
+            streak >= 7
+              ? "On fire!"
+              : streak > 0
+                ? "Keep going"
+                : "Start streak",
+          trendType:
+            streak >= 7
+              ? "positive"
+              : streak > 0
+                ? "neutral"
+                : ("neutral" as "positive" | "negative" | "neutral"),
         },
-        { 
-          value: gamesPlayed.toString(), 
+        {
+          value: gamesPlayed.toString(),
           label: "Games Played",
           icon: "pi-flag",
           iconType: "info",
-          trend: gamesPlayed > 0 ? (gamesPlayed >= 10 ? "Veteran" : "Active") : "No games yet",
-          trendType: gamesPlayed > 0 ? "positive" : "neutral" as "positive" | "negative" | "neutral",
+          trend:
+            gamesPlayed > 0
+              ? gamesPlayed >= 10
+                ? "Veteran"
+                : "Active"
+              : "No games yet",
+          trendType:
+            gamesPlayed > 0
+              ? "positive"
+              : ("neutral" as "positive" | "negative" | "neutral"),
         },
       ]);
 
@@ -955,32 +1038,32 @@ export class ProfileComponent implements OnInit {
 
   private loadEmptyState(): void {
     this.stats.set([
-      { 
-        value: "0", 
+      {
+        value: "0",
         label: "Training Sessions",
         icon: "pi-calendar-plus",
         iconType: "primary",
         trend: "Start training",
         trendType: "neutral" as "positive" | "negative" | "neutral",
       },
-      { 
-        value: "—", 
+      {
+        value: "—",
         label: "Performance Score",
         icon: "pi-heart",
         iconType: "error",
         trend: "No data yet",
         trendType: "neutral" as "positive" | "negative" | "neutral",
       },
-      { 
-        value: "0", 
+      {
+        value: "0",
         label: "Day Streak",
         icon: "pi-bolt",
         iconType: "warning",
         trend: "Start streak",
         trendType: "neutral" as "positive" | "negative" | "neutral",
       },
-      { 
-        value: "0", 
+      {
+        value: "0",
         label: "Games Played",
         icon: "pi-flag",
         iconType: "info",
@@ -1089,13 +1172,12 @@ export class ProfileComponent implements OnInit {
       const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
-      const { error: uploadError } =
-        await this.supabaseService.client.storage
-          .from("avatars")
-          .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+      const { error: uploadError } = await this.supabaseService.client.storage
+        .from("avatars")
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
 
       if (uploadError) {
         // If bucket doesn't exist, show helpful message

@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -26,20 +26,20 @@ import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    GameResult,
-    PlayerPerformanceStats,
-    RiskAlert,
-    TeamOverviewStats,
-    TeamStatisticsService,
-    TrainingSession,
-    UpcomingGame,
+  GameResult,
+  PlayerPerformanceStats,
+  RiskAlert,
+  TeamOverviewStats,
+  TeamStatisticsService,
+  TrainingSession,
+  UpcomingGame,
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-    AppLoadingComponent,
-    ButtonComponent,
-    CardComponent,
+  AppLoadingComponent,
+  ButtonComponent,
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { DatePipe, DecimalPipe } from "@angular/common";
@@ -57,7 +57,6 @@ interface ConsentInfo {
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 // SortField reserved for future use
 // type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
-
 
 @Component({
   selector: "app-coach-dashboard",
@@ -116,7 +115,13 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 <h3>Merlin's Team Briefing</h3>
                 <p>{{ merlinCoachInsight() }}</p>
                 <div class="merlin-actions">
-                  <app-button variant="text" size="sm" icon="comments" routerLink="/chat">Discuss Team Strategy</app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    icon="comments"
+                    routerLink="/chat"
+                    >Discuss Team Strategy</app-button
+                  >
                 </div>
               </div>
             </div>
@@ -124,14 +129,32 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
             @if (riskAlerts().length > 0) {
               <div class="priority-athletes-strip">
                 <div class="strip-header">
-                  <span class="strip-title"><i class="pi pi-exclamation-triangle"></i> Needs Attention Now</span>
-                  <p-badge [value]="riskAlerts().length.toString()" severity="danger"></p-badge>
+                  <span class="strip-title"
+                    ><i class="pi pi-exclamation-triangle"></i> Needs Attention
+                    Now</span
+                  >
+                  <p-badge
+                    [value]="riskAlerts().length.toString()"
+                    severity="danger"
+                  ></p-badge>
                 </div>
                 <div class="athlete-scroll">
                   @for (alert of riskAlerts(); track alert.playerId) {
-                    <div class="priority-athlete-card" (click)="viewPlayer(alert.playerId)">
-                      <p-avatar [label]="getPlayerInitials(alert.playerName)" shape="circle" 
-                        [style]="{'background-color': alert.severity === 'critical' ? 'var(--red-500)' : 'var(--yellow-500)', 'color': 'white'}">
+                    <div
+                      class="priority-athlete-card"
+                      (click)="viewPlayer(alert.playerId)"
+                    >
+                      <p-avatar
+                        [label]="getPlayerInitials(alert.playerName)"
+                        shape="circle"
+                        [style]="{
+                          'background-color':
+                            alert.severity === 'critical'
+                              ? 'var(--red-500)'
+                              : 'var(--yellow-500)',
+                          color: 'white',
+                        }"
+                      >
                       </p-avatar>
                       <div class="pa-info">
                         <span class="pa-name">{{ alert.playerName }}</span>
@@ -153,16 +176,28 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 {{ teamOverview().teamName }}
               </h1>
               <p class="header-subtitle toolbar-row__subtitle">
-                {{ teamOverview().season }} •
-                {{ teamOverview().wins }}-{{ teamOverview().losses }}
-                <span class="streak-badge" [class.winning]="teamOverview().streak.startsWith('W')">
+                {{ teamOverview().season }} • {{ teamOverview().wins }}-{{
+                  teamOverview().losses
+                }}
+                <span
+                  class="streak-badge"
+                  [class.winning]="teamOverview().streak.startsWith('W')"
+                >
                   {{ teamOverview().streak }}
                 </span>
               </p>
             </div>
             <div class="header-actions toolbar-row__end">
-              <app-button icon="plus" size="sm" (clicked)="openCreateSession()">Practice</app-button>
-              <app-button icon="send" size="sm" variant="outlined" (clicked)="openTeamMessage()">Message</app-button>
+              <app-button icon="plus" size="sm" (clicked)="openCreateSession()"
+                >Practice</app-button
+              >
+              <app-button
+                icon="send"
+                size="sm"
+                variant="outlined"
+                (clicked)="openTeamMessage()"
+                >Message</app-button
+              >
             </div>
           </div>
 
@@ -170,22 +205,34 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           <div class="stats-compact-row">
             <div class="sc-item" pTooltip="Average Team Readiness">
               <span class="sc-label">Team Readiness</span>
-              <span class="sc-value">{{ teamOverview().practiceAttendanceRate }}%</span>
+              <span class="sc-value"
+                >{{ teamOverview().practiceAttendanceRate }}%</span
+              >
             </div>
             <div class="sc-divider"></div>
             <div class="sc-item" pTooltip="Players in Danger Zone">
               <span class="sc-label">At Risk</span>
-              <span class="sc-value" [class.warning]="teamOverview().playersAtRisk > 0">{{ teamOverview().playersAtRisk }}</span>
+              <span
+                class="sc-value"
+                [class.warning]="teamOverview().playersAtRisk > 0"
+                >{{ teamOverview().playersAtRisk }}</span
+              >
             </div>
             <div class="sc-divider"></div>
             <div class="sc-item" pTooltip="Current Injuries">
               <span class="sc-label">Injured</span>
-              <span class="sc-value" [class.warning]="teamOverview().injuredPlayers > 0">{{ teamOverview().injuredPlayers }}</span>
+              <span
+                class="sc-value"
+                [class.warning]="teamOverview().injuredPlayers > 0"
+                >{{ teamOverview().injuredPlayers }}</span
+              >
             </div>
             <div class="sc-divider"></div>
             <div class="sc-item" pTooltip="Team Chemistry Score">
               <span class="sc-label">Chemistry</span>
-              <span class="sc-value">{{ teamOverview().teamChemistry | number: "1.1-1" }}</span>
+              <span class="sc-value">{{
+                teamOverview().teamChemistry | number: "1.1-1"
+              }}</span>
             </div>
           </div>
 
@@ -216,37 +263,60 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               <app-card [flush]="true">
                 <div class="workspace-tabs-header">
                   <div class="tab-triggers">
-                    <button class="tab-trigger" [class.active]="activeTab === 'roster'" (click)="activeTab = 'roster'">
+                    <button
+                      class="tab-trigger"
+                      [class.active]="activeTab === 'roster'"
+                      (click)="activeTab = 'roster'"
+                    >
                       <i class="pi pi-users"></i> Team Roster
                     </button>
-                    <button class="tab-trigger" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">
+                    <button
+                      class="tab-trigger"
+                      [class.active]="activeTab === 'analytics'"
+                      (click)="activeTab = 'analytics'"
+                    >
                       <i class="pi pi-chart-line"></i> Performance
                     </button>
                   </div>
                   <div class="tab-actions">
-                    <app-button variant="text" size="sm" icon="external-link" ariaLabel="Open analytics" (clicked)="navigateToAnalytics()"></app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      icon="external-link"
+                      ariaLabel="Open analytics"
+                      (clicked)="navigateToAnalytics()"
+                    ></app-button>
                   </div>
                 </div>
 
                 <div class="tab-content">
-                  @if (activeTab === 'roster') {
+                  @if (activeTab === "roster") {
                     <div class="roster-workspace">
                       <div class="workspace-filters">
                         <app-button
-                          [variant]="playerFilter() === 'all' ? 'primary' : 'text'"
+                          [variant]="
+                            playerFilter() === 'all' ? 'primary' : 'text'
+                          "
                           size="sm"
                           (clicked)="setPlayerFilter('all')"
-                        >All</app-button>
+                          >All</app-button
+                        >
                         <app-button
-                          [variant]="playerFilter() === 'at_risk' ? 'danger' : 'text'"
+                          [variant]="
+                            playerFilter() === 'at_risk' ? 'danger' : 'text'
+                          "
                           size="sm"
                           (clicked)="setPlayerFilter('at_risk')"
-                        >At Risk</app-button>
+                          >At Risk</app-button
+                        >
                         <app-button
-                          [variant]="playerFilter() === 'injured' ? 'danger' : 'text'"
+                          [variant]="
+                            playerFilter() === 'injured' ? 'danger' : 'text'
+                          "
                           size="sm"
                           (clicked)="setPlayerFilter('injured')"
-                        >Injured</app-button>
+                          >Injured</app-button
+                        >
                       </div>
 
                       <p-table
@@ -267,50 +337,99 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                           </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-player>
-                          <tr (click)="viewPlayer(player.playerId)" class="clickable-row">
+                          <tr
+                            (click)="viewPlayer(player.playerId)"
+                            class="clickable-row"
+                          >
                             <td>
                               <div class="player-cell">
-                                <p-avatar [label]="player.avatarInitials" shape="circle" [style]="getAvatarStyle(player)"></p-avatar>
+                                <p-avatar
+                                  [label]="player.avatarInitials"
+                                  shape="circle"
+                                  [style]="getAvatarStyle(player)"
+                                ></p-avatar>
                                 <div class="player-info">
-                                  <span class="player-name">{{ player.playerName }}</span>
-                                  <span class="jersey-number">#{{ player.jerseyNumber || '--' }}</span>
+                                  <span class="player-name">{{
+                                    player.playerName
+                                  }}</span>
+                                  <span class="jersey-number"
+                                    >#{{ player.jerseyNumber || "--" }}</span
+                                  >
                                 </div>
                               </div>
                             </td>
-                            <td><p-tag [value]="player.position" [severity]="getPositionSeverity(player.position)"></p-tag></td>
                             <td>
-                              <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">{{ player.performanceScore }}%</span>
+                              <p-tag
+                                [value]="player.position"
+                                [severity]="
+                                  getPositionSeverity(player.position)
+                                "
+                              ></p-tag>
                             </td>
-                            <td><span [class]="getACWRClass(player.acwr)">{{ player.acwr | number: "1.2-2" }}</span></td>
+                            <td>
+                              <span
+                                class="perf-score"
+                                [class]="
+                                  getPerformanceClass(player.performanceScore)
+                                "
+                                >{{ player.performanceScore }}%</span
+                              >
+                            </td>
+                            <td>
+                              <span [class]="getACWRClass(player.acwr)">{{
+                                player.acwr | number: "1.2-2"
+                              }}</span>
+                            </td>
                             <td>
                               <div class="readiness-compact">
-                                <div class="r-dot" [class]="getReadinessBarClass(player.readiness)"></div>
+                                <div
+                                  class="r-dot"
+                                  [class]="
+                                    getReadinessBarClass(player.readiness)
+                                  "
+                                ></div>
                                 <span>{{ player.readiness }}</span>
                               </div>
                             </td>
-                            <td><p-tag [value]="getStatusLabel(player.status)" [severity]="getStatusSeverity(player.status)"></p-tag></td>
+                            <td>
+                              <p-tag
+                                [value]="getStatusLabel(player.status)"
+                                [severity]="getStatusSeverity(player.status)"
+                              ></p-tag>
+                            </td>
                           </tr>
                         </ng-template>
                       </p-table>
                     </div>
                   }
 
-                  @if (activeTab === 'analytics') {
+                  @if (activeTab === "analytics") {
                     <div class="analytics-workspace">
                       <div class="analytics-hero">
                         <div class="chart-container">
                           @if (performanceChartData()) {
-                            <p-chart type="line" [data]="performanceChartData()" [options]="lineChartOptions" [style]="{ height: '200px' }"></p-chart>
+                            <p-chart
+                              type="line"
+                              [data]="performanceChartData()"
+                              [options]="lineChartOptions"
+                              [style]="{ height: '200px' }"
+                            ></p-chart>
                           }
                         </div>
                         <div class="hero-stats">
                           <div class="h-stat">
                             <span class="h-label">Current Strength</span>
-                            <span class="h-value">{{ latestPerformanceScore() }}%</span>
+                            <span class="h-value"
+                              >{{ latestPerformanceScore() }}%</span
+                            >
                           </div>
                           <div class="h-stat">
                             <span class="h-label">Attendance</span>
-                            <span class="h-value">{{ teamOverview().practiceAttendanceRate }}%</span>
+                            <span class="h-value"
+                              >{{
+                                teamOverview().practiceAttendanceRate
+                              }}%</span
+                            >
                           </div>
                         </div>
                       </div>
@@ -322,13 +441,20 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 
             <!-- Right Workspace: Schedule & Quick -->
             <div class="workspace-side">
-              <app-card title="Today schedule" headerIcon="pi-calendar" [compact]="true">
+              <app-card
+                title="Today schedule"
+                headerIcon="pi-calendar"
+                [compact]="true"
+              >
                 <div class="schedule-mini">
-                  @for (game of upcomingGames().slice(0, 2); track game.gameId) {
+                  @for (
+                    game of upcomingGames().slice(0, 2);
+                    track game.gameId
+                  ) {
                     <div class="mini-event game">
                       <div class="ev-date">
-                        <span class="d">{{ game.date | date: 'd' }}</span>
-                        <span class="m">{{ game.date | date: 'MMM' }}</span>
+                        <span class="d">{{ game.date | date: "d" }}</span>
+                        <span class="m">{{ game.date | date: "MMM" }}</span>
                       </div>
                       <div class="ev-info">
                         <span class="t">vs {{ game.opponent }}</span>
@@ -336,11 +462,14 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       </div>
                     </div>
                   }
-                  @for (session of trainingSessions().slice(0, 2); track session.sessionId) {
+                  @for (
+                    session of trainingSessions().slice(0, 2);
+                    track session.sessionId
+                  ) {
                     <div class="mini-event practice">
                       <div class="ev-date">
-                        <span class="d">{{ session.date | date: 'd' }}</span>
-                        <span class="m">{{ session.date | date: 'MMM' }}</span>
+                        <span class="d">{{ session.date | date: "d" }}</span>
+                        <span class="m">{{ session.date | date: "MMM" }}</span>
                       </div>
                       <div class="ev-info">
                         <span class="t">{{ session.title }}</span>
@@ -350,15 +479,41 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   }
                 </div>
                 <div class="card-footer">
-                  <app-button variant="text" size="sm" [fullWidth]="true" routerLink="/calendar">Full Schedule</app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    [fullWidth]="true"
+                    routerLink="/calendar"
+                    >Full Schedule</app-button
+                  >
                 </div>
               </app-card>
 
               <div class="quick-command-grid">
-                <app-button variant="outlined" icon="calendar-plus" (clicked)="openCreateSession()">New Practice</app-button>
-                <app-button variant="outlined" icon="send" (clicked)="openTeamMessage()">Msg Team</app-button>
-                <app-button variant="outlined" icon="heart" (clicked)="viewInjuryReport()">Injuries</app-button>
-                <app-button variant="outlined" icon="users" (clicked)="manageRoster()">Roster</app-button>
+                <app-button
+                  variant="outlined"
+                  icon="calendar-plus"
+                  (clicked)="openCreateSession()"
+                  >New Practice</app-button
+                >
+                <app-button
+                  variant="outlined"
+                  icon="send"
+                  (clicked)="openTeamMessage()"
+                  >Msg Team</app-button
+                >
+                <app-button
+                  variant="outlined"
+                  icon="heart"
+                  (clicked)="viewInjuryReport()"
+                  >Injuries</app-button
+                >
+                <app-button
+                  variant="outlined"
+                  icon="users"
+                  (clicked)="manageRoster()"
+                  >Roster</app-button
+                >
               </div>
             </div>
           </div>
@@ -440,11 +595,11 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
             <app-button
               variant="text"
               (clicked)="showCreateSessionDialog = false"
-            >Cancel</app-button>
-            <app-button
-              icon="check"
-              (clicked)="createSession()"
-            >Create</app-button>
+              >Cancel</app-button
+            >
+            <app-button icon="check" (clicked)="createSession()"
+              >Create</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -470,14 +625,12 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
             </div>
           </div>
           <ng-template pTemplate="footer">
-            <app-button
-              variant="text"
-              (clicked)="showTeamMessageDialog = false"
-            >Cancel</app-button>
-            <app-button
-              icon="send"
-              (clicked)="sendTeamMessage()"
-            >Send</app-button>
+            <app-button variant="text" (clicked)="showTeamMessageDialog = false"
+              >Cancel</app-button
+            >
+            <app-button icon="send" (clicked)="sendTeamMessage()"
+              >Send</app-button
+            >
           </ng-template>
         </p-dialog>
       }
@@ -496,7 +649,7 @@ export class CoachDashboardComponent {
   private readonly logger = inject(LoggerService);
 
   // Workspace state
-  activeTab: 'roster' | 'analytics' = 'roster';
+  activeTab: "roster" | "analytics" = "roster";
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -585,11 +738,11 @@ export class CoachDashboardComponent {
     const alerts = this.riskAlerts();
     const overview = this.teamOverview();
     const injured = this.injuredCount();
-    
+
     if (alerts.length > 3) {
       return `Coach, we have ${alerts.length} athletes at high risk today. I recommend adjusting the intensity of today's practice to prevent further injuries.`;
     }
-    
+
     if (injured > 0) {
       return `With ${injured} athletes currently injured, we should focus on position-specific modifications for the upcoming sessions.`;
     }

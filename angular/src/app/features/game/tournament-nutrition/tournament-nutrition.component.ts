@@ -111,7 +111,7 @@ interface HydrationLog {
     BadgeModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -124,7 +124,12 @@ interface HydrationLog {
           subtitle="Fuel your performance across all games"
           icon="pi-heart"
         >
-          <app-button variant="outlined" iconLeft="pi-calendar" (clicked)="showScheduleEditor = true">Edit Schedule</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-calendar"
+            (clicked)="showScheduleEditor = true"
+            >Edit Schedule</app-button
+          >
         </app-page-header>
 
         <!-- Tournament Overview Banner -->
@@ -194,7 +199,12 @@ interface HydrationLog {
             <ng-template pTemplate="header">
               <div class="card-header">
                 <h3><i class="pi pi-calendar"></i> Game Schedule</h3>
-                <app-icon-button icon="pi-times" variant="text" (clicked)="showScheduleEditor = false" ariaLabel="times" />
+                <app-icon-button
+                  icon="pi-times"
+                  variant="text"
+                  (clicked)="showScheduleEditor = false"
+                  ariaLabel="times"
+                />
               </div>
             </ng-template>
 
@@ -232,14 +242,29 @@ interface HydrationLog {
                       ></p-checkbox>
                       <span>Referee</span>
                     </label>
-                    <app-icon-button icon="pi-trash" variant="text" [disabled]="editGames.length <= 1" (clicked)="removeGame(i)" ariaLabel="trash" />
+                    <app-icon-button
+                      icon="pi-trash"
+                      variant="text"
+                      [disabled]="editGames.length <= 1"
+                      (clicked)="removeGame(i)"
+                      ariaLabel="trash"
+                    />
                   </div>
                 }
               </div>
 
               <div class="schedule-actions">
-                <app-button variant="outlined" iconLeft="pi-plus" (clicked)="addGame()">Add Game</app-button>
-                <app-button iconLeft="pi-bolt" (clicked)="generateNutritionPlan()">Generate Plan</app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-plus"
+                  (clicked)="addGame()"
+                  >Add Game</app-button
+                >
+                <app-button
+                  iconLeft="pi-bolt"
+                  (clicked)="generateNutritionPlan()"
+                  >Generate Plan</app-button
+                >
               </div>
             </div>
           </p-card>
@@ -309,7 +334,13 @@ interface HydrationLog {
                     <span>Target: {{ window.hydrationTarget }}ml</span>
                   </div>
                   @if (!window.completed) {
-                    <app-button variant="outlined" size="sm" iconLeft="pi-check" (clicked)="completeWindow(window)">Mark Complete</app-button>
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      iconLeft="pi-check"
+                      (clicked)="completeWindow(window)"
+                      >Mark Complete</app-button
+                    >
                   } @else {
                     <span class="completed-badge">
                       <i class="pi pi-check-circle"></i> Completed

@@ -50,6 +50,7 @@ npm run refactor:component -- --component=today
 ## 📋 Complete Workflow
 
 See `docs/SYSTEMATIC_REFACTORING_GUIDE.md` for:
+
 - Detailed debugging steps
 - Component-by-component approach
 - Visual regression testing setup
@@ -99,4 +100,4 @@ Before refactoring a component:
 
 ---
 
-*Ready to start? Run `npm run refactor:find-dark` to see what needs fixing!*
+_Ready to start? Run `npm run refactor:find-dark` to see what needs fixing!_

@@ -35,7 +35,7 @@ export interface SkillData {
     CardModule,
     ChartModule,
     ProgressBarModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -60,7 +60,13 @@ export interface SkillData {
                     [value]="subSkill.score"
                     [showValue]="true"
                   ></p-progressBar>
-                  <app-button variant="text" size="sm" iconLeft="pi-play-circle" (clicked)="startSkillDrill(subSkill)">Practice</app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-play-circle"
+                    (clicked)="startSkillDrill(subSkill)"
+                    >Practice</app-button
+                  >
                 </div>
               }
             </div>
@@ -69,7 +75,7 @@ export interface SkillData {
       </div>
     </p-card>
   `,
-  styleUrl: './interactive-skills-radar.component.scss',
+  styleUrl: "./interactive-skills-radar.component.scss",
 })
 export class InteractiveSkillsRadarComponent {
   private apiService = inject(ApiService);

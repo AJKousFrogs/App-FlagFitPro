@@ -113,7 +113,9 @@
   padding: var(--space-3);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   position: relative;
 }
 
@@ -235,4 +237,3 @@
 .compact .activity-title {
   font-size: var(--font-size-h4);
 }
-

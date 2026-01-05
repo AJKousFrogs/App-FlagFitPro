@@ -6,9 +6,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
   selector: "app-not-found",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule,
-    ButtonComponent,
-  ],
+  imports: [RouterModule, ButtonComponent],
   template: `
     <div class="not-found-page">
       <div class="not-found-content">
@@ -18,8 +16,16 @@ import { ButtonComponent } from "../../shared/components/button/button.component
           Oops! The page you're looking for doesn't exist or has been moved.
         </p>
         <div class="error-actions">
-          <app-button size="lg" iconLeft="pi-home" routerLink="/dashboard">Go to Dashboard</app-button>
-          <app-button variant="outlined" size="lg" iconLeft="pi-arrow-left" (clicked)="goBack()">Go Back</app-button>
+          <app-button size="lg" iconLeft="pi-home" routerLink="/dashboard"
+            >Go to Dashboard</app-button
+          >
+          <app-button
+            variant="outlined"
+            size="lg"
+            iconLeft="pi-arrow-left"
+            (clicked)="goBack()"
+            >Go Back</app-button
+          >
         </div>
         <div class="helpful-links">
           <p>Here are some helpful links:</p>
@@ -33,7 +39,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
       </div>
     </div>
   `,
-  styleUrl: './not-found.component.scss',
+  styleUrl: "./not-found.component.scss",
 })
 export class NotFoundComponent {
   goBack(): void {

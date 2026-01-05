@@ -324,33 +324,33 @@ Central hub for managing team roster, positions, depth chart, player invitations
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Roster Table | Sortable, filterable player list |
-| Depth Chart | Visual position hierarchy |
-| Player Invitations | Email-based team invites |
-| Team Settings | Logo, colors, preferences |
-| Player Edit | Position, status, notes |
-| Position Summary | Count by position |
+| Feature            | Description                      |
+| ------------------ | -------------------------------- |
+| Roster Table       | Sortable, filterable player list |
+| Depth Chart        | Visual position hierarchy        |
+| Player Invitations | Email-based team invites         |
+| Team Settings      | Logo, colors, preferences        |
+| Player Edit        | Position, status, notes          |
+| Position Summary   | Count by position                |
 
 ---
 
 ## Player Status Types
 
-| Status | Icon | Description |
-|--------|------|-------------|
-| Active | 🟢 | Full participation |
-| Minor Injury | 🟡 | Limited participation |
-| RTP | 🔴 | Return-to-play protocol |
-| Inactive | ⚪ | Not participating |
+| Status       | Icon | Description             |
+| ------------ | ---- | ----------------------- |
+| Active       | 🟢   | Full participation      |
+| Minor Injury | 🟡   | Limited participation   |
+| RTP          | 🔴   | Return-to-play protocol |
+| Inactive     | ⚪   | Not participating       |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Roster | `RosterService` | `team_members` |
-| Invitations | `InvitationService` | `team_invitations` |
-| Positions | `RosterService` | `flag_football_positions` |
-| Team settings | `TeamService` | `teams` |
+| Data          | Service             | Table                     |
+| ------------- | ------------------- | ------------------------- |
+| Roster        | `RosterService`     | `team_members`            |
+| Invitations   | `InvitationService` | `team_invitations`        |
+| Positions     | `RosterService`     | `flag_football_positions` |
+| Team settings | `TeamService`       | `teams`                   |

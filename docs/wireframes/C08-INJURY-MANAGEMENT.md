@@ -305,37 +305,37 @@ Track team injuries, manage return-to-play protocols, monitor recovery progress,
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Injury Reporting | Quick injury documentation |
-| RTP Protocol | 7-stage return-to-play tracking |
-| Daily Check-ins | Pain/function/confidence logging |
-| Medical Notes | Physician documentation |
-| Analytics | Injury patterns and prevention |
-| Stage Advancement | Approve protocol progression |
-| History | Full injury history per player |
+| Feature           | Description                      |
+| ----------------- | -------------------------------- |
+| Injury Reporting  | Quick injury documentation       |
+| RTP Protocol      | 7-stage return-to-play tracking  |
+| Daily Check-ins   | Pain/function/confidence logging |
+| Medical Notes     | Physician documentation          |
+| Analytics         | Injury patterns and prevention   |
+| Stage Advancement | Approve protocol progression     |
+| History           | Full injury history per player   |
 
 ---
 
 ## RTP Stages
 
-| Stage | Name | Intensity | Criteria |
-|-------|------|-----------|----------|
-| 1 | Rest | 0% | Symptom resolution |
-| 2 | Light Activity | 20% | Walking, light stretching |
-| 3 | Sport-Specific (Low) | 40% | Basic drills, no contact |
-| 4 | Sport-Specific (Med) | 60% | Complex drills, no contact |
-| 5 | Sport-Specific (High) | 80% | Full-speed, limited contact |
-| 6 | Full Training | 100% | Full participation |
-| 7 | Cleared | 100% | Competition cleared |
+| Stage | Name                  | Intensity | Criteria                    |
+| ----- | --------------------- | --------- | --------------------------- |
+| 1     | Rest                  | 0%        | Symptom resolution          |
+| 2     | Light Activity        | 20%       | Walking, light stretching   |
+| 3     | Sport-Specific (Low)  | 40%       | Basic drills, no contact    |
+| 4     | Sport-Specific (Med)  | 60%       | Complex drills, no contact  |
+| 5     | Sport-Specific (High) | 80%       | Full-speed, limited contact |
+| 6     | Full Training         | 100%      | Full participation          |
+| 7     | Cleared               | 100%      | Competition cleared         |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Injuries | `InjuryService` | `injury_records` |
-| RTP | `ReturnToPlayService` | `rtp_protocols` |
-| Daily logs | `ReturnToPlayService` | `rtp_daily_log` |
-| Medical notes | `MedicalService` | `medical_notes` |
+| Data          | Service               | Table            |
+| ------------- | --------------------- | ---------------- |
+| Injuries      | `InjuryService`       | `injury_records` |
+| RTP           | `ReturnToPlayService` | `rtp_protocols`  |
+| Daily logs    | `ReturnToPlayService` | `rtp_daily_log`  |
+| Medical notes | `MedicalService`      | `medical_notes`  |

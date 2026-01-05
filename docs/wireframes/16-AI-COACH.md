@@ -134,55 +134,55 @@
 
 ## Message Features
 
-| Feature | Description |
-|---------|-------------|
-| Citations | Evidence sources with grade (A/B/C) |
+| Feature           | Description                                          |
+| ----------------- | ---------------------------------------------------- |
+| Citations         | Evidence sources with grade (A/B/C)                  |
 | Suggested Actions | Clickable actions (micro-session, schedule, library) |
-| Disclaimer | General guidance warning |
-| Feedback | Thumbs up/down |
-| Copy | Copy message content |
-| Bookmark | Save message |
-| Coach Review | Mark as coach-reviewed |
-| ACWR Safety | Block high-intensity suggestions when ACWR is high |
+| Disclaimer        | General guidance warning                             |
+| Feedback          | Thumbs up/down                                       |
+| Copy              | Copy message content                                 |
+| Bookmark          | Save message                                         |
+| Coach Review      | Mark as coach-reviewed                               |
+| ACWR Safety       | Block high-intensity suggestions when ACWR is high   |
 
 ---
 
 ## Loading States
 
-| Stage | Description |
-|-------|-------------|
-| Thinking | Initial processing |
-| Searching | Looking through knowledge base |
-| Generating | Creating response |
+| Stage      | Description                    |
+| ---------- | ------------------------------ |
+| Thinking   | Initial processing             |
+| Searching  | Looking through knowledge base |
+| Generating | Creating response              |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Chat interface | ✅ |
-| Quick suggestions | ✅ |
-| Message history | ✅ |
-| Citations with evidence grade | ✅ |
-| Suggested actions | ✅ |
-| Micro-session integration | ✅ |
-| ACWR safety blocks | ✅ |
-| Feedback (thumbs up/down) | ✅ |
-| Copy message | ✅ |
-| Bookmark message | ✅ |
-| Voice input | ✅ |
-| Disclaimer | ✅ |
-| Loading stages | ✅ |
-| Coach review marking | ✅ |
-| New chat / Clear chat | ✅ |
+| Feature                       | Status |
+| ----------------------------- | ------ |
+| Chat interface                | ✅     |
+| Quick suggestions             | ✅     |
+| Message history               | ✅     |
+| Citations with evidence grade | ✅     |
+| Suggested actions             | ✅     |
+| Micro-session integration     | ✅     |
+| ACWR safety blocks            | ✅     |
+| Feedback (thumbs up/down)     | ✅     |
+| Copy message                  | ✅     |
+| Bookmark message              | ✅     |
+| Voice input                   | ✅     |
+| Disclaimer                    | ✅     |
+| Loading stages                | ✅     |
+| Coach review marking          | ✅     |
+| New chat / Clear chat         | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Endpoint |
-|------|---------|----------|
-| Chat messages | `ApiService` | `/api/ai/chat` |
-| User context | `UnifiedTrainingService` | Current ACWR, wellness |
-| Knowledge base | Backend | RAG system |
+| Data           | Service                  | Endpoint               |
+| -------------- | ------------------------ | ---------------------- |
+| Chat messages  | `ApiService`             | `/api/ai/chat`         |
+| User context   | `UnifiedTrainingService` | Current ACWR, wellness |
+| Knowledge base | Backend                  | RAG system             |

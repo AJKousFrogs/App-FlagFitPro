@@ -125,7 +125,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './swipeable-cards.component.scss',
+  styleUrl: "./swipeable-cards.component.scss",
 })
 export class SwipeableCardsComponent<T> implements OnDestroy {
   private elementRef = inject(ElementRef);

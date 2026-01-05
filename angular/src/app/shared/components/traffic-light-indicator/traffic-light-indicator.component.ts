@@ -22,7 +22,7 @@ export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";
       }
     </div>
   `,
-  styleUrl: './traffic-light-indicator.component.scss',
+  styleUrl: "./traffic-light-indicator.component.scss",
 })
 export class TrafficLightIndicatorComponent {
   // Angular 21: Use input() signal instead of @Input()

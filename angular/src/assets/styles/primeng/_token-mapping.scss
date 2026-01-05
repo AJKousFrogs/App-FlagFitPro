@@ -19,7 +19,7 @@
     // ============================================
     // BUTTONS
     // ============================================
-    
+
     // Primary button
     --p-button-primary-background: var(--ds-primary-green);
     --p-button-primary-hover-background: var(--ds-primary-green-hover);
@@ -70,20 +70,21 @@
     // ============================================
     // CARDS (Decision 14: Border-first + Policy A)
     // ============================================
-    
+
     --p-card-background: var(--color-surface-primary);
     --p-card-border-radius: var(--radius-lg); /* 8px - Design System standard */
     --p-card-shadow: var(--shadow-1);
     --p-card-padding: var(--space-5);
     --p-card-border: var(--border-1) solid var(--color-border-default);
-    
+
     // Card header
     --p-card-header-padding: var(--space-4) var(--space-5);
-    --p-card-header-border-bottom: var(--border-1) solid var(--color-border-muted);
-    
+    --p-card-header-border-bottom: var(--border-1) solid
+      var(--color-border-muted);
+
     // Card content
     --p-card-content-padding: var(--space-5);
-    
+
     // Card footer
     --p-card-footer-padding: var(--space-4) var(--space-5);
     --p-card-footer-border-top: var(--border-1) solid var(--color-border-muted);
@@ -91,7 +92,7 @@
     // ============================================
     // TAGS / BADGES
     // ============================================
-    
+
     --p-tag-padding-x: var(--space-3);
     --p-tag-padding-y: var(--space-1);
     --p-tag-border-radius: var(--radius-full);
@@ -111,23 +112,27 @@
     // ============================================
     // DIALOG / DRAWER (Decision 25)
     // ============================================
-    
-    --p-dialog-border-radius: var(--radius-lg); /* 8px - Design System standard */
+
+    --p-dialog-border-radius: var(
+      --radius-lg
+    ); /* 8px - Design System standard */
     --p-dialog-shadow: var(--shadow-3);
     --p-dialog-background: var(--color-surface-primary);
-    
+
     // Dialog header
     --p-dialog-header-padding: var(--space-5);
-    --p-dialog-header-border-bottom: var(--border-1) solid var(--color-border-muted);
+    --p-dialog-header-border-bottom: var(--border-1) solid
+      var(--color-border-muted);
     --p-dialog-header-font-size: var(--font-heading-md);
     --p-dialog-header-font-weight: var(--font-weight-semibold);
-    
+
     // Dialog content
     --p-dialog-content-padding: var(--space-5);
-    
+
     // Dialog footer (secondary left, primary right)
     --p-dialog-footer-padding: var(--space-4) var(--space-5);
-    --p-dialog-footer-border-top: var(--border-1) solid var(--color-border-muted);
+    --p-dialog-footer-border-top: var(--border-1) solid
+      var(--color-border-muted);
     --p-dialog-footer-gap: var(--space-3);
 
     // Dialog sizes
@@ -139,49 +144,49 @@
     // ============================================
     // INPUTS (Decision 23)
     // ============================================
-    
+
     --p-inputtext-border-radius: var(--radius-lg);
     --p-inputtext-padding-x: var(--space-4);
     --p-inputtext-padding-y: var(--space-3);
     --p-inputtext-font-size: var(--font-body-md);
     --p-inputtext-font-family: var(--font-family-sans);
-    
+
     // Input borders
     --p-inputtext-border-color: var(--color-border-default);
     --p-inputtext-border-width: var(--border-1);
-    
+
     // Input focus state
     --p-inputtext-focus-border-color: var(--color-border-focus);
     --p-inputtext-focus-ring-color: var(--color-focus-ring);
     --p-inputtext-focus-ring-width: 3px;
     --p-inputtext-focus-ring-offset: 0;
-    
+
     // Input error state (Decision 32)
     --p-inputtext-invalid-border-color: var(--color-border-danger);
-    
+
     // Input disabled state (Decision 46)
     --p-inputtext-disabled-background: var(--color-surface-secondary);
     --p-inputtext-disabled-opacity: 0.5;
-    
+
     // Input placeholder
     --p-inputtext-placeholder-color: var(--color-text-muted);
 
     // ============================================
     // SELECT / DROPDOWN (Decision 41)
     // ============================================
-    
+
     --p-select-border-radius: var(--radius-lg);
     --p-select-padding-x: var(--space-4);
     --p-select-padding-y: var(--space-3);
     --p-select-border-color: var(--color-border-default);
     --p-select-focus-border-color: var(--color-border-focus);
-    
+
     // Dropdown panel
     --p-select-panel-background: var(--color-surface-primary);
     --p-select-panel-border-radius: var(--radius-xl);
     --p-select-panel-shadow: var(--shadow-3);
     --p-select-panel-border: var(--border-1) solid var(--color-border-default);
-    
+
     // Option items
     --p-select-option-padding: var(--space-2) var(--space-3);
     --p-select-option-hover-background: var(--color-surface-hover);
@@ -190,7 +195,7 @@
     // ============================================
     // DATATABLE (Decision 24)
     // ============================================
-    
+
     // Table header
     --p-datatable-header-background: var(--color-surface-secondary);
     --p-datatable-header-padding: var(--space-3) var(--space-4);
@@ -199,24 +204,24 @@
     --p-datatable-header-color: var(--color-text-muted);
     --p-datatable-header-text-transform: uppercase;
     --p-datatable-header-letter-spacing: var(--letter-spacing-wide);
-    
+
     // Table body
     --p-datatable-row-padding: var(--space-3) var(--space-4);
     --p-datatable-row-hover-background: var(--color-surface-hover);
     --p-datatable-row-selected-background: var(--color-surface-selected);
     --p-datatable-border-color: var(--color-border-muted);
-    
+
     // Compact variant (Decision 24: 40px rows)
     --p-datatable-sm-row-padding: var(--space-2) var(--space-3);
 
     // ============================================
     // TOAST (Decision 26)
     // ============================================
-    
+
     --p-toast-border-radius: var(--radius-lg);
     --p-toast-shadow: var(--shadow-2);
     --p-toast-padding: var(--space-3) var(--space-4);
-    
+
     // Toast severities
     --p-toast-success-background: var(--color-status-success-surface);
     --p-toast-success-border-color: var(--color-status-success);
@@ -234,7 +239,7 @@
     // ============================================
     // TOOLTIP (Decision 31)
     // ============================================
-    
+
     --p-tooltip-background: var(--color-surface-inverse);
     --p-tooltip-color: var(--color-text-on-inverse);
     --p-tooltip-border-radius: var(--radius-md);
@@ -246,7 +251,7 @@
     // ============================================
     // PROGRESSBAR
     // ============================================
-    
+
     --p-progressbar-background: var(--color-surface-secondary);
     --p-progressbar-value-background: var(--ds-primary-green);
     --p-progressbar-border-radius: var(--radius-full);
@@ -256,7 +261,7 @@
     // CHECKBOX / RADIO (Decision 42)
     // Checkbox: 20px box, 6px radius, green check when checked
     // ============================================
-    
+
     --p-checkbox-width: 20px;
     --p-checkbox-height: 20px;
     --p-checkbox-border-radius: 6px;
@@ -281,7 +286,7 @@
     // Toggle: 44px hit area, visible track + thumb
     // Green = ON, neutral = OFF
     // ============================================
-    
+
     --p-toggleswitch-width: 44px;
     --p-toggleswitch-height: 24px;
     --p-toggleswitch-border-radius: var(--radius-full);
@@ -297,7 +302,7 @@
     // ============================================
     // ACCORDION
     // ============================================
-    
+
     --p-accordion-header-padding: var(--space-4);
     --p-accordion-content-padding: var(--space-4);
     --p-accordion-border-color: var(--color-border-muted);
@@ -305,7 +310,7 @@
     // ============================================
     // TABS
     // ============================================
-    
+
     --p-tabs-nav-padding: 0;
     --p-tabs-nav-gap: var(--space-1);
     --p-tabs-tab-padding: var(--space-3) var(--space-4);
@@ -317,7 +322,7 @@
     // ============================================
     // MENU
     // ============================================
-    
+
     --p-menu-background: var(--color-surface-primary);
     --p-menu-border-radius: var(--radius-xl);
     --p-menu-shadow: var(--shadow-3);
@@ -329,7 +334,7 @@
     // ============================================
     // AVATAR
     // ============================================
-    
+
     --p-avatar-sm-width: 32px;
     --p-avatar-sm-height: 32px;
     --p-avatar-md-width: 40px;
@@ -342,14 +347,14 @@
     // ============================================
     // SKELETON
     // ============================================
-    
+
     --p-skeleton-background: var(--color-surface-secondary);
     --p-skeleton-border-radius: var(--radius-md);
 
     // ============================================
     // Z-INDEX (Decision 20)
     // ============================================
-    
+
     --p-overlay-z-index: var(--z-dropdown);
     --p-modal-z-index: var(--z-modal);
     --p-tooltip-z-index: var(--z-tooltip);
@@ -358,7 +363,7 @@
     // ============================================
     // MOTION (Decision 19)
     // ============================================
-    
+
     --p-transition-duration: var(--motion-fast);
     --p-transition-timing-function: var(--ease-standard);
 
@@ -366,7 +371,7 @@
     // FOCUS RING (Decision 12/18/50)
     // ============================================
     // Unified focus ring tokens for all interactive elements
-    
+
     --focus-ring-width: 3px;
     --focus-ring-offset: 2px;
     --color-focus-ring: var(--ds-primary-green);

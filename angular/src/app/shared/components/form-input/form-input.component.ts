@@ -156,7 +156,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
       }
     </div>
   `,
-  styleUrl: './form-input.component.scss',
+  styleUrl: "./form-input.component.scss",
 })
 export class FormInputComponent implements ControlValueAccessor {
   // Configuration inputs

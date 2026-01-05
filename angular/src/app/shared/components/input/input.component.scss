@@ -95,24 +95,16 @@ label {
 
 .form-control.is-invalid:focus {
   border-color: var(--color-status-error, var(--color-status-error));
-  box-shadow: 0 0 0 3px
-    rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
+  box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
 }
 
 .form-control.is-valid {
-  border-color: var(
-    --color-status-success,
-    var(--color-status-success)
-  );
+  border-color: var(--color-status-success, var(--color-status-success));
 }
 
 .form-control.is-valid:focus {
-  border-color: var(
-    --color-status-success,
-    var(--color-status-success)
-  );
-  box-shadow: 0 0 0 3px
-    rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
+  border-color: var(--color-status-success, var(--color-status-success));
+  box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
 }
 
 .form-help {
@@ -153,4 +145,3 @@ label {
     animation: none;
   }
 }
-

@@ -19,7 +19,7 @@ interface HealthMetric {
   color: string;
   value: string;
   status: string;
-  severity: 'success' | 'info' | 'warn' | 'danger';
+  severity: "success" | "info" | "warn" | "danger";
 }
 
 interface SyncStatus {
@@ -31,9 +31,7 @@ interface SyncStatus {
 @Component({
   selector: "app-admin-database-dashboard",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule, Tabs,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, CardModule, TagModule, Tabs, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService],
   template: `
@@ -105,11 +103,27 @@ interface SyncStatus {
       <!-- Data Sync Controls -->
       <p-card header="Data Synchronization" class="sync-card">
         <div class="sync-controls">
-          <app-button iconLeft="pi-refresh" [loading]="syncingUSDA()" (clicked)="syncUSDAData()">Sync USDA Data</app-button>
+          <app-button
+            iconLeft="pi-refresh"
+            [loading]="syncingUSDA()"
+            (clicked)="syncUSDAData()"
+            >Sync USDA Data</app-button
+          >
 
-          <app-button iconLeft="pi-download" [loading]="syncingResearch()" (clicked)="syncResearchData()">Update Research Studies</app-button>
+          <app-button
+            iconLeft="pi-download"
+            [loading]="syncingResearch()"
+            (clicked)="syncResearchData()"
+            >Update Research Studies</app-button
+          >
 
-          <app-button variant="secondary" iconLeft="pi-save" [loading]="creatingBackup()" (clicked)="createBackup()">Backup Database</app-button>
+          <app-button
+            variant="secondary"
+            iconLeft="pi-save"
+            [loading]="creatingBackup()"
+            (clicked)="createBackup()"
+            >Backup Database</app-button
+          >
         </div>
 
         @if (lastSyncStatus().length > 0) {
@@ -134,7 +148,7 @@ interface SyncStatus {
       </p-card>
     </div>
   `,
-  styleUrl: './admin-database-dashboard.component.scss',
+  styleUrl: "./admin-database-dashboard.component.scss",
 })
 export class AdminDatabaseDashboardComponent {
   private adminService = inject(AdminService);

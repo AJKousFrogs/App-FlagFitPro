@@ -393,32 +393,32 @@ Allows players to import training programs and historical data from external sou
 
 ## Import Types Summary
 
-| Import Type | Formats | Data Imported | Affects |
-|-------------|---------|---------------|---------|
-| Training Program | JSON, CSV | Scheduled sessions, exercises | Training Schedule, Today, ACWR |
-| Training History | CSV, JSON | Past sessions with RPE/duration | Analytics, ACWR baseline |
-| Wearable Data | API sync | HR, HRV, sleep, activity | Wellness, Recovery, AI |
-| Performance Records | CSV | Historical benchmarks | Performance Tracking, Analytics |
-| Body Composition | CSV | Weight, body fat over time | Wellness, Trends |
-| Injury History | CSV, JSON | Past injuries, RTP records | Return-to-Play, Medical |
+| Import Type         | Formats   | Data Imported                   | Affects                         |
+| ------------------- | --------- | ------------------------------- | ------------------------------- |
+| Training Program    | JSON, CSV | Scheduled sessions, exercises   | Training Schedule, Today, ACWR  |
+| Training History    | CSV, JSON | Past sessions with RPE/duration | Analytics, ACWR baseline        |
+| Wearable Data       | API sync  | HR, HRV, sleep, activity        | Wellness, Recovery, AI          |
+| Performance Records | CSV       | Historical benchmarks           | Performance Tracking, Analytics |
+| Body Composition    | CSV       | Weight, body fat over time      | Wellness, Trends                |
+| Injury History      | CSV, JSON | Past injuries, RTP records      | Return-to-Play, Medical         |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| File Upload (drag/drop) | ❌ | HIGH |
-| JSON Parser | ❌ | HIGH |
-| CSV Parser | ❌ | HIGH |
-| Field Auto-Mapping | ❌ | MEDIUM |
-| Preview Before Import | ❌ | HIGH |
-| Import Validation | ❌ | HIGH |
-| Wearable OAuth Connections | ❌ | MEDIUM |
-| Template Downloads | ❌ | MEDIUM |
-| URL Import | ❌ | LOW |
-| Duplicate Detection | ❌ | MEDIUM |
-| Rollback/Undo Import | ❌ | LOW |
+| Feature                    | Status | Priority |
+| -------------------------- | ------ | -------- |
+| File Upload (drag/drop)    | ❌     | HIGH     |
+| JSON Parser                | ❌     | HIGH     |
+| CSV Parser                 | ❌     | HIGH     |
+| Field Auto-Mapping         | ❌     | MEDIUM   |
+| Preview Before Import      | ❌     | HIGH     |
+| Import Validation          | ❌     | HIGH     |
+| Wearable OAuth Connections | ❌     | MEDIUM   |
+| Template Downloads         | ❌     | MEDIUM   |
+| URL Import                 | ❌     | LOW      |
+| Duplicate Detection        | ❌     | MEDIUM   |
+| Rollback/Undo Import       | ❌     | LOW      |
 
 ---
 
@@ -437,7 +437,7 @@ interface TrainingProgramImport {
     sessions: {
       day: string; // "Monday", "Tuesday", etc.
       date?: string; // Optional specific date
-      type: 'Speed' | 'Agility' | 'Strength' | 'Position' | 'Recovery' | 'Game';
+      type: "Speed" | "Agility" | "Strength" | "Position" | "Recovery" | "Game";
       targetRPE?: number; // 1-10
       durationMinutes?: number;
       exercises: {
@@ -458,20 +458,20 @@ interface TrainingProgramImport {
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Import logs | `DataImportService` | `data_imports` |
-| Training sessions | `UnifiedTrainingService` | `training_sessions` |
-| Wearable connections | `WearableService` | `wearable_connections` |
-| Wearable data | `WearableService` | `wearable_data` |
+| Data                 | Service                  | Table                  |
+| -------------------- | ------------------------ | ---------------------- |
+| Import logs          | `DataImportService`      | `data_imports`         |
+| Training sessions    | `UnifiedTrainingService` | `training_sessions`    |
+| Wearable connections | `WearableService`        | `wearable_connections` |
+| Wearable data        | `WearableService`        | `wearable_data`        |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
+| Page              | Route       | Relationship                  |
+| ----------------- | ----------- | ----------------------------- |
 | Training Schedule | `/training` | Imported sessions appear here |
-| Today | `/today` | Current session from import |
-| Wellness | `/wellness` | Wearable data integrates |
-| Settings | `/settings` | Access from settings > Import |
+| Today             | `/today`    | Current session from import   |
+| Wellness          | `/wellness` | Wearable data integrates      |
+| Settings          | `/settings` | Access from settings > Import |

@@ -40,12 +40,7 @@
  * ```
  */
 
-import {
-  Injectable,
-  signal,
-  DestroyRef,
-  inject,
-} from "@angular/core";
+import { Injectable, signal, DestroyRef, inject } from "@angular/core";
 import { Observable, Subject, catchError, finalize } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../services/logger.service";

@@ -51,7 +51,9 @@
   height: 10px;
   border-radius: 50%;
   background: var(--color-border-secondary);
-  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 }
 
 .progress-dot.active {

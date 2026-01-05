@@ -187,7 +187,7 @@
   .cell-actions {
     text-align: right;
     white-space: nowrap;
-    
+
     // Action buttons in cells
     .p-button {
       padding: var(--space-1) var(--space-2);
@@ -210,11 +210,21 @@
     border-radius: var(--radius-full);
     flex-shrink: 0;
 
-    &--success { background: var(--color-status-success); }
-    &--warning { background: var(--color-status-warning); }
-    &--error { background: var(--color-status-error); }
-    &--info { background: var(--color-status-info); }
-    &--neutral { background: var(--color-text-muted); }
+    &--success {
+      background: var(--color-status-success);
+    }
+    &--warning {
+      background: var(--color-status-warning);
+    }
+    &--error {
+      background: var(--color-status-error);
+    }
+    &--info {
+      background: var(--color-status-info);
+    }
+    &--neutral {
+      background: var(--color-text-muted);
+    }
   }
 
   // ============================================
@@ -259,7 +269,7 @@
     min-height: 200px;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background: rgba(255, 255, 255, 0.7);

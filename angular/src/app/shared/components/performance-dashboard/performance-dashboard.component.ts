@@ -122,7 +122,7 @@ interface PerformanceMetric {
       </p-card>
     </div>
   `,
-  styleUrl: './performance-dashboard.component.scss',
+  styleUrl: "./performance-dashboard.component.scss",
 })
 export class PerformanceDashboardComponent implements OnInit, OnDestroy {
   // Angular 21: Use input() signals instead of @Input()
@@ -138,11 +138,20 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   radarChartData = computed(() => {
     const speed = this.metrics().find((m) => m.id === "speed")?.value || 0;
-    const accuracy = this.metrics().find((m) => m.id === "accuracy")?.value || 0;
-    const endurance = this.metrics().find((m) => m.id === "endurance")?.value || 0;
-    
+    const accuracy =
+      this.metrics().find((m) => m.id === "accuracy")?.value || 0;
+    const endurance =
+      this.metrics().find((m) => m.id === "endurance")?.value || 0;
+
     return {
-      labels: ["Speed", "Accuracy", "Endurance", "Agility", "Strength", "Focus"],
+      labels: [
+        "Speed",
+        "Accuracy",
+        "Endurance",
+        "Agility",
+        "Strength",
+        "Focus",
+      ],
       datasets: [
         {
           label: "Current",
@@ -294,7 +303,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
   getMetricChartData(metricId: string) {
     // Return empty dataset if no data
     const metric = this.metrics().find((m) => m.id === metricId);
-    
+
     return {
       datasets: [
         {

@@ -2,8 +2,8 @@ import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import {
-    getInvertedStatusHexColor,
-    getStatusHexColor
+  getInvertedStatusHexColor,
+  getStatusHexColor,
 } from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
@@ -309,7 +309,9 @@ export class RecoveryService {
   private transformSession(data: DatabaseRecoverySession): RecoverySession {
     return {
       id: data.id,
-      protocol: this.transformProtocol(data.protocol ?? {} as DatabaseRecoveryProtocol),
+      protocol: this.transformProtocol(
+        data.protocol ?? ({} as DatabaseRecoveryProtocol),
+      ),
       startTime: new Date(data.start_time),
       duration: data.duration_minutes,
       progress: data.progress_percentage || 0,

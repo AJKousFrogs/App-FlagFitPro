@@ -93,15 +93,29 @@ import { IconButtonComponent } from "../button/icon-button.component";
       <!-- Controls -->
       <div class="timer-controls">
         @if (!isRunning() && !isComplete()) {
-          <app-icon-button icon="pi-play" variant="success" (clicked)="start()" ariaLabel="play" />
+          <app-icon-button
+            icon="pi-play"
+            variant="success"
+            (clicked)="start()"
+            ariaLabel="play"
+          />
         }
 
         @if (isRunning()) {
-          <app-icon-button icon="pi-pause" (clicked)="pause()" ariaLabel="pause" />
+          <app-icon-button
+            icon="pi-pause"
+            (clicked)="pause()"
+            ariaLabel="pause"
+          />
         }
 
         @if (secondsRemaining() !== initialSeconds() || isComplete()) {
-          <app-icon-button icon="pi-refresh" variant="outlined" (clicked)="reset()" ariaLabel="refresh" />
+          <app-icon-button
+            icon="pi-refresh"
+            variant="outlined"
+            (clicked)="reset()"
+            ariaLabel="refresh"
+          />
         }
       </div>
 
@@ -132,7 +146,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
       }
     </div>
   `,
-  styleUrl: './countdown-timer.component.scss',
+  styleUrl: "./countdown-timer.component.scss",
 })
 export class CountdownTimerComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);

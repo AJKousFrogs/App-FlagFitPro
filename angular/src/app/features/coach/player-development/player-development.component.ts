@@ -118,7 +118,7 @@ const COMPARE_OPTIONS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -132,7 +132,12 @@ const COMPARE_OPTIONS = [
           subtitle="Track progress and set goals"
           icon="pi-chart-line"
         >
-          <app-button variant="secondary" iconLeft="pi-download" (clicked)="exportReport()">Export Report</app-button>
+          <app-button
+            variant="secondary"
+            iconLeft="pi-download"
+            (clicked)="exportReport()"
+            >Export Report</app-button
+          >
         </app-page-header>
 
         <!-- Player/Compare Selection -->
@@ -168,7 +173,9 @@ const COMPARE_OPTIONS = [
             <div class="stat-card">
               <span class="stat-icon">📊</span>
               <div class="stat-content">
-                <span class="stat-value">{{ selectedPlayer()?.overallProgress }}%</span>
+                <span class="stat-value"
+                  >{{ selectedPlayer()?.overallProgress }}%</span
+                >
                 <span class="stat-label">Overall Progress</span>
                 <span class="stat-sub">vs benchmarks</span>
               </div>
@@ -176,7 +183,11 @@ const COMPARE_OPTIONS = [
             <div class="stat-card">
               <span class="stat-icon">🎯</span>
               <div class="stat-content">
-                <span class="stat-value">{{ selectedPlayer()?.goalsCompleted }}/{{ selectedPlayer()?.goalsTotal }}</span>
+                <span class="stat-value"
+                  >{{ selectedPlayer()?.goalsCompleted }}/{{
+                    selectedPlayer()?.goalsTotal
+                  }}</span
+                >
                 <span class="stat-label">Goals Completed</span>
                 <span class="stat-sub">Active goals</span>
               </div>
@@ -184,8 +195,17 @@ const COMPARE_OPTIONS = [
             <div class="stat-card">
               <span class="stat-icon">📈</span>
               <div class="stat-content">
-                <span class="stat-value" [class.positive]="(selectedPlayer()?.improvementThisMonth ?? 0) > 0">
-                  {{ (selectedPlayer()?.improvementThisMonth ?? 0) > 0 ? '+' : '' }}{{ selectedPlayer()?.improvementThisMonth }}%
+                <span
+                  class="stat-value"
+                  [class.positive]="
+                    (selectedPlayer()?.improvementThisMonth ?? 0) > 0
+                  "
+                >
+                  {{
+                    (selectedPlayer()?.improvementThisMonth ?? 0) > 0
+                      ? "+"
+                      : ""
+                  }}{{ selectedPlayer()?.improvementThisMonth }}%
                 </span>
                 <span class="stat-label">Improvement</span>
                 <span class="stat-sub">This month</span>
@@ -194,7 +214,9 @@ const COMPARE_OPTIONS = [
             <div class="stat-card">
               <span class="stat-icon">🏆</span>
               <div class="stat-content">
-                <span class="stat-value">{{ selectedPlayer()?.achievements }}</span>
+                <span class="stat-value">{{
+                  selectedPlayer()?.achievements
+                }}</span>
                 <span class="stat-label">Achievements</span>
                 <span class="stat-sub">Unlocked</span>
               </div>
@@ -209,12 +231,26 @@ const COMPARE_OPTIONS = [
               </div>
             </ng-template>
             <div class="spider-chart-container">
-              <p-chart type="radar" [data]="radarChartData()" [options]="radarChartOptions"></p-chart>
+              <p-chart
+                type="radar"
+                [data]="radarChartData()"
+                [options]="radarChartOptions"
+              ></p-chart>
             </div>
             <div class="chart-legend">
-              <span class="legend-item"><span class="legend-color player"></span> {{ selectedPlayer()?.name }} ({{ selectedPlayer()?.position }})</span>
-              <span class="legend-item"><span class="legend-color elite"></span> Elite {{ selectedPlayer()?.position }} Benchmark</span>
-              <span class="legend-item"><span class="legend-color avg"></span> Position Average</span>
+              <span class="legend-item"
+                ><span class="legend-color player"></span>
+                {{ selectedPlayer()?.name }} ({{
+                  selectedPlayer()?.position
+                }})</span
+              >
+              <span class="legend-item"
+                ><span class="legend-color elite"></span> Elite
+                {{ selectedPlayer()?.position }} Benchmark</span
+              >
+              <span class="legend-item"
+                ><span class="legend-color avg"></span> Position Average</span
+              >
             </div>
           </p-card>
 
@@ -223,7 +259,12 @@ const COMPARE_OPTIONS = [
             <ng-template pTemplate="header">
               <div class="card-header">
                 <h3>Development Goals</h3>
-                <app-button size="sm" iconLeft="pi-plus" (clicked)="openGoalDialog()">Add Goal</app-button>
+                <app-button
+                  size="sm"
+                  iconLeft="pi-plus"
+                  (clicked)="openGoalDialog()"
+                  >Add Goal</app-button
+                >
               </div>
             </ng-template>
 
@@ -233,26 +274,47 @@ const COMPARE_OPTIONS = [
                   <div class="goal-item">
                     <div class="goal-header">
                       <div class="goal-title">
-                        <span class="goal-icon">{{ getGoalIcon(goal.category) }}</span>
-                        <span>{{ goal.metric }}: {{ goal.startValue }} → {{ goal.targetValue }}</span>
+                        <span class="goal-icon">{{
+                          getGoalIcon(goal.category)
+                        }}</span>
+                        <span
+                          >{{ goal.metric }}: {{ goal.startValue }} →
+                          {{ goal.targetValue }}</span
+                        >
                       </div>
                       <span class="goal-due">Due: {{ goal.dueDate }}</span>
                     </div>
                     <div class="goal-progress">
                       <span class="progress-label">Progress:</span>
-                      <p-progressBar [value]="goal.progress" [showValue]="false" [style]="{ height: '12px', flex: 1 }"></p-progressBar>
+                      <p-progressBar
+                        [value]="goal.progress"
+                        [showValue]="false"
+                        [style]="{ height: '12px', flex: 1 }"
+                      ></p-progressBar>
                       <span class="progress-value">{{ goal.progress }}%</span>
                     </div>
                     <div class="goal-status">
-                      <span class="current-value">Current: {{ goal.currentValue }}</span>
+                      <span class="current-value"
+                        >Current: {{ goal.currentValue }}</span
+                      >
                       <p-tag
                         [value]="getStatusLabel(goal.status)"
                         [severity]="getStatusSeverity(goal.status)"
                       ></p-tag>
                     </div>
                     <div class="goal-actions">
-                      <app-button variant="secondary" size="sm" (clicked)="updateGoal(goal)">Update</app-button>
-                      <app-button variant="text" size="sm" (clicked)="viewGoalDetails(goal)">Details</app-button>
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        (clicked)="updateGoal(goal)"
+                        >Update</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        (clicked)="viewGoalDetails(goal)"
+                        >Details</app-button
+                      >
                     </div>
                   </div>
                 }
@@ -260,7 +322,9 @@ const COMPARE_OPTIONS = [
             } @else {
               <div class="empty-goals">
                 <p>No development goals set for this player.</p>
-                <app-button iconLeft="pi-plus" (clicked)="openGoalDialog()">Set First Goal</app-button>
+                <app-button iconLeft="pi-plus" (clicked)="openGoalDialog()"
+                  >Set First Goal</app-button
+                >
               </div>
             }
           </p-card>
@@ -291,7 +355,11 @@ const COMPARE_OPTIONS = [
               ></p-select>
             </div>
             <div class="history-chart">
-              <p-chart type="line" [data]="lineChartData()" [options]="lineChartOptions"></p-chart>
+              <p-chart
+                type="line"
+                [data]="lineChartData()"
+                [options]="lineChartOptions"
+              ></p-chart>
             </div>
             <div class="history-stats">
               <span><strong>Best:</strong> {{ historyStats().best }}</span>
@@ -306,8 +374,15 @@ const COMPARE_OPTIONS = [
               <div class="card-header">
                 <h3>{{ selectedPlayer()?.position }}-Specific Skills</h3>
                 <div class="assessment-actions">
-                  <span class="last-assessment">Last Assessment: Dec 28, 2025</span>
-                  <app-button variant="secondary" size="sm" (clicked)="newAssessment()">New Assessment</app-button>
+                  <span class="last-assessment"
+                    >Last Assessment: Dec 28, 2025</span
+                  >
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="newAssessment()"
+                    >New Assessment</app-button
+                  >
                 </div>
               </div>
             </ng-template>
@@ -316,10 +391,17 @@ const COMPARE_OPTIONS = [
                 <div class="skill-row">
                   <span class="skill-name">{{ skill.skill }}</span>
                   <div class="skill-bar">
-                    <p-progressBar [value]="skill.score" [showValue]="false" [style]="{ height: '16px' }"></p-progressBar>
+                    <p-progressBar
+                      [value]="skill.score"
+                      [showValue]="false"
+                      [style]="{ height: '16px' }"
+                    ></p-progressBar>
                   </div>
                   <span class="skill-score">{{ skill.score }}%</span>
-                  <p-tag [value]="skill.grade" [severity]="getGradeSeverity(skill.grade)"></p-tag>
+                  <p-tag
+                    [value]="skill.grade"
+                    [severity]="getGradeSeverity(skill.grade)"
+                  ></p-tag>
                 </div>
               }
             </div>
@@ -333,7 +415,12 @@ const COMPARE_OPTIONS = [
             <ng-template pTemplate="header">
               <div class="card-header">
                 <h3>Coach Development Notes</h3>
-                <app-button size="sm" iconLeft="pi-plus" (clicked)="openNoteDialog()">Add Note</app-button>
+                <app-button
+                  size="sm"
+                  iconLeft="pi-plus"
+                  (clicked)="openNoteDialog()"
+                  >Add Note</app-button
+                >
               </div>
             </ng-template>
             <div class="notes-list">
@@ -410,30 +497,53 @@ const COMPARE_OPTIONS = [
             </div>
             <div class="form-field">
               <label>Current Value</label>
-              <input type="text" pInputText [(ngModel)]="goalForm.currentValue" placeholder="e.g., 4.52s" />
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="goalForm.currentValue"
+                placeholder="e.g., 4.52s"
+              />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-field">
               <label>Target Value</label>
-              <input type="text" pInputText [(ngModel)]="goalForm.targetValue" placeholder="e.g., 4.45s" />
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="goalForm.targetValue"
+                placeholder="e.g., 4.45s"
+              />
             </div>
             <div class="form-field">
               <label>Target Date</label>
-              <p-datepicker [(ngModel)]="goalForm.dueDate" [showIcon]="true" styleClass="w-full"></p-datepicker>
+              <p-datepicker
+                [(ngModel)]="goalForm.dueDate"
+                [showIcon]="true"
+                styleClass="w-full"
+              ></p-datepicker>
             </div>
           </div>
 
           <div class="form-field">
             <label>Notes (optional)</label>
-            <textarea pTextarea [(ngModel)]="goalForm.notes" rows="3" placeholder="Additional notes..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="goalForm.notes"
+              rows="3"
+              placeholder="Additional notes..."
+            ></textarea>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showGoalDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="createGoal()">Create Goal</app-button>
+          <app-button variant="secondary" (clicked)="showGoalDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="createGoal()"
+            >Create Goal</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -447,13 +557,22 @@ const COMPARE_OPTIONS = [
         <div class="note-form">
           <div class="form-field">
             <label>Note</label>
-            <textarea pTextarea [(ngModel)]="noteContent" rows="5" placeholder="Enter your development notes..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="noteContent"
+              rows="5"
+              placeholder="Enter your development notes..."
+            ></textarea>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showNoteDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" (clicked)="saveNote()">Save Note</app-button>
+          <app-button variant="secondary" (clicked)="showNoteDialog = false"
+            >Cancel</app-button
+          >
+          <app-button iconLeft="pi-check" (clicked)="saveNote()"
+            >Save Note</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
@@ -499,15 +618,18 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   // Computed
   readonly playerOptions = computed(() =>
-    this.players().map((p) => ({ id: p.id, name: `${p.name} (${p.position})` }))
+    this.players().map((p) => ({
+      id: p.id,
+      name: `${p.name} (${p.position})`,
+    })),
   );
 
-  readonly selectedPlayer = computed(() =>
-    this.players().find((p) => p.id === this.selectedPlayerId) || null
+  readonly selectedPlayer = computed(
+    () => this.players().find((p) => p.id === this.selectedPlayerId) || null,
   );
 
   readonly playerGoals = computed(() =>
-    this.goals().filter((g) => g.playerId === this.selectedPlayerId)
+    this.goals().filter((g) => g.playerId === this.selectedPlayerId),
   );
 
   readonly skillAssessments = computed(() => this.assessments());
@@ -515,7 +637,14 @@ export class PlayerDevelopmentComponent implements OnInit {
   readonly coachNotes = computed(() => this.notes());
 
   readonly radarChartData = computed(() => ({
-    labels: ["Speed", "Agility", "Strength", "Explosiveness", "Technique", "Endurance"],
+    labels: [
+      "Speed",
+      "Agility",
+      "Strength",
+      "Explosiveness",
+      "Technique",
+      "Endurance",
+    ],
     datasets: [
       {
         label: this.selectedPlayer()?.name || "Player",
@@ -608,7 +737,9 @@ export class PlayerDevelopmentComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/player-development"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/player-development"),
+      );
       if (response?.success && response.data) {
         this.players.set(response.data.players || []);
         this.goals.set(response.data.goals || []);
@@ -623,19 +754,102 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   private loadDemoData(): void {
     this.players.set([
-      { id: "1", name: "Sarah Johnson", position: "WR", overallProgress: 78, goalsCompleted: 4, goalsTotal: 6, improvementThisMonth: 12, focusArea: "Blocking", achievements: 8 },
-      { id: "2", name: "Marcus Williams", position: "QB", overallProgress: 85, goalsCompleted: 5, goalsTotal: 5, improvementThisMonth: 8, focusArea: "Deep accuracy", achievements: 12 },
-      { id: "3", name: "Emily Chen", position: "DB", overallProgress: 72, goalsCompleted: 3, goalsTotal: 6, improvementThisMonth: -2, focusArea: "Recovery (injury)", achievements: 5 },
-      { id: "4", name: "Chris Martinez", position: "WR", overallProgress: 68, goalsCompleted: 2, goalsTotal: 5, improvementThisMonth: 5, focusArea: "Route depth", achievements: 4 },
-      { id: "5", name: "Jake Rodriguez", position: "C", overallProgress: 82, goalsCompleted: 4, goalsTotal: 4, improvementThisMonth: 10, focusArea: "Snap accuracy", achievements: 7 },
+      {
+        id: "1",
+        name: "Sarah Johnson",
+        position: "WR",
+        overallProgress: 78,
+        goalsCompleted: 4,
+        goalsTotal: 6,
+        improvementThisMonth: 12,
+        focusArea: "Blocking",
+        achievements: 8,
+      },
+      {
+        id: "2",
+        name: "Marcus Williams",
+        position: "QB",
+        overallProgress: 85,
+        goalsCompleted: 5,
+        goalsTotal: 5,
+        improvementThisMonth: 8,
+        focusArea: "Deep accuracy",
+        achievements: 12,
+      },
+      {
+        id: "3",
+        name: "Emily Chen",
+        position: "DB",
+        overallProgress: 72,
+        goalsCompleted: 3,
+        goalsTotal: 6,
+        improvementThisMonth: -2,
+        focusArea: "Recovery (injury)",
+        achievements: 5,
+      },
+      {
+        id: "4",
+        name: "Chris Martinez",
+        position: "WR",
+        overallProgress: 68,
+        goalsCompleted: 2,
+        goalsTotal: 5,
+        improvementThisMonth: 5,
+        focusArea: "Route depth",
+        achievements: 4,
+      },
+      {
+        id: "5",
+        name: "Jake Rodriguez",
+        position: "C",
+        overallProgress: 82,
+        goalsCompleted: 4,
+        goalsTotal: 4,
+        improvementThisMonth: 10,
+        focusArea: "Snap accuracy",
+        achievements: 7,
+      },
     ]);
 
     this.selectedPlayerId = "1";
 
     this.goals.set([
-      { id: "g1", playerId: "1", category: "physical", metric: "40-Yard Dash", startValue: "4.52s", currentValue: "4.50s", targetValue: "4.45s", dueDate: "Mar 1, 2026", progress: 72, status: "on-track" },
-      { id: "g2", playerId: "1", category: "physical", metric: "Relative Squat", startValue: "1.8x", currentValue: "1.95x", targetValue: "2.0x BW", dueDate: "Apr 1, 2026", progress: 80, status: "ahead" },
-      { id: "g3", playerId: "1", category: "physical", metric: "Pro Agility", startValue: "4.25s", currentValue: "4.18s", targetValue: "4.10s", dueDate: "Mar 1, 2026", progress: 50, status: "behind" },
+      {
+        id: "g1",
+        playerId: "1",
+        category: "physical",
+        metric: "40-Yard Dash",
+        startValue: "4.52s",
+        currentValue: "4.50s",
+        targetValue: "4.45s",
+        dueDate: "Mar 1, 2026",
+        progress: 72,
+        status: "on-track",
+      },
+      {
+        id: "g2",
+        playerId: "1",
+        category: "physical",
+        metric: "Relative Squat",
+        startValue: "1.8x",
+        currentValue: "1.95x",
+        targetValue: "2.0x BW",
+        dueDate: "Apr 1, 2026",
+        progress: 80,
+        status: "ahead",
+      },
+      {
+        id: "g3",
+        playerId: "1",
+        category: "physical",
+        metric: "Pro Agility",
+        startValue: "4.25s",
+        currentValue: "4.18s",
+        targetValue: "4.10s",
+        dueDate: "Mar 1, 2026",
+        progress: 50,
+        status: "behind",
+      },
     ]);
 
     this.assessments.set([
@@ -649,8 +863,20 @@ export class PlayerDevelopmentComponent implements OnInit {
     ]);
 
     this.notes.set([
-      { id: "n1", date: "Jan 2, 2026", coachName: "Coach Mike", content: "Sarah's speed training is paying off. 40-yard improved 0.02s this week. Focus next month on YAC drills - she tends to go down too easily after catch. Blocking remains the biggest area for improvement." },
-      { id: "n2", date: "Dec 15, 2025", coachName: "Coach Sarah", content: "Route running is elite level. She can be our WR1 in the tournament if she maintains this trajectory. Consider her for captain role." },
+      {
+        id: "n1",
+        date: "Jan 2, 2026",
+        coachName: "Coach Mike",
+        content:
+          "Sarah's speed training is paying off. 40-yard improved 0.02s this week. Focus next month on YAC drills - she tends to go down too easily after catch. Blocking remains the biggest area for improvement.",
+      },
+      {
+        id: "n2",
+        date: "Dec 15, 2025",
+        coachName: "Coach Sarah",
+        content:
+          "Route running is elite level. She can be our WR1 in the tournament if she maintains this trajectory. Consider her for captain role.",
+      },
     ]);
 
     this.performanceHistory.set([
@@ -766,8 +992,13 @@ export class PlayerDevelopmentComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       "on-track": "success",
       ahead: "success",
       behind: "warn",
@@ -776,8 +1007,13 @@ export class PlayerDevelopmentComponent implements OnInit {
     return severities[status] || "secondary";
   }
 
-  getGradeSeverity(grade: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getGradeSeverity(
+    grade: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       Elite: "success",
       Excellent: "success",
       Good: "info",

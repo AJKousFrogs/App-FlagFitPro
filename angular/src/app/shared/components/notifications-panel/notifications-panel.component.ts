@@ -148,7 +148,7 @@ import {
       </div>
     </div>
   `,
-  styleUrl: './notifications-panel.component.scss',
+  styleUrl: "./notifications-panel.component.scss",
 })
 export class NotificationsPanelComponent {
   notificationService = inject(NotificationStateService);

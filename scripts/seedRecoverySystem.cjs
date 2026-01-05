@@ -62,7 +62,9 @@ class RecoverySystemSeeder {
   async seedRecoveryEquipment() {
     console.log("🛠️ Seeding Recovery Equipment...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const equipment = [
       {
@@ -100,7 +102,9 @@ class RecoverySystemSeeder {
 
         console.log(`✅ Inserted recovery equipment: ${item.equipment_name}`);
       } catch (error) {
-        console.error(`❌ Error inserting recovery equipment: ${error.message}`);
+        console.error(
+          `❌ Error inserting recovery equipment: ${error.message}`,
+        );
       }
     }
   }
@@ -108,7 +112,9 @@ class RecoverySystemSeeder {
   async seedRecoverySessions() {
     console.log("🏃 Seeding Recovery Sessions...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const sessions = [
       {
@@ -119,7 +125,7 @@ class RecoverySystemSeeder {
         start_time: new Date(),
         intensity_level: "low",
         created_at: new Date(),
-      }
+      },
     ];
 
     for (const session of sessions) {
@@ -141,7 +147,9 @@ class RecoverySystemSeeder {
           session.created_at,
         ]);
 
-        console.log(`✅ Inserted recovery session for user: ${session.user_id}`);
+        console.log(
+          `✅ Inserted recovery session for user: ${session.user_id}`,
+        );
       } catch (error) {
         console.error(`❌ Error inserting recovery session: ${error.message}`);
       }
@@ -151,7 +159,9 @@ class RecoverySystemSeeder {
   async seedRecoveryRecommendations() {
     console.log("💡 Seeding Recovery Recommendations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const recommendations = [
       {
@@ -162,7 +172,7 @@ class RecoverySystemSeeder {
         recommended_activities: ["Cold plunge", "Breathing exercises"],
         date_generated: new Date(),
         created_at: new Date(),
-      }
+      },
     ];
 
     for (const rec of recommendations) {
@@ -186,7 +196,9 @@ class RecoverySystemSeeder {
 
         console.log(`✅ Inserted recovery recommendation: ${rec.title}`);
       } catch (error) {
-        console.error(`❌ Error inserting recovery recommendation: ${error.message}`);
+        console.error(
+          `❌ Error inserting recovery recommendation: ${error.message}`,
+        );
       }
     }
   }
@@ -194,7 +206,9 @@ class RecoverySystemSeeder {
   async seedRecoveryAnalytics() {
     console.log("📊 Seeding Recovery Analytics...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const analytics = [
       {
@@ -202,8 +216,10 @@ class RecoverySystemSeeder {
         analysis_period_start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         analysis_period_end: new Date(),
         recovery_compliance_rate: 92.5,
-        key_insights: ["Better sleep quality correlates with 15% reduction in soreness"],
-      }
+        key_insights: [
+          "Better sleep quality correlates with 15% reduction in soreness",
+        ],
+      },
     ];
 
     for (const entry of analytics) {
@@ -223,9 +239,13 @@ class RecoverySystemSeeder {
           entry.key_insights,
         ]);
 
-        console.log(`✅ Inserted recovery analytics for user: ${entry.user_id}`);
+        console.log(
+          `✅ Inserted recovery analytics for user: ${entry.user_id}`,
+        );
       } catch (error) {
-        console.error(`❌ Error inserting recovery analytics: ${error.message}`);
+        console.error(
+          `❌ Error inserting recovery analytics: ${error.message}`,
+        );
       }
     }
   }
@@ -233,7 +253,9 @@ class RecoverySystemSeeder {
   async seedAthleteRecoveryProfiles() {
     console.log("👤 Seeding Athlete Recovery Profiles...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const profile = {
       user_id: usersRes.rows[0].id,
@@ -274,7 +296,9 @@ class RecoverySystemSeeder {
       await this.seedRecoveryRecommendations();
       await this.seedRecoveryAnalytics();
       await this.seedAthleteRecoveryProfiles();
-      console.log("🎉 Recovery System Database Seeding Completed Successfully!");
+      console.log(
+        "🎉 Recovery System Database Seeding Completed Successfully!",
+      );
     } catch (error) {
       console.error(`❌ Database seeding failed: ${error.message}`);
     } finally {

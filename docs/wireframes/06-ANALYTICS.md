@@ -146,41 +146,44 @@
 ## Component Breakdown
 
 ### 1. Page Header ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title "FlagFit Pro Analytics" | ✅ | With chart-bar icon |
-| Subtitle | ✅ | "Advanced Performance Analytics & Team Insights" |
+
+| Element                       | Status | Notes                                            |
+| ----------------------------- | ------ | ------------------------------------------------ |
+| Title "FlagFit Pro Analytics" | ✅     | With chart-bar icon                              |
+| Subtitle                      | ✅     | "Advanced Performance Analytics & Team Insights" |
 
 ---
 
 ### 1.5. My Development Goals (NEW) ⚠️
-| Element | Status | Notes |
-|---------|--------|-------|
-| Section title | ⚠️ Needs Implementation | "MY DEVELOPMENT GOALS (Coach Assigned)" |
-| View All link | ⚠️ Needs Implementation | Links to full goals page |
-| Goal cards (max 2-3) | ⚠️ Needs Implementation | Horizontal scroll on mobile |
-| Goal metric name | ⚠️ Needs Implementation | e.g., "40-Yard Dash" |
-| Target value | ⚠️ Needs Implementation | "4.45s by Feb 15" |
-| Current value | ⚠️ Needs Implementation | "4.52s" |
-| Progress bar | ⚠️ Needs Implementation | Visual % toward goal |
-| Days remaining | ⚠️ Needs Implementation | "42 days remaining" |
-| Coach note | ⚠️ Needs Implementation | Coach's guidance |
-| Empty state | ⚠️ Needs Implementation | "No goals assigned yet" |
+
+| Element              | Status                  | Notes                                   |
+| -------------------- | ----------------------- | --------------------------------------- |
+| Section title        | ⚠️ Needs Implementation | "MY DEVELOPMENT GOALS (Coach Assigned)" |
+| View All link        | ⚠️ Needs Implementation | Links to full goals page                |
+| Goal cards (max 2-3) | ⚠️ Needs Implementation | Horizontal scroll on mobile             |
+| Goal metric name     | ⚠️ Needs Implementation | e.g., "40-Yard Dash"                    |
+| Target value         | ⚠️ Needs Implementation | "4.45s by Feb 15"                       |
+| Current value        | ⚠️ Needs Implementation | "4.52s"                                 |
+| Progress bar         | ⚠️ Needs Implementation | Visual % toward goal                    |
+| Days remaining       | ⚠️ Needs Implementation | "42 days remaining"                     |
+| Coach note           | ⚠️ Needs Implementation | Coach's guidance                        |
+| Empty state          | ⚠️ Needs Implementation | "No goals assigned yet"                 |
 
 **Business Logic:**
+
 ```typescript
 interface DevelopmentGoal {
   id: string;
   playerId: string;
-  metricType: 'speed' | 'agility' | 'strength' | 'power' | 'skill';
-  metricName: string;           // "40-Yard Dash"
-  targetValue: number;          // 4.45
-  targetUnit: string;           // "s"
-  currentValue: number;         // 4.52
-  deadline: Date;               // Feb 15, 2026
-  coachNote: string;            // "Focus on start drill"
-  createdBy: string;            // Coach ID
-  status: 'active' | 'achieved' | 'missed';
+  metricType: "speed" | "agility" | "strength" | "power" | "skill";
+  metricName: string; // "40-Yard Dash"
+  targetValue: number; // 4.45
+  targetUnit: string; // "s"
+  currentValue: number; // 4.52
+  deadline: Date; // Feb 15, 2026
+  coachNote: string; // "Focus on start drill"
+  createdBy: string; // Coach ID
+  status: "active" | "achieved" | "missed";
 }
 
 // Progress calculation
@@ -200,14 +203,16 @@ function calculateProgress(goal: DevelopmentGoal): number {
 ---
 
 ### 2. Key Metrics Overview (4 Cards) ✅
-| Metric | Icon | Value Example | Trend | Status |
-|--------|------|---------------|-------|--------|
-| Training Load | 📈 chart-line | AU value | vs week | ✅ |
-| Team Rank | 👥 users | Position # | Position change | ✅ |
-| Top Speed | ⚡ bolt | Time (seconds) | Improvement | ✅ |
-| Training Sessions | 📅 calendar | Count | This week | ✅ |
+
+| Metric            | Icon          | Value Example  | Trend           | Status |
+| ----------------- | ------------- | -------------- | --------------- | ------ |
+| Training Load     | 📈 chart-line | AU value       | vs week         | ✅     |
+| Team Rank         | 👥 users      | Position #     | Position change | ✅     |
+| Top Speed         | ⚡ bolt       | Time (seconds) | Improvement     | ✅     |
+| Training Sessions | 📅 calendar   | Count          | This week       | ✅     |
 
 **Trend Types:**
+
 - `positive` - Green text
 - `negative` - Red text
 - `neutral` - Gray text
@@ -217,65 +222,72 @@ function calculateProgress(goal: DevelopmentGoal): number {
 ### 3. Charts Grid (4 Charts) ✅
 
 #### Load vs Performance (Line Chart)
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title + subtitle | ✅ | "Acute/Chronic Workload vs Subjective Wellness" |
-| Reset zoom button | ✅ | `⟳` icon |
-| Export button | ✅ | `⬇` icon - Downloads PNG |
-| Line chart | ✅ | 7-week trend |
-| ACWR insight | ✅ | Current value |
-| Safety zone insight | ✅ | Risk zone label |
-| Empty state | ✅ | With CTA to log training |
+
+| Element             | Status | Notes                                           |
+| ------------------- | ------ | ----------------------------------------------- |
+| Title + subtitle    | ✅     | "Acute/Chronic Workload vs Subjective Wellness" |
+| Reset zoom button   | ✅     | `⟳` icon                                        |
+| Export button       | ✅     | `⬇` icon - Downloads PNG                        |
+| Line chart          | ✅     | 7-week trend                                    |
+| ACWR insight        | ✅     | Current value                                   |
+| Safety zone insight | ✅     | Risk zone label                                 |
+| Empty state         | ✅     | With CTA to log training                        |
 
 #### Skill Proficiency Radar
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title + subtitle | ✅ | "Comparative assessment across core competencies" |
-| Radar chart | ✅ | Multi-axis skill comparison |
-| Empty state | ✅ | "Coming Soon" message |
+
+| Element          | Status | Notes                                             |
+| ---------------- | ------ | ------------------------------------------------- |
+| Title + subtitle | ✅     | "Comparative assessment across core competencies" |
+| Radar chart      | ✅     | Multi-axis skill comparison                       |
+| Empty state      | ✅     | "Coming Soon" message                             |
 
 #### Training Mix (Doughnut Chart)
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title + subtitle | ✅ | "Distribution of focus areas over 30 days" |
-| Doughnut chart | ✅ | Session type distribution |
-| Dynamic colors | ✅ | Color-coded segments |
-| Empty state | ✅ | "Coming Soon" message |
+
+| Element          | Status | Notes                                      |
+| ---------------- | ------ | ------------------------------------------ |
+| Title + subtitle | ✅     | "Distribution of focus areas over 30 days" |
+| Doughnut chart   | ✅     | Session type distribution                  |
+| Dynamic colors   | ✅     | Color-coded segments                       |
+| Empty state      | ✅     | "Coming Soon" message                      |
 
 #### Benchmark Comparison (Bar Chart)
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title + subtitle | ✅ | "Your metrics vs Olympic standard benchmarks" |
-| Bar chart | ✅ | Horizontal comparison bars |
-| Empty state | ✅ | "Coming Soon" message |
+
+| Element          | Status | Notes                                         |
+| ---------------- | ------ | --------------------------------------------- |
+| Title + subtitle | ✅     | "Your metrics vs Olympic standard benchmarks" |
+| Bar chart        | ✅     | Horizontal comparison bars                    |
+| Empty state      | ✅     | "Coming Soon" message                         |
 
 ---
 
 ### 4. Speed Development Progress (Full Width) ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title | ✅ | "Speed Development Progress" |
-| Time period selector | ✅ | Dropdown: Last 7 Weeks / 30 Days / Season |
-| Metrics selector | ✅ | Dropdown: 40-Yard, All Sprints, Agility |
-| Line chart | ✅ | Multi-line comparison |
-| Insight: Best 40-Yard | ✅ | "4.46s" |
-| Insight: Best 10-Yard | ✅ | "1.54s" |
-| Insight: Total Improvement | ✅ | "-0.19s" |
-| Insight: Olympic Target | ✅ | "4.40s" |
+
+| Element                    | Status | Notes                                     |
+| -------------------------- | ------ | ----------------------------------------- |
+| Title                      | ✅     | "Speed Development Progress"              |
+| Time period selector       | ✅     | Dropdown: Last 7 Weeks / 30 Days / Season |
+| Metrics selector           | ✅     | Dropdown: 40-Yard, All Sprints, Agility   |
+| Line chart                 | ✅     | Multi-line comparison                     |
+| Insight: Best 40-Yard      | ✅     | "4.46s"                                   |
+| Insight: Best 10-Yard      | ✅     | "1.54s"                                   |
+| Insight: Total Improvement | ✅     | "-0.19s"                                  |
+| Insight: Olympic Target    | ✅     | "4.40s"                                   |
 
 ---
 
 ### 5. Player Statistics & Attendance (Tabbed) ✅
 
 #### Tab 1: Per Game Stats
-| Element | Status | Notes |
-|---------|--------|-------|
-| Games Played summary | ✅ | Count |
-| Games Missed summary | ✅ | Count (red) |
-| Attendance Rate summary | ✅ | Percentage |
-| Data table | ✅ | Paginated, 10 rows |
+
+| Element                 | Status | Notes              |
+| ----------------------- | ------ | ------------------ |
+| Games Played summary    | ✅     | Count              |
+| Games Missed summary    | ✅     | Count (red)        |
+| Attendance Rate summary | ✅     | Percentage         |
+| Data table              | ✅     | Paginated, 10 rows |
 
 **Table Columns:**
+
 - Date
 - Opponent
 - Status (Present/Missed tag)
@@ -288,38 +300,42 @@ function calculateProgress(goal: DevelopmentGoal): number {
 - Interceptions
 
 #### Tab 2: Season Stats
-| Element | Status | Notes |
-|---------|--------|-------|
-| Season summary | ✅ | Year, games played/missed, attendance |
-| Passing stats card | ✅ | Attempts, Completions, Yards, % |
-| Receiving stats card | ✅ | Targets, Receptions, Yards, Drops |
-| Rushing stats card | ✅ | Attempts, Yards, Avg |
-| Defense stats card | ✅ | Flag Pulls, Success Rate, Interceptions |
+
+| Element              | Status | Notes                                   |
+| -------------------- | ------ | --------------------------------------- |
+| Season summary       | ✅     | Year, games played/missed, attendance   |
+| Passing stats card   | ✅     | Attempts, Completions, Yards, %         |
+| Receiving stats card | ✅     | Targets, Receptions, Yards, Drops       |
+| Rushing stats card   | ✅     | Attempts, Yards, Avg                    |
+| Defense stats card   | ✅     | Flag Pulls, Success Rate, Interceptions |
 
 #### Tab 3: Multi-Season Stats
-| Element | Status | Notes |
-|---------|--------|-------|
-| Total seasons | ✅ | Count |
-| Career games played/missed | ✅ | Counts |
-| Overall attendance | ✅ | Percentage |
-| Career totals (4 cards) | ✅ | Passing, Receiving, Rushing, Defense |
-| Season breakdown table | ✅ | Paginated by season |
+
+| Element                    | Status | Notes                                |
+| -------------------------- | ------ | ------------------------------------ |
+| Total seasons              | ✅     | Count                                |
+| Career games played/missed | ✅     | Counts                               |
+| Overall attendance         | ✅     | Percentage                           |
+| Career totals (4 cards)    | ✅     | Passing, Receiving, Rushing, Defense |
+| Season breakdown table     | ✅     | Paginated by season                  |
 
 ---
 
 ### 6. States ✅
-| State | Status | Notes |
-|-------|--------|-------|
-| Loading state | ✅ | Skeleton loader |
-| Error state | ✅ | With retry button |
-| Empty chart states | ✅ | Per-chart empty messaging |
-| No user state | ✅ | Fallback data |
+
+| State              | Status | Notes                     |
+| ------------------ | ------ | ------------------------- |
+| Loading state      | ✅     | Skeleton loader           |
+| Error state        | ✅     | With retry button         |
+| Empty chart states | ✅     | Per-chart empty messaging |
+| No user state      | ✅     | Fallback data             |
 
 ---
 
 ## Business Logic
 
 ### Stat Calculations (Documented)
+
 ```typescript
 // Quarterback Rating (simplified for flag football)
 QBR = ((Completions/Attempts × 100) + (Yards/Attempts × 10) + (TDs × 20) - (INTs × 25)) / 4
@@ -329,6 +345,7 @@ DefenseScore = (FlagPulls × 2) + (Interceptions × 6) + (Sacks × 3)
 ```
 
 ### Attendance Rate (Implemented)
+
 ```typescript
 attendanceRate(): number {
   const total = playerGameStats().length;
@@ -339,6 +356,7 @@ attendanceRate(): number {
 ```
 
 ### Games Missed (Implemented)
+
 ```typescript
 gamesMissed(): number {
   return playerGameStats().filter(g => !g.present).length;
@@ -346,6 +364,7 @@ gamesMissed(): number {
 ```
 
 ### Chart Options (Implemented)
+
 ```typescript
 // Enhanced chart configurations with:
 - Zoom & pan support
@@ -359,27 +378,27 @@ gamesMissed(): number {
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| Analytics summary | `ApiService` | `GET /analytics/summary` |
-| Performance trends | `ApiService` | `GET /analytics/performance-trends` |
-| Team chemistry | `ApiService` | `GET /analytics/team-chemistry` |
-| Training distribution | `ApiService` | `GET /analytics/training-distribution` |
-| Position performance | `ApiService` | `GET /analytics/position-performance` |
-| Speed development | `ApiService` | `GET /analytics/speed-development` |
-| Player game stats | `PlayerStatisticsService` | `getPlayerAllGames()` |
-| Season stats | `PlayerStatisticsService` | `getPlayerSeasonStats()` |
-| Multi-season stats | `PlayerStatisticsService` | `getPlayerMultiSeasonStats()` |
-| Training stats | `TrainingStatsCalculationService` | `getTrainingStats()` |
-| ACWR data | `AcwrService` | `acwrData()` |
+| Data                  | Service                           | Method                                 |
+| --------------------- | --------------------------------- | -------------------------------------- |
+| Analytics summary     | `ApiService`                      | `GET /analytics/summary`               |
+| Performance trends    | `ApiService`                      | `GET /analytics/performance-trends`    |
+| Team chemistry        | `ApiService`                      | `GET /analytics/team-chemistry`        |
+| Training distribution | `ApiService`                      | `GET /analytics/training-distribution` |
+| Position performance  | `ApiService`                      | `GET /analytics/position-performance`  |
+| Speed development     | `ApiService`                      | `GET /analytics/speed-development`     |
+| Player game stats     | `PlayerStatisticsService`         | `getPlayerAllGames()`                  |
+| Season stats          | `PlayerStatisticsService`         | `getPlayerSeasonStats()`               |
+| Multi-season stats    | `PlayerStatisticsService`         | `getPlayerMultiSeasonStats()`          |
+| Training stats        | `TrainingStatsCalculationService` | `getTrainingStats()`                   |
+| ACWR data             | `AcwrService`                     | `acwrData()`                           |
 
 ---
 
 ## Navigation Paths
 
-| From | To | Trigger |
-|------|-----|---------|
-| Analytics | Training Log | Empty chart CTA |
+| From      | To                 | Trigger              |
+| --------- | ------------------ | -------------------- |
+| Analytics | Training Log       | Empty chart CTA      |
 | Analytics | Enhanced Analytics | Chart "View Details" |
 
 ---
@@ -387,43 +406,45 @@ gamesMissed(): number {
 ## Chart Features
 
 ### Interactive Capabilities ✅
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Zoom (mouse wheel) | ✅ | On line/bar charts |
-| Pan (Shift + drag) | ✅ | Horizontal panning |
-| Legend toggle | ✅ | Click to show/hide datasets |
-| Hover tooltips | ✅ | Rich data display |
-| Export as PNG | ✅ | Download button |
-| Reset zoom | ✅ | Restore original view |
-| Responsive fonts | ✅ | Auto-adjust on resize |
+
+| Feature            | Status | Notes                       |
+| ------------------ | ------ | --------------------------- |
+| Zoom (mouse wheel) | ✅     | On line/bar charts          |
+| Pan (Shift + drag) | ✅     | Horizontal panning          |
+| Legend toggle      | ✅     | Click to show/hide datasets |
+| Hover tooltips     | ✅     | Rich data display           |
+| Export as PNG      | ✅     | Download button             |
+| Reset zoom         | ✅     | Restore original view       |
+| Responsive fonts   | ✅     | Auto-adjust on resize       |
 
 ---
 
 ## Feature Comparison: Documented vs Implemented
 
-| Documented Feature | Status | Notes |
-|-------------------|--------|-------|
-| Key metrics overview | ✅ | 4 metric cards |
-| Performance trends chart | ✅ | Line chart with ACWR |
-| Skill proficiency radar | ✅ | Radar chart |
-| Training distribution | ✅ | Doughnut chart |
-| Benchmark comparison | ✅ | Bar chart |
-| Speed development | ✅ | Full-width line chart |
-| Time period filters | ✅ | Dropdown selectors |
-| Per-game statistics | ✅ | Tabbed table |
-| Season statistics | ✅ | Summary cards |
-| Multi-season statistics | ✅ | Career totals |
-| Attendance tracking | ✅ | Games played/missed |
-| Chart export | ✅ | PNG download |
-| Chart zoom/pan | ✅ | Interactive features |
-| QBR calculation | ⚠️ | Formula documented, display unclear |
-| Defensive efficiency | ⚠️ | Formula documented, display unclear |
+| Documented Feature       | Status | Notes                               |
+| ------------------------ | ------ | ----------------------------------- |
+| Key metrics overview     | ✅     | 4 metric cards                      |
+| Performance trends chart | ✅     | Line chart with ACWR                |
+| Skill proficiency radar  | ✅     | Radar chart                         |
+| Training distribution    | ✅     | Doughnut chart                      |
+| Benchmark comparison     | ✅     | Bar chart                           |
+| Speed development        | ✅     | Full-width line chart               |
+| Time period filters      | ✅     | Dropdown selectors                  |
+| Per-game statistics      | ✅     | Tabbed table                        |
+| Season statistics        | ✅     | Summary cards                       |
+| Multi-season statistics  | ✅     | Career totals                       |
+| Attendance tracking      | ✅     | Games played/missed                 |
+| Chart export             | ✅     | PNG download                        |
+| Chart zoom/pan           | ✅     | Interactive features                |
+| QBR calculation          | ⚠️     | Formula documented, display unclear |
+| Defensive efficiency     | ⚠️     | Formula documented, display unclear |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Comprehensive data visualization
 - Lazy-loaded charts for performance
 - Interactive chart features (zoom, pan, export)
@@ -432,12 +453,14 @@ gamesMissed(): number {
 - Good empty states per chart
 
 ### ⚠️ Friction Points
+
 - Many charts can feel overwhelming
 - No quick summary/highlight section
 - Filter changes don't persist
 - No data comparison to previous periods
 
 ### 🔧 Suggested Improvements
+
 1. Add "Key Insights" summary section at top
 2. Add period-over-period comparison toggle
 3. Persist filter selections
@@ -512,23 +535,23 @@ gamesMissed(): number {
 
 ## Implementation Status Updates
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| PDF Report Export | ⚠️ **ADD** | MEDIUM |
-| Share with Coach | ⚠️ **ADD** | MEDIUM |
-| Position Benchmarks Selection | ⚠️ **ADD** | HIGH |
-| Gap Analysis Visualization | ⚠️ **ADD** | HIGH |
-| Training Recommendations | ⚠️ **ADD** | MEDIUM |
+| Feature                       | Status     | Priority |
+| ----------------------------- | ---------- | -------- |
+| PDF Report Export             | ⚠️ **ADD** | MEDIUM   |
+| Share with Coach              | ⚠️ **ADD** | MEDIUM   |
+| Position Benchmarks Selection | ⚠️ **ADD** | HIGH     |
+| Gap Analysis Visualization    | ⚠️ **ADD** | HIGH     |
+| Training Recommendations      | ⚠️ **ADD** | MEDIUM   |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| ACWR Dashboard | `/acwr-dashboard` | Detailed load monitoring |
-| Training Schedule | `/training` | Log sessions |
-| Profile | `/profile` | Personal records |
+| Page              | Route             | Relationship             |
+| ----------------- | ----------------- | ------------------------ |
+| ACWR Dashboard    | `/acwr-dashboard` | Detailed load monitoring |
+| Training Schedule | `/training`       | Log sessions             |
+| Profile           | `/profile`        | Personal records         |
 
 ---
 

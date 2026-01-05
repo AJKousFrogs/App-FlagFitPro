@@ -4,10 +4,10 @@ import { ButtonComponent } from "../button/button.component";
 
 /**
  * Page Header Component
- * 
+ *
  * Design System Compliant - Refactored January 5, 2026
  * Supports composite view patterns via CSS custom property --page-header-display
- * 
+ *
  * Usage in composite views:
  * Parent sets CSS variable to hide child headers:
  *   .hub-tab-content { --page-header-display: none; }
@@ -15,9 +15,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-page-header",
   standalone: true,
-  imports: [
-    ButtonComponent,
-  ],
+  imports: [ButtonComponent],
   template: `
     <div class="page-header" [class.hidden-in-composite]="hideInComposite()">
       <div class="header-content">
@@ -34,14 +32,14 @@ import { ButtonComponent } from "../button/button.component";
       <ng-content></ng-content>
     </div>
   `,
-  styleUrl: './page-header.component.scss',
+  styleUrl: "./page-header.component.scss",
 })
 export class PageHeaderComponent {
   // Angular 21: Use input() signal instead of @Input()
   title = input<string>("");
   subtitle = input<string | undefined>(undefined);
   icon = input<string | undefined>(undefined);
-  
+
   /**
    * When true, header will be hidden when inside a composite view.
    * Composite views set --page-header-display: none via CSS.

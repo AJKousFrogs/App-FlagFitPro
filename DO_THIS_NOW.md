@@ -19,6 +19,7 @@ npm start
 ```
 
 **In Browser:**
+
 1. Open `http://localhost:4200`
 2. Press `F12` (DevTools)
 3. Go to **Network** tab
@@ -36,8 +37,9 @@ npm run quick-fixes:apply
 ```
 
 This will:
+
 - ✅ Force white text on green buttons
-- ✅ Fix card padding consistency  
+- ✅ Fix card padding consistency
 - ✅ Fix input consistency
 
 **Then:** Restart server (`npm start`) → Hard refresh browser (`Cmd+Shift+R`)
@@ -49,11 +51,13 @@ This will:
 **Open Dashboard or Today page**
 
 **Check visually:**
+
 - [ ] Buttons have white text? ✅ or ❌
 - [ ] Cards look consistent? ✅ or ❌
 - [ ] Inputs same height? ✅ or ❌
 
 **If ANY are ❌:**
+
 1. Right-click element → Inspect
 2. In DevTools Styles pane → See what CSS is applied
 3. Find the file causing the problem
@@ -71,11 +75,13 @@ npm run build:production
 ```
 
 **If lint fails:**
+
 ```bash
 npm run lint:fix
 ```
 
 **If build fails:**
+
 - Check error message
 - Fix TypeScript errors
 - Or temporarily skip broken files
@@ -93,11 +99,13 @@ npm run build
 ```
 
 **If build succeeds:**
+
 - Check Netlify dashboard
 - Check environment variables
 - Deploy should work
 
 **If build fails:**
+
 - Fix the errors shown
 - Test again
 
@@ -106,6 +114,7 @@ npm run build
 ## ✅ Success Criteria
 
 **By end of hour, you should have:**
+
 1. ✅ Changes visible in localhost
 2. ✅ ONE page looking better (buttons fixed)
 3. ✅ CI passing (or at least not blocking)
@@ -118,6 +127,7 @@ npm run build
 ## 🆘 If Something Doesn't Work
 
 **Check:**
+
 1. Browser console → What errors?
 2. Network tab → What's failing to load?
 3. DevTools Styles → What CSS is overriding?

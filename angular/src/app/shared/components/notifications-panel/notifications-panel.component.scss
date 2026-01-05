@@ -258,7 +258,9 @@
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   position: relative;
   border-left: var(--border-3) solid transparent;
 }
@@ -368,7 +370,9 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   flex-shrink: 0;
 }
 

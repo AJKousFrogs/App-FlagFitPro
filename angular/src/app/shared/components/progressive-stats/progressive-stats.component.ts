@@ -52,7 +52,7 @@ export interface ProgressiveStatItem extends StatItem {
     TagModule,
     Tabs,
     TabPanel,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -169,9 +169,20 @@ export interface ProgressiveStatItem extends StatItem {
                 }
 
                 <div class="action-buttons">
-                  <app-button variant="text" iconLeft="pi-search-plus" [disabled]="!hasChartData(stat)" (clicked)="toggleDeepDive(stat.id)">Deep Dive</app-button>
+                  <app-button
+                    variant="text"
+                    iconLeft="pi-search-plus"
+                    [disabled]="!hasChartData(stat)"
+                    (clicked)="toggleDeepDive(stat.id)"
+                    >Deep Dive</app-button
+                  >
 
-                  <app-button variant="outlined" iconLeft="pi-flag" (clicked)="setGoal(stat)">Set Goal</app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-flag"
+                    (clicked)="setGoal(stat)"
+                    >Set Goal</app-button
+                  >
                 </div>
               </div>
             }
@@ -180,7 +191,7 @@ export interface ProgressiveStatItem extends StatItem {
       </div>
     </div>
   `,
-  styleUrl: './progressive-stats.component.scss',
+  styleUrl: "./progressive-stats.component.scss",
   animations: [expandCollapse],
 })
 export class ProgressiveStatsComponent {

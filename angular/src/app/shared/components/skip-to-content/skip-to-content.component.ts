@@ -27,7 +27,7 @@ import { CommonModule } from "@angular/common";
       <span class="skip-link__hint">Press Enter</span>
     </a>
   `,
-  styleUrl: './skip-to-content.component.scss',
+  styleUrl: "./skip-to-content.component.scss",
 })
 export class SkipToContentComponent {
   skipToMain(event: Event): void {

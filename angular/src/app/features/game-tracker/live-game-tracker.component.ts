@@ -25,9 +25,7 @@ import { SelectButtonModule } from "primeng/selectbutton";
 import { SpeedDialModule } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  SwipeGestureDirective,
-} from "../../shared/directives/swipe-gesture.directive";
+import { SwipeGestureDirective } from "../../shared/directives/swipe-gesture.directive";
 import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
@@ -196,11 +194,23 @@ interface Play {
         />
 
         <div class="action-history">
-          <app-icon-button icon="pi-undo" variant="text" [disabled]="!canUndo()" (clicked)="undoLastPlay()" ariaLabel="Undo last play" />
+          <app-icon-button
+            icon="pi-undo"
+            variant="text"
+            [disabled]="!canUndo()"
+            (clicked)="undoLastPlay()"
+            ariaLabel="Undo last play"
+          />
 
           <span class="play-counter">Play {{ currentPlay() }}</span>
 
-          <app-icon-button icon="pi-redo" variant="text" [disabled]="!canRedo()" (clicked)="redoPlay()" ariaLabel="Redo play" />
+          <app-icon-button
+            icon="pi-redo"
+            variant="text"
+            [disabled]="!canRedo()"
+            (clicked)="redoPlay()"
+            ariaLabel="Redo play"
+          />
         </div>
       </div>
 
@@ -246,8 +256,12 @@ interface Play {
           </div>
 
           <div class="form-actions">
-            <app-button variant="text" (clicked)="cancelPlay()">Cancel</app-button>
-            <app-button [disabled]="playForm.invalid" (clicked)="savePlay()">Save Play</app-button>
+            <app-button variant="text" (clicked)="cancelPlay()"
+              >Cancel</app-button
+            >
+            <app-button [disabled]="playForm.invalid" (clicked)="savePlay()"
+              >Save Play</app-button
+            >
           </div>
         </form>
       </p-dialog>

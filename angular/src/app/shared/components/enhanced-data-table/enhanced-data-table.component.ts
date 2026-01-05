@@ -41,7 +41,10 @@ interface ColumnReorderEvent {
  * Column resize event
  */
 interface ColumnResizeEvent {
-  element: HTMLElement & { dataset: { field: string }; style: { width: string } };
+  element: HTMLElement & {
+    dataset: { field: string };
+    style: { width: string };
+  };
 }
 
 /**
@@ -96,7 +99,7 @@ export interface TablePreferences {
     InputTextModule,
     MultiSelect,
     MenuModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -138,17 +141,39 @@ export interface TablePreferences {
         <div class="toolbar-right">
           <!-- Bulk actions -->
           @if (selectedRows().length > 0) {
-            <app-button variant="outlined" size="sm" iconLeft="pi-download" (clicked)="exportSelected()">Export Selected</app-button>
-            <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="deleteSelected()">Delete Selected</app-button>
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-download"
+              (clicked)="exportSelected()"
+              >Export Selected</app-button
+            >
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-trash"
+              (clicked)="deleteSelected()"
+              >Delete Selected</app-button
+            >
           }
 
           <!-- View toggle -->
           @if (supportsMobileView()) {
-            <app-button variant="outlined" size="sm" (clicked)="toggleView()"></app-button>
+            <app-button
+              variant="outlined"
+              size="sm"
+              (clicked)="toggleView()"
+            ></app-button>
           }
 
           <!-- Reset preferences -->
-          <app-icon-button icon="pi-refresh" variant="outlined" size="sm" (clicked)="resetPreferences()" ariaLabel="refresh" />
+          <app-icon-button
+            icon="pi-refresh"
+            variant="outlined"
+            size="sm"
+            (clicked)="resetPreferences()"
+            ariaLabel="refresh"
+          />
         </div>
       </div>
 
@@ -240,8 +265,20 @@ export interface TablePreferences {
               }
               @if (hasActions()) {
                 <td class="actions-cell">
-                  <app-button variant="text" size="sm" iconLeft="pi-pencil" (clicked)="editRow(rowData)">Edit row</app-button>
-                  <app-button variant="text" size="sm" iconLeft="pi-trash" (clicked)="deleteRow(rowData)">Delete row</app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-pencil"
+                    (clicked)="editRow(rowData)"
+                    >Edit row</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-trash"
+                    (clicked)="deleteRow(rowData)"
+                    >Delete row</app-button
+                  >
                 </td>
               }
             </tr>
@@ -294,8 +331,20 @@ export interface TablePreferences {
 
               @if (hasActions()) {
                 <div class="card-actions">
-                  <app-button variant="outlined" size="sm" iconLeft="pi-pencil" (clicked)="editRow(row)">Edit</app-button>
-                  <app-button variant="outlined" size="sm" iconLeft="pi-trash" (clicked)="deleteRow(row)">Delete</app-button>
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    iconLeft="pi-pencil"
+                    (clicked)="editRow(row)"
+                    >Edit</app-button
+                  >
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    iconLeft="pi-trash"
+                    (clicked)="deleteRow(row)"
+                    >Delete</app-button
+                  >
                 </div>
               }
             </div>
@@ -309,7 +358,7 @@ export interface TablePreferences {
       }
     </div>
   `,
-  styleUrl: './enhanced-data-table.component.scss',
+  styleUrl: "./enhanced-data-table.component.scss",
 })
 export class EnhancedDataTableComponent {
   // Inputs
@@ -489,15 +538,23 @@ export class EnhancedDataTableComponent {
   }
 
   getCellValue(row: TableRow, field: string): unknown {
-    return field.split(".").reduce((obj: Record<string, unknown> | undefined, key: string) => 
-      obj?.[key] as Record<string, unknown> | undefined, row as Record<string, unknown>);
+    return field
+      .split(".")
+      .reduce(
+        (obj: Record<string, unknown> | undefined, key: string) =>
+          obj?.[key] as Record<string, unknown> | undefined,
+        row as Record<string, unknown>,
+      );
   }
 
   setCellValue(row: TableRow, field: string, value: unknown): void {
     const keys = field.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj: Record<string, unknown>, key: string) => 
-      obj[key] as Record<string, unknown>, row as Record<string, unknown>);
+    const target = keys.reduce(
+      (obj: Record<string, unknown>, key: string) =>
+        obj[key] as Record<string, unknown>,
+      row as Record<string, unknown>,
+    );
     target[lastKey] = value;
   }
 

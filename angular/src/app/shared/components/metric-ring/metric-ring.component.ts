@@ -22,10 +22,10 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    input
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
 } from "@angular/core";
 
 export interface MetricRingThresholds {
@@ -131,7 +131,7 @@ export interface MetricRingThresholds {
       }
     </div>
   `,
-  styleUrl: './metric-ring.component.scss',
+  styleUrl: "./metric-ring.component.scss",
 })
 export class MetricRingComponent {
   // Inputs

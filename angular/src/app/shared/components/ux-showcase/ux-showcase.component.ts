@@ -71,7 +71,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       </p-card>
     </div>
   `,
-  styleUrl: './ux-showcase.component.scss',
+  styleUrl: "./ux-showcase.component.scss",
 })
 export class UxShowcaseComponent {
   private logger = inject(LoggerService);

@@ -13,12 +13,12 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CheckboxModule } from "primeng/checkbox";
@@ -40,7 +40,13 @@ export interface Supplement {
   name: string;
   dosage?: string;
   timing: "morning" | "pre-workout" | "post-workout" | "evening" | "anytime";
-  category: "vitamin" | "mineral" | "amino" | "performance" | "recovery" | "other";
+  category:
+    | "vitamin"
+    | "mineral"
+    | "amino"
+    | "performance"
+    | "recovery"
+    | "other";
   taken: boolean;
   takenAt?: Date;
   notes?: string;
@@ -174,7 +180,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   selector: "app-supplement-tracker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-imports: [
+  imports: [
     CommonModule,
     FormsModule,
     CheckboxModule,
@@ -228,9 +234,7 @@ export class SupplementTrackerComponent implements OnInit {
   ];
 
   // Computed
-  takenCount = computed(
-    () => this.supplements().filter((s) => s.taken).length
-  );
+  takenCount = computed(() => this.supplements().filter((s) => s.taken).length);
   totalCount = computed(() => this.supplements().length);
   progressPercent = computed(() => {
     const total = this.totalCount();
@@ -240,19 +244,19 @@ export class SupplementTrackerComponent implements OnInit {
 
   // Group by timing
   morningSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "morning")
+    this.supplements().filter((s) => s.timing === "morning"),
   );
   preWorkoutSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "pre-workout")
+    this.supplements().filter((s) => s.timing === "pre-workout"),
   );
   postWorkoutSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "post-workout")
+    this.supplements().filter((s) => s.timing === "post-workout"),
   );
   eveningSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "evening")
+    this.supplements().filter((s) => s.timing === "evening"),
   );
   anytimeSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "anytime")
+    this.supplements().filter((s) => s.timing === "anytime"),
   );
 
   ngOnInit(): void {
@@ -277,34 +281,39 @@ export class SupplementTrackerComponent implements OnInit {
       notes?: string;
     }
     // Try to fetch user's supplement list from API
-    this.apiService.get<{ supplements: SupplementResponse[] }>("/api/supplements").subscribe({
-      next: (response) => {
-        if (response?.data?.supplements && response.data.supplements.length > 0) {
-          // Map API response to our interface
-          const mapped: Supplement[] = response.data.supplements.map((s) => ({
-            id: s.id || s.supplement_id || this.generateId(s.name || ""),
-            name: s.name || s.supplement_name || "Unknown",
-            dosage: s.dosage || s.dose,
-            timing: (s.timing as Supplement["timing"]) || "anytime",
-            category: (s.category as Supplement["category"]) || "other",
-            taken: s.taken_today || s.taken || false,
-            takenAt: s.taken_at ? new Date(s.taken_at) : undefined,
-            notes: s.notes,
-          }));
-          this.supplements.set(mapped);
-        } else {
-          // Use default supplements
+    this.apiService
+      .get<{ supplements: SupplementResponse[] }>("/api/supplements")
+      .subscribe({
+        next: (response) => {
+          if (
+            response?.data?.supplements &&
+            response.data.supplements.length > 0
+          ) {
+            // Map API response to our interface
+            const mapped: Supplement[] = response.data.supplements.map((s) => ({
+              id: s.id || s.supplement_id || this.generateId(s.name || ""),
+              name: s.name || s.supplement_name || "Unknown",
+              dosage: s.dosage || s.dose,
+              timing: (s.timing as Supplement["timing"]) || "anytime",
+              category: (s.category as Supplement["category"]) || "other",
+              taken: s.taken_today || s.taken || false,
+              takenAt: s.taken_at ? new Date(s.taken_at) : undefined,
+              notes: s.notes,
+            }));
+            this.supplements.set(mapped);
+          } else {
+            // Use default supplements
+            this.supplements.set([...DEFAULT_SUPPLEMENTS]);
+          }
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Error loading supplements:", err);
+          // Fall back to defaults
           this.supplements.set([...DEFAULT_SUPPLEMENTS]);
-        }
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Error loading supplements:", err);
-        // Fall back to defaults
-        this.supplements.set([...DEFAULT_SUPPLEMENTS]);
-        this.isLoading.set(false);
-      },
-    });
+          this.isLoading.set(false);
+        },
+      });
   }
 
   toggleSupplement(supplement: Supplement): void {
@@ -343,7 +352,7 @@ export class SupplementTrackerComponent implements OnInit {
                 return { ...s, taken: supplement.taken };
               }
               return s;
-            })
+            }),
           );
         },
       });
@@ -386,7 +395,7 @@ export class SupplementTrackerComponent implements OnInit {
 
   removeSupplement(supplement: Supplement): void {
     this.supplements.set(
-      this.supplements().filter((s) => s.id !== supplement.id)
+      this.supplements().filter((s) => s.id !== supplement.id),
     );
     this.toastService.info(`${supplement.name} removed`);
   }
@@ -396,7 +405,7 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   getCategoryColor(
-    category: Supplement["category"]
+    category: Supplement["category"],
   ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     // All categories use the same neutral color for visual consistency
     return "secondary";

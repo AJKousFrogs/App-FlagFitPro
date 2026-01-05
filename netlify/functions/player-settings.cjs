@@ -79,7 +79,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ error: "Internal server error", message: err.message }),
+      body: JSON.stringify({
+        error: "Internal server error",
+        message: err.message,
+      }),
     };
   }
 };
@@ -138,11 +141,16 @@ async function getSettings(supabase, userId, headers) {
         secondaryPosition: config.secondary_position,
         birthDate: config.birth_date,
         flagPracticeSchedule: config.flag_practice_schedule || [],
-        preferredTrainingDays: config.preferred_training_days || [1, 2, 4, 5, 6],
+        preferredTrainingDays: config.preferred_training_days || [
+          1, 2, 4, 5, 6,
+        ],
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
         hasFieldAccess: config.has_field_access !== false,
-        availableEquipment: config.available_equipment || ["bodyweight", "resistance_bands"],
+        availableEquipment: config.available_equipment || [
+          "bodyweight",
+          "resistance_bands",
+        ],
         currentLimitations: config.current_limitations || [],
       },
     }),
@@ -205,7 +213,7 @@ async function saveSettings(supabase, userId, payload, headers) {
       },
       {
         onConflict: "user_id",
-      }
+      },
     )
     .select()
     .single();

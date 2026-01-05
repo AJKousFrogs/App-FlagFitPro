@@ -1,4 +1,3 @@
-
 .achievements-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -17,7 +16,11 @@
 
 .stat-card {
   &.highlight {
-    background: linear-gradient(135deg, var(--ds-primary-green), var(--ds-primary-green-dark));
+    background: linear-gradient(
+      135deg,
+      var(--ds-primary-green),
+      var(--ds-primary-green-dark)
+    );
     color: white;
 
     .stat-value,
@@ -106,7 +109,11 @@
 
   &.unlocked {
     .achievement-badge {
-      background: linear-gradient(135deg, var(--ds-primary-green), var(--ds-primary-green-dark));
+      background: linear-gradient(
+        135deg,
+        var(--ds-primary-green),
+        var(--ds-primary-green-dark)
+      );
     }
   }
 

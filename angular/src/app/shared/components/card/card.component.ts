@@ -106,7 +106,7 @@ import { COLORS } from "../../../core/constants/app.constants";
       }
     </div>
   `,
-  styleUrl: './card.component.scss',
+  styleUrl: "./card.component.scss",
 })
 export class CardComponent {
   private elementRef = inject(ElementRef);
@@ -153,12 +153,9 @@ export class CardComponent {
     const colorMap: Record<string, string> = {
       primary:
         "linear-gradient(90deg, var(--ds-primary-green) 0%, var(--ds-primary-green-light) 100%)",
-      success:
-        `linear-gradient(90deg, var(--color-status-success) 0%, ${COLORS.SUCCESS_LIGHT} 100%)`,
-      warning:
-        `linear-gradient(90deg, var(--color-status-warning) 0%, ${COLORS.WARNING_LIGHT} 100%)`,
-      error:
-        `linear-gradient(90deg, var(--color-status-error) 0%, ${COLORS.ERROR_LIGHT} 100%)`,
+      success: `linear-gradient(90deg, var(--color-status-success) 0%, ${COLORS.SUCCESS_LIGHT} 100%)`,
+      warning: `linear-gradient(90deg, var(--color-status-warning) 0%, ${COLORS.WARNING_LIGHT} 100%)`,
+      error: `linear-gradient(90deg, var(--color-status-error) 0%, ${COLORS.ERROR_LIGHT} 100%)`,
       info: `linear-gradient(90deg, var(--color-status-info) 0%, ${COLORS.INFO_LIGHT} 100%)`,
     };
     return colorMap[this.accentColor()] || colorMap["primary"];

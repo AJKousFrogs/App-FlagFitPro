@@ -363,59 +363,59 @@
      Use these shorthand tokens for consistent typography
      Format: --font-{role}: size / line-height / weight
      ================================ */
-  
+
   /* Heading Tokens - Unified System */
-  --font-h1-size: 2rem;         /* 32px */
+  --font-h1-size: 2rem; /* 32px */
   --font-h1-line-height: 1.2;
-  --font-h1-weight: 700;        /* bold */
-  
-  --font-h2-size: 1.5rem;       /* 24px */
+  --font-h1-weight: 700; /* bold */
+
+  --font-h2-size: 1.5rem; /* 24px */
   --font-h2-line-height: 1.25;
-  --font-h2-weight: 600;        /* semibold */
-  
-  --font-h3-size: 1.25rem;      /* 20px */
+  --font-h2-weight: 600; /* semibold */
+
+  --font-h3-size: 1.25rem; /* 20px */
   --font-h3-line-height: 1.3;
-  --font-h3-weight: 400;        /* regular */
-  
-  --font-h4-size: 1rem;         /* 16px */
+  --font-h3-weight: 400; /* regular */
+
+  --font-h4-size: 1rem; /* 16px */
   --font-h4-line-height: 1.35;
-  --font-h4-weight: 300;        /* light */
-  
+  --font-h4-weight: 300; /* light */
+
   /* Body Tokens - Unified System */
-  --font-body-size: 1rem;       /* 16px */
+  --font-body-size: 1rem; /* 16px */
   --font-body-line-height: 1.5;
-  --font-body-weight: 400;      /* regular */
-  
+  --font-body-weight: 400; /* regular */
+
   --font-body-sm-size: 0.875rem; /* 14px */
   --font-body-sm-line-height: 1.45;
-  --font-body-sm-weight: 400;   /* regular */
-  
+  --font-body-sm-weight: 400; /* regular */
+
   /* Label Token - Unified System */
-  --font-label-size: 0.875rem;  /* 14px */
+  --font-label-size: 0.875rem; /* 14px */
   --font-label-line-height: 1.2;
-  --font-label-weight: 600;     /* semibold */
-  
+  --font-label-weight: 600; /* semibold */
+
   /* Caption Token - Unified System */
   --font-caption-size: 0.75rem; /* 12px */
   --font-caption-line-height: 1.3;
-  --font-caption-weight: 400;   /* regular */
+  --font-caption-weight: 400; /* regular */
 
   /* ================================
      LEGACY FONT SIZE TOKENS (backward compatibility)
      These map to the new unified system
      ================================ */
-  
+
   /* Heading Sizes - Legacy (mapped to new system) */
   --font-size-h1: var(--font-h1-size);
   --font-size-h2: var(--font-h2-size);
   --font-size-h3: var(--font-h3-size);
   --font-size-h4: var(--font-h4-size);
-  
+
   /* Body Sizes - Legacy */
   --font-size-body: var(--font-body-size);
   --font-size-caption: var(--font-caption-size);
   --font-size-badge: 0.75rem; /* 12px - Badge/tag text */
-  
+
   /* Metric Sizes - Contract (KPI numbers, NOT headings) */
   --font-size-metric-lg: 2rem; /* 32px - Large KPI values */
   --font-size-metric-md: 1.5rem; /* 24px - Medium KPI values */
@@ -433,7 +433,7 @@
      LEGACY FONT SIZE TOKENS (for backward compatibility)
      Mapped to new contract values
      ================================ */
-  
+
   /* Font Sizes - Display (legacy) */
   --font-display-2xl: 4.5rem; /* 72px */
   --font-display-xl: 3.75rem; /* 60px */
@@ -542,7 +542,7 @@
   --radius-3xl: 1.5rem; /* 24px */
   /* ⚠️ DEPRECATED: radius-full (pill shape) - DO NOT USE for buttons, tags, badges */
   --radius-full: 9999px; /* Only for avatars/profile images */
-  
+
   /* ================================
      BUTTON-SPECIFIC RADIUS TOKEN
      SINGLE SOURCE OF TRUTH for all button border-radius

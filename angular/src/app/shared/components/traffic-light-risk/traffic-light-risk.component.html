@@ -7,12 +7,16 @@
       Injury Risk
     </h3>
     <span class="acwr-value" [class]="getAcwrClass()">
-      {{ acwrValue() | number : "1.2-2" }}
+      {{ acwrValue() | number: "1.2-2" }}
     </span>
   </div>
 
   <!-- Horizontal Traffic Light -->
-  <div class="traffic-light" role="img" [attr.aria-label]="'Risk level: ' + currentRisk().label">
+  <div
+    class="traffic-light"
+    role="img"
+    [attr.aria-label]="'Risk level: ' + currentRisk().label"
+  >
     <!-- Green = Optimal -->
     <div
       class="light green"
@@ -74,7 +78,7 @@
   <div class="risk-scale" aria-hidden="true">
     <!-- Marker showing current ACWR position -->
     <div class="scale-marker" [style.left.%]="markerPosition()">
-      <div class="marker-value">{{ acwrValue() | number : "1.2-2" }}</div>
+      <div class="marker-value">{{ acwrValue() | number: "1.2-2" }}</div>
       <div class="marker-line"></div>
     </div>
 
@@ -113,8 +117,8 @@
 
   <!-- Screen reader status -->
   <span class="sr-status">
-    Current ACWR value is {{ acwrValue() | number : "1.2-2" }}.
-    Risk level: {{ currentRisk().label }}.
+    Current ACWR value is {{ acwrValue() | number: "1.2-2" }}. Risk level:
+    {{ currentRisk().label }}.
     {{ currentRisk().recommendation }}
   </span>
 </div>

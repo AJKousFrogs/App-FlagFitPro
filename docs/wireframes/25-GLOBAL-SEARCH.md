@@ -120,24 +120,24 @@ Unified search functionality across all application content with real-time resul
 
 ## Search Categories
 
-| Category | Icon | Who Can Search | What's Indexed |
-|----------|------|----------------|----------------|
-| Exercises | 🏋️ | All | Name, description, muscle groups, equipment |
-| Videos | 🎬 | All | Title, description, category |
-| Programs | 📋 | All | Name, description, exercises included |
-| Players | 👤 | Coaches only | Name, position, jersey number |
-| Articles | 📄 | All | Title, content, tags |
+| Category  | Icon | Who Can Search | What's Indexed                              |
+| --------- | ---- | -------------- | ------------------------------------------- |
+| Exercises | 🏋️   | All            | Name, description, muscle groups, equipment |
+| Videos    | 🎬   | All            | Title, description, category                |
+| Programs  | 📋   | All            | Name, description, exercises included       |
+| Players   | 👤   | Coaches only   | Name, position, jersey number               |
+| Articles  | 📄   | All            | Title, content, tags                        |
 
 ---
 
 ## Search Features
 
-| Feature | Behavior |
-|---------|----------|
-| Debounced Input | 300ms delay to prevent excessive API calls |
-| Instant Suggestions | 150ms for quick autocomplete |
-| Result Highlighting | Matched text shown with `<mark>` tags |
-| Recent Searches | Last 10 searches saved locally |
+| Feature             | Behavior                                      |
+| ------------------- | --------------------------------------------- |
+| Debounced Input     | 300ms delay to prevent excessive API calls    |
+| Instant Suggestions | 150ms for quick autocomplete                  |
+| Result Highlighting | Matched text shown with `<mark>` tags         |
+| Recent Searches     | Last 10 searches saved locally                |
 | Keyboard Navigation | ↑↓ to navigate, Enter to select, Esc to close |
 
 ---
@@ -145,17 +145,17 @@ Unified search functionality across all application content with real-time resul
 ## Search Caching
 
 ```typescript
-const CACHE_TTL_MS = 5 * 60 * 1000;  // 5 minute TTL
-const MAX_CACHE_SIZE = 50;           // Max cached queries
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minute TTL
+const MAX_CACHE_SIZE = 50; // Max cached queries
 
 function search(query: string) {
   const cacheKey = query.toLowerCase().trim();
   const cached = searchCache.get(cacheKey);
-  
+
   if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     return cached.results;
   }
-  
+
   // Otherwise fetch from API...
 }
 ```
@@ -169,7 +169,7 @@ function calculateRelevance(result: SearchResult, query: string): number {
   let score = 0;
   const queryLower = query.toLowerCase();
   const titleLower = result.title.toLowerCase();
-  
+
   // Exact match in title: highest score
   if (titleLower === queryLower) score += 100;
   // Title starts with query
@@ -178,7 +178,7 @@ function calculateRelevance(result: SearchResult, query: string): number {
   else if (titleLower.includes(queryLower)) score += 50;
   // Description contains query
   else if (result.description?.toLowerCase().includes(queryLower)) score += 25;
-  
+
   return score;
 }
 ```
@@ -216,36 +216,36 @@ function calculateRelevance(result: SearchResult, query: string): number {
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Search Panel | ❌ | HIGH |
-| Keyboard Shortcut (⌘K) | ❌ | HIGH |
-| Real-time Results | ❌ | HIGH |
-| Category Filtering | ❌ | MEDIUM |
-| Recent Searches | ❌ | MEDIUM |
-| Quick Links | ❌ | LOW |
-| Result Highlighting | ❌ | MEDIUM |
-| Keyboard Navigation | ❌ | MEDIUM |
-| Search Caching | ❌ | LOW |
-| Player Search (Coach) | ❌ | LOW |
+| Feature                | Status | Priority |
+| ---------------------- | ------ | -------- |
+| Search Panel           | ❌     | HIGH     |
+| Keyboard Shortcut (⌘K) | ❌     | HIGH     |
+| Real-time Results      | ❌     | HIGH     |
+| Category Filtering     | ❌     | MEDIUM   |
+| Recent Searches        | ❌     | MEDIUM   |
+| Quick Links            | ❌     | LOW      |
+| Result Highlighting    | ❌     | MEDIUM   |
+| Keyboard Navigation    | ❌     | MEDIUM   |
+| Search Caching         | ❌     | LOW      |
+| Player Search (Coach)  | ❌     | LOW      |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table/API |
-|------|---------|-----------|
-| Exercises | `SearchService` | `exercises` |
-| Videos | `SearchService` | `training_videos` |
-| Programs | `SearchService` | `training_programs` |
-| Players | `SearchService` | `profiles` (coach only) |
-| Articles | `SearchService` | `help_articles` |
+| Data      | Service         | Table/API               |
+| --------- | --------------- | ----------------------- |
+| Exercises | `SearchService` | `exercises`             |
+| Videos    | `SearchService` | `training_videos`       |
+| Programs  | `SearchService` | `training_programs`     |
+| Players   | `SearchService` | `profiles` (coach only) |
+| Articles  | `SearchService` | `help_articles`         |
 
 ---
 
 ## Related Components
 
-| Component | Location | Relationship |
-|-----------|----------|--------------|
-| Header | `shared/components/header` | Contains search icon trigger |
-| SearchService | `core/services` | Handles API calls |
+| Component     | Location                   | Relationship                 |
+| ------------- | -------------------------- | ---------------------------- |
+| Header        | `shared/components/header` | Contains search icon trigger |
+| SearchService | `core/services`            | Handles API calls            |

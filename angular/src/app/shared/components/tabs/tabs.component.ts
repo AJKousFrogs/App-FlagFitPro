@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    output,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
 } from "@angular/core";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
@@ -28,14 +28,11 @@ export interface TabItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel],
   template: `
-    <p-tabs
-      [value]="activeIndex()"
-      [class]="styleClass()"
-    >
+    <p-tabs [value]="activeIndex()" [class]="styleClass()">
       <p-tablist [class]="scrollable() ? 'p-tabs-scrollable' : ''">
         @for (tab of tabs(); track tab.header; let i = $index) {
-          <p-tab 
-            [value]="tab.value ?? i" 
+          <p-tab
+            [value]="tab.value ?? i"
             [disabled]="tab.disabled || false"
             (click)="onChange.emit({ index: i, originalEvent: $event })"
           >
@@ -56,7 +53,7 @@ export interface TabItem {
       <ng-content></ng-content>
     </p-tabs>
   `,
-  styleUrl: './tabs.component.scss',
+  styleUrl: "./tabs.component.scss",
 })
 export class TabsComponent {
   // Configuration

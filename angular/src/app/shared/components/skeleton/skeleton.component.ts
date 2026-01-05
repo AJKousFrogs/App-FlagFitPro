@@ -56,7 +56,7 @@ import { CommonModule } from "@angular/common";
       </div>
     }
   `,
-  styleUrl: './skeleton.component.scss',
+  styleUrl: "./skeleton.component.scss",
 })
 export class SkeletonComponent {
   // Configuration

@@ -88,10 +88,18 @@
     height: 8px;
     border-radius: var(--radius-full);
 
-    &.badge--success { background: var(--color-status-success); }
-    &.badge--warning { background: var(--color-status-warning); }
-    &.badge--error { background: var(--color-status-error); }
-    &.badge--info { background: var(--color-status-info); }
+    &.badge--success {
+      background: var(--color-status-success);
+    }
+    &.badge--warning {
+      background: var(--color-status-warning);
+    }
+    &.badge--error {
+      background: var(--color-status-error);
+    }
+    &.badge--info {
+      background: var(--color-status-info);
+    }
   }
 
   // ============================================
@@ -163,7 +171,9 @@
     border-color: var(--color-status-success);
     color: var(--color-status-success);
 
-    .alert__message { color: var(--color-text-primary); }
+    .alert__message {
+      color: var(--color-text-primary);
+    }
   }
 
   .alert--warning {
@@ -171,7 +181,9 @@
     border-color: var(--color-status-warning);
     color: var(--color-status-warning);
 
-    .alert__message { color: var(--color-text-primary); }
+    .alert__message {
+      color: var(--color-text-primary);
+    }
   }
 
   .alert--error {
@@ -179,7 +191,9 @@
     border-color: var(--color-status-error);
     color: var(--color-status-error);
 
-    .alert__message { color: var(--color-text-primary); }
+    .alert__message {
+      color: var(--color-text-primary);
+    }
   }
 
   .alert--info {
@@ -187,7 +201,9 @@
     border-color: var(--color-status-info);
     color: var(--color-status-info);
 
-    .alert__message { color: var(--color-text-primary); }
+    .alert__message {
+      color: var(--color-text-primary);
+    }
   }
 
   // Compact alert (no icon)
@@ -293,7 +309,9 @@
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   // Inline loading
@@ -356,8 +374,12 @@
   }
 
   @keyframes skeleton-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 
   // ============================================

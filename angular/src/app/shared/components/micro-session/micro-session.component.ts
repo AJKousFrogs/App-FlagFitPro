@@ -13,16 +13,16 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    EventEmitter,
-    inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -83,7 +83,7 @@ type SessionStatus =
     TagModule,
     TooltipModule,
     TextareaModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -108,7 +108,6 @@ type SessionStatus =
               <p-tag
                 [value]="getSessionTypeLabel(session().session_type)"
                 [severity]="getSessionTypeSeverity(session().session_type)"
-                
               ></p-tag>
               <span class="duration-badge">
                 <i class="pi pi-clock"></i>
@@ -171,8 +170,12 @@ type SessionStatus =
 
             <!-- Start Button -->
             <div class="action-buttons">
-              <app-button iconLeft="pi-play" (clicked)="startSession()">Start Session</app-button>
-              <app-button variant="text" (clicked)="skipSession()">Skip</app-button>
+              <app-button iconLeft="pi-play" (clicked)="startSession()"
+                >Start Session</app-button
+              >
+              <app-button variant="text" (clicked)="skipSession()"
+                >Skip</app-button
+              >
             </div>
           </div>
         }
@@ -198,8 +201,15 @@ type SessionStatus =
               }
             </div>
             <div class="action-buttons">
-              <app-button iconLeft="pi-arrow-right" [disabled]="!allEquipmentChecked()" (clicked)="confirmEquipment()">Continue</app-button>
-              <app-button variant="text" (clicked)="skipEquipmentCheck()">Don't have equipment</app-button>
+              <app-button
+                iconLeft="pi-arrow-right"
+                [disabled]="!allEquipmentChecked()"
+                (clicked)="confirmEquipment()"
+                >Continue</app-button
+              >
+              <app-button variant="text" (clicked)="skipEquipmentCheck()"
+                >Don't have equipment</app-button
+              >
             </div>
           </div>
         }
@@ -254,9 +264,16 @@ type SessionStatus =
             <!-- Controls -->
             <div class="session-controls">
               @if (currentStatus() === "paused") {
-                <app-button iconLeft="pi-play" (clicked)="resumeSession()">Resume</app-button>
+                <app-button iconLeft="pi-play" (clicked)="resumeSession()"
+                  >Resume</app-button
+                >
               } @else {
-                <app-button variant="secondary" iconLeft="pi-pause" (clicked)="pauseSession()">Pause</app-button>
+                <app-button
+                  variant="secondary"
+                  iconLeft="pi-pause"
+                  (clicked)="pauseSession()"
+                  >Pause</app-button
+                >
               }
 
               <app-button
@@ -264,9 +281,15 @@ type SessionStatus =
                 variant="secondary"
                 [disabled]="currentStepIndex() >= session().steps.length - 1"
                 (clicked)="nextStep()"
-              >Next Step</app-button>
+                >Next Step</app-button
+              >
 
-              <app-button variant="success" iconLeft="pi-check" (clicked)="completeSession()">Complete</app-button>
+              <app-button
+                variant="success"
+                iconLeft="pi-check"
+                (clicked)="completeSession()"
+                >Complete</app-button
+              >
             </div>
 
             <!-- Elapsed Time -->
@@ -320,7 +343,12 @@ type SessionStatus =
                   [rows]="2"
                   class="follow-up-notes"
                 ></textarea>
-                <app-button iconLeft="pi-send" [loading]="submitting()" (clicked)="submitFollowUp()">Submit Feedback</app-button>
+                <app-button
+                  iconLeft="pi-send"
+                  [loading]="submitting()"
+                  (clicked)="submitFollowUp()"
+                  >Submit Feedback</app-button
+                >
               </div>
             } @else if (followUpSubmitted()) {
               <div class="follow-up-submitted">
@@ -335,7 +363,7 @@ type SessionStatus =
       </div>
     </ng-template>
   `,
-  styleUrl: './micro-session.component.scss',
+  styleUrl: "./micro-session.component.scss",
 })
 export class MicroSessionComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);

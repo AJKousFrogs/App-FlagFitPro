@@ -12,24 +12,28 @@ Before committing any UI changes, verify:
 ### 1. Token Usage (Mandatory)
 
 - [ ] **No hex colors** outside `design-system-tokens.scss`
+
   ```bash
   # Check for hex colors in feature files
   grep -rn "#[0-9a-fA-F]\{3,6\}" --include="*.scss" --include="*.ts" src/app/features/
   ```
 
 - [ ] **No raw spacing values** (px/rem for padding, margin, gap)
+
   ```bash
   # Should use var(--space-*) tokens
   grep -rn "padding:\s*\d\+px\|margin:\s*\d\+px\|gap:\s*\d\+px" src/app/features/
   ```
 
 - [ ] **No raw font sizes** (px/rem for font-size)
+
   ```bash
   # Should use var(--font-*) tokens
   grep -rn "font-size:\s*\d\+px" src/app/features/
   ```
 
 - [ ] **No raw border-radius** (especially 10px, 14px, 100px, 9999px)
+
   ```bash
   # Should use var(--radius-*) tokens
   grep -rn "border-radius:\s*\(10\|14\|100\|9999\)px" src/app/
@@ -46,18 +50,21 @@ Before committing any UI changes, verify:
 ### 2. CSS Architecture (Mandatory)
 
 - [ ] **No `!important`** outside `@layer overrides`
+
   ```bash
   grep -rn "!important" --include="*.scss" --include="*.ts" src/app/features/
   ```
 
 - [ ] **No `::ng-deep`** in feature components
   - Allowed ONLY in: `primeng/*.scss`, `@layer overrides`
+
   ```bash
   grep -rn "::ng-deep" --include="*.scss" --include="*.ts" src/app/features/
   ```
 
 - [ ] **No direct `.p-*` styling** in feature SCSS
   - PrimeNG overrides go in `primeng/_brand-overrides.scss`
+
   ```bash
   grep -rn "\.p-[a-z]" --include="*.scss" src/app/features/
   ```
@@ -71,15 +78,15 @@ Before committing any UI changes, verify:
 
 ### 3. Spacing Grid (8-point)
 
-| Token | Value | Use Case |
-|-------|-------|----------|
-| `--space-1` | 4px | Tight gaps, icon padding |
-| `--space-2` | 8px | Small gaps, list items |
-| `--space-3` | 12px | Component gaps |
-| `--space-4` | 16px | Card padding, section gaps |
-| `--space-5` | 20px | Large gaps |
-| `--space-6` | 24px | Section spacing |
-| `--space-8` | 32px | Major sections |
+| Token       | Value | Use Case                   |
+| ----------- | ----- | -------------------------- |
+| `--space-1` | 4px   | Tight gaps, icon padding   |
+| `--space-2` | 8px   | Small gaps, list items     |
+| `--space-3` | 12px  | Component gaps             |
+| `--space-4` | 16px  | Card padding, section gaps |
+| `--space-5` | 20px  | Large gaps                 |
+| `--space-6` | 24px  | Section spacing            |
+| `--space-8` | 32px  | Major sections             |
 
 **Verify:** All spacing uses tokens from this scale.
 
@@ -87,14 +94,14 @@ Before committing any UI changes, verify:
 
 ### 4. Radius Grid (Locked)
 
-| Token | Value | Use Case |
-|-------|-------|----------|
-| `--radius-sm` | 2px | Small elements, inputs |
-| `--radius-md` | 6px | Buttons, tags |
-| `--radius-lg` | 8px | Cards, panels (DEFAULT) |
-| `--radius-xl` | 12px | Large cards, dialogs |
-| `--radius-2xl` | 16px | Hero cards |
-| `--radius-full` | 9999px | Avatars ONLY |
+| Token           | Value  | Use Case                |
+| --------------- | ------ | ----------------------- |
+| `--radius-sm`   | 2px    | Small elements, inputs  |
+| `--radius-md`   | 6px    | Buttons, tags           |
+| `--radius-lg`   | 8px    | Cards, panels (DEFAULT) |
+| `--radius-xl`   | 12px   | Large cards, dialogs    |
+| `--radius-2xl`  | 16px   | Hero cards              |
+| `--radius-full` | 9999px | Avatars ONLY            |
 
 **Forbidden:** 10px, 14px, 100px (pill shapes for buttons/tags)
 
@@ -102,17 +109,17 @@ Before committing any UI changes, verify:
 
 ### 5. Typography Tokens (Unified System)
 
-| Element | Token | Size | Weight |
-|---------|-------|------|--------|
-| H1 | `--font-h1-*` | 32px | 700 |
-| H2 | `--font-h2-*` | 24px | 600 |
-| H3 | `--font-h3-*` | 20px | 400/600 |
-| H4 | `--font-h4-*` | 16px | 300 |
-| Body | `--font-body-*` | 16px | 400 |
-| Body-sm | `--font-body-sm-*` | 14px | 400 |
-| Label | `--font-label-*` | 14px | 600 |
-| Caption | `--font-caption-*` | 12px | 400 |
-| Metric | `--font-size-metric-*` | 24-32px | 700 |
+| Element | Token                  | Size    | Weight  |
+| ------- | ---------------------- | ------- | ------- |
+| H1      | `--font-h1-*`          | 32px    | 700     |
+| H2      | `--font-h2-*`          | 24px    | 600     |
+| H3      | `--font-h3-*`          | 20px    | 400/600 |
+| H4      | `--font-h4-*`          | 16px    | 300     |
+| Body    | `--font-body-*`        | 16px    | 400     |
+| Body-sm | `--font-body-sm-*`     | 14px    | 400     |
+| Label   | `--font-label-*`       | 14px    | 600     |
+| Caption | `--font-caption-*`     | 12px    | 400     |
+| Metric  | `--font-size-metric-*` | 24-32px | 700     |
 
 **Verify:** Typography uses unified tokens, not legacy aliases.
 
@@ -137,16 +144,16 @@ grep -rn ":focus[^-]" --include="*.scss" src/app/features/
 
 ### 7. PrimeNG Component Mapping
 
-| Component | styleClass | Location |
-|-----------|------------|----------|
-| Stat Card | `stat-card` | `primeng/_brand-overrides.scss` |
-| Welcome Card | `welcome-card` | `primeng/_brand-overrides.scss` |
-| Progress Card | `progress-card` | `primeng/_brand-overrides.scss` |
-| Schedule Card | `schedule-card` | `primeng/_brand-overrides.scss` |
-| Event Card | `event-card` | `primeng/_brand-overrides.scss` |
-| Timeline | `schedule-timeline` | `primeng/_brand-overrides.scss` |
-| Progress Bar | `custom-progress` | `primeng/_brand-overrides.scss` |
-| Message | `announcement-banner` | `primeng/_brand-overrides.scss` |
+| Component     | styleClass            | Location                        |
+| ------------- | --------------------- | ------------------------------- |
+| Stat Card     | `stat-card`           | `primeng/_brand-overrides.scss` |
+| Welcome Card  | `welcome-card`        | `primeng/_brand-overrides.scss` |
+| Progress Card | `progress-card`       | `primeng/_brand-overrides.scss` |
+| Schedule Card | `schedule-card`       | `primeng/_brand-overrides.scss` |
+| Event Card    | `event-card`          | `primeng/_brand-overrides.scss` |
+| Timeline      | `schedule-timeline`   | `primeng/_brand-overrides.scss` |
+| Progress Bar  | `custom-progress`     | `primeng/_brand-overrides.scss` |
+| Message       | `announcement-banner` | `primeng/_brand-overrides.scss` |
 
 **Usage:** Apply via `styleClass` attribute, not `::ng-deep`.
 
@@ -225,6 +232,7 @@ npm run build
 ## Violation Report
 
 See `UI_VIOLATION_REPORT.md` for:
+
 - Full list of violations by category
 - Priority order for fixes
 - File-by-file breakdown
@@ -241,6 +249,5 @@ Before merging:
 - [ ] No new violations introduced
 - [ ] Documentation updated if needed
 
-**Reviewer:** _______________  
-**Date:** _______________
-
+**Reviewer:** **\*\***\_\_\_**\*\***  
+**Date:** **\*\***\_\_\_**\*\***

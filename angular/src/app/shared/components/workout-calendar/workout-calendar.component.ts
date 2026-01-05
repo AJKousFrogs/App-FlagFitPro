@@ -35,7 +35,10 @@ export interface WorkoutEntry {
   selector: "app-workout-calendar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TooltipModule, BadgeModule,
+  imports: [
+    CommonModule,
+    TooltipModule,
+    BadgeModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -43,13 +46,25 @@ export interface WorkoutEntry {
     <div class="workout-calendar">
       <!-- Calendar Header -->
       <div class="calendar-header">
-        <app-icon-button icon="pi-chevron-left" variant="text" (clicked)="previousMonth()" ariaLabel="chevron-left" />
+        <app-icon-button
+          icon="pi-chevron-left"
+          variant="text"
+          (clicked)="previousMonth()"
+          ariaLabel="chevron-left"
+        />
 
         <h3 class="month-title">{{ monthYearLabel() }}</h3>
 
-        <app-icon-button icon="pi-chevron-right" variant="text" (clicked)="nextMonth()" ariaLabel="chevron-right" />
+        <app-icon-button
+          icon="pi-chevron-right"
+          variant="text"
+          (clicked)="nextMonth()"
+          ariaLabel="chevron-right"
+        />
 
-        <app-button variant="text" size="sm" (clicked)="goToToday()">Today</app-button>
+        <app-button variant="text" size="sm" (clicked)="goToToday()"
+          >Today</app-button
+        >
       </div>
 
       <!-- View Toggle -->
@@ -185,7 +200,7 @@ export interface WorkoutEntry {
       </div>
     </div>
   `,
-  styleUrl: './workout-calendar.component.scss',
+  styleUrl: "./workout-calendar.component.scss",
 })
 export class WorkoutCalendarComponent implements OnInit {
   @Input() workouts: WorkoutEntry[] = [];

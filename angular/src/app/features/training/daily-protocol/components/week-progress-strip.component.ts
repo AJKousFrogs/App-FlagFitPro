@@ -9,19 +9,15 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TooltipModule } from 'primeng/tooltip';
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { TooltipModule } from "primeng/tooltip";
 
 export interface WeekDay {
   date: string; // ISO date string
   dayName: string; // Mon, Tue, etc.
   dayNumber: number; // 1-31
-  status: 'complete' | 'partial' | 'planned' | 'rest' | 'empty';
+  status: "complete" | "partial" | "planned" | "rest" | "empty";
   loadAu?: number;
   isToday: boolean;
 }
@@ -35,7 +31,7 @@ export interface WeekStats {
 }
 
 @Component({
-  selector: 'app-week-progress-strip',
+  selector: "app-week-progress-strip",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TooltipModule],
@@ -53,13 +49,13 @@ export interface WeekStats {
           >
             <span class="day-name">{{ day.dayName }}</span>
             <div class="day-indicator">
-              @if (day.status === 'complete') {
+              @if (day.status === "complete") {
                 <i class="pi pi-check"></i>
-              } @else if (day.status === 'partial') {
+              } @else if (day.status === "partial") {
                 <i class="pi pi-minus"></i>
-              } @else if (day.status === 'planned') {
+              } @else if (day.status === "planned") {
                 <span class="dot"></span>
-              } @else if (day.status === 'rest') {
+              } @else if (day.status === "rest") {
                 <i class="pi pi-moon"></i>
               } @else {
                 <span class="empty-dot"></span>
@@ -75,7 +71,9 @@ export interface WeekStats {
       <!-- Week Stats -->
       <div class="week-stats">
         <div class="stat-item">
-          <span class="stat-value">{{ stats().completedDays }}/{{ stats().totalTrainingDays }}</span>
+          <span class="stat-value"
+            >{{ stats().completedDays }}/{{ stats().totalTrainingDays }}</span
+          >
           <span class="stat-label">Training Days</span>
         </div>
         @if (stats().currentStreak > 0) {
@@ -86,14 +84,16 @@ export interface WeekStats {
         }
         @if (stats().weeklyLoadAu > 0) {
           <div class="stat-item">
-            <span class="stat-value">{{ formatLoad(stats().weeklyLoadAu) }}</span>
+            <span class="stat-value">{{
+              formatLoad(stats().weeklyLoadAu)
+            }}</span>
             <span class="stat-label">Weekly Load</span>
           </div>
         }
       </div>
     </div>
   `,
-  styleUrl: './week-progress-strip.component.scss',
+  styleUrl: "./week-progress-strip.component.scss",
 })
 export class WeekProgressStripComponent {
   // Inputs
@@ -104,12 +104,12 @@ export class WeekProgressStripComponent {
   getDayTooltip(day: WeekDay): string {
     const statusText =
       {
-        complete: 'Completed',
-        partial: 'Partially done',
-        planned: 'Planned',
-        rest: 'Rest day',
-        empty: 'No session',
-      }[day.status] || '';
+        complete: "Completed",
+        partial: "Partially done",
+        planned: "Planned",
+        rest: "Rest day",
+        empty: "No session",
+      }[day.status] || "";
 
     let tooltip = `${day.dayName} ${day.dayNumber}: ${statusText}`;
 

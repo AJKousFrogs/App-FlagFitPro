@@ -371,7 +371,7 @@ router.get("/training-calendar", async (req, res) => {
  */
 router.get("/olympic-qualification", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -447,10 +447,7 @@ router.get("/olympic-qualification", async (req, res) => {
       olympic_date: "2028-07-14",
     };
 
-    benchmarks =
-      benchmarks.length > 0
-        ? benchmarks
-        : [];
+    benchmarks = benchmarks.length > 0 ? benchmarks : [];
 
     return sendSuccess(res, {
       qualification: olympicData,
@@ -474,7 +471,7 @@ router.get("/olympic-qualification", async (req, res) => {
  */
 router.get("/sponsor-rewards", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -550,10 +547,7 @@ router.get("/sponsor-rewards", async (req, res) => {
       tier_progress_percentage: 0,
     };
 
-    products =
-      products.length > 0
-        ? products
-        : [];
+    products = products.length > 0 ? products : [];
 
     return sendSuccess(res, {
       rewards: sponsorData,
@@ -577,7 +571,7 @@ router.get("/sponsor-rewards", async (req, res) => {
  */
 router.get("/wearables", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -620,10 +614,7 @@ router.get("/wearables", async (req, res) => {
     }
 
     // Default data
-    wearablesData =
-      wearablesData.length > 0
-        ? wearablesData
-        : [];
+    wearablesData = wearablesData.length > 0 ? wearablesData : [];
 
     return sendSuccess(res, wearablesData);
   } catch (error) {
@@ -644,7 +635,7 @@ router.get("/wearables", async (req, res) => {
  */
 router.get("/team-chemistry", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -716,7 +707,7 @@ router.get("/team-chemistry", async (req, res) => {
  */
 router.get("/notifications", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -757,10 +748,7 @@ router.get("/notifications", async (req, res) => {
     }
 
     // Default notifications
-    notifications =
-      notifications.length > 0
-        ? notifications
-        : [];
+    notifications = notifications.length > 0 ? notifications : [];
 
     return sendSuccess(res, notifications);
   } catch (error) {

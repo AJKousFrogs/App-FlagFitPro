@@ -16,7 +16,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const authHeader = event.headers.authorization || event.headers.Authorization;
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
     if (!authHeader?.startsWith("Bearer ")) {
       return {
         statusCode: 401,
@@ -96,7 +97,9 @@ async function getCycles(supabase, userId, headers) {
   }
 
   // Create a map of player progress
-  const progressMap = new Map((playerCycles || []).map((pc) => [pc.cycle_id, pc]));
+  const progressMap = new Map(
+    (playerCycles || []).map((pc) => [pc.cycle_id, pc]),
+  );
 
   // Combine cycles with player progress
   const result = cycles.map((cycle) => {
@@ -121,7 +124,9 @@ async function getCycles(supabase, userId, headers) {
       id: playerProgress?.id || `temp-${cycle.id}`,
       cycle_id: cycle.id,
       status,
-      started_at: playerProgress?.started_at || (status === "in_progress" ? cycle.start_date : null),
+      started_at:
+        playerProgress?.started_at ||
+        (status === "in_progress" ? cycle.start_date : null),
       completed_at: playerProgress?.completed_at,
       completion_percentage: playerProgress?.completion_percentage || 0,
       notes: playerProgress?.notes,
@@ -157,12 +162,14 @@ async function updateCycleStatus(supabase, userId, payload, headers) {
         status: status || "in_progress",
         completion_percentage: completionPercentage || 0,
         notes,
-        started_at: status === "in_progress" ? new Date().toISOString() : undefined,
-        completed_at: status === "completed" ? new Date().toISOString() : undefined,
+        started_at:
+          status === "in_progress" ? new Date().toISOString() : undefined,
+        completed_at:
+          status === "completed" ? new Date().toISOString() : undefined,
       },
       {
         onConflict: "user_id,cycle_id",
-      }
+      },
     )
     .select()
     .single();

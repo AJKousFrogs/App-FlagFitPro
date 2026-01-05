@@ -32,7 +32,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
     Select,
     TagModule,
     TrafficLightRiskComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -261,13 +261,24 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
       <!-- Generate Button -->
       @if (selectedGoal()) {
         <div class="actions mt-6 flex justify-end gap-3">
-          <app-button variant="outlined" iconLeft="pi-save" [loading]="saving()" (clicked)="savePlan()">Save to Schedule</app-button>
-          <app-button iconLeft="pi-calculator" [loading]="loading()" (clicked)="generatePlan()">Generate Plan</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-save"
+            [loading]="saving()"
+            (clicked)="savePlan()"
+            >Save to Schedule</app-button
+          >
+          <app-button
+            iconLeft="pi-calculator"
+            [loading]="loading()"
+            (clicked)="generatePlan()"
+            >Generate Plan</app-button
+          >
         </div>
       }
     </div>
   `,
-  styleUrl: './goal-based-planner.component.scss',
+  styleUrl: "./goal-based-planner.component.scss",
 })
 export class GoalBasedPlannerComponent implements OnInit {
   athleteId = input.required<string>();
@@ -413,11 +424,11 @@ export class GoalBasedPlannerComponent implements OnInit {
     try {
       // In a real app, this would call a service to save to Supabase
       // For now, we simulate a save and show success
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       this.trainingService.logTrainingSession({
         title: `Plan: ${this.getGoalLabel()}`,
         date: new Date().toISOString(),
-        notes: `Auto-generated ${this.getGoalLabel()} plan saved.`
+        notes: `Auto-generated ${this.getGoalLabel()} plan saved.`,
       });
       this.logger.info("Training plan saved to schedule");
     } catch (error) {

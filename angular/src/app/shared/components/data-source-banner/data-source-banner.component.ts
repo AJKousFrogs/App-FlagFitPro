@@ -35,9 +35,7 @@ import {
   selector: "app-data-source-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, TagModule, TooltipModule, ButtonComponent],
   template: `
     @if (shouldShow()) {
       <div class="data-source-banner" [class]="bannerClass()">
@@ -85,7 +83,7 @@ import {
       </div>
     }
   `,
-  styleUrl: './data-source-banner.component.scss',
+  styleUrl: "./data-source-banner.component.scss",
 })
 export class DataSourceBannerComponent {
   @Input() dataState: DataState = DataState.NO_DATA;

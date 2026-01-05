@@ -78,7 +78,7 @@ interface TournamentBudget {
     MainLayoutComponent,
     PageHeaderComponent,
     DecimalPipe,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -96,10 +96,19 @@ interface TournamentBudget {
         >
           <div class="header-actions">
             @if (nextTournament(); as next) {
-              <app-icon-button icon="pi-calendar" variant="outlined" (clicked)="scrollToTournament(next.id)" ariaLabel="calendar" />
+              <app-icon-button
+                icon="pi-calendar"
+                variant="outlined"
+                (clicked)="scrollToTournament(next.id)"
+                ariaLabel="calendar"
+              />
             }
             @if (isAuthenticated()) {
-              <app-icon-button icon="pi-plus" (clicked)="openCreateDialog()" ariaLabel="plus" />
+              <app-icon-button
+                icon="pi-plus"
+                (clicked)="openCreateDialog()"
+                ariaLabel="plus"
+              />
             }
           </div>
         </app-page-header>
@@ -119,7 +128,9 @@ interface TournamentBudget {
             <h3>No Tournaments Scheduled</h3>
             <p>There are no tournaments in the system yet.</p>
             @if (isAuthenticated()) {
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Add First Tournament</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+                >Add First Tournament</app-button
+              >
             }
           </div>
         }
@@ -163,8 +174,20 @@ interface TournamentBudget {
                         </div>
                         @if (isAuthenticated()) {
                           <div class="card-actions">
-                            <app-icon-button icon="pi-pencil" variant="text" size="sm" (clicked)="openEditDialog(tournament)" ariaLabel="pencil" />
-                            <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="confirmDelete(tournament)" ariaLabel="trash" />
+                            <app-icon-button
+                              icon="pi-pencil"
+                              variant="text"
+                              size="sm"
+                              (clicked)="openEditDialog(tournament)"
+                              ariaLabel="pencil"
+                            />
+                            <app-icon-button
+                              icon="pi-trash"
+                              variant="text"
+                              size="sm"
+                              (clicked)="confirmDelete(tournament)"
+                              ariaLabel="trash"
+                            />
                           </div>
                         }
                       </div>
@@ -253,15 +276,36 @@ interface TournamentBudget {
 
                       <div class="tournament-actions">
                         @if (tournament.website_url) {
-                          <app-button variant="outlined" size="sm" iconLeft="pi-external-link" (clicked)="openWebsite(tournament.website_url)">Website</app-button>
+                          <app-button
+                            variant="outlined"
+                            size="sm"
+                            iconLeft="pi-external-link"
+                            (clicked)="openWebsite(tournament.website_url)"
+                            >Website</app-button
+                          >
                         }
                         @if (isAuthenticated()) {
-                          <app-button variant="outlined" size="sm" iconLeft="pi-calendar-plus" (clicked)="openAvailabilityDialog(tournament)">My Availability</app-button>
+                          <app-button
+                            variant="outlined"
+                            size="sm"
+                            iconLeft="pi-calendar-plus"
+                            (clicked)="openAvailabilityDialog(tournament)"
+                            >My Availability</app-button
+                          >
                         }
                         @if (canViewTeamAvailability()) {
-                          <app-button size="sm" iconLeft="pi-users" (clicked)="openTeamAvailabilityDialog(tournament)">Team Status</app-button>
+                          <app-button
+                            size="sm"
+                            iconLeft="pi-users"
+                            (clicked)="openTeamAvailabilityDialog(tournament)"
+                            >Team Status</app-button
+                          >
                         }
-                        <app-button size="sm" (clicked)="viewDetails(tournament)">View Details</app-button>
+                        <app-button
+                          size="sm"
+                          (clicked)="viewDetails(tournament)"
+                          >View Details</app-button
+                        >
                       </div>
                     </div>
                   </p-card>
@@ -269,7 +313,12 @@ interface TournamentBudget {
                   <div class="empty-season">
                     <p>No tournaments scheduled for 2026 yet.</p>
                     @if (isAuthenticated()) {
-                      <app-button variant="outlined" iconLeft="pi-plus" (clicked)="openCreateDialog()">Add Tournament</app-button>
+                      <app-button
+                        variant="outlined"
+                        iconLeft="pi-plus"
+                        (clicked)="openCreateDialog()"
+                        >Add Tournament</app-button
+                      >
                     }
                   </div>
                 }
@@ -312,8 +361,20 @@ interface TournamentBudget {
                         </div>
                         @if (isAuthenticated()) {
                           <div class="card-actions">
-                            <app-icon-button icon="pi-pencil" variant="text" size="sm" (clicked)="openEditDialog(tournament)" ariaLabel="pencil" />
-                            <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="confirmDelete(tournament)" ariaLabel="trash" />
+                            <app-icon-button
+                              icon="pi-pencil"
+                              variant="text"
+                              size="sm"
+                              (clicked)="openEditDialog(tournament)"
+                              ariaLabel="pencil"
+                            />
+                            <app-icon-button
+                              icon="pi-trash"
+                              variant="text"
+                              size="sm"
+                              (clicked)="confirmDelete(tournament)"
+                              ariaLabel="trash"
+                            />
                           </div>
                         }
                       </div>
@@ -360,7 +421,11 @@ interface TournamentBudget {
                       </div>
 
                       <div class="tournament-actions">
-                        <app-button size="sm" (clicked)="viewDetails(tournament)">View Details</app-button>
+                        <app-button
+                          size="sm"
+                          (clicked)="viewDetails(tournament)"
+                          >View Details</app-button
+                        >
                       </div>
                     </div>
                   </p-card>
@@ -368,7 +433,12 @@ interface TournamentBudget {
                   <div class="empty-season">
                     <p>No tournaments scheduled for 2027 yet.</p>
                     @if (isAuthenticated()) {
-                      <app-button variant="outlined" iconLeft="pi-plus" (clicked)="openCreateDialog()">Add Tournament</app-button>
+                      <app-button
+                        variant="outlined"
+                        iconLeft="pi-plus"
+                        (clicked)="openCreateDialog()"
+                        >Add Tournament</app-button
+                      >
                     }
                   </div>
                 }
@@ -850,8 +920,16 @@ interface TournamentBudget {
 
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="outlined" iconLeft="pi-times" (clicked)="closeDialog()">Cancel</app-button>
-            <app-button [loading]="tournamentService.loading()" (clicked)="saveTournament()"></app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-times"
+              (clicked)="closeDialog()"
+              >Cancel</app-button
+            >
+            <app-button
+              [loading]="tournamentService.loading()"
+              (clicked)="saveTournament()"
+            ></app-button>
           </div>
         </ng-template>
       </p-dialog>
@@ -1015,8 +1093,17 @@ interface TournamentBudget {
         }
 
         <ng-template pTemplate="footer">
-          <app-button variant="outlined" (clicked)="showAvailabilityDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" [loading]="savingAvailability()" (clicked)="saveAvailability()">Save</app-button>
+          <app-button
+            variant="outlined"
+            (clicked)="showAvailabilityDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [loading]="savingAvailability()"
+            (clicked)="saveAvailability()"
+            >Save</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -1111,7 +1198,13 @@ interface TournamentBudget {
                     >
                   </div>
                 </div>
-                <app-button variant="outlined" size="sm" iconLeft="pi-cog" (clicked)="openBudgetDialog()">Manage Budget</app-button>
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  iconLeft="pi-cog"
+                  (clicked)="openBudgetDialog()"
+                  >Manage Budget</app-button
+                >
               </div>
             }
 
@@ -1158,14 +1251,26 @@ interface TournamentBudget {
 
             <!-- Actions -->
             <div class="dialog-actions">
-              <app-button variant="outlined" iconLeft="pi-bell" (clicked)="sendAvailabilityReminders()">Send Reminders</app-button>
-              <app-button variant="outlined" iconLeft="pi-download" (clicked)="exportAvailabilityReport()">Export Report</app-button>
+              <app-button
+                variant="outlined"
+                iconLeft="pi-bell"
+                (clicked)="sendAvailabilityReminders()"
+                >Send Reminders</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-download"
+                (clicked)="exportAvailabilityReport()"
+                >Export Report</app-button
+              >
             </div>
           </div>
         }
 
         <ng-template pTemplate="footer">
-          <app-button (clicked)="showTeamAvailabilityDialog = false">Close</app-button>
+          <app-button (clicked)="showTeamAvailabilityDialog = false"
+            >Close</app-button
+          >
         </ng-template>
       </p-dialog>
 
@@ -1318,8 +1423,15 @@ interface TournamentBudget {
         }
 
         <ng-template pTemplate="footer">
-          <app-button variant="outlined" (clicked)="showBudgetDialog = false">Cancel</app-button>
-          <app-button iconLeft="pi-check" [loading]="savingBudget()" (clicked)="saveBudget()">Save Budget</app-button>
+          <app-button variant="outlined" (clicked)="showBudgetDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [loading]="savingBudget()"
+            (clicked)="saveBudget()"
+            >Save Budget</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>

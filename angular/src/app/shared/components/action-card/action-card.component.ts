@@ -108,7 +108,7 @@ import { RouterModule } from "@angular/router";
       }
     </div>
   `,
-  styleUrl: './action-card.component.scss',
+  styleUrl: "./action-card.component.scss",
 })
 export class ActionCardComponent {
   // Inputs

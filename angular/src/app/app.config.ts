@@ -77,8 +77,9 @@ export const appConfig: ApplicationConfig = {
       theme: {
         options: {
           cssLayer: {
-            name: 'primeng-base',
-            order: 'reset, tokens, primeng-base, primeng-brand, primitives, features, overrides',
+            name: "primeng-base",
+            order:
+              "reset, tokens, primeng-base, primeng-brand, primitives, features, overrides",
           },
         },
       },

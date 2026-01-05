@@ -48,7 +48,7 @@ export interface PlayerFormData {
     InputTextModule,
     Select,
     InputNumberModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -202,12 +202,23 @@ export interface PlayerFormData {
       </form>
 
       <ng-template pTemplate="footer">
-        <app-button variant="text" iconLeft="pi-times" (clicked)="visibleChange.emit(false)">Cancel</app-button>
-        <app-icon-button icon="pi-check" [loading]="isSaving()" [disabled]="!playerForm.valid || isSaving()" (clicked)="onSave()" ariaLabel="check" />
+        <app-button
+          variant="text"
+          iconLeft="pi-times"
+          (clicked)="visibleChange.emit(false)"
+          >Cancel</app-button
+        >
+        <app-icon-button
+          icon="pi-check"
+          [loading]="isSaving()"
+          [disabled]="!playerForm.valid || isSaving()"
+          (clicked)="onSave()"
+          ariaLabel="check"
+        />
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './roster-player-form-dialog.component.scss',
+  styleUrl: "./roster-player-form-dialog.component.scss",
 })
 export class RosterPlayerFormDialogComponent implements OnChanges {
   private fb = inject(FormBuilder);

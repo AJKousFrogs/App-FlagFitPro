@@ -26,7 +26,7 @@ import {
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -110,7 +110,12 @@ import {
                 <i class="pi pi-inbox"></i>
                 Pending Approvals
               </h3>
-              <app-icon-button icon="pi-refresh" variant="text" (clicked)="refreshData()" ariaLabel="Refresh" />
+              <app-icon-button
+                icon="pi-refresh"
+                variant="text"
+                (clicked)="refreshData()"
+                ariaLabel="Refresh"
+              />
             </div>
           </ng-template>
 
@@ -199,8 +204,18 @@ import {
                   </div>
 
                   <div class="approval-actions">
-                    <app-button variant="success" iconLeft="pi-check" (clicked)="handleApprove(approval)">Approve</app-button>
-                    <app-button variant="outlined" iconLeft="pi-times" (clicked)="openRejectModal(approval)">Reject</app-button>
+                    <app-button
+                      variant="success"
+                      iconLeft="pi-check"
+                      (clicked)="handleApprove(approval)"
+                      >Approve</app-button
+                    >
+                    <app-button
+                      variant="outlined"
+                      iconLeft="pi-times"
+                      (clicked)="openRejectModal(approval)"
+                      >Reject</app-button
+                    >
                   </div>
                 </div>
               }
@@ -247,15 +262,22 @@ import {
               ></textarea>
             </div>
             <div class="modal-footer">
-              <app-button variant="text" (clicked)="closeRejectModal()">Cancel</app-button>
-              <app-button variant="danger" [disabled]="!rejectReason.trim()" (clicked)="confirmReject()">Confirm Rejection</app-button>
+              <app-button variant="text" (clicked)="closeRejectModal()"
+                >Cancel</app-button
+              >
+              <app-button
+                variant="danger"
+                [disabled]="!rejectReason.trim()"
+                (clicked)="confirmReject()"
+                >Confirm Rejection</app-button
+              >
             </div>
           </div>
         </div>
       }
     </app-main-layout>
   `,
-  styleUrl: './superadmin-dashboard.component.scss',
+  styleUrl: "./superadmin-dashboard.component.scss",
 })
 export class SuperadminDashboardComponent implements OnInit {
   private superadminService = inject(SuperadminService);

@@ -24,8 +24,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule, Chip,
-  ],
+  imports: [CommonModule, TagModule, TooltipModule, Chip],
   template: `
     <div class="tab-content">
       <div class="playlists-header">
@@ -108,7 +107,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
       }
     </div>
   `,
-  styleUrl: './video-curation-playlists.component.scss',
+  styleUrl: "./video-curation-playlists.component.scss",
 })
 export class VideoCurationPlaylistsComponent {
   playlists = input.required<InstagramPlaylist[]>();

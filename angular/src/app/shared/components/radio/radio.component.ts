@@ -69,7 +69,7 @@ import { CommonModule } from "@angular/common";
       }
     </div>
   `,
-  styleUrl: './radio.component.scss',
+  styleUrl: "./radio.component.scss",
 })
 export class RadioComponent<T = unknown> implements ControlValueAccessor {
   // Configuration

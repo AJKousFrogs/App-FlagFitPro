@@ -153,16 +153,16 @@ System-wide administration dashboard for managing all teams, users, monitoring p
 
 ## User Actions Menu ([⋮])
 
-| Action | Description |
-|--------|-------------|
-| View Profile | See user details |
-| Edit Role | Change user role |
-| Impersonate | Login as user (audit logged) |
-| Reset Password | Send password reset |
-| Disable Account | Temporarily disable |
-| Delete Account | Permanent deletion |
-| View Activity | User's audit log |
-| Message User | Send system message |
+| Action          | Description                  |
+| --------------- | ---------------------------- |
+| View Profile    | See user details             |
+| Edit Role       | Change user role             |
+| Impersonate     | Login as user (audit logged) |
+| Reset Password  | Send password reset          |
+| Disable Account | Temporarily disable          |
+| Delete Account  | Permanent deletion           |
+| View Activity   | User's audit log             |
+| Message User    | Send system message          |
 
 ---
 
@@ -196,50 +196,50 @@ System-wide administration dashboard for managing all teams, users, monitoring p
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Platform Stats | Users, teams, activity |
-| System Health | Service status monitoring |
-| User Management | CRUD, role changes |
-| Team Management | View/edit all teams |
-| Audit Logs | All system actions |
-| Support Tickets | Handle user issues |
-| Broadcasts | System-wide messages |
-| Backups | Database backup management |
-| Impersonation | Debug as user (logged) |
+| Feature         | Description                |
+| --------------- | -------------------------- |
+| Platform Stats  | Users, teams, activity     |
+| System Health   | Service status monitoring  |
+| User Management | CRUD, role changes         |
+| Team Management | View/edit all teams        |
+| Audit Logs      | All system actions         |
+| Support Tickets | Handle user issues         |
+| Broadcasts      | System-wide messages       |
+| Backups         | Database backup management |
+| Impersonation   | Debug as user (logged)     |
 
 ---
 
 ## Admin Roles
 
-| Role | Permissions |
-|------|-------------|
-| Superadmin | Full system access |
-| Support | User/team support only |
-| Analytics | Read-only metrics |
-| Billing | Payment management |
+| Role       | Permissions            |
+| ---------- | ---------------------- |
+| Superadmin | Full system access     |
+| Support    | User/team support only |
+| Analytics  | Read-only metrics      |
+| Billing    | Payment management     |
 
 ---
 
 ## Audit Log Events
 
-| Event | Logged Data |
-|-------|-------------|
-| User Login | IP, time, success/fail |
-| Role Change | Who, what, when |
-| Account Delete | Full record |
-| Impersonation | Admin, target, duration |
-| Data Export | What, by whom |
-| Settings Change | Before/after |
+| Event           | Logged Data             |
+| --------------- | ----------------------- |
+| User Login      | IP, time, success/fail  |
+| Role Change     | Who, what, when         |
+| Account Delete  | Full record             |
+| Impersonation   | Admin, target, duration |
+| Data Export     | What, by whom           |
+| Settings Change | Before/after            |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Users | `AdminService` | `users` |
-| Teams | `AdminService` | `teams` |
-| Audit | `AuditService` | `audit_logs` |
-| Support | `SupportService` | `support_tickets` |
+| Data    | Service          | Table              |
+| ------- | ---------------- | ------------------ |
+| Users   | `AdminService`   | `users`            |
+| Teams   | `AdminService`   | `teams`            |
+| Audit   | `AuditService`   | `audit_logs`       |
+| Support | `SupportService` | `support_tickets`  |
 | Metrics | `MetricsService` | `platform_metrics` |

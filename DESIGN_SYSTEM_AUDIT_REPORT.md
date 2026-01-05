@@ -3,6 +3,7 @@
 **Date:** January 4, 2026  
 **Benchmark Component:** `player-dashboard.component.ts`  
 **Reference Documents:**
+
 - `docs/PRIMENG_DESIGN_SYSTEM_RULES.md`
 - `docs/UI_STANDARDIZATION_SUMMARY.md`
 - `angular/src/assets/styles/ui-standardization.scss`
@@ -55,17 +56,18 @@ border-radius: var(--radius-lg);
 
 **Components Affected:**
 
-| Component | Issue | Line Example |
-|-----------|-------|--------------|
-| `landing.component.ts` | Uses direct `px`/`rem` values extensively | `padding: 120px 0`, `gap: 3rem` |
-| `chat.component.ts` | Uses `rem` values for spacing | `gap: 0.75rem`, `padding: 1rem` |
-| `community.component.ts` | External SCSS with hardcoded values | References `community.component.scss` |
-| `wellness.component.ts` | Direct `rem` in SCSS | `.check-in-form { padding: 1.5rem }` |
-| `onboarding.component.ts` | Direct values in SCSS | `.form-grid { gap: 24px }` |
-| `tournaments.component.ts` | Mix of direct rem/px | `margin-bottom: 1rem` |
-| `settings.component.ts` | SCSS with direct values | Various hardcoded spacings |
+| Component                  | Issue                                     | Line Example                          |
+| -------------------------- | ----------------------------------------- | ------------------------------------- |
+| `landing.component.ts`     | Uses direct `px`/`rem` values extensively | `padding: 120px 0`, `gap: 3rem`       |
+| `chat.component.ts`        | Uses `rem` values for spacing             | `gap: 0.75rem`, `padding: 1rem`       |
+| `community.component.ts`   | External SCSS with hardcoded values       | References `community.component.scss` |
+| `wellness.component.ts`    | Direct `rem` in SCSS                      | `.check-in-form { padding: 1.5rem }`  |
+| `onboarding.component.ts`  | Direct values in SCSS                     | `.form-grid { gap: 24px }`            |
+| `tournaments.component.ts` | Mix of direct rem/px                      | `margin-bottom: 1rem`                 |
+| `settings.component.ts`    | SCSS with direct values                   | Various hardcoded spacings            |
 
 **Correct Pattern (from Player Dashboard):**
+
 ```scss
 // ✅ CORRECT
 gap: var(--space-4);
@@ -82,13 +84,14 @@ padding: 1.5rem;
 
 **Components Affected:**
 
-| Component | Issue |
-|-----------|-------|
-| `landing.component.ts` | Uses `clamp()` and direct `rem` for font sizes |
-| `analytics.component.ts` | Missing font tokens in card headers |
-| `coach-dashboard.component.ts` | Inconsistent heading sizes |
+| Component                      | Issue                                          |
+| ------------------------------ | ---------------------------------------------- |
+| `landing.component.ts`         | Uses `clamp()` and direct `rem` for font sizes |
+| `analytics.component.ts`       | Missing font tokens in card headers            |
+| `coach-dashboard.component.ts` | Inconsistent heading sizes                     |
 
 **Correct Pattern:**
+
 ```scss
 // ✅ CORRECT
 font-size: var(--font-heading-sm);
@@ -107,13 +110,13 @@ font-size: clamp(2rem, 5vw, 3.5rem);
 
 **Inconsistent Implementations:**
 
-| Component | Dialog Width |
-|-----------|--------------|
-| `community.component.ts` | `{ width: '450px' }`, `{ width: '400px' }` - Fixed widths |
-| `depth-chart.component.ts` | `{ width: '400px' }` - Fixed width |
-| `exercisedb-manager.component.ts` | `{ width: '90vw', maxWidth: '800px' }` ✅ |
-| `live-game-tracker.component.ts` | `{ width: '90vw', maxWidth: '500px' }` ✅ |
-| `game-day-readiness.component.ts` | No explicit width (uses default) |
+| Component                         | Dialog Width                                              |
+| --------------------------------- | --------------------------------------------------------- |
+| `community.component.ts`          | `{ width: '450px' }`, `{ width: '400px' }` - Fixed widths |
+| `depth-chart.component.ts`        | `{ width: '400px' }` - Fixed width                        |
+| `exercisedb-manager.component.ts` | `{ width: '90vw', maxWidth: '800px' }` ✅                 |
+| `live-game-tracker.component.ts`  | `{ width: '90vw', maxWidth: '500px' }` ✅                 |
+| `game-day-readiness.component.ts` | No explicit width (uses default)                          |
 
 ---
 
@@ -122,11 +125,13 @@ font-size: clamp(2rem, 5vw, 3.5rem);
 #### 4. Card Padding/Gap Override Inconsistency
 
 **Compliant Components:**
+
 - `today.component.ts` - Uses `var(--p-card-body-gap)`, `var(--p-card-body-padding)`
 - `player-dashboard.component.ts` - Proper `::ng-deep` overrides
 - `training-schedule.component.ts` - Uses `--p-card-body-gap`
 
 **Non-Compliant Components:**
+
 - `coach-dashboard.component.ts` - Custom SCSS without PrimeNG token usage
 - `analytics.component.ts` - Custom card styles in external SCSS
 - `wellness.component.ts` - Direct padding values
@@ -136,26 +141,29 @@ font-size: clamp(2rem, 5vw, 3.5rem);
 #### 5. Button Styling Inconsistency
 
 **Design System Standard:**
+
 - Min-height: 44px (touch target)
 - Border-radius: `--radius-lg` (12px)
 - Consistent use of `severity` prop
 
 **Issues Found:**
 
-| Component | Issue |
-|-----------|-------|
-| `chat.component.ts` | Custom text button styles via `::ng-deep` |
-| `community.component.ts` | Custom `.media-btn` buttons bypass PrimeNG |
-| `live-game-tracker.component.ts` | Custom `.field-action` buttons |
+| Component                        | Issue                                      |
+| -------------------------------- | ------------------------------------------ |
+| `chat.component.ts`              | Custom text button styles via `::ng-deep`  |
+| `community.component.ts`         | Custom `.media-btn` buttons bypass PrimeNG |
+| `live-game-tracker.component.ts` | Custom `.field-action` buttons             |
 
 ---
 
 #### 6. Progress Bar Styling
 
 **Compliant:**
+
 - Most components use `p-progressBar` with `styleClass` for customization
 
 **Non-Compliant:**
+
 - Some components use custom progress indicators instead of `p-progressBar`
 
 ---
@@ -164,19 +172,19 @@ font-size: clamp(2rem, 5vw, 3.5rem);
 
 The following components properly follow the design system:
 
-| Component | Notes |
-|-----------|-------|
-| `achievements.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `cycle-tracking.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `sleep-debt.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `film-room.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `playbook.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `payments.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `return-to-play.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `team-calendar.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `data-import.component.ts` | Header comment indicates "Design System Compliant" ✅ |
-| `game-day-readiness.component.ts` | Proper token usage |
-| `tournament-nutrition.component.ts` | Proper token usage |
+| Component                           | Notes                                                 |
+| ----------------------------------- | ----------------------------------------------------- |
+| `achievements.component.ts`         | Header comment indicates "Design System Compliant" ✅ |
+| `cycle-tracking.component.ts`       | Header comment indicates "Design System Compliant" ✅ |
+| `sleep-debt.component.ts`           | Header comment indicates "Design System Compliant" ✅ |
+| `film-room.component.ts`            | Header comment indicates "Design System Compliant" ✅ |
+| `playbook.component.ts`             | Header comment indicates "Design System Compliant" ✅ |
+| `payments.component.ts`             | Header comment indicates "Design System Compliant" ✅ |
+| `return-to-play.component.ts`       | Header comment indicates "Design System Compliant" ✅ |
+| `team-calendar.component.ts`        | Header comment indicates "Design System Compliant" ✅ |
+| `data-import.component.ts`          | Header comment indicates "Design System Compliant" ✅ |
+| `game-day-readiness.component.ts`   | Proper token usage                                    |
+| `tournament-nutrition.component.ts` | Proper token usage                                    |
 
 ---
 
@@ -201,6 +209,7 @@ wellness.component.scss
 ```
 
 **Recommendation:** Audit all external SCSS files for:
+
 1. Hardcoded spacing values → Replace with `--space-*` tokens
 2. Hardcoded font sizes → Replace with `--font-*` tokens
 3. Custom button/card styles → Use PrimeNG tokens
@@ -211,11 +220,11 @@ wellness.component.scss
 
 The following components have inline `styles: []` arrays that need review:
 
-| Component | Status |
-|-----------|--------|
+| Component                       | Status                            |
+| ------------------------------- | --------------------------------- |
 | `player-dashboard.component.ts` | ✅ Proper token usage (BENCHMARK) |
-| `today.component.ts` | ✅ Good token usage |
-| Various auth components | Mixed |
+| `today.component.ts`            | ✅ Good token usage               |
+| Various auth components         | Mixed                             |
 
 ---
 
@@ -223,16 +232,16 @@ The following components have inline `styles: []` arrays that need review:
 
 ### Expected Utility Classes (from UI_STANDARDIZATION_SUMMARY.md):
 
-| Class | Purpose | Usage Rate |
-|-------|---------|------------|
-| `.page-container` | Main page wrapper | Low adoption |
-| `.section-stack` | Vertical section spacing | Low adoption |
-| `.card-stack` | Card vertical spacing | Low adoption |
-| `.toolbar-row` | Filter/action bars | Low adoption |
-| `.control-row` | Form control rows | Low adoption |
-| `.icon-btn` | Icon-only buttons | Low adoption |
-| `.list-row` | List item rows | Low adoption |
-| `.status-tag` | Status indicators | Low adoption |
+| Class             | Purpose                  | Usage Rate   |
+| ----------------- | ------------------------ | ------------ |
+| `.page-container` | Main page wrapper        | Low adoption |
+| `.section-stack`  | Vertical section spacing | Low adoption |
+| `.card-stack`     | Card vertical spacing    | Low adoption |
+| `.toolbar-row`    | Filter/action bars       | Low adoption |
+| `.control-row`    | Form control rows        | Low adoption |
+| `.icon-btn`       | Icon-only buttons        | Low adoption |
+| `.list-row`       | List item rows           | Low adoption |
+| `.status-tag`     | Status indicators        | Low adoption |
 
 **Observation:** Most components create custom layout classes instead of using the standardized utility classes.
 
@@ -243,6 +252,7 @@ The following components have inline `styles: []` arrays that need review:
 ### 1. Landing Page (`landing.component.ts`)
 
 **Issues:**
+
 - Extensive use of `px` values (120px padding, 240px heights)
 - Custom animations without `prefers-reduced-motion`
 - Font sizes use `clamp()` instead of design tokens
@@ -251,6 +261,7 @@ The following components have inline `styles: []` arrays that need review:
 ### 2. Community Component (`community.component.ts`)
 
 **Issues:**
+
 - Custom button classes (`.media-btn`, `.action-btn`)
 - Fixed dialog widths
 - Avatar inline styles with hardcoded values
@@ -259,6 +270,7 @@ The following components have inline `styles: []` arrays that need review:
 ### 3. Coach Dashboard (`coach-dashboard.component.ts`)
 
 **Issues:**
+
 - Uses `app-button` and `app-card` (custom components) - verify they follow design system
 - External SCSS with potential hardcoded values
 - Mix of specific pixel values
@@ -266,6 +278,7 @@ The following components have inline `styles: []` arrays that need review:
 ### 4. Chat Component (`chat.component.ts`)
 
 **Issues:**
+
 - Uses `rem` values for spacing
 - Custom `::ng-deep` overrides for PrimeNG buttons
 - External SCSS needs audit
@@ -273,6 +286,7 @@ The following components have inline `styles: []` arrays that need review:
 ### 5. Onboarding Component (`onboarding.component.ts`)
 
 **Issues:**
+
 - Custom card classes (`.checkbox-card`, `.equipment-card`, `.goal-card`)
 - Direct CSS variable usage for colors is good
 - Spacing values in SCSS need review
@@ -284,6 +298,7 @@ The following components have inline `styles: []` arrays that need review:
 ### Priority 1: Critical (Fix Immediately)
 
 1. **Create spacing token migration script**
+
    ```bash
    # Replace hardcoded values with tokens
    # 4px → var(--space-1)
@@ -298,10 +313,11 @@ The following components have inline `styles: []` arrays that need review:
    ```
 
 2. **Standardize dialog widths**
+
    ```typescript
    // Standard dialog pattern
-   [style]="{ width: '90vw', maxWidth: '500px' }"
-   [breakpoints]="{ '640px': '95vw' }"
+   [style] = "{ width: '90vw', maxWidth: '500px' }"[breakpoints] =
+     "{ '640px': '95vw' }";
    ```
 
 3. **Audit external SCSS files**
@@ -323,11 +339,11 @@ The following components have inline `styles: []` arrays that need review:
 
 ## Summary Statistics
 
-| Category | Count | Percentage |
-|----------|-------|------------|
-| **Fully Compliant** | ~15 components | ~30% |
-| **Mostly Compliant** | ~20 components | ~40% |
-| **Needs Significant Work** | ~15 components | ~30% |
+| Category                   | Count          | Percentage |
+| -------------------------- | -------------- | ---------- |
+| **Fully Compliant**        | ~15 components | ~30%       |
+| **Mostly Compliant**       | ~20 components | ~40%       |
+| **Needs Significant Work** | ~15 components | ~30%       |
 
 ---
 
@@ -344,6 +360,7 @@ The following components have inline `styles: []` arrays that need review:
 ## Appendix: Design Token Quick Reference
 
 ### Spacing Scale (8pt rhythm)
+
 ```scss
 --space-1: 4px;
 --space-2: 8px;
@@ -357,15 +374,17 @@ The following components have inline `styles: []` arrays that need review:
 ```
 
 ### Font Sizes
+
 ```scss
---font-heading-lg: 1.5rem;    // 24px
---font-heading-sm: 1.125rem;  // 18px
---font-body-md: 1rem;         // 16px
---font-body-sm: 0.875rem;     // 14px
---font-body-xs: 0.75rem;      // 12px
+--font-heading-lg: 1.5rem; // 24px
+--font-heading-sm: 1.125rem; // 18px
+--font-body-md: 1rem; // 16px
+--font-body-sm: 0.875rem; // 14px
+--font-body-xs: 0.75rem; // 12px
 ```
 
 ### Radii
+
 ```scss
 --radius-sm: 6px;
 --radius-md: 8px;
@@ -374,6 +393,7 @@ The following components have inline `styles: []` arrays that need review:
 ```
 
 ### PrimeNG Component Tokens
+
 ```scss
 --p-card-body-padding: var(--space-6);
 --p-card-body-gap: var(--space-4);
@@ -384,4 +404,4 @@ The following components have inline `styles: []` arrays that need review:
 
 ---
 
-*Report generated by automated design system audit*
+_Report generated by automated design system audit_

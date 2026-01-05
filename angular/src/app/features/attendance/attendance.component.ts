@@ -67,7 +67,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -80,7 +80,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()">Create Event</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()"
+                >Create Event</app-button
+              >
             }
           </div>
         </app-page-header>
@@ -169,14 +171,24 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                         [severity]="event.is_mandatory ? 'danger' : 'info'"
                       ></p-tag>
                       @if (isCoach()) {
-                        <app-icon-button icon="pi-users" variant="text" (clicked)="
+                        <app-icon-button
+                          icon="pi-users"
+                          variant="text"
+                          (clicked)="
                             openAttendanceDialog(event);
                             $event.stopPropagation()
-                          " ariaLabel="users" />
+                          "
+                          ariaLabel="users"
+                        />
                       } @else {
-                        <app-icon-button icon="pi-check" variant="text" (clicked)="
+                        <app-icon-button
+                          icon="pi-check"
+                          variant="text"
+                          (clicked)="
                             quickCheckIn(event); $event.stopPropagation()
-                          " ariaLabel="check" />
+                          "
+                          ariaLabel="check"
+                        />
                       }
                     </div>
                   </div>
@@ -358,8 +370,15 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showCreateEventDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" [disabled]="!canCreateEvent()" (clicked)="createEvent()">Create Event</app-button>
+            <app-button variant="text" (clicked)="showCreateEventDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [disabled]="!canCreateEvent()"
+              (clicked)="createEvent()"
+              >Create Event</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -395,9 +414,12 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     </div>
                     <div class="status-buttons">
                       @for (status of attendanceStatuses; track status.value) {
-                        <app-button size="sm" (clicked)="
+                        <app-button
+                          size="sm"
+                          (clicked)="
                             updateAttendanceStatus(record, status.value)
-                          "></app-button>
+                          "
+                        ></app-button>
                       }
                     </div>
                   </div>
@@ -407,14 +429,18 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           }
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showAttendanceDialog = false">Close</app-button>
-            <app-button iconLeft="pi-check" (clicked)="saveAttendance()">Save All</app-button>
+            <app-button variant="text" (clicked)="showAttendanceDialog = false"
+              >Close</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="saveAttendance()"
+              >Save All</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './attendance.component.scss',
+  styleUrl: "./attendance.component.scss",
 })
 export class AttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
@@ -590,7 +616,8 @@ export class AttendanceComponent implements OnInit {
         team_id: teamId,
         title: this.newEvent.title,
         event_type: this.newEvent.event_type,
-        start_time: this.newEvent.start_time?.toISOString() ?? new Date().toISOString(),
+        start_time:
+          this.newEvent.start_time?.toISOString() ?? new Date().toISOString(),
         end_time: this.newEvent.end_time?.toISOString(),
         location: this.newEvent.location || undefined,
         description: this.newEvent.description || undefined,

@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CookieConsentService } from "../../../core/services/cookie-consent.service";
@@ -157,7 +157,7 @@ import { ButtonComponent } from "../button/button.component";
       </div>
     }
   `,
-  styleUrl: './cookie-consent-banner.component.scss',
+  styleUrl: "./cookie-consent-banner.component.scss",
 })
 export class CookieConsentBannerComponent {
   protected readonly cookieService = inject(CookieConsentService);

@@ -22,7 +22,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { DROPDOWN_WIDTHS, TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
+import {
+  DROPDOWN_WIDTHS,
+  TABLE_COLUMN_WIDTHS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -49,40 +52,192 @@ interface LeaderboardEntry {
   isCurrentUser: boolean;
 }
 
-type AchievementCategory = "wellness" | "training" | "performance" | "social" | "special";
+type AchievementCategory =
+  | "wellness"
+  | "training"
+  | "performance"
+  | "social"
+  | "special";
 
 // ===== Constants =====
 const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
   // Wellness
-  { id: "wellness-first", name: "First Check-in", description: "Complete your first wellness check-in", category: "wellness", icon: "💚", points: 10, isUnlocked: false },
-  { id: "wellness-streak-7", name: "7-Day Streak", description: "7 consecutive wellness check-ins", category: "wellness", icon: "💚", points: 25, isUnlocked: false },
-  { id: "wellness-streak-30", name: "30-Day Streak", description: "30 consecutive wellness check-ins", category: "wellness", icon: "💚", points: 50, isUnlocked: false },
-  { id: "acwr-sweet-spot", name: "ACWR Sweet Spot", description: "Stay in optimal ACWR zone for 7 consecutive days", category: "wellness", icon: "🎯", points: 50, isUnlocked: false },
-  { id: "early-bird", name: "Early Bird", description: "10 check-ins before 6:00 AM", category: "wellness", icon: "🌅", points: 25, isUnlocked: false },
-  { id: "night-owl", name: "Night Owl", description: "10 check-ins after 10:00 PM", category: "wellness", icon: "🌙", points: 25, isUnlocked: false },
+  {
+    id: "wellness-first",
+    name: "First Check-in",
+    description: "Complete your first wellness check-in",
+    category: "wellness",
+    icon: "💚",
+    points: 10,
+    isUnlocked: false,
+  },
+  {
+    id: "wellness-streak-7",
+    name: "7-Day Streak",
+    description: "7 consecutive wellness check-ins",
+    category: "wellness",
+    icon: "💚",
+    points: 25,
+    isUnlocked: false,
+  },
+  {
+    id: "wellness-streak-30",
+    name: "30-Day Streak",
+    description: "30 consecutive wellness check-ins",
+    category: "wellness",
+    icon: "💚",
+    points: 50,
+    isUnlocked: false,
+  },
+  {
+    id: "acwr-sweet-spot",
+    name: "ACWR Sweet Spot",
+    description: "Stay in optimal ACWR zone for 7 consecutive days",
+    category: "wellness",
+    icon: "🎯",
+    points: 50,
+    isUnlocked: false,
+  },
+  {
+    id: "early-bird",
+    name: "Early Bird",
+    description: "10 check-ins before 6:00 AM",
+    category: "wellness",
+    icon: "🌅",
+    points: 25,
+    isUnlocked: false,
+  },
+  {
+    id: "night-owl",
+    name: "Night Owl",
+    description: "10 check-ins after 10:00 PM",
+    category: "wellness",
+    icon: "🌙",
+    points: 25,
+    isUnlocked: false,
+  },
 
   // Training
-  { id: "training-first", name: "First Session", description: "Log your first training session", category: "training", icon: "🏋️", points: 15, isUnlocked: false },
-  { id: "training-50", name: "Halfway There", description: "Complete 50 training sessions", category: "training", icon: "🏋️", points: 35, isUnlocked: false },
-  { id: "training-century", name: "Century Club", description: "Complete 100 training sessions", category: "training", icon: "🏋️", points: 75, isUnlocked: false },
-  { id: "training-iron", name: "Iron Warrior", description: "Complete 500 training sessions", category: "training", icon: "🏋️", points: 150, isUnlocked: false },
+  {
+    id: "training-first",
+    name: "First Session",
+    description: "Log your first training session",
+    category: "training",
+    icon: "🏋️",
+    points: 15,
+    isUnlocked: false,
+  },
+  {
+    id: "training-50",
+    name: "Halfway There",
+    description: "Complete 50 training sessions",
+    category: "training",
+    icon: "🏋️",
+    points: 35,
+    isUnlocked: false,
+  },
+  {
+    id: "training-century",
+    name: "Century Club",
+    description: "Complete 100 training sessions",
+    category: "training",
+    icon: "🏋️",
+    points: 75,
+    isUnlocked: false,
+  },
+  {
+    id: "training-iron",
+    name: "Iron Warrior",
+    description: "Complete 500 training sessions",
+    category: "training",
+    icon: "🏋️",
+    points: 150,
+    isUnlocked: false,
+  },
 
   // Performance
-  { id: "speed-demon", name: "Speed Demon", description: "Beat your 40-yard PR by 0.1s", category: "performance", icon: "⚡", points: 50, isUnlocked: false },
-  { id: "vertical-king", name: "Vertical King", description: "Vertical jump PR > 36 inches", category: "performance", icon: "🦘", points: 50, isUnlocked: false },
-  { id: "first-game-win", name: "First Win", description: "Win your first game", category: "performance", icon: "🏆", points: 100, isUnlocked: false },
-  { id: "touchdown-scorer", name: "TD Scorer", description: "Score your first touchdown", category: "performance", icon: "🎯", points: 50, isUnlocked: false },
+  {
+    id: "speed-demon",
+    name: "Speed Demon",
+    description: "Beat your 40-yard PR by 0.1s",
+    category: "performance",
+    icon: "⚡",
+    points: 50,
+    isUnlocked: false,
+  },
+  {
+    id: "vertical-king",
+    name: "Vertical King",
+    description: "Vertical jump PR > 36 inches",
+    category: "performance",
+    icon: "🦘",
+    points: 50,
+    isUnlocked: false,
+  },
+  {
+    id: "first-game-win",
+    name: "First Win",
+    description: "Win your first game",
+    category: "performance",
+    icon: "🏆",
+    points: 100,
+    isUnlocked: false,
+  },
+  {
+    id: "touchdown-scorer",
+    name: "TD Scorer",
+    description: "Score your first touchdown",
+    category: "performance",
+    icon: "🎯",
+    points: 50,
+    isUnlocked: false,
+  },
 
   // Social
-  { id: "team-player", name: "Team Player", description: "Complete 10 team practices", category: "social", icon: "👥", points: 20, isUnlocked: false },
-  { id: "mentor", name: "Mentor", description: "Help a teammate with their training", category: "social", icon: "🤝", points: 40, isUnlocked: false },
+  {
+    id: "team-player",
+    name: "Team Player",
+    description: "Complete 10 team practices",
+    category: "social",
+    icon: "👥",
+    points: 20,
+    isUnlocked: false,
+  },
+  {
+    id: "mentor",
+    name: "Mentor",
+    description: "Help a teammate with their training",
+    category: "social",
+    icon: "🤝",
+    points: 40,
+    isUnlocked: false,
+  },
 
   // Special
-  { id: "perfect-week", name: "Perfect Week", description: "Complete all scheduled activities for a week", category: "special", icon: "⭐", points: 75, isUnlocked: false },
-  { id: "comeback", name: "Comeback", description: "Complete return-to-play protocol successfully", category: "special", icon: "💪", points: 100, isUnlocked: false },
+  {
+    id: "perfect-week",
+    name: "Perfect Week",
+    description: "Complete all scheduled activities for a week",
+    category: "special",
+    icon: "⭐",
+    points: 75,
+    isUnlocked: false,
+  },
+  {
+    id: "comeback",
+    name: "Comeback",
+    description: "Complete return-to-play protocol successfully",
+    category: "special",
+    icon: "💪",
+    points: 100,
+    isUnlocked: false,
+  },
 ];
 
-const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string }> = {
+const CATEGORY_LABELS: Record<
+  AchievementCategory,
+  { label: string; icon: string }
+> = {
   wellness: { label: "Wellness", icon: "💚" },
   training: { label: "Training", icon: "🏋️" },
   performance: { label: "Performance", icon: "🏆" },
@@ -145,7 +300,9 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
               </div>
               <div class="stat-details">
                 <span class="stat-label">Achievements Unlocked</span>
-                <span class="stat-value">{{ unlockedCount() }} / {{ totalAchievements() }}</span>
+                <span class="stat-value"
+                  >{{ unlockedCount() }} / {{ totalAchievements() }}</span
+                >
               </div>
             </div>
           </p-card>
@@ -174,9 +331,13 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
               </div>
               <div class="stat-details">
                 <span class="stat-label">Recent Unlock</span>
-                <span class="stat-value recent">{{ recentUnlock()?.name || 'None yet' }}</span>
+                <span class="stat-value recent">{{
+                  recentUnlock()?.name || "None yet"
+                }}</span>
                 @if (recentUnlock()?.unlockedAt) {
-                  <span class="stat-hint">{{ getTimeAgo(recentUnlock()!.unlockedAt!) }}</span>
+                  <span class="stat-hint">{{
+                    getTimeAgo(recentUnlock()!.unlockedAt!)
+                  }}</span>
                 }
               </div>
             </div>
@@ -187,7 +348,10 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
         @if (recentUnlocks().length > 0) {
           <p-card header="Recently Unlocked" styleClass="recent-card">
             <div class="recent-grid">
-              @for (achievement of recentUnlocks().slice(0, 3); track achievement.id) {
+              @for (
+                achievement of recentUnlocks().slice(0, 3);
+                track achievement.id
+              ) {
                 <div class="achievement-card unlocked">
                   <div class="achievement-badge">
                     <span class="badge-icon">{{ achievement.icon }}</span>
@@ -198,7 +362,9 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
                     <p>{{ achievement.description }}</p>
                     <div class="achievement-meta">
                       <span class="points">+{{ achievement.points }} pts</span>
-                      <span class="date">{{ achievement.unlockedAt | date:'MMM d, y' }}</span>
+                      <span class="date">{{
+                        achievement.unlockedAt | date: "MMM d, y"
+                      }}</span>
                     </div>
                   </div>
                 </div>
@@ -229,7 +395,10 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
                 [class.unlocked]="achievement.isUnlocked"
                 [class.locked]="!achievement.isUnlocked"
               >
-                <div class="achievement-badge" [class.locked]="!achievement.isUnlocked">
+                <div
+                  class="achievement-badge"
+                  [class.locked]="!achievement.isUnlocked"
+                >
                   @if (achievement.isUnlocked) {
                     <span class="badge-icon">{{ achievement.icon }}</span>
                     <span class="badge-check"><i class="pi pi-check"></i></span>
@@ -244,20 +413,34 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
                   @if (achievement.isUnlocked) {
                     <div class="achievement-meta">
                       <span class="points">+{{ achievement.points }} pts</span>
-                      <span class="date">{{ achievement.unlockedAt | date:'MMM d, y' }}</span>
+                      <span class="date">{{
+                        achievement.unlockedAt | date: "MMM d, y"
+                      }}</span>
                     </div>
-                  } @else if (achievement.progress !== undefined && achievement.target) {
+                  } @else if (
+                    achievement.progress !== undefined && achievement.target
+                  ) {
                     <div class="achievement-progress">
                       <p-progressBar
-                        [value]="(achievement.progress / achievement.target) * 100"
+                        [value]="
+                          (achievement.progress / achievement.target) * 100
+                        "
                         [showValue]="false"
                         styleClass="progress-achievement"
                       ></p-progressBar>
-                      <span class="progress-text">{{ achievement.progress }}/{{ achievement.target }}</span>
+                      <span class="progress-text"
+                        >{{ achievement.progress }}/{{
+                          achievement.target
+                        }}</span
+                      >
                     </div>
-                    <span class="points pending">{{ achievement.points }} pts</span>
+                    <span class="points pending"
+                      >{{ achievement.points }} pts</span
+                    >
                   } @else {
-                    <span class="points pending">{{ achievement.points }} pts</span>
+                    <span class="points pending"
+                      >{{ achievement.points }} pts</span
+                    >
                   }
                 </div>
               </div>
@@ -298,23 +481,38 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
             <ng-template pTemplate="body" let-entry>
               <tr [class.current-user]="entry.isCurrentUser">
                 <td>
-                  @if (entry.rank === 1) { <span class="rank-medal">🥇</span> }
-                  @else if (entry.rank === 2) { <span class="rank-medal">🥈</span> }
-                  @else if (entry.rank === 3) { <span class="rank-medal">🥉</span> }
-                  @else { <span class="rank-number">{{ entry.rank }}</span> }
+                  @if (entry.rank === 1) {
+                    <span class="rank-medal">🥇</span>
+                  } @else if (entry.rank === 2) {
+                    <span class="rank-medal">🥈</span>
+                  } @else if (entry.rank === 3) {
+                    <span class="rank-medal">🥉</span>
+                  } @else {
+                    <span class="rank-number">{{ entry.rank }}</span>
+                  }
                 </td>
                 <td>
-                  @if (entry.isCurrentUser) { <strong>⭐ {{ entry.playerName }}</strong> }
-                  @else { {{ entry.playerName }} }
+                  @if (entry.isCurrentUser) {
+                    <strong>⭐ {{ entry.playerName }}</strong>
+                  } @else {
+                    {{ entry.playerName }}
+                  }
                 </td>
-                <td><strong>{{ entry.points | number }}</strong></td>
-                <td class="recent-achievement">{{ entry.recentAchievement || '-' }}</td>
+                <td>
+                  <strong>{{ entry.points | number }}</strong>
+                </td>
+                <td class="recent-achievement">
+                  {{ entry.recentAchievement || "-" }}
+                </td>
               </tr>
             </ng-template>
           </p-table>
 
           <div class="leaderboard-footer">
-            <span>Your Rank: #{{ userRank() }} of {{ leaderboard().length }} players</span>
+            <span
+              >Your Rank: #{{ userRank() }} of
+              {{ leaderboard().length }} players</span
+            >
           </div>
         </p-card>
       </div>
@@ -359,11 +557,11 @@ export class AchievementsComponent implements OnInit {
   readonly totalPoints = computed(() =>
     this.achievements()
       .filter((a) => a.isUnlocked)
-      .reduce((sum, a) => sum + a.points, 0)
+      .reduce((sum, a) => sum + a.points, 0),
   );
 
-  readonly unlockedCount = computed(() =>
-    this.achievements().filter((a) => a.isUnlocked).length
+  readonly unlockedCount = computed(
+    () => this.achievements().filter((a) => a.isUnlocked).length,
   );
 
   readonly totalAchievements = computed(() => this.achievements().length);
@@ -377,9 +575,11 @@ export class AchievementsComponent implements OnInit {
   readonly recentUnlocks = computed(() =>
     this.achievements()
       .filter((a) => a.isUnlocked && a.unlockedAt)
-      .sort((a, b) =>
-        new Date(b.unlockedAt ?? 0).getTime() - new Date(a.unlockedAt ?? 0).getTime()
-      )
+      .sort(
+        (a, b) =>
+          new Date(b.unlockedAt ?? 0).getTime() -
+          new Date(a.unlockedAt ?? 0).getTime(),
+      ),
   );
 
   readonly recentUnlock = computed(() => this.recentUnlocks()[0] || null);
@@ -411,7 +611,9 @@ export class AchievementsComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/achievements"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/achievements"),
+      );
       if (response?.success && response.data) {
         if (response.data.achievements) {
           this.achievements.set(response.data.achievements);
@@ -423,7 +625,10 @@ export class AchievementsComponent implements OnInit {
     } catch (err) {
       this.logger.error("Failed to load achievements data", err);
       // Initialize with achievement definitions (all locked until user earns them)
-      const initialAchievements = ACHIEVEMENT_DEFINITIONS.map((a) => ({ ...a, isUnlocked: false }));
+      const initialAchievements = ACHIEVEMENT_DEFINITIONS.map((a) => ({
+        ...a,
+        isUnlocked: false,
+      }));
       this.achievements.set(initialAchievements);
       this.leaderboard.set([]);
     } finally {

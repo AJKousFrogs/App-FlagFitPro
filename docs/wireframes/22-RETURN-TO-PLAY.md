@@ -199,15 +199,15 @@ Evidence-based graduated protocols for athletes returning from injury or extende
 
 ## 7-Stage Protocol
 
-| Stage | Name | Load % | Min Days | Activities | Progression Criteria |
-|-------|------|--------|----------|------------|---------------------|
-| 1 | Rest | 0% | 2 | Complete rest, medical treatment | Pain at rest < 2/10, swelling reduced |
-| 2 | Light Activity | 20% | 3 | Walking, light stretching, pool | Pain-free walking, ROM 90% normal |
-| 3 | Sport-Specific Low | 40% | 3 | Position drills low intensity | Pain-free at 40%, light jogging OK |
-| 4 | Sport-Specific Moderate | 60% | 3 | Drills moderate intensity, jogging | 3 pain-free sessions, ROM/strength 80%+ |
-| 5 | Sport-Specific High | 80% | 3 | Full drills, non-contact | Sprint pain-free, strength 90%+ |
-| 6 | Full Training | 100% | 2 | Full team training | Complete full practice |
-| 7 | Full Competition | 100% | N/A | Cleared for games | Coach + medical clearance |
+| Stage | Name                    | Load % | Min Days | Activities                         | Progression Criteria                    |
+| ----- | ----------------------- | ------ | -------- | ---------------------------------- | --------------------------------------- |
+| 1     | Rest                    | 0%     | 2        | Complete rest, medical treatment   | Pain at rest < 2/10, swelling reduced   |
+| 2     | Light Activity          | 20%    | 3        | Walking, light stretching, pool    | Pain-free walking, ROM 90% normal       |
+| 3     | Sport-Specific Low      | 40%    | 3        | Position drills low intensity      | Pain-free at 40%, light jogging OK      |
+| 4     | Sport-Specific Moderate | 60%    | 3        | Drills moderate intensity, jogging | 3 pain-free sessions, ROM/strength 80%+ |
+| 5     | Sport-Specific High     | 80%    | 3        | Full drills, non-contact           | Sprint pain-free, strength 90%+         |
+| 6     | Full Training           | 100%   | 2        | Full team training                 | Complete full practice                  |
+| 7     | Full Competition        | 100%   | N/A      | Cleared for games                  | Coach + medical clearance               |
 
 ---
 
@@ -215,30 +215,30 @@ Evidence-based graduated protocols for athletes returning from injury or extende
 
 ```typescript
 const MUSCLE_STRAIN_PROTOCOL: ReturnProtocol = {
-  injuryType: 'muscle_strain',
+  injuryType: "muscle_strain",
   stages: [
     {
       stage: 1,
-      name: 'Initial Rest',
+      name: "Initial Rest",
       minimumDays: 2,
       loadPercentage: 0,
-      activities: ['Rest', 'Ice', 'Compression', 'Elevation'],
-      restrictions: ['No running', 'No sport activity'],
-      progressionCriteria: ['Pain at rest < 2/10', 'Swelling reduced']
+      activities: ["Rest", "Ice", "Compression", "Elevation"],
+      restrictions: ["No running", "No sport activity"],
+      progressionCriteria: ["Pain at rest < 2/10", "Swelling reduced"],
     },
     {
       stage: 2,
-      name: 'Light Activity',
+      name: "Light Activity",
       minimumDays: 3,
       loadPercentage: 20,
-      activities: ['Walking', 'Gentle stretching', 'Pool walking'],
-      restrictions: ['No sprinting', 'No cutting'],
-      progressionCriteria: ['Pain-free walking', 'ROM 90% of normal']
+      activities: ["Walking", "Gentle stretching", "Pool walking"],
+      restrictions: ["No sprinting", "No cutting"],
+      progressionCriteria: ["Pain-free walking", "ROM 90% of normal"],
     },
     // ... stages 3-7
   ],
   totalMinimumDays: 14,
-  evidenceBase: 'Blanch & Gabbett 2016'
+  evidenceBase: "Blanch & Gabbett 2016",
 };
 ```
 
@@ -247,20 +247,24 @@ const MUSCLE_STRAIN_PROTOCOL: ReturnProtocol = {
 ## Re-injury Risk Assessment
 
 ```typescript
-function assessReinjuryRisk(injury: InjuryRecord, trainingData: TrainingData): RiskLevel {
+function assessReinjuryRisk(
+  injury: InjuryRecord,
+  trainingData: TrainingData,
+): RiskLevel {
   const factors = {
-    rushingReturn: injury.daysInRecovery < injury.protocol.totalMinimumDays * 0.8,
+    rushingReturn:
+      injury.daysInRecovery < injury.protocol.totalMinimumDays * 0.8,
     previousReinjury: injury.reinjuryCount > 0,
     highACWR: trainingData.acwr > 1.3,
     poorSleep: trainingData.avgSleep < 7,
-    incompleteCriteria: !allCriteriaMet(injury)
+    incompleteCriteria: !allCriteriaMet(injury),
   };
-  
+
   const riskScore = Object.values(factors).filter(Boolean).length;
-  
-  if (riskScore >= 3) return { level: 'high', color: 'danger' };
-  if (riskScore >= 2) return { level: 'moderate', color: 'warn' };
-  return { level: 'low', color: 'success' };
+
+  if (riskScore >= 3) return { level: "high", color: "danger" };
+  if (riskScore >= 2) return { level: "moderate", color: "warn" };
+  return { level: "low", color: "success" };
 }
 ```
 
@@ -268,41 +272,41 @@ function assessReinjuryRisk(injury: InjuryRecord, trainingData: TrainingData): R
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Active Recovery Protocol Display | ❌ | HIGH |
-| 7-Stage Visual Progress | ❌ | HIGH |
-| Current Stage Details | ❌ | HIGH |
-| Allowed Activities List | ❌ | HIGH |
-| Restrictions List | ❌ | HIGH |
-| Progression Criteria Checklist | ❌ | HIGH |
-| Daily Check-in Form | ❌ | HIGH |
-| Pain Level Tracking | ❌ | HIGH |
-| Function Score | ❌ | MEDIUM |
-| Confidence Level | ❌ | MEDIUM |
-| Recovery Progress Chart | ❌ | MEDIUM |
-| Start Protocol Dialog | ❌ | HIGH |
-| Injury Type Selection | ❌ | HIGH |
-| Severity Selection | ❌ | HIGH |
-| Coach Notification | ❌ | MEDIUM |
-| Re-injury Risk Warning | ❌ | MEDIUM |
+| Feature                          | Status | Priority |
+| -------------------------------- | ------ | -------- |
+| Active Recovery Protocol Display | ❌     | HIGH     |
+| 7-Stage Visual Progress          | ❌     | HIGH     |
+| Current Stage Details            | ❌     | HIGH     |
+| Allowed Activities List          | ❌     | HIGH     |
+| Restrictions List                | ❌     | HIGH     |
+| Progression Criteria Checklist   | ❌     | HIGH     |
+| Daily Check-in Form              | ❌     | HIGH     |
+| Pain Level Tracking              | ❌     | HIGH     |
+| Function Score                   | ❌     | MEDIUM   |
+| Confidence Level                 | ❌     | MEDIUM   |
+| Recovery Progress Chart          | ❌     | MEDIUM   |
+| Start Protocol Dialog            | ❌     | HIGH     |
+| Injury Type Selection            | ❌     | HIGH     |
+| Severity Selection               | ❌     | HIGH     |
+| Coach Notification               | ❌     | MEDIUM   |
+| Re-injury Risk Warning           | ❌     | MEDIUM   |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Injury records | `ReturnToPlayService` | `injury_records` |
-| Daily check-ins | `ReturnToPlayService` | `rtp_daily_log` |
-| Protocol templates | `ReturnToPlayService` | `rtp_protocols` |
+| Data               | Service               | Table            |
+| ------------------ | --------------------- | ---------------- |
+| Injury records     | `ReturnToPlayService` | `injury_records` |
+| Daily check-ins    | `ReturnToPlayService` | `rtp_daily_log`  |
+| Protocol templates | `ReturnToPlayService` | `rtp_protocols`  |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Wellness | `/wellness` | Recovery metrics |
-| ACWR Dashboard | `/acwr-dashboard` | Load monitoring |
-| Roster | `/roster` | Injury status display |
+| Page           | Route             | Relationship          |
+| -------------- | ----------------- | --------------------- |
+| Wellness       | `/wellness`       | Recovery metrics      |
+| ACWR Dashboard | `/acwr-dashboard` | Load monitoring       |
+| Roster         | `/roster`         | Injury status display |

@@ -7,6 +7,7 @@
 ## ⚡ STEP 1: Make Sure Changes Are Visible (5 min)
 
 ### Clear Everything:
+
 ```bash
 # Stop all running servers
 # Then run:
@@ -17,6 +18,7 @@ npm start
 ```
 
 ### In Browser:
+
 1. Open Chrome DevTools (F12)
 2. Go to **Network** tab
 3. Check **"Disable cache"** checkbox
@@ -30,22 +32,26 @@ npm start
 ## 🔧 STEP 2: Fix CI Pipeline (10 min)
 
 ### Check What's Failing:
+
 ```bash
 npm run lint
 npm run build:production
 ```
 
 ### Quick Fixes:
+
 - **Lint errors?** → `npm run lint:fix`
 - **TypeScript errors?** → Fix or temporarily skip
 - **Build errors?** → Check `angular/angular.json`
 
 ### Make Tests Non-Blocking (Temporary):
+
 Edit `.github/workflows/ci.yml`:
+
 ```yaml
 - name: Run unit tests
   run: npm run test:unit
-  continue-on-error: true  # Add this line
+  continue-on-error: true # Add this line
 ```
 
 **Goal:** Get CI passing so deployments work.
@@ -55,6 +61,7 @@ Edit `.github/workflows/ci.yml`:
 ## 🚀 STEP 3: Fix Netlify Deployment (15 min)
 
 ### Test Build Locally:
+
 ```bash
 cd angular
 npm ci
@@ -62,11 +69,13 @@ npm run build
 ```
 
 ### If Build Fails:
+
 1. Fix TypeScript errors
 2. Fix missing dependencies
 3. Fix import errors
 
 ### If Build Succeeds:
+
 1. Check Netlify dashboard → Build logs
 2. Check environment variables in Netlify UI
 3. Verify Node version is 22
@@ -80,6 +89,7 @@ npm run build
 ### Pick ONE page (recommend: Dashboard/Today)
 
 ### Process:
+
 1. Open page in browser
 2. Open DevTools (F12)
 3. Inspect ONE broken element (e.g., a button)
@@ -89,6 +99,7 @@ npm run build
 7. Commit
 
 ### Example: Fix Button Text Color
+
 ```scss
 // In angular/src/styles.scss, add at the END:
 .p-button:not(.p-button-outlined):not(.p-button-text) * {

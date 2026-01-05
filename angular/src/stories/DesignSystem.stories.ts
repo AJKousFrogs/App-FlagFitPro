@@ -1,30 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { applicationConfig } from '@storybook/angular';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { CommonModule } from '@angular/common';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { applicationConfig } from "@storybook/angular";
+import { provideAnimations } from "@angular/platform-browser/animations";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { InputTextModule } from "primeng/inputtext";
+import { CommonModule } from "@angular/common";
 
 /**
  * Design System Showcase
- * 
+ *
  * This story demonstrates the complete design system without legacy CSS interference.
  * Use this as a reference when refactoring components.
  */
 
 const meta: Meta = {
-  title: 'Design System/Showcase',
+  title: "Design System/Showcase",
   decorators: [
     applicationConfig({
       providers: [provideAnimations()],
     }),
   ],
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
-        component: 'Complete design system showcase - colors, spacing, typography, components',
+        component:
+          "Complete design system showcase - colors, spacing, typography, components",
       },
     },
   },

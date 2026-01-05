@@ -7,19 +7,22 @@ const pool = new Pool({
 
 async function listColumns() {
   const tables = [
-    'athlete_nutrition_profiles',
-    'user_nutrition_targets',
-    'recovery_sessions',
-    'recovery_recommendations'
+    "athlete_nutrition_profiles",
+    "user_nutrition_targets",
+    "recovery_sessions",
+    "recovery_recommendations",
   ];
-  
+
   for (const table of tables) {
     console.log(`\n--- Columns for ${table} ---`);
-    const res = await pool.query(`
+    const res = await pool.query(
+      `
       SELECT column_name, is_nullable, data_type 
       FROM information_schema.columns 
       WHERE table_name = $1
-    `, [table]);
+    `,
+      [table],
+    );
     console.log(JSON.stringify(res.rows, null, 2));
   }
   await pool.end();

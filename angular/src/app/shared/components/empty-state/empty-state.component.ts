@@ -20,9 +20,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-empty-state",
   standalone: true,
-  imports: [CommonModule, RouterModule, CardModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, RouterModule, CardModule, ButtonComponent],
   template: `
     <div class="empty-state" [class.compact]="compact()">
       @if (icon()) {
@@ -61,9 +59,15 @@ import { ButtonComponent } from "../button/button.component";
         <!-- Secondary action (optional) -->
         @if (secondaryActionLabel()) {
           @if (secondaryActionLink()) {
-            <app-button variant="outlined" routerLink="secondaryActionLink()!"></app-button>
+            <app-button
+              variant="outlined"
+              routerLink="secondaryActionLink()!"
+            ></app-button>
           } @else {
-            <app-button variant="outlined" (clicked)="handleSecondaryAction()"></app-button>
+            <app-button
+              variant="outlined"
+              (clicked)="handleSecondaryAction()"
+            ></app-button>
           }
         }
       </div>
@@ -79,7 +83,7 @@ import { ButtonComponent } from "../button/button.component";
       }
     </div>
   `,
-  styleUrl: './empty-state.component.scss',
+  styleUrl: "./empty-state.component.scss",
 })
 export class EmptyStateComponent {
   // Angular 21: Use input() signal instead of @Input()

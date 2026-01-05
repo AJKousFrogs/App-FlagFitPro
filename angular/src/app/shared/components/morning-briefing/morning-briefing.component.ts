@@ -15,13 +15,13 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -44,10 +44,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { WellnessService } from "../../../core/services/wellness.service";
-import {
-    ButtonComponent,
-    CardComponent,
-} from "../ui-components";
+import { ButtonComponent, CardComponent } from "../ui-components";
 
 interface QuickCheckIn {
   overallFeeling: number;
@@ -92,7 +89,9 @@ interface TodaysPlan {
             <div class="greeting">
               <span class="greeting-emoji">{{ getTimeEmoji() }}</span>
               <div class="greeting-text">
-                <h2 data-testid="welcome-message">{{ getGreeting() }}, {{ userName() }}!</h2>
+                <h2 data-testid="welcome-message">
+                  {{ getGreeting() }}, {{ userName() }}!
+                </h2>
                 <p class="date-text">{{ formattedDate() }}</p>
               </div>
             </div>
@@ -133,15 +132,29 @@ interface TodaysPlan {
                 todaysPlan()?.sessionType || "Rest"
               }}</span>
               <span class="metric-context muted">
-                {{ todaysPlan()?.duration ? todaysPlan()?.duration + ' min' : 'No session' }}
+                {{
+                  todaysPlan()?.duration
+                    ? todaysPlan()?.duration + " min"
+                    : "No session"
+                }}
               </span>
             </div>
             <div class="metric">
               <span class="metric-label">SUPPLEMENTS</span>
-              <span class="metric-value" [class]="quickCheckIn.tookSupplements ? 'status-good' : 'status-pending'">
+              <span
+                class="metric-value"
+                [class]="
+                  quickCheckIn.tookSupplements
+                    ? 'status-good'
+                    : 'status-pending'
+                "
+              >
                 {{ quickCheckIn.tookSupplements ? "Done" : "Pending" }}
               </span>
-              <span class="metric-context" [class]="quickCheckIn.tookSupplements ? 'muted' : 'status-warn'">
+              <span
+                class="metric-context"
+                [class]="quickCheckIn.tookSupplements ? 'muted' : 'status-warn'"
+              >
                 {{ getSupplementContext() }}
               </span>
             </div>
@@ -163,8 +176,8 @@ interface TodaysPlan {
             </div>
           }
 
-          <app-button 
-            variant="text" 
+          <app-button
+            variant="text"
             [fullWidth]="true"
             iconRight="chevron-down"
           >
@@ -181,12 +194,14 @@ interface TodaysPlan {
             <div class="greeting">
               <span class="greeting-emoji">{{ getTimeEmoji() }}</span>
               <div class="greeting-text">
-                <h2 data-testid="welcome-message-expanded">{{ getGreeting() }}, {{ userName() }}!</h2>
+                <h2 data-testid="welcome-message-expanded">
+                  {{ getGreeting() }}, {{ userName() }}!
+                </h2>
                 <p class="date-text">{{ formattedDate() }}</p>
               </div>
             </div>
-            <app-button 
-              variant="text" 
+            <app-button
+              variant="text"
               icon="times"
               ariaLabel="Collapse briefing"
               (clicked)="collapse()"
@@ -202,11 +217,19 @@ interface TodaysPlan {
                 <span class="time-badge">~30 sec</span>
               </h3>
 
-              <div class="checkin-form" role="form" aria-label="Quick wellness check-in form">
+              <div
+                class="checkin-form"
+                role="form"
+                aria-label="Quick wellness check-in form"
+              >
                 <!-- Overall Feeling Slider -->
                 <div class="feeling-slider">
                   <label id="feeling-label">How do you feel overall?</label>
-                  <div class="slider-container" role="group" aria-labelledby="feeling-label">
+                  <div
+                    class="slider-container"
+                    role="group"
+                    aria-labelledby="feeling-label"
+                  >
                     <span class="emoji-label" aria-hidden="true">😫</span>
                     <p-slider
                       [(ngModel)]="quickCheckIn.overallFeeling"
@@ -214,14 +237,20 @@ interface TodaysPlan {
                       [max]="10"
                       [step]="1"
                       styleClass="feeling-slider-input"
-                      [ariaLabel]="'Overall feeling rating: ' + quickCheckIn.overallFeeling + ' out of 10'"
+                      [ariaLabel]="
+                        'Overall feeling rating: ' +
+                        quickCheckIn.overallFeeling +
+                        ' out of 10'
+                      "
                     ></p-slider>
                     <span class="emoji-label" aria-hidden="true">🔥</span>
                   </div>
                   <div class="slider-value" aria-live="polite">
                     <span class="visually-hidden">Current rating:</span>
                     {{ quickCheckIn.overallFeeling }}/10
-                    <span class="feeling-label">{{ getFeelingLabel(quickCheckIn.overallFeeling) }}</span>
+                    <span class="feeling-label">{{
+                      getFeelingLabel(quickCheckIn.overallFeeling)
+                    }}</span>
                   </div>
                 </div>
 
@@ -244,7 +273,9 @@ interface TodaysPlan {
                       class="sleep-quality"
                       [class]="getSleepQualityClass()"
                       role="status"
-                      [attr.aria-label]="'Sleep quality: ' + getSleepQualityLabel()"
+                      [attr.aria-label]="
+                        'Sleep quality: ' + getSleepQualityLabel()
+                      "
                     >
                       {{ getSleepQualityLabel() }}
                     </span>
@@ -282,7 +313,9 @@ interface TodaysPlan {
                       [binary]="true"
                       inputId="tookSupplements"
                     ></p-checkbox>
-                    <label for="tookSupplements">Did you take your supplements?</label>
+                    <label for="tookSupplements"
+                      >Did you take your supplements?</label
+                    >
                   </div>
                   @if (quickCheckIn.tookSupplements) {
                     <div class="supplement-details">
@@ -302,7 +335,8 @@ interface TodaysPlan {
                   [fullWidth]="true"
                   [loading]="isSubmitting()"
                   (clicked)="submitQuickCheckIn()"
-                >Submit Quick Check-in</app-button>
+                  >Submit Quick Check-in</app-button
+                >
 
                 <a routerLink="/wellness" class="full-checkin-link">
                   Need full check-in? →
@@ -324,11 +358,8 @@ interface TodaysPlan {
               Today's Plan
             </h3>
 
-            @if (todaysPlan() && todaysPlan()?.sessionType !== 'Rest') {
-              <app-card 
-                variant="outlined"
-                [flush]="true"
-              >
+            @if (todaysPlan() && todaysPlan()?.sessionType !== "Rest") {
+              <app-card variant="outlined" [flush]="true">
                 <div class="plan-header-custom">
                   <div class="plan-type">
                     <span class="type-badge">{{
@@ -336,7 +367,7 @@ interface TodaysPlan {
                     }}</span>
                     <span class="duration"
                       >{{ todaysPlan()!.duration }} min</span
-                     >
+                    >
                   </div>
                   <p-tag
                     [value]="todaysPlan()!.phase"
@@ -384,7 +415,8 @@ interface TodaysPlan {
                   iconLeft="play"
                   [fullWidth]="true"
                   routerLink="/training/daily"
-                >Start Today's Practice</app-button>
+                  >Start Today's Practice</app-button
+                >
               </app-card>
             } @else {
               <div class="rest-day">
@@ -395,7 +427,8 @@ interface TodaysPlan {
                   variant="outlined"
                   iconLeft="heart"
                   routerLink="/wellness"
-                >View Recovery Protocols</app-button>
+                  >View Recovery Protocols</app-button
+                >
               </div>
             }
           </div>
@@ -438,12 +471,14 @@ interface TodaysPlan {
                   variant="primary"
                   icon="check-square"
                   routerLink="/game/readiness"
-                >Game Day Check-in</app-button>
+                  >Game Day Check-in</app-button
+                >
                 <app-button
                   variant="outlined"
                   icon="heart"
                   routerLink="/game/nutrition"
-                >Nutrition Plan</app-button>
+                  >Nutrition Plan</app-button
+                >
               </div>
             </div>
           }
@@ -688,16 +723,18 @@ export class MorningBriefingComponent implements OnInit {
         game_time?: string;
         location?: string;
       }
-      const response = await firstValueFrom(this.apiService.get<GameData[]>('/api/games', {
-        startDate: today.toISOString().split('T')[0],
-        endDate: twoDaysFromNow.toISOString().split('T')[0],
-        limit: 1
-      }));
+      const response = await firstValueFrom(
+        this.apiService.get<GameData[]>("/api/games", {
+          startDate: today.toISOString().split("T")[0],
+          endDate: twoDaysFromNow.toISOString().split("T")[0],
+          limit: 1,
+        }),
+      );
 
       if (response && response.data && response.data.length > 0) {
         const game = response.data[0];
         const gameDate = new Date(game.game_date);
-        
+
         // Only show if the game is in the future
         if (gameDate.getTime() > Date.now()) {
           this.upcomingGame.set({
@@ -735,7 +772,10 @@ export class MorningBriefingComponent implements OnInit {
       };
 
       // Handle supplements if taken
-      if (this.quickCheckIn.tookSupplements && this.quickCheckIn.supplementsTaken) {
+      if (
+        this.quickCheckIn.tookSupplements &&
+        this.quickCheckIn.supplementsTaken
+      ) {
         // Log supplements - ideally unified service would handle this too
         // For now, let's just use the wellness submission which includes hydration
       }
@@ -746,7 +786,8 @@ export class MorningBriefingComponent implements OnInit {
         this.checkInComplete.emit();
       } else {
         this.toastService.error(
-          (result as { error?: string } | null)?.error || "Failed to save check-in",
+          (result as { error?: string } | null)?.error ||
+            "Failed to save check-in",
         );
       }
       this.isSubmitting.set(false);

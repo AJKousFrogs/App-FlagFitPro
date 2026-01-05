@@ -16,7 +16,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const authHeader = event.headers.authorization || event.headers.Authorization;
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
     if (!authHeader?.startsWith("Bearer ")) {
       return {
         statusCode: 401,
@@ -41,7 +42,9 @@ exports.handler = async (event) => {
       };
     }
 
-    const path = event.path.replace("/.netlify/functions/achievements", "").replace("/api/achievements", "");
+    const path = event.path
+      .replace("/.netlify/functions/achievements", "")
+      .replace("/api/achievements", "");
     const method = event.httpMethod;
 
     // GET /achievements - Get all achievements with user progress
@@ -110,12 +113,19 @@ async function getAchievements(supabase, userId, headers) {
   const earnedMap = new Map(earned?.map((e) => [e.achievement_id, e]) || []);
 
   // Get user's streaks for progress calculation
-  const { data: streaks } = await supabase.from("player_streaks").select("*").eq("user_id", userId);
+  const { data: streaks } = await supabase
+    .from("player_streaks")
+    .select("*")
+    .eq("user_id", userId);
 
   const streakMap = new Map(streaks?.map((s) => [s.streak_type, s]) || []);
 
   // Get user's stats
-  const { data: stats } = await supabase.from("player_training_stats").select("*").eq("user_id", userId).single();
+  const { data: stats } = await supabase
+    .from("player_training_stats")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
 
   // Enhance achievements with earned status and progress
   const achievements = definitions.map((def) => {
@@ -129,7 +139,10 @@ async function getAchievements(supabase, userId, headers) {
       contextData: earnedData?.context_data,
       progress: progress.current,
       progressMax: progress.max,
-      progressPercent: Math.min(100, Math.round((progress.current / progress.max) * 100)),
+      progressPercent: Math.min(
+        100,
+        Math.round((progress.current / progress.max) * 100),
+      ),
     };
   });
 
@@ -147,7 +160,9 @@ async function getAchievements(supabase, userId, headers) {
     totalEarned: achievements.filter((a) => a.earned).length,
     totalAvailable: achievements.length,
     totalPoints: stats?.total_points || 0,
-    nextAchievement: achievements.find((a) => !a.earned && a.progressPercent > 0),
+    nextAchievement: achievements.find(
+      (a) => !a.earned && a.progressPercent > 0,
+    ),
   };
 
   return {
@@ -165,7 +180,7 @@ async function getAchievements(supabase, userId, headers) {
 }
 
 function calculateProgress(criteria, streakMap, stats) {
-  const {type} = criteria;
+  const { type } = criteria;
 
   switch (type) {
     case "streak": {
@@ -250,7 +265,8 @@ async function getUserStats(supabase, userId, headers) {
         },
         weekStats: {
           sessions: thisWeek?.length || 0,
-          totalLoad: thisWeek?.reduce((sum, p) => sum + (p.total_load_au || 0), 0) || 0,
+          totalLoad:
+            thisWeek?.reduce((sum, p) => sum + (p.total_load_au || 0), 0) || 0,
         },
       },
     }),
@@ -258,7 +274,10 @@ async function getUserStats(supabase, userId, headers) {
 }
 
 async function getUserStreaks(supabase, userId, headers) {
-  const { data: streaks, error } = await supabase.from("player_streaks").select("*").eq("user_id", userId);
+  const { data: streaks, error } = await supabase
+    .from("player_streaks")
+    .select("*")
+    .eq("user_id", userId);
 
   if (error) {
     return {
@@ -271,7 +290,9 @@ async function getUserStreaks(supabase, userId, headers) {
   // Format streaks with additional info
   const formatted = (streaks || []).map((s) => {
     const daysSinceActivity = s.last_activity_date
-      ? Math.floor((new Date() - new Date(s.last_activity_date)) / (1000 * 60 * 60 * 24))
+      ? Math.floor(
+          (new Date() - new Date(s.last_activity_date)) / (1000 * 60 * 60 * 24),
+        )
       : null;
 
     return {
@@ -327,7 +348,11 @@ async function updateStreak(supabase, userId, payload, headers) {
 
     if (awarded.data) {
       // Get achievement details
-      const { data: achDetail } = await supabase.from("achievement_definitions").select("*").eq("slug", slug).single();
+      const { data: achDetail } = await supabase
+        .from("achievement_definitions")
+        .select("*")
+        .eq("slug", slug)
+        .single();
 
       if (achDetail) {
         awardedAchievements.push(achDetail);
@@ -350,15 +375,25 @@ async function updateStreak(supabase, userId, payload, headers) {
 
 async function checkAchievements(supabase, userId, headers) {
   // Get user's stats
-  const { data: stats } = await supabase.from("player_training_stats").select("*").eq("user_id", userId).single();
+  const { data: stats } = await supabase
+    .from("player_training_stats")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
 
   // Get user's streaks
-  const { data: streaks } = await supabase.from("player_streaks").select("*").eq("user_id", userId);
+  const { data: streaks } = await supabase
+    .from("player_streaks")
+    .select("*")
+    .eq("user_id", userId);
 
   const streakMap = new Map(streaks?.map((s) => [s.streak_type, s]) || []);
 
   // Get all unearned achievements
-  const { data: earnedIds } = await supabase.from("player_achievements").select("achievement_id").eq("user_id", userId);
+  const { data: earnedIds } = await supabase
+    .from("player_achievements")
+    .select("achievement_id")
+    .eq("user_id", userId);
 
   const earnedSet = new Set(earnedIds?.map((e) => e.achievement_id) || []);
 
@@ -370,7 +405,9 @@ async function checkAchievements(supabase, userId, headers) {
   const newlyEarned = [];
 
   for (const def of definitions || []) {
-    if (earnedSet.has(def.id)) {continue;}
+    if (earnedSet.has(def.id)) {
+      continue;
+    }
 
     const shouldAward = checkCriteria(def.criteria, streakMap, stats);
 
@@ -401,7 +438,7 @@ async function checkAchievements(supabase, userId, headers) {
 }
 
 function checkCriteria(criteria, streakMap, stats) {
-  const {type} = criteria;
+  const { type } = criteria;
 
   switch (type) {
     case "streak": {

@@ -28,7 +28,7 @@
   transition: all var(--transition-fast);
   background: var(--surface-primary);
   border: 2px solid var(--color-border-secondary);
-  
+
   &:hover {
     box-shadow: var(--shadow-2);
     transform: translateY(-4px);
@@ -51,4 +51,3 @@
 .text-blue-600 {
   color: var(--color-status-info);
 }
-

@@ -209,62 +209,62 @@ Allows players to watch assigned game film, see moments where they're tagged by 
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Assigned Film | Required watching from coach |
-| Watch Progress | Track completion % |
-| Due Dates | Deadline for required film |
-| Tagged Moments | Clips where coach mentioned you |
-| Positive vs Correction | Clear feedback categorization |
-| Jump to Timestamp | Click to go to specific moment |
-| Discussion Thread | Ask questions about plays |
-| Watch History | See completed film |
+| Feature                | Description                     |
+| ---------------------- | ------------------------------- |
+| Assigned Film          | Required watching from coach    |
+| Watch Progress         | Track completion %              |
+| Due Dates              | Deadline for required film      |
+| Tagged Moments         | Clips where coach mentioned you |
+| Positive vs Correction | Clear feedback categorization   |
+| Jump to Timestamp      | Click to go to specific moment  |
+| Discussion Thread      | Ask questions about plays       |
+| Watch History          | See completed film              |
 
 ---
 
 ## Tag Types
 
-| Type | Icon | Purpose |
-|------|------|---------|
-| Positive | ✅ | Great execution, good example |
-| Correction | 📝 | Area for improvement |
-| Teaching Point | 📋 | General team learning |
-| Opponent Tendency | 👀 | Scouting observation |
+| Type              | Icon | Purpose                       |
+| ----------------- | ---- | ----------------------------- |
+| Positive          | ✅   | Great execution, good example |
+| Correction        | 📝   | Area for improvement          |
+| Teaching Point    | 📋   | General team learning         |
+| Opponent Tendency | 👀   | Scouting observation          |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Film Stats Overview | ❌ | MEDIUM |
-| Assigned Film List | ❌ | HIGH |
-| Watch Progress Tracking | ❌ | HIGH |
-| My Tagged Moments | ❌ | HIGH |
-| Video Player Integration | ❌ | HIGH |
-| Jump to Timestamp | ❌ | HIGH |
-| Tag List on Video | ❌ | MEDIUM |
-| Discussion Thread | ❌ | MEDIUM |
-| Completed Film History | ❌ | LOW |
-| Due Date Notifications | ❌ | MEDIUM |
+| Feature                  | Status | Priority |
+| ------------------------ | ------ | -------- |
+| Film Stats Overview      | ❌     | MEDIUM   |
+| Assigned Film List       | ❌     | HIGH     |
+| Watch Progress Tracking  | ❌     | HIGH     |
+| My Tagged Moments        | ❌     | HIGH     |
+| Video Player Integration | ❌     | HIGH     |
+| Jump to Timestamp        | ❌     | HIGH     |
+| Tag List on Video        | ❌     | MEDIUM   |
+| Discussion Thread        | ❌     | MEDIUM   |
+| Completed Film History   | ❌     | LOW      |
+| Due Date Notifications   | ❌     | MEDIUM   |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Film sessions | `FilmService` | `film_sessions` |
-| Video timestamps | `FilmService` | `video_timestamps` |
-| Player assignments | `FilmService` | `film_assignments` |
-| Watch progress | `FilmService` | `film_watch_progress` |
-| Comments | `FilmService` | `film_comments` |
+| Data               | Service       | Table                 |
+| ------------------ | ------------- | --------------------- |
+| Film sessions      | `FilmService` | `film_sessions`       |
+| Video timestamps   | `FilmService` | `video_timestamps`    |
+| Player assignments | `FilmService` | `film_assignments`    |
+| Watch progress     | `FilmService` | `film_watch_progress` |
+| Comments           | `FilmService` | `film_comments`       |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Playbook | `/playbook` | Tagged plays link to playbook |
-| Team Chat | `/team-chat` | Discussion threads |
+| Page      | Route        | Relationship                  |
+| --------- | ------------ | ----------------------------- |
+| Playbook  | `/playbook`  | Tagged plays link to playbook |
+| Team Chat | `/team-chat` | Discussion threads            |

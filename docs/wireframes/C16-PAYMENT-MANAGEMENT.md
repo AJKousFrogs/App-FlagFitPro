@@ -236,47 +236,47 @@ Manage team fees, track player payments, send reminders, and maintain financial 
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Fee Creation | Various fee types |
-| Collection Tracking | Real-time progress |
-| Player Balances | Individual ledgers |
-| Payment Recording | Log received payments |
-| Reminders | Automated & manual |
-| Guest Fees | Tournament guests |
-| Cost Breakdown | Transparency for players |
-| Export | CSV for records |
-| Payment Methods | Multiple options |
+| Feature             | Description              |
+| ------------------- | ------------------------ |
+| Fee Creation        | Various fee types        |
+| Collection Tracking | Real-time progress       |
+| Player Balances     | Individual ledgers       |
+| Payment Recording   | Log received payments    |
+| Reminders           | Automated & manual       |
+| Guest Fees          | Tournament guests        |
+| Cost Breakdown      | Transparency for players |
+| Export              | CSV for records          |
+| Payment Methods     | Multiple options         |
 
 ---
 
 ## Fee Types
 
-| Type | Examples |
-|------|----------|
-| Monthly Dues | Regular team dues |
-| Tournament | Entry + costs |
-| Equipment | Jersey, gear |
-| One-time | Registration, special |
+| Type         | Examples              |
+| ------------ | --------------------- |
+| Monthly Dues | Regular team dues     |
+| Tournament   | Entry + costs         |
+| Equipment    | Jersey, gear          |
+| One-time     | Registration, special |
 
 ---
 
 ## Payment Status
 
-| Status | Color | Description |
-|--------|-------|-------------|
-| Paid | 🟢 Green | Fully paid |
-| Due | 🟡 Yellow | Due within 7 days |
-| Overdue | 🔴 Red | Past due date |
-| Partial | 🟠 Orange | Partially paid |
+| Status  | Color     | Description       |
+| ------- | --------- | ----------------- |
+| Paid    | 🟢 Green  | Fully paid        |
+| Due     | 🟡 Yellow | Due within 7 days |
+| Overdue | 🔴 Red    | Past due date     |
+| Partial | 🟠 Orange | Partially paid    |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Fees | `PaymentService` | `team_fees` |
-| Payments | `PaymentService` | `payments` |
+| Data     | Service          | Table             |
+| -------- | ---------------- | ----------------- |
+| Fees     | `PaymentService` | `team_fees`       |
+| Payments | `PaymentService` | `payments`        |
 | Balances | `PaymentService` | `player_balances` |
-| Methods | `PaymentService` | `payment_methods` |
+| Methods  | `PaymentService` | `payment_methods` |

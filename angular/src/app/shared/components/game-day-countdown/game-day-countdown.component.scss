@@ -222,7 +222,9 @@
   border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--color-text-primary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   cursor: pointer;
 }
 
@@ -287,4 +289,3 @@
     flex-direction: column;
   }
 }
-

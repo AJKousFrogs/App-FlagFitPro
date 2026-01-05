@@ -1,9 +1,9 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
@@ -31,7 +31,13 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, CardModule, ButtonComponent, MessageModule, ToastModule],
+  imports: [
+    RouterModule,
+    CardModule,
+    ButtonComponent,
+    MessageModule,
+    ToastModule,
+  ],
 
   template: `
     <p-toast></p-toast>
@@ -64,7 +70,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               iconLeft="pi-home"
               routerLink="/dashboard"
               [fullWidth]="true"
-            >Go to Dashboard</app-button>
+              >Go to Dashboard</app-button
+            >
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
@@ -78,7 +85,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               (clicked)="resendVerification()"
               [loading]="isResending()"
               [fullWidth]="true"
-            >Resend Verification Email</app-button>
+              >Resend Verification Email</app-button
+            >
             <a [routerLink]="['/login']" class="back-to-login-link mt-4"
               >Back to Sign In</a
             >
@@ -99,7 +107,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               (clicked)="resendVerification()"
               [loading]="isResending()"
               [fullWidth]="true"
-            >Resend Verification Email</app-button>
+              >Resend Verification Email</app-button
+            >
             <a [routerLink]="['/login']" class="back-to-login-link mt-4"
               >Back to Sign In</a
             >
@@ -108,7 +117,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
       </p-card>
     </div>
   `,
-  styleUrl: './verify-email.component.scss',
+  styleUrl: "./verify-email.component.scss",
 })
 export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);

@@ -49,7 +49,13 @@ interface Stats {
 
 @Component({
   selector: "app-achievements-panel",
-  imports: [ TagModule, TooltipModule, ProgressBar, DialogModule, TabsModule, SkeletonModule,
+  imports: [
+    TagModule,
+    TooltipModule,
+    ProgressBar,
+    DialogModule,
+    TabsModule,
+    SkeletonModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -59,7 +65,11 @@ interface Stats {
       <div class="summary-card">
         <div class="summary-header">
           <h3>🏆 Achievements</h3>
-          <app-icon-button icon="pi-external-link" variant="text" ariaLabel="external-link" />
+          <app-icon-button
+            icon="pi-external-link"
+            variant="text"
+            ariaLabel="external-link"
+          />
         </div>
 
         @if (loading()) {
@@ -88,7 +98,9 @@ interface Stats {
             <div class="active-streaks">
               @for (streak of activeStreaks(); track streak.streak_type) {
                 <div class="streak-badge" [class.at-risk]="streak.atRisk">
-                  <span class="streak-icon">{{ getStreakIcon(streak.streak_type) }}</span>
+                  <span class="streak-icon">{{
+                    getStreakIcon(streak.streak_type)
+                  }}</span>
                   <span class="streak-count">{{ streak.current_streak }}</span>
                   @if (streak.atRisk) {
                     <span class="risk-badge">!</span>
@@ -102,11 +114,17 @@ interface Stats {
           @if (summary()?.nextAchievement) {
             <div class="next-achievement">
               <div class="next-header">
-                <span class="next-icon">{{ summary()?.nextAchievement?.icon }}</span>
+                <span class="next-icon">{{
+                  summary()?.nextAchievement?.icon
+                }}</span>
                 <div class="next-info">
-                  <span class="next-name">{{ summary()?.nextAchievement?.name }}</span>
+                  <span class="next-name">{{
+                    summary()?.nextAchievement?.name
+                  }}</span>
                   <span class="next-progress"
-                    >{{ summary()?.nextAchievement?.progress }}/{{ summary()?.nextAchievement?.progressMax }}</span
+                    >{{ summary()?.nextAchievement?.progress }}/{{
+                      summary()?.nextAchievement?.progressMax
+                    }}</span
                   >
                 </div>
               </div>
@@ -123,7 +141,9 @@ interface Stats {
             <div class="recent-achievements">
               <span class="recent-label">Recent:</span>
               @for (ach of recentAchievements(); track ach.id) {
-                <span class="recent-badge" [pTooltip]="ach.name">{{ ach.icon }}</span>
+                <span class="recent-badge" [pTooltip]="ach.name">{{
+                  ach.icon
+                }}</span>
               }
             </div>
           }
@@ -141,7 +161,11 @@ interface Stats {
         <p-tabs>
           <p-tabpanel value="all">
             <ng-template #header>
-              <span>All ({{ summary()?.totalEarned }}/{{ summary()?.totalAvailable }})</span>
+              <span
+                >All ({{ summary()?.totalEarned }}/{{
+                  summary()?.totalAvailable
+                }})</span
+              >
             </ng-template>
 
             <div class="achievements-grid">
@@ -149,23 +173,43 @@ interface Stats {
                 <div class="category-section">
                   <h4>{{ getCategoryLabel(category) }}</h4>
                   <div class="achievements-list">
-                    @for (ach of getAchievementsByCategory(category); track ach.id) {
-                      <div class="achievement-card" [class.earned]="ach.earned" [class.tier-{{ ach.tier }}]="true">
-                        <div class="ach-icon" [class.grayscale]="!ach.earned">{{ ach.icon }}</div>
+                    @for (
+                      ach of getAchievementsByCategory(category);
+                      track ach.id
+                    ) {
+                      <div
+                        class="achievement-card"
+                        [class.earned]="ach.earned"
+                        [class.tier-{{ ach.tier }}]="true"
+                      >
+                        <div class="ach-icon" [class.grayscale]="!ach.earned">
+                          {{ ach.icon }}
+                        </div>
                         <div class="ach-content">
                           <div class="ach-header">
                             <span class="ach-name">{{ ach.name }}</span>
-                            <p-tag [value]="ach.tier" [severity]="getTierSeverity(ach.tier)" />
+                            <p-tag
+                              [value]="ach.tier"
+                              [severity]="getTierSeverity(ach.tier)"
+                            />
                           </div>
                           <p class="ach-desc">{{ ach.description }}</p>
                           @if (!ach.earned && ach.progressPercent > 0) {
                             <div class="ach-progress">
-                              <p-progressBar [value]="ach.progressPercent" [showValue]="false" styleClass="h-1" />
-                              <span class="progress-text">{{ ach.progress }}/{{ ach.progressMax }}</span>
+                              <p-progressBar
+                                [value]="ach.progressPercent"
+                                [showValue]="false"
+                                styleClass="h-1"
+                              />
+                              <span class="progress-text"
+                                >{{ ach.progress }}/{{ ach.progressMax }}</span
+                              >
                             </div>
                           }
                           @if (ach.earned) {
-                            <span class="earned-date">Earned {{ formatDate(ach.earnedAt) }}</span>
+                            <span class="earned-date"
+                              >Earned {{ formatDate(ach.earnedAt) }}</span
+                            >
                           }
                         </div>
                         <span class="ach-points">{{ ach.points }} pts</span>
@@ -184,23 +228,37 @@ interface Stats {
 
             <div class="streaks-detail">
               @for (streak of streaks(); track streak.streak_type) {
-                <div class="streak-card" [class.active]="streak.isActive" [class.at-risk]="streak.atRisk">
+                <div
+                  class="streak-card"
+                  [class.active]="streak.isActive"
+                  [class.at-risk]="streak.atRisk"
+                >
                   <div class="streak-header">
-                    <span class="streak-type-icon">{{ getStreakIcon(streak.streak_type) }}</span>
-                    <span class="streak-type-name">{{ getStreakLabel(streak.streak_type) }}</span>
+                    <span class="streak-type-icon">{{
+                      getStreakIcon(streak.streak_type)
+                    }}</span>
+                    <span class="streak-type-name">{{
+                      getStreakLabel(streak.streak_type)
+                    }}</span>
                   </div>
                   <div class="streak-stats">
                     <div class="streak-stat">
-                      <span class="streak-value">{{ streak.current_streak }}</span>
+                      <span class="streak-value">{{
+                        streak.current_streak
+                      }}</span>
                       <span class="streak-label">Current</span>
                     </div>
                     <div class="streak-stat">
-                      <span class="streak-value">{{ streak.longest_streak }}</span>
+                      <span class="streak-value">{{
+                        streak.longest_streak
+                      }}</span>
                       <span class="streak-label">Best</span>
                     </div>
                   </div>
                   @if (streak.atRisk) {
-                    <div class="risk-warning">⚠️ Complete today to keep your streak!</div>
+                    <div class="risk-warning">
+                      ⚠️ Complete today to keep your streak!
+                    </div>
                   }
                   @if (!streak.isActive && streak.current_streak === 0) {
                     <div class="start-prompt">Start your streak today!</div>
@@ -219,22 +277,30 @@ interface Stats {
               <div class="stats-grid">
                 <div class="stat-card">
                   <span class="stat-icon">🏃</span>
-                  <span class="stat-value">{{ stats()?.total_sessions || 0 }}</span>
+                  <span class="stat-value">{{
+                    stats()?.total_sessions || 0
+                  }}</span>
                   <span class="stat-label">Training Sessions</span>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">💪</span>
-                  <span class="stat-value">{{ stats()?.total_exercises || 0 }}</span>
+                  <span class="stat-value">{{
+                    stats()?.total_exercises || 0
+                  }}</span>
                   <span class="stat-label">Exercises Completed</span>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">⏱️</span>
-                  <span class="stat-value">{{ formatMinutes(stats()?.total_training_minutes || 0) }}</span>
+                  <span class="stat-value">{{
+                    formatMinutes(stats()?.total_training_minutes || 0)
+                  }}</span>
                   <span class="stat-label">Training Time</span>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">📈</span>
-                  <span class="stat-value">{{ stats()?.total_load_au || 0 }}</span>
+                  <span class="stat-value">{{
+                    stats()?.total_load_au || 0
+                  }}</span>
                   <span class="stat-label">Total Load (AU)</span>
                 </div>
                 @if (stats()?.total_throws && stats()!.total_throws > 0) {
@@ -246,14 +312,19 @@ interface Stats {
                 }
                 <div class="stat-card">
                   <span class="stat-icon">🏆</span>
-                  <span class="stat-value">{{ stats()?.tournaments_completed || 0 }}</span>
+                  <span class="stat-value">{{
+                    stats()?.tournaments_completed || 0
+                  }}</span>
                   <span class="stat-label">Tournaments</span>
                 </div>
               </div>
 
               <div class="points-summary">
                 <h4>Total Points: {{ stats()?.total_points || 0 }}</h4>
-                <p>Earned from {{ stats()?.total_achievements || 0 }} achievements</p>
+                <p>
+                  Earned from
+                  {{ stats()?.total_achievements || 0 }} achievements
+                </p>
               </div>
             </div>
           </p-tabpanel>
@@ -261,7 +332,7 @@ interface Stats {
       </p-dialog>
     </div>
   `,
-  styleUrl: './achievements-panel.component.scss',
+  styleUrl: "./achievements-panel.component.scss",
 })
 export class AchievementsPanelComponent {
   private readonly api = inject(ApiService);
@@ -283,7 +354,9 @@ export class AchievementsPanelComponent {
 
   readonly categories = computed(() => Object.keys(this.grouped()));
 
-  readonly activeStreaks = computed(() => this.streaks().filter((s) => s.isActive || s.atRisk));
+  readonly activeStreaks = computed(() =>
+    this.streaks().filter((s) => s.isActive || s.atRisk),
+  );
 
   readonly currentStreak = computed(() => {
     const training = this.streaks().find((s) => s.streak_type === "training");
@@ -293,8 +366,12 @@ export class AchievementsPanelComponent {
   readonly recentAchievements = computed(() =>
     this.achievements()
       .filter((a) => a.earned)
-      .sort((a, b) => new Date(b.earnedAt || 0).getTime() - new Date(a.earnedAt || 0).getTime())
-      .slice(0, 5)
+      .sort(
+        (a, b) =>
+          new Date(b.earnedAt || 0).getTime() -
+          new Date(a.earnedAt || 0).getTime(),
+      )
+      .slice(0, 5),
   );
 
   constructor() {
@@ -313,7 +390,9 @@ export class AchievementsPanelComponent {
   async loadAchievements(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/achievements'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/achievements"),
+      );
       if (response?.success && response.data) {
         this.achievements.set(response.data.achievements || []);
         this.grouped.set(response.data.grouped || {});
@@ -334,7 +413,9 @@ export class AchievementsPanelComponent {
   async loadStreaks(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/achievements/streaks'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/achievements/streaks"),
+      );
       if (response?.success && response.data) {
         this.streaks.set(response.data.streaks || []);
       } else if (response?.streaks) {
@@ -348,7 +429,9 @@ export class AchievementsPanelComponent {
   async loadStats(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/achievements/stats'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/achievements/stats"),
+      );
       if (response?.success && response.data) {
         this.stats.set(response.data.stats);
       } else if (response?.stats) {
@@ -376,8 +459,13 @@ export class AchievementsPanelComponent {
     return labels[category] || category;
   }
 
-  getTierSeverity(tier: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getTierSeverity(
+    tier: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       bronze: "secondary",
       silver: "info",
       gold: "warn",

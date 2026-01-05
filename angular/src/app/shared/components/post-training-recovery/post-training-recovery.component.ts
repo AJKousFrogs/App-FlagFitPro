@@ -15,14 +15,14 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -69,7 +69,7 @@ interface RecoveryRecommendation {
     CheckboxModule,
     TagModule,
     ProgressBarModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -243,15 +243,30 @@ interface RecoveryRecommendation {
         <!-- Navigation Buttons -->
         <div class="dialog-actions">
           @if (currentStep() > 1) {
-            <app-button variant="text" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              (clicked)="previousStep()"
+              >Back</app-button
+            >
           }
 
           <div class="action-spacer"></div>
 
           @if (currentStep() < 3) {
-            <app-button iconLeft="pi-arrow-right" [disabled]="!canProceed()" (clicked)="nextStep()">Next</app-button>
+            <app-button
+              iconLeft="pi-arrow-right"
+              [disabled]="!canProceed()"
+              (clicked)="nextStep()"
+              >Next</app-button
+            >
           } @else {
-            <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="saveAndClose()">Save & View Recovery</app-button>
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSaving()"
+              (clicked)="saveAndClose()"
+              >Save & View Recovery</app-button
+            >
           }
         </div>
 
@@ -260,7 +275,7 @@ interface RecoveryRecommendation {
       </div>
     </p-dialog>
   `,
-  styleUrl: './post-training-recovery.component.scss',
+  styleUrl: "./post-training-recovery.component.scss",
 })
 export class PostTrainingRecoveryComponent implements OnInit {
   private router = inject(Router);
@@ -462,7 +477,7 @@ export class PostTrainingRecoveryComponent implements OnInit {
         rpe: sessionData.rpe,
         duration_minutes: sessionData.duration,
         load: sessionData.load,
-        session_date: new Date().toISOString().split('T')[0],
+        session_date: new Date().toISOString().split("T")[0],
         notes:
           sessionData.soreness.length > 0
             ? `Soreness: ${sessionData.soreness.map((s: { label: string }) => s.label).join(", ")}`

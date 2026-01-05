@@ -348,7 +348,9 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .filter-btn:hover {
@@ -376,7 +378,9 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
   position: relative;
 }
 
@@ -613,4 +617,3 @@
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 }
-

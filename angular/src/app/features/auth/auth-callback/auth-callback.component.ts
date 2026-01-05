@@ -1,9 +1,9 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -67,13 +67,15 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
                 iconLeft="pi-refresh"
                 routerLink="/login"
                 [fullWidth]="true"
-              >Try Again</app-button>
+                >Try Again</app-button
+              >
               <app-button
                 iconLeft="pi-home"
                 variant="outlined"
                 routerLink="/"
                 [fullWidth]="true"
-              >Go Home</app-button>
+                >Go Home</app-button
+              >
             </div>
           </div>
         } @else if (success()) {
@@ -88,7 +90,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
       </p-card>
     </div>
   `,
-  styleUrl: './auth-callback.component.scss',
+  styleUrl: "./auth-callback.component.scss",
 })
 export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);

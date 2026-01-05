@@ -1353,9 +1353,7 @@ export class InstagramVideoService {
       const positions = filter.positions;
       if (
         positions?.length &&
-        !video.positions.some(
-          (p) => positions.includes(p) || p === "All",
-        )
+        !video.positions.some((p) => positions.includes(p) || p === "All")
       ) {
         return false;
       }

@@ -122,7 +122,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './video-curation-playlist-dialog.component.scss',
+  styleUrl: "./video-curation-playlist-dialog.component.scss",
 })
 export class VideoCurationPlaylistDialogComponent {
   videoOptions = input.required<VideoOption[]>();

@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable,  catchError, map } from "rxjs";
+import { Observable, catchError, map } from "rxjs";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { environment } from "../../../environments/environment";
@@ -167,7 +167,9 @@ export class DailyTrainingService {
     });
 
     return this.http
-      .get<DailyTrainingResponse>(`${this.apiUrl}/api/daily-training`, { headers })
+      .get<DailyTrainingResponse>(`${this.apiUrl}/api/daily-training`, {
+        headers,
+      })
       .pipe(
         map((response) => {
           this.logger.info("[DailyTraining] Received training plan from API");

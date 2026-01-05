@@ -491,7 +491,12 @@ export class TeamNotificationService {
           message: m.message,
           channel_name: channelMap.get(m.channel_id) || "announcements",
           author_name:
-            (m.author as { raw_user_meta_data?: { full_name?: string }; email?: string } | null)?.raw_user_meta_data?.full_name ||
+            (
+              m.author as {
+                raw_user_meta_data?: { full_name?: string };
+                email?: string;
+              } | null
+            )?.raw_user_meta_data?.full_name ||
             (m.author as { email?: string } | null)?.email ||
             "Coach",
           created_at: m.created_at,

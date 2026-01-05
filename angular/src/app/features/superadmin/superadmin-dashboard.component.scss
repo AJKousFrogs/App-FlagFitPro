@@ -227,7 +227,10 @@
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: var(--color-text-secondary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 // .action-card:hover REMOVED - use app-card-shell with state="interactive"
@@ -344,4 +347,3 @@
     width: 100%;
   }
 }
-

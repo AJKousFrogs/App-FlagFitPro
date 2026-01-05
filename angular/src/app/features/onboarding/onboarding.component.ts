@@ -63,7 +63,7 @@ interface InjuryEntry {
     ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -239,8 +239,7 @@ interface InjuryEntry {
                           (click)="selectUserType(type.value)"
                           (keydown.enter)="selectUserType(type.value)"
                           (keydown.space)="
-                            selectUserType(type.value);
-                            $event.preventDefault()
+                            selectUserType(type.value); $event.preventDefault()
                           "
                         >
                           <span class="type-radio">
@@ -261,7 +260,7 @@ interface InjuryEntry {
                   </div>
 
                   <!-- Staff Role Selection (only shown if coaching staff) -->
-                  @if (onboardingData.userType === 'staff') {
+                  @if (onboardingData.userType === "staff") {
                     <div class="form-group span-2">
                       <label for="onboarding-staffRole"
                         >Staff Role <span class="required">*</span></label
@@ -308,7 +307,9 @@ interface InjuryEntry {
                             "
                             [attr.data-cy]="'visibility-' + option.value"
                             (click)="toggleStaffVisibility(option.value)"
-                            (keydown.enter)="toggleStaffVisibility(option.value)"
+                            (keydown.enter)="
+                              toggleStaffVisibility(option.value)
+                            "
                             (keydown.space)="
                               toggleStaffVisibility(option.value);
                               $event.preventDefault()
@@ -324,7 +325,9 @@ interface InjuryEntry {
                               }
                             </span>
                             <i [class]="option.icon" class="checkbox-icon"></i>
-                            <span class="checkbox-label">{{ option.label }}</span>
+                            <span class="checkbox-label">{{
+                              option.label
+                            }}</span>
                           </button>
                         }
                       </div>
@@ -347,7 +350,7 @@ interface InjuryEntry {
                   </div>
 
                   <!-- Player-specific fields -->
-                  @if (onboardingData.userType === 'player') {
+                  @if (onboardingData.userType === "player") {
                     <div class="form-group jersey-input">
                       <label for="onboarding-jerseyNumber">Jersey #</label>
                       <input
@@ -662,7 +665,12 @@ interface InjuryEntry {
                       placeholder="Severity"
                       class="injury-severity-select"
                     ></p-select>
-                    <app-icon-button icon="pi-plus" [disabled]="!newInjury.area" (clicked)="addCurrentInjury()" ariaLabel="plus" />
+                    <app-icon-button
+                      icon="pi-plus"
+                      [disabled]="!newInjury.area"
+                      (clicked)="addCurrentInjury()"
+                      ariaLabel="plus"
+                    />
                   </div>
 
                   @if (onboardingData.currentInjuries.length > 0) {
@@ -1314,12 +1322,24 @@ interface InjuryEntry {
 
             <div class="onboarding-actions">
               @if (currentStep() > 0) {
-                <app-button variant="outlined" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-arrow-left"
+                  (clicked)="previousStep()"
+                  >Back</app-button
+                >
               }
               @if (currentStep() < steps().length - 1) {
-                <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()">Next</app-button>
+                <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()"
+                  >Next</app-button
+                >
               } @else {
-                <app-button iconLeft="pi-check" [loading]="isCompleting()" (clicked)="completeOnboarding()">Complete Setup</app-button>
+                <app-button
+                  iconLeft="pi-check"
+                  [loading]="isCompleting()"
+                  (clicked)="completeOnboarding()"
+                  >Complete Setup</app-button
+                >
               }
             </div>
           </div>
@@ -1722,7 +1742,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   ];
 
   // User type options
-  userTypeOptions: { label: string; value: "player" | "staff"; icon: string; description: string }[] = [
+  userTypeOptions: {
+    label: string;
+    value: "player" | "staff";
+    icon: string;
+    description: string;
+  }[] = [
     {
       label: "Player",
       value: "player",
@@ -1884,7 +1909,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     userType: "player" as "player" | "staff",
     staffRole: null as string | null,
     staffVisibility: [] as string[],
-    
+
     // Step 2: Team & Position (for players)
     jerseyNumber: null as number | null,
     team: null as string | null,

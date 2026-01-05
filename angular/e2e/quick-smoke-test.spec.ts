@@ -80,9 +80,7 @@ test.describe("Quick Smoke Tests", () => {
 
     // Also check if page has main content area loaded
     const hasMainContent = await page
-      .locator(
-        "app-analytics, .analytics-page, app-loading, app-page-header",
-      )
+      .locator("app-analytics, .analytics-page, app-loading, app-page-header")
       .first()
       .isVisible()
       .catch(() => false);

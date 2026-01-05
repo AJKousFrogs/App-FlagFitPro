@@ -80,7 +80,12 @@
   }
 
   .p-slider-range {
-    background: linear-gradient(90deg, var(--ds-primary-green) 0%, var(--primitive-warning-500) 50%, var(--primitive-error-500) 100%);
+    background: linear-gradient(
+      90deg,
+      var(--ds-primary-green) 0%,
+      var(--primitive-warning-500) 50%,
+      var(--primitive-error-500) 100%
+    );
     border-radius: var(--radius-sm);
   }
 
@@ -206,4 +211,3 @@
     width: 100%;
   }
 }
-

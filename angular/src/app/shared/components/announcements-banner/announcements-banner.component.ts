@@ -24,9 +24,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import {
-  TeamNotificationService,
-} from "../../../core/services/team-notification.service";
+import { TeamNotificationService } from "../../../core/services/team-notification.service";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { TagModule } from "primeng/tag";
@@ -35,7 +33,10 @@ import { TagModule } from "primeng/tag";
   selector: "app-announcements-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, TagModule,
+  imports: [
+    CommonModule,
+    RouterModule,
+    TagModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -56,11 +57,7 @@ import { TagModule } from "primeng/tag";
         <div class="banner-content">
           <div class="banner-header">
             @if (announcement.is_important) {
-              <p-tag
-                severity="danger"
-                value="Important"
-                
-              ></p-tag>
+              <p-tag severity="danger" value="Important"></p-tag>
             }
             <span class="announcement-channel">
               #{{ announcement.channel_name }}
@@ -81,14 +78,30 @@ import { TagModule } from "primeng/tag";
           @if (unreadCount() > 1) {
             <span class="more-count">+{{ unreadCount() - 1 }} more</span>
           }
-          <app-button variant="text" size="sm" routerLink="/chat" (clicked)="onViewClick()">View</app-button>
-          <app-icon-button icon="pi-check" variant="text" (clicked)="acknowledgeAnnouncement()" ariaLabel="check" />
-          <app-icon-button icon="pi-times" variant="text" (clicked)="dismiss()" ariaLabel="times" />
+          <app-button
+            variant="text"
+            size="sm"
+            routerLink="/chat"
+            (clicked)="onViewClick()"
+            >View</app-button
+          >
+          <app-icon-button
+            icon="pi-check"
+            variant="text"
+            (clicked)="acknowledgeAnnouncement()"
+            ariaLabel="check"
+          />
+          <app-icon-button
+            icon="pi-times"
+            variant="text"
+            (clicked)="dismiss()"
+            ariaLabel="times"
+          />
         </div>
       </div>
     }
   `,
-  styleUrl: './announcements-banner.component.scss',
+  styleUrl: "./announcements-banner.component.scss",
 })
 export class AnnouncementsBannerComponent implements OnInit {
   private notificationService = inject(TeamNotificationService);

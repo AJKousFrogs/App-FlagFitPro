@@ -50,7 +50,7 @@ interface InvitationData {
     MessageModule,
     ToastModule,
     TitleCasePipe,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -85,8 +85,15 @@ interface InvitationData {
                 >.
               }
             </p>
-            <app-button iconLeft="pi-sign-in" routerLink="/login">Sign In</app-button>
-            <app-button variant="outlined" iconLeft="pi-user-plus" routerLink="/register">Create Account</app-button>
+            <app-button iconLeft="pi-sign-in" routerLink="/login"
+              >Sign In</app-button
+            >
+            <app-button
+              variant="outlined"
+              iconLeft="pi-user-plus"
+              routerLink="/register"
+              >Create Account</app-button
+            >
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
@@ -104,7 +111,9 @@ interface InvitationData {
             <p class="accepted-message">
               You've successfully joined {{ teamName() }}. Welcome to the team!
             </p>
-            <app-button iconLeft="pi-users" routerLink="/roster">Go to Team Page</app-button>
+            <app-button iconLeft="pi-users" routerLink="/roster"
+              >Go to Team Page</app-button
+            >
           </div>
         } @else if (isDeclined()) {
           <div class="declined-state">
@@ -115,7 +124,9 @@ interface InvitationData {
             <p class="declined-message">
               You have declined the invitation to join {{ teamName() }}.
             </p>
-            <app-button iconLeft="pi-home" routerLink="/dashboard">Go to Dashboard</app-button>
+            <app-button iconLeft="pi-home" routerLink="/dashboard"
+              >Go to Dashboard</app-button
+            >
           </div>
         } @else if (invitationData()) {
           <div class="invitation-state">
@@ -151,15 +162,25 @@ interface InvitationData {
             </div>
 
             <div class="invitation-actions">
-              <app-button iconLeft="pi-check" [loading]="isProcessing()" (clicked)="acceptInvitation()">Accept Invitation</app-button>
-              <app-button variant="outlined" [loading]="isProcessing()" (clicked)="declineInvitation()">Decline</app-button>
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isProcessing()"
+                (clicked)="acceptInvitation()"
+                >Accept Invitation</app-button
+              >
+              <app-button
+                variant="outlined"
+                [loading]="isProcessing()"
+                (clicked)="declineInvitation()"
+                >Decline</app-button
+              >
             </div>
           </div>
         }
       </p-card>
     </div>
   `,
-  styleUrl: './accept-invitation.component.scss',
+  styleUrl: "./accept-invitation.component.scss",
 })
 export class AcceptInvitationComponent implements OnInit {
   private router = inject(Router);

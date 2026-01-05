@@ -220,39 +220,49 @@ export class TeamStatisticsService {
   }> {
     interface TeamResponse {
       success: boolean;
-      data?: {
-        members?: PlayerPerformanceStats[];
-        consentInfo?: ConsentInfo;
-        dataState?: string;
-      } | PlayerPerformanceStats[];
+      data?:
+        | {
+            members?: PlayerPerformanceStats[];
+            consentInfo?: ConsentInfo;
+            dataState?: string;
+          }
+        | PlayerPerformanceStats[];
     }
-    return this.apiService.get<TeamResponse>(API_ENDPOINTS.coach.team, { teamId }).pipe(
-      map((response) => {
-        if (response.success && response.data) {
-          const data = response.data;
-          if (Array.isArray(data)) {
+    return this.apiService
+      .get<TeamResponse>(API_ENDPOINTS.coach.team, { teamId })
+      .pipe(
+        map((response) => {
+          if (response.success && response.data) {
+            const data = response.data;
+            if (Array.isArray(data)) {
+              return {
+                members: this.processPlayersData(data),
+                consentInfo: undefined,
+                dataState: undefined,
+              };
+            }
+            // Type narrowing: data is now the object type, not the array
+            const dataObj = data as {
+              members?: PlayerPerformanceStats[];
+              consentInfo?: ConsentInfo;
+              dataState?: string;
+            };
+            const members = Array.isArray(dataObj.members)
+              ? dataObj.members
+              : [];
             return {
-              members: this.processPlayersData(data),
-              consentInfo: undefined,
-              dataState: undefined,
+              members: this.processPlayersData(members),
+              consentInfo: dataObj.consentInfo,
+              dataState: dataObj.dataState,
             };
           }
-          // Type narrowing: data is now the object type, not the array
-          const dataObj = data as { members?: PlayerPerformanceStats[]; consentInfo?: ConsentInfo; dataState?: string };
-          const members = Array.isArray(dataObj.members) ? dataObj.members : [];
-          return {
-            members: this.processPlayersData(members),
-            consentInfo: dataObj.consentInfo,
-            dataState: dataObj.dataState,
-          };
-        }
-        throw new Error("No team players stats available");
-      }),
-      catchError((error) => {
-        this.logger.error("Error loading real players stats:", error);
-        throw error;
-      }),
-    );
+          throw new Error("No team players stats available");
+        }),
+        catchError((error) => {
+          this.logger.error("Error loading real players stats:", error);
+          throw error;
+        }),
+      );
   }
 
   /**

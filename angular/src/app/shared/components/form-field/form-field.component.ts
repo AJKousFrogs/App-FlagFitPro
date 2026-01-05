@@ -100,7 +100,7 @@ export interface FormFieldConfig {
       }
     </div>
   `,
-  styleUrl: './form-field.component.scss',
+  styleUrl: "./form-field.component.scss",
 })
 export class FormFieldComponent implements ControlValueAccessor {
   // Angular 21: Use input() signal instead of @Input()

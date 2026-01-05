@@ -11,7 +11,7 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 /**
  * Get today's hydration logs
  * GET /api/hydration
- * 
+ *
  * Database schema:
  * - id: uuid
  * - user_id: uuid
@@ -46,7 +46,8 @@ async function getTodayHydrationLogs(userId) {
     return (data || []).map((log) => ({
       id: log.id,
       amount: log.fluid_ml,
-      timestamp: log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
+      timestamp:
+        log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
       type: log.fluid_type || "water",
     }));
   } catch (error) {
@@ -134,7 +135,8 @@ async function getHydrationHistory(userId, days = 7) {
     return (data || []).map((log) => ({
       id: log.id,
       amount: log.fluid_ml,
-      timestamp: log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
+      timestamp:
+        log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
       type: log.fluid_type || "water",
     }));
   } catch (error) {

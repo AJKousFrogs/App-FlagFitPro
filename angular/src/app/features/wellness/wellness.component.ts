@@ -1,9 +1,9 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    signal
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -24,16 +24,16 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
-    AppLoadingComponent,
-    ButtonComponent,
-    CardComponent,
+  AppLoadingComponent,
+  ButtonComponent,
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface WellnessAlert {
   id: string;
-  severity: 'danger' | 'warn' | 'info';
+  severity: "danger" | "warn" | "info";
   title: string;
   message: string;
   recommendations?: string[];
@@ -48,7 +48,6 @@ interface WellnessMetric {
   color: string;
   trend?: string;
 }
-
 
 @Component({
   selector: "app-wellness",
@@ -97,10 +96,9 @@ interface WellnessMetric {
             subtitle="Track your health, recovery, and wellness metrics"
             icon="pi-heart"
           >
-            <app-button
-              icon="plus"
-              (clicked)="openCheckIn()"
-            >Log Check-in</app-button>
+            <app-button icon="plus" (clicked)="openCheckIn()"
+              >Log Check-in</app-button
+            >
           </app-page-header>
 
           <!-- Wellness Metrics (4 Cards) -->
@@ -117,7 +115,9 @@ interface WellnessMetric {
                     [options]="chartOptions"
                   ></p-chart>
                 } @else {
-                  <div class="chart-empty">No sleep data yet. Start logging daily check-ins.</div>
+                  <div class="chart-empty">
+                    No sleep data yet. Start logging daily check-ins.
+                  </div>
                 }
               </app-card>
             } @placeholder {
@@ -135,7 +135,9 @@ interface WellnessMetric {
                     [options]="chartOptions"
                   ></p-chart>
                 } @else {
-                  <div class="chart-empty">No recovery data yet. Start logging daily check-ins.</div>
+                  <div class="chart-empty">
+                    No recovery data yet. Start logging daily check-ins.
+                  </div>
                 }
               </app-card>
             } @placeholder {
@@ -165,16 +167,25 @@ interface WellnessMetric {
 
           <!-- Weight & Wellness Alerts (if triggered) -->
           @if (wellnessAlerts().length > 0) {
-            <app-card title="Weight & Wellness Alerts" headerIcon="pi-exclamation-triangle" headerIconColor="warning">
+            <app-card
+              title="Weight & Wellness Alerts"
+              headerIcon="pi-exclamation-triangle"
+              headerIconColor="warning"
+            >
               <div class="alerts-section">
                 @for (alert of wellnessAlerts(); track alert.id) {
-                  <div class="wellness-alert" [class]="'alert-' + alert.severity">
+                  <div
+                    class="wellness-alert"
+                    [class]="'alert-' + alert.severity"
+                  >
                     <div class="alert-header">
                       <i [class]="getAlertIcon(alert.severity)"></i>
                       <span class="alert-title">{{ alert.title }}</span>
                     </div>
                     <p class="alert-message">{{ alert.message }}</p>
-                    @if (alert.recommendations && alert.recommendations.length > 0) {
+                    @if (
+                      alert.recommendations && alert.recommendations.length > 0
+                    ) {
                       <div class="alert-recommendations">
                         <span class="rec-label">Possible causes:</span>
                         <ul>
@@ -185,17 +196,19 @@ interface WellnessMetric {
                       </div>
                     }
                     <div class="alert-actions">
-                      <app-button 
-                        variant="text" 
+                      <app-button
+                        variant="text"
                         size="sm"
                         (clicked)="dismissAlert(alert.id)"
-                      >Dismiss</app-button>
+                        >Dismiss</app-button
+                      >
                       @if (alert.actionLabel && alert.actionRoute) {
-                        <app-button 
-                          variant="outlined" 
+                        <app-button
+                          variant="outlined"
                           size="sm"
                           [routerLink]="alert.actionRoute"
-                        >{{ alert.actionLabel }}</app-button>
+                          >{{ alert.actionLabel }}</app-button
+                        >
                       }
                     </div>
                   </div>
@@ -214,8 +227,8 @@ interface WellnessMetric {
           }
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
-          <app-card 
-            title="Daily Wellness Check-in" 
+          <app-card
+            title="Daily Wellness Check-in"
             class="checkin-card"
             [flush]="true"
           >
@@ -287,7 +300,9 @@ interface WellnessMetric {
                 </div>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="hydrationGlasses">Hydration (glasses of water)</label>
+                    <label for="hydrationGlasses"
+                      >Hydration (glasses of water)</label
+                    >
                     <p-inputNumber
                       inputId="hydrationGlasses"
                       [(ngModel)]="checkInData.hydration"
@@ -379,7 +394,8 @@ interface WellnessMetric {
                   icon="check"
                   [loading]="isSubmitting()"
                   (clicked)="submitCheckIn()"
-                >Submit Check-in</app-button>
+                  >Submit Check-in</app-button
+                >
                 <small class="submit-note"
                   >Daily check-ins help optimize your training load</small
                 >
@@ -702,9 +718,7 @@ export class WellnessComponent {
           // Reload wellness data to show updated stats
           this.loadWellnessData();
         } else {
-          this.toastService.error(
-            response.error || "Failed to save check-in",
-          );
+          this.toastService.error(response.error || "Failed to save check-in");
         }
       })
       .catch((err) => {
@@ -723,68 +737,72 @@ export class WellnessComponent {
    */
   private generateWellnessAlerts(data: any[]): void {
     const alerts: WellnessAlert[] = [];
-    
+
     if (data.length >= 2) {
       const latest = data[0];
       const previous = data[1];
-      
+
       // Check for rapid weight loss
       if (latest.weight && previous.weight) {
         const weightDiff = previous.weight - latest.weight;
         if (weightDiff > 2) {
           alerts.push({
-            id: 'rapid-weight-loss',
-            severity: 'danger',
-            title: 'RAPID WEIGHT LOSS DETECTED',
+            id: "rapid-weight-loss",
+            severity: "danger",
+            title: "RAPID WEIGHT LOSS DETECTED",
             message: `You've lost ${weightDiff.toFixed(1)}kg recently. This may indicate dehydration or undereating.`,
-            recommendations: ['Dehydration', 'Undereating', 'Illness'],
-            actionLabel: 'Talk to AI Coach',
-            actionRoute: '/ai-coach'
+            recommendations: ["Dehydration", "Undereating", "Illness"],
+            actionLabel: "Talk to AI Coach",
+            actionRoute: "/ai-coach",
           });
         }
       }
-      
+
       // Check for elevated resting HR
       if (latest.resting_hr && latest.resting_hr > 70) {
         const baseline = 60; // typical athletic baseline
         const diff = latest.resting_hr - baseline;
         if (diff > 10) {
           alerts.push({
-            id: 'elevated-hr',
-            severity: 'warn',
-            title: 'ELEVATED RESTING HEART RATE',
+            id: "elevated-hr",
+            severity: "warn",
+            title: "ELEVATED RESTING HEART RATE",
             message: `Your resting HR (${latest.resting_hr} BPM) is ${diff} BPM above baseline. This may indicate fatigue, stress, or illness.`,
-            recommendations: ['Consider a lighter training day'],
+            recommendations: ["Consider a lighter training day"],
           });
         }
       }
     }
-    
+
     // Check for high soreness + magnesium gap
     const latestData = data[0];
     if (latestData?.soreness >= 7) {
       alerts.push({
-        id: 'supplement-rec',
-        severity: 'info',
-        title: 'SUPPLEMENT RECOMMENDATION',
+        id: "supplement-rec",
+        severity: "info",
+        title: "SUPPLEMENT RECOMMENDATION",
         message: `Your muscle soreness has been elevated (${latestData.soreness}/10). Consider magnesium supplementation for muscle recovery.`,
-        actionLabel: 'Log Magnesium Now',
-        actionRoute: '/wellness'
+        actionLabel: "Log Magnesium Now",
+        actionRoute: "/wellness",
       });
     }
-    
+
     this.wellnessAlerts.set(alerts);
   }
 
   /**
    * Get icon class for alert severity
    */
-  getAlertIcon(severity: 'danger' | 'warn' | 'info'): string {
+  getAlertIcon(severity: "danger" | "warn" | "info"): string {
     switch (severity) {
-      case 'danger': return 'pi pi-exclamation-circle';
-      case 'warn': return 'pi pi-exclamation-triangle';
-      case 'info': return 'pi pi-lightbulb';
-      default: return 'pi pi-info-circle';
+      case "danger":
+        return "pi pi-exclamation-circle";
+      case "warn":
+        return "pi pi-exclamation-triangle";
+      case "info":
+        return "pi pi-lightbulb";
+      default:
+        return "pi pi-info-circle";
     }
   }
 
@@ -792,7 +810,9 @@ export class WellnessComponent {
    * Dismiss an alert
    */
   dismissAlert(alertId: string): void {
-    this.wellnessAlerts.update(alerts => alerts.filter(a => a.id !== alertId));
-    this.toastService.info('Alert dismissed');
+    this.wellnessAlerts.update((alerts) =>
+      alerts.filter((a) => a.id !== alertId),
+    );
+    this.toastService.info("Alert dismissed");
   }
 }

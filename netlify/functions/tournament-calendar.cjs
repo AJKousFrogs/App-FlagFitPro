@@ -87,7 +87,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ error: "Internal server error", message: err.message }),
+      body: JSON.stringify({
+        error: "Internal server error",
+        message: err.message,
+      }),
     };
   }
 };
@@ -119,7 +122,9 @@ async function getTournaments(supabase, userId, headers) {
   const enrichedTournaments = tournaments.map((t) => {
     const startDate = new Date(t.start_date);
     const todayDate = new Date(today);
-    const daysUntil = Math.ceil((startDate - todayDate) / (1000 * 60 * 60 * 24));
+    const daysUntil = Math.ceil(
+      (startDate - todayDate) / (1000 * 60 * 60 * 24),
+    );
 
     // Calculate taper start date
     const taperWeeks = t.taper_weeks_before || 1;
@@ -222,7 +227,9 @@ async function saveTournament(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     result = data;
   } else {
     // Insert new
@@ -232,7 +239,9 @@ async function saveTournament(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     result = data;
   }
 
@@ -269,7 +278,9 @@ async function deleteTournament(supabase, userId, payload, headers) {
     .eq("id", id)
     .single();
 
-  if (fetchError) {throw fetchError;}
+  if (fetchError) {
+    throw fetchError;
+  }
 
   // For now, allow deletion if user created it
   // TODO: Add coach role check for national team events
@@ -277,7 +288,9 @@ async function deleteTournament(supabase, userId, payload, headers) {
     return {
       statusCode: 403,
       headers,
-      body: JSON.stringify({ error: "Not authorized to delete this tournament" }),
+      body: JSON.stringify({
+        error: "Not authorized to delete this tournament",
+      }),
     };
   }
 
@@ -286,7 +299,9 @@ async function deleteTournament(supabase, userId, payload, headers) {
     .delete()
     .eq("id", id);
 
-  if (deleteError) {throw deleteError;}
+  if (deleteError) {
+    throw deleteError;
+  }
 
   return {
     statusCode: 200,

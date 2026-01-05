@@ -44,7 +44,13 @@ interface Milestone {
 
 @Component({
   selector: "app-la28-roadmap",
-  imports: [ TagModule, TooltipModule, ProgressBar, DialogModule, TimelineModule, CardModule,
+  imports: [
+    TagModule,
+    TooltipModule,
+    ProgressBar,
+    DialogModule,
+    TimelineModule,
+    CardModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -57,7 +63,11 @@ interface Milestone {
             <h3>🏅 Road to LA28</h3>
             <span class="days-count">{{ daysUntilOlympics() }} days</span>
           </div>
-          <app-icon-button icon="pi-external-link" variant="text" ariaLabel="external-link" />
+          <app-icon-button
+            icon="pi-external-link"
+            variant="text"
+            ariaLabel="external-link"
+          />
         </div>
 
         <!-- Progress Ring -->
@@ -82,21 +92,30 @@ interface Milestone {
 
           <div class="current-phase">
             <span class="phase-label">Current Phase</span>
-            <span class="phase-name">{{ currentCycle()?.program_cycle?.cycle_name || "Not Started" }}</span>
+            <span class="phase-name">{{
+              currentCycle()?.program_cycle?.cycle_name || "Not Started"
+            }}</span>
             @if (currentCycle()?.program_cycle?.focus_area) {
-              <span class="phase-focus">{{ currentCycle()?.program_cycle?.focus_area }}</span>
+              <span class="phase-focus">{{
+                currentCycle()?.program_cycle?.focus_area
+              }}</span>
             }
           </div>
         </div>
 
         <!-- Mini Timeline -->
         <div class="mini-timeline">
-          @for (milestone of upcomingMilestones().slice(0, 3); track milestone.title) {
+          @for (
+            milestone of upcomingMilestones().slice(0, 3);
+            track milestone.title
+          ) {
             <div class="milestone-item" [class]="milestone.status">
               <span class="milestone-icon">{{ milestone.icon }}</span>
               <div class="milestone-info">
                 <span class="milestone-title">{{ milestone.title }}</span>
-                <span class="milestone-date">{{ formatDate(milestone.date) }}</span>
+                <span class="milestone-date">{{
+                  formatDate(milestone.date)
+                }}</span>
               </div>
             </div>
           }
@@ -119,7 +138,9 @@ interface Milestone {
               <span class="stat-label">Days Until LA28</span>
             </div>
             <div class="stat-item">
-              <span class="stat-value">{{ completedCycles() }}/{{ totalCycles() }}</span>
+              <span class="stat-value"
+                >{{ completedCycles() }}/{{ totalCycles() }}</span
+              >
               <span class="stat-label">Cycles Completed</span>
             </div>
             <div class="stat-item">
@@ -133,30 +154,45 @@ interface Milestone {
             <h4>Training Cycles</h4>
             <div class="cycles-grid">
               @for (cycle of playerCycles(); track cycle.id) {
-                <div class="cycle-card" [class.active]="cycle.status === 'in_progress'" [class.completed]="cycle.status === 'completed'">
+                <div
+                  class="cycle-card"
+                  [class.active]="cycle.status === 'in_progress'"
+                  [class.completed]="cycle.status === 'completed'"
+                >
                   <div class="cycle-header">
-                    <div class="cycle-year">{{ cycle.program_cycle?.cycle_year }}</div>
+                    <div class="cycle-year">
+                      {{ cycle.program_cycle?.cycle_year }}
+                    </div>
                     <p-tag
                       [value]="getStatusLabel(cycle.status)"
                       [severity]="getStatusSeverity(cycle.status)"
                     />
                   </div>
                   <h5>{{ cycle.program_cycle?.cycle_name }}</h5>
-                  <p class="cycle-focus">{{ cycle.program_cycle?.focus_area }}</p>
+                  <p class="cycle-focus">
+                    {{ cycle.program_cycle?.focus_area }}
+                  </p>
                   @if (cycle.program_cycle?.target_event) {
                     <div class="target-event">
                       <i class="pi pi-flag"></i>
                       {{ cycle.program_cycle?.target_event }}
                     </div>
                   }
-                  @if (cycle.status !== 'not_started') {
+                  @if (cycle.status !== "not_started") {
                     <div class="cycle-progress">
-                      <p-progressBar [value]="cycle.completion_percentage" [showValue]="false" styleClass="h-2" />
-                      <span class="progress-text">{{ cycle.completion_percentage }}%</span>
+                      <p-progressBar
+                        [value]="cycle.completion_percentage"
+                        [showValue]="false"
+                        styleClass="h-2"
+                      />
+                      <span class="progress-text"
+                        >{{ cycle.completion_percentage }}%</span
+                      >
                     </div>
                   }
                   <p class="cycle-dates">
-                    {{ formatDate(cycle.program_cycle?.start_date) }} - {{ formatDate(cycle.program_cycle?.end_date) }}
+                    {{ formatDate(cycle.program_cycle?.start_date) }} -
+                    {{ formatDate(cycle.program_cycle?.end_date) }}
                   </p>
                 </div>
               }
@@ -166,11 +202,21 @@ interface Milestone {
           <!-- Timeline -->
           <div class="timeline-section">
             <h4>Journey Timeline</h4>
-            <p-timeline [value]="milestones()" align="alternate" styleClass="roadmap-timeline">
+            <p-timeline
+              [value]="milestones()"
+              align="alternate"
+              styleClass="roadmap-timeline"
+            >
               <ng-template #content let-event>
-                <p-card [header]="event.title" [subheader]="formatDate(event.date)">
+                <p-card
+                  [header]="event.title"
+                  [subheader]="formatDate(event.date)"
+                >
                   <p>{{ event.description }}</p>
-                  <p-tag [value]="event.type" [severity]="getMilestoneTypeSeverity(event.type)" />
+                  <p-tag
+                    [value]="event.type"
+                    [severity]="getMilestoneTypeSeverity(event.type)"
+                  />
                 </p-card>
               </ng-template>
               <ng-template #opposite let-event>
@@ -207,7 +253,7 @@ interface Milestone {
       </p-dialog>
     </div>
   `,
-  styleUrl: './la28-roadmap.component.scss',
+  styleUrl: "./la28-roadmap.component.scss",
 })
 export class La28RoadmapComponent {
   private readonly api = inject(ApiService);
@@ -244,8 +290,10 @@ export class La28RoadmapComponent {
   });
 
   readonly totalCycles = computed(() => this.playerCycles().length);
-  
-  readonly completedCycles = computed(() => this.playerCycles().filter((c) => c.status === "completed").length);
+
+  readonly completedCycles = computed(
+    () => this.playerCycles().filter((c) => c.status === "completed").length,
+  );
 
   readonly overallProgress = computed(() => {
     const cycles = this.playerCycles();
@@ -259,7 +307,9 @@ export class La28RoadmapComponent {
     return this.ringCircumference * (1 - progress / 100);
   });
 
-  readonly currentCycle = computed(() => this.playerCycles().find((c) => c.status === "in_progress"));
+  readonly currentCycle = computed(() =>
+    this.playerCycles().find((c) => c.status === "in_progress"),
+  );
 
   readonly milestones = computed<Milestone[]>(() => {
     const now = new Date();
@@ -273,8 +323,18 @@ export class La28RoadmapComponent {
         date: cycle.program_cycle?.start_date || "",
         type: "cycle",
         description: cycle.program_cycle?.description || "",
-        status: startDate < now ? (cycle.status === "completed" ? "past" : "current") : "upcoming",
-        icon: cycle.status === "completed" ? "✅" : cycle.status === "in_progress" ? "🏃" : "📅",
+        status:
+          startDate < now
+            ? cycle.status === "completed"
+              ? "past"
+              : "current"
+            : "upcoming",
+        icon:
+          cycle.status === "completed"
+            ? "✅"
+            : cycle.status === "in_progress"
+              ? "🏃"
+              : "📅",
       });
     });
 
@@ -288,7 +348,9 @@ export class La28RoadmapComponent {
       icon: "🏅",
     });
 
-    return milestones.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return milestones.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
   });
 
   readonly upcomingMilestones = computed(() => {
@@ -306,7 +368,9 @@ export class La28RoadmapComponent {
   async loadCycles(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/program-cycles"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/program-cycles"),
+      );
       if (response?.success && response.data) {
         this.playerCycles.set(response.data);
       } else if (Array.isArray(response)) {
@@ -402,8 +466,13 @@ export class La28RoadmapComponent {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       not_started: "secondary",
       in_progress: "info",
       completed: "success",
@@ -411,8 +480,13 @@ export class La28RoadmapComponent {
     return severities[status] || "secondary";
   }
 
-  getMilestoneTypeSeverity(type: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getMilestoneTypeSeverity(
+    type: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       tournament: "info",
       cycle: "secondary",
       checkpoint: "warn",

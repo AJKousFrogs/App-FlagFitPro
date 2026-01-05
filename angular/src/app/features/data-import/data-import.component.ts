@@ -8,7 +8,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule} from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -125,12 +125,48 @@ const IMPORT_TYPES: ImportType[] = [
 ];
 
 const WEARABLE_DEVICES: WearableDevice[] = [
-  { id: "garmin", name: "Garmin", brand: "Garmin", dataTypes: ["HR", "HRV", "Sleep", "Activity"], connected: false },
-  { id: "whoop", name: "Whoop", brand: "Whoop", dataTypes: ["HRV", "Strain", "Recovery", "Sleep"], connected: false },
-  { id: "apple", name: "Apple Watch", brand: "Apple", dataTypes: ["HR", "Activity", "Workout data"], connected: false },
-  { id: "oura", name: "Oura Ring", brand: "Oura", dataTypes: ["Sleep", "HRV", "Readiness"], connected: false },
-  { id: "polar", name: "Polar", brand: "Polar", dataTypes: ["HR", "Training Load", "Recovery"], connected: false },
-  { id: "fitbit", name: "Fitbit", brand: "Fitbit", dataTypes: ["Activity", "Sleep", "HR zones"], connected: false },
+  {
+    id: "garmin",
+    name: "Garmin",
+    brand: "Garmin",
+    dataTypes: ["HR", "HRV", "Sleep", "Activity"],
+    connected: false,
+  },
+  {
+    id: "whoop",
+    name: "Whoop",
+    brand: "Whoop",
+    dataTypes: ["HRV", "Strain", "Recovery", "Sleep"],
+    connected: false,
+  },
+  {
+    id: "apple",
+    name: "Apple Watch",
+    brand: "Apple",
+    dataTypes: ["HR", "Activity", "Workout data"],
+    connected: false,
+  },
+  {
+    id: "oura",
+    name: "Oura Ring",
+    brand: "Oura",
+    dataTypes: ["Sleep", "HRV", "Readiness"],
+    connected: false,
+  },
+  {
+    id: "polar",
+    name: "Polar",
+    brand: "Polar",
+    dataTypes: ["HR", "Training Load", "Recovery"],
+    connected: false,
+  },
+  {
+    id: "fitbit",
+    name: "Fitbit",
+    brand: "Fitbit",
+    dataTypes: ["Activity", "Sleep", "HR zones"],
+    connected: false,
+  },
 ];
 
 @Component({
@@ -152,7 +188,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -180,7 +216,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   <h3>{{ type.name }}</h3>
                   <p>{{ type.description }}</p>
                   <span class="type-formats">
-                    {{ type.formats.join(', ') }}
+                    {{ type.formats.join(", ") }}
                   </span>
                   <span class="perfect-for">
                     Perfect for: {{ type.perfectFor }}
@@ -192,10 +228,15 @@ const WEARABLE_DEVICES: WearableDevice[] = [
         }
 
         <!-- Import Flow (Steps) -->
-        @if (selectedType() && selectedType()!.id !== 'wearables') {
+        @if (selectedType() && selectedType()!.id !== "wearables") {
           <div class="import-flow">
             <!-- Back Button -->
-            <app-button variant="text" iconLeft="pi-arrow-left" (clicked)="resetImport()">Back to Import Options</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              (clicked)="resetImport()"
+              >Back to Import Options</app-button
+            >
 
             <!-- Steps Indicator -->
             <p-steps
@@ -226,7 +267,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                       <div class="upload-placeholder">
                         <i class="pi pi-cloud-upload"></i>
                         <p>Drop file here or click to browse</p>
-                        <span>Accepted: {{ selectedType()!.formats.join(', ') }} | Max: 5MB</span>
+                        <span
+                          >Accepted: {{ selectedType()!.formats.join(", ") }} |
+                          Max: 5MB</span
+                        >
                       </div>
                     </ng-template>
                   </p-fileUpload>
@@ -245,7 +289,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                       [(ngModel)]="importUrl"
                       placeholder="https://example.com/data.json"
                     />
-                    <app-button iconLeft="pi-download" [disabled]="!importUrl" (clicked)="fetchFromUrl()">Fetch</app-button>
+                    <app-button
+                      iconLeft="pi-download"
+                      [disabled]="!importUrl"
+                      (clicked)="fetchFromUrl()"
+                      >Fetch</app-button
+                    >
                   </div>
                 </div>
 
@@ -267,7 +316,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   <div class="summary-header">
                     <i class="pi pi-file"></i>
                     <span>{{ importPreview()!.fileName }}</span>
-                    <span class="file-size">{{ importPreview()!.fileSize }}</span>
+                    <span class="file-size">{{
+                      importPreview()!.fileSize
+                    }}</span>
                     <p-tag value="Validated" severity="success"></p-tag>
                   </div>
                   <div class="summary-stats">
@@ -283,7 +334,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 <!-- Field Mappings -->
                 <div class="field-mappings">
                   <h4>Field Mapping</h4>
-                  <p-table [value]="importPreview()!.fieldMappings" styleClass="p-datatable-sm">
+                  <p-table
+                    [value]="importPreview()!.fieldMappings"
+                    styleClass="p-datatable-sm"
+                  >
                     <ng-template pTemplate="header">
                       <tr>
                         <th>File Field</th>
@@ -293,9 +347,11 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     </ng-template>
                     <ng-template pTemplate="body" let-mapping>
                       <tr>
-                        <td><code>{{ mapping.fileField }}</code></td>
                         <td>
-                          @if (mapping.status === 'unmapped') {
+                          <code>{{ mapping.fileField }}</code>
+                        </td>
+                        <td>
+                          @if (mapping.status === "unmapped") {
                             <p-select
                               [options]="availableMappings"
                               [(ngModel)]="mapping.mapsTo"
@@ -311,7 +367,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                         <td>
                           <p-tag
                             [value]="getMappingStatusLabel(mapping.status)"
-                            [severity]="getMappingStatusSeverity(mapping.status)"
+                            [severity]="
+                              getMappingStatusSeverity(mapping.status)
+                            "
                           ></p-tag>
                         </td>
                       </tr>
@@ -324,7 +382,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   <div class="data-preview">
                     <h4>Preview (First 3 Records)</h4>
                     <div class="preview-items">
-                      @for (item of importPreview()!.previewData.slice(0, 3); track $index) {
+                      @for (
+                        item of importPreview()!.previewData.slice(0, 3);
+                        track $index
+                      ) {
                         <div class="preview-item">
                           <pre>{{ item | json }}</pre>
                         </div>
@@ -334,8 +395,18 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 }
 
                 <div class="step-actions">
-                  <app-button variant="secondary" iconLeft="pi-arrow-left" (clicked)="previousStep()">Back</app-button>
-                  <app-button iconLeft="pi-check" [disabled]="hasUnmappedFields()" (clicked)="processImport()">Import Data</app-button>
+                  <app-button
+                    variant="secondary"
+                    iconLeft="pi-arrow-left"
+                    (clicked)="previousStep()"
+                    >Back</app-button
+                  >
+                  <app-button
+                    iconLeft="pi-check"
+                    [disabled]="hasUnmappedFields()"
+                    (clicked)="processImport()"
+                    >Import Data</app-button
+                  >
                 </div>
               </p-card>
             }
@@ -344,7 +415,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
             @if (currentStep() === 2 && importResult()) {
               <p-card styleClass="step-card result-card">
                 <div class="result-content">
-                  <div class="result-icon" [class.success]="importResult()!.success">
+                  <div
+                    class="result-icon"
+                    [class.success]="importResult()!.success"
+                  >
                     @if (importResult()!.success) {
                       <i class="pi pi-check-circle"></i>
                     } @else {
@@ -352,7 +426,13 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     }
                   </div>
 
-                  <h2>{{ importResult()!.success ? 'Import Complete!' : 'Import Failed' }}</h2>
+                  <h2>
+                    {{
+                      importResult()!.success
+                        ? "Import Complete!"
+                        : "Import Failed"
+                    }}
+                  </h2>
                   <p>{{ importResult()!.message }}</p>
 
                   @if (importResult()!.success) {
@@ -363,7 +443,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                           <i class="pi pi-check"></i>
                           {{ importResult()!.itemsImported }} items imported
                         </li>
-                        @for (warning of importResult()!.warnings; track warning) {
+                        @for (
+                          warning of importResult()!.warnings;
+                          track warning
+                        ) {
                           <li class="warning">
                             <i class="pi pi-exclamation-triangle"></i>
                             {{ warning }}
@@ -386,8 +469,15 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   }
 
                   <div class="result-actions">
-                    <app-button iconLeft="pi-calendar" routerLink="/training">View Training Schedule</app-button>
-                    <app-button variant="secondary" iconLeft="pi-plus" (clicked)="resetImport()">Import Another</app-button>
+                    <app-button iconLeft="pi-calendar" routerLink="/training"
+                      >View Training Schedule</app-button
+                    >
+                    <app-button
+                      variant="secondary"
+                      iconLeft="pi-plus"
+                      (clicked)="resetImport()"
+                      >Import Another</app-button
+                    >
                   </div>
                 </div>
               </p-card>
@@ -396,9 +486,14 @@ const WEARABLE_DEVICES: WearableDevice[] = [
         }
 
         <!-- Wearables Connection Flow -->
-        @if (selectedType()?.id === 'wearables') {
+        @if (selectedType()?.id === "wearables") {
           <div class="wearables-flow">
-            <app-button variant="text" iconLeft="pi-arrow-left" (clicked)="resetImport()">Back to Import Options</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              (clicked)="resetImport()"
+              >Back to Import Options</app-button
+            >
 
             <p-card styleClass="wearables-card">
               <h3>Connect Wearable Devices</h3>
@@ -413,11 +508,26 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                         <span class="device-name">⌚ {{ device.name }}</span>
                         <p-tag value="Connected" severity="success"></p-tag>
                       </div>
-                      <p class="device-sync">Last sync: {{ device.lastSync || 'Never' }}</p>
-                      <p class="device-data">Data: {{ device.dataTypes.join(', ') }}</p>
+                      <p class="device-sync">
+                        Last sync: {{ device.lastSync || "Never" }}
+                      </p>
+                      <p class="device-data">
+                        Data: {{ device.dataTypes.join(", ") }}
+                      </p>
                       <div class="device-actions">
-                        <app-button size="sm" iconLeft="pi-refresh" (clicked)="syncDevice(device)">Sync Now</app-button>
-                        <app-button variant="text" size="sm" iconLeft="pi-times" (clicked)="disconnectDevice(device)">Disconnect</app-button>
+                        <app-button
+                          size="sm"
+                          iconLeft="pi-refresh"
+                          (clicked)="syncDevice(device)"
+                          >Sync Now</app-button
+                        >
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-times"
+                          (clicked)="disconnectDevice(device)"
+                          >Disconnect</app-button
+                        >
                       </div>
                     </div>
                   }
@@ -432,8 +542,15 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     <div class="device-card available">
                       <div class="device-icon">⌚</div>
                       <h5>{{ device.name }}</h5>
-                      <p class="device-data">{{ device.dataTypes.join(', ') }}</p>
-                      <app-button size="sm" iconLeft="pi-link" (clicked)="connectDevice(device)">Connect</app-button>
+                      <p class="device-data">
+                        {{ device.dataTypes.join(", ") }}
+                      </p>
+                      <app-button
+                        size="sm"
+                        iconLeft="pi-link"
+                        (clicked)="connectDevice(device)"
+                        >Connect</app-button
+                      >
                     </div>
                   }
                 </div>
@@ -443,11 +560,25 @@ const WEARABLE_DEVICES: WearableDevice[] = [
               <div class="data-usage-info">
                 <h4>💡 How Wearable Data Is Used</h4>
                 <ul>
-                  <li><strong>HRV</strong> → Wellness Score calculation, readiness assessment</li>
-                  <li><strong>Sleep</strong> → Sleep debt tracking, recovery recommendations</li>
-                  <li><strong>Activity</strong> → ACWR calculation, training load tracking</li>
-                  <li><strong>HR Zones</strong> → Workout intensity validation</li>
-                  <li><strong>Strain/Recovery</strong> → AI training recommendations</li>
+                  <li>
+                    <strong>HRV</strong> → Wellness Score calculation, readiness
+                    assessment
+                  </li>
+                  <li>
+                    <strong>Sleep</strong> → Sleep debt tracking, recovery
+                    recommendations
+                  </li>
+                  <li>
+                    <strong>Activity</strong> → ACWR calculation, training load
+                    tracking
+                  </li>
+                  <li>
+                    <strong>HR Zones</strong> → Workout intensity validation
+                  </li>
+                  <li>
+                    <strong>Strain/Recovery</strong> → AI training
+                    recommendations
+                  </li>
                 </ul>
                 <p class="privacy-note">
                   <i class="pi pi-lock"></i>
@@ -500,11 +631,11 @@ export class DataImportComponent implements OnInit {
 
   // Computed
   readonly connectedDevices = computed(() =>
-    this.wearableDevices().filter((d) => d.connected)
+    this.wearableDevices().filter((d) => d.connected),
   );
 
   readonly availableDevices = computed(() =>
-    this.wearableDevices().filter((d) => !d.connected)
+    this.wearableDevices().filter((d) => !d.connected),
   );
 
   ngOnInit(): void {
@@ -514,7 +645,9 @@ export class DataImportComponent implements OnInit {
   async loadWearableStatus(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/wearables/status"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/wearables/status"),
+      );
       if (response?.success && response.data?.devices) {
         this.wearableDevices.set(response.data.devices);
       }
@@ -746,7 +879,7 @@ export class DataImportComponent implements OnInit {
     const preview = this.importPreview();
     if (!preview) return true;
     return preview.fieldMappings.some(
-      (m) => m.status === "unmapped" && m.mapsTo !== "skip"
+      (m) => m.status === "unmapped" && m.mapsTo !== "skip",
     );
   }
 
@@ -766,7 +899,7 @@ export class DataImportComponent implements OnInit {
           type: type.id,
           data: preview.previewData,
           mappings: preview.fieldMappings,
-        })
+        }),
       );
 
       if (response?.success) {
@@ -807,8 +940,8 @@ export class DataImportComponent implements OnInit {
         devices.map((d) =>
           d.id === device.id
             ? { ...d, connected: true, lastSync: "Just now" }
-            : d
-        )
+            : d,
+        ),
       );
 
       this.messageService.add({
@@ -829,8 +962,8 @@ export class DataImportComponent implements OnInit {
     setTimeout(() => {
       this.wearableDevices.update((devices) =>
         devices.map((d) =>
-          d.id === device.id ? { ...d, lastSync: "Just now" } : d
-        )
+          d.id === device.id ? { ...d, lastSync: "Just now" } : d,
+        ),
       );
 
       this.messageService.add({
@@ -846,8 +979,8 @@ export class DataImportComponent implements OnInit {
       devices.map((d) =>
         d.id === device.id
           ? { ...d, connected: false, lastSync: undefined }
-          : d
-      )
+          : d,
+      ),
     );
 
     this.messageService.add({

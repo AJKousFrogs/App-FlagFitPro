@@ -218,7 +218,11 @@ export class TrainingDataService {
       created_at: __,
       user_id: ___,
       ...updateData
-    } = updates as Partial<TrainingSession> & { id?: string; created_at?: string; user_id?: string };
+    } = updates as Partial<TrainingSession> & {
+      id?: string;
+      created_at?: string;
+      user_id?: string;
+    };
 
     return from(
       this.supabaseService.client

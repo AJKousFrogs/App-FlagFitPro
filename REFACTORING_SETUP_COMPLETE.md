@@ -3,6 +3,7 @@
 ## What's Been Set Up
 
 ### 1. ✅ CSS Override Debugging Guide
+
 **Location:** `docs/CSS_OVERRIDE_DEBUGGING_GUIDE.md`
 
 - DevTools inspection workflow
@@ -11,6 +12,7 @@
 - Common override patterns & solutions
 
 ### 2. ✅ Storybook Design System Showcase
+
 **Location:** `angular/src/stories/DesignSystem.stories.ts`
 
 - Colors showcase (primary green #089949, text, status)
@@ -22,6 +24,7 @@
 **To view:** Run `npm run storybook` (add script if needed)
 
 ### 3. ✅ CSS Cascade Layers System
+
 **Location:** `angular/src/assets/styles/cascade-layers.scss`
 
 - `@layer base` - Legacy CSS (lowest priority)
@@ -31,18 +34,22 @@
 **Usage:** Import in `styles.scss` before other stylesheets
 
 ### 4. ✅ Legacy Variable Detection Script
+
 **Location:** `scripts/find-legacy-dark-variables.js`
 
 **Commands:**
+
 ```bash
 npm run refactor:find-dark          # Find legacy --dark-* variables
 npm run refactor:find-dark:fix      # Auto-fix them
 ```
 
 ### 5. ✅ Systematic Refactoring Script
+
 **Location:** `scripts/systematic-refactor.js`
 
 **Commands:**
+
 ```bash
 npm run refactor:component -- --component=<name> --dry-run
 npm run refactor:component -- --component=<name>
@@ -50,15 +57,18 @@ npm run refactor:all
 ```
 
 Automatically replaces:
+
 - Hardcoded spacing → `var(--space-*)`
 - Hardcoded font sizes → `var(--font-*)`
 - Hardcoded colors → `var(--ds-primary-green)`, etc.
 - Hardcoded border radius → `var(--radius-*)`
 
 ### 6. ✅ Design System JSON
+
 **Location:** `design-system.json`
 
 Complete design system specification extracted from reference screenshot:
+
 - Colors (#089949 primary green)
 - Spacing (8px grid)
 - Typography (H1-H6, body text)
@@ -66,6 +76,7 @@ Complete design system specification extracted from reference screenshot:
 - Component specs (buttons, cards, dialogs)
 
 ### 7. ✅ Documentation
+
 - **Quick Start:** `docs/REFACTORING_QUICK_START.md`
 - **Complete Guide:** `docs/SYSTEMATIC_REFACTORING_GUIDE.md`
 - **Debugging Guide:** `docs/CSS_OVERRIDE_DEBUGGING_GUIDE.md`
@@ -77,11 +88,13 @@ Complete design system specification extracted from reference screenshot:
 ### Immediate Actions
 
 1. **Find legacy variables:**
+
    ```bash
    npm run refactor:find-dark
    ```
 
 2. **Start Storybook** (if script exists):
+
    ```bash
    cd angular
    npm run storybook
@@ -131,24 +144,28 @@ Complete design system specification extracted from reference screenshot:
 ## Key Design System Rules
 
 ### Colors
+
 - **Primary Green:** `#089949` → `var(--ds-primary-green)`
 - **Text on Green:** `#ffffff` → `var(--color-text-on-primary)`
 - **Text on White:** `#1a1a1a` → `var(--color-text-primary)`
 - **❌ NEVER:** Black text on green backgrounds
 
 ### Spacing (8px Grid)
+
 - `4px` → `var(--space-1)`
 - `8px` → `var(--space-2)`
 - `16px` → `var(--space-4)`
 - `24px` → `var(--space-6)`
 
 ### Typography
+
 - `1.5rem` → `var(--font-heading-lg)`
 - `1.125rem` → `var(--font-heading-sm)`
 - `1rem` → `var(--font-body-md)`
 - `0.875rem` → `var(--font-body-sm)`
 
 ### Border Radius
+
 - `12px` → `var(--radius-lg)` (standard)
 - `8px` → `var(--radius-md)`
 - `6px` → `var(--radius-sm)`
@@ -187,7 +204,7 @@ The script searches for `--dark-*` patterns. If you have different legacy patter
 ```javascript
 const LEGACY_PATTERNS = [
   /--dark-[a-z-]+/gi,
-  /--old-[a-z-]+/gi,  // Add your patterns
+  /--old-[a-z-]+/gi, // Add your patterns
 ];
 ```
 
@@ -218,4 +235,4 @@ After refactoring a component, verify:
 
 ---
 
-*Setup complete! Start refactoring with `npm run refactor:find-dark`*
+_Setup complete! Start refactoring with `npm run refactor:find-dark`_

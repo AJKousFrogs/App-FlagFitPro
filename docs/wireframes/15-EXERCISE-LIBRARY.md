@@ -134,64 +134,64 @@
 
 ## Categories
 
-| Category | Icon | Description |
-|----------|------|-------------|
-| All | 🏃 | All exercises |
-| Strength | 💪 | Weight training, resistance |
-| Speed | ⚡ | Sprint, acceleration |
-| Agility | 🔄 | Direction change, footwork |
-| Flag Football | 🏈 | Position-specific drills |
-| Mobility | 🧘 | Flexibility, stretching |
-| Recovery | 💚 | Foam rolling, stretching |
-| Warmup | 🔥 | Dynamic warmup exercises |
+| Category      | Icon | Description                 |
+| ------------- | ---- | --------------------------- |
+| All           | 🏃   | All exercises               |
+| Strength      | 💪   | Weight training, resistance |
+| Speed         | ⚡   | Sprint, acceleration        |
+| Agility       | 🔄   | Direction change, footwork  |
+| Flag Football | 🏈   | Position-specific drills    |
+| Mobility      | 🧘   | Flexibility, stretching     |
+| Recovery      | 💚   | Foam rolling, stretching    |
+| Warmup        | 🔥   | Dynamic warmup exercises    |
 
 ---
 
 ## Difficulty Levels
 
-| Level | Color |
-|-------|-------|
-| Beginner | 🟢 Green |
+| Level        | Color     |
+| ------------ | --------- |
+| Beginner     | 🟢 Green  |
 | Intermediate | 🟡 Yellow |
-| Advanced | 🔴 Red |
+| Advanced     | 🔴 Red    |
 
 ---
 
 ## Exercise Card Data
 
-| Field | Description |
-|-------|-------------|
-| Name | Exercise name |
-| Category | One of the 8 categories |
-| Difficulty | Beginner/Intermediate/Advanced |
-| Muscle Groups | Tags (array) |
-| Equipment | Tags (array) |
-| Description | Short text |
+| Field         | Description                    |
+| ------------- | ------------------------------ |
+| Name          | Exercise name                  |
+| Category      | One of the 8 categories        |
+| Difficulty    | Beginner/Intermediate/Advanced |
+| Muscle Groups | Tags (array)                   |
+| Equipment     | Tags (array)                   |
+| Description   | Short text                     |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Exercise count header | ✅ |
-| Category count header | ✅ |
-| Search input | ✅ |
-| Category filter buttons | ✅ |
-| Exercise cards grid | ✅ |
-| Difficulty tags | ✅ |
-| Muscle group tags | ✅ |
-| Equipment tags | ✅ |
-| Pagination | ✅ |
-| Exercise detail dialog | ✅ |
-| Add to workout button | ✅ |
-| Responsive grid | ✅ |
+| Feature                 | Status |
+| ----------------------- | ------ |
+| Exercise count header   | ✅     |
+| Category count header   | ✅     |
+| Search input            | ✅     |
+| Category filter buttons | ✅     |
+| Exercise cards grid     | ✅     |
+| Difficulty tags         | ✅     |
+| Muscle group tags       | ✅     |
+| Equipment tags          | ✅     |
+| Pagination              | ✅     |
+| Exercise detail dialog  | ✅     |
+| Add to workout button   | ✅     |
+| Responsive grid         | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Source |
-|------|---------|--------|
-| Exercises | `ApiService` | `exercises` table or ExerciseDB API |
-| Workouts | `UnifiedTrainingService` | For "Add to Workout" |
+| Data      | Service                  | Source                              |
+| --------- | ------------------------ | ----------------------------------- |
+| Exercises | `ApiService`             | `exercises` table or ExerciseDB API |
+| Workouts  | `UnifiedTrainingService` | For "Add to Workout"                |

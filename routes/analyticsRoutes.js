@@ -167,7 +167,10 @@ router.get("/performance-trends", async (req, res) => {
         (sum, row) => sum + (row.sessions_count || 0),
         0,
       ),
-      averageScore: overallScores.length > 0 ? Math.round(safeAverage(overallScores, 0)) : 0,
+      averageScore:
+        overallScores.length > 0
+          ? Math.round(safeAverage(overallScores, 0))
+          : 0,
     });
   } catch (error) {
     serverLogger.error(
@@ -190,7 +193,7 @@ router.get("/performance-trends", async (req, res) => {
  */
 router.get("/team-chemistry", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -323,7 +326,7 @@ router.get("/team-chemistry", async (req, res) => {
  */
 router.get("/training-distribution", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -445,7 +448,7 @@ router.get("/training-distribution", async (req, res) => {
  */
 router.get("/position-performance", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -530,7 +533,10 @@ router.get("/position-performance", async (req, res) => {
       currentScores,
       targetScores: targetScoresData,
       totalPositions: positions.length,
-      averagePerformance: currentScores.length > 0 ? Math.round(safeAverage(currentScores, 0)) : 0,
+      averagePerformance:
+        currentScores.length > 0
+          ? Math.round(safeAverage(currentScores, 0))
+          : 0,
     });
   } catch (error) {
     serverLogger.error("Position performance error:", error);
@@ -550,7 +556,7 @@ router.get("/position-performance", async (req, res) => {
  */
 router.get("/injury-risk", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -779,18 +785,23 @@ router.get("/speed-development", async (req, res) => {
       }
     }
 
-    const validFortyTimes = fortyYardTimes.filter(t => t > 0);
-    const validTenTimes = tenYardTimes.filter(t => t > 0);
+    const validFortyTimes = fortyYardTimes.filter((t) => t > 0);
+    const validTenTimes = tenYardTimes.filter((t) => t > 0);
 
     return sendSuccess(res, {
       weeks: weeksData,
       fortyYardTimes,
       tenYardTimes,
-      bestFortyYard: validFortyTimes.length > 0 ? Math.min(...validFortyTimes) : 0,
+      bestFortyYard:
+        validFortyTimes.length > 0 ? Math.min(...validFortyTimes) : 0,
       bestTenYard: validTenTimes.length > 0 ? Math.min(...validTenTimes) : 0,
       totalImprovement:
         validFortyTimes.length > 1
-          ? Math.round((validFortyTimes[0] - validFortyTimes[validFortyTimes.length - 1]) * 100) / 100
+          ? Math.round(
+              (validFortyTimes[0] -
+                validFortyTimes[validFortyTimes.length - 1]) *
+                100,
+            ) / 100
           : 0,
     });
   } catch (error) {
@@ -896,17 +907,14 @@ router.get("/user-engagement", async (req, res) => {
       if (stageName) {
         const stageIndex = stages.indexOf(stageName);
         if (stageIndex !== -1) {
-          userCounts[stageIndex] = safeParseInt(
-            row.unique_users,
-            0,
-          );
+          userCounts[stageIndex] = safeParseInt(row.unique_users, 0);
         }
       }
     });
 
     // Ensure funnel makes sense
     for (let i = 1; i < userCounts.length; i++) {
-      if (userCounts[i] > userCounts[i - 1] && userCounts[i-1] > 0) {
+      if (userCounts[i] > userCounts[i - 1] && userCounts[i - 1] > 0) {
         userCounts[i] = Math.round(userCounts[i - 1] * 0.9);
       }
     }
@@ -918,7 +926,9 @@ router.get("/user-engagement", async (req, res) => {
         if (index === 0) {
           return userCounts[0] > 0 ? 100 : 0;
         }
-        return userCounts[0] > 0 ? Math.round((userCounts[index] / userCounts[0]) * 100) : 0;
+        return userCounts[0] > 0
+          ? Math.round((userCounts[index] / userCounts[0]) * 100)
+          : 0;
       }),
       period,
       totalUsers: userCounts[0],
@@ -941,7 +951,7 @@ router.get("/user-engagement", async (req, res) => {
  */
 router.get("/summary", async (req, res) => {
   try {
-    const {userId} = req.query;
+    const { userId } = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }

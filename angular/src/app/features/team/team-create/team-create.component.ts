@@ -36,7 +36,7 @@ import { AuthService } from "../../../core/services/auth.service";
     Select,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -119,15 +119,22 @@ import { AuthService } from "../../../core/services/auth.service";
             </div>
 
             <div class="form-actions">
-              <app-button variant="outlined" routerLink="/roster">Cancel</app-button>
-              <app-button iconLeft="pi-check" [loading]="isSubmitting()" [disabled]="teamForm.invalid">Create Team</app-button>
+              <app-button variant="outlined" routerLink="/roster"
+                >Cancel</app-button
+              >
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isSubmitting()"
+                [disabled]="teamForm.invalid"
+                >Create Team</app-button
+              >
             </div>
           </form>
         </p-card>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './team-create.component.scss',
+  styleUrl: "./team-create.component.scss",
 })
 export class TeamCreateComponent {
   private router = inject(Router);

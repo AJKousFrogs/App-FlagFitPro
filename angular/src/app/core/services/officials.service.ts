@@ -407,7 +407,11 @@ export class OfficialsService {
   /**
    * Get upcoming games for a team
    */
-  getUpcomingGames(teamId: string): Observable<Array<{ label: string; value: string; date: string; opponent: string }>> {
+  getUpcomingGames(
+    teamId: string,
+  ): Observable<
+    Array<{ label: string; value: string; date: string; opponent: string }>
+  > {
     interface GameResponse {
       id?: string;
       game_id?: string;
@@ -416,22 +420,24 @@ export class OfficialsService {
       opponent?: string;
       opponent_name?: string;
     }
-    return this.apiService.get<GameResponse[]>(`/api/coach/games`, { teamId, limit: 50 }).pipe(
-      map(response => {
-        if (response.success && response.data) {
-          return response.data.map(g => ({
-            label: `${new Date(g.date || g.game_date || new Date()).toLocaleDateString()} vs ${g.opponent || g.opponent_name || 'TBD'}`,
-            value: g.id || g.game_id || '',
-            date: g.date || g.game_date || '',
-            opponent: g.opponent || g.opponent_name || ''
-          }));
-        }
-        return [];
-      }),
-      catchError(error => {
-        this.logger.error("Failed to fetch upcoming games:", error);
-        return of([]);
-      })
-    );
+    return this.apiService
+      .get<GameResponse[]>(`/api/coach/games`, { teamId, limit: 50 })
+      .pipe(
+        map((response) => {
+          if (response.success && response.data) {
+            return response.data.map((g) => ({
+              label: `${new Date(g.date || g.game_date || new Date()).toLocaleDateString()} vs ${g.opponent || g.opponent_name || "TBD"}`,
+              value: g.id || g.game_id || "",
+              date: g.date || g.game_date || "",
+              opponent: g.opponent || g.opponent_name || "",
+            }));
+          }
+          return [];
+        }),
+        catchError((error) => {
+          this.logger.error("Failed to fetch upcoming games:", error);
+          return of([]);
+        }),
+      );
   }
 }

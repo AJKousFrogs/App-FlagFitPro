@@ -64,7 +64,7 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -240,11 +240,16 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                               ></p-badge>
                             }
                             @if (exercise.is_curated && !exercise.is_approved) {
-                              <p-badge value="Curated" severity="info"></p-badge>
+                              <p-badge
+                                value="Curated"
+                                severity="info"
+                              ></p-badge>
                             }
                             @if (exercise.flag_football_relevance) {
                               <p-badge
-                                [value]="exercise.flag_football_relevance + '/10'"
+                                [value]="
+                                  exercise.flag_football_relevance + '/10'
+                                "
                                 [severity]="
                                   getRelevanceSeverity(
                                     exercise.flag_football_relevance
@@ -275,7 +280,10 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                           @if (exercise.applicable_positions?.length) {
                             <div class="position-chips">
                               @for (
-                                pos of exercise.applicable_positions?.slice(0, 3);
+                                pos of exercise.applicable_positions?.slice(
+                                  0,
+                                  3
+                                );
                                 track pos
                               ) {
                                 <p-chip
@@ -288,8 +296,8 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                               ) {
                                 <span class="more-positions">
                                   +{{
-                                    (exercise.applicable_positions?.length || 0) -
-                                      3
+                                    (exercise.applicable_positions?.length ||
+                                      0) - 3
                                   }}
                                 </span>
                               }
@@ -324,8 +332,9 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                   </h3>
                   <p class="import-description">
                     Import exercises from the ExerciseDB API and automatically
-                    categorize them for flag football training. Exercises will be
-                    auto-tagged based on body part and target muscle relevance.
+                    categorize them for flag football training. Exercises will
+                    be auto-tagged based on body part and target muscle
+                    relevance.
                   </p>
 
                   <div class="import-options">
@@ -367,7 +376,9 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                       </p>
                     </div>
                   } @else {
-                    <app-button iconLeft="pi-download" (clicked)="startImport()">Start Import</app-button>
+                    <app-button iconLeft="pi-download" (clicked)="startImport()"
+                      >Start Import</app-button
+                    >
                   }
 
                   @if (lastImportStats()) {
@@ -499,8 +510,18 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                         </div>
                       }
                       <div class="approval-actions">
-                        <app-button variant="success" iconLeft="pi-check" (clicked)="openApprovalDialog(exercise)">Review & Approve</app-button>
-                        <app-button variant="outlined" iconLeft="pi-times" (clicked)="skipExercise(exercise)">Skip</app-button>
+                        <app-button
+                          variant="success"
+                          iconLeft="pi-check"
+                          (clicked)="openApprovalDialog(exercise)"
+                          >Review & Approve</app-button
+                        >
+                        <app-button
+                          variant="outlined"
+                          iconLeft="pi-times"
+                          (clicked)="skipExercise(exercise)"
+                          >Skip</app-button
+                        >
                       </div>
                     </p-card>
                   }
@@ -661,9 +682,19 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
             </div>
             <ng-template pTemplate="footer">
               @if (!selectedExercise()?.is_approved) {
-                <app-button variant="success" iconLeft="pi-check" (clicked)="openApprovalDialog(selectedExercise()!)">Approve Exercise</app-button>
+                <app-button
+                  variant="success"
+                  iconLeft="pi-check"
+                  (clicked)="openApprovalDialog(selectedExercise()!)"
+                  >Approve Exercise</app-button
+                >
               }
-              <app-button variant="secondary" iconLeft="pi-times" (clicked)="showDetailDialog = false">Close</app-button>
+              <app-button
+                variant="secondary"
+                iconLeft="pi-times"
+                (clicked)="showDetailDialog = false"
+                >Close</app-button
+              >
             </ng-template>
           }
         </p-dialog>
@@ -754,14 +785,24 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
             </div>
           }
           <ng-template pTemplate="footer">
-            <app-button variant="text" iconLeft="pi-times" (clicked)="showApprovalDialog = false">Cancel</app-button>
-            <app-button variant="success" iconLeft="pi-check" (clicked)="approveExercise()">Approve</app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-times"
+              (clicked)="showApprovalDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              variant="success"
+              iconLeft="pi-check"
+              (clicked)="approveExercise()"
+              >Approve</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './exercisedb-manager.component.scss',
+  styleUrl: "./exercisedb-manager.component.scss",
 })
 export class ExerciseDBManagerComponent implements OnInit {
   private exerciseDBService = inject(ExerciseDBService);

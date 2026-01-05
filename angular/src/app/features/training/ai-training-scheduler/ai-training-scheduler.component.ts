@@ -72,7 +72,7 @@ interface AthleteMetrics {
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -84,7 +84,13 @@ interface AthleteMetrics {
           subtitle="AI-powered training schedule optimization based on your readiness and performance"
           icon="pi-sparkles"
         >
-          <app-button iconLeft="pi-refresh" [loading]="isGenerating()" [disabled]="!aiEnabled()" (clicked)="generateNewPlan()">Generate New Plan</app-button>
+          <app-button
+            iconLeft="pi-refresh"
+            [loading]="isGenerating()"
+            [disabled]="!aiEnabled()"
+            (clicked)="generateNewPlan()"
+            >Generate New Plan</app-button
+          >
         </app-page-header>
 
         <!-- AI Consent Required Banner -->
@@ -207,8 +213,19 @@ interface AthleteMetrics {
                     </div>
                     <div class="suggestion-actions">
                       @if (!suggestion.accepted && !suggestion.dismissed) {
-                        <app-button size="sm" iconLeft="pi-check" [loading]="applyingId() === suggestion.id" (clicked)="applySuggestion(suggestion)">Apply</app-button>
-                        <app-button variant="outlined" size="sm" (clicked)="dismissSuggestion(suggestion)">Dismiss</app-button>
+                        <app-button
+                          size="sm"
+                          iconLeft="pi-check"
+                          [loading]="applyingId() === suggestion.id"
+                          (clicked)="applySuggestion(suggestion)"
+                          >Apply</app-button
+                        >
+                        <app-button
+                          variant="outlined"
+                          size="sm"
+                          (clicked)="dismissSuggestion(suggestion)"
+                          >Dismiss</app-button
+                        >
                       } @else if (suggestion.accepted) {
                         <p-tag value="Applied" severity="success"></p-tag>
                       }
@@ -240,7 +257,9 @@ interface AthleteMetrics {
               @if (selectedDateSessions().length === 0) {
                 <div class="empty-sessions">
                   <p>No sessions scheduled for this date</p>
-                  <app-button variant="outlined" size="sm" iconLeft="pi-plus">Add Session</app-button>
+                  <app-button variant="outlined" size="sm" iconLeft="pi-plus"
+                    >Add Session</app-button
+                  >
                 </div>
               } @else {
                 <div class="sessions-list">
@@ -273,7 +292,7 @@ interface AthleteMetrics {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './ai-training-scheduler.component.scss',
+  styleUrl: "./ai-training-scheduler.component.scss",
 })
 export class AiTrainingSchedulerComponent implements OnInit {
   private supabaseService = inject(SupabaseService);

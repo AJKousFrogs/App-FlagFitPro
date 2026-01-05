@@ -58,7 +58,14 @@ export interface LineChartDataset extends ChartDataset<number> {
  * Bar chart specific dataset
  */
 export interface BarChartDataset extends ChartDataset<number> {
-  borderRadius?: number | { topLeft?: number; topRight?: number; bottomLeft?: number; bottomRight?: number };
+  borderRadius?:
+    | number
+    | {
+        topLeft?: number;
+        topRight?: number;
+        bottomLeft?: number;
+        bottomRight?: number;
+      };
   barThickness?: number | "flex";
   maxBarThickness?: number;
   minBarLength?: number;

@@ -17,7 +17,8 @@ class NutritionSystemSeeder {
     const nutritionPlans = [
       {
         name: "Elite Flag Football Competition Day Plan",
-        description: "High-performance nutrition plan for game days and tournaments",
+        description:
+          "High-performance nutrition plan for game days and tournaments",
         athlete_level: "elite_competitor",
         created_at: new Date(),
       },
@@ -85,7 +86,9 @@ class NutritionSystemSeeder {
           profile.created_at,
         ]);
 
-        console.log(`✅ Inserted nutrition profile for user: ${profile.user_id}`);
+        console.log(
+          `✅ Inserted nutrition profile for user: ${profile.user_id}`,
+        );
       } catch (error) {
         console.error(`❌ Error inserting nutrition profile: ${error.message}`);
       }
@@ -95,16 +98,19 @@ class NutritionSystemSeeder {
   async seedNutritionRecommendations() {
     console.log("💡 Seeding Nutrition Recommendations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const recommendations = [
       {
         user_id: usersRes.rows[0].id,
         title: "Pre-Game Fueling",
-        description: "Focus on slow-digesting carbs 3-4 hours before the match.",
+        description:
+          "Focus on slow-digesting carbs 3-4 hours before the match.",
         recommendation_type: "pre_game",
         date_generated: new Date(),
-      }
+      },
     ];
 
     for (const rec of recommendations) {
@@ -125,7 +131,9 @@ class NutritionSystemSeeder {
 
         console.log(`✅ Inserted nutrition recommendation: ${rec.title}`);
       } catch (error) {
-        console.error(`❌ Error inserting nutrition recommendation: ${error.message}`);
+        console.error(
+          `❌ Error inserting nutrition recommendation: ${error.message}`,
+        );
       }
     }
   }
@@ -133,7 +141,9 @@ class NutritionSystemSeeder {
   async seedNutritionPerformanceCorrelations() {
     console.log("📊 Seeding Nutrition Performance Correlations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const correlations = [
       {
@@ -141,7 +151,7 @@ class NutritionSystemSeeder {
         analysis_date: new Date(),
         correlation_strength: 0.85,
         key_insights: ["Carb loading correlates with +10% speed endurance"],
-      }
+      },
     ];
 
     for (const corr of correlations) {
@@ -159,9 +169,13 @@ class NutritionSystemSeeder {
           corr.key_insights,
         ]);
 
-        console.log(`✅ Inserted performance correlation for user: ${corr.user_id}`);
+        console.log(
+          `✅ Inserted performance correlation for user: ${corr.user_id}`,
+        );
       } catch (error) {
-        console.error(`❌ Error inserting performance correlation: ${error.message}`);
+        console.error(
+          `❌ Error inserting performance correlation: ${error.message}`,
+        );
       }
     }
   }
@@ -169,7 +183,9 @@ class NutritionSystemSeeder {
   async seedUserNutritionTargets() {
     console.log("🎯 Seeding User Nutrition Targets...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) {return;}
+    if (usersRes.rows.length === 0) {
+      return;
+    }
 
     const target = {
       user_id: usersRes.rows[0].id,
@@ -214,7 +230,9 @@ class NutritionSystemSeeder {
       await this.seedNutritionRecommendations();
       await this.seedNutritionPerformanceCorrelations();
       await this.seedUserNutritionTargets();
-      console.log("🎉 Nutrition System Database Seeding Completed Successfully!");
+      console.log(
+        "🎉 Nutrition System Database Seeding Completed Successfully!",
+      );
     } catch (error) {
       console.error(`❌ Database seeding failed: ${error.message}`);
     } finally {

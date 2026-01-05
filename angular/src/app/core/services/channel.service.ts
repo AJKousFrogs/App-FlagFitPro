@@ -229,7 +229,8 @@ export class ChannelService {
   // User role check
   readonly isCoach = computed(() => {
     const user = this.authService.getUser();
-    const metadata = (user as { user_metadata?: { role?: string } } | null)?.user_metadata;
+    const metadata = (user as { user_metadata?: { role?: string } } | null)
+      ?.user_metadata;
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 

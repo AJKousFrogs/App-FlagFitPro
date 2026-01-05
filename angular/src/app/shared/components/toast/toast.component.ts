@@ -58,7 +58,7 @@ import { ToastModule } from "primeng/toast";
       </ng-template>
     </p-toast>
   `,
-  styleUrl: './toast.component.scss',
+  styleUrl: "./toast.component.scss",
 })
 export class ToastComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);

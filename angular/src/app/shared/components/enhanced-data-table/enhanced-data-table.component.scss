@@ -105,7 +105,9 @@ tr.selected {
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .mobile-card.selected {
@@ -168,4 +170,3 @@ tr.selected {
     flex-wrap: wrap;
   }
 }
-

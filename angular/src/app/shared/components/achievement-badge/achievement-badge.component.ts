@@ -124,7 +124,7 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
       }
     </div>
   `,
-  styleUrl: './achievement-badge.component.scss',
+  styleUrl: "./achievement-badge.component.scss",
 })
 export class AchievementBadgeComponent {
   // Inputs

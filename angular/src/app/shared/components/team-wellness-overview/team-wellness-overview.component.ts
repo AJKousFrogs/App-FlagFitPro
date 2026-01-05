@@ -79,7 +79,7 @@ interface TeamWellnessSummary {
     TooltipModule,
     BadgeModule,
     SkeletonModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -191,7 +191,9 @@ interface TeamWellnessSummary {
                 [value]="athletesNeedingAttention().length.toString()"
               ></p-badge>
             </h3>
-            <app-button variant="text" size="sm" routerLink="/roster">View All</app-button>
+            <app-button variant="text" size="sm" routerLink="/roster"
+              >View All</app-button
+            >
           </div>
 
           <div class="attention-list">
@@ -238,7 +240,12 @@ interface TeamWellnessSummary {
                   </div>
                 </div>
 
-                <app-icon-button icon="pi-arrow-right" variant="text" routerLink="/roster" ariaLabel="arrow-right" />
+                <app-icon-button
+                  icon="pi-arrow-right"
+                  variant="text"
+                  routerLink="/roster"
+                  ariaLabel="arrow-right"
+                />
               </div>
             }
           </div>
@@ -253,7 +260,13 @@ interface TeamWellnessSummary {
               <i class="pi pi-clock"></i>
               Not Checked In Today
             </h3>
-            <app-button variant="outlined" size="sm" iconLeft="pi-bell" (clicked)="sendReminders()">Send Reminder</app-button>
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-bell"
+              (clicked)="sendReminders()"
+              >Send Reminder</app-button
+            >
           </div>
 
           <div class="not-checked-list">
@@ -378,7 +391,7 @@ interface TeamWellnessSummary {
       </div>
     </div>
   `,
-  styleUrl: './team-wellness-overview.component.scss',
+  styleUrl: "./team-wellness-overview.component.scss",
 })
 export class TeamWellnessOverviewComponent implements OnInit {
   private logger = inject(LoggerService);

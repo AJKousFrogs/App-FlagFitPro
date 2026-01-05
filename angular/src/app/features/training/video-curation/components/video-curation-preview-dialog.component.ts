@@ -49,7 +49,7 @@ import { InstagramVideo } from "../video-curation.models";
       }
     </p-dialog>
   `,
-  styleUrl: './video-curation-preview-dialog.component.scss',
+  styleUrl: "./video-curation-preview-dialog.component.scss",
 })
 export class VideoCurationPreviewDialogComponent {
   video = input<InstagramVideo | null>(null);

@@ -93,14 +93,14 @@ export function kgToLbs(kg: number): number {
  */
 export function formatWeight(weight: string): string {
   if (!weight) return "-";
-  
+
   const normalized = weight.toLowerCase().trim();
-  
+
   // Already in kg
   if (normalized.includes("kg")) {
     return weight.trim();
   }
-  
+
   // In lbs - convert to kg
   if (normalized.includes("lb")) {
     const numMatch = normalized.match(/[\d.]+/);
@@ -110,7 +110,7 @@ export function formatWeight(weight: string): string {
       return `${kg} kg`;
     }
   }
-  
+
   // Just a number - assume it might be lbs if > 100, kg if <= 100
   const numMatch = normalized.match(/[\d.]+/);
   if (numMatch) {
@@ -122,7 +122,7 @@ export function formatWeight(weight: string): string {
     }
     return `${num} kg`;
   }
-  
+
   return weight;
 }
 
@@ -132,23 +132,23 @@ export function formatWeight(weight: string): string {
  */
 export function formatHeight(height: string): string {
   if (!height) return "-";
-  
+
   const normalized = height.toLowerCase().trim();
-  
+
   // Already in cm
   if (normalized.includes("cm")) {
     return height.trim();
   }
-  
+
   // Feet and inches format (6'2", 6-2, 6ft 2in, etc.)
   const feetInchesMatch = normalized.match(/(\d+)['\-ft\s]+(\d+)/);
   if (feetInchesMatch) {
     const feet = parseInt(feetInchesMatch[1], 10);
     const inches = parseInt(feetInchesMatch[2], 10);
-    const cm = Math.round((feet * 30.48) + (inches * 2.54));
+    const cm = Math.round(feet * 30.48 + inches * 2.54);
     return `${cm} cm`;
   }
-  
+
   // Just feet (6')
   const feetOnlyMatch = normalized.match(/(\d+)['\-ft]/);
   if (feetOnlyMatch) {
@@ -156,7 +156,7 @@ export function formatHeight(height: string): string {
     const cm = Math.round(feet * 30.48);
     return `${cm} cm`;
   }
-  
+
   // Just a number - assume cm if > 100, otherwise might be feet
   const numMatch = normalized.match(/[\d.]+/);
   if (numMatch) {
@@ -168,7 +168,7 @@ export function formatHeight(height: string): string {
     const cm = Math.round(num * 30.48);
     return `${cm} cm`;
   }
-  
+
   return height;
 }
 

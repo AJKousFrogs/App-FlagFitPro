@@ -64,7 +64,7 @@ export type PulseStatus =
       }
     </div>
   `,
-  styleUrl: './pulse-indicator.component.scss',
+  styleUrl: "./pulse-indicator.component.scss",
 })
 export class PulseIndicatorComponent {
   // Inputs

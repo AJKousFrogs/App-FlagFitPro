@@ -16,7 +16,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const authHeader = event.headers.authorization || event.headers.Authorization;
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
     if (!authHeader?.startsWith("Bearer ")) {
       return {
         statusCode: 401,
@@ -150,7 +151,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
       },
       {
         onConflict: "user_id,checkin_date",
-      }
+      },
     )
     .select()
     .single();
@@ -232,7 +233,8 @@ async function saveCheckin(supabase, userId, payload, headers) {
 }
 
 function calculateReadiness(data) {
-  const { sleepQuality, sleepHours, energyLevel, muscleSoreness, stressLevel } = data;
+  const { sleepQuality, sleepHours, energyLevel, muscleSoreness, stressLevel } =
+    data;
 
   // Weighted average formula
   const sleepQualityScore = ((sleepQuality || 3) / 5) * 100;

@@ -40,7 +40,10 @@
   border: none;
   border-bottom: var(--border-2) solid transparent;
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
   white-space: nowrap;
 }
 
@@ -92,4 +95,3 @@
 .aria-tabpanel[hidden] {
   display: none;
 }
-

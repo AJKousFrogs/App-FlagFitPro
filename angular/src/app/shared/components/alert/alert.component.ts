@@ -46,7 +46,7 @@ import { CommonModule } from "@angular/common";
       </div>
     }
   `,
-  styleUrl: './alert.component.scss',
+  styleUrl: "./alert.component.scss",
 })
 export class AlertComponent {
   // Angular 21: Use input() signals instead of @Input()

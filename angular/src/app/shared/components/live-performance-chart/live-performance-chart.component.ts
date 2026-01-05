@@ -68,7 +68,7 @@ export interface LiveMetric {
       </div>
     </p-card>
   `,
-  styleUrl: './live-performance-chart.component.scss',
+  styleUrl: "./live-performance-chart.component.scss",
 })
 export class LivePerformanceChartComponent implements OnInit {
   private apiService = inject(ApiService);

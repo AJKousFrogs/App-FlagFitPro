@@ -18,25 +18,23 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 
 import {
   PrescribedExercise,
   formatPrescription,
-} from '../daily-protocol.models';
+} from "../daily-protocol.models";
 
 @Component({
-  selector: 'app-exercise-card',
+  selector: "app-exercise-card",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, TagModule, TooltipModule, ButtonComponent],
   template: `
     <div
       class="exercise-card"
@@ -49,9 +47,9 @@ import {
       <div class="exercise-header" (click)="toggleExpand()">
         <div class="exercise-title-row">
           <div class="status-indicator" [class]="exercise().status">
-            @if (exercise().status === 'complete') {
+            @if (exercise().status === "complete") {
               <i class="pi pi-check"></i>
-            } @else if (exercise().status === 'skipped') {
+            } @else if (exercise().status === "skipped") {
               <i class="pi pi-minus"></i>
             } @else {
               <span class="status-number">{{ sequenceNumber() }}</span>
@@ -68,7 +66,11 @@ import {
             [attr.aria-expanded]="isExpanded()"
             [attr.aria-label]="isExpanded() ? 'Collapse' : 'Expand'"
           >
-            <i class="pi" [class.pi-chevron-down]="!isExpanded()" [class.pi-chevron-up]="isExpanded()"></i>
+            <i
+              class="pi"
+              [class.pi-chevron-down]="!isExpanded()"
+              [class.pi-chevron-up]="isExpanded()"
+            ></i>
           </button>
         </div>
       </div>
@@ -114,25 +116,33 @@ import {
               <div class="prescription-badges">
                 @if (exercise().prescribedSets) {
                   <div class="badge-item">
-                    <span class="badge-value">{{ exercise().prescribedSets }}</span>
+                    <span class="badge-value">{{
+                      exercise().prescribedSets
+                    }}</span>
                     <span class="badge-label">Sets</span>
                   </div>
                 }
                 @if (exercise().prescribedReps) {
                   <div class="badge-item">
-                    <span class="badge-value">{{ exercise().prescribedReps }}</span>
+                    <span class="badge-value">{{
+                      exercise().prescribedReps
+                    }}</span>
                     <span class="badge-label">Reps</span>
                   </div>
                 }
                 @if (exercise().prescribedHoldSeconds) {
                   <div class="badge-item">
-                    <span class="badge-value">{{ exercise().prescribedHoldSeconds }}s</span>
+                    <span class="badge-value"
+                      >{{ exercise().prescribedHoldSeconds }}s</span
+                    >
                     <span class="badge-label">Hold</span>
                   </div>
                 }
                 @if (exercise().prescribedDurationSeconds) {
                   <div class="badge-item">
-                    <span class="badge-value">{{ formatDuration(exercise().prescribedDurationSeconds!) }}</span>
+                    <span class="badge-value">{{
+                      formatDuration(exercise().prescribedDurationSeconds!)
+                    }}</span>
                     <span class="badge-label">Duration</span>
                   </div>
                 }
@@ -175,7 +185,9 @@ import {
                     <i class="pi pi-heart"></i>
                     FEEL
                   </h5>
-                  <p class="instruction-text">{{ exercise().exercise.feelText }}</p>
+                  <p class="instruction-text">
+                    {{ exercise().exercise.feelText }}
+                  </p>
                 </div>
               }
 
@@ -185,7 +197,9 @@ import {
                     <i class="pi pi-exclamation-triangle"></i>
                     COMPENSATION
                   </h5>
-                  <p class="instruction-text">{{ exercise().exercise.compensationText }}</p>
+                  <p class="instruction-text">
+                    {{ exercise().exercise.compensationText }}
+                  </p>
                 </div>
               }
             </div>
@@ -201,9 +215,19 @@ import {
 
           <!-- Action Row -->
           <div class="action-row">
-            @if (exercise().status !== 'complete') {
-              <app-button iconLeft="pi-check" [loading]="isCompleting()" (clicked)="onComplete()">Mark Complete</app-button>
-              <app-button variant="outlined" iconLeft="pi-forward" (clicked)="onSkip()">Skip</app-button>
+            @if (exercise().status !== "complete") {
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isCompleting()"
+                (clicked)="onComplete()"
+                >Mark Complete</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-forward"
+                (clicked)="onSkip()"
+                >Skip</app-button
+              >
             } @else {
               <div class="completed-badge">
                 <i class="pi pi-check-circle"></i>
@@ -220,7 +244,7 @@ import {
       }
     </div>
   `,
-  styleUrl: './exercise-card.component.scss',
+  styleUrl: "./exercise-card.component.scss",
 })
 export class ExerciseCardComponent {
   // Inputs
@@ -267,7 +291,7 @@ export class ExerciseCardComponent {
       parts.push(`${ex.yesterdayHoldSeconds}s hold`);
     }
 
-    return parts.join(' × ');
+    return parts.join(" × ");
   });
 
   // Methods
@@ -296,8 +320,8 @@ export class ExerciseCardComponent {
 
   formatTime(date: Date): string {
     return new Date(date).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 }

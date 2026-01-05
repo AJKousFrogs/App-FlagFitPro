@@ -37,7 +37,9 @@
 
   /* Button styling */
   --p-button-text-primary-color: var(--color-text-secondary);
-  --p-button-text-primary-hover-background: var(--ds-primary-green-ultra-subtle);
+  --p-button-text-primary-hover-background: var(
+    --ds-primary-green-ultra-subtle
+  );
 
   /* Form control styling */
   --p-inputtext-border-radius: var(--radius-md);
@@ -225,7 +227,9 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: background-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: var(--shadow-inset), var(--shadow-1);
 }
 
@@ -280,11 +284,7 @@
   gap: var(--space-6);
   flex-wrap: wrap;
   padding: var(--space-5) var(--space-6);
-  background: linear-gradient(
-    to right,
-    var(--surface-secondary),
-    transparent
-  );
+  background: linear-gradient(to right, var(--surface-secondary), transparent);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
 }
 
@@ -350,7 +350,9 @@
   border-radius: var(--radius-lg);
   text-align: center;
   border: var(--border-1) solid var(--color-border-secondary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .stat-box:hover {
@@ -465,7 +467,10 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -583,7 +588,9 @@
     height: var(--space-9);
     border-radius: var(--radius-md);
     color: var(--color-text-secondary);
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
 
     &:hover {
       background: var(--ds-primary-green-ultra-subtle);

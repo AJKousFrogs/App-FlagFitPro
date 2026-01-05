@@ -147,9 +147,9 @@ Monitors cumulative sleep deficit and its impact on training capacity, recovery,
 
 ```typescript
 const SLEEP_REQUIREMENTS = {
-  junior:     { optimal: 9, minimum: 8 },   // 16-17 years
-  youngAdult: { optimal: 8, minimum: 7 },   // 18-25 years
-  adult:      { optimal: 7.5, minimum: 7 }  // 26+ years
+  junior: { optimal: 9, minimum: 8 }, // 16-17 years
+  youngAdult: { optimal: 8, minimum: 7 }, // 18-25 years
+  adult: { optimal: 7.5, minimum: 7 }, // 26+ years
 };
 ```
 
@@ -159,11 +159,11 @@ const SLEEP_REQUIREMENTS = {
 
 ```typescript
 function calculateSleepDebt(
-  sleepHistory: SleepEntry[], 
-  optimalHours: number
+  sleepHistory: SleepEntry[],
+  optimalHours: number,
 ): SleepDebtAnalysis {
   const last7Days = sleepHistory.slice(-7);
-  
+
   // Calculate cumulative debt
   let cumulativeDebt = 0;
   for (const entry of last7Days) {
@@ -172,15 +172,15 @@ function calculateSleepDebt(
       cumulativeDebt += deficit;
     }
   }
-  
+
   // Determine debt level
   let debtLevel: DebtLevel;
-  if (cumulativeDebt === 0) debtLevel = 'none';
-  else if (cumulativeDebt < 5) debtLevel = 'mild';
-  else if (cumulativeDebt < 10) debtLevel = 'moderate';
-  else if (cumulativeDebt < 15) debtLevel = 'severe';
-  else debtLevel = 'critical';
-  
+  if (cumulativeDebt === 0) debtLevel = "none";
+  else if (cumulativeDebt < 5) debtLevel = "mild";
+  else if (cumulativeDebt < 10) debtLevel = "moderate";
+  else if (cumulativeDebt < 15) debtLevel = "severe";
+  else debtLevel = "critical";
+
   return {
     cumulativeDebt,
     debtLevel,
@@ -193,13 +193,13 @@ function calculateSleepDebt(
 
 ## Debt Severity Levels
 
-| Level | Hours | Color | Impact |
-|-------|-------|-------|--------|
-| None | 0 | 🟢 Green | 100% capacity |
-| Mild | 1-4 | 🔵 Blue | 90% capacity |
-| Moderate | 5-9 | 🟡 Yellow | 75-85% capacity |
-| Severe | 10-14 | 🟠 Orange | 60-75% capacity |
-| Critical | 15+ | 🔴 Red | <60% capacity |
+| Level    | Hours | Color     | Impact          |
+| -------- | ----- | --------- | --------------- |
+| None     | 0     | 🟢 Green  | 100% capacity   |
+| Mild     | 1-4   | 🔵 Blue   | 90% capacity    |
+| Moderate | 5-9   | 🟡 Yellow | 75-85% capacity |
+| Severe   | 10-14 | 🟠 Orange | 60-75% capacity |
+| Critical | 15+   | 🔴 Red    | <60% capacity   |
 
 ---
 
@@ -208,10 +208,10 @@ function calculateSleepDebt(
 ```typescript
 function calculateImpactMultipliers(cumulativeDebt: number): ImpactMultipliers {
   return {
-    trainingCapacity: Math.max(0.5, 1 - (cumulativeDebt * 0.03)),
-    recoveryRate: Math.max(0.4, 1 - (cumulativeDebt * 0.04)),
-    injuryRiskMultiplier: 1 + (cumulativeDebt * 0.1),  // 10% increase per hour
-    reactionTimeMultiplier: 1 + (cumulativeDebt * 0.03)  // 3% slower per hour
+    trainingCapacity: Math.max(0.5, 1 - cumulativeDebt * 0.03),
+    recoveryRate: Math.max(0.4, 1 - cumulativeDebt * 0.04),
+    injuryRiskMultiplier: 1 + cumulativeDebt * 0.1, // 10% increase per hour
+    reactionTimeMultiplier: 1 + cumulativeDebt * 0.03, // 3% slower per hour
   };
 }
 
@@ -228,8 +228,8 @@ function calculateImpactMultipliers(cumulativeDebt: number): ImpactMultipliers {
 
 ```typescript
 function calculateRecoveryTimeline(
-  debtHours: number, 
-  extraSleepPerNight: number
+  debtHours: number,
+  extraSleepPerNight: number,
 ): number {
   // Can't bank more than 1-2 hours extra per night
   const effectiveExtra = Math.min(extraSleepPerNight, 1.5);
@@ -248,18 +248,18 @@ function calculateRecoveryTimeline(
 // Based on Mah et al. (2011), Halson (2014), Simpson et al. (2017)
 const SLEEP_RESEARCH = {
   reactionTime: {
-    finding: 'Reaction time decreases 300% with sleep deprivation',
-    formula: (debtHours) => 1 + (debtHours * 0.15)
+    finding: "Reaction time decreases 300% with sleep deprivation",
+    formula: (debtHours) => 1 + debtHours * 0.15,
   },
   injuryRisk: {
-    finding: 'Injury risk increases 1.7x with <8 hours sleep',
+    finding: "Injury risk increases 1.7x with <8 hours sleep",
     threshold: 8,
-    multiplier: 1.7
+    multiplier: 1.7,
   },
   performance: {
-    finding: 'Basketball players gained 9% sprint speed with sleep extension',
-    optimalBoost: 1.09
-  }
+    finding: "Basketball players gained 9% sprint speed with sleep extension",
+    optimalBoost: 1.09,
+  },
 };
 ```
 
@@ -267,43 +267,43 @@ const SLEEP_RESEARCH = {
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Current Debt Display | ❌ | HIGH |
-| 7-Day & 14-Day Averages | ❌ | HIGH |
-| Optimal Target by Age | ❌ | MEDIUM |
-| Recovery Timeline | ❌ | MEDIUM |
-| Impact Multipliers | ❌ | HIGH |
-| AI Recommendations | ❌ | MEDIUM |
-| Sleep History Chart | ❌ | HIGH |
-| Cumulative Debt Chart | ❌ | MEDIUM |
+| Feature                 | Status | Priority |
+| ----------------------- | ------ | -------- |
+| Current Debt Display    | ❌     | HIGH     |
+| 7-Day & 14-Day Averages | ❌     | HIGH     |
+| Optimal Target by Age   | ❌     | MEDIUM   |
+| Recovery Timeline       | ❌     | MEDIUM   |
+| Impact Multipliers      | ❌     | HIGH     |
+| AI Recommendations      | ❌     | MEDIUM   |
+| Sleep History Chart     | ❌     | HIGH     |
+| Cumulative Debt Chart   | ❌     | MEDIUM   |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
+| Data          | Service           | Table               |
+| ------------- | ----------------- | ------------------- |
 | Sleep entries | `WellnessService` | `wellness_checkins` |
-| User age | `AuthService` | `profiles` |
+| User age      | `AuthService`     | `profiles`          |
 
 ---
 
 ## Integration Points
 
-| Feature | Integration |
-|---------|-------------|
-| Wellness Check-in | Sleep hours logged daily |
-| ACWR Dashboard | Adjusts sweet spot based on sleep |
-| Training Recommendations | Reduces intensity when debt high |
-| AI Coach | Provides sleep-aware advice |
+| Feature                  | Integration                       |
+| ------------------------ | --------------------------------- |
+| Wellness Check-in        | Sleep hours logged daily          |
+| ACWR Dashboard           | Adjusts sweet spot based on sleep |
+| Training Recommendations | Reduces intensity when debt high  |
+| AI Coach                 | Provides sleep-aware advice       |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Wellness | `/wellness` | Sleep logging |
-| ACWR Dashboard | `/acwr-dashboard` | Load adjustments |
-| Today's Practice | `/today` | Training modifications |
+| Page             | Route             | Relationship           |
+| ---------------- | ----------------- | ---------------------- |
+| Wellness         | `/wellness`       | Sleep logging          |
+| ACWR Dashboard   | `/acwr-dashboard` | Load adjustments       |
+| Today's Practice | `/today`          | Training modifications |

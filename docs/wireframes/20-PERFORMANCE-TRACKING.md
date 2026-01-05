@@ -228,35 +228,35 @@
 
 ### Speed Metrics
 
-| Metric | Input Type | Unit | Elite | Good | Average |
-|--------|------------|------|-------|------|---------|
-| 10m Sprint | Decimal | seconds | 1.50s | 1.60s | 1.70s |
-| 20m Sprint | Decimal | seconds | 2.80s | 2.95s | 3.10s |
-| 40-Yard Dash | Decimal | seconds | 4.40s | 4.60s | 4.80s |
+| Metric       | Input Type | Unit    | Elite | Good  | Average |
+| ------------ | ---------- | ------- | ----- | ----- | ------- |
+| 10m Sprint   | Decimal    | seconds | 1.50s | 1.60s | 1.70s   |
+| 20m Sprint   | Decimal    | seconds | 2.80s | 2.95s | 3.10s   |
+| 40-Yard Dash | Decimal    | seconds | 4.40s | 4.60s | 4.80s   |
 
 ### Agility Metrics
 
-| Metric | Input Type | Unit | Elite | Good | Average |
-|--------|------------|------|-------|------|---------|
-| Pro Agility (5-10-5) | Decimal | seconds | 3.90s | 4.10s | 4.30s |
-| L-Drill | Decimal | seconds | 6.50s | 7.00s | 7.50s |
-| Reactive Agility | Decimal | seconds | 1.10s | 1.25s | 1.40s |
+| Metric               | Input Type | Unit    | Elite | Good  | Average |
+| -------------------- | ---------- | ------- | ----- | ----- | ------- |
+| Pro Agility (5-10-5) | Decimal    | seconds | 3.90s | 4.10s | 4.30s   |
+| L-Drill              | Decimal    | seconds | 6.50s | 7.00s | 7.50s   |
+| Reactive Agility     | Decimal    | seconds | 1.10s | 1.25s | 1.40s   |
 
 ### Power Metrics
 
-| Metric | Input Type | Unit | Elite | Good | Average |
-|--------|------------|------|-------|------|---------|
-| Vertical Jump | Integer | inches | 40" | 36" | 32" |
-| Broad Jump | Integer | inches | 130" | 115" | 100" |
-| RSI (Reactive Strength Index) | Decimal | ratio | 2.60 | 2.20 | 1.80 |
+| Metric                        | Input Type | Unit   | Elite | Good | Average |
+| ----------------------------- | ---------- | ------ | ----- | ---- | ------- |
+| Vertical Jump                 | Integer    | inches | 40"   | 36"  | 32"     |
+| Broad Jump                    | Integer    | inches | 130"  | 115" | 100"    |
+| RSI (Reactive Strength Index) | Decimal    | ratio  | 2.60  | 2.20 | 1.80    |
 
 ### Strength Metrics
 
-| Metric | Input Type | Unit | Relative Strength Levels |
-|--------|------------|------|-------------------------|
-| Bench Press 1RM | Integer | lbs | Beginner: 0.75×, Int: 1.0×, Adv: 1.25×, Elite: 1.5× BW |
-| Back Squat 1RM | Integer | lbs | Beginner: 1.0×, Int: 1.5×, Adv: 2.0×, Elite: 2.5× BW |
-| Trap Bar Deadlift 1RM | Integer | lbs | Beginner: 1.25×, Int: 1.75×, Adv: 2.25×, Elite: 2.75× BW |
+| Metric                | Input Type | Unit | Relative Strength Levels                                 |
+| --------------------- | ---------- | ---- | -------------------------------------------------------- |
+| Bench Press 1RM       | Integer    | lbs  | Beginner: 0.75×, Int: 1.0×, Adv: 1.25×, Elite: 1.5× BW   |
+| Back Squat 1RM        | Integer    | lbs  | Beginner: 1.0×, Int: 1.5×, Adv: 2.0×, Elite: 2.5× BW     |
+| Trap Bar Deadlift 1RM | Integer    | lbs  | Beginner: 1.25×, Int: 1.75×, Adv: 2.25×, Elite: 2.75× BW |
 
 ---
 
@@ -267,23 +267,23 @@ const POSITION_BENCHMARKS = {
   QB: {
     sprint40: { elite: 4.6, good: 4.8, average: 5.0 },
     proAgility: { elite: 4.0, good: 4.2, average: 4.4 },
-    verticalJump: { elite: 34, good: 30, average: 26 } // inches
+    verticalJump: { elite: 34, good: 30, average: 26 }, // inches
   },
   WR: {
     sprint40: { elite: 4.4, good: 4.6, average: 4.8 },
     proAgility: { elite: 3.9, good: 4.1, average: 4.3 },
-    verticalJump: { elite: 36, good: 32, average: 28 }
+    verticalJump: { elite: 36, good: 32, average: 28 },
   },
   DB: {
     sprint40: { elite: 4.4, good: 4.6, average: 4.8 },
     proAgility: { elite: 3.9, good: 4.1, average: 4.3 },
-    verticalJump: { elite: 35, good: 31, average: 27 }
+    verticalJump: { elite: 35, good: 31, average: 27 },
   },
   Rusher: {
     sprint40: { elite: 4.5, good: 4.7, average: 4.9 },
     proAgility: { elite: 4.0, good: 4.2, average: 4.4 },
-    verticalJump: { elite: 33, good: 29, average: 25 }
-  }
+    verticalJump: { elite: 33, good: 29, average: 25 },
+  },
 };
 ```
 
@@ -292,28 +292,39 @@ const POSITION_BENCHMARKS = {
 ## Relative Strength Calculations
 
 ```typescript
-function calculateRelativeStrength(oneRepMax: number, bodyWeight: number): RelativeStrength {
+function calculateRelativeStrength(
+  oneRepMax: number,
+  bodyWeight: number,
+): RelativeStrength {
   const ratio = oneRepMax / bodyWeight;
-  
+
   return {
     ratio: ratio.toFixed(2),
-    level: getStrengthLevel(ratio)
+    level: getStrengthLevel(ratio),
   };
 }
 
-function getStrengthLevel(ratio: number, exercise: 'squat' | 'deadlift' | 'bench'): string {
+function getStrengthLevel(
+  ratio: number,
+  exercise: "squat" | "deadlift" | "bench",
+): string {
   const standards = {
     squat: { beginner: 1.0, intermediate: 1.5, advanced: 2.0, elite: 2.5 },
-    deadlift: { beginner: 1.25, intermediate: 1.75, advanced: 2.25, elite: 2.75 },
-    bench: { beginner: 0.75, intermediate: 1.0, advanced: 1.25, elite: 1.5 }
+    deadlift: {
+      beginner: 1.25,
+      intermediate: 1.75,
+      advanced: 2.25,
+      elite: 2.75,
+    },
+    bench: { beginner: 0.75, intermediate: 1.0, advanced: 1.25, elite: 1.5 },
   };
-  
+
   const levels = standards[exercise];
-  
-  if (ratio >= levels.elite) return 'Elite';
-  if (ratio >= levels.advanced) return 'Advanced';
-  if (ratio >= levels.intermediate) return 'Intermediate';
-  return 'Beginner';
+
+  if (ratio >= levels.elite) return "Elite";
+  if (ratio >= levels.advanced) return "Advanced";
+  if (ratio >= levels.intermediate) return "Intermediate";
+  return "Beginner";
 }
 ```
 
@@ -333,24 +344,24 @@ interface GapAnalysis {
 }
 
 function analyzeGaps(
-  metrics: PerformanceMetrics, 
-  position: Position
+  metrics: PerformanceMetrics,
+  position: Position,
 ): GapAnalysis[] {
   const benchmarks = POSITION_BENCHMARKS[position];
   const gaps: GapAnalysis[] = [];
-  
+
   // Calculate gap for each metric
-  Object.keys(benchmarks).forEach(metric => {
+  Object.keys(benchmarks).forEach((metric) => {
     const current = metrics[metric];
     const elite = benchmarks[metric].elite;
-    
+
     if (current) {
-      const gap = isTimeMetric(metric) 
-        ? current - elite   // Lower is better
-        : elite - current;  // Higher is better
-      
+      const gap = isTimeMetric(metric)
+        ? current - elite // Lower is better
+        : elite - current; // Higher is better
+
       const gapPercentage = (gap / elite) * 100;
-      
+
       gaps.push({
         metric,
         current,
@@ -358,11 +369,11 @@ function analyzeGaps(
         gap: Math.abs(gap),
         gapPercentage: Math.abs(gapPercentage),
         priority: calculatePriority(gapPercentage, metric),
-        recommendations: getRecommendations(metric, gap)
+        recommendations: getRecommendations(metric, gap),
       });
     }
   });
-  
+
   // Sort by priority (highest gap percentage first)
   return gaps.sort((a, b) => b.gapPercentage - a.gapPercentage);
 }
@@ -376,52 +387,46 @@ function analyzeGaps(
 const TRAINING_RECOMMENDATIONS = {
   proAgility: {
     high: [
-      'Lateral change of direction drills (2x/week)',
-      'Hip mobility work before training',
-      'Deceleration/re-acceleration mechanics',
-      'Cone drills with tight cuts'
+      "Lateral change of direction drills (2x/week)",
+      "Hip mobility work before training",
+      "Deceleration/re-acceleration mechanics",
+      "Cone drills with tight cuts",
     ],
     medium: [
-      'Maintain agility work (1x/week)',
-      'Focus on other priority areas'
-    ]
+      "Maintain agility work (1x/week)",
+      "Focus on other priority areas",
+    ],
   },
   sprint40: {
     high: [
-      'Sprint mechanics drills',
-      'Acceleration work (10-20m)',
-      'Hip flexor strength development',
-      'Arm swing mechanics'
+      "Sprint mechanics drills",
+      "Acceleration work (10-20m)",
+      "Hip flexor strength development",
+      "Arm swing mechanics",
     ],
-    medium: [
-      'Weekly sprint maintenance',
-      'Flying sprints for top-end speed'
-    ]
+    medium: ["Weekly sprint maintenance", "Flying sprints for top-end speed"],
   },
   verticalJump: {
     high: [
-      'Plyometric training (box jumps, depth jumps)',
-      'Hip flexor power development',
-      'Reactive strength (RSI) training',
-      'Single-leg jump variations'
+      "Plyometric training (box jumps, depth jumps)",
+      "Hip flexor power development",
+      "Reactive strength (RSI) training",
+      "Single-leg jump variations",
     ],
-    medium: [
-      'Weekly plyometric maintenance',
-      'Jump technique refinement'
-    ]
+    medium: ["Weekly plyometric maintenance", "Jump technique refinement"],
   },
   squat: {
     high: [
-      'Progressive squat program (3x/week, 85% 1RM)',
-      'Single-leg variations (split squats, lunges)',
-      'Core stability work',
-      'Hip hinge pattern development'
+      "Progressive squat program (3x/week, 85% 1RM)",
+      "Single-leg variations (split squats, lunges)",
+      "Core stability work",
+      "Hip hinge pattern development",
     ],
     medium: [
-      'Maintenance program (2x/week)',
-      'Focus on other strength priorities'
-    ]
-  }
+      "Maintenance program (2x/week)",
+      "Focus on other strength priorities",
+    ],
+  },
 };
 ```
 
@@ -429,50 +434,52 @@ const TRAINING_RECOMMENDATIONS = {
 
 ## Feature Implementation Status
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| 40-Yard Dash | ✅ | Implemented |
-| Vertical Jump | ✅ | Implemented |
-| Broad Jump | ✅ | Implemented |
-| Bench Press | ✅ | Implemented |
-| Performance History Table | ✅ | Implemented |
-| Pagination | ✅ | Implemented |
-| **10m Sprint** | ⚠️ | **ADD TO UI** |
-| **20m Sprint** | ⚠️ | **ADD TO UI** |
-| **Pro Agility (5-10-5)** | ⚠️ | **ADD TO UI** |
-| **L-Drill** | ⚠️ | **ADD TO UI** |
-| **Reactive Agility** | ⚠️ | **ADD TO UI** |
-| **RSI (Reactive Strength Index)** | ⚠️ | **ADD TO UI** |
-| **Back Squat 1RM** | ⚠️ | **ADD TO UI** |
-| **Deadlift 1RM** | ⚠️ | **ADD TO UI** |
-| **Body Weight input** | ⚠️ | **ADD TO UI** |
-| **Relative Strength display** | ⚠️ | **ADD TO UI** |
-| **Position Benchmark Comparison** | ⚠️ | **ADD TO UI** |
-| **Gap Analysis section** | ⚠️ | **ADD TO UI** |
-| **Training Recommendations** | ⚠️ | **ADD TO UI** |
-| **Related Videos links** | ⚠️ | **ADD TO UI** |
+| Feature                           | Status | Notes         |
+| --------------------------------- | ------ | ------------- |
+| 40-Yard Dash                      | ✅     | Implemented   |
+| Vertical Jump                     | ✅     | Implemented   |
+| Broad Jump                        | ✅     | Implemented   |
+| Bench Press                       | ✅     | Implemented   |
+| Performance History Table         | ✅     | Implemented   |
+| Pagination                        | ✅     | Implemented   |
+| **10m Sprint**                    | ⚠️     | **ADD TO UI** |
+| **20m Sprint**                    | ⚠️     | **ADD TO UI** |
+| **Pro Agility (5-10-5)**          | ⚠️     | **ADD TO UI** |
+| **L-Drill**                       | ⚠️     | **ADD TO UI** |
+| **Reactive Agility**              | ⚠️     | **ADD TO UI** |
+| **RSI (Reactive Strength Index)** | ⚠️     | **ADD TO UI** |
+| **Back Squat 1RM**                | ⚠️     | **ADD TO UI** |
+| **Deadlift 1RM**                  | ⚠️     | **ADD TO UI** |
+| **Body Weight input**             | ⚠️     | **ADD TO UI** |
+| **Relative Strength display**     | ⚠️     | **ADD TO UI** |
+| **Position Benchmark Comparison** | ⚠️     | **ADD TO UI** |
+| **Gap Analysis section**          | ⚠️     | **ADD TO UI** |
+| **Training Recommendations**      | ⚠️     | **ADD TO UI** |
+| **Related Videos links**          | ⚠️     | **ADD TO UI** |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Performance records | `SupabaseService` | `performance_records` |
-| User position | `AuthService` | `profiles` |
-| Video recommendations | `ApiService` | `training_videos` |
+| Data                  | Service           | Table                 |
+| --------------------- | ----------------- | --------------------- |
+| Performance records   | `SupabaseService` | `performance_records` |
+| User position         | `AuthService`     | `profiles`            |
+| Video recommendations | `ApiService`      | `training_videos`     |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Core metrics (40yd, vert, broad, bench) implemented
 - Trend indicators show progress
 - History table with pagination
 - Score calculation system
 
 ### ⚠️ Needs Implementation
+
 - Extended speed metrics (10m, 20m sprints)
 - All agility metrics (Pro Agility, L-Drill, Reactive)
 - Power metrics (RSI)
@@ -483,6 +490,7 @@ const TRAINING_RECOMMENDATIONS = {
 - Related video links
 
 ### 🔧 Implementation Priority
+
 1. Add all metric inputs to Log Performance dialog
 2. Add Position Benchmark Comparison section
 3. Add Gap Analysis & Training Priorities section
@@ -492,9 +500,9 @@ const TRAINING_RECOMMENDATIONS = {
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Analytics | `/analytics` | Speed development charts |
-| Training Videos | `/training/videos` | Skill improvement videos |
-| Exercise Library | `/exercise-library` | Related exercises |
-| QB Hub | `/qb` | QB-specific metrics |
+| Page             | Route               | Relationship             |
+| ---------------- | ------------------- | ------------------------ |
+| Analytics        | `/analytics`        | Speed development charts |
+| Training Videos  | `/training/videos`  | Skill improvement videos |
+| Exercise Library | `/exercise-library` | Related exercises        |
+| QB Hub           | `/qb`               | QB-specific metrics      |

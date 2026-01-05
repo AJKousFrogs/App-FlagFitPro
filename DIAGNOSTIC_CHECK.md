@@ -14,6 +14,7 @@ npm start
 ```
 
 **Common Issues:**
+
 - ❌ "Cannot find module" → Missing dependency
 - ❌ "Type error" → TypeScript error
 - ❌ "404" in Network tab → Missing file
@@ -31,6 +32,7 @@ npm run test:unit
 ```
 
 **What fails?**
+
 - Lint → Run `npm run lint:fix`
 - Build → Check TypeScript errors
 - Tests → Temporarily skip broken tests
@@ -47,11 +49,13 @@ npm run build
 ```
 
 **If build fails:**
+
 - Check error message
 - Fix TypeScript errors
 - Fix missing dependencies
 
 **If build succeeds:**
+
 - Check Netlify dashboard → Build logs
 - Check environment variables
 - Check Node version (should be 22)
@@ -61,6 +65,7 @@ npm run build
 ## 4. Check What's Visible (10 min)
 
 **Open ONE page in browser:**
+
 1. Dashboard or Today page
 2. Open DevTools (F12)
 3. Inspect a button
@@ -70,6 +75,7 @@ npm run build
    - Are there crossed-out rules?
 
 **If button text is black:**
+
 - CSS override issue
 - Check specificity
 - Add `!important` temporarily
@@ -79,6 +85,7 @@ npm run build
 ## 5. Quick Visual Check
 
 **Check these visually:**
+
 - [ ] Buttons have white text on green
 - [ ] Cards have consistent padding
 - [ ] Inputs are same height
@@ -86,6 +93,7 @@ npm run build
 - [ ] Spacing looks consistent
 
 **If ANY are wrong:**
+
 - That's what to fix first
 - Use DevTools to find the CSS
 - Fix it → See change → Commit

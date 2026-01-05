@@ -49,7 +49,7 @@ import { LoggerService } from "../../core/services/logger.service";
     SkeletonModule,
     TooltipModule,
     ScrollPanelModule,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -66,9 +66,17 @@ import { LoggerService } from "../../core/services/logger.service";
         </div>
         <div class="header-actions">
           @if (unreadCount() > 0) {
-            <app-button variant="text" size="sm" (clicked)="markAllRead()">Mark all read</app-button>
+            <app-button variant="text" size="sm" (clicked)="markAllRead()"
+              >Mark all read</app-button
+            >
           }
-          <app-icon-button icon="pi-refresh" variant="text" [loading]="loading()" (clicked)="refresh()" ariaLabel="refresh" />
+          <app-icon-button
+            icon="pi-refresh"
+            variant="text"
+            [loading]="loading()"
+            (clicked)="refresh()"
+            ariaLabel="refresh"
+          />
         </div>
       </div>
 
@@ -152,7 +160,6 @@ import { LoggerService } from "../../core/services/logger.service";
                         @if (activity.player?.position) {
                           <p-tag
                             [value]="activity.player?.position ?? ''"
-                            
                             severity="info"
                           ></p-tag>
                         }
@@ -171,7 +178,12 @@ import { LoggerService } from "../../core/services/logger.service";
             <!-- Load More -->
             @if (hasMore()) {
               <div class="load-more">
-                <app-button variant="text" [loading]="loadingMore()" (clicked)="loadMore()">Load more</app-button>
+                <app-button
+                  variant="text"
+                  [loading]="loadingMore()"
+                  (clicked)="loadMore()"
+                  >Load more</app-button
+                >
               </div>
             }
           </div>
@@ -193,7 +205,7 @@ import { LoggerService } from "../../core/services/logger.service";
       }
     </div>
   `,
-  styleUrl: './coach-activity-feed.component.scss',
+  styleUrl: "./coach-activity-feed.component.scss",
 })
 export class CoachActivityFeedComponent implements OnDestroy {
   private readonly notificationService = inject(TeamNotificationService);

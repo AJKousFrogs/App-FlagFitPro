@@ -1,12 +1,12 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -23,10 +23,10 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    EquipmentAssignment,
-    EquipmentItem,
-    EquipmentService,
-    EquipmentSummary,
+  EquipmentAssignment,
+  EquipmentItem,
+  EquipmentService,
+  EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
@@ -64,7 +64,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -77,7 +77,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
         >
           <div class="header-actions">
             @if (isCoach()) {
-              <app-button iconLeft="pi-plus" (clicked)="openAddDialog()">Add Equipment</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="openAddDialog()"
+                >Add Equipment</app-button
+              >
             }
           </div>
         </app-page-header>
@@ -221,9 +223,25 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   <td>
                     <div class="action-buttons">
                       @if (isCoach()) {
-                        <app-icon-button icon="pi-arrow-right" variant="text" [disabled]="item.quantity_available === 0" (clicked)="openCheckoutDialog(item)" ariaLabel="arrow-right" />
-                        <app-icon-button icon="pi-pencil" variant="text" (clicked)="openEditDialog(item)" ariaLabel="pencil" />
-                        <app-icon-button icon="pi-trash" variant="text" (clicked)="deleteItem(item)" ariaLabel="trash" />
+                        <app-icon-button
+                          icon="pi-arrow-right"
+                          variant="text"
+                          [disabled]="item.quantity_available === 0"
+                          (clicked)="openCheckoutDialog(item)"
+                          ariaLabel="arrow-right"
+                        />
+                        <app-icon-button
+                          icon="pi-pencil"
+                          variant="text"
+                          (clicked)="openEditDialog(item)"
+                          ariaLabel="pencil"
+                        />
+                        <app-icon-button
+                          icon="pi-trash"
+                          variant="text"
+                          (clicked)="deleteItem(item)"
+                          ariaLabel="trash"
+                        />
                       }
                     </div>
                   </td>
@@ -282,7 +300,13 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                       <td>{{ assignment.quantity_assigned }}</td>
                       <td>{{ assignment.assigned_at | date: "shortDate" }}</td>
                       <td>
-                        <app-button variant="text" size="sm" iconLeft="pi-arrow-left" (clicked)="openReturnDialog(assignment)">Return</app-button>
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-arrow-left"
+                          (clicked)="openReturnDialog(assignment)"
+                          >Return</app-button
+                        >
                       </td>
                     </tr>
                   </ng-template>
@@ -369,8 +393,15 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           </div>
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showAddDialog = false">Cancel</app-button>
-            <app-icon-button icon="pi-check" [disabled]="!canSaveItem()" (clicked)="saveItem()" ariaLabel="check" />
+            <app-button variant="text" (clicked)="showAddDialog = false"
+              >Cancel</app-button
+            >
+            <app-icon-button
+              icon="pi-check"
+              [disabled]="!canSaveItem()"
+              (clicked)="saveItem()"
+              ariaLabel="check"
+            />
           </ng-template>
         </p-dialog>
 
@@ -423,8 +454,15 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           }
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showCheckoutDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" [disabled]="!checkoutData.player_id" (clicked)="checkout()">Checkout</app-button>
+            <app-button variant="text" (clicked)="showCheckoutDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [disabled]="!checkoutData.player_id"
+              (clicked)="checkout()"
+              >Checkout</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -464,14 +502,18 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           }
 
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showReturnDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" (clicked)="processReturn()">Process Return</app-button>
+            <app-button variant="text" (clicked)="showReturnDialog = false"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="processReturn()"
+              >Process Return</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './equipment.component.scss',
+  styleUrl: "./equipment.component.scss",
 })
 export class EquipmentComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
@@ -533,16 +575,18 @@ export class EquipmentComponent implements OnInit {
   }
 
   loadTeamPlayers(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id || "default";
-    this.teamStatsService.getTeamPlayersStats(teamId)
+    const teamId =
+      this.authService.getUser()?.user_metadata?.team_id || "default";
+    this.teamStatsService
+      .getTeamPlayersStats(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           this.teamPlayers.set(
-            data.members.map(m => ({ id: m.playerId, name: m.playerName }))
+            data.members.map((m) => ({ id: m.playerId, name: m.playerName })),
           );
         },
-        error: (err) => this.logger.error("Failed to load team players", err)
+        error: (err) => this.logger.error("Failed to load team players", err),
       });
   }
 

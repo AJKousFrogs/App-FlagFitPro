@@ -148,7 +148,8 @@ import {
             [disabled]="!isFormValid()"
             [fullWidth]="true"
             testId="login-submit"
-          >Sign in</app-button>
+            >Sign in</app-button
+          >
         </form>
 
         <div class="login-divider">

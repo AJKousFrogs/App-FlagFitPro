@@ -247,45 +247,50 @@
 ## Component Breakdown
 
 ### 1. Page Header ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title "Wellness & Recovery" | ✅ | With heart icon |
-| Subtitle | ✅ | "Track your health, recovery, and wellness metrics" |
-| "Log Check-in" button | ✅ | Scrolls to check-in form |
+
+| Element                     | Status | Notes                                               |
+| --------------------------- | ------ | --------------------------------------------------- |
+| Title "Wellness & Recovery" | ✅     | With heart icon                                     |
+| Subtitle                    | ✅     | "Track your health, recovery, and wellness metrics" |
+| "Log Check-in" button       | ✅     | Scrolls to check-in form                            |
 
 ---
 
 ### 2. Wellness Stats Grid (4 Cards) ✅
-| Stat | Icon | Value Example | Trend | Status |
-|------|------|---------------|-------|--------|
-| Sleep Quality | 🌙 | Hours (e.g., "7.5h") | vs yesterday | ✅ |
-| Recovery Score | 💚 | Percentage (e.g., "82%") | Status label | ✅ |
-| Energy Level | ⚡ | X/10 | vs yesterday | ✅ |
-| Stress Level | 🛡️ | Label (Low/Moderate/High) | Status | ✅ |
+
+| Stat           | Icon | Value Example             | Trend        | Status |
+| -------------- | ---- | ------------------------- | ------------ | ------ |
+| Sleep Quality  | 🌙   | Hours (e.g., "7.5h")      | vs yesterday | ✅     |
+| Recovery Score | 💚   | Percentage (e.g., "82%")  | Status label | ✅     |
+| Energy Level   | ⚡   | X/10                      | vs yesterday | ✅     |
+| Stress Level   | 🛡️   | Label (Low/Moderate/High) | Status       | ✅     |
 
 ---
 
 ### 3. Wellness Charts (Lazy-loaded) ✅
-| Chart | Type | Data Period | Status |
-|-------|------|-------------|--------|
-| Sleep Quality | Line | 7 days | ✅ |
-| Recovery Score | Bar | 7 days | ✅ |
+
+| Chart          | Type | Data Period | Status |
+| -------------- | ---- | ----------- | ------ |
+| Sleep Quality  | Line | 7 days      | ✅     |
+| Recovery Score | Bar  | 7 days      | ✅     |
 
 ---
 
 ### 4. Body Composition Card ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Last measured date | ✅ | "Last measured Today/Yesterday/Date" |
-| Primary weight display | ✅ | Large value with trend arrow |
-| Body Fat % | ✅ | With progress bar and range label |
-| Muscle Mass | ✅ | kg display |
-| Body Water % | ✅ | Percentage |
-| BMR (kcal) | ✅ | Daily calorie burn |
-| View Full History link | ✅ | Links to detailed page |
-| Empty state | ✅ | "No measurements yet" + CTA |
+
+| Element                | Status | Notes                                |
+| ---------------------- | ------ | ------------------------------------ |
+| Last measured date     | ✅     | "Last measured Today/Yesterday/Date" |
+| Primary weight display | ✅     | Large value with trend arrow         |
+| Body Fat %             | ✅     | With progress bar and range label    |
+| Muscle Mass            | ✅     | kg display                           |
+| Body Water %           | ✅     | Percentage                           |
+| BMR (kcal)             | ✅     | Daily calorie burn                   |
+| View Full History link | ✅     | Links to detailed page               |
+| Empty state            | ✅     | "No measurements yet" + CTA          |
 
 **Body Fat Ranges:**
+
 - < 10%: "Below essential fat range"
 - 10-14%: "Athletic range"
 - 15-20%: "Fitness range"
@@ -297,19 +302,21 @@
 ---
 
 ### 5. Supplement Tracker ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Progress bar | ✅ | X/Y taken with percentage |
-| Morning section | ✅ | Vitamin D, Iron, Omega-3, Calcium, Multivitamin, Vitamin C |
-| Pre-workout section | ✅ | Caffeine, Beta Alanine, BCAAs, Electrolytes |
-| Post-workout section | ✅ | Protein Powder, L-Glutamine |
-| Evening section | ✅ | Magnesium, Zinc |
-| Anytime section | ✅ | Creatine |
-| Checkbox toggle | ✅ | Click to mark taken |
-| Add Supplement dialog | ✅ | Name, dosage, timing, category |
-| Remove supplement | ✅ | Per-item action |
+
+| Element               | Status | Notes                                                      |
+| --------------------- | ------ | ---------------------------------------------------------- |
+| Progress bar          | ✅     | X/Y taken with percentage                                  |
+| Morning section       | ✅     | Vitamin D, Iron, Omega-3, Calcium, Multivitamin, Vitamin C |
+| Pre-workout section   | ✅     | Caffeine, Beta Alanine, BCAAs, Electrolytes                |
+| Post-workout section  | ✅     | Protein Powder, L-Glutamine                                |
+| Evening section       | ✅     | Magnesium, Zinc                                            |
+| Anytime section       | ✅     | Creatine                                                   |
+| Checkbox toggle       | ✅     | Click to mark taken                                        |
+| Add Supplement dialog | ✅     | Name, dosage, timing, category                             |
+| Remove supplement     | ✅     | Per-item action                                            |
 
 **Default Supplements (15):**
+
 - Creatine (5g) - Anytime - Performance
 - Vitamin D (2000 IU) - Morning - Vitamin
 - Omega-3 Fish Oil (1000mg) - Morning - Recovery
@@ -333,81 +340,88 @@
 ### 6. Daily Wellness Check-in Form ✅
 
 #### Sleep & Recovery Section
-| Field | Type | Range | Status |
-|-------|------|-------|--------|
-| Sleep Hours | InputNumber | 0-24, 0.5 step | ✅ |
-| Sleep Quality | InputNumber | 1-10 | ✅ |
+
+| Field         | Type        | Range          | Status |
+| ------------- | ----------- | -------------- | ------ |
+| Sleep Hours   | InputNumber | 0-24, 0.5 step | ✅     |
+| Sleep Quality | InputNumber | 1-10           | ✅     |
 
 #### Physical State Section
-| Field | Type | Range | Notes | Status |
-|-------|------|-------|-------|--------|
-| Energy Level | InputNumber | 1-10 | | ✅ |
-| Muscle Soreness | InputNumber | 1-10 | Inverted (1=none, 10=severe) | ✅ |
-| Hydration | InputNumber | 0-20 | Glasses (8oz) | ✅ |
-| Resting Heart Rate | InputNumber | 40-120 | BPM, optional | ✅ |
+
+| Field              | Type        | Range  | Notes                        | Status |
+| ------------------ | ----------- | ------ | ---------------------------- | ------ |
+| Energy Level       | InputNumber | 1-10   |                              | ✅     |
+| Muscle Soreness    | InputNumber | 1-10   | Inverted (1=none, 10=severe) | ✅     |
+| Hydration          | InputNumber | 0-20   | Glasses (8oz)                | ✅     |
+| Resting Heart Rate | InputNumber | 40-120 | BPM, optional                | ✅     |
 
 #### Mental State Section
-| Field | Type | Range | Notes | Status |
-|-------|------|-------|-------|--------|
-| Mood | InputNumber | 1-10 | | ✅ |
-| Stress Level | InputNumber | 1-10 | Inverted (1=relaxed, 10=stressed) | ✅ |
-| Training Motivation | InputNumber | 1-10 | | ✅ |
-| Readiness to Train | InputNumber | 1-10 | | ✅ |
+
+| Field               | Type        | Range | Notes                             | Status |
+| ------------------- | ----------- | ----- | --------------------------------- | ------ |
+| Mood                | InputNumber | 1-10  |                                   | ✅     |
+| Stress Level        | InputNumber | 1-10  | Inverted (1=relaxed, 10=stressed) | ✅     |
+| Training Motivation | InputNumber | 1-10  |                                   | ✅     |
+| Readiness to Train  | InputNumber | 1-10  |                                   | ✅     |
 
 ---
 
 ### 7. States ✅
-| State | Status | Notes |
-|-------|--------|-------|
-| Loading state | ✅ | Skeleton loader |
-| Error state | ✅ | With retry button |
-| Empty chart data | ✅ | Graceful fallback |
-| Submitting check-in | ✅ | Button loading state |
+
+| State               | Status | Notes                |
+| ------------------- | ------ | -------------------- |
+| Loading state       | ✅     | Skeleton loader      |
+| Error state         | ✅     | With retry button    |
+| Empty chart data    | ✅     | Graceful fallback    |
+| Submitting check-in | ✅     | Button loading state |
 
 ---
 
 ## Business Logic
 
 ### Wellness Score Calculation (Documented)
+
 ```typescript
 function calculateWellnessScore(data: WellnessCheckIn): number {
   const weights = {
-    sleepHours: 0.20,      // Target: 7-9 hours
+    sleepHours: 0.2, // Target: 7-9 hours
     sleepQuality: 0.15,
     energy: 0.15,
-    soreness: 0.15,        // Inverted
-    mood: 0.10,
-    stress: 0.10,          // Inverted
-    motivation: 0.10,
-    hydration: 0.05
+    soreness: 0.15, // Inverted
+    mood: 0.1,
+    stress: 0.1, // Inverted
+    motivation: 0.1,
+    hydration: 0.05,
   };
   // ... normalization and inversion logic ...
-  return weightedAverage / 10 * 100;
+  return (weightedAverage / 10) * 100;
 }
 ```
 
 ### Body Composition Alerts (Documented)
+
 ```typescript
 const WEIGHT_CHANGE_THRESHOLDS = {
-  rapidLossWeekly: -2,      // kg per week → DANGER
-  rapidLossPercent: -3,     // % per week → WARNING
-  rapidGainWeekly: 2,       // kg per week → WARNING
-  dehydrationRisk: -1.5,    // kg in 24 hours → WARNING
-  competitionBuffer: 2      // kg above competition weight
+  rapidLossWeekly: -2, // kg per week → DANGER
+  rapidLossPercent: -3, // % per week → WARNING
+  rapidGainWeekly: 2, // kg per week → WARNING
+  dehydrationRisk: -1.5, // kg in 24 hours → WARNING
+  competitionBuffer: 2, // kg above competition weight
 };
 ```
 
 ### Supplement-Fatigue Correlation (Documented)
+
 ```typescript
 // Low magnesium → muscle cramps, fatigue
 // Low iron → reduced oxygen transport, fatigue
 
 function assessSupplementImpact(wellness, supplements): string[] {
   if (wellness.soreness >= 7 && !supplements.magnesium.taken) {
-    recommendations.push('Consider magnesium supplementation');
+    recommendations.push("Consider magnesium supplementation");
   }
   if (wellness.energy <= 4 && !supplements.iron.taken) {
-    recommendations.push('Iron supplementation may help with low energy');
+    recommendations.push("Iron supplementation may help with low energy");
   }
 }
 ```
@@ -416,69 +430,70 @@ function assessSupplementImpact(wellness, supplements): string[] {
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| Wellness history | `WellnessService` | `getWellnessData('7d')` |
-| Check-in submission | `UnifiedTrainingService` | `submitWellness()` |
-| Body composition | `UnifiedTrainingService` | `latestMeasurement` signal |
-| Supplements | `ApiService` | `GET /api/supplements` |
-| Supplement logging | `ApiService` | `POST /api/supplements/log` |
+| Data                | Service                  | Method                      |
+| ------------------- | ------------------------ | --------------------------- |
+| Wellness history    | `WellnessService`        | `getWellnessData('7d')`     |
+| Check-in submission | `UnifiedTrainingService` | `submitWellness()`          |
+| Body composition    | `UnifiedTrainingService` | `latestMeasurement` signal  |
+| Supplements         | `ApiService`             | `GET /api/supplements`      |
+| Supplement logging  | `ApiService`             | `POST /api/supplements/log` |
 
 ---
 
 ## Navigation Paths
 
-| From | To | Trigger |
-|------|-----|---------|
+| From     | To          | Trigger                       |
+| -------- | ----------- | ----------------------------- |
 | Wellness | Performance | Body comp "View Full History" |
-| Wellness | Dashboard | After check-in submission |
+| Wellness | Dashboard   | After check-in submission     |
 
 ---
 
 ## Feature Comparison: Documented vs Implemented
 
-| Documented Feature | Status | Location |
-|-------------------|--------|----------|
-| Sleep Hours input | ✅ | Check-in form |
-| Sleep Quality input | ✅ | Check-in form |
-| Energy Level input | ✅ | Check-in form |
-| Muscle Soreness input | ✅ | Check-in form |
-| Hydration tracking | ✅ | Check-in form |
-| Resting Heart Rate | ✅ | Check-in form |
-| Mood tracking | ✅ | Check-in form |
-| Stress Level | ✅ | Check-in form |
-| Motivation tracking | ✅ | Check-in form |
-| Readiness to Train | ✅ | Check-in form |
-| Sleep chart | ✅ | Charts section |
-| Recovery chart | ✅ | Charts section |
-| Body Composition card | ✅ | Shared component |
-| Weight tracking | ✅ | Body comp card |
-| Body Fat % | ✅ | Body comp card |
-| Muscle Mass | ✅ | Body comp card |
-| Body Water % | ✅ | Body comp card |
-| BMR | ✅ | Body comp card |
-| Visceral Fat | ⚠️ | In component, may not display |
-| Weight trend indicator | ✅ | Body comp card |
-| Weight change alerts | ⚠️ **ADD TO UI** | Alerts section (wireframe updated) |
-| Supplement tracker | ✅ | Shared component |
-| 15 default supplements | ✅ | Pre-configured |
-| Timing categories | ✅ | Morning/Pre/Post/Evening/Anytime |
-| Progress bar | ✅ | X/Y taken |
-| Add custom supplement | ✅ | Dialog |
-| Remove supplement | ✅ | Per item |
-| Supplement logging | ✅ | API integration |
-| Fatigue correlation recommendations | ⚠️ **ADD TO UI** | Alerts section (wireframe updated) |
-| **Hydration Quick Logger** | ⚠️ **ADD TO UI** | Hydration Tracker section (wireframe updated) |
-| **Animated water bottle** | ⚠️ **ADD TO UI** | Hydration Tracker section (wireframe updated) |
-| **Smart goal calculation** | ⚠️ **ADD TO UI** | Based on body weight (wireframe updated) |
-| **Elevated HR alert** | ⚠️ **ADD TO UI** | Alerts section (wireframe updated) |
-| Smart scale integration | ❌ | Manual entry only (future feature) |
+| Documented Feature                  | Status           | Location                                      |
+| ----------------------------------- | ---------------- | --------------------------------------------- |
+| Sleep Hours input                   | ✅               | Check-in form                                 |
+| Sleep Quality input                 | ✅               | Check-in form                                 |
+| Energy Level input                  | ✅               | Check-in form                                 |
+| Muscle Soreness input               | ✅               | Check-in form                                 |
+| Hydration tracking                  | ✅               | Check-in form                                 |
+| Resting Heart Rate                  | ✅               | Check-in form                                 |
+| Mood tracking                       | ✅               | Check-in form                                 |
+| Stress Level                        | ✅               | Check-in form                                 |
+| Motivation tracking                 | ✅               | Check-in form                                 |
+| Readiness to Train                  | ✅               | Check-in form                                 |
+| Sleep chart                         | ✅               | Charts section                                |
+| Recovery chart                      | ✅               | Charts section                                |
+| Body Composition card               | ✅               | Shared component                              |
+| Weight tracking                     | ✅               | Body comp card                                |
+| Body Fat %                          | ✅               | Body comp card                                |
+| Muscle Mass                         | ✅               | Body comp card                                |
+| Body Water %                        | ✅               | Body comp card                                |
+| BMR                                 | ✅               | Body comp card                                |
+| Visceral Fat                        | ⚠️               | In component, may not display                 |
+| Weight trend indicator              | ✅               | Body comp card                                |
+| Weight change alerts                | ⚠️ **ADD TO UI** | Alerts section (wireframe updated)            |
+| Supplement tracker                  | ✅               | Shared component                              |
+| 15 default supplements              | ✅               | Pre-configured                                |
+| Timing categories                   | ✅               | Morning/Pre/Post/Evening/Anytime              |
+| Progress bar                        | ✅               | X/Y taken                                     |
+| Add custom supplement               | ✅               | Dialog                                        |
+| Remove supplement                   | ✅               | Per item                                      |
+| Supplement logging                  | ✅               | API integration                               |
+| Fatigue correlation recommendations | ⚠️ **ADD TO UI** | Alerts section (wireframe updated)            |
+| **Hydration Quick Logger**          | ⚠️ **ADD TO UI** | Hydration Tracker section (wireframe updated) |
+| **Animated water bottle**           | ⚠️ **ADD TO UI** | Hydration Tracker section (wireframe updated) |
+| **Smart goal calculation**          | ⚠️ **ADD TO UI** | Based on body weight (wireframe updated)      |
+| **Elevated HR alert**               | ⚠️ **ADD TO UI** | Alerts section (wireframe updated)            |
+| Smart scale integration             | ❌               | Manual entry only (future feature)            |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Comprehensive 10-field wellness check-in
 - Body composition card with trend indicators
 - Supplement tracker grouped by timing
@@ -487,12 +502,14 @@ function assessSupplementImpact(wellness, supplements): string[] {
 - Good empty states
 
 ### ⚠️ Friction Points
+
 - Body composition requires separate logging (not in same form)
 - Supplement-fatigue correlation not surfaced to user
 - No weight change alerts shown in UI
 - Smart scale integration not available
 
 ### 🔧 Suggested Improvements
+
 1. Add quick weight log option in check-in form
 2. Surface supplement recommendations based on wellness data
 3. Show weight change alerts prominently
@@ -504,17 +521,18 @@ function assessSupplementImpact(wellness, supplements): string[] {
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
+| Page                 | Route                   | Relationship               |
+| -------------------- | ----------------------- | -------------------------- |
 | Performance Tracking | `/performance-tracking` | Detailed body comp history |
-| ACWR Dashboard | `/acwr-dashboard` | Load monitoring |
-| Today's Practice | `/today` | Morning check-in prompt |
+| ACWR Dashboard       | `/acwr-dashboard`       | Load monitoring            |
+| Today's Practice     | `/today`                | Morning check-in prompt    |
 
 ---
 
 ## Implementation Checklist
 
 ### Core Features (Implemented)
+
 - [x] Page header with Log Check-in button
 - [x] 4 wellness stat cards
 - [x] Sleep Quality chart (lazy-loaded)
@@ -554,6 +572,7 @@ function assessSupplementImpact(wellness, supplements): string[] {
 - [x] Error state with retry
 
 ### Missing Features (Add to UI - wireframe updated)
+
 - [ ] **Hydration Quick Logger section**
   - [ ] Quick-log buttons (250ml, 500ml, Sports Drink, Custom)
   - [ ] Animated water bottle fill visualization
@@ -571,6 +590,7 @@ function assessSupplementImpact(wellness, supplements): string[] {
   - [ ] Log supplement quick action
 
 ### Future Features
+
 - [ ] Smart scale integration
 - [ ] Food/meal logging
 - [ ] Menstrual cycle tracking (female athletes)

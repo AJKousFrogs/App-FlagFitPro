@@ -23,21 +23,24 @@ Composite views (like QB Hub) embed child components that have their own page he
 ```typescript
 // qb-hub.component.ts - BEFORE
 @Component({
-  selector: 'app-qb-hub',
-  styles: [`
-    /* Remove redundant headers from child components when inside the hub */
-    :host ::ng-deep app-page-header {
-      display: none;
-    }
-    :host > app-main-layout > .qb-hub-page > app-page-header {
-      display: block;
-    }
-  `]
+  selector: "app-qb-hub",
+  styles: [
+    `
+      /* Remove redundant headers from child components when inside the hub */
+      :host ::ng-deep app-page-header {
+        display: none;
+      }
+      :host > app-main-layout > .qb-hub-page > app-page-header {
+        display: block;
+      }
+    `,
+  ],
 })
 export class QbHubComponent {}
 ```
 
 **Issues:**
+
 - `::ng-deep` is deprecated and will be removed
 - Creates style specificity wars
 - Breaks encapsulation principles
@@ -48,29 +51,31 @@ export class QbHubComponent {}
 ```typescript
 // qb-hub.component.ts - AFTER
 @Component({
-  selector: 'app-qb-hub',
-  styles: [`
-    .qb-hub-page {
-      padding: var(--spacing-4);
-      
-      /* Hub's own header should display normally */
-      > app-page-header {
-        --page-header-display: block;
+  selector: "app-qb-hub",
+  styles: [
+    `
+      .qb-hub-page {
+        padding: var(--spacing-4);
+
+        /* Hub's own header should display normally */
+        > app-page-header {
+          --page-header-display: block;
+        }
       }
-    }
-    
-    .hub-tab-content {
-      padding: var(--spacing-6) 0;
-      
-      /*
+
+      .hub-tab-content {
+        padding: var(--spacing-6) 0;
+
+        /*
        * COMPOSITE VIEW PATTERN
        * Child components inherit this CSS variable which hides their headers.
        * PageHeaderComponent reads --page-header-display on :host.
        * No ::ng-deep needed - CSS custom properties cascade through encapsulation.
        */
-      --page-header-display: none;
-    }
-  `]
+        --page-header-display: none;
+      }
+    `,
+  ],
 })
 export class QbHubComponent {}
 ```
@@ -93,7 +98,7 @@ export class QbHubComponent {}
 ```typescript
 // page-header.component.ts - AFTER
 @Component({
-  selector: 'app-page-header',
+  selector: "app-page-header",
   // ...
 })
 export class PageHeaderComponent {
@@ -107,6 +112,7 @@ export class PageHeaderComponent {
 ```
 
 **Benefits:**
+
 - Uses standard CSS cascade (custom properties pierce Shadow DOM)
 - No deprecated APIs
 - Clean separation of concerns
@@ -127,17 +133,18 @@ export class PageHeaderComponent {
 
 ## Files Changed
 
-| File | Change |
-|------|--------|
-| `qb-hub.component.ts` | Replaced `::ng-deep` with CSS custom property pattern |
+| File                         | Change                                                        |
+| ---------------------------- | ------------------------------------------------------------- |
+| `qb-hub.component.ts`        | Replaced `::ng-deep` with CSS custom property pattern         |
 | `page-header.component.scss` | Added `:host { display: var(--page-header-display, block); }` |
-| `page-header.component.ts` | Added `hideInComposite` input for explicit control |
+| `page-header.component.ts`   | Added `hideInComposite` input for explicit control            |
 
 ---
 
 ## Testing
 
 Vitest tests verify:
+
 1. PageHeader displays by default (`--page-header-display` not set)
 2. PageHeader hides when `--page-header-display: none` is set by parent
 3. PageHeader respects `hideInComposite` input binding
@@ -151,11 +158,11 @@ See: `angular/src/app/shared/components/page-header/page-header.component.spec.t
 
 This pattern can be applied to any composite view that embeds child components with headers:
 
-| Composite View | Child Components |
-|----------------|------------------|
-| `QbHubComponent` | `QbThrowingTrackerComponent`, `QbAssessmentToolsComponent`, `QbTrainingScheduleComponent` |
-| Future: `CoachHubComponent` | Various coach tools |
-| Future: `AnalyticsHubComponent` | Various analytics widgets |
+| Composite View                  | Child Components                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------------------- |
+| `QbHubComponent`                | `QbThrowingTrackerComponent`, `QbAssessmentToolsComponent`, `QbTrainingScheduleComponent` |
+| Future: `CoachHubComponent`     | Various coach tools                                                                       |
+| Future: `AnalyticsHubComponent` | Various analytics widgets                                                                 |
 
 ---
 
@@ -176,4 +183,3 @@ This pattern can be applied to any composite view that embeds child components w
 - [Angular Style Guide - View Encapsulation](https://angular.io/guide/view-encapsulation)
 - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
 - [FlagFit Design System Rules](../docs/DESIGN_SYSTEM_RULES.md)
-

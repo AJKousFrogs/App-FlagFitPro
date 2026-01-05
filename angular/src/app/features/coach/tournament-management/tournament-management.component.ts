@@ -125,7 +125,7 @@ const POSITIONS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -139,7 +139,9 @@ const POSITIONS = [
           subtitle="Manage registrations and lineups"
           icon="pi-trophy"
         >
-          <app-button iconLeft="pi-plus" (clicked)="registerTeam()">Register Team</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="registerTeam()"
+            >Register Team</app-button
+          >
         </app-page-header>
 
         <!-- Tab Navigation -->
@@ -185,28 +187,47 @@ const POSITIONS = [
                     <h3>{{ tournament.name }}</h3>
                   </div>
                   <div class="tournament-actions">
-                    <app-button size="sm" (clicked)="manageTournament(tournament)">Manage</app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v">More options</app-button>
+                    <app-button
+                      size="sm"
+                      (clicked)="manageTournament(tournament)"
+                      >Manage</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-ellipsis-v"
+                      >More options</app-button
+                    >
                   </div>
                 </div>
 
                 <div class="tournament-details">
                   <div class="detail-row">
                     <span class="detail-item">📅 {{ tournament.dates }}</span>
-                    <span class="detail-item">📍 {{ tournament.location }}</span>
+                    <span class="detail-item"
+                      >📍 {{ tournament.location }}</span
+                    >
                   </div>
                   <div class="detail-row">
-                    <span class="detail-item">Division: {{ tournament.division }}</span>
+                    <span class="detail-item"
+                      >Division: {{ tournament.division }}</span
+                    >
                   </div>
                   <div class="detail-row">
                     <span class="detail-item">
                       Registration:
                       <p-tag
-                        [value]="getRegistrationLabel(tournament.registrationStatus)"
-                        [severity]="getRegistrationSeverity(tournament.registrationStatus)"
+                        [value]="
+                          getRegistrationLabel(tournament.registrationStatus)
+                        "
+                        [severity]="
+                          getRegistrationSeverity(tournament.registrationStatus)
+                        "
                       ></p-tag>
                     </span>
-                    <span class="detail-item">Entry Fee: {{ tournament.entryFee }}</span>
+                    <span class="detail-item"
+                      >Entry Fee: {{ tournament.entryFee }}</span
+                    >
                   </div>
                 </div>
 
@@ -215,15 +236,30 @@ const POSITIONS = [
                   <div class="status-section rsvp-section">
                     <h4>👥 ROSTER STATUS</h4>
                     <div class="rsvp-summary">
-                      <span class="rsvp-item going">✅ Going: {{ tournament.rsvpSummary.going }}</span>
-                      <span class="rsvp-item cant-go">❌ Can't Go: {{ tournament.rsvpSummary.cantGo }}</span>
-                      <span class="rsvp-item pending">❓ Pending: {{ tournament.rsvpSummary.pending }}</span>
+                      <span class="rsvp-item going"
+                        >✅ Going: {{ tournament.rsvpSummary.going }}</span
+                      >
+                      <span class="rsvp-item cant-go"
+                        >❌ Can't Go: {{ tournament.rsvpSummary.cantGo }}</span
+                      >
+                      <span class="rsvp-item pending"
+                        >❓ Pending: {{ tournament.rsvpSummary.pending }}</span
+                      >
                     </div>
                     <div class="minimum-check">
                       Minimum Required: {{ tournament.rsvpSummary.minimum }}
-                      <span class="current-count" [class.met]="tournament.rsvpSummary.going >= tournament.rsvpSummary.minimum">
+                      <span
+                        class="current-count"
+                        [class.met]="
+                          tournament.rsvpSummary.going >=
+                          tournament.rsvpSummary.minimum
+                        "
+                      >
                         Current: {{ tournament.rsvpSummary.going }}
-                        @if (tournament.rsvpSummary.going >= tournament.rsvpSummary.minimum) {
+                        @if (
+                          tournament.rsvpSummary.going >=
+                          tournament.rsvpSummary.minimum
+                        ) {
                           ✓
                         }
                       </span>
@@ -241,20 +277,49 @@ const POSITIONS = [
                     <div class="status-section payment-section">
                       <h4>💰 PAYMENT STATUS</h4>
                       <div class="payment-info">
-                        <span>Collected: \${{ tournament.paymentSummary.collected }} / \${{ tournament.paymentSummary.total }} ({{ getPaymentPercent(tournament) }}%)</span>
+                        <span
+                          >Collected: \${{
+                            tournament.paymentSummary.collected
+                          }}
+                          / \${{ tournament.paymentSummary.total }} ({{
+                            getPaymentPercent(tournament)
+                          }}%)</span
+                        >
                         @if (tournament.paymentSummary.outstanding) {
-                          <span class="outstanding">Outstanding: {{ tournament.paymentSummary.outstanding }}</span>
+                          <span class="outstanding"
+                            >Outstanding:
+                            {{ tournament.paymentSummary.outstanding }}</span
+                          >
                         }
                       </div>
-                      <p-progressBar [value]="getPaymentPercent(tournament)" [showValue]="false" [style]="{ height: '12px' }"></p-progressBar>
+                      <p-progressBar
+                        [value]="getPaymentPercent(tournament)"
+                        [showValue]="false"
+                        [style]="{ height: '12px' }"
+                      ></p-progressBar>
                     </div>
                   }
                 </div>
 
                 <div class="tournament-quick-actions">
-                  <app-button variant="secondary" size="sm" (clicked)="viewRsvps(tournament)">View RSVPs</app-button>
-                  <app-button variant="secondary" size="sm" (clicked)="setLineup(tournament)">Set Lineup</app-button>
-                  <app-button variant="text" size="sm" (clicked)="sendReminders(tournament)">Send Reminders</app-button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="viewRsvps(tournament)"
+                    >View RSVPs</app-button
+                  >
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="setLineup(tournament)"
+                    >Set Lineup</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    (clicked)="sendReminders(tournament)"
+                    >Send Reminders</app-button
+                  >
                 </div>
               </div>
             }
@@ -265,8 +330,10 @@ const POSITIONS = [
               <i class="pi pi-trophy"></i>
               <h3>No {{ activeTab() }} Tournaments</h3>
               <p>{{ getEmptyMessage() }}</p>
-              @if (activeTab() === 'available' || activeTab() === 'upcoming') {
-                <app-button iconLeft="pi-search" (clicked)="browseTournaments()">Browse Available</app-button>
+              @if (activeTab() === "available" || activeTab() === "upcoming") {
+                <app-button iconLeft="pi-search" (clicked)="browseTournaments()"
+                  >Browse Available</app-button
+                >
               }
             </div>
           </p-card>
@@ -287,40 +354,64 @@ const POSITIONS = [
               class="detail-tab"
               [class.active]="detailTab() === 'overview'"
               (click)="detailTab.set('overview')"
-            >Overview</button>
+            >
+              Overview
+            </button>
             <button
               class="detail-tab"
               [class.active]="detailTab() === 'rsvps'"
               (click)="detailTab.set('rsvps')"
-            >RSVPs</button>
+            >
+              RSVPs
+            </button>
             <button
               class="detail-tab"
               [class.active]="detailTab() === 'lineup'"
               (click)="detailTab.set('lineup')"
-            >Lineup</button>
+            >
+              Lineup
+            </button>
             <button
               class="detail-tab"
               [class.active]="detailTab() === 'schedule'"
               (click)="detailTab.set('schedule')"
-            >Schedule</button>
+            >
+              Schedule
+            </button>
           </div>
 
           @switch (detailTab()) {
-            @case ('overview') {
+            @case ("overview") {
               <div class="overview-content">
                 <div class="overview-info">
-                  <p><strong>Dates:</strong> {{ selectedTournament()?.dates }}</p>
-                  <p><strong>Location:</strong> {{ selectedTournament()?.location }}</p>
-                  <p><strong>Division:</strong> {{ selectedTournament()?.division }}</p>
-                  <p><strong>Entry Fee:</strong> {{ selectedTournament()?.entryFee }}</p>
+                  <p>
+                    <strong>Dates:</strong> {{ selectedTournament()?.dates }}
+                  </p>
+                  <p>
+                    <strong>Location:</strong>
+                    {{ selectedTournament()?.location }}
+                  </p>
+                  <p>
+                    <strong>Division:</strong>
+                    {{ selectedTournament()?.division }}
+                  </p>
+                  <p>
+                    <strong>Entry Fee:</strong>
+                    {{ selectedTournament()?.entryFee }}
+                  </p>
                 </div>
               </div>
             }
-            @case ('rsvps') {
+            @case ("rsvps") {
               <div class="rsvps-content">
                 <div class="rsvps-header">
-                  <span>RSVP Deadline: {{ selectedTournament()?.rsvpDeadline }}</span>
-                  <app-button size="sm" (clicked)="sendPendingReminders()">Send Reminder to Pending</app-button>
+                  <span
+                    >RSVP Deadline:
+                    {{ selectedTournament()?.rsvpDeadline }}</span
+                  >
+                  <app-button size="sm" (clicked)="sendPendingReminders()"
+                    >Send Reminder to Pending</app-button
+                  >
                 </div>
 
                 <h4>Going ({{ goingRsvps().length }})</h4>
@@ -330,14 +421,20 @@ const POSITIONS = [
                       <span class="rsvp-status">✅</span>
                       <span class="rsvp-name">{{ rsvp.playerName }}</span>
                       <span class="rsvp-position">{{ rsvp.position }}</span>
-                      <span class="rsvp-payment" [class.owes]="rsvp.paymentStatus === 'owes'">
-                        @if (rsvp.paymentStatus === 'paid') {
+                      <span
+                        class="rsvp-payment"
+                        [class.owes]="rsvp.paymentStatus === 'owes'"
+                      >
+                        @if (rsvp.paymentStatus === "paid") {
                           Paid: \${{ rsvp.amountPaid }}
-                        } @else if (rsvp.paymentStatus === 'owes') {
+                        } @else if (rsvp.paymentStatus === "owes") {
                           OWES: \${{ rsvp.amountOwed }} ⚠️
                         }
                       </span>
-                      <span class="rsvp-guests">Guests: {{ rsvp.guests }} {{ rsvp.guestDetails || '' }}</span>
+                      <span class="rsvp-guests"
+                        >Guests: {{ rsvp.guests }}
+                        {{ rsvp.guestDetails || "" }}</span
+                      >
                     </div>
                   }
                 </div>
@@ -351,7 +448,9 @@ const POSITIONS = [
                         <span class="rsvp-name">{{ rsvp.playerName }}</span>
                         <span class="rsvp-position">{{ rsvp.position }}</span>
                         <span class="no-response">No response</span>
-                        <app-button size="sm" (clicked)="sendNudge(rsvp)">Send Nudge</app-button>
+                        <app-button size="sm" (clicked)="sendNudge(rsvp)"
+                          >Send Nudge</app-button
+                        >
                       </div>
                     }
                   </div>
@@ -365,18 +464,25 @@ const POSITIONS = [
                         <span class="rsvp-status">❌</span>
                         <span class="rsvp-name">{{ rsvp.playerName }}</span>
                         <span class="rsvp-position">{{ rsvp.position }}</span>
-                        <span class="rsvp-reason">{{ rsvp.reason || 'No reason given' }}</span>
+                        <span class="rsvp-reason">{{
+                          rsvp.reason || "No reason given"
+                        }}</span>
                       </div>
                     }
                   </div>
                 }
               </div>
             }
-            @case ('lineup') {
+            @case ("lineup") {
               <div class="lineup-content">
                 <div class="lineup-header">
                   <span>Tournament Lineup</span>
-                  <app-button size="sm" iconLeft="pi-save" (clicked)="saveLineup()">Save Lineup</app-button>
+                  <app-button
+                    size="sm"
+                    iconLeft="pi-save"
+                    (clicked)="saveLineup()"
+                    >Save Lineup</app-button
+                  >
                 </div>
 
                 <h4>Starting 5</h4>
@@ -413,7 +519,11 @@ const POSITIONS = [
                         styleClass="w-full"
                       ></p-select>
                       @if (slot.note) {
-                        <span class="slot-note" [class.warning]="slot.note.includes('Limited')">{{ slot.note }}</span>
+                        <span
+                          class="slot-note"
+                          [class.warning]="slot.note.includes('Limited')"
+                          >{{ slot.note }}</span
+                        >
                       }
                     </div>
                   }
@@ -421,34 +531,58 @@ const POSITIONS = [
 
                 <div class="lineup-notes">
                   <h5>💡 Lineup Notes</h5>
-                  <textarea pTextarea [(ngModel)]="lineupNotes" rows="3" placeholder="Add lineup notes..."></textarea>
+                  <textarea
+                    pTextarea
+                    [(ngModel)]="lineupNotes"
+                    rows="3"
+                    placeholder="Add lineup notes..."
+                  ></textarea>
                 </div>
               </div>
             }
-            @case ('schedule') {
+            @case ("schedule") {
               <div class="schedule-content">
-                @if (selectedTournament()?.games && selectedTournament()!.games!.length > 0) {
+                @if (
+                  selectedTournament()?.games &&
+                  selectedTournament()!.games!.length > 0
+                ) {
                   @for (day of [1, 2]; track day) {
                     @if (getGamesForDay(day).length > 0) {
                       <h4>Day {{ day }}</h4>
                       <div class="games-list">
                         @for (game of getGamesForDay(day); track game.id) {
-                          <div class="game-card" [class.win]="game.result === 'win'" [class.loss]="game.result === 'loss'">
+                          <div
+                            class="game-card"
+                            [class.win]="game.result === 'win'"
+                            [class.loss]="game.result === 'loss'"
+                          >
                             <div class="game-info">
-                              <span class="game-type">{{ getGameTypeLabel(game.type) }}</span>
-                              <span class="game-time">{{ game.time }}, {{ game.field }}</span>
+                              <span class="game-type">{{
+                                getGameTypeLabel(game.type)
+                              }}</span>
+                              <span class="game-time"
+                                >{{ game.time }}, {{ game.field }}</span
+                              >
                             </div>
                             <div class="game-matchup">
                               Panthers vs {{ game.opponent }}
                             </div>
                             <div class="game-result">
-                              @if (game.result === 'pending') {
+                              @if (game.result === "pending") {
                                 <span class="pending">Result: Pending</span>
                               } @else {
-                                <span [class.win]="game.result === 'win'" [class.loss]="game.result === 'loss'">
-                                  Panthers {{ game.ourScore }} - {{ game.opponent }} {{ game.theirScore }}
-                                  @if (game.result === 'win') { ✅ WIN }
-                                  @if (game.result === 'loss') { ❌ LOSS }
+                                <span
+                                  [class.win]="game.result === 'win'"
+                                  [class.loss]="game.result === 'loss'"
+                                >
+                                  Panthers {{ game.ourScore }} -
+                                  {{ game.opponent }} {{ game.theirScore }}
+                                  @if (game.result === "win") {
+                                    ✅ WIN
+                                  }
+                                  @if (game.result === "loss") {
+                                    ❌ LOSS
+                                  }
                                 </span>
                               }
                             </div>
@@ -458,11 +592,16 @@ const POSITIONS = [
                     }
                   }
                   <div class="bracket-link">
-                    <app-button variant="secondary" iconLeft="pi-external-link">View Full Bracket</app-button>
+                    <app-button variant="secondary" iconLeft="pi-external-link"
+                      >View Full Bracket</app-button
+                    >
                   </div>
                 } @else {
                   <div class="no-schedule">
-                    <p>Schedule not yet available. Check back closer to the tournament date.</p>
+                    <p>
+                      Schedule not yet available. Check back closer to the
+                      tournament date.
+                    </p>
                   </div>
                 }
               </div>
@@ -484,8 +623,12 @@ export class TournamentManagementComponent implements OnInit {
   readonly rsvps = signal<TournamentRsvp[]>([]);
   readonly lineupSlots = signal<LineupSlot[]>([]);
   readonly selectedTournament = signal<Tournament | null>(null);
-  readonly activeTab = signal<"upcoming" | "active" | "past" | "available">("upcoming");
-  readonly detailTab = signal<"overview" | "rsvps" | "lineup" | "schedule">("overview");
+  readonly activeTab = signal<"upcoming" | "active" | "past" | "available">(
+    "upcoming",
+  );
+  readonly detailTab = signal<"overview" | "rsvps" | "lineup" | "schedule">(
+    "overview",
+  );
   readonly isLoading = signal(true);
 
   lineupNotes = "";
@@ -498,31 +641,31 @@ export class TournamentManagementComponent implements OnInit {
 
   // Computed
   readonly filteredTournaments = computed(() =>
-    this.tournaments().filter((t) => t.status === this.activeTab())
+    this.tournaments().filter((t) => t.status === this.activeTab()),
   );
 
   readonly goingRsvps = computed(() =>
-    this.rsvps().filter((r) => r.status === "going")
+    this.rsvps().filter((r) => r.status === "going"),
   );
 
   readonly pendingRsvps = computed(() =>
-    this.rsvps().filter((r) => r.status === "pending")
+    this.rsvps().filter((r) => r.status === "pending"),
   );
 
   readonly cantGoRsvps = computed(() =>
-    this.rsvps().filter((r) => r.status === "cant-go")
+    this.rsvps().filter((r) => r.status === "cant-go"),
   );
 
   readonly starterSlots = computed(() =>
-    this.lineupSlots().filter((s) => s.isStarter)
+    this.lineupSlots().filter((s) => s.isStarter),
   );
 
   readonly rotationSlots = computed(() =>
-    this.lineupSlots().filter((s) => !s.isStarter)
+    this.lineupSlots().filter((s) => !s.isStarter),
   );
 
   readonly availablePlayers = computed(() =>
-    this.goingRsvps().map((r) => ({ id: r.id, name: r.playerName }))
+    this.goingRsvps().map((r) => ({ id: r.id, name: r.playerName })),
   );
 
   ngOnInit(): void {
@@ -534,7 +677,9 @@ export class TournamentManagementComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/tournaments"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/tournaments"),
+      );
       if (response?.success && response.data?.tournaments) {
         this.tournaments.set(response.data.tournaments);
       }
@@ -560,12 +705,56 @@ export class TournamentManagementComponent implements OnInit {
         status: "upcoming",
         rsvpDeadline: "Jan 10, 2026 (5 days away)",
         rsvpSummary: { going: 13, cantGo: 1, pending: 1, minimum: 10 },
-        paymentSummary: { collected: 1040, total: 1170, outstanding: "$130 (Chris M. - $85, Jake R. - $45 guest fee)" },
+        paymentSummary: {
+          collected: 1040,
+          total: 1170,
+          outstanding: "$130 (Chris M. - $85, Jake R. - $45 guest fee)",
+        },
         games: [
-          { id: "g1", gameNum: 1, type: "pool", time: "9:00 AM", field: "Field 3", opponent: "Eagles", ourScore: 21, theirScore: 14, result: "win", day: 1 },
-          { id: "g2", gameNum: 2, type: "pool", time: "11:30 AM", field: "Field 5", opponent: "Hawks", ourScore: 28, theirScore: 7, result: "win", day: 1 },
-          { id: "g3", gameNum: 3, type: "pool", time: "2:00 PM", field: "Field 3", opponent: "Lions", result: "pending", day: 1 },
-          { id: "g4", gameNum: 4, type: "quarterfinal", time: "TBD", field: "TBD", opponent: "TBD", result: "pending", day: 2 },
+          {
+            id: "g1",
+            gameNum: 1,
+            type: "pool",
+            time: "9:00 AM",
+            field: "Field 3",
+            opponent: "Eagles",
+            ourScore: 21,
+            theirScore: 14,
+            result: "win",
+            day: 1,
+          },
+          {
+            id: "g2",
+            gameNum: 2,
+            type: "pool",
+            time: "11:30 AM",
+            field: "Field 5",
+            opponent: "Hawks",
+            ourScore: 28,
+            theirScore: 7,
+            result: "win",
+            day: 1,
+          },
+          {
+            id: "g3",
+            gameNum: 3,
+            type: "pool",
+            time: "2:00 PM",
+            field: "Field 3",
+            opponent: "Lions",
+            result: "pending",
+            day: 1,
+          },
+          {
+            id: "g4",
+            gameNum: 4,
+            type: "quarterfinal",
+            time: "TBD",
+            field: "TBD",
+            opponent: "TBD",
+            result: "pending",
+            day: 2,
+          },
         ],
       },
       {
@@ -584,32 +773,170 @@ export class TournamentManagementComponent implements OnInit {
     ]);
 
     this.rsvps.set([
-      { id: "r1", playerName: "Sarah Johnson", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 1, guestDetails: "(Sarah Sr)" },
-      { id: "r2", playerName: "Emily Chen", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r3", playerName: "Jake Rodriguez", position: "C", status: "going", paymentStatus: "owes", amountOwed: 45, amountPaid: 40, guests: 1, guestDetails: "(OWES $45) ⚠️" },
-      { id: "r4", playerName: "Chris Martinez", position: "WR", status: "going", paymentStatus: "owes", amountOwed: 85, guests: 0 },
-      { id: "r5", playerName: "Taylor Smith", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r6", playerName: "Jordan Lee", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r7", playerName: "Riley Brown", position: "Rush", status: "going", paymentStatus: "paid", amountPaid: 175, guests: 2, guestDetails: "($90 paid)" },
-      { id: "r8", playerName: "Morgan Davis", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r9", playerName: "Casey Wilson", position: "C", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r10", playerName: "Quinn Parker", position: "QB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r11", playerName: "Drew Anderson", position: "WR", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r12", playerName: "Jamie Foster", position: "Rush", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r13", playerName: "Avery Garcia", position: "DB", status: "going", paymentStatus: "paid", amountPaid: 85, guests: 0 },
-      { id: "r14", playerName: "Marcus Williams", position: "QB", status: "pending", paymentStatus: "na", guests: 0 },
-      { id: "r15", playerName: "Alex Thompson", position: "Rush", status: "cant-go", paymentStatus: "na", guests: 0, reason: "RTP (injury)" },
+      {
+        id: "r1",
+        playerName: "Sarah Johnson",
+        position: "WR",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 1,
+        guestDetails: "(Sarah Sr)",
+      },
+      {
+        id: "r2",
+        playerName: "Emily Chen",
+        position: "DB",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r3",
+        playerName: "Jake Rodriguez",
+        position: "C",
+        status: "going",
+        paymentStatus: "owes",
+        amountOwed: 45,
+        amountPaid: 40,
+        guests: 1,
+        guestDetails: "(OWES $45) ⚠️",
+      },
+      {
+        id: "r4",
+        playerName: "Chris Martinez",
+        position: "WR",
+        status: "going",
+        paymentStatus: "owes",
+        amountOwed: 85,
+        guests: 0,
+      },
+      {
+        id: "r5",
+        playerName: "Taylor Smith",
+        position: "DB",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r6",
+        playerName: "Jordan Lee",
+        position: "WR",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r7",
+        playerName: "Riley Brown",
+        position: "Rush",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 175,
+        guests: 2,
+        guestDetails: "($90 paid)",
+      },
+      {
+        id: "r8",
+        playerName: "Morgan Davis",
+        position: "DB",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r9",
+        playerName: "Casey Wilson",
+        position: "C",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r10",
+        playerName: "Quinn Parker",
+        position: "QB",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r11",
+        playerName: "Drew Anderson",
+        position: "WR",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r12",
+        playerName: "Jamie Foster",
+        position: "Rush",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r13",
+        playerName: "Avery Garcia",
+        position: "DB",
+        status: "going",
+        paymentStatus: "paid",
+        amountPaid: 85,
+        guests: 0,
+      },
+      {
+        id: "r14",
+        playerName: "Marcus Williams",
+        position: "QB",
+        status: "pending",
+        paymentStatus: "na",
+        guests: 0,
+      },
+      {
+        id: "r15",
+        playerName: "Alex Thompson",
+        position: "Rush",
+        status: "cant-go",
+        paymentStatus: "na",
+        guests: 0,
+        reason: "RTP (injury)",
+      },
     ]);
 
     this.lineupSlots.set([
-      { position: "QB", playerId: "r10", note: "Marcus pending", isStarter: true },
+      {
+        position: "QB",
+        playerId: "r10",
+        note: "Marcus pending",
+        isStarter: true,
+      },
       { position: "WR1", playerId: "r1", isStarter: true },
-      { position: "WR2", playerId: "r4", note: "⚠️ Owes payment", isStarter: true },
+      {
+        position: "WR2",
+        playerId: "r4",
+        note: "⚠️ Owes payment",
+        isStarter: true,
+      },
       { position: "C", playerId: "r3", isStarter: true },
       { position: "DB1", playerId: "r5", isStarter: true },
       { position: "WR3", playerId: "r6", isStarter: false },
       { position: "WR4", playerId: "r11", isStarter: false },
-      { position: "DB2", playerId: "r2", note: "⚠️ Limited (hip tightness)", isStarter: false },
+      {
+        position: "DB2",
+        playerId: "r2",
+        note: "⚠️ Limited (hip tightness)",
+        isStarter: false,
+      },
       { position: "DB3", playerId: "r8", isStarter: false },
       { position: "DB4", playerId: "r13", isStarter: false },
       { position: "Rush1", playerId: "r7", isStarter: false },
@@ -689,7 +1016,8 @@ export class TournamentManagementComponent implements OnInit {
   getPaymentPercent(tournament: Tournament): number {
     if (tournament.paymentSummary.total === 0) return 100;
     return Math.round(
-      (tournament.paymentSummary.collected / tournament.paymentSummary.total) * 100
+      (tournament.paymentSummary.collected / tournament.paymentSummary.total) *
+        100,
     );
   }
 
@@ -702,8 +1030,13 @@ export class TournamentManagementComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getRegistrationSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
+  getRegistrationSeverity(
+    status: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+    > = {
       confirmed: "success",
       pending: "warn",
       "auto-qualified": "info",

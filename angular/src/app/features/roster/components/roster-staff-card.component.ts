@@ -60,7 +60,7 @@ import { getInitials, getYears } from "../roster-utils";
       }
     </p-card>
   `,
-  styleUrl: './roster-staff-card.component.scss',
+  styleUrl: "./roster-staff-card.component.scss",
 })
 export class RosterStaffCardComponent {
   // Inputs

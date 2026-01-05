@@ -226,38 +226,38 @@ Create and manage team events (practices, games, tournaments), track RSVPs, hand
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Calendar View | Month/week/agenda views |
-| Event Creation | All event types |
-| RSVP Management | Track attendance |
-| Recurring Events | Weekly practices |
-| Ride Coordination | Match drivers/riders |
-| Reminders | Automatic notifications |
-| Fee Collection | Event-based payments |
-| Multi-day Events | Tournaments |
-| Location Management | Saved locations |
+| Feature             | Description             |
+| ------------------- | ----------------------- |
+| Calendar View       | Month/week/agenda views |
+| Event Creation      | All event types         |
+| RSVP Management     | Track attendance        |
+| Recurring Events    | Weekly practices        |
+| Ride Coordination   | Match drivers/riders    |
+| Reminders           | Automatic notifications |
+| Fee Collection      | Event-based payments    |
+| Multi-day Events    | Tournaments             |
+| Location Management | Saved locations         |
 
 ---
 
 ## Event Types
 
-| Type | Icon | Features |
-|------|------|----------|
-| Practice | 🏋️ | Standard, recurring |
-| Game | 🏈 | Opponent, uniform |
-| Tournament | 🏆 | Multi-day, fees |
-| Meeting | 📋 | Film session, planning |
-| Social | 🎉 | Team bonding |
-| Travel | ✈️ | Logistics |
+| Type       | Icon | Features               |
+| ---------- | ---- | ---------------------- |
+| Practice   | 🏋️   | Standard, recurring    |
+| Game       | 🏈   | Opponent, uniform      |
+| Tournament | 🏆   | Multi-day, fees        |
+| Meeting    | 📋   | Film session, planning |
+| Social     | 🎉   | Team bonding           |
+| Travel     | ✈️   | Logistics              |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Events | `CalendarService` | `team_events` |
-| RSVPs | `CalendarService` | `event_rsvps` |
-| Rides | `CalendarService` | `event_logistics` |
-| Locations | `LocationService` | `team_locations` |
+| Data      | Service           | Table             |
+| --------- | ----------------- | ----------------- |
+| Events    | `CalendarService` | `team_events`     |
+| RSVPs     | `CalendarService` | `event_rsvps`     |
+| Rides     | `CalendarService` | `event_logistics` |
+| Locations | `LocationService` | `team_locations`  |

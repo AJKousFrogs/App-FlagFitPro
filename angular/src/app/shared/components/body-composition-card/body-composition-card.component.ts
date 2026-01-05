@@ -1,9 +1,9 @@
 /**
  * Body Composition Card Component
- * 
+ *
  * Displays latest body composition metrics from smart scale.
  * Shows weight, body fat, muscle mass with trend indicators.
- * 
+ *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md):
  * - Decision 14: Border-first cards
  * - Decision 33: Card header pattern
@@ -11,22 +11,19 @@
 
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
-import {
-    ButtonComponent,
-    CardComponent,
-} from "../ui-components";
+import { ButtonComponent, CardComponent } from "../ui-components";
 
 interface BodyCompositionData {
   weight: number | null;
@@ -57,7 +54,11 @@ interface BodyCompositionData {
   template: `
     <app-card
       title="Body Composition"
-      [subtitle]="lastUpdated() ? 'Last measured ' + formatDate(lastUpdated()!) : undefined"
+      [subtitle]="
+        lastUpdated()
+          ? 'Last measured ' + formatDate(lastUpdated()!)
+          : undefined
+      "
       headerIcon="pi-chart-pie"
       headerIconColor="primary"
       [loading]="isLoading()"
@@ -68,14 +69,14 @@ interface BodyCompositionData {
           <i class="pi pi-scale empty-icon"></i>
           <p class="empty-title">No measurements yet</p>
           <p class="empty-description">
-            Log your first body composition measurement to track changes over time.
+            Log your first body composition measurement to track changes over
+            time.
           </p>
-          <app-button 
+          <app-button
             variant="primary"
             size="md"
             icon="plus"
             routerLink="/dashboard"
-            
             [queryParams]="{ action: 'log-metrics' }"
           >
             Log Measurement
@@ -89,10 +90,12 @@ interface BodyCompositionData {
           <!-- Primary Metric: Weight -->
           <div class="primary-metric">
             <div class="metric-main">
-              <span class="metric-value">{{ displayData().weight | number:'1.1-1' }}</span>
+              <span class="metric-value">{{
+                displayData().weight | number: "1.1-1"
+              }}</span>
               <span class="metric-unit">kg</span>
               @if (displayData().weightTrend) {
-                <span 
+                <span
                   class="trend-indicator"
                   [class.up]="displayData().weightTrend === 'up'"
                   [class.down]="displayData().weightTrend === 'down'"
@@ -110,9 +113,11 @@ interface BodyCompositionData {
             @if (displayData().bodyFat !== null) {
               <div class="metric-item">
                 <div class="metric-row">
-                  <span class="metric-value-sm">{{ displayData().bodyFat | number:'1.1-1' }}%</span>
+                  <span class="metric-value-sm"
+                    >{{ displayData().bodyFat | number: "1.1-1" }}%</span
+                  >
                   @if (displayData().fatTrend) {
-                    <span 
+                    <span
                       class="trend-small"
                       [class.good]="displayData().fatTrend === 'down'"
                       [class.neutral]="displayData().fatTrend === 'stable'"
@@ -122,16 +127,22 @@ interface BodyCompositionData {
                   }
                 </div>
                 <span class="metric-label-sm">Body Fat</span>
-                <div 
+                <div
                   class="fat-bar"
                   [pTooltip]="getFatRangeTooltip(displayData().bodyFat!)"
                 >
-                  <div 
+                  <div
                     class="fat-fill"
                     [style.width.%]="getFatBarWidth(displayData().bodyFat!)"
                     [class.low]="displayData().bodyFat! < 10"
-                    [class.ideal]="displayData().bodyFat! >= 10 && displayData().bodyFat! <= 20"
-                    [class.moderate]="displayData().bodyFat! > 20 && displayData().bodyFat! <= 30"
+                    [class.ideal]="
+                      displayData().bodyFat! >= 10 &&
+                      displayData().bodyFat! <= 20
+                    "
+                    [class.moderate]="
+                      displayData().bodyFat! > 20 &&
+                      displayData().bodyFat! <= 30
+                    "
                     [class.high]="displayData().bodyFat! > 30"
                   ></div>
                 </div>
@@ -141,7 +152,9 @@ interface BodyCompositionData {
             <!-- Muscle Mass -->
             @if (displayData().muscleMass !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ displayData().muscleMass | number:'1.1-1' }} kg</span>
+                <span class="metric-value-sm"
+                  >{{ displayData().muscleMass | number: "1.1-1" }} kg</span
+                >
                 <span class="metric-label-sm">Muscle Mass</span>
               </div>
             }
@@ -149,7 +162,9 @@ interface BodyCompositionData {
             <!-- Body Water -->
             @if (displayData().bodyWater !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ displayData().bodyWater | number:'1.1-1' }}%</span>
+                <span class="metric-value-sm"
+                  >{{ displayData().bodyWater | number: "1.1-1" }}%</span
+                >
                 <span class="metric-label-sm">Body Water</span>
               </div>
             }
@@ -157,7 +172,9 @@ interface BodyCompositionData {
             <!-- BMR -->
             @if (displayData().basalMetabolicRate !== null) {
               <div class="metric-item">
-                <span class="metric-value-sm">{{ displayData().basalMetabolicRate }}</span>
+                <span class="metric-value-sm">{{
+                  displayData().basalMetabolicRate
+                }}</span>
                 <span class="metric-label-sm">BMR (kcal)</span>
               </div>
             }
@@ -174,7 +191,7 @@ interface BodyCompositionData {
       </div>
     </app-card>
   `,
-  styleUrl: './body-composition-card.component.scss',
+  styleUrl: "./body-composition-card.component.scss",
 })
 export class BodyCompositionCardComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
@@ -194,9 +211,16 @@ export class BodyCompositionCardComponent implements OnInit {
 
     if (!latest) {
       return {
-        weight: null, bodyFat: null, muscleMass: null, bodyWater: null,
-        bmi: null, visceralFat: null, basalMetabolicRate: null,
-        measurementDate: null, weightTrend: null, fatTrend: null
+        weight: null,
+        bodyFat: null,
+        muscleMass: null,
+        bodyWater: null,
+        bmi: null,
+        visceralFat: null,
+        basalMetabolicRate: null,
+        measurementDate: null,
+        weightTrend: null,
+        fatTrend: null,
       };
     }
 
@@ -209,8 +233,12 @@ export class BodyCompositionCardComponent implements OnInit {
       visceralFat: latest.visceralFatRating || null,
       basalMetabolicRate: latest.basalMetabolicRate || null,
       measurementDate: latest.timestamp || null,
-      weightTrend: previous ? this.calculateTrend(latest.weight, previous.weight) : null,
-      fatTrend: previous ? this.calculateTrend(latest.bodyFat, previous.bodyFat) : null,
+      weightTrend: previous
+        ? this.calculateTrend(latest.weight, previous.weight)
+        : null,
+      fatTrend: previous
+        ? this.calculateTrend(latest.bodyFat, previous.bodyFat)
+        : null,
     };
   });
 
@@ -223,7 +251,7 @@ export class BodyCompositionCardComponent implements OnInit {
 
   private calculateTrend(
     current: number | null | undefined,
-    previous: number | null | undefined
+    previous: number | null | undefined,
   ): "up" | "down" | "stable" | null {
     if (current == null || previous == null) return null;
     const diff = current - previous;

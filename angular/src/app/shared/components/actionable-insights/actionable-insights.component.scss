@@ -58,7 +58,9 @@
   border-radius: var(--radius-lg);
   border-left: var(--border-4) solid var(--color-border-secondary);
   position: relative;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .insight-card:hover {
@@ -239,7 +241,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .dismiss-btn:hover {
@@ -286,7 +290,9 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .show-more-btn:hover {
@@ -308,4 +314,3 @@
     flex-wrap: wrap;
   }
 }
-

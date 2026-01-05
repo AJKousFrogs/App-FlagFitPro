@@ -77,8 +77,7 @@ const getDashboardData = async (userId) => {
       winRate: Math.min(Math.round(avgScore), 100) || 0,
       totalTouchdowns: Math.floor(avgScore * 0.15) || 0,
       trainingHours: Math.round(totalTrainingHours) || 0,
-      recentActivity:
-        recentActivity.length > 0 ? recentActivity : [],
+      recentActivity: recentActivity.length > 0 ? recentActivity : [],
       performanceData: {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         values: performanceValues,

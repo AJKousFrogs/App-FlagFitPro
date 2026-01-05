@@ -46,9 +46,7 @@ import {
   LoadRecommendation,
   ACWRCalculation,
 } from "../../../../core/services/phase-load-calculator.service";
-import {
-  FlagFootballAthleteProfileService,
-} from "../../../../core/services/flag-football-athlete-profile.service";
+import { FlagFootballAthleteProfileService } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
 
 interface TimelineEvent {

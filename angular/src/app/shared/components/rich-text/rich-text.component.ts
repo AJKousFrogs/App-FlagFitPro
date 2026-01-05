@@ -131,7 +131,7 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
       }
     </div>
   `,
-  styleUrl: './rich-text.component.scss',
+  styleUrl: "./rich-text.component.scss",
 })
 export class RichTextComponent implements ControlValueAccessor {
   private sanitizer = inject(DomSanitizer);

@@ -36,7 +36,10 @@ import {
   selector: "app-ai-consent-required",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, RouterLink,
+  imports: [
+    CommonModule,
+    CardModule,
+    RouterLink,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -65,16 +68,24 @@ import {
         </p>
         @if (showSettingsLink) {
           <div class="consent-actions">
-            <app-icon-button icon="pi-cog" variant="outlined" size="sm" routerLink="getHelpLink()" ariaLabel="cog" />
+            <app-icon-button
+              icon="pi-cog"
+              variant="outlined"
+              size="sm"
+              routerLink="getHelpLink()"
+              ariaLabel="cog"
+            />
             @if (showDismiss) {
-              <app-button variant="text" size="sm" (clicked)="onDismiss.emit()">Continue Without AI</app-button>
+              <app-button variant="text" size="sm" (clicked)="onDismiss.emit()"
+                >Continue Without AI</app-button
+              >
             }
           </div>
         }
       </div>
     </div>
   `,
-  styleUrl: './ai-consent-required.component.scss',
+  styleUrl: "./ai-consent-required.component.scss",
 })
 export class AiConsentRequiredComponent {
   @Input() featureName?: string;

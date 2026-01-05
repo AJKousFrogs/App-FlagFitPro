@@ -18,8 +18,5 @@
     "../.storybook/**/*",
     "../src/**/*.ts"
   ],
-  "files": [
-    "./preview.ts",
-    "./main.ts"
-  ]
+  "files": ["./preview.ts", "./main.ts"]
 }

@@ -28,8 +28,7 @@
 /* Science Info Box - Uses brand primary subtle background */
 .science-info-box {
   background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-  border: 1px solid
-    var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.2));
+  border: 1px solid var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.2));
 }
 .science-icon {
   color: var(--color-brand-primary, #089949);
@@ -43,4 +42,3 @@
 .coach-icon {
   color: var(--color-text-secondary, #4a4a4a);
 }
-

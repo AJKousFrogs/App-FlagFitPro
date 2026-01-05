@@ -9,10 +9,7 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import {
-  RealtimeService,
-  RealtimeCallback,
-} from "./realtime.service";
+import { RealtimeService, RealtimeCallback } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 

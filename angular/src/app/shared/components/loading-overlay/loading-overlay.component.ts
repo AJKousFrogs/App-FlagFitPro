@@ -35,7 +35,7 @@ import { LoadingService } from "../../../core/services/loading.service";
       </div>
     }
   `,
-  styleUrl: './loading-overlay.component.scss',
+  styleUrl: "./loading-overlay.component.scss",
 })
 export class LoadingOverlayComponent {
   public loadingService = inject(LoadingService);

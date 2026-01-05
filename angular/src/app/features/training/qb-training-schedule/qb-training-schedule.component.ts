@@ -22,7 +22,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     DatePicker,
     TagModule,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -34,31 +34,33 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       ></app-page-header>
 
       <p-card class="schedule-card">
-          <ng-template pTemplate="header">
-            <h3>Throwing Volume Program</h3>
-          </ng-template>
-          <div class="program-info">
-            <p>
-              This is a specialized training schedule for quarterbacks focusing
-              on throwing volume periodization.
-            </p>
-            <app-button variant="outlined" iconLeft="pi-book">View Full Program</app-button>
-          </div>
-        </p-card>
+        <ng-template pTemplate="header">
+          <h3>Throwing Volume Program</h3>
+        </ng-template>
+        <div class="program-info">
+          <p>
+            This is a specialized training schedule for quarterbacks focusing on
+            throwing volume periodization.
+          </p>
+          <app-button variant="outlined" iconLeft="pi-book"
+            >View Full Program</app-button
+          >
+        </div>
+      </p-card>
 
-        <p-card class="calendar-card mt-4">
-          <ng-template pTemplate="header">
-            <h3>Weekly Schedule</h3>
-          </ng-template>
-          <p-datepicker
-            [(ngModel)]="selectedDate"
-            [inline]="true"
-            [showWeek]="true"
-          ></p-datepicker>
-        </p-card>
+      <p-card class="calendar-card mt-4">
+        <ng-template pTemplate="header">
+          <h3>Weekly Schedule</h3>
+        </ng-template>
+        <p-datepicker
+          [(ngModel)]="selectedDate"
+          [inline]="true"
+          [showWeek]="true"
+        ></p-datepicker>
+      </p-card>
     </div>
   `,
-  styleUrl: './qb-training-schedule.component.scss',
+  styleUrl: "./qb-training-schedule.component.scss",
 })
 export class QbTrainingScheduleComponent implements OnInit {
   selectedDate = signal<Date>(new Date());

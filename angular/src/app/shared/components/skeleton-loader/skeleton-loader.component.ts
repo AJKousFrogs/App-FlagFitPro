@@ -289,7 +289,7 @@ export type SkeletonVariant =
       }
     }
   `,
-  styleUrl: './skeleton-loader.component.scss',
+  styleUrl: "./skeleton-loader.component.scss",
 })
 export class SkeletonLoaderComponent {
   // Angular 21: Use input() signals
@@ -333,7 +333,7 @@ export class SkeletonLoaderComponent {
       }
     </div>
   `,
-  styleUrl: './skeleton-loader.component.scss',
+  styleUrl: "./skeleton-loader.component.scss",
 })
 export class SkeletonRepeatComponent {
   variant = input<SkeletonVariant>("text");

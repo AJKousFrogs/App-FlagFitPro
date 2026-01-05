@@ -18,6 +18,7 @@ The refactoring process follows this workflow:
 ### Use Chrome DevTools
 
 1. **Inspect problematic elements:**
+
    ```bash
    # Open DevTools (F12)
    # Right-click element → Inspect
@@ -46,6 +47,7 @@ npm run refactor:find-dark:fix
 ### Manual Inspection Script
 
 See `docs/CSS_OVERRIDE_DEBUGGING_GUIDE.md` for DevTools console scripts to:
+
 - Find all overridden CSS rules
 - Calculate specificity scores
 - Identify ViewEncapsulation issues
@@ -65,6 +67,7 @@ npm run storybook
 Navigate to: **Design System → Showcase**
 
 This shows:
+
 - ✅ Colors (primary green #089949, text colors, status colors)
 - ✅ Buttons (primary, outlined, text, icon-only)
 - ✅ Cards (standard, with footer)
@@ -77,11 +80,11 @@ Before refactoring a component, create a Storybook story:
 
 ```typescript
 // angular/src/app/features/today/today.component.stories.ts
-import type { Meta, StoryObj } from '@storybook/angular';
-import { TodayComponent } from './today.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { TodayComponent } from "./today.component";
 
 const meta: Meta<TodayComponent> = {
-  title: 'Features/Today',
+  title: "Features/Today",
   component: TodayComponent,
 };
 
@@ -130,46 +133,51 @@ npm run refactor:all
 For each component:
 
 - [ ] **Replace hardcoded spacing:**
+
   ```scss
   // ❌ Before
   padding: 16px;
   gap: 24px;
-  
+
   // ✅ After
   padding: var(--space-4);
   gap: var(--space-6);
   ```
 
 - [ ] **Replace hardcoded font sizes:**
+
   ```scss
   // ❌ Before
   font-size: 1.125rem;
-  
+
   // ✅ After
   font-size: var(--font-heading-sm);
   ```
 
 - [ ] **Replace hardcoded colors:**
+
   ```scss
   // ❌ Before
   background: #089949;
   color: #ffffff;
-  
+
   // ✅ After
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
   ```
 
 - [ ] **Replace hardcoded border radius:**
+
   ```scss
   // ❌ Before
   border-radius: 12px;
-  
+
   // ✅ After
   border-radius: var(--radius-lg);
   ```
 
 - [ ] **Use PrimeNG tokens:**
+
   ```scss
   // ✅ Use PrimeNG design tokens
   :host ::ng-deep .p-card-body {
@@ -193,6 +201,7 @@ For each component:
 For complex screens with multiple components:
 
 1. **Identify all components in route:**
+
    ```bash
    # List components in a route
    ls angular/src/app/features/dashboard/
@@ -228,10 +237,10 @@ npx cypress run --spec "cypress/e2e/visual-regression.cy.ts"
 
 ```typescript
 // cypress/e2e/visual-regression.cy.ts
-describe('Visual Regression', () => {
-  it('Today component matches design system', () => {
-    cy.visit('/today');
-    cy.percySnapshot('Today Component');
+describe("Visual Regression", () => {
+  it("Today component matches design system", () => {
+    cy.visit("/today");
+    cy.percySnapshot("Today Component");
   });
 });
 ```
@@ -239,10 +248,11 @@ describe('Visual Regression', () => {
 ### Manual Verification
 
 1. **Screenshot before/after:**
+
    ```bash
    # Before refactoring
    # Take screenshot of component
-   
+
    # After refactoring
    # Take screenshot and compare
    ```
@@ -401,4 +411,4 @@ npx cypress run
 
 ---
 
-*For detailed DevTools debugging, see `docs/CSS_OVERRIDE_DEBUGGING_GUIDE.md`*
+_For detailed DevTools debugging, see `docs/CSS_OVERRIDE_DEBUGGING_GUIDE.md`_

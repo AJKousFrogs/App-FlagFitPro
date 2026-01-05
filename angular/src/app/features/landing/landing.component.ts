@@ -94,8 +94,19 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           </p>
 
           <div class="hero-actions animate-item" style="--delay: 4">
-            <app-button size="lg" iconLeft="pi-arrow-right" routerLink="/register">Get Started Free</app-button>
-            <app-button variant="outlined" size="lg" iconLeft="pi-sign-in" routerLink="/login">Sign In</app-button>
+            <app-button
+              size="lg"
+              iconLeft="pi-arrow-right"
+              routerLink="/register"
+              >Get Started Free</app-button
+            >
+            <app-button
+              variant="outlined"
+              size="lg"
+              iconLeft="pi-sign-in"
+              routerLink="/login"
+              >Sign In</app-button
+            >
           </div>
 
           <div class="hero-stats animate-item" style="--delay: 5">
@@ -202,7 +213,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           <p>&copy; {{ currentYear }} FlagFit Pro. All rights reserved.</p>
         </div>
       </div>
-      </footer>
+    </footer>
   `,
   styleUrl: "./landing.component.scss",
 })

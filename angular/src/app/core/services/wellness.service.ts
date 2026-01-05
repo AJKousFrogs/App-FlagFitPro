@@ -523,7 +523,6 @@ export class WellnessService {
     return recommendations;
   }
 
-
   /**
    * Load wellness data from database
    */

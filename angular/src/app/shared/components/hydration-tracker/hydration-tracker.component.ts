@@ -1,9 +1,9 @@
 /**
  * Hydration Tracker Component
- * 
+ *
  * Visual water intake tracking widget for athlete dashboard.
  * Allows quick logging and shows daily progress toward hydration goal.
- * 
+ *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md):
  * - Decision 14: Border-first cards
  * - Decision 33: Card header pattern (title left, actions right)
@@ -11,13 +11,13 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    DestroyRef,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -25,10 +25,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
-import {
-    ButtonComponent,
-    CardComponent,
-} from "../ui-components";
+import { ButtonComponent, CardComponent } from "../ui-components";
 
 interface HydrationLog {
   id: string;
@@ -41,7 +38,13 @@ interface HydrationLog {
   selector: "app-hydration-tracker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent, CardComponent, ProgressBarModule, TooltipModule],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    CardComponent,
+    ProgressBarModule,
+    TooltipModule,
+  ],
   template: `
     <app-card
       title="Hydration"
@@ -53,17 +56,19 @@ interface HydrationLog {
       <div class="hydration-display">
         <div class="water-visual">
           <div class="water-bottle">
-            <div 
-              class="water-level" 
+            <div
+              class="water-level"
               [style.height.%]="waterLevelPercent()"
               [class.low]="waterLevelPercent() < 30"
-              [class.medium]="waterLevelPercent() >= 30 && waterLevelPercent() < 70"
+              [class.medium]="
+                waterLevelPercent() >= 30 && waterLevelPercent() < 70
+              "
               [class.high]="waterLevelPercent() >= 70"
             ></div>
             <div class="water-waves"></div>
           </div>
         </div>
-        
+
         <div class="hydration-stats">
           <div class="current-intake">
             <span class="value">{{ totalIntake() }}</span>
@@ -72,8 +77,8 @@ interface HydrationLog {
           <div class="progress-text">
             {{ progressPercent() }}% of daily goal
           </div>
-          <p-progressBar 
-            [value]="progressPercent()" 
+          <p-progressBar
+            [value]="progressPercent()"
             [showValue]="false"
             styleClass="hydration-progress"
           ></p-progressBar>
@@ -83,7 +88,11 @@ interface HydrationLog {
       <!-- Quick Add Buttons -->
       <div class="quick-add-section">
         <span class="quick-add-label" id="quick-add-label">Quick Add:</span>
-        <div class="quick-add-buttons" role="group" aria-labelledby="quick-add-label">
+        <div
+          class="quick-add-buttons"
+          role="group"
+          aria-labelledby="quick-add-label"
+        >
           @for (amount of quickAddAmounts; track amount) {
             <app-button
               variant="outlined"
@@ -118,14 +127,20 @@ interface HydrationLog {
       <div footer>
         @if (showTip()) {
           <div class="hydration-tip" [class.warning]="needsMoreWater()">
-            <i [class]="needsMoreWater() ? 'pi pi-exclamation-triangle' : 'pi-info-circle'"></i>
+            <i
+              [class]="
+                needsMoreWater()
+                  ? 'pi pi-exclamation-triangle'
+                  : 'pi-info-circle'
+              "
+            ></i>
             <span>{{ hydrationTip() }}</span>
           </div>
         }
       </div>
     </app-card>
   `,
-  styleUrl: './hydration-tracker.component.scss',
+  styleUrl: "./hydration-tracker.component.scss",
 })
 export class HydrationTrackerComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
@@ -144,7 +159,10 @@ export class HydrationTrackerComponent implements OnInit {
   // Computed values
   totalIntake = computed(() => {
     const unifiedLevel = this.trainingService.hydrationLevel();
-    return Math.max(unifiedLevel, this.hydrationLogs().reduce((sum, log) => sum + log.amount, 0));
+    return Math.max(
+      unifiedLevel,
+      this.hydrationLogs().reduce((sum, log) => sum + log.amount, 0),
+    );
   });
 
   progressPercent = computed(() => {
@@ -199,7 +217,8 @@ export class HydrationTrackerComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.trainingService.getWellnessForDay(new Date().toISOString().split('T')[0])
+    this.trainingService
+      .getWellnessForDay(new Date().toISOString().split("T")[0])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -222,7 +241,8 @@ export class HydrationTrackerComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.trainingService.addHydration(amount)
+    this.trainingService
+      .addHydration(amount)
       .then((result) => {
         if (result?.success) {
           const newLog: HydrationLog = {

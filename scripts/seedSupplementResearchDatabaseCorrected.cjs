@@ -319,7 +319,9 @@ class SupplementResearchSeederCorrected {
         `;
 
         await this.pool.query(query, [
-          plan.athlete_id === "1" ? "00000000-0000-0000-0000-000000000000" : "00000000-0000-0000-0000-000000000001",
+          plan.athlete_id === "1"
+            ? "00000000-0000-0000-0000-000000000000"
+            : "00000000-0000-0000-0000-000000000001",
           plan.supplement_id,
           plan.dosage,
           plan.timing,

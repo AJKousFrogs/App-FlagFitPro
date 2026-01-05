@@ -14,9 +14,7 @@ import { ButtonComponent } from "../button/button.component";
   selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TableModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, TableModule, ButtonComponent],
   template: `
     <div
       class="swipe-table-container"
@@ -116,7 +114,7 @@ import { ButtonComponent } from "../button/button.component";
       </div>
     </div>
   `,
-  styleUrl: './swipe-table.component.scss',
+  styleUrl: "./swipe-table.component.scss",
 })
 export class SwipeTableComponent<T = Record<string, unknown>> {
   // Angular 21: Use input() signal instead of @Input() with signal assignment

@@ -13,13 +13,13 @@ The token `--border-radius` is **undefined** in the design system. It was likely
 
 ## Replacement Strategy
 
-| Context | Replace With | Token Value |
-|---------|--------------|-------------|
-| Cards, panels, dialogs, containers | `var(--radius-lg)` | 8px |
-| Badges, small pills | `var(--radius-xl)` | 12px |
-| Chips, tags (pill shape) | `var(--radius-full)` | 9999px |
-| Input fields | `var(--radius-md)` | 6px |
-| Small UI elements | `var(--radius-sm)` | 2px |
+| Context                            | Replace With         | Token Value |
+| ---------------------------------- | -------------------- | ----------- |
+| Cards, panels, dialogs, containers | `var(--radius-lg)`   | 8px         |
+| Badges, small pills                | `var(--radius-xl)`   | 12px        |
+| Chips, tags (pill shape)           | `var(--radius-full)` | 9999px      |
+| Input fields                       | `var(--radius-md)`   | 6px         |
+| Small UI elements                  | `var(--radius-sm)`   | 2px         |
 
 ---
 
@@ -27,17 +27,17 @@ The token `--border-radius` is **undefined** in the design system. It was likely
 
 ### Summary by File
 
-| File | Occurrences | Replacement |
-|------|-------------|-------------|
-| `training.component.scss` | 11 | `--radius-lg` |
-| `achievements-panel.component.scss` | 6 | `--radius-lg` |
-| `la28-roadmap.component.scss` | 5 | `--radius-lg` |
-| `depth-chart.component.scss` | 4 | `--radius-lg` |
-| `password-strength.component.scss` | 2 | `--radius-lg` |
-| `form-input.component.scss` | 1 | `--radius-md` |
-| `equipment.component.scss` | 1 | `--radius-lg` |
-| `officials.component.scss` | 1 | `--radius-lg` |
-| `attendance.component.scss` | 1 | `--radius-lg` |
+| File                                | Occurrences | Replacement   |
+| ----------------------------------- | ----------- | ------------- |
+| `training.component.scss`           | 11          | `--radius-lg` |
+| `achievements-panel.component.scss` | 6           | `--radius-lg` |
+| `la28-roadmap.component.scss`       | 5           | `--radius-lg` |
+| `depth-chart.component.scss`        | 4           | `--radius-lg` |
+| `password-strength.component.scss`  | 2           | `--radius-lg` |
+| `form-input.component.scss`         | 1           | `--radius-md` |
+| `equipment.component.scss`          | 1           | `--radius-lg` |
+| `officials.component.scss`          | 1           | `--radius-lg` |
+| `attendance.component.scss`         | 1           | `--radius-lg` |
 
 **Total: 31 occurrences across 9 files**
 
@@ -462,4 +462,4 @@ cd angular && npm run build
 
 ---
 
-*Generated: January 4, 2026*
+_Generated: January 4, 2026_

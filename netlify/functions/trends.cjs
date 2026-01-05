@@ -188,7 +188,8 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
     const gameData = (data || []).map((game) => ({
       date: game.game_date || game.date,
       opponent: game.opponent || game.opponent_name || "Unknown",
-      performance: game.performance_score || game.performance || game.rating || 0,
+      performance:
+        game.performance_score || game.performance || game.rating || 0,
       metrics: {
         touchdowns: game.touchdowns || 0,
         completions: game.completions || 0,
@@ -197,7 +198,9 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
       },
     }));
 
-    const performances = gameData.map((g) => g.performance).filter((p) => p > 0);
+    const performances = gameData
+      .map((g) => g.performance)
+      .filter((p) => p > 0);
     const averagePerformance =
       performances.length > 0
         ? performances.reduce((sum, p) => sum + p, 0) / performances.length

@@ -10,6 +10,7 @@
 ## Purpose
 
 Flag football QBs throw **8x more** than NFL QBs in tournament play (320+ throws vs ~40). The QB Hub provides:
+
 - Throwing volume tracking to build toward tournament capacity
 - Arm care compliance monitoring
 - QB-specific periodization
@@ -208,36 +209,36 @@ Flag football QBs throw **8x more** than NFL QBs in tournament play (320+ throws
 
 ```typescript
 const QB_PROGRESSION_PHASES = [
-  { 
-    name: 'Foundation', 
-    targetThrowsPerSession: 100, 
-    durationWeeks: 4, 
-    description: 'Build base throwing capacity'
+  {
+    name: "Foundation",
+    targetThrowsPerSession: 100,
+    durationWeeks: 4,
+    description: "Build base throwing capacity",
   },
-  { 
-    name: 'Building', 
-    targetThrowsPerSession: 150, 
-    durationWeeks: 4, 
-    description: 'Increase volume progressively'
+  {
+    name: "Building",
+    targetThrowsPerSession: 150,
+    durationWeeks: 4,
+    description: "Increase volume progressively",
   },
-  { 
-    name: 'Peak Load', 
-    targetThrowsPerSession: 200, 
-    durationWeeks: 3, 
-    description: 'Approach competition volume'
+  {
+    name: "Peak Load",
+    targetThrowsPerSession: 200,
+    durationWeeks: 3,
+    description: "Approach competition volume",
   },
-  { 
-    name: 'Tournament Ready', 
-    targetThrowsPerSession: 250, 
-    durationWeeks: 2, 
-    description: 'Near-competition volume'
+  {
+    name: "Tournament Ready",
+    targetThrowsPerSession: 250,
+    durationWeeks: 2,
+    description: "Near-competition volume",
   },
-  { 
-    name: '320 Simulation', 
-    targetThrowsPerSession: 320, 
-    durationWeeks: 1, 
-    description: 'Full tournament simulation'
-  }
+  {
+    name: "320 Simulation",
+    targetThrowsPerSession: 320,
+    durationWeeks: 1,
+    description: "Full tournament simulation",
+  },
 ];
 ```
 
@@ -247,20 +248,22 @@ const QB_PROGRESSION_PHASES = [
 
 ```typescript
 function interpretArmFeeling(score: number): ArmStatus {
-  if (score <= 3) return { 
-    status: 'Fresh',
-    color: 'success',
-    recommendation: 'Good to throw at full volume'
-  };
-  if (score <= 6) return { 
-    status: 'Moderate',
-    color: 'warn',
-    recommendation: 'Monitor fatigue, consider reducing volume'
-  };
-  return { 
-    status: 'Fatigued',
-    color: 'danger',
-    recommendation: 'Rest day recommended'
+  if (score <= 3)
+    return {
+      status: "Fresh",
+      color: "success",
+      recommendation: "Good to throw at full volume",
+    };
+  if (score <= 6)
+    return {
+      status: "Moderate",
+      color: "warn",
+      recommendation: "Monitor fatigue, consider reducing volume",
+    };
+  return {
+    status: "Fatigued",
+    color: "danger",
+    recommendation: "Rest day recommended",
   };
 }
 ```
@@ -274,17 +277,17 @@ const QB_WEEKLY_LIMITS = {
   inSeason: {
     maxThrows: 600,
     maxSessions: 5,
-    minRestDays: 2
+    minRestDays: 2,
   },
   offSeason: {
     maxThrows: 400,
     maxSessions: 4,
-    minRestDays: 2
+    minRestDays: 2,
   },
   tournamentWeek: {
-    preTournament: 150,   // 2 days before
-    tournamentDay: 320    // Expected max
-  }
+    preTournament: 150, // 2 days before
+    tournamentDay: 320, // Expected max
+  },
 };
 ```
 
@@ -295,30 +298,30 @@ const QB_WEEKLY_LIMITS = {
 ```typescript
 const ARM_CARE_PROTOCOL = {
   preThrowingWarmup: {
-    duration: '30 min',
+    duration: "30 min",
     required: true,
     activities: [
-      'Band work (internal/external rotation)',
-      'Shoulder mobility',
-      'Core activation',
-      'Light throws (50%)'
-    ]
+      "Band work (internal/external rotation)",
+      "Shoulder mobility",
+      "Core activation",
+      "Light throws (50%)",
+    ],
   },
   postThrowingCare: {
-    duration: '15-20 min',
+    duration: "15-20 min",
     required: true,
     activities: [
-      'Stretching (shoulder, chest, lat)',
-      'Band deceleration work',
-      'Massage (forearm, bicep)',
-      'Ice (if 100+ throws)'
-    ]
+      "Stretching (shoulder, chest, lat)",
+      "Band deceleration work",
+      "Massage (forearm, bicep)",
+      "Ice (if 100+ throws)",
+    ],
   },
   iceRecommendation: {
     threshold: 100,
-    duration: '15-20 min',
-    required: true
-  }
+    duration: "15-20 min",
+    required: true,
+  },
 };
 ```
 
@@ -326,42 +329,42 @@ const ARM_CARE_PROTOCOL = {
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Progression Status Dashboard | ❌ | HIGH |
-| Current Phase Display | ❌ | HIGH |
-| Phase Progress Bar | ❌ | HIGH |
-| AI Recommendation | ❌ | MEDIUM |
-| Weekly Stats Cards | ❌ | HIGH |
-| Weekly Throw Volume Chart | ❌ | HIGH |
-| Throw Distance Breakdown | ❌ | HIGH |
-| Distance Mix Analysis | ❌ | MEDIUM |
-| Arm Care Compliance Section | ❌ | HIGH |
-| Compliance Progress Bars | ❌ | MEDIUM |
-| Recent Sessions Table | ❌ | HIGH |
-| Log Throwing Session Dialog | ❌ | HIGH |
-| Session Type Selection | ❌ | HIGH |
-| Throw Count by Distance | ❌ | HIGH |
-| Arm Feeling Before/After | ❌ | HIGH |
-| Arm Care Checkboxes | ❌ | HIGH |
-| Notes Field | ❌ | LOW |
+| Feature                      | Status | Priority |
+| ---------------------------- | ------ | -------- |
+| Progression Status Dashboard | ❌     | HIGH     |
+| Current Phase Display        | ❌     | HIGH     |
+| Phase Progress Bar           | ❌     | HIGH     |
+| AI Recommendation            | ❌     | MEDIUM   |
+| Weekly Stats Cards           | ❌     | HIGH     |
+| Weekly Throw Volume Chart    | ❌     | HIGH     |
+| Throw Distance Breakdown     | ❌     | HIGH     |
+| Distance Mix Analysis        | ❌     | MEDIUM   |
+| Arm Care Compliance Section  | ❌     | HIGH     |
+| Compliance Progress Bars     | ❌     | MEDIUM   |
+| Recent Sessions Table        | ❌     | HIGH     |
+| Log Throwing Session Dialog  | ❌     | HIGH     |
+| Session Type Selection       | ❌     | HIGH     |
+| Throw Count by Distance      | ❌     | HIGH     |
+| Arm Feeling Before/After     | ❌     | HIGH     |
+| Arm Care Checkboxes          | ❌     | HIGH     |
+| Notes Field                  | ❌     | LOW      |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Throwing sessions | `ApiService` | `qb_throwing_sessions` |
-| Arm care compliance | `ApiService` | `qb_arm_care_log` |
-| User progression | `ApiService` | `qb_progression` |
+| Data                | Service      | Table                  |
+| ------------------- | ------------ | ---------------------- |
+| Throwing sessions   | `ApiService` | `qb_throwing_sessions` |
+| Arm care compliance | `ApiService` | `qb_arm_care_log`      |
+| User progression    | `ApiService` | `qb_progression`       |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Performance Tracking | `/performance-tracking` | General metrics |
-| Training Schedule | `/training` | Session planning |
-| Wellness | `/wellness` | Recovery status |
+| Page                 | Route                   | Relationship     |
+| -------------------- | ----------------------- | ---------------- |
+| Performance Tracking | `/performance-tracking` | General metrics  |
+| Training Schedule    | `/training`             | Session planning |
+| Wellness             | `/wellness`             | Recovery status  |

@@ -2601,9 +2601,7 @@ export class TrainingVideoDatabaseService {
     const position = filters.position;
     if (position) {
       results = results.filter(
-        (v) =>
-          v.positions.includes(position) ||
-          v.positions.includes("All"),
+        (v) => v.positions.includes(position) || v.positions.includes("All"),
       );
     }
 
@@ -2635,9 +2633,7 @@ export class TrainingVideoDatabaseService {
     const equipment = filters.equipment;
     if (equipment && equipment.length > 0) {
       results = results.filter((v) =>
-        v.equipment.every(
-          (e) => equipment.includes(e) || e === "none",
-        ),
+        v.equipment.every((e) => equipment.includes(e) || e === "none"),
       );
     }
 

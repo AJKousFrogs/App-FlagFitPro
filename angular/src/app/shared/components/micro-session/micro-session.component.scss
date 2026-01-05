@@ -129,7 +129,11 @@
 }
 
 .start-button {
-  background: linear-gradient(135deg, var(--ds-primary-green) 0%, var(--ds-primary-green-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ds-primary-green) 0%,
+    var(--ds-primary-green-light) 100%
+  );
   border: none;
 }
 
@@ -188,7 +192,9 @@
   padding: var(--space-6);
   background: var(--surface-50);
   border-radius: var(--radius-xl);
-  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 }
 
 .current-step.paused {
@@ -261,7 +267,11 @@
 }
 
 .step-bar .p-progressbar-value {
-  background: linear-gradient(90deg, var(--ds-primary-green), var(--ds-primary-green-light));
+  background: linear-gradient(
+    90deg,
+    var(--ds-primary-green),
+    var(--ds-primary-green-light)
+  );
 }
 
 .session-controls {
@@ -377,4 +387,3 @@
 .p-slider .p-slider-handle {
   border-color: var(--ds-primary-green, #089949);
 }
-

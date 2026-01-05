@@ -11,6 +11,7 @@
 **Problem:** Changes not showing in localhost
 
 **Quick Fix:**
+
 ```bash
 # Clear all caches
 rm -rf angular/.angular angular/dist angular/node_modules/.cache
@@ -21,6 +22,7 @@ rm -rf node_modules/.cache
 ```
 
 **Check:**
+
 - [ ] Angular dev server running (`npm start`)
 - [ ] Browser cache cleared
 - [ ] No console errors blocking rendering
@@ -33,6 +35,7 @@ rm -rf node_modules/.cache
 **Problem:** CI failing, blocking deployments
 
 **Quick Fix:**
+
 ```bash
 # Check what's failing
 npm run lint
@@ -43,17 +46,19 @@ npm run test:unit
 ```
 
 **Common CI Issues:**
+
 - TypeScript errors → Fix or skip type checking in tests
 - Linting errors → Run `npm run lint:fix`
 - Build errors → Check `angular/angular.json` config
 - Test failures → Temporarily skip broken tests
 
 **Temporary Fix (if needed):**
+
 ```yaml
 # In .github/workflows/ci.yml - make tests non-blocking
 - name: Run unit tests
   run: npm run test:unit
-  continue-on-error: true  # Add this temporarily
+  continue-on-error: true # Add this temporarily
 ```
 
 ---
@@ -63,11 +68,13 @@ npm run test:unit
 **Problem:** Deployments failing
 
 **Check:**
+
 1. Netlify build logs → What's the error?
 2. Environment variables set in Netlify UI?
 3. Build command correct? (`cd angular && npm ci && npm run build`)
 
 **Quick Fix:**
+
 ```bash
 # Test build locally first
 cd angular
@@ -88,8 +95,10 @@ npm run build
 **Priority Order:**
 
 #### A. Fix Buttons (15 min)
+
 - **Problem:** Black text on green buttons
 - **Fix:** Add to `styles.scss`:
+
 ```scss
 @layer overrides {
   .p-button:not(.p-button-outlined):not(.p-button-text) * {
@@ -99,8 +108,10 @@ npm run build
 ```
 
 #### B. Fix Cards (15 min)
+
 - **Problem:** Inconsistent padding/spacing
 - **Fix:** Use PrimeNG tokens:
+
 ```scss
 :host ::ng-deep .p-card-body {
   padding: var(--p-card-body-padding) !important;
@@ -109,8 +120,10 @@ npm run build
 ```
 
 #### C. Fix Colors (30 min)
+
 - **Problem:** Wrong colors everywhere
 - **Fix:** Replace hardcoded colors:
+
 ```bash
 # Find all hardcoded #089949
 grep -r "#089949" angular/src --include="*.ts" --include="*.scss"
@@ -119,8 +132,10 @@ grep -r "#089949" angular/src --include="*.ts" --include="*.scss"
 ```
 
 #### D. Fix Spacing (30 min)
+
 - **Problem:** Inconsistent spacing
 - **Fix:** Replace hardcoded values:
+
 ```bash
 # Find hardcoded spacing
 grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
@@ -140,6 +155,7 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 **Recommended:** Today/Dashboard page (most visible)
 
 **Process:**
+
 1. Open page in browser
 2. Open DevTools (F12)
 3. Inspect each broken element
@@ -148,11 +164,13 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 6. Repeat
 
 **Don't:**
+
 - ❌ Try to fix everything at once
 - ❌ Refactor code you can't see
 - ❌ Worry about perfect design system compliance yet
 
 **Do:**
+
 - ✅ Fix what's broken visually
 - ✅ Make ONE page work perfectly
 - ✅ Use that as template for others
@@ -162,26 +180,30 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 ## 🔧 QUICK WINS (Do These Today)
 
 ### 1. Force Design System on Buttons (5 min)
+
 ```scss
 // Add to angular/src/styles.scss at the END
 @layer overrides {
   // Force white text on ALL green buttons
   .p-button:not(.p-button-outlined):not(.p-button-text) {
     color: #ffffff !important;
-    
+
     * {
       color: #ffffff !important;
     }
   }
-  
+
   // Force green background
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary) {
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ) {
     background: #089949 !important;
   }
 }
 ```
 
 ### 2. Fix Card Consistency (10 min)
+
 ```scss
 // Add to angular/src/styles.scss
 @layer overrides {
@@ -193,6 +215,7 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 ```
 
 ### 3. Fix Input Fields (10 min)
+
 ```scss
 @layer overrides {
   .p-inputtext,
@@ -205,9 +228,10 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 ```
 
 ### 4. Fix Dialog Widths (5 min)
+
 ```typescript
 // Standardize all dialogs
-[style]="{ width: '90vw', maxWidth: '500px' }"
+[style] = "{ width: '90vw', maxWidth: '500px' }";
 ```
 
 ---
@@ -261,12 +285,14 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 ## 💡 PRO TIP: See Changes Immediately
 
 **Use Browser DevTools:**
+
 1. Open DevTools (F12)
 2. Go to Sources tab
 3. Enable "Disable cache" checkbox
 4. Keep DevTools open while developing
 
 **Or use Hard Refresh:**
+
 - Mac: `Cmd + Shift + R`
 - Windows: `Ctrl + Shift + R`
 
@@ -295,6 +321,7 @@ grep -r "padding: [0-9]" angular/src --include="*.scss" | head -20
 ## 🎯 TODAY'S GOAL
 
 **By end of day, you should have:**
+
 1. ✅ Localhost showing changes
 2. ✅ CI pipeline passing (or at least not blocking)
 3. ✅ Netlify deploying successfully

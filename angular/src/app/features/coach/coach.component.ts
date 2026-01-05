@@ -78,10 +78,9 @@ interface TeamMember {
           subtitle="Manage your team, track performance, and create training sessions"
           icon="pi-users"
         >
-          <app-button
-            iconLeft="pi-plus"
-            (clicked)="openCreateSession()"
-          >Create Session</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateSession()"
+            >Create Session</app-button
+          >
         </app-page-header>
 
         <!-- Coach Stats -->
@@ -297,21 +296,21 @@ interface TeamMember {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button
-            variant="text"
-            (clicked)="showCreateSessionDialog = false"
-          >Cancel</app-button>
+          <app-button variant="text" (clicked)="showCreateSessionDialog = false"
+            >Cancel</app-button
+          >
           <app-button
             iconLeft="pi-check"
             [loading]="isCreatingSession()"
             [disabled]="!isSessionValid()"
             (clicked)="createSession()"
-          >Create Session</app-button>
+            >Create Session</app-button
+          >
         </ng-template>
       </p-dialog>
     </app-main-layout>
   `,
-  styleUrl: './coach.component.scss',
+  styleUrl: "./coach.component.scss",
 })
 export class CoachComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -319,8 +318,13 @@ export class CoachComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
 
-  stats = signal<{ label: string; value: number | string; icon: string; trend?: string }[]>([]);
-  teamChartData = signal<{ labels: string[]; datasets: { label: string; data: number[] }[] } | null>(null);
+  stats = signal<
+    { label: string; value: number | string; icon: string; trend?: string }[]
+  >([]);
+  teamChartData = signal<{
+    labels: string[];
+    datasets: { label: string; data: number[] }[];
+  } | null>(null);
   teamMembers = signal<TeamMember[]>([]);
 
   // Consent blocked players tracking

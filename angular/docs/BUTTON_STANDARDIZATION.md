@@ -7,12 +7,14 @@ This document describes the unified button system for the FlagFit Pro Angular ap
 ## Why Standardization?
 
 Before standardization, the app had 4 parallel button systems:
+
 - PrimeNG `<p-button>` (~1,500 occurrences)
 - PrimeNG `pButton` directive (~29 occurrences)
 - Native `<button>` (~256 occurrences)
 - Custom `<app-button>` (~99 occurrences)
 
 This fragmentation caused:
+
 - Inconsistent styling across the app
 - Duplicated CSS and styling logic
 - Difficulty maintaining accessibility standards
@@ -37,24 +39,24 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 
 #### API
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'outlined' \| 'text' \| 'danger' \| 'success'` | `'primary'` | Visual style variant |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
-| `iconLeft` | `string` | `''` | PrimeIcon on left (e.g., `'pi-check'`) |
-| `iconRight` | `string` | `''` | PrimeIcon on right (e.g., `'pi-arrow-right'`) |
-| `loading` | `boolean` | `false` | Shows spinner, disables interaction |
-| `disabled` | `boolean` | `false` | Disables the button |
-| `fullWidth` | `boolean` | `false` | Makes button full width |
-| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
-| `ariaLabel` | `string` | `''` | Accessibility label (required for icon-only) |
-| `routerLink` | `string \| string[]` | `null` | Router navigation |
-| `queryParams` | `object` | `null` | Query parameters for router link |
-| `tooltip` | `string` | `''` | Tooltip text |
-| `testId` | `string` | `''` | data-testid attribute |
+| Input         | Type                                                                        | Default     | Description                                   |
+| ------------- | --------------------------------------------------------------------------- | ----------- | --------------------------------------------- |
+| `variant`     | `'primary' \| 'secondary' \| 'outlined' \| 'text' \| 'danger' \| 'success'` | `'primary'` | Visual style variant                          |
+| `size`        | `'sm' \| 'md' \| 'lg'`                                                      | `'md'`      | Button size                                   |
+| `iconLeft`    | `string`                                                                    | `''`        | PrimeIcon on left (e.g., `'pi-check'`)        |
+| `iconRight`   | `string`                                                                    | `''`        | PrimeIcon on right (e.g., `'pi-arrow-right'`) |
+| `loading`     | `boolean`                                                                   | `false`     | Shows spinner, disables interaction           |
+| `disabled`    | `boolean`                                                                   | `false`     | Disables the button                           |
+| `fullWidth`   | `boolean`                                                                   | `false`     | Makes button full width                       |
+| `type`        | `'button' \| 'submit' \| 'reset'`                                           | `'button'`  | HTML button type                              |
+| `ariaLabel`   | `string`                                                                    | `''`        | Accessibility label (required for icon-only)  |
+| `routerLink`  | `string \| string[]`                                                        | `null`      | Router navigation                             |
+| `queryParams` | `object`                                                                    | `null`      | Query parameters for router link              |
+| `tooltip`     | `string`                                                                    | `''`        | Tooltip text                                  |
+| `testId`      | `string`                                                                    | `''`        | data-testid attribute                         |
 
-| Output | Type | Description |
-|--------|------|-------------|
+| Output    | Type         | Description                                |
+| --------- | ------------ | ------------------------------------------ |
 | `clicked` | `MouseEvent` | Emits on click (NOT when disabled/loading) |
 
 #### Examples
@@ -104,26 +106,22 @@ import { IconButtonComponent } from '@shared/components/button/icon-button.compo
 
 #### API
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `icon` | `string` | **required** | PrimeIcon class (e.g., `'pi-plus'`) |
-| `ariaLabel` | `string` | **required** | Accessibility label |
-| `variant` | `'primary' \| 'secondary' \| 'outlined' \| 'text' \| 'danger' \| 'success'` | `'text'` | Visual style |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
-| `loading` | `boolean` | `false` | Shows spinner |
-| `disabled` | `boolean` | `false` | Disables button |
-| `tooltip` | `string` | `''` | Tooltip (defaults to ariaLabel) |
-| `routerLink` | `string \| string[]` | `null` | Router navigation |
+| Input        | Type                                                                        | Default      | Description                         |
+| ------------ | --------------------------------------------------------------------------- | ------------ | ----------------------------------- |
+| `icon`       | `string`                                                                    | **required** | PrimeIcon class (e.g., `'pi-plus'`) |
+| `ariaLabel`  | `string`                                                                    | **required** | Accessibility label                 |
+| `variant`    | `'primary' \| 'secondary' \| 'outlined' \| 'text' \| 'danger' \| 'success'` | `'text'`     | Visual style                        |
+| `size`       | `'sm' \| 'md' \| 'lg'`                                                      | `'md'`       | Button size                         |
+| `loading`    | `boolean`                                                                   | `false`      | Shows spinner                       |
+| `disabled`   | `boolean`                                                                   | `false`      | Disables button                     |
+| `tooltip`    | `string`                                                                    | `''`         | Tooltip (defaults to ariaLabel)     |
+| `routerLink` | `string \| string[]`                                                        | `null`       | Router navigation                   |
 
 #### Examples
 
 ```html
 <!-- Add button -->
-<app-icon-button
-  icon="pi-plus"
-  ariaLabel="Add item"
-  (clicked)="addItem()"
-/>
+<app-icon-button icon="pi-plus" ariaLabel="Add item" (clicked)="addItem()" />
 
 <!-- Edit button in a table row -->
 <app-icon-button
@@ -143,31 +141,27 @@ import { IconButtonComponent } from '@shared/components/button/icon-button.compo
 />
 
 <!-- Settings with router link -->
-<app-icon-button
-  icon="pi-cog"
-  ariaLabel="Settings"
-  routerLink="/settings"
-/>
+<app-icon-button icon="pi-cog" ariaLabel="Settings" routerLink="/settings" />
 ```
 
 ## Migration Guide
 
 ### From PrimeNG `<p-button>`
 
-| PrimeNG | App Button |
-|---------|------------|
+| PrimeNG                   | App Button                      |
+| ------------------------- | ------------------------------- |
 | `<p-button label="Save">` | `<app-button>Save</app-button>` |
-| `severity="secondary"` | `variant="secondary"` |
-| `severity="danger"` | `variant="danger"` |
-| `severity="success"` | `variant="success"` |
-| `[outlined]="true"` | `variant="outlined"` |
-| `[text]="true"` | `variant="text"` |
-| `icon="pi pi-check"` | `iconLeft="pi-check"` |
-| `iconPos="right"` | `iconRight="pi-check"` |
-| `styleClass="w-full"` | `[fullWidth]="true"` |
-| `(onClick)="fn()"` | `(clicked)="fn()"` |
-| `size="small"` | `size="sm"` |
-| `size="large"` | `size="lg"` |
+| `severity="secondary"`    | `variant="secondary"`           |
+| `severity="danger"`       | `variant="danger"`              |
+| `severity="success"`      | `variant="success"`             |
+| `[outlined]="true"`       | `variant="outlined"`            |
+| `[text]="true"`           | `variant="text"`                |
+| `icon="pi pi-check"`      | `iconLeft="pi-check"`           |
+| `iconPos="right"`         | `iconRight="pi-check"`          |
+| `styleClass="w-full"`     | `[fullWidth]="true"`            |
+| `(onClick)="fn()"`        | `(clicked)="fn()"`              |
+| `size="small"`            | `size="sm"`                     |
+| `size="large"`            | `size="lg"`                     |
 
 ### From `pButton` Directive
 
@@ -210,9 +204,7 @@ In some cases, raw `<button>` elements are allowed:
 To whitelist a raw button, add the `data-raw-button="allowed"` attribute:
 
 ```html
-<button data-raw-button="allowed" (click)="customAction()">
-  Custom
-</button>
+<button data-raw-button="allowed" (click)="customAction()">Custom</button>
 ```
 
 ## Linting
@@ -237,17 +229,17 @@ node scripts/lint-buttons.js src/app/features/auth
 
 The button components use these design tokens:
 
-| Token | Usage |
-|-------|-------|
-| `--ds-primary-green` | Primary button background |
-| `--ds-primary-green-hover` | Primary button hover |
-| `--color-status-error` | Danger button background |
-| `--color-status-success` | Success button background |
-| `--surface-primary` | Secondary button background |
-| `--color-border-primary` | Secondary button border |
-| `--radius-lg` | Default border radius |
-| `--radius-md` | Small button border radius |
-| `--radius-xl` | Large button border radius |
+| Token                      | Usage                       |
+| -------------------------- | --------------------------- |
+| `--ds-primary-green`       | Primary button background   |
+| `--ds-primary-green-hover` | Primary button hover        |
+| `--color-status-error`     | Danger button background    |
+| `--color-status-success`   | Success button background   |
+| `--surface-primary`        | Secondary button background |
+| `--color-border-primary`   | Secondary button border     |
+| `--radius-lg`              | Default border radius       |
+| `--radius-md`              | Small button border radius  |
+| `--radius-xl`              | Large button border radius  |
 
 ## Accessibility
 

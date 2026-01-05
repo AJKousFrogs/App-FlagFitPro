@@ -223,7 +223,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
       </div>
     </app-main-layout>
   `,
-  styleUrl: './video-curation.component.scss',
+  styleUrl: "./video-curation.component.scss",
 })
 export class VideoCurationComponent implements OnInit {
   readonly curationService = inject(VideoCurationService);

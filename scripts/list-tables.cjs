@@ -12,7 +12,13 @@ async function listTables() {
     WHERE table_schema = 'public'
     ORDER BY table_name
   `);
-  console.log(JSON.stringify(res.rows.map(r => r.table_name), null, 2));
+  console.log(
+    JSON.stringify(
+      res.rows.map((r) => r.table_name),
+      null,
+      2,
+    ),
+  );
   await pool.end();
 }
 

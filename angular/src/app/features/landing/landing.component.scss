@@ -182,7 +182,8 @@
     rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) 0%,
     rgba(var(--color-brand-secondary-rgb, 139, 92, 246), 0.1) 100%
   );
-  border: var(--border-1) solid rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
+  border: var(--border-1) solid
+    rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
   border-radius: var(--radius-full);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
@@ -254,7 +255,8 @@
 }
 
 .countdown-value {
-  font-family: "JetBrains Mono", "SF Mono", "Fira Code", "Roboto Mono", monospace;
+  font-family:
+    "JetBrains Mono", "SF Mono", "Fira Code", "Roboto Mono", monospace;
   font-size: clamp(2rem, 8vw, 4.5rem);
   font-weight: var(--font-weight-black);
   line-height: 1;
@@ -487,32 +489,56 @@
 }
 
 .feature-icon-analytics {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1) 0%,
+    rgba(59, 130, 246, 0.2) 100%
+  );
   color: var(--primitive-blue-500);
 }
 
 .feature-icon-tournament {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.1) 0%,
+    rgba(245, 158, 11, 0.2) 100%
+  );
   color: var(--primitive-amber-500);
 }
 
 .feature-icon-community {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.1) 0%,
+    rgba(16, 185, 129, 0.2) 100%
+  );
   color: var(--primitive-success-500);
 }
 
 .feature-icon-training {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.2) 100%
+  );
   color: var(--primitive-purple-500);
 }
 
 .feature-icon-ai-coach {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(236, 72, 153, 0.1) 0%,
+    rgba(236, 72, 153, 0.2) 100%
+  );
   color: var(--primitive-pink-500);
 }
 
 .feature-icon-progress {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(6, 182, 212, 0.1) 0%,
+    rgba(6, 182, 212, 0.2) 100%
+  );
   color: var(--primitive-cyan-500);
 }
 
@@ -535,7 +561,9 @@
   color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: background var(--transition-fast), gap var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    gap var(--transition-fast);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
 
@@ -629,7 +657,9 @@
   color: var(--color-text-secondary);
   text-decoration: none;
   font-size: var(--font-size-h4);
-  transition: color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
   display: inline-block;
 
   &:hover {

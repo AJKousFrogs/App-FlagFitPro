@@ -47,7 +47,10 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
   color: var(--color-text-secondary);
 }
 
@@ -93,7 +96,10 @@
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
   border: 2px solid transparent;
 }
 
@@ -201,7 +207,10 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-badge);
   background: var(--surface-tertiary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .workout-item:hover {
@@ -305,4 +314,3 @@
     justify-content: center;
   }
 }
-

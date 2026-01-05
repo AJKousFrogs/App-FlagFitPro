@@ -76,57 +76,57 @@
 
 ## Channel Types
 
-| Type | Icon | Who Can Post | Who Can View |
-|------|------|--------------|--------------|
-| Announcements | 📢 | Coaches only | Everyone |
-| General | 💬 | Everyone | Everyone |
-| Game Day | 🏈 | Everyone | Everyone |
-| Coaches Only | 🔒 | Coaches | Coaches only |
+| Type            | Icon     | Who Can Post     | Who Can View     |
+| --------------- | -------- | ---------------- | ---------------- |
+| Announcements   | 📢       | Coaches only     | Everyone         |
+| General         | 💬       | Everyone         | Everyone         |
+| Game Day        | 🏈       | Everyone         | Everyone         |
+| Coaches Only    | 🔒       | Coaches          | Coaches only     |
 | Position Groups | 🏈🏃🛡️💪 | Position members | Position members |
-| Direct Messages | 👤 | Participants | Participants |
+| Direct Messages | 👤       | Participants     | Participants     |
 
 ---
 
 ## Message Features
 
-| Feature | Who Can Use | Description |
-|---------|-------------|-------------|
-| Pin message | Coaches | Pin to top of channel |
-| Mark important | Coaches | ⚠️ badge |
-| Read receipts | Announcements | "Read by X/Y" |
-| @mentions | Everyone | Notify specific user |
-| Reactions | Everyone | Emoji reactions |
+| Feature        | Who Can Use   | Description           |
+| -------------- | ------------- | --------------------- |
+| Pin message    | Coaches       | Pin to top of channel |
+| Mark important | Coaches       | ⚠️ badge              |
+| Read receipts  | Announcements | "Read by X/Y"         |
+| @mentions      | Everyone      | Notify specific user  |
+| Reactions      | Everyone      | Emoji reactions       |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Channel list sidebar | ✅ |
-| Announcements channel | ✅ |
-| General channel | ✅ |
-| Coaches-only channel | ✅ |
-| Position group channels | ✅ |
-| Direct messages | ✅ |
-| Create channel (coach) | ✅ |
-| Pin message | ✅ |
-| Mark important | ✅ |
-| Read receipts | ✅ |
-| @mentions | ✅ |
-| Online indicator | ✅ |
-| Unread badge | ✅ |
-| Real-time updates | ✅ |
-| Message input | ✅ |
-| Role-based permissions | ✅ |
+| Feature                 | Status |
+| ----------------------- | ------ |
+| Channel list sidebar    | ✅     |
+| Announcements channel   | ✅     |
+| General channel         | ✅     |
+| Coaches-only channel    | ✅     |
+| Position group channels | ✅     |
+| Direct messages         | ✅     |
+| Create channel (coach)  | ✅     |
+| Pin message             | ✅     |
+| Mark important          | ✅     |
+| Read receipts           | ✅     |
+| @mentions               | ✅     |
+| Online indicator        | ✅     |
+| Unread badge            | ✅     |
+| Real-time updates       | ✅     |
+| Message input           | ✅     |
+| Role-based permissions  | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Method |
-|------|---------|--------|
-| Channels | `ChannelService` | `getChannels()` |
-| Messages | `ChannelService` | `getMessages()` |
-| Presence | `PresenceService` | Online status |
+| Data          | Service                   | Method          |
+| ------------- | ------------------------- | --------------- |
+| Channels      | `ChannelService`          | `getChannels()` |
+| Messages      | `ChannelService`          | `getMessages()` |
+| Presence      | `PresenceService`         | Online status   |
 | Notifications | `TeamNotificationService` | @mention alerts |

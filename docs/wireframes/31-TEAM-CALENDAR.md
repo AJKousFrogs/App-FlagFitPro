@@ -212,71 +212,71 @@ Allows players to view all team events, RSVP to practices/games/tournaments, ind
 
 ## Event Types
 
-| Type | Icon | Examples |
-|------|------|----------|
-| Practice | 🏋️ | Regular practice, skill session |
-| Game | 🏈 | League game, friendly |
-| Tournament | 🏆 | Multi-game tournament |
-| Team Meeting | 📋 | Film session, planning |
-| Team Event | 🎉 | Team dinner, bonding |
-| Travel | ✈️ | Travel day |
+| Type         | Icon | Examples                        |
+| ------------ | ---- | ------------------------------- |
+| Practice     | 🏋️   | Regular practice, skill session |
+| Game         | 🏈   | League game, friendly           |
+| Tournament   | 🏆   | Multi-game tournament           |
+| Team Meeting | 📋   | Film session, planning          |
+| Team Event   | 🎉   | Team dinner, bonding            |
+| Travel       | ✈️   | Travel day                      |
 
 ---
 
 ## RSVP Responses
 
-| Response | Color | Meaning |
-|----------|-------|---------|
-| Going | 🟢 Green | Confirmed attendance |
-| Can't Go | 🔴 Red | Declined |
-| Maybe | 🟡 Yellow | Tentative |
-| Pending | ⚪ Gray | Not yet responded |
+| Response | Color     | Meaning              |
+| -------- | --------- | -------------------- |
+| Going    | 🟢 Green  | Confirmed attendance |
+| Can't Go | 🔴 Red    | Declined             |
+| Maybe    | 🟡 Yellow | Tentative            |
+| Pending  | ⚪ Gray   | Not yet responded    |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Calendar View | ❌ | HIGH |
-| List View | ❌ | MEDIUM |
-| RSVP Stats | ❌ | MEDIUM |
-| RSVP Dialog | ❌ | HIGH |
-| Guest Handling | ❌ | MEDIUM |
-| Ride Coordination | ❌ | LOW |
-| Calendar Sync (Google/Apple) | ❌ | MEDIUM |
-| RSVP Deadline Reminders | ❌ | MEDIUM |
-| Event Details View | ❌ | HIGH |
-| Change RSVP | ❌ | HIGH |
+| Feature                      | Status | Priority |
+| ---------------------------- | ------ | -------- |
+| Calendar View                | ❌     | HIGH     |
+| List View                    | ❌     | MEDIUM   |
+| RSVP Stats                   | ❌     | MEDIUM   |
+| RSVP Dialog                  | ❌     | HIGH     |
+| Guest Handling               | ❌     | MEDIUM   |
+| Ride Coordination            | ❌     | LOW      |
+| Calendar Sync (Google/Apple) | ❌     | MEDIUM   |
+| RSVP Deadline Reminders      | ❌     | MEDIUM   |
+| Event Details View           | ❌     | HIGH     |
+| Change RSVP                  | ❌     | HIGH     |
 
 ---
 
 ## Calendar Sync Options
 
-| Service | Action |
-|---------|--------|
-| Google Calendar | Add single event or subscribe |
-| Apple Calendar | Add single event or subscribe |
-| Outlook | Add single event or subscribe |
-| ICS Download | Download .ics file |
-| Subscribe URL | `webcal://app.flagfit.com/calendar/...` |
+| Service         | Action                                  |
+| --------------- | --------------------------------------- |
+| Google Calendar | Add single event or subscribe           |
+| Apple Calendar  | Add single event or subscribe           |
+| Outlook         | Add single event or subscribe           |
+| ICS Download    | Download .ics file                      |
+| Subscribe URL   | `webcal://app.flagfit.com/calendar/...` |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Events | `CalendarService` | `team_events` |
-| RSVPs | `CalendarService` | `event_rsvps` |
+| Data      | Service           | Table             |
+| --------- | ----------------- | ----------------- |
+| Events    | `CalendarService` | `team_events`     |
+| RSVPs     | `CalendarService` | `event_rsvps`     |
 | Logistics | `CalendarService` | `event_logistics` |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Tournaments | `/tournaments` | Tournament events |
-| Training Schedule | `/training` | Practice events |
-| My Payments | `/payments` | Event costs |
+| Page              | Route          | Relationship      |
+| ----------------- | -------------- | ----------------- |
+| Tournaments       | `/tournaments` | Tournament events |
+| Training Schedule | `/training`    | Practice events   |
+| My Payments       | `/payments`    | Event costs       |

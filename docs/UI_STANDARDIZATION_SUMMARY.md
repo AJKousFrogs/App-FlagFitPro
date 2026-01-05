@@ -17,25 +17,25 @@ This document summarizes the UI standardization work completed to ensure a profe
 
 ### Core Style Files Modified
 
-| File | Change |
-|------|--------|
+| File                                                | Change                                                                                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `angular/src/assets/styles/ui-standardization.scss` | Updated to Enterprise/Calm Clinical token values (14px card radius, 10px button/input radius, 12px message radius, calm focus rings) |
 
 ### Templates Updated for Accessibility
 
-| File | Change |
-|------|--------|
-| `angular/src/app/features/dashboard/coach-dashboard.component.ts` | Added `ariaLabel="Open analytics"` to icon-only button |
-| `angular/src/app/features/settings/settings.component.html` | Added `ariaLabel="Close dialog"` to 5 dialog close buttons |
-| `angular/src/app/shared/components/morning-briefing/morning-briefing.component.ts` | Added `ariaLabel="Collapse briefing"` to icon-only button |
+| File                                                                               | Change                                                     |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `angular/src/app/features/dashboard/coach-dashboard.component.ts`                  | Added `ariaLabel="Open analytics"` to icon-only button     |
+| `angular/src/app/features/settings/settings.component.html`                        | Added `ariaLabel="Close dialog"` to 5 dialog close buttons |
+| `angular/src/app/shared/components/morning-briefing/morning-briefing.component.ts` | Added `ariaLabel="Collapse briefing"` to icon-only button  |
 
 ### Previously Modified (still in effect)
 
-| File | Change |
-|------|--------|
-| `angular/src/styles.scss` | Import for `ui-standardization.scss` |
+| File                                                             | Change                                       |
+| ---------------------------------------------------------------- | -------------------------------------------- |
+| `angular/src/styles.scss`                                        | Import for `ui-standardization.scss`         |
 | `angular/src/app/shared/components/button/button.component.scss` | Fixed icon-only button dimensions (44px min) |
-| `angular/src/app/shared/components/badge/badge.component.scss` | Fixed SCSS syntax error |
+| `angular/src/app/shared/components/badge/badge.component.scss`   | Fixed SCSS syntax error                      |
 
 ---
 
@@ -47,21 +47,16 @@ All spacing values are now consistent multiples of 8px:
 
 ```scss
 --space-unit: 8px;
---space-1: 4px    /* 0.5 units */
---space-2: 8px    /* 1 unit */
---space-3: 12px   /* 1.5 units */
---space-4: 16px   /* 2 units */
---space-5: 20px   /* 2.5 units */
---space-6: 24px   /* 3 units */
---space-8: 32px   /* 4 units */
---space-10: 40px  /* 5 units */
---space-12: 48px  /* 6 units */
+--space-1: 4px /* 0.5 units */ --space-2: 8px /* 1 unit */ --space-3: 12px
+  /* 1.5 units */ --space-4: 16px /* 2 units */ --space-5: 20px /* 2.5 units */
+  --space-6: 24px /* 3 units */ --space-8: 32px /* 4 units */ --space-10: 40px
+  /* 5 units */ --space-12: 48px /* 6 units */;
 ```
 
 ### 2. Card Tokens (Enterprise)
 
 ```scss
---p-card-border-radius: 14px;    /* Softer than sharp, cleaner than round */
+--p-card-border-radius: 14px; /* Softer than sharp, cleaner than round */
 --p-card-body-padding: 16px;
 --p-card-body-gap: 12px;
 --p-card-shadow: var(--shadow-sm);
@@ -73,12 +68,12 @@ All spacing values are now consistent multiples of 8px:
 ### 3. Button Tokens (Enterprise)
 
 ```scss
---p-button-border-radius: 10px;  /* Balanced radius */
+--p-button-border-radius: 10px; /* Balanced radius */
 --p-button-padding-x: 24px;
 --p-button-padding-y: 12px;
---p-button-icon-only-width: 44px;  /* Touch target minimum */
+--p-button-icon-only-width: 44px; /* Touch target minimum */
 --p-button-icon-only-height: 44px;
---p-button-raised-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);  /* Subtle */
+--p-button-raised-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle */
 ```
 
 ### 4. Form Control Tokens (Enterprise)
@@ -138,39 +133,39 @@ All spacing values are now consistent multiples of 8px:
 
 ### Layout Primitives
 
-| Class | Purpose |
-|-------|---------|
-| `.page-container` | Max-width container (1400px) with responsive gutters |
-| `.page-container--narrow` | Narrow variant (800px) for content-heavy pages |
-| `.page-container--wide` | Wide variant (1600px) for dashboards |
-| `.section-stack` | 24px vertical gap between major sections |
-| `.section-stack--compact` | 16px variant |
-| `.section-stack--loose` | 32px variant |
-| `.card-stack` | 12px vertical gap for card internal content |
-| `.card-stack--default` | 16px variant |
-| `.card-stack--tight` | 8px variant |
+| Class                     | Purpose                                              |
+| ------------------------- | ---------------------------------------------------- |
+| `.page-container`         | Max-width container (1400px) with responsive gutters |
+| `.page-container--narrow` | Narrow variant (800px) for content-heavy pages       |
+| `.page-container--wide`   | Wide variant (1600px) for dashboards                 |
+| `.section-stack`          | 24px vertical gap between major sections             |
+| `.section-stack--compact` | 16px variant                                         |
+| `.section-stack--loose`   | 32px variant                                         |
+| `.card-stack`             | 12px vertical gap for card internal content          |
+| `.card-stack--default`    | 16px variant                                         |
+| `.card-stack--tight`      | 8px variant                                          |
 
 ### Component Primitives
 
-| Class | Purpose |
-|-------|---------|
-| `.toolbar-row` | Baseline aligned: icon + title + actions |
-| `.toolbar-row__start` | Left-aligned flex container |
-| `.toolbar-row__title` | Primary heading text |
-| `.toolbar-row__subtitle` | Secondary text |
-| `.toolbar-row__end` | Right-aligned actions |
-| `.control-row` | Checkbox/toggle row with 44px min-height |
-| `.control-row__label` | Label with title + description |
-| `.control-row__control` | 44px touch target area |
-| `.icon-btn` | 44x44 icon button with no layout shift |
-| `.icon-btn--sm` | 36px variant |
-| `.icon-btn--lg` | 52px variant |
-| `.icon-btn--primary` | Green background variant |
-| `.icon-btn--ghost` | Transparent background variant |
-| `.form-field` | Standardized form field wrapper |
-| `.list-row` | Standardized list item layout |
-| `.status-tag` | Consistent status indicator styling |
-| `.dialog-footer` | Secondary left, primary right button layout |
+| Class                    | Purpose                                     |
+| ------------------------ | ------------------------------------------- |
+| `.toolbar-row`           | Baseline aligned: icon + title + actions    |
+| `.toolbar-row__start`    | Left-aligned flex container                 |
+| `.toolbar-row__title`    | Primary heading text                        |
+| `.toolbar-row__subtitle` | Secondary text                              |
+| `.toolbar-row__end`      | Right-aligned actions                       |
+| `.control-row`           | Checkbox/toggle row with 44px min-height    |
+| `.control-row__label`    | Label with title + description              |
+| `.control-row__control`  | 44px touch target area                      |
+| `.icon-btn`              | 44x44 icon button with no layout shift      |
+| `.icon-btn--sm`          | 36px variant                                |
+| `.icon-btn--lg`          | 52px variant                                |
+| `.icon-btn--primary`     | Green background variant                    |
+| `.icon-btn--ghost`       | Transparent background variant              |
+| `.form-field`            | Standardized form field wrapper             |
+| `.list-row`              | Standardized list item layout               |
+| `.status-tag`            | Consistent status indicator styling         |
+| `.dialog-footer`         | Secondary left, primary right button layout |
 
 ---
 
@@ -179,10 +174,12 @@ All spacing values are now consistent multiples of 8px:
 ### Icon-Only Buttons
 
 **Before:**
+
 - Inconsistent sizing based on padding
 - Potential layout shift when content changes
 
 **After:**
+
 - Fixed 44x44px dimensions (36px for sm, 52px for lg)
 - `flex-shrink: 0` prevents compression
 - Explicit width/height prevents layout shift
@@ -190,10 +187,12 @@ All spacing values are now consistent multiples of 8px:
 ### Checkbox/Toggle Rows
 
 **Before:**
+
 - Varied heights causing visual inconsistency
 - Potential "jump" on check/uncheck
 
 **After:**
+
 - Fixed 44px minimum height on control rows
 - Explicit dimensions on checkboxes (20x20px) and toggles (48x26px)
 - `flex-shrink: 0` prevents sizing issues
@@ -201,9 +200,11 @@ All spacing values are now consistent multiples of 8px:
 ### Card Spacing
 
 **Before:**
+
 - Mixed padding values across components
 
 **After:**
+
 - Consistent 20px body padding
 - 16px internal gap
 - Responsive reduction on mobile (16px → 12px)
@@ -211,9 +212,11 @@ All spacing values are now consistent multiples of 8px:
 ### Dialog Consistency
 
 **Before:**
+
 - Varied padding per dialog
 
 **After:**
+
 - Unified header: 20px 24px
 - Unified content: 20px 24px
 - Unified footer: 16px 24px with 12px button gap
@@ -232,11 +235,13 @@ All spacing values are now consistent multiples of 8px:
 ## Responsive Behavior
 
 ### Mobile (≤768px)
+
 - Card padding reduced to 16px
 - Dialog padding reduced to 16px 20px
 - Section gaps reduced to 20px
 
 ### Small Mobile (≤480px)
+
 - Card padding reduced to 12px
 - Section gaps reduced to 16px
 - List row padding reduced to 12px

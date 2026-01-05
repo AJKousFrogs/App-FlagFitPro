@@ -1,8 +1,4 @@
-import {
-  Component,
-  signal,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, signal, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -124,7 +120,7 @@ interface HeatmapCell {
       </p-dialog>
     </p-card>
   `,
-  styleUrl: './training-heatmap.component.scss',
+  styleUrl: "./training-heatmap.component.scss",
 })
 export class TrainingHeatmapComponent {
   selectedTimeRange = "6months";

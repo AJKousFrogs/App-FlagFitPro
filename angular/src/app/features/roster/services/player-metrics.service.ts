@@ -1,17 +1,22 @@
 /**
  * Player Metrics Service
- * 
+ *
  * Bridges roster data with live performance metrics from:
  * - FlagFootballAthleteProfileService (position benchmarks)
  * - ACWRService (workload ratios)
  * - WellnessService (readiness scores)
  * - UnifiedTrainingService (training data)
- * 
+ *
  * Provides computed metrics for Player Cards and Dashboard.
  */
 
-import { Injectable, inject,  signal } from "@angular/core";
-import { FlagFootballAthleteProfileService, FlagFootballPosition, PositionRequirements, BenchmarkRange } from "../../../core/services/flag-football-athlete-profile.service";
+import { Injectable, inject, signal } from "@angular/core";
+import {
+  FlagFootballAthleteProfileService,
+  FlagFootballPosition,
+  PositionRequirements,
+  BenchmarkRange,
+} from "../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../core/services/acwr.service";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -46,13 +51,17 @@ export interface RiskAssessment {
   providedIn: "root",
 })
 export class PlayerMetricsService {
-  private readonly athleteProfileService = inject(FlagFootballAthleteProfileService);
+  private readonly athleteProfileService = inject(
+    FlagFootballAthleteProfileService,
+  );
   private readonly acwrService = inject(AcwrService);
   private readonly wellnessService = inject(WellnessService);
   private readonly logger = inject(LoggerService);
 
   // Cache for player metrics
-  private readonly _playerMetricsCache = signal<Map<string, PlayerWithMetrics>>(new Map());
+  private readonly _playerMetricsCache = signal<Map<string, PlayerWithMetrics>>(
+    new Map(),
+  );
 
   /**
    * Enrich a player with live performance metrics
@@ -64,21 +73,25 @@ export class PlayerMetricsService {
     }
 
     const position = this.mapPositionToFlagFootball(player.position);
-    const positionRequirements = position 
+    const positionRequirements = position
       ? this.athleteProfileService.getPositionRequirements(position)
       : null;
 
     // Get live metrics
     const readiness = player.readiness ?? this.calculateReadiness(player);
     const acwr = player.acwr ?? this.calculateACWR(player);
-    const performanceScore = player.performanceScore ?? this.calculatePerformanceScore(player, positionRequirements);
-    const riskLevel = player.riskLevel ?? this.calculateRiskLevel(readiness, acwr, player.status);
+    const performanceScore =
+      player.performanceScore ??
+      this.calculatePerformanceScore(player, positionRequirements);
+    const riskLevel =
+      player.riskLevel ??
+      this.calculateRiskLevel(readiness, acwr, player.status);
 
     // Build position metrics
     const positionMetrics = this.buildPositionMetrics(player, position);
 
     // Build benchmark comparison
-    const benchmarkComparison = positionRequirements 
+    const benchmarkComparison = positionRequirements
       ? this.buildBenchmarkComparison(player, positionRequirements)
       : [];
 
@@ -105,7 +118,7 @@ export class PlayerMetricsService {
    * Enrich multiple players
    */
   enrichPlayers(players: Player[]): PlayerWithMetrics[] {
-    return players.map(p => this.enrichPlayer(p));
+    return players.map((p) => this.enrichPlayer(p));
   }
 
   /**
@@ -118,7 +131,9 @@ export class PlayerMetricsService {
 
     // Check ACWR
     if (enriched.acwr > 1.5) {
-      factors.push(`High ACWR (${enriched.acwr.toFixed(2)}) - Injury risk elevated`);
+      factors.push(
+        `High ACWR (${enriched.acwr.toFixed(2)}) - Injury risk elevated`,
+      );
       recommendations.push("Reduce training load by 20-30% this week");
     } else if (enriched.acwr > 1.3) {
       factors.push(`Elevated ACWR (${enriched.acwr.toFixed(2)})`);
@@ -150,7 +165,7 @@ export class PlayerMetricsService {
     const position = this.mapPositionToFlagFootball(player.position);
     if (position && enriched.positionRequirements) {
       const posReq = enriched.positionRequirements;
-      posReq.commonInjuries.forEach(injury => {
+      posReq.commonInjuries.forEach((injury) => {
         if (this.hasInjuryRiskFactor(enriched, injury)) {
           factors.push(`Elevated ${injury} risk`);
         }
@@ -171,19 +186,25 @@ export class PlayerMetricsService {
     const position = this.mapPositionToFlagFootball(player.position);
     if (!position) return [];
 
-    const requirements = this.athleteProfileService.getPositionRequirements(position);
+    const requirements =
+      this.athleteProfileService.getPositionRequirements(position);
     return requirements.trainingPriorities.slice(0, 5);
   }
 
   /**
    * Get QB-specific arm care status
    */
-  getQBStatus(player: Player): { armCareStatus: string; throwsThisWeek: number; weeklyLimit: number } | null {
+  getQBStatus(player: Player): {
+    armCareStatus: string;
+    throwsThisWeek: number;
+    weeklyLimit: number;
+  } | null {
     if (player.position !== "QB") return null;
 
     const throwsThisWeek = player.positionMetrics?.throwsThisWeek ?? 0;
     const weeklyLimit = 300; // Based on FlagFootballAthleteProfileService tournament capacity
-    const armCareCompliance = player.positionMetrics?.armCareCompliance ?? false;
+    const armCareCompliance =
+      player.positionMetrics?.armCareCompliance ?? false;
 
     let armCareStatus = "Unknown";
     if (armCareCompliance) {
@@ -200,16 +221,18 @@ export class PlayerMetricsService {
   /**
    * Map roster position code to FlagFootballPosition type
    */
-  private mapPositionToFlagFootball(position: string): FlagFootballPosition | null {
+  private mapPositionToFlagFootball(
+    position: string,
+  ): FlagFootballPosition | null {
     const mapping: Record<string, FlagFootballPosition> = {
-      "QB": "QB",
-      "WR": "WR",
-      "RB": "WR", // RBs in flag football are essentially WRs
-      "DB": "DB",
-      "Rusher": "Rusher",
-      "C": "Center",
-      "LB": "LB",
-      "Center": "Center",
+      QB: "QB",
+      WR: "WR",
+      RB: "WR", // RBs in flag football are essentially WRs
+      DB: "DB",
+      Rusher: "Rusher",
+      C: "Center",
+      LB: "LB",
+      Center: "Center",
     };
     return mapping[position] || null;
   }
@@ -224,12 +247,18 @@ export class PlayerMetricsService {
 
     // Default based on status
     switch (player.status) {
-      case "active": return 75 + Math.floor(Math.random() * 20);
-      case "limited": return 55 + Math.floor(Math.random() * 15);
-      case "returning": return 50 + Math.floor(Math.random() * 20);
-      case "injured": return 20 + Math.floor(Math.random() * 20);
-      case "inactive": return 40 + Math.floor(Math.random() * 20);
-      default: return 70;
+      case "active":
+        return 75 + Math.floor(Math.random() * 20);
+      case "limited":
+        return 55 + Math.floor(Math.random() * 15);
+      case "returning":
+        return 50 + Math.floor(Math.random() * 20);
+      case "injured":
+        return 20 + Math.floor(Math.random() * 20);
+      case "inactive":
+        return 40 + Math.floor(Math.random() * 20);
+      default:
+        return 70;
     }
   }
 
@@ -242,19 +271,28 @@ export class PlayerMetricsService {
 
     // Generate realistic ACWR based on status
     switch (player.status) {
-      case "active": return 0.9 + Math.random() * 0.4; // 0.9 - 1.3
-      case "limited": return 0.7 + Math.random() * 0.3; // 0.7 - 1.0
-      case "returning": return 0.5 + Math.random() * 0.4; // 0.5 - 0.9
-      case "injured": return 0.1 + Math.random() * 0.3; // 0.1 - 0.4
-      case "inactive": return 0.3 + Math.random() * 0.4; // 0.3 - 0.7
-      default: return 1.0;
+      case "active":
+        return 0.9 + Math.random() * 0.4; // 0.9 - 1.3
+      case "limited":
+        return 0.7 + Math.random() * 0.3; // 0.7 - 1.0
+      case "returning":
+        return 0.5 + Math.random() * 0.4; // 0.5 - 0.9
+      case "injured":
+        return 0.1 + Math.random() * 0.3; // 0.1 - 0.4
+      case "inactive":
+        return 0.3 + Math.random() * 0.4; // 0.3 - 0.7
+      default:
+        return 1.0;
     }
   }
 
   /**
    * Calculate performance score based on position benchmarks
    */
-  private calculatePerformanceScore(player: Player, requirements: PositionRequirements | null): number {
+  private calculatePerformanceScore(
+    player: Player,
+    requirements: PositionRequirements | null,
+  ): number {
     if (player.performanceScore !== undefined) return player.performanceScore;
     if (!requirements) return 70;
 
@@ -263,12 +301,18 @@ export class PlayerMetricsService {
     if (!metrics) {
       // Generate based on status
       switch (player.status) {
-        case "active": return 70 + Math.floor(Math.random() * 25);
-        case "limited": return 55 + Math.floor(Math.random() * 20);
-        case "returning": return 50 + Math.floor(Math.random() * 20);
-        case "injured": return 40 + Math.floor(Math.random() * 20);
-        case "inactive": return 45 + Math.floor(Math.random() * 25);
-        default: return 70;
+        case "active":
+          return 70 + Math.floor(Math.random() * 25);
+        case "limited":
+          return 55 + Math.floor(Math.random() * 20);
+        case "returning":
+          return 50 + Math.floor(Math.random() * 20);
+        case "injured":
+          return 40 + Math.floor(Math.random() * 20);
+        case "inactive":
+          return 45 + Math.floor(Math.random() * 25);
+        default:
+          return 70;
       }
     }
 
@@ -277,15 +321,24 @@ export class PlayerMetricsService {
     let metricCount = 0;
 
     if (metrics.sprint10m) {
-      totalScore += this.scoreBenchmark(metrics.sprint10m, requirements.benchmarks.sprint10m);
+      totalScore += this.scoreBenchmark(
+        metrics.sprint10m,
+        requirements.benchmarks.sprint10m,
+      );
       metricCount++;
     }
     if (metrics.verticalJump) {
-      totalScore += this.scoreBenchmark(metrics.verticalJump, requirements.benchmarks.verticalJump);
+      totalScore += this.scoreBenchmark(
+        metrics.verticalJump,
+        requirements.benchmarks.verticalJump,
+      );
       metricCount++;
     }
     if (metrics.proAgility505) {
-      totalScore += this.scoreBenchmark(metrics.proAgility505, requirements.benchmarks.proAgility505);
+      totalScore += this.scoreBenchmark(
+        metrics.proAgility505,
+        requirements.benchmarks.proAgility505,
+      );
       metricCount++;
     }
 
@@ -295,7 +348,11 @@ export class PlayerMetricsService {
   /**
    * Calculate risk level from multiple factors
    */
-  private calculateRiskLevel(readiness: number, acwr: number, status: string): PlayerRiskLevel {
+  private calculateRiskLevel(
+    readiness: number,
+    acwr: number,
+    status: string,
+  ): PlayerRiskLevel {
     // Critical risk
     if (status === "injured") return "critical";
     if (acwr > 1.5 && readiness < 50) return "critical";
@@ -317,7 +374,10 @@ export class PlayerMetricsService {
   /**
    * Build position-specific metrics
    */
-  private buildPositionMetrics(player: Player, position: FlagFootballPosition | null): PositionMetrics {
+  private buildPositionMetrics(
+    player: Player,
+    position: FlagFootballPosition | null,
+  ): PositionMetrics {
     const existing = player.positionMetrics || {};
 
     // Add position-specific defaults if not present
@@ -340,37 +400,48 @@ export class PlayerMetricsService {
   /**
    * Build benchmark comparison data
    */
-  private buildBenchmarkComparison(player: Player, requirements: PositionRequirements): BenchmarkComparison[] {
+  private buildBenchmarkComparison(
+    player: Player,
+    requirements: PositionRequirements,
+  ): BenchmarkComparison[] {
     const comparisons: BenchmarkComparison[] = [];
     const metrics = player.positionMetrics || {};
 
     // Sprint 10m
-    comparisons.push(this.createComparison(
-      "10m Sprint",
-      metrics.sprint10m ?? null,
-      requirements.benchmarks.sprint10m
-    ));
+    comparisons.push(
+      this.createComparison(
+        "10m Sprint",
+        metrics.sprint10m ?? null,
+        requirements.benchmarks.sprint10m,
+      ),
+    );
 
     // Vertical Jump
-    comparisons.push(this.createComparison(
-      "Vertical Jump",
-      metrics.verticalJump ?? null,
-      requirements.benchmarks.verticalJump
-    ));
+    comparisons.push(
+      this.createComparison(
+        "Vertical Jump",
+        metrics.verticalJump ?? null,
+        requirements.benchmarks.verticalJump,
+      ),
+    );
 
     // Pro Agility
-    comparisons.push(this.createComparison(
-      "Pro Agility 5-10-5",
-      metrics.proAgility505 ?? null,
-      requirements.benchmarks.proAgility505
-    ));
+    comparisons.push(
+      this.createComparison(
+        "Pro Agility 5-10-5",
+        metrics.proAgility505 ?? null,
+        requirements.benchmarks.proAgility505,
+      ),
+    );
 
     // Relative Squat
-    comparisons.push(this.createComparison(
-      "Relative Squat",
-      metrics.relativeSquat ?? null,
-      requirements.benchmarks.relativeSquat
-    ));
+    comparisons.push(
+      this.createComparison(
+        "Relative Squat",
+        metrics.relativeSquat ?? null,
+        requirements.benchmarks.relativeSquat,
+      ),
+    );
 
     return comparisons;
   }
@@ -378,7 +449,11 @@ export class PlayerMetricsService {
   /**
    * Create a single benchmark comparison
    */
-  private createComparison(metric: string, value: number | null, benchmark: BenchmarkRange): BenchmarkComparison {
+  private createComparison(
+    metric: string,
+    value: number | null,
+    benchmark: BenchmarkRange,
+  ): BenchmarkComparison {
     if (value === null) {
       return {
         metric,
@@ -406,7 +481,10 @@ export class PlayerMetricsService {
   /**
    * Get rating category from benchmark
    */
-  private getRating(value: number, benchmark: BenchmarkRange): "elite" | "good" | "average" | "needs_work" {
+  private getRating(
+    value: number,
+    benchmark: BenchmarkRange,
+  ): "elite" | "good" | "average" | "needs_work" {
     const { elite, good, average, higherIsBetter } = benchmark;
 
     if (higherIsBetter) {
@@ -431,14 +509,18 @@ export class PlayerMetricsService {
     if (higherIsBetter) {
       if (value >= elite) return 100;
       if (value >= good) return 80 + ((value - good) / (elite - good)) * 20;
-      if (value >= average) return 60 + ((value - average) / (good - average)) * 20;
-      if (value >= needsWork) return 40 + ((value - needsWork) / (average - needsWork)) * 20;
+      if (value >= average)
+        return 60 + ((value - average) / (good - average)) * 20;
+      if (value >= needsWork)
+        return 40 + ((value - needsWork) / (average - needsWork)) * 20;
       return Math.max(0, 40 * (value / needsWork));
     } else {
       if (value <= elite) return 100;
       if (value <= good) return 80 + ((good - value) / (good - elite)) * 20;
-      if (value <= average) return 60 + ((average - value) / (average - good)) * 20;
-      if (value <= needsWork) return 40 + ((needsWork - value) / (needsWork - average)) * 20;
+      if (value <= average)
+        return 60 + ((average - value) / (average - good)) * 20;
+      if (value <= needsWork)
+        return 40 + ((needsWork - value) / (needsWork - average)) * 20;
       return Math.max(0, 40 * (needsWork / value));
     }
   }
@@ -446,10 +528,13 @@ export class PlayerMetricsService {
   /**
    * Check if player has specific injury risk factor
    */
-  private hasInjuryRiskFactor(player: PlayerWithMetrics, injuryType: string): boolean {
+  private hasInjuryRiskFactor(
+    player: PlayerWithMetrics,
+    injuryType: string,
+  ): boolean {
     // Simplified check - in production would look at historical data
     const lowStrength = (player.positionMetrics?.relativeSquat ?? 1.5) < 1.5;
-    
+
     switch (injuryType.toLowerCase()) {
       case "hamstring":
       case "hamstring strain":
@@ -459,7 +544,10 @@ export class PlayerMetricsService {
         return player.acwr > 1.4;
       case "shoulder":
       case "shoulder (throwing)":
-        return player.position === "QB" && (player.positionMetrics?.throwsThisWeek ?? 0) > 200;
+        return (
+          player.position === "QB" &&
+          (player.positionMetrics?.throwsThisWeek ?? 0) > 200
+        );
       default:
         return false;
     }

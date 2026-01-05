@@ -29,7 +29,7 @@
   background: var(--surface-primary);
   transition: all var(--transition-fast);
   border: 2px solid var(--color-border-secondary);
-  
+
   &:hover {
     box-shadow: var(--shadow-2);
     transform: translateY(-4px);
@@ -77,4 +77,3 @@
 .status-info {
   color: var(--color-status-info);
 }
-

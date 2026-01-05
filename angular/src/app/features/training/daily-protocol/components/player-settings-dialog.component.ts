@@ -10,20 +10,27 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, model, output, signal, effect } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import {
+  Component,
+  inject,
+  model,
+  output,
+  signal,
+  effect,
+} from "@angular/core";
+import { firstValueFrom } from "rxjs";
+import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { Checkbox } from 'primeng/checkbox';
-import { DatePicker } from 'primeng/datepicker';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelect } from 'primeng/multiselect';
-import { Select } from 'primeng/select';
+import { Checkbox } from "primeng/checkbox";
+import { DatePicker } from "primeng/datepicker";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { MultiSelect } from "primeng/multiselect";
+import { Select } from "primeng/select";
 
-import { ApiService } from '../../../../core/services/api.service';
-import { LoggerService } from '../../../../core/services/logger.service';
+import { ApiService } from "../../../../core/services/api.service";
+import { LoggerService } from "../../../../core/services/logger.service";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -66,7 +73,7 @@ interface DayOption {
 }
 
 @Component({
-  selector: 'app-player-settings-dialog',
+  selector: "app-player-settings-dialog",
   imports: [
     FormsModule,
     DialogModule,
@@ -75,7 +82,7 @@ interface DayOption {
     Checkbox,
     InputTextModule,
     MultiSelect,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -107,7 +114,9 @@ interface DayOption {
               (onChange)="updatePositionDescription()"
             ></p-select>
             @if (selectedPositionDescription()) {
-              <small class="field-hint">{{ selectedPositionDescription() }}</small>
+              <small class="field-hint">{{
+                selectedPositionDescription()
+              }}</small>
             }
           </div>
 
@@ -157,14 +166,21 @@ interface DayOption {
         <div class="form-section">
           <h4>Flag Football Practice Schedule</h4>
           <p class="section-description">
-            Add your team practice times. Training will be adjusted on practice days.
+            Add your team practice times. Training will be adjusted on practice
+            days.
           </p>
 
           @for (slot of settings.flagPracticeSchedule; track slot.day) {
             <div class="practice-slot">
               <div class="slot-header">
                 <span class="day-name">{{ slot.dayName }}</span>
-                <app-icon-button icon="pi-trash" variant="text" size="sm" (clicked)="removePracticeSlot(slot.day)" ariaLabel="trash" />
+                <app-icon-button
+                  icon="pi-trash"
+                  variant="text"
+                  size="sm"
+                  (clicked)="removePracticeSlot(slot.day)"
+                  ariaLabel="trash"
+                />
               </div>
               <div class="slot-times">
                 <div class="time-field">
@@ -185,7 +201,7 @@ interface DayOption {
                     (change)="updateSlotDuration(slot)"
                   />
                 </div>
-                @if (settings.primaryPosition === 'quarterback') {
+                @if (settings.primaryPosition === "quarterback") {
                   <div class="time-field">
                     <label>Expected Throws</label>
                     <input
@@ -213,7 +229,12 @@ interface DayOption {
                 placeholder="Add practice day..."
                 [style]="{ width: '100%' }"
               ></p-select>
-              <app-button iconLeft="pi-plus" [disabled]="selectedNewDay === null" (clicked)="addPracticeSlot()">Add</app-button>
+              <app-button
+                iconLeft="pi-plus"
+                [disabled]="selectedNewDay === null"
+                (clicked)="addPracticeSlot()"
+                >Add</app-button
+              >
             </div>
           }
         </div>
@@ -224,7 +245,7 @@ interface DayOption {
           <p class="section-description">
             Set your preferred times for daily activities.
           </p>
-          
+
           <div class="routine-list">
             @for (slot of settings.dailyRoutine; track slot.id) {
               <div class="routine-field">
@@ -280,12 +301,19 @@ interface DayOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outlined" (clicked)="onCancel()">Cancel</app-button>
-        <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="onSave()">Save Settings</app-button>
+        <app-button variant="outlined" (clicked)="onCancel()"
+          >Cancel</app-button
+        >
+        <app-button
+          iconLeft="pi-check"
+          [loading]="isSaving()"
+          (clicked)="onSave()"
+          >Save Settings</app-button
+        >
       </ng-template>
     </p-dialog>
   `,
-  styleUrl: './player-settings-dialog.component.scss',
+  styleUrl: "./player-settings-dialog.component.scss",
 })
 export class PlayerSettingsDialogComponent {
   private readonly api = inject(ApiService);
@@ -297,20 +325,40 @@ export class PlayerSettingsDialogComponent {
 
   // Form state
   settings: PlayerSettings = {
-    primaryPosition: 'wr_db',
+    primaryPosition: "wr_db",
     secondaryPosition: undefined,
     birthDate: undefined,
     flagPracticeSchedule: [],
     preferredTrainingDays: [1, 2, 4, 5, 6], // Mon, Tue, Thu, Fri, Sat
     dailyRoutine: [
-      { id: 'wake', label: 'Wake Up', time: '07:00', icon: 'pi-sun' },
-      { id: 'breakfast', label: 'Breakfast', time: '08:15', icon: 'pi-apple' },
-      { id: 'work_start', label: 'Work/Study Start', time: '09:00', icon: 'pi-briefcase' },
-      { id: 'lunch', label: 'Lunch', time: '12:30', icon: 'pi-utensils' },
-      { id: 'work_end', label: 'Work/Study End', time: '17:00', icon: 'pi-home' },
-      { id: 'training', label: 'Daily Training', time: '18:00', icon: 'pi-bolt' },
-      { id: 'shower', label: 'Shower (Hot)', time: '20:00', icon: 'pi-info-circle' },
-      { id: 'sleep', label: 'Sleep', time: '22:30', icon: 'pi-moon' },
+      { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
+      { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
+      {
+        id: "work_start",
+        label: "Work/Study Start",
+        time: "09:00",
+        icon: "pi-briefcase",
+      },
+      { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+      {
+        id: "work_end",
+        label: "Work/Study End",
+        time: "17:00",
+        icon: "pi-home",
+      },
+      {
+        id: "training",
+        label: "Daily Training",
+        time: "18:00",
+        icon: "pi-bolt",
+      },
+      {
+        id: "shower",
+        label: "Shower (Hot)",
+        time: "20:00",
+        icon: "pi-info-circle",
+      },
+      { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
     ],
     maxSessionsPerWeek: 5,
     hasGymAccess: true,
@@ -323,20 +371,38 @@ export class PlayerSettingsDialogComponent {
 
   // Options
   positions: PositionOption[] = [
-    { label: 'Quarterback', value: 'quarterback', description: 'Field general with throwing-specific training and arm care protocols' },
-    { label: 'Wide Receiver / Defensive Back', value: 'wr_db', description: 'Standard speed and agility training for receivers and coverage specialists' },
-    { label: 'Blitzer / Rusher', value: 'blitzer', description: 'Enhanced deceleration training for chase/stop demands' },
-    { label: 'Center', value: 'center', description: 'Balanced training with core stability focus' },
+    {
+      label: "Quarterback",
+      value: "quarterback",
+      description:
+        "Field general with throwing-specific training and arm care protocols",
+    },
+    {
+      label: "Wide Receiver / Defensive Back",
+      value: "wr_db",
+      description:
+        "Standard speed and agility training for receivers and coverage specialists",
+    },
+    {
+      label: "Blitzer / Rusher",
+      value: "blitzer",
+      description: "Enhanced deceleration training for chase/stop demands",
+    },
+    {
+      label: "Center",
+      value: "center",
+      description: "Balanced training with core stability focus",
+    },
   ];
 
   allDays: DayOption[] = [
-    { label: 'Monday', value: 1 },
-    { label: 'Tuesday', value: 2 },
-    { label: 'Wednesday', value: 3 },
-    { label: 'Thursday', value: 4 },
-    { label: 'Friday', value: 5 },
-    { label: 'Saturday', value: 6 },
-    { label: 'Sunday', value: 0 },
+    { label: "Monday", value: 1 },
+    { label: "Tuesday", value: 2 },
+    { label: "Wednesday", value: 3 },
+    { label: "Thursday", value: 4 },
+    { label: "Friday", value: 5 },
+    { label: "Saturday", value: 6 },
+    { label: "Sunday", value: 0 },
   ];
 
   // Computed
@@ -345,9 +411,9 @@ export class PlayerSettingsDialogComponent {
     return this.allDays.filter((d) => !usedDays.includes(d.value));
   }
 
-  readonly selectedPositionDescription = signal<string>('');
+  readonly selectedPositionDescription = signal<string>("");
   readonly calculatedAge = signal<number | null>(null);
-  readonly ageRecoveryNote = signal<string>('');
+  readonly ageRecoveryNote = signal<string>("");
 
   constructor() {
     // React to visible changes to load settings
@@ -361,18 +427,22 @@ export class PlayerSettingsDialogComponent {
   async loadSettings(): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get('/api/player-settings'));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/player-settings"),
+      );
       if (response?.success && response.data) {
         this.settings = {
           ...this.settings,
           ...response.data,
-          birthDate: response.data.birthDate ? new Date(response.data.birthDate) : undefined,
+          birthDate: response.data.birthDate
+            ? new Date(response.data.birthDate)
+            : undefined,
         };
         this.updatePositionDescription();
         this.updateAge();
       }
     } catch (err) {
-      this.logger.warn('Could not load player settings', err);
+      this.logger.warn("Could not load player settings", err);
     }
   }
 
@@ -381,14 +451,16 @@ export class PlayerSettingsDialogComponent {
   }
 
   updatePositionDescription(): void {
-    const pos = this.positions.find((p) => p.value === this.settings.primaryPosition);
-    this.selectedPositionDescription.set(pos?.description || '');
+    const pos = this.positions.find(
+      (p) => p.value === this.settings.primaryPosition,
+    );
+    this.selectedPositionDescription.set(pos?.description || "");
   }
 
   updateAge(): void {
     if (!this.settings.birthDate) {
       this.calculatedAge.set(null);
-      this.ageRecoveryNote.set('');
+      this.ageRecoveryNote.set("");
       return;
     }
 
@@ -396,7 +468,10 @@ export class PlayerSettingsDialogComponent {
     const birth = new Date(this.settings.birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
 
@@ -404,15 +479,15 @@ export class PlayerSettingsDialogComponent {
 
     // Set recovery note based on age
     if (age < 25) {
-      this.ageRecoveryNote.set('Standard recovery');
+      this.ageRecoveryNote.set("Standard recovery");
     } else if (age < 30) {
-      this.ageRecoveryNote.set('+10% recovery time');
+      this.ageRecoveryNote.set("+10% recovery time");
     } else if (age < 35) {
-      this.ageRecoveryNote.set('+25% recovery time');
+      this.ageRecoveryNote.set("+25% recovery time");
     } else if (age < 40) {
-      this.ageRecoveryNote.set('+40% recovery time');
+      this.ageRecoveryNote.set("+40% recovery time");
     } else {
-      this.ageRecoveryNote.set('+50% recovery time');
+      this.ageRecoveryNote.set("+50% recovery time");
     }
   }
 
@@ -425,10 +500,11 @@ export class PlayerSettingsDialogComponent {
     this.settings.flagPracticeSchedule.push({
       day: this.selectedNewDay,
       dayName: dayOption.label,
-      startTime: '18:00',
-      endTime: '19:30',
+      startTime: "18:00",
+      endTime: "19:30",
       durationMinutes: 90,
-      expectedThrows: this.settings.primaryPosition === 'quarterback' ? 50 : undefined,
+      expectedThrows:
+        this.settings.primaryPosition === "quarterback" ? 50 : undefined,
     });
 
     // Sort by day
@@ -437,15 +513,14 @@ export class PlayerSettingsDialogComponent {
   }
 
   removePracticeSlot(day: number): void {
-    this.settings.flagPracticeSchedule = this.settings.flagPracticeSchedule.filter(
-      (s) => s.day !== day
-    );
+    this.settings.flagPracticeSchedule =
+      this.settings.flagPracticeSchedule.filter((s) => s.day !== day);
   }
 
   updateSlotDuration(slot: FlagPracticeSlot): void {
     if (slot.startTime && slot.endTime) {
-      const [startH, startM] = slot.startTime.split(':').map(Number);
-      const [endH, endM] = slot.endTime.split(':').map(Number);
+      const [startH, startM] = slot.startTime.split(":").map(Number);
+      const [endH, endM] = slot.endTime.split(":").map(Number);
       const startMinutes = startH * 60 + startM;
       const endMinutes = endH * 60 + endM;
       slot.durationMinutes = endMinutes - startMinutes;
@@ -462,15 +537,15 @@ export class PlayerSettingsDialogComponent {
     try {
       const payload = {
         ...this.settings,
-        birthDate: this.settings.birthDate?.toISOString().split('T')[0],
+        birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
 
-      await firstValueFrom(this.api.post('/api/player-settings', payload));
+      await firstValueFrom(this.api.post("/api/player-settings", payload));
 
       this.settingsSaved.emit(this.settings);
       this.visible.set(false);
     } catch (err) {
-      this.logger.error('Failed to save player settings', err);
+      this.logger.error("Failed to save player settings", err);
     } finally {
       this.isSaving.set(false);
     }

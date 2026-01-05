@@ -7,447 +7,452 @@
 @use "styles/variables" as *;
 @use "styles/mixins" as *;
 
-
 // ============================================================================
 // PAGE LAYOUT
 // ============================================================================
 
 .login-page {
-display: flex;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-min-height: 100dvh; // Dynamic viewport height for mobile
-width: 100%;
-padding: var(--space-6);
-box-sizing: border-box;
-position: relative;
-background: linear-gradient(
-  135deg,
-  var(--surface-primary) 0%,
-  var(--surface-secondary) 100%
-);
-
-// Subtle pattern overlay
-&::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    circle at 25% 25%,
-    rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
-}
-
-// ============================================================================
-// CARD STYLING
-// ============================================================================
-
-.login-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh; // Dynamic viewport height for mobile
   width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  background: var(--surface-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
+  padding: var(--space-6);
+  box-sizing: border-box;
   position: relative;
-  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--surface-secondary) 100%
+  );
 
-  // Gradient top border
+  // Subtle pattern overlay
   &::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(
-      90deg,
-      var(--ds-primary-green) 0%,
-      var(--ds-secondary-gold) 100%
+    inset: 0;
+    background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(var(--ds-primary-green-rgb), 0.03) 0%,
+      transparent 50%
     );
-  }
-}
-
-// PrimeNG card overrides - moved to @layer overrides
-
-// ============================================================================
-// LOGO & HEADER
-// ============================================================================
-
-.login-logo {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ds-primary-green-subtle);
-  border-radius: var(--radius-xl);
-  color: var(--ds-primary-green);
-  font-size: var(--font-heading-lg, 2rem);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  &:hover {
-    transform: scale(1.05);
+    pointer-events: none;
   }
 
-  i {
-    animation: pulse-subtle 2s ease-in-out infinite;
-  }
-}
+  // ============================================================================
+  // CARD STYLING
+  // ============================================================================
 
-@keyframes pulse-subtle {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.login-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin: 0;
-  text-align: center;
-  letter-spacing: -0.02em;
-}
-
-// ============================================================================
-// FORM ELEMENTS
-// ============================================================================
-
-.form-field {
-  margin-bottom: var(--space-4);
-}
-
-.form-label {
-  display: block;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-
-  &.required::after {
-    content: " *";
-    color: var(--color-status-error);
-  }
-}
-
-// Password input with toggle
-.password-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  input {
-    padding-right: 48px;
-  }
-}
-
-.password-toggle-btn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  padding: var(--space-2);
-  cursor: pointer;
-  color: var(--color-text-muted);
-  border-radius: var(--radius-sm);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    color: var(--color-text-primary);
-    background: var(--surface-secondary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-  }
-
-  i {
-    font-size: var(--font-body-md, 1rem);
-  }
-}
-
-// Input field styling - moved to @layer overrides
-
-// Error messages
-.p-error {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-top: var(--space-2);
-  font-size: var(--font-size-badge);
-  color: var(--color-status-error);
-  animation: shake 0.3s ease-in-out;
-
-  &::before {
-    content: "⚠";
-    font-size: var(--font-size-h4);
-  }
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  75% {
-    transform: translateX(4px);
-  }
-}
-
-// ============================================================================
-// FORM OPTIONS ROW
-// ============================================================================
-
-.login-form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-bottom: var(--space-6);
-  margin-top: var(--space-2);
-}
-
-.forgot-link {
-  font-size: var(--font-size-h4);
-  color: var(--ds-primary-green);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-
-  &:hover {
-    color: var(--ds-primary-green-hover);
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
-}
-
-// Custom Checkbox styling
-.checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-
-  input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-
-    &:checked + .checkmark {
-      background: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
-
-      &::after {
-        display: block;
-      }
-    }
-
-    &:focus-visible + .checkmark {
-      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
-    }
-  }
-
-  .checkmark {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    border: 2px solid var(--color-border-primary);
-    border-radius: var(--radius-sm);
-    background: var(--surface-primary);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  .login-card {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--surface-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
     position: relative;
+    z-index: 1;
+
+    // Gradient top border
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(
+        90deg,
+        var(--ds-primary-green) 0%,
+        var(--ds-secondary-gold) 100%
+      );
+    }
+  }
+
+  // PrimeNG card overrides - moved to @layer overrides
+
+  // ============================================================================
+  // LOGO & HEADER
+  // ============================================================================
+
+  .login-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    &::after {
-      content: "";
-      display: none;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-      margin-bottom: 2px;
-    }
+    background: var(--ds-primary-green-subtle);
+    border-radius: var(--radius-xl);
+    color: var(--ds-primary-green);
+    font-size: var(--font-heading-lg, 2rem);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &:hover {
-      border-color: var(--ds-primary-green);
+      transform: scale(1.05);
+    }
+
+    i {
+      animation: pulse-subtle 2s ease-in-out infinite;
     }
   }
 
-  .checkbox-label {
-    font-size: var(--font-size-h4);
-    color: var(--color-text-secondary);
-  }
-}
-
-// ============================================================================
-// SUBMIT BUTTON
-// ============================================================================
-
-// Submit button styling - moved to @layer overrides
-
-// ============================================================================
-// DIVIDER
-// ============================================================================
-
-.login-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin: var(--space-6) 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-h4);
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--color-border-secondary);
-  }
-}
-
-// ============================================================================
-// CREATE ACCOUNT LINK
-// ============================================================================
-
-.login-create-link {
-  display: block;
-  text-align: center;
-  font-size: var(--font-size-body);
-  color: var(--ds-primary-green);
-  text-decoration: none;
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-
-  &:hover {
-    background: var(--ds-primary-green-subtle);
-    text-decoration: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-  }
-}
-
-// ============================================================================
-// ALERT STYLES
-// ============================================================================
-
-.alert {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
-  margin-bottom: var(--space-6);
-
-  strong {
-    font-weight: var(--font-weight-semibold);
-    margin-right: var(--space-2);
-  }
-
-  &.alert-info {
-    background: var(--color-status-info-light);
-    color: var(--primitive-info-700);
-    border: 1px solid var(--primitive-info-200);
-  }
-}
-
-// ============================================================================
-// RESPONSIVE DESIGN
-// ============================================================================
-
-@media (max-width: 480px) {
-  .login-page {
-    padding: var(--space-4, 1rem);
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-
-  .login-logo {
-    width: 60px;
-    height: 60px;
-    font-size: var(--font-size-h2);
+  @keyframes pulse-subtle {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
   }
 
   .login-title {
     font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.02em;
   }
+
+  // ============================================================================
+  // FORM ELEMENTS
+  // ============================================================================
+
+  .form-field {
+    margin-bottom: var(--space-4);
+  }
+
+  .form-label {
+    display: block;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+
+    &.required::after {
+      content: " *";
+      color: var(--color-status-error);
+    }
+  }
+
+  // Password input with toggle
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      padding-right: 48px;
+    }
+  }
+
+  .password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: var(--space-2);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-sm);
+    transition:
+      transform var(--transition-fast),
+      opacity var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--color-text-primary);
+      background: var(--surface-secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+    }
+
+    i {
+      font-size: var(--font-body-md, 1rem);
+    }
+  }
+
+  // Input field styling - moved to @layer overrides
+
+  // Error messages
+  .p-error {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    font-size: var(--font-size-badge);
+    color: var(--color-status-error);
+    animation: shake 0.3s ease-in-out;
+
+    &::before {
+      content: "⚠";
+      font-size: var(--font-size-h4);
+    }
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  // ============================================================================
+  // FORM OPTIONS ROW
+  // ============================================================================
 
   .login-form-options {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-// Mobile PrimeNG overrides - moved to @layer overrides
-
-// ============================================================================
-// DARK MODE
-// ============================================================================
-
-[data-theme="dark"] {
-  .login-page {
-    background: linear-gradient(
-      135deg,
-      var(--primitive-neutral-900) 0%,
-      var(--primitive-neutral-950) 100%
-    );
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    margin-top: var(--space-2);
   }
 
-  .login-card {
-    background: var(--primitive-neutral-800);
-    border: 1px solid var(--primitive-neutral-700);
+  .forgot-link {
+    font-size: var(--font-size-h4);
+    color: var(--ds-primary-green);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--ds-primary-green-hover);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
   }
 
-  .login-logo {
-    background: rgba(var(--ds-primary-green-rgb), 0.15);
-  }
-}
+  // Custom Checkbox styling
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    cursor: pointer;
+    user-select: none;
+    position: relative;
 
-// ============================================================================
-// REDUCED MOTION
-// ============================================================================
+    input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
 
-@media (prefers-reduced-motion: reduce) {
-  .login-logo i {
-    animation: none;
+      &:checked + .checkmark {
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+
+        &::after {
+          display: block;
+        }
+      }
+
+      &:focus-visible + .checkmark {
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+      }
+    }
+
+    .checkmark {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border: 2px solid var(--color-border-primary);
+      border-radius: var(--radius-sm);
+      background: var(--surface-primary);
+      transition:
+        transform var(--transition-fast),
+        opacity var(--transition-fast);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::after {
+        content: "";
+        display: none;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        margin-bottom: 2px;
+      }
+
+      &:hover {
+        border-color: var(--ds-primary-green);
+      }
+    }
+
+    .checkbox-label {
+      font-size: var(--font-size-h4);
+      color: var(--color-text-secondary);
+    }
   }
 
-  .p-error {
-    animation: none;
+  // ============================================================================
+  // SUBMIT BUTTON
+  // ============================================================================
+
+  // Submit button styling - moved to @layer overrides
+
+  // ============================================================================
+  // DIVIDER
+  // ============================================================================
+
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: var(--space-6) 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-h4);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--color-border-secondary);
+    }
   }
-}
+
+  // ============================================================================
+  // CREATE ACCOUNT LINK
+  // ============================================================================
+
+  .login-create-link {
+    display: block;
+    text-align: center;
+    font-size: var(--font-size-body);
+    color: var(--ds-primary-green);
+    text-decoration: none;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    transition:
+      transform var(--transition-fast),
+      opacity var(--transition-fast);
+
+    &:hover {
+      background: var(--ds-primary-green-subtle);
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+    }
+  }
+
+  // ============================================================================
+  // ALERT STYLES
+  // ============================================================================
+
+  .alert {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-6);
+
+    strong {
+      font-weight: var(--font-weight-semibold);
+      margin-right: var(--space-2);
+    }
+
+    &.alert-info {
+      background: var(--color-status-info-light);
+      color: var(--primitive-info-700);
+      border: 1px solid var(--primitive-info-200);
+    }
+  }
+
+  // ============================================================================
+  // RESPONSIVE DESIGN
+  // ============================================================================
+
+  @media (max-width: 480px) {
+    .login-page {
+      padding: var(--space-4, 1rem);
+      align-items: flex-start;
+      padding-top: 2rem;
+    }
+
+    .login-logo {
+      width: 60px;
+      height: 60px;
+      font-size: var(--font-size-h2);
+    }
+
+    .login-title {
+      font-size: var(--font-size-h2);
+    }
+
+    .login-form-options {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  // Mobile PrimeNG overrides - moved to @layer overrides
+
+  // ============================================================================
+  // DARK MODE
+  // ============================================================================
+
+  [data-theme="dark"] {
+    .login-page {
+      background: linear-gradient(
+        135deg,
+        var(--primitive-neutral-900) 0%,
+        var(--primitive-neutral-950) 100%
+      );
+    }
+
+    .login-card {
+      background: var(--primitive-neutral-800);
+      border: 1px solid var(--primitive-neutral-700);
+    }
+
+    .login-logo {
+      background: rgba(var(--ds-primary-green-rgb), 0.15);
+    }
+  }
+
+  // ============================================================================
+  // REDUCED MOTION
+  // ============================================================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .login-logo i {
+      animation: none;
+    }
+
+    .p-error {
+      animation: none;
+    }
+  }
 } // End @layer features
 
 // ============================================================================

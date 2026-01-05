@@ -1,7 +1,7 @@
 // ============================================================================
 // checkbox.component Styles
 // Design System Compliant - Unified Checkbox Styling
-// 
+//
 // Design Rules:
 // - Checkbox: 20px box, 6px radius, green check when checked
 // - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
@@ -55,7 +55,7 @@
   border: 2px solid var(--color-border-default, #d1d5db);
   border-radius: 6px;
   background-color: var(--color-surface-primary, white);
-  transition: 
+  transition:
     background-color 200ms ease,
     border-color 200ms ease,
     box-shadow 200ms ease;
@@ -124,4 +124,3 @@
   color: var(--color-status-error, #ef4444);
   margin-left: calc(20px + var(--space-3, 0.75rem));
 }
-

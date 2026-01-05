@@ -10,14 +10,12 @@
       icon="pi-list"
     >
       <div class="header-actions">
-        <app-button
-          iconLeft="pi-list"
-          (clicked)="viewGames()"
-        >View Games</app-button>
-        <app-button
-          iconLeft="pi-plus"
-          (clicked)="openNewGame()"
-        >{{ getNewGameButtonLabel() }}</app-button>
+        <app-button iconLeft="pi-list" (clicked)="viewGames()"
+          >View Games</app-button
+        >
+        <app-button iconLeft="pi-plus" (clicked)="openNewGame()">{{
+          getNewGameButtonLabel()
+        }}</app-button>
       </div>
     </app-page-header>
 
@@ -162,14 +160,12 @@
             </div>
           </div>
           <div class="form-actions">
-            <app-button
-              variant="outlined"
-              (clicked)="cancelGame()"
-            >Cancel</app-button>
-            <app-button
-              type="submit"
-              [disabled]="gameForm.invalid"
-            >Start Game</app-button>
+            <app-button variant="outlined" (clicked)="cancelGame()"
+              >Cancel</app-button
+            >
+            <app-button type="submit" [disabled]="gameForm.invalid"
+              >Start Game</app-button
+            >
           </div>
         </form>
       </p-card>
@@ -640,11 +636,11 @@
               variant="outlined"
               type="button"
               (clicked)="cancelPlay()"
-            >Cancel</app-button>
-            <app-button
-              type="submit"
-              [disabled]="playForm.invalid"
-            >Save Play</app-button>
+              >Cancel</app-button
+            >
+            <app-button type="submit" [disabled]="playForm.invalid"
+              >Save Play</app-button
+            >
           </div>
         </form>
       </p-card>

@@ -1,17 +1,17 @@
 import {
-    CdkDragDrop,
-    DragDropModule,
-    moveItemInArray,
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -25,10 +25,10 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    DepthChartEntry,
-    DepthChartService,
-    DepthChartTemplate,
-    DepthChartWithEntries,
+  DepthChartEntry,
+  DepthChartService,
+  DepthChartTemplate,
+  DepthChartWithEntries,
 } from "../../core/services/depth-chart.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -65,7 +65,7 @@ interface PositionGroup {
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -82,7 +82,8 @@ interface PositionGroup {
                 iconLeft="pi-refresh"
                 (clicked)="initializeDepthCharts()"
                 [disabled]="depthCharts().length > 0"
-              >Initialize Charts</app-button>
+                >Initialize Charts</app-button
+              >
             }
           </div>
         </app-page-header>
@@ -98,7 +99,11 @@ interface PositionGroup {
                   positions.
                 </p>
                 @if (isCoach()) {
-                  <app-button iconLeft="pi-plus" (clicked)="initializeDepthCharts()">Initialize Depth Charts</app-button>
+                  <app-button
+                    iconLeft="pi-plus"
+                    (clicked)="initializeDepthCharts()"
+                    >Initialize Depth Charts</app-button
+                  >
                 }
               </div>
             </p-card>
@@ -173,7 +178,13 @@ interface PositionGroup {
                                         }
                                       </div>
                                       @if (isCoach()) {
-                                        <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="removePlayer(entry)" ariaLabel="times" />
+                                        <app-icon-button
+                                          icon="pi-times"
+                                          variant="text"
+                                          size="sm"
+                                          (clicked)="removePlayer(entry)"
+                                          ariaLabel="times"
+                                        />
                                       }
                                     } @else {
                                       <div
@@ -190,7 +201,13 @@ interface PositionGroup {
                                   </div>
                                 }
                                 @if (isCoach()) {
-                                  <app-button variant="text" size="sm" iconLeft="pi-plus" (clicked)="addBackupSlot(group)">Add Backup</app-button>
+                                  <app-button
+                                    variant="text"
+                                    size="sm"
+                                    iconLeft="pi-plus"
+                                    (clicked)="addBackupSlot(group)"
+                                    >Add Backup</app-button
+                                  >
                                 }
                               </div>
                             </div>
@@ -256,14 +273,21 @@ interface PositionGroup {
             ></p-select>
           </div>
           <ng-template pTemplate="footer">
-            <app-button variant="text" (clicked)="showAssignDialog = false">Cancel</app-button>
-            <app-button iconLeft="pi-check" [disabled]="!selectedPlayerId" (clicked)="assignPlayer()">Assign</app-button>
+            <app-button variant="text" (clicked)="showAssignDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [disabled]="!selectedPlayerId"
+              (clicked)="assignPlayer()"
+              >Assign</app-button
+            >
           </ng-template>
         </p-dialog>
       </div>
     </app-main-layout>
   `,
-  styleUrl: './depth-chart.component.scss',
+  styleUrl: "./depth-chart.component.scss",
 })
 export class DepthChartComponent implements OnInit {
   private depthChartService = inject(DepthChartService);

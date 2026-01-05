@@ -20,7 +20,10 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   selector: "app-performance-monitor",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarModule, MessageModule,
+  imports: [
+    CommonModule,
+    ProgressBarModule,
+    MessageModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -29,7 +32,13 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
       <div class="performance-monitor">
         <div class="monitor-header">
           <h4>Performance Monitor</h4>
-          <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="hideMonitor()" ariaLabel="Close performance monitor" />
+          <app-icon-button
+            icon="pi-times"
+            variant="text"
+            size="sm"
+            (clicked)="hideMonitor()"
+            ariaLabel="Close performance monitor"
+          />
         </div>
 
         <div class="performance-metrics">
@@ -70,15 +79,26 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
             >
             </p-message>
             <div class="action-buttons">
-              <app-button size="sm" iconLeft="pi-cog" (clicked)="optimizePerformance()">Optimize Now</app-button>
-              <app-button variant="outlined" size="sm" iconLeft="pi-flag" (clicked)="reportIssue()">Report Issue</app-button>
+              <app-button
+                size="sm"
+                iconLeft="pi-cog"
+                (clicked)="optimizePerformance()"
+                >Optimize Now</app-button
+              >
+              <app-button
+                variant="outlined"
+                size="sm"
+                iconLeft="pi-flag"
+                (clicked)="reportIssue()"
+                >Report Issue</app-button
+              >
             </div>
           </div>
         }
       </div>
     }
   `,
-  styleUrl: './performance-monitor.component.scss',
+  styleUrl: "./performance-monitor.component.scss",
 })
 export class PerformanceMonitorComponent {
   private performanceMonitorService = inject(PerformanceMonitorService);

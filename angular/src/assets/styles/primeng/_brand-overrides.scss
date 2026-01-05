@@ -21,10 +21,13 @@
     font-weight: var(--p-button-font-weight);
     border-radius: var(--p-button-border-radius);
     padding: var(--p-button-padding-y) var(--p-button-padding-x);
-    transition: 
-      background-color var(--p-transition-duration) var(--p-transition-timing-function),
-      border-color var(--p-transition-duration) var(--p-transition-timing-function),
-      box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+    transition:
+      background-color var(--p-transition-duration)
+        var(--p-transition-timing-function),
+      border-color var(--p-transition-duration)
+        var(--p-transition-timing-function),
+      box-shadow var(--p-transition-duration)
+        var(--p-transition-timing-function);
 
     // Primary (default)
     &:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary) {
@@ -136,7 +139,8 @@
     border-radius: var(--p-card-border-radius);
     box-shadow: var(--p-card-shadow);
     border: var(--p-card-border);
-    transition: box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+    transition: box-shadow var(--p-transition-duration)
+      var(--p-transition-timing-function);
 
     // Hover handled in media query section below (Decision 52)
 
@@ -237,16 +241,20 @@
     font-size: var(--p-inputtext-font-size);
     border-radius: var(--p-inputtext-border-radius);
     padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
-    border: var(--p-inputtext-border-width) solid var(--p-inputtext-border-color);
-    transition: 
-      border-color var(--p-transition-duration) var(--p-transition-timing-function),
-      box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+    border: var(--p-inputtext-border-width) solid
+      var(--p-inputtext-border-color);
+    transition:
+      border-color var(--p-transition-duration)
+        var(--p-transition-timing-function),
+      box-shadow var(--p-transition-duration)
+        var(--p-transition-timing-function);
 
     &:focus,
     &:focus-visible {
       outline: none;
       border-color: var(--p-inputtext-focus-border-color);
-      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color);
+      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width)
+        var(--p-inputtext-focus-ring-color);
     }
 
     &.ng-invalid.ng-touched,
@@ -276,7 +284,8 @@
     &:focus-within,
     &.p-focus {
       border-color: var(--p-select-focus-border-color);
-      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color);
+      box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width)
+        var(--p-inputtext-focus-ring-color);
     }
   }
 
@@ -289,7 +298,8 @@
 
     .p-select-option {
       padding: var(--p-select-option-padding);
-      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+      transition: background-color var(--p-transition-duration)
+        var(--p-transition-timing-function);
 
       &:hover {
         background: var(--p-select-option-hover-background);
@@ -318,7 +328,8 @@
     }
 
     .p-datatable-tbody > tr {
-      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+      transition: background-color var(--p-transition-duration)
+        var(--p-transition-timing-function);
 
       > td {
         padding: var(--p-datatable-row-padding);
@@ -437,12 +448,16 @@
       min-width: var(--p-checkbox-width);
       min-height: var(--p-checkbox-height);
       border-radius: var(--p-checkbox-border-radius);
-      border: var(--p-checkbox-border-width) solid var(--p-checkbox-border-color);
+      border: var(--p-checkbox-border-width) solid
+        var(--p-checkbox-border-color);
       background: var(--p-checkbox-background);
-      transition: 
-        background-color var(--p-transition-duration) var(--p-transition-timing-function),
-        border-color var(--p-transition-duration) var(--p-transition-timing-function),
-        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+      transition:
+        background-color var(--p-transition-duration)
+          var(--p-transition-timing-function),
+        border-color var(--p-transition-duration)
+          var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration)
+          var(--p-transition-timing-function);
 
       // Checked state - green background with white check
       &.p-highlight {
@@ -490,9 +505,11 @@
       width: var(--p-radio-width);
       height: var(--p-radio-height);
       border-color: var(--p-radio-border-color);
-      transition: 
-        border-color var(--p-transition-duration) var(--p-transition-timing-function),
-        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+      transition:
+        border-color var(--p-transition-duration)
+          var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration)
+          var(--p-transition-timing-function);
 
       &.p-highlight {
         border-color: var(--p-radio-checked-border-color);
@@ -541,9 +558,11 @@
       height: var(--p-toggleswitch-height);
       border-radius: var(--p-toggleswitch-border-radius);
       background: var(--p-toggleswitch-background);
-      transition: 
-        background-color var(--p-transition-duration) var(--p-transition-timing-function),
-        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
+      transition:
+        background-color var(--p-transition-duration)
+          var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration)
+          var(--p-transition-timing-function);
 
       // Thumb/handle
       &::before {
@@ -556,7 +575,8 @@
         background: var(--p-toggleswitch-handle-background);
         border-radius: var(--radius-full);
         box-shadow: var(--p-toggleswitch-handle-shadow);
-        transition: transform var(--p-transition-duration) var(--p-transition-timing-function);
+        transition: transform var(--p-transition-duration)
+          var(--p-transition-timing-function);
       }
     }
 
@@ -566,7 +586,12 @@
 
       &::before {
         // Move thumb to the right: width - handle-size - (2 * offset)
-        transform: translateX(calc(var(--p-toggleswitch-width) - var(--p-toggleswitch-handle-size) - (var(--p-toggleswitch-handle-offset) * 2)));
+        transform: translateX(
+          calc(
+            var(--p-toggleswitch-width) - var(--p-toggleswitch-handle-size) -
+              (var(--p-toggleswitch-handle-offset) * 2)
+          )
+        );
       }
     }
 
@@ -600,7 +625,8 @@
     .p-menuitem-link {
       padding: var(--p-menu-item-padding);
       border-radius: var(--p-menu-item-border-radius);
-      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+      transition: background-color var(--p-transition-duration)
+        var(--p-transition-timing-function);
 
       &:hover {
         background: var(--p-menu-item-hover-background);
@@ -719,7 +745,7 @@
   .p-card.stat-card {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-1);
-    transition: 
+    transition:
       transform var(--motion-fast) var(--ease-standard),
       box-shadow var(--motion-fast) var(--ease-standard);
 
@@ -741,7 +767,11 @@
 
   // Welcome Card - hero greeting card
   .p-card.welcome-card {
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-primary) 50%);
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      var(--surface-primary) 50%
+    );
     border: var(--border-1) solid var(--color-border-secondary);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-1);
@@ -781,7 +811,7 @@
     border-radius: var(--radius-lg);
     border-left: var(--space-1) solid var(--color-brand-primary);
     box-shadow: var(--shadow-1);
-    transition: 
+    transition:
       transform var(--motion-fast) var(--ease-standard),
       box-shadow var(--motion-fast) var(--ease-standard);
 
@@ -916,7 +946,9 @@
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-border-secondary);
     cursor: pointer;
-    transition: transform var(--hover-transition-fast), box-shadow var(--hover-transition-fast);
+    transition:
+      transform var(--hover-transition-fast),
+      box-shadow var(--hover-transition-fast);
 
     .p-card-body {
       padding: var(--space-3);
@@ -1008,7 +1040,9 @@
     border: 1px solid var(--color-border-secondary);
     border-radius: var(--radius-lg);
     box-shadow: none;
-    transition: border-color var(--hover-transition-fast), background var(--hover-transition-fast);
+    transition:
+      border-color var(--hover-transition-fast),
+      background var(--hover-transition-fast);
 
     .p-card-body {
       padding: var(--space-3);

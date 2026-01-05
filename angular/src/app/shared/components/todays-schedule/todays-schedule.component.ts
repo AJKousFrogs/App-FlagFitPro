@@ -12,22 +12,19 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 
-import {
-    ButtonComponent,
-    CardComponent,
-} from "../ui-components";
+import { ButtonComponent, CardComponent } from "../ui-components";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -78,7 +75,8 @@ export class TodaysScheduleComponent {
   // Computed
   hasSchedule = computed(() => this.scheduleItems().length > 0);
   completedCount = computed(
-    () => this.scheduleItems().filter((item) => item.status === "completed").length
+    () =>
+      this.scheduleItems().filter((item) => item.status === "completed").length,
   );
   totalCount = computed(() => this.scheduleItems().length);
   progressPercent = computed(() => {
@@ -88,24 +86,27 @@ export class TodaysScheduleComponent {
   });
 
   currentItem = computed(() =>
-    this.scheduleItems().find((item) => item.status === "in-progress")
+    this.scheduleItems().find((item) => item.status === "in-progress"),
   );
 
   nextItem = computed(() => {
     const items = this.scheduleItems();
-    const currentIndex = items.findIndex((item) => item.status === "in-progress");
+    const currentIndex = items.findIndex(
+      (item) => item.status === "in-progress",
+    );
     if (currentIndex >= 0 && currentIndex < items.length - 1) {
       return items[currentIndex + 1];
     }
     return items.find((item) => item.status === "upcoming");
   });
 
-
   private loadSchedule(): void {
     // Handled by service refresh
   }
 
-  private mapPracticeToSchedule(practice: Record<string, unknown>): ScheduleItem[] {
+  private mapPracticeToSchedule(
+    practice: Record<string, unknown>,
+  ): ScheduleItem[] {
     const items: ScheduleItem[] = [];
     const now = new Date();
     const currentHour = now.getHours();
@@ -117,7 +118,12 @@ export class TodaysScheduleComponent {
       title: "Morning Wellness Check",
       type: "wellness",
       duration: 5,
-      status: currentHour >= 8 ? "completed" : currentHour >= 7 ? "in-progress" : "upcoming",
+      status:
+        currentHour >= 8
+          ? "completed"
+          : currentHour >= 7
+            ? "in-progress"
+            : "upcoming",
       description: "Log sleep, energy, and mood",
     });
 
@@ -128,7 +134,12 @@ export class TodaysScheduleComponent {
       title: "Pre-Workout Nutrition",
       type: "nutrition",
       duration: 30,
-      status: currentHour >= 9 ? "completed" : currentHour >= 8 ? "in-progress" : "upcoming",
+      status:
+        currentHour >= 9
+          ? "completed"
+          : currentHour >= 8
+            ? "in-progress"
+            : "upcoming",
       description: "Balanced meal 1-2 hours before training",
     });
 
@@ -137,12 +148,26 @@ export class TodaysScheduleComponent {
       items.push({
         id: "training-main",
         time: "10:00",
-        title: typeof practice.sessionType === "string" ? practice.sessionType : "Training Session",
+        title:
+          typeof practice.sessionType === "string"
+            ? practice.sessionType
+            : "Training Session",
         type: "training",
-        duration: typeof practice.totalDuration === "number" ? practice.totalDuration : 60,
-        status: currentHour >= 11 ? "completed" : currentHour >= 10 ? "in-progress" : "upcoming",
-        description: Array.isArray(practice.focus) ? practice.focus.join(", ") : "Scheduled training",
-        location: typeof practice.location === "string" ? practice.location : undefined,
+        duration:
+          typeof practice.totalDuration === "number"
+            ? practice.totalDuration
+            : 60,
+        status:
+          currentHour >= 11
+            ? "completed"
+            : currentHour >= 10
+              ? "in-progress"
+              : "upcoming",
+        description: Array.isArray(practice.focus)
+          ? practice.focus.join(", ")
+          : "Scheduled training",
+        location:
+          typeof practice.location === "string" ? practice.location : undefined,
       });
     } else {
       items.push({
@@ -151,7 +176,12 @@ export class TodaysScheduleComponent {
         title: "Active Recovery",
         type: "rest",
         duration: 30,
-        status: currentHour >= 11 ? "completed" : currentHour >= 10 ? "in-progress" : "upcoming",
+        status:
+          currentHour >= 11
+            ? "completed"
+            : currentHour >= 10
+              ? "in-progress"
+              : "upcoming",
         description: "Light stretching and mobility work",
       });
     }
@@ -163,7 +193,12 @@ export class TodaysScheduleComponent {
       title: "Post-Workout Recovery",
       type: "recovery",
       duration: 20,
-      status: currentHour >= 13 ? "completed" : currentHour >= 12 ? "in-progress" : "upcoming",
+      status:
+        currentHour >= 13
+          ? "completed"
+          : currentHour >= 12
+            ? "in-progress"
+            : "upcoming",
       description: "Cool down, stretching, foam rolling",
     });
 
@@ -174,7 +209,12 @@ export class TodaysScheduleComponent {
       title: "Recovery Nutrition",
       type: "nutrition",
       duration: 30,
-      status: currentHour >= 14 ? "completed" : currentHour >= 13 ? "in-progress" : "upcoming",
+      status:
+        currentHour >= 14
+          ? "completed"
+          : currentHour >= 13
+            ? "in-progress"
+            : "upcoming",
       description: "Protein-rich meal for recovery",
     });
 
@@ -185,7 +225,12 @@ export class TodaysScheduleComponent {
       title: "Evening Check-in",
       type: "wellness",
       duration: 5,
-      status: currentHour >= 21 ? "completed" : currentHour >= 20 ? "in-progress" : "upcoming",
+      status:
+        currentHour >= 21
+          ? "completed"
+          : currentHour >= 20
+            ? "in-progress"
+            : "upcoming",
       description: "Log soreness and daily summary",
     });
 
@@ -211,7 +256,12 @@ export class TodaysScheduleComponent {
         title: "Training Session",
         type: "training",
         duration: 60,
-        status: currentHour >= 11 ? "completed" : currentHour >= 10 ? "in-progress" : "upcoming",
+        status:
+          currentHour >= 11
+            ? "completed"
+            : currentHour >= 10
+              ? "in-progress"
+              : "upcoming",
       },
       {
         id: "recovery",
@@ -236,7 +286,9 @@ export class TodaysScheduleComponent {
     return icons[type] || "pi-calendar";
   }
 
-  getTypeSeverity(_type: ScheduleItem["type"]): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  getTypeSeverity(
+    _type: ScheduleItem["type"],
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     // All tags use the same neutral color for visual consistency
     return "secondary";
   }
@@ -256,18 +308,28 @@ export class TodaysScheduleComponent {
   }
 
   takeSupplements(item: ScheduleItem): void {
-    const morningSupps = ["Creatine", "Vitamin D", "Omega-3", "Iron", "Calcium", "Multivitamin"];
-    const date = new Date().toISOString().split('T')[0];
-    
-    morningSupps.forEach(name => {
-      this.trainingService.logSupplement({
-        name,
-        taken: true,
-        timeOfDay: 'morning' as const,
-        date
-      }).subscribe({
-        error: (err: unknown) => this.logger.error('Failed to log supplement:', err)
-      });
+    const morningSupps = [
+      "Creatine",
+      "Vitamin D",
+      "Omega-3",
+      "Iron",
+      "Calcium",
+      "Multivitamin",
+    ];
+    const date = new Date().toISOString().split("T")[0];
+
+    morningSupps.forEach((name) => {
+      this.trainingService
+        .logSupplement({
+          name,
+          taken: true,
+          timeOfDay: "morning" as const,
+          date,
+        })
+        .subscribe({
+          error: (err: unknown) =>
+            this.logger.error("Failed to log supplement:", err),
+        });
     });
 
     this.markComplete(item);

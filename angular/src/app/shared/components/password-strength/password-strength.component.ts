@@ -139,7 +139,7 @@ export interface PasswordStrength {
       }
     </div>
   `,
-  styleUrl: './password-strength.component.scss',
+  styleUrl: "./password-strength.component.scss",
 })
 export class PasswordStrengthComponent {
   // Inputs

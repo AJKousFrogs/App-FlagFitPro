@@ -51,7 +51,9 @@
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
   border-left: 4px solid var(--color-border-secondary);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .metric:last-child {
@@ -146,4 +148,3 @@
     width: 100%;
   }
 }
-

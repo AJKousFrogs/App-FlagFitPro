@@ -250,39 +250,39 @@ Centralized repository of coaching resources, articles, drills, and flag footbal
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Search | Full-text search across resources |
-| Categories | Browse by topic |
-| Resource Types | Articles, videos, links, PDFs |
-| Team Resources | Coach-created content |
-| Favorites | Save for quick access |
-| Sharing | Share to team or individuals |
-| Related Content | Linked resources |
-| Staff Picks | Featured content |
+| Feature         | Description                       |
+| --------------- | --------------------------------- |
+| Search          | Full-text search across resources |
+| Categories      | Browse by topic                   |
+| Resource Types  | Articles, videos, links, PDFs     |
+| Team Resources  | Coach-created content             |
+| Favorites       | Save for quick access             |
+| Sharing         | Share to team or individuals      |
+| Related Content | Linked resources                  |
+| Staff Picks     | Featured content                  |
 
 ---
 
 ## Resource Categories
 
-| Category | Content Types |
-|----------|---------------|
-| Drills | Practice exercises |
-| Tactics | Offensive/defensive concepts |
-| Conditioning | Fitness, warm-ups |
-| Rules | Official rules, updates |
-| Position Guides | Role-specific info |
-| Injury Prevention | Prehab, safety |
-| Mental Game | Psychology, focus |
-| Nutrition | Diet, hydration |
+| Category          | Content Types                |
+| ----------------- | ---------------------------- |
+| Drills            | Practice exercises           |
+| Tactics           | Offensive/defensive concepts |
+| Conditioning      | Fitness, warm-ups            |
+| Rules             | Official rules, updates      |
+| Position Guides   | Role-specific info           |
+| Injury Prevention | Prehab, safety               |
+| Mental Game       | Psychology, focus            |
+| Nutrition         | Diet, hydration              |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Resources | `KnowledgeService` | `knowledge_resources` |
-| Categories | `KnowledgeService` | `resource_categories` |
-| Favorites | `KnowledgeService` | `user_favorites` |
-| Team content | `KnowledgeService` | `team_resources` |
+| Data         | Service            | Table                 |
+| ------------ | ------------------ | --------------------- |
+| Resources    | `KnowledgeService` | `knowledge_resources` |
+| Categories   | `KnowledgeService` | `resource_categories` |
+| Favorites    | `KnowledgeService` | `user_favorites`      |
+| Team content | `KnowledgeService` | `team_resources`      |

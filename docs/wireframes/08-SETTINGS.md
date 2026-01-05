@@ -263,25 +263,28 @@
 ## Component Breakdown
 
 ### 1. Page Header ✅
-| Element | Status | Notes |
-|---------|--------|-------|
-| Title "Settings" | ✅ | With cog icon |
-| Subtitle | ✅ | "Manage your account and application preferences" |
-| "Save Changes" button | ✅ | Triggers save action |
+
+| Element               | Status | Notes                                             |
+| --------------------- | ------ | ------------------------------------------------- |
+| Title "Settings"      | ✅     | With cog icon                                     |
+| Subtitle              | ✅     | "Manage your account and application preferences" |
+| "Save Changes" button | ✅     | Triggers save action                              |
 
 ---
 
 ### 2. Profile Settings Card ✅
-| Field | Type | Validation | Status |
-|-------|------|------------|--------|
-| Display Name | Text input | Required | ✅ |
-| Email | Text input | Required, Email format | ✅ |
-| Position | Select dropdown | 15 options | ✅ |
-| Jersey Number | Text input | Max 3 chars | ✅ |
-| Team Name | Text input | Optional | ✅ |
-| Phone Number | Text input | Optional | ✅ |
+
+| Field         | Type            | Validation             | Status |
+| ------------- | --------------- | ---------------------- | ------ |
+| Display Name  | Text input      | Required               | ✅     |
+| Email         | Text input      | Required, Email format | ✅     |
+| Position      | Select dropdown | 15 options             | ✅     |
+| Jersey Number | Text input      | Max 3 chars            | ✅     |
+| Team Name     | Text input      | Optional               | ✅     |
+| Phone Number  | Text input      | Optional               | ✅     |
 
 **Position Options:**
+
 - QB, Center, WR, RB, DB, Safety, LB, Rusher (Players)
 - Coach, Manager, Physiotherapist, Nutritionist, Sport Psychologist (Staff)
 - Admin, Superadmin (Admin)
@@ -289,24 +292,27 @@
 ---
 
 ### 3. Notification Settings Card ✅
-| Setting | Icon | Description | Status |
-|---------|------|-------------|--------|
-| Email Notifications | ✉️ | Receive updates via email | ✅ |
-| Push Notifications | 📱 | Instant alerts on device | ✅ |
-| Training Reminders | ⏰ | Daily workout reminders | ✅ |
+
+| Setting             | Icon | Description               | Status |
+| ------------------- | ---- | ------------------------- | ------ |
+| Email Notifications | ✉️   | Receive updates via email | ✅     |
+| Push Notifications  | 📱   | Instant alerts on device  | ✅     |
+| Training Reminders  | ⏰   | Daily workout reminders   | ✅     |
 
 All use toggle switches with ON/OFF labels.
 
 ---
 
 ### 4. Privacy Settings Card ✅
-| Setting | Type | Options | Status |
-|---------|------|---------|--------|
-| Profile Visibility | Select | Public / Private / Coaches Only | ✅ |
-| Show Statistics | Toggle | ON/OFF | ✅ |
-| Advanced Privacy Link | Button | Links to `/settings/privacy` | ✅ |
+
+| Setting               | Type   | Options                         | Status |
+| --------------------- | ------ | ------------------------------- | ------ |
+| Profile Visibility    | Select | Public / Private / Coaches Only | ✅     |
+| Show Statistics       | Toggle | ON/OFF                          | ✅     |
+| Advanced Privacy Link | Button | Links to `/settings/privacy`    | ✅     |
 
 **Visibility Options:**
+
 - Public: "Everyone in the app can see"
 - Private: "Only you can see"
 - Coaches Only: "Only you and coaches can see"
@@ -314,84 +320,95 @@ All use toggle switches with ON/OFF labels.
 ---
 
 ### 5. App Preferences Card ✅
-| Setting | Type | Options | Status |
-|---------|------|---------|--------|
-| Theme | Button group | Light / Dark / Auto | ✅ |
-| Language | Select | 10 languages | ✅ |
+
+| Setting  | Type         | Options             | Status |
+| -------- | ------------ | ------------------- | ------ |
+| Theme    | Button group | Light / Dark / Auto | ✅     |
+| Language | Select       | 10 languages        | ✅     |
 
 **Theme Options:**
+
 - Light (☀️)
 - Dark (🌙)
 - Auto (🖥️) - Follows system
 
 **Language Options:**
+
 - 🇬🇧 English, 🇪🇸 Spanish, 🇫🇷 French, 🇮🇹 Italian, 🇩🇪 German
 - 🇵🇹 Portuguese, 🇵🇱 Polish, 🇸🇮 Slovenian, 🇷🇸 Serbian, 🇩🇰 Danish
 
 ---
 
 ### 6. Security Card ✅
-| Action | Button | Dialog | Status |
-|--------|--------|--------|--------|
-| Change Password | Change | Password dialog | ✅ |
-| Two-Factor Auth | Enable/Disable | 2FA setup wizard | ✅ |
-| Active Sessions | View | Sessions list dialog | ✅ |
-| Delete Account | Delete (danger) | Confirmation dialog | ✅ |
+
+| Action          | Button          | Dialog               | Status |
+| --------------- | --------------- | -------------------- | ------ |
+| Change Password | Change          | Password dialog      | ✅     |
+| Two-Factor Auth | Enable/Disable  | 2FA setup wizard     | ✅     |
+| Active Sessions | View            | Sessions list dialog | ✅     |
+| Delete Account  | Delete (danger) | Confirmation dialog  | ✅     |
 
 ---
 
 ### 7. Dialogs ✅
 
 #### Change Password Dialog
-| Element | Status | Notes |
-|---------|--------|-------|
-| Current password field | ✅ | With toggle visibility |
-| New password field | ✅ | With toggle visibility |
-| Confirm password field | ✅ | With toggle visibility |
-| Password requirements | ✅ | 4 checklist items |
-| Match indicator | ✅ | Green success message |
-| Cancel/Update buttons | ✅ | Update has loading state |
+
+| Element                | Status | Notes                    |
+| ---------------------- | ------ | ------------------------ |
+| Current password field | ✅     | With toggle visibility   |
+| New password field     | ✅     | With toggle visibility   |
+| Confirm password field | ✅     | With toggle visibility   |
+| Password requirements  | ✅     | 4 checklist items        |
+| Match indicator        | ✅     | Green success message    |
+| Cancel/Update buttons  | ✅     | Update has loading state |
 
 **Password Requirements:**
+
 - At least 8 characters
 - One uppercase letter
 - One number
-- One special character (@$!%*?&)
+- One special character (@$!%\*?&)
 
 #### 2FA Setup Dialog
-| Step | Content | Status |
-|------|---------|--------|
-| Step 1 | Install authenticator app options | ✅ |
-| Step 2 | QR code + manual secret | ✅ |
-| Step 3 | 6-digit verification input | ✅ |
-| Step 4 | Success + backup codes | ✅ |
+
+| Step   | Content                           | Status |
+| ------ | --------------------------------- | ------ |
+| Step 1 | Install authenticator app options | ✅     |
+| Step 2 | QR code + manual secret           | ✅     |
+| Step 3 | 6-digit verification input        | ✅     |
+| Step 4 | Success + backup codes            | ✅     |
 
 **Features:**
+
 - Step progress indicators
 - QR code generation
 - Copy secret to clipboard
 - Download backup codes as .txt
 
 #### Delete Account Dialog
-| Element | Status | Notes |
-|---------|--------|-------|
-| Warning icon + message | ✅ | Lists what will be deleted |
-| Type "DELETE" confirmation | ✅ | Must match exactly |
-| Cancel/Delete buttons | ✅ | Delete is red/danger |
+
+| Element                    | Status | Notes                      |
+| -------------------------- | ------ | -------------------------- |
+| Warning icon + message     | ✅     | Lists what will be deleted |
+| Type "DELETE" confirmation | ✅     | Must match exactly         |
+| Cancel/Delete buttons      | ✅     | Delete is red/danger       |
 
 #### Active Sessions Dialog
-| Element | Status | Notes |
-|---------|--------|-------|
-| Sessions list | ✅ | Device icon, name, location, time |
-| "This device" indicator | ✅ | For current session |
-| Revoke individual session | ✅ | Button per non-current session |
-| "Sign out all others" | ✅ | Bulk action with loading |
+
+| Element                   | Status | Notes                             |
+| ------------------------- | ------ | --------------------------------- |
+| Sessions list             | ✅     | Device icon, name, location, time |
+| "This device" indicator   | ✅     | For current session               |
+| Revoke individual session | ✅     | Button per non-current session    |
+| "Sign out all others"     | ✅     | Bulk action with loading          |
 
 ---
 
 ## Business Logic
 
 ### Password Validation (Implemented)
+
 ```typescript
 // Password pattern
 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
@@ -404,6 +421,7 @@ passwordsMatch(): boolean { return newPassword === confirmPassword; }
 ```
 
 ### 2FA Setup (Implemented)
+
 ```typescript
 // 4-step flow:
 // Step 1: Show authenticator app options
@@ -424,14 +442,16 @@ generateBackupCodes(): string[] {
 ```
 
 ### Theme Application (Implemented)
+
 ```typescript
 // Theme changes applied immediately via ThemeService
-preferencesForm.get('theme')?.valueChanges.subscribe((theme) => {
+preferencesForm.get("theme")?.valueChanges.subscribe((theme) => {
   this.themeService.setMode(theme);
 });
 ```
 
 ### Settings Persistence (Implemented)
+
 ```typescript
 // Save to multiple locations for redundancy:
 1. localStorage (fallback)
@@ -444,57 +464,58 @@ preferencesForm.get('theme')?.valueChanges.subscribe((theme) => {
 
 ## Data Sources
 
-| Data | Service | Storage |
-|------|---------|---------|
-| User profile | `AuthService` | `getUser()` |
-| Extended profile | `SupabaseService` | `users` table |
-| Theme | `ThemeService` | localStorage + signal |
-| Settings | `SupabaseService` | `user_settings` table |
-| 2FA status | `SupabaseService` | `user_security` table |
-| Sessions | `SupabaseService` | Supabase auth |
+| Data             | Service           | Storage               |
+| ---------------- | ----------------- | --------------------- |
+| User profile     | `AuthService`     | `getUser()`           |
+| Extended profile | `SupabaseService` | `users` table         |
+| Theme            | `ThemeService`    | localStorage + signal |
+| Settings         | `SupabaseService` | `user_settings` table |
+| 2FA status       | `SupabaseService` | `user_security` table |
+| Sessions         | `SupabaseService` | Supabase auth         |
 
 ---
 
 ## Navigation Paths
 
-| From | To | Trigger |
-|------|-----|---------|
-| Settings | Privacy Controls | "Privacy Controls" button |
-| Settings | (Dialog) | Any security action button |
+| From     | To               | Trigger                    |
+| -------- | ---------------- | -------------------------- |
+| Settings | Privacy Controls | "Privacy Controls" button  |
+| Settings | (Dialog)         | Any security action button |
 
 ---
 
 ## Feature Comparison: Documented vs Implemented
 
-| Documented Feature | Status | Notes |
-|-------------------|--------|-------|
-| Name display | ✅ | Editable |
-| Email (read-only) | ⚠️ | Editable, but change requires verification |
-| Phone number | ✅ | |
-| Date of birth | ❌ | Not in current form |
-| Position preferences | ✅ | Dropdown |
-| Training reminders | ✅ | Toggle |
-| Wellness check-in reminders | ⚠️ | Part of training reminders |
-| Team announcements | ⚠️ | Not separate toggle |
-| Game reminders | ⚠️ | Not separate toggle |
-| Achievement notifications | ⚠️ | Not separate toggle |
-| Push notification toggle | ✅ | |
-| Profile visibility | ✅ | 3 options |
-| Stats visibility | ✅ | Toggle |
-| Activity visibility | ⚠️ | Part of profile visibility |
-| Data export request | ❌ | Not in current UI |
-| Theme selection | ✅ | 3 options |
-| Language selection | ✅ | 10 languages |
-| Change password | ✅ | Full dialog with validation |
-| 2FA setup | ✅ | Full 4-step wizard |
-| Session management | ✅ | View, revoke individual, revoke all |
-| Account deletion | ✅ | Confirmation dialog |
+| Documented Feature          | Status | Notes                                      |
+| --------------------------- | ------ | ------------------------------------------ |
+| Name display                | ✅     | Editable                                   |
+| Email (read-only)           | ⚠️     | Editable, but change requires verification |
+| Phone number                | ✅     |                                            |
+| Date of birth               | ❌     | Not in current form                        |
+| Position preferences        | ✅     | Dropdown                                   |
+| Training reminders          | ✅     | Toggle                                     |
+| Wellness check-in reminders | ⚠️     | Part of training reminders                 |
+| Team announcements          | ⚠️     | Not separate toggle                        |
+| Game reminders              | ⚠️     | Not separate toggle                        |
+| Achievement notifications   | ⚠️     | Not separate toggle                        |
+| Push notification toggle    | ✅     |                                            |
+| Profile visibility          | ✅     | 3 options                                  |
+| Stats visibility            | ✅     | Toggle                                     |
+| Activity visibility         | ⚠️     | Part of profile visibility                 |
+| Data export request         | ❌     | Not in current UI                          |
+| Theme selection             | ✅     | 3 options                                  |
+| Language selection          | ✅     | 10 languages                               |
+| Change password             | ✅     | Full dialog with validation                |
+| 2FA setup                   | ✅     | Full 4-step wizard                         |
+| Session management          | ✅     | View, revoke individual, revoke all        |
+| Account deletion            | ✅     | Confirmation dialog                        |
 
 ---
 
 ## UX Notes
 
 ### ✅ What Works Well
+
 - Clear card-based organization
 - Theme selector with visual button group
 - Language selector with flags and native names
@@ -503,12 +524,14 @@ preferencesForm.get('theme')?.valueChanges.subscribe((theme) => {
 - Dangerous actions (delete) have proper confirmation
 
 ### ⚠️ Friction Points
+
 - Many notification types documented but only 3 toggles implemented
 - No data export option visible
 - Date of birth field missing
 - Language translation not actually functional (hint shown)
 
 ### 🔧 Suggested Improvements
+
 1. Add more granular notification controls
 2. Add data export/download feature
 3. Add date of birth field
@@ -520,9 +543,9 @@ preferencesForm.get('theme')?.valueChanges.subscribe((theme) => {
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Profile | `/profile` | View profile |
+| Page             | Route               | Relationship     |
+| ---------------- | ------------------- | ---------------- |
+| Profile          | `/profile`          | View profile     |
 | Privacy Controls | `/settings/privacy` | Advanced privacy |
 
 ---

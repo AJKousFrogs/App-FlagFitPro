@@ -21,7 +21,12 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-export type MetricStatus = "success" | "warning" | "danger" | "info" | "neutral";
+export type MetricStatus =
+  | "success"
+  | "warning"
+  | "danger"
+  | "info"
+  | "neutral";
 export type MetricSize = "sm" | "md" | "lg";
 
 export interface MetricTrend {
@@ -86,14 +91,19 @@ export interface MetricTrend {
 
       <!-- Trend Indicator -->
       @if (trend()) {
-        <div class="metric-card__trend" [class]="'trend--' + trend()!.direction">
+        <div
+          class="metric-card__trend"
+          [class]="'trend--' + trend()!.direction"
+        >
           <i
             class="pi"
             [class.pi-arrow-up]="trend()!.direction === 'up'"
             [class.pi-arrow-down]="trend()!.direction === 'down'"
             [class.pi-minus]="trend()!.direction === 'stable'"
           ></i>
-          <span class="trend-value">{{ trend()!.value | number : "1.0-1" }}%</span>
+          <span class="trend-value"
+            >{{ trend()!.value | number: "1.0-1" }}%</span
+          >
           @if (trend()!.label) {
             <span class="trend-label">{{ trend()!.label }}</span>
           }
@@ -127,7 +137,9 @@ export class MetricCardComponent {
   ariaLabel = computed(() => {
     const base = `${this.label()}: ${this.value()}`;
     const unitPart = this.unit() ? ` ${this.unit()}` : "";
-    const statusPart = this.statusLabel() ? `. Status: ${this.statusLabel()}` : "";
+    const statusPart = this.statusLabel()
+      ? `. Status: ${this.statusLabel()}`
+      : "";
     const trendPart = this.trend()
       ? `. Trend: ${this.trend()!.direction} ${this.trend()!.value}%`
       : "";

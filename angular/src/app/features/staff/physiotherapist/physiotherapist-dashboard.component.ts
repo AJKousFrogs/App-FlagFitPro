@@ -110,7 +110,11 @@ const POSITION_INJURY_RISK: Record<
       "Poor arm care compliance",
       "Throwing through fatigue",
     ],
-    screeningFocus: ["Shoulder ROM", "Thoracic mobility", "Hip internal rotation"],
+    screeningFocus: [
+      "Shoulder ROM",
+      "Thoracic mobility",
+      "Hip internal rotation",
+    ],
   },
   WR: {
     commonInjuries: [
@@ -124,7 +128,11 @@ const POSITION_INJURY_RISK: Record<
       "Inadequate warm-up",
       "Surface changes",
     ],
-    screeningFocus: ["Hamstring flexibility", "Single-leg balance", "Hip mobility"],
+    screeningFocus: [
+      "Hamstring flexibility",
+      "Single-leg balance",
+      "Hip mobility",
+    ],
   },
   DB: {
     commonInjuries: [
@@ -142,11 +150,7 @@ const POSITION_INJURY_RISK: Record<
   },
   Rusher: {
     commonInjuries: ["Shoulder strain", "Knee ligament", "Ankle sprain"],
-    riskFactors: [
-      "Explosive starts",
-      "Contact frequency",
-      "Lateral movements",
-    ],
+    riskFactors: ["Explosive starts", "Contact frequency", "Lateral movements"],
     screeningFocus: [
       "Shoulder stability",
       "Knee stability",
@@ -156,10 +160,26 @@ const POSITION_INJURY_RISK: Record<
 };
 
 const RTP_PHASES = [
-  { phase: 1, name: "Rest & Protect", description: "Pain-free daily activities" },
-  { phase: 2, name: "Light Activity", description: "Walking, light stretching" },
-  { phase: 3, name: "Sport-Specific", description: "Running, agility without contact" },
-  { phase: 4, name: "Non-Contact Practice", description: "Full practice, no live play" },
+  {
+    phase: 1,
+    name: "Rest & Protect",
+    description: "Pain-free daily activities",
+  },
+  {
+    phase: 2,
+    name: "Light Activity",
+    description: "Walking, light stretching",
+  },
+  {
+    phase: 3,
+    name: "Sport-Specific",
+    description: "Running, agility without contact",
+  },
+  {
+    phase: 4,
+    name: "Non-Contact Practice",
+    description: "Full practice, no live play",
+  },
   { phase: 5, name: "Full Clearance", description: "Return to competition" },
 ];
 
@@ -185,7 +205,7 @@ const RTP_PHASES = [
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -197,7 +217,11 @@ const RTP_PHASES = [
           subtitle="Monitor injury status, return-to-play progress, and athlete risk factors"
           icon="pi-heart-fill"
         >
-          <app-button iconLeft="pi-file-pdf" (clicked)="showReportDialog.set(true)">Generate Report</app-button>
+          <app-button
+            iconLeft="pi-file-pdf"
+            (clicked)="showReportDialog.set(true)"
+            >Generate Report</app-button
+          >
         </app-page-header>
 
         @if (loading()) {
@@ -320,7 +344,9 @@ const RTP_PHASES = [
                         <td>
                           <p-tag
                             [value]="getClearanceLabel(athlete.clearanceStatus)"
-                            [severity]="getClearanceSeverity(athlete.clearanceStatus)"
+                            [severity]="
+                              getClearanceSeverity(athlete.clearanceStatus)
+                            "
                           ></p-tag>
                         </td>
                         <td>
@@ -330,13 +356,18 @@ const RTP_PHASES = [
                                 injury of athlete.activeInjuries.slice(0, 2);
                                 track injury.id
                               ) {
-                                <span class="injury-badge" [class]="injury.severity">
+                                <span
+                                  class="injury-badge"
+                                  [class]="injury.severity"
+                                >
                                   {{ injury.type }}
                                 </span>
                               }
                               @if (athlete.activeInjuries.length > 2) {
                                 <span class="more-badge"
-                                  >+{{ athlete.activeInjuries.length - 2 }}</span
+                                  >+{{
+                                    athlete.activeInjuries.length - 2
+                                  }}</span
                                 >
                               }
                             </div>
@@ -360,8 +391,18 @@ const RTP_PHASES = [
                           ></p-tag>
                         </td>
                         <td>
-                          <app-icon-button icon="pi-eye" variant="text" (clicked)="viewAthleteDetails(athlete)" ariaLabel="eye" />
-                          <app-icon-button icon="pi-file" variant="text" (clicked)="generateAthleteReport(athlete)" ariaLabel="file" />
+                          <app-icon-button
+                            icon="pi-eye"
+                            variant="text"
+                            (clicked)="viewAthleteDetails(athlete)"
+                            ariaLabel="eye"
+                          />
+                          <app-icon-button
+                            icon="pi-file"
+                            variant="text"
+                            (clicked)="generateAthleteReport(athlete)"
+                            ariaLabel="file"
+                          />
                         </td>
                       </tr>
                     </ng-template>
@@ -391,8 +432,17 @@ const RTP_PHASES = [
                                 }}</span>
                               </div>
                               <p-tag
-                                [value]="rtp.clearanceRecommendation.status.replace('_', ' ')"
-                                [severity]="getRtpStatusSeverity(rtp.clearanceRecommendation.status)"
+                                [value]="
+                                  rtp.clearanceRecommendation.status.replace(
+                                    '_',
+                                    ' '
+                                  )
+                                "
+                                [severity]="
+                                  getRtpStatusSeverity(
+                                    rtp.clearanceRecommendation.status
+                                  )
+                                "
                               ></p-tag>
                             </div>
                           </ng-template>
@@ -400,22 +450,32 @@ const RTP_PHASES = [
                           <div class="rtp-content">
                             <!-- Phase Progress -->
                             <div class="phase-progress">
-                              <h5>Current Phase: {{ rtp.currentPhase.phaseName }}</h5>
+                              <h5>
+                                Current Phase: {{ rtp.currentPhase.phaseName }}
+                              </h5>
                               <div class="phase-timeline">
                                 @for (phase of rtpPhases; track phase.phase) {
                                   <div
                                     class="phase-step"
-                                    [class.completed]="phase.phase < rtp.currentPhase.phase"
-                                    [class.current]="phase.phase === rtp.currentPhase.phase"
+                                    [class.completed]="
+                                      phase.phase < rtp.currentPhase.phase
+                                    "
+                                    [class.current]="
+                                      phase.phase === rtp.currentPhase.phase
+                                    "
                                   >
-                                    <span class="phase-number">{{ phase.phase }}</span>
-                                    <span class="phase-name">{{ phase.name }}</span>
+                                    <span class="phase-number">{{
+                                      phase.phase
+                                    }}</span>
+                                    <span class="phase-name">{{
+                                      phase.name
+                                    }}</span>
                                   </div>
                                 }
                               </div>
                               <p class="days-in-phase">
-                                {{ rtp.currentPhase.daysInPhase }} days in current
-                                phase
+                                {{ rtp.currentPhase.daysInPhase }} days in
+                                current phase
                               </p>
                             </div>
 
@@ -439,7 +499,9 @@ const RTP_PHASES = [
                                     [showValue]="false"
                                   ></p-progressBar>
                                   <span
-                                    >{{ rtp.progressMetrics.functionScore }}%</span
+                                    >{{
+                                      rtp.progressMetrics.functionScore
+                                    }}%</span
                                   >
                                 </div>
                               </div>
@@ -449,11 +511,15 @@ const RTP_PHASES = [
                                 >
                                 <div class="metric-bar">
                                   <p-progressBar
-                                    [value]="rtp.progressMetrics.strengthRecovery"
+                                    [value]="
+                                      rtp.progressMetrics.strengthRecovery
+                                    "
                                     [showValue]="false"
                                   ></p-progressBar>
                                   <span
-                                    >{{ rtp.progressMetrics.strengthRecovery }}%</span
+                                    >{{
+                                      rtp.progressMetrics.strengthRecovery
+                                    }}%</span
                                   >
                                 </div>
                               </div>
@@ -461,11 +527,15 @@ const RTP_PHASES = [
                                 <span class="metric-label">Confidence</span>
                                 <div class="metric-bar">
                                   <p-progressBar
-                                    [value]="rtp.progressMetrics.confidenceLevel * 10"
+                                    [value]="
+                                      rtp.progressMetrics.confidenceLevel * 10
+                                    "
                                     [showValue]="false"
                                   ></p-progressBar>
                                   <span
-                                    >{{ rtp.progressMetrics.confidenceLevel }}/10</span
+                                    >{{
+                                      rtp.progressMetrics.confidenceLevel
+                                    }}/10</span
                                   >
                                 </div>
                               </div>
@@ -495,8 +565,18 @@ const RTP_PHASES = [
                           </div>
 
                           <ng-template #footer>
-                            <app-button variant="text" iconLeft="pi-pencil" (clicked)="updateRtpProgress(rtp)">Update Progress</app-button>
-                            <app-button variant="text" iconLeft="pi-file" (clicked)="viewRtpReport(rtp)">View Full Report</app-button>
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-pencil"
+                              (clicked)="updateRtpProgress(rtp)"
+                              >Update Progress</app-button
+                            >
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-file"
+                              (clicked)="viewRtpReport(rtp)"
+                              >View Full Report</app-button
+                            >
                           </ng-template>
                         </p-card>
                       }
@@ -505,7 +585,9 @@ const RTP_PHASES = [
                     <div class="empty-state">
                       <i class="pi pi-check-circle"></i>
                       <h4>No Active RTP Protocols</h4>
-                      <p>All athletes are currently cleared for full activity.</p>
+                      <p>
+                        All athletes are currently cleared for full activity.
+                      </p>
                     </div>
                   }
                 </div>
@@ -560,7 +642,10 @@ const RTP_PHASES = [
                               <i class="pi pi-bolt"></i>
                               <span>Load Spike</span>
                             </div>
-                            <div class="flag" [class.active]="risk.sleepDeficit">
+                            <div
+                              class="flag"
+                              [class.active]="risk.sleepDeficit"
+                            >
                               <i class="pi pi-moon"></i>
                               <span>Sleep Deficit</span>
                             </div>
@@ -590,9 +675,14 @@ const RTP_PHASES = [
                             <div class="asymmetries">
                               <h5>Asymmetries</h5>
                               @for (asym of risk.asymmetries; track asym.test) {
-                                <div class="asymmetry-item" [class.concern]="asym.concern">
+                                <div
+                                  class="asymmetry-item"
+                                  [class.concern]="asym.concern"
+                                >
                                   <span class="asym-test">{{ asym.test }}</span>
-                                  <span class="asym-value">{{ asym.leftRight }}</span>
+                                  <span class="asym-value">{{
+                                    asym.leftRight
+                                  }}</span>
                                 </div>
                               }
                             </div>
@@ -600,7 +690,12 @@ const RTP_PHASES = [
                         </div>
 
                         <ng-template #footer>
-                          <app-button variant="text" iconLeft="pi-info-circle" (clicked)="viewPositionRisks(risk.athleteId)">View Position Risks</app-button>
+                          <app-button
+                            variant="text"
+                            iconLeft="pi-info-circle"
+                            (clicked)="viewPositionRisks(risk.athleteId)"
+                            >View Position Risks</app-button
+                          >
                         </ng-template>
                       </p-card>
                     }
@@ -653,11 +748,10 @@ const RTP_PHASES = [
                           ) {
                             <div class="injury-type-row">
                               <span class="type-name">{{ type.type }}</span>
-                              <span class="type-count"
-                                >{{ type.count }}x</span
-                              >
+                              <span class="type-count">{{ type.count }}x</span>
                               <span class="type-recovery"
-                                >Avg {{ type.avgRecoveryDays }} days recovery</span
+                                >Avg {{ type.avgRecoveryDays }} days
+                                recovery</span
                               >
                             </div>
                           }
@@ -674,7 +768,8 @@ const RTP_PHASES = [
                         >
                           <ul class="recurrent-list">
                             @for (
-                              injury of currentInjuryHistory()!.recurrentInjuries;
+                              injury of currentInjuryHistory()!
+                                .recurrentInjuries;
                               track $index
                             ) {
                               <li>{{ injury }}</li>
@@ -715,8 +810,12 @@ const RTP_PHASES = [
                   </p>
                 </div>
                 <p-tag
-                  [value]="getClearanceLabel(selectedAthlete()!.clearanceStatus)"
-                  [severity]="getClearanceSeverity(selectedAthlete()!.clearanceStatus)"
+                  [value]="
+                    getClearanceLabel(selectedAthlete()!.clearanceStatus)
+                  "
+                  [severity]="
+                    getClearanceSeverity(selectedAthlete()!.clearanceStatus)
+                  "
                   styleClass="large-tag"
                 ></p-tag>
               </div>
@@ -724,7 +823,9 @@ const RTP_PHASES = [
               <!-- Position Risk Profile -->
               @if (positionRiskProfile()) {
                 <div class="risk-profile">
-                  <h4>Position Risk Profile ({{ selectedAthlete()!.position }})</h4>
+                  <h4>
+                    Position Risk Profile ({{ selectedAthlete()!.position }})
+                  </h4>
                   <div class="risk-sections">
                     <div class="risk-section">
                       <h5>Common Injuries</h5>
@@ -812,7 +913,11 @@ const RTP_PHASES = [
             </div>
           }
           <ng-template #footer>
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateAthleteReport(selectedAthlete()!)">Generate Report</app-button>
+            <app-button
+              iconLeft="pi-file-pdf"
+              (clicked)="generateAthleteReport(selectedAthlete()!)"
+              >Generate Report</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -845,8 +950,12 @@ const RTP_PHASES = [
             </div>
           </div>
           <ng-template #footer>
-            <app-button variant="text" (clicked)="showReportDialog.set(false)">Cancel</app-button>
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()">Generate</app-button>
+            <app-button variant="text" (clicked)="showReportDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
+              >Generate</app-button
+            >
           </ng-template>
         </p-dialog>
 
@@ -863,7 +972,9 @@ const RTP_PHASES = [
               <h3>{{ viewingPositionRisk()!.position }}</h3>
 
               <div class="risk-category">
-                <h4><i class="pi pi-exclamation-circle"></i> Common Injuries</h4>
+                <h4>
+                  <i class="pi pi-exclamation-circle"></i> Common Injuries
+                </h4>
                 <ul>
                   @for (
                     injury of viewingPositionRisk()!.risks.commonInjuries;
@@ -931,7 +1042,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   } | null>(null);
   viewingPositionRisk = signal<{
     position: string;
-    risks: { commonInjuries: string[]; riskFactors: string[]; screeningFocus: string[] };
+    risks: {
+      commonInjuries: string[];
+      riskFactors: string[];
+      screeningFocus: string[];
+    };
   } | null>(null);
 
   // Report form
@@ -987,57 +1102,66 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load athletes with physio status from real API
-      const response = await this.api.get<{
-        athletes: Array<{
-          id: string;
-          name: string;
-          position: string;
-          avatarUrl: string;
-          clearanceStatus: "cleared" | "limited" | "not_cleared";
-          activeInjuries: number;
-          currentInjury: {
-            type: string;
-            location: string;
-            grade: string;
-            phase: string;
-            rtpProgress: number;
-            expectedReturn: string;
-          } | null;
-          restrictions: string[];
-          acwr: number | null;
-          riskLevel: "low" | "medium" | "high" | "unknown";
-        }>;
-      }>("/api/staff-physiotherapist/athletes").toPromise();
+      const response = await this.api
+        .get<{
+          athletes: Array<{
+            id: string;
+            name: string;
+            position: string;
+            avatarUrl: string;
+            clearanceStatus: "cleared" | "limited" | "not_cleared";
+            activeInjuries: number;
+            currentInjury: {
+              type: string;
+              location: string;
+              grade: string;
+              phase: string;
+              rtpProgress: number;
+              expectedReturn: string;
+            } | null;
+            restrictions: string[];
+            acwr: number | null;
+            riskLevel: "low" | "medium" | "high" | "unknown";
+          }>;
+        }>("/api/staff-physiotherapist/athletes")
+        .toPromise();
 
       if (response?.data?.athletes) {
-        const athletes: AthletePhysioData[] = response.data.athletes.map((a) => ({
-          id: a.id,
-          name: a.name,
-          position: a.position,
-          age: 0,
-          yearsPlaying: 0,
-          activeInjuries: a.currentInjury
-            ? [
-                {
-                  id: a.id + "-inj",
-                  type: a.currentInjury.type,
-                  dateOccurred: new Date(),
-                  severity: this.mapGradeToSeverity(a.currentInjury.grade),
-                  recoveryTimeWeeks: 2,
-                  status: "active" as const,
-                  bodyArea: a.currentInjury.location,
-                },
-              ]
-            : [],
-          restrictions: a.restrictions,
-          clearanceStatus: this.mapClearanceStatus(a.clearanceStatus),
-        }));
+        const athletes: AthletePhysioData[] = response.data.athletes.map(
+          (a) => ({
+            id: a.id,
+            name: a.name,
+            position: a.position,
+            age: 0,
+            yearsPlaying: 0,
+            activeInjuries: a.currentInjury
+              ? [
+                  {
+                    id: a.id + "-inj",
+                    type: a.currentInjury.type,
+                    dateOccurred: new Date(),
+                    severity: this.mapGradeToSeverity(a.currentInjury.grade),
+                    recoveryTimeWeeks: 2,
+                    status: "active" as const,
+                    bodyArea: a.currentInjury.location,
+                  },
+                ]
+              : [],
+            restrictions: a.restrictions,
+            clearanceStatus: this.mapClearanceStatus(a.clearanceStatus),
+          }),
+        );
         this.athletes.set(athletes);
 
         // Build risk indicators from athlete data
         const risks: RiskIndicators[] = response.data.athletes.map((a) => ({
           athleteId: a.id,
-          acwrRisk: a.riskLevel === "high" ? "high" : a.riskLevel === "medium" ? "moderate" : "low",
+          acwrRisk:
+            a.riskLevel === "high"
+              ? "high"
+              : a.riskLevel === "medium"
+                ? "moderate"
+                : "low",
           acwrValue: a.acwr || 1.0,
           trainingLoadSpike: a.acwr !== null && a.acwr > 1.4,
           sleepDeficit: false,
@@ -1073,7 +1197,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     return gradeMap[grade] || "moderate";
   }
 
-  private mapClearanceStatus(status: string): "full" | "limited" | "not_cleared" {
+  private mapClearanceStatus(
+    status: string,
+  ): "full" | "limited" | "not_cleared" {
     if (status === "cleared") return "full";
     if (status === "limited") return "limited";
     return "not_cleared";
@@ -1081,51 +1207,62 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   private async loadRTPData(): Promise<void> {
     try {
-      const response = await this.api.get<{
-        athletes: Array<{
-          athleteId: string;
-          athleteName: string;
-          position: string;
-          injury: { type: string; location: string; grade: string; injuryDate: string };
-          currentPhase: string;
-          rtpProgress: number;
-          expectedReturn: string;
-          daysRemaining: number | null;
-        }>;
-      }>("/api/staff-physiotherapist/rtp").toPromise();
+      const response = await this.api
+        .get<{
+          athletes: Array<{
+            athleteId: string;
+            athleteName: string;
+            position: string;
+            injury: {
+              type: string;
+              location: string;
+              grade: string;
+              injuryDate: string;
+            };
+            currentPhase: string;
+            rtpProgress: number;
+            expectedReturn: string;
+            daysRemaining: number | null;
+          }>;
+        }>("/api/staff-physiotherapist/rtp")
+        .toPromise();
 
       if (response?.data?.athletes) {
-        const rtpList: ReturnToPlayData[] = response.data.athletes.map((rtp) => ({
-          athleteId: rtp.athleteId,
-          injury: {
-            id: rtp.athleteId + "-inj",
-            type: rtp.injury.type,
-            dateOccurred: new Date(rtp.injury.injuryDate),
-            severity: this.mapGradeToSeverity(rtp.injury.grade),
-            recoveryTimeWeeks: Math.ceil((rtp.daysRemaining || 14) / 7),
-            status: "active" as const,
-            bodyArea: rtp.injury.location,
-          },
-          currentPhase: {
-            phase: this.parsePhaseNumber(rtp.currentPhase),
-            phaseName: rtp.currentPhase,
-            startDate: new Date(),
-            daysInPhase: 0,
-            criteria: [],
-          },
-          progressMetrics: {
-            painLevel: [5, 4, 3],
-            functionScore: rtp.rtpProgress,
-            strengthRecovery: rtp.rtpProgress,
-            confidenceLevel: Math.round(rtp.rtpProgress / 10),
-          },
-          clearanceRecommendation: {
-            status: rtp.rtpProgress >= 90 ? "full_clearance" : "not_ready",
-            rationale: [],
-            restrictions: [],
-            followUpDate: rtp.expectedReturn ? new Date(rtp.expectedReturn) : new Date(),
-          },
-        }));
+        const rtpList: ReturnToPlayData[] = response.data.athletes.map(
+          (rtp) => ({
+            athleteId: rtp.athleteId,
+            injury: {
+              id: rtp.athleteId + "-inj",
+              type: rtp.injury.type,
+              dateOccurred: new Date(rtp.injury.injuryDate),
+              severity: this.mapGradeToSeverity(rtp.injury.grade),
+              recoveryTimeWeeks: Math.ceil((rtp.daysRemaining || 14) / 7),
+              status: "active" as const,
+              bodyArea: rtp.injury.location,
+            },
+            currentPhase: {
+              phase: this.parsePhaseNumber(rtp.currentPhase),
+              phaseName: rtp.currentPhase,
+              startDate: new Date(),
+              daysInPhase: 0,
+              criteria: [],
+            },
+            progressMetrics: {
+              painLevel: [5, 4, 3],
+              functionScore: rtp.rtpProgress,
+              strengthRecovery: rtp.rtpProgress,
+              confidenceLevel: Math.round(rtp.rtpProgress / 10),
+            },
+            clearanceRecommendation: {
+              status: rtp.rtpProgress >= 90 ? "full_clearance" : "not_ready",
+              rationale: [],
+              restrictions: [],
+              followUpDate: rtp.expectedReturn
+                ? new Date(rtp.expectedReturn)
+                : new Date(),
+            },
+          }),
+        );
         this.rtpData.set(rtpList);
       }
     } catch {
@@ -1143,31 +1280,48 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
     for (const athlete of this.athletes()) {
       try {
-        const response = await this.api.get<{
-          activeInjuries: Array<{ injury_type: string; injury_date: string }>;
-          injuryHistory: Array<{ injury_type: string; injury_date: string }>;
-        }>(`/api/staff-physiotherapist/athletes/${athlete.id}`).toPromise();
+        const response = await this.api
+          .get<{
+            activeInjuries: Array<{ injury_type: string; injury_date: string }>;
+            injuryHistory: Array<{ injury_type: string; injury_date: string }>;
+          }>(`/api/staff-physiotherapist/athletes/${athlete.id}`)
+          .toPromise();
 
         if (response?.data) {
           const allInjuries = [...(response.data.injuryHistory || [])];
           const injuryTypes = new Map<string, number>();
           allInjuries.forEach((inj) => {
-            injuryTypes.set(inj.injury_type, (injuryTypes.get(inj.injury_type) || 0) + 1);
+            injuryTypes.set(
+              inj.injury_type,
+              (injuryTypes.get(inj.injury_type) || 0) + 1,
+            );
           });
 
           historyMap.set(athlete.id, {
             athleteId: athlete.id,
             totalInjuries: allInjuries.length,
-            injuriesByType: Array.from(injuryTypes.entries()).map(([type, count]) => ({
-              type,
-              count,
-              avgRecoveryDays: 14,
-            })),
-            recurrentInjuries: this.findRecurrentInjuries(Array.from(injuryTypes.entries())),
-            lastInjuryDate: allInjuries.length > 0 ? new Date(allInjuries[0].injury_date) : null,
-            daysSinceLastInjury: allInjuries.length > 0
-              ? Math.floor((Date.now() - new Date(allInjuries[0].injury_date).getTime()) / 86400000)
-              : null,
+            injuriesByType: Array.from(injuryTypes.entries()).map(
+              ([type, count]) => ({
+                type,
+                count,
+                avgRecoveryDays: 14,
+              }),
+            ),
+            recurrentInjuries: this.findRecurrentInjuries(
+              Array.from(injuryTypes.entries()),
+            ),
+            lastInjuryDate:
+              allInjuries.length > 0
+                ? new Date(allInjuries[0].injury_date)
+                : null,
+            daysSinceLastInjury:
+              allInjuries.length > 0
+                ? Math.floor(
+                    (Date.now() -
+                      new Date(allInjuries[0].injury_date).getTime()) /
+                      86400000,
+                  )
+                : null,
           });
         }
       } catch {
@@ -1178,7 +1332,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   }
 
   private findRecurrentInjuries(types: [string, number][]): string[] {
-    return types.filter(([, count]) => count > 1).map(([type, count]) => `${type} (${count}x)`);
+    return types
+      .filter(([, count]) => count > 1)
+      .map(([type, count]) => `${type} (${count}x)`);
   }
 
   getAthleteName(id: string): string {
@@ -1187,7 +1343,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getAthleteRiskLabel(id: string): string {
     const risk = this.riskIndicators().find((r) => r.athleteId === id);
-    return risk ? risk.acwrRisk.charAt(0).toUpperCase() + risk.acwrRisk.slice(1) : "N/A";
+    return risk
+      ? risk.acwrRisk.charAt(0).toUpperCase() + risk.acwrRisk.slice(1)
+      : "N/A";
   }
 
   getAthleteRiskSeverity(
@@ -1212,7 +1370,10 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   getClearanceSeverity(
     status: string,
   ): "success" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "warn" | "danger" | "secondary"> = {
+    const severities: Record<
+      string,
+      "success" | "warn" | "danger" | "secondary"
+    > = {
       full: "success",
       limited: "warn",
       not_cleared: "danger",
@@ -1235,7 +1396,10 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   }
 
   getRiskSeverity(risk: string): "success" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "warn" | "danger" | "secondary"> = {
+    const severities: Record<
+      string,
+      "success" | "warn" | "danger" | "secondary"
+    > = {
       low: "success",
       moderate: "warn",
       high: "danger",
@@ -1246,7 +1410,10 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   getRtpStatusSeverity(
     status: string,
   ): "success" | "warn" | "danger" | "secondary" {
-    const severities: Record<string, "success" | "warn" | "danger" | "secondary"> = {
+    const severities: Record<
+      string,
+      "success" | "warn" | "danger" | "secondary"
+    > = {
       full_clearance: "success",
       limited_return: "warn",
       not_ready: "danger",
@@ -1267,7 +1434,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   }
 
   generateAthleteReport(athlete: AthletePhysioData): void {
-    this.toast.success(`Generating physiotherapy report for ${athlete.name}...`);
+    this.toast.success(
+      `Generating physiotherapy report for ${athlete.name}...`,
+    );
     this.showAthleteDialog.set(false);
   }
 

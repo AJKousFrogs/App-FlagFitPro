@@ -93,7 +93,7 @@ export interface AriaTab {
       </div>
     </div>
   `,
-  styleUrl: './aria-tabs.component.scss',
+  styleUrl: "./aria-tabs.component.scss",
 })
 export class AriaTabsComponent {
   private elementRef = inject(ElementRef);

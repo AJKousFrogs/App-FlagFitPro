@@ -10,11 +10,7 @@
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { firstValueFrom } from "rxjs";
-import {
-  NutritionService,
-  USDAFood,
-  Meal,
-} from "./nutrition.service";
+import { NutritionService, USDAFood, Meal } from "./nutrition.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";

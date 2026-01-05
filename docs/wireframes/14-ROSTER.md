@@ -140,78 +140,78 @@
 
 ## Player Card Metrics
 
-| Metric | Source | Display |
-|--------|--------|---------|
-| ACWR | `PlayerMetricsService` | Color-coded badge |
-| Risk Level | Calculated from ACWR | Low/Moderate/High |
-| Readiness % | From wellness check-ins | Percentage |
-| Status | Manual | Active/Injured/Inactive |
+| Metric      | Source                  | Display                 |
+| ----------- | ----------------------- | ----------------------- |
+| ACWR        | `PlayerMetricsService`  | Color-coded badge       |
+| Risk Level  | Calculated from ACWR    | Low/Moderate/High       |
+| Readiness % | From wellness check-ins | Percentage              |
+| Status      | Manual                  | Active/Injured/Inactive |
 
 ---
 
 ## Position Options
 
-| Position | Full Name |
-|----------|-----------|
-| QB | Quarterback |
-| WR | Wide Receiver |
-| DB | Defensive Back |
-| Rusher | Defensive Rusher |
-| Center | Offensive Center |
+| Position | Full Name        |
+| -------- | ---------------- |
+| QB       | Quarterback      |
+| WR       | Wide Receiver    |
+| DB       | Defensive Back   |
+| Rusher   | Defensive Rusher |
+| Center   | Offensive Center |
 
 ---
 
 ## Role Options
 
-| Role | Description |
-|------|-------------|
-| Player | Team player |
-| Coach | Head coach |
+| Role            | Description     |
+| --------------- | --------------- |
+| Player          | Team player     |
+| Coach           | Head coach      |
 | Assistant Coach | Assistant coach |
-| Team Manager | Administrative |
+| Team Manager    | Administrative  |
 
 ---
 
 ## Status Options
 
-| Status | Color |
-|--------|-------|
-| Active | Green |
-| Injured | Red |
-| Inactive | Gray |
+| Status   | Color |
+| -------- | ----- |
+| Active   | Green |
+| Injured  | Red   |
+| Inactive | Gray  |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Team overview stats | ✅ |
-| Position distribution | ✅ |
-| Search players | ✅ |
-| Filter by position | ✅ |
-| Filter by status | ✅ |
-| Player cards grid | ✅ |
-| Staff cards section | ✅ |
-| ACWR badge per player | ✅ |
-| Risk level display | ✅ |
-| Readiness percentage | ✅ |
-| Add player dialog | ✅ |
-| Edit player | ✅ |
-| Delete player (with confirm) | ✅ |
-| Invite player (email) | ✅ |
-| Avatar display | ✅ |
-| Jersey number display | ✅ |
-| Loading state | ✅ |
-| Error state | ✅ |
-| Empty state | ✅ |
+| Feature                      | Status |
+| ---------------------------- | ------ |
+| Team overview stats          | ✅     |
+| Position distribution        | ✅     |
+| Search players               | ✅     |
+| Filter by position           | ✅     |
+| Filter by status             | ✅     |
+| Player cards grid            | ✅     |
+| Staff cards section          | ✅     |
+| ACWR badge per player        | ✅     |
+| Risk level display           | ✅     |
+| Readiness percentage         | ✅     |
+| Add player dialog            | ✅     |
+| Edit player                  | ✅     |
+| Delete player (with confirm) | ✅     |
+| Invite player (email)        | ✅     |
+| Avatar display               | ✅     |
+| Jersey number display        | ✅     |
+| Loading state                | ✅     |
+| Error state                  | ✅     |
+| Empty state                  | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Players | `RosterService` | `users`, `team_members` |
-| Metrics | `PlayerMetricsService` | `wellness_checkins`, `training_sessions` |
-| Invitations | `RosterService` | `team_invitations` |
+| Data        | Service                | Table                                    |
+| ----------- | ---------------------- | ---------------------------------------- |
+| Players     | `RosterService`        | `users`, `team_members`                  |
+| Metrics     | `PlayerMetricsService` | `wellness_checkins`, `training_sessions` |
+| Invitations | `RosterService`        | `team_invitations`                       |

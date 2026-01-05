@@ -104,21 +104,47 @@
   }
 
   // Gap variants
-  .grid-gap-1 { gap: var(--space-1); }
-  .grid-gap-2 { gap: var(--space-2); }
-  .grid-gap-3 { gap: var(--space-3); }
-  .grid-gap-4 { gap: var(--space-4); }
-  .grid-gap-5 { gap: var(--space-5); }
-  .grid-gap-6 { gap: var(--space-6); }
-  .grid-gap-8 { gap: var(--space-8); }
+  .grid-gap-1 {
+    gap: var(--space-1);
+  }
+  .grid-gap-2 {
+    gap: var(--space-2);
+  }
+  .grid-gap-3 {
+    gap: var(--space-3);
+  }
+  .grid-gap-4 {
+    gap: var(--space-4);
+  }
+  .grid-gap-5 {
+    gap: var(--space-5);
+  }
+  .grid-gap-6 {
+    gap: var(--space-6);
+  }
+  .grid-gap-8 {
+    gap: var(--space-8);
+  }
 
   // Column templates
-  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-  .grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
-  .grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .grid-cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .grid-cols-12 {
+    grid-template-columns: repeat(12, 1fr);
+  }
 
   // Auto-fit grid (responsive)
   .grid-auto-fit {
@@ -144,17 +170,35 @@
   }
 
   // Bento spans
-  .bento-span-1 { grid-column: span 1; }
-  .bento-span-2 { grid-column: span 2; }
-  .bento-span-3 { grid-column: span 3; }
-  .bento-span-4 { grid-column: span 4; }
-  .bento-span-6 { grid-column: span 6; }
-  .bento-span-8 { grid-column: span 8; }
-  .bento-span-12 { grid-column: span 12; }
+  .bento-span-1 {
+    grid-column: span 1;
+  }
+  .bento-span-2 {
+    grid-column: span 2;
+  }
+  .bento-span-3 {
+    grid-column: span 3;
+  }
+  .bento-span-4 {
+    grid-column: span 4;
+  }
+  .bento-span-6 {
+    grid-column: span 6;
+  }
+  .bento-span-8 {
+    grid-column: span 8;
+  }
+  .bento-span-12 {
+    grid-column: span 12;
+  }
 
   // Bento row spans
-  .bento-row-2 { grid-row: span 2; }
-  .bento-row-3 { grid-row: span 3; }
+  .bento-row-2 {
+    grid-row: span 2;
+  }
+  .bento-row-3 {
+    grid-row: span 3;
+  }
 
   // Responsive bento (Decision 35)
   @media (max-width: 1024px) {
@@ -211,26 +255,60 @@
   }
 
   // Alignment
-  .items-start { align-items: flex-start; }
-  .items-center { align-items: center; }
-  .items-end { align-items: flex-end; }
-  .items-stretch { align-items: stretch; }
-  .items-baseline { align-items: baseline; }
+  .items-start {
+    align-items: flex-start;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .items-end {
+    align-items: flex-end;
+  }
+  .items-stretch {
+    align-items: stretch;
+  }
+  .items-baseline {
+    align-items: baseline;
+  }
 
-  .justify-start { justify-content: flex-start; }
-  .justify-center { justify-content: center; }
-  .justify-end { justify-content: flex-end; }
-  .justify-between { justify-content: space-between; }
-  .justify-around { justify-content: space-around; }
+  .justify-start {
+    justify-content: flex-start;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .justify-end {
+    justify-content: flex-end;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-around {
+    justify-content: space-around;
+  }
 
   // Gap (shared with grid)
-  .gap-1 { gap: var(--space-1); }
-  .gap-2 { gap: var(--space-2); }
-  .gap-3 { gap: var(--space-3); }
-  .gap-4 { gap: var(--space-4); }
-  .gap-5 { gap: var(--space-5); }
-  .gap-6 { gap: var(--space-6); }
-  .gap-8 { gap: var(--space-8); }
+  .gap-1 {
+    gap: var(--space-1);
+  }
+  .gap-2 {
+    gap: var(--space-2);
+  }
+  .gap-3 {
+    gap: var(--space-3);
+  }
+  .gap-4 {
+    gap: var(--space-4);
+  }
+  .gap-5 {
+    gap: var(--space-5);
+  }
+  .gap-6 {
+    gap: var(--space-6);
+  }
+  .gap-8 {
+    gap: var(--space-8);
+  }
 
   // ============================================
   // STACK (Vertical spacing pattern)
@@ -242,10 +320,18 @@
     gap: var(--space-4);
   }
 
-  .stack-sm { gap: var(--space-2); }
-  .stack-md { gap: var(--space-4); }
-  .stack-lg { gap: var(--space-6); }
-  .stack-xl { gap: var(--space-8); }
+  .stack-sm {
+    gap: var(--space-2);
+  }
+  .stack-md {
+    gap: var(--space-4);
+  }
+  .stack-lg {
+    gap: var(--space-6);
+  }
+  .stack-xl {
+    gap: var(--space-8);
+  }
 
   // ============================================
   // CLUSTER (Horizontal wrapping pattern)
@@ -258,8 +344,12 @@
     align-items: center;
   }
 
-  .cluster-sm { gap: var(--space-2); }
-  .cluster-lg { gap: var(--space-4); }
+  .cluster-sm {
+    gap: var(--space-2);
+  }
+  .cluster-lg {
+    gap: var(--space-4);
+  }
 
   // ============================================
   // PAGE HEADER PATTERN (Decision 29)

@@ -18,7 +18,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  background: linear-gradient(135deg, var(--green-100) 0%, var(--green-50) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--green-100) 0%,
+    var(--green-50) 100%
+  );
   padding: var(--space-2);
   border-radius: var(--radius-md);
   margin: calc(-1 * var(--space-4));
@@ -475,7 +479,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  background: linear-gradient(135deg, var(--primitive-blue-600) 0%, var(--primitive-blue-800) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-blue-600) 0%,
+    var(--primitive-blue-800) 100%
+  );
   padding: var(--space-3);
   border-radius: var(--radius-md);
   color: white;

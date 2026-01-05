@@ -44,7 +44,7 @@ import { ToastService } from "../../../core/services/toast.service";
     TagModule,
     TooltipModule,
     BadgeModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -208,13 +208,17 @@ import { ToastService } from "../../../core/services/toast.service";
 
         <!-- Actions -->
         <div class="widget-actions">
-          <app-button iconLeft="pi-apple" routerLink="/game/nutrition">Nutrition Plan</app-button>
-          <app-button iconLeft="pi-stop" (clicked)="confirmEndTournament()">End Tournament</app-button>
+          <app-button iconLeft="pi-apple" routerLink="/game/nutrition"
+            >Nutrition Plan</app-button
+          >
+          <app-button iconLeft="pi-stop" (clicked)="confirmEndTournament()"
+            >End Tournament</app-button
+          >
         </div>
       </div>
     }
   `,
-  styleUrl: './tournament-mode-widget.component.scss',
+  styleUrl: "./tournament-mode-widget.component.scss",
 })
 export class TournamentModeWidgetComponent {
   private tournamentService = inject(TournamentModeService);

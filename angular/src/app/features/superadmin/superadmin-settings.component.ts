@@ -29,7 +29,7 @@ interface SuperadminUser {
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -91,7 +91,9 @@ interface SuperadminUser {
                 <i class="pi pi-users"></i>
                 Manage Superadmins
               </h3>
-              <app-button iconLeft="pi-plus" (clicked)="showAddModal = true">Add Superadmin</app-button>
+              <app-button iconLeft="pi-plus" (clicked)="showAddModal = true"
+                >Add Superadmin</app-button
+              >
             </div>
           </ng-template>
 
@@ -126,7 +128,12 @@ interface SuperadminUser {
                   <td>{{ admin.notes || "-" }}</td>
                   <td>
                     @if (admin.email !== "aljosa@ljubljanafrogs.si") {
-                      <app-button variant="text" size="sm" (clicked)="removeSuperadmin(admin.user_id)">Remove</app-button>
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        (clicked)="removeSuperadmin(admin.user_id)"
+                        >Remove</app-button
+                      >
                     } @else {
                       <span class="founder-badge">Founder</span>
                     }
@@ -285,15 +292,22 @@ interface SuperadminUser {
               </div>
             </div>
             <div class="modal-footer">
-              <app-button variant="text" (clicked)="showAddModal = false">Cancel</app-button>
-              <app-button iconLeft="pi-plus" [disabled]="!newAdminEmail.trim()" (clicked)="addNewSuperadmin()">Add Superadmin</app-button>
+              <app-button variant="text" (clicked)="showAddModal = false"
+                >Cancel</app-button
+              >
+              <app-button
+                iconLeft="pi-plus"
+                [disabled]="!newAdminEmail.trim()"
+                (clicked)="addNewSuperadmin()"
+                >Add Superadmin</app-button
+              >
             </div>
           </div>
         </div>
       }
     </app-main-layout>
   `,
-  styleUrl: './superadmin-settings.component.scss',
+  styleUrl: "./superadmin-settings.component.scss",
 })
 export class SuperadminSettingsComponent implements OnInit {
   private superadminService = inject(SuperadminService);

@@ -635,7 +635,11 @@
 }
 
 .danger-icon {
-  background: linear-gradient(135deg, var(--color-status-error) 0%, var(--primitive-error-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-status-error) 0%,
+    var(--primitive-error-600) 100%
+  );
   box-shadow: var(--hover-shadow-md);
 }
 
@@ -738,7 +742,9 @@
   height: 10px;
   border-radius: var(--radius-full);
   background: var(--color-border-primary);
-  transition: background-color var(--transition-base), width var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    width var(--transition-base);
 }
 
 .step-dot.active {
@@ -782,7 +788,9 @@
   background: var(--surface-secondary);
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
   cursor: pointer;
 }
 
@@ -1115,7 +1123,10 @@
 }
 
 .theme-option.active {
-  background: rgba(var(--ds-primary-green-rgb), 0.08); /* Subtle tint instead of solid */
+  background: rgba(
+    var(--ds-primary-green-rgb),
+    0.08
+  ); /* Subtle tint instead of solid */
   border: 2px solid var(--ds-primary-green);
   border-radius: 8px; /* Explicit 8px - matches design system button radius */
   color: var(--ds-primary-green);
@@ -1298,7 +1309,9 @@
  * Owner: @design-system
  */
 .p-field {
-  margin-bottom: var(--space-5); /* Increased from space-4 for better breathing room */
+  margin-bottom: var(
+    --space-5
+  ); /* Increased from space-4 for better breathing room */
 }
 
 .p-field .p-label {
@@ -1459,7 +1472,9 @@
   border-radius: 8px;
   font-size: 0.9375rem; /* 15px */
   background: var(--surface-primary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .password-input .p-password-input:focus,

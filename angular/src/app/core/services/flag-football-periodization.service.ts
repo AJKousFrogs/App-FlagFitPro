@@ -1407,7 +1407,9 @@ export class FlagFootballPeriodizationService {
   /**
    * Generate sport-specific session
    */
-  private generateSportSpecificSession(_phase: PhaseConfig): ExerciseTemplate[] {
+  private generateSportSpecificSession(
+    _phase: PhaseConfig,
+  ): ExerciseTemplate[] {
     return [
       {
         name: "Reactive Agility Drill",

@@ -13,8 +13,8 @@
  * - Decision 19: Specific transitions
  */
 
-@use 'styles/variables' as *;
-@use 'styles/mixins' as *;
+@use "styles/variables" as *;
+@use "styles/mixins" as *;
 
 // =============================================
 // MAIN CONTAINER
@@ -356,7 +356,7 @@
 
   // Arrow pointing down
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 100%;
     left: 50%;

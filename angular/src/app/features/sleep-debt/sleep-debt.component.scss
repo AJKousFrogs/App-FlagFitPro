@@ -1,4 +1,3 @@
-
 .sleep-debt-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -168,11 +167,19 @@
       margin-bottom: var(--space-2);
 
       &.danger .p-progressbar-value {
-        background: linear-gradient(90deg, var(--primitive-error-500), var(--primitive-error-600));
+        background: linear-gradient(
+          90deg,
+          var(--primitive-error-500),
+          var(--primitive-error-600)
+        );
       }
 
       &.warn .p-progressbar-value {
-        background: linear-gradient(90deg, var(--primitive-orange-500), var(--primitive-orange-600));
+        background: linear-gradient(
+          90deg,
+          var(--primitive-orange-500),
+          var(--primitive-orange-600)
+        );
       }
     }
 

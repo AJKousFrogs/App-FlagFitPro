@@ -16,7 +16,13 @@ async function verifyPhysioAccess(userId) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", ["physiotherapist", "athletic_trainer", "coach", "admin", "staff"])
+    .in("role", [
+      "physiotherapist",
+      "athletic_trainer",
+      "coach",
+      "admin",
+      "staff",
+    ])
     .limit(1)
     .single();
 
@@ -33,7 +39,8 @@ async function verifyPhysioAccess(userId) {
 async function getAthletePhysioOverview(teamId) {
   const { data: members } = await supabaseAdmin
     .from("team_members")
-    .select(`
+    .select(
+      `
       user_id,
       users:user_id (
         id,
@@ -41,7 +48,8 @@ async function getAthletePhysioOverview(teamId) {
         position,
         avatar_url
       )
-    `)
+    `,
+    )
     .eq("team_id", teamId)
     .eq("role", "player");
 
@@ -50,7 +58,9 @@ async function getAthletePhysioOverview(teamId) {
   for (const member of members || []) {
     const userId = member.user_id;
     const user = member.users;
-    if (!user) {continue;}
+    if (!user) {
+      continue;
+    }
 
     // Get active injuries
     const { data: injuries } = await supabaseAdmin
@@ -77,7 +87,10 @@ async function getAthletePhysioOverview(teamId) {
       const activeInjury = injuries[0];
       if (activeInjury.recovery_status === "active") {
         clearanceStatus = "not_cleared";
-      } else if (activeInjury.recovery_status === "recovering" || activeInjury.recovery_status === "rehab") {
+      } else if (
+        activeInjury.recovery_status === "recovering" ||
+        activeInjury.recovery_status === "rehab"
+      ) {
         clearanceStatus = "limited";
       }
       restrictions = activeInjury.activity_restrictions || [];
@@ -90,14 +103,16 @@ async function getAthletePhysioOverview(teamId) {
       avatarUrl: user.avatar_url,
       clearanceStatus,
       activeInjuries: injuries?.length || 0,
-      currentInjury: injuries?.[0] ? {
-        type: injuries[0].injury_type,
-        location: injuries[0].injury_location,
-        grade: injuries[0].injury_grade,
-        phase: injuries[0].current_phase,
-        rtpProgress: injuries[0].rtp_progress || 0,
-        expectedReturn: injuries[0].expected_return_date,
-      } : null,
+      currentInjury: injuries?.[0]
+        ? {
+            type: injuries[0].injury_type,
+            location: injuries[0].injury_location,
+            grade: injuries[0].injury_grade,
+            phase: injuries[0].current_phase,
+            rtpProgress: injuries[0].rtp_progress || 0,
+            expectedReturn: injuries[0].expected_return_date,
+          }
+        : null,
       restrictions,
       acwr: loadData?.acwr || null,
       riskLevel: calculateRiskLevel(loadData?.acwr, injuries),
@@ -126,8 +141,8 @@ async function getAthleteInjuryDetails(athleteId) {
     .order("injury_date", { ascending: false });
 
   // Get rehab protocol if active injury
-  const activeInjury = injuries?.find((i) => 
-    ["active", "recovering", "rehab"].includes(i.recovery_status)
+  const activeInjury = injuries?.find((i) =>
+    ["active", "recovering", "rehab"].includes(i.recovery_status),
   );
 
   let rehabProtocol = null;
@@ -151,10 +166,12 @@ async function getAthleteInjuryDetails(athleteId) {
     .limit(28);
 
   return {
-    activeInjuries: injuries?.filter((i) => 
-      ["active", "recovering", "rehab"].includes(i.recovery_status)
-    ) || [],
-    injuryHistory: injuries?.filter((i) => i.recovery_status === "resolved") || [],
+    activeInjuries:
+      injuries?.filter((i) =>
+        ["active", "recovering", "rehab"].includes(i.recovery_status),
+      ) || [],
+    injuryHistory:
+      injuries?.filter((i) => i.recovery_status === "resolved") || [],
     tracking: tracking || [],
     rehabProtocol,
     loadHistory: loadHistory || [],
@@ -199,7 +216,10 @@ async function getRTPAthletes(teamId) {
         rtpProgress: injury.rtp_progress || 0,
         expectedReturn: injury.expected_return_date,
         daysRemaining: injury.expected_return_date
-          ? Math.ceil((new Date(injury.expected_return_date) - new Date()) / (1000 * 60 * 60 * 24))
+          ? Math.ceil(
+              (new Date(injury.expected_return_date) - new Date()) /
+                (1000 * 60 * 60 * 24),
+            )
           : null,
       });
     }
@@ -224,7 +244,9 @@ async function updateRTPProgress(injuryId, updates) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -234,23 +256,34 @@ async function updateRTPProgress(injuryId, updates) {
 async function getTeamInjurySummary(teamId) {
   const athletes = await getAthletePhysioOverview(teamId);
 
-  const cleared = athletes.filter((a) => a.clearanceStatus === "cleared").length;
-  const limited = athletes.filter((a) => a.clearanceStatus === "limited").length;
-  const notCleared = athletes.filter((a) => a.clearanceStatus === "not_cleared").length;
+  const cleared = athletes.filter(
+    (a) => a.clearanceStatus === "cleared",
+  ).length;
+  const limited = athletes.filter(
+    (a) => a.clearanceStatus === "limited",
+  ).length;
+  const notCleared = athletes.filter(
+    (a) => a.clearanceStatus === "not_cleared",
+  ).length;
 
   // Count injuries by type
   const { data: allInjuries } = await supabaseAdmin
     .from("athlete_injuries")
     .select("injury_type, injury_location, user_id")
-    .in("user_id", athletes.map((a) => a.id))
+    .in(
+      "user_id",
+      athletes.map((a) => a.id),
+    )
     .in("recovery_status", ["active", "recovering", "rehab"]);
 
   const injuryTypes = {};
   const injuryLocations = {};
 
   for (const injury of allInjuries || []) {
-    injuryTypes[injury.injury_type] = (injuryTypes[injury.injury_type] || 0) + 1;
-    injuryLocations[injury.injury_location] = (injuryLocations[injury.injury_location] || 0) + 1;
+    injuryTypes[injury.injury_type] =
+      (injuryTypes[injury.injury_type] || 0) + 1;
+    injuryLocations[injury.injury_location] =
+      (injuryLocations[injury.injury_location] || 0) + 1;
   }
 
   return {
@@ -291,24 +324,34 @@ async function logInjury(userId, injuryData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
 // Helper functions
 function calculateRiskLevel(acwr, injuries) {
-  if (!acwr) {return "unknown";}
+  if (!acwr) {
+    return "unknown";
+  }
 
   // High risk if ACWR > 1.5 or < 0.8
-  if (acwr > 1.5 || acwr < 0.8) {return "high";}
+  if (acwr > 1.5 || acwr < 0.8) {
+    return "high";
+  }
 
   // Medium risk if recovering from injury
-  if (injuries?.some((i) => ["recovering", "rehab"].includes(i.recovery_status))) {
+  if (
+    injuries?.some((i) => ["recovering", "rehab"].includes(i.recovery_status))
+  ) {
     return "medium";
   }
 
   // Medium risk if ACWR between 1.3-1.5
-  if (acwr > 1.3) {return "medium";}
+  if (acwr > 1.3) {
+    return "medium";
+  }
 
   return "low";
 }
@@ -323,13 +366,22 @@ function calculateRiskIndicators(loadHistory, injuries) {
 
   if (loadHistory && loadHistory.length > 0) {
     const latestAcwr = loadHistory[0]?.acwr;
-    if (latestAcwr > 1.5) {indicators.acwrRisk = "high";}
-    else if (latestAcwr > 1.3) {indicators.acwrRisk = "medium";}
+    if (latestAcwr > 1.5) {
+      indicators.acwrRisk = "high";
+    } else if (latestAcwr > 1.3) {
+      indicators.acwrRisk = "medium";
+    }
 
     // Check for load spike (>10% increase in last 7 days)
     if (loadHistory.length >= 7) {
-      const recentAvg = loadHistory.slice(0, 7).reduce((sum, d) => sum + (d.acute_load || 0), 0) / 7;
-      const previousAvg = loadHistory.slice(7, 14).reduce((sum, d) => sum + (d.acute_load || 0), 0) / 
+      const recentAvg =
+        loadHistory
+          .slice(0, 7)
+          .reduce((sum, d) => sum + (d.acute_load || 0), 0) / 7;
+      const previousAvg =
+        loadHistory
+          .slice(7, 14)
+          .reduce((sum, d) => sum + (d.acute_load || 0), 0) /
         Math.min(7, loadHistory.length - 7);
       if (previousAvg > 0 && (recentAvg - previousAvg) / previousAvg > 0.1) {
         indicators.loadSpike = true;
@@ -342,12 +394,13 @@ function calculateRiskIndicators(loadHistory, injuries) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     indicators.recentInjury = injuries.some(
-      (i) => new Date(i.injury_date) > thirtyDaysAgo
+      (i) => new Date(i.injury_date) > thirtyDaysAgo,
     );
 
     // Recurrence risk - same injury type occurred before
     const injuryTypes = injuries.map((i) => i.injury_type);
-    indicators.recurrenceRisk = injuryTypes.length !== new Set(injuryTypes).size;
+    indicators.recurrenceRisk =
+      injuryTypes.length !== new Set(injuryTypes).size;
   }
 
   return indicators;
@@ -356,19 +409,28 @@ function calculateRiskIndicators(loadHistory, injuries) {
 // Main handler
 async function handler(event) {
   return baseHandler(event, async (event, userId) => {
-    const path = event.path.replace("/.netlify/functions/staff-physiotherapist", "");
+    const path = event.path.replace(
+      "/.netlify/functions/staff-physiotherapist",
+      "",
+    );
     const method = event.httpMethod;
 
     // Verify physiotherapist access
     const access = await verifyPhysioAccess(userId);
     if (!access) {
-      return createErrorResponse(403, "Access denied. Physiotherapist role required.");
+      return createErrorResponse(
+        403,
+        "Access denied. Physiotherapist role required.",
+      );
     }
 
     const teamId = access.team_id;
 
     // GET /athletes - Get all athletes with physio status
-    if (method === "GET" && (path === "" || path === "/" || path === "/athletes")) {
+    if (
+      method === "GET" &&
+      (path === "" || path === "/" || path === "/athletes")
+    ) {
       const athletes = await getAthletePhysioOverview(teamId);
       return createSuccessResponse({ athletes });
     }
@@ -404,7 +466,10 @@ async function handler(event) {
     if (method === "POST" && path === "/injuries") {
       const body = JSON.parse(event.body || "{}");
       if (!body.userId || !body.type || !body.location) {
-        return createErrorResponse(400, "Missing required fields: userId, type, location");
+        return createErrorResponse(
+          400,
+          "Missing required fields: userId, type, location",
+        );
       }
       const injury = await logInjury(body.userId, body);
       return createSuccessResponse({ injury });

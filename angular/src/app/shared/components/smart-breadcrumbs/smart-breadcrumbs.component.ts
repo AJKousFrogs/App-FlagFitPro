@@ -54,7 +54,7 @@ import { ContextService } from "../../../core/services/context.service";
       </nav>
     }
   `,
-  styleUrl: './smart-breadcrumbs.component.scss',
+  styleUrl: "./smart-breadcrumbs.component.scss",
 })
 export class SmartBreadcrumbsComponent {
   private router = inject(Router);

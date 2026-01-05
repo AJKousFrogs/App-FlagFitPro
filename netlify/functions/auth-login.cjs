@@ -27,7 +27,6 @@ exports.handler = async (event, context) => {
       // Normalize email
       const normalizedEmail = email.trim().toLowerCase();
 
-
       // Initialize Supabase client
       const supabase = getSupabaseClient();
 

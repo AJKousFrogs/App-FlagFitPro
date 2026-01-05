@@ -28,7 +28,8 @@ const supabase =
 
 // Helper to validate UUID
 const isValidUUID = (uuid) => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 };
 
@@ -202,7 +203,8 @@ app.get("/api/daily-training", async (_req, res) => {
           greeting: `${greeting}!`,
           date: todayStr,
           dayOfWeek,
-          message: "No training program found. Please set up your annual program to see daily training data.",
+          message:
+            "No training program found. Please set up your annual program to see daily training data.",
           trainingStatus: {
             phase: "No Active Program",
             acwr: 0,
@@ -213,7 +215,7 @@ app.get("/api/daily-training", async (_req, res) => {
             sessionType: "No Data",
             isRestDay: false,
             message: "No training data available",
-            schedule: []
+            schedule: [],
           },
         },
       });
@@ -250,7 +252,7 @@ app.get("/api/daily-training", async (_req, res) => {
           type: "Rest",
           focus: ["Complete recovery", "No training scheduled"],
           duration: 0,
-          isRestDay: true
+          isRestDay: true,
         },
         1: {
           type: "Strength",
@@ -296,7 +298,9 @@ app.get("/api/daily-training", async (_req, res) => {
         weekFocus: currentWeek.focus,
         intensity: currentWeek.intensity_level,
         isRestDay: daySession.isRestDay || false,
-        message: daySession.isRestDay ? "Rest Day: Focus on recovery and nutrition." : null,
+        message: daySession.isRestDay
+          ? "Rest Day: Focus on recovery and nutrition."
+          : null,
         schedule:
           daySession.duration > 0
             ? [
@@ -758,7 +762,9 @@ app.get("/training-stats-enhanced", async (req, res) => {
 // Knowledge Search endpoint (legacy without /api/)
 app.get("/knowledge-search", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -911,24 +917,37 @@ app.get("/api/dashboard/overview", async (req, res) => {
 // Additional Dashboard Endpoints for local development
 app.get("/api/dashboard/training-calendar", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
   try {
     const { data: sessions } = await supabase
       .from("training_sessions")
       .select("id, workout_type, session_date, duration_minutes")
       .order("session_date", { ascending: true });
-    res.json({ success: true, data: { calendar: sessions || [], upcomingSessions: sessions || [] } });
+    res.json({
+      success: true,
+      data: { calendar: sessions || [], upcomingSessions: sessions || [] },
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.get("/api/dashboard/olympic-qualification", async (req, res) => {
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { qualification: null, benchmarks: [] } });}
+  if (!supabase) {
+    return res.status(503).json({
+      success: false,
+      error: "Database not configured",
+      data: { qualification: null, benchmarks: [] },
+    });
+  }
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
+    if (!isValidUUID(userId)) {
+      userId = DEMO_USER_ID;
+    }
 
     const { data: qual } = await supabase
       .from("olympic_qualification")
@@ -946,8 +965,11 @@ app.get("/api/dashboard/olympic-qualification", async (req, res) => {
       data: {
         qualification: qual || null,
         benchmarks: benchmarks || [],
-        message: !qual && (!benchmarks || benchmarks.length === 0) ? "No qualification data found" : null
-      }
+        message:
+          !qual && (!benchmarks || benchmarks.length === 0)
+            ? "No qualification data found"
+            : null,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -955,10 +977,18 @@ app.get("/api/dashboard/olympic-qualification", async (req, res) => {
 });
 
 app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { rewards: null, products: [] } });}
+  if (!supabase) {
+    return res.status(503).json({
+      success: false,
+      error: "Database not configured",
+      data: { rewards: null, products: [] },
+    });
+  }
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
+    if (!isValidUUID(userId)) {
+      userId = DEMO_USER_ID;
+    }
 
     const { data: rewards } = await supabase
       .from("sponsor_rewards")
@@ -976,8 +1006,8 @@ app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
       data: {
         rewards: rewards || null,
         products: products || [],
-        message: !rewards ? "No sponsor rewards data found" : null
-      }
+        message: !rewards ? "No sponsor rewards data found" : null,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -985,10 +1015,16 @@ app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
 });
 
 app.get("/api/dashboard/team-chemistry", async (req, res) => {
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: null });}
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: null });
+  }
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
+    if (!isValidUUID(userId)) {
+      userId = DEMO_USER_ID;
+    }
 
     const { data: chem } = await supabase
       .from("team_chemistry")
@@ -999,7 +1035,7 @@ app.get("/api/dashboard/team-chemistry", async (req, res) => {
     res.json({
       success: true,
       data: chem || null,
-      message: !chem ? "No team chemistry data found" : null
+      message: !chem ? "No team chemistry data found" : null,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -1007,7 +1043,11 @@ app.get("/api/dashboard/team-chemistry", async (req, res) => {
 });
 
 app.get("/api/dashboard/daily-quote", async (req, res) => {
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: null });}
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: null });
+  }
   try {
     const { data: quote } = await supabase
       .from("daily_quotes")
@@ -1019,7 +1059,7 @@ app.get("/api/dashboard/daily-quote", async (req, res) => {
     res.json({
       success: true,
       data: quote || null,
-      message: !quote ? "No daily quote available" : null
+      message: !quote ? "No daily quote available" : null,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -1027,25 +1067,49 @@ app.get("/api/dashboard/daily-quote", async (req, res) => {
 });
 
 app.get("/api/dashboard/health", async (req, res) => {
-  res.json({ success: true, status: "healthy", timestamp: new Date().toISOString(), service: "dashboard" });
+  res.json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    service: "dashboard",
+  });
 });
 
 app.get("/api/analytics/health", async (req, res) => {
-  res.json({ success: true, status: "healthy", timestamp: new Date().toISOString(), service: "analytics" });
+  res.json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    service: "analytics",
+  });
 });
 
 app.get("/api/coach/health", async (req, res) => {
-  res.json({ success: true, status: "healthy", timestamp: new Date().toISOString(), service: "coach" });
+  res.json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    service: "coach",
+  });
 });
 
 app.get("/api/community/health", async (req, res) => {
-  res.json({ success: true, status: "healthy", timestamp: new Date().toISOString(), service: "community" });
+  res.json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    service: "community",
+  });
 });
 
 // Dashboard Notifications
 app.get("/api/dashboard/notifications", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: [] });}
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
+  }
 
   // Handle invalid UUIDs for Supabase queries
   if (!isValidUUID(userId)) {
@@ -1060,17 +1124,27 @@ app.get("/api/dashboard/notifications", async (req, res) => {
       .order("created_at", { ascending: false })
       .limit(20);
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     res.json({ success: true, data: data || [] });
   } catch (error) {
     console.error("[Notifications] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load notifications" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to load notifications" });
   }
 });
 
 app.get("/api/dashboard/notifications/count", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { unreadCount: 0 } });}
+  if (!supabase) {
+    return res.status(503).json({
+      success: false,
+      error: "Database not configured",
+      data: { unreadCount: 0 },
+    });
+  }
 
   if (!isValidUUID(userId)) {
     userId = DEMO_USER_ID;
@@ -1083,18 +1157,24 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
       .eq("user_id", userId)
       .eq("is_read", false);
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     res.json({ success: true, data: { unreadCount: count || 0 } });
   } catch (error) {
     console.error("[Notifications Count] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load notification count" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to load notification count" });
   }
 });
 
 // For compatibility with test script
 app.get("/notifications-count", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) {return res.json({ success: true, count: 0 });}
+  if (!supabase) {
+    return res.json({ success: true, count: 0 });
+  }
 
   if (!isValidUUID(userId)) {
     userId = DEMO_USER_ID;
@@ -1107,7 +1187,9 @@ app.get("/notifications-count", async (req, res) => {
       .eq("user_id", userId)
       .eq("is_read", false);
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     res.json({ success: true, count: count || 0 });
   } catch (_error) {
     res.status(500).json({ success: false, error: "Failed" });
@@ -1123,8 +1205,8 @@ app.get("/api/performance/metrics", async (req, res) => {
       agility: 78,
       power: 92,
       endurance: 80,
-      readiness: 88
-    }
+      readiness: 88,
+    },
   });
 });
 
@@ -1135,9 +1217,9 @@ app.get("/api/performance/heatmap", async (req, res) => {
       zones: [
         { name: "Field Left", value: 65 },
         { name: "Field Center", value: 88 },
-        { name: "Field Right", value: 45 }
-      ]
-    }
+        { name: "Field Right", value: 45 },
+      ],
+    },
   });
 });
 
@@ -1145,7 +1227,9 @@ app.get("/api/performance/heatmap", async (req, res) => {
 app.post("/api/training/complete", async (req, res) => {
   const { sessionId, rpe, duration, notes, userId } = req.body;
   const targetUserId = userId || "1";
-  if (!supabase) {return res.json({ success: true });}
+  if (!supabase) {
+    return res.json({ success: true });
+  }
 
   if (!isValidUUID(targetUserId)) {
     // We need a real user ID
@@ -1159,11 +1243,13 @@ app.post("/api/training/complete", async (req, res) => {
         .from("training_sessions")
         .update({
           status: "completed",
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq("id", sessionId);
-      
-      if (sessionError) {console.warn("[Training Complete] Session update error:", sessionError);}
+
+      if (sessionError) {
+        console.warn("[Training Complete] Session update error:", sessionError);
+      }
     }
 
     // 2. Insert into workout_logs
@@ -1171,25 +1257,40 @@ app.post("/api/training/complete", async (req, res) => {
       .from("workout_logs")
       .insert({
         player_id: targetUserId,
-        session_id: sessionId && sessionId !== "demo-session" && isValidUUID(sessionId) ? sessionId : null,
+        session_id:
+          sessionId && sessionId !== "demo-session" && isValidUUID(sessionId)
+            ? sessionId
+            : null,
         completed_at: new Date().toISOString(),
         rpe: rpe || 5,
         duration_minutes: duration || 60,
-        notes: notes || "Completed via API"
+        notes: notes || "Completed via API",
       })
       .select();
 
     if (logError) {
-      if (logError.code === "23503") { // Foreign key violation
-        console.warn("[Training Complete] Foreign key violation, but returning success for compatibility");
-        return res.json({ success: true, message: "Logged (without DB persistence due to user mismatch)" });
+      if (logError.code === "23503") {
+        // Foreign key violation
+        console.warn(
+          "[Training Complete] Foreign key violation, but returning success for compatibility",
+        );
+        return res.json({
+          success: true,
+          message: "Logged (without DB persistence due to user mismatch)",
+        });
       }
       throw logError;
     }
-    res.json({ success: true, message: "Training session marked as complete", data });
+    res.json({
+      success: true,
+      message: "Training session marked as complete",
+      data,
+    });
   } catch (error) {
     console.error("[Training Complete] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to complete training" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to complete training" });
   }
 });
 
@@ -1569,8 +1670,8 @@ app.get("/api/analytics/position-performance", async (req, res) => {
     success: true,
     data: {
       position: "N/A",
-      metrics: []
-    }
+      metrics: [],
+    },
   });
 });
 
@@ -1578,7 +1679,7 @@ app.get("/api/analytics/position-performance", async (req, res) => {
 app.get("/api/analytics/speed-development", async (req, res) => {
   res.json({
     success: true,
-    data: []
+    data: [],
   });
 });
 
@@ -1862,7 +1963,9 @@ app.get("/api/player-stats", async (req, res) => {
 // Games endpoint
 app.get("/api/games", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -1890,7 +1993,9 @@ app.get("/api/games", async (req, res) => {
 // Tournaments endpoints - REAL DATA
 app.get("/api/tournaments", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -1963,7 +2068,9 @@ app.post("/api/tournaments/createGame", async (req, res) => {
 // Knowledge Base Search - REAL DATA
 app.get("/api/knowledge-search", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2000,7 +2107,9 @@ app.get("/api/knowledge-search", async (req, res) => {
 // Community endpoints - REAL DATA
 app.get("/api/community/feed", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2026,7 +2135,9 @@ app.get("/api/community/feed", async (req, res) => {
 
 app.get("/api/community/leaderboard", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2109,19 +2220,23 @@ app.post("/api/community/posts", async (req, res) => {
 // Wellness Check-in endpoint (matches Netlify function: /api/wellness-checkin)
 app.get("/api/wellness-checkin", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
     const userId = req.query.userId || req.headers["x-user-id"];
     const date = req.query.date || new Date().toISOString().split("T")[0];
-    
+
     // Try to get user from auth header if not provided
     let targetUserId = userId;
     if (!targetUserId) {
       const authHeader = req.headers.authorization;
       if (authHeader?.startsWith("Bearer ")) {
-        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+        const {
+          data: { user },
+        } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
         targetUserId = user?.id;
       }
     }
@@ -2151,35 +2266,45 @@ app.get("/api/wellness-checkin", async (req, res) => {
 
 app.post("/api/wellness-checkin", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
     let targetUserId = req.body.userId || req.body.user_id;
-    
+
     // Try to get user from auth header if not provided
     if (!targetUserId) {
       const authHeader = req.headers.authorization;
       if (authHeader?.startsWith("Bearer ")) {
-        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+        const {
+          data: { user },
+        } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
         targetUserId = user?.id;
       }
     }
 
     if (!targetUserId) {
-      return res.status(401).json({ success: false, error: "User not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, error: "User not authenticated" });
     }
 
-    const checkinDate = req.body.checkin_date || new Date().toISOString().split("T")[0];
-    
+    const checkinDate =
+      req.body.checkin_date || new Date().toISOString().split("T")[0];
+
     const { data, error } = await supabase
       .from("daily_wellness_checkin")
-      .upsert({
-        user_id: targetUserId,
-        checkin_date: checkinDate,
-        ...req.body,
-        updated_at: new Date().toISOString()
-      }, { onConflict: "user_id,checkin_date" })
+      .upsert(
+        {
+          user_id: targetUserId,
+          checkin_date: checkinDate,
+          ...req.body,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,checkin_date" },
+      )
       .select()
       .single();
 
@@ -2198,7 +2323,9 @@ app.post("/api/wellness-checkin", async (req, res) => {
 // Wellness endpoints - REAL DATA
 app.get("/api/wellness/checkins", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2243,11 +2370,21 @@ app.get("/api/wellness/latest", async (req, res) => {
 
 // Wellness Checkin Fix
 app.post("/api/wellness/checkin", async (req, res) => {
-  if (!supabase) {return res.json({ success: true });}
-  
-  const { userId, sleep_quality, energy_level, muscle_soreness, stress_level, mood, notes } = req.body;
+  if (!supabase) {
+    return res.json({ success: true });
+  }
+
+  const {
+    userId,
+    sleep_quality,
+    energy_level,
+    muscle_soreness,
+    stress_level,
+    mood,
+    notes,
+  } = req.body;
   const targetUserId = userId || "1";
-  
+
   if (!isValidUUID(targetUserId)) {
     // If we can't find a real user, return error
     return res.status(400).json({ success: false, error: "Invalid user ID" });
@@ -2264,12 +2401,13 @@ app.post("/api/wellness/checkin", async (req, res) => {
         muscle_soreness: muscle_soreness || 0,
         stress_level: stress_level || 5,
         mood: mood || 5,
-        notes: notes || "Check-in via API"
+        notes: notes || "Check-in via API",
       })
       .select();
 
     if (error) {
-      if (error.code === "23505") { // Unique violation (already checked in today)
+      if (error.code === "23505") {
+        // Unique violation (already checked in today)
         return res.json({ success: true, message: "Already checked in today" });
       }
       throw error;
@@ -2332,7 +2470,9 @@ app.get("/api/coach/dashboard", async (req, res) => {
 // Roster endpoints - REAL DATA
 app.get("/api/roster", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2356,7 +2496,9 @@ app.get("/api/roster", async (req, res) => {
 // Team endpoints - REAL DATA
 app.get("/api/teams", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2407,7 +2549,9 @@ app.get("/api/teams/:id", async (req, res) => {
 // Coach Games endpoint
 app.get("/api/coach/games", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2427,7 +2571,9 @@ app.get("/api/coach/games", async (req, res) => {
 // Roster Players endpoint
 app.get("/api/roster/players", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -2604,7 +2750,11 @@ app.post("/api/training/suggestions", async (req, res) => {
 
 // Readiness calculation endpoint
 app.all("/api/calc-readiness", async (req, res) => {
-  const { athleteId, user_id, day: _day } = req.method === "POST" ? req.body : req.query;
+  const {
+    athleteId,
+    user_id,
+    day: _day,
+  } = req.method === "POST" ? req.body : req.query;
   const userId = athleteId || user_id;
 
   if (!supabase) {
@@ -2961,7 +3111,11 @@ app.get("/api/trends/game-performance", async (req, res) => {
       }
     }
 
-    if (queryError && queryError.code !== "PGRST116" && queryError.code !== "42P01") {
+    if (
+      queryError &&
+      queryError.code !== "PGRST116" &&
+      queryError.code !== "42P01"
+    ) {
       console.warn("[Trends Game] Query error:", queryError.message);
     }
 
@@ -3034,7 +3188,9 @@ app.get("/api/trends/game-performance", async (req, res) => {
 
 app.get("/api/supplements", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
@@ -3062,8 +3218,7 @@ app.get("/api/supplements", async (req, res) => {
     if (userSupplements && userSupplements.length > 0) {
       const supplements = userSupplements.map((s) => {
         const takenToday = todayLogs?.some(
-          (log) =>
-            log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+          (log) => log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
         );
         return {
           id: s.id,
@@ -3075,17 +3230,23 @@ app.get("/api/supplements", async (req, res) => {
           takenAt: takenToday
             ? todayLogs.find(
                 (log) =>
-                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase()
+                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
               )?.created_at
             : null,
         };
       });
 
-      return res.json({ success: true, data: { supplements, todayLogs: todayLogs || [] } });
+      return res.json({
+        success: true,
+        data: { supplements, todayLogs: todayLogs || [] },
+      });
     }
 
     // Return empty - frontend will use defaults
-    res.json({ success: true, data: { supplements: [], todayLogs: todayLogs || [] } });
+    res.json({
+      success: true,
+      data: { supplements: [], todayLogs: todayLogs || [] },
+    });
   } catch (error) {
     console.error("[Supplements] Error:", error);
     res.json({ success: true, data: { supplements: [], todayLogs: [] } });
@@ -3094,7 +3255,9 @@ app.get("/api/supplements", async (req, res) => {
 
 app.post("/api/supplements/log", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
@@ -3132,7 +3295,9 @@ app.post("/api/supplements/log", async (req, res) => {
 
 app.get("/api/supplements/logs", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
@@ -3166,7 +3331,9 @@ app.get("/api/supplements/logs", async (req, res) => {
 
 app.get("/api/hydration", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
@@ -3181,7 +3348,7 @@ app.get("/api/hydration", async (req, res) => {
       .from("hydration_logs")
       .select("*")
       .eq("user_id", userId)
-      .gte("timestamp", `${today  }T00:00:00`)
+      .gte("timestamp", `${today}T00:00:00`)
       .order("timestamp", { ascending: true });
 
     if (error && error.code !== "42P01") {
@@ -3198,7 +3365,9 @@ app.get("/api/hydration", async (req, res) => {
 
 app.post("/api/hydration/log", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured" });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
   }
 
   try {
@@ -3257,7 +3426,9 @@ app.post("/api/hydration/log", async (req, res) => {
 
 app.get("/api/notifications", async (req, res) => {
   if (!supabase) {
-    return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured", data: [] });
   }
 
   try {
@@ -4044,11 +4215,14 @@ app.get(/^(?!\/api).*$/, (_req, res) => {
     "angular/dist/flagfit-pro/browser/index.html",
   );
 
-  if (fs.existsSync(angularIndexPath) && fs.statSync(angularIndexPath).size > 0) {
+  if (
+    fs.existsSync(angularIndexPath) &&
+    fs.statSync(angularIndexPath).size > 0
+  ) {
     res.send(injectScript(angularIndexPath));
   } else {
     // During development, redirect to Angular dev server
-    res.redirect(`http://localhost:4200${  _req.path}`);
+    res.redirect(`http://localhost:4200${_req.path}`);
   }
 });
 

@@ -54,7 +54,7 @@ interface DailyState {
     DialogModule,
     TooltipModule,
     ProgressBarModule,
-  
+
     ButtonComponent,
   ],
   template: `
@@ -72,8 +72,16 @@ interface DailyState {
 
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="text" (clicked)="onSkip()">Skip for now</app-button>
-            <app-button iconLeft="pi-check" [loading]="saving()" [disabled]="saving()" (clicked)="saveState()">Save Check-in</app-button>
+            <app-button variant="text" (clicked)="onSkip()"
+              >Skip for now</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [loading]="saving()"
+              [disabled]="saving()"
+              (clicked)="saveState()"
+              >Save Check-in</app-button
+            >
           </div>
         </ng-template>
       </p-dialog>
@@ -95,7 +103,13 @@ interface DailyState {
 
         <ng-template pTemplate="footer">
           <div class="card-footer">
-            <app-button iconLeft="pi-check" [loading]="saving()" [disabled]="saving()" (clicked)="saveState()">Save</app-button>
+            <app-button
+              iconLeft="pi-check"
+              [loading]="saving()"
+              [disabled]="saving()"
+              (clicked)="saveState()"
+              >Save</app-button
+            >
           </div>
         </ng-template>
       </p-card>
@@ -234,7 +248,7 @@ interface DailyState {
       </div>
     </ng-template>
   `,
-  styleUrl: './daily-readiness.component.scss',
+  styleUrl: "./daily-readiness.component.scss",
 })
 export class DailyReadinessComponent implements OnInit {
   private supabaseService = inject(SupabaseService);

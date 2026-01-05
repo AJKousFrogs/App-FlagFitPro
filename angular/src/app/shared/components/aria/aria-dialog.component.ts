@@ -93,7 +93,7 @@ import { CommonModule, DOCUMENT } from "@angular/common";
       </div>
     }
   `,
-  styleUrl: './aria-dialog.component.scss',
+  styleUrl: "./aria-dialog.component.scss",
 })
 export class AriaDialogComponent {
   private elementRef = inject(ElementRef);

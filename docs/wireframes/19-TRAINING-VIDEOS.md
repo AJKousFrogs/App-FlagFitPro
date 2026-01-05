@@ -128,62 +128,62 @@
 
 ## Video Categories
 
-| Category | Description |
-|----------|-------------|
-| QB | Quarterback-specific drills |
-| WR | Wide Receiver routes and catching |
-| DB | Defensive Back coverage |
-| Rushers | Pass rush techniques |
-| Recovery | Stretching, foam rolling |
-| Mobility | Flexibility drills |
-| Strength | Gym and bodyweight exercises |
-| Speed | Sprint mechanics and agility |
+| Category | Description                       |
+| -------- | --------------------------------- |
+| QB       | Quarterback-specific drills       |
+| WR       | Wide Receiver routes and catching |
+| DB       | Defensive Back coverage           |
+| Rushers  | Pass rush techniques              |
+| Recovery | Stretching, foam rolling          |
+| Mobility | Flexibility drills                |
+| Strength | Gym and bodyweight exercises      |
+| Speed    | Sprint mechanics and agility      |
 
 ---
 
 ## Video Card Data
 
-| Field | Description |
-|-------|-------------|
-| Thumbnail | Video preview image |
-| Duration | Video length |
-| Title | Video name |
-| Description | Short summary |
-| Category Tag | Position/category |
-| Rating | Star rating (1-5) |
-| Views | View count |
+| Field        | Description         |
+| ------------ | ------------------- |
+| Thumbnail    | Video preview image |
+| Duration     | Video length        |
+| Title        | Video name          |
+| Description  | Short summary       |
+| Category Tag | Position/category   |
+| Rating       | Star rating (1-5)   |
+| Views        | View count          |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Video grid | ✅ |
-| Category filters | ✅ |
-| Search videos | ✅ |
-| Video thumbnails | ✅ |
-| Duration display | ✅ |
-| Rating display | ✅ |
-| View count | ✅ |
-| Watch video (player) | ✅ |
-| Save to favorites | ✅ |
-| Share video | ✅ |
-| Add to training plan | ✅ |
-| Video description | ✅ |
-| Chapters/timestamps | ✅ |
-| Full-width player | ✅ |
-| HD quality toggle | ✅ |
-| Closed captions | ✅ |
-| Fullscreen | ✅ |
-| Playback speed | ✅ |
+| Feature              | Status |
+| -------------------- | ------ |
+| Video grid           | ✅     |
+| Category filters     | ✅     |
+| Search videos        | ✅     |
+| Video thumbnails     | ✅     |
+| Duration display     | ✅     |
+| Rating display       | ✅     |
+| View count           | ✅     |
+| Watch video (player) | ✅     |
+| Save to favorites    | ✅     |
+| Share video          | ✅     |
+| Add to training plan | ✅     |
+| Video description    | ✅     |
+| Chapters/timestamps  | ✅     |
+| Full-width player    | ✅     |
+| HD quality toggle    | ✅     |
+| Closed captions      | ✅     |
+| Fullscreen           | ✅     |
+| Playback speed       | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Source |
-|------|---------|--------|
-| Videos | `ApiService` | `training_videos` table or YouTube API |
-| Favorites | `ApiService` | `user_video_favorites` |
-| Watch history | `ApiService` | `video_watch_history` |
+| Data          | Service      | Source                                 |
+| ------------- | ------------ | -------------------------------------- |
+| Videos        | `ApiService` | `training_videos` table or YouTube API |
+| Favorites     | `ApiService` | `user_video_favorites`                 |
+| Watch history | `ApiService` | `video_watch_history`                  |

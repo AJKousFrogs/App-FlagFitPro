@@ -195,21 +195,43 @@
 }
 
 // Readiness colors
-.readiness-high { color: var(--color-status-success); }
-.readiness-medium { color: var(--color-status-warning); }
-.readiness-low { color: var(--color-status-error); }
+.readiness-high {
+  color: var(--color-status-success);
+}
+.readiness-medium {
+  color: var(--color-status-warning);
+}
+.readiness-low {
+  color: var(--color-status-error);
+}
 
 // ACWR colors
-.acwr-safe { color: var(--color-status-success); }
-.acwr-elevated { color: var(--color-status-warning); }
-.acwr-danger { color: var(--color-status-error); }
-.acwr-low { color: var(--color-status-info); }
+.acwr-safe {
+  color: var(--color-status-success);
+}
+.acwr-elevated {
+  color: var(--color-status-warning);
+}
+.acwr-danger {
+  color: var(--color-status-error);
+}
+.acwr-low {
+  color: var(--color-status-info);
+}
 
 // Performance colors
-.perf-excellent { color: var(--ds-primary-green); }
-.perf-good { color: var(--color-status-success); }
-.perf-average { color: var(--color-status-warning); }
-.perf-poor { color: var(--color-status-error); }
+.perf-excellent {
+  color: var(--ds-primary-green);
+}
+.perf-good {
+  color: var(--color-status-success);
+}
+.perf-average {
+  color: var(--color-status-warning);
+}
+.perf-poor {
+  color: var(--color-status-error);
+}
 
 /* Phase 1: Position Benchmarks */
 .details-benchmarks {
@@ -423,7 +445,9 @@
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .status-option:hover {
@@ -521,7 +545,9 @@
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .invitation-item:hover {

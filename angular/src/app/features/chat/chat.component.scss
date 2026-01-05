@@ -149,7 +149,9 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
   margin-bottom: var(--space-2);
   position: relative;
   overflow: hidden;
@@ -353,7 +355,8 @@
   background: var(--surface-primary);
   border: 1px solid var(--ds-primary-green-subtle);
   color: var(--color-text-primary);
-  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm)
+    var(--radius-lg);
 }
 
 .message-pinned {
@@ -390,7 +393,8 @@
   max-width: 70%;
   background: var(--surface-tertiary);
   padding: var(--space-4);
-  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg)
+    var(--radius-sm);
   box-shadow: var(--shadow-0);
   transition: box-shadow var(--transition-fast);
 }
@@ -494,7 +498,10 @@
   padding: var(--space-2);
   border-radius: var(--radius-lg);
   border: var(--border-2) solid var(--color-border-secondary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .input-row:focus-within {
@@ -528,7 +535,9 @@
   padding-bottom: var(--space-3);
   margin-bottom: var(--space-1);
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .quick-reply-btn {
@@ -761,7 +770,10 @@
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 // .member-card:hover REMOVED - use app-card-shell with state="interactive"

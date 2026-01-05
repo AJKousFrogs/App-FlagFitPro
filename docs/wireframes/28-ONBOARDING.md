@@ -308,11 +308,11 @@ Guides new users through profile setup, training preferences, and initial config
 ```typescript
 function getAgeCategory(birthDate: Date): AgeCategory {
   const age = calculateAge(birthDate);
-  
-  if (age < 18) return 'junior';        // 16-17 years
-  if (age < 25) return 'adult-open';    // 18-24 years
-  if (age < 35) return 'adult-masters'; // 25-34 years
-  return 'adult-seniors';               // 35+ years
+
+  if (age < 18) return "junior"; // 16-17 years
+  if (age < 25) return "adult-open"; // 18-24 years
+  if (age < 35) return "adult-masters"; // 25-34 years
+  return "adult-seniors"; // 35+ years
 }
 
 // Age category affects:
@@ -326,49 +326,49 @@ function getAgeCategory(birthDate: Date): AgeCategory {
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Progress Tracking | Visual progress bar, step indicators |
-| Auto-save Drafts | Save progress, resume where left off |
-| Skip Optional Steps | Medical history is optional |
-| Validation | Required fields marked, inline errors |
-| Back Navigation | Can go back to previous steps |
+| Feature             | Description                           |
+| ------------------- | ------------------------------------- |
+| Progress Tracking   | Visual progress bar, step indicators  |
+| Auto-save Drafts    | Save progress, resume where left off  |
+| Skip Optional Steps | Medical history is optional           |
+| Validation          | Required fields marked, inline errors |
+| Back Navigation     | Can go back to previous steps         |
 
 ---
 
 ## Features to Implement
 
-| Feature | Status | Priority |
-|---------|--------|----------|
-| Progress Bar | ❌ | HIGH |
-| Step 1: Personal Info | ❌ | HIGH |
-| Step 2: Athletic Profile | ❌ | HIGH |
-| Step 3: Physical Profile | ❌ | HIGH |
-| Step 4: Training Preferences | ❌ | MEDIUM |
-| Step 5: Medical History | ❌ | LOW |
-| Step 6: Consent | ❌ | HIGH |
-| Auto-save Drafts | ❌ | LOW |
-| Avatar Upload | ❌ | MEDIUM |
-| Age Calculation | ❌ | HIGH |
-| Team Search | ❌ | LOW |
+| Feature                      | Status | Priority |
+| ---------------------------- | ------ | -------- |
+| Progress Bar                 | ❌     | HIGH     |
+| Step 1: Personal Info        | ❌     | HIGH     |
+| Step 2: Athletic Profile     | ❌     | HIGH     |
+| Step 3: Physical Profile     | ❌     | HIGH     |
+| Step 4: Training Preferences | ❌     | MEDIUM   |
+| Step 5: Medical History      | ❌     | LOW      |
+| Step 6: Consent              | ❌     | HIGH     |
+| Auto-save Drafts             | ❌     | LOW      |
+| Avatar Upload                | ❌     | MEDIUM   |
+| Age Calculation              | ❌     | HIGH     |
+| Team Search                  | ❌     | LOW      |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| User profile | `AuthService` | `profiles` |
-| Team membership | `TeamService` | `team_members` |
-| Settings | `SettingsService` | `user_settings` |
+| Data            | Service           | Table           |
+| --------------- | ----------------- | --------------- |
+| User profile    | `AuthService`     | `profiles`      |
+| Team membership | `TeamService`     | `team_members`  |
+| Settings        | `SettingsService` | `user_settings` |
 
 ---
 
 ## Navigation
 
-| From | To | Trigger |
-|------|-----|---------|
-| Registration | Onboarding | After email verification |
-| Any Step | Previous Step | Back button |
-| Any Step | Next Step | Continue button |
-| Step 6 | Dashboard | "Go to Dashboard" button |
+| From         | To            | Trigger                  |
+| ------------ | ------------- | ------------------------ |
+| Registration | Onboarding    | After email verification |
+| Any Step     | Previous Step | Back button              |
+| Any Step     | Next Step     | Continue button          |
+| Step 6       | Dashboard     | "Go to Dashboard" button |

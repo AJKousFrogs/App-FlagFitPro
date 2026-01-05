@@ -182,7 +182,11 @@
 
     &.tier-platinum {
       border-color: var(--purple-400);
-      background: linear-gradient(135deg, var(--surface-card), var(--purple-50));
+      background: linear-gradient(
+        135deg,
+        var(--surface-card),
+        var(--purple-50)
+      );
     }
 
     .ach-icon {

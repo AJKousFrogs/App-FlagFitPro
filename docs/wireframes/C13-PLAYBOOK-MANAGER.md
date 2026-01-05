@@ -205,53 +205,53 @@ Create, manage, and organize team plays. Design formations, routes, and assignme
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Play Cards | Visual play library |
-| Play Designer | Draw routes and formations |
-| Assignments | Per-position instructions |
-| Formation Library | Pre-built formations |
-| Route Library | Drag-and-drop routes |
-| Memorization Tracking | Monitor player knowledge |
-| Quiz Integration | Test player understanding |
-| Play Stats | Usage and success data |
+| Feature               | Description                |
+| --------------------- | -------------------------- |
+| Play Cards            | Visual play library        |
+| Play Designer         | Draw routes and formations |
+| Assignments           | Per-position instructions  |
+| Formation Library     | Pre-built formations       |
+| Route Library         | Drag-and-drop routes       |
+| Memorization Tracking | Monitor player knowledge   |
+| Quiz Integration      | Test player understanding  |
+| Play Stats            | Usage and success data     |
 
 ---
 
 ## Formation Types
 
-| Formation | Description |
-|-----------|-------------|
-| Trips Right | 3 receivers right |
-| Trips Left | 3 receivers left |
-| Stack | Receivers stacked vertically |
-| Spread | Even distribution |
-| Bunch Right | 3 receivers bunched right |
-| Bunch Left | 3 receivers bunched left |
-| Empty | No backs |
+| Formation   | Description                  |
+| ----------- | ---------------------------- |
+| Trips Right | 3 receivers right            |
+| Trips Left  | 3 receivers left             |
+| Stack       | Receivers stacked vertically |
+| Spread      | Even distribution            |
+| Bunch Right | 3 receivers bunched right    |
+| Bunch Left  | 3 receivers bunched left     |
+| Empty       | No backs                     |
 
 ---
 
 ## Route Types
 
-| Route | Symbol | Description |
-|-------|--------|-------------|
-| Out | → | Break to sideline |
-| Corner | ↗ | Break to corner |
-| Slant | ↓ | Break inside |
-| Mesh | ↘ | Shallow cross |
-| Go | ↑ | Straight upfield |
-| Curl | ↙ | Turn back to QB |
-| Post | ⬆️ | Break to post |
-| Drag | ⬅️ | Shallow drag |
+| Route  | Symbol | Description       |
+| ------ | ------ | ----------------- |
+| Out    | →      | Break to sideline |
+| Corner | ↗      | Break to corner   |
+| Slant  | ↓      | Break inside      |
+| Mesh   | ↘      | Shallow cross     |
+| Go     | ↑      | Straight upfield  |
+| Curl   | ↙      | Turn back to QB   |
+| Post   | ⬆️     | Break to post     |
+| Drag   | ⬅️     | Shallow drag      |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Plays | `PlaybookService` | `playbook_plays` |
-| Assignments | `PlaybookService` | `play_assignments` |
+| Data         | Service           | Table                      |
+| ------------ | ----------------- | -------------------------- |
+| Plays        | `PlaybookService` | `playbook_plays`           |
+| Assignments  | `PlaybookService` | `play_assignments`         |
 | Memorization | `PlaybookService` | `player_playbook_progress` |
-| Quiz scores | `PlaybookService` | `playbook_quiz_scores` |
+| Quiz scores  | `PlaybookService` | `playbook_quiz_scores`     |

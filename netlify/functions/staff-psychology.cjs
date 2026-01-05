@@ -47,7 +47,9 @@ async function getMentalPerformanceLogs(userId, days = 30) {
     .gte("log_date", startDate.toISOString().split("T")[0])
     .order("log_date", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -61,7 +63,9 @@ async function getPsychologicalAssessments(userId) {
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -74,12 +78,16 @@ async function getWellnessTrends(userId, days = 30) {
 
   const { data, error } = await supabaseAdmin
     .from("wellness_entries")
-    .select("date, mood, stress_level, sleep_quality, motivation_level, energy_level")
+    .select(
+      "date, mood, stress_level, sleep_quality, motivation_level, energy_level",
+    )
     .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
     .gte("date", startDate.toISOString().split("T")[0])
     .order("date", { ascending: true });
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -98,7 +106,9 @@ async function generateMentalWellnessReport(userId, options = {}) {
   const avgMetrics = {
     confidence: calculateAverage(mentalLogs, "confidence_level"),
     focus: calculateAverage(mentalLogs, "focus_level"),
-    motivation: calculateAverage(mentalLogs, "motivation_level") || calculateAverage(wellness, "motivation_level"),
+    motivation:
+      calculateAverage(mentalLogs, "motivation_level") ||
+      calculateAverage(wellness, "motivation_level"),
     anxiety: calculateAverage(mentalLogs, "anxiety_level"),
     mood: calculateAverage(wellness, "mood"),
     stress: calculateAverage(wellness, "stress_level"),
@@ -114,7 +124,12 @@ async function generateMentalWellnessReport(userId, options = {}) {
 
   const report = {
     generatedAt: new Date().toISOString(),
-    period: { days, startDate: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString() },
+    period: {
+      days,
+      startDate: new Date(
+        Date.now() - days * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+    },
     averageMetrics: avgMetrics,
     trends: {
       mentalPerformance: mentalLogs.map((l) => ({
@@ -141,12 +156,15 @@ async function generateMentalWellnessReport(userId, options = {}) {
   };
 
   // Save report to database
-  await supabaseAdmin.from("mental_wellness_reports").insert({
-    user_id: userId,
-    report_type: "wellness",
-    report_data: report,
-    generated_at: new Date().toISOString(),
-  }).select();
+  await supabaseAdmin
+    .from("mental_wellness_reports")
+    .insert({
+      user_id: userId,
+      report_type: "wellness",
+      report_data: report,
+      generated_at: new Date().toISOString(),
+    })
+    .select();
 
   return report;
 }
@@ -167,7 +185,8 @@ async function generatePreCompetitionReport(userId, gameDate) {
   const readinessFactors = {
     confidence: latestMental.confidence_level || 5,
     focus: latestMental.focus_level || 5,
-    motivation: latestMental.motivation_level || latestWellness.motivation_level || 5,
+    motivation:
+      latestMental.motivation_level || latestWellness.motivation_level || 5,
     preGameNerves: latestMental.pre_game_nerves || 5,
     sleepQuality: latestWellness.sleep_quality || 5,
     energy: latestWellness.energy_level || 5,
@@ -175,14 +194,20 @@ async function generatePreCompetitionReport(userId, gameDate) {
   };
 
   const readinessScore = Math.round(
-    Object.values(readinessFactors).reduce((sum, v) => sum + v, 0) / Object.keys(readinessFactors).length
+    Object.values(readinessFactors).reduce((sum, v) => sum + v, 0) /
+      Object.keys(readinessFactors).length,
   );
 
   const report = {
     gameDate,
     generatedAt: new Date().toISOString(),
     readinessScore,
-    readinessLevel: readinessScore >= 7 ? "optimal" : readinessScore >= 5 ? "moderate" : "concern",
+    readinessLevel:
+      readinessScore >= 7
+        ? "optimal"
+        : readinessScore >= 5
+          ? "moderate"
+          : "concern",
     factors: readinessFactors,
     focusAreas: [],
     mentalPrep: [],
@@ -190,16 +215,22 @@ async function generatePreCompetitionReport(userId, gameDate) {
 
   // Add focus areas based on weaknesses
   if (readinessFactors.confidence < 5) {
-    report.focusAreas.push("Build confidence through visualization of past successes");
+    report.focusAreas.push(
+      "Build confidence through visualization of past successes",
+    );
   }
   if (readinessFactors.preGameNerves > 6) {
-    report.focusAreas.push("Practice breathing exercises to manage pre-game anxiety");
+    report.focusAreas.push(
+      "Practice breathing exercises to manage pre-game anxiety",
+    );
   }
   if (readinessFactors.focus < 5) {
     report.focusAreas.push("Use focus cues and establish pre-game routine");
   }
   if (readinessFactors.sleepQuality < 5) {
-    report.focusAreas.push("Prioritize sleep quality in days leading up to competition");
+    report.focusAreas.push(
+      "Prioritize sleep quality in days leading up to competition",
+    );
   }
 
   // Mental prep suggestions
@@ -235,7 +266,9 @@ async function createAssessment(userId, assessmentData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -266,7 +299,9 @@ async function logMentalPerformance(userId, logData) {
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -312,9 +347,10 @@ async function getTeamMentalOverview(teamId) {
       10 - (wellness?.stress_level || 5),
     ].filter(Boolean);
 
-    const avgScore = scores.length > 0
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-      : null;
+    const avgScore =
+      scores.length > 0
+        ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+        : null;
 
     overview.push({
       athleteId: userId,
@@ -335,9 +371,16 @@ async function getTeamMentalOverview(teamId) {
 
 // Helper functions
 function calculateAverage(data, field) {
-  const values = data.map((d) => d[field]).filter((v) => v !== null && v !== undefined);
-  if (values.length === 0) {return null;}
-  return Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10;
+  const values = data
+    .map((d) => d[field])
+    .filter((v) => v !== null && v !== undefined);
+  if (values.length === 0) {
+    return null;
+  }
+  return (
+    Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) /
+    10
+  );
 }
 
 function identifyPatterns(mentalLogs, wellness) {
@@ -346,7 +389,9 @@ function identifyPatterns(mentalLogs, wellness) {
   // Check for stress-sleep correlation
   const highStressDays = wellness.filter((w) => w.stress_level >= 7);
   const lowSleepAfterStress = wellness.filter((w, i) => {
-    if (i === 0) {return false;}
+    if (i === 0) {
+      return false;
+    }
     const prevDay = wellness[i - 1];
     return prevDay?.stress_level >= 7 && w.sleep_quality <= 4;
   });
@@ -372,7 +417,10 @@ function identifyPatterns(mentalLogs, wellness) {
 
   // Check for low motivation patterns
   const lowMotivationDays = mentalLogs.filter((l) => l.motivation_level <= 4);
-  if (lowMotivationDays.length >= mentalLogs.length * 0.3 && mentalLogs.length >= 5) {
+  if (
+    lowMotivationDays.length >= mentalLogs.length * 0.3 &&
+    mentalLogs.length >= 5
+  ) {
     patterns.push({
       type: "low_motivation",
       description: "Experiencing periods of low motivation",
@@ -390,7 +438,8 @@ function generateMentalRecommendations(metrics, patterns) {
     recommendations.push({
       priority: "high",
       category: "anxiety",
-      message: "Consider anxiety management techniques: breathing exercises, progressive muscle relaxation",
+      message:
+        "Consider anxiety management techniques: breathing exercises, progressive muscle relaxation",
     });
   }
 
@@ -398,7 +447,8 @@ function generateMentalRecommendations(metrics, patterns) {
     recommendations.push({
       priority: "high",
       category: "sleep",
-      message: "Focus on sleep hygiene: consistent schedule, limit screens before bed",
+      message:
+        "Focus on sleep hygiene: consistent schedule, limit screens before bed",
     });
   }
 
@@ -406,7 +456,8 @@ function generateMentalRecommendations(metrics, patterns) {
     recommendations.push({
       priority: "medium",
       category: "confidence",
-      message: "Build confidence through visualization and reviewing past successes",
+      message:
+        "Build confidence through visualization and reviewing past successes",
     });
   }
 
@@ -414,7 +465,8 @@ function generateMentalRecommendations(metrics, patterns) {
     recommendations.push({
       priority: "medium",
       category: "motivation",
-      message: "Set small achievable goals and celebrate progress to boost motivation",
+      message:
+        "Set small achievable goals and celebrate progress to boost motivation",
     });
   }
 
@@ -422,7 +474,8 @@ function generateMentalRecommendations(metrics, patterns) {
     recommendations.push({
       priority: "medium",
       category: "stress",
-      message: "Implement stress management: mindfulness, time management, social support",
+      message:
+        "Implement stress management: mindfulness, time management, social support",
     });
   }
 

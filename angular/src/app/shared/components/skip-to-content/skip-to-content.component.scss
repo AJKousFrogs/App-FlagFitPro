@@ -19,7 +19,11 @@
   border-radius: 0 0 9999px 9999px;
 
   /* Brand gradient background */
-  background: linear-gradient(180deg, var(--ds-primary-green-light) 0%, var(--ds-primary-green) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--ds-primary-green-light) 0%,
+    var(--ds-primary-green) 100%
+  );
   border: 2px solid var(--ds-primary-green);
   border-top: none;
   box-shadow:
@@ -65,7 +69,11 @@
 
 /* Hover state (while focused) */
 .skip-link:hover {
-  background: linear-gradient(180deg, var(--ds-primary-green) 0%, var(--ds-primary-green-hover) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--ds-primary-green) 0%,
+    var(--ds-primary-green-hover) 100%
+  );
   box-shadow:
     0 10px 40px rgba(var(--primitive-primary-700-rgb), 0.5),
     0 16px 56px rgba(0, 0, 0, 0.25),
@@ -143,4 +151,3 @@
     display: none; /* Hide hint on mobile - less relevant for touch */
   }
 }
-

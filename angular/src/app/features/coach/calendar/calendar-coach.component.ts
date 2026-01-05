@@ -109,7 +109,7 @@ const RECURRING_OPTIONS = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -124,25 +124,43 @@ const RECURRING_OPTIONS = [
           subtitle="Manage team schedule and RSVPs"
           icon="pi-calendar"
         >
-          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Event</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+            >Create Event</app-button
+          >
         </app-page-header>
 
         <!-- Calendar View -->
         <p-card styleClass="calendar-card">
           <div class="calendar-header">
             <div class="calendar-nav">
-              <app-button variant="text" iconLeft="pi-chevron-left" (clicked)="previousMonth()">Previous month</app-button>
+              <app-button
+                variant="text"
+                iconLeft="pi-chevron-left"
+                (clicked)="previousMonth()"
+                >Previous month</app-button
+              >
               <h3>{{ currentMonthLabel() }}</h3>
-              <app-button variant="text" iconLeft="pi-chevron-right" (clicked)="nextMonth()">Next month</app-button>
+              <app-button
+                variant="text"
+                iconLeft="pi-chevron-right"
+                (clicked)="nextMonth()"
+                >Next month</app-button
+              >
             </div>
             <div class="calendar-view-toggle">
-              <app-button size="sm" (clicked)="viewMode.set('month')">Month</app-button>
-              <app-button size="sm" (clicked)="viewMode.set('list')">List</app-button>
-              <app-button size="sm" (clicked)="viewMode.set('agenda')">Agenda</app-button>
+              <app-button size="sm" (clicked)="viewMode.set('month')"
+                >Month</app-button
+              >
+              <app-button size="sm" (clicked)="viewMode.set('list')"
+                >List</app-button
+              >
+              <app-button size="sm" (clicked)="viewMode.set('agenda')"
+                >Agenda</app-button
+              >
             </div>
           </div>
 
-          @if (viewMode() === 'month') {
+          @if (viewMode() === "month") {
             <div class="calendar-grid">
               <div class="calendar-weekdays">
                 @for (day of weekDays; track day) {
@@ -160,13 +178,25 @@ const RECURRING_OPTIONS = [
                     @if (day.events.length > 0) {
                       <div class="day-events">
                         @for (event of day.events.slice(0, 2); track event.id) {
-                          <div class="event-dot" [class]="'type-' + event.type" (click)="viewEvent(event)">
+                          <div
+                            class="event-dot"
+                            [class]="'type-' + event.type"
+                            (click)="viewEvent(event)"
+                          >
                             {{ getEventIcon(event.type) }}
-                            <span class="rsvp-count">{{ event.rsvpSummary.going }}/{{ event.rsvpSummary.going + event.rsvpSummary.cantGo + event.rsvpSummary.pending }}</span>
+                            <span class="rsvp-count"
+                              >{{ event.rsvpSummary.going }}/{{
+                                event.rsvpSummary.going +
+                                  event.rsvpSummary.cantGo +
+                                  event.rsvpSummary.pending
+                              }}</span
+                            >
                           </div>
                         }
                         @if (day.events.length > 2) {
-                          <div class="more-events">+{{ day.events.length - 2 }} more</div>
+                          <div class="more-events">
+                            +{{ day.events.length - 2 }} more
+                          </div>
                         }
                       </div>
                     }
@@ -176,11 +206,21 @@ const RECURRING_OPTIONS = [
             </div>
 
             <div class="calendar-legend">
-              <span class="legend-item"><span class="legend-icon">🏋️</span> Practice</span>
-              <span class="legend-item"><span class="legend-icon">🏈</span> Game</span>
-              <span class="legend-item"><span class="legend-icon">🏆</span> Tournament</span>
-              <span class="legend-item"><span class="legend-icon">📋</span> Meeting</span>
-              <span class="legend-item"><span class="legend-icon">●</span> Today</span>
+              <span class="legend-item"
+                ><span class="legend-icon">🏋️</span> Practice</span
+              >
+              <span class="legend-item"
+                ><span class="legend-icon">🏈</span> Game</span
+              >
+              <span class="legend-item"
+                ><span class="legend-icon">🏆</span> Tournament</span
+              >
+              <span class="legend-item"
+                ><span class="legend-icon">📋</span> Meeting</span
+              >
+              <span class="legend-item"
+                ><span class="legend-icon">●</span> Today</span
+              >
             </div>
           }
         </p-card>
@@ -193,24 +233,46 @@ const RECURRING_OPTIONS = [
               <div class="event-card" [class]="'type-' + event.type">
                 <div class="event-header">
                   <div class="event-title">
-                    <span class="event-icon">{{ getEventIcon(event.type) }}</span>
+                    <span class="event-icon">{{
+                      getEventIcon(event.type)
+                    }}</span>
                     <h4>{{ event.title }}</h4>
                   </div>
                   <div class="event-date">{{ event.date }}</div>
                   <div class="event-actions-header">
-                    <app-button variant="text" size="sm" iconLeft="pi-pencil" (clicked)="editEvent(event)">Edit</app-button>
-                    <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v">More options</app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-pencil"
+                      (clicked)="editEvent(event)"
+                      >Edit</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-ellipsis-v"
+                      >More options</app-button
+                    >
                   </div>
                 </div>
 
                 <div class="event-details">
-                  <p>📍 {{ event.location }} • ⏰ {{ event.startTime }} - {{ event.endTime }}</p>
+                  <p>
+                    📍 {{ event.location }} • ⏰ {{ event.startTime }} -
+                    {{ event.endTime }}
+                  </p>
                 </div>
 
                 <div class="event-rsvp">
-                  <span class="rsvp-item going">✅ {{ event.rsvpSummary.going }} going</span>
-                  <span class="rsvp-item cant-go">❌ {{ event.rsvpSummary.cantGo }} can't</span>
-                  <span class="rsvp-item pending">❓ {{ event.rsvpSummary.pending }} pending</span>
+                  <span class="rsvp-item going"
+                    >✅ {{ event.rsvpSummary.going }} going</span
+                  >
+                  <span class="rsvp-item cant-go"
+                    >❌ {{ event.rsvpSummary.cantGo }} can't</span
+                  >
+                  <span class="rsvp-item pending"
+                    >❓ {{ event.rsvpSummary.pending }} pending</span
+                  >
                 </div>
 
                 @if (event.rsvpDeadline) {
@@ -224,30 +286,56 @@ const RECURRING_OPTIONS = [
 
                 @if (event.ridesNeeded && event.ridesOffered) {
                   <div class="event-rides">
-                    🚗 Rides: {{ event.ridesNeeded }} need, {{ event.ridesOffered }} offered
+                    🚗 Rides: {{ event.ridesNeeded }} need,
+                    {{ event.ridesOffered }} offered
                   </div>
                 }
 
                 @if (event.paymentInfo) {
                   <div class="event-payment">
-                    💰 Payments: \${{ event.paymentInfo.collected }} / \${{ event.paymentInfo.total }} ({{ getPaymentPercent(event) }}%)
+                    💰 Payments: \${{ event.paymentInfo.collected }} / \${{
+                      event.paymentInfo.total
+                    }}
+                    ({{ getPaymentPercent(event) }}%)
                   </div>
                 }
 
                 <div class="event-actions">
-                  <app-button variant="secondary" size="sm" (clicked)="viewRsvps(event)">View RSVPs</app-button>
-                  <app-button variant="secondary" size="sm" (clicked)="editEvent(event)">Edit Event</app-button>
-                  @if (event.type === 'tournament') {
-                    <app-button variant="text" size="sm" (clicked)="setLineup(event)">Set Lineup</app-button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="viewRsvps(event)"
+                    >View RSVPs</app-button
+                  >
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="editEvent(event)"
+                    >Edit Event</app-button
+                  >
+                  @if (event.type === "tournament") {
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="setLineup(event)"
+                      >Set Lineup</app-button
+                    >
                   }
-                  <app-button variant="text" size="sm" (clicked)="cancelEvent(event)">Cancel Event</app-button>
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    (clicked)="cancelEvent(event)"
+                    >Cancel Event</app-button
+                  >
                 </div>
               </div>
             } @empty {
               <div class="empty-state">
                 <i class="pi pi-calendar"></i>
                 <p>No upcoming events</p>
-                <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()">Create Event</app-button>
+                <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+                  >Create Event</app-button
+                >
               </div>
             }
           </div>
@@ -267,7 +355,12 @@ const RECURRING_OPTIONS = [
             <div class="radio-group">
               @for (type of eventTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton name="eventType" [value]="type.value" [(ngModel)]="eventForm.type" [inputId]="'type-' + type.value"></p-radioButton>
+                  <p-radioButton
+                    name="eventType"
+                    [value]="type.value"
+                    [(ngModel)]="eventForm.type"
+                    [inputId]="'type-' + type.value"
+                  ></p-radioButton>
                   <label [for]="'type-' + type.value">{{ type.label }}</label>
                 </div>
               }
@@ -276,48 +369,97 @@ const RECURRING_OPTIONS = [
 
           <div class="form-field">
             <label>Event Title</label>
-            <input type="text" pInputText [(ngModel)]="eventForm.title" placeholder="Tuesday Practice" />
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="eventForm.title"
+              placeholder="Tuesday Practice"
+            />
           </div>
 
           <div class="form-row">
             <div class="form-field">
               <label>Date</label>
-              <p-datepicker [(ngModel)]="eventForm.date" [showIcon]="true" styleClass="w-full"></p-datepicker>
+              <p-datepicker
+                [(ngModel)]="eventForm.date"
+                [showIcon]="true"
+                styleClass="w-full"
+              ></p-datepicker>
             </div>
             <div class="form-field">
               <label>Start Time</label>
-              <p-select [options]="timeOptions" [(ngModel)]="eventForm.startTime" optionLabel="label" optionValue="value" placeholder="Select time" styleClass="w-full"></p-select>
+              <p-select
+                [options]="timeOptions"
+                [(ngModel)]="eventForm.startTime"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select time"
+                styleClass="w-full"
+              ></p-select>
             </div>
             <div class="form-field">
               <label>End Time</label>
-              <p-select [options]="timeOptions" [(ngModel)]="eventForm.endTime" optionLabel="label" optionValue="value" placeholder="Select time" styleClass="w-full"></p-select>
+              <p-select
+                [options]="timeOptions"
+                [(ngModel)]="eventForm.endTime"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select time"
+                styleClass="w-full"
+              ></p-select>
             </div>
           </div>
 
           <div class="checkbox-option">
-            <p-checkbox [(ngModel)]="eventForm.isMultiDay" [binary]="true" inputId="multiDay"></p-checkbox>
+            <p-checkbox
+              [(ngModel)]="eventForm.isMultiDay"
+              [binary]="true"
+              inputId="multiDay"
+            ></p-checkbox>
             <label for="multiDay">Multi-day event (e.g., tournament)</label>
           </div>
 
           <div class="form-field">
             <label>Location</label>
-            <p-select [options]="locations" [(ngModel)]="eventForm.location" optionLabel="name" optionValue="id" placeholder="Select location" styleClass="w-full"></p-select>
+            <p-select
+              [options]="locations"
+              [(ngModel)]="eventForm.location"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select location"
+              styleClass="w-full"
+            ></p-select>
           </div>
 
           <div class="form-field">
             <label>Description / Notes</label>
-            <textarea pTextarea [(ngModel)]="eventForm.description" rows="3" placeholder="Regular practice. Focus on red zone offense..."></textarea>
+            <textarea
+              pTextarea
+              [(ngModel)]="eventForm.description"
+              rows="3"
+              placeholder="Regular practice. Focus on red zone offense..."
+            ></textarea>
           </div>
 
           <div class="form-section">
             <h5>RSVP Settings</h5>
             <div class="checkbox-option">
-              <p-checkbox [(ngModel)]="eventForm.requireRsvp" [binary]="true" inputId="requireRsvp"></p-checkbox>
+              <p-checkbox
+                [(ngModel)]="eventForm.requireRsvp"
+                [binary]="true"
+                inputId="requireRsvp"
+              ></p-checkbox>
               <label for="requireRsvp">Require RSVP</label>
             </div>
             <div class="checkbox-option">
-              <p-checkbox [(ngModel)]="eventForm.sendReminder" [binary]="true" inputId="sendReminder"></p-checkbox>
-              <label for="sendReminder">Send automatic reminder 24h before</label>
+              <p-checkbox
+                [(ngModel)]="eventForm.sendReminder"
+                [binary]="true"
+                inputId="sendReminder"
+              ></p-checkbox>
+              <label for="sendReminder"
+                >Send automatic reminder 24h before</label
+              >
             </div>
           </div>
 
@@ -326,7 +468,12 @@ const RECURRING_OPTIONS = [
             <div class="radio-group">
               @for (opt of recurringOptions; track opt.value) {
                 <div class="radio-option">
-                  <p-radioButton name="recurring" [value]="opt.value" [(ngModel)]="eventForm.recurring" [inputId]="'rec-' + opt.value"></p-radioButton>
+                  <p-radioButton
+                    name="recurring"
+                    [value]="opt.value"
+                    [(ngModel)]="eventForm.recurring"
+                    [inputId]="'rec-' + opt.value"
+                  ></p-radioButton>
                   <label [for]="'rec-' + opt.value">{{ opt.label }}</label>
                 </div>
               }
@@ -336,19 +483,35 @@ const RECURRING_OPTIONS = [
           <div class="form-section">
             <h5>Notify</h5>
             <div class="checkbox-option">
-              <p-checkbox [(ngModel)]="eventForm.notifyPlayers" [binary]="true" inputId="notifyPlayers"></p-checkbox>
-              <label for="notifyPlayers">Send notification to all players</label>
+              <p-checkbox
+                [(ngModel)]="eventForm.notifyPlayers"
+                [binary]="true"
+                inputId="notifyPlayers"
+              ></p-checkbox>
+              <label for="notifyPlayers"
+                >Send notification to all players</label
+              >
             </div>
             <div class="checkbox-option">
-              <p-checkbox [(ngModel)]="eventForm.notifyParents" [binary]="true" inputId="notifyParents"></p-checkbox>
+              <p-checkbox
+                [(ngModel)]="eventForm.notifyParents"
+                [binary]="true"
+                inputId="notifyParents"
+              ></p-checkbox>
               <label for="notifyParents">Include parents/guardians</label>
             </div>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <app-button variant="secondary" (clicked)="showCreateDialog = false">Cancel</app-button>
-          <app-icon-button icon="pi-check" (clicked)="saveEvent()" ariaLabel="check" />
+          <app-button variant="secondary" (clicked)="showCreateDialog = false"
+            >Cancel</app-button
+          >
+          <app-icon-button
+            icon="pi-check"
+            (clicked)="saveEvent()"
+            ariaLabel="check"
+          />
         </ng-template>
       </p-dialog>
 
@@ -362,7 +525,10 @@ const RECURRING_OPTIONS = [
         @if (selectedEvent()) {
           <div class="rsvp-content">
             <div class="rsvp-header-info">
-              <p>{{ selectedEvent()?.date }} • {{ selectedEvent()?.startTime }} - {{ selectedEvent()?.endTime }} • {{ selectedEvent()?.location }}</p>
+              <p>
+                {{ selectedEvent()?.date }} • {{ selectedEvent()?.startTime }} -
+                {{ selectedEvent()?.endTime }} • {{ selectedEvent()?.location }}
+              </p>
               <p class="rsvp-totals">
                 Total: {{ totalRsvpCount() }} players
                 <span class="going">✅ {{ goingCount() }} going</span>
@@ -374,7 +540,12 @@ const RECURRING_OPTIONS = [
             <div class="rsvp-section">
               <div class="section-header">
                 <h4>Going ({{ goingCount() }})</h4>
-                <app-button variant="text" size="sm" (clicked)="messageAll('going')">Message All</app-button>
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="messageAll('going')"
+                  >Message All</app-button
+                >
               </div>
               <div class="rsvp-list">
                 @for (rsvp of goingRsvps(); track rsvp.id) {
@@ -382,7 +553,9 @@ const RECURRING_OPTIONS = [
                     <span class="rsvp-status">✅</span>
                     <span class="rsvp-name">{{ rsvp.playerName }}</span>
                     @if (rsvp.arrivalTime) {
-                      <span class="rsvp-arrival">Arriving: {{ rsvp.arrivalTime }}</span>
+                      <span class="rsvp-arrival"
+                        >Arriving: {{ rsvp.arrivalTime }}</span
+                      >
                     }
                     @if (rsvp.notes) {
                       <span class="rsvp-notes">{{ rsvp.notes }}</span>
@@ -413,7 +586,9 @@ const RECURRING_OPTIONS = [
               <div class="rsvp-section">
                 <div class="section-header">
                   <h4>Pending ({{ pendingCount() }})</h4>
-                  <app-button size="sm" (clicked)="sendRsvpReminder()">Send Reminder</app-button>
+                  <app-button size="sm" (clicked)="sendRsvpReminder()"
+                    >Send Reminder</app-button
+                  >
                 </div>
                 <div class="rsvp-list">
                   @for (rsvp of pendingRsvps(); track rsvp.id) {
@@ -428,7 +603,12 @@ const RECURRING_OPTIONS = [
             }
 
             <div class="rsvp-actions">
-              <app-button variant="secondary" iconLeft="pi-download" (clicked)="exportRsvpList()">Export List</app-button>
+              <app-button
+                variant="secondary"
+                iconLeft="pi-download"
+                (clicked)="exportRsvpList()"
+                >Export List</app-button
+              >
               <app-button (clicked)="showRsvpDialog = false">Close</app-button>
             </div>
           </div>
@@ -498,10 +678,17 @@ export class CalendarCoachComponent implements OnInit {
 
     // Current month days
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+      const isToday =
+        d === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear();
       const dayEvents = this.events().filter((e) => {
         const eventDate = new Date(e.date);
-        return eventDate.getDate() === d && eventDate.getMonth() === month && eventDate.getFullYear() === year;
+        return (
+          eventDate.getDate() === d &&
+          eventDate.getMonth() === month &&
+          eventDate.getFullYear() === year
+        );
       });
       days.push({
         date: d,
@@ -529,12 +716,18 @@ export class CalendarCoachComponent implements OnInit {
     this.events()
       .filter((e) => new Date(e.date) >= new Date())
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 5)
+      .slice(0, 5),
   );
 
-  readonly goingRsvps = computed(() => this.rsvps().filter((r) => r.status === "going"));
-  readonly cantGoRsvps = computed(() => this.rsvps().filter((r) => r.status === "cant-go"));
-  readonly pendingRsvps = computed(() => this.rsvps().filter((r) => r.status === "pending"));
+  readonly goingRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "going"),
+  );
+  readonly cantGoRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "cant-go"),
+  );
+  readonly pendingRsvps = computed(() =>
+    this.rsvps().filter((r) => r.status === "pending"),
+  );
   readonly totalRsvpCount = computed(() => this.rsvps().length);
   readonly goingCount = computed(() => this.goingRsvps().length);
   readonly cantGoCount = computed(() => this.cantGoRsvps().length);
@@ -549,7 +742,9 @@ export class CalendarCoachComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/coach/calendar"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/coach/calendar"),
+      );
       if (response?.success && response.data) {
         this.events.set(response.data.events || []);
       }
@@ -564,7 +759,12 @@ export class CalendarCoachComponent implements OnInit {
 
   private getEmptyEventForm() {
     return {
-      type: "practice" as "practice" | "game" | "tournament" | "meeting" | "social",
+      type: "practice" as
+        | "practice"
+        | "game"
+        | "tournament"
+        | "meeting"
+        | "social",
       title: "",
       date: null as Date | null,
       startTime: "6:00 PM",
@@ -597,12 +797,16 @@ export class CalendarCoachComponent implements OnInit {
   // Navigation
   previousMonth(): void {
     const current = this.currentMonth();
-    this.currentMonth.set(new Date(current.getFullYear(), current.getMonth() - 1, 1));
+    this.currentMonth.set(
+      new Date(current.getFullYear(), current.getMonth() - 1, 1),
+    );
   }
 
   nextMonth(): void {
     const current = this.currentMonth();
-    this.currentMonth.set(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    this.currentMonth.set(
+      new Date(current.getFullYear(), current.getMonth() + 1, 1),
+    );
   }
 
   // Actions
@@ -704,6 +908,8 @@ export class CalendarCoachComponent implements OnInit {
 
   getPaymentPercent(event: TeamEvent): number {
     if (!event.paymentInfo || event.paymentInfo.total === 0) return 0;
-    return Math.round((event.paymentInfo.collected / event.paymentInfo.total) * 100);
+    return Math.round(
+      (event.paymentInfo.collected / event.paymentInfo.total) * 100,
+    );
   }
 }

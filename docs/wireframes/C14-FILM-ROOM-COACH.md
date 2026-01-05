@@ -267,37 +267,37 @@ Upload and manage game/practice film, create timestamps and tags for players, as
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Film Upload | YouTube/Vimeo links or file upload |
-| Video Player | Embedded playback with controls |
-| Timestamping | Mark specific moments |
-| Player Tagging | Tag individual players |
-| Tag Types | Positive, Correction, Teaching |
-| Play Linking | Connect tags to playbook |
-| Assignment | Assign to team or individuals |
-| Compliance | Track who has watched |
-| Discussion | Comments on timestamps |
+| Feature        | Description                        |
+| -------------- | ---------------------------------- |
+| Film Upload    | YouTube/Vimeo links or file upload |
+| Video Player   | Embedded playback with controls    |
+| Timestamping   | Mark specific moments              |
+| Player Tagging | Tag individual players             |
+| Tag Types      | Positive, Correction, Teaching     |
+| Play Linking   | Connect tags to playbook           |
+| Assignment     | Assign to team or individuals      |
+| Compliance     | Track who has watched              |
+| Discussion     | Comments on timestamps             |
 
 ---
 
 ## Tag Types
 
-| Type | Icon | Purpose |
-|------|------|---------|
-| Positive | ✅ | Great execution, example |
-| Correction | 📝 | Area for improvement |
-| Teaching Point | 📋 | General team learning |
-| Opponent Tendency | 👀 | Scouting observation |
+| Type              | Icon | Purpose                  |
+| ----------------- | ---- | ------------------------ |
+| Positive          | ✅   | Great execution, example |
+| Correction        | 📝   | Area for improvement     |
+| Teaching Point    | 📋   | General team learning    |
+| Opponent Tendency | 👀   | Scouting observation     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Film sessions | `FilmService` | `film_sessions` |
-| Timestamps | `FilmService` | `video_timestamps` |
-| Assignments | `FilmService` | `film_assignments` |
+| Data           | Service       | Table                 |
+| -------------- | ------------- | --------------------- |
+| Film sessions  | `FilmService` | `film_sessions`       |
+| Timestamps     | `FilmService` | `video_timestamps`    |
+| Assignments    | `FilmService` | `film_assignments`    |
 | Watch progress | `FilmService` | `film_watch_progress` |
-| Comments | `FilmService` | `film_comments` |
+| Comments       | `FilmService` | `film_comments`       |

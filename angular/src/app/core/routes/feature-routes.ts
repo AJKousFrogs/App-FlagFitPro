@@ -115,8 +115,8 @@ export const dashboardRoutes: Routes = [
   {
     path: "athlete-dashboard",
     redirectTo: "player-dashboard",
-    pathMatch: "full"
-  }
+    pathMatch: "full",
+  },
 ];
 
 /**
@@ -137,17 +137,17 @@ export const trainingRoutes: Routes = [
   {
     path: "training/daily",
     redirectTo: "/todays-practice",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "training/protocol",
     redirectTo: "/todays-practice",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "training/protocol/:date",
     redirectTo: "/todays-practice",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   // Keep advanced training routes under a consolidated workspace
   {
@@ -204,17 +204,17 @@ export const trainingRoutes: Routes = [
   {
     path: "training/qb/schedule",
     redirectTo: "training/qb",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "training/qb/throwing",
     redirectTo: "training/qb",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "training/qb/assessment",
     redirectTo: "training/qb",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "training/ai-scheduler",
@@ -386,7 +386,7 @@ export const teamRoutes: Routes = [
   {
     path: "coach",
     redirectTo: "team/workspace",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   {
     path: "coach/dashboard",

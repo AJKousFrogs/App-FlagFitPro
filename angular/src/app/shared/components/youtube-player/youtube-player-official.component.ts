@@ -21,9 +21,7 @@ import { LoggerService } from "../../../core/services/logger.service";
   selector: "app-youtube-player-official",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, YouTubePlayerModule, CardModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, YouTubePlayerModule, CardModule, ButtonComponent],
   template: `
     <div class="youtube-player-container">
       @if (videoId()) {
@@ -42,8 +40,16 @@ import { LoggerService } from "../../../core/services/logger.service";
 
       @if (showControls()) {
         <div class="player-controls">
-          <app-button [disabled]="!playerReady()" (clicked)="togglePlay()"></app-button>
-          <app-button iconLeft="pi-stop" [disabled]="!playerReady()" (clicked)="stop()">Stop</app-button>
+          <app-button
+            [disabled]="!playerReady()"
+            (clicked)="togglePlay()"
+          ></app-button>
+          <app-button
+            iconLeft="pi-stop"
+            [disabled]="!playerReady()"
+            (clicked)="stop()"
+            >Stop</app-button
+          >
         </div>
       }
 
@@ -61,7 +67,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       }
     </div>
   `,
-  styleUrl: './youtube-player-official.component.scss',
+  styleUrl: "./youtube-player-official.component.scss",
 })
 export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
   // Angular 21: Use input() signal instead of @Input() with signal assignment

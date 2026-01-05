@@ -56,7 +56,7 @@ interface Meal {
     TagModule,
     DataViewModule,
     ProgressBarModule,
-  
+
     ButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,7 +89,12 @@ interface Meal {
             </ng-template>
           </p-autoComplete>
 
-          <app-button iconLeft="pi-plus" [disabled]="!selectedFood" (clicked)="addFoodToMeal()">Add Food</app-button>
+          <app-button
+            iconLeft="pi-plus"
+            [disabled]="!selectedFood"
+            (clicked)="addFoodToMeal()"
+            >Add Food</app-button
+          >
         </div>
 
         <!-- Quick Add Suggestions (AI-powered) -->
@@ -235,7 +240,11 @@ interface Meal {
                   <h5>{{ insight.title }}</h5>
                   <p>{{ insight.description }}</p>
                   @if (insight.actionLabel) {
-                    <app-button variant="text" size="sm" (clicked)="executeInsightAction(insight)"></app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      (clicked)="executeInsightAction(insight)"
+                    ></app-button>
                   }
                 </div>
               </div>
@@ -245,7 +254,7 @@ interface Meal {
       }
     </div>
   `,
-  styleUrl: './nutrition-dashboard.component.scss',
+  styleUrl: "./nutrition-dashboard.component.scss",
 })
 export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);

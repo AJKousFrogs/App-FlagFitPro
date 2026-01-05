@@ -49,16 +49,28 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
         </div>
         <div class="banner-actions">
           @if (connectionStatus() === "offline") {
-            <app-button variant="text" size="sm" iconLeft="pi-refresh" (clicked)="retry()">Retry</app-button>
+            <app-button
+              variant="text"
+              size="sm"
+              iconLeft="pi-refresh"
+              (clicked)="retry()"
+              >Retry</app-button
+            >
           }
           @if (connectionStatus() === "online" && showBanner()) {
-            <app-icon-button icon="pi-times" variant="text" size="sm" (clicked)="dismiss()" ariaLabel="times" />
+            <app-icon-button
+              icon="pi-times"
+              variant="text"
+              size="sm"
+              (clicked)="dismiss()"
+              ariaLabel="times"
+            />
           }
         </div>
       </div>
     }
   `,
-  styleUrl: './offline-banner.component.scss',
+  styleUrl: "./offline-banner.component.scss",
 })
 export class OfflineBannerComponent implements OnInit, OnDestroy {
   connectionStatus = signal<ConnectionStatus>("online");
@@ -182,7 +194,9 @@ export class OfflineBannerComponent implements OnInit, OnDestroy {
     }
 
     // Use Network Information API if available
-    const connection = (navigator as Navigator & { connection?: { effectiveType: string } }).connection;
+    const connection = (
+      navigator as Navigator & { connection?: { effectiveType: string } }
+    ).connection;
     if (connection) {
       const effectiveType = connection.effectiveType;
       if (effectiveType === "slow-2g" || effectiveType === "2g") {

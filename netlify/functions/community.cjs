@@ -556,7 +556,9 @@ const getTrendingTopics = async (limit = 5) => {
 
 // Helper function to get initials
 const getInitials = (name) => {
-  if (!name) {return "??";}
+  if (!name) {
+    return "??";
+  }
   const parts = name.split(" ");
   if (parts.length >= 2) {
     return (parts[0][0] + parts[1][0]).toUpperCase();
@@ -572,15 +574,23 @@ const getRelativeTime = (date) => {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMinutes < 1) {return "Just now";}
-  if (diffMinutes < 60) {return `${diffMinutes}m ago`;}
-  if (diffHours < 24) {return `${diffHours}h ago`;}
-  if (diffDays < 7) {return `${diffDays}d ago`;}
+  if (diffMinutes < 1) {
+    return "Just now";
+  }
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  }
+  if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  }
   return `${Math.floor(diffDays / 7)}w ago`;
 };
 
-// Create a poll for a post
-const createPoll = async (postId, pollData) => {
+// Create a poll for a post (exported for future use)
+const _createPoll = async (postId, pollData) => {
   try {
     checkEnvVars();
 

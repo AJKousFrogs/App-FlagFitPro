@@ -32,17 +32,17 @@
     font-size: var(--font-body-md, 16px);
     letter-spacing: 0.01em;
     line-height: 1.5;
-    
+
     // LOCKED SHAPE - RAISED RECTANGULAR (NOT PILL)
     border-radius: var(--radius-button, 8px);
-    
+
     // LOCKED SIZE
     min-height: 44px;
     padding: var(--space-3, 12px) var(--space-6, 24px);
-    
+
     // LOCKED BORDER for hover state support
     border: 2px solid transparent;
-    
+
     transition:
       transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -627,7 +627,11 @@
      ================================ */
   .p-button-help:not(.p-button-outlined):not(.p-button-text) {
     // allowed: purple severity gradient
-    background: linear-gradient(180deg, #a78bfa 0%, var(--color-status-help) 100%);
+    background: linear-gradient(
+      180deg,
+      #a78bfa 0%,
+      var(--color-status-help) 100%
+    );
     border-color: var(--color-status-help);
     color: var(--color-text-on-primary);
     box-shadow:
@@ -637,7 +641,11 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--color-status-help) 0%, var(--color-status-help-hover) 100%);
+        background: linear-gradient(
+          180deg,
+          var(--color-status-help) 0%,
+          var(--color-status-help-hover) 100%
+        );
         box-shadow:
           0 8px 20px rgba(139, 92, 246, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
@@ -671,7 +679,11 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(180deg, var(--primitive-neutral-600) 0%, var(--primitive-neutral-800) 100%);
+        background: linear-gradient(
+          180deg,
+          var(--primitive-neutral-600) 0%,
+          var(--primitive-neutral-800) 100%
+        );
         box-shadow:
           0 8px 20px rgba(0, 0, 0, 0.35),
           0 4px 8px rgba(0, 0, 0, 0.15),
@@ -867,13 +879,21 @@
     }
 
     .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-      background: linear-gradient(180deg, var(--primitive-neutral-100) 0%, var(--primitive-neutral-300) 100%);
+      background: linear-gradient(
+        180deg,
+        var(--primitive-neutral-100) 0%,
+        var(--primitive-neutral-300) 100%
+      );
       border-color: var(--primitive-neutral-300);
       color: var(--primitive-neutral-900);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: linear-gradient(180deg, var(--color-text-on-primary) 0%, var(--primitive-neutral-100) 100%);
+          background: linear-gradient(
+            180deg,
+            var(--color-text-on-primary) 0%,
+            var(--primitive-neutral-100) 100%
+          );
         }
       }
     }
@@ -983,7 +1003,8 @@
 
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    border-bottom: 1px solid
+      var(--color-border-secondary, var(--primitive-neutral-300));
     background: var(--surface-primary, var(--color-text-on-primary));
     display: flex;
     align-items: center;
@@ -1045,7 +1066,8 @@
 
     /* Base appearance */
     background: var(--surface-secondary, var(--primitive-neutral-50));
-    border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    border: 1px solid
+      var(--color-border-secondary, var(--primitive-neutral-300));
     color: var(--color-text-secondary, var(--primitive-neutral-600));
 
     /* Interaction */
@@ -1434,19 +1456,20 @@
     height: var(--p-form-control-height, 44px);
     min-height: var(--p-form-control-min-height, 44px);
     border-radius: var(--p-form-control-border-radius, 8px);
-    padding: var(--p-form-control-padding-y, 10px) var(--p-form-control-padding-x, 16px);
-    
+    padding: var(--p-form-control-padding-y, 10px)
+      var(--p-form-control-padding-x, 16px);
+
     /* Typography */
     font-size: var(--p-form-control-font-size, 16px);
     font-weight: var(--p-form-control-font-weight, 400);
     line-height: var(--p-form-control-line-height, 1.5);
     font-family: var(--font-family-sans);
-    
+
     /* Colors */
     background: var(--p-input-background, var(--surface-primary));
     border: 1px solid var(--p-input-border-color, var(--color-border-primary));
     color: var(--p-input-text-color, var(--color-text-primary));
-    
+
     /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -1455,31 +1478,42 @@
 
     /* Hover - subtle border change only */
     &:hover:not(:disabled):not(:focus):not(.p-invalid) {
-      border-color: var(--p-input-hover-border-color, var(--primitive-neutral-400));
+      border-color: var(
+        --p-input-hover-border-color,
+        var(--primitive-neutral-400)
+      );
     }
 
     /* Focus - green border + green ring */
     &:focus,
     &:focus-visible {
       border-color: var(--p-input-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px var(--p-input-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0 3px
+        var(--p-input-focus-ring-color, rgba(8, 153, 73, 0.15));
       outline: none;
     }
 
     /* Invalid/Error state */
     &.p-invalid,
     &.ng-invalid.ng-touched {
-      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+      border-color: var(
+        --p-input-invalid-border-color,
+        var(--color-status-error)
+      );
 
       &:focus {
-        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0 3px
+          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
       }
     }
 
     /* Disabled state */
     &:disabled {
       background: var(--p-input-disabled-background, var(--surface-secondary));
-      border-color: var(--p-input-disabled-border-color, var(--color-border-primary));
+      border-color: var(
+        --p-input-disabled-border-color,
+        var(--color-border-primary)
+      );
       opacity: var(--p-input-disabled-opacity, 0.6);
       cursor: not-allowed;
     }
@@ -1509,11 +1543,12 @@
     min-height: var(--p-form-control-min-height, 44px);
     border-radius: var(--p-form-control-border-radius, 8px);
     padding: 0 var(--p-form-control-padding-x, 16px);
-    
+
     /* Colors */
     background: var(--p-dropdown-background, var(--surface-primary));
-    border: 1px solid var(--p-dropdown-border-color, var(--color-border-primary));
-    
+    border: 1px solid
+      var(--p-dropdown-border-color, var(--color-border-primary));
+
     /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -1521,23 +1556,34 @@
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
-      border-color: var(--p-dropdown-hover-border-color, var(--primitive-neutral-400));
+      border-color: var(
+        --p-dropdown-hover-border-color,
+        var(--primitive-neutral-400)
+      );
     }
 
     /* Focus */
     &.p-focus,
     &:focus {
-      border-color: var(--p-dropdown-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px var(--p-dropdown-focus-ring-color, rgba(8, 153, 73, 0.15));
+      border-color: var(
+        --p-dropdown-focus-border-color,
+        var(--ds-primary-green)
+      );
+      box-shadow: 0 0 0 3px
+        var(--p-dropdown-focus-ring-color, rgba(8, 153, 73, 0.15));
       outline: none;
     }
 
     /* Invalid */
     &.p-invalid {
-      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+      border-color: var(
+        --p-input-invalid-border-color,
+        var(--color-status-error)
+      );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0 3px
+          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
       }
     }
 
@@ -1571,7 +1617,9 @@
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
-      transition: color 0.15s ease, transform 0.2s ease;
+      transition:
+        color 0.15s ease,
+        transform 0.2s ease;
     }
 
     &.p-focus .p-dropdown-trigger,
@@ -1653,11 +1701,11 @@
     min-height: var(--p-form-control-min-height, 44px);
     border-radius: var(--p-form-control-border-radius, 8px);
     padding: 0 var(--p-form-control-padding-x, 16px);
-    
+
     /* Colors */
     background: var(--p-select-background, var(--surface-primary));
     border: 1px solid var(--p-select-border-color, var(--color-border-primary));
-    
+
     /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -1665,23 +1713,31 @@
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
-      border-color: var(--p-select-hover-border-color, var(--primitive-neutral-400));
+      border-color: var(
+        --p-select-hover-border-color,
+        var(--primitive-neutral-400)
+      );
     }
 
     /* Focus */
     &.p-focus,
     &:focus {
       border-color: var(--p-select-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px var(--p-select-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0 3px
+        var(--p-select-focus-ring-color, rgba(8, 153, 73, 0.15));
       outline: none;
     }
 
     /* Invalid */
     &.p-invalid {
-      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+      border-color: var(
+        --p-input-invalid-border-color,
+        var(--color-status-error)
+      );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0 3px
+          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
       }
     }
 
@@ -1715,7 +1771,9 @@
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
-      transition: color 0.15s ease, transform 0.2s ease;
+      transition:
+        color 0.15s ease,
+        transform 0.2s ease;
     }
 
     &.p-focus .p-select-dropdown,
@@ -1787,11 +1845,12 @@
     min-height: var(--p-form-control-min-height, 44px);
     border-radius: var(--p-form-control-border-radius, 8px);
     padding: 0 var(--p-form-control-padding-x, 16px);
-    
+
     /* Colors */
     background: var(--p-multiselect-background, var(--surface-primary));
-    border: 1px solid var(--p-multiselect-border-color, var(--color-border-primary));
-    
+    border: 1px solid
+      var(--p-multiselect-border-color, var(--color-border-primary));
+
     /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -1799,23 +1858,34 @@
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
-      border-color: var(--p-multiselect-hover-border-color, var(--primitive-neutral-400));
+      border-color: var(
+        --p-multiselect-hover-border-color,
+        var(--primitive-neutral-400)
+      );
     }
 
     /* Focus */
     &.p-focus,
     &:focus {
-      border-color: var(--p-multiselect-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px var(--p-multiselect-focus-ring-color, rgba(8, 153, 73, 0.15));
+      border-color: var(
+        --p-multiselect-focus-border-color,
+        var(--ds-primary-green)
+      );
+      box-shadow: 0 0 0 3px
+        var(--p-multiselect-focus-ring-color, rgba(8, 153, 73, 0.15));
       outline: none;
     }
 
     /* Invalid */
     &.p-invalid {
-      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+      border-color: var(
+        --p-input-invalid-border-color,
+        var(--color-status-error)
+      );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0 3px
+          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
       }
     }
 
@@ -1849,7 +1919,9 @@
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
-      transition: color 0.15s ease, transform 0.2s ease;
+      transition:
+        color 0.15s ease,
+        transform 0.2s ease;
     }
 
     &.p-focus .p-multiselect-trigger {
@@ -1917,7 +1989,9 @@
       height: var(--p-form-control-height, 44px);
       min-height: var(--p-form-control-min-height, 44px);
       border-radius: var(--p-form-control-border-radius, 8px);
-      padding: var(--p-form-control-padding-y, 10px) 2.75rem var(--p-form-control-padding-y, 10px) var(--p-form-control-padding-x, 16px);
+      padding: var(--p-form-control-padding-y, 10px) 2.75rem
+        var(--p-form-control-padding-y, 10px)
+        var(--p-form-control-padding-x, 16px);
       width: 100%;
     }
 
@@ -1933,7 +2007,8 @@
       color: var(--color-text-secondary);
       background: transparent;
       border: none;
-      border-radius: 0 var(--p-form-control-border-radius, 8px) var(--p-form-control-border-radius, 8px) 0;
+      border-radius: 0 var(--p-form-control-border-radius, 8px)
+        var(--p-form-control-border-radius, 8px) 0;
       cursor: pointer;
       transition: color 0.15s ease;
 
@@ -1957,14 +2032,17 @@
     }
 
     &.p-inputnumber-buttons-stacked .p-inputtext {
-      border-radius: var(--p-form-control-border-radius, 8px) 0 0 var(--p-form-control-border-radius, 8px);
+      border-radius: var(--p-form-control-border-radius, 8px) 0 0
+        var(--p-form-control-border-radius, 8px);
     }
 
     .p-inputnumber-button {
       background: var(--surface-secondary);
       border: 1px solid var(--color-border-primary);
       color: var(--color-text-secondary);
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
       &:hover {
         background: var(--ds-primary-green-subtle);
@@ -2118,15 +2196,15 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    
+
     /* Fixed height - 30px, no vertical growth */
     height: 30px;
     min-height: 30px;
     max-height: 30px;
-    
+
     /* Padding: 13px horizontal */
     padding: 0 13px;
-    
+
     /* Typography - Semibold */
     font-family: var(--font-family-sans);
     font-size: 14px;
@@ -2136,18 +2214,18 @@
     text-decoration: none;
     letter-spacing: 0;
     white-space: nowrap;
-    
+
     /* Shape: PILL (full rounded) */
     border-radius: 9999px;
-    
+
     /* NO borders, shadows, outlines, or underlines */
     border: none;
     box-shadow: none;
     outline: none;
-    
+
     /* Prevent flex row stretching */
     flex-shrink: 0;
-    
+
     /* Smooth transitions */
     transition: opacity 0.15s ease;
   }
@@ -2162,7 +2240,9 @@
   }
 
   /* Default/Primary tag - Brand green with white text */
-  .p-tag:not(.p-tag-success):not(.p-tag-info):not(.p-tag-warn):not(.p-tag-warning):not(.p-tag-danger):not(.p-tag-secondary):not(.p-tag-contrast) {
+  .p-tag:not(.p-tag-success):not(.p-tag-info):not(.p-tag-warn):not(
+      .p-tag-warning
+    ):not(.p-tag-danger):not(.p-tag-secondary):not(.p-tag-contrast) {
     background: var(--ds-primary-green);
     color: var(--color-text-on-primary);
   }
@@ -2233,12 +2313,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    
+
     /* Height: 28-32px range - consistent with tags/chips */
     height: 30px;
     min-height: 28px;
     max-height: 32px;
-    
+
     padding: 0 12px;
     font-family: var(--font-family-sans);
     font-size: 14px;
@@ -2247,10 +2327,10 @@
     text-transform: none;
     text-decoration: none;
     white-space: nowrap;
-    
+
     /* Shape: 6px border-radius (rounded, NOT pill) */
     border-radius: 6px;
-    
+
     border: none;
     box-shadow: none;
     outline: none;
@@ -2305,12 +2385,12 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    
+
     /* Height: 28-32px range - consistent with tags/badges */
     height: 30px;
     min-height: 28px;
     max-height: 32px;
-    
+
     padding: 0 12px;
     font-family: var(--font-family-sans);
     font-size: 14px;
@@ -2319,15 +2399,15 @@
     text-transform: none;
     text-decoration: none;
     white-space: nowrap;
-    
+
     /* Shape: 6px border-radius (rounded, NOT pill) */
     border-radius: 6px;
-    
+
     border: none;
     box-shadow: none;
     outline: none;
     flex-shrink: 0;
-    
+
     background: var(--primitive-neutral-200);
     color: var(--color-text-secondary);
   }
@@ -3468,7 +3548,7 @@ p-button .p-button,
   background: var(--ds-primary-green);
   border: 2px solid transparent;
   color: var(--color-text-on-primary);
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -3637,7 +3717,9 @@ p-button .p-button,
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .p-select-option:hover,
@@ -3665,7 +3747,8 @@ p-button .p-button,
 /* Calendar Header */
 .p-datepicker-panel .p-datepicker-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+  border-bottom: 1px solid
+    var(--color-border-secondary, var(--primitive-neutral-300));
   background: linear-gradient(
     to bottom,
     var(--surface-secondary, var(--primitive-neutral-50)),
@@ -3711,10 +3794,7 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-title button:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-month:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-year:hover {
-  background: var(
-    --ds-primary-green-ultra-subtle,
-    rgba(8, 153, 73, 0.08)
-  );
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
   color: var(--ds-primary-green);
 }
 
@@ -3738,14 +3818,8 @@ p-button .p-button,
 
 .p-datepicker-panel .p-datepicker-prev:hover,
 .p-datepicker-panel .p-datepicker-next:hover {
-  background: var(
-    --ds-primary-green-ultra-subtle,
-    rgba(8, 153, 73, 0.1)
-  );
-  border-color: var(
-    --ds-primary-green-subtle,
-    rgba(8, 153, 73, 0.2)
-  );
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.1));
+  border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
   color: var(--ds-primary-green);
   transform: scale(1.05);
 }
@@ -3825,10 +3899,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td
   > button:hover:not(.p-disabled):not(.p-highlight) {
-  background: var(
-    --ds-primary-green-ultra-subtle,
-    rgba(8, 153, 73, 0.08)
-  );
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
   color: var(--ds-primary-green);
 }
 
@@ -4021,7 +4092,8 @@ p-button .p-button,
     align-items: center;
     justify-content: center;
     background: var(--surface-secondary, var(--primitive-neutral-50));
-    border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+    border: 1px solid
+      var(--color-border-secondary, var(--primitive-neutral-300));
     color: var(--color-text-secondary, var(--primitive-neutral-600));
     cursor: pointer;
     transition:

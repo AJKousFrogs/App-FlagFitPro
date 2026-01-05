@@ -21,10 +21,20 @@ export class DashboardViewModel extends BaseViewModel {
 
   // State signals
   readonly stats = signal<DashboardStats | null>(null);
-  readonly recentActivity = signal<{ id: string; type: string; date: string; description: string }[]>([]);
-  readonly upcomingSessions = signal<{ id: string; title: string; date: string; type: string }[]>([]);
-  readonly performanceChartData = signal<{ labels: string[]; datasets: { label: string; data: number[] }[] } | null>(null);
-  readonly trainingChartData = signal<{ labels: string[]; datasets: { label: string; data: number[] }[] } | null>(null);
+  readonly recentActivity = signal<
+    { id: string; type: string; date: string; description: string }[]
+  >([]);
+  readonly upcomingSessions = signal<
+    { id: string; title: string; date: string; type: string }[]
+  >([]);
+  readonly performanceChartData = signal<{
+    labels: string[];
+    datasets: { label: string; data: number[] }[];
+  } | null>(null);
+  readonly trainingChartData = signal<{
+    labels: string[];
+    datasets: { label: string; data: number[] }[];
+  } | null>(null);
 
   // Derived/computed signals
   readonly hasData = computed(() => this.stats() !== null);

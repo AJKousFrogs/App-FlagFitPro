@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -43,9 +39,7 @@ export type ConsentBlockedDataType =
   selector: "app-consent-blocked-message",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, RouterModule, CardModule, ButtonComponent],
   template: `
     <div class="consent-blocked" [class]="variant">
       <div class="consent-icon">
@@ -67,7 +61,7 @@ export type ConsentBlockedDataType =
       </div>
     </div>
   `,
-  styleUrl: './consent-blocked-message.component.scss',
+  styleUrl: "./consent-blocked-message.component.scss",
 })
 export class ConsentBlockedMessageComponent {
   @Input() playerName?: string;

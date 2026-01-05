@@ -9,7 +9,9 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: var(--space-4);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .protocol-block:hover {
@@ -319,4 +321,3 @@
     transition: none;
   }
 }
-

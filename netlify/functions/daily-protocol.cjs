@@ -39,13 +39,23 @@ const BLOCK_TYPES = {
 };
 
 // Day names for schedule matching
-const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const DAY_NAMES = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
 
 /**
  * Calculate age from birth date
  */
 function calculateAge(birthDate) {
-  if (!birthDate) {return null;}
+  if (!birthDate) {
+    return null;
+  }
   const today = new Date();
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
@@ -97,12 +107,14 @@ async function getUserTrainingContext(supabase, userId, date) {
   // 4. Get assigned program and current phase/week
   const { data: playerProgram } = await supabase
     .from("player_programs")
-    .select(`
+    .select(
+      `
       *,
       training_programs (
         id, name, program_type, program_structure
       )
-    `)
+    `,
+    )
     .eq("player_id", userId)
     .eq("status", "active")
     .single();
@@ -148,18 +160,18 @@ async function getUserTrainingContext(supabase, userId, date) {
 
   // 7. Check if today has flag practice
   const flagPracticeSchedule = config?.flag_practice_schedule || [];
-  const todayPractice = flagPracticeSchedule.find(p => p.day === dayOfWeek);
+  const todayPractice = flagPracticeSchedule.find((p) => p.day === dayOfWeek);
   const hasFlagPractice = !!todayPractice;
 
   // 8. Get ACWR and readiness from wellness checkin
   let readiness = null;
-  
+
   // First try to get from wellness checkin (new system)
   const { data: wellnessData } = await supabase.rpc("get_athlete_readiness", {
     p_user_id: userId,
     p_date: date,
   });
-  
+
   if (wellnessData && wellnessData.length > 0 && wellnessData[0].has_checkin) {
     const w = wellnessData[0];
     readiness = {
@@ -179,7 +191,7 @@ async function getUserTrainingContext(supabase, userId, date) {
       .eq("user_id", userId)
       .eq("day", date)
       .single();
-    
+
     if (oldReadiness) {
       readiness = {
         score: oldReadiness.score || oldReadiness.readiness_score,
@@ -215,19 +227,21 @@ async function getUserTrainingContext(supabase, userId, date) {
     for (const tournament of upcomingTournaments) {
       const tournamentDate = new Date(tournament.start_date);
       const currentDate = new Date(date);
-      const daysUntil = Math.ceil((tournamentDate - currentDate) / (1000 * 60 * 60 * 24));
+      const daysUntil = Math.ceil(
+        (tournamentDate - currentDate) / (1000 * 60 * 60 * 24),
+      );
       const taperWeeks = tournament.taper_weeks_before || 1;
       const taperDays = taperWeeks * 7;
 
       if (daysUntil <= taperDays && daysUntil > 0) {
         // We're in taper period
-        const taperProgress = 1 - (daysUntil / taperDays); // 0 at start, 1 at tournament
-        
-        // Calculate taper reduction: 
+        const taperProgress = 1 - daysUntil / taperDays; // 0 at start, 1 at tournament
+
+        // Calculate taper reduction:
         // Peak events: reduce to 40% at tournament
         // Regular events: reduce to 60% at tournament
         const minLoadPercent = tournament.is_peak_event ? 0.4 : 0.6;
-        const loadMultiplier = 1 - (taperProgress * (1 - minLoadPercent));
+        const loadMultiplier = 1 - taperProgress * (1 - minLoadPercent);
 
         taperContext = {
           isInTaper: true,
@@ -243,7 +257,10 @@ async function getUserTrainingContext(supabase, userId, date) {
           taperWeeks,
           taperProgress: Math.round(taperProgress * 100),
           loadMultiplier: Math.round(loadMultiplier * 100) / 100,
-          recommendation: getTaperRecommendation(daysUntil, tournament.is_peak_event),
+          recommendation: getTaperRecommendation(
+            daysUntil,
+            tournament.is_peak_event,
+          ),
         };
         break; // Use first tournament we're tapering for
       }
@@ -290,7 +307,7 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
     return "🔄 Final prep phase - Very light training. Prioritize sleep and nutrition.";
   }
   if (daysUntil <= 7) {
-    return isPeakEvent 
+    return isPeakEvent
       ? "⚡ Peak week - Reduce volume 50%, maintain intensity on key movements."
       : "📉 Taper week - Reduce volume 30%, sharpen movement quality.";
   }
@@ -353,7 +370,12 @@ exports.handler = async (event) => {
     const endpoint = pathParts[pathParts.length - 1];
 
     if (httpMethod === "GET" && endpoint === "daily-protocol") {
-      return await getProtocol(supabase, user.id, queryStringParameters, corsHeaders);
+      return await getProtocol(
+        supabase,
+        user.id,
+        queryStringParameters,
+        corsHeaders,
+      );
     }
 
     if (httpMethod === "POST") {
@@ -361,9 +383,19 @@ exports.handler = async (event) => {
 
       switch (endpoint) {
         case "generate":
-          return await generateProtocol(supabase, user.id, payload, corsHeaders);
+          return await generateProtocol(
+            supabase,
+            user.id,
+            payload,
+            corsHeaders,
+          );
         case "complete":
-          return await completeExercise(supabase, user.id, payload, corsHeaders);
+          return await completeExercise(
+            supabase,
+            user.id,
+            payload,
+            corsHeaders,
+          );
         case "skip":
           return await skipExercise(supabase, user.id, payload, corsHeaders);
         case "complete-block":
@@ -436,7 +468,7 @@ async function getProtocol(supabase, userId, params, headers) {
         default_sets, default_reps, default_hold_seconds, default_duration_seconds,
         difficulty_level, load_contribution_au, is_high_intensity
       )
-    `
+    `,
     )
     .eq("protocol_id", protocol.id)
     .order("sequence_order");
@@ -448,7 +480,7 @@ async function getProtocol(supabase, userId, params, headers) {
   // Transform to frontend format
   const transformedProtocol = transformProtocolResponse(
     protocol,
-    protocolExercises
+    protocolExercises,
   );
 
   return {
@@ -477,7 +509,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .single();
 
   if (existing) {
-    await supabase.from("protocol_exercises").delete().eq("protocol_id", existing.id);
+    await supabase
+      .from("protocol_exercises")
+      .delete()
+      .eq("protocol_id", existing.id);
     await supabase.from("daily_protocols").delete().eq("id", existing.id);
   }
 
@@ -493,24 +528,28 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (context.hasFlagPractice) {
     const practiceTime = context.flagPracticeDetails?.start_time || "18:00";
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;
-    
+
     if (context.isQB) {
-      aiRationale += `QB: ${context.flagPracticeDetails?.expected_throws || 40-50} throws expected at practice. Arm care is light activation only - no heavy throwing before practice.`;
+      aiRationale += `QB: ${context.flagPracticeDetails?.expected_throws || 40 - 50} throws expected at practice. Arm care is light activation only - no heavy throwing before practice.`;
       trainingFocus = "practice_day_qb";
     } else {
-      aiRationale += "Training adjusted to complement practice. Lower body work OK, rest before practice.";
+      aiRationale +=
+        "Training adjusted to complement practice. Lower body work OK, rest before practice.";
       trainingFocus = "practice_day";
     }
   } else if (readinessScore < 50 || acwrValue > context.acwrTargetRange.max) {
     trainingFocus = "recovery";
-    aiRationale = "⚠️ Readiness is low or ACWR is high. Today focuses on recovery and mobility.";
+    aiRationale =
+      "⚠️ Readiness is low or ACWR is high. Today focuses on recovery and mobility.";
   } else if (readinessScore < 70) {
     trainingFocus = "skill";
-    aiRationale = "Moderate readiness. Technical work recommended over high intensity.";
+    aiRationale =
+      "Moderate readiness. Technical work recommended over high intensity.";
   } else {
     // Use session template focus if available
     if (context.sessionTemplate) {
-      trainingFocus = context.sessionTemplate.session_type?.toLowerCase() || "strength";
+      trainingFocus =
+        context.sessionTemplate.session_type?.toLowerCase() || "strength";
       aiRationale = `📋 ${context.sessionTemplate.session_name}: ${context.sessionTemplate.description || "Structured training from your program."}`;
     } else {
       aiRationale = "Good readiness! Today is great for training.";
@@ -522,7 +561,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (context.taperContext?.isInTaper) {
     const taper = context.taperContext;
     taperLoadMultiplier = taper.loadMultiplier;
-    
+
     // Override training focus for taper
     if (taper.daysUntil <= 2) {
       trainingFocus = "taper_final";
@@ -531,10 +570,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
     } else {
       trainingFocus = "taper_early";
     }
-    
+
     // Add taper rationale at the start
     const taperEmoji = taper.tournament.isPeakEvent ? "🏆" : "🎯";
-    aiRationale = `${taperEmoji} TAPER for ${taper.tournament.name} (${taper.daysUntil} days). ${taper.recommendation} ${  aiRationale}`;
+    aiRationale = `${taperEmoji} TAPER for ${taper.tournament.name} (${taper.daysUntil} days). ${taper.recommendation} ${aiRationale}`;
   }
 
   // Add age-based notes
@@ -549,8 +588,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   // Calculate load target (adjusted by age AND taper)
   const baseLoadTarget = Math.round(readinessScore * 15);
-  let adjustedLoadTarget = Math.round(baseLoadTarget / (context.ageModifier?.recovery_modifier || 1));
-  
+  let adjustedLoadTarget = Math.round(
+    baseLoadTarget / (context.ageModifier?.recovery_modifier || 1),
+  );
+
   // Apply taper reduction
   if (taperLoadMultiplier < 1) {
     adjustedLoadTarget = Math.round(adjustedLoadTarget * taperLoadMultiplier);
@@ -600,7 +641,8 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_hold_seconds: ex.default_hold_seconds,
           prescribed_duration_seconds: ex.default_duration_seconds,
           load_contribution_au: ex.load_contribution_au || 0,
-          ai_note: "QB Morning Routine - Hip flexor flexibility supports throwing velocity",
+          ai_note:
+            "QB Morning Routine - Hip flexor flexibility supports throwing velocity",
         });
       });
     }
@@ -638,7 +680,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .limit(10);
 
   if (foamRollExercises && foamRollExercises.length > 0) {
-    const shuffled = foamRollExercises.sort(() => Math.random() - 0.5).slice(0, 5);
+    const shuffled = foamRollExercises
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         protocol_id: protocol.id,
@@ -691,9 +735,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
   } else {
     // Standard warm-up for non-QB or practice days
     const { data: warmUpExercises } = await warmUpQuery.limit(12);
-    
+
     if (warmUpExercises && warmUpExercises.length > 0) {
-      const shuffled = warmUpExercises.sort(() => Math.random() - 0.5).slice(0, 6);
+      const shuffled = warmUpExercises
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 6);
       shuffled.forEach((ex, idx) => {
         protocolExercises.push({
           protocol_id: protocol.id,
@@ -715,13 +761,15 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Get exercises from session_exercises table
     const { data: sessionExercises } = await supabase
       .from("session_exercises")
-      .select(`
+      .select(
+        `
         *,
         exercises (
           id, name, slug, category, video_url, video_id, thumbnail_url,
           how_text, feel_text, compensation_text, load_contribution_au
         )
-      `)
+      `,
+      )
       .eq("session_template_id", context.sessionTemplate.id)
       .order("exercise_order");
 
@@ -729,12 +777,14 @@ async function generateProtocol(supabase, userId, payload, headers) {
       // Get previous session data for progressive overload
       const { data: previousCompletions } = await supabase
         .from("protocol_completions")
-        .select(`
+        .select(
+          `
           exercise_id,
           protocol_exercises (
             actual_sets, actual_reps, actual_weight_kg, prescribed_weight_kg
           )
-        `)
+        `,
+        )
         .eq("user_id", userId)
         .eq("block_type", "main_session")
         .order("completion_date", { ascending: false })
@@ -748,7 +798,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
             previousPerformance[pc.exercise_id] = {
               sets: pc.protocol_exercises.actual_sets,
               reps: pc.protocol_exercises.actual_reps,
-              weight: pc.protocol_exercises.actual_weight_kg || pc.protocol_exercises.prescribed_weight_kg,
+              weight:
+                pc.protocol_exercises.actual_weight_kg ||
+                pc.protocol_exercises.prescribed_weight_kg,
             };
           }
         });
@@ -757,15 +809,21 @@ async function generateProtocol(supabase, userId, payload, headers) {
       sessionExercises.forEach((se, idx) => {
         const exerciseId = se.exercise_id || se.exercises?.id;
         const prev = previousPerformance[exerciseId];
-        
+
         // Calculate progressive overload
         let prescribedSets = se.sets || 3;
         let prescribedReps = parseInt(se.reps) || 8;
-        let prescribedWeight = se.load_percentage ? (se.load_percentage / 100) : null;
+        let prescribedWeight = se.load_percentage
+          ? se.load_percentage / 100
+          : null;
         let progressionNote = null;
 
         // Apply progressive overload logic
-        if (prev && readinessScore >= 70 && acwrValue < context.acwrTargetRange.max) {
+        if (
+          prev &&
+          readinessScore >= 70 &&
+          acwrValue < context.acwrTargetRange.max
+        ) {
           // If previous was completed successfully, progress
           if (prev.reps >= prescribedReps && prev.sets >= prescribedSets) {
             // Add 1 rep or 2.5% weight
@@ -774,7 +832,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
               prescribedReps = Math.min(prev.reps + 1, 15);
               progressionNote = `↑ +1 rep from last time (${prev.reps}→${prescribedReps})`;
             } else if (prescribedWeight) {
-              prescribedWeight = prev.weight ? prev.weight * 1.025 : prescribedWeight;
+              prescribedWeight = prev.weight
+                ? prev.weight * 1.025
+                : prescribedWeight;
               progressionNote = `↑ +2.5% load progression`;
             }
           }
@@ -811,7 +871,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .limit(20);
 
     if (mainExercises && mainExercises.length > 0) {
-      const shuffled = mainExercises.sort(() => Math.random() - 0.5).slice(0, 6);
+      const shuffled = mainExercises
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 6);
       shuffled.forEach((ex, idx) => {
         protocolExercises.push({
           protocol_id: protocol.id,
@@ -821,7 +883,8 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_sets: ex.default_sets || 3,
           prescribed_reps: ex.default_reps || 8,
           load_contribution_au: ex.load_contribution_au || 10,
-          ai_note: "Generic exercise - configure your program for personalized training",
+          ai_note:
+            "Generic exercise - configure your program for personalized training",
         });
       });
     }
@@ -836,7 +899,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .limit(6);
 
   if (coolDownExercises && coolDownExercises.length > 0) {
-    const shuffled = coolDownExercises.sort(() => Math.random() - 0.5).slice(0, 3);
+    const shuffled = coolDownExercises
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         protocol_id: protocol.id,
@@ -861,7 +926,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .limit(4);
 
   if (recoveryExercises && recoveryExercises.length > 0) {
-    const shuffled = recoveryExercises.sort(() => Math.random() - 0.5).slice(0, 2);
+    const shuffled = recoveryExercises
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 2);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         protocol_id: protocol.id,
@@ -1145,7 +1212,8 @@ async function skipBlock(supabase, userId, payload, headers) {
  * Log the main session RPE and duration
  */
 async function logSession(supabase, userId, payload, headers) {
-  const { protocolId, actualDurationMinutes, actualRpe, sessionNotes } = payload;
+  const { protocolId, actualDurationMinutes, actualRpe, sessionNotes } =
+    payload;
 
   if (!protocolId || !actualDurationMinutes || !actualRpe) {
     return {
@@ -1218,16 +1286,19 @@ async function logSession(supabase, userId, payload, headers) {
 
   // Update wellness tracking - log the training
   try {
-    await supabase.from("wellness_logs").upsert({
-      user_id: userId,
-      log_date: protocol.protocol_date,
-      training_load: actualLoadAu,
-      training_duration: actualDurationMinutes,
-      training_rpe: actualRpe,
-    }, {
-      onConflict: "user_id,log_date",
-      ignoreDuplicates: false,
-    });
+    await supabase.from("wellness_logs").upsert(
+      {
+        user_id: userId,
+        log_date: protocol.protocol_date,
+        training_load: actualLoadAu,
+        training_duration: actualDurationMinutes,
+        training_rpe: actualRpe,
+      },
+      {
+        onConflict: "user_id,log_date",
+        ignoreDuplicates: false,
+      },
+    );
   } catch (wellnessError) {
     console.warn("Could not update wellness:", wellnessError.message);
     // Non-fatal
@@ -1247,15 +1318,18 @@ async function logSession(supabase, userId, payload, headers) {
   // Update training streak
   let streakResult = null;
   try {
-    const { data: streakData, error: streakError } = await supabase.rpc("update_player_streak", {
-      p_user_id: userId,
-      p_streak_type: "training",
-      p_activity_date: protocol.protocol_date,
-    });
-    
+    const { data: streakData, error: streakError } = await supabase.rpc(
+      "update_player_streak",
+      {
+        p_user_id: userId,
+        p_streak_type: "training",
+        p_activity_date: protocol.protocol_date,
+      },
+    );
+
     if (!streakError && streakData && streakData.length > 0) {
       streakResult = streakData[0];
-      
+
       // Award any streak achievements
       const unlocked = streakResult.achievements_unlocked || [];
       for (const slug of unlocked) {
@@ -1273,11 +1347,13 @@ async function logSession(supabase, userId, payload, headers) {
   // Update player_training_stats
   try {
     const currentMonth = protocol.protocol_date.substring(0, 7); // YYYY-MM
-    
+
     // Check if stats exist
     const { data: existingStats } = await supabase
       .from("player_training_stats")
-      .select("id, total_sessions, total_training_minutes, total_load_au, month_sessions, month_load_au, current_month")
+      .select(
+        "id, total_sessions, total_training_minutes, total_load_au, month_sessions, month_load_au, current_month",
+      )
       .eq("user_id", userId)
       .single();
 
@@ -1287,10 +1363,13 @@ async function logSession(supabase, userId, payload, headers) {
         .from("player_training_stats")
         .update({
           total_sessions: existingStats.total_sessions + 1,
-          total_training_minutes: existingStats.total_training_minutes + actualDurationMinutes,
+          total_training_minutes:
+            existingStats.total_training_minutes + actualDurationMinutes,
           total_load_au: existingStats.total_load_au + actualLoadAu,
           month_sessions: monthReset ? 1 : existingStats.month_sessions + 1,
-          month_load_au: monthReset ? actualLoadAu : existingStats.month_load_au + actualLoadAu,
+          month_load_au: monthReset
+            ? actualLoadAu
+            : existingStats.month_load_au + actualLoadAu,
           current_month: currentMonth,
           updated_at: new Date().toISOString(),
         })
@@ -1328,7 +1407,7 @@ async function logSession(supabase, userId, payload, headers) {
         { count: 100, slug: "sessions_100" },
         { count: 365, slug: "sessions_365" },
       ];
-      
+
       for (const milestone of milestones) {
         if (sessionsCount >= milestone.count) {
           await supabase.rpc("award_achievement", {
@@ -1346,13 +1425,15 @@ async function logSession(supabase, userId, payload, headers) {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ 
-      success: true, 
+    body: JSON.stringify({
+      success: true,
       actualLoadAu,
-      streak: streakResult ? {
-        newStreak: streakResult.new_streak,
-        isNewRecord: streakResult.is_new_record,
-      } : null,
+      streak: streakResult
+        ? {
+            newStreak: streakResult.new_streak,
+            isNewRecord: streakResult.is_new_record,
+          }
+        : null,
     }),
   };
 }
@@ -1381,7 +1462,7 @@ function transformProtocolResponse(protocol, exercises) {
   const createBlock = (type, title, icon) => {
     const blockExercises = blocks[type] || [];
     const completedCount = blockExercises.filter(
-      (e) => e.status === "complete"
+      (e) => e.status === "complete",
     ).length;
 
     return {
@@ -1410,10 +1491,22 @@ function transformProtocolResponse(protocol, exercises) {
     totalLoadTargetAu: protocol.total_load_target_au,
     aiRationale: protocol.ai_rationale,
     trainingFocus: protocol.training_focus,
-    morningMobility: createBlock("morning_mobility", "Morning Mobility", "pi-sun"),
-    foamRoll: createBlock("foam_roll", "Pre-Training: Foam Roll", "pi-circle-fill"),
+    morningMobility: createBlock(
+      "morning_mobility",
+      "Morning Mobility",
+      "pi-sun",
+    ),
+    foamRoll: createBlock(
+      "foam_roll",
+      "Pre-Training: Foam Roll",
+      "pi-circle-fill",
+    ),
     mainSession: createBlock("main_session", "Main Session", "pi-play"),
-    eveningRecovery: createBlock("evening_recovery", "Evening Recovery", "pi-moon"),
+    eveningRecovery: createBlock(
+      "evening_recovery",
+      "Evening Recovery",
+      "pi-moon",
+    ),
     overallProgress: protocol.overall_progress || 0,
     completedExercises: protocol.completed_exercises || 0,
     totalExercises: protocol.total_exercises || 0,

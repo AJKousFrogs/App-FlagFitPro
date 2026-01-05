@@ -78,7 +78,7 @@ interface DiscussionMessage {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
+
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -157,28 +157,38 @@ interface DiscussionMessage {
                       <i class="pi pi-video"></i>
                     </div>
                   }
-                  <span class="duration-badge">{{ formatDuration(film.duration) }}</span>
+                  <span class="duration-badge">{{
+                    formatDuration(film.duration)
+                  }}</span>
                   @if (film.isWatched) {
-                    <span class="watched-badge"><i class="pi pi-check"></i></span>
+                    <span class="watched-badge"
+                      ><i class="pi pi-check"></i
+                    ></span>
                   }
                 </div>
 
                 <div class="film-info">
                   <h3>{{ film.title }}</h3>
                   <p class="opponent">vs {{ film.opponent }}</p>
-                  <p class="date">{{ film.gameDate | date:'MMM d, y' }}</p>
+                  <p class="date">{{ film.gameDate | date: "MMM d, y" }}</p>
 
                   <div class="film-meta">
                     @if (film.taggedMoments.length > 0) {
-                      <span class="tag-count" [class.has-corrections]="hasCorrections(film)">
+                      <span
+                        class="tag-count"
+                        [class.has-corrections]="hasCorrections(film)"
+                      >
                         <i class="pi pi-bookmark"></i>
                         {{ film.taggedMoments.length }} moments
                       </span>
                     }
                     @if (film.dueBy) {
-                      <span class="due-date" [class.overdue]="isOverdue(film.dueBy)">
+                      <span
+                        class="due-date"
+                        [class.overdue]="isOverdue(film.dueBy)"
+                      >
                         <i class="pi pi-calendar"></i>
-                        Due: {{ film.dueBy | date:'MMM d' }}
+                        Due: {{ film.dueBy | date: "MMM d" }}
                       </span>
                     }
                   </div>
@@ -248,28 +258,49 @@ interface DiscussionMessage {
                       (click)="jumpToMoment(moment.timestamp)"
                     >
                       <div class="moment-header">
-                        <span class="timestamp" (click)="jumpToMoment(moment.timestamp); $event.stopPropagation()">
+                        <span
+                          class="timestamp"
+                          (click)="
+                            jumpToMoment(moment.timestamp);
+                            $event.stopPropagation()
+                          "
+                        >
                           <i class="pi pi-play-circle"></i>
                           {{ formatTimestamp(moment.timestamp) }}
                         </span>
                         <p-tag
-                          [value]="moment.type === 'positive' ? 'Great play!' : 'Correction'"
-                          [severity]="moment.type === 'positive' ? 'success' : 'warn'"
+                          [value]="
+                            moment.type === 'positive'
+                              ? 'Great play!'
+                              : 'Correction'
+                          "
+                          [severity]="
+                            moment.type === 'positive' ? 'success' : 'warn'
+                          "
                         ></p-tag>
                       </div>
                       <h5>{{ moment.title }}</h5>
                       <p class="coach-comment">
-                        <strong>{{ moment.coachName }}:</strong> {{ moment.coachComment }}
+                        <strong>{{ moment.coachName }}:</strong>
+                        {{ moment.coachComment }}
                       </p>
 
                       <!-- Discussion Thread -->
-                      @if (moment.discussionThread.length > 0 || expandedMoment() === moment.id) {
+                      @if (
+                        moment.discussionThread.length > 0 ||
+                        expandedMoment() === moment.id
+                      ) {
                         <div class="discussion-thread">
                           @for (msg of moment.discussionThread; track msg.id) {
-                            <div class="thread-message" [class.player]="msg.authorRole === 'player'">
+                            <div
+                              class="thread-message"
+                              [class.player]="msg.authorRole === 'player'"
+                            >
                               <span class="msg-author">{{ msg.author }}</span>
                               <p>{{ msg.message }}</p>
-                              <span class="msg-time">{{ msg.timestamp | date:'short' }}</span>
+                              <span class="msg-time">{{
+                                msg.timestamp | date: "short"
+                              }}</span>
                             </div>
                           }
 
@@ -281,7 +312,12 @@ interface DiscussionMessage {
                                 placeholder="Add a comment..."
                                 rows="2"
                               ></textarea>
-                              <app-button iconLeft="pi-send" [disabled]="!replyMessage.trim()" (clicked)="sendReply(moment.id)">Send</app-button>
+                              <app-button
+                                iconLeft="pi-send"
+                                [disabled]="!replyMessage.trim()"
+                                (clicked)="sendReply(moment.id)"
+                                >Send</app-button
+                              >
                             </div>
                           }
                         </div>
@@ -289,10 +325,23 @@ interface DiscussionMessage {
 
                       <button
                         class="expand-btn"
-                        (click)="toggleExpand(moment.id); $event.stopPropagation()"
+                        (click)="
+                          toggleExpand(moment.id); $event.stopPropagation()
+                        "
                       >
-                        <i class="pi" [ngClass]="expandedMoment() === moment.id ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
-                        {{ expandedMoment() === moment.id ? 'Collapse' : 'Reply/Discuss' }}
+                        <i
+                          class="pi"
+                          [ngClass]="
+                            expandedMoment() === moment.id
+                              ? 'pi-chevron-up'
+                              : 'pi-chevron-down'
+                          "
+                        ></i>
+                        {{
+                          expandedMoment() === moment.id
+                            ? "Collapse"
+                            : "Reply/Discuss"
+                        }}
                       </button>
                     </div>
                   }
@@ -346,28 +395,28 @@ export class FilmRoomComponent implements OnInit {
       result = result.filter(
         (f) =>
           f.title.toLowerCase().includes(query) ||
-          f.opponent.toLowerCase().includes(query)
+          f.opponent.toLowerCase().includes(query),
       );
     }
 
     // Status filter
     if (this.selectedStatus) {
       result = result.filter((f) =>
-        this.selectedStatus === "watched" ? f.isWatched : !f.isWatched
+        this.selectedStatus === "watched" ? f.isWatched : !f.isWatched,
       );
     }
 
     return result;
   });
 
-  readonly watchedCount = computed(() =>
-    this.films().filter((f) => f.isWatched).length
+  readonly watchedCount = computed(
+    () => this.films().filter((f) => f.isWatched).length,
   );
 
   readonly totalFilms = computed(() => this.films().length);
 
   readonly totalTaggedMoments = computed(() =>
-    this.films().reduce((sum, f) => sum + f.taggedMoments.length, 0)
+    this.films().reduce((sum, f) => sum + f.taggedMoments.length, 0),
   );
 
   readonly progressPercent = computed(() => {
@@ -385,7 +434,9 @@ export class FilmRoomComponent implements OnInit {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/film-room"));
+      const response: any = await firstValueFrom(
+        this.api.get("/api/film-room"),
+      );
       if (response?.success && response.data?.films) {
         this.films.set(response.data.films);
       }
@@ -410,25 +461,32 @@ export class FilmRoomComponent implements OnInit {
     this.films.update((films) =>
       films.map((f) =>
         f.id === film.id
-          ? { ...f, isWatched: newStatus, watchProgress: newStatus ? 100 : f.watchProgress }
-          : f
-      )
+          ? {
+              ...f,
+              isWatched: newStatus,
+              watchProgress: newStatus ? 100 : f.watchProgress,
+            }
+          : f,
+      ),
     );
 
     this.selectedFilm.update((f) =>
-      f?.id === film.id ? { ...f, isWatched: newStatus } : f
+      f?.id === film.id ? { ...f, isWatched: newStatus } : f,
     );
 
-    this.api.post("/api/film-room/watched", { filmId: film.id, watched: newStatus }).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: newStatus ? "Marked as Watched" : "Marked as Unwatched",
-          detail: film.title,
-        });
-      },
-      error: (err) => this.logger.error("Failed to update watched status", err),
-    });
+    this.api
+      .post("/api/film-room/watched", { filmId: film.id, watched: newStatus })
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: "success",
+            summary: newStatus ? "Marked as Watched" : "Marked as Unwatched",
+            detail: film.title,
+          });
+        },
+        error: (err) =>
+          this.logger.error("Failed to update watched status", err),
+      });
   }
 
   toggleExpand(momentId: string): void {
@@ -457,8 +515,10 @@ export class FilmRoomComponent implements OnInit {
     // Update progress
     this.films.update((films) =>
       films.map((f) =>
-        f.id === film.id ? { ...f, watchProgress: Math.max(f.watchProgress, progress) } : f
-      )
+        f.id === film.id
+          ? { ...f, watchProgress: Math.max(f.watchProgress, progress) }
+          : f,
+      ),
     );
   }
 
@@ -482,12 +542,15 @@ export class FilmRoomComponent implements OnInit {
               ...f,
               taggedMoments: f.taggedMoments.map((m) =>
                 m.id === momentId
-                  ? { ...m, discussionThread: [...m.discussionThread, newMessage] }
-                  : m
+                  ? {
+                      ...m,
+                      discussionThread: [...m.discussionThread, newMessage],
+                    }
+                  : m,
               ),
             }
-          : f
-      )
+          : f,
+      ),
     );
 
     // Update selected film
@@ -497,11 +560,14 @@ export class FilmRoomComponent implements OnInit {
             ...f,
             taggedMoments: f.taggedMoments.map((m) =>
               m.id === momentId
-                ? { ...m, discussionThread: [...m.discussionThread, newMessage] }
-                : m
+                ? {
+                    ...m,
+                    discussionThread: [...m.discussionThread, newMessage],
+                  }
+                : m,
             ),
           }
-        : null
+        : null,
     );
 
     this.api

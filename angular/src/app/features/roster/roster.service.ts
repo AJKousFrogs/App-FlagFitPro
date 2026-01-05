@@ -210,7 +210,9 @@ export class RosterService {
       }
 
       // Process coaching staff
-      const staff = this.processStaffMembers(members as TeamMemberRecord[] | null);
+      const staff = this.processStaffMembers(
+        members as TeamMemberRecord[] | null,
+      );
       this.coachingStaff.set(staff);
 
       // Process players
@@ -268,7 +270,10 @@ export class RosterService {
       return { success: true };
     } catch (error: unknown) {
       this.logger.error("[RosterService] Error adding player:", error);
-      return { success: false, error: this.extractErrorMessage(error) || "Failed to add player" };
+      return {
+        success: false,
+        error: this.extractErrorMessage(error) || "Failed to add player",
+      };
     }
   }
 
@@ -514,7 +519,8 @@ export class RosterService {
             role: invRecord.role,
             message: invRecord.message,
             status: invRecord.status as TeamInvitation["status"],
-            invitedBy: invRecord.inviter?.raw_user_meta_data?.full_name || "Unknown",
+            invitedBy:
+              invRecord.inviter?.raw_user_meta_data?.full_name || "Unknown",
             expiresAt: invRecord.expires_at,
             createdAt: invRecord.created_at,
             isExpired: new Date(invRecord.expires_at) < new Date(),
@@ -649,7 +655,9 @@ export class RosterService {
   // HELPER METHODS
   // ============================================================================
 
-  private processStaffMembers(members: TeamMemberRecord[] | null): StaffMember[] {
+  private processStaffMembers(
+    members: TeamMemberRecord[] | null,
+  ): StaffMember[] {
     const staffRoles = [
       "owner",
       "admin",
@@ -694,8 +702,9 @@ export class RosterService {
       // Map database status to Player status type
       let status: PlayerStatus = "active";
       if (p.status === "injured") status = "injured";
-      else if (p.status === "inactive" || p.status === "suspended") status = "inactive";
-      
+      else if (p.status === "inactive" || p.status === "suspended")
+        status = "inactive";
+
       return {
         id: p.id,
         name: p.name,

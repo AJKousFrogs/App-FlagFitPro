@@ -173,43 +173,43 @@ Central command center for coaches - overview of team health, today's activities
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Alert Center | High/medium priority items requiring action |
-| Team Stats Cards | Readiness, ACWR, check-ins, record |
-| Today's Schedule | Practice plan with attendance |
-| Wellness Heatmap | Visual player wellness overview |
-| Quick Actions | Fast access to coaching tools |
-| Activity Feed | Recent team activity |
+| Feature          | Description                                 |
+| ---------------- | ------------------------------------------- |
+| Alert Center     | High/medium priority items requiring action |
+| Team Stats Cards | Readiness, ACWR, check-ins, record          |
+| Today's Schedule | Practice plan with attendance               |
+| Wellness Heatmap | Visual player wellness overview             |
+| Quick Actions    | Fast access to coaching tools               |
+| Activity Feed    | Recent team activity                        |
 
 ---
 
 ## Alert Types
 
-| Priority | Color | Examples |
-|----------|-------|----------|
-| High | 🔴 Red | ACWR danger zone, injury reported, overdue RTP |
-| Medium | 🟡 Yellow | Missing check-ins, pending RSVPs, unwatched film |
-| Low | 🔵 Blue | Upcoming deadlines, achievements |
+| Priority | Color     | Examples                                         |
+| -------- | --------- | ------------------------------------------------ |
+| High     | 🔴 Red    | ACWR danger zone, injury reported, overdue RTP   |
+| Medium   | 🟡 Yellow | Missing check-ins, pending RSVPs, unwatched film |
+| Low      | 🔵 Blue   | Upcoming deadlines, achievements                 |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Team roster | `RosterService` | `team_members` |
-| Wellness data | `WellnessService` | `wellness_checkins` |
-| ACWR alerts | `AcwrAlertsService` | `acwr_calculations` |
-| Events | `CalendarService` | `team_events` |
-| Payments | `PaymentService` | `player_balances` |
+| Data          | Service             | Table               |
+| ------------- | ------------------- | ------------------- |
+| Team roster   | `RosterService`     | `team_members`      |
+| Wellness data | `WellnessService`   | `wellness_checkins` |
+| ACWR alerts   | `AcwrAlertsService` | `acwr_calculations` |
+| Events        | `CalendarService`   | `team_events`       |
+| Payments      | `PaymentService`    | `player_balances`   |
 
 ---
 
 ## Related Pages
 
-| Page | Route | Relationship |
-|------|-------|--------------|
-| Team Analytics | `/coach/analytics` | Detailed metrics |
-| Roster | `/roster` | Player management |
-| Practice Planner | `/coach/practice` | Create sessions |
+| Page             | Route              | Relationship      |
+| ---------------- | ------------------ | ----------------- |
+| Team Analytics   | `/coach/analytics` | Detailed metrics  |
+| Roster           | `/roster`          | Player management |
+| Practice Planner | `/coach/practice`  | Create sessions   |

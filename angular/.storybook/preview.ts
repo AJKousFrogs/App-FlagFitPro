@@ -28,8 +28,8 @@ const preview: Preview = {
         surface: {
           name: "surface",
           value: "#ffffff",
-        }
-      }
+        },
+      },
     },
     viewport: {
       options: {
@@ -89,9 +89,9 @@ const preview: Preview = {
 
   initialGlobals: {
     backgrounds: {
-      value: "light"
-    }
-  }
+      value: "light",
+    },
+  },
 };
 
 export default preview;

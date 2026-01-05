@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    input,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
@@ -28,7 +28,13 @@ interface DayPlan {
 @Component({
   selector: "app-microcycle-planner",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TrafficLightRiskComponent, DatePipe, DecimalPipe, TitleCasePipe],
+  imports: [
+    FormsModule,
+    TrafficLightRiskComponent,
+    DatePipe,
+    DecimalPipe,
+    TitleCasePipe,
+  ],
   template: `
     <div
       class="microcycle-planner bg-surface-primary rounded-lg shadow-medium p-6"
@@ -190,7 +196,7 @@ interface DayPlan {
       </div>
     </div>
   `,
-  styleUrl: './microcycle-planner.component.scss',
+  styleUrl: "./microcycle-planner.component.scss",
 })
 export class MicrocyclePlannerComponent {
   // Angular 21: Use input() signal instead of @Input()
@@ -463,11 +469,13 @@ export class MicrocyclePlannerComponent {
 
   getDayCardClass(day: DayPlan): string {
     let classes = "";
-    if (day.suggestedIntensity === "rest") classes += " border-gray-300 opacity-80 bg-surface-secondary";
+    if (day.suggestedIntensity === "rest")
+      classes += " border-gray-300 opacity-80 bg-surface-secondary";
     else if (day.acwrProjection > 1.5) classes += " border-red-500 bg-red-50";
-    else if (day.acwrProjection > 1.3) classes += " border-yellow-500 bg-yellow-50";
+    else if (day.acwrProjection > 1.3)
+      classes += " border-yellow-500 bg-yellow-50";
     else classes += " border-green-500 bg-green-50";
-    
+
     return classes;
   }
 

@@ -150,15 +150,18 @@
 ## UI Review Checklist
 
 ### Cards
+
 - [ ] Radius: `var(--radius-lg)`
 - [ ] Shadow: `var(--shadow-sm)` / hover `var(--shadow-md)`
 - [ ] Hover: `translateY(-1px)`
 
 ### Buttons
+
 - [ ] Radius: `var(--radius-button)` (NOT pill)
 - [ ] Primary CTA: `variant="primary"`
 
 ### Tokens
+
 - [ ] Spacing: `var(--space-*)`
 - [ ] Colors: `var(--color-*)` or `var(--ds-primary-green)`
 - [ ] Typography: `var(--font-*)`
@@ -166,6 +169,7 @@
 - [ ] z-index: `var(--z-index-*)`
 
 ### Accessibility
+
 - [ ] Focus states visible
 - [ ] Touch targets ≥ 44px
 ```
@@ -174,31 +178,31 @@
 
 ## 🔴 Common Violations to Watch For
 
-| Violation | Wrong | Correct |
-|-----------|-------|---------|
-| Pill buttons | `border-radius: 9999px` | `var(--radius-button)` |
-| Raw spacing | `padding: 12px` | `var(--space-3)` |
-| Deprecated token | `--border-radius` | `var(--radius-lg)` |
-| Raw shadow | `box-shadow: 0 4px 12px...` | `var(--shadow-md)` |
-| Raw color | `#089949` | `var(--ds-primary-green)` |
-| Big hover lift | `translateY(-4px)` | `translateY(-1px)` |
-| Raw z-index | `z-index: 999` | `var(--z-index-modal)` |
+| Violation        | Wrong                       | Correct                   |
+| ---------------- | --------------------------- | ------------------------- |
+| Pill buttons     | `border-radius: 9999px`     | `var(--radius-button)`    |
+| Raw spacing      | `padding: 12px`             | `var(--space-3)`          |
+| Deprecated token | `--border-radius`           | `var(--radius-lg)`        |
+| Raw shadow       | `box-shadow: 0 4px 12px...` | `var(--shadow-md)`        |
+| Raw color        | `#089949`                   | `var(--ds-primary-green)` |
+| Big hover lift   | `translateY(-4px)`          | `translateY(-1px)`        |
+| Raw z-index      | `z-index: 999`              | `var(--z-index-modal)`    |
 
 ---
 
 ## 📊 Token Quick Reference
 
-| Category | Token Pattern | Example |
-|----------|---------------|---------|
-| Spacing | `--space-{1-24}` | `var(--space-4)` → 16px |
-| Radius | `--radius-{sm,md,lg,xl}` | `var(--radius-lg)` → 8px |
-| Shadow | `--shadow-{sm,md,lg,xl}` | `var(--shadow-sm)` |
-| Font Size | `--font-size-{h1-h4}` | `var(--font-size-h2)` → 18px |
-| Font Size | `--font-body-{sm,md,lg}` | `var(--font-body-sm)` → 14px |
+| Category    | Token Pattern                                  | Example                             |
+| ----------- | ---------------------------------------------- | ----------------------------------- |
+| Spacing     | `--space-{1-24}`                               | `var(--space-4)` → 16px             |
+| Radius      | `--radius-{sm,md,lg,xl}`                       | `var(--radius-lg)` → 8px            |
+| Shadow      | `--shadow-{sm,md,lg,xl}`                       | `var(--shadow-sm)`                  |
+| Font Size   | `--font-size-{h1-h4}`                          | `var(--font-size-h2)` → 18px        |
+| Font Size   | `--font-body-{sm,md,lg}`                       | `var(--font-body-sm)` → 14px        |
 | Font Weight | `--font-weight-{regular,medium,semibold,bold}` | `var(--font-weight-semibold)` → 600 |
-| Color | `--color-{brand,text,status}-*` | `var(--color-brand-primary)` |
-| z-index | `--z-index-{base,dropdown,modal,tooltip}` | `var(--z-index-modal)` → 1050 |
+| Color       | `--color-{brand,text,status}-*`                | `var(--color-brand-primary)`        |
+| z-index     | `--z-index-{base,dropdown,modal,tooltip}`      | `var(--z-index-modal)` → 1050       |
 
 ---
 
-*Last updated: January 4, 2026*
+_Last updated: January 4, 2026_

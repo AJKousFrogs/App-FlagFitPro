@@ -115,7 +115,9 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "3-6 sessions/week",
     },
-    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
+    citations: RESEARCH_CITATIONS["gabbett2016"]
+      ? [RESEARCH_CITATIONS["gabbett2016"]]
+      : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,
@@ -268,7 +270,9 @@ export const YOUTH_FLAG_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "3-5 sessions/week",
     },
-    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
+    citations: RESEARCH_CITATIONS["gabbett2016"]
+      ? [RESEARCH_CITATIONS["gabbett2016"]]
+      : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,
@@ -419,7 +423,9 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "2-4 sessions/week",
     },
-    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
+    citations: RESEARCH_CITATIONS["gabbett2016"]
+      ? [RESEARCH_CITATIONS["gabbett2016"]]
+      : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,

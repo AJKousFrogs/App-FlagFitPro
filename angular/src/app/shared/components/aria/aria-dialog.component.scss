@@ -90,7 +90,10 @@
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .aria-dialog-close:hover {
@@ -128,4 +131,3 @@
     max-height: calc(100vh - var(--space-8));
   }
 }
-

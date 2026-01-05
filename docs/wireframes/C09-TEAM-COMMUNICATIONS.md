@@ -279,34 +279,34 @@ Centralized hub for all team communications - announcements, direct messages, gr
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Announcements | Team-wide messages with read tracking |
-| Direct Messages | 1:1 communication with players |
-| Read Receipts | Track who has seen messages |
-| Priority Levels | Normal, medium, high priority |
-| Scheduled Messages | Send later / recurring |
-| Parent Communications | Include guardians |
-| Templates | Pre-written message templates |
-| Analytics | Message engagement stats |
+| Feature               | Description                           |
+| --------------------- | ------------------------------------- |
+| Announcements         | Team-wide messages with read tracking |
+| Direct Messages       | 1:1 communication with players        |
+| Read Receipts         | Track who has seen messages           |
+| Priority Levels       | Normal, medium, high priority         |
+| Scheduled Messages    | Send later / recurring                |
+| Parent Communications | Include guardians                     |
+| Templates             | Pre-written message templates         |
+| Analytics             | Message engagement stats              |
 
 ---
 
 ## Priority Levels
 
-| Level | Icon | Behavior |
-|-------|------|----------|
-| High | 🔴 | Push notification + badge |
-| Medium | 🟡 | Badge increase |
-| Normal | 🔵 | In-app notification only |
+| Level  | Icon | Behavior                  |
+| ------ | ---- | ------------------------- |
+| High   | 🔴   | Push notification + badge |
+| Medium | 🟡   | Badge increase            |
+| Normal | 🔵   | In-app notification only  |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
+| Data          | Service               | Table                |
+| ------------- | --------------------- | -------------------- |
 | Announcements | `AnnouncementService` | `team_announcements` |
-| Messages | `MessageService` | `direct_messages` |
-| Read receipts | `MessageService` | `message_reads` |
-| Scheduled | `SchedulerService` | `scheduled_messages` |
+| Messages      | `MessageService`      | `direct_messages`    |
+| Read receipts | `MessageService`      | `message_reads`      |
+| Scheduled     | `SchedulerService`    | `scheduled_messages` |

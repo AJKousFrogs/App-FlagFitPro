@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -78,15 +78,14 @@ interface MonthlyStats {
           subtitle="View and manage your training sessions"
           icon="pi-calendar"
         >
-          <app-button iconLeft="pi-plus" (clicked)="createNewSession()">New Session</app-button>
+          <app-button iconLeft="pi-plus" (clicked)="createNewSession()"
+            >New Session</app-button
+          >
         </app-page-header>
 
         <div class="schedule-content">
           <!-- STEP 2: Calendar Card with inline DatePicker and showWeek -->
-          <app-card-shell
-            title="Training Calendar"
-            headerIcon="pi-calendar"
-          >
+          <app-card-shell title="Training Calendar" headerIcon="pi-calendar">
             <p-datepicker
               [ngModel]="selectedDate()"
               (ngModelChange)="onDateSelect($event)"
@@ -100,7 +99,7 @@ interface MonthlyStats {
               <!-- Today indicator -->
               <p class="legend-today">
                 <i class="pi pi-circle legend-today-icon"></i>
-                Today: {{ today | date: 'MMM d' }}
+                Today: {{ today | date: "MMM d" }}
               </p>
 
               <!-- Legend section with label -->
@@ -136,48 +135,57 @@ interface MonthlyStats {
                 ></p-checkbox>
                 <label for="showWeekNumbers">Show Week Numbers</label>
               </div>
-              
+
               <!-- View Mode Toggle -->
               <div class="view-toggle">
-                <app-button 
-                  [variant]="viewMode() === 'week' ? 'primary' : 'outlined'" 
+                <app-button
+                  [variant]="viewMode() === 'week' ? 'primary' : 'outlined'"
                   size="sm"
                   (clicked)="viewMode.set('week'); loadSessions()"
-                >Week</app-button>
-                <app-button 
-                  [variant]="viewMode() === 'month' ? 'primary' : 'outlined'" 
+                  >Week</app-button
+                >
+                <app-button
+                  [variant]="viewMode() === 'month' ? 'primary' : 'outlined'"
                   size="sm"
                   (clicked)="viewMode.set('month'); loadSessions()"
-                >Month</app-button>
+                  >Month</app-button
+                >
               </div>
             </div>
           </app-card-shell>
-          
+
           <!-- Monthly Statistics Summary -->
-          @if (viewMode() === 'month' && monthlyStats().totalSessions > 0) {
-            <app-card-shell
-              title="Monthly Summary"
-              headerIcon="pi-chart-bar"
-            >
+          @if (viewMode() === "month" && monthlyStats().totalSessions > 0) {
+            <app-card-shell title="Monthly Summary" headerIcon="pi-chart-bar">
               <div class="monthly-stats">
                 <div class="stat-item">
-                  <span class="stat-value">{{ monthlyStats().totalSessions }}</span>
+                  <span class="stat-value">{{
+                    monthlyStats().totalSessions
+                  }}</span>
                   <span class="stat-label">Total Sessions</span>
                 </div>
                 <div class="stat-item completed">
-                  <span class="stat-value">{{ monthlyStats().completedSessions }}</span>
+                  <span class="stat-value">{{
+                    monthlyStats().completedSessions
+                  }}</span>
                   <span class="stat-label">Completed</span>
                 </div>
                 <div class="stat-item missed">
-                  <span class="stat-value">{{ monthlyStats().missedSessions }}</span>
+                  <span class="stat-value">{{
+                    monthlyStats().missedSessions
+                  }}</span>
                   <span class="stat-label">Missed</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-value">{{ monthlyStats().totalDuration }}m</span>
+                  <span class="stat-value"
+                    >{{ monthlyStats().totalDuration }}m</span
+                  >
                   <span class="stat-label">Total Duration</span>
                 </div>
                 <div class="stat-item completion">
-                  <span class="stat-value">{{ monthlyStats().completionRate }}%</span>
+                  <span class="stat-value"
+                    >{{ monthlyStats().completionRate }}%</span
+                  >
                   <span class="stat-label">Completion Rate</span>
                 </div>
               </div>
@@ -185,20 +193,25 @@ interface MonthlyStats {
           }
 
           <!-- STEP 3: Sessions List Card -->
-          <app-card-shell
-            title="Upcoming Sessions"
-            headerIcon="pi-clipboard"
-          >
+          <app-card-shell title="Upcoming Sessions" headerIcon="pi-clipboard">
             <div class="sessions-list">
               <!-- STEP 4: Error State with p-message and retry -->
               @if (hasError()) {
                 <div class="error-state">
-                  <i class="pi pi-calendar-times error-icon" aria-hidden="true"></i>
+                  <i
+                    class="pi pi-calendar-times error-icon"
+                    aria-hidden="true"
+                  ></i>
                   <div class="error-text">
                     <strong>Unable to load sessions</strong>
                     <p>{{ errorMessage() }}</p>
                   </div>
-                  <app-button variant="outlined" iconLeft="pi-refresh" (clicked)="loadSessions()">Try Again</app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-refresh"
+                    (clicked)="loadSessions()"
+                    >Try Again</app-button
+                  >
                 </div>
               } @else if (isLoading()) {
                 <!-- STEP 4: Loading State with p-skeleton -->
@@ -206,11 +219,23 @@ interface MonthlyStats {
                   <div class="session-item session-item-skeleton">
                     <div class="session-info">
                       <p-skeleton width="60%" height="1.25rem"></p-skeleton>
-                      <p-skeleton width="80%" height="0.875rem" class="skeleton-date"></p-skeleton>
-                      <p-skeleton width="40%" height="0.75rem" class="skeleton-duration"></p-skeleton>
+                      <p-skeleton
+                        width="80%"
+                        height="0.875rem"
+                        class="skeleton-date"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="40%"
+                        height="0.75rem"
+                        class="skeleton-duration"
+                      ></p-skeleton>
                     </div>
                     <div class="session-actions">
-                      <p-skeleton width="5rem" height="1.5rem" borderRadius="1rem"></p-skeleton>
+                      <p-skeleton
+                        width="5rem"
+                        height="1.5rem"
+                        borderRadius="1rem"
+                      ></p-skeleton>
                     </div>
                   </div>
                 }
@@ -232,17 +257,30 @@ interface MonthlyStats {
                 @for (session of filteredSessions(); track session.id) {
                   <div
                     class="session-item"
-                    [style.border-left-color]="getSessionTypeColor(session.type)"
+                    [style.border-left-color]="
+                      getSessionTypeColor(session.type)
+                    "
                     (click)="viewSession(session)"
                     (keydown.enter)="viewSession(session)"
                     (keydown.space)="viewSession(session)"
                     tabindex="0"
                     role="button"
-                    [attr.aria-label]="session.type + ' on ' + (session.date | date: 'MMMM d, y') + ', ' + session.status"
+                    [attr.aria-label]="
+                      session.type +
+                      ' on ' +
+                      (session.date | date: 'MMMM d, y') +
+                      ', ' +
+                      session.status
+                    "
                   >
                     <div class="session-info">
                       <!-- Session type color indicator -->
-                      <span class="session-type-indicator" [style.background-color]="getSessionTypeColor(session.type)"></span>
+                      <span
+                        class="session-type-indicator"
+                        [style.background-color]="
+                          getSessionTypeColor(session.type)
+                        "
+                      ></span>
                       <!-- Title visually dominant -->
                       <h4 class="session-title">{{ session.type }}</h4>
                       <!-- Date/time secondary -->
@@ -261,12 +299,26 @@ interface MonthlyStats {
                         {{ getStatusLabel(session.status) }}
                       </span>
                       <!-- Mark-complete button: only for actual sessions (not templates) -->
-                      @if (session.status === "scheduled" && !session.isTemplate) {
-                        <app-button variant="text" size="sm" iconLeft="pi-check" (clicked)="markComplete($event, session)">Mark session as complete</app-button>
+                      @if (
+                        session.status === "scheduled" && !session.isTemplate
+                      ) {
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-check"
+                          (clicked)="markComplete($event, session)"
+                          >Mark session as complete</app-button
+                        >
                       }
                       <!-- Start session button: for template sessions -->
                       @if (session.isTemplate) {
-                        <app-button variant="text" size="sm" iconLeft="pi-play" (clicked)="startTemplateSession($event, session)">Start this training session</app-button>
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-play"
+                          (clicked)="startTemplateSession($event, session)"
+                          >Start this training session</app-button
+                        >
                       }
                     </div>
                   </div>
@@ -278,7 +330,7 @@ interface MonthlyStats {
       </div>
     </app-main-layout>
   `,
-  styleUrl: './training-schedule.component.scss',
+  styleUrl: "./training-schedule.component.scss",
 })
 export class TrainingScheduleComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
@@ -295,17 +347,17 @@ export class TrainingScheduleComponent implements OnInit {
 
   // Calendar date markers for visual indicators
   dateMarkers = signal<CalendarDateMarker[]>([]);
-  
+
   // View mode: week or month
-  viewMode = signal<'week' | 'month'>('week');
-  
+  viewMode = signal<"week" | "month">("week");
+
   // Monthly statistics
   monthlyStats = signal<MonthlyStats>({
     totalSessions: 0,
     completedSessions: 0,
     missedSessions: 0,
     totalDuration: 0,
-    completionRate: 0
+    completionRate: 0,
   });
 
   // Runtime guard signals - prevent white screen crashes
@@ -322,13 +374,13 @@ export class TrainingScheduleComponent implements OnInit {
   // Computed: Get session type color for calendar markers
   getSessionTypeColor(type: string): string {
     const typeColors: Record<string, string> = {
-      'Strength': 'var(--primitive-blue-500)',
-      'Conditioning': 'var(--primitive-success-500)',
-      'Skills': 'var(--primitive-warning-500)',
-      'Recovery': 'var(--primitive-purple-500)',
-      'Game': 'var(--primitive-error-500)',
-      'Practice': 'var(--ds-primary-green)',
-      'Training': 'var(--p-primary-500)',
+      Strength: "var(--primitive-blue-500)",
+      Conditioning: "var(--primitive-success-500)",
+      Skills: "var(--primitive-warning-500)",
+      Recovery: "var(--primitive-purple-500)",
+      Game: "var(--primitive-error-500)",
+      Practice: "var(--ds-primary-green)",
+      Training: "var(--p-primary-500)",
     };
     // Find partial match
     for (const [key, color] of Object.entries(typeColors)) {
@@ -336,14 +388,14 @@ export class TrainingScheduleComponent implements OnInit {
         return color;
       }
     }
-    return 'var(--p-primary-500)';
+    return "var(--p-primary-500)";
   }
 
   // Check if a date has sessions (for calendar highlighting)
   getDateMarker(date: Date): CalendarDateMarker | undefined {
-    const dateStr = date.toISOString().split('T')[0];
-    return this.dateMarkers().find(m => 
-      m.date.toISOString().split('T')[0] === dateStr
+    const dateStr = date.toISOString().split("T")[0];
+    return this.dateMarkers().find(
+      (m) => m.date.toISOString().split("T")[0] === dateStr,
     );
   }
 
@@ -369,8 +421,8 @@ export class TrainingScheduleComponent implements OnInit {
       const selected = this.selectedDate();
       let startDate: Date;
       let endDate: Date;
-      
-      if (this.viewMode() === 'month') {
+
+      if (this.viewMode() === "month") {
         // Month view: show entire month
         startDate = new Date(selected.getFullYear(), selected.getMonth(), 1);
         endDate = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
@@ -382,15 +434,17 @@ export class TrainingScheduleComponent implements OnInit {
         endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 6);
       }
-      
+
       // Alias for backward compatibility
       const startOfWeek = startDate;
       const endOfWeek = endDate;
 
       // 1. Fetch actual training sessions (logged/completed sessions)
-      const { data: actualSessions, error: sessionsError } = await this.supabaseService.client
-        .from("training_sessions")
-        .select(`
+      const { data: actualSessions, error: sessionsError } =
+        await this.supabaseService.client
+          .from("training_sessions")
+          .select(
+            `
           id,
           session_date,
           start_time,
@@ -400,11 +454,12 @@ export class TrainingScheduleComponent implements OnInit {
           duration,
           status,
           notes
-        `)
-        .eq("user_id", user.id)
-        .gte("session_date", startOfWeek.toISOString().split('T')[0])
-        .lte("session_date", endOfWeek.toISOString().split('T')[0])
-        .order("session_date", { ascending: true });
+        `,
+          )
+          .eq("user_id", user.id)
+          .gte("session_date", startOfWeek.toISOString().split("T")[0])
+          .lte("session_date", endOfWeek.toISOString().split("T")[0])
+          .order("session_date", { ascending: true });
 
       if (sessionsError) {
         throw new Error(sessionsError.message);
@@ -412,9 +467,11 @@ export class TrainingScheduleComponent implements OnInit {
 
       // 2. Fetch scheduled sessions from training templates (52-week program)
       // Find weeks that contain any day in our selected week range
-      const { data: scheduledTemplates, error: templatesError } = await this.supabaseService.client
-        .from("training_session_templates")
-        .select(`
+      const { data: scheduledTemplates, error: templatesError } =
+        await this.supabaseService.client
+          .from("training_session_templates")
+          .select(
+            `
           id,
           session_name,
           session_type,
@@ -428,15 +485,24 @@ export class TrainingScheduleComponent implements OnInit {
             start_date,
             end_date
           )
-        `)
-        .lte("training_weeks.start_date", endOfWeek.toISOString().split('T')[0])
-        .gte("training_weeks.end_date", startOfWeek.toISOString().split('T')[0]);
+        `,
+          )
+          .lte(
+            "training_weeks.start_date",
+            endOfWeek.toISOString().split("T")[0],
+          )
+          .gte(
+            "training_weeks.end_date",
+            startOfWeek.toISOString().split("T")[0],
+          );
 
       // Map actual sessions
-      const mappedActualSessions: TrainingSession[] = (actualSessions || []).map((session) => ({
+      const mappedActualSessions: TrainingSession[] = (
+        actualSessions || []
+      ).map((session) => ({
         id: session.id,
-        date: session.start_time 
-          ? new Date(session.start_time) 
+        date: session.start_time
+          ? new Date(session.start_time)
           : new Date(session.session_date),
         type: session.session_type || session.training_type || "Training",
         duration: session.duration_minutes || session.duration || 60,
@@ -450,21 +516,30 @@ export class TrainingScheduleComponent implements OnInit {
         mappedScheduledSessions = scheduledTemplates
           .filter((template) => {
             // training_weeks is an array from the join - ensure it has data
-            const weeks = template.training_weeks as Array<{ start_date: string; week_number: number }>;
+            const weeks = template.training_weeks as Array<{
+              start_date: string;
+              week_number: number;
+            }>;
             return weeks && weeks.length > 0;
           })
           .map((template) => {
             // Get the first (and should be only) week from the join
-            const weeks = template.training_weeks as Array<{ start_date: string; week_number: number }>;
+            const weeks = template.training_weeks as Array<{
+              start_date: string;
+              week_number: number;
+            }>;
             const weekData = weeks[0];
             const weekStart = new Date(weekData.start_date);
             const sessionDate = new Date(weekStart);
-            sessionDate.setDate(weekStart.getDate() + (template.day_of_week || 0));
-            
+            sessionDate.setDate(
+              weekStart.getDate() + (template.day_of_week || 0),
+            );
+
             return {
               id: template.id,
               date: sessionDate,
-              type: template.session_name || template.session_type || "Training",
+              type:
+                template.session_name || template.session_type || "Training",
               duration: template.duration_minutes || 60,
               status: "scheduled" as const,
               isTemplate: true,
@@ -474,15 +549,19 @@ export class TrainingScheduleComponent implements OnInit {
 
       // Combine both sources, avoiding duplicates by checking if actual session exists for same date/type
       const actualDates = new Set(
-        mappedActualSessions.map(s => `${s.date.toISOString().split('T')[0]}-${s.type}`)
-      );
-      
-      const uniqueScheduled = mappedScheduledSessions.filter(
-        s => !actualDates.has(`${s.date.toISOString().split('T')[0]}-${s.type}`)
+        mappedActualSessions.map(
+          (s) => `${s.date.toISOString().split("T")[0]}-${s.type}`,
+        ),
       );
 
-      const allSessions = [...mappedActualSessions, ...uniqueScheduled]
-        .sort((a, b) => a.date.getTime() - b.date.getTime());
+      const uniqueScheduled = mappedScheduledSessions.filter(
+        (s) =>
+          !actualDates.has(`${s.date.toISOString().split("T")[0]}-${s.type}`),
+      );
+
+      const allSessions = [...mappedActualSessions, ...uniqueScheduled].sort(
+        (a, b) => a.date.getTime() - b.date.getTime(),
+      );
 
       this.sessions.set(allSessions);
     } catch (error) {
@@ -490,11 +569,17 @@ export class TrainingScheduleComponent implements OnInit {
       this.hasError.set(true);
 
       if (error instanceof Error) {
-        if (error.message.includes("network") || error.message.includes("fetch")) {
+        if (
+          error.message.includes("network") ||
+          error.message.includes("fetch")
+        ) {
           this.errorMessage.set(
             "Unable to connect to the server. Please check your internet connection.",
           );
-        } else if (error.message.includes("permission") || error.message.includes("denied")) {
+        } else if (
+          error.message.includes("permission") ||
+          error.message.includes("denied")
+        ) {
           this.errorMessage.set(
             "You don't have permission to view these sessions.",
           );
@@ -511,21 +596,21 @@ export class TrainingScheduleComponent implements OnInit {
 
   onDateSelect(date: Date): void {
     if (!date) return;
-    
+
     const previousDate = this.selectedDate();
-    
+
     // Check if the week changed
     const prevWeekStart = new Date(previousDate);
     prevWeekStart.setDate(previousDate.getDate() - previousDate.getDay());
     prevWeekStart.setHours(0, 0, 0, 0);
-    
+
     const newWeekStart = new Date(date);
     newWeekStart.setDate(date.getDate() - date.getDay());
     newWeekStart.setHours(0, 0, 0, 0);
-    
+
     // Update the selected date
     this.selectedDate.set(date);
-    
+
     // Reload sessions if the week changed
     if (prevWeekStart.getTime() !== newWeekStart.getTime()) {
       this.loadSessions();
@@ -603,7 +688,10 @@ export class TrainingScheduleComponent implements OnInit {
    * Start a template session - creates an actual training_session record
    * and navigates to the session form
    */
-  async startTemplateSession(event: Event, session: TrainingSession): Promise<void> {
+  async startTemplateSession(
+    event: Event,
+    session: TrainingSession,
+  ): Promise<void> {
     event.stopPropagation();
 
     const user = this.authService.getUser();
@@ -637,13 +725,18 @@ export class TrainingScheduleComponent implements OnInit {
       this.sessions.update((sessions) =>
         sessions.map((s) =>
           s.id === session.id
-            ? { ...s, id: data.id, status: "in_progress" as const, isTemplate: false }
+            ? {
+                ...s,
+                id: data.id,
+                status: "in_progress" as const,
+                isTemplate: false,
+              }
             : s,
         ),
       );
 
       this.toastService.success("Session started!");
-      
+
       // Navigate to the session detail page
       this.router.navigate(["/training/session", data.id]);
     } catch (error) {
@@ -727,7 +820,7 @@ export class TrainingScheduleComponent implements OnInit {
    * Toggle between week and month view
    */
   toggleViewMode(): void {
-    const newMode = this.viewMode() === 'week' ? 'month' : 'week';
+    const newMode = this.viewMode() === "week" ? "month" : "week";
     this.viewMode.set(newMode);
     this.loadSessions();
   }
@@ -741,26 +834,34 @@ export class TrainingScheduleComponent implements OnInit {
       if (!user?.id) return;
 
       const selected = this.selectedDate();
-      const startOfMonth = new Date(selected.getFullYear(), selected.getMonth(), 1);
-      const endOfMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
+      const startOfMonth = new Date(
+        selected.getFullYear(),
+        selected.getMonth(),
+        1,
+      );
+      const endOfMonth = new Date(
+        selected.getFullYear(),
+        selected.getMonth() + 1,
+        0,
+      );
 
       const { data: sessions, error } = await this.supabaseService.client
         .from("training_sessions")
         .select("session_date, session_type, training_type, status")
         .eq("user_id", user.id)
-        .gte("session_date", startOfMonth.toISOString().split('T')[0])
-        .lte("session_date", endOfMonth.toISOString().split('T')[0]);
+        .gte("session_date", startOfMonth.toISOString().split("T")[0])
+        .lte("session_date", endOfMonth.toISOString().split("T")[0]);
 
       if (error) {
         this.logger.warn("Failed to load date markers:", error);
         return;
       }
 
-      const markers: CalendarDateMarker[] = (sessions || []).map(s => ({
+      const markers: CalendarDateMarker[] = (sessions || []).map((s) => ({
         date: new Date(s.session_date),
         status: this.mapDbStatusToUiStatus(s.status),
-        sessionType: s.session_type || s.training_type || 'Training',
-        tooltip: `${s.session_type || s.training_type || 'Training'} - ${this.mapDbStatusToUiStatus(s.status)}`
+        sessionType: s.session_type || s.training_type || "Training",
+        tooltip: `${s.session_type || s.training_type || "Training"} - ${this.mapDbStatusToUiStatus(s.status)}`,
       }));
 
       this.dateMarkers.set(markers);
@@ -778,15 +879,23 @@ export class TrainingScheduleComponent implements OnInit {
       if (!user?.id) return;
 
       const selected = this.selectedDate();
-      const startOfMonth = new Date(selected.getFullYear(), selected.getMonth(), 1);
-      const endOfMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
+      const startOfMonth = new Date(
+        selected.getFullYear(),
+        selected.getMonth(),
+        1,
+      );
+      const endOfMonth = new Date(
+        selected.getFullYear(),
+        selected.getMonth() + 1,
+        0,
+      );
 
       const { data: sessions, error } = await this.supabaseService.client
         .from("training_sessions")
         .select("status, duration_minutes, duration")
         .eq("user_id", user.id)
-        .gte("session_date", startOfMonth.toISOString().split('T')[0])
-        .lte("session_date", endOfMonth.toISOString().split('T')[0]);
+        .gte("session_date", startOfMonth.toISOString().split("T")[0])
+        .lte("session_date", endOfMonth.toISOString().split("T")[0]);
 
       if (error) {
         this.logger.warn("Failed to load monthly stats:", error);
@@ -794,17 +903,22 @@ export class TrainingScheduleComponent implements OnInit {
       }
 
       const total = sessions?.length || 0;
-      const completed = sessions?.filter(s => s.status === 'completed').length || 0;
-      const missed = sessions?.filter(s => s.status === 'cancelled').length || 0;
-      const totalDuration = sessions?.reduce((sum, s) => 
-        sum + (s.duration_minutes || s.duration || 0), 0) || 0;
+      const completed =
+        sessions?.filter((s) => s.status === "completed").length || 0;
+      const missed =
+        sessions?.filter((s) => s.status === "cancelled").length || 0;
+      const totalDuration =
+        sessions?.reduce(
+          (sum, s) => sum + (s.duration_minutes || s.duration || 0),
+          0,
+        ) || 0;
 
       this.monthlyStats.set({
         totalSessions: total,
         completedSessions: completed,
         missedSessions: missed,
         totalDuration,
-        completionRate: total > 0 ? Math.round((completed / total) * 100) : 0
+        completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
       });
     } catch (error) {
       this.logger.error("Error loading monthly stats:", error);
@@ -816,10 +930,14 @@ export class TrainingScheduleComponent implements OnInit {
    */
   getStatusColor(status: string): string {
     switch (status) {
-      case 'completed': return 'var(--primitive-success-500)';
-      case 'missed': return 'var(--primitive-error-500)';
-      case 'in_progress': return 'var(--primitive-warning-500)';
-      default: return 'var(--primitive-blue-500)';
+      case "completed":
+        return "var(--primitive-success-500)";
+      case "missed":
+        return "var(--primitive-error-500)";
+      case "in_progress":
+        return "var(--primitive-warning-500)";
+      default:
+        return "var(--primitive-blue-500)";
     }
   }
 }

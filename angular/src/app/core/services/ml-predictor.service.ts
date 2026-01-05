@@ -196,7 +196,10 @@ export class MlPredictorService {
 
   private models = new Map<string, ModelConfig>();
   private trainingData = new Map<string, MLTrainingDataEntry[]>();
-  private predictionCache = new Map<string, SprintPredictionResult | RoutePredictionResult | DecisionPredictionResult>();
+  private predictionCache = new Map<
+    string,
+    SprintPredictionResult | RoutePredictionResult | DecisionPredictionResult
+  >();
 
   private readonly modelAccuracy = {
     sprintPerformance: 0.874,
@@ -264,7 +267,9 @@ export class MlPredictorService {
   /**
    * Predict sprint performance for 10-25 yard distances (flag football optimized)
    */
-  predictSprintPerformance(athleteData: SprintPredictionInput): SprintPredictionResult {
+  predictSprintPerformance(
+    athleteData: SprintPredictionInput,
+  ): SprintPredictionResult {
     const cacheKey = `sprint_${athleteData.playerId}_${Date.now()}`;
 
     const cached = this.predictionCache.get(cacheKey);
@@ -416,7 +421,9 @@ export class MlPredictorService {
     }
   }
 
-  private extractSprintFeatures(athleteData: SprintPredictionInput): SprintFeatures {
+  private extractSprintFeatures(
+    athleteData: SprintPredictionInput,
+  ): SprintFeatures {
     return {
       current_speed: athleteData.sprintTimes?.average ?? 4.5,
       training_load: athleteData.weeklyLoad ?? 100,
@@ -438,7 +445,9 @@ export class MlPredictorService {
     };
   }
 
-  private extractDecisionFeatures(playerData: DecisionPredictionInput): DecisionFeatures {
+  private extractDecisionFeatures(
+    playerData: DecisionPredictionInput,
+  ): DecisionFeatures {
     return {
       reaction_time: playerData.reactionTime ?? 0.45,
       field_vision: playerData.visionScore ?? 0.75,
@@ -472,7 +481,9 @@ export class MlPredictorService {
     };
   }
 
-  private generateSprintRecommendations(performance: FlagFootballOptimization): Recommendation[] {
+  private generateSprintRecommendations(
+    performance: FlagFootballOptimization,
+  ): Recommendation[] {
     const recommendations: Recommendation[] = [];
 
     if (performance.acceleration < 0.8) {
@@ -534,7 +545,10 @@ export class MlPredictorService {
     return prediction;
   }
 
-  private computeSkillClassification(features: RouteFeatures & { route_type?: string }, model: ModelConfig): SkillClassificationResult {
+  private computeSkillClassification(
+    features: RouteFeatures & { route_type?: string },
+    model: ModelConfig,
+  ): SkillClassificationResult {
     // Simplified classification logic
     const score = this.computeLinearRegression(
       features,
@@ -549,8 +563,13 @@ export class MlPredictorService {
     };
   }
 
-  private computeNeuralNetwork(features: DecisionFeatures & { scenario_type?: string }, _model: ModelConfig): NeuralNetworkDecisionResult {
-    const input = Object.values(features).filter((v): v is number => typeof v === "number");
+  private computeNeuralNetwork(
+    features: DecisionFeatures & { scenario_type?: string },
+    _model: ModelConfig,
+  ): NeuralNetworkDecisionResult {
+    const input = Object.values(features).filter(
+      (v): v is number => typeof v === "number",
+    );
     let output = input.reduce(
       (sum, val, idx) => sum + val * (0.1 + idx * 0.05),
       0,
@@ -640,7 +659,9 @@ export class MlPredictorService {
     return 0.95;
   }
 
-  private generateTrainingRecommendations(features: DecisionFeatures & { scenario_type?: string }): string[] {
+  private generateTrainingRecommendations(
+    features: DecisionFeatures & { scenario_type?: string },
+  ): string[] {
     const recommendations: string[] = [];
     if (features.reaction_time > 0.4)
       recommendations.push("Reaction time drills");
@@ -657,7 +678,10 @@ export class MlPredictorService {
     playerId: string,
     predictionType: string,
     input: SprintPredictionInput | RouteSkillInput | DecisionPredictionInput,
-    output: SprintPredictionResult | RoutePredictionResult | DecisionPredictionResult,
+    output:
+      | SprintPredictionResult
+      | RoutePredictionResult
+      | DecisionPredictionResult,
     actualResult: unknown = null,
   ): Promise<void> {
     try {

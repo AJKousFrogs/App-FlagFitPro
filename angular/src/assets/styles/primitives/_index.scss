@@ -23,28 +23,28 @@
  */
 
 // Typography (base styles, headings, body text)
-@use 'typography';
+@use "typography";
 
 // Layout (containers, grids, flex, spacing)
-@use 'layout';
+@use "layout";
 
 // Card patterns
-@use 'cards';
+@use "cards";
 
 // Form patterns (fields, labels, validation, groups)
-@use 'forms';
+@use "forms";
 
 // Table patterns (density, variants, empty states)
-@use 'tables';
+@use "tables";
 
 // Feedback (badges, alerts, empty/loading states)
-@use 'feedback';
+@use "feedback";
 
 // Dialog / overlay patterns (modals, drawers, popovers)
-@use 'dialogs';
+@use "dialogs";
 
 // Dashboard patterns (stats, grids, events, progress)
-@use 'dashboard';
+@use "dashboard";
 
 // TODO: Add more primitives as needed:
 // @use 'buttons';

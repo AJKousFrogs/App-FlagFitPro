@@ -150,84 +150,89 @@
 ## Play Types & Fields
 
 ### Pass Play
-| Field | Type | Options |
-|-------|------|---------|
-| Quarterback | Select | Team roster |
-| Receiver | Select | Team roster |
-| Route Type | Select | Slant, Out, In, Post, Corner, Go, Comeback, Screen, Flat |
-| Route Depth | Number | Yards |
-| Outcome | Select | Completion, Drop, Incompletion, Interception, Defended |
-| Throw Accuracy | Select | On Target, High, Low, Behind, Overthrow |
-| Snap Accuracy | Select | Good, Off target, Fumbled |
-| Is Drop? | Boolean | |
-| Drop Severity | Select | (if drop) Bad, Okay |
-| Drop Reason | Select | (if drop) Concentration, Pressure, Bad throw |
+
+| Field          | Type    | Options                                                  |
+| -------------- | ------- | -------------------------------------------------------- |
+| Quarterback    | Select  | Team roster                                              |
+| Receiver       | Select  | Team roster                                              |
+| Route Type     | Select  | Slant, Out, In, Post, Corner, Go, Comeback, Screen, Flat |
+| Route Depth    | Number  | Yards                                                    |
+| Outcome        | Select  | Completion, Drop, Incompletion, Interception, Defended   |
+| Throw Accuracy | Select  | On Target, High, Low, Behind, Overthrow                  |
+| Snap Accuracy  | Select  | Good, Off target, Fumbled                                |
+| Is Drop?       | Boolean |                                                          |
+| Drop Severity  | Select  | (if drop) Bad, Okay                                      |
+| Drop Reason    | Select  | (if drop) Concentration, Pressure, Bad throw             |
 
 ### Run Play
-| Field | Type | Options |
-|-------|------|---------|
+
+| Field        | Type   | Options     |
+| ------------ | ------ | ----------- |
 | Ball Carrier | Select | Team roster |
-| Yards Gained | Number | |
+| Yards Gained | Number |             |
 
 ### Flag Pull
-| Field | Type | Options |
-|-------|------|---------|
-| Defender | Select | Team roster |
-| Ball Carrier | Select | (opponent) |
-| Successful | Boolean | |
-| Miss Reason | Select | (if missed) Grab, Position, Speed |
+
+| Field        | Type    | Options                           |
+| ------------ | ------- | --------------------------------- |
+| Defender     | Select  | Team roster                       |
+| Ball Carrier | Select  | (opponent)                        |
+| Successful   | Boolean |                                   |
+| Miss Reason  | Select  | (if missed) Grab, Position, Speed |
 
 ### Interception
-| Field | Type | Options |
-|-------|------|---------|
+
+| Field       | Type   | Options     |
+| ----------- | ------ | ----------- |
 | Interceptor | Select | Team roster |
 
 ### Pass Deflection
-| Field | Type | Options |
-|-------|------|---------|
+
+| Field        | Type   | Options     |
+| ------------ | ------ | ----------- |
 | Deflected By | Select | Team roster |
 
 ---
 
 ## Game Visibility
 
-| Type | Created By | Visible To |
-|------|------------|------------|
-| Team Game | Coach | All team members |
-| Personal Game | Player | Player only, coaches with consent |
+| Type          | Created By | Visible To                        |
+| ------------- | ---------- | --------------------------------- |
+| Team Game     | Coach      | All team members                  |
+| Personal Game | Player     | Player only, coaches with consent |
 
 ---
 
 ## Features Implemented
 
-| Feature | Status |
-|---------|--------|
-| Create new game | ✅ |
-| Game type (team/personal) | ✅ |
-| Weather conditions | ✅ |
-| Field conditions | ✅ |
-| Temperature (F/C toggle) | ✅ |
-| Home/Away selection | ✅ |
-| Pass play tracking | ✅ |
-| Run play tracking | ✅ |
-| Flag pull tracking | ✅ |
-| Interception tracking | ✅ |
-| Pass deflection tracking | ✅ |
-| Half/time/down tracking | ✅ |
-| Route types | ✅ |
-| Drop tracking with reasons | ✅ |
-| Play notes | ✅ |
-| Score tracking | ✅ |
-| Play history table | ✅ |
-| Games list | ✅ |
-| Result tagging (W/L/T) | ✅ |
+| Feature                    | Status |
+| -------------------------- | ------ |
+| Create new game            | ✅     |
+| Game type (team/personal)  | ✅     |
+| Weather conditions         | ✅     |
+| Field conditions           | ✅     |
+| Temperature (F/C toggle)   | ✅     |
+| Home/Away selection        | ✅     |
+| Pass play tracking         | ✅     |
+| Run play tracking          | ✅     |
+| Flag pull tracking         | ✅     |
+| Interception tracking      | ✅     |
+| Pass deflection tracking   | ✅     |
+| Half/time/down tracking    | ✅     |
+| Route types                | ✅     |
+| Drop tracking with reasons | ✅     |
+| Play notes                 | ✅     |
+| Score tracking             | ✅     |
+| Play history table         | ✅     |
+| Games list                 | ✅     |
+| Result tagging (W/L/T)     | ✅     |
 
 ---
 
 ## Data Sources
 
-| Data | Service | Table |
-|------|---------|-------|
-| Games | `ApiService` | `games` |
-| Plays | `ApiService` | `game_plays` |
+| Data    | Service      | Table              |
+| ------- | ------------ | ------------------ |
+| Games   | `ApiService` | `games`            |
+| Plays   | `ApiService` | `game_plays`       |
 | Players | `ApiService` | `roster` / `users` |

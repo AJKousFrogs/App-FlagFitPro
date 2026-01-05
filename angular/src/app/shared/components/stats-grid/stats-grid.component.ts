@@ -2,10 +2,7 @@ import { Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import {
-  formatNumber,
-  formatStat,
-} from "../../utils/format.utils";
+import { formatNumber, formatStat } from "../../utils/format.utils";
 
 export interface StatItem {
   label: string;
@@ -56,7 +53,7 @@ export interface StatItem {
       }
     </section>
   `,
-  styleUrl: './stats-grid.component.scss',
+  styleUrl: "./stats-grid.component.scss",
 })
 export class StatsGridComponent {
   stats = input<StatItem[]>([]);

@@ -1,6 +1,6 @@
 /**
  * Roster Player Card Component (Phase 1 Enhanced)
- * 
+ *
  * Displays a single player card with:
  * - Live performance metrics (Readiness, ACWR, Performance Score)
  * - Position-specific insights (QB arm care, WR sprint capacity, etc.)
@@ -24,7 +24,10 @@ import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Player } from "../roster.models";
-import { PlayerMetricsService, PlayerWithMetrics } from "../services/player-metrics.service";
+import {
+  PlayerMetricsService,
+  PlayerWithMetrics,
+} from "../services/player-metrics.service";
 import {
   getJerseyColor,
   getPlayerStats,
@@ -48,7 +51,12 @@ import {
     IconButtonComponent,
   ],
   template: `
-    <p-card class="player-card" [class.selected]="isSelected()" [class.risk-high]="enrichedPlayer().riskLevel === 'high'" [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'">
+    <p-card
+      class="player-card"
+      [class.selected]="isSelected()"
+      [class.risk-high]="enrichedPlayer().riskLevel === 'high'"
+      [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'"
+    >
       <!-- Selection Checkbox (Coach+ only) -->
       @if (canManage()) {
         <div class="card-checkbox">
@@ -65,8 +73,12 @@ import {
         <div class="status-badge" [class]="'status-' + player().status">
           {{ player().status | titlecase }}
         </div>
-        @if (enrichedPlayer().riskLevel !== 'low') {
-          <div class="risk-badge" [class]="'risk-' + enrichedPlayer().riskLevel" [pTooltip]="getRiskTooltip()">
+        @if (enrichedPlayer().riskLevel !== "low") {
+          <div
+            class="risk-badge"
+            [class]="'risk-' + enrichedPlayer().riskLevel"
+            [pTooltip]="getRiskTooltip()"
+          >
             <i class="pi pi-exclamation-triangle"></i>
             {{ enrichedPlayer().riskLevel | titlecase }}
           </div>
@@ -94,32 +106,49 @@ import {
       <!-- Live Metrics Section -->
       <div class="metrics-section">
         <!-- Readiness -->
-        <div class="metric-item" pTooltip="Today's readiness from wellness check-in">
+        <div
+          class="metric-item"
+          pTooltip="Today's readiness from wellness check-in"
+        >
           <div class="metric-header">
             <span class="metric-label">Readiness</span>
-            <span class="metric-value" [class]="getReadinessClass(enrichedPlayer().readiness)">
+            <span
+              class="metric-value"
+              [class]="getReadinessClass(enrichedPlayer().readiness)"
+            >
               {{ enrichedPlayer().readiness }}%
             </span>
           </div>
-          <p-progressBar 
-            [value]="enrichedPlayer().readiness" 
+          <p-progressBar
+            [value]="enrichedPlayer().readiness"
             [showValue]="false"
             [style]="{ height: '6px' }"
-            [styleClass]="'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness)"
+            [styleClass]="
+              'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness)
+            "
           ></p-progressBar>
         </div>
 
         <!-- ACWR -->
-        <div class="metric-item" pTooltip="Acute:Chronic Workload Ratio - Safe range: 0.8-1.3">
+        <div
+          class="metric-item"
+          pTooltip="Acute:Chronic Workload Ratio - Safe range: 0.8-1.3"
+        >
           <div class="metric-header">
             <span class="metric-label">ACWR</span>
-            <span class="metric-value" [class]="getACWRClass(enrichedPlayer().acwr)">
-              {{ enrichedPlayer().acwr | number:'1.2-2' }}
+            <span
+              class="metric-value"
+              [class]="getACWRClass(enrichedPlayer().acwr)"
+            >
+              {{ enrichedPlayer().acwr | number: "1.2-2" }}
             </span>
           </div>
           <div class="acwr-indicator">
             <div class="acwr-zone safe"></div>
-            <div class="acwr-marker" [style.left]="getACWRMarkerPosition(enrichedPlayer().acwr)"></div>
+            <div
+              class="acwr-marker"
+              [style.left]="getACWRMarkerPosition(enrichedPlayer().acwr)"
+            ></div>
           </div>
         </div>
 
@@ -127,7 +156,10 @@ import {
         <div class="metric-item" pTooltip="Performance vs position benchmarks">
           <div class="metric-header">
             <span class="metric-label">Performance</span>
-            <span class="metric-value" [class]="getPerformanceClass(enrichedPlayer().performanceScore)">
+            <span
+              class="metric-value"
+              [class]="getPerformanceClass(enrichedPlayer().performanceScore)"
+            >
               {{ enrichedPlayer().performanceScore }}%
             </span>
           </div>
@@ -155,25 +187,53 @@ import {
 
       <!-- Action Buttons -->
       <div class="card-actions">
-        <app-icon-button icon="pi-eye" variant="text" (clicked)="viewDetails.emit(player())" ariaLabel="eye" />
+        <app-icon-button
+          icon="pi-eye"
+          variant="text"
+          (clicked)="viewDetails.emit(player())"
+          ariaLabel="eye"
+        />
 
         @if (canManage()) {
-          @if (enrichedPlayer().riskLevel === 'high' || enrichedPlayer().riskLevel === 'critical') {
-            <app-icon-button icon="pi-sliders-h" variant="text" (clicked)="adjustLoad.emit(player())" ariaLabel="sliders-h" />
+          @if (
+            enrichedPlayer().riskLevel === "high" ||
+            enrichedPlayer().riskLevel === "critical"
+          ) {
+            <app-icon-button
+              icon="pi-sliders-h"
+              variant="text"
+              (clicked)="adjustLoad.emit(player())"
+              ariaLabel="sliders-h"
+            />
           }
 
-          <app-icon-button icon="pi-pencil" variant="text" (clicked)="edit.emit(player())" ariaLabel="pencil" />
+          <app-icon-button
+            icon="pi-pencil"
+            variant="text"
+            (clicked)="edit.emit(player())"
+            ariaLabel="pencil"
+          />
 
-          <app-icon-button icon="pi-tag" variant="text" (clicked)="changeStatus.emit(player())" ariaLabel="tag" />
+          <app-icon-button
+            icon="pi-tag"
+            variant="text"
+            (clicked)="changeStatus.emit(player())"
+            ariaLabel="tag"
+          />
         }
 
         @if (canDelete()) {
-          <app-icon-button icon="pi-trash" variant="text" (clicked)="remove.emit(player())" ariaLabel="trash" />
+          <app-icon-button
+            icon="pi-trash"
+            variant="text"
+            (clicked)="remove.emit(player())"
+            ariaLabel="trash"
+          />
         }
       </div>
     </p-card>
   `,
-  styleUrl: './roster-player-card.component.scss',
+  styleUrl: "./roster-player-card.component.scss",
 })
 export class RosterPlayerCardComponent {
   private readonly metricsService = inject(PlayerMetricsService);
@@ -203,7 +263,11 @@ export class RosterPlayerCardComponent {
   });
 
   // Computed: Position-specific insight
-  positionInsight = computed<{ text: string; icon: string; type: string } | null>(() => {
+  positionInsight = computed<{
+    text: string;
+    icon: string;
+    type: string;
+  } | null>(() => {
     const p = this.enrichedPlayer();
     const position = p.position;
 
@@ -211,7 +275,9 @@ export class RosterPlayerCardComponent {
     if (position === "QB") {
       const qbStatus = this.metricsService.getQBStatus(p);
       if (qbStatus) {
-        const percentage = Math.round((qbStatus.throwsThisWeek / qbStatus.weeklyLimit) * 100);
+        const percentage = Math.round(
+          (qbStatus.throwsThisWeek / qbStatus.weeklyLimit) * 100,
+        );
         return {
           text: `Arm Care: ${qbStatus.armCareStatus} � Throws: ${qbStatus.throwsThisWeek}/${qbStatus.weeklyLimit}`,
           icon: "pi pi-bolt",
@@ -281,6 +347,6 @@ export class RosterPlayerCardComponent {
 
   getRiskTooltip(): string {
     const assessment = this.metricsService.getRiskAssessment(this.player());
-    return assessment.factors.join('\n');
+    return assessment.factors.join("\n");
   }
 }

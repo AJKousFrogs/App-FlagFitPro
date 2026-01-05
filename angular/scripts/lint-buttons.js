@@ -52,43 +52,44 @@ const CONFIG = {
       regex: /<p-button\b/g,
       severity: "error",
       message: "Use <app-button> instead of <p-button>",
-      fix: "Replace with <app-button variant=\"...\">"
+      fix: 'Replace with <app-button variant="...">',
     },
     {
       name: "pButton directive",
       regex: /\bpButton\b/g,
       severity: "error",
       message: "Use <app-button> instead of pButton directive",
-      fix: "Replace button with <app-button>"
+      fix: "Replace button with <app-button>",
     },
     {
       name: "native button (unwhitelisted)",
       regex: /<button\b(?![^>]*data-raw-button="allowed")/g,
       severity: "warning",
       message: "Consider using <app-button> instead of native <button>",
-      fix: "Replace with <app-button> or add data-raw-button=\"allowed\" if raw button is required"
+      fix: 'Replace with <app-button> or add data-raw-button="allowed" if raw button is required',
     },
     {
       name: "ButtonModule import (potential cleanup)",
-      regex: /import\s*{[^}]*ButtonModule[^}]*}\s*from\s*['"]primeng\/button['"]/g,
+      regex:
+        /import\s*{[^}]*ButtonModule[^}]*}\s*from\s*['"]primeng\/button['"]/g,
       severity: "info",
       message: "ButtonModule may no longer be needed after migration",
-      fix: "Remove ButtonModule import if no longer using <p-button> directly"
+      fix: "Remove ButtonModule import if no longer using <p-button> directly",
     },
     {
       name: "p-button class usage",
       regex: /class="[^"]*p-button[^"]*"/g,
       severity: "warning",
       message: "Avoid using PrimeNG p-button classes directly",
-      fix: "Use <app-button> variant prop instead of raw classes"
+      fix: "Use <app-button> variant prop instead of raw classes",
     },
     {
       name: "styleClass p-button",
       regex: /styleClass="[^"]*p-button[^"]*"/g,
       severity: "warning",
       message: "PrimeNG styleClass with p-button detected",
-      fix: "Use <app-button> variant prop instead"
-    }
+      fix: "Use <app-button> variant prop instead",
+    },
   ],
 
   // File extensions to scan
@@ -145,7 +146,11 @@ function scanDirectory(dir, baseDir) {
     const relativePath = relative(baseDir, fullPath);
 
     // Skip configured directories
-    if (CONFIG.skipDirs.some((skip) => entry === skip || relativePath.includes(skip))) {
+    if (
+      CONFIG.skipDirs.some(
+        (skip) => entry === skip || relativePath.includes(skip),
+      )
+    ) {
       continue;
     }
 
@@ -153,7 +158,10 @@ function scanDirectory(dir, baseDir) {
 
     if (stat.isDirectory()) {
       results.push(...scanDirectory(fullPath, baseDir));
-    } else if (stat.isFile() && CONFIG.extensions.some((ext) => entry.endsWith(ext))) {
+    } else if (
+      stat.isFile() &&
+      CONFIG.extensions.some((ext) => entry.endsWith(ext))
+    ) {
       // Check if whitelisted
       if (isWhitelisted(relativePath)) {
         continue;
@@ -189,7 +197,11 @@ function formatOutput(violations, showFix = false) {
 
     for (const v of fileViolations) {
       const severityColor =
-        v.severity === "error" ? "\x1b[31m" : v.severity === "warning" ? "\x1b[33m" : "\x1b[36m";
+        v.severity === "error"
+          ? "\x1b[31m"
+          : v.severity === "warning"
+            ? "\x1b[33m"
+            : "\x1b[36m";
 
       output += `  ${severityColor}${v.severity}\x1b[0m  Line ${v.line}: ${v.message}\n`;
       output += `         \x1b[90m${v.snippet}\x1b[0m\n`;
@@ -213,14 +225,18 @@ function printSummary(violations) {
   console.log("=".repeat(60));
 
   if (violations.length === 0) {
-    console.log("\n\x1b[32m✓ No button standardization violations found!\x1b[0m\n");
+    console.log(
+      "\n\x1b[32m✓ No button standardization violations found!\x1b[0m\n",
+    );
     return;
   }
 
   console.log(`\n  \x1b[31m${errors} error(s)\x1b[0m`);
   console.log(`  \x1b[33m${warnings} warning(s)\x1b[0m`);
   console.log(`  \x1b[36m${infos} info(s)\x1b[0m`);
-  console.log(`\n  Total: ${violations.length} violation(s) in ${new Set(violations.map((v) => v.file)).size} file(s)\n`);
+  console.log(
+    `\n  Total: ${violations.length} violation(s) in ${new Set(violations.map((v) => v.file)).size} file(s)\n`,
+  );
 }
 
 // ============================================
@@ -252,9 +268,15 @@ function main() {
   printSummary(violations);
 
   // Migration progress
-  const pButtonCount = violations.filter((v) => v.pattern === "p-button element").length;
-  const pButtonDirectiveCount = violations.filter((v) => v.pattern === "pButton directive").length;
-  const nativeButtonCount = violations.filter((v) => v.pattern === "native button (unwhitelisted)").length;
+  const pButtonCount = violations.filter(
+    (v) => v.pattern === "p-button element",
+  ).length;
+  const pButtonDirectiveCount = violations.filter(
+    (v) => v.pattern === "pButton directive",
+  ).length;
+  const nativeButtonCount = violations.filter(
+    (v) => v.pattern === "native button (unwhitelisted)",
+  ).length;
 
   if (violations.length > 0) {
     console.log("\x1b[1mMigration Progress:\x1b[0m");
