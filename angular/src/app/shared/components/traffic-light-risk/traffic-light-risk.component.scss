@@ -97,8 +97,8 @@
 }
 
 .light {
-  width: 36px;
-  height: 36px;
+  width: var(--touch-target-sm); /* 36px */
+  height: var(--touch-target-sm);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;

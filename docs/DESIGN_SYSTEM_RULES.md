@@ -296,6 +296,100 @@ PrimeNG styles may exist **only** in:
 - `[rounded]="true"` is **FORBIDDEN** — all buttons use raised (rectangular) style
 - Primary CTA buttons use `raised` appearance
 
+### 6.3 Button Sizing Rules (LOCKED)
+
+**Single Buttons:** Size to content (default `inline-block`)
+
+**Grouped Buttons:** Must be equal width when displayed together
+
+Use these CSS classes for button groups:
+
+```html
+<!-- Equal-width buttons in a grid -->
+<div class="button-grid cols-3">
+  <app-button>Short</app-button>
+  <app-button>Much Longer Text</app-button>
+  <app-button>Medium</app-button>
+</div>
+
+<!-- Quick actions (3 columns, 2 on mobile) -->
+<div class="quick-actions-grid">
+  <app-button variant="outlined">Action 1</app-button>
+  <app-button variant="outlined">Action 2</app-button>
+  <app-button variant="outlined">Action 3</app-button>
+</div>
+
+<!-- Auto-fit grid (responsive columns) -->
+<div class="actions-grid">
+  <app-button>Save</app-button>
+  <app-button>Cancel</app-button>
+</div>
+```
+
+**Available Grid Classes:**
+
+| Class | Columns | Mobile |
+|-------|---------|--------|
+| `.button-grid` | 2 | 2 |
+| `.button-grid.cols-3` | 3 | 2 |
+| `.button-grid.cols-4` | 4 | 2 |
+| `.quick-actions-grid` | 3 | 2 |
+| `.actions-grid` | auto-fit | auto-fit |
+
+**Alternative:** Use `[fullWidth]="true"` on individual buttons when needed.
+
+### 6.4 Icon + Text Layout Rules (LOCKED)
+
+**Icons must always be positioned LEFT of text, never above.**
+
+This applies to:
+- Stat cards
+- Selection buttons/cards
+- Action cards
+- List items with icons
+
+**Correct Pattern:**
+```html
+<div class="stat-card-content">
+  <div class="stat-icon">
+    <i class="pi pi-chart-line"></i>
+  </div>
+  <div class="stat-details">
+    <span class="stat-value">0.85</span>
+    <span class="stat-label">ACWR</span>
+  </div>
+</div>
+```
+
+**CSS Pattern:**
+```scss
+.card-content {
+  display: flex;
+  flex-direction: row; /* NEVER column for icon + text */
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.card-icon {
+  width: var(--space-10); /* 40px */
+  height: var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+```
+
+**❌ FORBIDDEN:** `flex-direction: column` with icon above text
+**✅ REQUIRED:** `flex-direction: row` with icon left of text
+
 ---
 
 ## 7. Interaction & Motion
@@ -4529,7 +4623,7 @@ export class ButtonComponent {
 <app-button label="Save" variant="raised" />
 
 // Table row
-<app-button icon="pi pi-pencil" variant="text" shape="pill" />
+<app-button iconLeft="pi-pencil" variant="text" shape="pill" />
 
 // Dialog footer
 <app-button label="Cancel" variant="outlined" />

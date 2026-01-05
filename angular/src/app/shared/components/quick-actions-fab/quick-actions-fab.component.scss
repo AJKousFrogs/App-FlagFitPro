@@ -108,7 +108,7 @@
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.08),
     0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
   letter-spacing: -0.01em;
 }
 
@@ -134,7 +134,7 @@
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
   flex-shrink: 0;
 }
 
@@ -168,7 +168,7 @@
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.12),
     0 6px 20px rgba(var(--ds-primary-green-rgb), 0.35);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1), box-shadow var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1), transform var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
@@ -205,7 +205,7 @@
   height: var(--space-12);
   border-radius: var(--radius-lg);
   object-fit: cover;
-  transition: all 0.25s ease;
+  transition: opacity var(--motion-base) var(--ease-standard), transform var(--motion-base) var(--ease-standard);
 }
 
 .main-fab.active .merlin-img {
@@ -223,7 +223,7 @@
   justify-content: center;
   opacity: 0;
   transform: scale(0.5) rotate(-90deg);
-  transition: all 0.25s ease;
+  transition: opacity var(--motion-base) var(--ease-standard), transform var(--motion-base) var(--ease-standard);
 }
 
 .fab-close i {

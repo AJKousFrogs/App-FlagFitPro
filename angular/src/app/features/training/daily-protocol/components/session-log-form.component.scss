@@ -95,7 +95,7 @@
     background: white;
     border: 3px solid var(--ds-primary-green);
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-1);
     margin-top: -7px;
   }
 }
@@ -143,10 +143,10 @@
   transition: border-color 150ms ease;
 }
 
-.notes-textarea:focus {
+.notes-textarea:focus-visible {
   outline: none;
-  border-color: var(--ds-primary-green, #089949);
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.1);
+  border-color: var(--ds-primary-green);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Load Preview */

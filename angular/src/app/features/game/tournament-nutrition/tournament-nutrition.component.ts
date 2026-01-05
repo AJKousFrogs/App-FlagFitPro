@@ -364,29 +364,31 @@ interface HydrationLog {
           <div class="supplements-grid">
             @for (supp of gameDaySupplements; track supp.name) {
               <div class="supplement-card" [attr.data-category]="supp.category">
-                <div class="supp-header">
-                  <span class="supp-icon">{{ supp.icon }}</span>
-                  <div class="supp-meta">
-                    <span class="supp-name">{{ supp.name }}</span>
-                    <span
-                      class="supp-evidence"
-                      [class]="'evidence-' + supp.evidence.toLowerCase()"
-                    >
-                      {{ supp.evidence }} Evidence
-                    </span>
+                <div class="supp-content">
+                  <div class="supp-header">
+                    <span class="supp-icon">{{ supp.icon }}</span>
+                    <div class="supp-meta">
+                      <span class="supp-name">{{ supp.name }}</span>
+                      <span
+                        class="supp-evidence"
+                        [ngClass]="'evidence-' + supp.evidence.toLowerCase()"
+                      >
+                        {{ supp.evidence }} Evidence
+                      </span>
+                    </div>
                   </div>
+                  <div class="supp-details">
+                    <div class="supp-row">
+                      <span class="supp-label">Dose:</span>
+                      <span class="supp-value">{{ supp.dose }}</span>
+                    </div>
+                    <div class="supp-row">
+                      <span class="supp-label">Timing:</span>
+                      <span class="supp-value">{{ supp.timing }}</span>
+                    </div>
+                  </div>
+                  <p class="supp-reason">{{ supp.reason }}</p>
                 </div>
-                <div class="supp-details">
-                  <div class="supp-row">
-                    <span class="supp-label">Dose:</span>
-                    <span class="supp-value">{{ supp.dose }}</span>
-                  </div>
-                  <div class="supp-row">
-                    <span class="supp-label">Timing:</span>
-                    <span class="supp-value">{{ supp.timing }}</span>
-                  </div>
-                </div>
-                <p class="supp-reason">{{ supp.reason }}</p>
                 <p class="supp-notes">
                   <i class="pi pi-info-circle"></i> {{ supp.notes }}
                 </p>

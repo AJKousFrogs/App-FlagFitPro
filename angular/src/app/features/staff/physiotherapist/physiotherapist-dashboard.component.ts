@@ -23,6 +23,7 @@ import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -1102,8 +1103,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load athletes with physio status from real API
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           athletes: Array<{
             id: string;
             name: string;
@@ -1123,8 +1124,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
             acwr: number | null;
             riskLevel: "low" | "medium" | "high" | "unknown";
           }>;
-        }>("/api/staff-physiotherapist/athletes")
-        .toPromise();
+        }>("/api/staff-physiotherapist/athletes"),
+      );
 
       if (response?.data?.athletes) {
         const athletes: AthletePhysioData[] = response.data.athletes.map(
@@ -1207,8 +1208,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   private async loadRTPData(): Promise<void> {
     try {
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           athletes: Array<{
             athleteId: string;
             athleteName: string;
@@ -1224,8 +1225,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
             expectedReturn: string;
             daysRemaining: number | null;
           }>;
-        }>("/api/staff-physiotherapist/rtp")
-        .toPromise();
+        }>("/api/staff-physiotherapist/rtp"),
+      );
 
       if (response?.data?.athletes) {
         const rtpList: ReturnToPlayData[] = response.data.athletes.map(
@@ -1280,12 +1281,12 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
     for (const athlete of this.athletes()) {
       try {
-        const response = await this.api
-          .get<{
+        const response = await firstValueFrom(
+          this.api.get<{
             activeInjuries: Array<{ injury_type: string; injury_date: string }>;
             injuryHistory: Array<{ injury_type: string; injury_date: string }>;
-          }>(`/api/staff-physiotherapist/athletes/${athlete.id}`)
-          .toPromise();
+          }>(`/api/staff-physiotherapist/athletes/${athlete.id}`),
+        );
 
         if (response?.data) {
           const allInjuries = [...(response.data.injuryHistory || [])];

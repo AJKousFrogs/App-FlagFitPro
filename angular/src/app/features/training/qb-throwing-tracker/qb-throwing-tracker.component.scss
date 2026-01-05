@@ -40,7 +40,7 @@
 .status-card {
   background: var(--surface-primary, #ffffff);
   border: 1px solid var(--surface-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl); /* 12px */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -113,7 +113,7 @@
 .section {
   background: var(--surface-primary, #ffffff);
   border: 1px solid var(--surface-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl); /* 12px */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -183,7 +183,7 @@
 
 .session-card {
   border: 1px solid var(--surface-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg); /* 8px */
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
 }

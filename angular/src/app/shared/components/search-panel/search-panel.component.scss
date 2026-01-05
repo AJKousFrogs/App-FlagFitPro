@@ -215,7 +215,7 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
   color: var(--text-color);
   text-align: left;
   position: relative;
@@ -329,7 +329,7 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
   font-size: var(--font-size-h4);
   cursor: pointer;
   color: var(--text-color);
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 }
 
 .recent-tag:hover {
@@ -630,7 +630,7 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
   border-radius: var(--radius-2xl);
   font-size: var(--font-size-h4);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
   color: var(--text-color);
 }
 

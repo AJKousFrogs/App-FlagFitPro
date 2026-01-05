@@ -9,7 +9,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { throwError } from "rxjs";
+import { throwError, firstValueFrom } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
@@ -52,17 +52,18 @@ export class TrainingMetricsService {
    * Get ACWR data for an athlete using the stored procedure
    */
   async getACWR(athleteId: string): Promise<ACWRData[]> {
-    return this.apiService
-      .post<{ data: ACWRData[] }>("/api/compute-acwr", { athleteId })
-      .pipe(
-        map((response) => response.data?.data || []),
-        catchError((error) => {
-          this.logger.error("Error fetching ACWR:", error);
-          return throwError(() => error);
-        }),
-      )
-      .toPromise()
-      .then((result) => result || []);
+    const result = await firstValueFrom(
+      this.apiService
+        .post<{ data: ACWRData[] }>("/api/compute-acwr", { athleteId })
+        .pipe(
+          map((response) => response.data?.data || []),
+          catchError((error) => {
+            this.logger.error("Error fetching ACWR:", error);
+            return throwError(() => error);
+          }),
+        ),
+    );
+    return result || [];
   }
 
   /**
@@ -79,42 +80,31 @@ export class TrainingMetricsService {
       distance?: number;
     }>,
   ): Promise<ImportDatasetResponse> {
-    return this.apiService
-      .post<ImportDatasetResponse>("/api/import-open-data", {
-        athleteId,
-        dataset,
-      })
-      .pipe(
-        map(
-          (response) =>
-            response.data || {
-              ok: false,
-              metrics: {
-                total_volume: 0,
-                high_speed_distance: 0,
-                sprint_count: 0,
-                duration_minutes: 0,
-              },
-            },
+    const defaultResponse: ImportDatasetResponse = {
+      ok: false,
+      metrics: {
+        total_volume: 0,
+        high_speed_distance: 0,
+        sprint_count: 0,
+        duration_minutes: 0,
+      },
+    };
+
+    const result = await firstValueFrom(
+      this.apiService
+        .post<ImportDatasetResponse>("/api/import-open-data", {
+          athleteId,
+          dataset,
+        })
+        .pipe(
+          map((response) => response.data || defaultResponse),
+          catchError((error) => {
+            this.logger.error("Error importing dataset:", error);
+            return throwError(() => error);
+          }),
         ),
-        catchError((error) => {
-          this.logger.error("Error importing dataset:", error);
-          return throwError(() => error);
-        }),
-      )
-      .toPromise()
-      .then(
-        (result) =>
-          result || {
-            ok: false,
-            metrics: {
-              total_volume: 0,
-              high_speed_distance: 0,
-              sprint_count: 0,
-              duration_minutes: 0,
-            },
-          },
-      );
+    );
+    return result || defaultResponse;
   }
 
   /**
@@ -126,19 +116,20 @@ export class TrainingMetricsService {
       .toISOString()
       .split("T")[0];
 
-    return this.apiService
-      .get<FlagMetrics[]>("/api/training-metrics", {
-        athleteId,
-        startDate: fourWeeksAgo,
-      })
-      .pipe(
-        map((response) => response.data || []),
-        catchError((error) => {
-          this.logger.error("Error fetching flag metrics:", error);
-          return throwError(() => error);
-        }),
-      )
-      .toPromise()
-      .then((result) => result || []);
+    const result = await firstValueFrom(
+      this.apiService
+        .get<FlagMetrics[]>("/api/training-metrics", {
+          athleteId,
+          startDate: fourWeeksAgo,
+        })
+        .pipe(
+          map((response) => response.data || []),
+          catchError((error) => {
+            this.logger.error("Error fetching flag metrics:", error);
+            return throwError(() => error);
+          }),
+        ),
+    );
+    return result || [];
   }
 }

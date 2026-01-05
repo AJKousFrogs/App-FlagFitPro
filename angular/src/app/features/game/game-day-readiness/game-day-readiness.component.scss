@@ -79,7 +79,7 @@
 
 .metric-card {
   background: var(--surface-primary);
-  border-radius: 14px;
+  border-radius: var(--radius-xl); /* 12px */
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--surface-border);

@@ -67,6 +67,37 @@ function calculateAge(birthDate) {
 }
 
 /**
+ * Position mapping from UI values to modifier keys
+ * Maps onboarding position values to position_exercise_modifiers.position values
+ */
+const POSITION_TO_MODIFIER_KEY = {
+  QB: "quarterback",
+  WR: "wr_db",
+  DB: "wr_db",
+  Center: "center",
+  Rusher: "rusher",
+  Blitzer: "blitzer",
+  LB: "linebacker",
+  Hybrid: "hybrid",
+  // Lowercase variants (from athlete_training_config)
+  quarterback: "quarterback",
+  wr_db: "wr_db",
+  center: "center",
+  rusher: "rusher",
+  blitzer: "blitzer",
+  linebacker: "linebacker",
+  hybrid: "hybrid",
+};
+
+/**
+ * Normalize position value to modifier key
+ */
+function normalizePosition(position) {
+  if (!position) return "wr_db";
+  return POSITION_TO_MODIFIER_KEY[position] || "wr_db";
+}
+
+/**
  * Get user's training context - position, age modifiers, practice schedule, current program
  */
 async function getUserTrainingContext(supabase, userId, date) {
@@ -80,15 +111,27 @@ async function getUserTrainingContext(supabase, userId, date) {
     .eq("user_id", userId)
     .single();
 
-  // 2. Get user's birth date from users table if not in config
+  // 2. Get user's birth date and position from users table if not in config
   let birthDate = config?.birth_date;
+  let userPosition = config?.primary_position;
+
+  // Fallback to users table if config doesn't exist or is missing data
+  const { data: userData } = await supabase
+    .from("users")
+    .select("date_of_birth, birth_date, position")
+    .eq("id", userId)
+    .single();
+
   if (!birthDate) {
-    const { data: userData } = await supabase
-      .from("users")
-      .select("date_of_birth, birth_date")
-      .eq("id", userId)
-      .single();
     birthDate = userData?.date_of_birth || userData?.birth_date;
+  }
+
+  // If no position in config, use position from users table
+  if (!userPosition && userData?.position) {
+    userPosition = normalizePosition(userData.position);
+    console.log(
+      `[daily-protocol] No athlete_training_config, using users.position: ${userData.position} -> ${userPosition}`,
+    );
   }
 
   // 3. Calculate age and get recovery modifier
@@ -202,11 +245,16 @@ async function getUserTrainingContext(supabase, userId, date) {
   }
 
   // 9. Get position-specific modifiers
-  const position = config?.primary_position || "wr_db";
+  // Use userPosition which was already normalized from config or users table
+  const position = userPosition || "wr_db";
   const { data: positionModifiers } = await supabase
     .from("position_exercise_modifiers")
     .select("*")
     .eq("position", position);
+
+  console.log(
+    `[daily-protocol] Fetching modifiers for position: ${position}, found: ${positionModifiers?.length || 0}`,
+  );
 
   // 10. Calculate ACWR target range (adjusted by age)
   const baseAcwrMin = config?.acwr_target_min || 0.8;

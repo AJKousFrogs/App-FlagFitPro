@@ -107,14 +107,40 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Enable CORS - explicitly allow Angular dev server
+// Enable CORS - dynamically allow localhost and local network for development
 app.use(
   cors({
-    origin: [
-      "http://localhost:4200",
-      "http://127.0.0.1:4200",
-      "http://localhost:3000",
-    ],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or Postman)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Allow any localhost or 127.0.0.1 origin (any port) for development
+      const localhostPattern = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+      if (localhostPattern.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x) for development
+      const localNetworkPattern =
+        /^http:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})(:\d+)?$/;
+      if (localNetworkPattern.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow Netlify deployments
+      if (
+        origin.includes("netlify.app") ||
+        origin.includes("netlify.com")
+      ) {
+        return callback(null, true);
+      }
+
+      // Reject other origins in production, but log for debugging
+      console.warn(`[CORS] Blocked origin: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
@@ -4173,6 +4199,372 @@ app.post("/api/ai-chat", async (req, res) => {
       success: false,
       error: "Failed to process chat request",
       message: error.message,
+    });
+  }
+});
+
+// ============================================
+// Player Programs API Endpoints
+// ============================================
+
+// GET /api/player-programs/me - Get current active assignment
+app.get("/api/player-programs/me", async (req, res) => {
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    // Get user from auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        error: "Authorization required",
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid authentication",
+      });
+    }
+
+    // Get active assignment
+    const { data, error } = await supabase
+      .from("player_programs")
+      .select(
+        `
+        id,
+        player_id,
+        program_id,
+        status,
+        start_date,
+        end_date,
+        current_week,
+        current_phase_id,
+        completion_percentage,
+        modifications,
+        notes,
+        created_at,
+        updated_at,
+        training_programs!inner (
+          id,
+          name
+        )
+      `,
+      )
+      .eq("player_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (error) {
+      console.error("[player-programs] Error fetching assignment:", error);
+      return res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    if (!data) {
+      return res.json({
+        success: true,
+        data: {
+          assignment: null,
+          message: "No active program assigned",
+        },
+      });
+    }
+
+    // Transform to expected shape
+    const assignment = {
+      id: data.id,
+      player_id: data.player_id,
+      program_id: data.program_id,
+      status: data.status,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      current_week: data.current_week,
+      current_phase_id: data.current_phase_id,
+      completion_percentage: data.completion_percentage,
+      modifications: data.modifications,
+      notes: data.notes,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+      program: {
+        id: data.training_programs.id,
+        name: data.training_programs.name,
+      },
+    };
+
+    return res.json({
+      success: true,
+      data: { assignment },
+    });
+  } catch (error) {
+    console.error("[player-programs] Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// POST /api/player-programs - Assign user to a program
+app.post("/api/player-programs", async (req, res) => {
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    // Get user from auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        error: "Authorization required",
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid authentication",
+      });
+    }
+
+    const { program_id, start_date, status = "active", force = false } =
+      req.body;
+
+    if (!program_id) {
+      return res.status(400).json({
+        success: false,
+        error: "program_id is required",
+      });
+    }
+
+    // Check if program exists
+    const { data: programExists, error: programError } = await supabase
+      .from("training_programs")
+      .select("id, name")
+      .eq("id", program_id)
+      .single();
+
+    if (programError || !programExists) {
+      return res.status(404).json({
+        success: false,
+        error: "Training program not found",
+      });
+    }
+
+    // Check for existing active assignment
+    const { data: existingAssignment } = await supabase
+      .from("player_programs")
+      .select(
+        `
+        id,
+        program_id,
+        training_programs!inner (id, name)
+      `,
+      )
+      .eq("player_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (existingAssignment) {
+      // Same program - idempotent success
+      if (existingAssignment.program_id === program_id) {
+        const { data: fullAssignment } = await supabase
+          .from("player_programs")
+          .select(
+            `
+            id,
+            player_id,
+            program_id,
+            status,
+            start_date,
+            end_date,
+            current_week,
+            current_phase_id,
+            completion_percentage,
+            modifications,
+            notes,
+            created_at,
+            updated_at,
+            training_programs!inner (id, name)
+          `,
+          )
+          .eq("id", existingAssignment.id)
+          .single();
+
+        return res.json({
+          success: true,
+          data: {
+            assignment: {
+              ...fullAssignment,
+              program: {
+                id: fullAssignment.training_programs.id,
+                name: fullAssignment.training_programs.name,
+              },
+            },
+          },
+          message: "Program already assigned",
+        });
+      }
+
+      // Different program - check force flag
+      if (!force) {
+        return res.status(409).json({
+          success: false,
+          error: `User already has active program "${existingAssignment.training_programs.name}". Use force=true to switch programs.`,
+        });
+      }
+
+      // Force switch: inactivate previous
+      const today = new Date().toISOString().split("T")[0];
+      await supabase
+        .from("player_programs")
+        .update({
+          status: "inactive",
+          end_date: today,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existingAssignment.id);
+    }
+
+    // Create new assignment
+    const newAssignment = {
+      player_id: user.id,
+      program_id,
+      status,
+      start_date: start_date || new Date().toISOString().split("T")[0],
+      current_week: 1,
+      completion_percentage: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data: created, error: createError } = await supabase
+      .from("player_programs")
+      .insert(newAssignment)
+      .select(
+        `
+        id,
+        player_id,
+        program_id,
+        status,
+        start_date,
+        end_date,
+        current_week,
+        current_phase_id,
+        completion_percentage,
+        modifications,
+        notes,
+        created_at,
+        updated_at,
+        training_programs!inner (id, name)
+      `,
+      )
+      .single();
+
+    if (createError) {
+      console.error("[player-programs] Error creating assignment:", createError);
+      return res.status(500).json({
+        success: false,
+        error: createError.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        assignment: {
+          ...created,
+          program: {
+            id: created.training_programs.id,
+            name: created.training_programs.name,
+          },
+        },
+      },
+      message: "Program assigned successfully",
+    });
+  } catch (error) {
+    console.error("[player-programs] Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
+  }
+});
+
+// ============================================
+// Daily Protocol API Endpoints
+// ============================================
+
+// GET /api/daily-protocol - Get today's protocol
+app.get("/api/daily-protocol", async (req, res) => {
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    // Get user from auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        error: "Authorization required",
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid authentication",
+      });
+    }
+
+    const date = req.query.date || new Date().toISOString().split("T")[0];
+
+    // Return empty protocol for now - this can be enhanced later
+    // The actual protocol generation is complex and handled by the Netlify function
+    return res.json({
+      success: true,
+      data: {
+        protocol_date: date,
+        blocks: [],
+        aiRationale: null,
+      },
+    });
+  } catch (error) {
+    console.error("[daily-protocol] Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
     });
   }
 });

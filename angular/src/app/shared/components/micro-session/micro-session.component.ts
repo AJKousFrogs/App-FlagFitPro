@@ -33,6 +33,7 @@ import { SliderModule } from "primeng/slider";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -501,25 +502,25 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   private async beginSession(): Promise<void> {
     // Create the session in the database
     try {
-      const response = await this.apiService
-        .post<{ id: string }>("/api/micro-sessions", {
+      const response = await firstValueFrom(
+        this.apiService.post<{ id: string }>("/api/micro-sessions", {
           ...this.session(),
           source_type: this.session().source_message_id
             ? "ai_suggestion"
             : "self_created",
           source_message_id: this.session().source_message_id || null,
-        })
-        .toPromise();
+        }),
+      );
 
       if (response?.success && response.data?.id) {
         this.savedSessionId.set(response.data.id);
 
         // Mark as in_progress
-        await this.apiService
-          .patch(`/api/micro-sessions/${response.data.id}`, {
+        await firstValueFrom(
+          this.apiService.patch(`/api/micro-sessions/${response.data.id}`, {
             status: "in_progress",
-          })
-          .toPromise();
+          }),
+        );
       }
     } catch (error) {
       this.logger.error("Error creating micro-session:", error);
@@ -559,12 +560,12 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     // Update session status in database
     if (this.savedSessionId()) {
       try {
-        await this.apiService
-          .patch(`/api/micro-sessions/${this.savedSessionId()}`, {
+        await firstValueFrom(
+          this.apiService.patch(`/api/micro-sessions/${this.savedSessionId()}`, {
             status: "completed",
             actual_duration_minutes: Math.round(this.totalElapsedTime() / 60),
-          })
-          .toPromise();
+          }),
+        );
       } catch (error) {
         this.logger.error("Error updating micro-session:", error);
       }
@@ -574,11 +575,11 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   async skipSession(): Promise<void> {
     if (this.savedSessionId()) {
       try {
-        await this.apiService
-          .patch(`/api/micro-sessions/${this.savedSessionId()}`, {
+        await firstValueFrom(
+          this.apiService.patch(`/api/micro-sessions/${this.savedSessionId()}`, {
             status: "skipped",
-          })
-          .toPromise();
+          }),
+        );
       } catch (error) {
         this.logger.error("Error skipping micro-session:", error);
       }
@@ -593,12 +594,15 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
     try {
       if (this.savedSessionId()) {
-        await this.apiService
-          .post(`/api/micro-sessions/${this.savedSessionId()}/follow-up`, {
-            rating: this.followUpRating,
-            notes: this.followUpNotes,
-          })
-          .toPromise();
+        await firstValueFrom(
+          this.apiService.post(
+            `/api/micro-sessions/${this.savedSessionId()}/follow-up`,
+            {
+              rating: this.followUpRating,
+              notes: this.followUpNotes,
+            },
+          ),
+        );
       }
 
       this.followUpSubmitted.set(true);

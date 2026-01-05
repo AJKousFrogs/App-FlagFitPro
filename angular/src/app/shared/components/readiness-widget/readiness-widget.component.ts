@@ -227,7 +227,7 @@ import { ButtonComponent, CardComponent } from "../ui-components";
       } @else {
         <div class="no-data-state p-4 text-center">
           <p class="text-text-secondary mb-4">No readiness data available</p>
-          <app-button icon="calculator" (clicked)="refresh()"
+          <app-button iconLeft="pi-calculator" (clicked)="refresh()"
             >Calculate Readiness</app-button
           >
         </div>

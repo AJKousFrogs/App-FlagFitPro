@@ -27,17 +27,44 @@ const getEnvValue = (key: string, fallback: string): string => {
   return fallback;
 };
 
+// Auto-detect API URL for local development
+// This allows the Angular app to connect to the API server regardless of which port it's running on
+const getDefaultApiUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // Check for API_PORT in URL query params (e.g., ?API_PORT=3000)
+    const urlParams = new URLSearchParams(window.location.search);
+    const apiPort = urlParams.get("API_PORT") || "4000";
+
+    // For localhost or 127.0.0.1
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return `http://${hostname}:${apiPort}`;
+    }
+
+    // For local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    // Connect to the API on the same host but port 4000
+    const localNetworkPattern =
+      /^(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})$/;
+    if (localNetworkPattern.test(hostname)) {
+      return `http://${hostname}:${apiPort}`;
+    }
+  }
+  // Default for SSR or unknown environments
+  return "http://localhost:4000";
+};
+
 // Default development values (safe to commit - public anon key only)
 const DEFAULTS = {
   SUPABASE_URL: "https://pvziciccwxgftcielknm.supabase.co",
   SUPABASE_ANON_KEY:
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU",
-  API_URL: "http://localhost:4000",
+  API_URL: "", // Will be auto-detected
 };
 
 export const environment = {
   production: false,
-  apiUrl: getEnvValue("API_URL", DEFAULTS.API_URL),
+  // API URL: Check window._env first, then auto-detect for local dev
+  apiUrl: getEnvValue("API_URL", DEFAULTS.API_URL) || getDefaultApiUrl(),
   supabase: {
     url: getEnvValue("SUPABASE_URL", DEFAULTS.SUPABASE_URL),
     anonKey: getEnvValue("SUPABASE_ANON_KEY", DEFAULTS.SUPABASE_ANON_KEY),

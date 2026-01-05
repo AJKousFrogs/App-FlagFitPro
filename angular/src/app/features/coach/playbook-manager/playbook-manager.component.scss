@@ -24,7 +24,7 @@
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
     white-space: nowrap;
 
     &:hover {
@@ -106,7 +106,7 @@
   transition: box-shadow 0.2s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-2);
   }
 }
 
@@ -178,7 +178,7 @@
         height: 24px;
         border-radius: 50%;
         background: white;
-        color: #1e4d2b;
+        color: var(--ds-primary-green-hover);
         font-size: var(--font-body-2xs);
         font-weight: var(--font-weight-bold);
         display: flex;
@@ -186,7 +186,7 @@
         justify-content: center;
 
         &.qb {
-          background: #fbbf24;
+          background: var(--color-status-warning);
         }
       }
     }
@@ -313,11 +313,11 @@
     }
 
     .player-marker {
-      width: 36px;
-      height: 36px;
+      width: var(--touch-target-sm); /* 36px */
+      height: var(--touch-target-sm);
       border-radius: 50%;
       background: white;
-      color: #1e4d2b;
+      color: var(--ds-primary-green-hover);
       font-size: var(--font-size-badge);
       font-weight: var(--font-weight-bold);
       display: flex;
@@ -326,7 +326,7 @@
       cursor: move;
 
       &.qb {
-        background: #fbbf24;
+        background: var(--color-status-warning);
       }
     }
 

@@ -888,7 +888,7 @@
 
   .availability-option,
   .header-actions button {
-    min-height: 44px;
+    min-height: var(--touch-target-md); /* 44px */
   }
 }
 

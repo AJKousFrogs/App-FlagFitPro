@@ -306,3 +306,4 @@ async function cleanupTestData(supabase) {
     await supabase.from("load_monitoring").delete().eq("player_id", userId);
   }
 }
+

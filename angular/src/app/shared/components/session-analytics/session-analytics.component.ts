@@ -28,6 +28,7 @@ import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { ChartModule } from "primeng/chart";
+import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -324,9 +325,11 @@ export class SessionAnalyticsComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      const response = await this.apiService
-        .get<AnalyticsData>("/api/micro-sessions/analytics", { weeks: 4 })
-        .toPromise();
+      const response = await firstValueFrom(
+        this.apiService.get<AnalyticsData>("/api/micro-sessions/analytics", {
+          weeks: 4,
+        }),
+      );
 
       if (response?.success && response.data) {
         this.analytics.set(response.data);

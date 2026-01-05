@@ -37,7 +37,10 @@
 // Table patterns (density, variants, empty states)
 @use "tables";
 
-// Feedback (badges, alerts, empty/loading states)
+// Badges (status indicators, labels, pills)
+@use "badges";
+
+// Feedback (alerts, empty/loading states - badges moved to _badges.scss)
 @use "feedback";
 
 // Dialog / overlay patterns (modals, drawers, popovers)

@@ -20,6 +20,7 @@ import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -1102,8 +1103,8 @@ export class ScoutingReportsComponent implements OnInit {
     try {
       // Load scouting reports from API
       const [reportsRes, opponentsRes] = await Promise.all([
-        this.api
-          .get<{
+        firstValueFrom(
+          this.api.get<{
             reports: Array<{
               id: string;
               opponent_name: string;
@@ -1128,10 +1129,10 @@ export class ScoutingReportsComponent implements OnInit {
               created_at: string;
               created_by_user?: { full_name: string };
             }>;
-          }>("/api/scouting/reports")
-          .toPromise(),
-        this.api
-          .get<{
+          }>("/api/scouting/reports"),
+        ),
+        firstValueFrom(
+          this.api.get<{
             opponents: Array<{
               name: string;
               opponentTeamId?: string;
@@ -1147,8 +1148,8 @@ export class ScoutingReportsComponent implements OnInit {
               losses: number;
               lastPlayed: string;
             }>;
-          }>("/api/scouting/opponents")
-          .toPromise(),
+          }>("/api/scouting/opponents"),
+        ),
       ]);
 
       // Transform reports
@@ -1223,8 +1224,8 @@ export class ScoutingReportsComponent implements OnInit {
 
   async loadTendencies(opponentName: string): Promise<void> {
     try {
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           tendencies: {
             offensive: {
               formations: Record<string, number>;
@@ -1236,8 +1237,8 @@ export class ScoutingReportsComponent implements OnInit {
               notes?: string[];
             };
           };
-        }>(`/api/scouting/tendencies/${encodeURIComponent(opponentName)}`)
-        .toPromise();
+        }>(`/api/scouting/tendencies/${encodeURIComponent(opponentName)}`),
+      );
 
       if (response?.data?.tendencies) {
         const t = response.data.tendencies;
@@ -1312,9 +1313,9 @@ export class ScoutingReportsComponent implements OnInit {
 
   async shareToChat(report: ScoutingReport): Promise<void> {
     try {
-      await this.api
-        .post(`/api/scouting/reports/${report.id}/share`)
-        .toPromise();
+      await firstValueFrom(
+        this.api.post(`/api/scouting/reports/${report.id}/share`),
+      );
       this.toast.success(
         `"${report.opponentName}" report shared to team chat!`,
       );
@@ -1355,8 +1356,8 @@ export class ScoutingReportsComponent implements OnInit {
     );
 
     try {
-      const response = await this.api
-        .post<{ report: { id: string } }>("/api/scouting/reports", {
+      const response = await firstValueFrom(
+        this.api.post<{ report: { id: string } }>("/api/scouting/reports", {
           opponentName: opponent?.teamName || "Unknown",
           gameDate: this.newReport.gameDate,
           offensiveNotes: this.newReport.executiveSummary,
@@ -1375,8 +1376,8 @@ export class ScoutingReportsComponent implements OnInit {
               .split("\n")
               .filter((p) => p.trim()),
           },
-        })
-        .toPromise();
+        }),
+      );
 
       // Add to local list
       const report: ScoutingReport = {
@@ -1426,13 +1427,13 @@ export class ScoutingReportsComponent implements OnInit {
     }
 
     try {
-      await this.api
-        .post("/api/scouting/opponents", {
+      await firstValueFrom(
+        this.api.post("/api/scouting/opponents", {
           name: this.newOpponent.teamName,
           conference: this.newOpponent.conference,
           coach: this.newOpponent.headCoach,
-        })
-        .toPromise();
+        }),
+      );
 
       const opponent: OpponentProfile = {
         id: `opp${Date.now()}`,

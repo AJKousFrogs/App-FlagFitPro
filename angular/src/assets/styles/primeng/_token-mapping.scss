@@ -94,10 +94,10 @@
     // ============================================
 
     --p-tag-padding-x: var(--space-3);
-    --p-tag-padding-y: var(--space-1);
-    --p-tag-border-radius: var(--radius-full);
-    --p-tag-font-size: var(--font-body-xs);
-    --p-tag-font-weight: var(--font-weight-medium);
+    --p-tag-padding-y: var(--space-2);
+    --p-tag-border-radius: var(--radius-md); // RAISED RECTANGULAR (not pill)
+    --p-tag-font-size: var(--font-body-sm);
+    --p-tag-font-weight: var(--font-weight-semibold);
 
     // Tag severities
     --p-tag-success-background: var(--color-status-success-surface);

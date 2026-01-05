@@ -873,15 +873,15 @@
   }
 
   /* ================================
-     TAG/BADGE - PILL styling (unified)
+     TAG/BADGE - RAISED RECTANGULAR styling
      See primeng-theme.scss for complete styles
      ================================ */
   .p-tag {
-    border-radius: 9999px;
-    height: 30px;
-    min-height: 30px;
-    max-height: 30px;
-    padding: 0 13px;
+    border-radius: var(--radius-md);
+    height: var(--touch-target-sm); /* 36px for breathing room */
+    min-height: var(--touch-target-sm);
+    padding: 0 var(--space-4); /* 16px horizontal */
+    box-shadow: var(--shadow-sm);
   }
 } /* End @layer overrides */
 

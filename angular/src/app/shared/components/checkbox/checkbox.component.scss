@@ -27,7 +27,7 @@
   user-select: none;
   font-size: var(--font-size-body, 0.875rem);
   color: var(--color-text-primary);
-  min-height: 44px; // Ensure 44px hit area for accessibility
+  min-height: var(--touch-target-md); // 44px hit area for accessibility
 }
 
 .checkbox-label.disabled {
@@ -53,7 +53,7 @@
   min-width: 20px;
   min-height: 20px;
   border: 2px solid var(--color-border-default, #d1d5db);
-  border-radius: 6px;
+  border-radius: var(--radius-md); /* 6px */
   background-color: var(--color-surface-primary, white);
   transition:
     background-color 200ms ease,

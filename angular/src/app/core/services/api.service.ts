@@ -25,8 +25,11 @@ export class ApiService {
   }
 
   private getApiBaseUrl(): string {
-    // Check environment configuration first
+    // Check environment configuration first (includes auto-detection from environment.ts)
     if (environment.apiUrl) {
+      this.logger.info(
+        `[ApiService] Using environment apiUrl: ${environment.apiUrl}`,
+      );
       return environment.apiUrl;
     }
 
@@ -42,13 +45,29 @@ export class ApiService {
         return window.location.origin;
       }
 
-      // Local development: use the local Node server
+      // Local development: auto-detect API port
+      // Default is 4000, but can be overridden via URL query param ?API_PORT=3000
+      const urlParams = new URLSearchParams(window.location.search);
+      const apiPort = urlParams.get("API_PORT") || "4000";
+
+      // localhost or 127.0.0.1
       if (hostname === "localhost" || hostname === "127.0.0.1") {
-        // Use port 4000 for local development (matches server.js)
+        const apiUrl = `http://${hostname}:${apiPort}`;
         this.logger.info(
-          "[ApiService] Development mode: targeting local server on port 4000",
+          `[ApiService] Development mode: targeting local server at ${apiUrl}`,
         );
-        return "http://localhost:4000";
+        return apiUrl;
+      }
+
+      // Local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+      const localNetworkPattern =
+        /^(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})$/;
+      if (localNetworkPattern.test(hostname)) {
+        const apiUrl = `http://${hostname}:${apiPort}`;
+        this.logger.info(
+          `[ApiService] LAN development mode: targeting server at ${apiUrl}`,
+        );
+        return apiUrl;
       }
     }
 
@@ -187,8 +206,8 @@ export const API_ENDPOINTS = {
     health: "/api/dashboard/health",
   },
   training: {
-    stats: "/training-stats",
-    statsEnhanced: "/training-stats-enhanced",
+    stats: "/api/training/stats",
+    statsEnhanced: "/api/training/stats-enhanced",
     complete: "/api/training/complete",
     suggestions: "/api/training/suggestions",
     sessions: "/api/training/sessions",
@@ -252,9 +271,9 @@ export const API_ENDPOINTS = {
     health: "/api/tournaments/health",
   },
   knowledge: {
-    search: "/knowledge-search",
-    entry: (topic: string) => `/knowledge-search?topic=${topic}`,
-    articles: "/knowledge-search",
+    search: "/api/knowledge-search",
+    entry: (topic: string) => `/api/knowledge-search?topic=${topic}`,
+    articles: "/api/knowledge-search",
   },
   wellness: {
     checkin: "/api/wellness/checkin",

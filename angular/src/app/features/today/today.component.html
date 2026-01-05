@@ -425,9 +425,10 @@
                 </div>
 
                 <!-- Protocol Blocks -->
-                <div class="protocol-blocks">
+                <div class="protocol-blocks" data-testid="protocol-blocks">
                   @if (p.morningMobility) {
                     <app-protocol-block
+                      data-testid="protocol-block-morning-mobility"
                       [block]="p.morningMobility"
                       [simpleView]="true"
                       [defaultExpanded]="true"
@@ -437,6 +438,7 @@
 
                   @if (p.foamRoll && p.foamRoll.totalCount > 0) {
                     <app-protocol-block
+                      data-testid="protocol-block-foam-rolling"
                       [block]="p.foamRoll"
                       [simpleView]="true"
                       [defaultExpanded]="true"

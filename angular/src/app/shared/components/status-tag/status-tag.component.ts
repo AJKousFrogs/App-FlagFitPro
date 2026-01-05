@@ -1,17 +1,17 @@
 /**
- * Status Tag Component - Unified PILL Design System
+ * Status Tag Component - Unified RAISED BADGE Design System
  *
  * SINGLE SOURCE OF TRUTH for all status indicators (tags, badges, chips)
  * across the entire application.
  *
- * Reference Design (matches "Good" pill exactly):
+ * Reference Design:
  * - Solid green background (#63ad0e for success)
  * - White text (#ffffff)
  * - Semibold font weight (600)
- * - Fixed height: 30px
- * - Horizontal padding: 13px
- * - NO borders, shadows, outlines, or underlines
- * - PILL shape: border-radius 9999px
+ * - Fixed height: 32px
+ * - Horizontal padding: 12px
+ * - RAISED RECTANGULAR shape: border-radius 8px
+ * - Subtle shadow for depth
  * - Text vertically centered
  * - text-transform: none
  *
@@ -64,23 +64,22 @@ export type StatusTagSeverity =
       }
 
       /* ================================================================
-       STATUS TAG - UNIFIED PILL DESIGN
-       Matches the "Good" pill badge in the player dashboard exactly
+       STATUS TAG - UNIFIED RAISED BADGE DESIGN
+       Standardized raised rectangular shape across the app
        ================================================================ */
 
       .status-tag {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: var(--space-2);
 
-        /* Fixed height - 30px, no vertical growth */
-        height: 30px;
-        min-height: 30px;
-        max-height: 30px;
+        /* Fixed height - 36px for better touch target */
+        height: var(--touch-target-sm);
+        min-height: var(--touch-target-sm);
 
-        /* Padding: 13px horizontal */
-        padding: 0 13px;
+        /* Padding: 16px horizontal for breathing room */
+        padding: 0 var(--space-4);
 
         /* Typography */
         font-family: var(--font-family-sans);
@@ -91,12 +90,12 @@ export type StatusTagSeverity =
         text-transform: none;
         text-decoration: none;
 
-        /* Shape: PILL (full rounded) */
-        border-radius: 9999px;
+        /* Shape: RAISED RECTANGULAR (not pill) */
+        border-radius: var(--radius-md, 8px);
 
-        /* NO borders, shadows, outlines, or underlines */
+        /* Raised effect with shadow */
         border: none;
-        box-shadow: none;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
         outline: none;
 
         /* Default: Success (green) */
@@ -107,7 +106,9 @@ export type StatusTagSeverity =
         flex-shrink: 0;
 
         /* Smooth transitions */
-        transition: opacity 0.15s ease;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
       }
 
       /* Icon styling */
@@ -164,27 +165,25 @@ export type StatusTagSeverity =
       }
 
       /* ================================================================
-       SIZE VARIANTS - All use PILL shape
+       SIZE VARIANTS - All use RAISED RECTANGULAR shape
        ================================================================ */
 
       /* Small - More compact */
       .status-tag-sm {
-        height: 24px;
-        min-height: 24px;
-        max-height: 24px;
-        padding: 0 10px;
-        font-size: 12px;
-        border-radius: 9999px;
+        height: var(--space-7); /* 28px */
+        min-height: var(--space-7);
+        padding: 0 var(--space-3);
+        font-size: var(--font-size-badge);
+        border-radius: var(--radius-sm);
       }
 
       /* Large - More prominent */
       .status-tag-lg {
-        height: 36px;
-        min-height: 36px;
-        max-height: 36px;
-        padding: 0 16px;
-        font-size: 16px;
-        border-radius: 9999px;
+        height: var(--touch-target-md); /* 44px */
+        min-height: var(--touch-target-md);
+        padding: 0 var(--space-5);
+        font-size: var(--font-body-size);
+        border-radius: var(--radius-lg);
       }
 
       /* ================================================================

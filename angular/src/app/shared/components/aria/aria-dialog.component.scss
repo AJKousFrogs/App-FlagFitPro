@@ -23,7 +23,7 @@
   position: relative;
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-3);
   max-height: 90vh;
   overflow: hidden;
   display: flex;

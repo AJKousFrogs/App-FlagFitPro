@@ -21,6 +21,7 @@ import { TableModule } from "primeng/table";
 import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -965,8 +966,8 @@ export class NutritionistDashboardComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load real data from API
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           athletes: Array<{
             id: string;
             name: string;
@@ -980,8 +981,8 @@ export class NutritionistDashboardComponent implements OnInit {
             proteinTarget: number;
             lastUpdated: string;
           }>;
-        }>("/api/staff-nutritionist/athletes")
-        .toPromise();
+        }>("/api/staff-nutritionist/athletes"),
+      );
 
       if (response?.data?.athletes) {
         const athletes = response.data.athletes.map((a) => ({
@@ -1020,16 +1021,16 @@ export class NutritionistDashboardComponent implements OnInit {
 
     for (const athlete of athletes) {
       try {
-        const response = await this.api
-          .get<{
+        const response = await firstValueFrom(
+          this.api.get<{
             trends: Array<{
               date: string;
               weight: number;
               bodyFat: number;
               leanMass: number;
             }>;
-          }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`)
-          .toPromise();
+          }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`),
+        );
 
         if (response?.data?.trends) {
           compData.set(athlete.id, {
@@ -1086,8 +1087,8 @@ export class NutritionistDashboardComponent implements OnInit {
 
   private async loadSupplementCompliance(): Promise<void> {
     try {
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           compliance: Array<{
             athleteId: string;
             athleteName: string;
@@ -1096,8 +1097,8 @@ export class NutritionistDashboardComponent implements OnInit {
             takenCount: number;
             missedCount: number;
           }>;
-        }>("/api/staff-nutritionist/supplements")
-        .toPromise();
+        }>("/api/staff-nutritionist/supplements"),
+      );
 
       if (response?.data?.compliance) {
         const supplements: SupplementCompliance[] =

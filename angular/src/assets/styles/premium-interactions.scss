@@ -806,25 +806,13 @@
    ================================================================ */
 
 /* Enhanced PrimeNG Button - Global styles (no ::ng-deep needed) */
-.p-button {
-  transition:
-    transform var(--anim-fast) var(--ease-micro-bounce),
-    box-shadow var(--anim-fast) var(--ease-smooth),
-    background-color var(--anim-fast) var(--ease-smooth),
-    border-color var(--anim-fast) var(--ease-smooth);
-  will-change: transform, box-shadow;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .p-button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.p-button:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
-}
+/* .p-button - REMOVED (Consolidated)
+   ================================================================
+   Button hover/active styles are now defined ONLY in:
+   - primeng/_brand-overrides.scss (for PrimeNG buttons)
+   
+   This prevents conflicting hover behaviors.
+   ================================================================ */
 
 /* Enhanced PrimeNG Card - Global styles */
 .p-card {

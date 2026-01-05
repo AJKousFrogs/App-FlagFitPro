@@ -21,6 +21,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { CountdownTimerComponent } from "../../../../shared/components/countdown-timer/countdown-timer.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
@@ -34,7 +35,13 @@ import {
   selector: "app-exercise-card",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule, ButtonComponent],
+  imports: [
+    CommonModule,
+    TagModule,
+    TooltipModule,
+    ButtonComponent,
+    CountdownTimerComponent,
+  ],
   template: `
     <div
       class="exercise-card"
@@ -213,6 +220,27 @@ import {
             </div>
           }
 
+          <!-- Timer for Timed Exercises -->
+          @if (
+            exercise().prescribedDurationSeconds &&
+            exercise().status !== "complete"
+          ) {
+            <div class="exercise-timer-section">
+              <h5 class="timer-section-title">
+                <i class="pi pi-clock"></i>
+                Exercise Timer
+              </h5>
+              <app-countdown-timer
+                [initialSeconds]="exercise().prescribedDurationSeconds!"
+                [autoStart]="false"
+                [showPresets]="false"
+                [showProgressBar]="true"
+                label="remaining"
+                (timerComplete)="onTimerComplete()"
+              />
+            </div>
+          }
+
           <!-- Action Row -->
           <div class="action-row">
             @if (exercise().status !== "complete") {
@@ -307,6 +335,14 @@ export class ExerciseCardComponent {
 
   onSkip(): void {
     this.skip.emit(this.exercise());
+  }
+
+  /**
+   * Handle timer completion - auto-mark exercise as complete
+   */
+  onTimerComplete(): void {
+    // Auto-complete the exercise when timer finishes
+    this.onComplete();
   }
 
   formatDuration(seconds: number): string {

@@ -1094,8 +1094,8 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 >
   <!-- Header Actions -->
   <ng-container header-actions>
-    <app-button variant="text" size="sm" icon="pi-filter">Filter</app-button>
-    <app-button variant="text" size="sm" icon="pi-download">Export</app-button>
+    <app-button variant="text" size="sm" iconLeft="pi-filter">Filter</app-button>
+    <app-button variant="text" size="sm" iconLeft="pi-download">Export</app-button>
   </ng-container>
 
   <!-- Flush body for table -->
@@ -1215,7 +1215,7 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 ```html
 <app-card-shell title="Performance Trend" headerIcon="pi-trending-up">
   <ng-container header-actions>
-    <app-button variant="text" size="sm" icon="pi-download">Export</app-button>
+    <app-button variant="text" size="sm" iconLeft="pi-download">Export</app-button>
   </ng-container>
 
   <p-chart type="line" [data]="chartData"></p-chart>

@@ -1,6 +1,12 @@
 {
   "$schema": "https://modelcontextprotocol.io/schema.json",
   "mcpServers": {
+    "angular-cli": {
+      "command": "npx",
+      "args": ["-y", "@angular/cli", "mcp"],
+      "description": "Angular CLI MCP Server - Provides Angular CLI commands, documentation search, best practices, code examples, and migration guides",
+      "alwaysAllow": []
+    },
     "context7-sports": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],

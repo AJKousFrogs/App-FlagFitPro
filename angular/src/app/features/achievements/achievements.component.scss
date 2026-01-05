@@ -104,7 +104,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  transition: all 0.2s ease;
+  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
   border: 1px solid var(--ds-border-subtle);
 
   &.unlocked {
@@ -127,7 +127,7 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-2);
   }
 }
 
@@ -259,7 +259,7 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-full);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
     white-space: nowrap;
     color: var(--ds-text-secondary);
 

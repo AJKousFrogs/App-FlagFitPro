@@ -40,8 +40,8 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  width: 44px;
-  height: 44px;
+  width: var(--touch-target-md); /* 44px */
+  height: var(--touch-target-md);
   border: none;
   background: var(--surface-tertiary);
   border-radius: 50%;
@@ -89,7 +89,7 @@
 
 .sidebar-logo:hover .logo-icon-wrapper {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+  box-shadow: var(--shadow-2);
 }
 
 .logo-icon-wrapper {
@@ -108,7 +108,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  box-shadow: 0 2px 8px rgba(var(--primitive-primary-700-rgb), 0.2);
+  box-shadow: var(--shadow-1);
   flex-shrink: 0;
 }
 
@@ -217,7 +217,7 @@
   cursor: pointer;
   font-size: var(--font-size-h4);
   font-family: inherit;
-  min-height: 44px; /* WCAG touch target minimum */
+  min-height: var(--touch-target-md); /* 44px WCAG touch target */
 }
 
 .nav-item:focus-visible {
@@ -337,8 +337,8 @@
   }
 
   .logo-icon-wrapper {
-    width: 36px;
-    height: 36px;
+    width: var(--touch-target-sm); /* 36px */
+    height: var(--touch-target-sm);
   }
 
   .user-section {

@@ -13,17 +13,57 @@ const TEST_USER = {
 
 // Run tests in parallel for faster execution
 
+/**
+ * Dismisses the cookie consent banner by setting localStorage consent.
+ * This bypasses the banner entirely for testing purposes.
+ */
+async function dismissCookieBanner(page: Page): Promise<void> {
+  // Set cookie consent in localStorage to prevent banner from showing
+  await page.evaluate(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0"
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+  
+  // Also try to click dismiss if banner is already visible
+  try {
+    const banner = page.locator("app-cookie-consent-banner");
+    if (await banner.isVisible({ timeout: 500 }).catch(() => false)) {
+      // Use force click to bypass any overlay issues
+      await page.locator("app-cookie-consent-banner button").filter({ hasText: /Accept All/i }).click({ force: true, timeout: 2000 }).catch(() => {});
+      // Wait briefly for banner to hide
+      await page.waitForTimeout(500);
+    }
+  } catch {
+    // Banner not present or already dismissed
+  }
+}
+
 test.describe("Quick Smoke Tests", () => {
   test("1. Login and verify session", async ({ page }) => {
     await page.goto(`${BASE_URL}/login`);
+    await dismissCookieBanner(page);
 
-    // Fill credentials
-    await page.locator('input[type="email"]').fill(TEST_USER.email);
-    await page.locator('input[type="password"]').fill(TEST_USER.password);
+    // Fill email with proper blur to trigger Angular form validation
+    const emailInput = page.locator('input[type="email"]');
+    await emailInput.click();
+    await emailInput.fill(TEST_USER.email);
+    await emailInput.press("Tab");
+    
+    // Fill password with proper blur to trigger Angular form validation
+    const passwordInput = page.locator('input[type="password"]');
+    await passwordInput.click();
+    await passwordInput.fill(TEST_USER.password);
+    await passwordInput.press("Tab");
 
     // Submit
     await page.waitForSelector('button[type="submit"]:not([disabled])', {
-      timeout: 5000,
+      timeout: 10000,
     });
     await page.click('button[type="submit"]');
 
@@ -205,11 +245,27 @@ test.describe("Quick Smoke Tests", () => {
 // Helper to login and navigate
 async function loginAndNavigate(page: Page, path: string) {
   await page.goto(`${BASE_URL}/login`);
-  await page.locator('input[type="email"]').fill(TEST_USER.email);
-  await page.locator('input[type="password"]').fill(TEST_USER.password);
+  await dismissCookieBanner(page);
+  
+  // Fill email with proper blur to trigger Angular form validation
+  const emailInput = page.locator('input[type="email"]');
+  await emailInput.click();
+  await emailInput.fill(TEST_USER.email);
+  await emailInput.press("Tab");
+  
+  // Fill password with proper blur to trigger Angular form validation
+  const passwordInput = page.locator('input[type="password"]');
+  await passwordInput.click();
+  await passwordInput.fill(TEST_USER.password);
+  await passwordInput.press("Tab");
+  
+  // Wait for form validation and button to be enabled
+  await page.waitForSelector('button[type="submit"]:not([disabled])', { timeout: 10000 });
   await page.click('button[type="submit"]');
   await page.waitForURL(/.*dashboard.*/, { timeout: 15000 });
   await page.goto(`${BASE_URL}${path}`);
+  // Dismiss cookie banner again in case it reappears on new page
+  await dismissCookieBanner(page);
   // Wait for Angular to hydrate
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(1000);

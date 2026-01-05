@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "timestamp": "2026-01-05T16:04:59.094Z",
+    "totalTests": 21,
+    "totalPassed": 21,
+    "totalFailed": 0
+  },
+  "tests": {
+    "backendFrontend": {
+      "status": "passed",
+      "tests": 21,
+      "passed": 21,
+      "failed": 0,
+      "errors": []
+    },
+    "designSystem": {
+      "status": "skipped",
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": [
+        "Angular server not running"
+      ]
+    },
+    "ux": {
+      "status": "skipped",
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": [
+        "Angular server not running"
+      ]
+    }
+  }
+}

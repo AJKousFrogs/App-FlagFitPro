@@ -4,6 +4,9 @@ import {
   OnInit,
   inject,
   signal,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
 } from "@angular/core";
 
 import {
@@ -66,13 +69,16 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
   private themeService = inject(ThemeService);
   private logger = inject(LoggerService);
+
+  @ViewChild("dobDatePicker", { read: ElementRef })
+  dobDatePickerRef?: ElementRef<HTMLElement>;
 
   profileForm!: FormGroup;
   notificationForm!: FormGroup;
@@ -168,6 +174,13 @@ export class SettingsComponent implements OnInit {
   // Date constraints for date of birth field
   maxBirthDate = new Date(new Date().setFullYear(new Date().getFullYear() - 5)); // Must be at least 5 years old
 
+  // Birthday suggestion state
+  birthdaySuggestion = signal<{
+    date: Date | null;
+    age: number | null;
+    formatted: string;
+  } | null>(null);
+
   positionOptions = [
     // Players
     { label: "Quarterback (QB)", value: "Quarterback" },
@@ -252,6 +265,213 @@ export class SettingsComponent implements OnInit {
       },
       { validators: this.passwordMatchValidator },
     );
+  }
+
+  ngAfterViewInit(): void {
+    // Set up input listener for manual date typing
+    setTimeout(() => {
+      this.setupBirthdayInputListener();
+    }, 100);
+  }
+
+  private retryCount = 0;
+  private readonly MAX_RETRIES = 10;
+
+  /**
+   * Set up input event listener on the datepicker input element
+   * to detect manual typing and provide suggestions
+   */
+  private setupBirthdayInputListener(): void {
+    if (!this.dobDatePickerRef?.nativeElement) {
+      // Retry after a short delay if element not found
+      if (this.retryCount < this.MAX_RETRIES) {
+        this.retryCount++;
+        setTimeout(() => this.setupBirthdayInputListener(), 100);
+      }
+      return;
+    }
+
+    // Find the input element within the datepicker
+    // PrimeNG datepicker wraps input in .p-datepicker or .p-calendar
+    const datepickerWrapper = this.dobDatePickerRef.nativeElement.querySelector(
+      ".p-datepicker, .p-calendar",
+    );
+    const inputElement = datepickerWrapper
+      ? (datepickerWrapper.querySelector("input") as HTMLInputElement)
+      : (this.dobDatePickerRef.nativeElement.querySelector(
+          "input",
+        ) as HTMLInputElement);
+
+    if (!inputElement) {
+      // Retry after a short delay if input not found
+      if (this.retryCount < this.MAX_RETRIES) {
+        this.retryCount++;
+        setTimeout(() => this.setupBirthdayInputListener(), 100);
+      }
+      return;
+    }
+
+    // Reset retry count on success
+    this.retryCount = 0;
+
+    // Mark as set up to avoid duplicate listeners
+    if ((inputElement as any)["__suggestionListenerSetup"]) {
+      return;
+    }
+    (inputElement as any)["__suggestionListenerSetup"] = true;
+
+    // Listen for input events (manual typing)
+    const inputHandler = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const typedValue = target.value.trim();
+
+      if (typedValue.length > 0) {
+        this.parseAndSuggestBirthday(typedValue);
+      } else {
+        this.birthdaySuggestion.set(null);
+      }
+    };
+
+    inputElement.addEventListener("input", inputHandler);
+
+    // Clear suggestion on blur if date is valid
+    const blurHandler = () => {
+      const currentValue = this.profileForm.get("dateOfBirth")?.value;
+      if (currentValue instanceof Date && !isNaN(currentValue.getTime())) {
+        // Valid date selected, clear suggestion after a short delay
+        setTimeout(() => {
+          this.birthdaySuggestion.set(null);
+        }, 300);
+      }
+    };
+
+    inputElement.addEventListener("blur", blurHandler);
+  }
+
+  /**
+   * Parse manually typed birthday string and provide suggestions
+   * Supports formats: DD.MM.YYYY, DD/MM/YYYY, MM/DD/YYYY, DD-MM-YYYY
+   */
+  private parseAndSuggestBirthday(typedValue: string): void {
+    // Try to parse various date formats
+    const formats = [
+      /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/, // DD.MM.YYYY (European)
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, // DD/MM/YYYY or MM/DD/YYYY
+      /^(\d{1,2})-(\d{1,2})-(\d{4})$/, // DD-MM-YYYY
+      /^(\d{1,2})\.(\d{1,2})\.(\d{2})$/, // DD.MM.YY (2-digit year)
+      /^(\d{1,2})\/(\d{1,2})\/(\d{2})$/, // DD/MM/YY or MM/DD/YY
+    ];
+
+    let parsedDate: Date | null = null;
+    let day = 0;
+    let month = 0;
+    let year = 0;
+
+    for (const format of formats) {
+      const match = typedValue.match(format);
+      if (match) {
+        const [, part1, part2, part3] = match;
+        const num1 = parseInt(part1, 10);
+        const num2 = parseInt(part2, 10);
+        const num3 = parseInt(part3, 10);
+
+        // Determine format based on values
+        // If first part > 12, it's likely DD.MM format (European)
+        // Otherwise, try MM/DD format (US)
+        if (num1 > 12) {
+          // European format: DD.MM.YYYY
+          day = num1;
+          month = num2 - 1; // JavaScript months are 0-indexed
+          year = num3 < 100 ? 2000 + num3 : num3;
+        } else if (num2 > 12) {
+          // US format: MM/DD/YYYY
+          month = num1 - 1;
+          day = num2;
+          year = num3 < 100 ? 2000 + num3 : num3;
+        } else {
+          // Ambiguous - try both formats, prefer European for birthday context
+          // Check if it's a valid date in DD.MM format first
+          if (num1 <= 31 && num2 <= 12) {
+            day = num1;
+            month = num2 - 1;
+            year = num3 < 100 ? 2000 + num3 : num3;
+          } else {
+            month = num1 - 1;
+            day = num2;
+            year = num3 < 100 ? 2000 + num3 : num3;
+          }
+        }
+
+        // Validate date
+        parsedDate = new Date(year, month, day);
+        if (
+          parsedDate.getFullYear() === year &&
+          parsedDate.getMonth() === month &&
+          parsedDate.getDate() === day
+        ) {
+          // Check if date is valid (not in future, at least 5 years old)
+          const today = new Date();
+          const maxDate = this.maxBirthDate;
+          if (parsedDate <= today && parsedDate <= maxDate) {
+            break;
+          } else {
+            parsedDate = null;
+          }
+        } else {
+          parsedDate = null;
+        }
+      }
+    }
+
+    if (parsedDate && !isNaN(parsedDate.getTime())) {
+      // Calculate age
+      const age = this.calculateAgeFromDate(parsedDate);
+
+      // Format date for display
+      const formatted = parsedDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      this.birthdaySuggestion.set({
+        date: parsedDate,
+        age,
+        formatted,
+      });
+    } else {
+      // Invalid or incomplete date
+      this.birthdaySuggestion.set(null);
+    }
+  }
+
+  /**
+   * Calculate age from a birth date
+   */
+  private calculateAgeFromDate(birthDate: Date): number {
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  }
+
+  /**
+   * Apply the suggested birthday to the form
+   */
+  applyBirthdaySuggestion(): void {
+    const suggestion = this.birthdaySuggestion();
+    if (suggestion?.date) {
+      this.profileForm.get("dateOfBirth")?.setValue(suggestion.date);
+      this.birthdaySuggestion.set(null);
+    }
   }
 
   private passwordMatchValidator(form: FormGroup) {

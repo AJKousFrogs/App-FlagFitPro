@@ -6,102 +6,15 @@
  * See Decision 26 (Feedback), 27 (Empty States) in DESIGN_SYSTEM_RULES.md.
  * 
  * INCLUDES:
- *   - Badges (status indicators)
  *   - Alerts (inline messages)
  *   - Empty states
  *   - Loading states
  * 
+ * NOTE: Badges are defined in _badges.scss (single source of truth).
  * NOTE: Toast/Message components use PrimeNG with token mapping.
- * These primitives are for non-PrimeNG contexts.
  */
 
 @layer primitives {
-  // ============================================
-  // BADGES
-  // ============================================
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    border-radius: var(--radius-full);
-    padding: var(--space-1) var(--space-3);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-medium);
-    line-height: 1;
-    white-space: nowrap;
-    border: var(--border-1) solid transparent;
-  }
-
-  // Badge sizes
-  .badge--sm {
-    padding: 2px var(--space-2);
-    font-size: 10px;
-  }
-
-  .badge--lg {
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--font-body-sm);
-  }
-
-  // Badge variants (semantic)
-  .badge--default {
-    background: var(--color-surface-secondary);
-    color: var(--color-text-secondary);
-    border-color: var(--color-border-muted);
-  }
-
-  .badge--success {
-    background: var(--color-status-success-surface, rgba(34, 197, 94, 0.1));
-    color: var(--color-status-success);
-    border-color: transparent;
-  }
-
-  .badge--warning {
-    background: var(--color-status-warning-surface, rgba(245, 158, 11, 0.1));
-    color: var(--color-status-warning);
-    border-color: transparent;
-  }
-
-  .badge--error {
-    background: var(--color-status-error-surface, rgba(239, 68, 68, 0.1));
-    color: var(--color-status-error);
-    border-color: transparent;
-  }
-
-  .badge--info {
-    background: var(--color-status-info-surface, rgba(59, 130, 246, 0.1));
-    color: var(--color-status-info);
-    border-color: transparent;
-  }
-
-  // Badge with icon
-  .badge__icon {
-    font-size: 12px;
-    line-height: 1;
-  }
-
-  // Dot badge (minimal)
-  .badge--dot {
-    padding: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-full);
-
-    &.badge--success {
-      background: var(--color-status-success);
-    }
-    &.badge--warning {
-      background: var(--color-status-warning);
-    }
-    &.badge--error {
-      background: var(--color-status-error);
-    }
-    &.badge--info {
-      background: var(--color-status-info);
-    }
-  }
-
   // ============================================
   // ALERTS (Inline messages)
   // ============================================

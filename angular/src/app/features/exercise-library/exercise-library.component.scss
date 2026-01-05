@@ -377,7 +377,7 @@
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   border: var(--border-2) solid;
-  min-height: 44px;
+  min-height: var(--touch-target-md); /* 44px */
   white-space: nowrap;
 }
 

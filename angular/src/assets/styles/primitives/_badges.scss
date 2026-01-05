@@ -1,0 +1,305 @@
+/**
+ * Badge Primitives - SINGLE SOURCE OF TRUTH
+ * ==========================================
+ * 
+ * Canonical badge styles for the design system.
+ * All badge styling in the app MUST use these classes.
+ * 
+ * DESIGN CONTRACT:
+ * - Shape: RAISED RECTANGULAR (border-radius: var(--radius-md))
+ * - Height: 32px default, 24px small, 40px large
+ * - Background: Solid semantic colors
+ * - Text: White on colored backgrounds (except warning)
+ * - States: default, hover, active, focus-visible, disabled
+ * 
+ * USAGE:
+ *   <span class="badge badge-success">Good</span>
+ *   <span class="badge badge-sm badge-warning">Caution</span>
+ * 
+ * DO NOT define .badge styles anywhere else in the codebase.
+ */
+
+@layer primitives {
+  // ============================================
+  // BASE BADGE - RAISED RECTANGULAR SHAPE
+  // ============================================
+
+  .badge {
+    // Layout
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+
+    // Size: Default (32px height)
+    height: var(--space-8); // 32px
+    min-height: var(--space-8);
+    padding: 0 var(--space-3);
+
+    // Typography
+    font-family: var(--font-family-sans);
+    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: none;
+    text-decoration: none;
+
+    // Shape: RAISED RECTANGULAR (not pill)
+    border-radius: var(--radius-md);
+
+    // Default appearance (neutral)
+    background-color: var(--surface-secondary);
+    color: var(--color-text-secondary);
+    border: none;
+    box-shadow: var(--shadow-1);
+
+    // Transitions (specific properties, not 'all')
+    transition:
+      background-color var(--motion-fast) var(--ease-standard),
+      color var(--motion-fast) var(--ease-standard),
+      opacity var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
+
+    // Ensure children don't have underlines
+    * {
+      text-decoration: none;
+    }
+  }
+
+  // ============================================
+  // SIZE VARIANTS
+  // ============================================
+
+  .badge-sm {
+    height: var(--space-6); // 24px
+    min-height: var(--space-6);
+    padding: 0 var(--space-2);
+    font-size: var(--font-body-xs);
+    border-radius: var(--radius-sm);
+  }
+
+  .badge-lg {
+    height: var(--space-10); // 40px
+    min-height: var(--space-10);
+    padding: 0 var(--space-4);
+    font-size: var(--font-body-md);
+    border-radius: var(--radius-lg);
+  }
+
+  // ============================================
+  // SEMANTIC VARIANTS
+  // ============================================
+
+  // Primary - Brand green
+  .badge-primary {
+    background-color: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  // Success - Status success color
+  .badge-success {
+    background-color: var(--color-status-success);
+    color: var(--color-text-on-primary);
+  }
+
+  // Warning - Amber with dark text for contrast
+  .badge-warning {
+    background-color: var(--color-status-warning);
+    color: var(--primitive-warning-800);
+  }
+
+  // Danger/Error - Red
+  .badge-danger,
+  .badge-error {
+    background-color: var(--color-status-error);
+    color: var(--color-text-on-primary);
+  }
+
+  // Info - Blue
+  .badge-info {
+    background-color: var(--color-status-info);
+    color: var(--color-text-on-primary);
+  }
+
+  // Secondary/Neutral - Gray
+  .badge-secondary,
+  .badge-neutral {
+    background-color: var(--surface-tertiary);
+    color: var(--color-text-secondary);
+  }
+
+  // ============================================
+  // INTERACTIVE STATES
+  // ============================================
+
+  // Hover state (only on hover-capable devices)
+  @media (hover: hover) and (pointer: fine) {
+    .badge[role="button"],
+    .badge.badge-interactive,
+    button.badge,
+    a.badge {
+      cursor: pointer;
+
+      &:hover:not(:disabled):not(.badge-disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-2);
+      }
+    }
+  }
+
+  // Active/Pressed state
+  .badge[role="button"],
+  .badge.badge-interactive,
+  button.badge,
+  a.badge {
+    &:active:not(:disabled):not(.badge-disabled) {
+      transform: translateY(0);
+      box-shadow: var(--shadow-0);
+    }
+  }
+
+  // Focus-visible state (keyboard navigation)
+  .badge:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  // Disabled state
+  .badge:disabled,
+  .badge.badge-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // ============================================
+  // DOT BADGE (minimal indicator - stays circular)
+  // ============================================
+
+  .badge-dot {
+    display: inline-block;
+    width: var(--space-2);
+    height: var(--space-2);
+    padding: 0;
+    border-radius: var(--radius-full); // Dots stay circular
+    background-color: var(--color-status-success);
+    box-shadow: none; // No shadow on dots
+
+    &.badge-primary {
+      background-color: var(--ds-primary-green);
+    }
+
+    &.badge-warning {
+      background-color: var(--color-status-warning);
+    }
+
+    &.badge-danger,
+    &.badge-error {
+      background-color: var(--color-status-error);
+    }
+
+    &.badge-info {
+      background-color: var(--color-status-info);
+    }
+  }
+
+  // ============================================
+  // OVERLAY POSITIONING
+  // ============================================
+
+  .badge-overlay {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .badge-overlay-top-right {
+    top: calc(var(--space-2) * -1);
+    right: calc(var(--space-2) * -1);
+  }
+
+  .badge-overlay-top-left {
+    top: calc(var(--space-2) * -1);
+    left: calc(var(--space-2) * -1);
+  }
+
+  .badge-overlay-bottom-right {
+    bottom: calc(var(--space-2) * -1);
+    right: calc(var(--space-2) * -1);
+  }
+
+  .badge-overlay-bottom-left {
+    bottom: calc(var(--space-2) * -1);
+    left: calc(var(--space-2) * -1);
+  }
+
+  // ============================================
+  // ICON WITHIN BADGE
+  // ============================================
+
+  .badge__icon,
+  .badge i,
+  .badge .pi {
+    font-size: var(--font-body-xs);
+    line-height: 1;
+  }
+
+  .badge-sm .badge__icon,
+  .badge-sm i,
+  .badge-sm .pi {
+    font-size: 10px;
+  }
+
+  .badge-lg .badge__icon,
+  .badge-lg i,
+  .badge-lg .pi {
+    font-size: var(--font-body-sm);
+  }
+
+  // ============================================
+  // DARK MODE
+  // ============================================
+
+  [data-theme="dark"],
+  .dark-theme {
+    .badge-secondary,
+    .badge-neutral {
+      background-color: var(--primitive-neutral-700);
+      color: var(--primitive-neutral-200);
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge {
+      transition: none;
+    }
+
+    .badge[role="button"]:hover,
+    .badge.badge-interactive:hover,
+    button.badge:hover,
+    a.badge:hover {
+      transform: none;
+    }
+  }
+
+  // ============================================
+  // HIGH CONTRAST MODE
+  // ============================================
+
+  @media (forced-colors: active) {
+    .badge {
+      border: 1px solid CanvasText;
+    }
+
+    .badge:focus-visible {
+      outline: 3px solid CanvasText;
+    }
+  }
+}
+

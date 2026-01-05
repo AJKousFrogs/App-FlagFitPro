@@ -30,8 +30,8 @@
 }
 
 .trophy-icon {
-  width: 44px;
-  height: 44px;
+  width: var(--touch-target-md); /* 44px */
+  height: var(--touch-target-md);
   background: var(--primitive-warning-100);
   border-radius: var(--radius-lg);
   display: flex;

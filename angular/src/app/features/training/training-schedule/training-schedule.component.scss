@@ -221,7 +221,7 @@ app-card-shell {
       border-radius: 0.1875rem;
       border: 1.5px solid var(--color-border-primary);
       background: var(--surface-primary);
-      transition: all 0.1s ease;
+      transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard);
 
       &:hover {
         border-color: var(--p-primary-400);
@@ -255,27 +255,27 @@ app-card-shell {
 .sessions-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-3); // 12px gap between items for breathing room
   min-height: 140px;
 }
 
-// Session row - Card-like appearance
+// Session row - Card-like appearance with proper padding
 .session-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: var(--space-4) var(--space-5); // 16px 20px for comfortable touch targets
   background: var(--surface-primary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg); // 8px for consistency
   border: 1px solid var(--color-border-secondary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
 
   &:hover {
     background: var(--surface-secondary);
     border-color: var(--color-border-primary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-1);
   }
 
   &:focus,
@@ -296,30 +296,33 @@ app-card-shell {
   }
 }
 
-// Session info - clear hierarchy
+// Session info - clear hierarchy with proper spacing
 .session-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1); // 4px between text elements
 }
 
 .session-title {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--font-size-h3); // Larger for better readability
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
 }
 
 .session-date {
-  margin: 0.25rem 0 0 0;
-  font-size: var(--font-size-badge);
+  margin: 0;
+  font-size: var(--font-body-sm-size); // 14px for better readability
   color: var(--color-text-secondary);
   line-height: var(--line-height-tight);
 }
 
 .session-duration {
-  margin: 0.125rem 0 0 0;
-  font-size: var(--font-compact-md); // 11px - compact body text
+  margin: 0;
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-tertiary);
   line-height: var(--line-height-tight);
 }
@@ -328,7 +331,7 @@ app-card-shell {
 .session-actions {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--space-3); // 12px gap between elements
   flex-shrink: 0;
 
   // Mark complete button
@@ -349,12 +352,12 @@ app-card-shell {
 .status-tag {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--font-compact-md); // 11px - compact body text
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-medium);
   line-height: 1;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   text-transform: capitalize;
   letter-spacing: 0.01em;
   white-space: nowrap;

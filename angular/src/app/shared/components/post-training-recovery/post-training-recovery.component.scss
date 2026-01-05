@@ -102,7 +102,7 @@
   width: 40px;
   height: 2px;
   background: var(--color-border-secondary);
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5); /* 20px */
   transition: background 0.3s;
 }
 

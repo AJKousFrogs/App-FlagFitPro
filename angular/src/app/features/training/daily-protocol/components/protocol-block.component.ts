@@ -50,10 +50,12 @@ import { ExerciseCardComponent } from "./exercise-card.component";
       [class.completed]="block().status === 'complete'"
       [class.expanded]="isExpanded()"
       [attr.aria-label]="block().title"
+      [attr.data-testid]="'protocol-block-' + block().type"
     >
       <!-- Block Header -->
       <div
         class="block-header"
+        data-testid="protocol-block-header"
         (click)="toggleExpand()"
         [style.--block-color]="blockConfig().color"
         role="button"
@@ -144,14 +146,15 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           }
 
           <!-- Exercise List -->
-          <div class="exercise-list">
+          <div class="exercise-list" data-testid="protocol-block-exercise-list">
             @if (simpleView()) {
               <!-- Simple list view matching wireframe -->
               @for (exercise of block().exercises; track exercise.id) {
-                <div class="exercise-list-item">
+                <div class="exercise-list-item" [attr.data-testid]="'exercise-item-' + exercise.id">
                   <label class="exercise-checkbox">
                     <input
                       type="checkbox"
+                      [attr.data-testid]="'exercise-checkbox-' + exercise.id"
                       [checked]="exercise.status === 'complete'"
                       (change)="onExerciseToggle(exercise)"
                     />

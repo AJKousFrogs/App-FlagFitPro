@@ -73,7 +73,8 @@
     color: var(--color-text-secondary, #737373);
     background: var(--surface-secondary, #f8faf9);
     padding: var(--space-1, 4px) var(--space-2, 8px);
-    border-radius: var(--radius-full, 9999px);
+    border-radius: var(--radius-md, 8px);
+    box-shadow: var(--shadow-1);
   }
 
   // =============================================
@@ -193,8 +194,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: var(--touch-target-md); /* 44px */
+    min-height: var(--touch-target-md);
   }
 
   .item-info {

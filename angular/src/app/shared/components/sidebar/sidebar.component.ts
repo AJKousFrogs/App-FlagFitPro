@@ -85,6 +85,7 @@ interface NavItem {
               ) {
                 <a
                   [routerLink]="item.route"
+                  [attr.data-testid]="getNavTestId(item.route)"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{
                     exact: item.route === '/dashboard',
@@ -379,5 +380,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
    */
   getGroupItems(groupId: string): NavItem[] {
     return this.visibleNavItems().filter((item) => item.group === groupId);
+  }
+
+  /**
+   * Generate data-testid for navigation items
+   */
+  getNavTestId(route: string): string {
+    const cleaned = route.replace(/^\//, "").replace(/\//g, "-");
+    return `nav-${cleaned || "home"}`;
   }
 }

@@ -230,3 +230,4 @@ async function cleanupTestData(supabase) {
     await supabase.from("privacy_settings").delete().eq("user_id", userId);
   }
 }
+

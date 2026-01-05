@@ -5,7 +5,6 @@ import {
   output,
   input,
   computed,
-  effect,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
@@ -342,12 +341,7 @@ export class WellnessCheckinComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadExistingCheckin();
-
-    // Update preview score when form data changes
-    effect(() => {
-      this.formData(); // Track formData signal
-      // previewScore is computed, so it will update automatically
-    });
+    // Note: previewScore is a computed signal that automatically updates when formData changes
   }
 
   async loadExistingCheckin(): Promise<void> {

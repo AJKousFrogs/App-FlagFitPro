@@ -395,102 +395,24 @@
    ================================================================ */
 
 /* ================================
-   p-button - ALL button variants
+   p-button - REMOVED (Consolidated)
+   ================================
+   Button hover styles are now defined ONLY in:
+   - primeng/_brand-overrides.scss (for PrimeNG buttons)
+   - button.component.scss (for app-button component)
+   
+   This prevents conflicting hover behaviors.
    ================================ */
-
-/* Primary buttons */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link) {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not(.p-disabled) {
-      background: linear-gradient(
-        180deg,
-        var(--hover-bg-primary-light) 0%,
-        var(--hover-bg-primary) 100%
-      );
-      border-color: var(--hover-bg-primary);
-      box-shadow: var(--hover-shadow-md);
-      transform: var(--hover-lift-normal);
-    }
-  }
-
-  &:active:not(:disabled):not(.p-disabled) {
-    transform: translateY(0) scale(0.98);
-    box-shadow: var(--hover-shadow-sm);
-  }
-}
-
-/* Outlined buttons */
-.p-button.p-button-outlined {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary);
-      border-color: var(--hover-border-primary);
-      box-shadow: var(--hover-shadow-sm);
-      transform: var(--hover-lift-subtle);
-    }
-  }
-}
-
-/* Text/Link buttons */
-.p-button.p-button-text,
-.p-button.p-button-link {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary);
-      transform: var(--hover-lift-subtle);
-    }
-  }
-}
-
-/* Secondary buttons */
-.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--surface-tertiary);
-      border-color: var(--hover-border-primary);
-      color: var(--ds-primary-green);
-      box-shadow: var(--hover-shadow-sm);
-      transform: var(--hover-lift-subtle);
-    }
-  }
-}
 
 /* ================================
-   p-card - Card hover effects
+   p-card - REMOVED (Consolidated)
+   ================================
+   Card hover styles are now defined ONLY in:
+   - primitives/_cards.scss (for .card classes)
+   - primeng/_brand-overrides.scss (for .p-card classes)
+   
+   This prevents conflicting hover behaviors.
    ================================ */
-
-.p-card {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: var(--hover-lift-strong);
-      box-shadow: var(--hover-shadow-lg);
-      border-color: var(--hover-border-subtle);
-    }
-  }
-
-  @media (hover: none) and (pointer: coarse) {
-    &:active {
-      transform: scale(0.99);
-    }
-  }
-}
-
-/* Clickable cards */
-.p-card[role="button"],
-.p-card.clickable,
-.p-card.interactive {
-  cursor: pointer;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: var(--hover-lift-strong);
-      box-shadow: var(--hover-shadow-lg);
-      border-color: var(--hover-border-primary);
-    }
-  }
-}
 
 /* ================================
    p-dropdown / p-select - Dropdown hovers
@@ -621,64 +543,13 @@
 }
 
 /* ================================
-   p-tabview / p-tabs - Tab hover
+   p-tabview / p-tabs - REMOVED (Consolidated)
+   ================================
+   Tab hover/active styles are now defined ONLY in:
+   - primeng-theme.scss (for PrimeNG tabs)
+   
+   This prevents conflicting hover behaviors.
    ================================ */
-
-/* Legacy TabView */
-.p-tabview-nav-link {
-  transition:
-    color var(--hover-transition-fast),
-    border-color var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(.p-highlight):not(.p-disabled) {
-      color: var(--ds-primary-green);
-      border-bottom-color: var(--hover-border-subtle);
-    }
-  }
-
-  &.p-highlight {
-    color: var(--ds-primary-green);
-    border-bottom-color: var(--ds-primary-green);
-  }
-}
-
-/* Modern Tabs (PrimeNG 21+) */
-.p-tab {
-  transition:
-    background-color var(--hover-transition-fast),
-    color var(--hover-transition-fast),
-    box-shadow var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
-        [data-p-active="true"]
-      ) {
-      background-color: rgba(255, 255, 255, 0.6);
-      color: var(--color-text-primary);
-
-      i,
-      .pi {
-        color: var(--ds-primary-green);
-      }
-    }
-  }
-
-  &.p-tab-active,
-  &[aria-selected="true"],
-  &[data-p-active="true"] {
-    background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.1),
-      0 2px 8px rgba(0, 0, 0, 0.05);
-
-    i,
-    .pi {
-      color: var(--ds-primary-green);
-    }
-  }
-}
 
 /* ================================
    p-datatable - Table row hover

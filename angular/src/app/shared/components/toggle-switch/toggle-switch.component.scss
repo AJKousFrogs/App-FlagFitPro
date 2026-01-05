@@ -27,7 +27,7 @@
   user-select: none;
   font-size: var(--font-size-body, 0.875rem);
   color: var(--color-text-primary);
-  min-height: 44px; // Ensure 44px hit area
+  min-height: var(--touch-target-md); // 44px hit area
 }
 
 .toggle-switch-label.disabled {
@@ -68,7 +68,7 @@
   background-color: var(--color-surface-primary, white);
   border-radius: var(--radius-full, 9999px);
   transition: transform 200ms ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-1);
 }
 
 // Checked state - green background
@@ -87,9 +87,9 @@
   outline: none;
 }
 
-// Legacy focus support
-.toggle-input:focus + .toggle-slider {
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.15);
+// Focus-visible support
+.toggle-input:focus-visible + .toggle-slider {
+  box-shadow: var(--shadow-focus);
 }
 
 // Disabled state

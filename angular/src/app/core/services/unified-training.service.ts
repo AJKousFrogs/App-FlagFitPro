@@ -5,7 +5,7 @@ import {
   signal,
   DestroyRef,
 } from "@angular/core";
-import { Observable, combineLatest, of, from } from "rxjs";
+import { Observable, combineLatest, of, from, firstValueFrom } from "rxjs";
 import { map, shareReplay, tap, catchError } from "rxjs/operators";
 
 import { AcwrService } from "./acwr.service";
@@ -19,6 +19,10 @@ import {
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import {
+  PlayerProgramService,
+  ProgramAssignment,
+} from "./player-program.service";
 import { SupabaseService } from "./supabase.service";
 import { COLORS } from "../constants/app.constants";
 import {
@@ -29,6 +33,7 @@ import {
   WellnessAlert,
   ReadinessStatus,
   TrainingDataResult,
+  SessionType,
 } from "../models/training.models";
 import {
   UserMetadata,
@@ -79,8 +84,25 @@ export class UnifiedTrainingService {
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private playerProgramService = inject(PlayerProgramService);
   private supabase = inject(SupabaseService);
   private _destroyRef = inject(DestroyRef);
+
+  // Program assignment state
+  private _programAssignment = signal<ProgramAssignment | null>(null);
+  private _hasProgramAssignment = signal<boolean | null>(null); // null = not checked yet
+
+  /**
+   * Current program assignment for the user
+   * Returns null if no program assigned
+   */
+  readonly programAssignment = this._programAssignment.asReadonly();
+
+  /**
+   * Whether user has an active program assigned
+   * null = not checked yet, true = has program, false = no program
+   */
+  readonly hasProgramAssignment = this._hasProgramAssignment.asReadonly();
 
   // ============================================================================
   // CORE REACTIVE STATE (Signals)
@@ -359,6 +381,9 @@ export class UnifiedTrainingService {
     if (!userId) return this.getFallbackData();
 
     try {
+      // Load program assignment first (non-blocking for other data)
+      this.loadProgramAssignment();
+
       const [sessions, schedule, workouts, wellnessData] = await Promise.all([
         this.loadTrainingSessions(userId),
         this.loadWeeklySchedule(userId),
@@ -398,6 +423,45 @@ export class UnifiedTrainingService {
     }
   }
 
+  /**
+   * Load user's program assignment from the API
+   * Updates _programAssignment and _hasProgramAssignment signals
+   */
+  loadProgramAssignment(): void {
+    this.playerProgramService.getMyProgramAssignment().subscribe({
+      next: (assignment) => {
+        this._programAssignment.set(assignment);
+        this._hasProgramAssignment.set(assignment !== null);
+
+        if (assignment) {
+          this.logger.info(
+            `[UnifiedTrainingService] Program loaded: ${assignment.program.name}`,
+          );
+        } else {
+          this.logger.info(
+            "[UnifiedTrainingService] No active program assigned",
+          );
+        }
+      },
+      error: (error) => {
+        this.logger.error(
+          "[UnifiedTrainingService] Error loading program assignment:",
+          error,
+        );
+        this._programAssignment.set(null);
+        this._hasProgramAssignment.set(false);
+      },
+    });
+  }
+
+  /**
+   * Check if user needs to be assigned a program
+   * Returns true if user has no active program
+   */
+  needsProgramAssignment(): boolean {
+    return this._hasProgramAssignment() === false;
+  }
+
   // ============================================================================
   // UNIFIED LOGGING ACTIONS
   // ============================================================================
@@ -407,13 +471,13 @@ export class UnifiedTrainingService {
    */
   async logTrainingSession(sessionData: Record<string, unknown>) {
     this.logger.info("Logging training session via Unified Service");
-    const result = await this.trainingDataService
-      .createTrainingSession(
+    const result = await firstValueFrom(
+      this.trainingDataService.createTrainingSession(
         sessionData as Parameters<
           typeof this.trainingDataService.createTrainingSession
         >[0],
-      )
-      .toPromise();
+      ),
+    );
 
     // Trigger updates
     const currentUserId = this.userId();
@@ -429,11 +493,11 @@ export class UnifiedTrainingService {
    * Unified wellness submission
    */
   async submitWellness(data: Record<string, unknown>) {
-    const result = await this.wellnessService
-      .logWellness(
+    const result = await firstValueFrom(
+      this.wellnessService.logWellness(
         data as Parameters<typeof this.wellnessService.logWellness>[0],
-      )
-      .toPromise();
+      ),
+    );
     const currentUserId = this.userId();
     if (currentUserId) {
       this.readinessService.calculateToday(currentUserId).subscribe();
@@ -483,9 +547,9 @@ export class UnifiedTrainingService {
    * Log body composition measurement
    */
   async logBodyComp(measurement: Partial<PhysicalMeasurement>) {
-    const result = await this.performanceDataService
-      .logMeasurement(measurement)
-      .toPromise();
+    const result = await firstValueFrom(
+      this.performanceDataService.logMeasurement(measurement),
+    );
     if (result && result.success) {
       this.loadAllTrainingData();
     }
@@ -522,19 +586,175 @@ export class UnifiedTrainingService {
   private async loadWeeklySchedule(
     userId: string,
   ): Promise<WeeklyScheduleDay[]> {
-    const startOfWeek = this.getStartOfWeek();
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    try {
+      // 1. Get user's assigned program
+      const { data: playerProgram } = await this.supabase.client
+        .from("player_programs")
+        .select("*, training_programs (id, name)")
+        .eq("player_id", userId)
+        .eq("status", "active")
+        .single();
 
-    const { data } = await this.supabase.client
-      .from("training_sessions")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("date", startOfWeek.toISOString())
-      .lte("date", endOfWeek.toISOString())
-      .order("date", { ascending: true });
+      if (!playerProgram) {
+        this.logger.info(
+          "[UnifiedTrainingService] No active program assigned, returning empty schedule",
+        );
+        return this.getEmptyWeekSchedule();
+      }
 
-    return this.transformToWeeklySchedule(data || []);
+      const programId = playerProgram.program_id;
+
+      // 2. Get current week based on today's date
+      const today = new Date().toISOString().split("T")[0];
+      const startOfWeek = this.getStartOfWeek();
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+      // Get phase for current date
+      const { data: currentPhase } = await this.supabase.client
+        .from("training_phases")
+        .select("*")
+        .eq("program_id", programId)
+        .lte("start_date", today)
+        .gte("end_date", today)
+        .single();
+
+      if (!currentPhase) {
+        this.logger.info(
+          "[UnifiedTrainingService] No active phase found for current date",
+        );
+        return this.getEmptyWeekSchedule();
+      }
+
+      // Get week for current date
+      const { data: currentWeek } = await this.supabase.client
+        .from("training_weeks")
+        .select("*")
+        .eq("phase_id", currentPhase.id)
+        .lte("start_date", today)
+        .gte("end_date", today)
+        .single();
+
+      if (!currentWeek) {
+        this.logger.info(
+          "[UnifiedTrainingService] No active week found for current date",
+        );
+        return this.getEmptyWeekSchedule();
+      }
+
+      // 3. Get scheduled sessions for the week from training_sessions
+      const { data: sessionTemplates } = await this.supabase.client
+        .from("training_sessions")
+        .select("*")
+        .eq("week_id", currentWeek.id)
+        .order("day_of_week", { ascending: true })
+        .order("session_order", { ascending: true });
+
+      if (!sessionTemplates || sessionTemplates.length === 0) {
+        this.logger.info(
+          "[UnifiedTrainingService] No session templates found for current week",
+        );
+        return this.getEmptyWeekSchedule();
+      }
+
+      // 4. Transform to WeeklyScheduleDay format
+      return this.transformSessionTemplatesToWeeklySchedule(
+        sessionTemplates,
+        startOfWeek,
+      );
+    } catch (error) {
+      this.logger.error(
+        "[UnifiedTrainingService] Error loading weekly schedule:",
+        error,
+      );
+      return this.getEmptyWeekSchedule();
+    }
+  }
+
+  private getEmptyWeekSchedule(): WeeklyScheduleDay[] {
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    const start = this.getStartOfWeek();
+    return days.map((name, i) => {
+      const d = new Date(start);
+      d.setDate(d.getDate() + i);
+      return {
+        name,
+        date: d,
+        sessions: [],
+        isToday: d.toDateString() === new Date().toDateString(),
+      };
+    });
+  }
+
+  private transformSessionTemplatesToWeeklySchedule(
+    templates: Array<{
+      id: string;
+      day_of_week: number;
+      session_name: string;
+      session_type?: string;
+      duration_minutes?: number;
+      notes?: string;
+      warm_up_protocol?: string;
+      session_order?: number;
+    }>,
+    weekStart: Date,
+  ): WeeklyScheduleDay[] {
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    return days.map((name, i) => {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      // day_of_week in DB: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
+      // days array index: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
+      const daySessions = templates.filter((t) => t.day_of_week === i);
+
+      return {
+        name,
+        date: d,
+        sessions: daySessions.map((s) => ({
+          time: "TBD", // training_sessions doesn't have scheduled_time, use TBD
+          title: s.session_name || "Training Session",
+          type: this.mapSessionTypeToScheduleType(s.session_type || "training"),
+          duration: s.duration_minutes || 60,
+          description: s.notes || s.warm_up_protocol || "",
+        })),
+        isToday: d.toDateString() === new Date().toDateString(),
+      };
+    });
+  }
+
+  private mapSessionTypeToScheduleType(
+    sessionType: string,
+  ): SessionType | undefined {
+    const lower = sessionType.toLowerCase();
+    if (lower.includes("recovery") || lower.includes("rest")) return "recovery";
+    if (lower.includes("game") || lower.includes("match")) return "game";
+    if (lower.includes("speed")) return "speed";
+    if (lower.includes("strength")) return "strength";
+    if (lower.includes("skills")) return "skills";
+    if (lower.includes("conditioning")) return "conditioning";
+    if (lower.includes("technique")) return "technique";
+    if (lower.includes("team_practice") || lower.includes("team practice")) return "team_practice";
+    if (lower.includes("scrimmage")) return "scrimmage";
+    if (lower.includes("mixed")) return "mixed";
+    // For generic "training", return undefined since type is optional
+    return undefined;
   }
 
   private async loadAvailableWorkouts(): Promise<Workout[]> {
@@ -902,7 +1122,7 @@ export class UnifiedTrainingService {
       if (error) return false;
 
       // Refresh state
-      await this.getTodayOverview().toPromise();
+      await firstValueFrom(this.getTodayOverview());
       return true;
     } catch (_error) {
       return false;
@@ -930,7 +1150,7 @@ export class UnifiedTrainingService {
       if (error) return false;
 
       // Refresh state
-      await this.getTodayOverview().toPromise();
+      await firstValueFrom(this.getTodayOverview());
       return true;
     } catch (_error) {
       return false;

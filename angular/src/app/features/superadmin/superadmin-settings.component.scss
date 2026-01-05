@@ -296,7 +296,7 @@
   border-radius: var(--radius-lg);
   width: 90%;
   max-width: 450px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-3);
 }
 
 .modal-header {
@@ -361,8 +361,8 @@
   font-size: var(--font-size-h4);
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.form-group input:focus-visible,
+.form-group textarea:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
   border-color: var(--ds-primary-green);

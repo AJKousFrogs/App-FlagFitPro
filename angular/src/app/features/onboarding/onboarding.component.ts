@@ -15,6 +15,7 @@ import { AvatarModule } from "primeng/avatar";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
+import { AutoCompleteModule } from "primeng/autocomplete";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { FileUploadModule } from "primeng/fileupload";
@@ -26,6 +27,11 @@ import { ToastModule } from "primeng/toast";
 import { Subject, debounceTime } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import {
+  PlayerProgramService,
+  getProgramIdForPosition,
+  normalizePositionForModifiers,
+} from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -54,6 +60,7 @@ interface InjuryEntry {
     CardModule,
     InputTextModule,
     Select,
+    AutoCompleteModule,
     StepsModule,
     ToastModule,
     DatePicker,
@@ -339,14 +346,31 @@ interface InjuryEntry {
                     <label for="onboarding-team"
                       >Team <span class="required">*</span></label
                     >
-                    <p-select
+                    <p-autoComplete
                       inputId="onboarding-team"
-                      [options]="teams"
                       [(ngModel)]="onboardingData.team"
-                      placeholder="Select your team"
-                      [showClear]="true"
+                      [suggestions]="teamSuggestions()"
+                      (completeMethod)="searchTeams($event)"
+                      (onSelect)="onTeamSelect($event)"
+                      (onClear)="onboardingData.team = null"
+                      placeholder="Search for your team or enter name..."
+                      [minLength]="0"
+                      [forceSelection]="false"
+                      [dropdown]="true"
+                      field="label"
                       class="w-full"
-                    ></p-select>
+                      [inputStyle]="{ width: '100%' }"
+                    >
+                      <ng-template let-team pTemplate="item">
+                        <div class="team-suggestion">
+                          <i class="pi pi-users"></i>
+                          <span>{{ team.label }}</span>
+                        </div>
+                      </ng-template>
+                    </p-autoComplete>
+                    <small class="field-hint"
+                      >You can search existing teams or enter a new team name</small
+                    >
                   </div>
 
                   <!-- Player-specific fields -->
@@ -1310,6 +1334,127 @@ interface InjuryEntry {
                   </div>
                 </div>
 
+                <!-- Consent Section -->
+                <div class="consent-section">
+                  <h4 class="consent-title">
+                    <i class="pi pi-shield"></i> Review & Consent
+                  </h4>
+                  <p class="consent-description">
+                    Please review and accept the following to complete your
+                    setup:
+                  </p>
+
+                  <div class="consent-list">
+                    <!-- Required Consents -->
+                    <div class="consent-item required">
+                      <label class="consent-checkbox">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="onboardingData.consentTermsOfService"
+                          id="consent-terms"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="consent-text">
+                          I accept the
+                          <a
+                            [routerLink]="['/terms']"
+                            target="_blank"
+                            class="consent-link"
+                            >Terms of Service</a
+                          >
+                          <span class="required-indicator">*</span>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="consent-item required">
+                      <label class="consent-checkbox">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="onboardingData.consentPrivacyPolicy"
+                          id="consent-privacy"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="consent-text">
+                          I accept the
+                          <a
+                            [routerLink]="['/privacy']"
+                            target="_blank"
+                            class="consent-link"
+                            >Privacy Policy</a
+                          >
+                          <span class="required-indicator">*</span>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="consent-item required">
+                      <label class="consent-checkbox">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="onboardingData.consentDataUsage"
+                          id="consent-data"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="consent-text">
+                          I consent to my data being used to personalize my
+                          training experience
+                          <span class="consent-hint"
+                            >(required for app functionality)</span
+                          >
+                          <span class="required-indicator">*</span>
+                        </span>
+                      </label>
+                    </div>
+
+                    <!-- Optional Consents -->
+                    <div class="consent-item optional">
+                      <label class="consent-checkbox">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="onboardingData.consentAICoach"
+                          id="consent-ai"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="consent-text">
+                          I consent to AI Coach (Merlin) providing personalized
+                          advice based on my training and wellness data
+                          <span class="consent-hint">(optional)</span>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="consent-item optional">
+                      <label class="consent-checkbox">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="onboardingData.consentEmailUpdates"
+                          id="consent-email"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="consent-text">
+                          I want to receive email updates about new features and
+                          tips
+                          <span class="consent-hint">(optional)</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  @if (
+                    !onboardingData.consentTermsOfService ||
+                    !onboardingData.consentPrivacyPolicy ||
+                    !onboardingData.consentDataUsage
+                  ) {
+                    <div class="consent-error">
+                      <i class="pi pi-exclamation-triangle"></i>
+                      <span
+                        >Please accept all required consents to continue</span
+                      >
+                    </div>
+                  }
+                </div>
+
                 <div class="summary-note success">
                   <i class="pi pi-check-circle"></i>
                   <span
@@ -1337,6 +1482,7 @@ interface InjuryEntry {
                 <app-button
                   iconLeft="pi-check"
                   [loading]="isCompleting()"
+                  [disabled]="!canCompleteOnboarding()"
                   (clicked)="completeOnboarding()"
                   >Complete Setup</app-button
                 >
@@ -1355,6 +1501,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private playerProgramService = inject(PlayerProgramService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
@@ -1367,8 +1514,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private autoSaveSubscription: any;
   private readonly STORAGE_KEY = "flagfit_onboarding_draft";
 
-  // Team options
-  teams = [
+  // Team options - loaded from database with fallback
+  teams = signal<Array<{ label: string; value: string }>>([
     {
       label: "Ljubljana Frogs - International",
       value: "ljubljana_frogs_international",
@@ -1382,7 +1529,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       label: "American Samoa National Team - Women",
       value: "american_samoa_women",
     },
-  ];
+  ]);
+  teamSuggestions = signal<Array<{ label: string; value: string }>>([]);
+  teamSearchQuery = signal<string>("");
 
   // Position options - updated for flag football
   positions = [
@@ -1390,7 +1539,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "Wide Receiver (WR)", value: "WR" },
     { label: "Center", value: "Center" },
     { label: "Defensive Back (DB)", value: "DB" },
-    { label: "Rusher", value: "Rusher" },
+    { label: "Rusher / Blitzer", value: "Rusher" },
     { label: "Linebacker (LB)", value: "LB" },
     { label: "Hybrid (Multiple Positions)", value: "Hybrid" },
   ];
@@ -1952,6 +2101,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     enableReminders: true,
     reminderTime: "08:00" as string,
     notificationPreferences: ["training", "recovery"] as string[],
+
+    // Step 9: Consent & Legal
+    consentTermsOfService: false,
+    consentPrivacyPolicy: false,
+    consentDataUsage: false, // Required for app functionality
+    consentAICoach: false, // Optional
+    consentEmailUpdates: false, // Optional
   };
 
   steps = signal<OnboardingStep[]>([
@@ -2006,6 +2162,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
     // Load saved draft first
     this.loadDraft();
+
+    // Load teams from database
+    await this.loadTeams();
 
     // Then load user profile
     await this.loadUserProfile();
@@ -2240,6 +2399,23 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   /**
    * Validate current step before advancing
    */
+  /**
+   * Check if onboarding can be completed (all required consents accepted)
+   */
+  canCompleteOnboarding(): boolean {
+    // Must be on last step
+    if (this.currentStep() !== this.steps().length - 1) {
+      return false;
+    }
+
+    // All required consents must be accepted
+    return (
+      this.onboardingData.consentTermsOfService &&
+      this.onboardingData.consentPrivacyPolicy &&
+      this.onboardingData.consentDataUsage
+    );
+  }
+
   validateCurrentStep(): { valid: boolean; message?: string } {
     const step = this.currentStep();
 
@@ -2318,6 +2494,28 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         return { valid: true };
 
+      case 8: // Summary & Consent
+        if (!this.onboardingData.consentTermsOfService) {
+          return {
+            valid: false,
+            message: "Please accept the Terms of Service",
+          };
+        }
+        if (!this.onboardingData.consentPrivacyPolicy) {
+          return {
+            valid: false,
+            message: "Please accept the Privacy Policy",
+          };
+        }
+        if (!this.onboardingData.consentDataUsage) {
+          return {
+            valid: false,
+            message:
+              "Please consent to data usage for personalized training",
+          };
+        }
+        return { valid: true };
+
       default:
         return { valid: true };
     }
@@ -2354,8 +2552,79 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   }
 
   // Helper methods for summary display
+  /**
+   * Load teams from database, with fallback to predefined list
+   */
+  private async loadTeams(): Promise<void> {
+    try {
+      const { data: teamsData, error } = await this.supabaseService.client
+        .from("teams")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("name");
+
+      if (!error && teamsData && teamsData.length > 0) {
+        // Convert database teams to options format
+        const teamOptions = teamsData.map((team) => ({
+          label: team.name,
+          value: team.id,
+        }));
+        this.teams.set(teamOptions);
+      } else {
+        // Keep predefined teams as fallback
+        this.logger.info(
+          "[Onboarding] Using predefined teams (database query failed or empty)",
+        );
+      }
+    } catch (error) {
+      this.logger.warn("[Onboarding] Failed to load teams from database:", error);
+      // Keep predefined teams as fallback
+    }
+  }
+
+  /**
+   * Search teams for autocomplete
+   */
+  searchTeams(event: { query: string }): void {
+    const query = event.query.toLowerCase();
+    const allTeams = this.teams();
+
+    if (!query) {
+      this.teamSuggestions.set(allTeams);
+      return;
+    }
+
+    // Filter teams by name
+    const filtered = allTeams.filter((team) =>
+      team.label.toLowerCase().includes(query),
+    );
+
+    // If no matches and user typed something, allow free text entry
+    // The autocomplete will show the typed text as an option
+    this.teamSuggestions.set(filtered);
+  }
+
+  /**
+   * Handle team selection - allows free text entry
+   */
+  onTeamSelect(event: any): void {
+    // If user selected from dropdown, use the value
+    // If user typed free text, use the typed value directly
+    if (event && typeof event === "object" && event.value) {
+      this.onboardingData.team = event.value;
+    } else if (typeof event === "string") {
+      // Free text entry - store as-is
+      this.onboardingData.team = event;
+    }
+  }
+
   getTeamLabel(value: string | null): string {
-    return this.teams.find((t) => t.value === value)?.label || "Not selected";
+    if (!value) return "Not selected";
+    // Check if it's a team ID from database
+    const team = this.teams().find((t) => t.value === value);
+    if (team) return team.label;
+    // Otherwise it's free text entry, return as-is
+    return value;
   }
 
   getPositionLabel(value: string | null): string {
@@ -2490,10 +2759,16 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         updated_at: new Date().toISOString(),
       };
 
-      // Update user profile
+      // Update user profile with onboarding_completed flag
+      const profileDataWithOnboarding = {
+        ...profileData,
+        onboarding_completed: true,
+        onboarding_completed_at: new Date().toISOString(),
+      };
+
       const { error: updateError } = await this.supabaseService.client
         .from("users")
-        .update(profileData)
+        .update(profileDataWithOnboarding)
         .eq("email", user.email);
 
       if (updateError) {
@@ -2501,7 +2776,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           .from("users")
           .insert({
             email: user.email,
-            ...profileData,
+            ...profileDataWithOnboarding,
             is_active: true,
             email_verified: true,
           });
@@ -2514,8 +2789,30 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // Save training preferences (schedule, mobility, recovery)
       await this.saveTrainingPreferences(user.email!);
 
+      // Save current injuries to wellness_checkins table
+      await this.saveCurrentInjuries(user.id);
+
+      // Create athlete_training_config for daily-protocol position modifiers
+      // This maps UI position values to normalized database keys
+      await this.createAthleteTrainingConfig(user.id);
+
+      // Assign training program based on position
+      // This is non-blocking - if it fails, user can still enter app
+      // and admin can assign later
+      const assignmentResult = await this.assignTrainingProgram();
+      
+      if (!assignmentResult) {
+        this.logger.warn(
+          "[Onboarding] Program assignment may have failed - user will see 'No Program Assigned' message",
+        );
+      }
+
       // Clear the draft after successful completion
       this.clearDraft();
+
+      // Always set flag to refresh program assignment on dashboard
+      // This ensures the dashboard checks for the program even if assignment had issues
+      sessionStorage.setItem("refreshProgramAssignment", "true");
 
       this.toastService.success(
         "Your profile and training preferences have been set up!",
@@ -2564,6 +2861,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         enable_reminders: this.onboardingData.enableReminders,
         reminder_time: this.onboardingData.reminderTime,
         notification_preferences: this.onboardingData.notificationPreferences,
+        // Consent preferences
+        consent_terms_of_service: this.onboardingData.consentTermsOfService,
+        consent_privacy_policy: this.onboardingData.consentPrivacyPolicy,
+        consent_data_usage: this.onboardingData.consentDataUsage,
+        consent_ai_coach: this.onboardingData.consentAICoach,
+        consent_email_updates: this.onboardingData.consentEmailUpdates,
+        consent_updated_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
 
@@ -2593,6 +2897,228 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         injuryHistory: this.onboardingData.injuryHistory,
       };
       localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
+    }
+  }
+
+  /**
+   * Create or update athlete_training_config record
+   * This is used by daily-protocol.cjs to determine position-specific modifiers
+   *
+   * Maps UI position values to normalized database values:
+   * - QB -> "quarterback"
+   * - WR, DB, LB, Hybrid -> "wr_db"
+   * - Center -> "center"
+   * - Rusher -> "rusher" (also "blitzer" in Europe)
+   */
+  private async createAthleteTrainingConfig(userId: string): Promise<void> {
+    try {
+      const normalizedPosition = normalizePositionForModifiers(
+        this.onboardingData.position || "WR",
+      );
+
+      // Build practice schedule from onboarding data
+      const practiceSchedule = this.onboardingData.practiceDays?.map(
+        (day: string) => ({
+          day: this.getDayNumber(day),
+          type: "flag_practice",
+        }),
+      ) || [];
+
+      const config = {
+        user_id: userId,
+        primary_position: normalizedPosition,
+        secondary_position: this.onboardingData.secondaryPosition
+          ? normalizePositionForModifiers(this.onboardingData.secondaryPosition)
+          : null,
+        flag_practice_schedule: practiceSchedule,
+        birth_date: this.onboardingData.dateOfBirth
+          ?.toISOString()
+          .split("T")[0] || null,
+        preferred_training_days: this.getPreferredTrainingDays(),
+        max_sessions_per_week: this.onboardingData.practicesPerWeek || 3,
+        available_equipment: this.onboardingData.equipmentAvailable || [],
+        has_gym_access: this.onboardingData.equipmentAvailable?.includes("gym") || false,
+        has_field_access: this.onboardingData.equipmentAvailable?.includes("field") || true,
+        current_limitations: this.onboardingData.currentInjuries?.length > 0
+          ? { injuries: this.onboardingData.currentInjuries }
+          : null,
+        // Default ACWR targets (can be adjusted by coach later)
+        acwr_target_min: 0.8,
+        acwr_target_max: 1.3,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await this.supabaseService.client
+        .from("athlete_training_config")
+        .upsert(config, { onConflict: "user_id" });
+
+      if (error) {
+        this.logger.warn(
+          "[Onboarding] Failed to create athlete_training_config:",
+          error.message,
+        );
+        // Non-blocking - continue with onboarding
+      } else {
+        this.logger.info(
+          `[Onboarding] Created athlete_training_config for position: ${normalizedPosition}`,
+        );
+      }
+    } catch (e) {
+      this.logger.warn("[Onboarding] Error creating athlete_training_config:", e);
+      // Non-blocking - continue with onboarding
+    }
+  }
+
+  /**
+   * Save current injuries to wellness_checkins table
+   * This ensures injuries are properly tracked for training modifications
+   */
+  private async saveCurrentInjuries(userId: string): Promise<void> {
+    try {
+      // Only save if there are current injuries
+      if (!this.onboardingData.currentInjuries || this.onboardingData.currentInjuries.length === 0) {
+        return;
+      }
+
+      // Convert injury entries to soreness_areas format
+      // soreness_areas is an array of strings in wellness_checkins table
+      const sorenessAreas = this.onboardingData.currentInjuries.map(
+        (injury: InjuryEntry) => {
+          // Map injury area to soreness area format
+          // e.g., "hamstring" -> "hamstring", "hip_flexor" -> "hip flexor"
+          const area = injury.area.replace(/_/g, " ");
+          return `${area} (${injury.severity})`;
+        }
+      );
+
+      // Also save injury history as notes or in a separate field
+      const injuryHistoryNotes = this.onboardingData.injuryHistory.length > 0
+        ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`
+        : null;
+
+      // Create or update wellness checkin for today with current injuries
+      const today = new Date().toISOString().split("T")[0];
+      const { error } = await this.supabaseService.client
+        .from("daily_wellness_checkin")
+        .upsert(
+          {
+            user_id: userId,
+            checkin_date: today,
+            soreness_areas: sorenessAreas,
+            notes: injuryHistoryNotes || null,
+            // Set default values for other required fields if not set
+            sleep_quality: 5,
+            sleep_hours: 7,
+            energy_level: 5,
+            muscle_soreness: this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
+            stress_level: 5,
+            readiness_score: 50, // Default readiness score
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id,checkin_date" }
+        );
+
+      if (error) {
+        this.logger.warn(
+          "[Onboarding] Failed to save current injuries to wellness_checkin:",
+          error.message,
+        );
+        // Non-blocking - continue with onboarding
+      } else {
+        this.logger.info(
+          `[Onboarding] Saved ${this.onboardingData.currentInjuries.length} current injuries to wellness_checkin`,
+        );
+      }
+    } catch (e) {
+      this.logger.warn("[Onboarding] Error saving current injuries:", e);
+      // Non-blocking - continue with onboarding
+    }
+  }
+
+  /**
+   * Convert day name to day number (0 = Sunday, 1 = Monday, etc.)
+   */
+  private getDayNumber(dayName: string): number {
+    const days: Record<string, number> = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+    };
+    return days[dayName.toLowerCase()] ?? 1;
+  }
+
+  /**
+   * Get preferred training days based on practice schedule
+   * Returns days that are NOT practice days (for strength training)
+   */
+  private getPreferredTrainingDays(): string[] {
+    const allDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const practiceDays = this.onboardingData.practiceDays || [];
+    // Prefer non-practice days for strength training
+    const trainingDays = allDays.filter(
+      (day) => !practiceDays.map((d: string) => d.toLowerCase()).includes(day),
+    );
+    // Return at least 3 days
+    return trainingDays.length >= 3 ? trainingDays.slice(0, 4) : allDays.slice(0, 4);
+  }
+
+  /**
+   * Assign training program based on selected position
+   *
+   * Program mapping:
+   * - QB -> Ljubljana Frogs QB Annual Program 2025-2026
+   * - Everyone else (WR, DB, Center, Rusher, LB, Hybrid) -> Ljubljana Frogs WR/DB Annual Program 2025-2026
+   *
+   * This is idempotent: if user already has the same program assigned, it succeeds without duplicates.
+   * If user has a different program, it will switch (force=true) to maintain consistency.
+   *
+   * Non-blocking: If this fails, user can still enter app and admin can assign later.
+   */
+  private async assignTrainingProgram(): Promise<boolean> {
+    const position = this.onboardingData.position;
+
+    if (!position) {
+      this.logger.warn(
+        "[Onboarding] No position selected, skipping program assignment",
+      );
+      return false;
+    }
+
+    const programId = getProgramIdForPosition(position);
+    this.logger.info(
+      `[Onboarding] Assigning program for position "${position}" -> ${programId}`,
+    );
+
+    try {
+      // Use firstValueFrom to convert Observable to Promise
+      const { firstValueFrom } = await import("rxjs");
+
+      const assignment = await firstValueFrom(
+        this.playerProgramService.assignMyProgram(programId, { force: true }),
+      );
+
+      if (assignment) {
+        this.logger.info(
+          `[Onboarding] Successfully assigned program: ${assignment.program.name}`,
+        );
+        return true;
+      } else {
+        // Assignment returned null - could be an error or conflict
+        // Log but don't block onboarding
+        this.logger.warn(
+          "[Onboarding] Program assignment returned null - may need manual assignment",
+        );
+        return false;
+      }
+    } catch (error) {
+      // Non-blocking error - log and continue
+      this.logger.error("[Onboarding] Failed to assign training program:", error);
+      // User can still proceed; admin can assign program later if needed
+      return false;
     }
   }
 }

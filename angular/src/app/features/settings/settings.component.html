@@ -6,7 +6,7 @@
       subtitle="Manage your account and application preferences"
       icon="pi-cog"
     >
-      <app-button icon="save" (clicked)="saveSettings()"
+      <app-button iconLeft="pi-save" (clicked)="saveSettings()"
         >Save Changes</app-button
       >
     </app-page-header>
@@ -48,16 +48,42 @@
           </div>
           <div class="p-field mb-4">
             <label for="settings-dob" class="p-label">Date of Birth</label>
-            <p-datepicker
-              inputId="settings-dob"
-              formControlName="dateOfBirth"
-              [showIcon]="true"
-              [maxDate]="maxBirthDate"
-              dateFormat="mm/dd/yy"
-              placeholder="Select your date of birth"
-              appendTo="body"
-              styleClass="w-full"
-            ></p-datepicker>
+            <div class="datepicker-with-suggestion">
+              <p-datepicker
+                #dobDatePicker
+                inputId="settings-dob"
+                formControlName="dateOfBirth"
+                [showIcon]="true"
+                [maxDate]="maxBirthDate"
+                dateFormat="mm/dd/yy"
+                placeholder="Select your date of birth"
+                appendTo="body"
+                styleClass="w-full"
+              ></p-datepicker>
+              @if (birthdaySuggestion(); as suggestion) {
+                <div class="birthday-suggestion">
+                  <div class="suggestion-content">
+                    <i class="pi pi-lightbulb suggestion-icon"></i>
+                    <div class="suggestion-text">
+                      <span class="suggestion-label">Suggested:</span>
+                      <span class="suggestion-date">{{ suggestion.formatted }}</span>
+                      @if (suggestion.age !== null) {
+                        <span class="suggestion-age">(Age: {{ suggestion.age }} years)</span>
+                      }
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="suggestion-apply-btn"
+                    (click)="applyBirthdaySuggestion()"
+                    aria-label="Apply suggested date"
+                  >
+                    <i class="pi pi-check"></i>
+                    Apply
+                  </button>
+                </div>
+              }
+            </div>
             @if (calculateAge() !== null) {
               <small class="age-display">Age: {{ calculateAge() }} years</small>
             }

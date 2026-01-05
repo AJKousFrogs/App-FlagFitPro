@@ -25,7 +25,7 @@
   background-position: center;
   background-repeat: no-repeat;
   border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 8px rgba(8, 153, 73, 0.25);
+  box-shadow: var(--shadow-1);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -33,7 +33,7 @@
 
 .avatar:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(8, 153, 73, 0.35);
+  box-shadow: var(--shadow-2);
 }
 
 .avatar-sm {

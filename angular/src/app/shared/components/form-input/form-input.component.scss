@@ -6,8 +6,8 @@
 .form-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--space-2); /* 8px label-to-input gap */
+  margin-bottom: var(--space-4); /* 16px between form fields */
 }
 
 .input-label {
@@ -16,7 +16,7 @@
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .input-label.required::after {
@@ -30,7 +30,7 @@
   font-weight: var(--font-weight-normal);
   color: var(--color-text-secondary);
   background: var(--surface-100);
-  padding: 0.125rem 0.5rem;
+  padding: var(--space-1) var(--space-3); /* 4px 12px for breathing room */
   border-radius: var(--radius-lg);
 }
 
@@ -46,11 +46,11 @@ input {
 }
 
 input.has-prefix {
-  padding-left: 2.5rem;
+  padding-left: var(--space-10); /* 40px for icon + padding */
 }
 
 input.has-suffix {
-  padding-right: 2.5rem;
+  padding-right: var(--space-10);
 }
 
 /* Validation States - uses global error/success state styling */
@@ -71,16 +71,16 @@ input.has-suffix {
 }
 
 .prefix-icon {
-  left: 0.75rem;
+  left: var(--space-3);
 }
 
 .suffix-icon {
-  right: 0.75rem;
+  right: var(--space-3);
 }
 
 .validation-icon {
   position: absolute;
-  right: 0.75rem;
+  right: var(--space-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,11 +89,11 @@ input.has-suffix {
 
 .password-toggle {
   position: absolute;
-  right: 0.75rem;
+  right: var(--space-3);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: var(--space-1);
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;
@@ -122,8 +122,8 @@ input.has-suffix {
   font-size: var(--font-size-badge);
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  margin-top: -0.25rem;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
 }
 
 .hint-text {
@@ -148,7 +148,7 @@ input.has-suffix {
   align-self: flex-end;
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
-  margin-top: -0.25rem;
+  margin-top: var(--space-1);
 }
 
 .char-count.near-limit {

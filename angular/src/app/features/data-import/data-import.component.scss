@@ -16,12 +16,12 @@
 
 .import-type-card {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
   border: var(--border-2) solid transparent;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-3);
     border-color: var(--ds-primary-green);
   }
 }
@@ -109,7 +109,7 @@
   border-radius: var(--radius-lg);
   background: var(--ds-surface-base);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
 
   &:hover {
     border-color: var(--ds-primary-green);

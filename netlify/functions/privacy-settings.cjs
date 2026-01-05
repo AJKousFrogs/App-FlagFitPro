@@ -268,3 +268,4 @@ function mapDbToParentalConsent(db) {
     expiresAt: db.expires_at,
   };
 }
+

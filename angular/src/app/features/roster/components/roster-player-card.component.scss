@@ -45,15 +45,15 @@
 
 // Status badge - Sharp rectangular style (matches "Optimal" tag exactly)
 .status-badge {
-  padding: var(--space-2) var(--space-4);
-  // Sharp rectangular corners - matches "Optimal" tag exactly
-  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-2) var(--space-4); /* 8px 16px for breathing room */
+  border-radius: var(--radius-md);
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-h4);
+  font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-semibold);
   text-transform: none;
   letter-spacing: 0;
   line-height: var(--line-height-tight);
+  min-height: var(--space-8); /* 32px minimum height */
 }
 
 // Status variants - Solid backgrounds with appropriate text colors
@@ -84,9 +84,9 @@
 
 // Risk badge - Sharp rectangular style (matches "Optimal" tag exactly)
 .risk-badge {
-  padding: var(--space-2) var(--space-4);
-  // Sharp rectangular corners - matches "Optimal" tag exactly
-  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-2) var(--space-4); /* 8px 16px for breathing room */
+  border-radius: var(--radius-md);
+  min-height: var(--space-8); /* 32px minimum height */
   font-family: var(--font-family-sans);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
@@ -411,7 +411,7 @@
 @media (hover: none) and (pointer: coarse) {
   // .player-card:hover REMOVED - card-shell handles touch devices
   .card-actions button {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: var(--touch-target-md); /* 44px */
+    min-width: var(--touch-target-md);
   }
 }

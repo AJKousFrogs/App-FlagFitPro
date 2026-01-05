@@ -4,6 +4,10 @@
 //
 // Usage: @use '../assets/styles/canonical-mixins' as canon;
 // Then:  @include canon.card-base;
+//
+// MIGRATION NOTE: Prefer using app-card-shell component or CSS custom
+// properties instead of these mixins with ::ng-deep (deprecated).
+// See: docs/NG_DEEP_REMOVAL_PLAN.md
 // ============================================================================
 
 // ============================================================================
@@ -12,7 +16,8 @@
 
 /// Base card styling - use on all p-card components
 /// @example
-///   :host ::ng-deep .my-card { @include card-base; }
+///   .my-card { @include card-base; }
+/// @deprecated Prefer using app-card-shell component
 @mixin card-base {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -23,7 +28,7 @@
 
 /// Card hover effect - subtle lift
 /// @example
-///   :host ::ng-deep .my-card:hover { @include card-hover; }
+///   .my-card:hover { @include card-hover; }
 @mixin card-hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -31,14 +36,14 @@
 
 /// Card body padding reset
 /// @example
-///   :host ::ng-deep .my-card .p-card-body { @include card-body; }
+///   .my-card .p-card-body { @include card-body; }
 @mixin card-body($padding: var(--space-4)) {
   padding: $padding;
 }
 
 /// Card content padding reset
 /// @example
-///   :host ::ng-deep .my-card .p-card-content { @include card-content; }
+///   .my-card .p-card-content { @include card-content; }
 @mixin card-content {
   padding: 0;
 }
@@ -47,7 +52,7 @@
 /// @param {String} $class - The card class name
 /// @example
 ///   @include card-complete('.my-card');
-/// NOTE: Prefer using app-card-shell component instead of this mixin
+/// @deprecated Prefer using app-card-shell component instead of this mixin
 /// @see docs/CARD_SHELL_CONTRACT.md
 @mixin card-complete($class) {
   #{$class} {
@@ -71,7 +76,7 @@
 /// @param {String} $class - The card class name
 /// @example
 ///   @include stat-card('.stat-card');
-/// NOTE: Prefer using app-card-shell component instead of this mixin
+/// @deprecated Prefer using app-card-shell component instead of this mixin
 /// @see docs/CARD_SHELL_CONTRACT.md
 @mixin stat-card($class) {
   #{$class} {

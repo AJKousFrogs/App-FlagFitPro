@@ -96,7 +96,7 @@ interface WellnessMetric {
             subtitle="Track your health, recovery, and wellness metrics"
             icon="pi-heart"
           >
-            <app-button icon="plus" (clicked)="openCheckIn()"
+            <app-button iconLeft="pi-plus" (clicked)="openCheckIn()"
               >Log Check-in</app-button
             >
           </app-page-header>

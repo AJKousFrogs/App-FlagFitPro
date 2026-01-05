@@ -30,7 +30,7 @@
   background-color: var(--surface-primary, #ffffff);
   border: 1px solid var(--color-border-primary, #e0e0e0);
   border-radius: var(--radius-xl);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-1);
 
   // Support explicit hiding via input binding
   &.hidden-in-composite {

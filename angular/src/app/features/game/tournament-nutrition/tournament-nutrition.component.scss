@@ -74,21 +74,37 @@
 
 .banner-stats {
   display: flex;
-  gap: var(--space-10);
+  gap: var(--space-4);
   position: relative;
   z-index: 1;
 }
 
 .stat {
-  text-align: center;
-  padding: var(--space-2) var(--space-4);
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  background: var(--ds-primary-green);
   border-radius: var(--radius-lg);
+  min-width: 140px;
+  flex: 1;
 }
 
-// .stat-value/.stat-label REMOVED
-// Use .stat-block classes from card-shell instead
-// @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
+.stat-value {
+  font-size: var(--font-size-metric-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-on-primary, #ffffff);
+  line-height: var(--line-height-tight);
+}
+
+.stat-label {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-medium);
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
 // ===== Hydration Card - Design System =====
 .hydration-card {
@@ -569,9 +585,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-5);
+  align-items: stretch;
 }
 
 .supplement-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--surface-primary);
   border: 2px solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
@@ -619,11 +639,21 @@
   }
 }
 
+.supp-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
 .supp-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-3);
+  flex-shrink: 0;
 }
 
 .supp-icon {
@@ -666,15 +696,17 @@
   padding: var(--space-2) var(--space-4);
   // Sharp rectangular corners - matches "Optimal" tag exactly
   border-radius: var(--radius-sm, 4px);
+  // Default: white text on colored background
+  color: var(--color-text-on-primary, #ffffff);
 
   &.evidence-strong {
     background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
+    color: var(--color-text-on-primary, #ffffff);
   }
 
   &.evidence-conditional {
-    background: var(--primitive-orange-500);
-    color: var(--color-text-on-primary);
+    background: var(--primitive-orange-500, #f97316); // Vibrant orange background
+    color: var(--color-text-on-primary, #ffffff); // White text to match Strong Evidence design
   }
 }
 
@@ -683,6 +715,8 @@
   flex-direction: column;
   gap: var(--space-1);
   margin-bottom: var(--space-2);
+  flex-shrink: 0;
+  min-height: 48px; /* Ensure consistent height for details section */
 }
 
 .supp-row {
@@ -704,8 +738,11 @@
 .supp-reason {
   font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
-  margin: var(--space-2) 0;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
   line-height: var(--line-height-relaxed);
+  flex-shrink: 0;
+  min-height: 3em; /* Ensure consistent minimum height for reason section */
 }
 
 .supp-notes {
@@ -715,13 +752,16 @@
   font-size: var(--font-size-badge);
   color: var(--color-text-muted);
   margin: 0;
+  margin-top: auto;
   padding-top: var(--space-2);
   border-top: 1px dashed var(--color-border-secondary);
+  min-height: 48px; /* Ensure consistent height for notes section */
 
   i {
     font-size: var(--font-size-badge);
-    margin-top: var(--space-0);
+    margin-top: 2px; /* Align icon with text baseline */
     flex-shrink: 0;
+    line-height: 1;
   }
 }
 

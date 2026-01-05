@@ -189,8 +189,8 @@
   position: absolute;
   bottom: var(--space-2);
   right: var(--space-2);
-  width: 44px;
-  height: 44px;
+  width: var(--button-height-md); /* 44px */
+  height: var(--button-height-md);
   border-radius: var(--radius-full);
   background: var(--ds-primary-green);
   border: 3px solid var(--surface-primary);
@@ -384,9 +384,13 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
-  height: 44px;
-  min-height: 44px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  height: var(--button-height-md); /* 44px */
+  min-height: var(--button-height-md);
   outline: none;
 }
 
@@ -445,7 +449,7 @@
   padding: 0 var(--space-2);
   font-size: 0.75rem;
   font-weight: var(--font-weight-bold);
-  color: #fff;
+  color: var(--color-text-on-primary);
   background: var(--color-status-error);
   border-radius: var(--radius-md);
   margin-left: var(--space-2);
@@ -475,16 +479,17 @@
 .profile-page .activity-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3); // 12px gap between items for breathing room
 }
 
 .profile-page .activity-item {
   display: flex;
   align-items: center;
-  gap: var(--space-3); // Dashboard: gap: var(--space-3)
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
+  gap: var(--space-4); // 16px gap between icon and content
+  padding: var(--space-4); // 16px padding for comfortable touch targets
+  border-radius: var(--radius-lg);
   transition: background-color 0.2s ease;
+  border: 1px solid transparent; // Subtle border ready for hover
 }
 
 .profile-page .activity-item:hover {
@@ -818,18 +823,18 @@
 
   .profile-page .profile-tabs-container .p-tablist-content,
   .profile-page .profile-tabs-container .p-tablist-viewport {
-    padding: 3px;
+    padding: var(--space-1); /* 4px */
   }
 
   .profile-page .profile-tabs-container .p-tablist-tab-list {
-    gap: 3px;
+    gap: var(--space-1); /* 4px */
   }
 
   .profile-page .profile-tabs-container .p-tab {
     padding: 0 var(--space-3);
     font-size: 0.8125rem;
-    height: 40px;
-    min-height: 40px;
+    height: var(--button-height-md); /* 44px */
+    min-height: var(--button-height-md);
   }
 
   .profile-page .performance-stats-grid {
@@ -868,8 +873,8 @@
 
   .profile-page .profile-tabs-container .p-tab {
     padding: 0 var(--space-3);
-    height: 36px;
-    min-height: 36px;
+    height: var(--button-height-sm); /* 36px */
+    min-height: var(--button-height-sm);
     gap: var(--space-1);
   }
 

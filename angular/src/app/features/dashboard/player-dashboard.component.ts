@@ -34,6 +34,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -104,14 +105,42 @@ interface AnnouncementBanner {
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard section-stack">
+          <!-- NO PROGRAM ASSIGNED FALLBACK -->
+          @if (needsProgramAssignment()) {
+            <section class="no-program-section">
+              <p-card styleClass="no-program-card">
+                <div class="no-program-content">
+                  <div class="no-program-icon">
+                    <i class="pi pi-calendar-times"></i>
+                  </div>
+                  <h3 class="no-program-title">No Training Program Assigned</h3>
+                  <p class="no-program-message">
+                    Your training program hasn't been set up yet. This usually happens
+                    automatically during onboarding based on your position.
+                  </p>
+                  <div class="no-program-actions">
+                    <app-button iconLeft="pi-user-edit" routerLink="/onboarding">
+                      Complete Onboarding
+                    </app-button>
+                    <app-button
+                      iconLeft="pi-envelope"
+                      variant="outlined"
+                      (onClick)="contactCoach()"
+                    >
+                      Contact Coach
+                    </app-button>
+                  </div>
+                </div>
+              </p-card>
+            </section>
+          }
+
           <!-- SECTION 1: Announcement Banner -->
           <!-- Only shows when message content exists (from backend) -->
           @if (announcement()?.message && !announcementDismissed()) {
             <section class="announcement-section">
               <p-message
-                [severity]="
-                  announcement()?.priority === 'important' ? 'warn' : 'info'
-                "
+                severity="info"
                 [closable]="true"
                 (onClose)="dismissAnnouncement()"
                 styleClass="announcement-banner"
@@ -487,17 +516,106 @@ interface AnnouncementBanner {
       }
 
       /* ==========================================
+       NO PROGRAM ASSIGNED FALLBACK
+       ========================================== */
+      .no-program-section {
+        margin-bottom: var(--space-4);
+      }
+
+      .no-program-card {
+        background: var(--surface-card);
+        border: 2px dashed var(--surface-border);
+        border-radius: var(--radius-lg);
+      }
+
+      .no-program-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: var(--space-6);
+        gap: var(--space-4);
+      }
+
+      .no-program-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--surface-ground);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-color-secondary);
+      }
+
+      .no-program-icon i {
+        font-size: 2rem;
+      }
+
+      .no-program-title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-color);
+        margin: 0;
+      }
+
+      .no-program-message {
+        font-size: var(--font-size-sm);
+        color: var(--text-color-secondary);
+        max-width: 400px;
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      .no-program-actions {
+        display: flex;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: var(--space-2);
+      }
+
+      /* ==========================================
        SECTION 1: Announcement Banner
+       Design System: Green background, white text
        ========================================== */
       .announcement-section {
         margin-bottom: 0;
+      }
+
+      /* Override PrimeNG p-message to use brand green */
+      .announcement-banner.p-message {
+        background: var(--ds-primary-green);
+        border: none;
+        border-radius: var(--radius-lg);
+        padding: var(--space-3) var(--space-4);
+        color: var(--color-text-on-primary);
+      }
+
+      .announcement-banner .p-message-wrapper {
+        padding: 0;
+        gap: var(--space-3);
+      }
+
+      .announcement-banner .p-message-icon {
+        display: none; /* Hide default icon, we use custom */
+      }
+
+      .announcement-banner .p-message-close-button {
+        color: var(--color-text-on-primary);
+        opacity: 0.8;
+      }
+
+      .announcement-banner .p-message-close-button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        opacity: 1;
       }
 
       .announcement-content {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: var(--space-3);
+        gap: var(--space-4);
         width: 100%;
         flex-wrap: wrap;
       }
@@ -505,24 +623,33 @@ interface AnnouncementBanner {
       .announcement-text {
         display: flex;
         align-items: center;
-        gap: var(--space-2);
+        gap: var(--space-3);
         flex: 1;
       }
 
       .announcement-icon {
-        font-size: var(--font-body-size);
+        font-size: var(--font-size-h2);
         flex-shrink: 0;
-        opacity: 0.9;
+        color: var(--color-text-on-primary);
+        width: var(--space-10);
+        height: var(--space-10);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-md);
       }
 
       .announcement-message {
-        font-weight: var(--font-weight-medium);
-        font-size: var(--font-body-sm-size);
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-body-size);
+        color: var(--color-text-on-primary);
       }
 
       .announcement-meta {
-        font-size: var(--font-caption-size);
-        opacity: 0.65;
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-on-primary);
+        opacity: 0.85;
         margin-left: 0;
         white-space: nowrap;
       }
@@ -591,13 +718,21 @@ interface AnnouncementBanner {
       .stats-overview {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-3);
+        gap: var(--space-4); /* 16px gap for breathing room */
       }
 
       .stat-card-content {
         display: flex;
         align-items: center;
-        gap: var(--space-3);
+        gap: var(--space-4); /* 16px gap between icon and content */
+      }
+
+      /* PrimeNG Card padding override for stat cards */
+      .stat-card .p-card-body {
+        padding: var(--space-4); /* 16px for breathing room */
+      }
+      .stat-card .p-card-content {
+        padding: 0;
       }
 
       .stat-icon {
@@ -833,19 +968,20 @@ interface AnnouncementBanner {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-3);
+        gap: var(--space-3);
+        padding: var(--space-6); /* 24px for breathing room */
       }
 
       .empty-content {
         display: flex;
         align-items: center;
-        gap: var(--space-2);
-        font-size: var(--font-body-sm-size);
+        gap: var(--space-3);
+        font-size: var(--font-body-size);
+        padding: var(--space-4) var(--space-5); /* Inner padding for the message */
       }
 
       .empty-icon {
-        font-size: var(--font-body-size);
+        font-size: var(--font-size-h2);
         opacity: 0.7;
       }
 
@@ -856,11 +992,6 @@ interface AnnouncementBanner {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: var(--space-3);
-      }
-
-      .quick-actions-grid app-button {
-        display: block;
-        width: 100%;
       }
 
       /* ==========================================
@@ -989,12 +1120,18 @@ interface AnnouncementBanner {
         }
 
         .announcement-content {
-          flex-direction: column;
-          align-items: flex-start;
+          flex-direction: row; /* Keep icon left on mobile */
+          align-items: center;
+        }
+
+        .announcement-text {
+          flex-wrap: wrap;
         }
 
         .announcement-meta {
-          margin-left: var(--space-5);
+          width: 100%;
+          margin-left: calc(var(--space-10) + var(--space-3)); /* Align with text */
+          margin-top: var(--space-1);
         }
       }
     `,
@@ -1007,6 +1144,7 @@ export class PlayerDashboardComponent {
   private readonly trainingStatsService = inject(
     TrainingStatsCalculationService,
   );
+  private readonly unifiedTrainingService = inject(UnifiedTrainingService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -1021,6 +1159,11 @@ export class PlayerDashboardComponent {
   // Announcement
   announcement = signal<AnnouncementBanner | null>(null);
   announcementDismissed = signal(false);
+
+  // Program assignment state (from UnifiedTrainingService)
+  needsProgramAssignment = computed(
+    () => this.unifiedTrainingService.needsProgramAssignment(),
+  );
 
   // Stats
   readinessScore = signal(0);
@@ -1040,8 +1183,19 @@ export class PlayerDashboardComponent {
     }>
   >([]);
 
-  // Schedule
-  todaySchedule = signal<ScheduleItem[]>([]);
+  // Schedule - use computed from UnifiedTrainingService
+  todaySchedule = computed(() => {
+    const items = this.unifiedTrainingService.todaysScheduleItems();
+    // Transform TodayScheduleItem to ScheduleItem format for dashboard
+    return items.map((item) => ({
+      id: item.id,
+      time: item.time,
+      title: item.title,
+      duration: item.duration || 60,
+      completed: item.status === "completed",
+      icon: item.icon,
+    }));
+  });
 
   // Events
   upcomingEvents = signal<
@@ -1143,6 +1297,25 @@ export class PlayerDashboardComponent {
   constructor() {
     this.headerService.setDashboardHeader();
     this.loadData();
+    
+    // Check if we need to refresh program assignment (e.g., after onboarding)
+    const refreshProgramAssignment = sessionStorage.getItem("refreshProgramAssignment");
+    if (refreshProgramAssignment === "true") {
+      sessionStorage.removeItem("refreshProgramAssignment");
+      // Force refresh program assignment check
+      this.unifiedTrainingService.loadProgramAssignment();
+    }
+    
+    // Trigger data loading in UnifiedTrainingService to populate schedule
+    // This ensures today's schedule is available
+    this.unifiedTrainingService.getTodayOverview().subscribe({
+      next: () => {
+        this.logger.info("[Dashboard] Today's overview data loaded");
+      },
+      error: (error) => {
+        this.logger.error("[Dashboard] Error loading today's overview:", error);
+      },
+    });
   }
 
   loadData(): void {
@@ -1192,10 +1365,9 @@ export class PlayerDashboardComponent {
         // this.performanceService.getWeeklyTrend().subscribe(...)
         // For now, performanceChartData remains null (shows empty state)
 
-        // TODO: Load today's schedule from backend service
-        // The schedule data (time, title, duration, completed) will come from the API
-        // this.scheduleService.getTodaySchedule().subscribe(...)
-        // For now, todaySchedule remains empty (shows empty state)
+        // Today's schedule is loaded via UnifiedTrainingService.todaysScheduleItems()
+        // which is computed from weeklySchedule signal. Data is loaded by getTodayOverview()
+        // or loadAllTrainingData() which is called during component initialization.
 
         // TODO: Load upcoming events from backend service
         // The events data (day, month, title, type, typeLabel) will come from the API
@@ -1233,6 +1405,15 @@ export class PlayerDashboardComponent {
 
   dismissAnnouncement(): void {
     this.announcementDismissed.set(true);
+  }
+
+  /**
+   * Navigate to contact coach or show contact info
+   * For now, navigates to team chat or shows a message
+   */
+  contactCoach(): void {
+    // Navigate to team chat where user can message coach
+    this.router.navigate(["/chat"]);
   }
 
   getTimeAgo(date: Date | null | undefined): string {

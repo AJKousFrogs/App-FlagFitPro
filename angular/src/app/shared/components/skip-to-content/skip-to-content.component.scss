@@ -102,10 +102,10 @@
 .skip-link__hint {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2); /* 4px 8px for breathing room */
   background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-badge);
+  font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-medium);
   color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
@@ -120,11 +120,10 @@
     0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-:host-context([data-theme="dark"]) .skip-link:focus,
-:host-context(.dark) .skip-link:focus {
+:host-context([data-theme="dark"]) .skip-link:focus-visible,
+:host-context(.dark) .skip-link:focus-visible {
   box-shadow:
-    0 8px 32px rgba(10, 184, 90, 0.4),
-    0 12px 48px rgba(0, 0, 0, 0.5),
+    var(--shadow-3),
     0 0 0 3px rgba(241, 196, 15, 0.6);
 }
 
@@ -134,7 +133,7 @@
     transition: none;
   }
 
-  .skip-link:focus {
+  .skip-link:focus-visible {
     transform: translateX(-50%) translateY(0);
   }
 }

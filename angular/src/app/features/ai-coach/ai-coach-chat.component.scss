@@ -148,8 +148,8 @@
 }
 
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-md); /* 44px for better touch target */
+  height: var(--touch-target-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,10 +219,10 @@
 }
 
 .search-count {
-  font-size: var(--font-size-badge);
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   background: var(--ds-primary-green-ultra-subtle);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
   border-radius: var(--radius-lg);
 }
 
@@ -477,8 +477,8 @@
 }
 
 .message-avatar {
-  width: 36px;
-  height: 36px;
+  width: var(--touch-target-sm); /* 36px */
+  height: var(--touch-target-sm);
   flex-shrink: 0;
 }
 
@@ -875,16 +875,17 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-5); /* 12px 20px for breathing room */
   border-radius: var(--radius-full);
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-h4);
+  font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   border: none;
+  min-height: var(--touch-target-md); /* 44px minimum for touch target */
 }
 
 .action-btn.primary {
@@ -909,9 +910,9 @@
 
 .action-btn.micro-session .duration-badge {
   background: rgba(255, 255, 255, 0.2);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
+  font-size: var(--font-body-sm-size);
 }
 
 /* Message footer */
@@ -1147,7 +1148,11 @@
   color: var(--color-text-muted);
 }
 
-.message-textarea:focus {
+.message-textarea:focus-visible {
+  outline: none;
+}
+
+.message-textarea:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -1157,8 +1162,8 @@
 }
 
 .input-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: var(--touch-target-sm); /* 36px */
+  height: var(--touch-target-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1329,7 +1334,7 @@
   }
 
   .send-btn {
-    width: 44px;
-    height: 44px;
+    width: var(--touch-target-md); /* 44px */
+    height: var(--touch-target-md);
   }
 }

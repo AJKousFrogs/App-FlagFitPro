@@ -22,6 +22,7 @@ import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -1124,8 +1125,8 @@ export class PsychologyReportsComponent implements OnInit {
     this.loading.set(true);
     try {
       // Load wellness data from API
-      const response = await this.api
-        .get<{
+      const response = await firstValueFrom(
+        this.api.get<{
           mentalLogs: Array<{
             log_date: string;
             confidence_level: number;
@@ -1147,8 +1148,8 @@ export class PsychologyReportsComponent implements OnInit {
             created_at: string;
             requires_professional_review: boolean;
           }>;
-        }>("/api/staff-psychology/my-data")
-        .toPromise();
+        }>("/api/staff-psychology/my-data"),
+      );
 
       if (response?.data) {
         this.processWellnessData(response.data);

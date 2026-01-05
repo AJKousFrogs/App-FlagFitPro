@@ -188,11 +188,11 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               </p>
             </div>
             <div class="header-actions toolbar-row__end">
-              <app-button icon="plus" size="sm" (clicked)="openCreateSession()"
+              <app-button iconLeft="pi-plus" size="sm" (clicked)="openCreateSession()"
                 >Practice</app-button
               >
               <app-button
-                icon="send"
+                iconLeft="pi-send"
                 size="sm"
                 variant="outlined"
                 (clicked)="openTeamMessage()"
@@ -597,7 +597,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               (clicked)="showCreateSessionDialog = false"
               >Cancel</app-button
             >
-            <app-button icon="check" (clicked)="createSession()"
+            <app-button iconLeft="pi-check" (clicked)="createSession()"
               >Create</app-button
             >
           </ng-template>
@@ -628,7 +628,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
             <app-button variant="text" (clicked)="showTeamMessageDialog = false"
               >Cancel</app-button
             >
-            <app-button icon="send" (clicked)="sendTeamMessage()"
+            <app-button iconLeft="pi-send" (clicked)="sendTeamMessage()"
               >Send</app-button
             >
           </ng-template>

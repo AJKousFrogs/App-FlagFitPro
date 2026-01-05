@@ -27,8 +27,42 @@ const TEST_USER = {
 // Helper Functions
 // ============================================================================
 
+/**
+ * Dismisses the cookie consent banner by setting localStorage consent.
+ * This bypasses the banner entirely for testing purposes.
+ */
+async function dismissCookieBanner(page: Page): Promise<void> {
+  // Set cookie consent in localStorage to prevent banner from showing
+  await page.evaluate(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0"
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+  
+  // Also try to click dismiss if banner is already visible
+  try {
+    const banner = page.locator("app-cookie-consent-banner");
+    if (await banner.isVisible({ timeout: 500 }).catch(() => false)) {
+      // Use force click to bypass any overlay issues
+      await page.locator("app-cookie-consent-banner button").filter({ hasText: /Accept All/i }).click({ force: true, timeout: 2000 }).catch(() => {});
+      // Wait briefly for banner to hide
+      await page.waitForTimeout(500);
+    }
+  } catch {
+    // Banner not present or already dismissed
+  }
+}
+
 async function login(page: Page): Promise<void> {
   await page.goto(`${BASE_URL}/login`);
+  
+  // Dismiss cookie banner if present (blocks interactions on mobile)
+  await dismissCookieBanner(page);
 
   // Clear and fill email field, then trigger blur to update Angular form
   const emailInput = page.locator('input[type="email"]');
@@ -77,6 +111,7 @@ async function logout(page: Page): Promise<void> {
 test.describe("Authentication Flow", () => {
   test("should display login page", async ({ page }) => {
     await page.goto(`${BASE_URL}/login`);
+    await dismissCookieBanner(page);
 
     await expect(page.locator("h1, h2").first()).toContainText(
       /login|sign in/i,
@@ -87,6 +122,7 @@ test.describe("Authentication Flow", () => {
 
   test("should show error for invalid credentials", async ({ page }) => {
     await page.goto(`${BASE_URL}/login`);
+    await dismissCookieBanner(page);
 
     // Fill email with blur
     const emailInput = page.locator('input[type="email"]');
@@ -116,6 +152,7 @@ test.describe("Authentication Flow", () => {
 
   test("should redirect unauthenticated users to login", async ({ page }) => {
     await page.goto(`${BASE_URL}/dashboard`);
+    await dismissCookieBanner(page);
 
     // Should redirect to login
     await expect(page).toHaveURL(/.*login.*/);

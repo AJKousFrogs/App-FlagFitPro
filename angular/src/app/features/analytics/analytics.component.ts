@@ -127,11 +127,11 @@ interface DevelopmentGoal {
             <div class="header-actions">
               <app-button
                 variant="outlined"
-                icon="share-alt"
+                iconLeft="pi-share-alt"
                 (clicked)="showShareDialog.set(true)"
                 >Share with Coach</app-button
               >
-              <app-button icon="file-pdf" (clicked)="exportAnalyticsPDF()"
+              <app-button iconLeft="pi-file-pdf" (clicked)="exportAnalyticsPDF()"
                 >Export PDF</app-button
               >
             </div>
@@ -222,13 +222,17 @@ interface DevelopmentGoal {
               track trackByMetricLabel($index, metric)
             ) {
               <p-card class="metric-card">
-                <div class="metric-icon">
-                  <i [class]="'pi ' + metric.icon"></i>
-                </div>
-                <div class="metric-value">{{ metric.value }}</div>
-                <div class="metric-label">{{ metric.label }}</div>
-                <div class="metric-trend" [class]="'trend-' + metric.trendType">
-                  {{ metric.trend }}
+                <div class="metric-card-content">
+                  <div class="metric-icon">
+                    <i [class]="'pi ' + metric.icon"></i>
+                  </div>
+                  <div class="metric-details">
+                    <div class="metric-value">{{ metric.value }}</div>
+                    <div class="metric-label">{{ metric.label }}</div>
+                    <div class="metric-trend" [class]="'trend-' + metric.trendType">
+                      {{ metric.trend }}
+                    </div>
+                  </div>
                 </div>
               </p-card>
             }

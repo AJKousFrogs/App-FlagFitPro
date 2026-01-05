@@ -26,6 +26,7 @@ import { PasswordModule } from "primeng/password";
 import { ToastModule } from "primeng/toast";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
   getFormControlError,
@@ -167,6 +168,7 @@ import {
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
@@ -269,12 +271,31 @@ export class LoginComponent {
       .login(credentials)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response: { success?: boolean; error?: string }) => {
+        next: async (response: { success?: boolean; error?: string }) => {
           if (response.success) {
             this.toastService.success("Login successful!");
-            // Redirect to returnUrl if provided, otherwise dashboard
-            const returnUrl = this.route.snapshot.queryParams["returnUrl"];
-            this.router.navigateByUrl(returnUrl || "/dashboard");
+            // Check onboarding status before redirecting
+            const user = this.authService.currentUser();
+            if (user) {
+              const { data: userData } = await this.supabaseService.client
+                .from("users")
+                .select("onboarding_completed")
+                .eq("id", user.id)
+                .single();
+
+              const returnUrl = this.route.snapshot.queryParams["returnUrl"];
+              
+              // If onboarding not completed and no specific returnUrl, redirect to onboarding
+              if (userData && !userData.onboarding_completed && !returnUrl) {
+                this.router.navigate(["/onboarding"]);
+              } else {
+                this.router.navigateByUrl(returnUrl || "/dashboard");
+              }
+            } else {
+              // Fallback to dashboard if user check fails
+              const returnUrl = this.route.snapshot.queryParams["returnUrl"];
+              this.router.navigateByUrl(returnUrl || "/dashboard");
+            }
           } else {
             this.toastService.error(
               response.error || "Invalid email or password",

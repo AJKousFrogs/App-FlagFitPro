@@ -2153,12 +2153,13 @@
   }
 
   /* ================================================================
-     BADGE COMPONENT ENHANCEMENTS
+     BADGE COMPONENT ENHANCEMENTS - RAISED RECTANGULAR
      ================================================================ */
 
   .p-badge {
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     font-weight: var(--font-weight-semibold);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     animation: badge-pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
@@ -2179,31 +2180,30 @@
      TAG/BADGE/CHIP UNIFIED PILL DESIGN SYSTEM
      
      SINGLE SOURCE OF TRUTH for all status indicators
-     Matches the "Good" pill badge in the player dashboard exactly
+     Standardized RAISED RECTANGULAR shape
      
      Design Rules:
-     - Fixed height: 30px (no vertical growth)
-     - PILL shape: border-radius 9999px
-     - Green for positive (#63ad0e), neutral gray otherwise
+     - Fixed height: 32px
+     - RAISED RECTANGULAR shape: border-radius var(--radius-md)
+     - Subtle shadow for depth
      - Semibold font weight (600)
      - NO borders, shadows, outlines, or underlines
      - text-transform: none
      ================================================================ */
 
   .p-tag {
-    /* UNIFIED PILL dimensions */
+    /* UNIFIED RAISED RECTANGULAR dimensions */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--space-2);
 
-    /* Fixed height - 30px, no vertical growth */
-    height: 30px;
-    min-height: 30px;
-    max-height: 30px;
+    /* Fixed height - 36px for better touch target */
+    height: var(--touch-target-sm);
+    min-height: var(--touch-target-sm);
 
-    /* Padding: 13px horizontal */
-    padding: 0 13px;
+    /* Padding: 16px horizontal for breathing room */
+    padding: 0 var(--space-4);
 
     /* Typography - Semibold */
     font-family: var(--font-family-sans);
@@ -2211,14 +2211,19 @@
     font-weight: 600;
     line-height: 1;
     text-transform: none;
+
+    /* Shape: RAISED RECTANGULAR (not pill) */
+    border-radius: var(--radius-md, 8px);
+
+    /* Raised effect with shadow */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     text-decoration: none;
     letter-spacing: 0;
     white-space: nowrap;
 
-    /* Shape: PILL (full rounded) */
-    border-radius: 9999px;
+    /* Note: Shape and shadow defined above in the unified section */
 
-    /* NO borders, shadows, outlines, or underlines */
+    /* Clean appearance - border handled by shadow */
     border: none;
     box-shadow: none;
     outline: none;
@@ -2314,15 +2319,14 @@
     align-items: center;
     justify-content: center;
 
-    /* Height: 28-32px range - consistent with tags/chips */
-    height: 30px;
-    min-height: 28px;
-    max-height: 32px;
+    /* Height: 36px - consistent with tags/chips, better touch target */
+    height: var(--touch-target-sm);
+    min-height: var(--touch-target-sm);
 
-    padding: 0 12px;
+    padding: 0 var(--space-4); /* 16px horizontal for breathing room */
     font-family: var(--font-family-sans);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--font-body-sm-size);
+    font-weight: var(--font-weight-semibold);
     line-height: 1;
     text-transform: none;
     text-decoration: none;
@@ -2384,14 +2388,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--space-2);
 
-    /* Height: 28-32px range - consistent with tags/badges */
-    height: 30px;
-    min-height: 28px;
-    max-height: 32px;
+    /* Height: 36px - consistent with tags/badges, better touch target */
+    height: var(--touch-target-sm);
+    min-height: var(--touch-target-sm);
 
-    padding: 0 12px;
+    padding: 0 var(--space-4); /* 16px horizontal for breathing room */
     font-family: var(--font-family-sans);
     font-size: 14px;
     font-weight: 600;
@@ -2815,12 +2818,12 @@
       display: flex;
       align-items: stretch;
       background: var(--surface-secondary);
-      border-radius: 10px; /* 8-12px range */
-      padding: 4px;
-      gap: 4px;
+      border-radius: var(--radius-lg);
+      padding: var(--space-1); /* 4px */
+      gap: var(--space-2); /* 8px for breathing room */
       border: 1px solid var(--color-border-secondary);
       box-shadow: none;
-      margin-bottom: 1.25rem;
+      margin-bottom: var(--space-5);
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
@@ -2840,23 +2843,27 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 0 16px;
+      gap: var(--space-2); /* 8px */
+      padding: 0 var(--space-5); /* 20px for breathing room */
       font-family: var(--font-family-sans);
       /* Typography: Body-sm (14px/600) - unified system */
-      font-size: var(--font-body-sm-size, 0.875rem);
-      font-weight: 600; /* semibold for tab labels */
-      line-height: var(--font-body-sm-line-height, 1.45);
+      font-size: var(--font-body-sm-size);
+      font-weight: var(--font-weight-semibold);
+      line-height: var(--font-body-sm-line-height);
       color: var(--color-text-secondary);
       background: transparent;
       border: none;
-      border-radius: 8px; /* 8-12px range */
+      border-radius: var(--radius-md);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s ease;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
       position: relative;
-      height: 40px; /* Consistent 40px height */
-      min-height: 40px;
+      height: var(--touch-target-md); /* 44px for better touch target */
+      min-height: var(--touch-target-md);
       flex: none;
       outline: none;
 
@@ -3788,7 +3795,9 @@ p-button .p-button,
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
-  transition: all 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .p-datepicker-panel .p-datepicker-title button:hover,
@@ -3812,7 +3821,11 @@ p-button .p-button,
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    background-color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   flex-shrink: 0;
 }
 
@@ -3872,7 +3885,7 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-calendar td > button {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 10px;
+  border-radius: var(--radius-lg); /* 8px */
   font-family:
     "Poppins",
     -apple-system,
@@ -3884,7 +3897,9 @@ p-button .p-button,
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
   border: none;
   background: transparent;
   color: var(--color-text-primary, var(--primitive-neutral-900));

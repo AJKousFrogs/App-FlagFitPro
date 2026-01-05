@@ -13,6 +13,7 @@ import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
 import { Radio } from "primeng/radiobutton";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -294,7 +295,9 @@ export class AiFeedbackComponent {
     };
 
     try {
-      await this.apiService.post("/api/ai/feedback", feedbackData).toPromise();
+      await firstValueFrom(
+        this.apiService.post("/api/ai/feedback", feedbackData),
+      );
 
       this.selectedFeedback.set(type);
       this.submitted.set(true);

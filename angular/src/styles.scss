@@ -12,9 +12,6 @@
 /* Spacing System - Consistent padding, margins, and gaps */
 @use "./assets/styles/spacing-system.scss" as *;
 
-/* Standardized Design Tokens - CSS Custom Properties */
-@use "./assets/styles/design-system-tokens.scss" as *;
-
 /* Standardized Components - All components use same variants */
 @use "./assets/styles/standardized-components.scss" as *;
 
@@ -44,7 +41,7 @@
 @use "./styles/mixins" as *;
 @use "./styles/responsive-utilities" as *;
 
-/* PrimeIcons - CSS file, must use @import */
+/* PrimeIcons - imported from node_modules */
 @import "primeicons/primeicons.css";
 
 /* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library

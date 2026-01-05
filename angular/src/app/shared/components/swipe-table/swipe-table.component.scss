@@ -52,8 +52,8 @@
 }
 
 .action-btn {
-  width: 44px;
-  height: 44px;
+  width: var(--touch-target-md); /* 44px */
+  height: var(--touch-target-md);
   border-radius: 50%;
   border: none;
   color: white;

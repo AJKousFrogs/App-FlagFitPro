@@ -125,8 +125,10 @@ interface TimezoneOption {
             (click)="setTravelType('flight')"
           >
             <i class="pi pi-send"></i>
-            <span>Flight Travel</span>
-            <small>Jet lag protocols</small>
+            <div class="type-btn-content">
+              <span>Flight Travel</span>
+              <small>Jet lag protocols</small>
+            </div>
           </button>
           <button
             class="type-btn"
@@ -134,8 +136,10 @@ interface TimezoneOption {
             (click)="setTravelType('car')"
           >
             <i class="pi pi-car"></i>
-            <span>Car Travel</span>
-            <small>6-12+ hour drives</small>
+            <div class="type-btn-content">
+              <span>Car Travel</span>
+              <small>6-12+ hour drives</small>
+            </div>
           </button>
         </div>
 
@@ -161,8 +165,10 @@ interface TimezoneOption {
                   [class.selected]="selectedOlympicVenue === 'LA28'"
                 >
                   <span class="venue-flag">🇺🇸</span>
-                  <span class="venue-name">Los Angeles 2028</span>
-                  <span class="venue-tz">UTC-8</span>
+                  <div class="olympic-btn-content">
+                    <span class="venue-name">Los Angeles 2028</span>
+                    <span class="venue-tz">UTC-8</span>
+                  </div>
                 </button>
                 <button
                   class="olympic-btn brisbane"
@@ -170,8 +176,10 @@ interface TimezoneOption {
                   [class.selected]="selectedOlympicVenue === 'BRISBANE32'"
                 >
                   <span class="venue-flag">🇦🇺</span>
-                  <span class="venue-name">Brisbane 2032</span>
-                  <span class="venue-tz">UTC+10</span>
+                  <div class="olympic-btn-content">
+                    <span class="venue-name">Brisbane 2032</span>
+                    <span class="venue-tz">UTC+10</span>
+                  </div>
                 </button>
               </div>
 

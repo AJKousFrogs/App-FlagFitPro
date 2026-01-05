@@ -710,8 +710,8 @@
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
   .header-actions button {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: var(--touch-target-md); /* 44px */
+    min-width: var(--touch-target-md);
   }
 }
 
