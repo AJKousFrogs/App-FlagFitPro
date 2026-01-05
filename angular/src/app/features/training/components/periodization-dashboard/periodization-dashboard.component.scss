@@ -8,7 +8,7 @@
   margin-bottom: var(--space-8);
 
   h1 {
-    font-size: var(--font-heading-lg);
+    font-size: var(--font-size-metric-md);
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
     display: flex;
@@ -27,18 +27,12 @@
   }
 }
 
-:host ::ng-deep .phase-card {
-  margin-bottom: var(--space-8);
+// .phase-card .p-card-header REMOVED
+// Use app-card-shell instead
+// @see docs/CARD_SHELL_CONTRACT.md
 
-  .p-card-header {
-    padding: var(--space-4) var(--space-6);
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--primary-700)
-    );
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-  }
+.phase-card {
+  margin-bottom: var(--space-8);
 }
 
 .phase-header {
@@ -54,7 +48,7 @@
   }
 
   .phase-week {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     opacity: 0.9;
   }
 
@@ -64,14 +58,14 @@
   }
 }
 
-:host ::ng-deep .phase-tag {
-  font-size: var(--font-body-md);
+.phase-tag {
+  font-size: var(--font-size-body);
   padding: var(--space-2) var(--space-4);
 }
 
 .phase-content {
   .phase-description {
-    font-size: var(--font-body-md);
+    font-size: var(--font-size-body);
     line-height: 1.6;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-6);
@@ -82,7 +76,7 @@
   margin-bottom: var(--space-6);
 
   h4 {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     text-transform: uppercase;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-2);
@@ -96,7 +90,7 @@
   }
 }
 
-:host ::ng-deep .focus-chip {
+.focus-chip {
   &.primary {
     background: var(--primary-100);
     color: var(--primary-700);
@@ -112,7 +106,7 @@
   margin-bottom: var(--space-6);
 
   h4 {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     text-transform: uppercase;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-2);
@@ -121,12 +115,12 @@
   .load-info {
     display: flex;
     justify-content: space-between;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     margin-bottom: var(--space-2);
   }
 }
 
-:host ::ng-deep .load-bar {
+.load-bar {
   height: var(--space-2);
   border-radius: var(--radius-sm);
 }
@@ -160,22 +154,22 @@
     .acwr-label {
       font-weight: var(--font-weight-semibold);
       text-transform: uppercase;
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
     }
 
     .acwr-value {
-      font-size: var(--font-heading-md);
+      font-size: var(--font-size-h2);
       font-weight: var(--font-weight-bold);
     }
   }
 
   .acwr-recommendation {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--color-text-secondary);
   }
 }
 
-:host ::ng-deep .training-tabs {
+.training-tabs {
   margin-bottom: var(--space-8);
 }
 
@@ -223,7 +217,7 @@
   }
 
   .day-content {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--color-text-secondary);
 
     > div {
@@ -233,7 +227,7 @@
       margin-bottom: var(--space-1);
 
       i {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
       }
     }
 
@@ -251,7 +245,7 @@
 
   h4 {
     margin-bottom: var(--space-4);
-    font-size: var(--font-body-md);
+    font-size: var(--font-size-body);
   }
 
   .totals-grid {
@@ -263,13 +257,13 @@
     .total-item {
       .total-value {
         display: block;
-        font-size: var(--font-heading-md);
+        font-size: var(--font-size-h2);
         font-weight: var(--font-weight-bold);
         color: var(--primary-color);
       }
 
       .total-label {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         color: var(--color-text-secondary);
       }
     }
@@ -310,14 +304,14 @@
       }
 
       i {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
       }
     }
   }
 
   h4 {
     margin: var(--space-4) 0 var(--space-2);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     text-transform: uppercase;
     color: var(--color-text-secondary);
   }
@@ -327,14 +321,14 @@
     flex-wrap: wrap;
     gap: var(--space-2);
 
-    &.avoid :host ::ng-deep .protocol-chip {
+    &.avoid .protocol-chip {
       background: var(--red-100);
       color: var(--red-700);
     }
   }
 }
 
-:host ::ng-deep .protocol-chip {
+.protocol-chip {
   background: var(--primary-100);
   color: var(--primary-700);
 }
@@ -371,7 +365,7 @@
   overflow-x: auto;
 }
 
-:host ::ng-deep .phase-timeline {
+.phase-timeline {
   .p-timeline-event-content {
     text-align: center;
   }
@@ -387,7 +381,7 @@
   color: white;
 
   i {
-    font-size: var(--font-body-md);
+    font-size: var(--font-size-body);
   }
 }
 
@@ -395,12 +389,12 @@
   .timeline-month {
     display: block;
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
   }
 
   .timeline-phase {
     display: block;
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--color-text-secondary);
   }
 }
@@ -425,7 +419,7 @@
 
       .metric-label {
         display: block;
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         color: var(--color-text-secondary);
         margin-bottom: var(--space-1);
       }
@@ -474,20 +468,20 @@
     border: var(--border-1) solid var(--surface-200);
 
     .research-header {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--color-text-secondary);
       margin-bottom: var(--space-2);
     }
 
     .research-title {
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
       margin-bottom: var(--space-2);
-      line-height: 1.4;
+      line-height: var(--line-height-base);
     }
 
     .research-journal {
       display: block;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       font-style: italic;
       color: var(--color-text-secondary);
       margin-bottom: var(--space-4);
@@ -495,9 +489,9 @@
 
     .research-finding,
     .research-application {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       margin-bottom: var(--space-2);
-      line-height: 1.5;
+      line-height: var(--line-height-base);
 
       strong {
         color: var(--primary-color);
@@ -506,7 +500,7 @@
   }
 }
 
-:host ::ng-deep .adjustments-card {
+.adjustments-card {
   margin-bottom: var(--space-6);
 
   .adjustments-list {
@@ -517,7 +511,7 @@
     li {
       padding: var(--space-3) 0;
       border-bottom: var(--border-1) solid var(--surface-200);
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
 
       &:last-child {
         border-bottom: none;
@@ -539,7 +533,7 @@
 
     i {
       color: var(--yellow-600);
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
     }
   }
 }

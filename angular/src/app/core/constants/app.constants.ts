@@ -281,7 +281,7 @@ export const REGEX = {
   ALPHA: /^[a-zA-Z]+$/,
   ALPHA_NUMERIC: /^[a-zA-Z0-9]+$/,
   NUMBER: /^-?\d+\.?\d*$/,
-  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
 } as const;
 
 /**

@@ -2,11 +2,9 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  computed,
-  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule, Router } from "@angular/router";
+import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import {

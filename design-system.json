@@ -1,0 +1,139 @@
+{
+  "name": "FlagFit Pro Design System",
+  "version": "1.0.0",
+  "description": "Design system extracted from reference screenshot - Angular 19 + PrimeNG",
+  
+  "colors": {
+    "primary": {
+      "green": "#089949",
+      "greenHover": "#036d35",
+      "greenLight": "#0ab85a",
+      "greenRgb": "8, 153, 73"
+    },
+    "text": {
+      "primary": "#1a1a1a",
+      "secondary": "#4a4a4a",
+      "muted": "#525252",
+      "onPrimary": "#ffffff"
+    },
+    "surface": {
+      "primary": "#ffffff",
+      "secondary": "#f8faf9",
+      "tertiary": "#e9ecef"
+    },
+    "border": {
+      "primary": "#e5e7eb",
+      "secondary": "#e5e7eb"
+    },
+    "status": {
+      "success": "#63ad0e",
+      "warning": "#ffc000",
+      "error": "#ff003c",
+      "info": "#0ea5e9"
+    }
+  },
+  
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "1": "4px",
+      "2": "8px",
+      "3": "12px",
+      "4": "16px",
+      "5": "20px",
+      "6": "24px",
+      "8": "32px",
+      "10": "40px",
+      "12": "48px"
+    },
+    "grid": 8
+  },
+  
+  "typography": {
+    "fontFamily": {
+      "sans": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif"
+    },
+    "fontSize": {
+      "headingLg": "1.5rem",
+      "headingSm": "1.125rem",
+      "bodyMd": "1rem",
+      "bodySm": "0.875rem",
+      "bodyXs": "0.75rem"
+    },
+    "fontWeight": {
+      "semibold": 600,
+      "medium": 500,
+      "regular": 400
+    }
+  },
+  
+  "borderRadius": {
+    "sm": "6px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "full": "9999px"
+  },
+  
+  "components": {
+    "button": {
+      "borderRadius": "12px",
+      "minHeight": "44px",
+      "paddingX": "24px",
+      "paddingY": "12px",
+      "primaryBackground": "#089949",
+      "primaryText": "#ffffff",
+      "iconOnlySize": "44px"
+    },
+    "card": {
+      "borderRadius": "12px",
+      "bodyPadding": "16px",
+      "bodyGap": "12px",
+      "shadow": "0 1px 3px rgba(0, 0, 0, 0.1)"
+    },
+    "dialog": {
+      "borderRadius": "14px",
+      "headerPadding": "16px",
+      "contentPadding": "16px",
+      "footerPadding": "16px",
+      "width": "90vw",
+      "maxWidth": "500px"
+    },
+    "input": {
+      "borderRadius": "12px",
+      "paddingX": "16px",
+      "paddingY": "12px",
+      "minHeight": "44px",
+      "borderColor": "#e5e7eb",
+      "focusBorderColor": "#089949"
+    }
+  },
+  
+  "icons": {
+    "library": "Lucide",
+    "size": {
+      "sm": "1rem",
+      "md": "1.125rem",
+      "lg": "1.5rem"
+    }
+  },
+  
+  "rules": {
+    "noBlackOnGreen": true,
+    "whiteOnGreen": true,
+    "greenOnWhite": true,
+    "wcagAA": true
+  },
+  
+  "primeNG": {
+    "version": "21",
+    "theme": "custom",
+    "primaryColor": "#089949",
+    "contrastColor": "#ffffff"
+  },
+  
+  "angular": {
+    "version": "19",
+    "viewEncapsulation": "Emulated"
+  }
+}

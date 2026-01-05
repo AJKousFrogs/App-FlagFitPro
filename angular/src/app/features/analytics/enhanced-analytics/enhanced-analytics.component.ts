@@ -133,7 +133,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
 
-  performanceChartData = signal<any>(null);
+  performanceChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null>(null);
   injuryRisk = signal(15);
   isLoading = signal(false);
   sessionCount = signal(0);
@@ -214,7 +214,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     }
   }
 
-  private calculateWeeklyPerformance(sessions: any[]): any {
+  private calculateWeeklyPerformance(sessions: { scheduled_date: string; status: string; duration_minutes?: number }[]): { labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } {
     const weeks: Map<
       number,
       { completed: number; total: number; duration: number }
@@ -228,11 +228,13 @@ export class EnhancedAnalyticsComponent implements OnInit {
         weeks.set(weekNum, { completed: 0, total: 0, duration: 0 });
       }
 
-      const week = weeks.get(weekNum)!;
-      week.total++;
-      if (session.status === "completed") {
-        week.completed++;
-        week.duration += session.duration_minutes || 0;
+      const week = weeks.get(weekNum);
+      if (week) {
+        week.total++;
+        if (session.status === "completed") {
+          week.completed++;
+          week.duration += session.duration_minutes || 0;
+        }
       }
     });
 
@@ -244,7 +246,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
       .sort((a, b) => a[0] - b[0])
       .slice(-7);
 
-    sortedWeeks.forEach(([weekNum, stats], index) => {
+    sortedWeeks.forEach(([_weekNum, stats], index) => {
       labels.push(`Week ${index + 1}`);
       // Performance score: completion rate * intensity factor
       const completionRate =
@@ -281,7 +283,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     return Math.ceil((days + startOfYear.getDay() + 1) / 7);
   }
 
-  private calculateInjuryRisk(sessions: any[]): void {
+  private calculateInjuryRisk(sessions: { scheduled_date: string; status: string; intensity_level?: string }[]): void {
     // Simple injury risk calculation based on training intensity and frequency
     const recentSessions = sessions.filter((s) => {
       const date = new Date(s.scheduled_date);

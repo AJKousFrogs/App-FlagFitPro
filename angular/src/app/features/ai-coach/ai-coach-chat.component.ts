@@ -30,7 +30,6 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -151,8 +150,6 @@ interface AutocompleteSuggestion {
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
-  
-    ButtonComponent,
   ],
   template: `
     <app-main-layout>

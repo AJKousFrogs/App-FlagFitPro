@@ -80,7 +80,7 @@ const SEASONAL_CONTEXT = {
 };
 
 // Session types based on day of week - fallback only
-const SESSION_TYPES = {
+const _SESSION_TYPES = {
   monday: "Training",
   tuesday: "Training",
   wednesday: "Training",
@@ -531,7 +531,7 @@ async function buildDailyTrainingPlan(userId, userContext) {
     "Friday",
     "Saturday",
   ];
-  const dayOfWeek = dayNames[today.getDay()].toLowerCase();
+  const _dayOfWeek = dayNames[today.getDay()].toLowerCase();
   const month = today.getMonth() + 1;
 
   const seasonal = SEASONAL_CONTEXT[month];
@@ -544,7 +544,7 @@ async function buildDailyTrainingPlan(userId, userContext) {
   const gameTomorrow = userContext.games.find((g) => g.game_date === tomorrowStr);
   const scheduledToday = userContext.scheduledSessions.find((s) => s.session_date === todayStr);
 
-  let sessionType = scheduledToday ? scheduledToday.session_type : (gameToday ? "Game Day" : (gameTomorrow ? "Rest" : "Rest"));
+  const sessionType = scheduledToday ? scheduledToday.session_type : (gameToday ? "Game Day" : (gameTomorrow ? "Rest" : "Rest"));
 
   // Get greeting based on time of day
   let greeting;

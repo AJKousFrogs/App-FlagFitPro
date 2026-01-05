@@ -45,7 +45,7 @@ const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'frid
  * Calculate age from birth date
  */
 function calculateAge(birthDate) {
-  if (!birthDate) return null;
+  if (!birthDate) {return null;}
   const today = new Date();
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
@@ -534,7 +534,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     
     // Add taper rationale at the start
     const taperEmoji = taper.tournament.isPeakEvent ? "🏆" : "🎯";
-    aiRationale = `${taperEmoji} TAPER for ${taper.tournament.name} (${taper.daysUntil} days). ${taper.recommendation} ` + aiRationale;
+    aiRationale = `${taperEmoji} TAPER for ${taper.tournament.name} (${taper.daysUntil} days). ${taper.recommendation} ${  aiRationale}`;
   }
 
   // Add age-based notes
@@ -655,7 +655,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // 3. Warm-up - Position-aware
-  let warmUpQuery = supabase
+  const warmUpQuery = supabase
     .from("exercises")
     .select("*")
     .eq("category", "warm_up")
@@ -965,7 +965,7 @@ async function completeExercise(supabase, userId, payload, headers) {
  * Mark a single exercise as skipped
  */
 async function skipExercise(supabase, userId, payload, headers) {
-  const { protocolExerciseId, skipReason } = payload;
+  const { protocolExerciseId, skipReason: _skipReason } = payload;
 
   if (!protocolExerciseId) {
     return {

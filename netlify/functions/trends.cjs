@@ -148,7 +148,7 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
       .limit(games);
 
     if (!gameStatsResult.error && gameStatsResult.data?.length > 0) {
-      data = gameStatsResult.data;
+      ({ data } = gameStatsResult);
     } else {
       // Try games table as fallback
       const gamesResult = await supabaseAdmin
@@ -159,9 +159,9 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
         .limit(games);
 
       if (!gamesResult.error) {
-        data = gamesResult.data;
+        ({ data } = gamesResult);
       } else {
-        error = gamesResult.error;
+        ({ error } = gamesResult);
       }
     }
 

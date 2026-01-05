@@ -59,13 +59,14 @@ interface ProgramPhase {
   focus: string;
 }
 
-interface WeekSchedule {
-  weekNumber: number;
-  phaseName: string;
-  sessions: DaySession[];
-}
+// WeekSchedule interface reserved for future use
+// interface WeekSchedule {
+//   weekNumber: number;
+//   phaseName: string;
+//   sessions: DaySession[];
+// }
 
-interface DaySession {
+interface _DaySession {
   id?: string;
   day: DayOfWeek;
   sessionType: SessionType;
@@ -844,7 +845,7 @@ export class ProgramBuilderComponent implements OnInit {
     });
   }
 
-  openProgramMenu(event: Event, program: TrainingProgram): void {
+  openProgramMenu(_event: Event, _program: TrainingProgram): void {
     // Menu would open here
   }
 

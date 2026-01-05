@@ -6,12 +6,10 @@
  */
 
 import { inject } from "@angular/core";
-import { CanActivateFn, Router, NavigationEnd } from "@angular/router";
-import { filter, take } from "rxjs/operators";
+import { CanActivateFn } from "@angular/router";
 import { AnalyticsDataService } from "../services/data/analytics-data.service";
 
-export const prefetchGuard: CanActivateFn = (route, state) => {
-  const router = inject(Router);
+export const prefetchGuard: CanActivateFn = (_route, state) => {
   const analyticsDataService = inject(AnalyticsDataService);
 
   // Prefetch analytics data if navigating to analytics route

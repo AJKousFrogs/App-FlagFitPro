@@ -3,223 +3,191 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .depth-chart-page {
-    padding: var(--space-6);
+.depth-chart-page {
+  padding: var(--space-6);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.depth-chart-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+// .empty-state REMOVED - use .card-empty-state from card-shell
+// @see docs/CARD_SHELL_CONTRACT.md §8
+
+.chart-container {
+  padding: var(--space-4) 0;
+}
+
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.position-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.position-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-100);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.position-abbr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-h4);
+}
+
+.position-name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.players-list {
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 80px;
+}
+
+.player-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  cursor: grab;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+
+  &:hover {
+    border-color: var(--primary-color);
   }
 
-  .header-actions {
-    display: flex;
-    gap: var(--space-3);
+  &.starter {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
   }
 
-  .depth-chart-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+  &.empty {
+    cursor: pointer;
+    border-style: dashed;
   }
 
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-8);
-    text-align: center;
-
-    i {
-      font-size: var(--font-display-md);
-      color: var(--color-text-secondary);
-      margin-bottom: var(--space-4);
-    }
-
-    h3 {
-      margin: 0 0 var(--space-2) 0;
-    }
-
-    p {
-      color: var(--color-text-secondary);
-      margin-bottom: var(--space-4);
-    }
+  &.cdk-drag-preview {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
-  .chart-container {
-    padding: var(--space-4) 0;
+  &.cdk-drag-placeholder {
+    opacity: 0.5;
   }
+}
 
-  .positions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-4);
+.depth-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--surface-200);
+  border-radius: 50%;
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: var(--font-weight-medium);
+}
+
+.player-number {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
+
+.empty-slot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+
+  i {
+    font-size: var(--font-size-h2);
   }
+}
 
-  .position-card {
-    background: var(--surface-card);
-    border: 1px solid var(--surface-border);
-    border-radius: var(--border-radius);
-    overflow: hidden;
+.drag-handle {
+  cursor: grab;
+  color: var(--color-text-secondary);
+  padding: var(--space-2);
+
+  &:hover {
+    color: var(--color-text-primary);
   }
+}
 
-  .position-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface-100);
-    border-bottom: 1px solid var(--surface-border);
-  }
+.add-backup-btn {
+  width: 100%;
+  justify-content: center;
+}
 
-  .position-abbr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: var(--border-radius);
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-body-sm);
-  }
+// .card-header - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
 
-  .position-name {
-    font-weight: var(--font-weight-semibold);
-  }
+.unassigned-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
 
-  .players-list {
-    padding: var(--space-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    min-height: 80px;
-  }
+.unassigned-player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-100);
+  border-radius: var(--radius-lg);
+}
 
-  .player-slot {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: var(--surface-50);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--surface-border);
-    cursor: grab;
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
+.assign-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
 
-    &:hover {
-      border-color: var(--primary-color);
-    }
-
-    &.starter {
-      background: var(--primary-50);
-      border-color: var(--primary-200);
-    }
-
-    &.empty {
-      cursor: pointer;
-      border-style: dashed;
-    }
-
-    &.cdk-drag-preview {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    &.cdk-drag-placeholder {
-      opacity: 0.5;
-    }
-  }
-
-  .depth-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: var(--surface-200);
-    border-radius: 50%;
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    flex-shrink: 0;
-  }
-
-  .player-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .player-name {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .player-number {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .empty-slot {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--color-text-secondary);
-
-    i {
-      font-size: var(--font-heading-sm);
-    }
-  }
-
-  .drag-handle {
-    cursor: grab;
-    color: var(--color-text-secondary);
-    padding: var(--space-2);
-
-    &:hover {
-      color: var(--color-text-primary);
-    }
-  }
-
-  .add-backup-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-4);
-    border-bottom: 1px solid var(--surface-border);
-
-    h3 {
-      margin: 0;
-    }
-  }
-
-  .unassigned-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    padding: var(--space-4);
-  }
-
-  .unassigned-player {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    background: var(--surface-100);
-    border-radius: var(--border-radius);
-  }
-
-  .assign-dialog {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .assign-info {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
+.assign-info {
+  margin: 0;
+  color: var(--color-text-secondary);
 }
 

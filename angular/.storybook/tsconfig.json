@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": []
+  },
+  "exclude": [
+    "../src/**/*.spec.ts",
+    "../src/**/*.test.ts",
+    "../node_modules",
+    "../**/*.spec.ts"
+  ],
+  "include": [
+    "../src/**/*.stories.ts",
+    "../src/**/*.stories.tsx",
+    "../src/**/*.mdx",
+    "../.storybook/**/*",
+    "../src/**/*.ts"
+  ],
+  "files": [
+    "./preview.ts",
+    "./main.ts"
+  ]
+}

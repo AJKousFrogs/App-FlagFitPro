@@ -10,15 +10,13 @@ import {
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-landing",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, RouterModule, CardShellComponent, ButtonComponent],
   template: `
     <section class="hero-section">
       <div class="hero-background">
@@ -108,19 +106,15 @@ import { CardModule } from "primeng/card";
               </div>
             }
           </div>
-        </div>
-      </div>
 
-      <!-- Scroll indicator -->
-      <div
-        class="scroll-indicator animate-item"
-        style="--delay: 6"
-        [class.visible]="isLoaded()"
-      >
-        <div class="scroll-mouse">
-          <div class="scroll-wheel"></div>
+          <!-- Scroll indicator -->
+          <div class="scroll-indicator animate-item" style="--delay: 6">
+            <div class="scroll-mouse">
+              <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+          </div>
         </div>
-        <span>Scroll to explore</span>
       </div>
     </section>
 
@@ -136,27 +130,27 @@ import { CardModule } from "primeng/card";
 
         <div class="features-grid">
           @for (feature of features; track trackByFeatureId($index, feature)) {
-            <p-card class="feature-card">
-              <ng-template pTemplate="header">
-                <div class="feature-card-icon">
-                  <div
-                    class="feature-icon-wrapper"
-                    [class]="'feature-icon-' + feature.id"
-                  >
-                    <i [class]="'pi ' + feature.icon"></i>
-                  </div>
+            <app-card-shell
+              class="feature-card"
+              state="interactive"
+              (cardClick)="navigateToFeature(feature.id)"
+            >
+              <!-- Custom header with icon -->
+              <div class="feature-card-icon">
+                <div
+                  class="feature-icon-wrapper"
+                  [class]="'feature-icon-' + feature.id"
+                >
+                  <i [class]="'pi ' + feature.icon"></i>
                 </div>
-              </ng-template>
+              </div>
               <h3 class="feature-card-title">{{ feature.title }}</h3>
               <p class="feature-card-description">{{ feature.description }}</p>
-              <div
-                class="feature-card-link"
-                (click)="navigateToFeature(feature.id)"
-              >
+              <div class="feature-card-link">
                 <span>Learn more</span>
                 <i class="pi pi-arrow-right"></i>
               </div>
-            </p-card>
+            </app-card-shell>
           }
         </div>
       </div>

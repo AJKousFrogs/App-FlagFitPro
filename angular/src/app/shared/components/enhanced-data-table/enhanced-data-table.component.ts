@@ -23,6 +23,28 @@ import { MenuModule } from "primeng/menu";
 import { MenuItem } from "primeng/api";
 
 /**
+ * Generic table row type with selection support
+ */
+export interface TableRow {
+  _selected?: boolean;
+  [key: string]: unknown;
+}
+
+/**
+ * Column reorder event
+ */
+interface ColumnReorderEvent {
+  columns: Array<{ field: string }>;
+}
+
+/**
+ * Column resize event
+ */
+interface ColumnResizeEvent {
+  element: HTMLElement & { dataset: { field: string }; style: { width: string } };
+}
+
+/**
  * Enhanced Column Definition
  */
 export interface EnhancedTableColumn {
@@ -36,7 +58,7 @@ export interface EnhancedTableColumn {
   width?: string;
   minWidth?: number;
   type?: "text" | "number" | "date" | "boolean" | "custom";
-  customTemplate?: any;
+  customTemplate?: unknown;
 }
 
 /**
@@ -291,7 +313,7 @@ export interface TablePreferences {
 })
 export class EnhancedDataTableComponent {
   // Inputs
-  data = input<any[]>([]);
+  data = input<TableRow[]>([]);
   columns = input<EnhancedTableColumn[]>([]);
   selectable = input<boolean>(false);
   resizableColumns = input<boolean>(true);
@@ -301,25 +323,25 @@ export class EnhancedDataTableComponent {
   mobileBreakpoint = input<number>(768);
 
   // Outputs
-  onEdit = output<any>();
-  onDelete = output<any>();
-  onBulkDelete = output<any[]>();
-  onExport = output<any[]>();
+  onEdit = output<TableRow>();
+  onDelete = output<TableRow>();
+  onBulkDelete = output<TableRow[]>();
+  onExport = output<TableRow[]>();
 
   @ViewChild("editInput") editInput?: ElementRef<HTMLInputElement>;
 
   // State
   selectAll = signal<boolean>(false);
-  selectedRows = signal<any[]>([]);
+  selectedRows = signal<TableRow[]>([]);
   visibleColumnFields = signal<string[]>([]);
   columnWidths = signal<Record<string, string>>({});
   columnOrderState = signal<string[]>([]);
   isMobileView = signal<boolean>(false);
 
   // Editing state
-  editingRow = signal<any | null>(null);
+  editingRow = signal<TableRow | null>(null);
   editingField = signal<string | null>(null);
-  editingValue = signal<any>(null);
+  editingValue = signal<unknown>(null);
 
   // Computed
   visibleColumns = computed(() => {
@@ -402,13 +424,13 @@ export class EnhancedDataTableComponent {
     }
   }
 
-  onRowSelect(row: any): void {
+  onRowSelect(row: TableRow): void {
     const selected = this.data().filter((r) => r._selected);
     this.selectedRows.set(selected);
     this.selectAll.set(selected.length === this.data().length);
   }
 
-  isRowSelected(row: any): boolean {
+  isRowSelected(row: TableRow): boolean {
     return row._selected === true;
   }
 
@@ -417,13 +439,13 @@ export class EnhancedDataTableComponent {
     this.savePreferencesToStorage();
   }
 
-  onColumnReorder(event: any): void {
-    const order = event.columns.map((col: any) => col.field);
+  onColumnReorder(event: ColumnReorderEvent): void {
+    const order = event.columns.map((col) => col.field);
     this.columnOrderState.set(order);
     this.savePreferencesToStorage();
   }
 
-  onColumnResize(event: any): void {
+  onColumnResize(event: ColumnResizeEvent): void {
     const widths = { ...this.columnWidths() };
     widths[event.element.dataset.field] = event.element.style.width;
     this.columnWidths.set(widths);
@@ -435,7 +457,7 @@ export class EnhancedDataTableComponent {
   }
 
   // Inline editing
-  startEdit(row: any, field: string, event: Event): void {
+  startEdit(row: TableRow, field: string, event: Event): void {
     const col = this.columns().find((c) => c.field === field);
     if (!col?.editable) return;
 
@@ -449,7 +471,7 @@ export class EnhancedDataTableComponent {
     }, 50);
   }
 
-  saveEdit(row: any, field: string): void {
+  saveEdit(row: TableRow, field: string): void {
     if (this.editingRow() === row && this.editingField() === field) {
       this.setCellValue(row, field, this.editingValue());
       this.cancelEdit();
@@ -462,18 +484,20 @@ export class EnhancedDataTableComponent {
     this.editingValue.set(null);
   }
 
-  isEditing(row: any, field: string): boolean {
+  isEditing(row: TableRow, field: string): boolean {
     return this.editingRow() === row && this.editingField() === field;
   }
 
-  getCellValue(row: any, field: string): any {
-    return field.split(".").reduce((obj, key) => obj?.[key], row);
+  getCellValue(row: TableRow, field: string): unknown {
+    return field.split(".").reduce((obj: Record<string, unknown> | undefined, key: string) => 
+      obj?.[key] as Record<string, unknown> | undefined, row as Record<string, unknown>);
   }
 
-  setCellValue(row: any, field: string, value: any): void {
+  setCellValue(row: TableRow, field: string, value: unknown): void {
     const keys = field.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj, key) => obj[key], row);
+    const target = keys.reduce((obj: Record<string, unknown>, key: string) => 
+      obj[key] as Record<string, unknown>, row as Record<string, unknown>);
     target[lastKey] = value;
   }
 
@@ -482,11 +506,11 @@ export class EnhancedDataTableComponent {
     return this.onEdit.observed || this.onDelete.observed;
   }
 
-  editRow(row: any): void {
+  editRow(row: TableRow): void {
     this.onEdit.emit(row);
   }
 
-  deleteRow(row: any): void {
+  deleteRow(row: TableRow): void {
     this.onDelete.emit(row);
   }
 

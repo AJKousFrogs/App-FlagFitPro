@@ -15,9 +15,73 @@ import {
   TeamRole,
   StaffCategory,
   StaffByCategory,
-  PositionGroup,
   PlayerStatus,
 } from "./roster.models";
+
+/**
+ * Team member record from database
+ */
+interface TeamMemberRecord {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  users?: {
+    id: string;
+    email: string;
+    raw_user_meta_data?: {
+      full_name?: string;
+      country?: string;
+      experience?: string;
+      phone?: string;
+      specialization?: string;
+      certifications?: string[];
+      achievements?: string[];
+    };
+  };
+  teams?: {
+    name: string;
+  };
+}
+
+/**
+ * Team player record from database
+ */
+interface TeamPlayerRecord {
+  id: string;
+  team_id: string;
+  user_id?: string;
+  name: string;
+  position: string;
+  jersey_number?: number | string;
+  country?: string;
+  age?: number;
+  height?: string;
+  weight?: string;
+  email?: string;
+  phone?: string;
+  status: "active" | "injured" | "inactive" | "suspended";
+  stats?: Record<string, unknown>;
+  created_at: string;
+}
+
+/**
+ * Invitation record from database
+ */
+interface InvitationRecord {
+  id: string;
+  email: string;
+  role: string;
+  message?: string;
+  status: string;
+  expires_at: string;
+  created_at: string;
+  inviter?: {
+    raw_user_meta_data?: {
+      full_name?: string;
+    };
+  };
+}
 
 @Injectable({
   providedIn: "root",
@@ -146,7 +210,7 @@ export class RosterService {
       }
 
       // Process coaching staff
-      const staff = this.processStaffMembers(members);
+      const staff = this.processStaffMembers(members as TeamMemberRecord[] | null);
       this.coachingStaff.set(staff);
 
       // Process players
@@ -155,7 +219,7 @@ export class RosterService {
 
       // Calculate team stats
       this.calculateTeamStats(playerList, staff);
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading roster:", error);
       this.error.set(this.getErrorMessage(error));
     } finally {
@@ -202,9 +266,9 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error adding player:", error);
-      return { success: false, error: error.message || "Failed to add player" };
+      return { success: false, error: this.extractErrorMessage(error) || "Failed to add player" };
     }
   }
 
@@ -236,11 +300,11 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error updating player:", error);
       return {
         success: false,
-        error: error.message || "Failed to update player",
+        error: this.extractErrorMessage(error) || "Failed to update player",
       };
     }
   }
@@ -261,11 +325,11 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error removing player:", error);
       return {
         success: false,
-        error: error.message || "Failed to remove player",
+        error: this.extractErrorMessage(error) || "Failed to remove player",
       };
     }
   }
@@ -287,11 +351,11 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error updating status:", error);
       return {
         success: false,
-        error: error.message || "Failed to update status",
+        error: this.extractErrorMessage(error) || "Failed to update status",
       };
     }
   }
@@ -313,11 +377,11 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error bulk updating status:", error);
       return {
         success: false,
-        error: error.message || "Failed to update status",
+        error: this.extractErrorMessage(error) || "Failed to update status",
       };
     }
   }
@@ -338,11 +402,11 @@ export class RosterService {
 
       await this.loadRosterData();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error bulk removing players:", error);
       return {
         success: false,
-        error: error.message || "Failed to remove players",
+        error: this.extractErrorMessage(error) || "Failed to remove players",
       };
     }
   }
@@ -400,11 +464,11 @@ export class RosterService {
 
       await this.loadPendingInvitations();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error sending invitation:", error);
       return {
         success: false,
-        error: error.message || "Failed to send invitation",
+        error: this.extractErrorMessage(error) || "Failed to send invitation",
       };
     }
   }
@@ -442,19 +506,22 @@ export class RosterService {
       }
 
       this.pendingInvitations.set(
-        (data || []).map((inv: any) => ({
-          id: inv.id,
-          email: inv.email,
-          role: inv.role,
-          message: inv.message,
-          status: inv.status,
-          invitedBy: inv.inviter?.raw_user_meta_data?.full_name || "Unknown",
-          expiresAt: inv.expires_at,
-          createdAt: inv.created_at,
-          isExpired: new Date(inv.expires_at) < new Date(),
-        })),
+        (data || []).map((inv) => {
+          const invRecord = inv as InvitationRecord;
+          return {
+            id: invRecord.id,
+            email: invRecord.email,
+            role: invRecord.role,
+            message: invRecord.message,
+            status: invRecord.status as TeamInvitation["status"],
+            invitedBy: invRecord.inviter?.raw_user_meta_data?.full_name || "Unknown",
+            expiresAt: invRecord.expires_at,
+            createdAt: invRecord.created_at,
+            isExpired: new Date(invRecord.expires_at) < new Date(),
+          };
+        }),
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading invitations:", error);
     }
   }
@@ -481,11 +548,11 @@ export class RosterService {
 
       await this.loadPendingInvitations();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error resending invitation:", error);
       return {
         success: false,
-        error: error.message || "Failed to resend invitation",
+        error: this.extractErrorMessage(error) || "Failed to resend invitation",
       };
     }
   }
@@ -506,11 +573,11 @@ export class RosterService {
 
       await this.loadPendingInvitations();
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("[RosterService] Error cancelling invitation:", error);
       return {
         success: false,
-        error: error.message || "Failed to cancel invitation",
+        error: this.extractErrorMessage(error) || "Failed to cancel invitation",
       };
     }
   }
@@ -582,7 +649,7 @@ export class RosterService {
   // HELPER METHODS
   // ============================================================================
 
-  private processStaffMembers(members: any[] | null): StaffMember[] {
+  private processStaffMembers(members: TeamMemberRecord[] | null): StaffMember[] {
     const staffRoles = [
       "owner",
       "admin",
@@ -597,8 +664,8 @@ export class RosterService {
     ];
 
     return (members || [])
-      .filter((m: any) => staffRoles.includes(m.role))
-      .map((m: any) => {
+      .filter((m: TeamMemberRecord) => staffRoles.includes(m.role))
+      .map((m: TeamMemberRecord) => {
         const role = m.role;
         const category = this.getStaffCategoryFromRole(role);
         return {
@@ -622,23 +689,30 @@ export class RosterService {
       });
   }
 
-  private processPlayers(players: any[] | null): Player[] {
-    return (players || []).map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      position: p.position,
-      jersey: p.jersey_number?.toString() || "0",
-      country: p.country || "Unknown",
-      age: p.age || 0,
-      height: p.height || "N/A",
-      weight: p.weight || "N/A",
-      email: p.email || "",
-      phone: p.phone || "",
-      status: p.status || "active",
-      stats: p.stats || {},
-      created_at: p.created_at,
-      user_id: p.user_id,
-    }));
+  private processPlayers(players: TeamPlayerRecord[] | null): Player[] {
+    return (players || []).map((p: TeamPlayerRecord) => {
+      // Map database status to Player status type
+      let status: PlayerStatus = "active";
+      if (p.status === "injured") status = "injured";
+      else if (p.status === "inactive" || p.status === "suspended") status = "inactive";
+      
+      return {
+        id: p.id,
+        name: p.name,
+        position: p.position,
+        jersey: p.jersey_number?.toString() || "0",
+        country: p.country || "Unknown",
+        age: p.age || 0,
+        height: p.height || "N/A",
+        weight: p.weight || "N/A",
+        email: p.email || "",
+        phone: p.phone || "",
+        status,
+        stats: (p.stats || {}) as Record<string, number | string>,
+        created_at: p.created_at,
+        user_id: p.user_id,
+      };
+    });
   }
 
   private calculateTeamStats(players: Player[], staff: StaffMember[]): void {
@@ -743,12 +817,23 @@ export class RosterService {
     return roleNames[role] || role;
   }
 
-  private getErrorMessage(error: any): string {
-    if (error?.status === 401 || error?.status === 403) {
+  private getErrorMessage(error: unknown): string {
+    const err = error as { status?: number };
+    if (err?.status === 401 || err?.status === 403) {
       return "Your session has expired. Please log in again.";
-    } else if (error?.status >= 500) {
+    } else if (err?.status && err.status >= 500) {
       return "The server is temporarily unavailable. Please try again later.";
     }
     return "Failed to load roster data. Please try again.";
+  }
+
+  private extractErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === "object" && error !== null && "message" in error) {
+      return String((error as { message: unknown }).message);
+    }
+    return String(error);
   }
 }

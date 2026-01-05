@@ -69,11 +69,12 @@ interface CycleEntry {
   notes?: string;
 }
 
-interface SymptomLog {
-  date: string;
-  symptoms: string[];
-  severity: string;
-}
+// SymptomLog interface reserved for future use
+// interface SymptomLog {
+//   date: string;
+//   symptoms: string[];
+//   severity: string;
+// }
 
 // ===== Design Token Imports =====
 import { CYCLE_PHASE_COLORS } from '../../core/utils/design-tokens.util';
@@ -774,14 +775,14 @@ export class CycleTrackingComponent implements OnInit {
   readonly averageCycleLength = computed(() => {
     const history = this.cycleHistory();
     if (history.length < 2) return 28;
-    const lengths = history.filter(c => c.length).map(c => c.length!);
+    const lengths = history.filter((c): c is typeof c & { length: number } => c.length !== undefined).map(c => c.length);
     return Math.round(lengths.reduce((a, b) => a + b, 0) / lengths.length);
   });
 
   readonly cycleRegularity = computed(() => {
     const history = this.cycleHistory();
     if (history.length < 3) return 'Insufficient data';
-    const lengths = history.filter(c => c.length).map(c => c.length!);
+    const lengths = history.filter((c): c is typeof c & { length: number } => c.length !== undefined).map(c => c.length);
     const avg = lengths.reduce((a, b) => a + b, 0) / lengths.length;
     const variance = lengths.reduce((sum, l) => sum + Math.abs(l - avg), 0) / lengths.length;
     if (variance <= 1) return 'Very Regular (±1 day)';

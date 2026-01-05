@@ -11,7 +11,7 @@ import { AnalyticsDataService } from "../services/data/analytics-data.service";
 import { AnalyticsViewModel } from "../view-models/analytics.view-model";
 import { LoggerService } from "../services/logger.service";
 
-export const analyticsPrefetchResolver: ResolveFn<void> = (route, state) => {
+export const analyticsPrefetchResolver: ResolveFn<void> = (_route, _state) => {
   const analyticsDataService = inject(AnalyticsDataService);
   const analyticsViewModel = inject(AnalyticsViewModel);
   const logger = inject(LoggerService);
@@ -19,7 +19,7 @@ export const analyticsPrefetchResolver: ResolveFn<void> = (route, state) => {
   // Prefetch analytics data
   // This runs before the component loads, improving perceived performance
   analyticsDataService.getAllAnalytics().subscribe({
-    next: (data) => {
+    next: (_data) => {
       // Data is prefetched and cached
       // Component will use AnalyticsViewModel which may have cached data
     },

@@ -1,0 +1,133 @@
+// ============================================================================
+// aria-dialog.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .aria-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .aria-dialog-backdrop.visible {
+    opacity: 1;
+  }
+
+  .aria-dialog {
+    position: relative;
+    background: var(--surface-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dialogEnter 0.2s ease;
+  }
+
+  @keyframes dialogEnter {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Size variants */
+  .size-sm {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .size-md {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .size-lg {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .size-full {
+    width: 95vw;
+    height: 90vh;
+  }
+
+  .aria-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .aria-dialog-title {
+    margin: 0;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .aria-dialog-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-8);
+    height: var(--space-8);
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  }
+
+  .aria-dialog-close:hover {
+    background: var(--surface-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .aria-dialog-close:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  .aria-dialog-content {
+    flex: 1;
+    padding: var(--space-6);
+    overflow-y: auto;
+  }
+
+  .aria-dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .aria-dialog-footer:empty {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .aria-dialog {
+      margin: var(--space-4);
+      max-height: calc(100vh - var(--space-8));
+    }
+  }
+}
+

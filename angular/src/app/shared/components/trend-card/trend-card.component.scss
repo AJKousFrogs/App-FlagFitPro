@@ -3,55 +3,53 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .trend-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-lg);
-    background: var(--color-brand-primary-subtle);
-    color: var(--color-brand-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-xl);
-    flex-shrink: 0;
-  }
+.trend-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--color-brand-primary-subtle);
+  color: var(--color-brand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
 
-  .trend-body {
-    padding: var(--space-1) 0;
-  }
+.trend-body {
+  padding: var(--space-1) 0;
+}
 
-  .trend-value {
-    font-size: var(--text-3xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
-  }
+.trend-value {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
 
-  .trend-change {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-  }
+.trend-change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+}
 
-  .trend-change.up {
-    color: var(--color-status-success);
-  }
+.trend-change.up {
+  color: var(--color-status-success);
+}
 
-  .trend-change.down {
-    color: var(--color-status-error);
-  }
+.trend-change.down {
+  color: var(--color-status-error);
+}
 
-  .trend-change.stable {
-    color: var(--color-text-secondary);
-  }
+.trend-change.stable {
+  color: var(--color-text-secondary);
+}
 
-  .change-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-normal);
-  }
+.change-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
 }
 

@@ -1,0 +1,45 @@
+// ============================================================================
+// enhanced-analytics.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .enhanced-analytics-page {
+    padding: var(--space-6);
+  }
+
+  .risk-analysis {
+    text-align: center;
+    padding: var(--space-6);
+  }
+
+  .risk-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--space-4);
+  }
+
+  .score-value {
+    font-size: var(--font-display-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-primary);
+  }
+
+  .score-label {
+    font-size: var(--font-size-h2);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  .predictions {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  // .no-data-state, .insufficient-data-state REMOVED
+  // Use .card-empty-state from card-shell
+  // @see docs/CARD_SHELL_CONTRACT.md §8
+}
+

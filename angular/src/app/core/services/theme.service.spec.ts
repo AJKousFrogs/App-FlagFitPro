@@ -8,7 +8,7 @@
  */
 
 import { TestBed, fakeAsync, tick } from "@angular/core/testing";
-import { ThemeService, ThemeMode } from "./theme.service";
+import { ThemeService } from "./theme.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -180,7 +180,7 @@ describe("ThemeService", () => {
       localStorage.setItem("flagfit-theme", "dark");
 
       // Create a new instance to test loading
-      const newService = TestBed.inject(ThemeService);
+      const _newService = TestBed.inject(ThemeService);
 
       // Note: The service loads on construction, so we check the stored value
       expect(localStorage.getItem("flagfit-theme")).toBe("dark");

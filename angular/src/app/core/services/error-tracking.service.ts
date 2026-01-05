@@ -227,7 +227,7 @@ export class ErrorTrackingService {
           scope.setUser(this.userContext);
         }
 
-        this.Sentry!.captureException(errorObj);
+        this.Sentry?.captureException(errorObj);
       });
     }
   }
@@ -255,7 +255,7 @@ export class ErrorTrackingService {
           if (context.extra) scope.setExtras(context.extra);
         }
 
-        this.Sentry!.captureMessage(message);
+        this.Sentry?.captureMessage(message);
       });
     }
   }

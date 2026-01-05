@@ -11,7 +11,6 @@ import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -108,8 +107,6 @@ const CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
-    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -381,7 +378,7 @@ export class AchievementsComponent implements OnInit {
     this.achievements()
       .filter((a) => a.isUnlocked && a.unlockedAt)
       .sort((a, b) =>
-        new Date(b.unlockedAt!).getTime() - new Date(a.unlockedAt!).getTime()
+        new Date(b.unlockedAt ?? 0).getTime() - new Date(a.unlockedAt ?? 0).getTime()
       )
   );
 

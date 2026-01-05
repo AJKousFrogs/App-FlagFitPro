@@ -13,6 +13,21 @@ import { AdminService } from "../../../core/services/admin.service";
 import { MessageService } from "primeng/api";
 import { firstValueFrom } from "rxjs";
 
+interface HealthMetric {
+  name: string;
+  icon: string;
+  color: string;
+  value: string;
+  status: string;
+  severity: 'success' | 'info' | 'warn' | 'danger';
+}
+
+interface SyncStatus {
+  source: string;
+  lastSync: string;
+  status: string;
+}
+
 @Component({
   selector: "app-admin-database-dashboard",
   standalone: true,
@@ -125,7 +140,7 @@ export class AdminDatabaseDashboardComponent {
   private adminService = inject(AdminService);
   private messageService = inject(MessageService);
 
-  healthMetrics = signal<any[]>([]);
+  healthMetrics = signal<HealthMetric[]>([]);
   syncingUSDA = signal(false);
   syncingResearch = signal(false);
   creatingBackup = signal(false);
@@ -135,7 +150,7 @@ export class AdminDatabaseDashboardComponent {
     this.loadHealthMetrics();
     this.loadSyncStatus();
   }
-  lastSyncStatus = signal<any[]>([]);
+  lastSyncStatus = signal<SyncStatus[]>([]);
 
   async syncUSDAData() {
     this.syncingUSDA.set(true);
@@ -150,7 +165,7 @@ export class AdminDatabaseDashboardComponent {
       } else {
         throw new Error("Sync failed");
       }
-    } catch (error) {
+    } catch (_error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",
@@ -177,7 +192,7 @@ export class AdminDatabaseDashboardComponent {
       } else {
         throw new Error("Sync failed");
       }
-    } catch (error) {
+    } catch (_error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",
@@ -200,7 +215,7 @@ export class AdminDatabaseDashboardComponent {
         summary: "Success",
         detail: `Backup created: ${backupInfo.filename}`,
       });
-    } catch (error) {
+    } catch (_error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",

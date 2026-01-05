@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   signal,
   ChangeDetectionStrategy,
   inject,
@@ -12,8 +11,6 @@ import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ApiService } from "../../../core/services/api.service";
-import { timer } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface LiveMetric {
   id: string;

@@ -1,12 +1,13 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  signal,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CookieConsentService } from "../../../core/services/cookie-consent.service";
+import { ButtonComponent } from "../button/button.component";
 
 /**
  * Cookie Consent Banner Component
@@ -27,7 +28,7 @@ import { CookieConsentService } from "../../../core/services/cookie-consent.serv
   selector: "app-cookie-consent-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ButtonComponent],
   template: `
     @if (cookieService.showBanner()) {
       <div
@@ -107,38 +108,42 @@ import { CookieConsentService } from "../../../core/services/cookie-consent.serv
           <!-- Actions -->
           <div class="cookie-actions">
             @if (!showDetails()) {
-              <button
-                class="cookie-btn cookie-btn-secondary"
-                (click)="toggleDetails()"
+              <app-button
+                variant="secondary"
+                size="md"
+                (clicked)="toggleDetails()"
                 type="button"
               >
                 Customize
-              </button>
+              </app-button>
             } @else {
-              <button
-                class="cookie-btn cookie-btn-secondary"
-                (click)="saveCustom()"
+              <app-button
+                variant="secondary"
+                size="md"
+                (clicked)="saveCustom()"
                 type="button"
               >
                 Save Preferences
-              </button>
+              </app-button>
             }
 
-            <button
-              class="cookie-btn cookie-btn-outline"
-              (click)="acceptNecessary()"
+            <app-button
+              variant="outlined"
+              size="md"
+              (clicked)="acceptNecessary()"
               type="button"
             >
               Necessary Only
-            </button>
+            </app-button>
 
-            <button
-              class="cookie-btn cookie-btn-primary"
-              (click)="acceptAll()"
+            <app-button
+              variant="primary"
+              size="md"
+              (clicked)="acceptAll()"
               type="button"
             >
               Accept All
-            </button>
+            </app-button>
           </div>
 
           <!-- Club Info -->

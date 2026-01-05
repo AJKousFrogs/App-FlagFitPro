@@ -222,7 +222,7 @@ async function saveTournament(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     result = data;
   } else {
     // Insert new
@@ -232,7 +232,7 @@ async function saveTournament(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     result = data;
   }
 
@@ -269,7 +269,7 @@ async function deleteTournament(supabase, userId, payload, headers) {
     .eq("id", id)
     .single();
 
-  if (fetchError) throw fetchError;
+  if (fetchError) {throw fetchError;}
 
   // For now, allow deletion if user created it
   // TODO: Add coach role check for national team events
@@ -286,7 +286,7 @@ async function deleteTournament(supabase, userId, payload, headers) {
     .delete()
     .eq("id", id);
 
-  if (deleteError) throw deleteError;
+  if (deleteError) {throw deleteError;}
 
   return {
     statusCode: 200,

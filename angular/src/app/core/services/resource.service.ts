@@ -98,7 +98,7 @@ export class ResourceService {
     urlFn: () => string,
     options: ResourceOptions<T> = {},
   ): ResourceRef<T | undefined> {
-    const { cacheKey, initialValue } = options;
+    const { cacheKey, initialValue: _initialValue } = options;
 
     // Check cache for existing resource
     if (cacheKey && this.resourceCache.has(cacheKey)) {

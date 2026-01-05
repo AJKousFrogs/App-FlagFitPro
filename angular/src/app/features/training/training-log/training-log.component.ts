@@ -30,7 +30,6 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -40,6 +39,7 @@ import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { TrainingDataService } from "../../../core/services/training-data.service";
@@ -60,7 +60,6 @@ interface SessionType {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    CardModule,
     Slider,
     InputNumberModule,
     InputTextModule,
@@ -69,8 +68,8 @@ interface SessionType {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -86,14 +85,10 @@ interface SessionType {
 
         <form [formGroup]="sessionForm" (ngSubmit)="submitSession()">
           <!-- Session Type Selection -->
-          <p-card class="form-section">
-            <ng-template pTemplate="header">
-              <div class="section-header">
-                <i class="pi pi-tag"></i>
-                <h3>Session Type</h3>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            title="Session Type"
+            headerIcon="pi-tag"
+          >
             <div class="session-types-grid">
               @for (type of sessionTypes; track type.value) {
                 <div
@@ -109,17 +104,13 @@ interface SessionType {
                 </div>
               }
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Duration and Intensity -->
-          <p-card class="form-section">
-            <ng-template pTemplate="header">
-              <div class="section-header">
-                <i class="pi pi-clock"></i>
-                <h3>Duration & Intensity</h3>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            title="Duration & Intensity"
+            headerIcon="pi-clock"
+          >
             <div class="form-grid">
               <div class="form-field">
                 <label for="duration">Duration (minutes)</label>
@@ -166,17 +157,13 @@ interface SessionType {
                 {{ sessionForm.get("rpe")?.value || 0 }} RPE
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Movement Volume (Position-Specific) -->
-          <p-card class="form-section">
-            <ng-template pTemplate="header">
-              <div class="section-header">
-                <i class="pi pi-bolt"></i>
-                <h3>Movement Volume (Optional)</h3>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            title="Movement Volume (Optional)"
+            headerIcon="pi-bolt"
+          >
             <div class="form-grid">
               <div class="form-field">
                 <label for="sprints">Sprint Repetitions</label>
@@ -230,17 +217,13 @@ interface SessionType {
                 <small>Max recommended: 40/session</small>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Notes -->
-          <p-card class="form-section">
-            <ng-template pTemplate="header">
-              <div class="section-header">
-                <i class="pi pi-pencil"></i>
-                <h3>Notes</h3>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            title="Notes"
+            headerIcon="pi-pencil"
+          >
             <div class="form-field">
               <textarea
                 pTextarea
@@ -249,7 +232,7 @@ interface SessionType {
                 placeholder="Add any notes about this session (injuries, fatigue, weather, etc.)"
               ></textarea>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Submit Button -->
           <div class="form-actions">

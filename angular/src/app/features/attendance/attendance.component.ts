@@ -513,7 +513,7 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (events) => this.events.set(events),
-        error: (err) => this.toastService.error("Failed to load events"),
+        error: (_err) => this.toastService.error("Failed to load events"),
       });
   }
 
@@ -526,7 +526,7 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (stats) => this.playerStats.set(stats),
-        error: (err) =>
+        error: (_err) =>
           this.toastService.error("Failed to load attendance stats"),
       });
   }
@@ -590,7 +590,7 @@ export class AttendanceComponent implements OnInit {
         team_id: teamId,
         title: this.newEvent.title,
         event_type: this.newEvent.event_type,
-        start_time: this.newEvent.start_time!.toISOString(),
+        start_time: this.newEvent.start_time?.toISOString() ?? new Date().toISOString(),
         end_time: this.newEvent.end_time?.toISOString(),
         location: this.newEvent.location || undefined,
         description: this.newEvent.description || undefined,

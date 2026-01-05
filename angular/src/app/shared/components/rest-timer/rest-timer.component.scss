@@ -3,251 +3,249 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  /* Floating Timer Button */
-  .floating-timer {
-    position: fixed;
-    bottom: 80px;
-    right: var(--space-4);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--space-3);
-    background: var(--color-brand-primary);
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    box-shadow: var(--shadow-lg);
-    min-width: 100px;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-  }
+/* Floating Timer Button */
+.floating-timer {
+  position: fixed;
+  bottom: 80px;
+  right: var(--space-4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--color-brand-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  min-width: 100px;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+}
 
-  .floating-timer:hover {
+.floating-timer:hover {
+  transform: scale(1.05);
+}
+
+.floating-timer.warning {
+  background: var(--color-status-warning);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
     transform: scale(1.05);
   }
+}
 
-  .floating-timer.warning {
-    background: var(--color-status-warning);
-    animation: pulse 1s infinite;
+.floating-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.floating-time {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.floating-progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-2);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: white;
+  transition: width 0.5s linear;
+}
+
+/* Timer Dialog */
+.rest-timer-dialog {
+  .p-dialog-header {
+    padding: var(--space-3);
   }
 
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
-    }
+  .p-dialog-content {
+    padding: 0 var(--space-4) var(--space-4);
   }
+}
 
-  .floating-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
 
-  .floating-time {
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-bold);
-    font-variant-numeric: tabular-nums;
-  }
+.timer-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+}
 
-  .floating-progress {
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: var(--radius-sm);
-    margin-top: var(--space-2);
-    overflow: hidden;
-  }
+.header-actions {
+  display: flex;
+  gap: var(--space-1);
+}
 
-  .progress-fill {
-    height: 100%;
-    background: white;
-    transition: width 0.5s linear;
-  }
+.timer-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
 
-  /* Timer Dialog */
-  :host ::ng-deep .rest-timer-dialog {
-    .p-dialog-header {
-      padding: var(--space-3);
-    }
+/* Timer Display */
+.timer-display {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
 
-    .p-dialog-content {
-      padding: 0 var(--space-4) var(--space-4);
-    }
-  }
+.progress-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
 
-  .timer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
+.progress-ring-bg {
+  stroke: var(--color-border-secondary);
+}
 
-  .timer-title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-weight: var(--font-weight-semibold);
-  }
+.progress-ring-fill {
+  stroke: var(--color-brand-primary);
+  transition: stroke-dashoffset 0.5s linear;
+}
 
-  .header-actions {
-    display: flex;
-    gap: var(--space-1);
-  }
+.timer-display.warning .progress-ring-fill {
+  stroke: var(--color-status-warning);
+}
 
-  .timer-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
+.timer-display.finished .progress-ring-fill {
+  stroke: var(--color-status-success);
+}
 
-  /* Timer Display */
-  .timer-display {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-  }
+.timer-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-  .progress-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
+.time-value {
+  font-size: var(--font-display-sm);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
 
-  .progress-ring-bg {
-    stroke: var(--color-border-secondary);
-  }
+.timer-display.warning .time-value {
+  color: var(--color-status-warning);
+}
 
-  .progress-ring-fill {
-    stroke: var(--color-brand-primary);
-    transition: stroke-dashoffset 0.5s linear;
-  }
+.timer-display.finished .time-value {
+  color: var(--color-status-success);
+}
 
-  .timer-display.warning .progress-ring-fill {
-    stroke: var(--color-status-warning);
-  }
+.time-label {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
 
-  .timer-display.finished .progress-ring-fill {
-    stroke: var(--color-status-success);
-  }
+/* Time Presets */
+.time-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
 
-  .timer-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+.preset-btn {
+  padding: var(--space-2);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--surface-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+}
 
-  .time-value {
-    font-size: var(--font-display-sm);
-    font-weight: var(--font-weight-bold);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text-primary);
-    line-height: 1;
-  }
+.preset-btn:hover {
+  border-color: var(--color-brand-primary);
+  background: var(--color-brand-light);
+}
 
-  .timer-display.warning .time-value {
-    color: var(--color-status-warning);
-  }
+.preset-btn.active {
+  border-color: var(--color-brand-primary);
+  background: var(--color-brand-primary);
+  color: white;
+}
 
-  .timer-display.finished .time-value {
-    color: var(--color-status-success);
-  }
+/* Custom Duration */
+.custom-duration {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
 
-  .time-label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    margin-top: var(--space-1);
-  }
+.custom-duration label {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
 
-  /* Time Presets */
-  .time-presets {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-2);
-  }
+/* Controls */
+.timer-controls {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}
 
-  .preset-btn {
-    padding: var(--space-2);
-    border: 1px solid var(--color-border-secondary);
-    background: var(--surface-primary);
-    border-radius: var(--radius-md);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-  }
+/* Sound Toggle */
+.sound-toggle {
+  display: flex;
+  justify-content: center;
+}
 
-  .preset-btn:hover {
-    border-color: var(--color-brand-primary);
-    background: var(--color-brand-light);
-  }
+.sound-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-h4);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+}
 
-  .preset-btn.active {
-    border-color: var(--color-brand-primary);
-    background: var(--color-brand-primary);
-    color: white;
-  }
+.sound-btn:hover {
+  background: var(--surface-tertiary);
+}
 
-  /* Custom Duration */
-  .custom-duration {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
+.sound-btn.muted {
+  color: var(--color-status-error);
+}
 
-  .custom-duration label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  /* Controls */
-  .timer-controls {
-    display: flex;
-    gap: var(--space-2);
-    justify-content: center;
-  }
-
-  /* Sound Toggle */
-  .sound-toggle {
-    display: flex;
-    justify-content: center;
-  }
-
-  .sound-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    border: none;
-    background: transparent;
-    color: var(--color-text-secondary);
-    font-size: var(--font-body-sm);
-    cursor: pointer;
-    border-radius: var(--radius-md);
-    transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-  }
-
-  .sound-btn:hover {
-    background: var(--surface-tertiary);
-  }
-
-  .sound-btn.muted {
-    color: var(--color-status-error);
-  }
-
-  @media (max-width: 768px) {
-    .floating-timer {
-      bottom: 140px;
-    }
+@media (max-width: 768px) {
+  .floating-timer {
+    bottom: 140px;
   }
 }
 

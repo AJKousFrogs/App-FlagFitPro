@@ -41,7 +41,7 @@
   // ============================================
 
   .page-title {
-    font-size: var(--font-heading-2xl);
+    font-size: var(--font-size-h1);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
@@ -50,26 +50,26 @@
   }
 
   .section-title {
-    font-size: var(--font-heading-lg);
+    font-size: var(--font-size-h2);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
-    letter-spacing: var(--letter-spacing-tight);
+    letter-spacing: var(--letter-spacing-normal);
     margin: 0;
   }
 
   .subsection-title {
-    font-size: var(--font-heading-md);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-tight);
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-base);
     color: var(--color-text-primary);
     margin: 0;
   }
 
   .group-title {
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-tight);
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-light);
+    line-height: var(--line-height-base);
     color: var(--color-text-primary);
     margin: 0;
   }
@@ -102,9 +102,9 @@
   // ============================================
 
   .caption {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-normal);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-base);
     color: var(--color-text-muted);
   }
 

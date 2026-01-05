@@ -184,7 +184,7 @@ export class PrivacySettingsService {
 
     try {
       // Load privacy settings (create default if doesn't exist)
-      let { data: settings, error } = await this.supabase.client
+      const { data: settings, error } = await this.supabase.client
         .from("privacy_settings")
         .select("*")
         .eq("user_id", userId)

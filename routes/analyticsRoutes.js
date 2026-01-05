@@ -190,7 +190,7 @@ router.get("/performance-trends", async (req, res) => {
  */
 router.get("/team-chemistry", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -323,7 +323,7 @@ router.get("/team-chemistry", async (req, res) => {
  */
 router.get("/training-distribution", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -445,7 +445,7 @@ router.get("/training-distribution", async (req, res) => {
  */
 router.get("/position-performance", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -455,6 +455,9 @@ router.get("/position-performance", async (req, res) => {
     }
 
     let positionData = [];
+    const positions = [];
+    const currentScores = [];
+    const targetScoresData = [];
 
     if (supabase) {
       const startDate = new Date();
@@ -547,7 +550,7 @@ router.get("/position-performance", async (req, res) => {
  */
 router.get("/injury-risk", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }
@@ -938,7 +941,7 @@ router.get("/user-engagement", async (req, res) => {
  */
 router.get("/summary", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const {userId} = req.query;
     if (!userId) {
       return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
     }

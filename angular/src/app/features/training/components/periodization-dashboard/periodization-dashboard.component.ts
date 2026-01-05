@@ -15,7 +15,7 @@
  * @version 1.0.0
  */
 
-import { Component, OnInit, inject, signal, computed } from "@angular/core";
+import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
@@ -25,7 +25,6 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { AccordionModule } from "primeng/accordion";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { DividerModule } from "primeng/divider";
 import { Chip } from "primeng/chip";
 import { TimelineModule } from "primeng/timeline";
@@ -41,17 +40,14 @@ import {
 import {
   SprintTrainingKnowledgeService,
   SprintPhaseGuidelines,
-  SprintProtocol,
 } from "../../../../core/services/sprint-training-knowledge.service";
 import {
   PhaseLoadCalculatorService,
   LoadRecommendation,
   ACWRCalculation,
-  WeeklyLoadTarget,
 } from "../../../../core/services/phase-load-calculator.service";
 import {
   FlagFootballAthleteProfileService,
-  FlagFootballPosition,
 } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
 
@@ -82,8 +78,6 @@ interface TimelineEvent {
     Chip,
     TimelineModule,
     BadgeModule,
-  
-    ButtonComponent,
   ],
   template: `
     <div class="periodization-dashboard">

@@ -491,8 +491,8 @@ export class TeamNotificationService {
           message: m.message,
           channel_name: channelMap.get(m.channel_id) || "announcements",
           author_name:
-            (m.author as any)?.raw_user_meta_data?.full_name ||
-            (m.author as any)?.email ||
+            (m.author as { raw_user_meta_data?: { full_name?: string }; email?: string } | null)?.raw_user_meta_data?.full_name ||
+            (m.author as { email?: string } | null)?.email ||
             "Coach",
           created_at: m.created_at,
           is_important: m.is_important,
@@ -627,7 +627,7 @@ export class TeamNotificationService {
   async notifyTrainingCompleted(
     sessionType: string,
     duration: number,
-    rpe?: number,
+    _rpe?: number,
   ): Promise<void> {
     // Database trigger handles coach notifications
     // This shows local confirmation

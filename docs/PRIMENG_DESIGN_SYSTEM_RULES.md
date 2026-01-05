@@ -5,6 +5,32 @@
 
 ---
 
+## ⚠️ Typography Override Notice
+
+**Effective January 4, 2026:** PrimeNG component typography is controlled by the **Unified Typography System**.
+
+See **[DESIGN_SYSTEM_RULES.md § 4.4](./DESIGN_SYSTEM_RULES.md#44-typography-scale-locked--unified-system)** for the single source of truth.
+
+### PrimeNG Typography Mapping (Quick Reference)
+| Component | Typography Token | Specification |
+|-----------|-----------------|---------------|
+| `p-dialog .p-dialog-title` | H2 | 24px/600/1.25 |
+| `p-card .p-card-title` | H3 | 20px/600/1.3 |
+| `p-card .p-card-subtitle` | Body-sm | 14px/400/1.45 |
+| `p-tabview .p-tabview-nav-link` | Body-sm | 14px/600/1.45 |
+| `p-tabs .p-tab` | Body-sm | 14px/600/1.45 |
+| `p-datatable thead th` | Label | 14px/600/1.2 + uppercase |
+| `p-datatable tbody td` | Body | 16px/400/1.5 |
+| `p-panel .p-panel-header` | H3 | 20px/600/1.3 |
+| `p-accordion header` | H3 | 20px/600/1.3 |
+
+**Implementation files:**
+- `angular/src/assets/styles/design-system-tokens.scss` — Token definitions
+- `angular/src/assets/styles/typography-system.scss` — Implementation
+- `angular/src/assets/styles/primeng-integration.scss` — PrimeNG CSS variable mapping
+
+---
+
 ## Table of Contents
 
 1. [Architecture Overview](#architecture-overview)

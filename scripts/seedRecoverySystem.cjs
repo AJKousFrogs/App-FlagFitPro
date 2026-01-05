@@ -62,7 +62,7 @@ class RecoverySystemSeeder {
   async seedRecoveryEquipment() {
     console.log("🛠️ Seeding Recovery Equipment...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const equipment = [
       {
@@ -108,7 +108,7 @@ class RecoverySystemSeeder {
   async seedRecoverySessions() {
     console.log("🏃 Seeding Recovery Sessions...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const sessions = [
       {
@@ -151,7 +151,7 @@ class RecoverySystemSeeder {
   async seedRecoveryRecommendations() {
     console.log("💡 Seeding Recovery Recommendations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const recommendations = [
       {
@@ -194,7 +194,7 @@ class RecoverySystemSeeder {
   async seedRecoveryAnalytics() {
     console.log("📊 Seeding Recovery Analytics...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const analytics = [
       {
@@ -233,7 +233,7 @@ class RecoverySystemSeeder {
   async seedAthleteRecoveryProfiles() {
     console.log("👤 Seeding Athlete Recovery Profiles...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const profile = {
       user_id: usersRes.rows[0].id,

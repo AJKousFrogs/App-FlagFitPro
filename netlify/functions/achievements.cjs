@@ -165,7 +165,7 @@ async function getAchievements(supabase, userId, headers) {
 }
 
 function calculateProgress(criteria, streakMap, stats) {
-  const type = criteria.type;
+  const {type} = criteria;
 
   switch (type) {
     case "streak": {
@@ -370,7 +370,7 @@ async function checkAchievements(supabase, userId, headers) {
   const newlyEarned = [];
 
   for (const def of definitions || []) {
-    if (earnedSet.has(def.id)) continue;
+    if (earnedSet.has(def.id)) {continue;}
 
     const shouldAward = checkCriteria(def.criteria, streakMap, stats);
 
@@ -401,7 +401,7 @@ async function checkAchievements(supabase, userId, headers) {
 }
 
 function checkCriteria(criteria, streakMap, stats) {
-  const type = criteria.type;
+  const {type} = criteria;
 
   switch (type) {
     case "streak": {

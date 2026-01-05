@@ -1,165 +1,318 @@
 /* ================================================================
-   FLAGFIT PRO - TYPOGRAPHY SYSTEM
-   Consistent typography across all components
+   FLAGFIT PRO - UNIFIED TYPOGRAPHY SYSTEM
+   SINGLE SOURCE OF TRUTH for all typography
    ================================================================
    
-   USAGE:
-   - H1: Page titles, hero sections (2rem/32px)
-   - H2: Section headings, card titles (1.5rem/24px)
-   - H3: Subsection headings, dialog titles (1.25rem/20px)
-   - H4: Card subtitles, group headers (1.125rem/18px)
-   - Body: Regular text (1rem/16px)
-   - Small: Secondary text, labels (0.875rem/14px)
-   - XS: Captions, timestamps (0.75rem/12px)
+   TYPOGRAPHY CONTRACT (STRICTLY ENFORCED):
+   ────────────────────────────────────────
+   H1: Page titles/greetings - Bold (700), 32px, line-height 1.2
+   H2: Section headers - Semibold (600), 24px, line-height 1.25
+   H3: Card titles/subsections - Regular (400), 20px, line-height 1.3
+   H4: Small headings - Light (300), 16px, line-height 1.35
+   Body: Regular text - Regular (400), 16px, line-height 1.5
+   Body-sm: Small body/helper - Regular (400), 14px, line-height 1.45
+   Label: Form labels/table headers - Semibold (600), 14px, line-height 1.2
+   Caption: Smallest text - Regular (400), 12px, line-height 1.3
+   
+   PRIMENG COMPONENT MAPPING:
+   - p-card header title → H3 (20px/600 for card headers)
+   - p-dialog header title → H2 (24px/600)
+   - Tab labels → Body-sm (14px/600)
+   - Table headers → Label (14px/600)
+   - Form labels → Label (14px/600)
+   - Helper/description text → Body-sm (14px/400)
+   - Error text → Body-sm (14px/400) with error color
+   
+   MARGIN RULES:
+   - All headings have margin-block-end: 0.5em by default
+   - In cards, headings should have margin: 0 (use .no-margin or card context)
+   - Metrics have no margin by default
    ================================================================ */
 
 @use "./design-system-tokens.scss" as *;
 
 /* ================================================================
-   HEADING STYLES
+   BASE ELEMENT DEFAULTS
+   Sets consistent defaults for native heading elements
    ================================================================ */
 
-/* H1 - Page Titles */
-h1,
-.h1,
-.page-title,
-.hero-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-2xl); /* 2.5rem/40px */
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--letter-spacing-tight);
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-sans);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-4) 0;
+  margin-block-start: 0;
+  margin-block-end: 0.5em;
+}
+
+/* H1 - Page Titles / Hero Greetings */
+h1 {
+  font-size: var(--font-h1-size, 2rem); /* 32px */
+  font-weight: var(--font-h1-weight, 700); /* bold */
+  line-height: var(--font-h1-line-height, 1.2);
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
+}
+
+/* H2 - Section Headers / Dialog Titles */
+h2 {
+  font-size: var(--font-h2-size, 1.5rem); /* 24px */
+  font-weight: var(--font-h2-weight, 600); /* semibold */
+  line-height: var(--font-h2-line-height, 1.25);
+  letter-spacing: var(--letter-spacing-normal, 0);
+}
+
+/* H3 - Card Titles / Subsection Titles */
+h3 {
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: var(--font-h3-weight, 400); /* regular */
+  line-height: var(--font-h3-line-height, 1.3);
+  letter-spacing: var(--letter-spacing-normal, 0);
+}
+
+/* H4 - Small Headings / Group Labels */
+h4 {
+  font-size: var(--font-h4-size, 1rem); /* 16px */
+  font-weight: var(--font-h4-weight, 300); /* light */
+  line-height: var(--font-h4-line-height, 1.35);
+  letter-spacing: var(--letter-spacing-normal, 0);
+}
+
+/* H5/H6 - Smallest Headings (rarely used) */
+h5 {
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-base, 1.5);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide, 0.05em);
+  color: var(--color-text-secondary);
+}
+
+h6 {
+  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--font-caption-line-height, 1.3);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide, 0.05em);
+  color: var(--color-text-muted);
 }
 
 /* Responsive H1 */
 @media (max-width: 768px) {
-  h1,
-  .h1,
-  .page-title,
-  .hero-title {
-    font-size: var(--font-heading-xl); /* 1.875rem/30px */
+  h1 {
+    font-size: 1.75rem; /* 28px on mobile */
   }
 }
 
 @media (max-width: 480px) {
-  h1,
-  .h1,
+  h1 {
+    font-size: 1.5rem; /* 24px on small mobile */
+  }
+}
+
+/* ================================================================
+   TYPOGRAPHY ROLE CLASSES (.ff-*)
+   Use these classes for semantic typography roles
+   ================================================================ */
+
+/* H1 Role - Page Titles / Hero Greetings */
+.ff-h1,
+.page-title,
+.hero-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h1-size, 2rem); /* 32px */
+  font-weight: var(--font-h1-weight, 700); /* bold */
+  line-height: var(--font-h1-line-height, 1.2);
+  letter-spacing: var(--letter-spacing-tight, -0.02em);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .ff-h1,
   .page-title,
   .hero-title {
-    font-size: var(--font-heading-lg); /* 1.5rem/24px */
+    font-size: 1.75rem; /* 28px */
   }
 }
 
-/* H2 - Section Headings */
-h2,
-.h2,
+@media (max-width: 480px) {
+  .ff-h1,
+  .page-title,
+  .hero-title {
+    font-size: 1.5rem; /* 24px */
+  }
+}
+
+/* H2 Role - Section Headers / Dialog Titles */
+.ff-h2,
 .section-title,
-.card-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-lg); /* 1.5rem/24px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-3) 0;
-}
-
-@media (max-width: 768px) {
-  h2,
-  .h2,
-  .section-title,
-  .card-title {
-    font-size: var(--font-heading-md); /* 1.25rem/20px */
-  }
-}
-
-/* H3 - Subsection Headings */
-h3,
-.h3,
-.subsection-title,
 .dialog-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-md); /* 1.25rem/20px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h2-size, 1.5rem); /* 24px */
+  font-weight: var(--font-h2-weight, 600); /* semibold */
+  line-height: var(--font-h2-line-height, 1.25);
+  letter-spacing: var(--letter-spacing-normal, 0);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: 0 0 var(--space-3, 0.75rem) 0; /* 12px margin-bottom */
 }
 
 @media (max-width: 768px) {
-  h3,
-  .h3,
-  .subsection-title,
+  .ff-h2,
+  .section-title,
   .dialog-title {
-    font-size: var(--font-heading-sm); /* 1.125rem/18px */
+    font-size: 1.25rem; /* 20px */
   }
 }
 
-/* H4 - Card Subtitles, Group Headers */
-h4,
-.h4,
-.group-title,
-.label-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-sm); /* 1.125rem/18px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
+/* H3 Role - Card Titles / Subsection Titles */
+.ff-h3,
+.card-title,
+.subsection-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: 600; /* semibold for card headers specifically */
+  line-height: var(--font-h3-line-height, 1.3);
+  letter-spacing: var(--letter-spacing-normal, 0);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  h4,
-  .h4,
-  .group-title,
-  .label-title {
-    font-size: var(--font-heading-xs); /* 1rem/16px */
-  }
-}
-
-/* H5/H6 - Small Headings */
-h5,
-.h5 {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-xs); /* 1rem/16px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
+/* H4 Role - Small Headings / Group Labels */
+.ff-h4,
+.label-title,
+.group-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h4-size, 1rem); /* 16px */
+  font-weight: var(--font-h4-weight, 300); /* light */
+  line-height: var(--font-h4-line-height, 1.35);
+  letter-spacing: var(--letter-spacing-normal, 0);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-1) 0;
+  margin: 0;
 }
 
-h6,
-.h6 {
-  font-family: var(--font-family-display);
-  font-size: var(--font-body-sm); /* 0.875rem/14px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
+/* Body Role - Regular Text */
+.ff-body,
+.body-text,
+.text-base {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-weight: var(--font-body-weight, 400); /* regular */
+  line-height: var(--font-body-line-height, 1.5);
+  color: var(--color-text-primary);
+}
+
+/* Body-sm Role - Small Body / Helper Text */
+.ff-body-sm,
+.body-sm,
+.description,
+.helper-text {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-body-sm-weight, 400); /* regular */
+  line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-1) 0;
+}
+
+/* Label Role - Form Labels / Table Headers */
+.ff-label,
+.form-label,
+.table-header {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-weight: var(--font-label-weight, 600); /* semibold */
+  line-height: var(--font-label-line-height, 1.2);
+  color: var(--color-text-primary);
+}
+
+/* Caption Role - Smallest Text / Timestamps */
+.ff-caption,
+.caption,
+.hint,
+.meta,
+.timestamp {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-weight: var(--font-caption-weight, 400); /* regular */
+  line-height: var(--font-caption-line-height, 1.3);
+  color: var(--color-text-muted);
+}
+
+/* Badge Role - Small Labels / Tags */
+.ff-badge {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-tight, 1.2);
+  letter-spacing: var(--letter-spacing-normal, 0);
+}
+
+/* ================================================================
+   METRIC / KPI TYPOGRAPHY
+   For displaying numeric values (NOT headings)
+   ================================================================ */
+
+/* Large Metric - Primary KPI Values */
+.ff-metric-lg,
+.metric-xl,
+.stat-value-xl {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-metric-lg, 2rem); /* 32px */
+  font-weight: var(--font-weight-bold, 700);
+  line-height: var(--line-height-tight, 1.2);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Medium Metric - Secondary KPI Values */
+.ff-metric-md,
+.metric-lg,
+.stat-value {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-metric-md, 1.5rem); /* 24px */
+  font-weight: var(--font-weight-bold, 700);
+  line-height: var(--line-height-tight, 1.2);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Small Metric - Compact KPI Values */
+.ff-metric-sm,
+.metric-md,
+.stat-value-sm {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: var(--line-height-tight, 1.2);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Metric Labels - Uppercase captions for KPI values */
+.ff-metric-label,
+.stat-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-regular, 400);
+  line-height: var(--line-height-base, 1.5);
+  color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  letter-spacing: var(--letter-spacing-wide, 0.05em);
+  margin: 0;
 }
 
 /* ================================================================
    BODY TEXT STYLES
    ================================================================ */
 
-/* Body - Regular text */
 body,
-p,
-.body-text,
-.text-base {
+p {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-md); /* 1rem/16px */
-  font-weight: var(--font-weight-normal);
-  line-height: var(--line-height-normal);
+  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-weight: var(--font-body-weight, 400);
+  line-height: var(--font-body-line-height, 1.5);
   color: var(--color-text-primary);
 }
 
 p {
-  margin: 0 0 var(--space-4) 0;
+  margin: 0 0 var(--space-4, 1rem) 0;
 
   &:last-child {
     margin-bottom: 0;
@@ -170,26 +323,23 @@ p {
 .text-lg,
 .body-lg,
 .lead {
-  font-size: var(--font-body-lg); /* 1.125rem/18px */
-  line-height: var(--line-height-relaxed);
+  font-size: var(--font-body-lg, 1.125rem); /* 18px */
+  line-height: var(--line-height-relaxed, 1.625);
 }
 
 /* Small Body Text */
 .text-sm,
 .body-sm,
 .description {
-  font-size: var(--font-body-sm); /* 0.875rem/14px */
-  line-height: var(--line-height-normal);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
 }
 
 /* Extra Small Text */
-.text-xs,
-.caption,
-.timestamp,
-.meta {
-  font-size: var(--font-body-xs); /* 0.75rem/12px */
-  line-height: var(--line-height-normal);
+.text-xs {
+  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  line-height: var(--font-caption-line-height, 1.3);
   color: var(--color-text-muted);
 }
 
@@ -199,130 +349,153 @@ p {
 
 /* Labels */
 label,
-.label,
-.form-label {
+.label {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm); /* 0.875rem/14px */
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-normal);
+  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-weight: var(--font-label-weight, 600); /* semibold */
+  line-height: var(--font-label-line-height, 1.2);
   color: var(--color-text-primary);
   display: block;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-2, 0.5rem);
 }
 
-/* Helper Text */
-.helper-text,
-.hint {
-  font-size: var(--font-body-xs); /* 0.75rem/12px */
-  color: var(--color-text-muted);
-  margin-top: var(--space-1);
-}
-
-/* Error Text */
+/* Error Text - uses body-sm with error color */
 .error-text,
 .p-error {
-  font-size: var(--font-body-xs); /* 0.75rem/12px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-body-sm-weight, 400);
+  line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-status-error);
-  margin-top: var(--space-1);
+  margin-top: var(--space-1, 0.25rem);
 }
 
 /* Success Text */
 .success-text {
-  font-size: var(--font-body-xs);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-body-sm-weight, 400);
   color: var(--color-status-success);
-  margin-top: var(--space-1);
-}
-
-/* ================================================================
-   STAT/METRIC TYPOGRAPHY
-   ================================================================ */
-
-/* Large Stats */
-.stat-value-xl,
-.metric-xl {
-  font-family: var(--font-family-display);
-  font-size: 3rem; /* 48px */
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  color: var(--color-text-primary);
-}
-
-/* Medium Stats */
-.stat-value,
-.metric-lg {
-  font-family: var(--font-family-display);
-  font-size: 2rem; /* 32px */
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  color: var(--color-text-primary);
-}
-
-/* Small Stats */
-.stat-value-sm,
-.metric-md {
-  font-family: var(--font-family-display);
-  font-size: 1.5rem; /* 24px */
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
-  color: var(--color-text-primary);
-}
-
-/* Stat Labels */
-.stat-label {
-  font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm); /* 0.875rem/14px */
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  margin-top: var(--space-1, 0.25rem);
 }
 
 /* ================================================================
    PRIMENG COMPONENT TYPOGRAPHY OVERRIDES
+   Single source of truth for PrimeNG typography
    ================================================================ */
 
-/* Dialog Header */
+/* Dialog Header - H2 (24px/600) */
 .p-dialog .p-dialog-header {
   .p-dialog-title {
-    font-family: var(--font-family-display);
-    font-size: var(--font-heading-md); /* 1.25rem/20px */
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-tight);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-h2-size, 1.5rem); /* 24px */
+    font-weight: var(--font-h2-weight, 600); /* semibold */
+    line-height: var(--font-h2-line-height, 1.25);
     color: var(--color-text-primary);
   }
 }
 
-/* Card Header */
+/* Card Header - H3 (20px/600 for section title style) */
 .p-card .p-card-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-heading-md); /* 1.25rem/20px */
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: 600; /* semibold for card headers */
+  line-height: var(--font-h3-line-height, 1.3);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+  margin: 0;
 }
 
 .p-card .p-card-subtitle {
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-body-sm-weight, 400);
+  line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
+  margin-top: var(--space-1, 0.25rem);
 }
 
-/* Tab Headers */
-.p-tabview .p-tabview-nav-link {
+/* Reset heading margins inside cards */
+.p-card h1,
+.p-card h2,
+.p-card h3,
+.p-card h4,
+.p-card h5,
+.p-card h6 {
+  margin-block-end: 0;
+}
+
+/* Tab Headers - Body-sm (14px/600) */
+.p-tabview .p-tabview-nav-link,
+.p-tabs .p-tab {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-md);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: 600; /* semibold for tab labels */
+  line-height: var(--font-body-sm-line-height, 1.45);
 }
 
-/* Table Headers */
+/* Table Headers - Label (14px/600) */
 .p-datatable .p-datatable-thead > tr > th {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-weight: var(--font-label-weight, 600); /* semibold */
+  line-height: var(--font-label-line-height, 1.2);
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  letter-spacing: var(--letter-spacing-wide, 0.05em);
   color: var(--color-text-secondary);
+}
+
+/* Table Body Cells - Body (16px/400) */
+.p-datatable .p-datatable-tbody > tr > td {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-weight: var(--font-body-weight, 400);
+  line-height: var(--font-body-line-height, 1.5);
+  color: var(--color-text-primary);
+}
+
+/* Panel Headers - H3 (20px/600) */
+.p-panel .p-panel-header,
+.p-fieldset .p-fieldset-legend {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: 600; /* semibold for panel headers */
+  line-height: var(--font-h3-line-height, 1.3);
+  color: var(--color-text-primary);
+}
+
+/* Accordion Headers - H3 (20px/600) */
+.p-accordion .p-accordion-header-link {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: 600; /* semibold */
+  line-height: var(--font-h3-line-height, 1.3);
+}
+
+/* Menu Items - Body (16px/400) */
+.p-menu .p-menuitem-text,
+.p-tieredmenu .p-menuitem-text,
+.p-contextmenu .p-menuitem-text {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-weight: var(--font-body-weight, 400);
+  line-height: var(--font-body-line-height, 1.5);
+}
+
+/* Empty State Titles - H3 (20px/400) */
+.empty-state-title,
+.no-data-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-weight: var(--font-h3-weight, 400); /* regular */
+  line-height: var(--font-h3-line-height, 1.3);
+  color: var(--color-text-primary);
+}
+
+/* Empty State Description - Body-sm (14px/400) */
+.empty-state-description,
+.no-data-description {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-weight: var(--font-body-sm-weight, 400);
+  line-height: var(--font-body-sm-line-height, 1.45);
+  color: var(--color-text-muted);
 }
 
 /* ================================================================
@@ -333,7 +506,7 @@ a,
 .link {
   color: var(--color-brand-primary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast, 150ms ease);
 
   &:hover {
     color: var(--color-brand-primary-hover);
@@ -343,7 +516,7 @@ a,
   &:focus-visible {
     outline: 2px solid var(--color-brand-primary);
     outline-offset: 2px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-sm, 2px);
   }
 }
 
@@ -361,17 +534,21 @@ a,
    ================================================================ */
 
 /* Weight */
+.font-light {
+  font-weight: var(--font-weight-light, 300);
+}
+.font-regular,
 .font-normal {
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-regular, 400);
 }
 .font-medium {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-medium, 500);
 }
 .font-semibold {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-semibold, 600);
 }
 .font-bold {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold, 700);
 }
 
 /* Alignment */
@@ -395,6 +572,9 @@ a,
 .capitalize {
   text-transform: capitalize;
 }
+.normal-case {
+  text-transform: none;
+}
 
 /* Truncation */
 .truncate {
@@ -417,6 +597,34 @@ a,
   overflow: hidden;
 }
 
+/* No Margin Utility */
+.no-margin {
+  margin: 0 !important;
+}
+
+/* Text Colors */
+.text-primary {
+  color: var(--color-text-primary);
+}
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-brand {
+  color: var(--color-brand-primary);
+}
+.text-success {
+  color: var(--color-status-success);
+}
+.text-warning {
+  color: var(--color-status-warning);
+}
+.text-error {
+  color: var(--color-status-error);
+}
+
 /* ================================================================
-   END OF TYPOGRAPHY SYSTEM
+   END OF UNIFIED TYPOGRAPHY SYSTEM
    ================================================================ */

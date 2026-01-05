@@ -13,8 +13,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { PreloadingStrategy, Route, Router } from "@angular/router";
-import { Observable, of, fromEvent } from "rxjs";
-import { filter, debounceTime, take } from "rxjs/operators";
+import { Observable, of } from "rxjs";
 import { DOCUMENT } from "@angular/common";
 
 @Injectable({
@@ -33,7 +32,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
     }
   }
 
-  preload(route: Route, load: () => Observable<any>): Observable<any> {
+  preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
     const routePath = route.path || "";
 
     // Don't preload if already preloaded
@@ -144,7 +143,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
 
     // Check for data saver mode
     if ("connection" in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
       if (connection?.saveData) {
         return true;
       }

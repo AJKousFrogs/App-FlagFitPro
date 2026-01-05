@@ -104,7 +104,7 @@ export class InputComponent implements ControlValueAccessor {
 
   // Value signal for ControlValueAccessor
   value = signal<string>("");
-  private onChangeFn = (value: string) => {};
+  private onChangeFn = (_value: string) => {};
   private onTouchedFn = () => {};
 
   onChange(event: Event): void {
@@ -131,7 +131,7 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Note: We can't directly set input() signals, so we'll handle this via the disabled input
     // The template will use disabled() which combines both
   }

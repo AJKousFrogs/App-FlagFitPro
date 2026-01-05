@@ -48,7 +48,7 @@ async function getScoutingReports(teamId, options = {}) {
   }
 
   const { data, error } = await query;
-  if (error && error.code !== "42P01") throw error; // Ignore table not exists
+  if (error && error.code !== "42P01") {throw error;} // Ignore table not exists
   return data || [];
 }
 
@@ -65,7 +65,7 @@ async function getScoutingReport(reportId) {
     .eq("id", reportId)
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -96,7 +96,7 @@ async function createScoutingReport(teamId, userId, reportData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -114,7 +114,7 @@ async function updateScoutingReport(reportId, updates) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -127,7 +127,7 @@ async function deleteScoutingReport(reportId) {
     .delete()
     .eq("id", reportId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 }
 
@@ -180,7 +180,7 @@ async function getOpponents(teamId) {
   for (const game of games || []) {
     const isHome = game.home_team_id === teamId;
     const opponent = isHome ? game.away_team : game.home_team;
-    if (!opponent) continue;
+    if (!opponent) {continue;}
 
     const opponentName = opponent.name;
     const entry = opponentMap.get(opponentName) || {
@@ -198,8 +198,8 @@ async function getOpponents(teamId) {
     const ourScore = isHome ? game.home_score : game.away_score;
     const theirScore = isHome ? game.away_score : game.home_score;
 
-    if (ourScore > theirScore) entry.wins++;
-    else if (theirScore > ourScore) entry.losses++;
+    if (ourScore > theirScore) {entry.wins++;}
+    else if (theirScore > ourScore) {entry.losses++;}
 
     if (!entry.lastPlayed || game.game_date > entry.lastPlayed) {
       entry.lastPlayed = game.game_date;
@@ -236,7 +236,7 @@ async function addOpponent(teamId, opponentData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -288,11 +288,11 @@ async function analyzeTendencies(teamId, opponentName) {
 
     // Notes
     if (report.offensive_notes) {
-      aggregated.offensive.notes = aggregated.offensive.notes || [];
+      aggregated.offensive.notes ||= [];
       aggregated.offensive.notes.push(report.offensive_notes);
     }
     if (report.defensive_notes) {
-      aggregated.defensive.notes = aggregated.defensive.notes || [];
+      aggregated.defensive.notes ||= [];
       aggregated.defensive.notes.push(report.defensive_notes);
     }
   }
@@ -319,7 +319,7 @@ async function shareReportToChat(reportId, teamId, userId) {
     created_at: new Date().toISOString(),
   });
 
-  if (error && error.code !== "42P01") throw error;
+  if (error && error.code !== "42P01") {throw error;}
 
   // Update report as shared
   await updateScoutingReport(reportId, { status: "shared" });

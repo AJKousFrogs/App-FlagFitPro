@@ -9,12 +9,8 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { of, firstValueFrom } from "rxjs";
-import {
-  WellnessService,
-  WellnessData,
-  WellnessAverages,
-} from "./wellness.service";
+import { firstValueFrom } from "rxjs";
+import { WellnessService, WellnessData } from "./wellness.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";

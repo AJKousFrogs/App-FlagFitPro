@@ -29,8 +29,6 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 
@@ -1409,7 +1407,7 @@ export class FlagFootballPeriodizationService {
   /**
    * Generate sport-specific session
    */
-  private generateSportSpecificSession(phase: PhaseConfig): ExerciseTemplate[] {
+  private generateSportSpecificSession(_phase: PhaseConfig): ExerciseTemplate[] {
     return [
       {
         name: "Reactive Agility Drill",

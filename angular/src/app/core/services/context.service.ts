@@ -1,4 +1,4 @@
-import { Injectable, computed, signal, inject } from "@angular/core";
+import { Injectable,  inject } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { filter, map } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -461,7 +461,7 @@ export class ContextService {
    */
   enhanceWithContext(items: BreadcrumbItem[]): BreadcrumbItem[] {
     // Add badges or context information
-    return items.map((item, index) => {
+    return items.map((item, _index) => {
       const enhanced = { ...item };
 
       // Add badge for current page

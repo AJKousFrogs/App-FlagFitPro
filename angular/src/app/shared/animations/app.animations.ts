@@ -23,12 +23,8 @@ import {
   query,
   stagger,
   group,
-  animateChild,
-  AnimationMetadata,
-  AnimationTriggerMetadata,
   state,
   keyframes,
-  sequence,
 } from "@angular/animations";
 
 /**
@@ -74,15 +70,15 @@ export const ANIMATION_EASING = {
  * Common Animation Styles
  */
 const fadeInStyle = style({ opacity: 0 });
-const fadeOutStyle = style({ opacity: 1 });
+const _fadeOutStyle = style({ opacity: 1 });
 const slideUpStyle = style({ transform: "translateY(20px)", opacity: 0 });
 const slideDownStyle = style({ transform: "translateY(-20px)", opacity: 0 });
 const slideLeftStyle = style({ transform: "translateX(-20px)", opacity: 0 });
 const slideRightStyle = style({ transform: "translateX(20px)", opacity: 0 });
 const scaleInStyle = style({ transform: "scale(0.95)", opacity: 0 });
-const scaleOutStyle = style({ transform: "scale(1)", opacity: 1 });
-const scaleUpStyle = style({ transform: "scale(0.9)", opacity: 0 });
-const scaleDownStyle = style({ transform: "scale(1.1)", opacity: 0 });
+const _scaleOutStyle = style({ transform: "scale(1)", opacity: 1 });
+const _scaleUpStyle = style({ transform: "scale(0.9)", opacity: 0 });
+const _scaleDownStyle = style({ transform: "scale(1.1)", opacity: 0 });
 
 /**
  * Fade In/Out Animation

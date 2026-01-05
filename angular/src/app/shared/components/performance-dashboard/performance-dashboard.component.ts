@@ -16,9 +16,9 @@ import { ChartModule } from "primeng/chart";
 import { TagModule } from "primeng/tag";
 import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
-import { interval, takeUntil, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { ApiService } from "../../../core/services/api.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../../../core/services/logger.service";
 

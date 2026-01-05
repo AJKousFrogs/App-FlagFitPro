@@ -1,0 +1,605 @@
+// ============================================================================
+// Training Component Styles
+// Design System Compliant - Migrated to app-card-shell
+// @see docs/CARD_SHELL_CONTRACT.md
+// ============================================================================
+
+@layer features {
+  .training-page {
+    padding: var(--space-4);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  // ============================================================================
+  // PROTOCOL BANNER - Now inside app-card-shell
+  // ============================================================================
+
+  .protocol-banner-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: linear-gradient(135deg, var(--green-100) 0%, var(--green-50) 100%);
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    margin: calc(-1 * var(--space-4));
+    margin-bottom: 0;
+  }
+
+  .banner-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .banner-content {
+    flex: 1;
+  }
+
+  .banner-content h3 {
+    margin: 0;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
+    color: var(--green-700);
+  }
+
+  .banner-content p {
+    margin: 0.125rem 0 0;
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+  }
+
+  .banner-stats {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .streak-badge {
+    padding: 0.25rem 0.5rem;
+    background: var(--orange-100);
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // ============================================================================
+  // PAGE HEADER
+  // ============================================================================
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .position-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .position-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .position-label {
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .page-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+  }
+
+  .readiness-badge-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    min-width: 60px;
+  }
+
+  .readiness-badge-compact.excellent {
+    background: var(--green-100);
+  }
+
+  .readiness-badge-compact.good {
+    background: var(--blue-100);
+  }
+
+  .readiness-badge-compact.caution {
+    background: var(--yellow-100);
+  }
+
+  .readiness-badge-compact.rest {
+    background: var(--red-100);
+  }
+
+  .readiness-value {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .readiness-label {
+    font-size: var(--font-body-2xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+  }
+
+  // ============================================================================
+  // WELLNESS ALERT BANNER
+  // ============================================================================
+
+  .wellness-alert-banner.compact {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .wellness-alert-banner.compact .alert-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .wellness-alert-banner.compact .alert-content {
+    flex: 1;
+    font-size: var(--font-size-h4);
+  }
+
+  .wellness-alert-banner.alert-critical {
+    background: var(--red-100);
+    border: 1px solid var(--red-300);
+  }
+
+  .wellness-alert-banner.alert-warning {
+    background: var(--yellow-100);
+    border: 1px solid var(--yellow-300);
+  }
+
+  .alert-dismiss {
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    padding: 0.25rem;
+  }
+
+  .alert-dismiss:hover {
+    opacity: 1;
+  }
+
+  // ============================================================================
+  // QUICK ACTIONS - Now using app-card-shell
+  // ============================================================================
+
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .action-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    position: relative;
+    text-align: center;
+  }
+
+  .action-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .action-label {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+
+  .action-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--primary-500);
+    color: white;
+    font-size: var(--font-body-2xs);
+    font-weight: var(--font-weight-semibold);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-xl);
+    min-width: 1rem;
+    text-align: center;
+  }
+
+  // ============================================================================
+  // PRIORITY WORKOUTS - Now using app-card-shell
+  // ============================================================================
+
+  .priority-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .priority-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .priority-card-content.high {
+    border-left: 3px solid var(--green-500);
+    padding-left: var(--space-2);
+    margin-left: calc(-1 * var(--space-3));
+  }
+
+  .priority-card-content.medium {
+    border-left: 3px solid var(--yellow-500);
+    padding-left: var(--space-2);
+    margin-left: calc(-1 * var(--space-3));
+  }
+
+  .priority-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .priority-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .priority-title {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-h4);
+  }
+
+  .priority-desc {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+  }
+
+  .priority-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--green-500);
+    color: white;
+    font-size: var(--font-body-2xs);
+    font-weight: var(--font-weight-semibold);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-xl);
+    text-transform: uppercase;
+  }
+
+  // ============================================================================
+  // TRAINING GRID - Two column layout
+  // ============================================================================
+
+  .training-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .section-header h2 {
+    margin: 0;
+    font-size: var(--font-size-body);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  // ============================================================================
+  // WEEKLY SCHEDULE
+  // ============================================================================
+
+  .weekly-schedule-compact {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .schedule-day-compact {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-ground);
+  }
+
+  .schedule-day-compact.today {
+    background: var(--primary-100);
+    border: 1px solid var(--primary-300);
+  }
+
+  .day-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .day-abbrev {
+    font-size: var(--font-body-2xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .session-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-500);
+  }
+
+  .day-session-preview {
+    font-size: var(--font-body-2xs);
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: 0.25rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .day-session-preview.empty {
+    opacity: 0.5;
+  }
+
+  // ============================================================================
+  // WORKOUTS LIST
+  // ============================================================================
+
+  .workouts-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .workout-card-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-lg);
+    border-left: 3px solid;
+    background: var(--surface-ground);
+    cursor: pointer;
+    transition: background var(--motion-base) var(--ease-standard);
+  }
+
+  .workout-card-compact:hover {
+    background: var(--surface-secondary);
+  }
+
+  .workout-icon-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-h4);
+  }
+
+  .workout-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .workout-name {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-h4);
+  }
+
+  .workout-meta-compact {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+  }
+
+  .workout-card-compact .pi-play {
+    color: var(--primary-500);
+    opacity: 0;
+    transition: opacity var(--motion-base) var(--ease-standard);
+  }
+
+  .workout-card-compact:hover .pi-play {
+    opacity: 1;
+  }
+
+  // ============================================================================
+  // ACHIEVEMENTS - Now using app-card-shell
+  // ============================================================================
+
+  .achievements-scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .achievement-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    background: var(--surface-ground);
+    border-radius: var(--radius-xl);
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  .ach-icon {
+    font-size: var(--font-size-body);
+  }
+
+  .ach-name {
+    font-size: var(--font-size-badge);
+    font-weight: var(--font-weight-medium);
+  }
+
+  // ============================================================================
+  // LA28 TEASER - Now using app-card-shell
+  // ============================================================================
+
+  .la28-teaser-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: linear-gradient(135deg, var(--primitive-blue-600) 0%, var(--primitive-blue-800) 100%);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    color: white;
+    margin: calc(-1 * var(--space-4));
+  }
+
+  .teaser-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .teaser-icon {
+    font-size: var(--font-size-h2);
+  }
+
+  .teaser-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .teaser-title {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-body);
+  }
+
+  .teaser-subtitle {
+    font-size: var(--font-size-badge);
+    opacity: 0.9;
+  }
+
+  .teaser-progress {
+    display: flex;
+    align-items: center;
+  }
+
+  .progress-ring-mini {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-badge);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .la28-teaser-content .pi-chevron-right {
+    opacity: 0.7;
+  }
+
+  // ============================================================================
+  // RESPONSIVE
+  // ============================================================================
+
+  @media (max-width: 768px) {
+    .training-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .priority-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-header {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .quick-actions {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .weekly-schedule-compact {
+      flex-wrap: wrap;
+    }
+
+    .schedule-day-compact {
+      flex: 0 0 calc(25% - 0.25rem);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .wellness-alert-banner:not(.compact) {
+      flex-direction: column;
+    }
+
+    .alert-actions {
+      flex-direction: row;
+      width: 100%;
+    }
+
+    .alert-btn {
+      flex: 1;
+    }
+  }
+
+  // ============================================================================
+  // REFRESH ANIMATION
+  // ============================================================================
+
+  .training-page.refreshing::before {
+    transform: scaleX(1);
+    animation: refresh-indicator 1s ease-in-out;
+  }
+
+  @keyframes refresh-indicator {
+    0% {
+      transform: scaleX(0);
+    }
+    50% {
+      transform: scaleX(1);
+    }
+    100% {
+      transform: scaleX(0);
+    }
+  }
+}

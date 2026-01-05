@@ -10,7 +10,7 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { Observable, from } from "rxjs";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { TrainingDataService, TrainingSession } from "./training-data.service";
 import { ApiService, API_ENDPOINTS } from "./api.service";
@@ -98,7 +98,7 @@ export class TrainingStatsCalculationService {
     startDate?: string;
     endDate?: string;
   }): Observable<TrainingStatsData> {
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
 
     if (options?.startDate) {
       params["startDate"] = options.startDate;
@@ -263,7 +263,7 @@ export class TrainingStatsCalculationService {
   ): WeeklyVolumeData {
     const today =
       referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const todayStr = today.toISOString().split("T")[0];
+    const _todayStr = today.toISOString().split("T")[0];
 
     // Get ISO week start (Monday)
     const getISOWeekStart = (date: Date): Date => {

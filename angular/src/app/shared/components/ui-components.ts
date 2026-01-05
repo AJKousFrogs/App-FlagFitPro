@@ -69,6 +69,10 @@ export { CountdownTimerComponent } from "./countdown-timer/countdown-timer.compo
 // STATUS & INDICATOR COMPONENTS
 // ============================================================================
 export {
+  StatusTagComponent,
+  type StatusTagSeverity,
+} from "./status-tag/status-tag.component";
+export {
   PulseIndicatorComponent,
   type PulseStatus,
 } from "./pulse-indicator/pulse-indicator.component";

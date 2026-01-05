@@ -1,0 +1,50 @@
+// ============================================================================
+// coach-inbox.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .coach-inbox {
+    padding: var(--space-8);
+  }
+  .inbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .inbox-item-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  }
+  .item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: 1rem;
+  }
+  .item-meta {
+    flex: 1;
+  }
+  .item-meta h3 {
+    margin: 0;
+    font-size: var(--font-body-lg);
+  }
+  .timestamp {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+  }
+  .item-body h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text-primary);
+  }
+  .item-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+}
+

@@ -87,6 +87,13 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "port": 4200,
+            "host": "0.0.0.0",
+            "open": false,
+            "liveReload": true,
+            "poll": 2000
+          },
           "configurations": {
             "production": {
               "buildTarget": "flagfit-pro:build:production"
@@ -96,6 +103,23 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "browserTarget": "flagfit-pro:build",
+            "port": 6006,
+            "compodoc": false,
+            "tsConfig": ".storybook/tsconfig.json"
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "browserTarget": "flagfit-pro:build",
+            "compodoc": false,
+            "outputDir": "storybook-static"
+          }
         },
         "serve-ssr": {
           "builder": "@angular-devkit/build-angular:ssr-dev-server",

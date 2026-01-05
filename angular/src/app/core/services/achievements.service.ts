@@ -260,8 +260,8 @@ export class AchievementsService {
     return this.unlockedAchievements()
       .filter((a) => a.unlockedAt)
       .sort((a, b) => {
-        const dateA = new Date(a.unlockedAt!).getTime();
-        const dateB = new Date(b.unlockedAt!).getTime();
+        const dateA = a.unlockedAt ? new Date(a.unlockedAt).getTime() : 0;
+        const dateB = b.unlockedAt ? new Date(b.unlockedAt).getTime() : 0;
         return dateB - dateA;
       })
       .slice(0, limit);

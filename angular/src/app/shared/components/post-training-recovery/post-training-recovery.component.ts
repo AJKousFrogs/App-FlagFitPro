@@ -465,7 +465,7 @@ export class PostTrainingRecoveryComponent implements OnInit {
         session_date: new Date().toISOString().split('T')[0],
         notes:
           sessionData.soreness.length > 0
-            ? `Soreness: ${sessionData.soreness.map((s: any) => s.label).join(", ")}`
+            ? `Soreness: ${sessionData.soreness.map((s: { label: string }) => s.label).join(", ")}`
             : undefined,
       });
 

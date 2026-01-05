@@ -29,7 +29,7 @@
   }
 
   .stat-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
     flex-shrink: 0;
   }
 
@@ -38,19 +38,19 @@
     flex-direction: column;
 
     .stat-value {
-      font-size: var(--font-heading-sm);
-      font-weight: 700;
+      font-size: var(--font-size-h2);
+      font-weight: var(--font-weight-bold);
       color: var(--ds-text-primary);
     }
 
     .stat-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
     }
 
     .stat-change {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
 
       &.positive {
         color: var(--ds-primary-green);
@@ -62,7 +62,7 @@
     }
 
     .stat-sub {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
 
       &.healthy {
@@ -76,18 +76,8 @@
   }
 }
 
-// Card Header
-.card-header {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
-
-  h3 {
-    margin: 0;
-    font-size: var(--font-body-lg);
-    font-weight: 600;
-    color: var(--ds-text-primary);
-  }
-}
+// Card Header - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
 
 // Quick Actions
 .quick-actions {
@@ -115,12 +105,12 @@
   }
 
   .action-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
   }
 
   .action-label {
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 }
@@ -159,7 +149,7 @@
   }
 
   .activity-icon {
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-size-h2);
     flex-shrink: 0;
   }
 
@@ -169,19 +159,19 @@
 
     strong {
       display: block;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-primary);
     }
 
     p {
       margin: var(--space-1) 0 0 0;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
   }
 
   .activity-time {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
     white-space: nowrap;
   }
@@ -216,12 +206,12 @@
 
   .service-name {
     flex: 1;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 
   .service-detail {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }

@@ -10,10 +10,33 @@
  * Pass-Through (pt) API Configuration
  * Allows component-level customization without ::ng-deep
  */
+/** PrimeNG Button Props */
+interface ButtonPTProps {
+  props: {
+    size?: "small" | "large";
+    severity?: "primary" | "secondary" | "success" | "danger" | "warning";
+    disabled?: boolean;
+  };
+}
+
+/** PrimeNG Input Props */
+interface InputPTProps {
+  props: {
+    disabled?: boolean;
+  };
+}
+
+/** PrimeNG DataTable Row Context */
+interface DataTableRowContext {
+  context: {
+    selected?: boolean;
+  };
+}
+
 export const PRIMENG_PT_CONFIG = {
   // Button pass-through
   button: {
-    root: ({ props }: any) => ({
+    root: ({ props }: ButtonPTProps) => ({
       class: [
         // Base styles
         "inline-flex items-center justify-center",
@@ -59,7 +82,7 @@ export const PRIMENG_PT_CONFIG = {
 
   // Input pass-through
   inputtext: {
-    root: ({ props }: any) => ({
+    root: ({ props }: InputPTProps) => ({
       class: [
         "w-full",
         "px-4 py-3",
@@ -105,7 +128,7 @@ export const PRIMENG_PT_CONFIG = {
     tbody: {
       class: "bg-[var(--surface-card)]",
     },
-    row: ({ context }: any) => ({
+    row: ({ context }: DataTableRowContext) => ({
       class: [
         "transition-colors duration-200",
         context.selected && "bg-[var(--ds-primary-green)]/10",

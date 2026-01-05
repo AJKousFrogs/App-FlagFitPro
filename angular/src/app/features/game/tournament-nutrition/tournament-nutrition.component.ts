@@ -721,7 +721,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
         if (data.games?.length > 0) {
           this.generateNutritionPlan();
         }
-      } catch (e) {
+      } catch (_e) {
         this.logger.warn(
           "[TournamentNutrition] Could not parse saved schedule",
         );
@@ -735,7 +735,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     if (todayLogs) {
       try {
         this.hydrationLogs.set(JSON.parse(todayLogs));
-      } catch (e) {
+      } catch (_e) {
         // Ignore
       }
     }
@@ -809,7 +809,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
     // Pre-game, halftime, and post-game windows for each game
     sortedGames.forEach((game, index) => {
-      const isLastGame = index === sortedGames.length - 1;
+      const _isLastGame = index === sortedGames.length - 1;
       const nextGame = sortedGames[index + 1];
 
       // Pre-game (45-60 min before)
@@ -1134,7 +1134,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
   private createFinalRecoveryWindow(
     game: GameSchedule,
-    gameNum: number,
+    _gameNum: number,
   ): NutritionWindow {
     const startTime = this.addMinutes(game.time, 45);
     return {

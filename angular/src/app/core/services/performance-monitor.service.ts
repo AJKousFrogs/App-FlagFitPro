@@ -105,7 +105,7 @@ export class PerformanceMonitorService {
         this.performanceObserver.observe({
           entryTypes: ["navigation", "paint"],
         });
-      } catch (e) {
+      } catch (_e) {
         // Fallback for browsers that don't support all entry types
         this.logger.debug("Some performance entry types not supported");
       }
@@ -118,7 +118,7 @@ export class PerformanceMonitorService {
           }
         });
         lcpObserver.observe({ entryTypes: ["largest-contentful-paint"] });
-      } catch (e) {
+      } catch (_e) {
         this.logger.debug("LCP observation not supported");
       }
 
@@ -129,7 +129,7 @@ export class PerformanceMonitorService {
           }
         });
         clsObserver.observe({ entryTypes: ["layout-shift"] });
-      } catch (e) {
+      } catch (_e) {
         this.logger.debug("CLS observation not supported");
       }
     } catch (error) {
@@ -152,16 +152,16 @@ export class PerformanceMonitorService {
 
   private processPerformanceEntry(entry: PerformanceEntry): void {
     if (entry.entryType === "navigation") {
-      const navEntry = entry as PerformanceNavigationTiming;
+      const _navEntry = entry as PerformanceNavigationTiming;
       // Process navigation timing
     } else if (entry.entryType === "paint") {
-      const paintEntry = entry as PerformancePaintTiming;
+      const _paintEntry = entry as PerformancePaintTiming;
       // Process paint timing
     } else if (entry.entryType === "largest-contentful-paint") {
-      const lcpEntry = entry as LargestContentfulPaintEntry;
+      const _lcpEntry = entry as LargestContentfulPaintEntry;
       // Process LCP
     } else if (entry.entryType === "layout-shift") {
-      const clsEntry = entry as LayoutShiftEntry;
+      const _clsEntry = entry as LayoutShiftEntry;
       // Process CLS
     }
   }
@@ -235,8 +235,10 @@ export class PerformanceMonitorService {
       typeof performance !== "undefined" &&
       (performance as ExtendedPerformance).memory
     ) {
-      const memory = (performance as ExtendedPerformance).memory!;
-      return Math.round(memory.usedJSHeapSize / 1048576); // Convert to MB
+      const memory = (performance as ExtendedPerformance).memory;
+      if (memory) {
+        return Math.round(memory.usedJSHeapSize / 1048576); // Convert to MB
+      }
     }
     return 0;
   }

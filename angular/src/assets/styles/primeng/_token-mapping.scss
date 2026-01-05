@@ -72,7 +72,7 @@
     // ============================================
     
     --p-card-background: var(--color-surface-primary);
-    --p-card-border-radius: var(--radius-xl);
+    --p-card-border-radius: var(--radius-lg); /* 8px - Design System standard */
     --p-card-shadow: var(--shadow-1);
     --p-card-padding: var(--space-5);
     --p-card-border: var(--border-1) solid var(--color-border-default);
@@ -112,7 +112,7 @@
     // DIALOG / DRAWER (Decision 25)
     // ============================================
     
-    --p-dialog-border-radius: var(--radius-xl);
+    --p-dialog-border-radius: var(--radius-lg); /* 8px - Design System standard */
     --p-dialog-shadow: var(--shadow-3);
     --p-dialog-background: var(--color-surface-primary);
     
@@ -254,32 +254,45 @@
 
     // ============================================
     // CHECKBOX / RADIO (Decision 42)
+    // Checkbox: 20px box, 6px radius, green check when checked
     // ============================================
     
     --p-checkbox-width: 20px;
     --p-checkbox-height: 20px;
-    --p-checkbox-border-radius: var(--radius-md);
+    --p-checkbox-border-radius: 6px;
+    --p-checkbox-border-width: 2px;
     --p-checkbox-border-color: var(--color-border-default);
+    --p-checkbox-background: var(--color-surface-primary);
+    --p-checkbox-hover-border-color: var(--ds-primary-green);
     --p-checkbox-checked-background: var(--ds-primary-green);
     --p-checkbox-checked-border-color: var(--ds-primary-green);
-    --p-checkbox-focus-ring-color: var(--color-focus-ring);
+    --p-checkbox-check-color: white;
+    --p-checkbox-disabled-opacity: 0.6;
+    --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
     --p-radio-width: 20px;
     --p-radio-height: 20px;
     --p-radio-border-color: var(--color-border-default);
     --p-radio-checked-background: var(--ds-primary-green);
     --p-radio-checked-border-color: var(--ds-primary-green);
+    --p-radio-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
 
     // ============================================
     // TOGGLESWITCH (Decision 9B)
+    // Toggle: 44px hit area, visible track + thumb
+    // Green = ON, neutral = OFF
     // ============================================
     
-    --p-toggleswitch-width: 48px;
-    --p-toggleswitch-height: 26px;
+    --p-toggleswitch-width: 44px;
+    --p-toggleswitch-height: 24px;
     --p-toggleswitch-border-radius: var(--radius-full);
     --p-toggleswitch-background: var(--color-border-default);
     --p-toggleswitch-checked-background: var(--ds-primary-green);
-    --p-toggleswitch-handle-size: 20px;
+    --p-toggleswitch-handle-size: 18px;
+    --p-toggleswitch-handle-offset: 3px;
     --p-toggleswitch-handle-background: var(--color-surface-primary);
+    --p-toggleswitch-handle-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --p-toggleswitch-disabled-opacity: 0.6;
+    --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
 
     // ============================================
     // ACCORDION

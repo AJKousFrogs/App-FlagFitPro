@@ -25,9 +25,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { Injectable, inject, signal } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 

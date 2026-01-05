@@ -951,9 +951,9 @@ export class TrainingPlanService {
   private applyProgressionRules(
     template: TrainingSessionTemplate[],
     acwr: number,
-    trainingDaysPerWeek: number,
+    _trainingDaysPerWeek: number,
   ): WeeklyTrainingPlan {
-    const totalVolume = template.reduce((sum, s) => sum + s.volume, 0);
+    const _totalVolume = template.reduce((sum, s) => sum + s.volume, 0);
 
     // Progression rules
     let volumeAdjustment = 0;

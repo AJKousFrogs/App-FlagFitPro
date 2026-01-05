@@ -3,52 +3,50 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .score-value {
-    font-size: var(--text-5xl);
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--space-2);
-  }
+.score-value {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+}
 
-  .score-label {
-    font-size: var(--font-body-sm);
-  }
+.score-label {
+  font-size: var(--font-size-h4);
+}
 
-  .suggestion-text {
-    font-size: var(--font-body-md);
-  }
+.suggestion-text {
+  font-size: var(--font-size-body);
+}
 
-  .metric-item {
-    text-align: center;
-  }
+.metric-item {
+  text-align: center;
+}
 
-  .metric-label {
-    margin-bottom: var(--space-1);
-  }
+.metric-label {
+  margin-bottom: var(--space-1);
+}
 
-  .metric-value {
-    font-size: var(--font-body-lg);
-  }
+.metric-value {
+  font-size: var(--font-body-lg);
+}
 
-  .component-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-2);
-    background: var(--surface-primary);
-    border-radius: var(--radius-sm);
-  }
+.component-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2);
+  background: var(--surface-primary);
+  border-radius: var(--radius-sm);
+}
 
-  .text-green-600 {
-    color: var(--color-status-success);
-  }
+.text-green-600 {
+  color: var(--color-status-success);
+}
 
-  .text-yellow-600 {
-    color: var(--color-status-warning);
-  }
+.text-yellow-600 {
+  color: var(--color-status-warning);
+}
 
-  .text-red-600 {
-    color: var(--color-status-error);
-  }
+.text-red-600 {
+  color: var(--color-status-error);
 }
 

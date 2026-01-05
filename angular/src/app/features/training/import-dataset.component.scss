@@ -3,10 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .tab-button {
-    @apply transition-colors;
-  }
+.tab-button {
+  @apply transition-colors;
 
   .tab-button.active {
     @apply text-brand-primary;

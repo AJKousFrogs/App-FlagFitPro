@@ -203,7 +203,7 @@ export class PlayerStatisticsService {
    * Uses the games API endpoint: GET /api/games
    * Games where player didn't track stats are marked as missed
    */
-  getPlayerAllGames(playerId: string): Observable<PlayerGameStats[]> {
+  getPlayerAllGames(_playerId: string): Observable<PlayerGameStats[]> {
     // Use the games list endpoint - games are filtered by user's team
     return this.apiService.get<unknown>(API_ENDPOINTS.games.list).pipe(
       map((response): PlayerGameStats[] => {

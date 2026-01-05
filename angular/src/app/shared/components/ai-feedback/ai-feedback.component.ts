@@ -54,9 +54,8 @@ interface FeedbackData {
     FormsModule,
     DialogModule,
     TextareaModule,
-    Radio
+    Radio,
     TooltipModule,
-  
     ButtonComponent,
   ],
   template: `

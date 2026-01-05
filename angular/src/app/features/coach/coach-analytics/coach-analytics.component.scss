@@ -3,161 +3,159 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .coach-analytics {
-    padding: var(--space-6);
-  }
+.coach-analytics {
+  padding: var(--space-6);
+}
 
-  .analytics-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-8);
-  }
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+}
 
-  .header-filters {
-    display: flex;
-    gap: var(--space-3);
-  }
+.header-filters {
+  display: flex;
+  gap: var(--space-3);
+}
 
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-8);
-  }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
 
-  .metric-card {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    background: white;
-    padding: var(--space-4);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: white;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-  .metric-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-heading-sm);
-  }
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-h2);
+}
 
-  .metric-icon.athletes {
-    background: var(--color-status-info-subtle);
-    color: var(--color-status-info);
-  }
-  .metric-icon.interactions {
-    background: var(--color-status-success-subtle);
-    color: var(--color-status-success);
-  }
-  .metric-icon.sessions {
-    background: var(--color-status-warning-subtle);
-    color: var(--color-status-warning);
-  }
-  .metric-icon.accuracy {
-    background: var(--color-accent-purple-subtle, rgba(124, 58, 237, 0.1));
-    color: var(--color-accent-purple, #7c3aed);
-  }
+.metric-icon.athletes {
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
+}
+.metric-icon.interactions {
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
+}
+.metric-icon.sessions {
+  background: var(--color-status-warning-subtle);
+  color: var(--color-status-warning);
+}
+.metric-icon.accuracy {
+  background: var(--color-accent-purple-subtle, rgba(124, 58, 237, 0.1));
+  color: var(--color-accent-purple, #7c3aed);
+}
 
-  .metric-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+.metric-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-  .metric-value {
-    font-size: var(--font-heading-md);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
+.metric-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
 
-  .metric-label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
+.metric-label {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
 
-  .metric-sub {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
+.metric-sub {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
 
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-6);
+}
+
+.charts-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.analytics-card {
+  height: 100%;
+}
+
+.classification-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.stat-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.stat-item {
+  background: var(--surface-secondary);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.risk-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.distribution-item {
+  margin-bottom: var(--space-2);
+}
+
+.dist-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-h4);
+  margin-bottom: 4px;
+}
+
+.chart-container {
+  height: 250px;
+  position: relative;
+}
+
+@media (max-width: 1024px) {
   .analytics-grid {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: var(--space-6);
+    grid-template-columns: 1fr;
   }
-
-  .charts-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
   .side-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .analytics-card {
-    height: 100%;
-  }
-
-  .classification-stats {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .stat-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-  }
-
-  .stat-item {
-    background: var(--surface-secondary);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .risk-distribution {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .distribution-item {
-    margin-bottom: var(--space-2);
-  }
-
-  .dist-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--font-body-sm);
-    margin-bottom: 4px;
-  }
-
-  .chart-container {
-    height: 250px;
-    position: relative;
-  }
-
-  @media (max-width: 1024px) {
-    .analytics-grid {
-      grid-template-columns: 1fr;
-    }
-    .side-column {
-      order: -1;
-    }
+    order: -1;
   }
 }
 

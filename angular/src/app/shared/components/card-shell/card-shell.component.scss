@@ -1,0 +1,517 @@
+/**
+ * Card Shell Component Styles
+ * Design System Compliant - Card Container Baseline v1.0
+ * Refactored January 4, 2026 - Removed ::ng-deep (deprecated)
+ *
+ * CANONICAL REFERENCE: Player Dashboard cards (progress-card)
+ * - Header: inline icon + title, NO background, NO separator
+ * - Icon: raw icon (no container), --font-body-md, --color-brand-primary, opacity 0.85
+ * - Title: --font-size-h2 (18px), semibold, line-height-tight
+ *
+ * @see docs/CARD_SHELL_CONTRACT.md
+ *
+ * Token Usage (LOCKED — extracted from Player Dashboard):
+ * - Radius: --radius-lg (8px)
+ * - Shadow (rest): --shadow-sm
+ * - Shadow (hover): --shadow-md (interactive only)
+ * - Border: --border-1 + --color-border-subtle
+ * - Header Padding: --space-3 --space-4 --space-2 (top/sides/bottom)
+ * - Body Padding: --space-4 (default), --space-3 (compact)
+ */
+
+// ============================================
+// HOST
+// ============================================
+
+:host {
+  display: block;
+}
+
+// ============================================
+// BASE CARD SHELL
+// ============================================
+
+.card-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-primary);
+
+  // ✅ LOCKED baseline (Dashboard)
+  border-radius: var(--radius-lg);
+  border: var(--border-1) solid var(--color-border-subtle);
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
+
+  // ✅ Keep transitions minimal (no hover effects on default cards)
+  transition:
+    box-shadow var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
+}
+
+// ============================================
+// DEFAULT (non-interactive) — Option A
+// No hover visuals. No transform. No border/shadow changes.
+// ============================================
+
+// (intentionally no .card-shell:hover rules)
+
+// ============================================
+// INTERACTIVE STATE — Dashboard baseline
+// Hover: translateY(-1px) + shadow-md
+// No green border on hover.
+// ============================================
+
+.card-shell--interactive {
+  cursor: pointer;
+
+  // Optional: if you want keyboard users to see it's interactive even without hover
+  // transition already inherited from .card-shell
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-shell--interactive:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.card-shell--interactive:active,
+.card-shell--interactive.card-shell--pressed {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+// Focus ring (keyboard only)
+.card-shell--interactive:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--focus-ring-shadow);
+}
+
+.card-shell--interactive:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// ============================================
+// DISABLED STATE
+// ============================================
+
+.card-shell--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+// ============================================
+// HEADER - CANONICAL (Player Dashboard style)
+// NO background, NO separator
+// ============================================
+
+.card-shell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  // CANONICAL: tighter header padding (top/sides/bottom)
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  // NO background - transparent
+  background: transparent;
+  // NO separator
+  border-bottom: none;
+}
+
+.card-shell__header--compact {
+  padding: var(--space-2) var(--space-3) var(--space-1);
+  gap: var(--space-3);
+}
+
+.card-shell__header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2); // CANONICAL: tight gap between icon and title
+  flex: 1;
+  min-width: 0;
+}
+
+// ============================================
+// HEADER ICON - CANONICAL (raw icon, no container)
+// ============================================
+
+.card-shell__header-icon {
+  // CANONICAL: raw icon, no container
+  font-size: var(--font-body-md); // 16px
+  color: var(--color-brand-primary);
+  opacity: 0.85;
+  flex-shrink: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-shell__header-icon--compact {
+  font-size: var(--font-body-sm); // 14px
+}
+
+// ============================================
+// HEADER TEXT - CANONICAL
+// ============================================
+
+.card-shell__header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-shell__title {
+  // CANONICAL: Player Dashboard title style
+  margin: 0;
+  font-size: var(--font-size-h2); // 18px
+  font-weight: var(--font-weight-semibold); // 600
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight); // 1.2
+}
+
+.card-shell__subtitle {
+  margin: var(--space-1) 0 0 0;
+  font-size: var(--font-body-sm-size);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+}
+
+// ============================================
+// HEADER ACTIONS
+// ============================================
+
+.card-shell__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+// ============================================
+// BODY
+// ============================================
+
+.card-shell__body {
+  padding: var(--space-4);
+  flex: 1;
+}
+
+.card-shell__body--compact {
+  padding: var(--space-3);
+}
+
+.card-shell__body--flush {
+  padding: 0;
+}
+
+// ============================================
+// FOOTER (with separator - allowed exception)
+// ============================================
+
+.card-shell__footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-1) solid var(--color-border-default);
+  background: var(--surface-secondary);
+}
+
+.card-shell__footer--compact {
+  padding: var(--space-2) var(--space-3);
+}
+
+// ============================================
+// EMPTY STATE - CANONICAL (inside card body)
+// SINGLE SOURCE OF TRUTH for card empty states
+// All features MUST use these classes
+// ============================================
+
+.card-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-6);
+  min-height: 180px;
+
+  // Subtle entrance animation
+  animation: card-empty-fade-in 0.4s var(--ease-standard);
+}
+
+@keyframes card-empty-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Compact variant for smaller cards
+.card-empty-state--compact {
+  padding: var(--space-4);
+  min-height: 120px;
+}
+
+// Inline variant (icon + text horizontal)
+.card-empty-state--inline {
+  flex-direction: row;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  min-height: auto;
+
+  .card-empty-state__icon {
+    margin-bottom: 0;
+    font-size: var(--icon-xl);
+  }
+
+  .card-empty-state__content {
+    text-align: left;
+  }
+
+  .card-empty-state__title {
+    font-size: var(--font-body-md);
+    margin-bottom: var(--space-1);
+  }
+
+  .card-empty-state__text {
+    font-size: var(--font-body-sm);
+  }
+}
+
+.card-empty-state__icon {
+  font-size: var(--icon-3xl);
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  margin-bottom: var(--space-3);
+  line-height: 1;
+}
+
+.card-empty-state--compact .card-empty-state__icon {
+  font-size: var(--icon-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.card-empty-state__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-empty-state__title {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--font-body-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-snug);
+}
+
+.card-empty-state--compact .card-empty-state__title {
+  font-size: var(--font-body-sm);
+}
+
+.card-empty-state__text {
+  margin: 0;
+  font-size: var(--font-body-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+  max-width: 280px;
+}
+
+.card-empty-state--compact .card-empty-state__text {
+  font-size: var(--font-caption);
+  max-width: 240px;
+}
+
+.card-empty-state__action {
+  margin-top: var(--space-3);
+}
+
+.card-empty-state--compact .card-empty-state__action {
+  margin-top: var(--space-2);
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .card-empty-state {
+    animation: none;
+  }
+}
+
+// ============================================
+// STAT BLOCK - CANONICAL (Player Dashboard)
+// Single source of truth for stat/metric displays
+// All features MUST use these classes
+// ============================================
+
+.stat-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.stat-block__icon {
+  width: var(--space-10); // 40px
+  height: var(--space-10);
+  min-width: var(--space-10);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-body-lg);
+  flex-shrink: 0;
+
+  // Icon color variants
+  &--success {
+    background: rgba(var(--ds-primary-green-rgb), 0.08);
+    color: var(--color-brand-primary);
+  }
+  &--warning {
+    background: rgba(245, 158, 11, 0.08); // Warning RGB
+    color: var(--color-status-warning);
+  }
+  &--error {
+    background: rgba(239, 68, 68, 0.08); // Error RGB
+    color: var(--color-status-error);
+  }
+  &--info {
+    background: rgba(59, 130, 246, 0.08); // Info RGB
+    color: var(--color-status-info);
+  }
+}
+
+.stat-block__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.stat-block__value {
+  font-size: var(--font-size-metric-md); // 24px
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.stat-block__label {
+  font-size: var(--font-size-caption); // 13px
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+  letter-spacing: var(--letter-spacing-caption);
+  text-transform: uppercase;
+}
+
+// Large variant (hero stats)
+.stat-block--large .stat-block__value {
+  font-size: var(--font-size-metric-lg); // 32px
+}
+
+// Compact variant (dense layouts)
+.stat-block--compact .stat-block__value {
+  font-size: var(--font-size-h2); // 18px
+}
+
+.stat-block__tag {
+  flex-shrink: 0;
+}
+
+// ============================================
+// TABLE-IN-CARD STANDARD
+// Tables inside cards use flush body + inherit radius
+// Using CSS classes instead of ::ng-deep
+// @see docs/CARD_SHELL_CONTRACT.md §12 Table-in-Card Standard
+// ============================================
+
+// Table inside flush card body - inherit bottom corners
+.card-shell__body--flush {
+  // PrimeNG DataTable inside flush card - use CSS custom properties
+  --p-datatable-border: none;
+  --p-datatable-shadow: none;
+  --p-datatable-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+
+  // Paginator styling
+  --p-paginator-border: none;
+  --p-paginator-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+// Table styling classes to apply in template
+.table-in-card {
+  border: none;
+  box-shadow: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  overflow: hidden;
+
+  // First row - no top border (card header provides separation)
+  .table-row-first td {
+    border-top: none;
+  }
+
+  // Last row - rounded bottom corners
+  .table-row-last td:first-child {
+    border-bottom-left-radius: var(--radius-xl);
+  }
+
+  .table-row-last td:last-child {
+    border-bottom-right-radius: var(--radius-xl);
+  }
+
+  // Table header styling
+  .table-header th {
+    background: var(--surface-secondary);
+    border-top: var(--border-1) solid var(--color-border-default);
+  }
+}
+
+// ============================================
+// TOUCH DEVICE OPTIMIZATIONS
+// ============================================
+
+@media (hover: none) and (pointer: coarse) {
+  .card-shell--interactive:active {
+    transform: scale(0.99);
+  }
+}
+
+// ============================================
+// REDUCED MOTION
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shell {
+    transition: none;
+  }
+
+  .card-shell:hover,
+  .card-shell:active {
+    transform: none;
+  }
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+
+:host-context([data-theme="dark"]),
+:host-context(.dark-theme) {
+  .card-shell {
+    background: var(--surface-primary);
+    border-color: var(--color-border-default);
+  }
+
+  .card-shell__header {
+    background: transparent;
+  }
+
+  .card-shell__footer {
+    background: var(--surface-secondary);
+    border-color: var(--color-border-default);
+  }
+}

@@ -89,7 +89,7 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   // Value signal
   dateValue = signal<Date | null>(null);
-  private onChangeFn = (value: Date | null) => {};
+  private onChangeFn = (_value: Date | null) => {};
   private onTouchedFn = () => {};
 
   // Events
@@ -118,7 +118,7 @@ export class DatePickerComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Handled via disabled input
   }
 }

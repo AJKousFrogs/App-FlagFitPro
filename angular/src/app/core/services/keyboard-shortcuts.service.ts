@@ -45,7 +45,7 @@ export type ShortcutCategory =
   | "view"
   | "help";
 
-interface ShortcutState {
+interface _ShortcutState {
   isHelpModalOpen: boolean;
   isSearchOpen: boolean;
   activeShortcuts: Map<string, KeyboardShortcut>;

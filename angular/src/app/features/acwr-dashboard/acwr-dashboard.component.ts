@@ -21,6 +21,7 @@ import {
     signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { ChartModule } from "primeng/chart";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
@@ -40,6 +41,7 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
   imports: [
     CommonModule,
     RouterModule,
+    ChartModule,
     PageErrorStateComponent,
     AppLoadingComponent,
   ],
@@ -294,6 +296,30 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
           </div>
         </div>
 
+        <!-- ACWR Trend Chart -->
+        @if (trendChartData()) {
+          <div class="trend-chart-section">
+            <h3>ACWR Trend (Last 28 Days)</h3>
+            <div class="chart-container">
+              <p-chart 
+                type="line" 
+                [data]="trendChartData()" 
+                [options]="trendChartOptions"
+              ></p-chart>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-dot sweet-spot"></span>
+                <span>Sweet Spot (0.8-1.3)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot danger"></span>
+                <span>Danger Zone (&gt;1.5)</span>
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Training Recommendations -->
         <div class="recommendations-section">
           <h3>Training Recommendations</h3>
@@ -329,7 +355,11 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
           </button>
           <button class="action-btn" (click)="downloadReport()">
             <i class="icon-download"></i>
-            Export Report
+            Export JSON
+          </button>
+          <button class="action-btn" (click)="exportPDF()">
+            <i class="icon-file-pdf"></i>
+            Export PDF
           </button>
         </div>
 
@@ -390,8 +420,52 @@ export class AcwrDashboardComponent implements OnInit {
   // Centralized UX copy for insufficient data state
   public readonly insufficientDataMessage = METRIC_INSUFFICIENT_DATA.acwr;
 
+  // Trend chart data
+  trendChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null>(null);
+  
+  // Chart options for trend visualization
+  trendChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      },
+      tooltip: {
+        mode: 'index' as const,
+        intersect: false,
+      },
+    },
+    scales: {
+      y: {
+        min: 0,
+        max: 2,
+        ticks: {
+          stepSize: 0.25,
+        },
+        title: {
+          display: true,
+          text: 'ACWR',
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+        },
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.3,
+      },
+    },
+  };
+
   ngOnInit(): void {
     this.initializeDashboard();
+    this.loadTrendData();
   }
 
   /**
@@ -566,6 +640,172 @@ export class AcwrDashboardComponent implements OnInit {
         ];
       default:
         return ["Continue monitoring your training load"];
+    }
+  }
+
+  /**
+   * Load historical ACWR trend data for the chart
+   */
+  private async loadTrendData(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      // Get last 28 days of training sessions
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 28);
+
+      const { data: sessions, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("session_date, duration_minutes, rpe, status")
+        .eq("user_id", user.id)
+        .gte("session_date", startDate.toISOString().split('T')[0])
+        .lte("session_date", endDate.toISOString().split('T')[0])
+        .eq("status", "completed")
+        .order("session_date", { ascending: true });
+
+      if (error) {
+        this.logger.warn("Could not load trend data:", error);
+        return;
+      }
+
+      // Generate daily ACWR values
+      const _dailyData: { date: string; acwr: number; acute: number; chronic: number }[] = [];
+      const labels: string[] = [];
+      const acwrValues: number[] = [];
+      
+      // Calculate rolling ACWR for each day
+      for (let i = 0; i < 28; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        const _dateStr = currentDate.toISOString().split('T')[0];
+        
+        // Calculate acute (7-day) and chronic (28-day) loads up to this date
+        const acuteStart = new Date(currentDate);
+        acuteStart.setDate(currentDate.getDate() - 7);
+        
+        const chronicStart = new Date(currentDate);
+        chronicStart.setDate(currentDate.getDate() - 28);
+        
+        const acuteLoad = (sessions || [])
+          .filter(s => {
+            const sDate = new Date(s.session_date);
+            return sDate >= acuteStart && sDate <= currentDate;
+          })
+          .reduce((sum, s) => sum + ((s.duration_minutes || 0) * (s.rpe || 5)), 0);
+        
+        const chronicLoad = (sessions || [])
+          .filter(s => {
+            const sDate = new Date(s.session_date);
+            return sDate >= chronicStart && sDate <= currentDate;
+          })
+          .reduce((sum, s) => sum + ((s.duration_minutes || 0) * (s.rpe || 5)), 0) / 4; // Average over 4 weeks
+        
+        const acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
+        
+        labels.push(currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        acwrValues.push(Number(acwr.toFixed(2)));
+      }
+
+      // Set chart data
+      this.trendChartData.set({
+        labels,
+        datasets: [
+          {
+            label: 'ACWR',
+            data: acwrValues,
+            borderColor: 'var(--ds-primary-green)',
+            backgroundColor: 'rgba(var(--ds-primary-green-rgb), 0.1)',
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+          },
+          {
+            label: 'Sweet Spot Upper (1.3)',
+            data: new Array(28).fill(1.3),
+            borderColor: 'var(--color-status-warning)',
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            label: 'Sweet Spot Lower (0.8)',
+            data: new Array(28).fill(0.8),
+            borderColor: 'var(--color-status-warning)',
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            label: 'Danger Zone (1.5)',
+            data: new Array(28).fill(1.5),
+            borderColor: 'var(--color-status-error)',
+            borderDash: [2, 2],
+            pointRadius: 0,
+            fill: false,
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.error("Error loading trend data:", error);
+    }
+  }
+
+  /**
+   * Export ACWR dashboard as PDF
+   */
+  async exportPDF(): Promise<void> {
+    try {
+      this.toastService.info("Generating PDF report...");
+      
+      // Dynamically import jspdf and html2canvas
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas'),
+      ]);
+      
+      const dashboard = document.querySelector('.acwr-dashboard') as HTMLElement;
+      if (!dashboard) {
+        this.toastService.error("Dashboard not found");
+        return;
+      }
+      
+      // Create canvas from dashboard
+      const canvas = await html2canvas(dashboard, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+      
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Add title
+      pdf.setFontSize(20);
+      pdf.text('ACWR Dashboard Report', 105, 15, { align: 'center' });
+      pdf.setFontSize(10);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
+      
+      // Add dashboard image
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, Math.min(imgHeight, 250));
+      
+      // Save PDF
+      pdf.save(`acwr-report-${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      this.toastService.success("PDF report downloaded successfully");
+    } catch (error) {
+      this.logger.error("Error generating PDF:", error);
+      this.toastService.error("Failed to generate PDF. Make sure jspdf and html2canvas are installed.");
     }
   }
 }

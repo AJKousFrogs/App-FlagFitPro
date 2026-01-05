@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of, throwError, from } from "rxjs";
-import { delay, map, catchError, switchMap } from "rxjs/operators";
+import { Observable, of, from } from "rxjs";
+import { map, catchError, switchMap } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
 import { LoggerService } from "./logger.service";
@@ -223,13 +223,14 @@ export class AIService {
           message: "Taking a break is important for recovery. Rest up!",
         });
 
-      case "intensity":
+      case "intensity": {
         const isIncrease = /increase|more|harder|up/i.test(lowerCommand);
         return of({
           message: isIncrease
             ? "Increasing intensity. Push yourself!"
             : "Reducing intensity. Listen to your body.",
         });
+      }
 
       case "help":
         return of({
@@ -266,7 +267,7 @@ export class AIService {
                 }),
               );
           }),
-          catchError((error) => {
+          catchError((_error) => {
             // Consent not given - provide helpful message
             return of({
               message:

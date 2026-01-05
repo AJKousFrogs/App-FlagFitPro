@@ -1,8 +1,8 @@
 /**
  * Header Component Styles
  * ─────────────────────────────────────────────────────────────
- * ViewEncapsulation.None - styles apply globally when component loads
- * Use app-header prefix for all selectors to scope styles
+ * FIXED: Using default ViewEncapsulation (Emulated)
+ * Styles are now properly scoped to this component only
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -10,14 +10,14 @@
    HEADER CONTAINER - EXACT 64px HEIGHT
    ================================================================ */
 
-app-header {
+:host {
   display: block;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-app-header .p-toolbar.app-header {
+.p-toolbar.app-header {
   background: var(--surface-card);
   border: none;
   border-bottom: var(--border-1) solid var(--surface-border);
@@ -33,9 +33,9 @@ app-header .p-toolbar.app-header {
 }
 
 /* Toolbar sections - force vertical centering */
-app-header .p-toolbar.app-header .p-toolbar-start,
-app-header .p-toolbar.app-header .p-toolbar-center,
-app-header .p-toolbar.app-header .p-toolbar-end {
+.p-toolbar.app-header .p-toolbar-start,
+.p-toolbar.app-header .p-toolbar-center,
+.p-toolbar.app-header .p-toolbar-end {
   display: flex;
   align-items: center;
   height: 100%;
@@ -47,14 +47,14 @@ app-header .p-toolbar.app-header .p-toolbar-end {
    HEADER SECTIONS
    ================================================================ */
 
-app-header .header-start {
+.header-start {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   height: 64px;
 }
 
-app-header .header-center {
+.header-center {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,13 +64,13 @@ app-header .header-center {
   cursor: pointer;
 }
 
-app-header .header-center:focus-visible {
+.header-center:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
   border-radius: var(--radius-lg);
 }
 
-app-header .header-end {
+.header-end {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -81,17 +81,17 @@ app-header .header-end {
    MOBILE MENU TOGGLE (hidden by default on desktop)
    ================================================================ */
 
-app-header .mobile-menu-toggle,
-app-header .mobile-menu-toggle.p-button,
-app-header .p-button.mobile-menu-toggle {
-  display: none !important;
+.mobile-menu-toggle,
+.mobile-menu-toggle.p-button,
+.p-button.mobile-menu-toggle {
+  display: none;
 }
 
 /* ================================================================
    OLYMPICS COUNTDOWN
    ================================================================ */
 
-app-header .olympic-countdown {
+.olympic-countdown {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -103,40 +103,40 @@ app-header .olympic-countdown {
   cursor: default;
 }
 
-app-header .countdown-timer {
+.countdown-timer {
   display: flex;
   align-items: center;
   gap: 1px;
 }
 
-app-header .countdown-segment {
+.countdown-segment {
   display: flex;
   align-items: baseline;
   gap: 1px;
 }
 
-app-header .countdown-value {
+.countdown-value {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--font-body-xs);
-  font-weight: 600;
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-color);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   line-height: 1;
 }
 
-app-header .countdown-unit {
+.countdown-unit {
   font-size: var(--font-body-2xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
-app-header .countdown-sep {
+.countdown-sep {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: var(--font-body-2xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   opacity: 0.6;
   padding: 0 1px;
@@ -144,10 +144,10 @@ app-header .countdown-sep {
 }
 
 /* Olympics Badge */
-app-header .olympics-badge.p-tag {
-  background: var(--ds-primary-green) !important;
-  color: var(--color-text-on-primary) !important;
-  font-weight: 600;
+.olympics-badge.p-tag {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  font-weight: var(--font-weight-semibold);
   font-size: var(--font-body-2xs);
   letter-spacing: 0.05em;
   padding: var(--space-1) var(--space-2);
@@ -156,7 +156,7 @@ app-header .olympics-badge.p-tag {
   height: auto;
 }
 
-app-header .olympics-badge .p-tag-icon {
+.olympics-badge .p-tag-icon {
   font-size: var(--font-body-2xs);
   margin-right: var(--space-1);
 }
@@ -165,7 +165,7 @@ app-header .olympics-badge .p-tag-icon {
    BREADCRUMBS
    ================================================================ */
 
-app-header .breadcrumbs {
+.breadcrumbs {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -173,21 +173,21 @@ app-header .breadcrumbs {
   height: 100%;
 }
 
-app-header .breadcrumb-item {
-  font-size: var(--font-body-xs);
+.breadcrumb-item {
+  font-size: var(--font-size-badge);
   color: var(--text-color-secondary);
   opacity: 0.7;
   margin: 0;
   padding: 0;
 }
 
-app-header .breadcrumb-item.current {
+.breadcrumb-item.current {
   color: var(--text-color);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   opacity: 1;
 }
 
-app-header .separator {
+.separator {
   font-size: var(--font-body-2xs);
   color: var(--text-color-secondary);
   opacity: 0.5;
@@ -197,8 +197,8 @@ app-header .separator {
    SEARCH INPUT GROUP - THE VISUAL ANCHOR
    ================================================================ */
 
-app-header .search-input-group.p-inputgroup,
-app-header .p-inputgroup.search-input-group {
+.search-input-group.p-inputgroup,
+.p-inputgroup.search-input-group {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: none;
@@ -209,8 +209,8 @@ app-header .p-inputgroup.search-input-group {
   align-items: center;
 }
 
-app-header .search-input-group .p-inputgroupaddon,
-app-header .search-input-group .p-inputgroup-addon {
+.search-input-group .p-inputgroupaddon,
+.search-input-group .p-inputgroup-addon {
   background: transparent;
   border: none;
   color: var(--text-color-secondary);
@@ -224,82 +224,82 @@ app-header .search-input-group .p-inputgroup-addon {
 }
 
 /* Search icon addon (first) */
-app-header .search-input-group .p-inputgroupaddon:first-child,
-app-header .search-input-group .p-inputgroup-addon:first-child {
+.search-input-group .p-inputgroupaddon:first-child,
+.search-input-group .p-inputgroup-addon:first-child {
   padding-left: var(--space-3);
   padding-right: var(--space-2);
   width: auto;
 }
 
-app-header .search-input-group .p-inputgroupaddon:first-child i,
-app-header .search-input-group .p-inputgroup-addon:first-child i {
-  font-size: var(--font-body-sm);
+.search-input-group .p-inputgroupaddon:first-child i,
+.search-input-group .p-inputgroup-addon:first-child i {
+  font-size: var(--font-size-h4);
   color: var(--text-color-secondary);
   opacity: 0.6;
 }
 
 /* Shortcut addon (last) */
-app-header .search-input-group .p-inputgroupaddon:last-child,
-app-header .search-input-group .p-inputgroup-addon:last-child,
-app-header .search-input-group .search-shortcut-addon {
+.search-input-group .p-inputgroupaddon:last-child,
+.search-input-group .p-inputgroup-addon:last-child,
+.search-input-group .search-shortcut-addon {
   padding-left: var(--space-2);
   padding-right: var(--space-3);
   width: auto;
 }
 
-app-header .search-input-group .p-inputtext {
-  border: none !important;
-  background: transparent !important;
+.search-input-group .p-inputtext {
+  border: none;
+  background: transparent;
   height: var(--space-10);
-  font-size: var(--font-body-sm);
-  padding: 0 var(--space-1) !important;
+  font-size: var(--font-size-h4);
+  padding: 0 var(--space-1);
   margin: 0;
   line-height: var(--space-10);
-  box-shadow: none !important;
+  box-shadow: none;
   flex: 1;
   min-width: 0;
 }
 
-app-header .search-input-group .p-inputtext::placeholder {
+.search-input-group .p-inputtext::placeholder {
   color: var(--text-color-secondary);
   opacity: 0.6;
 }
 
-app-header .search-input-group .p-inputtext:hover,
-app-header .search-input-group .p-inputtext:focus {
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
+.search-input-group .p-inputtext:hover,
+.search-input-group .p-inputtext:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
 }
 
-app-header .search-input {
-  cursor: pointer !important;
+.search-input {
+  cursor: pointer;
   min-width: 200px;
 }
 
 /* Search shortcut hint */
-app-header .search-shortcut {
+.search-shortcut {
   display: flex;
   align-items: center;
   gap: var(--space-1);
   opacity: 0.5;
 }
 
-app-header .search-shortcut kbd {
+.search-shortcut kbd {
   background: rgba(0, 0, 0, 0.06);
   border: none;
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
   font-size: var(--font-body-2xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   line-height: 1;
 }
 
 /* Search hover state */
-app-header .search-input-group:hover .p-inputgroupaddon:first-child i,
-app-header .search-input-group:hover .p-inputgroup-addon:first-child i {
+.search-input-group:hover .p-inputgroupaddon:first-child i,
+.search-input-group:hover .p-inputgroup-addon:first-child i {
   opacity: 1;
   color: var(--text-color);
 }
@@ -308,16 +308,16 @@ app-header .search-input-group:hover .p-inputgroup-addon:first-child i {
    THEME TOGGLE
    ================================================================ */
 
-app-header .theme-toggle {
+.theme-toggle {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   height: 100%;
 }
 
-app-header .theme-label {
-  font-size: var(--font-body-xs);
-  font-weight: 400;
+.theme-label {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-regular);
   color: var(--text-color-secondary);
   opacity: 0.8;
   min-width: var(--space-8);
@@ -327,7 +327,7 @@ app-header .theme-label {
    USER MENU CONTAINER
    ================================================================ */
 
-app-header .user-menu-container {
+.user-menu-container {
   position: relative;
   display: flex;
   align-items: center;
@@ -336,180 +336,134 @@ app-header .user-menu-container {
 
 /* ================================================================
    HEADER ICON BUTTONS - 40px UNIFORM
-   Override global PrimeNG button styles
+   Override PrimeNG button styles within this component
    ================================================================ */
 
-app-header .header-icon-btn.p-button {
-  width: var(--space-10) !important;
-  height: var(--space-10) !important;
-  min-width: var(--space-10) !important;
-  min-height: var(--space-10) !important;
-  max-width: var(--space-10) !important;
-  max-height: var(--space-10) !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: var(--radius-lg) !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transform: none !important; /* Override global translateY */
+.header-icon-btn.p-button {
+  width: var(--space-10);
+  height: var(--space-10);
+  min-width: var(--space-10);
+  min-height: var(--space-10);
+  max-width: var(--space-10);
+  max-height: var(--space-10);
+  padding: 0;
+  margin: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: none;
 }
 
-app-header .header-icon-btn.p-button .p-button-icon {
+.header-icon-btn.p-button .p-button-icon {
   font-size: var(--font-body-lg);
   color: var(--text-color-secondary);
   opacity: 0.7;
   margin: 0;
 }
 
-app-header .header-icon-btn.p-button:hover {
-  background: rgba(0, 0, 0, 0.04) !important;
-  transform: none !important; /* Override global translateY(-2px) */
+.header-icon-btn.p-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: none;
 }
 
-app-header .header-icon-btn.p-button:hover .p-button-icon {
+.header-icon-btn.p-button:hover .p-button-icon {
   opacity: 1;
   color: var(--text-color);
 }
 
-app-header .header-icon-btn.p-button:active {
-  transform: none !important;
+.header-icon-btn.p-button:active {
+  transform: none;
 }
 
-app-header .header-icon-btn.p-button:focus-visible {
+.header-icon-btn.p-button:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
 }
 
 /* Remove pseudo-elements from header buttons */
-app-header .header-icon-btn.p-button::before,
-app-header .header-icon-btn.p-button::after {
-  display: none !important;
+.header-icon-btn.p-button::before,
+.header-icon-btn.p-button::after {
+  display: none;
 }
 
 /* ================================================================
    USER AVATAR - EXACTLY 36px, PERFECT CIRCLE
    ================================================================ */
 
-app-header .user-avatar.p-avatar {
-  width: var(--space-10) !important;
-  height: var(--space-10) !important;
-  min-width: var(--space-10) !important;
-  min-height: var(--space-10) !important;
-  max-width: var(--space-10) !important;
-  max-height: var(--space-10) !important;
-  background: var(--ds-primary-green) !important;
-  color: var(--color-text-on-primary) !important;
-  font-weight: 600 !important;
-  font-size: var(--font-body-sm) !important;
+.user-avatar.p-avatar {
+  width: var(--space-10);
+  height: var(--space-10);
+  min-width: var(--space-10);
+  min-height: var(--space-10);
+  max-width: var(--space-10);
+  max-height: var(--space-10);
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h4);
   letter-spacing: 0.02em;
   border: none;
   box-shadow: none;
-  border-radius: 50% !important;
+  border-radius: 50%;
 }
 
-app-header .user-avatar-btn.p-button {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: var(--space-10) !important;
-  height: var(--space-10) !important;
-  min-width: var(--space-10) !important;
-  max-width: var(--space-10) !important;
-  border-radius: 50% !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  transform: none !important;
+.user-avatar-btn.p-button {
+  padding: 0;
+  margin: 0;
+  width: var(--space-10);
+  height: var(--space-10);
+  min-width: var(--space-10);
+  max-width: var(--space-10);
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transform: none;
 }
 
-app-header .user-avatar-btn.p-button:hover {
-  background: transparent !important;
-  transform: none !important;
+.user-avatar-btn.p-button:hover {
+  background: transparent;
+  transform: none;
 }
 
-app-header .user-avatar-btn.p-button:hover .user-avatar {
+.user-avatar-btn.p-button:hover .user-avatar {
   opacity: 0.85;
 }
 
-app-header .user-avatar-btn.p-button::before,
-app-header .user-avatar-btn.p-button::after {
-  display: none !important;
+.user-avatar-btn.p-button::before,
+.user-avatar-btn.p-button::after {
+  display: none;
 }
 
 /* ================================================================
    USER DROPDOWN MENU
+   NOTE: This menu is rendered in an overlay (outside component DOM)
+   These styles should be moved to global styles or use PT API
    ================================================================ */
-
-.user-dropdown-menu.p-menu {
-  min-width: 180px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  border: var(--border-1) solid var(--surface-border);
-  padding: var(--space-1);
-}
-
-.user-dropdown-menu .p-menu-item-link {
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  margin: var(--space-1);
-}
-
-.user-dropdown-menu .p-menu-item-link:hover {
-  background: var(--surface-hover);
-}
-
-.user-dropdown-menu .p-menu-item-icon {
-  color: var(--text-color-secondary);
-  margin-right: var(--space-3);
-  font-size: var(--font-body-sm);
-}
-
-.user-dropdown-menu .p-menu-item-label {
-  font-size: var(--font-body-sm);
-  font-weight: 400;
-  color: var(--text-color);
-}
-
-.user-dropdown-menu .p-menu-separator {
-  margin: var(--space-2) var(--space-2);
-  border-color: var(--surface-border);
-}
-
-/* Sign out item */
-.user-dropdown-menu .p-menu-item:last-child .p-menu-item-link {
-  color: var(--primitive-error-500);
-}
-
-.user-dropdown-menu .p-menu-item:last-child .p-menu-item-icon {
-  color: var(--primitive-error-500);
-}
-
-.user-dropdown-menu .p-menu-item:last-child .p-menu-item-label {
-  color: var(--primitive-error-500);
-}
 
 /* ================================================================
    RESPONSIVE: TABLET (768px - 1024px)
    ================================================================ */
 
 @media (max-width: 1024px) {
-  app-header .olympic-countdown {
+  .olympic-countdown {
     padding: 0 var(--space-2);
     height: 30px;
   }
 
-  app-header .countdown-value {
+  .countdown-value {
     font-size: var(--font-body-2xs);
   }
 
-  app-header .search-input {
+  .search-input {
     min-width: 180px;
   }
 
-  app-header .theme-label {
+  .theme-label {
     display: none;
   }
 }
@@ -519,69 +473,69 @@ app-header .user-avatar-btn.p-button::after {
    ================================================================ */
 
 @media (max-width: 768px) {
-  app-header .p-toolbar.app-header {
+  .p-toolbar.app-header {
     padding: 0 var(--space-4);
     height: 56px;
     min-height: 56px;
     max-height: 56px;
   }
 
-  app-header .header-start,
-  app-header .header-center,
-  app-header .header-end {
+  .header-start,
+  .header-center,
+  .header-end {
     height: 56px;
   }
 
-  app-header .mobile-menu-toggle {
-    display: flex !important;
+  .mobile-menu-toggle {
+    display: flex;
   }
 
-  app-header .header-center {
+  .header-center {
     display: none;
   }
 
-  app-header .olympic-countdown {
+  .olympic-countdown {
     display: none;
   }
 
-  app-header .breadcrumbs {
+  .breadcrumbs {
     display: none;
   }
 
-  app-header .theme-label {
+  .theme-label {
     display: none;
   }
 
-  app-header .header-end {
+  .header-end {
     gap: var(--space-2);
   }
 
-  app-header .header-icon-btn.p-button {
-    width: var(--space-10) !important;
-    height: var(--space-10) !important;
-    min-width: var(--space-10) !important;
-    min-height: var(--space-10) !important;
-    max-width: var(--space-10) !important;
-    max-height: var(--space-10) !important;
+  .header-icon-btn.p-button {
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    min-height: var(--space-10);
+    max-width: var(--space-10);
+    max-height: var(--space-10);
   }
 
-  app-header .header-icon-btn.p-button .p-button-icon {
-    font-size: var(--font-body-md);
+  .header-icon-btn.p-button .p-button-icon {
+    font-size: var(--font-size-body);
   }
 
-  app-header .user-avatar.p-avatar {
-    width: var(--space-8) !important;
-    height: var(--space-8) !important;
-    min-width: var(--space-8) !important;
-    min-height: var(--space-8) !important;
-    font-size: var(--font-body-xs) !important;
+  .user-avatar.p-avatar {
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    min-height: var(--space-8);
+    font-size: var(--font-size-badge);
   }
 
-  app-header .user-avatar-btn.p-button {
-    width: var(--space-8) !important;
-    height: var(--space-8) !important;
-    min-width: var(--space-8) !important;
-    max-width: var(--space-8) !important;
+  .user-avatar-btn.p-button {
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    max-width: var(--space-8);
   }
 }
 
@@ -590,7 +544,7 @@ app-header .user-avatar-btn.p-button::after {
    ================================================================ */
 
 @media (max-width: 480px) {
-  app-header .header-end {
+  .header-end {
     gap: var(--space-1);
   }
 }

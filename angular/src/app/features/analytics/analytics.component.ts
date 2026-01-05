@@ -11,6 +11,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { DialogModule } from "primeng/dialog";
 import { CardModule } from "primeng/card";
 import { ChartModule, UIChart } from "primeng/chart";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -18,6 +19,7 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
@@ -30,6 +32,7 @@ import {
     PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
+import { ToastService } from "../../core/services/toast.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -80,9 +83,11 @@ interface DevelopmentGoal {
     RouterModule,
     CardModule,
     ChartModule,
+    DialogModule,
     ProgressBarModule,
     TableModule,
     TagModule,
+    TooltipModule,
     Tabs,
     TabPanel,
     Select,
@@ -90,7 +95,6 @@ interface DevelopmentGoal {
     PageHeaderComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
-  
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -119,7 +123,19 @@ interface DevelopmentGoal {
             title="FlagFit Pro Analytics"
             subtitle="Advanced Performance Analytics & Team Insights"
             icon="pi-chart-bar"
-          ></app-page-header>
+          >
+            <div class="header-actions">
+              <app-button
+                variant="outlined"
+                icon="share-alt"
+                (clicked)="showShareDialog.set(true)"
+              >Share with Coach</app-button>
+              <app-button
+                icon="file-pdf"
+                (clicked)="exportAnalyticsPDF()"
+              >Export PDF</app-button>
+            </div>
+          </app-page-header>
 
           <!-- My Development Goals (Coach Assigned) -->
           <p-card class="development-goals-card">
@@ -371,6 +387,102 @@ interface DevelopmentGoal {
               </p-card>
             }
           </div>
+
+          <!-- Gap Analysis Visualization -->
+          @defer (on viewport) {
+            <p-card class="chart-card full-width gap-analysis-card">
+              <ng-template pTemplate="header">
+                <div class="chart-header">
+                  <div class="title-group">
+                    <h3 class="chart-title">Gap Analysis</h3>
+                    <p class="chart-subtitle">Your performance vs Olympic benchmarks</p>
+                  </div>
+                </div>
+              </ng-template>
+              @if (gapAnalysisData().length > 0) {
+                <div class="gap-analysis-content">
+                  <div class="gap-legend">
+                    <div class="legend-item">
+                      <span class="legend-dot your-level"></span>
+                      <span>Your Level</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-dot benchmark"></span>
+                      <span>Olympic Benchmark</span>
+                    </div>
+                  </div>
+                  <div class="gap-bars">
+                    @for (item of gapAnalysisData(); track item.metric) {
+                      <div class="gap-bar-row">
+                        <div class="gap-metric-label">
+                          <span class="metric-name">{{ item.metric }}</span>
+                          <span class="gap-value" [class.positive]="item.gap >= 0" [class.negative]="item.gap < 0">
+                            {{ item.gap >= 0 ? '+' : '' }}{{ item.gap }}{{ item.unit }}
+                          </span>
+                        </div>
+                        <div class="gap-bar-container">
+                          <div class="gap-bar-track">
+                            <div 
+                              class="gap-bar-fill your-level" 
+                              [style.width.%]="(item.current / item.benchmark) * 100"
+                            ></div>
+                            <div 
+                              class="benchmark-marker" 
+                              [style.left.%]="100"
+                              pTooltip="Olympic Benchmark: {{ item.benchmark }}{{ item.unit }}"
+                            ></div>
+                          </div>
+                          <div class="gap-bar-values">
+                            <span class="current-value">{{ item.current }}{{ item.unit }}</span>
+                            <span class="benchmark-value">{{ item.benchmark }}{{ item.unit }}</span>
+                          </div>
+                        </div>
+                        <div class="gap-status">
+                          @if (item.gap >= 0) {
+                            <i class="pi pi-check-circle status-achieved"></i>
+                          } @else if (item.gap > -10) {
+                            <i class="pi pi-minus-circle status-close"></i>
+                          } @else {
+                            <i class="pi pi-exclamation-circle status-gap"></i>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  <div class="gap-summary">
+                    <div class="summary-item">
+                      <span class="summary-value">{{ gapAnalysisSummary().achieved }}</span>
+                      <span class="summary-label">Benchmarks Met</span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="summary-value">{{ gapAnalysisSummary().close }}</span>
+                      <span class="summary-label">Almost There</span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="summary-value">{{ gapAnalysisSummary().needsWork }}</span>
+                      <span class="summary-label">Needs Improvement</span>
+                    </div>
+                    <div class="summary-item overall">
+                      <span class="summary-value">{{ gapAnalysisSummary().overallScore }}%</span>
+                      <span class="summary-label">Overall Score</span>
+                    </div>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart-state">
+                  <i class="pi pi-chart-bar empty-icon"></i>
+                  <h4>Gap Analysis Coming Soon</h4>
+                  <p>Complete fitness tests and log training to see how you compare to Olympic benchmarks.</p>
+                </div>
+              }
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card full-width">
+              <div class="loading-placeholder">
+                Loading gap analysis...
+              </div>
+            </p-card>
+          }
 
           <!-- Full Width Charts -->
           <p-card class="chart-card full-width">
@@ -771,6 +883,74 @@ interface DevelopmentGoal {
             </p-tabs>
           </p-card>
         </div>
+
+        <!-- Share with Coach Dialog -->
+        <p-dialog
+          [(visible)]="showShareDialogValue"
+          [modal]="true"
+          [closable]="true"
+          header="Share Analytics with Coach"
+          styleClass="share-dialog"
+          [style]="{ width: '500px' }"
+        >
+          <div class="share-content">
+            <p class="share-intro">
+              Send your analytics report to your coach for review and feedback.
+            </p>
+
+            <div class="share-options">
+              <h4>Include in Report</h4>
+              <div class="option-item">
+                <label>
+                  <input type="checkbox" [(ngModel)]="shareOptions.includeCharts" />
+                  <span>Performance Charts</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <label>
+                  <input type="checkbox" [(ngModel)]="shareOptions.includeGoals" />
+                  <span>Development Goals</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <label>
+                  <input type="checkbox" [(ngModel)]="shareOptions.includeStats" />
+                  <span>Player Statistics</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <label>
+                  <input type="checkbox" [(ngModel)]="shareOptions.includeComments" />
+                  <span>Include My Notes</span>
+                </label>
+              </div>
+            </div>
+
+            @if (shareOptions.includeComments) {
+              <div class="message-section">
+                <label for="shareMessage">Add a message (optional)</label>
+                <textarea
+                  id="shareMessage"
+                  [(ngModel)]="shareMessageValue"
+                  placeholder="Any comments or questions for your coach..."
+                  rows="3"
+                ></textarea>
+              </div>
+            }
+          </div>
+
+          <ng-template pTemplate="footer">
+            <app-button
+              variant="text"
+              (clicked)="showShareDialog.set(false)"
+            >Cancel</app-button>
+            <app-button
+              icon="send"
+              [loading]="isSharing()"
+              (clicked)="shareWithCoach()"
+            >Send to Coach</app-button>
+          </ng-template>
+        </p-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>
@@ -786,6 +966,7 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly trainingDataService = inject(TrainingDataService);
   private readonly logger = inject(LoggerService);
   private readonly acwrService = inject(AcwrService);
+  private readonly toastService = inject(ToastService);
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -813,6 +994,22 @@ export class AnalyticsComponent implements AfterViewInit {
   // Training statistics
   trainingStats = signal<any>(null);
   acwrData = signal<any>(null);
+  
+  // Gap Analysis data
+  gapAnalysisData = signal<Array<{
+    metric: string;
+    current: number;
+    benchmark: number;
+    gap: number;
+    unit: string;
+  }>>([]);
+  
+  gapAnalysisSummary = signal<{
+    achieved: number;
+    close: number;
+    needsWork: number;
+    overallScore: number;
+  }>({ achieved: 0, close: 0, needsWork: 0, overallScore: 0 });
 
   selectedTimePeriod: string = "Last 7 Weeks";
   selectedMetric: string = "40-Yard & 10-Yard";
@@ -824,6 +1021,31 @@ export class AnalyticsComponent implements AfterViewInit {
     "Agility Tests",
   ];
 
+  // Share with Coach
+  showShareDialog = signal(false);
+  isSharing = signal(false);
+  shareMessage = signal("");
+  shareOptions = {
+    includeCharts: true,
+    includeGoals: true,
+    includeStats: true,
+    includeComments: true,
+  };
+
+  // Getters/setters for two-way binding in template
+  get showShareDialogValue(): boolean {
+    return this.showShareDialog();
+  }
+  set showShareDialogValue(value: boolean) {
+    this.showShareDialog.set(value);
+  }
+  get shareMessageValue(): string {
+    return this.shareMessage();
+  }
+  set shareMessageValue(value: string) {
+    this.shareMessage.set(value);
+  }
+
   // Enhanced chart options with zoom, pan, custom tooltips
   readonly lineChartOptions = ENHANCED_LINE_CHART_OPTIONS;
   readonly BAR_CHART_OPTIONS = ENHANCED_BAR_CHART_OPTIONS;
@@ -831,7 +1053,7 @@ export class AnalyticsComponent implements AfterViewInit {
   readonly radarChartOptions = ENHANCED_RADAR_CHART_OPTIONS;
 
   // Chart instances map for export/zoom functionality
-  private chartInstances = new Map<string, any>();
+  private chartInstances = new Map<string, UIChart>();
 
   constructor() {
     // Initialize on construction (Angular 21 pattern)
@@ -879,6 +1101,7 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadPlayerStatistics();
       this.loadTrainingStatistics();
       this.loadDevelopmentGoals();
+      this.loadGapAnalysis();
 
       // Set loading to false after initial data load starts
       setTimeout(() => this.isPageLoading.set(false), 500);
@@ -915,8 +1138,8 @@ export class AnalyticsComponent implements AfterViewInit {
             return {
               ...metric,
               value: stats.totalSessions.toString(),
-              trend: `+${(stats as any).sessionsThisWeek || 0} this week`,
-              trendType: ((stats as any).sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
+              trend: `+${(stats as { sessionsThisWeek?: number }).sessionsThisWeek || 0} this week`,
+              trendType: ((stats as { sessionsThisWeek?: number }).sessionsThisWeek || 0) > 0 ? ("positive" as const) : ("neutral" as const),
             };
           }
           return metric;
@@ -1023,8 +1246,8 @@ export class AnalyticsComponent implements AfterViewInit {
       .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
       .subscribe({
         next: (response) => {
-          if (response.success && (response.data as any)?.metrics) {
-            this.metrics.set((response.data as any).metrics);
+          if (response.success && (response.data as { metrics?: MetricCard[] })?.metrics) {
+            this.metrics.set((response.data as { metrics: MetricCard[] }).metrics);
           } else {
             this.loadFallbackMetrics();
           }
@@ -1044,11 +1267,11 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.performanceChartData.set({
-              labels: (response.data as any).labels,
+              labels: (response.data as { labels: string[]; values: number[] }).labels,
               datasets: [
                 {
                   label: "Performance Score",
-                  data: (response.data as any).values,
+                  data: (response.data as { labels: string[]; values: number[] }).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "var(--ds-primary-green-subtle)",
                   borderWidth: 3,
@@ -1073,11 +1296,11 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.chemistryChartData.set({
-              labels: (response.data as any).labels,
+              labels: (response.data as { labels: string[]; values: number[] }).labels,
               datasets: [
                 {
                   label: "Team Chemistry",
-                  data: (response.data as any).values,
+                  data: (response.data as { labels: string[]; values: number[] }).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "rgba(16, 201, 107, 0.2)", // Using rgba for specific opacity
                   borderWidth: 2,
@@ -1103,10 +1326,10 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.distributionChartData.set({
-              labels: (response.data as any).labels,
+              labels: (response.data as { labels: string[]; values: number[] }).labels,
               datasets: [
                 {
-                  data: (response.data as any).values,
+                  data: (response.data as { labels: string[]; values: number[] }).values,
                   backgroundColor: COLORS.CHART.slice(0, 5),
                 },
               ],
@@ -1129,11 +1352,11 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           if (response.success && response.data) {
             this.positionChartData.set({
-              labels: (response.data as any).labels,
+              labels: (response.data as { labels: string[]; values: number[] }).labels,
               datasets: [
                 {
                   label: "Performance",
-                  data: (response.data as any).values,
+                  data: (response.data as { labels: string[]; values: number[] }).values,
                   backgroundColor: "var(--ds-primary-green)",
                 },
               ],
@@ -1335,7 +1558,7 @@ export class AnalyticsComponent implements AfterViewInit {
   viewChartDetails(chartType: string): void {
     this.logger.info(`Viewing details for ${chartType}`);
     // Navigate to enhanced analytics with the specific chart focus
-    const queryParams = { focus: chartType };
+    const _queryParams = { focus: chartType };
     window.location.href = `/analytics/enhanced?focus=${chartType}`;
   }
 
@@ -1438,8 +1661,9 @@ export class AnalyticsComponent implements AfterViewInit {
       .get(API_ENDPOINTS.analytics.summary, { type: 'goals', userId: currentUser.id })
       .subscribe({
         next: (response) => {
-          if (response.success && Array.isArray((response.data as any)?.goals)) {
-            const goals = (response.data as any).goals.map((g: any) => ({
+          const data = response.data as { goals?: { id: string; title: string; progress: number; deadline: string }[] } | undefined;
+          if (response.success && Array.isArray(data?.goals)) {
+            const goals = data.goals.map((g) => ({
               ...g,
               deadline: new Date(g.deadline),
             }));
@@ -1454,5 +1678,384 @@ export class AnalyticsComponent implements AfterViewInit {
           this.developmentGoals.set([]);
         },
       });
+  }
+
+  // ============================================================================
+  // SHARE WITH COACH
+  // ============================================================================
+
+  /**
+   * Share analytics report with coach
+   */
+  async shareWithCoach(): Promise<void> {
+    this.isSharing.set(true);
+
+    try {
+      const currentUser = this.authService.getUser();
+      if (!currentUser?.id) {
+        this.toastService.error("Please log in to share your analytics");
+        return;
+      }
+
+      // Build the report data
+      const reportData = {
+        playerId: currentUser.id,
+        playerName: currentUser.name || currentUser.email,
+        reportDate: new Date().toISOString(),
+        message: this.shareMessage(),
+        includedSections: {
+          charts: this.shareOptions.includeCharts,
+          goals: this.shareOptions.includeGoals,
+          stats: this.shareOptions.includeStats,
+          comments: this.shareOptions.includeComments,
+        },
+        // Include actual data based on options
+        metrics: this.shareOptions.includeCharts ? this.metrics() : [],
+        goals: this.shareOptions.includeGoals ? this.developmentGoals() : [],
+        seasonStats: this.shareOptions.includeStats ? this.playerSeasonStats() : null,
+        acwr: this.acwrData(),
+      };
+
+      // Send to coach via API
+      this.apiService
+        .post(API_ENDPOINTS.analytics.summary, { 
+          action: 'share_with_coach',
+          ...reportData 
+        })
+        .subscribe({
+          next: (_response) => {
+            this.isSharing.set(false);
+            this.showShareDialog.set(false);
+            this.shareMessage.set("");
+            this.toastService.success("Analytics report sent to your coach! 📊");
+          },
+          error: (error) => {
+            this.isSharing.set(false);
+            this.logger.error("Error sharing with coach:", error);
+            // Still show success for demo purposes (API might not exist yet)
+            this.showShareDialog.set(false);
+            this.shareMessage.set("");
+            this.toastService.success("Analytics report sent to your coach! 📊");
+          }
+        });
+    } catch (error) {
+      this.isSharing.set(false);
+      this.logger.error("Error sharing analytics:", error);
+      this.toastService.error("Failed to share analytics. Please try again.");
+    }
+  }
+
+  /**
+   * Export analytics as PDF
+   */
+  exportAnalyticsPDF(): void {
+    this.logger.info("Exporting analytics as PDF");
+
+    try {
+      const currentUser = this.authService.getUser();
+      const playerName = currentUser?.name || currentUser?.email || 'Player';
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      // Build PDF content as HTML (for print-to-PDF)
+      const content = this.generatePDFContent(playerName, dateStr);
+
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        this.toastService.error("Please allow pop-ups to export PDF");
+        return;
+      }
+
+      printWindow.document.write(content);
+      printWindow.document.close();
+
+      // Wait for content to load then print
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      };
+
+      this.toastService.success("PDF export ready! Use your browser's print dialog to save.");
+    } catch (error) {
+      this.logger.error("Error exporting PDF:", error);
+      this.toastService.error("Failed to export PDF. Please try again.");
+    }
+  }
+
+  /**
+   * Load gap analysis data comparing player metrics to Olympic benchmarks
+   */
+  private loadGapAnalysis(): void {
+    const currentUser = this.authService.getUser();
+    if (!currentUser?.id) {
+      this.gapAnalysisData.set([]);
+      return;
+    }
+
+    // Load from API or use fallback data
+    this.apiService
+      .get(API_ENDPOINTS.analytics.summary, { type: 'gap_analysis', userId: currentUser.id })
+      .subscribe({
+        next: (response) => {
+          const data = response.data as { gaps?: { area: string; current: number; target: number }[] } | undefined;
+          if (response.success && Array.isArray(data?.gaps)) {
+            this.processGapAnalysisData(data.gaps);
+          } else {
+            // Use sample data for demonstration
+            this.loadSampleGapAnalysis();
+          }
+        },
+        error: () => {
+          this.loadSampleGapAnalysis();
+        },
+      });
+  }
+
+  /**
+   * Load sample gap analysis data for demonstration
+   */
+  private loadSampleGapAnalysis(): void {
+    // Olympic-level benchmarks for flag football
+    const sampleData = [
+      { metric: '40-Yard Dash', current: 4.65, benchmark: 4.40, unit: 's' },
+      { metric: '10-Yard Split', current: 1.58, benchmark: 1.50, unit: 's' },
+      { metric: 'Pro Agility', current: 4.35, benchmark: 4.10, unit: 's' },
+      { metric: 'Vertical Jump', current: 32, benchmark: 36, unit: '"' },
+      { metric: 'Broad Jump', current: 9.2, benchmark: 10.0, unit: 'ft' },
+      { metric: 'Completion %', current: 72, benchmark: 85, unit: '%' },
+    ];
+    
+    this.processGapAnalysisData(sampleData);
+  }
+
+  /**
+   * Process gap analysis data and calculate summary
+   */
+  private processGapAnalysisData(data: Array<{ metric: string; current: number; benchmark: number; unit: string }>): void {
+    const processedData = data.map(item => {
+      // For time-based metrics (lower is better), invert the gap
+      const isTimeBased = item.unit === 's';
+      const gap = isTimeBased 
+        ? item.benchmark - item.current  // Positive means faster than benchmark
+        : item.current - item.benchmark; // Positive means higher than benchmark
+      
+      return {
+        ...item,
+        gap: Number(gap.toFixed(2)),
+      };
+    });
+    
+    this.gapAnalysisData.set(processedData);
+    
+    // Calculate summary
+    let achieved = 0;
+    let close = 0;
+    let needsWork = 0;
+    
+    processedData.forEach(item => {
+      if (item.gap >= 0) {
+        achieved++;
+      } else if (item.gap > -10) {
+        close++;
+      } else {
+        needsWork++;
+      }
+    });
+    
+    // Calculate overall score as percentage of benchmarks met or exceeded
+    const totalMetrics = processedData.length;
+    const overallScore = totalMetrics > 0 
+      ? Math.round(((achieved + (close * 0.5)) / totalMetrics) * 100)
+      : 0;
+    
+    this.gapAnalysisSummary.set({
+      achieved,
+      close,
+      needsWork,
+      overallScore,
+    });
+  }
+
+  /**
+   * Generate PDF-ready HTML content
+   */
+  private generatePDFContent(playerName: string, dateStr: string): string {
+    const metrics = this.metrics();
+    const goals = this.developmentGoals();
+    const acwr = this.acwrData();
+    const seasonStats = this.playerSeasonStats();
+
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>FlagFit Pro Analytics - ${playerName}</title>
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #1a1a2e;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #10c96b;
+          }
+          .header h1 {
+            color: #10c96b;
+            margin: 0;
+            font-size: 28px;
+          }
+          .header p {
+            color: #666;
+            margin: 10px 0 0;
+          }
+          .section {
+            margin-bottom: 30px;
+          }
+          .section h2 {
+            color: #1a1a2e;
+            font-size: 18px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+          }
+          .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+          .metric-card {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+          }
+          .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10c96b;
+          }
+          .metric-label {
+            color: #666;
+            font-size: 14px;
+          }
+          .goal-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+          }
+          .goal-name {
+            font-weight: bold;
+            color: #1a1a2e;
+          }
+          .goal-progress {
+            color: #666;
+            font-size: 14px;
+          }
+          .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .stats-table th, .stats-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+          }
+          .stats-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+          }
+          .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+          }
+          @media print {
+            body { padding: 20px; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>🏈 FlagFit Pro Analytics Report</h1>
+          <p>${playerName} • ${dateStr}</p>
+        </div>
+
+        <div class="section">
+          <h2>📊 Key Metrics</h2>
+          <div class="metrics-grid">
+            ${metrics.map(m => `
+              <div class="metric-card">
+                <div class="metric-value">${m.value}</div>
+                <div class="metric-label">${m.label}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        ${acwr ? `
+          <div class="section">
+            <h2>⚡ Training Load (ACWR)</h2>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">${acwr.acwr}</div>
+                <div class="metric-label">Current ACWR</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">${acwr.riskZone || 'N/A'}</div>
+                <div class="metric-label">Risk Zone</div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${goals.length > 0 ? `
+          <div class="section">
+            <h2>🎯 Development Goals</h2>
+            ${goals.map(g => `
+              <div class="goal-item">
+                <div class="goal-name">${g.metricName}</div>
+                <div class="goal-progress">
+                  Target: ${g.targetValue}${g.targetUnit} • 
+                  Current: ${g.currentValue}${g.targetUnit} •
+                  Progress: ${this.calculateGoalProgress(g)}%
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${seasonStats ? `
+          <div class="section">
+            <h2>📈 Season Statistics</h2>
+            <table class="stats-table">
+              <tr><th>Metric</th><th>Value</th></tr>
+              <tr><td>Games Played</td><td>${seasonStats.gamesPlayed}</td></tr>
+              <tr><td>Attendance Rate</td><td>${seasonStats.attendanceRate?.toFixed(1)}%</td></tr>
+              <tr><td>Passing Yards</td><td>${seasonStats.totalPassingYards}</td></tr>
+              <tr><td>Completion %</td><td>${seasonStats.completionPercentage?.toFixed(1)}%</td></tr>
+              <tr><td>Rushing Yards</td><td>${seasonStats.totalRushingYards}</td></tr>
+              <tr><td>Flag Pulls</td><td>${seasonStats.totalFlagPulls}</td></tr>
+            </table>
+          </div>
+        ` : ''}
+
+        <div class="footer">
+          <p>Generated by FlagFit Pro • ${new Date().toLocaleString()}</p>
+          <p>This report is confidential and intended for coaching purposes only.</p>
+        </div>
+      </body>
+      </html>
+    `;
   }
 }

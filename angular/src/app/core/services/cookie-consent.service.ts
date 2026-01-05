@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from "@angular/core";
+import { Injectable, signal, computed, isDevMode, inject } from "@angular/core";
+import { LoggerService } from "./logger.service";
 
 /**
  * Cookie Consent Service
@@ -25,6 +26,8 @@ const CONSENT_VERSION = "1.0";
   providedIn: "root",
 })
 export class CookieConsentService {
+  private readonly logger = inject(LoggerService);
+
   private readonly defaultPreferences: CookiePreferences = {
     necessary: true,
     analytics: false,
@@ -119,6 +122,19 @@ export class CookieConsentService {
    */
   openConsentBanner(): void {
     this._showBanner.set(true);
+  }
+
+  /**
+   * Development helper: Force show banner (clears localStorage consent)
+   * Only works in dev mode
+   */
+  forceShowBanner(): void {
+    if (isDevMode()) {
+      localStorage.removeItem(CONSENT_STORAGE_KEY);
+      this._preferences.set(this.defaultPreferences);
+      this._showBanner.set(true);
+      this.logger?.debug("[Cookie Service] Banner forced to show (dev mode)");
+    }
   }
 
   /**

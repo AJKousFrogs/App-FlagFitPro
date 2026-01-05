@@ -3,92 +3,90 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  label {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    font-size: var(--font-body-sm);
-  }
+label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h4);
+}
 
-  .form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
-    font-size: var(--font-body-md);
-    font-family: inherit;
-    line-height: 1.5;
-    resize: vertical;
-    min-height: 6rem;
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
-  }
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
+  font-family: inherit;
+  line-height: var(--line-height-base);
+  resize: vertical;
+  min-height: 6rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
 
-  .form-control:focus {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-    border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-  }
+.form-control:focus {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
+  border-color: var(--ds-primary-green);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
 
-  .form-control:focus:not(:focus-visible) {
-    outline: none;
-  }
+.form-control:focus:not(:focus-visible) {
+  outline: none;
+}
 
-  .form-control:disabled {
-    background-color: var(--surface-tertiary);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
+.form-control:disabled {
+  background-color: var(--surface-tertiary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
-  .form-control:read-only {
-    background-color: var(--surface-secondary);
-    cursor: default;
-  }
+.form-control:read-only {
+  background-color: var(--surface-secondary);
+  cursor: default;
+}
 
-  .form-control.is-invalid {
-    border-color: var(--color-status-error);
-  }
+.form-control.is-invalid {
+  border-color: var(--color-status-error);
+}
 
-  .form-control.is-invalid:focus {
-    border-color: var(--color-status-error);
-    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
-  }
+.form-control.is-invalid:focus {
+  border-color: var(--color-status-error);
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+}
 
-  .form-control.is-valid {
-    border-color: var(--color-status-success);
-  }
+.form-control.is-valid {
+  border-color: var(--color-status-success);
+}
 
-  .form-control.is-valid:focus {
-    border-color: var(--color-status-success);
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-  }
+.form-control.is-valid:focus {
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
 
-  .char-count {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    text-align: right;
-  }
+.char-count {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  text-align: right;
+}
 
-  .form-help {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
+.form-help {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
 
-  .form-error {
-    font-size: var(--font-body-xs);
-    color: var(--color-status-error);
-  }
+.form-error {
+  font-size: var(--font-size-badge);
+  color: var(--color-status-error);
 }
 

@@ -45,7 +45,6 @@ import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { WellnessService } from "../../../core/services/wellness.service";
 import {
-    AppLoadingComponent,
     ButtonComponent,
     CardComponent,
 } from "../ui-components";
@@ -76,7 +75,6 @@ interface TodaysPlan {
     RouterModule,
     CardComponent,
     ButtonComponent,
-    AppLoadingComponent,
     Slider,
     InputNumberModule,
     ProgressBarModule,
@@ -487,7 +485,8 @@ export class MorningBriefingComponent implements OnInit {
   // Computed values from Unified Service
   userName = computed(() => {
     const user = this.authService.getUser();
-    const name = (user as any)?.name || (user as any)?.email?.split("@")[0];
+    const typedUser = user as { name?: string; email?: string } | null;
+    const name = typedUser?.name || typedUser?.email?.split("@")[0];
     return name?.split(" ")[0] || "Athlete";
   });
 
@@ -683,7 +682,14 @@ export class MorningBriefingComponent implements OnInit {
       const twoDaysFromNow = new Date();
       twoDaysFromNow.setDate(today.getDate() + 2);
 
-      const response = await firstValueFrom(this.apiService.get<any[]>('/api/games', {
+      interface GameData {
+        game_date: string;
+        opponent_name?: string;
+        opponent?: string;
+        game_time?: string;
+        location?: string;
+      }
+      const response = await firstValueFrom(this.apiService.get<GameData[]>('/api/games', {
         startDate: today.toISOString().split('T')[0],
         endDate: twoDaysFromNow.toISOString().split('T')[0],
         limit: 1
@@ -741,7 +747,7 @@ export class MorningBriefingComponent implements OnInit {
         this.checkInComplete.emit();
       } else {
         this.toastService.error(
-          (result as any).error || "Failed to save check-in",
+          (result as { error?: string } | null)?.error || "Failed to save check-in",
         );
       }
       this.isSubmitting.set(false);

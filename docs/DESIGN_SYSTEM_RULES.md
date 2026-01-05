@@ -124,21 +124,101 @@ Single spacing system for padding, margin, gap, grid:
 - 14px → 12px or 16px
 - `border-radius: 100px` or `9999px` → `var(--radius-lg)` or `var(--radius-md)`
 
-### 4.4 Typography Scale (LOCKED)
-Strict token scale — no custom font sizes:
-```scss
---font-body-xs: 0.75rem;    /* 12px */
---font-body-sm: 0.875rem;   /* 14px */
---font-body-md: 1rem;       /* 16px */
---font-body-lg: 1.125rem;   /* 18px */
+### 4.4 Typography Scale (LOCKED — UNIFIED SYSTEM)
 
---font-heading-xs: 1rem;    /* 16px */
---font-heading-sm: 1.125rem;
---font-heading-md: 1.25rem;
---font-heading-lg: 1.5rem;
---font-heading-xl: 1.875rem;
---font-heading-2xl: 2.5rem;
+**Effective Date:** January 4, 2026
+
+The unified typography system enforces predictable hierarchy across all components:
+
+#### 4.4.1 Heading Tokens (LOCKED)
+```scss
+/* H1: Page titles, hero greetings */
+--font-h1-size: 2rem;         /* 32px */
+--font-h1-line-height: 1.2;
+--font-h1-weight: 700;        /* bold */
+
+/* H2: Section headers, dialog titles */
+--font-h2-size: 1.5rem;       /* 24px */
+--font-h2-line-height: 1.25;
+--font-h2-weight: 600;        /* semibold */
+
+/* H3: Card titles, subsections */
+--font-h3-size: 1.25rem;      /* 20px */
+--font-h3-line-height: 1.3;
+--font-h3-weight: 400;        /* regular (600 for card headers) */
+
+/* H4: Small headings, group labels */
+--font-h4-size: 1rem;         /* 16px */
+--font-h4-line-height: 1.35;
+--font-h4-weight: 300;        /* light */
 ```
+
+#### 4.4.2 Body & Text Tokens (LOCKED)
+```scss
+/* Body: Regular text, paragraphs */
+--font-body-size: 1rem;       /* 16px */
+--font-body-line-height: 1.5;
+--font-body-weight: 400;      /* regular */
+
+/* Body-sm: Helper text, descriptions */
+--font-body-sm-size: 0.875rem; /* 14px */
+--font-body-sm-line-height: 1.45;
+--font-body-sm-weight: 400;   /* regular */
+
+/* Label: Form labels, table headers */
+--font-label-size: 0.875rem;  /* 14px */
+--font-label-line-height: 1.2;
+--font-label-weight: 600;     /* semibold */
+
+/* Caption: Timestamps, smallest text */
+--font-caption-size: 0.75rem; /* 12px */
+--font-caption-line-height: 1.3;
+--font-caption-weight: 400;   /* regular */
+```
+
+#### 4.4.3 Typography Hierarchy Summary
+| Element | Size | Weight | Line-Height | Use Case |
+|---------|------|--------|-------------|----------|
+| **H1** | 32px | 700 (bold) | 1.2 | Page titles, hero greetings |
+| **H2** | 24px | 600 (semibold) | 1.25 | Section headers, dialog titles |
+| **H3** | 20px | 400/600 | 1.3 | Card titles, subsections |
+| **H4** | 16px | 300 (light) | 1.35 | Small headings, group labels |
+| **Body** | 16px | 400 (regular) | 1.5 | Regular text, paragraphs |
+| **Body-sm** | 14px | 400 (regular) | 1.45 | Helper text, descriptions |
+| **Label** | 14px | 600 (semibold) | 1.2 | Form labels, table headers |
+| **Caption** | 12px | 400 (regular) | 1.3 | Timestamps, smallest text |
+
+#### 4.4.4 PrimeNG Component Typography Mapping (MANDATORY)
+| Component | Typography Token | Details |
+|-----------|-----------------|---------|
+| `p-dialog .p-dialog-title` | H2 | 24px/600/1.25 |
+| `p-card .p-card-title` | H3 | 20px/600/1.3 (semibold for cards) |
+| `p-card .p-card-subtitle` | Body-sm | 14px/400/1.45 |
+| `p-tabview .p-tabview-nav-link` | Body-sm | 14px/600/1.45 (semibold for tabs) |
+| `p-tabs .p-tab` | Body-sm | 14px/600/1.45 (semibold for tabs) |
+| `p-datatable thead th` | Label | 14px/600/1.2 + uppercase |
+| `p-datatable tbody td` | Body | 16px/400/1.5 |
+| `p-panel .p-panel-header` | H3 | 20px/600/1.3 |
+| `p-accordion header` | H3 | 20px/600/1.3 |
+| Form labels | Label | 14px/600/1.2 |
+| Helper/description text | Body-sm | 14px/400/1.45 |
+| Error text | Body-sm | 14px/400/1.45 + error color |
+
+#### 4.4.5 Legacy Token Mapping (Backward Compatibility)
+```scss
+/* These legacy tokens are mapped to the unified system */
+--font-body-xs: var(--font-caption-size);   /* 12px */
+--font-body-sm: var(--font-body-sm-size);   /* 14px */
+--font-body-md: var(--font-body-size);      /* 16px */
+--font-body-lg: 1.125rem;                   /* 18px */
+--font-size-h1: var(--font-h1-size);
+--font-size-h2: var(--font-h2-size);
+--font-size-h3: var(--font-h3-size);
+--font-size-h4: var(--font-h4-size);
+```
+
+❌ **No raw font sizes allowed.**  
+❌ **No per-component font overrides outside typography-system.scss.**
 
 ---
 
@@ -1706,12 +1786,18 @@ Page headers vary: title placement, action buttons, breadcrumbs inconsistent.
 
 ---
 
-## Decision 29: Typography System (Poppins)
+## Decision 29: Typography System (Poppins) — UNIFIED
+
+**Status:** ✅ **UPDATED January 4, 2026**
 
 ### Current State
-You already have a well-defined typography system with Poppins. **However, 168 instances** of hardcoded `font-family` declarations exist across the codebase instead of using tokens.
+The typography system has been **unified** with predictable hierarchy across all components.
 
-### Existing Typography Tokens (Keep These)
+### Unified Typography Tokens (SINGLE SOURCE OF TRUTH)
+
+**Source file:** `angular/src/assets/styles/design-system-tokens.scss`  
+**Implementation:** `angular/src/assets/styles/typography-system.scss`
+
 ```scss
 /* Font Families */
 --font-family-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
@@ -1719,61 +1805,103 @@ You already have a well-defined typography system with Poppins. **However, 168 i
 --font-family-mono: "JetBrains Mono", "SF Mono", "Monaco", "Inconsolata", monospace;
 
 /* Font Weights */
---font-weight-normal: 400;
+--font-weight-light: 300;
+--font-weight-regular: 400;
+--font-weight-normal: 400;   /* Alias */
 --font-weight-medium: 500;
 --font-weight-semibold: 600;
 --font-weight-bold: 700;
-
-/* Font Sizes - Headings */
---font-heading-2xl: 2.5rem;   /* 40px */
---font-heading-xl: 1.875rem;  /* 30px */
---font-heading-lg: 1.5rem;    /* 24px */
---font-heading-md: 1.25rem;   /* 20px */
---font-heading-sm: 1.125rem;  /* 18px */
---font-heading-xs: 1rem;      /* 16px */
-
-/* Font Sizes - Body */
---font-body-lg: 1.125rem;     /* 18px */
---font-body-md: 1rem;         /* 16px */
---font-body-sm: 0.875rem;     /* 14px */
---font-body-xs: 0.75rem;      /* 12px */
-
-/* Line Heights */
---line-height-tight: 1.25;    /* Headings */
---line-height-normal: 1.5;    /* Body text */
---line-height-relaxed: 1.625; /* Long-form reading */
-
-/* Letter Spacing */
---letter-spacing-tight: -0.02em;  /* Large headings */
---letter-spacing-normal: 0;        /* Body text */
---letter-spacing-wide: 0.05em;     /* Uppercase labels */
 ```
 
-### Typography Hierarchy
-| Role | Token | Size | Weight | Use Case |
-|------|-------|------|--------|----------|
-| **Page Title** | `--font-heading-2xl` | 40px | Bold | H1, page headers |
-| **Section Title** | `--font-heading-lg` | 24px | Semibold | H2, card titles |
-| **Subsection** | `--font-heading-md` | 20px | Semibold | H3, dialog titles |
-| **Group Header** | `--font-heading-sm` | 18px | Semibold | H4, list headers |
-| **Body Large** | `--font-body-lg` | 18px | Normal | Lead paragraphs |
-| **Body** | `--font-body-md` | 16px | Normal | Default text |
-| **Body Small** | `--font-body-sm` | 14px | Normal | Secondary text, labels |
-| **Caption** | `--font-body-xs` | 12px | Normal | Timestamps, hints |
+### Unified Heading Tokens (LOCKED)
+```scss
+/* H1: Page titles, hero greetings */
+--font-h1-size: 2rem;         /* 32px */
+--font-h1-line-height: 1.2;
+--font-h1-weight: 700;        /* bold */
 
-### Existing Typography Classes (Use These)
+/* H2: Section headers, dialog titles */
+--font-h2-size: 1.5rem;       /* 24px */
+--font-h2-line-height: 1.25;
+--font-h2-weight: 600;        /* semibold */
+
+/* H3: Card titles, subsections */
+--font-h3-size: 1.25rem;      /* 20px */
+--font-h3-line-height: 1.3;
+--font-h3-weight: 400;        /* regular (600 for card headers) */
+
+/* H4: Small headings, group labels */
+--font-h4-size: 1rem;         /* 16px */
+--font-h4-line-height: 1.35;
+--font-h4-weight: 300;        /* light */
+```
+
+### Unified Body & Text Tokens (LOCKED)
+```scss
+/* Body: Regular text, paragraphs */
+--font-body-size: 1rem;       /* 16px */
+--font-body-line-height: 1.5;
+--font-body-weight: 400;      /* regular */
+
+/* Body-sm: Helper text, descriptions */
+--font-body-sm-size: 0.875rem; /* 14px */
+--font-body-sm-line-height: 1.45;
+--font-body-sm-weight: 400;   /* regular */
+
+/* Label: Form labels, table headers */
+--font-label-size: 0.875rem;  /* 14px */
+--font-label-line-height: 1.2;
+--font-label-weight: 600;     /* semibold */
+
+/* Caption: Timestamps, smallest text */
+--font-caption-size: 0.75rem; /* 12px */
+--font-caption-line-height: 1.3;
+--font-caption-weight: 400;   /* regular */
+```
+
+### Typography Hierarchy (UNIFIED)
+| Role | Size | Weight | Line-Height | Use Case |
+|------|------|--------|-------------|----------|
+| **H1** | 32px | 700 (bold) | 1.2 | Page titles, hero greetings |
+| **H2** | 24px | 600 (semibold) | 1.25 | Section headers, dialog titles |
+| **H3** | 20px | 400/600 | 1.3 | Card titles, subsections |
+| **H4** | 16px | 300 (light) | 1.35 | Small headings, group labels |
+| **Body** | 16px | 400 (regular) | 1.5 | Regular text, paragraphs |
+| **Body-sm** | 14px | 400 (regular) | 1.45 | Helper text, descriptions |
+| **Label** | 14px | 600 (semibold) | 1.2 | Form labels, table headers |
+| **Caption** | 12px | 400 (regular) | 1.3 | Timestamps, smallest text |
+
+### PrimeNG Component Typography Mapping (MANDATORY)
+| Component | Token | Specification |
+|-----------|-------|---------------|
+| `p-dialog .p-dialog-title` | H2 | 24px/600/1.25 |
+| `p-card .p-card-title` | H3 | 20px/600/1.3 |
+| `p-card .p-card-subtitle` | Body-sm | 14px/400/1.45 |
+| `p-tabview .p-tabview-nav-link` | Body-sm | 14px/600/1.45 |
+| `p-tabs .p-tab` | Body-sm | 14px/600/1.45 |
+| `p-datatable thead th` | Label | 14px/600/1.2 + uppercase |
+| `p-datatable tbody td` | Body | 16px/400/1.5 |
+| `p-panel .p-panel-header` | H3 | 20px/600/1.3 |
+| `p-accordion header` | H3 | 20px/600/1.3 |
+| Form labels | Label | 14px/600/1.2 |
+| Helper/description text | Body-sm | 14px/400/1.45 |
+| Error text | Body-sm | 14px/400/1.45 + error color |
+
+### Typography CSS Classes (Use These)
 ```scss
 /* Headings */
-.page-title, .h1     /* 40px → 30px → 24px responsive */
-.section-title, .h2  /* 24px → 20px responsive */
-.subsection-title, .h3 /* 20px → 18px responsive */
-.group-title, .h4    /* 18px → 16px responsive */
+.ff-h1, .page-title, .hero-title   /* 32px/700/1.2 */
+.ff-h2, .section-title, .dialog-title /* 24px/600/1.25 */
+.ff-h3, .card-title, .subsection-title /* 20px/600/1.3 */
+.ff-h4, .label-title, .group-title /* 16px/300/1.35 */
 
 /* Body */
-.lead, .body-lg      /* 18px */
-.body-text, .text-base /* 16px */
-.body-sm, .text-sm   /* 14px */
-.caption, .text-xs   /* 12px */
+.ff-body, .body-text, .text-base   /* 16px/400/1.5 */
+.ff-body-sm, .body-sm, .description, .helper-text /* 14px/400/1.45 */
+
+/* Label & Caption */
+.ff-label, .form-label, .table-header /* 14px/600/1.2 */
+.ff-caption, .caption, .hint, .meta, .timestamp /* 12px/400/1.3 */
 
 /* Semantic */
 .form-label          /* 14px medium */

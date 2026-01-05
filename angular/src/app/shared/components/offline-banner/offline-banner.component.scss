@@ -3,108 +3,106 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.status-offline {
+  background: linear-gradient(135deg, var(--primitive-error-500) 0%, var(--primitive-error-600) 100%);
+  color: white;
+}
+
+.status-slow {
+  background: linear-gradient(135deg, var(--primitive-warning-500) 0%, var(--primitive-warning-600) 100%);
+  color: white;
+}
+
+.status-syncing {
+  background: linear-gradient(135deg, var(--primitive-blue-500) 0%, var(--primitive-blue-600) 100%);
+  color: white;
+}
+
+.status-online {
+  background: linear-gradient(135deg, var(--primitive-success-500) 0%, var(--primitive-success-600) 100%);
+  color: white;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.status-icon i {
+  font-size: var(--font-size-body);
+}
+
+.status-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.status-title {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h4);
+}
+
+.status-message {
+  font-size: var(--font-size-badge);
+  opacity: 0.9;
+}
+
+.banner-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.banner-actions .p-button {
+  color: white;
+}
+
+.banner-actions .p-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
   .offline-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-3) var(--space-4);
-    animation: slideDown 0.3s ease;
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  .status-offline {
-    background: linear-gradient(135deg, var(--primitive-error-500) 0%, var(--primitive-error-600) 100%);
-    color: white;
-  }
-
-  .status-slow {
-    background: linear-gradient(135deg, var(--primitive-warning-500) 0%, var(--primitive-warning-600) 100%);
-    color: white;
-  }
-
-  .status-syncing {
-    background: linear-gradient(135deg, var(--primitive-blue-500) 0%, var(--primitive-blue-600) 100%);
-    color: white;
-  }
-
-  .status-online {
-    background: linear-gradient(135deg, var(--primitive-success-500) 0%, var(--primitive-success-600) 100%);
-    color: white;
-  }
-
-  .banner-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .status-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-  }
-
-  .status-icon i {
-    font-size: var(--font-body-md);
-  }
-
-  .status-text {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .status-title {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-sm);
+    padding: var(--space-2) var(--space-3);
   }
 
   .status-message {
-    font-size: var(--font-body-xs);
-    opacity: 0.9;
-  }
-
-  .banner-actions {
-    display: flex;
-    gap: var(--space-2);
-  }
-
-  .banner-actions ::ng-deep .p-button {
-    color: white !important;
-  }
-
-  .banner-actions ::ng-deep .p-button:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  @media (max-width: 768px) {
-    .offline-banner {
-      padding: var(--space-2) var(--space-3);
-    }
-
-    .status-message {
-      display: none;
-    }
+    display: none;
   }
 }
 

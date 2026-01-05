@@ -10,7 +10,6 @@ import {
   input,
   output,
   signal,
-  computed,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -18,7 +17,6 @@ import { FormsModule } from "@angular/forms";
 // PrimeNG
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TooltipModule } from "primeng/tooltip";
@@ -49,8 +47,6 @@ import {
     Select,
     TooltipModule,
     AvatarModule,
-  
-    ButtonComponent,
   ],
   template: `
     <div class="tab-content">

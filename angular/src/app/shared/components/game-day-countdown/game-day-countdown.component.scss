@@ -3,290 +3,288 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .countdown-widget {
-    background: var(--surface-primary);
-    border-radius: var(--radius-xl);
-    padding: var(--space-5);
-    border: 2px solid var(--color-border-secondary);
-    transition: all 0.3s ease;
-  }
+.countdown-widget {
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  border: 2px solid var(--color-border-secondary);
+  transition: all 0.3s ease;
+}
 
-  .countdown-widget.urgent {
-    border-color: var(--primitive-warning-300);
-    background: linear-gradient(
-      135deg,
-      var(--surface-primary) 0%,
-      var(--primitive-warning-50) 100%
-    );
-  }
+.countdown-widget.urgent {
+  border-color: var(--primitive-warning-300);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--primitive-warning-50) 100%
+  );
+}
 
-  .countdown-widget.game-day {
-    border-color: var(--primitive-error-400);
-    background: linear-gradient(
-      135deg,
-      var(--surface-primary) 0%,
-      var(--primitive-error-50) 100%
-    );
-    animation: pulse-border 2s infinite;
-  }
+.countdown-widget.game-day {
+  border-color: var(--primitive-error-400);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--primitive-error-50) 100%
+  );
+  animation: pulse-border 2s infinite;
+}
 
-  @keyframes pulse-border {
-    0%,
-    100% {
-      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
-    }
+@keyframes pulse-border {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
   }
-
-  /* Header */
-  .widget-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-4);
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
   }
+}
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+/* Header */
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.header-left i {
+  font-size: var(--font-size-h2);
+  color: var(--color-status-warning);
+}
+
+.game-day .header-left i {
+  color: var(--color-status-error);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
   }
-
-  .header-left i {
-    font-size: var(--font-heading-sm);
-    color: var(--color-status-warning);
+  50% {
+    opacity: 0.5;
   }
+}
 
-  .game-day .header-left i {
-    color: var(--color-status-error);
-    animation: pulse 1s infinite;
-  }
+.header-title {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-h4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-primary);
+}
 
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
+/* Countdown Display */
+.countdown-display {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+}
 
-  .header-title {
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-body-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--color-text-primary);
-  }
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
 
-  /* Countdown Display */
+.countdown-value {
+  font-size: var(--font-size-metric-md);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.urgent .countdown-value {
+  color: var(--primitive-warning-600);
+}
+
+.game-day .countdown-value {
+  color: var(--primitive-error-600);
+}
+
+.countdown-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: var(--space-1);
+}
+
+/* Game Info */
+.game-info {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.opponent-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.vs-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.opponent-name {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.game-details {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.detail i {
+  font-size: var(--font-size-h4);
+}
+
+/* Readiness Section */
+.readiness-section {
+  margin-bottom: var(--space-4);
+}
+
+.readiness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.readiness-label {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.readiness-percent {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.progress-green .p-progressbar-value {
+  background: var(--ds-primary-green);
+}
+
+.progress-orange .p-progressbar-value {
+  background: var(--color-status-warning);
+}
+
+.progress-red .p-progressbar-value {
+  background: var(--color-status-error);
+}
+
+/* Checklist */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  cursor: pointer;
+}
+
+.checklist-item:hover {
+  background: var(--surface-tertiary);
+}
+
+.checklist-item.completed {
+  background: var(--primitive-success-50);
+}
+
+.item-status i {
+  font-size: var(--font-size-body);
+  color: var(--color-border-primary);
+}
+
+.checklist-item.completed .item-status i {
+  color: var(--ds-primary-green);
+}
+
+.item-label {
+  flex: 1;
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-medium);
+}
+
+.checklist-item.completed .item-label {
+  color: var(--primitive-success-700);
+}
+
+.item-arrow {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
+
+/* Actions */
+.widget-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.widget-actions p-button {
+  flex: 1;
+}
+
+.widget-actions .p-button {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   .countdown-display {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-5);
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-  }
-
-  .countdown-unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 60px;
+    gap: var(--space-3);
   }
 
   .countdown-value {
-    font-size: var(--font-heading-lg);
-    font-weight: var(--font-weight-extrabold);
-    color: var(--color-text-primary);
-    line-height: 1;
+    font-size: var(--font-size-h2);
   }
 
-  .urgent .countdown-value {
-    color: var(--primitive-warning-600);
-  }
-
-  .game-day .countdown-value {
-    color: var(--primitive-error-600);
-  }
-
-  .countdown-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: var(--space-1);
-  }
-
-  /* Game Info */
-  .game-info {
-    text-align: center;
-    margin-bottom: var(--space-4);
-  }
-
-  .opponent-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
-  .vs-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .opponent-name {
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
-  .game-details {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-4);
-  }
-
-  .detail {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .detail i {
-    font-size: var(--font-body-sm);
-  }
-
-  /* Readiness Section */
-  .readiness-section {
-    margin-bottom: var(--space-4);
-  }
-
-  .readiness-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2);
-  }
-
-  .readiness-label {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .readiness-percent {
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
-  :host ::ng-deep .progress-green .p-progressbar-value {
-    background: var(--ds-primary-green);
-  }
-
-  :host ::ng-deep .progress-orange .p-progressbar-value {
-    background: var(--color-status-warning);
-  }
-
-  :host ::ng-deep .progress-red .p-progressbar-value {
-    background: var(--color-status-error);
-  }
-
-  /* Checklist */
-  .checklist {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
-  }
-
-  .checklist-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: var(--color-text-primary);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
-    cursor: pointer;
-  }
-
-  .checklist-item:hover {
-    background: var(--surface-tertiary);
-  }
-
-  .checklist-item.completed {
-    background: var(--primitive-success-50);
-  }
-
-  .item-status i {
-    font-size: var(--font-body-md);
-    color: var(--color-border-primary);
-  }
-
-  .checklist-item.completed .item-status i {
-    color: var(--ds-primary-green);
-  }
-
-  .item-label {
-    flex: 1;
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .checklist-item.completed .item-label {
-    color: var(--primitive-success-700);
-  }
-
-  .item-arrow {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Actions */
   .widget-actions {
-    display: flex;
-    gap: var(--space-3);
-  }
-
-  .widget-actions p-button {
-    flex: 1;
-  }
-
-  :host ::ng-deep .widget-actions .p-button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    .countdown-display {
-      gap: var(--space-3);
-    }
-
-    .countdown-value {
-      font-size: var(--font-heading-md);
-    }
-
-    .widget-actions {
-      flex-direction: column;
-    }
+    flex-direction: column;
   }
 }
 

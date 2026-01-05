@@ -56,7 +56,7 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
     "/workout",
   ];
 
-  preload(route: Route, load: () => Observable<any>): Observable<any> {
+  preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
     const routePath = route.path || "";
 
     // Don't preload if route has data.preload = false

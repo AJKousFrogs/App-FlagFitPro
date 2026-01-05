@@ -186,7 +186,7 @@ export class YoutubePlayerComponent implements OnDestroy {
     if (this.player) {
       try {
         this.player.destroy();
-      } catch (e) {
+      } catch (_e) {
         // Ignore errors during cleanup
       }
     }
@@ -269,7 +269,7 @@ export class YoutubePlayerComponent implements OnDestroy {
     }
   }
 
-  private onPlayerReady(event: YTEvent): void {
+  private onPlayerReady(_event: YTEvent): void {
     this.playerReady.set(true);
     this.loading.set(false);
     if (this.player) {
@@ -321,7 +321,7 @@ export class YoutubePlayerComponent implements OnDestroy {
         try {
           const current = this.player.getCurrentTime();
           this.currentTime.set(Math.floor(current));
-        } catch (e) {
+        } catch (_e) {
           // Ignore errors
         }
       }

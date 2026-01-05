@@ -262,12 +262,26 @@ export class SupplementTrackerComponent implements OnInit {
   private loadSupplements(): void {
     this.isLoading.set(true);
 
+    interface SupplementResponse {
+      id?: string;
+      supplement_id?: string;
+      name?: string;
+      supplement_name?: string;
+      dosage?: string;
+      dose?: string;
+      timing?: string;
+      category?: string;
+      taken_today?: boolean;
+      taken?: boolean;
+      taken_at?: string;
+      notes?: string;
+    }
     // Try to fetch user's supplement list from API
-    this.apiService.get<any>("/api/supplements").subscribe({
+    this.apiService.get<{ supplements: SupplementResponse[] }>("/api/supplements").subscribe({
       next: (response) => {
         if (response?.data?.supplements && response.data.supplements.length > 0) {
           // Map API response to our interface
-          const mapped = response.data.supplements.map((s: any) => ({
+          const mapped = response.data.supplements.map((s) => ({
             id: s.id || s.supplement_id || this.generateId(s.name),
             name: s.name || s.supplement_name,
             dosage: s.dosage || s.dose,

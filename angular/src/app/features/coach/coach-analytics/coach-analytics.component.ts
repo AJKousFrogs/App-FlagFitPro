@@ -17,7 +17,6 @@ import { DecimalPipe } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
-    inject,
     signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -431,7 +430,7 @@ export class CoachAnalyticsComponent {
   classification = signal<ClassificationBreakdown | null>(null);
   trends = signal<TrendData | null>(null);
   leaderboard = signal<LeaderboardEntry[]>([]);
-  feedbackStats = signal<any>(null);
+  feedbackStats = signal<{ positive: number; negative: number; neutral: number } | null>(null);
 
   teamOptions: TeamOption[] = [
     { label: "All Athletes", value: "all" },
@@ -447,8 +446,8 @@ export class CoachAnalyticsComponent {
   ];
   selectedTimeRange = "30d";
 
-  trendChartData: any;
-  lineChartOptions: any;
+  trendChartData: { labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null = null;
+  lineChartOptions: ChartOptions<'line'> | null = null;
 
   constructor() {
     this.initChartOptions();

@@ -9,7 +9,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable, throwError } from "rxjs";
+import { throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";

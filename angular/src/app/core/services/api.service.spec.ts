@@ -26,7 +26,7 @@ const mockLoggerService = {
 };
 
 // Mock window for URL detection
-const originalWindow = global.window;
+const _originalWindow = global.window;
 
 describe("ApiService", () => {
   let service: ApiService;

@@ -112,7 +112,7 @@ export class FormFieldComponent implements ControlValueAccessor {
   disabled = signal<boolean>(false);
   touched = signal<boolean>(false);
 
-  private onChange = (value: string) => {};
+  private onChange = (_value: string) => {};
   private onTouched = () => {};
 
   hasError = computed(() => {
@@ -127,8 +127,9 @@ export class FormFieldComponent implements ControlValueAccessor {
   getAriaDescribedBy(): string | null {
     const ids: string[] = [];
 
-    if (this.config().ariaDescribedBy) {
-      ids.push(this.config().ariaDescribedBy!);
+    const ariaDescribedBy = this.config().ariaDescribedBy;
+    if (ariaDescribedBy) {
+      ids.push(ariaDescribedBy);
     }
 
     if (this.hasError()) {

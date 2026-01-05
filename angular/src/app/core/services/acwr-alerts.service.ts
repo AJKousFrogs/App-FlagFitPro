@@ -22,9 +22,9 @@ import { NotificationStateService } from "./notification-state.service";
 import {
   LoadAlert,
   ACWRData,
-  TrainingSession,
-  RiskLevel,
-  PlayerACWRProfile,
+  type TrainingSession as _TrainingSession,
+  type RiskLevel as _RiskLevel,
+  type PlayerACWRProfile as _PlayerACWRProfile,
   TrainingAdjustment,
   SessionType,
 } from "../models/acwr.models";
@@ -143,7 +143,7 @@ export class AcwrAlertsService {
     // Get player info from auth service
     const user = this.authService.getUser();
     const playerId = user?.id || "anonymous";
-    const rawMetadata = (user as any)?.user_metadata || {};
+    const rawMetadata = (user as { user_metadata?: { full_name?: string } } | null)?.user_metadata || {};
     const playerName =
       rawMetadata?.full_name || user?.email?.split("@")[0] || "Player";
 

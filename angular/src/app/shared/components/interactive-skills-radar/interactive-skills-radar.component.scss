@@ -3,73 +3,71 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.radar-container {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skills-breakdown {
+  padding: var(--space-5);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.skills-breakdown h4 {
+  margin: 0 0 var(--space-5) 0;
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.sub-skills {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sub-skill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-secondary);
+}
+
+.sub-skill-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+}
+
+@media (min-width: 768px) {
   .skills-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+    flex-direction: row;
   }
 
   .radar-container {
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 1;
   }
 
   .skills-breakdown {
-    padding: var(--space-5);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
+    flex: 0 0 350px;
   }
+}
 
-  .skills-breakdown h4 {
-    margin: 0 0 var(--space-5) 0;
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .sub-skills {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .sub-skill {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    background: var(--surface-card);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-secondary);
-  }
-
-  .sub-skill-name {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    font-size: var(--font-body-md);
-  }
-
-  @media (min-width: 768px) {
-    .skills-container {
-      flex-direction: row;
-    }
-
-    .radar-container {
-      flex: 1;
-    }
-
-    .skills-breakdown {
-      flex: 0 0 350px;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .radar-container {
-      min-height: 300px;
-    }
+@media (max-width: 767px) {
+  .radar-container {
+    min-height: 300px;
   }
 }
 

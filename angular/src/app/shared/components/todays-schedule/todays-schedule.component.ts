@@ -105,7 +105,7 @@ export class TodaysScheduleComponent {
     // Handled by service refresh
   }
 
-  private mapPracticeToSchedule(practice: any): ScheduleItem[] {
+  private mapPracticeToSchedule(practice: Record<string, unknown>): ScheduleItem[] {
     const items: ScheduleItem[] = [];
     const now = new Date();
     const currentHour = now.getHours();
@@ -236,7 +236,7 @@ export class TodaysScheduleComponent {
     return icons[type] || "pi-calendar";
   }
 
-  getTypeSeverity(type: ScheduleItem["type"]): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  getTypeSeverity(_type: ScheduleItem["type"]): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     // All tags use the same neutral color for visual consistency
     return "secondary";
   }

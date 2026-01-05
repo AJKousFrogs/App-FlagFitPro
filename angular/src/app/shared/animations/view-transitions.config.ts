@@ -45,7 +45,7 @@ export class ViewTransitionHelper {
       return Promise.resolve();
     }
 
-    return (document as any).startViewTransition(callback).finished;
+    return (document as Document & { startViewTransition: (callback: () => void) => { finished: Promise<void> } }).startViewTransition(callback).finished;
   }
 
   /**
@@ -80,7 +80,7 @@ export class ViewTransitionHelper {
       );
     }
 
-    return (document as any)
+    return (document as Document & { startViewTransition: (callback: () => void) => { finished: Promise<void> } })
       .startViewTransition(callback)
       .finished.finally(() => {
         // Clean up attributes after transition

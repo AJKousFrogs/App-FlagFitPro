@@ -94,11 +94,10 @@ interface ChartOptions {
     ProgressBarModule,
     Tabs,
     TimelineModule,
-    Select
+    Select,
     DialogModule,
     TooltipModule,
     CountdownTimerComponent,
-  
     ButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

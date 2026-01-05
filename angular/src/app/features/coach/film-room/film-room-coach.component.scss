@@ -21,8 +21,8 @@
     background: none;
     border: none;
     border-radius: var(--radius-md);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -56,7 +56,7 @@
   border-radius: var(--radius-lg);
 
   .stat-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
   }
 
   .stat-content {
@@ -64,19 +64,19 @@
     flex-direction: column;
 
     .stat-value {
-      font-size: var(--font-heading-sm);
-      font-weight: 700;
+      font-size: var(--font-size-h2);
+      font-weight: var(--font-weight-bold);
       color: var(--ds-text-primary);
     }
 
     .stat-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
     }
 
     .stat-sub {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
     }
   }
@@ -110,13 +110,13 @@
     gap: var(--space-2);
 
     .film-icon {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
     }
 
     h3 {
       margin: 0;
-      font-size: var(--font-body-md);
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -147,7 +147,7 @@
     justify-content: center;
 
     i {
-      font-size: var(--font-heading-lg);
+      font-size: var(--font-size-metric-md);
       color: white;
     }
   }
@@ -158,7 +158,7 @@
 
   p {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     strong {
@@ -177,7 +177,7 @@
 
   p {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     strong {
@@ -196,13 +196,13 @@
     .progress-label {
       display: block;
       margin-bottom: var(--space-1);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
   }
 
   .not-watched {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--primitive-warning-500);
   }
 }
@@ -254,7 +254,7 @@
   padding: var(--space-2);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 
   strong {
@@ -266,8 +266,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 

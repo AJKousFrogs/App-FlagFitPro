@@ -258,7 +258,7 @@ describe("EvidenceConfigService", () => {
     it("should update configs when preset changes", () => {
       const presets = service.availablePresets();
       if (presets.length > 1) {
-        const originalAcwr = service.getACWRConfig();
+        const _originalAcwr = service.getACWRConfig();
         const newPreset = presets.find(
           (p) => p.id !== service.getActivePreset().id,
         );

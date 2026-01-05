@@ -12,11 +12,11 @@
 
 import {
   EvidencePreset,
-  PopulationAssumptions,
+  type PopulationAssumptions as _PopulationAssumptions,
   ResearchCitation,
-  ACWREvidenceConfig,
-  ReadinessEvidenceConfig,
-  TaperingEvidenceConfig,
+  type ACWREvidenceConfig as _ACWREvidenceConfig,
+  type ReadinessEvidenceConfig as _ReadinessEvidenceConfig,
+  type TaperingEvidenceConfig as _TaperingEvidenceConfig,
 } from "./evidence-config";
 
 /**
@@ -115,7 +115,7 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "3-6 sessions/week",
     },
-    citations: [RESEARCH_CITATIONS["gabbett2016"]!],
+    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,
@@ -151,10 +151,10 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
       trainingFrequency: "3-6 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["halson2014"]!!,
-      RESEARCH_CITATIONS["fullagar2015"]!,
-      RESEARCH_CITATIONS["saw2016"]!!,
-      RESEARCH_CITATIONS["mclellan2011"]!,
+      RESEARCH_CITATIONS.halson2014,
+      RESEARCH_CITATIONS.fullagar2015,
+      RESEARCH_CITATIONS.saw2016,
+      RESEARCH_CITATIONS.mclellan2011,
     ],
     weightings: {
       workload: 0.35,
@@ -195,9 +195,9 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
       trainingFrequency: "3-6 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["bosquet2007"]!,
-      RESEARCH_CITATIONS["mujika2003"]!,
-    ],
+      RESEARCH_CITATIONS["bosquet2007"],
+      RESEARCH_CITATIONS["mujika2003"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
     taperDuration: {
       major: { min: 10, max: 14 },
       high: { min: 7, max: 10 },
@@ -268,7 +268,7 @@ export const YOUTH_FLAG_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "3-5 sessions/week",
     },
-    citations: [RESEARCH_CITATIONS["gabbett2016"]!],
+    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,
@@ -304,9 +304,9 @@ export const YOUTH_FLAG_V1: EvidencePreset = {
       trainingFrequency: "3-5 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["halson2014"]!,
-      RESEARCH_CITATIONS["saw2016"]!,
-    ],
+      RESEARCH_CITATIONS["halson2014"],
+      RESEARCH_CITATIONS["saw2016"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
     weightings: {
       workload: 0.3, // Lower workload weight
       wellness: 0.35, // Higher wellness weight (youth may be more sensitive)
@@ -346,9 +346,9 @@ export const YOUTH_FLAG_V1: EvidencePreset = {
       trainingFrequency: "3-5 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["bosquet2007"]!,
-      RESEARCH_CITATIONS["mujika2003"]!,
-    ],
+      RESEARCH_CITATIONS["bosquet2007"],
+      RESEARCH_CITATIONS["mujika2003"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
     taperDuration: {
       major: { min: 10, max: 14 },
       high: { min: 7, max: 10 },
@@ -419,7 +419,7 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
       competitionLevel: "competitive",
       trainingFrequency: "2-4 sessions/week",
     },
-    citations: [RESEARCH_CITATIONS["gabbett2016"]!],
+    citations: RESEARCH_CITATIONS["gabbett2016"] ? [RESEARCH_CITATIONS["gabbett2016"]] : [],
     acuteWindowDays: 7,
     chronicWindowDays: 28,
     acuteLambda: 0.2,
@@ -455,9 +455,9 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
       trainingFrequency: "2-4 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["halson2014"]!,
-      RESEARCH_CITATIONS["saw2016"]!,
-    ],
+      RESEARCH_CITATIONS["halson2014"],
+      RESEARCH_CITATIONS["saw2016"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
     weightings: {
       workload: 0.3,
       wellness: 0.35, // Higher wellness weight for RTP
@@ -497,9 +497,9 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
       trainingFrequency: "2-4 sessions/week",
     },
     citations: [
-      RESEARCH_CITATIONS["bosquet2007"]!,
-      RESEARCH_CITATIONS["mujika2003"]!,
-    ],
+      RESEARCH_CITATIONS["bosquet2007"],
+      RESEARCH_CITATIONS["mujika2003"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
     taperDuration: {
       major: { min: 10, max: 14 },
       high: { min: 7, max: 10 },

@@ -60,14 +60,10 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, of } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
-import {
-  RecoveryService,
-  RecoveryProtocol as BaseRecoveryProtocol,
-} from "./recovery.service";
+import { RecoveryService } from "./recovery.service";
 
 // ============================================================================
 // INTERFACES
@@ -698,7 +694,7 @@ export class TravelRecoveryService {
    */
   private generateTravelDay(
     plan: TravelPlan,
-    profile: CircadianProfile,
+    _profile: CircadianProfile,
   ): RecoveryProtocol {
     const isEastward = plan.travelDirection === "eastward";
 
@@ -824,11 +820,11 @@ export class TravelRecoveryService {
     day: number,
     date: Date,
     plan: TravelPlan,
-    profile: CircadianProfile,
+    _profile: CircadianProfile,
     severity: JetLagSeverity,
   ): RecoveryProtocol {
     const isEastward = plan.travelDirection === "eastward";
-    const timezones = Math.abs(plan.timezonesEast);
+    const _timezones = Math.abs(plan.timezonesEast);
     const isRecovered = day > severity.estimatedRecoveryDays;
 
     const recommendations: ProtocolRecommendation[] = [];

@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of, forkJoin } from "rxjs";
+import { Observable } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
@@ -218,15 +218,26 @@ export class TeamStatisticsService {
     consentInfo?: ConsentInfo;
     dataState?: string;
   }> {
-    return this.apiService.get<any>(API_ENDPOINTS.coach.team, { teamId }).pipe(
+    interface TeamResponse {
+      success: boolean;
+      data?: {
+        members?: PlayerPerformanceStats[];
+        consentInfo?: ConsentInfo;
+        dataState?: string;
+      } | PlayerPerformanceStats[];
+    }
+    return this.apiService.get<TeamResponse>(API_ENDPOINTS.coach.team, { teamId }).pipe(
       map((response) => {
         if (response.success && response.data) {
           const data = response.data;
-          const members = Array.isArray(data.members)
-            ? data.members
-            : Array.isArray(data)
-              ? data
-              : [];
+          if (Array.isArray(data)) {
+            return {
+              members: this.processPlayersData(data),
+              consentInfo: undefined,
+              dataState: undefined,
+            };
+          }
+          const members = Array.isArray(data.members) ? data.members : [];
           return {
             members: this.processPlayersData(members),
             consentInfo: data.consentInfo,

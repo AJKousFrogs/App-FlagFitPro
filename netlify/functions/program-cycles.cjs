@@ -109,7 +109,7 @@ async function getCycles(supabase, userId, headers) {
     const endDate = new Date(cycle.end_date);
 
     if (playerProgress) {
-      status = playerProgress.status;
+      ({ status } = playerProgress);
     } else if (now >= startDate && now <= endDate) {
       status = "in_progress";
     } else if (now > endDate) {

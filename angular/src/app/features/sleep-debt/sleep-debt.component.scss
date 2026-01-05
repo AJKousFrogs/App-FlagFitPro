@@ -76,19 +76,19 @@
 
   .debt-value {
     font-size: var(--font-display-sm);
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     line-height: 1;
   }
 
   .debt-unit {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
     margin-top: var(--space-1);
   }
 
   .debt-label {
-    font-size: var(--font-body-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     margin-top: var(--space-1);
     letter-spacing: 1px;
   }
@@ -96,7 +96,7 @@
 
 .debt-description {
   color: var(--ds-text-secondary);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
   margin: 0;
 }
 
@@ -116,34 +116,16 @@
   }
 
   .stat-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
     color: var(--ds-primary-green);
     padding: var(--space-2);
     background: var(--ds-primary-green-subtle);
     border-radius: var(--radius-md);
   }
 
-  .stat-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .stat-label {
-    font-size: var(--font-body-sm);
-    color: var(--ds-text-secondary);
-  }
-
-  .stat-value {
-    font-size: var(--font-heading-sm);
-    font-weight: 600;
-    color: var(--ds-text-primary);
-  }
-
-  .stat-hint {
-    font-size: var(--font-body-xs);
-    color: var(--ds-text-tertiary);
-  }
+  // .stat-details/.stat-label/.stat-value/.stat-hint REMOVED
+  // Use .stat-block classes from card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
 // Impact Card
@@ -163,12 +145,12 @@
     }
 
     .impact-label {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
     }
 
     .impact-value {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
 
       &.danger {
@@ -185,17 +167,17 @@
       border-radius: var(--radius-sm);
       margin-bottom: var(--space-2);
 
-      &.danger ::ng-deep .p-progressbar-value {
+      &.danger .p-progressbar-value {
         background: linear-gradient(90deg, var(--primitive-error-500), var(--primitive-error-600));
       }
 
-      &.warn ::ng-deep .p-progressbar-value {
+      &.warn .p-progressbar-value {
         background: linear-gradient(90deg, var(--primitive-orange-500), var(--primitive-orange-600));
       }
     }
 
     .impact-description {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
       margin: 0;
     }
@@ -216,11 +198,11 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-4);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
 
     i {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
       color: var(--primitive-yellow-500);
     }
   }
@@ -257,10 +239,11 @@
 }
 
 // Chart Card
+// .chart-card p-card-content height override is ALLOWED
+// Reason: Chart containers need explicit height for proper rendering
+// @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
 .chart-card {
-  ::ng-deep .p-card-content {
-    height: 280px;
-  }
+  // Chart height handled by chart container, not card padding
 }
 
 // Research Card
@@ -270,7 +253,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-4);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
 
     i {
@@ -285,7 +268,7 @@
   }
 
   .research-item {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     strong {
@@ -293,7 +276,7 @@
     }
 
     .citation {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
       font-style: italic;
     }
@@ -335,7 +318,7 @@
     height: 140px;
 
     .debt-value {
-      font-size: var(--font-heading-lg);
+      font-size: var(--font-size-metric-md);
     }
   }
 }

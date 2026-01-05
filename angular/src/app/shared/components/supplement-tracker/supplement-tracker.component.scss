@@ -17,21 +17,19 @@
 @use 'styles/variables' as *;
 @use 'styles/mixins' as *;
 
-@layer features {
-  // =============================================
-  // CARD CONTAINER (Standardized)
-  // =============================================
+// =============================================
+// CARD CONTAINER (Standardized)
+// =============================================
 
-  .supplement-card {
-  background: var(--surface-primary, #ffffff);
-  border-radius: var(--radius-xl, 12px);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
-  overflow: hidden;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+.supplement-card {
+background: var(--surface-primary, #ffffff);
+border-radius: var(--radius-xl, 12px);
+border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+overflow: hidden;
+height: 100%;
+display: flex;
+flex-direction: column;
 
 // =============================================
 // HEADER (Standardized pattern)
@@ -51,7 +49,7 @@
   gap: var(--space-2, 8px);
 
   i {
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-size-h2);
     color: var(--primitive-error-500, #ef4444);
   }
 
@@ -160,7 +158,7 @@
   letter-spacing: 0.5px;
 
   i {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--color-text-muted, #a3a3a3);
   }
 }
@@ -233,7 +231,7 @@
   justify-content: center;
 
   i {
-    font-size: var(--font-heading-xl);
+    font-size: var(--font-size-metric-lg);
     color: var(--color-text-muted, #a3a3a3);
     margin-bottom: var(--space-3, 12px);
     display: block;
@@ -268,7 +266,7 @@
   }
 
   input,
-  :host ::ng-deep .p-select {
+  .p-select {
     width: 100%;
   }
 }
@@ -294,54 +292,57 @@
  * Owner: @design-system
  * Status: Permanent - Component requirement
  */
-:host ::ng-deep {
-  .category-tag {
-    font-size: var(--font-body-xs, 11px);
-    padding: var(--space-1, 4px) var(--space-2, 8px);
-  }
+.category-tag {
+  font-size: var(--font-body-xs, 11px);
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+}
 
-  // Checkbox - Larger touch target (44x44px minimum per WCAG 2.5.5)
-  .p-checkbox {
+// Checkbox - Larger touch target (44x44px minimum per WCAG 2.5.5)
+.p-checkbox {
+  width: 24px;
+  height: 24px;
+
+  .p-checkbox-box {
     width: 24px;
     height: 24px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--primitive-neutral-300, #d4d4d4);
+    background: var(--surface-primary, #ffffff);
+    transition: background-color 150ms ease, border-color 150ms ease;
 
-    .p-checkbox-box {
-      width: 24px;
-      height: 24px;
-      border-radius: var(--radius-sm);
-      border: 2px solid var(--primitive-neutral-300, #d4d4d4);
-      background: var(--surface-primary, #ffffff);
-      transition: background-color 150ms ease, border-color 150ms ease;
+    &:hover {
+      border-color: var(--ds-primary-green, #089949);
+    }
 
-      &:hover {
-        border-color: var(--ds-primary-green, #089949);
+    &.p-highlight {
+      background: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
+
+      .p-checkbox-icon {
+        color: var(--color-text-on-primary);
       }
+    }
 
-      &.p-highlight {
-        background: var(--ds-primary-green);
-        border-color: var(--ds-primary-green);
-
-        .p-checkbox-icon {
-          color: var(--color-text-on-primary);
-        }
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--ds-primary-green, #089949);
-        outline-offset: 2px;
-      }
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green, #089949);
+      outline-offset: 2px;
     }
   }
+}
 
-  .supplement-dialog {
-    .p-dialog-content {
-      padding: var(--space-5, 20px);
-    }
+.supplement-dialog {
+  .p-dialog {
+    width: 400px;
+    max-width: 95vw;
+  }
 
-    .p-dialog-footer {
-      padding: var(--space-4, 16px) var(--space-5, 20px);
-      border-top: 1px solid var(--primitive-neutral-100, #f0f0f0);
-    }
+  .p-dialog-content {
+    padding: var(--space-5, 20px);
+  }
+
+  .p-dialog-footer {
+    padding: var(--space-4, 16px) var(--space-5, 20px);
+    border-top: 1px solid var(--primitive-neutral-100, #f0f0f0);
   }
 }
 

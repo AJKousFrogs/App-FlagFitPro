@@ -263,8 +263,8 @@ export class ImageUploadComponent {
       };
 
       // Add dimensions to file object (for display)
-      (result.file as any).width = dimensions.width;
-      (result.file as any).height = dimensions.height;
+      (result.file as File & { width?: number; height?: number }).width = dimensions.width;
+      (result.file as File & { width?: number; height?: number }).height = dimensions.height;
 
       this.uploadedImage.set(result);
       this.resizeWidth.set(dimensions.width);

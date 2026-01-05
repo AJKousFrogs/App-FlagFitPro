@@ -91,7 +91,7 @@ export class RatingComponent implements ControlValueAccessor {
 
   // Value signal
   value = signal<number>(0);
-  private onChangeFn = (value: number) => {};
+  private onChangeFn = (_value: number) => {};
   private onTouchedFn = () => {};
 
   // Computed
@@ -130,7 +130,7 @@ export class RatingComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Handled via disabled input
   }
 }

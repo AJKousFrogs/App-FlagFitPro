@@ -1,0 +1,64 @@
+// ============================================================================
+// page-error-state.component Styles
+// Design System Compliant - Uses utility class patterns
+// ============================================================================
+
+@layer features {
+  /* Extends .error-state from ui-standardization.scss */
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    text-align: center;
+    min-height: 200px;
+  }
+
+  .error-state__icon {
+    font-size: var(--icon-3xl);
+    color: var(--color-status-error);
+    margin-bottom: var(--space-4);
+    opacity: 0.9;
+  }
+
+  .error-state__title {
+    font-size: var(--font-body-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .error-state__description {
+    font-size: var(--font-size-body);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4) 0;
+    max-width: 300px;
+    line-height: var(--line-height-base);
+  }
+
+  .error-state__help {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-tertiary);
+    margin: var(--space-4) 0 0 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .error-state {
+      padding: var(--space-6);
+    }
+
+    .error-state__icon {
+      font-size: var(--icon-2xl);
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .error-state {
+      transition: none;
+    }
+  }
+}
+

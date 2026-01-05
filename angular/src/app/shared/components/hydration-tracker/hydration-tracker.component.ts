@@ -202,7 +202,7 @@ export class HydrationTrackerComponent implements OnInit {
     this.trainingService.getWellnessForDay(new Date().toISOString().split('T')[0])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response: any) => {
+        next: () => {
           // Wellness entry might have the level but not individual logs
           // We'll trust the computed totalIntake which uses trainingService.hydrationLevel()
           this.isLoading.set(false);
@@ -223,7 +223,7 @@ export class HydrationTrackerComponent implements OnInit {
     this.isLoading.set(true);
 
     this.trainingService.addHydration(amount)
-      .then((result: any) => {
+      .then((result: { success?: boolean }) => {
         if (result.success) {
           const newLog: HydrationLog = {
             id: Date.now().toString(),

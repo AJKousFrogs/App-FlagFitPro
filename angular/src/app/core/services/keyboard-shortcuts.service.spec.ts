@@ -19,7 +19,7 @@ import { LoggerService } from "./logger.service";
 
 describe("KeyboardShortcutsService", () => {
   let service: KeyboardShortcutsService;
-  let router: Router;
+  let _router: Router;
 
   const mockLoggerService = {
     debug: jasmine.createSpy("debug"),

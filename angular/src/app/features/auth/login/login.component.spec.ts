@@ -26,8 +26,8 @@ import { ToastService } from "../../../core/services/toast.service";
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
-  let toastService: jasmine.SpyObj<ToastService>;
+  let _authService: jasmine.SpyObj<AuthService>;
+  let _toastService: jasmine.SpyObj<ToastService>;
   let router: Router;
 
   const mockAuthService = {

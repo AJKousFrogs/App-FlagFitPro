@@ -423,7 +423,7 @@ export class PhaseLoadCalculatorService {
     totalLoad: number,
   ): SessionDistribution[] {
     const sessions: SessionDistribution[] = [];
-    const daysOfWeek = [
+    const _daysOfWeek = [
       "Monday",
       "Tuesday",
       "Wednesday",

@@ -3,125 +3,123 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
+.search-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+}
+
+.search-input {
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 36px;
+}
+
+.clear-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--space-1);
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.clear-search:hover {
+  background: var(--surface-tertiary);
+}
+
+.filter-group {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.filter-select {
+  min-width: 150px;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--color-border-secondary);
+  margin-left: auto;
+}
+
+.selected-count {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive */
+@media (min-width: 769px) and (max-width: 1023px) {
   .search-filter-bar {
-    display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
-    align-items: center;
-    margin-bottom: var(--space-6);
-    padding: var(--space-4);
-    background: var(--surface-card);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
   }
 
   .search-box {
-    position: relative;
-    flex: 1;
-    min-width: 250px;
+    min-width: 200px;
   }
 
-  .search-box i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-text-secondary);
+  .filter-select {
+    min-width: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3);
   }
 
-  .search-input {
-    width: 100%;
-    padding-left: 40px !important;
-    padding-right: 36px !important;
-  }
-
-  .clear-search {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-secondary);
-    padding: var(--space-1);
-    border-radius: 50%;
-    transition: background 0.2s;
-  }
-
-  .clear-search:hover {
-    background: var(--surface-tertiary);
+  .search-box {
+    min-width: 100%;
   }
 
   .filter-group {
-    display: flex;
-    gap: var(--space-3);
+    flex-direction: column;
+    width: 100%;
   }
 
-  :host ::ng-deep .filter-select {
-    min-width: 150px;
+  .filter-select {
+    min-width: 100%;
   }
 
   .bulk-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding-left: var(--space-4);
-    border-left: 1px solid var(--color-border-secondary);
-    margin-left: auto;
-  }
-
-  .selected-count {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
-  }
-
-  /* Responsive */
-  @media (min-width: 769px) and (max-width: 1023px) {
-    .search-filter-bar {
-      flex-wrap: wrap;
-    }
-
-    .search-box {
-      min-width: 200px;
-    }
-
-    :host ::ng-deep .filter-select {
-      min-width: 130px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .search-filter-bar {
-      flex-direction: column;
-      align-items: stretch;
-      padding: var(--space-3);
-    }
-
-    .search-box {
-      min-width: 100%;
-    }
-
-    .filter-group {
-      flex-direction: column;
-      width: 100%;
-    }
-
-    :host ::ng-deep .filter-select {
-      min-width: 100%;
-    }
-
-    .bulk-actions {
-      border-left: none;
-      padding-left: 0;
-      padding-top: var(--space-3);
-      border-top: 1px solid var(--color-border-secondary);
-      margin-left: 0;
-      justify-content: center;
-      width: 100%;
-    }
+    border-left: none;
+    padding-left: 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-secondary);
+    margin-left: 0;
+    justify-content: center;
+    width: 100%;
   }
 }
 

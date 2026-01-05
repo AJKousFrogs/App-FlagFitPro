@@ -452,7 +452,7 @@ export class SmartTrainingFormComponent implements OnInit {
       this.logger.debug("Creating training session:", formValue);
 
       // Save to Supabase
-      const { data, error } = await this.supabaseService.client
+      const { error } = await this.supabaseService.client
         .from("training_sessions")
         .insert({
           user_id: user.id,

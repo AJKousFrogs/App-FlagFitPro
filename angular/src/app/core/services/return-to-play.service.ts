@@ -1210,17 +1210,19 @@ export class ReturnToPlayService {
     const decision = this.evaluateProgression(injuryId);
     if (!decision.canProgress) return false;
 
+    const nextStage = progress.nextStage;
+
     this._activeInjuries.update((injuries) =>
       injuries.map((injury) => {
         if (injury.id === injuryId) {
           return {
             ...injury,
-            currentStage: progress.nextStage!.stage,
+            currentStage: nextStage.stage,
             stageHistory: [
               ...injury.stageHistory,
               {
                 fromStage: progress.currentStage.stage,
-                toStage: progress.nextStage!.stage,
+                toStage: nextStage.stage,
                 date: new Date(),
                 clearedBy,
                 notes,

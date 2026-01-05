@@ -64,7 +64,7 @@ export class CoreWebVitalsService {
       });
 
       observer.observe({ type: "largest-contentful-paint", buffered: true });
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[Web Vitals] LCP observation not supported");
     }
   }
@@ -94,7 +94,7 @@ export class CoreWebVitalsService {
       });
 
       observer.observe({ type: "first-input", buffered: true });
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[Web Vitals] FID observation not supported");
     }
   }
@@ -128,7 +128,7 @@ export class CoreWebVitalsService {
       });
 
       observer.observe({ type: "layout-shift", buffered: true });
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[Web Vitals] CLS observation not supported");
     }
   }
@@ -151,7 +151,7 @@ export class CoreWebVitalsService {
       });
 
       observer.observe({ type: "paint", buffered: true });
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[Web Vitals] FCP observation not supported");
     }
   }
@@ -176,7 +176,7 @@ export class CoreWebVitalsService {
           this.getStatus(this.metrics.ttfb, 600, 1500),
         );
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[Web Vitals] TTFB observation not supported");
     }
   }

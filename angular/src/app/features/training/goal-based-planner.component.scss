@@ -3,54 +3,52 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .stat-item {
-    text-align: center;
-    padding: var(--space-3);
-    background: var(--surface-primary);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-secondary);
-  }
+.stat-item {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--surface-primary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-secondary);
+}
 
-  .stat-label {
-    margin-bottom: var(--space-1);
-    font-size: var(--font-body-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-  }
+.stat-label {
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
 
-  .stat-value {
-    font-size: var(--font-body-lg);
-    font-weight: 700;
-  }
+.stat-value {
+  font-size: var(--font-body-lg);
+  font-weight: var(--font-weight-bold);
+}
 
-  .session-card {
-    transition: all var(--transition-fast);
-    background: var(--surface-primary);
-    border: 2px solid var(--color-border-secondary);
-    
-    &:hover {
-      box-shadow: var(--shadow-2);
-      transform: translateY(-4px);
-      border-color: var(--ds-primary-green);
-    }
+.session-card {
+  transition: all var(--transition-fast);
+  background: var(--surface-primary);
+  border: 2px solid var(--color-border-secondary);
+  
+  &:hover {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-4px);
+    border-color: var(--ds-primary-green);
   }
+}
 
-  .text-green-600 {
-    color: var(--color-status-success);
-  }
+.text-green-600 {
+  color: var(--color-status-success);
+}
 
-  .text-yellow-600 {
-    color: var(--color-status-warning);
-  }
+.text-yellow-600 {
+  color: var(--color-status-warning);
+}
 
-  .text-red-600 {
-    color: var(--color-status-error);
-  }
+.text-red-600 {
+  color: var(--color-status-error);
+}
 
-  .text-blue-600 {
-    color: var(--color-status-info);
-  }
+.text-blue-600 {
+  color: var(--color-status-info);
 }
 

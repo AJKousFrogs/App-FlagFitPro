@@ -194,7 +194,7 @@ export class ThemeService {
         this._mode.set(saved as ThemeMode);
         this.logger.debug(`[ThemeService] Loaded saved theme: ${saved}`);
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[ThemeService] Failed to load saved theme preference");
     }
   }
@@ -208,7 +208,7 @@ export class ThemeService {
 
       // Also save to Supabase if user is authenticated
       this.saveToSupabase(mode);
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn("[ThemeService] Failed to save theme preference");
     }
   }
@@ -238,7 +238,7 @@ export class ThemeService {
           error.message,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       // Silently fail - localStorage is the primary storage
     }
   }
@@ -251,7 +251,7 @@ export class ThemeService {
       const user = this.supabase.currentUser();
       if (!user) return;
 
-      const { data, error } = await this.supabase.client
+      const { data, error: _error } = await this.supabase.client
         .from("user_settings")
         .select("theme")
         .eq("user_id", user.id)
@@ -264,7 +264,7 @@ export class ThemeService {
           `[ThemeService] Loaded theme from Supabase: ${data.theme}`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       // Silently fail - localStorage preference is used
     }
   }

@@ -805,8 +805,7 @@
    Premium animations for PrimeNG components
    ================================================================ */
 
-/* Enhanced PrimeNG Button */
-:host ::ng-deep .p-button,
+/* Enhanced PrimeNG Button - Global styles (no ::ng-deep needed) */
 .p-button {
   transition:
     transform var(--anim-fast) var(--ease-micro-bounce),
@@ -817,20 +816,17 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :host ::ng-deep .p-button:hover:not(:disabled),
   .p-button:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 }
 
-:host ::ng-deep .p-button:active:not(:disabled),
 .p-button:active:not(:disabled) {
   transform: translateY(0) scale(0.98);
 }
 
-/* Enhanced PrimeNG Card */
-:host ::ng-deep .p-card,
+/* Enhanced PrimeNG Card - Global styles */
 .p-card {
   transition:
     transform var(--anim-normal) var(--ease-micro-bounce),
@@ -839,15 +835,13 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :host ::ng-deep .p-card:hover,
   .p-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.15);
   }
 }
 
-/* Enhanced PrimeNG Dialog */
-:host ::ng-deep .p-dialog,
+/* Enhanced PrimeNG Dialog - Global styles */
 .p-dialog {
   animation: dialog-enter var(--anim-slow) var(--ease-micro-bounce);
 }
@@ -863,7 +857,6 @@
   }
 }
 
-:host ::ng-deep .p-dialog-mask,
 .p-dialog-mask {
   animation: backdrop-fade var(--anim-normal) var(--ease-smooth);
 }
@@ -877,8 +870,7 @@
   }
 }
 
-/* Enhanced PrimeNG Toast */
-:host ::ng-deep .p-toast-message,
+/* Enhanced PrimeNG Toast - Global styles */
 .p-toast-message {
   animation: toast-enter var(--anim-slow) var(--ease-micro-bounce);
 }
@@ -894,8 +886,7 @@
   }
 }
 
-/* Enhanced PrimeNG Menu */
-:host ::ng-deep .p-menu,
+/* Enhanced PrimeNG Menu - Global styles */
 .p-menu {
   animation: menu-enter var(--anim-normal) var(--ease-micro-bounce);
   transform-origin: top left;
@@ -912,8 +903,7 @@
   }
 }
 
-/* Enhanced PrimeNG Menu Items */
-:host ::ng-deep .p-menuitem-link,
+/* Enhanced PrimeNG Menu Items - Global styles */
 .p-menuitem-link {
   transition:
     background-color var(--anim-fast) var(--ease-smooth),
@@ -922,14 +912,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :host ::ng-deep .p-menuitem-link:hover,
   .p-menuitem-link:hover {
     padding-left: calc(var(--space-4) + 4px);
   }
 }
 
-/* Enhanced PrimeNG Dropdown */
-:host ::ng-deep .p-dropdown-panel,
+/* Enhanced PrimeNG Dropdown - Global styles */
 .p-dropdown-panel {
   animation: dropdown-enter var(--anim-normal) var(--ease-micro-bounce);
   transform-origin: top center;
@@ -946,8 +934,7 @@
   }
 }
 
-/* Enhanced PrimeNG Tooltip */
-:host ::ng-deep .p-tooltip,
+/* Enhanced PrimeNG Tooltip - Global styles */
 .p-tooltip {
   animation: tooltip-enter var(--anim-fast) var(--ease-micro-bounce);
 }
@@ -963,8 +950,7 @@
   }
 }
 
-/* Enhanced PrimeNG DataTable Rows */
-:host ::ng-deep .p-datatable-tbody > tr,
+/* Enhanced PrimeNG DataTable Rows - Global styles */
 .p-datatable-tbody > tr {
   transition:
     background-color var(--anim-fast) var(--ease-smooth),
@@ -972,14 +958,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :host ::ng-deep .p-datatable-tbody > tr:hover,
   .p-datatable-tbody > tr:hover {
     transform: translateX(4px);
   }
 }
 
-/* Enhanced PrimeNG Accordion */
-:host ::ng-deep .p-accordion-content,
+/* Enhanced PrimeNG Accordion - Global styles */
 .p-accordion-content {
   animation: accordion-expand var(--anim-slow) var(--ease-micro-bounce);
 }
@@ -995,8 +979,7 @@
   }
 }
 
-/* Enhanced PrimeNG Tab Panel */
-:host ::ng-deep .p-tabview-panel,
+/* Enhanced PrimeNG Tab Panel - Global styles */
 .p-tabview-panel {
   animation: tab-enter var(--anim-normal) var(--ease-smooth);
 }
@@ -1010,8 +993,7 @@
   }
 }
 
-/* Enhanced PrimeNG Sidebar */
-:host ::ng-deep .p-sidebar,
+/* Enhanced PrimeNG Sidebar - Global styles */
 .p-sidebar {
   animation: sidebar-enter var(--anim-slow) var(--ease-micro-bounce);
 }
@@ -1025,7 +1007,6 @@
   }
 }
 
-:host ::ng-deep .p-sidebar-right,
 .p-sidebar-right {
   animation: sidebar-right-enter var(--anim-slow) var(--ease-micro-bounce);
 }
@@ -1048,10 +1029,10 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
   }
 
   .hover-lift:hover,
@@ -1080,8 +1061,8 @@
 
 /* Disable animations temporarily */
 .no-animation {
-  animation: none !important;
-  transition: none !important;
+  animation: none;
+  transition: none;
 }
 
 /* Force GPU acceleration */
@@ -1125,30 +1106,30 @@
 
 /* Animation duration utilities */
 .duration-fast {
-  animation-duration: var(--anim-fast) !important;
+  animation-duration: var(--anim-fast);
 }
 .duration-normal {
-  animation-duration: var(--anim-normal) !important;
+  animation-duration: var(--anim-normal);
 }
 .duration-slow {
-  animation-duration: var(--anim-slow) !important;
+  animation-duration: var(--anim-slow);
 }
 .duration-slower {
-  animation-duration: var(--anim-slower) !important;
+  animation-duration: var(--anim-slower);
 }
 
 /* Transition duration utilities */
 .transition-fast {
-  transition-duration: var(--anim-fast) !important;
+  transition-duration: var(--anim-fast);
 }
 .transition-normal {
-  transition-duration: var(--anim-normal) !important;
+  transition-duration: var(--anim-normal);
 }
 .transition-slow {
-  transition-duration: var(--anim-slow) !important;
+  transition-duration: var(--anim-slow);
 }
 .transition-slower {
-  transition-duration: var(--anim-slower) !important;
+  transition-duration: var(--anim-slower);
 }
 
 /* ================================================================

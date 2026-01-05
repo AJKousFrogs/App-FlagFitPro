@@ -3,103 +3,101 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  [role="alert"] {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
-    border-radius: var(--radius-md);
-    border: var(--border-1) solid transparent;
-    margin-bottom: var(--space-4);
-    position: relative;
-  }
+[role="alert"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid transparent;
+  margin-bottom: var(--space-4);
+  position: relative;
+}
 
-  .alert-content {
-    flex: 1;
-  }
+.alert-content {
+  flex: 1;
+}
 
-  .alert-title {
-    margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-  }
+.alert-title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+}
 
-  .alert-message {
-    margin: 0;
-    font-size: var(--font-body-sm);
-    line-height: 1.5;
-  }
+.alert-message {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-base);
+}
 
-  .alert-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: var(--space-1);
-    color: inherit;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--space-6);
-    height: var(--space-6);
-    border-radius: var(--radius-md);
-  }
+.alert-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1);
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-md);
+}
 
-  .alert-close:hover {
-    opacity: 1;
-    background: rgba(0, 0, 0, 0.1);
-  }
+.alert-close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
 
-  .alert-close:focus {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
-  }
+.alert-close:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
 
-  /* Variants */
-  .alert-success {
-    background-color: var(--primitive-success-50);
-    color: var(--primitive-success-700);
-    border-color: var(--color-status-success);
-  }
+/* Variants */
+.alert-success {
+  background-color: var(--primitive-success-50);
+  color: var(--primitive-success-700);
+  border-color: var(--color-status-success);
+}
 
-  .alert-success .alert-title {
-    color: var(--primitive-success-700);
-  }
+.alert-success .alert-title {
+  color: var(--primitive-success-700);
+}
 
-  .alert-warning {
-    background-color: var(--primitive-warning-50);
-    color: var(--primitive-warning-700);
-    border-color: var(--color-status-warning);
-  }
+.alert-warning {
+  background-color: var(--primitive-warning-50);
+  color: var(--primitive-warning-700);
+  border-color: var(--color-status-warning);
+}
 
-  .alert-warning .alert-title {
-    color: var(--primitive-warning-700);
-  }
+.alert-warning .alert-title {
+  color: var(--primitive-warning-700);
+}
 
-  .alert-error {
-    background-color: var(--primitive-error-50);
-    color: var(--primitive-error-700);
-    border-color: var(--color-status-error);
-  }
+.alert-error {
+  background-color: var(--primitive-error-50);
+  color: var(--primitive-error-700);
+  border-color: var(--color-status-error);
+}
 
-  .alert-error .alert-title {
-    color: var(--primitive-error-700);
-  }
+.alert-error .alert-title {
+  color: var(--primitive-error-700);
+}
 
-  .alert-info {
-    background-color: var(--primitive-info-50);
-    color: var(--primitive-info-700);
-    border-color: var(--color-status-info);
-  }
+.alert-info {
+  background-color: var(--primitive-info-50);
+  color: var(--primitive-info-700);
+  border-color: var(--color-status-info);
+}
 
-  .alert-info .alert-title {
-    color: var(--primitive-info-700);
-  }
+.alert-info .alert-title {
+  color: var(--primitive-info-700);
 }
 

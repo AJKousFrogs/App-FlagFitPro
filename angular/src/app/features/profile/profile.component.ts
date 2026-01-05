@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  ViewEncapsulation,
   inject,
   signal,
 } from "@angular/core";
@@ -13,7 +14,8 @@ import { RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { ProgressBarModule } from "primeng/progressbar";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
@@ -49,10 +51,10 @@ interface PendingInvitation {
   selector: "app-profile",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
     AvatarModule,
     TagModule,
     Tabs,
@@ -60,6 +62,7 @@ interface PendingInvitation {
     Tab,
     TabPanels,
     TabPanel,
+    ProgressBarModule,
     ProgressSpinnerModule,
     TooltipModule,
     MainLayoutComponent,
@@ -68,9 +71,9 @@ interface PendingInvitation {
     PageErrorStateComponent,
     DatePipe,
     TitleCasePipe,
-  
     ButtonComponent,
     IconButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
@@ -194,19 +197,49 @@ interface PendingInvitation {
               </p>
             </div>
 
+            <!-- Profile Completion Indicator -->
+            @if (profileCompletion().percentage < 100) {
+              <div class="profile-completion-card">
+                <div class="completion-header">
+                  <span class="completion-label">Profile Completion</span>
+                  <span class="completion-percentage">{{ profileCompletion().percentage }}%</span>
+                </div>
+                <p-progressBar 
+                  [value]="profileCompletion().percentage" 
+                  [showValue]="false"
+                  styleClass="completion-progress"
+                ></p-progressBar>
+                @if (profileCompletion().missingFields.length > 0) {
+                  <div class="completion-hint">
+                    <i class="pi pi-info-circle"></i>
+                    <span>Complete your profile: {{ profileCompletion().missingFields.slice(0, 2).join(', ') }}
+                      @if (profileCompletion().missingFields.length > 2) {
+                        and {{ profileCompletion().missingFields.length - 2 }} more
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="profile-complete-badge">
+                <i class="pi pi-check-circle"></i>
+                <span>Profile Complete</span>
+              </div>
+            }
+
             <!-- Action Buttons -->
             <div class="profile-header-actions">
-              <button
-                class="edit-profile-btn"
-                [routerLink]="['/settings']"
+              <app-button
+                iconLeft="pi-cog"
+                routerLink="/settings"
                 [disabled]="deletionPending()"
-              >
-                <i class="pi pi-cog"></i>
-                <span>Edit Profile</span>
-              </button>
-              <button class="share-profile-btn" (click)="shareProfile()">
-                <i class="pi pi-share-alt"></i>
-              </button>
+              >Edit Profile</app-button>
+              <app-icon-button
+                icon="pi-share-alt"
+                variant="outlined"
+                (clicked)="shareProfile()"
+                ariaLabel="Share profile"
+              />
             </div>
           </div>
 
@@ -242,17 +275,18 @@ interface PendingInvitation {
               <p-tabpanels>
                 <p-tabpanel value="overview">
                   <div class="overview-content">
-                    <p-card>
-                      <ng-template pTemplate="header">
-                        <h3>Recent Activity</h3>
-                      </ng-template>
+                    <app-card-shell
+                      title="Recent Activity"
+                      headerIcon="pi-clock"
+                    >
                       @if (activities().length === 0) {
-                        <app-empty-state
-                          title="No Recent Activity"
-                          message="Your activity will appear here once you start training."
-                          icon="pi-clock"
-                          [compact]="true"
-                        ></app-empty-state>
+                        <div class="card-empty-state card-empty-state--compact">
+                          <i class="pi pi-clock card-empty-state__icon"></i>
+                          <div class="card-empty-state__content">
+                            <p class="card-empty-state__title">No Recent Activity</p>
+                            <p class="card-empty-state__text">Your activity will appear here once you start training.</p>
+                          </div>
+                        </div>
                       } @else {
                         <div class="activity-list">
                           @for (
@@ -275,61 +309,68 @@ interface PendingInvitation {
                           }
                         </div>
                       }
-                    </p-card>
+                    </app-card-shell>
                   </div>
                 </p-tabpanel>
                 <p-tabpanel value="achievements">
                   @if (achievements().length === 0) {
-                    <app-empty-state
-                      title="No Achievements Yet"
-                      message="Complete training sessions and reach milestones to earn achievements."
-                      icon="pi-trophy"
-                    ></app-empty-state>
+                    <div class="card-empty-state">
+                      <i class="pi pi-trophy card-empty-state__icon"></i>
+                      <div class="card-empty-state__content">
+                        <p class="card-empty-state__title">No Achievements Yet</p>
+                        <p class="card-empty-state__text">Complete training sessions and reach milestones to earn achievements.</p>
+                      </div>
+                    </div>
                   } @else {
                     <div class="achievements-grid">
                       @for (
                         achievement of achievements();
                         track trackByAchievementTitle($index, achievement)
                       ) {
-                        <p-card class="achievement-card">
-                          <div class="achievement-icon">
-                            <i class="pi" [ngClass]="achievement.icon"></i>
+                        <app-card-shell>
+                          <div class="achievement-content">
+                            <div class="achievement-icon">
+                              <i class="pi" [ngClass]="achievement.icon"></i>
+                            </div>
+                            <h4 class="achievement-title">
+                              {{ achievement.title }}
+                            </h4>
+                            <p class="achievement-description">
+                              {{ achievement.description }}
+                            </p>
+                            <div class="achievement-date">
+                              {{ achievement.date }}
+                            </div>
                           </div>
-                          <h4 class="achievement-title">
-                            {{ achievement.title }}
-                          </h4>
-                          <p class="achievement-description">
-                            {{ achievement.description }}
-                          </p>
-                          <div class="achievement-date">
-                            {{ achievement.date }}
-                          </div>
-                        </p-card>
+                        </app-card-shell>
                       }
                     </div>
                   }
                 </p-tabpanel>
                 <p-tabpanel value="statistics">
-                  <p-card>
-                    <ng-template pTemplate="header">
-                      <h3>Performance Statistics</h3>
-                    </ng-template>
-                    <div class="stats-grid">
+                  <app-card-shell
+                    title="Performance Statistics"
+                    headerIcon="pi-chart-bar"
+                  >
+                    <div class="performance-stats-grid">
                       @for (
                         stat of performanceStats();
                         track trackByPerformanceStatLabel($index, stat)
                       ) {
-                        <div class="performance-stat">
-                          <div class="stat-label">{{ stat.label }}</div>
-                          <div class="stat-value">{{ stat.value }}</div>
+                        <div class="stat-block">
+                          <div class="stat-block__content">
+                            <span class="stat-block__value">{{ stat.value }}</span>
+                            <span class="stat-block__label">{{ stat.label }}</span>
+                          </div>
                           <p-tag
+                            class="stat-block__tag"
                             [value]="stat.trend"
                             [severity]="stat.trendType"
                           ></p-tag>
                         </div>
                       }
                     </div>
-                  </p-card>
+                  </app-card-shell>
                 </p-tabpanel>
                 <p-tabpanel value="invitations">
                   <div class="invitations-section">
@@ -342,18 +383,20 @@ interface PendingInvitation {
                         <span>Loading invitations...</span>
                       </div>
                     } @else if (pendingInvitations().length === 0) {
-                      <app-empty-state
-                        title="No Pending Invitations"
-                        message="You don't have any team invitations at the moment."
-                        icon="pi-envelope"
-                      ></app-empty-state>
+                      <div class="card-empty-state">
+                        <i class="pi pi-envelope card-empty-state__icon"></i>
+                        <div class="card-empty-state__content">
+                          <p class="card-empty-state__title">No Pending Invitations</p>
+                          <p class="card-empty-state__text">You don't have any team invitations at the moment.</p>
+                        </div>
+                      </div>
                     } @else {
                       <div class="invitations-list">
                         @for (
                           invitation of pendingInvitations();
                           track invitation.id
                         ) {
-                          <p-card class="invitation-card">
+                          <app-card-shell class="invitation-card">
                             <div class="invitation-content">
                               <div class="invitation-header">
                                 <h4>{{ invitation.teamName }}</h4>
@@ -408,7 +451,7 @@ interface PendingInvitation {
                                 }
                               </div>
                             </div>
-                          </p-card>
+                          </app-card-shell>
                         }
                       </div>
                     }
@@ -458,7 +501,14 @@ export class ProfileComponent implements OnInit {
   isUploadingAvatar = signal(false);
   userInitials = signal("U");
   activeTab = signal<string>("overview");
-  stats = signal<Array<{ value: string; label: string }>>([]);
+  stats = signal<Array<{ 
+    value: string; 
+    label: string;
+    icon?: string;
+    iconType?: "primary" | "error" | "warning" | "info";
+    trend?: string;
+    trendType?: "positive" | "negative" | "neutral";
+  }>>([]);
   activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
   achievements = signal<
     Array<{ icon: string; title: string; description: string; date: string }>
@@ -483,6 +533,13 @@ export class ProfileComponent implements OnInit {
   loadingInvitations = signal(false);
   processingInvitation = signal<string | null>(null);
 
+  // Profile Completion
+  profileCompletion = signal<{
+    percentage: number;
+    missingFields: string[];
+    completedFields: string[];
+  }>({ percentage: 0, missingFields: [], completedFields: [] });
+
   ngOnInit(): void {
     this.initializePage();
   }
@@ -497,6 +554,46 @@ export class ProfileComponent implements OnInit {
     this.loadPendingInvitations();
     // Check for pending deletion to show banner and restrict actions
     this.accountDeletionService.checkDeletionStatus();
+    // Calculate profile completion
+    this.calculateProfileCompletion();
+  }
+
+  /**
+   * Calculate profile completion percentage
+   */
+  private calculateProfileCompletion(): void {
+    const fields = [
+      { name: 'Display Name', value: this.userName(), required: true },
+      { name: 'Email', value: this.userEmail(), required: true },
+      { name: 'Profile Photo', value: this.avatarUrl(), required: false },
+      { name: 'Position', value: this.userPosition(), required: false },
+      { name: 'Jersey Number', value: this.jerseyNumber(), required: false },
+      { name: 'Team', value: this.teamName(), required: false },
+    ];
+
+    const completedFields: string[] = [];
+    const missingFields: string[] = [];
+
+    fields.forEach(field => {
+      const hasValue = field.value && 
+        field.value !== 'Loading...' && 
+        field.value !== 'User' &&
+        field.value !== null;
+      
+      if (hasValue) {
+        completedFields.push(field.name);
+      } else {
+        missingFields.push(field.name);
+      }
+    });
+
+    const percentage = Math.round((completedFields.length / fields.length) * 100);
+
+    this.profileCompletion.set({
+      percentage,
+      completedFields,
+      missingFields,
+    });
   }
 
   /**
@@ -535,6 +632,9 @@ export class ProfileComponent implements OnInit {
 
     // Load extended profile data from Supabase
     await this.loadExtendedProfileData(user.id);
+    
+    // Recalculate profile completion after extended data loads
+    this.calculateProfileCompletion();
 
     try {
       // Load real training sessions count
@@ -544,6 +644,34 @@ export class ProfileComponent implements OnInit {
           .from("training_sessions")
           .select("id, status, completed_at, session_date, duration_minutes")
           .eq("user_id", user.id);
+      
+      // Load games played count from game_participations table
+      let gamesPlayed = 0;
+      try {
+        const { data: gameParticipations, error: gamesError } =
+          await this.supabaseService.client
+            .from("game_participations")
+            .select("id, game_id, status")
+            .eq("player_id", user.id)
+            .eq("status", "played");
+        
+        if (!gamesError && gameParticipations) {
+          gamesPlayed = gameParticipations.length;
+        } else {
+          // Try alternate table name
+          const { data: games, error: altError } =
+            await this.supabaseService.client
+              .from("games")
+              .select("id")
+              .contains("participants", [user.id]);
+          
+          if (!altError && games) {
+            gamesPlayed = games.length;
+          }
+        }
+      } catch (e) {
+        this.logger.debug("Games data not available:", e);
+      }
 
       if (sessionsError) {
         // If table doesn't exist or user_id column missing, use empty data
@@ -637,15 +765,40 @@ export class ProfileComponent implements OnInit {
         }
       }
 
-      // Load stats with real data - only show actual data, not placeholders
+      // Load stats with real data - matches Dashboard stat cards
       this.stats.set([
-        { value: totalSessions.toString(), label: "Training Sessions" },
+        { 
+          value: totalSessions.toString(), 
+          label: "Training Sessions",
+          icon: "pi-calendar-plus",
+          iconType: "primary",
+          trend: totalSessions > 0 ? "Active" : "Start training",
+          trendType: totalSessions > 0 ? "positive" : "neutral" as "positive" | "negative" | "neutral",
+        },
         {
           value: performanceScore > 0 ? `${performanceScore}%` : "—",
           label: "Performance Score",
+          icon: "pi-heart",
+          iconType: "error",
+          trend: performanceScore >= 70 ? "Good" : performanceScore >= 50 ? "Moderate" : "Building",
+          trendType: performanceScore >= 70 ? "positive" : performanceScore >= 50 ? "neutral" : "neutral" as "positive" | "negative" | "neutral",
         },
-        { value: streak.toString(), label: "Day Streak" },
-        { value: "0", label: "Games Played" },
+        { 
+          value: streak.toString(), 
+          label: "Day Streak",
+          icon: "pi-bolt",
+          iconType: "warning",
+          trend: streak >= 7 ? "On fire!" : streak > 0 ? "Keep going" : "Start streak",
+          trendType: streak >= 7 ? "positive" : streak > 0 ? "neutral" : "neutral" as "positive" | "negative" | "neutral",
+        },
+        { 
+          value: gamesPlayed.toString(), 
+          label: "Games Played",
+          icon: "pi-flag",
+          iconType: "info",
+          trend: gamesPlayed > 0 ? (gamesPlayed >= 10 ? "Veteran" : "Active") : "No games yet",
+          trendType: gamesPlayed > 0 ? "positive" : "neutral" as "positive" | "negative" | "neutral",
+        },
       ]);
 
       // Load recent activities from training sessions
@@ -802,10 +955,38 @@ export class ProfileComponent implements OnInit {
 
   private loadEmptyState(): void {
     this.stats.set([
-      { value: "0", label: "Training Sessions" },
-      { value: "—", label: "Performance Score" },
-      { value: "0", label: "Day Streak" },
-      { value: "0", label: "Games Played" },
+      { 
+        value: "0", 
+        label: "Training Sessions",
+        icon: "pi-calendar-plus",
+        iconType: "primary",
+        trend: "Start training",
+        trendType: "neutral" as "positive" | "negative" | "neutral",
+      },
+      { 
+        value: "—", 
+        label: "Performance Score",
+        icon: "pi-heart",
+        iconType: "error",
+        trend: "No data yet",
+        trendType: "neutral" as "positive" | "negative" | "neutral",
+      },
+      { 
+        value: "0", 
+        label: "Day Streak",
+        icon: "pi-bolt",
+        iconType: "warning",
+        trend: "Start streak",
+        trendType: "neutral" as "positive" | "negative" | "neutral",
+      },
+      { 
+        value: "0", 
+        label: "Games Played",
+        icon: "pi-flag",
+        iconType: "info",
+        trend: "Coming soon",
+        trendType: "neutral" as "positive" | "negative" | "neutral",
+      },
     ]);
 
     this.activities.set([]);
@@ -908,7 +1089,7 @@ export class ProfileComponent implements OnInit {
       const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } =
+      const { error: uploadError } =
         await this.supabaseService.client.storage
           .from("avatars")
           .upload(fileName, file, {

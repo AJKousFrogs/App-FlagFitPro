@@ -15,12 +15,13 @@
  * @version 2.0.0 - Angular 21 Signals Architecture
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
+import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     computed,
+    effect,
     inject,
     signal,
 } from '@angular/core';
@@ -29,16 +30,17 @@ import { Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 
 // Layout & Components
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
 import { PostTrainingRecoveryComponent } from '../../shared/components/post-training-recovery/post-training-recovery.component';
-import { TodaysScheduleComponent } from '../../shared/components/todays-schedule/todays-schedule.component';
 import { ProtocolBlockComponent } from '../training/daily-protocol/components/protocol-block.component';
 import {
     WeekDay,
@@ -58,6 +60,24 @@ type DayPhase = 'morning' | 'midday' | 'evening';
 type ActiveFocus = 'checkin' | 'protocol' | 'wrapup';
 type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contrast';
 
+// Quick Check-in Types
+interface QuickMood {
+  value: number;
+  emoji: string;
+  label: string;
+}
+
+interface QuickEnergyLevel {
+  value: number;
+  label: string;
+}
+
+interface QuickFormData {
+  overallFeeling: number | null;
+  energyLevel: number | null;
+  hasSoreness: boolean | null;
+}
+
 @Component({
   selector: 'app-today',
   standalone: true,
@@ -65,18 +85,18 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
   imports: [
     RouterModule,
     CardModule,
+    DialogModule,
     MessageModule,
     ProgressBarModule,
     SkeletonModule,
     TagModule,
     ToastModule,
+    TooltipModule,
     MainLayoutComponent,
-    TodaysScheduleComponent,
     WellnessCheckinComponent,
     ProtocolBlockComponent,
     PostTrainingRecoveryComponent,
     WeekProgressStripComponent,
-  
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -85,6 +105,24 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(-12px)' }),
         animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+    trigger('celebrationFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0 })),
+      ]),
+    ]),
+    trigger('celebrationBounce', [
+      transition(':enter', [
+        animate('600ms cubic-bezier(0.34, 1.56, 0.64, 1)', keyframes([
+          style({ opacity: 0, transform: 'scale(0.3) translateY(50px)', offset: 0 }),
+          style({ opacity: 1, transform: 'scale(1.1) translateY(-10px)', offset: 0.6 }),
+          style({ opacity: 1, transform: 'scale(1) translateY(0)', offset: 1 }),
+        ])),
       ]),
     ]),
   ],
@@ -211,19 +249,20 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       min-width: 0;
     }
 
-    .welcome-label {
-      font-size: var(--font-body-xs);
-      color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: var(--font-weight-medium);
+    .welcome-greeting {
+      font-size: var(--font-size-h1); /* H1: Page greeting - 28px */
+      font-weight: var(--font-weight-semibold); /* H1: Semibold (600) - reduced from 700 */
+      margin: 0;
+      color: var(--color-text-primary);
+      line-height: var(--line-height-tight);
     }
 
     .welcome-name {
-      font-size: var(--font-heading-sm);
-      font-weight: var(--font-weight-semibold);
-      margin: 0;
+      font-size: var(--font-heading-lg);
+      font-weight: var(--font-weight-bold);
+      margin: var(--space-1) 0 0;
       color: var(--color-text-primary);
+      line-height: 1.2;
     }
 
     .welcome-hint {
@@ -276,17 +315,17 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: var(--icon-md); /* 16px - standard icon */
     }
 
     .stat-icon.acwr {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3b82f6;
+      background: var(--color-status-info-light);
+      color: var(--color-status-info);
     }
 
     .stat-icon.readiness {
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
+      background: var(--color-status-error-light);
+      color: var(--color-status-error);
     }
 
     .stat-info {
@@ -294,11 +333,30 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       min-width: 0;
     }
 
+    .stat-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
     .stat-value {
-      font-size: var(--font-heading-sm);
-      font-weight: var(--font-weight-bold);
-      line-height: 1.2;
+      font-size: var(--font-size-metric-md); /* Metric: KPI numbers - 24px */
+      font-weight: var(--font-weight-bold); /* Metric: Bold (700) */
+      line-height: var(--line-height-tight); /* Metric: 1.2 */
       color: var(--color-text-primary);
+    }
+
+    .stat-status-label {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .stat-chevron {
+      color: var(--color-text-muted);
+      opacity: 0.6;
+      font-size: var(--icon-sm); /* 14px - small icon */
     }
 
     .stat-value.optimal,
@@ -308,10 +366,11 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
     .stat-value.low { color: var(--color-status-error); }
 
     .stat-label {
-      font-size: var(--font-body-xs);
-      color: var(--color-text-secondary);
+      font-size: var(--font-size-caption); /* Caption: Helper text - 13px */
+      font-weight: var(--font-weight-regular); /* Caption: Regular (400) */
+      color: var(--color-text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.25px;
+      letter-spacing: var(--letter-spacing-caption); /* 0.04em for labels like READINESS, ACWR */
     }
 
     /* --------------------------------------------------------------------------
@@ -346,6 +405,11 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       border: 1px solid var(--color-border-secondary);
     }
 
+    :host ::ng-deep .highlight-card {
+      border-left: 4px solid var(--color-brand-primary);
+      border-left-width: 4px;
+    }
+
     :host ::ng-deep .content-card .p-card-body {
       padding: var(--space-4);
     }
@@ -364,15 +428,17 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
     }
 
     .card-header-icon {
-      font-size: 1rem;
+      font-size: var(--icon-md); /* 16px - standard icon */
       color: var(--color-brand-primary);
     }
 
     .card-header-title {
       flex: 1;
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-h2); /* H2: Card titles - 18px */
+      font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
       color: var(--color-text-primary);
+      line-height: var(--line-height-tight);
+      margin-bottom: var(--space-3); /* 12px consistent margin */
     }
 
     .card-description {
@@ -529,7 +595,7 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: var(--icon-md); /* 16px - standard icon */
     }
 
     .action-text {
@@ -566,7 +632,7 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
     }
 
     .empty-state i {
-      font-size: 2.5rem;
+      font-size: var(--icon-3xl); /* 48px - hero/empty state icon */
       color: var(--color-text-muted);
       opacity: 0.5;
       margin-bottom: var(--space-3);
@@ -641,12 +707,417 @@ type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contr
     }
 
     /* --------------------------------------------------------------------------
+       QUICK CHECK-IN BUTTONS
+       -------------------------------------------------------------------------- */
+    .checkin-buttons {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    /* --------------------------------------------------------------------------
+       QUICK CHECK-IN DIALOG
+       -------------------------------------------------------------------------- */
+    .quick-checkin-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .quick-intro {
+      text-align: center;
+      color: var(--color-text-secondary);
+      font-size: var(--font-body-sm);
+      margin: 0;
+    }
+
+    .quick-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .quick-label {
+      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .mood-selector {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .mood-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-2);
+      background: var(--surface-secondary);
+      border: 2px solid var(--color-border-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--hover-transition-fast);
+    }
+
+    .mood-btn:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--hover-bg-secondary);
+    }
+
+    .mood-btn.selected {
+      border-color: var(--color-brand-primary);
+      background: var(--ds-primary-green-ultra-subtle);
+    }
+
+    .mood-emoji {
+      font-size: 1.5rem;
+    }
+
+    .mood-text {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .mood-btn.selected .mood-text {
+      color: var(--color-brand-primary);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .energy-selector {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .energy-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2);
+      background: var(--surface-secondary);
+      border: 2px solid var(--color-border-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--hover-transition-fast);
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .energy-btn i {
+      font-size: var(--icon-md);
+      color: var(--color-status-warning);
+    }
+
+    .energy-btn:hover {
+      border-color: var(--color-brand-primary);
+    }
+
+    .energy-btn.selected {
+      border-color: var(--color-brand-primary);
+      background: var(--ds-primary-green-ultra-subtle);
+      color: var(--color-brand-primary);
+    }
+
+    .soreness-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .soreness-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--surface-secondary);
+      border: 2px solid var(--color-border-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--hover-transition-fast);
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .soreness-btn i {
+      font-size: var(--icon-md);
+    }
+
+    .soreness-btn:hover {
+      border-color: var(--color-brand-primary);
+    }
+
+    .soreness-btn.selected {
+      border-color: var(--color-brand-primary);
+      background: var(--ds-primary-green-ultra-subtle);
+      color: var(--color-brand-primary);
+    }
+
+    .soreness-btn.soreness-yes.selected {
+      border-color: var(--color-status-warning);
+      background: var(--color-status-warning-light);
+      color: var(--color-status-warning);
+    }
+
+    .quick-preview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3);
+      background: var(--surface-tertiary);
+      border-radius: var(--radius-md);
+    }
+
+    .quick-preview .preview-label {
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .quick-preview .preview-score {
+      font-size: var(--font-heading-md);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .quick-preview .preview-score.high { color: var(--color-brand-primary); }
+    .quick-preview .preview-score.moderate { color: var(--color-status-warning); }
+    .quick-preview .preview-score.low { color: var(--color-status-error); }
+
+    /* --------------------------------------------------------------------------
+       CELEBRATION OVERLAY
+       -------------------------------------------------------------------------- */
+    .celebration-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      padding: var(--space-4);
+    }
+
+    .celebration-content {
+      position: relative;
+      background: var(--surface-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8) var(--space-6);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .celebration-confetti {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--color-brand-primary);
+      border-radius: 50%;
+      animation: confetti-fall 2s ease-out forwards;
+      animation-delay: var(--delay);
+      transform: translateX(var(--x));
+      opacity: 0;
+    }
+
+    .confetti-piece:nth-child(2n) {
+      background: var(--color-status-warning);
+      width: 8px;
+      height: 8px;
+    }
+
+    .confetti-piece:nth-child(3n) {
+      background: var(--color-status-info);
+      width: 12px;
+      height: 12px;
+    }
+
+    .confetti-piece:nth-child(4n) {
+      background: var(--color-status-error);
+      border-radius: 0;
+      transform: translateX(var(--x)) rotate(45deg);
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        opacity: 1;
+        transform: translateX(var(--x)) translateY(-20px) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(calc(var(--x) * 1.5)) translateY(150px) rotate(720deg);
+      }
+    }
+
+    .celebration-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-3);
+      animation: icon-bounce 0.6s ease-out;
+    }
+
+    @keyframes icon-bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .celebration-title {
+      margin: 0 0 var(--space-2);
+      font-size: var(--font-heading-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+    }
+
+    .celebration-message {
+      margin: 0 0 var(--space-5);
+      font-size: var(--font-body-md);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    .celebration-stats {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-6);
+      margin-bottom: var(--space-5);
+      padding: var(--space-4);
+      background: var(--surface-tertiary);
+      border-radius: var(--radius-lg);
+    }
+
+    .celebration-stats .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .celebration-stats .stat-number {
+      font-size: var(--font-heading-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-brand-primary);
+    }
+
+    .celebration-stats .stat-label {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* --------------------------------------------------------------------------
+       EMPTY STATE ACTIONS
+       -------------------------------------------------------------------------- */
+    .empty-state-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* --------------------------------------------------------------------------
+       TOMORROW'S TRAINING PREVIEW
+       -------------------------------------------------------------------------- */
+    .tomorrow-loading {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .tomorrow-preview {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .tomorrow-rationale {
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin: 0;
+      padding: var(--space-3);
+      background: var(--surface-tertiary);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--color-brand-primary);
+    }
+
+    .tomorrow-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .tomorrow-block-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--surface-secondary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border-secondary);
+    }
+
+    .tomorrow-block-item i {
+      color: var(--color-brand-primary);
+      font-size: var(--icon-md);
+    }
+
+    .tomorrow-block-item span:nth-child(2) {
+      flex: 1;
+      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+
+    .tomorrow-block-item .block-count {
+      font-size: var(--font-body-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .tomorrow-actions {
+      display: flex;
+      justify-content: center;
+      padding-top: var(--space-2);
+    }
+
+    .tomorrow-empty {
+      text-align: center;
+      padding: var(--space-4);
+    }
+
+    .tomorrow-empty p {
+      margin: 0 0 var(--space-3);
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* --------------------------------------------------------------------------
        ACCESSIBILITY - Reduced Motion
        -------------------------------------------------------------------------- */
     @media (prefers-reduced-motion: reduce) {
       :host ::ng-deep .stat-card,
       :host ::ng-deep .action-card {
         transition: none;
+      }
+      
+      .confetti-piece {
+        animation: none;
+        opacity: 0;
+      }
+      
+      .celebration-icon {
+        animation: none;
       }
     }
   `],
@@ -668,6 +1139,42 @@ export class TodayComponent {
   readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentTime = signal(new Date());
+  
+  // Quick Check-in State
+  readonly showQuickCheckin = signal(false);
+  readonly isSavingQuickCheckin = signal(false);
+  readonly quickFormData = signal<QuickFormData>({
+    overallFeeling: null,
+    energyLevel: null,
+    hasSoreness: null,
+  });
+  
+  // Celebration State
+  readonly showCelebration = signal(false);
+  private celebrationShownForSession = false;
+  
+  // Protocol Generation State
+  readonly isGeneratingProtocol = signal(false);
+  readonly isGeneratingTomorrow = signal(false);
+  readonly isLoadingTomorrow = signal(false);
+  readonly tomorrowProtocol = signal<Partial<DailyProtocol> | null>(null);
+  
+  // Quick Check-in Options
+  readonly quickMoods: QuickMood[] = [
+    { value: 1, emoji: '😫', label: 'Rough' },
+    { value: 2, emoji: '😐', label: 'Okay' },
+    { value: 3, emoji: '🙂', label: 'Good' },
+    { value: 4, emoji: '😊', label: 'Great' },
+    { value: 5, emoji: '🤩', label: 'Amazing' },
+  ];
+  
+  readonly quickEnergyLevels: QuickEnergyLevel[] = [
+    { value: 1, label: 'Low' },
+    { value: 2, label: 'Moderate' },
+    { value: 3, label: 'Normal' },
+    { value: 4, label: 'High' },
+    { value: 5, label: 'Peak' },
+  ];
 
   // ============================================================================
   // DERIVED STATE FROM SERVICES
@@ -809,16 +1316,64 @@ export class TodayComponent {
     return severityMap[this.readinessLevel()] ?? 'secondary';
   });
 
+  readonly tomorrowDate = computed(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
+
+  readonly tomorrowDateLabel = computed(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  });
+
+  // ============================================================================
+  // COMPUTED - Quick Check-in
+  // ============================================================================
+  readonly quickReadinessScore = computed(() => {
+    const data = this.quickFormData();
+    if (data.overallFeeling === null || data.energyLevel === null || data.hasSoreness === null) {
+      return 0;
+    }
+    
+    // Calculate score based on quick inputs
+    const feelingScore = (data.overallFeeling / 5) * 100;
+    const energyScore = (data.energyLevel / 5) * 100;
+    const sorenessScore = data.hasSoreness ? 60 : 100; // Penalty for soreness
+    
+    // Weighted average
+    const score = Math.round(feelingScore * 0.4 + energyScore * 0.35 + sorenessScore * 0.25);
+    return score;
+  });
+  
+  readonly isQuickFormValid = computed(() => {
+    const data = this.quickFormData();
+    return data.overallFeeling !== null && 
+           data.energyLevel !== null && 
+           data.hasSoreness !== null;
+  });
+
   // ============================================================================
   // CONSTRUCTOR
   // ============================================================================
   constructor() {
     this.headerService.setDashboardHeader();
     this.loadTodayData();
+    this.loadTomorrowProtocol();
 
     // Update time every minute
     const interval = setInterval(() => this.currentTime.set(new Date()), 60000);
     this.destroyRef.onDestroy(() => clearInterval(interval));
+    
+    // Watch for protocol completion to trigger celebration
+    effect(() => {
+      const p = this.protocol();
+      if (p?.overallProgress === 100 && !this.celebrationShownForSession && this.hasCheckedInToday()) {
+        this.celebrationShownForSession = true;
+        this.showCelebration.set(true);
+      }
+    });
   }
 
   // ============================================================================
@@ -851,8 +1406,9 @@ export class TodayComponent {
     this.messageService.add({
       severity: 'success',
       summary: 'Wellness Logged',
-      detail: `Readiness: ${result.readinessScore}. Let's optimize your session.`,
+      detail: `Readiness: ${result.readinessScore}%. Let's optimize your session.`,
     });
+    // Refresh protocol data after check-in
     this.refreshProtocol();
   }
 
@@ -871,6 +1427,170 @@ export class TodayComponent {
 
   scrollToWellness(): void {
     document.getElementById('wellness-section')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ============================================================================
+  // QUICK CHECK-IN METHODS
+  // ============================================================================
+  openQuickCheckin(): void {
+    this.quickFormData.set({
+      overallFeeling: null,
+      energyLevel: null,
+      hasSoreness: null,
+    });
+    this.showQuickCheckin.set(true);
+  }
+  
+  setQuickField<K extends keyof QuickFormData>(field: K, value: QuickFormData[K]): void {
+    this.quickFormData.set({
+      ...this.quickFormData(),
+      [field]: value,
+    });
+  }
+  
+  getQuickReadinessClass(): string {
+    const score = this.quickReadinessScore();
+    if (score >= 70) return 'high';
+    if (score >= 50) return 'moderate';
+    return 'low';
+  }
+  
+  async submitQuickCheckin(): Promise<void> {
+    if (!this.isQuickFormValid()) return;
+    
+    this.isSavingQuickCheckin.set(true);
+    
+    try {
+      const data = this.quickFormData();
+      const targetDate = new Date().toISOString().split('T')[0];
+      const readiness = this.quickReadinessScore();
+      
+      // Map quick form to full wellness data
+      const wellnessData = {
+        date: targetDate,
+        sleepQuality: data.overallFeeling ?? 3,
+        sleepHours: 7, // Default
+        energyLevel: data.energyLevel ?? 3,
+        muscleSoreness: data.hasSoreness ? 2 : 4,
+        stressLevel: data.overallFeeling ?? 3,
+        sorenessAreas: [] as string[],
+        readinessScore: readiness,
+      };
+      
+      const response: any = await this.trainingService.submitWellness(wellnessData);
+      
+      if (response?.success) {
+        this.showQuickCheckin.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Quick Check-in Complete',
+          detail: `Readiness: ${readiness}%. Ready to train!`,
+        });
+        this.refreshProtocol();
+      }
+    } catch (err) {
+      this.logger.error('Failed to save quick checkin', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to save check-in. Please try again.',
+      });
+    } finally {
+      this.isSavingQuickCheckin.set(false);
+    }
+  }
+
+  // ============================================================================
+  // CELEBRATION METHODS
+  // ============================================================================
+  dismissCelebration(): void {
+    this.showCelebration.set(false);
+  }
+
+  // ============================================================================
+  // PROTOCOL GENERATION
+  // ============================================================================
+  generateProtocol(): void {
+    this.isGeneratingProtocol.set(true);
+    
+    this.trainingService.generateDailyProtocol()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: any) => {
+          if (response?.success && response.data) {
+            this.protocol.set(response.data as Partial<DailyProtocol>);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Protocol Generated',
+              detail: 'Your personalized training plan is ready!',
+            });
+          }
+          this.isGeneratingProtocol.set(false);
+        },
+        error: (err) => {
+          this.logger.error('Failed to generate protocol', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to generate protocol. Please try again.',
+          });
+          this.isGeneratingProtocol.set(false);
+        },
+      });
+  }
+
+  generateTomorrowProtocol(): void {
+    this.isGeneratingTomorrow.set(true);
+    
+    this.trainingService.generateDailyProtocol(this.tomorrowDate())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: any) => {
+          if (response?.success && response.data) {
+            this.tomorrowProtocol.set(response.data as Partial<DailyProtocol>);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Tomorrow\'s Protocol Ready',
+              detail: 'Your training plan for tomorrow has been generated!',
+            });
+          }
+          this.isGeneratingTomorrow.set(false);
+        },
+        error: (err) => {
+          this.logger.error('Failed to generate tomorrow protocol', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to generate tomorrow\'s protocol.',
+          });
+          this.isGeneratingTomorrow.set(false);
+        },
+      });
+  }
+
+  loadTomorrowProtocol(): void {
+    this.isLoadingTomorrow.set(true);
+    
+    this.trainingService.getProtocolForDate(this.tomorrowDate())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: any) => {
+          if (response?.success && response.data) {
+            this.tomorrowProtocol.set(response.data as Partial<DailyProtocol>);
+          }
+          this.isLoadingTomorrow.set(false);
+        },
+        error: () => {
+          this.isLoadingTomorrow.set(false);
+        },
+      });
+  }
+
+  viewTomorrowProtocol(): void {
+    // Navigate to training schedule with tomorrow's date highlighted
+    this.router.navigate(['/training'], { 
+      queryParams: { date: this.tomorrowDate() } 
+    });
   }
 
   // ============================================================================

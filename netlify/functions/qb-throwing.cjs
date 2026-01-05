@@ -160,9 +160,9 @@ async function getThrowingData(supabase, userId, headers) {
       week.weeklyThrows += session.total_throws || 0;
       week.sessionsCount += 1;
       week.totalArmFeeling += session.arm_feeling_after || 0;
-      if (session.pre_throwing_warmup_done) week.warmupCount += 1;
-      if (session.post_throwing_arm_care_done) week.armCareCount += 1;
-      if (session.ice_applied) week.iceSessions += 1;
+      if (session.pre_throwing_warmup_done) {week.warmupCount += 1;}
+      if (session.post_throwing_arm_care_done) {week.armCareCount += 1;}
+      if (session.ice_applied) {week.iceSessions += 1;}
     });
 
     // Convert to array and calculate averages
@@ -300,7 +300,7 @@ async function logThrowingSession(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     result = data;
   } else {
     // Insert new
@@ -330,7 +330,7 @@ async function logThrowingSession(supabase, userId, payload, headers) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     result = data;
   }
 
@@ -376,7 +376,7 @@ async function markArmCareDone(supabase, userId, payload, headers) {
     .eq("id", sessionId)
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return {
     statusCode: 200,

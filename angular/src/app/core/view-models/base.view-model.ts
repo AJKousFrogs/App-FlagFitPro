@@ -43,12 +43,10 @@
 import {
   Injectable,
   signal,
-  computed,
-  effect,
   DestroyRef,
   inject,
 } from "@angular/core";
-import { Observable, Subject, takeUntil, catchError, finalize } from "rxjs";
+import { Observable, Subject, catchError, finalize } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../services/logger.service";
 

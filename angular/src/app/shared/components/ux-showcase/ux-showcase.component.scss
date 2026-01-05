@@ -3,15 +3,13 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .ux-showcase {
-    padding: var(--space-4);
-  }
+.ux-showcase {
+  padding: var(--space-4);
+}
 
-  .info-text {
-    color: var(--color-text-secondary);
-    margin-bottom: 1rem;
-    font-size: var(--font-body-sm);
-  }
+.info-text {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+  font-size: var(--font-size-h4);
 }
 

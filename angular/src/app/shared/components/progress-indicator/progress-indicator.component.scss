@@ -3,160 +3,158 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  .progress-indicator-container {
-    width: 100%;
-  }
+.progress-indicator-container {
+  width: 100%;
+}
 
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2, 0.5rem);
-  }
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2, 0.5rem);
+}
 
-  .progress-label {
-    font-size: var(--font-body-md, 1rem);
-    font-weight: var(--font-weight-medium);
-    color: var(--text-primary, #1a1a1a);
-    margin: 0;
-  }
+.progress-label {
+  font-size: var(--font-body-md, 1rem);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary, #1a1a1a);
+  margin: 0;
+}
 
-  .progress-value {
-    font-size: var(--font-body-md, 1rem);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-brand-primary, #089949);
-  }
+.progress-value {
+  font-size: var(--font-body-md, 1rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-brand-primary, #089949);
+}
 
-  .progress-bar-wrapper {
-    width: 100%;
-  }
+.progress-bar-wrapper {
+  width: 100%;
+}
 
-  /* Circular Progress */
-  .circular-progress {
-    position: relative;
-    margin: 0 auto;
-  }
+/* Circular Progress */
+.circular-progress {
+  position: relative;
+  margin: 0 auto;
+}
 
-  .circular-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
+.circular-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
 
-  .circular-background {
-    opacity: 0.2;
-  }
+.circular-background {
+  opacity: 0.2;
+}
 
-  .circular-progress-circle {
-    transition: stroke-dashoffset 0.3s ease;
-  }
+.circular-progress-circle {
+  transition: stroke-dashoffset 0.3s ease;
+}
 
-  .circular-value {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: var(--font-heading-md, 1.25rem);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-primary, #1a1a1a);
-  }
+.circular-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-heading-md, 1.25rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary, #1a1a1a);
+}
 
-  /* Steps Progress */
-  .steps-progress {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    position: relative;
-  }
+/* Steps Progress */
+.steps-progress {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+}
 
-  .step-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    position: relative;
-  }
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
 
-  .step-marker {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-border-secondary);
-    color: var(--text-secondary, #6b7280);
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--space-2, 0.5rem);
-    transition: all 0.3s ease;
-  }
+.step-marker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-border-secondary);
+  color: var(--text-secondary, #6b7280);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2, 0.5rem);
+  transition: all 0.3s ease;
+}
 
-  .step-item.active .step-marker {
-    background: var(--color-brand-primary, #089949);
-    color: var(--color-text-on-primary, #ffffff);
-  }
+.step-item.active .step-marker {
+  background: var(--color-brand-primary, #089949);
+  color: var(--color-text-on-primary, #ffffff);
+}
 
-  .step-item.completed .step-marker {
-    background: var(--color-status-success);
-    color: var(--color-text-on-primary, #ffffff);
-  }
+.step-item.completed .step-marker {
+  background: var(--color-status-success);
+  color: var(--color-text-on-primary, #ffffff);
+}
 
-  .step-number {
-    font-size: var(--font-body-sm, 0.875rem);
-  }
+.step-number {
+  font-size: var(--font-body-sm, 0.875rem);
+}
 
-  .step-label {
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-    text-align: center;
-    max-width: 100px;
-  }
+.step-label {
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
+  text-align: center;
+  max-width: 100px;
+}
 
-  .step-item.active .step-label {
-    color: var(--text-primary, #1a1a1a);
-    font-weight: var(--font-weight-medium);
-  }
+.step-item.active .step-label {
+  color: var(--text-primary, #1a1a1a);
+  font-weight: var(--font-weight-medium);
+}
 
-  .step-connector {
-    position: absolute;
-    top: 1.25rem;
-    left: calc(50% + 1.25rem);
-    right: calc(-50% + 1.25rem);
-    height: 2px;
-    background: var(--color-border-secondary);
-    z-index: -1;
-  }
+.step-connector {
+  position: absolute;
+  top: 1.25rem;
+  left: calc(50% + 1.25rem);
+  right: calc(-50% + 1.25rem);
+  height: 2px;
+  background: var(--color-border-secondary);
+  z-index: -1;
+}
 
-  .step-item.completed .step-connector {
-    background: var(--color-status-success);
-  }
+.step-item.completed .step-connector {
+  background: var(--color-status-success);
+}
 
-  .progress-helper {
-    margin-top: var(--space-2, 0.5rem);
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-  }
+.progress-helper {
+  margin-top: var(--space-2, 0.5rem);
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
+}
 
-  /* Size variants */
-  .progress-sm .progress-label {
-    font-size: var(--font-body-sm, 0.875rem);
-  }
+/* Size variants */
+.progress-sm .progress-label {
+  font-size: var(--font-body-sm, 0.875rem);
+}
 
-  .progress-sm .circular-value {
-    font-size: var(--font-body-md, 1rem);
-  }
+.progress-sm .circular-value {
+  font-size: var(--font-body-md, 1rem);
+}
 
-  .progress-lg .progress-label {
-    font-size: var(--font-body-lg, 1.125rem);
-  }
+.progress-lg .progress-label {
+  font-size: var(--font-body-lg, 1.125rem);
+}
 
-  .progress-lg .circular-value {
-    font-size: var(--font-heading-lg, 1.5rem);
-  }
+.progress-lg .circular-value {
+  font-size: var(--font-heading-lg, 1.5rem);
 }
 

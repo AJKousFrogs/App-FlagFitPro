@@ -6,8 +6,8 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { Observable, interval } from "rxjs";
-import { switchMap, map, shareReplay } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "../api.service";
 
 export interface PerformanceTrendsData {

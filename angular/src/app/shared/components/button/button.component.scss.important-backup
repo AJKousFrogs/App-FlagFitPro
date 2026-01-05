@@ -1,0 +1,503 @@
+// ============================================================================
+// Button Component Styles - Unified Design System
+// ============================================================================
+// THE SINGLE SOURCE OF TRUTH FOR BUTTON STYLING IN THE APP
+// All buttons use <app-button> or <app-icon-button> which use these styles.
+//
+// NORMALIZED DESIGN CONTRACT (STRICTLY ENFORCED):
+// ============================================================================
+// 1. HEIGHT: Fixed 44px for ALL buttons (no min-height, exact height)
+// 2. PADDING: Identical padding for ALL variants (12px 24px)
+// 3. RADIUS: Identical border-radius for ALL variants (8px)
+// 4. TYPOGRAPHY: Identical font-size (16px) and weight (600) for ALL variants
+// 5. DEFAULT: Green background + white text/icons
+// 6. HOVER: White background + green text/icons + visible border
+// 7. VARIANTS: May ONLY change color/background/border - NEVER geometry
+//
+// ARCHITECTURE:
+// - Base .btn: ALL geometry is LOCKED and IDENTICAL across variants
+// - Variants: ONLY control color, background, border, shadow
+// - NO variant may override height, padding, radius, or font
+// ============================================================================
+
+// NOTE: No @layer here - component styles are scoped by Angular's ViewEncapsulation
+// and should have highest specificity within the component
+
+:host {
+  display: inline-block;
+}
+
+:host(.btn-full-width) {
+  display: block;
+  width: 100%;
+}
+
+// ============================================
+// BASE BUTTON STYLES
+// ALL GEOMETRY IS LOCKED - VARIANTS CANNOT OVERRIDE
+// ============================================
+
+.btn,
+button.btn,
+a.btn {
+  // ─────────────────────────────────────────
+  // LOCKED GEOMETRY - IDENTICAL FOR ALL VARIANTS
+  // ─────────────────────────────────────────
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 8px);
+  
+  // FIXED HEIGHT - exactly 44px, not min-height
+  height: 44px;
+  
+  // FIXED PADDING - identical for all variants
+  padding: 0 var(--space-6, 24px);
+  
+  // FIXED TYPOGRAPHY - identical for all variants
+  font-size: var(--font-body-md, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  font-family: var(--font-family-sans, system-ui, sans-serif);
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  
+  // FIXED SHAPE - identical for all variants
+  border-radius: var(--radius-button, 8px);
+  
+  // FIXED INTERACTION PROPERTIES
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+
+  // ─────────────────────────────────────────
+  // DEFAULT APPEARANCE
+  // Green background + white text/icons
+  // ─────────────────────────────────────────
+  background-color: var(--ds-primary-green, #089949);
+  color: var(--color-text-on-primary, #ffffff);
+  border: 2px solid transparent;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+
+  // Transition
+  transition:
+    transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    opacity 150ms ease;
+  will-change: transform, box-shadow;
+  
+  // Ensure icons inherit color
+  i, .pi, svg, .btn-icon {
+    color: inherit;
+  }
+}
+
+// ============================================
+// HOVER STATE
+// White background + green text/icons + visible border
+// ============================================
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--color-text-on-primary, #ffffff);
+    color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green, #089949);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 20px rgba(8, 153, 73, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ============================================
+// ACTIVE/PRESSED STATE
+// ============================================
+
+.btn:active:not(:disabled):not(.btn-disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+// ============================================
+// FOCUS STYLES (Accessibility)
+// ============================================
+
+.btn:focus-visible {
+  outline: 3px solid rgba(8, 153, 73, 0.5);
+  outline-offset: 2px;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.15),
+    0 0 0 4px rgba(8, 153, 73, 0.25);
+}
+
+.btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// ============================================
+// DISABLED STYLES
+// ============================================
+
+.btn:disabled,
+.btn.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+// ============================================
+// LOADING STATE
+// ============================================
+
+.btn.btn-loading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+// ============================================
+// BUTTON VARIANTS
+// ONLY control: color, background, border, shadow
+// CANNOT change: height, padding, radius, font
+// Using .btn.btn-variant for higher specificity
+// ============================================
+
+// PRIMARY - Default (green bg + white text)
+// Explicitly defined for clarity, matches base
+.btn.btn-primary {
+  background-color: var(--ds-primary-green, #089949);
+  color: var(--color-text-on-primary, #ffffff);
+  border-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-primary:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--color-text-on-primary, #ffffff);
+    color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green, #089949);
+  }
+}
+
+// SECONDARY - Light background with border
+// Using !important to ensure these override base .btn styles
+.btn.btn-secondary {
+  background-color: var(--surface-secondary, #f8faf9) !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  border-color: var(--color-border-muted, #e5e5e5) !important;
+  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08)) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-secondary:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--surface-tertiary, #e9ecef) !important;
+    color: var(--ds-primary-green, #089949) !important;
+    border-color: var(--ds-primary-green, #089949) !important;
+    box-shadow: var(--shadow-2, 0 4px 12px rgba(0, 0, 0, 0.12)) !important;
+  }
+}
+
+// OUTLINED - Transparent with green border and green text
+// Using !important to ensure these override base .btn styles
+.btn.btn-outlined {
+  background-color: transparent !important;
+  color: var(--ds-primary-green, #089949) !important;
+  border-color: var(--ds-primary-green, #089949) !important;
+  box-shadow: none !important;
+  
+  // Ensure text is visible
+  .btn-content,
+  .btn-icon,
+  i {
+    color: var(--ds-primary-green, #089949) !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-outlined:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--ds-primary-green, #089949) !important;
+    color: var(--color-text-on-primary, #ffffff) !important;
+    border-color: var(--ds-primary-green, #089949) !important;
+    box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08)) !important;
+    
+    .btn-content,
+    .btn-icon,
+    i {
+      color: var(--color-text-on-primary, #ffffff) !important;
+    }
+  }
+}
+
+// TEXT - Transparent, minimal style
+// SAME height, padding, radius as all other variants
+// Using !important to ensure these override base .btn styles
+.btn.btn-text {
+  background-color: transparent !important;
+  color: var(--ds-primary-green, #089949) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  
+  .btn-content,
+  .btn-icon,
+  i {
+    color: var(--ds-primary-green, #089949) !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-text:hover:not(:disabled):not(.btn-disabled) {
+    background-color: rgba(8, 153, 73, 0.08) !important;
+    color: var(--ds-primary-green-hover, #036d35) !important;
+    
+    .btn-content,
+    .btn-icon,
+    i {
+      color: var(--ds-primary-green-hover, #036d35) !important;
+    }
+  }
+}
+
+// DANGER - Red for destructive actions
+.btn.btn-danger {
+  background-color: var(--color-status-error, #dc2626);
+  color: var(--color-text-on-primary, #ffffff);
+  border-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-danger:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--color-text-on-primary, #ffffff);
+    color: var(--color-status-error, #dc2626);
+    border-color: var(--color-status-error, #dc2626);
+  }
+}
+
+.btn.btn-danger:focus-visible {
+  outline-color: var(--color-status-error, #dc2626);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.15),
+    0 0 0 4px rgba(220, 38, 38, 0.25);
+}
+
+// SUCCESS - Same as primary (green)
+.btn.btn-success {
+  background-color: var(--ds-primary-green, #089949);
+  color: var(--color-text-on-primary, #ffffff);
+  border-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-success:hover:not(:disabled):not(.btn-disabled) {
+    background-color: var(--color-text-on-primary, #ffffff);
+    color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green, #089949);
+  }
+}
+
+// ============================================
+// SIZE VARIANTS
+// Only sm and lg change geometry
+// ============================================
+
+.btn.btn-sm {
+  height: 36px;
+  padding: 0 var(--space-4, 16px);
+  font-size: var(--font-body-sm, 14px);
+  gap: var(--space-1, 4px);
+}
+
+.btn.btn-lg {
+  height: 52px;
+  padding: 0 var(--space-8, 32px);
+  font-size: var(--font-body-lg, 18px);
+  gap: var(--space-3, 12px);
+}
+
+// ============================================
+// FULL WIDTH
+// ============================================
+
+.btn-full-width {
+  width: 100%;
+}
+
+// ============================================
+// ICON-ONLY BUTTONS
+// Square, same height as standard
+// ============================================
+
+.btn.btn-icon-only {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.btn.btn-icon-only.btn-sm {
+  width: 36px;
+  height: 36px;
+}
+
+.btn.btn-icon-only.btn-lg {
+  width: 52px;
+  height: 52px;
+}
+
+// ============================================
+// ICON STYLES
+// ============================================
+
+.btn-icon {
+  font-size: var(--font-body-lg, 18px);
+  line-height: 1;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.btn.btn-sm .btn-icon {
+  font-size: var(--font-body-sm, 14px);
+}
+
+.btn.btn-lg .btn-icon {
+  font-size: var(--font-heading-sm, 18px);
+}
+
+// ============================================
+// CONTENT STYLES
+// ============================================
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  transition: opacity 150ms ease;
+}
+
+.btn-content-loading {
+  opacity: 0.7;
+}
+
+.btn-content.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ============================================
+// SPINNER
+// ============================================
+
+.btn-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spinner-rotate 0.8s linear infinite;
+}
+
+.spinner-svg circle {
+  stroke: currentColor;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 45;
+  stroke-linecap: round;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// TOUCH DEVICE OPTIMIZATIONS
+// ============================================
+
+@media (hover: none) and (pointer: coarse) {
+  .btn:active:not(:disabled):not(.btn-disabled) {
+    transform: scale(0.97);
+  }
+
+  .btn-primary:active:not(:disabled):not(.btn-disabled),
+  .btn-danger:active:not(:disabled):not(.btn-disabled),
+  .btn-success:active:not(:disabled):not(.btn-disabled) {
+    opacity: 0.9;
+  }
+}
+
+// ============================================
+// REDUCED MOTION
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .spinner-svg {
+    animation-duration: 1.5s;
+  }
+
+  .btn:hover,
+  .btn:active {
+    transform: none;
+  }
+}
+
+// ============================================
+// HIGH CONTRAST MODE
+// ============================================
+
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 2px;
+  }
+
+  .btn-text {
+    border-color: currentColor;
+  }
+
+  .btn:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+// ============================================
+// DARK MODE ADJUSTMENTS
+// Only color changes, no geometry changes
+// ============================================
+
+:host-context(.dark-mode),
+:host-context([data-theme="dark"]) {
+  .btn-secondary {
+    background-color: var(--surface-secondary);
+    border-color: var(--color-border-default);
+    color: var(--color-text-primary);
+  }
+
+  .btn-outlined {
+    border-color: var(--ds-primary-green);
+    color: var(--ds-primary-green);
+  }
+}

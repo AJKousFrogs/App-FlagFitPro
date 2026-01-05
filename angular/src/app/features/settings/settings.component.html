@@ -47,6 +47,22 @@
               autocomplete="email"
             />
           </div>
+          <div class="p-field mb-4">
+            <label for="settings-dob" class="p-label">Date of Birth</label>
+            <p-datepicker
+              inputId="settings-dob"
+              formControlName="dateOfBirth"
+              [showIcon]="true"
+              [maxDate]="maxBirthDate"
+              dateFormat="mm/dd/yy"
+              placeholder="Select your date of birth"
+              appendTo="body"
+              styleClass="w-full"
+            ></p-datepicker>
+            @if (calculateAge() !== null) {
+              <small class="age-display">Age: {{ calculateAge() }} years</small>
+            }
+          </div>
           <div class="form-row two-columns">
             <div class="p-field">
               <label for="settings-position" class="p-label">Position</label>
@@ -123,18 +139,6 @@
               </div>
             </div>
             <div class="toggle-wrapper control-row__control">
-              <span
-                class="toggle-status"
-                [class.active]="
-                  notificationForm.get('emailNotifications')?.value
-                "
-              >
-                {{
-                  notificationForm.get("emailNotifications")?.value
-                    ? "ON"
-                    : "OFF"
-                }}
-              </span>
               <p-toggleswitch
                 formControlName="emailNotifications"
               ></p-toggleswitch>
@@ -154,18 +158,6 @@
               </div>
             </div>
             <div class="toggle-wrapper control-row__control">
-              <span
-                class="toggle-status"
-                [class.active]="
-                  notificationForm.get('pushNotifications')?.value
-                "
-              >
-                {{
-                  notificationForm.get("pushNotifications")?.value
-                    ? "ON"
-                    : "OFF"
-                }}
-              </span>
               <p-toggleswitch
                 formControlName="pushNotifications"
               ></p-toggleswitch>
@@ -185,20 +177,103 @@
               </div>
             </div>
             <div class="toggle-wrapper control-row__control">
-              <span
-                class="toggle-status"
-                [class.active]="
-                  notificationForm.get('trainingReminders')?.value
-                "
-              >
-                {{
-                  notificationForm.get("trainingReminders")?.value
-                    ? "ON"
-                    : "OFF"
-                }}
-              </span>
               <p-toggleswitch
                 formControlName="trainingReminders"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-heart"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title">Wellness Reminders</span>
+                <span class="notification-desc control-row__description"
+                  >Daily wellness check-in reminders</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="wellnessReminders"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-flag"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title">Game Alerts</span>
+                <span class="notification-desc control-row__description"
+                  >Notifications about upcoming games</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="gameAlerts"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-megaphone"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title">Team Announcements</span>
+                <span class="notification-desc control-row__description"
+                  >Important team news and updates</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="teamAnnouncements"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title">Coach Messages</span>
+                <span class="notification-desc control-row__description"
+                  >Direct messages from your coach</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="coachMessages"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-trophy"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title">Achievement Alerts</span>
+                <span class="notification-desc control-row__description"
+                  >Celebrate your milestones and badges</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="achievementAlerts"
               ></p-toggleswitch>
             </div>
           </div>
@@ -238,12 +313,6 @@
               >Show Statistics Publicly</label
             >
             <div class="toggle-wrapper">
-              <span
-                class="toggle-status"
-                [class.active]="privacyForm.get('showStats')?.value"
-              >
-                {{ privacyForm.get("showStats")?.value ? "ON" : "OFF" }}
-              </span>
               <p-toggleswitch
                 formControlName="showStats"
                 ariaLabelledBy="settings-showStats-label"
@@ -266,6 +335,20 @@
             
             routerLink="/settings/privacy"
           >Privacy Controls</app-button>
+        </div>
+        <p-divider></p-divider>
+        <div class="privacy-controls-link">
+          <div class="link-info">
+            <h4>Export Your Data</h4>
+            <p>
+              Download a copy of all your data including training sessions, wellness logs, and achievements.
+            </p>
+          </div>
+          <app-button
+            variant="outlined"
+            icon="download"
+            (clicked)="showDataExportDialog = true"
+          >Export Data</app-button>
         </div>
       </app-card>
 
@@ -412,7 +495,7 @@
             <app-button
               variant="outlined"
               icon="desktop"
-              (clicked)="showSessionsDialog = true"
+              (clicked)="showSessionsDialog = true; loadSessions()"
             >View</app-button>
           </div>
           <p-divider></p-divider>
@@ -437,7 +520,6 @@
   <p-dialog
     [(visible)]="showChangePasswordDialog"
     [modal]="true"
-    [style]="{ width: '440px' }"
     [closable]="true"
     [showHeader]="false"
     styleClass="password-dialog"
@@ -596,7 +678,6 @@
   <p-dialog
     [(visible)]="showDeleteAccountDialog"
     [modal]="true"
-    [style]="{ width: '480px' }"
     [closable]="true"
     [showHeader]="false"
     styleClass="delete-dialog"
@@ -682,7 +763,6 @@
   <p-dialog
     [(visible)]="show2FASetupDialog"
     [modal]="true"
-    [style]="{ width: '500px' }"
     [closable]="true"
     [showHeader]="false"
     styleClass="twofa-dialog"
@@ -769,9 +849,13 @@
                 <span class="manual-label">Can't scan? Enter manually:</span>
                 <div class="code-box">
                   <code>{{ twoFASecret() }}</code>
-                  <button class="copy-btn" (click)="copySecret()">
-                    <i class="pi pi-copy"></i>
-                  </button>
+                  <app-icon-button
+                    icon="pi-copy"
+                    ariaLabel="Copy secret to clipboard"
+                    variant="primary"
+                    size="sm"
+                    (clicked)="copySecret()"
+                  ></app-icon-button>
                 </div>
               </div>
             </div>
@@ -825,10 +909,12 @@
                     <code class="backup-code-item">{{ code }}</code>
                   }
                 </div>
-                <button class="download-btn" (click)="downloadBackupCodes()">
-                  <i class="pi pi-download"></i>
-                  <span>Download Codes</span>
-                </button>
+                <app-button
+                  variant="outlined"
+                  icon="download"
+                  [fullWidth]="true"
+                  (clicked)="downloadBackupCodes()"
+                >Download Codes</app-button>
               </div>
             </div>
           }
@@ -879,7 +965,6 @@
   <p-dialog
     [(visible)]="showDisable2FADialog"
     [modal]="true"
-    [style]="{ width: '400px' }"
     [closable]="true"
     [showHeader]="false"
     styleClass="twofa-dialog"
@@ -906,7 +991,7 @@
 
       <div class="twofa-content">
         <div class="step-section">
-          <i class="pi pi-exclamation-triangle success-icon" style="color: var(--color-status-error)"></i>
+          <i class="pi pi-exclamation-triangle success-icon error-warning-icon"></i>
           <p class="step-desc">Disabling 2FA will make your account less secure. Please confirm with your authenticator code.</p>
           
           <div class="code-input-wrapper">
@@ -947,7 +1032,6 @@
   <p-dialog
     [(visible)]="showSessionsDialog"
     [modal]="true"
-    [style]="{ width: '520px' }"
     [closable]="true"
     [showHeader]="false"
     styleClass="sessions-dialog"
@@ -1009,12 +1093,13 @@
                   </div>
                 </div>
                 @if (!session.isCurrent) {
-                  <button
-                    class="revoke-btn"
-                    (click)="revokeSession(session.id)"
-                  >
-                    <i class="pi pi-sign-out"></i>
-                  </button>
+                  <app-icon-button
+                    icon="pi-sign-out"
+                    ariaLabel="Revoke this session"
+                    variant="danger"
+                    size="md"
+                    (clicked)="revokeSession(session.id)"
+                  ></app-icon-button>
                 }
               </div>
             }
@@ -1035,6 +1120,126 @@
           [loading]="isRevokingAll()"
           (clicked)="revokeAllSessions()"
         >Sign out all others</app-button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Data Export Dialog -->
+  <p-dialog
+    [(visible)]="showDataExportDialog"
+    [modal]="true"
+    [closable]="true"
+    [showHeader]="false"
+    styleClass="export-dialog"
+  >
+    <div class="dialog-container">
+      <!-- Custom Header -->
+      <div class="dialog-header">
+        <div class="dialog-icon">
+          <i class="pi pi-download"></i>
+        </div>
+        <div class="dialog-title-section">
+          <h2>Export Your Data</h2>
+          <p>Download a copy of your FlagFit Pro data</p>
+        </div>
+        <app-button
+          icon="times"
+          variant="text"
+          ariaLabel="Close dialog"
+          severity="secondary"
+          class="dialog-close-btn"
+          (clicked)="showDataExportDialog = false"
+        ></app-button>
+      </div>
+
+      <!-- Export Options -->
+      <div class="export-content">
+        <div class="export-format-section">
+          <h4>Export Format</h4>
+          <div class="format-options">
+            <button
+              type="button"
+              class="format-option"
+              [class.active]="exportFormat === 'json'"
+              (click)="exportFormat = 'json'"
+            >
+              <i class="pi pi-code"></i>
+              <span>JSON</span>
+              <small>Machine-readable</small>
+            </button>
+            <button
+              type="button"
+              class="format-option"
+              [class.active]="exportFormat === 'csv'"
+              (click)="exportFormat = 'csv'"
+            >
+              <i class="pi pi-file"></i>
+              <span>CSV</span>
+              <small>Spreadsheet-friendly</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="export-data-section">
+          <h4>Data to Include</h4>
+          <div class="data-options">
+            <div class="data-option">
+              <div class="option-info">
+                <i class="pi pi-user"></i>
+                <span>Profile Information</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="exportOptions.profile"></p-toggleswitch>
+            </div>
+            <div class="data-option">
+              <div class="option-info">
+                <i class="pi pi-calendar"></i>
+                <span>Training Sessions</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="exportOptions.training"></p-toggleswitch>
+            </div>
+            <div class="data-option">
+              <div class="option-info">
+                <i class="pi pi-heart"></i>
+                <span>Wellness Check-ins</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="exportOptions.wellness"></p-toggleswitch>
+            </div>
+            <div class="data-option">
+              <div class="option-info">
+                <i class="pi pi-trophy"></i>
+                <span>Achievements</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="exportOptions.achievements"></p-toggleswitch>
+            </div>
+            <div class="data-option">
+              <div class="option-info">
+                <i class="pi pi-cog"></i>
+                <span>Settings & Preferences</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="exportOptions.settings"></p-toggleswitch>
+            </div>
+          </div>
+        </div>
+
+        @if (isExportingData()) {
+          <div class="export-progress-section">
+            <p-progressBar [value]="exportProgress()" [showValue]="true"></p-progressBar>
+            <span class="progress-label">Preparing your data...</span>
+          </div>
+        }
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="dialog-actions">
+        <app-button
+          variant="text"
+          (clicked)="showDataExportDialog = false"
+        >Cancel</app-button>
+        <app-button
+          icon="download"
+          [loading]="isExportingData()"
+          (clicked)="exportUserData()"
+        >Export Data</app-button>
       </div>
     </div>
   </p-dialog>

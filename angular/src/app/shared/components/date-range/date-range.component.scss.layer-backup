@@ -1,0 +1,72 @@
+// ============================================================================
+// date-range.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  .date-range-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .date-range-presets {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .date-range-container {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .date-range-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .date-range-label {
+    display: block;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .date-range-separator {
+    display: flex;
+    align-items: center;
+    padding-bottom: var(--space-2);
+    color: var(--color-text-secondary);
+  }
+
+  .form-help {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+  }
+
+  .form-error {
+    font-size: var(--font-size-badge);
+    color: var(--color-status-error);
+  }
+
+  @media (max-width: 640px) {
+    .date-range-container {
+      flex-direction: column;
+    }
+
+    .date-range-separator {
+      transform: rotate(90deg);
+      padding: var(--space-2) 0;
+      justify-content: center;
+    }
+  }
+}
+

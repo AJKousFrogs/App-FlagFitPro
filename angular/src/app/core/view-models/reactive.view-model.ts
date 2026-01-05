@@ -44,7 +44,7 @@ import { BaseViewModel } from "./base.view-model";
 @Injectable()
 export abstract class ReactiveViewModel extends BaseViewModel {
   // Stream management for complex async work (API calls, intervals, etc.)
-  private streams = new Map<string, Observable<any>>();
+  private streams = new Map<string, Observable<unknown>>();
 
   /**
    * Create a reactive data stream with automatic sharing
@@ -83,7 +83,7 @@ export abstract class ReactiveViewModel extends BaseViewModel {
    * Initialize the view model
    * Override in subclasses to set up initial data loading
    */
-  override initialize(...args: unknown[]): void {
+  override initialize(..._args: unknown[]): void {
     // Override in subclasses if needed
   }
 }

@@ -838,7 +838,7 @@ export class PerformanceDataService {
   }
 
   // Trends Analysis
-  getTrends(timeframe: string = "12m"): Observable<TrendsData> {
+  getTrends(_timeframe: string = "12m"): Observable<TrendsData> {
     const userId = this.userId();
 
     if (!userId) {

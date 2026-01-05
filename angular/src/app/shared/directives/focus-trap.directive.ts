@@ -127,7 +127,7 @@ export class FocusTrapDirective implements OnDestroy {
     }
   }
 
-  private handleEscapeKey(event: KeyboardEvent): void {
+  private handleEscapeKey(_event: KeyboardEvent): void {
     // Allow parent to handle escape (e.g., close modal)
     // This directive just manages focus cycling
   }

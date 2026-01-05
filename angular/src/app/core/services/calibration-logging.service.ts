@@ -137,45 +137,51 @@ export class CalibrationLoggingService {
   /**
    * Get calibration statistics for an athlete
    */
-  getCalibrationStats(athleteId: string): Observable<{
-    totalRecommendations: number;
-    recommendationsByType: {
-      deload: number;
-      maintain: number;
-      push: number;
-    };
-    outcomesRecorded: number;
-    injuryRate: {
-      deload: number;
-      maintain: number;
-      push: number;
-    };
-    averagePerformanceRating: {
-      deload: number;
-      maintain: number;
-      push: number;
-    };
-  }> {
+  getCalibrationStats(athleteId: string): Observable<CalibrationStats> {
     return this.apiService
       .get(`/api/calibration-logs/stats/${athleteId}`)
-      .pipe(map((response) => response.data as any));
+      .pipe(map((response) => response.data as CalibrationStats));
   }
 
   /**
    * Get calibration statistics for a preset
    */
-  getPresetCalibrationStats(presetId: string): Observable<{
-    presetId: string;
-    totalRecommendations: number;
-    thresholdEffectiveness: {
-      lowReadinessThreshold: number; // Current lowMax threshold
-      injuryRateBelowThreshold: number;
-      injuryRateAboveThreshold: number;
-      recommendation: "conservative" | "optimal" | "aggressive";
-    };
-  }> {
+  getPresetCalibrationStats(presetId: string): Observable<PresetCalibrationStats> {
     return this.apiService
       .get(`/api/calibration-logs/preset-stats/${presetId}`)
-      .pipe(map((response) => response.data as any));
+      .pipe(map((response) => response.data as PresetCalibrationStats));
   }
+}
+
+/** Calibration statistics for an athlete */
+interface CalibrationStats {
+  totalRecommendations: number;
+  recommendationsByType: {
+    deload: number;
+    maintain: number;
+    push: number;
+  };
+  outcomesRecorded: number;
+  injuryRate: {
+    deload: number;
+    maintain: number;
+    push: number;
+  };
+  averagePerformanceRating: {
+    deload: number;
+    maintain: number;
+    push: number;
+  };
+}
+
+/** Preset calibration statistics */
+interface PresetCalibrationStats {
+  presetId: string;
+  totalRecommendations: number;
+  thresholdEffectiveness: {
+    lowReadinessThreshold: number;
+    injuryRateBelowThreshold: number;
+    injuryRateAboveThreshold: number;
+    recommendation: "conservative" | "optimal" | "aggressive";
+  };
 }

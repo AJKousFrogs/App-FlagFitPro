@@ -1,0 +1,55 @@
+// ============================================================================
+// form-field.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-h4);
+  }
+
+  label.required::after {
+    content: " *";
+    color: var(--color-status-error);
+  }
+
+  /* Native input/textarea styling defers to global form control system (44px height, 8px radius) */
+  input,
+  textarea {
+    width: 100%;
+  }
+
+  /* Textarea-specific layout */
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-badge);
+  }
+
+  .error-message {
+    color: var(--color-status-error);
+    font-size: var(--font-size-badge);
+  }
+
+  /* Validation states - uses global error state styling */
+  .form-field.has-error input,
+  .form-field.has-error textarea,
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"] {
+    border-color: var(--color-status-error);
+  }
+}
+

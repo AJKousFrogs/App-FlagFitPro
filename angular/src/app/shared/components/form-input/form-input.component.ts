@@ -11,7 +11,6 @@ import {
   computed,
   ChangeDetectionStrategy,
   forwardRef,
-  effect,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -193,7 +192,7 @@ export class FormInputComponent implements ControlValueAccessor {
   showPassword = signal<boolean>(false);
 
   // ControlValueAccessor callbacks
-  private onChange = (value: string) => {};
+  private onChange = (_value: string) => {};
   private onTouched = () => {};
 
   // Computed properties

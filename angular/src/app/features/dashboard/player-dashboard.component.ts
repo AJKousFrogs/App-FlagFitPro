@@ -221,7 +221,7 @@ interface AnnouncementBanner {
           <!-- Main Content Grid -->
           <div class="dashboard-grid">
             <!-- SECTION 4: Weekly Progress -->
-            <p-card header="Weekly Progress" styleClass="progress-card">
+            <p-card styleClass="progress-card">
               <ng-template pTemplate="header">
                 <div class="card-header-custom">
                   <i class="pi pi-chart-bar card-header-icon"></i>
@@ -417,7 +417,7 @@ interface AnnouncementBanner {
       flex-direction: column;
       gap: var(--space-6); /* 24px between major sections */
       padding: var(--space-5) var(--space-4);
-      max-width: 1400px;
+      max-width: 1400px; /* Standard container width - matches page-container--wide pattern */
       margin: 0 auto;
     }
 
@@ -458,7 +458,7 @@ interface AnnouncementBanner {
     }
 
     .announcement-icon {
-      font-size: 1rem; /* Slightly smaller */
+      font-size: var(--font-body-md); /* Use design token */
       flex-shrink: 0;
       opacity: 0.9;
     }
@@ -504,16 +504,16 @@ interface AnnouncementBanner {
     }
 
     .merlin-avatar {
-      width: 48px; /* Slightly smaller */
-      height: 48px;
-      min-width: 48px;
+      width: var(--space-12); /* 48px - Use design token */
+      height: var(--space-12);
+      min-width: var(--space-12);
       border-radius: 50%;
       background: var(--color-brand-primary); /* Solid color, less gradient */
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
-      color: white;
+      font-size: var(--font-heading-md); /* Use design token */
+      color: var(--color-text-on-primary);
       flex-shrink: 0;
     }
 
@@ -524,18 +524,17 @@ interface AnnouncementBanner {
 
     .welcome-greeting {
       margin: 0 0 var(--space-1);
-      font-size: var(--font-heading-sm); /* Slightly smaller heading */
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-h1); /* H1: Page greeting - 28px */
+      font-weight: var(--font-weight-semibold); /* H1: Semibold (600) - reduced from 700 */
       color: var(--color-text-primary);
-      line-height: 1.3;
+      line-height: var(--line-height-tight); /* H1: 1.2 */
     }
 
     .merlin-insight {
       margin: 0 0 var(--space-3);
-      color: var(--color-text-secondary);
+      color: var(--color-text-muted); /* Muted color for informational text */
       font-size: var(--font-body-sm);
-      line-height: 1.5;
-      opacity: 0.85; /* Slight reduction */
+      line-height: var(--line-height-base);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -553,10 +552,23 @@ interface AnnouncementBanner {
       /* Primary CTA - default styling */
     }
 
-    :host ::ng-deep .ask-merlin-btn {
-      /* Lighter secondary text button */
-      opacity: 0.9;
-      padding: 0.5rem 1rem !important; /* Reduced padding */
+    /* Ask Merlin button - ensure always visible */
+    :host ::ng-deep .welcome-actions .p-button.p-button-text,
+    :host ::ng-deep .welcome-actions a[routerlink="/chat"],
+    :host ::ng-deep .welcome-actions .p-button[routerlink="/chat"] {
+      opacity: 1 !important;
+      padding: var(--space-2) var(--space-4) !important;
+      color: var(--ds-primary-green) !important;
+    }
+
+    :host ::ng-deep .welcome-actions .p-button.p-button-text .p-button-label,
+    :host ::ng-deep .welcome-actions .p-button.p-button-text .p-button-icon,
+    :host ::ng-deep .welcome-actions a[routerlink="/chat"] .p-button-label,
+    :host ::ng-deep .welcome-actions a[routerlink="/chat"] .p-button-icon,
+    :host ::ng-deep .welcome-actions a[routerlink="/chat"] span,
+    :host ::ng-deep .welcome-actions a[routerlink="/chat"] i {
+      color: var(--ds-primary-green) !important;
+      opacity: 1 !important;
     }
 
     /* ==========================================
@@ -594,29 +606,29 @@ interface AnnouncementBanner {
     }
 
     .stat-icon {
-      width: 40px; /* Slightly smaller */
-      height: 40px;
-      min-width: 40px;
+      width: var(--space-10); /* 40px - Use design token */
+      height: var(--space-10);
+      min-width: var(--space-10);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: var(--font-body-md); /* Use design token */
     }
 
     .readiness-icon {
-      background: rgba(239, 68, 68, 0.08); /* Softer background */
-      color: #ef4444;
+      background: var(--color-status-error-subtle); /* Use design token */
+      color: var(--primitive-error-500);
     }
 
     .acwr-icon {
-      background: rgba(59, 130, 246, 0.08);
-      color: #3b82f6;
+      background: var(--color-status-info-subtle); /* Use design token */
+      color: var(--color-status-info);
     }
 
     .streak-icon {
-      background: rgba(234, 179, 8, 0.08);
-      color: #eab308;
+      background: var(--color-status-warning-subtle); /* Use design token */
+      color: var(--primitive-success-500);
     }
 
     .sessions-icon {
@@ -629,25 +641,28 @@ interface AnnouncementBanner {
       flex-direction: column;
       flex: 1;
       min-width: 0;
-      gap: 0.125rem; /* Tighter gap */
+      gap: var(--space-1); /* Use design token */
     }
 
     .stat-value {
-      font-size: var(--font-heading-sm); /* Slightly smaller */
-      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-metric-md); /* Metric: KPI numbers - 24px */
+      font-weight: var(--font-weight-bold); /* Metric: Bold (700) */
       color: var(--color-text-primary);
-      line-height: 1.1;
+      line-height: var(--line-height-tight); /* Metric: 1.2 */
     }
 
     .stat-label {
-      font-size: var(--font-body-xs);
-      color: var(--color-text-secondary);
-      opacity: 0.8; /* Reduced opacity */
+      font-size: var(--font-size-caption); /* Caption: Helper text - 13px */
+      font-weight: var(--font-weight-regular); /* Caption: Regular (400) */
+      color: var(--color-text-muted);
+      line-height: var(--line-height-base); /* Caption: 1.5 */
+      letter-spacing: var(--letter-spacing-caption); /* 0.04em for labels like READINESS, ACWR */
+      text-transform: uppercase;
     }
 
     :host ::ng-deep .stat-tag {
-      font-size: 0.6875rem; /* 11px - smaller tag */
-      padding: 0.1875rem 0.375rem;
+      font-size: var(--font-body-xs); /* Use design token */
+      padding: var(--space-1) var(--space-2);
       line-height: 1.2;
     }
 
@@ -677,16 +692,17 @@ interface AnnouncementBanner {
     }
 
     .card-header-icon {
-      font-size: 1rem;
+      font-size: var(--font-body-md); /* Use design token */
       color: var(--color-brand-primary);
       opacity: 0.85;
     }
 
     .card-header-title {
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-medium); /* Not too bold */
+      font-size: var(--font-size-h2); /* H2: Card titles - 18px */
+      font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
       color: var(--color-text-primary);
-      line-height: 1;
+      line-height: var(--line-height-tight); /* H2: 1.2 */
+      margin-bottom: var(--space-3); /* 12px consistent margin */
     }
 
     :host ::ng-deep .progress-card .p-card-header,
@@ -727,18 +743,18 @@ interface AnnouncementBanner {
     }
 
     .day-indicator {
-      width: 32px; /* Slightly smaller */
-      height: 32px;
-      min-width: 32px;
-      min-height: 32px;
+      width: var(--space-8); /* 32px - Use design token */
+      height: var(--space-8);
+      min-width: var(--space-8);
+      min-height: var(--space-8);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: var(--font-body-xs); /* Use design token */
       background: var(--surface-tertiary);
       color: var(--color-text-muted);
-      border: 2px solid transparent;
+      border: var(--space-1) solid transparent; /* Use design token */
       transition: all 0.15s ease;
     }
 
@@ -758,7 +774,7 @@ interface AnnouncementBanner {
     }
 
     .day-name {
-      font-size: 0.625rem; /* 10px - smaller */
+      font-size: var(--font-body-xs); /* Use design token */
       color: var(--color-text-secondary);
       text-transform: uppercase;
       font-weight: var(--font-weight-medium);
@@ -772,7 +788,7 @@ interface AnnouncementBanner {
     }
 
     :host ::ng-deep .custom-progress {
-      height: 6px; /* Thinner progress bar */
+      height: var(--space-1); /* Use design token */
       border-radius: var(--radius-full);
     }
 
@@ -812,15 +828,15 @@ interface AnnouncementBanner {
     }
 
     .timeline-marker {
-      width: 24px; /* Smaller marker */
-      height: 24px;
+      width: var(--space-6); /* 24px - Use design token */
+      height: var(--space-6);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--surface-tertiary);
       color: var(--color-text-muted);
-      font-size: 0.625rem;
+      font-size: var(--font-body-xs); /* Use design token */
     }
 
     .timeline-marker.completed {
@@ -843,7 +859,7 @@ interface AnnouncementBanner {
       font-size: var(--font-body-xs);
       font-weight: var(--font-weight-semibold);
       color: var(--color-brand-primary);
-      min-width: 44px;
+      min-width: calc(var(--space-10) + var(--space-1)); /* 44px - Touch target standard */
     }
 
     .item-info {
@@ -861,7 +877,7 @@ interface AnnouncementBanner {
     }
 
     .item-duration {
-      font-size: 0.6875rem; /* 11px */
+      font-size: var(--font-body-xs); /* Use design token */
       color: var(--color-text-secondary);
       opacity: 0.7;
     }
@@ -885,7 +901,7 @@ interface AnnouncementBanner {
       width: 100%;
       justify-content: center;
       font-size: var(--font-body-sm);
-      padding: 0.5rem !important; /* Reduced padding */
+      padding: var(--space-2) !important; /* Use design token */
     }
 
     .empty-schedule,
@@ -909,7 +925,7 @@ interface AnnouncementBanner {
     }
 
     .empty-icon {
-      font-size: 1rem;
+      font-size: var(--font-body-md); /* Use design token */
       opacity: 0.7;
     }
 
@@ -919,47 +935,25 @@ interface AnnouncementBanner {
     .quick-actions-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-2); /* Tighter gap */
+      gap: var(--space-3);
     }
 
-    :host ::ng-deep .quick-action-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-2);
-      padding: var(--space-3); /* Equal padding */
-      height: 88px; /* Fixed height for equality */
+    /* Make app-button stretch to fill grid cell */
+    .quick-actions-grid app-button {
+      display: block;
       width: 100%;
-      background: var(--ds-primary-green) !important;
-      border: none !important;
-      border-radius: var(--radius-lg) !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(var(--ds-primary-green-rgb), 0.15) !important; /* Softer shadow */
     }
 
-    :host ::ng-deep .quick-action-btn:hover {
-      background: var(--ds-primary-green-hover) !important;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(var(--ds-primary-green-rgb), 0.2) !important;
-      transform: translateY(-1px);
-    }
-
-    :host ::ng-deep .quick-action-btn .p-button-icon {
-      font-size: 1.25rem; /* Consistent icon size */
-      color: white !important;
-    }
-
-    :host ::ng-deep .quick-action-btn .p-button-label {
-      font-size: var(--font-body-xs);
-      font-weight: var(--font-weight-medium);
-      color: white !important;
-      line-height: 1.2;
+    /* Make the inner button fill the host */
+    :host ::ng-deep .quick-actions-grid .btn {
+      width: 100%;
     }
 
     /* ==========================================
        Performance Chart
        ========================================== */
     .chart-container {
-      height: 160px; /* Slightly shorter */
+      height: calc(var(--space-8) * 5); /* 160px - Use design tokens (32px * 5) */
     }
 
     /* ==========================================
@@ -991,7 +985,7 @@ interface AnnouncementBanner {
 
     :host ::ng-deep .event-card {
       border-radius: var(--radius-lg);
-      border-left: 3px solid var(--color-brand-primary); /* Thinner border */
+      border-left: var(--space-1) solid var(--color-brand-primary); /* Use design token */
       box-shadow: var(--shadow-sm);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
@@ -1002,11 +996,11 @@ interface AnnouncementBanner {
     }
 
     :host ::ng-deep .event-card.event-game {
-      border-left-color: #ef4444;
+      border-left-color: var(--primitive-error-500);
     }
 
     :host ::ng-deep .event-card.event-tournament {
-      border-left-color: #f59e0b;
+      border-left-color: var(--primitive-warning-500);
     }
 
     :host ::ng-deep .event-card .p-card-body {
@@ -1027,7 +1021,7 @@ interface AnnouncementBanner {
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 36px;
+      min-width: calc(var(--space-4) + var(--space-1)); /* 36px - Use design tokens */
     }
 
     .date-day {
@@ -1038,10 +1032,10 @@ interface AnnouncementBanner {
     }
 
     .date-month {
-      font-size: 0.625rem; /* 10px */
+      font-size: var(--font-body-2xs); /* 10px - micro label */
       color: var(--color-text-secondary);
       text-transform: uppercase;
-      opacity: 0.75;
+      letter-spacing: var(--letter-spacing-wide);
     }
 
     .event-info {
@@ -1060,8 +1054,8 @@ interface AnnouncementBanner {
     }
 
     :host ::ng-deep .event-type-tag {
-      font-size: 0.625rem; /* 10px */
-      padding: 0.125rem 0.3125rem;
+      font-size: var(--font-body-xs); /* Use design token */
+      padding: var(--space-1) var(--space-2);
       line-height: 1.2;
     }
 
@@ -1108,10 +1102,6 @@ interface AnnouncementBanner {
 
       .quick-actions-grid {
         grid-template-columns: repeat(2, 1fr);
-      }
-
-      :host ::ng-deep .quick-action-btn {
-        height: 80px;
       }
 
       .events-strip {

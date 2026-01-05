@@ -8,7 +8,6 @@ import {
 import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
-import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -19,6 +18,7 @@ import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import {
   SwipeGestureDirective,
   SwipeEvent,
@@ -29,7 +29,6 @@ import { ApiService } from "../../core/services/api.service";
 import {
   Workout,
   Achievement,
-  TrainingStatCard,
   WeeklyScheduleDay,
 } from "../../core/models/training.models";
 
@@ -37,7 +36,6 @@ import {
   selector: "app-training",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardModule,
     TagModule,
     ProgressBarModule,
     ToastModule,
@@ -47,8 +45,8 @@ import {
     StatsGridComponent,
     TrainingBuilderComponent,
     SwipeGestureDirective,
-  
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -61,20 +59,25 @@ import {
         (pullToRefresh)="refreshTrainingData()"
       >
         <!-- Back to Daily Protocol Banner -->
-        <div class="protocol-banner primary" (click)="goToDailyProtocol()">
-          <div class="banner-icon">📋</div>
-          <div class="banner-content">
-            <h3>← Back to Daily Protocol</h3>
-            <p>Your AI-prescribed daily training with progressive overload</p>
+        <app-card-shell
+          state="interactive"
+          (cardClick)="goToDailyProtocol()"
+        >
+          <div class="protocol-banner-content">
+            <div class="banner-icon">📋</div>
+            <div class="banner-content">
+              <h3>← Back to Daily Protocol</h3>
+              <p>Your AI-prescribed daily training with progressive overload</p>
+            </div>
+            <div class="banner-stats">
+              @if (streakCount() > 0) {
+                <div class="streak-badge" pTooltip="Training streak">
+                  🔥 {{ streakCount() }}
+                </div>
+              }
+            </div>
           </div>
-          <div class="banner-stats">
-            @if (streakCount() > 0) {
-              <div class="streak-badge" pTooltip="Training streak">
-                🔥 {{ streakCount() }}
-              </div>
-            }
-          </div>
-        </div>
+        </app-card-shell>
 
         <!-- Page Header -->
         <div class="page-header">
@@ -118,47 +121,55 @@ import {
         <!-- Position-Specific Quick Actions -->
         <div class="quick-actions">
           @for (action of positionQuickActions(); track action.label) {
-            <div 
-              class="action-card" 
-              (click)="navigateToAction(action.route)"
-              [pTooltip]="action.tooltip"
+            <app-card-shell
+              state="interactive"
+              density="compact"
+              (cardClick)="navigateToAction(action.route)"
             >
-              <span class="action-icon">{{ action.icon }}</span>
-              <span class="action-label">{{ action.label }}</span>
-              @if (action.label === 'Achievements' && totalAchievements() > 0) {
-                <span class="action-badge">{{ totalAchievements() }}</span>
-              }
-            </div>
+              <div class="action-card-content" [pTooltip]="action.tooltip">
+                <span class="action-icon">{{ action.icon }}</span>
+                <span class="action-label">{{ action.label }}</span>
+                @if (action.label === 'Achievements' && totalAchievements() > 0) {
+                  <span class="action-badge">{{ totalAchievements() }}</span>
+                }
+              </div>
+            </app-card-shell>
           }
         </div>
 
         <!-- Position Priority Workouts -->
         @if (positionWorkouts().length > 0) {
-          <div class="priority-workouts">
-            <div class="priority-header">
-              <h3>{{ positionIcon() }} {{ positionLabel() }} Priority Training</h3>
+          <app-card-shell
+            [title]="positionIcon() + ' ' + positionLabel() + ' Priority Training'"
+          >
+            <ng-container header-actions>
               <p-tag value="Position-Specific" severity="info" />
-            </div>
+            </ng-container>
             <div class="priority-grid">
               @for (workout of positionWorkouts(); track workout.title) {
-                <div 
-                  class="priority-card" 
-                  [class.high]="workout.priority === 'high'"
-                  [class.medium]="workout.priority === 'medium'"
-                  (click)="startPriorityWorkout(workout)"
+                <app-card-shell
+                  state="interactive"
+                  density="compact"
+                  (cardClick)="startPriorityWorkout(workout)"
                 >
-                  <span class="priority-icon">{{ workout.icon }}</span>
-                  <div class="priority-info">
-                    <span class="priority-title">{{ workout.title }}</span>
-                    <span class="priority-desc">{{ workout.description }}</span>
+                  <div 
+                    class="priority-card-content" 
+                    [class.high]="workout.priority === 'high'"
+                    [class.medium]="workout.priority === 'medium'"
+                  >
+                    <span class="priority-icon">{{ workout.icon }}</span>
+                    <div class="priority-info">
+                      <span class="priority-title">{{ workout.title }}</span>
+                      <span class="priority-desc">{{ workout.description }}</span>
+                    </div>
+                    @if (workout.priority === 'high') {
+                      <span class="priority-badge">Priority</span>
+                    }
                   </div>
-                  @if (workout.priority === 'high') {
-                    <span class="priority-badge">Priority</span>
-                  }
-                </div>
+                </app-card-shell>
               }
             </div>
-          </div>
+          </app-card-shell>
         }
 
         <!-- Smart Training Session Builder -->
@@ -170,15 +181,11 @@ import {
         <!-- Two Column Grid -->
         <div class="training-grid">
           <!-- Weekly Schedule -->
-          <p-card class="schedule-card">
-            <ng-template pTemplate="header">
-              <div class="section-header">
-                <h2>
-                  <i class="pi pi-calendar"></i>
-                  This Week
-                </h2>
-              </div>
-            </ng-template>
+          <app-card-shell
+            title="This Week"
+            headerIcon="pi-calendar"
+            [hasFooter]="true"
+          >
             <div class="weekly-schedule-compact">
               @for (day of weeklySchedule(); track trackByDayName($index, day)) {
                 <div class="schedule-day-compact" [class.today]="isToday(day.name)">
@@ -198,19 +205,17 @@ import {
                 </div>
               }
             </div>
-            <div class="card-footer">
+            <ng-container footer>
               <app-button variant="text" size="sm" iconLeft="pi-th-large" (clicked)="toggleScheduleView()">Full Schedule</app-button>
-            </div>
-          </p-card>
+            </ng-container>
+          </app-card-shell>
 
           <!-- Quick Workouts -->
-          <p-card class="workouts-section">
-            <ng-template pTemplate="header">
-              <h2>
-                <i class="pi pi-bolt"></i>
-                Quick Workouts
-              </h2>
-            </ng-template>
+          <app-card-shell
+            title="Quick Workouts"
+            headerIcon="pi-bolt"
+            [hasFooter]="workouts().length > 4"
+          >
             <div class="workouts-list-compact">
               @for (
                 workout of workouts().slice(0, 4);
@@ -233,20 +238,21 @@ import {
               }
             </div>
             @if (workouts().length > 4) {
-              <div class="card-footer">
+              <ng-container footer>
                 <app-button variant="text" size="sm" iconLeft="pi-list" (clicked)="showAllWorkouts()">View All {{ workouts().length }} Workouts</app-button>
-              </div>
+              </ng-container>
             }
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Recent Achievements -->
         @if (recentAchievements().length > 0) {
-          <div class="achievements-strip">
-            <div class="strip-header">
-              <h3>🏆 Recent Achievements</h3>
+          <app-card-shell
+            title="🏆 Recent Achievements"
+          >
+            <ng-container header-actions>
               <app-button variant="text" size="sm" (clicked)="goToAchievements()">View All</app-button>
-            </div>
+            </ng-container>
             <div class="achievements-scroll">
               @for (achievement of recentAchievements(); track achievement.id) {
                 <div class="achievement-chip" [pTooltip]="achievement.description">
@@ -255,25 +261,30 @@ import {
                 </div>
               }
             </div>
-          </div>
+          </app-card-shell>
         }
 
         <!-- LA28 Progress Teaser -->
-        <div class="la28-teaser" (click)="goToRoadmap()">
-          <div class="teaser-content">
-            <span class="teaser-icon">🏅</span>
-            <div class="teaser-text">
-              <span class="teaser-title">Road to LA28</span>
-              <span class="teaser-subtitle">{{ daysUntilOlympics() }} days until Olympics</span>
+        <app-card-shell
+          state="interactive"
+          (cardClick)="goToRoadmap()"
+        >
+          <div class="la28-teaser-content">
+            <div class="teaser-content">
+              <span class="teaser-icon">🏅</span>
+              <div class="teaser-text">
+                <span class="teaser-title">Road to LA28</span>
+                <span class="teaser-subtitle">{{ daysUntilOlympics() }} days until Olympics</span>
+              </div>
             </div>
-          </div>
-          <div class="teaser-progress">
-            <div class="progress-ring-mini">
-              <span>{{ overallProgress() }}%</span>
+            <div class="teaser-progress">
+              <div class="progress-ring-mini">
+                <span>{{ overallProgress() }}%</span>
+              </div>
             </div>
+            <i class="pi pi-chevron-right"></i>
           </div>
-          <i class="pi pi-chevron-right"></i>
-        </div>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

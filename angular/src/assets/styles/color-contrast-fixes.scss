@@ -85,7 +85,7 @@ input::placeholder,
 textarea::placeholder,
 .p-inputtext::placeholder,
 .p-dropdown-label.p-placeholder {
-  color: var(--color-placeholder-accessible) !important;
+  color: var(--color-placeholder-accessible);
   opacity: 1; // Prevent browser opacity reduction
 }
 
@@ -93,13 +93,13 @@ textarea::placeholder,
 .text-secondary,
 .p-text-secondary,
 [class*="text-secondary"] {
-  color: var(--color-text-secondary-accessible) !important;
+  color: var(--color-text-secondary-accessible);
 }
 
 .text-muted,
 .p-text-muted,
 [class*="text-muted"] {
-  color: var(--color-text-muted-accessible) !important;
+  color: var(--color-text-muted-accessible);
 }
 
 // Fix status message backgrounds for better contrast
@@ -356,19 +356,19 @@ small:not(.p-error) {
   .p-inputtext,
   .p-button,
   .p-card {
-    border-width: 2px !important;
+    border-width: 2px;
   }
 
   // Remove subtle backgrounds that reduce contrast
   .p-card,
   .p-panel {
-    background: white !important;
+    background: white;
   }
 
   // Ensure focus states are highly visible
   :focus-visible {
-    outline: 3px solid black !important;
-    outline-offset: 2px !important;
+    outline: 3px solid black;
+    outline-offset: 2px;
   }
 }
 
@@ -403,25 +403,25 @@ small:not(.p-error) {
 // ============================================================================
 
 .a11y-text-secondary {
-  color: var(--color-text-secondary-accessible) !important;
+  color: var(--color-text-secondary-accessible);
 }
 
 .a11y-text-muted {
-  color: var(--color-text-muted-accessible) !important;
+  color: var(--color-text-muted-accessible);
 }
 
 .a11y-warning {
-  color: var(--color-warning-text-accessible) !important;
+  color: var(--color-warning-text-accessible);
 }
 
 .a11y-info {
-  color: var(--color-info-text-accessible) !important;
+  color: var(--color-info-text-accessible);
 }
 
 .a11y-success {
-  color: var(--color-success-text-accessible) !important;
+  color: var(--color-success-text-accessible);
 }
 
 .a11y-error {
-  color: var(--color-error-text-accessible) !important;
+  color: var(--color-error-text-accessible);
 }

@@ -10,7 +10,7 @@
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Router } from "@angular/router";
-import { of, throwError, firstValueFrom } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import {
   AuthService,
   User,

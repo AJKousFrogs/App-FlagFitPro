@@ -69,7 +69,7 @@ export function getStatusSeverity(
   status: string,
 ): "success" | "info" | "warn" | "warning" | "danger" | "secondary" {
   const severity = statusSeverityMap[status?.toLowerCase()];
-  return (severity as any) || "info";
+  return (severity as "success" | "info" | "warn" | "warning" | "danger" | "secondary") || "info";
 }
 
 /**

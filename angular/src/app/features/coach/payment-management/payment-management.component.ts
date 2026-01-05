@@ -738,7 +738,7 @@ export class PaymentManagementComponent implements OnInit {
     this.showFeeDialog = true;
   }
 
-  openRecordPaymentDialog(fee?: TeamFee): void {
+  openRecordPaymentDialog(_fee?: TeamFee): void {
     this.paymentForm = this.getEmptyPaymentForm();
     this.showPaymentDialog = true;
   }
@@ -793,7 +793,7 @@ export class PaymentManagementComponent implements OnInit {
     this.showPaymentDialog = true;
   }
 
-  viewPlayerHistory(balance: PlayerBalance): void {
+  viewPlayerHistory(_balance: PlayerBalance): void {
     this.activeTab.set("history");
   }
 

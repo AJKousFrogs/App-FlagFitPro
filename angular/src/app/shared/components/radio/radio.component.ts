@@ -84,7 +84,7 @@ export class RadioComponent<T = unknown> implements ControlValueAccessor {
 
   // Selected value (from parent form control)
   selectedValue = signal<T | null>(null);
-  private onChangeFn = (value: T | null) => {};
+  private onChangeFn = (_value: T | null) => {};
   private onTouchedFn = () => {};
 
   // Events
@@ -122,7 +122,7 @@ export class RadioComponent<T = unknown> implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Handled via disabled input
   }
 }

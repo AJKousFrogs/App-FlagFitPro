@@ -9,10 +9,9 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { of, firstValueFrom } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import {
   NutritionService,
-  NutritionGoal,
   USDAFood,
   Meal,
 } from "./nutrition.service";
@@ -48,7 +47,7 @@ const MOCK_NUTRITION_LOG = {
   meal_type: "lunch",
 };
 
-const MOCK_NUTRITION_GOALS = {
+const _MOCK_NUTRITION_GOALS = {
   id: 1,
   user_id: "user-123",
   calories_target: 2500,

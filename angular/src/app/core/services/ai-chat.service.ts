@@ -254,10 +254,13 @@ export class AiChatService {
   private addMessageToSession(message: ChatMessage): void {
     const session = this.currentSession();
     if (session) {
-      this.currentSession.update((current) => ({
-        ...current!,
-        messages: [...current!.messages, message],
-      }));
+      this.currentSession.update((current) => {
+        if (!current) return current;
+        return {
+          ...current,
+          messages: [...current.messages, message],
+        };
+      });
     } else {
       // Create new session with this message
       this.currentSession.set({
@@ -274,10 +277,13 @@ export class AiChatService {
   private updateSessionId(sessionId: string): void {
     const session = this.currentSession();
     if (session && !session.id) {
-      this.currentSession.update((current) => ({
-        ...current!,
-        id: sessionId,
-      }));
+      this.currentSession.update((current) => {
+        if (!current) return current;
+        return {
+          ...current,
+          id: sessionId,
+        };
+      });
     }
   }
 }

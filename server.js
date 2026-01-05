@@ -925,10 +925,10 @@ app.get("/api/dashboard/training-calendar", async (req, res) => {
 });
 
 app.get("/api/dashboard/olympic-qualification", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: { qualification: null, benchmarks: [] } });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { qualification: null, benchmarks: [] } });}
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) userId = DEMO_USER_ID;
+    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
 
     const { data: qual } = await supabase
       .from("olympic_qualification")
@@ -955,10 +955,10 @@ app.get("/api/dashboard/olympic-qualification", async (req, res) => {
 });
 
 app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: { rewards: null, products: [] } });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { rewards: null, products: [] } });}
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) userId = DEMO_USER_ID;
+    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
 
     const { data: rewards } = await supabase
       .from("sponsor_rewards")
@@ -985,10 +985,10 @@ app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
 });
 
 app.get("/api/dashboard/team-chemistry", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: null });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: null });}
   try {
     let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) userId = DEMO_USER_ID;
+    if (!isValidUUID(userId)) {userId = DEMO_USER_ID;}
 
     const { data: chem } = await supabase
       .from("team_chemistry")
@@ -1007,7 +1007,7 @@ app.get("/api/dashboard/team-chemistry", async (req, res) => {
 });
 
 app.get("/api/dashboard/daily-quote", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: null });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: null });}
   try {
     const { data: quote } = await supabase
       .from("daily_quotes")
@@ -1045,7 +1045,7 @@ app.get("/api/community/health", async (req, res) => {
 // Dashboard Notifications
 app.get("/api/dashboard/notifications", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: [] });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: [] });}
 
   // Handle invalid UUIDs for Supabase queries
   if (!isValidUUID(userId)) {
@@ -1060,7 +1060,7 @@ app.get("/api/dashboard/notifications", async (req, res) => {
       .order("created_at", { ascending: false })
       .limit(20);
 
-    if (error) throw error;
+    if (error) {throw error;}
     res.json({ success: true, data: data || [] });
   } catch (error) {
     console.error("[Notifications] Error:", error);
@@ -1070,7 +1070,7 @@ app.get("/api/dashboard/notifications", async (req, res) => {
 
 app.get("/api/dashboard/notifications/count", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) return res.status(503).json({ success: false, error: "Database not configured", data: { unreadCount: 0 } });
+  if (!supabase) {return res.status(503).json({ success: false, error: "Database not configured", data: { unreadCount: 0 } });}
 
   if (!isValidUUID(userId)) {
     userId = DEMO_USER_ID;
@@ -1083,7 +1083,7 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
       .eq("user_id", userId)
       .eq("is_read", false);
 
-    if (error) throw error;
+    if (error) {throw error;}
     res.json({ success: true, data: { unreadCount: count || 0 } });
   } catch (error) {
     console.error("[Notifications Count] Error:", error);
@@ -1094,7 +1094,7 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
 // For compatibility with test script
 app.get("/notifications-count", async (req, res) => {
   let userId = req.query.userId || "1";
-  if (!supabase) return res.json({ success: true, count: 0 });
+  if (!supabase) {return res.json({ success: true, count: 0 });}
 
   if (!isValidUUID(userId)) {
     userId = DEMO_USER_ID;
@@ -1107,9 +1107,9 @@ app.get("/notifications-count", async (req, res) => {
       .eq("user_id", userId)
       .eq("is_read", false);
 
-    if (error) throw error;
+    if (error) {throw error;}
     res.json({ success: true, count: count || 0 });
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ success: false, error: "Failed" });
   }
 });
@@ -1144,8 +1144,8 @@ app.get("/api/performance/heatmap", async (req, res) => {
 // Training Complete
 app.post("/api/training/complete", async (req, res) => {
   const { sessionId, rpe, duration, notes, userId } = req.body;
-  let targetUserId = userId || "1";
-  if (!supabase) return res.json({ success: true });
+  const targetUserId = userId || "1";
+  if (!supabase) {return res.json({ success: true });}
 
   if (!isValidUUID(targetUserId)) {
     // We need a real user ID
@@ -1163,7 +1163,7 @@ app.post("/api/training/complete", async (req, res) => {
         })
         .eq("id", sessionId);
       
-      if (sessionError) console.warn("[Training Complete] Session update error:", sessionError);
+      if (sessionError) {console.warn("[Training Complete] Session update error:", sessionError);}
     }
 
     // 2. Insert into workout_logs
@@ -1375,7 +1375,7 @@ app.get("/api/exercises", async (req, res) => {
 
 // Performance Trends
 app.get("/api/analytics/performance-trends", async (req, res) => {
-  let { userId } = req.query;
+  const { userId } = req.query;
   const weeks = parseInt(req.query.weeks) || 7;
 
   if (!supabase) {
@@ -2243,10 +2243,10 @@ app.get("/api/wellness/latest", async (req, res) => {
 
 // Wellness Checkin Fix
 app.post("/api/wellness/checkin", async (req, res) => {
-  if (!supabase) return res.json({ success: true });
+  if (!supabase) {return res.json({ success: true });}
   
   const { userId, sleep_quality, energy_level, muscle_soreness, stress_level, mood, notes } = req.body;
-  let targetUserId = userId || "1";
+  const targetUserId = userId || "1";
   
   if (!isValidUUID(targetUserId)) {
     // If we can't find a real user, return error
@@ -2604,7 +2604,7 @@ app.post("/api/training/suggestions", async (req, res) => {
 
 // Readiness calculation endpoint
 app.all("/api/calc-readiness", async (req, res) => {
-  const { athleteId, user_id, day } = req.method === "POST" ? req.body : req.query;
+  const { athleteId, user_id, day: _day } = req.method === "POST" ? req.body : req.query;
   const userId = athleteId || user_id;
 
   if (!supabase) {
@@ -3110,8 +3110,8 @@ app.post("/api/supplements/log", async (req, res) => {
       .insert({
         user_id: userId,
         supplement_name: supplement,
-        dosage: dosage,
-        taken: taken,
+        dosage,
+        taken,
         date: today,
         notes: notes || null,
         created_at: new Date().toISOString(),
@@ -3181,7 +3181,7 @@ app.get("/api/hydration", async (req, res) => {
       .from("hydration_logs")
       .select("*")
       .eq("user_id", userId)
-      .gte("timestamp", today + "T00:00:00")
+      .gte("timestamp", `${today  }T00:00:00`)
       .order("timestamp", { ascending: true });
 
     if (error && error.code !== "42P01") {
@@ -4048,7 +4048,7 @@ app.get(/^(?!\/api).*$/, (_req, res) => {
     res.send(injectScript(angularIndexPath));
   } else {
     // During development, redirect to Angular dev server
-    res.redirect('http://localhost:4200' + _req.path);
+    res.redirect(`http://localhost:4200${  _req.path}`);
   }
 });
 

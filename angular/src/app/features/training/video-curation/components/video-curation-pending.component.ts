@@ -14,8 +14,6 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { TagModule } from "primeng/tag";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-
 import { InstagramVideo } from "../video-curation.models";
 
 @Component({
@@ -23,7 +21,6 @@ import { InstagramVideo } from "../video-curation.models";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TagModule,
-    ButtonComponent,
   ],
   template: `
     <div class="tab-content">

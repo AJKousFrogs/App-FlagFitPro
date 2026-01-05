@@ -18,12 +18,10 @@ import {
   Component,
   input,
   output,
-  signal,
   computed,
   ChangeDetectionStrategy,
   ElementRef,
   inject,
-  HostListener,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 

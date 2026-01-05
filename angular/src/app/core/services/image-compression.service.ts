@@ -9,6 +9,14 @@ export interface CompressionOptions {
   preserveAspectRatio?: boolean;
 }
 
+interface RequiredCompressionOptions {
+  maxWidth: number;
+  maxHeight: number;
+  quality: number;
+  outputFormat: "image/jpeg" | "image/png" | "image/webp";
+  preserveAspectRatio: boolean;
+}
+
 export interface CompressionResult {
   blob: Blob;
   dataUrl: string;
@@ -30,7 +38,7 @@ export interface BatchCompressionResult {
   errors: { index: number; error: string }[];
 }
 
-const DEFAULT_OPTIONS: CompressionOptions = {
+const DEFAULT_OPTIONS: RequiredCompressionOptions = {
   maxWidth: 1920,
   maxHeight: 1080,
   quality: 0.8,
@@ -95,7 +103,7 @@ export class ImageCompressionService {
     file: File | Blob,
     options: CompressionOptions = {},
   ): Promise<CompressionResult> {
-    const opts = { ...DEFAULT_OPTIONS, ...options };
+    const opts: RequiredCompressionOptions = { ...DEFAULT_OPTIONS, ...options };
     const originalSize = file.size;
 
     try {
@@ -115,9 +123,9 @@ export class ImageCompressionService {
       const { width, height } = this.calculateDimensions(
         imageBitmap.width,
         imageBitmap.height,
-        opts.maxWidth!,
-        opts.maxHeight!,
-        opts.preserveAspectRatio!,
+        opts.maxWidth,
+        opts.maxHeight,
+        opts.preserveAspectRatio,
       );
 
       // Create canvas and draw resized image
@@ -143,10 +151,10 @@ export class ImageCompressionService {
       // Convert to blob
       const blob = await this.canvasToBlob(
         canvas,
-        opts.outputFormat!,
-        opts.quality!,
+        opts.outputFormat,
+        opts.quality,
       );
-      const dataUrl = canvas.toDataURL(opts.outputFormat!, opts.quality!);
+      const dataUrl = canvas.toDataURL(opts.outputFormat, opts.quality);
 
       const compressedSize = blob.size;
       const compressionRatio =
@@ -166,7 +174,7 @@ export class ImageCompressionService {
         compressionRatio,
         width,
         height,
-        format: opts.outputFormat!,
+        format: opts.outputFormat,
       };
     } catch (error) {
       this.logger.error("Image compression failed:", error);
@@ -311,8 +319,8 @@ export class ImageCompressionService {
     try {
       const imageBitmap = await createImageBitmap(file);
       const needsResize =
-        imageBitmap.width > DEFAULT_OPTIONS.maxWidth! ||
-        imageBitmap.height > DEFAULT_OPTIONS.maxHeight!;
+        imageBitmap.width > DEFAULT_OPTIONS.maxWidth ||
+        imageBitmap.height > DEFAULT_OPTIONS.maxHeight;
       imageBitmap.close();
       return needsResize;
     } catch {

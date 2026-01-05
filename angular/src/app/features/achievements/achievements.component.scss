@@ -44,12 +44,12 @@
   }
 
   .stat-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
     color: var(--ds-primary-green);
   }
 
   .stat-emoji {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
   }
 
   .stat-details {
@@ -59,22 +59,22 @@
   }
 
   .stat-label {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
   .stat-value {
-    font-size: var(--font-heading-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
 
     &.recent {
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
     }
   }
 
   .stat-hint {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 
@@ -142,7 +142,7 @@
   }
 
   .badge-icon {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
 
     &.locked {
       opacity: 0.5;
@@ -172,16 +172,16 @@
 
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-body-md);
-    font-weight: 600;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   p {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
-    line-height: 1.4;
+    line-height: var(--line-height-base);
   }
 }
 
@@ -192,13 +192,13 @@
   margin-top: var(--space-2);
 
   .points {
-    font-weight: 600;
-    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-h4);
     color: var(--ds-primary-green);
   }
 
   .date {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 }
@@ -215,15 +215,15 @@
   }
 
   .progress-text {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-secondary);
     white-space: nowrap;
   }
 }
 
 .points {
-  font-weight: 600;
-  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h4);
   color: var(--ds-primary-green);
   margin-top: var(--space-2);
 
@@ -268,12 +268,12 @@
     }
 
     .tab-icon {
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
     }
 
     .tab-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
     }
   }
 }
@@ -296,7 +296,7 @@
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       font-size: var(--font-body-lg);
       color: var(--ds-text-primary);
 
@@ -307,11 +307,11 @@
   }
 
   .rank-medal {
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-size-h2);
   }
 
   .rank-number {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-secondary);
   }
 
@@ -320,7 +320,7 @@
   }
 
   .recent-achievement {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
@@ -328,7 +328,7 @@
     padding: var(--space-3);
     text-align: center;
     border-top: 1px solid var(--ds-border-subtle);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }

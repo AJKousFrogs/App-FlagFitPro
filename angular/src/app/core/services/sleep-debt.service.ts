@@ -353,10 +353,12 @@ export class SleepDebtService {
     const consistencyFromDuration = Math.max(0, 100 - stdDev * 50);
 
     // If we have bed/wake times, factor those in
-    const entriesWithTimes = entries.filter((e) => e.bedTime && e.wakeTime);
+    const entriesWithTimes = entries.filter((e): e is typeof e & { bedTime: string; wakeTime: string } => 
+      Boolean(e.bedTime && e.wakeTime)
+    );
     if (entriesWithTimes.length >= 3) {
       const bedTimes = entriesWithTimes.map((e) =>
-        this.timeToMinutes(e.bedTime!),
+        this.timeToMinutes(e.bedTime),
       );
       const bedMean = bedTimes.reduce((a, b) => a + b, 0) / bedTimes.length;
       const bedVariance =

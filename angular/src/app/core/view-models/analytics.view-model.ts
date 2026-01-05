@@ -26,9 +26,9 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   readonly performanceTrends = signal<PerformanceTrendsData | null>(null);
   readonly teamChemistry = signal<TeamChemistryData | null>(null);
   readonly trainingDistribution = signal<TrainingDistributionData | null>(null);
-  readonly positionPerformance = signal<any>(null);
-  readonly injuryRisk = signal<any>(null);
-  readonly speedDevelopment = signal<any>(null);
+  readonly positionPerformance = signal<Record<string, number> | null>(null);
+  readonly injuryRisk = signal<{ score: number; factors: string[] } | null>(null);
+  readonly speedDevelopment = signal<{ labels: string[]; data: number[] } | null>(null);
 
   // Real-time data stream (updates every 5 seconds)
   private realTimeUpdateInterval = 5000; // 5 seconds
@@ -141,7 +141,7 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   /**
    * Start real-time updates
    */
-  startRealTimeUpdates(athleteId?: string): void {
+  startRealTimeUpdates(_athleteId?: string): void {
     this.realTimeEnabled.set(true);
 
     // Subscribe to reactive stream

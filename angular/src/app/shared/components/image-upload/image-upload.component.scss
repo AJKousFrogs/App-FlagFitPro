@@ -3,158 +3,156 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  .image-upload-container {
-    width: 100%;
-  }
+.image-upload-container {
+  width: 100%;
+}
 
-  .image-upload-area {
-    border: 2px dashed var(--color-border-primary);
-    border-radius: var(--radius-md);
-    padding: var(--space-6, 1.5rem);
-    background: var(--surface-primary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.image-upload-area {
+  border: 2px dashed var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-6, 1.5rem);
+  background: var(--surface-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .image-upload-area:hover:not(.disabled) {
-    border-color: var(--color-brand-primary, #089949);
-    background: var(--surface-secondary);
-  }
+.image-upload-area:hover:not(.disabled) {
+  border-color: var(--color-brand-primary, #089949);
+  background: var(--surface-secondary);
+}
 
-  .image-upload-area.drag-over {
-    border-color: var(--color-brand-primary, #089949);
-    background: var(--surface-tertiary);
-  }
+.image-upload-area.drag-over {
+  border-color: var(--color-brand-primary, #089949);
+  background: var(--surface-tertiary);
+}
 
-  .image-upload-area.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+.image-upload-area.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-  .file-input-hidden {
-    display: none;
-  }
+.file-input-hidden {
+  display: none;
+}
 
-  .upload-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2, 0.5rem);
-    text-align: center;
-  }
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  text-align: center;
+}
 
-  .upload-icon {
-    font-size: var(--font-display-sm);
-    color: var(--color-brand-primary, #089949);
-  }
+.upload-icon {
+  font-size: var(--font-display-sm);
+  color: var(--color-brand-primary, #089949);
+}
 
-  .upload-label {
-    font-size: var(--font-body-lg, 1.125rem);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-primary, #1a1a1a);
-    margin: 0;
-  }
+.upload-label {
+  font-size: var(--font-body-lg, 1.125rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary, #1a1a1a);
+  margin: 0;
+}
 
-  .upload-hint {
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-    margin: 0;
-  }
+.upload-hint {
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+}
 
-  .image-preview-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4, 1rem);
-  }
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
 
-  .image-preview-wrapper {
-    position: relative;
-    display: inline-block;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--color-border-primary);
-  }
+.image-preview-wrapper {
+  position: relative;
+  display: inline-block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border-primary);
+}
 
-  .preview-image {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
+.preview-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
-  .remove-image-btn {
-    position: absolute;
-    top: var(--space-2, 0.5rem);
-    right: var(--space-2, 0.5rem);
-    background: rgba(239, 68, 68, 0.9);
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: var(--space-2, 0.5rem);
-    border-radius: 50%;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
+.remove-image-btn {
+  position: absolute;
+  top: var(--space-2, 0.5rem);
+  right: var(--space-2, 0.5rem);
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: var(--space-2, 0.5rem);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
 
-  .remove-image-btn:hover {
-    background: rgba(239, 68, 68, 1);
-  }
+.remove-image-btn:hover {
+  background: rgba(239, 68, 68, 1);
+}
 
-  .image-info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1, 0.25rem);
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-  }
+.image-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
+}
 
-  .image-name {
-    font-weight: var(--font-weight-medium);
-    color: var(--text-primary, #1a1a1a);
-  }
+.image-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary, #1a1a1a);
+}
 
-  .crop-controls,
-  .resize-controls {
-    display: flex;
-    gap: var(--space-2, 0.5rem);
-    align-items: center;
-    flex-wrap: wrap;
-  }
+.crop-controls,
+.resize-controls {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-  .resize-controls label {
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-  }
+.resize-controls label {
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
+}
 
-  .resize-controls input {
-    width: 80px;
-    padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
-  }
+.resize-controls input {
+  width: 80px;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+}
 
-  .upload-progress {
-    margin-top: var(--space-4, 1rem);
-  }
+.upload-progress {
+  margin-top: var(--space-4, 1rem);
+}
 
-  .progress-text {
-    display: block;
-    text-align: center;
-    margin-top: var(--space-2, 0.5rem);
-    font-size: var(--font-body-sm, 0.875rem);
-    color: var(--text-secondary, #6b7280);
-  }
+.progress-text {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-2, 0.5rem);
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--text-secondary, #6b7280);
 }
 

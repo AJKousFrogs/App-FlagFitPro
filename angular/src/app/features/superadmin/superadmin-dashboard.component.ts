@@ -12,7 +12,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import {
   SuperadminService,
   ApprovalRequest,
-  SuperadminStats,
 } from "../../core/services/superadmin.service";
 
 @Component({

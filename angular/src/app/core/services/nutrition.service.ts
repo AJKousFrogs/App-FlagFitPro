@@ -92,7 +92,7 @@ interface DatabaseNutritionLog {
 
 // RealtimePayload is imported from realtime.service.ts as RealtimeEvent
 // Using type alias for clarity
-type RealtimePayload<T extends Record<string, unknown>> = {
+type _RealtimePayload<T extends Record<string, unknown>> = {
   new: T;
   old: T;
 };
@@ -514,7 +514,7 @@ export class NutritionService {
             calories: totals.calories + (log.calories || 0),
             protein: totals.protein + (log.protein || 0),
             carbs:
-              totals.carbs + (log.carbohydrates || (log as any).carbs || 0),
+              totals.carbs + (log.carbohydrates || (log as { carbs?: number }).carbs || 0),
             fat: totals.fat + (log.fat || 0),
           }),
           { calories: 0, protein: 0, carbs: 0, fat: 0 },

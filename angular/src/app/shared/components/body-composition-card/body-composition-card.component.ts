@@ -17,16 +17,13 @@ import {
     OnInit,
     computed,
     inject,
-    signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import {
-    AppLoadingComponent,
     ButtonComponent,
     CardComponent,
 } from "../ui-components";
@@ -53,7 +50,6 @@ interface BodyCompositionData {
     RouterModule,
     ButtonComponent,
     CardComponent,
-    AppLoadingComponent,
     TagModule,
     TooltipModule,
     DecimalPipe,

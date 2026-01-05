@@ -1,0 +1,436 @@
+/**
+ * Traffic Light Risk Component Styles
+ * Design System Compliant (DESIGN_SYSTEM_RULES.md)
+ *
+ * Modern horizontal traffic light design for injury risk visualization
+ *
+ * Decisions Applied:
+ * - Decision 1: Token-only colors
+ * - Decision 2: Spacing tokens
+ * - Decision 3: Radius tokens
+ * - Decision 8: Semantic color tokens
+ * - Decision 14: Border-first cards
+ * - Decision 19: Specific transitions
+ */
+
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+@layer features {
+  // =============================================
+  // MAIN CONTAINER
+  // =============================================
+
+  .traffic-light-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--surface-primary);
+    border-radius: var(--radius-xl);
+    border: var(--border-1) solid var(--color-border-muted);
+    box-shadow: var(--shadow-1);
+  }
+
+  // =============================================
+  // HEADER ROW
+  // =============================================
+
+  .risk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .risk-title {
+    margin: 0;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .acwr-value {
+    font-size: var(--font-size-metric-md);
+    font-weight: var(--font-weight-bold);
+
+    &.optimal {
+      color: var(--color-status-success);
+    }
+
+    &.warning {
+      color: var(--color-status-warning);
+    }
+
+    &.danger {
+      color: var(--color-status-danger);
+    }
+
+    &.under {
+      color: var(--color-status-info);
+    }
+
+    &.no-data {
+      color: var(--color-text-muted);
+    }
+  }
+
+  // =============================================
+  // HORIZONTAL TRAFFIC LIGHT
+  // =============================================
+
+  .traffic-light {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+    border: var(--border-1) solid var(--color-border-muted);
+  }
+
+  .light {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    opacity: 0.3;
+    transition:
+      opacity var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-standard);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+
+    &.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    // Light colors using tokens
+    &.green {
+      background: var(--ds-primary-green);
+
+      &.active {
+        box-shadow: 0 0 16px var(--ds-primary-green-subtle);
+      }
+    }
+
+    &.yellow {
+      background: var(--color-status-warning);
+
+      &.active {
+        box-shadow: 0 0 16px var(--color-warning-bg);
+      }
+    }
+
+    &.red {
+      background: var(--color-status-error);
+
+      &.active {
+        box-shadow: 0 0 16px var(--color-danger-bg);
+      }
+    }
+
+    &.orange {
+      background: var(--color-status-info);
+
+      &.active {
+        box-shadow: 0 0 16px var(--color-info-bg);
+      }
+    }
+
+    &.gray {
+      background: var(--color-border-strong);
+
+      &.active {
+        box-shadow: 0 0 16px rgba(163, 163, 163, 0.5);
+      }
+    }
+  }
+
+  @keyframes glow {
+    0%,
+    100% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.15);
+    }
+  }
+
+  // Light labels (hidden by default, shown on hover)
+  .light-label {
+    position: absolute;
+    bottom: -20px;
+    font-size: var(--font-size-badge);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--motion-fast) var(--ease-standard);
+
+    .light.active & {
+      opacity: 1;
+    }
+  }
+
+  // =============================================
+  // RISK INFO CARD
+  // =============================================
+
+  .risk-info {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-xl);
+    border: var(--border-1) solid var(--color-border-default);
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-1);
+
+    // Status-specific backgrounds using tokens
+    &.info-sweet-spot {
+      background: var(--color-success-bg);
+      border-color: var(--ds-primary-green-subtle);
+    }
+
+    &.info-elevated-risk {
+      background: var(--color-warning-bg);
+      border-color: var(--color-border-warning);
+    }
+
+    &.info-danger-zone {
+      background: var(--color-danger-bg);
+      border-color: var(--color-border-danger);
+    }
+
+    &.info-under-training {
+      background: var(--color-info-bg);
+      border-color: var(--color-status-info);
+    }
+
+    &.info-no-data {
+      background: var(--surface-secondary);
+      border-color: var(--color-border-default);
+    }
+  }
+
+  .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .info-title {
+    margin: 0;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .risk-description {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
+  }
+
+  .risk-recommendation {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-3);
+    background: var(--color-success-bg);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--ds-primary-green);
+
+    strong {
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  // =============================================
+  // RISK SCALE (Progress Bar Style)
+  // =============================================
+
+  .risk-scale {
+    position: relative;
+    padding-top: var(--space-6);
+  }
+
+  .scale-bar {
+    display: flex;
+    height: var(--space-2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: var(--color-surface-tertiary);
+  }
+
+  .scale-segment {
+    position: relative;
+    transition: transform var(--motion-fast) var(--ease-standard);
+
+    &.active {
+      z-index: 1;
+    }
+
+    &.segment-under {
+      background: var(--color-status-info);
+      opacity: 0.7;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+
+    &.segment-sweet {
+      background: var(--color-status-success);
+      opacity: 0.7;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+
+    &.segment-elevated {
+      background: var(--color-status-warning);
+      opacity: 0.7;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+
+    &.segment-danger {
+      background: var(--color-status-danger);
+      opacity: 0.7;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+
+  .segment-label {
+    position: absolute;
+    top: calc(100% + var(--space-1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size-badge);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  // =============================================
+  // SCALE MARKER
+  // =============================================
+
+  .scale-marker {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left var(--motion-base) var(--ease-standard);
+  }
+
+  .marker-value {
+    background: var(--color-surface-inverse);
+    color: var(--color-text-on-inverse);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-badge);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    margin-bottom: var(--space-1);
+
+    // Arrow pointing down
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top-color: var(--color-surface-inverse);
+    }
+  }
+
+  .marker-line {
+    width: 2px;
+    height: var(--space-4);
+    background: var(--color-surface-inverse);
+    border-radius: var(--radius-full);
+  }
+
+  // =============================================
+  // COMPACT VARIANT (for dashboard cards)
+  // =============================================
+
+  .traffic-light-container.compact {
+    padding: var(--space-4);
+    gap: var(--space-3);
+
+    .traffic-light {
+      padding: var(--space-2);
+      gap: var(--space-1);
+    }
+
+    .light {
+      width: 24px;
+      height: 24px;
+    }
+
+    .risk-info {
+      padding: var(--space-3);
+    }
+
+    .risk-scale {
+      padding-top: var(--space-5);
+    }
+  }
+
+  // =============================================
+  // RESPONSIVE
+  // =============================================
+
+  @include respond-to(md) {
+    .traffic-light-container {
+      padding: var(--space-4);
+    }
+
+    .risk-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+  }
+
+  // =============================================
+  // ACCESSIBILITY
+  // =============================================
+
+  // Reduced motion support
+  .light.active {
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  // Screen reader text for status
+  .sr-status {
+    @include visually-hidden;
+  }
+}

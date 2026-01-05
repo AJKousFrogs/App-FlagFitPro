@@ -2598,22 +2598,25 @@ export class TrainingVideoDatabaseService {
   }): TrainingVideo[] {
     let results = this._allVideos();
 
-    if (filters.position) {
+    const position = filters.position;
+    if (position) {
       results = results.filter(
         (v) =>
-          v.positions.includes(filters.position!) ||
+          v.positions.includes(position) ||
           v.positions.includes("All"),
       );
     }
 
-    if (filters.focus && filters.focus.length > 0) {
+    const focus = filters.focus;
+    if (focus && focus.length > 0) {
       results = results.filter((v) =>
-        filters.focus!.some((f) => v.trainingFocus.includes(f)),
+        focus.some((f) => v.trainingFocus.includes(f)),
       );
     }
 
-    if (filters.maxDuration) {
-      results = results.filter((v) => v.duration <= filters.maxDuration!);
+    const maxDuration = filters.maxDuration;
+    if (maxDuration) {
+      results = results.filter((v) => v.duration <= maxDuration);
     }
 
     if (filters.skillLevel) {
@@ -2622,16 +2625,18 @@ export class TrainingVideoDatabaseService {
       );
     }
 
-    if (filters.phase) {
+    const phase = filters.phase;
+    if (phase) {
       results = results.filter(
-        (v) => v.phase.includes(filters.phase!) || v.phase.includes("all"),
+        (v) => v.phase.includes(phase) || v.phase.includes("all"),
       );
     }
 
-    if (filters.equipment && filters.equipment.length > 0) {
+    const equipment = filters.equipment;
+    if (equipment && equipment.length > 0) {
       results = results.filter((v) =>
         v.equipment.every(
-          (e) => filters.equipment!.includes(e) || e === "none",
+          (e) => equipment.includes(e) || e === "none",
         ),
       );
     }
@@ -2790,7 +2795,7 @@ export class TrainingVideoDatabaseService {
     position: FlagPosition,
     focus?: TrainingFocus,
   ): TrainingVideo[] {
-    let videos = this.filterVideos({
+    const videos = this.filterVideos({
       position,
       maxDuration: availableMinutes,
       focus: focus ? [focus] : undefined,
@@ -3466,8 +3471,8 @@ export class TrainingVideoDatabaseService {
   } {
     const morningMobility = this.getVideoById("mobility_morning");
     const foamRolling = this.getFoamRollingVideo();
-    const eveningMobility = this.getVideoById("mobility_evening");
-    const restDayStretching = this.getRestDayStretchingVideo();
+    const _eveningMobility = this.getVideoById("mobility_evening");
+    const _restDayStretching = this.getRestDayStretchingVideo();
 
     switch (dayType) {
       case "practice":

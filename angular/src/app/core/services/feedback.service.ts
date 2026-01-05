@@ -126,26 +126,28 @@ export class FeedbackService {
    * Maps an API error to a user-friendly message and shows it.
    */
   handleApiError(
-    error: any,
+    error: unknown,
     context: string = "",
   ): { error: boolean; message: string } {
     this.logger.error(`API Error ${context}:`, error);
 
     let message = "Something went wrong. Please try again.";
 
-    if (error.status === 401) {
+    const err = error as { status?: number; message?: string };
+    
+    if (err.status === 401) {
       message = "Your session has expired. Please log in again.";
       // Logic for redirecting to login should ideally be in AuthService or a Guard
-    } else if (error.status === 403) {
+    } else if (err.status === 403) {
       message = "You do not have permission to perform this action.";
-    } else if (error.status === 404) {
+    } else if (err.status === 404) {
       message = "The requested resource was not found.";
-    } else if (error.status >= 500) {
+    } else if (err.status && err.status >= 500) {
       message = "Server error. Please try again later.";
     } else if (!this.isOnline()) {
       message = "You are offline. Please check your internet connection.";
-    } else if (error.message) {
-      message = error.message;
+    } else if (err.message) {
+      message = err.message;
     }
 
     this.showError(message);

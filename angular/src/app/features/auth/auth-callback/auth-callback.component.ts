@@ -225,7 +225,7 @@ export class AuthCallbackComponent implements OnInit {
    */
   private async handleAuthType(
     type: string | null,
-    user: { email?: string; email_confirmed_at?: string | null },
+    _user: { email?: string; email_confirmed_at?: string | null },
   ): Promise<void> {
     this.isProcessing.set(false);
     this.success.set(true);

@@ -21,8 +21,8 @@
     label {
       display: block;
       margin-bottom: var(--space-1);
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-secondary);
     }
   }
@@ -43,59 +43,24 @@
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
 
-  .stat-icon {
-    font-size: var(--font-heading-md);
-  }
+  // .stat-icon/.stat-content/.stat-value/.stat-label REMOVED
+  // Use .stat-block classes from card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
-  .stat-content {
-    display: flex;
-    flex-direction: column;
-
-    .stat-value {
-      font-size: var(--font-heading-sm);
-      font-weight: 700;
-      color: var(--ds-text-primary);
-
-      &.positive {
-        color: var(--ds-primary-green);
-      }
-    }
-
-    .stat-label {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
-      color: var(--ds-text-primary);
-    }
-
-    .stat-sub {
-      font-size: var(--font-body-xs);
-      color: var(--ds-text-tertiary);
-    }
+  .stat-sub {
+    font-size: var(--font-size-badge);
+    color: var(--ds-text-tertiary);
   }
 }
 
-// Card Headers
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
-
-  h3 {
-    margin: 0;
-    font-size: var(--font-body-lg);
-    font-weight: 600;
-    color: var(--ds-text-primary);
-  }
-}
+// Card Headers - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
+// Migration: Replace <div class="card-header"> with <app-card-shell title="...">
+// .card-header styles deleted per Card Shell Contract v1
 
 // Spider Chart
-.chart-card {
-  ::ng-deep .p-card-body {
-    padding: 0;
-  }
-}
+// .chart-card p-card padding REMOVED - use app-card-shell with flush=true
+// @see docs/CARD_SHELL_CONTRACT.md
 
 .spider-chart-container {
   display: flex;
@@ -116,7 +81,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
@@ -140,15 +105,8 @@
 }
 
 // Goals Card
-.goals-card {
-  ::ng-deep .p-card-body {
-    padding: 0;
-  }
-
-  ::ng-deep .p-card-content {
-    padding: var(--space-4);
-  }
-}
+// .goals-card p-card padding REMOVED - use app-card-shell
+// @see docs/CARD_SHELL_CONTRACT.md
 
 .goals-list {
   display: flex;
@@ -174,16 +132,16 @@
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
 
       .goal-icon {
-        font-size: var(--font-heading-sm);
+        font-size: var(--font-size-h2);
       }
     }
 
     .goal-due {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-tertiary);
     }
   }
@@ -195,14 +153,14 @@
     margin-bottom: var(--space-2);
 
     .progress-label {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
       min-width: 60px;
     }
 
     .progress-value {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
       min-width: 40px;
     }
@@ -217,7 +175,7 @@
     gap: var(--space-2);
 
     .current-value {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
   }
@@ -241,15 +199,8 @@
 }
 
 // History Card
-.history-card {
-  ::ng-deep .p-card-body {
-    padding: 0;
-  }
-
-  ::ng-deep .p-card-content {
-    padding: var(--space-4);
-  }
-}
+// .history-card p-card padding REMOVED - use app-card-shell
+// @see docs/CARD_SHELL_CONTRACT.md
 
 .history-filters {
   display: flex;
@@ -272,31 +223,24 @@
   flex-wrap: wrap;
 
   span {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }
 
 // Assessments Card
-.assessments-card {
-  ::ng-deep .p-card-body {
-    padding: 0;
-  }
+// .assessments-card p-card padding REMOVED - use app-card-shell
+// @see docs/CARD_SHELL_CONTRACT.md
 
-  ::ng-deep .p-card-content {
-    padding: var(--space-4);
-  }
+.assessment-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 
-  .assessment-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-
-    .last-assessment {
-      font-size: var(--font-body-sm);
-      color: var(--ds-text-tertiary);
-    }
+  .last-assessment {
+    font-size: var(--font-size-h4);
+    color: var(--ds-text-tertiary);
   }
 }
 
@@ -313,7 +257,7 @@
 
   .skill-name {
     min-width: 140px;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-primary);
   }
 
@@ -324,8 +268,8 @@
 
   .skill-score {
     min-width: 45px;
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
     text-align: right;
   }
@@ -335,20 +279,13 @@
   margin-top: var(--space-4);
   padding-top: var(--space-3);
   border-top: 1px solid var(--ds-border-subtle);
-  font-size: var(--font-body-md);
+  font-size: var(--font-size-body);
   color: var(--ds-text-primary);
 }
 
 // Notes Card
-.notes-card {
-  ::ng-deep .p-card-body {
-    padding: 0;
-  }
-
-  ::ng-deep .p-card-content {
-    padding: var(--space-4);
-  }
-}
+// .notes-card p-card padding REMOVED - use app-card-shell
+// @see docs/CARD_SHELL_CONTRACT.md
 
 .notes-list {
   display: flex;
@@ -371,7 +308,7 @@
     margin-bottom: var(--space-2);
 
     .note-date {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
     }
 
@@ -386,38 +323,14 @@
 
   .note-content {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
     line-height: 1.6;
   }
 }
 
-// Empty State
-.empty-state-card {
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--space-6);
-    text-align: center;
-
-    i {
-      font-size: var(--font-display-md);
-      color: var(--ds-text-tertiary);
-      margin-bottom: var(--space-3);
-    }
-
-    h3 {
-      margin: 0 0 var(--space-2) 0;
-      color: var(--ds-text-primary);
-    }
-
-    p {
-      margin: 0;
-      color: var(--ds-text-secondary);
-    }
-  }
-}
+// Empty State - REMOVED (use .card-empty-state from card-shell)
+// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Form Styles
 .goal-form,
@@ -431,8 +344,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 
@@ -503,9 +416,5 @@
     grid-template-columns: 1fr;
   }
 
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
+  // .card-header responsive styles removed - use app-card-shell
 }

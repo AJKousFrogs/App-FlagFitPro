@@ -1,0 +1,20 @@
+// ============================================================================
+// tabs.component Styles
+// UNIFIED DESIGN SYSTEM - Uses global tab styles from primeng-theme.scss
+//
+// Design Rules:
+// - Height: ~40px
+// - Border-radius: 8-12px (rounded, NOT pill)
+// - Active: Green border, green text, subtle background
+// - Inactive: Neutral text, no heavy border
+// ============================================================================
+
+@layer features {
+  :host {
+    display: block;
+  }
+
+  // The component inherits global styles from primeng-theme.scss
+  // Only add component-specific overrides here if absolutely necessary
+}
+

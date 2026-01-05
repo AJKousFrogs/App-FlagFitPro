@@ -896,7 +896,7 @@ export class InjuryManagementComponent implements OnInit {
     });
   }
 
-  requestMedical(injury: InjuryRecord): void {
+  requestMedical(_injury: InjuryRecord): void {
     this.messageService.add({
       severity: "info",
       summary: "Medical Report Requested",

@@ -3,153 +3,151 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .settings-form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-5, 20px);
-  }
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 20px);
+}
 
-  .form-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3, 12px);
-  }
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
 
-  .form-section h4 {
-    margin: 0;
-    font-size: var(--font-body-md, 16px);
-    font-weight: var(--font-weight-semibold, 600);
-    color: var(--color-text-primary, #171717);
-    padding-bottom: var(--space-2, 8px);
-    border-bottom: 1px solid var(--primitive-neutral-200, #e5e5e5);
-  }
+.form-section h4 {
+  margin: 0;
+  font-size: var(--font-body-md, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary, #171717);
+  padding-bottom: var(--space-2, 8px);
+  border-bottom: 1px solid var(--primitive-neutral-200, #e5e5e5);
+}
 
-  .section-description {
-    margin: 0;
-    font-size: var(--font-body-sm, 14px);
-    color: var(--color-text-secondary, #737373);
-  }
+.section-description {
+  margin: 0;
+  font-size: var(--font-body-sm, 14px);
+  color: var(--color-text-secondary, #737373);
+}
 
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1, 4px);
-  }
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
 
-  .form-field label {
-    font-size: var(--font-body-sm, 14px);
-    font-weight: var(--font-weight-medium, 500);
-    color: var(--color-text-secondary, #737373);
-  }
+.form-field label {
+  font-size: var(--font-body-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-text-secondary, #737373);
+}
 
-  .field-hint {
-    font-size: var(--font-body-xs, 12px);
-    color: var(--color-text-muted, #a3a3a3);
-  }
+.field-hint {
+  font-size: var(--font-body-xs, 12px);
+  color: var(--color-text-muted, #a3a3a3);
+}
 
-  .recovery-note {
-    color: var(--ds-primary-green, #089949);
-  }
+.recovery-note {
+  color: var(--ds-primary-green, #089949);
+}
 
-  /* Practice Slots */
-  .practice-slot {
-    background: var(--primitive-neutral-50, #fafafa);
-    border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-    border-radius: var(--radius-md, 6px);
-    padding: var(--space-3, 12px);
-  }
+/* Practice Slots */
+.practice-slot {
+  background: var(--primitive-neutral-50, #fafafa);
+  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-3, 12px);
+}
 
-  .slot-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2, 8px);
-  }
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2, 8px);
+}
 
-  .day-name {
-    font-weight: var(--font-weight-semibold, 600);
-    color: var(--color-text-primary, #171717);
-  }
+.day-name {
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary, #171717);
+}
 
-  .slot-times {
-    display: flex;
-    gap: var(--space-3, 12px);
-    flex-wrap: wrap;
-  }
+.slot-times {
+  display: flex;
+  gap: var(--space-3, 12px);
+  flex-wrap: wrap;
+}
 
-  .time-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1, 4px);
-    flex: 1;
-    min-width: 100px;
-  }
+.time-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+  flex: 1;
+  min-width: 100px;
+}
 
-  .time-field label {
-    font-size: var(--font-body-xs, 12px);
-    color: var(--color-text-muted, #a3a3a3);
-  }
+.time-field label {
+  font-size: var(--font-body-xs, 12px);
+  color: var(--color-text-muted, #a3a3a3);
+}
 
-  .time-field input {
-    width: 100%;
-  }
+.time-field input {
+  width: 100%;
+}
 
-  .add-practice {
-    display: flex;
-    gap: var(--space-2, 8px);
-    align-items: center;
-  }
+.add-practice {
+  display: flex;
+  gap: var(--space-2, 8px);
+  align-items: center;
+}
 
-  .add-practice p-select {
-    flex: 1;
-  }
+.add-practice p-select {
+  flex: 1;
+}
 
-  /* Routine List */
-  .routine-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
+/* Routine List */
+.routine-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
 
-  .routine-field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-2) var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-secondary);
-  }
+.routine-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-secondary);
+}
 
-  .routine-label {
-    display: flex;
-    align-items: center;
-    font-size: var(--font-body-sm);
-    color: var(--color-text-primary);
-    
-    i {
-      color: var(--ds-primary-green);
-      width: 20px;
-    }
+.routine-label {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-h4);
+  color: var(--color-text-primary);
+  
+  i {
+    color: var(--ds-primary-green);
+    width: 20px;
   }
+}
 
-  .routine-time-input {
-    width: 100px !important;
-    font-size: var(--font-body-sm) !important;
-    padding: var(--space-1) var(--space-2) !important;
-  }
+.routine-time-input {
+  width: 100px;
+  font-size: var(--font-size-h4);
+  padding: var(--space-1) var(--space-2);
+}
 
-  /* Checkbox Group */
-  .checkbox-group {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-2, 8px);
-  }
+/* Checkbox Group */
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
 
-  .checkbox-group label {
-    font-weight: var(--font-weight-normal);
-    color: var(--color-text-primary, #171717);
-  }
+.checkbox-group label {
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary, #171717);
 }
 

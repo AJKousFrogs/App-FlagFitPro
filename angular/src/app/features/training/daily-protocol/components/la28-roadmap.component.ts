@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, DestroyRef, input } from "@angular/core";
+import { Component, signal, computed, inject, DestroyRef } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";

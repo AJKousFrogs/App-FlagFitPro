@@ -17,11 +17,10 @@
 import {
   signal,
   computed,
-  effect,
-  Signal,
   WritableSignal,
   untracked,
 } from "@angular/core";
+import type { Signal } from "@angular/core";
 
 // ============================================================================
 // Signal Form Types

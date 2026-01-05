@@ -219,7 +219,7 @@ export class CoachInboxComponent {
     }, 500);
   }
 
-  onTabChange(event: any): void {
+  onTabChange(event: { index: number }): void {
     this.activeTabIndex = event.index;
   }
 

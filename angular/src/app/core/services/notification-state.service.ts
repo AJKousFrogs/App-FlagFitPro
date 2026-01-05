@@ -36,7 +36,7 @@ export interface NotificationState {
   lastOpenedAt: string | null;
 }
 
-interface NotificationResponse {
+interface _NotificationResponse {
   data?: Notification[] | NotificationWrapper | NotificationDataWrapper;
   notifications?: Notification[];
 }
@@ -50,7 +50,7 @@ interface NotificationDataWrapper {
   data?: Notification[];
 }
 
-interface CountResponse {
+interface _CountResponse {
   data?: { unreadCount?: number; count?: number } | number;
   unreadCount?: number;
 }

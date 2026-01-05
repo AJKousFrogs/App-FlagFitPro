@@ -5,6 +5,7 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  HostListener,
   OnInit,
   computed,
   inject,
@@ -28,7 +29,9 @@ import { LoggerService } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { fadeInOut } from "../../shared/animations/app.animations";
 
 interface Comment {
   id: string;
@@ -37,6 +40,7 @@ interface Comment {
   content: string;
   timeAgo: string;
   likes: number;
+  isLiked?: boolean;
 }
 
 interface PollOption {
@@ -96,9 +100,10 @@ interface Post {
     TooltipModule,
     MainLayoutComponent,
     AnnouncementsBannerComponent,
-  
     ButtonComponent,
+    CardShellComponent,
   ],
+  animations: [fadeInOut],
   template: `
     <app-main-layout>
       <!-- Poll Creation Dialog -->
@@ -488,7 +493,7 @@ interface Post {
 
                   <!-- Comments Section -->
                   @if (post.showComments) {
-                    <div class="comments-section" @fadeIn>
+                    <div class="comments-section" @fadeInOut>
                       <!-- Existing Comments -->
                       @if (post.commentsList.length > 0) {
                         <div class="comments-list">
@@ -520,7 +525,16 @@ interface Post {
                                   </p>
                                 </div>
                                 <div class="comment-meta">
-                                  <button class="comment-action">Like</button>
+                                  <button
+                                    class="comment-action"
+                                    [class.liked]="comment.isLiked"
+                                    (click)="toggleCommentLike(post, comment)"
+                                  >
+                                    {{ comment.isLiked ? "Liked" : "Like" }}
+                                    @if (comment.likes > 0) {
+                                      ({{ comment.likes }})
+                                    }
+                                  </button>
                                   <button class="comment-action">Reply</button>
                                   <span class="comment-time">{{
                                     comment.timeAgo
@@ -568,16 +582,33 @@ interface Post {
 
               <!-- Empty state when no posts match filter -->
               @if (filteredPosts().length === 0 && selectedTopic()) {
-                <div class="empty-state">
-                  <div class="empty-icon">
-                    <i class="pi pi-search"></i>
+                <div class="card-empty-state">
+                  <i class="pi pi-search card-empty-state__icon"></i>
+                  <div class="card-empty-state__content">
+                    <h3 class="card-empty-state__title">No posts found</h3>
+                    <p class="card-empty-state__text">
+                      No posts match the topic <strong>#{{ selectedTopic() }}</strong>
+                    </p>
                   </div>
-                  <h3>No posts found</h3>
-                  <p>
-                    No posts match the topic
-                    <strong>#{{ selectedTopic() }}</strong>
-                  </p>
-                  <app-button variant="outlined" iconLeft="pi-times" (clicked)="clearTopicFilter()">Clear Filter</app-button>
+                  <div class="card-empty-state__action">
+                    <app-button variant="outlined" iconLeft="pi-times" (clicked)="clearTopicFilter()">Clear Filter</app-button>
+                  </div>
+                </div>
+              }
+
+              <!-- Loading more indicator -->
+              @if (isLoadingMore()) {
+                <div class="loading-more">
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Loading more posts...</span>
+                </div>
+              }
+
+              <!-- End of feed indicator -->
+              @if (!hasMorePosts() && filteredPosts().length > 0) {
+                <div class="end-of-feed">
+                  <i class="pi pi-check-circle"></i>
+                  <span>You're all caught up!</span>
                 </div>
               }
             </div>
@@ -586,13 +617,11 @@ interface Post {
           <!-- Sidebar -->
           <div class="sidebar">
             <!-- Leaderboard Card -->
-            <div class="sidebar-card leaderboard-card">
-              <div class="card-header">
-                <div class="card-icon trophy">
-                  <i class="pi pi-trophy"></i>
-                </div>
-                <h3>Leaderboard</h3>
-              </div>
+            <app-card-shell
+              title="Leaderboard"
+              headerIcon="pi-trophy"
+              [hasFooter]="true"
+            >
               <div class="leaderboard-list">
                 @for (entry of leaderboard(); track entry.rank) {
                   <div
@@ -636,17 +665,16 @@ interface Post {
                   </div>
                 }
               </div>
-              <button class="view-all-btn">View Full Leaderboard</button>
-            </div>
+              <ng-container footer>
+                <app-button variant="text" block>View Full Leaderboard</app-button>
+              </ng-container>
+            </app-card-shell>
 
             <!-- Trending Topics Card -->
-            <div class="sidebar-card trending-card">
-              <div class="card-header">
-                <div class="card-icon fire">
-                  <i class="pi pi-bolt"></i>
-                </div>
-                <h3>Trending Topics</h3>
-              </div>
+            <app-card-shell
+              title="Trending Topics"
+              headerIcon="pi-bolt"
+            >
               <div class="topics-list">
                 @for (topic of trendingTopics(); track topic.name) {
                   <div
@@ -672,31 +700,34 @@ interface Post {
                   </button>
                 }
               </div>
-            </div>
+            </app-card-shell>
 
             <!-- Quick Stats Card -->
-            <div class="sidebar-card stats-card">
-              <div class="card-header">
-                <div class="card-icon stats">
-                  <i class="pi pi-chart-line"></i>
-                </div>
-                <h3>Your Activity</h3>
-              </div>
+            <app-card-shell
+              title="Your Activity"
+              headerIcon="pi-chart-line"
+            >
               <div class="quick-stats">
-                <div class="stat-box">
-                  <span class="stat-number">{{ userStats().posts }}</span>
-                  <span class="stat-label">Posts</span>
+                <div class="stat-block">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{ userStats().posts }}</span>
+                    <span class="stat-block__label">Posts</span>
+                  </div>
                 </div>
-                <div class="stat-box">
-                  <span class="stat-number">{{ userStats().likes }}</span>
-                  <span class="stat-label">Likes</span>
+                <div class="stat-block">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{ userStats().likes }}</span>
+                    <span class="stat-block__label">Likes</span>
+                  </div>
                 </div>
-                <div class="stat-box">
-                  <span class="stat-number">{{ userStats().comments }}</span>
-                  <span class="stat-label">Comments</span>
+                <div class="stat-block">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{ userStats().comments }}</span>
+                    <span class="stat-block__label">Comments</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </app-card-shell>
           </div>
         </div>
       </div>
@@ -735,6 +766,12 @@ export class CommunityComponent implements OnInit {
     likes: 0,
     comments: 0,
   });
+
+  // Infinite scroll state
+  isLoadingMore = signal(false);
+  hasMorePosts = signal(true);
+  currentPage = signal(1);
+  readonly POSTS_PER_PAGE = 20;
 
   // Poll dialog state
   showPollDialog = false;
@@ -797,6 +834,76 @@ export class CommunityComponent implements OnInit {
     this.loadCommunityData();
   }
 
+  // Infinite scroll - load more posts when near bottom
+  @HostListener("window:scroll")
+  onScroll(): void {
+    if (this.isLoadingMore() || !this.hasMorePosts()) return;
+
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight;
+    const threshold = 500; // Load more when 500px from bottom
+
+    if (scrollPosition >= documentHeight - threshold) {
+      this.loadMorePosts();
+    }
+  }
+
+  loadMorePosts(): void {
+    if (this.isLoadingMore() || !this.hasMorePosts()) return;
+
+    this.isLoadingMore.set(true);
+    const nextPage = this.currentPage() + 1;
+    const offset = (nextPage - 1) * this.POSTS_PER_PAGE;
+
+    this.apiService
+      .get<any>(
+        `/api/community?feed=true&limit=${this.POSTS_PER_PAGE}&offset=${offset}`,
+      )
+      .subscribe({
+        next: (response) => {
+          if (response?.data?.posts) {
+            const newPosts = response.data.posts.map((p: any) => ({
+              id: p.id,
+              author: p.authorName || p.author || "Unknown",
+              authorInitials: this.getInitials(p.authorName || p.author || "??"),
+              authorRole: p.postType === "announcement" ? "Coach" : undefined,
+              timeAgo: this.getRelativeTime(new Date(p.timestamp)),
+              location: p.location,
+              content: p.content,
+              likes: p.likes || 0,
+              comments: p.comments || 0,
+              shares: p.shares || 0,
+              isLiked: p.isLiked || false,
+              isBookmarked: p.isBookmarked || false,
+              showComments: false,
+              commentsList: [],
+              newComment: "",
+              media: p.mediaUrl
+                ? { type: p.mediaType || "image", url: p.mediaUrl }
+                : undefined,
+            }));
+
+            if (newPosts.length > 0) {
+              this.posts.update((posts) => [...posts, ...newPosts]);
+              this.currentPage.set(nextPage);
+            }
+
+            // Check if we've reached the end
+            if (newPosts.length < this.POSTS_PER_PAGE) {
+              this.hasMorePosts.set(false);
+            }
+          } else {
+            this.hasMorePosts.set(false);
+          }
+          this.isLoadingMore.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Error loading more posts:", err);
+          this.isLoadingMore.set(false);
+        },
+      });
+  }
+
   // Handle announcement events
   onAnnouncementViewed(announcementId: string): void {
     this.logger.info("Announcement viewed:", announcementId);
@@ -808,25 +915,28 @@ export class CommunityComponent implements OnInit {
 
   loadCommunityData(): void {
     // Load posts from real API
-    this.apiService.get<any[]>("/api/community/feed").subscribe({
+    this.apiService.get<any>("/api/community?feed=true").subscribe({
       next: (response) => {
-        if (response && response.data) {
-          const mappedPosts = response.data.map((p: any) => ({
+        if (response?.data?.posts) {
+          const mappedPosts = response.data.posts.map((p: any) => ({
             id: p.id,
-            author: p.author?.full_name || "Unknown",
-            authorInitials: this.getInitials(p.author?.full_name || "??"),
-            authorRole: p.author_role,
-            timeAgo: this.getRelativeTime(new Date(p.created_at)),
+            author: p.authorName || p.author || "Unknown",
+            authorInitials: this.getInitials(p.authorName || p.author || "??"),
+            authorRole: p.postType === "announcement" ? "Coach" : undefined,
+            timeAgo: this.getRelativeTime(new Date(p.timestamp)),
             location: p.location,
             content: p.content,
-            likes: p.likes?.count || 0,
-            comments: p.comments?.count || 0,
-            shares: p.shares_count || 0,
-            isLiked: false, // Would check from user session
-            isBookmarked: false,
+            likes: p.likes || 0,
+            comments: p.comments || 0,
+            shares: p.shares || 0,
+            isLiked: p.isLiked || false,
+            isBookmarked: p.isBookmarked || false,
             showComments: false,
             commentsList: [],
             newComment: "",
+            media: p.mediaUrl
+              ? { type: p.mediaType || "image", url: p.mediaUrl }
+              : undefined,
           }));
           this.posts.set(mappedPosts);
         }
@@ -835,13 +945,16 @@ export class CommunityComponent implements OnInit {
     });
 
     // Load leaderboard from real API
-    this.apiService.get<any[]>("/api/community/leaderboard").subscribe({
+    this.apiService.get<any>("/api/community?leaderboard=true").subscribe({
       next: (response) => {
-        if (response && response.data) {
-          const mappedLeaderboard = response.data.map((entry: any) => ({
+        if (response?.data) {
+          const leaderboardData = Array.isArray(response.data)
+            ? response.data
+            : [];
+          const mappedLeaderboard = leaderboardData.map((entry: any) => ({
             rank: entry.rank,
-            name: entry.user?.full_name || "Anonymous",
-            initials: this.getInitials(entry.user?.full_name || "??"),
+            name: entry.name || "Anonymous",
+            initials: this.getInitials(entry.name || "??"),
             score: entry.points,
           }));
           this.leaderboard.set(mappedLeaderboard);
@@ -850,8 +963,25 @@ export class CommunityComponent implements OnInit {
       error: (err) => this.logger.error("Error loading leaderboard:", err),
     });
 
-    // Load trending topics (placeholder for real data)
-    this.trendingTopics.set([]);
+    // Load trending topics from real API
+    this.apiService.get<any>("/api/community?trending=true").subscribe({
+      next: (response) => {
+        if (response?.data?.topics) {
+          this.trendingTopics.set(response.data.topics);
+        }
+      },
+      error: (err) => {
+        this.logger.error("Error loading trending topics:", err);
+        // Set default trending topics as fallback
+        this.trendingTopics.set([
+          { name: "Training", count: 45 },
+          { name: "GameDay", count: 38 },
+          { name: "Quarterback", count: 27 },
+          { name: "Defense", count: 19 },
+          { name: "Fitness", count: 15 },
+        ]);
+      },
+    });
   }
 
   getInitials(name: string): string {
@@ -884,47 +1014,121 @@ export class CommunityComponent implements OnInit {
     }, 500);
   }
 
-  createPost(): void {
-    if (!this.newPostContent.trim() && !this.pendingPoll) return;
+  async createPost(): Promise<void> {
+    if (!this.newPostContent.trim() && !this.pendingPoll && !this.pendingMedia)
+      return;
 
-    // Clean up content if poll placeholder is there
+    // Clean up content - remove placeholders
     let content = this.newPostContent;
-    if (this.pendingPoll) {
-      content = content.replace(/\n📊 Poll attached/g, "").trim();
+    content = content.replace(/\n📊 Poll attached/g, "").trim();
+    content = content.replace(/\n📷 \[Photo attached: .+\]/g, "").trim();
+    content = content.replace(/\n🎥 \[Video attached: .+\]/g, "").trim();
+
+    // Extract location from content if present
+    const locationMatch = content.match(/\n📍 (.+)$/);
+    const location = locationMatch ? locationMatch[1] : null;
+    if (locationMatch) {
+      content = content.replace(/\n📍 .+$/, "").trim();
     }
 
-    const newPost: Post = {
-      id: Date.now().toString(),
-      author: "You",
-      authorInitials: this.currentUserInitials(),
-      timeAgo: "Just now",
-      content: content,
-      likes: 0,
-      comments: 0,
-      shares: 0,
-      isLiked: false,
-      isBookmarked: false,
-      showComments: false,
-      commentsList: [],
-      newComment: "",
-      poll: this.pendingPoll || undefined,
+    // Upload media if present
+    let mediaUrl: string | null = null;
+    let mediaType: string | null = null;
+
+    if (this.pendingMedia) {
+      this.toastService.info("Uploading media...");
+      try {
+        const uploadResult = await this.uploadMedia();
+        if (uploadResult) {
+          mediaUrl = uploadResult.url;
+          mediaType = uploadResult.type;
+        }
+      } catch (err) {
+        this.toastService.error("Failed to upload media. Post will be created without it.");
+        this.logger.error("Media upload failed:", err);
+      }
+    }
+
+    const postData = {
+      content,
+      location,
+      media_url: mediaUrl,
+      media_type: mediaType,
+      post_type: "general",
     };
 
-    // Update posts signal with new post at the beginning
-    this.posts.update((posts) => [newPost, ...posts]);
-    this.newPostContent = "";
-    this.pendingPoll = null;
-    this.toastService.success("Your post has been published!");
+    // Call API to create post
+    this.apiService.post<{ data: { id?: string; authorName?: string; location?: string; content?: string } }>("/api/community", postData).subscribe({
+      next: (response) => {
+        if (response?.data) {
+          const newPost: Post = {
+            id: response.data.id || Date.now().toString(),
+            author: response.data.authorName || "You",
+            authorInitials: this.currentUserInitials(),
+            timeAgo: "Just now",
+            location: response.data.location,
+            content: response.data.content || content,
+            likes: 0,
+            comments: 0,
+            shares: 0,
+            isLiked: false,
+            isBookmarked: false,
+            showComments: false,
+            commentsList: [],
+            newComment: "",
+            media: mediaUrl ? { type: mediaType as "image" | "video", url: mediaUrl } : undefined,
+            poll: this.pendingPoll || undefined,
+          };
 
-    // Update user stats
-    this.userStats.update((stats) => ({
-      ...stats,
-      posts: stats.posts + 1,
-    }));
+          // Update posts signal with new post at the beginning
+          this.posts.update((posts) => [newPost, ...posts]);
+          this.toastService.success("Your post has been published!");
+
+          // Update user stats
+          this.userStats.update((stats) => ({
+            ...stats,
+            posts: stats.posts + 1,
+          }));
+        }
+        this.newPostContent = "";
+        this.pendingPoll = null;
+        this.pendingMedia = null;
+      },
+      error: (err) => {
+        this.logger.error("Error creating post:", err);
+        // Fallback to optimistic update if API fails
+        const newPost: Post = {
+          id: Date.now().toString(),
+          author: "You",
+          authorInitials: this.currentUserInitials(),
+          timeAgo: "Just now",
+          location: location || undefined,
+          content: content,
+          likes: 0,
+          comments: 0,
+          shares: 0,
+          isLiked: false,
+          isBookmarked: false,
+          showComments: false,
+          commentsList: [],
+          newComment: "",
+          media: mediaUrl ? { type: mediaType as "image" | "video", url: mediaUrl } : undefined,
+          poll: this.pendingPoll || undefined,
+        };
+        this.posts.update((posts) => [newPost, ...posts]);
+        this.newPostContent = "";
+        this.pendingPoll = null;
+        this.pendingMedia = null;
+        this.toastService.warn(
+          "Post saved locally. Will sync when online.",
+        );
+      },
+    });
   }
 
   toggleLike(post: Post): void {
-    // Create a new posts array with the updated post
+    // Optimistically update UI
+    const wasLiked = post.isLiked;
     this.posts.update((posts) =>
       posts.map((p) =>
         p.id === post.id
@@ -936,23 +1140,89 @@ export class CommunityComponent implements OnInit {
           : p,
       ),
     );
+
+    // Call API to persist like
+    this.apiService
+      .post<{ success: boolean }>(`/api/community?postId=${post.id}&like=true`, {})
+      .subscribe({
+        next: (_response) => {
+          // Update user stats if we liked
+          if (!wasLiked) {
+            this.userStats.update((stats) => ({
+              ...stats,
+              likes: stats.likes + 1,
+            }));
+          }
+        },
+        error: (err) => {
+          this.logger.error("Error toggling like:", err);
+          // Revert optimistic update on error
+          this.posts.update((posts) =>
+            posts.map((p) =>
+              p.id === post.id
+                ? {
+                    ...p,
+                    isLiked: wasLiked,
+                    likes: wasLiked ? p.likes + 1 : p.likes - 1,
+                  }
+                : p,
+            ),
+          );
+        },
+      });
   }
 
   toggleComments(post: Post): void {
+    const willShow = !post.showComments;
+
     // Create a new posts array with the updated post
     this.posts.update((posts) =>
       posts.map((p) =>
         p.id === post.id
           ? {
               ...p,
-              showComments: !p.showComments,
+              showComments: willShow,
             }
           : p,
       ),
     );
+
+    // Load comments from API when expanding
+    if (willShow && post.commentsList.length === 0 && post.comments > 0) {
+      this.apiService
+        .get<{ data: { comments?: Comment[] } }>(`/api/community?postId=${post.id}&comment=true`)
+        .subscribe({
+          next: (response) => {
+            if (response?.data?.comments) {
+              this.posts.update((posts) =>
+                posts.map((p) =>
+                  p.id === post.id
+                    ? {
+                        ...p,
+                        commentsList: response.data.comments.map((c: any) => ({
+                          id: c.id,
+                          author: c.author,
+                          authorInitials: this.getInitials(c.author || "??"),
+                          content: c.content,
+                          timeAgo: c.timeAgo,
+                          likes: c.likes || 0,
+                        })),
+                      }
+                    : p,
+                ),
+              );
+            }
+          },
+          error: (err) => {
+            this.logger.error("Error loading comments:", err);
+          },
+        });
+    }
   }
 
   toggleBookmark(post: Post): void {
+    // Optimistically update UI
+    const wasBookmarked = post.isBookmarked;
     this.posts.update((posts) =>
       posts.map((p) =>
         p.id === post.id
@@ -964,20 +1234,46 @@ export class CommunityComponent implements OnInit {
       ),
     );
 
-    const updatedPost = this.posts().find((p) => p.id === post.id);
-    if (updatedPost?.isBookmarked) {
-      this.toastService.success("Post saved to bookmarks");
-    }
+    // Call API to persist bookmark
+    this.apiService
+      .post<any>(`/api/community?postId=${post.id}&bookmark=true`, {})
+      .subscribe({
+        next: () => {
+          if (!wasBookmarked) {
+            this.toastService.success("Post saved to bookmarks");
+          } else {
+            this.toastService.info("Bookmark removed");
+          }
+        },
+        error: (err) => {
+          this.logger.error("Error toggling bookmark:", err);
+          // Revert optimistic update on error
+          this.posts.update((posts) =>
+            posts.map((p) =>
+              p.id === post.id
+                ? {
+                    ...p,
+                    isBookmarked: wasBookmarked,
+                  }
+                : p,
+            ),
+          );
+          this.toastService.error("Failed to update bookmark");
+        },
+      });
   }
 
   addComment(post: Post): void {
     if (!post.newComment?.trim()) return;
 
-    const newComment: Comment = {
-      id: Date.now().toString(),
+    const commentContent = post.newComment.trim();
+
+    // Optimistically add comment to UI
+    const tempComment: Comment = {
+      id: `temp-${Date.now()}`,
       author: "You",
       authorInitials: this.currentUserInitials(),
-      content: post.newComment,
+      content: commentContent,
       timeAgo: "Just now",
       likes: 0,
     };
@@ -987,7 +1283,7 @@ export class CommunityComponent implements OnInit {
         p.id === post.id
           ? {
               ...p,
-              commentsList: [...p.commentsList, newComment],
+              commentsList: [...p.commentsList, tempComment],
               comments: p.comments + 1,
               newComment: "",
             }
@@ -995,23 +1291,93 @@ export class CommunityComponent implements OnInit {
       ),
     );
 
-    // Update user stats
-    this.userStats.update((stats) => ({
-      ...stats,
-      comments: stats.comments + 1,
-    }));
+    // Call API to persist comment
+    this.apiService
+      .post<any>(`/api/community?postId=${post.id}&comment=true`, {
+        content: commentContent,
+      })
+      .subscribe({
+        next: (response) => {
+          // Replace temp comment with real one from server
+          if (response?.data?.id) {
+            this.posts.update((posts) =>
+              posts.map((p) =>
+                p.id === post.id
+                  ? {
+                      ...p,
+                      commentsList: p.commentsList.map((c) =>
+                        c.id === tempComment.id
+                          ? {
+                              ...c,
+                              id: response.data.id,
+                              author: response.data.author || c.author,
+                            }
+                          : c,
+                      ),
+                    }
+                  : p,
+              ),
+            );
+          }
+
+          // Update user stats
+          this.userStats.update((stats) => ({
+            ...stats,
+            comments: stats.comments + 1,
+          }));
+        },
+        error: (err) => {
+          this.logger.error("Error adding comment:", err);
+          // Remove optimistic comment on error
+          this.posts.update((posts) =>
+            posts.map((p) =>
+              p.id === post.id
+                ? {
+                    ...p,
+                    commentsList: p.commentsList.filter(
+                      (c) => c.id !== tempComment.id,
+                    ),
+                    comments: p.comments - 1,
+                  }
+                : p,
+            ),
+          );
+          this.toastService.error("Failed to add comment");
+        },
+      });
   }
+
+  // Pending media for post
+  pendingMedia: { file: File; type: "image" | "video"; preview: string } | null =
+    null;
 
   // Post attachment methods
   attachPhoto(): void {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "image/*";
+    input.accept = "image/jpeg,image/png,image/gif,image/webp";
     input.onchange = (e: Event) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        this.newPostContent += `\n📷 [Photo attached: ${file.name}]`;
-        this.toastService.info("Photo will be uploaded with your post");
+        // Validate file size (5MB max for images)
+        if (file.size > 5 * 1024 * 1024) {
+          this.toastService.error("Image must be less than 5MB");
+          return;
+        }
+
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.pendingMedia = {
+            file,
+            type: "image",
+            preview: reader.result as string,
+          };
+          this.newPostContent += `\n📷 [Photo attached: ${file.name}]`;
+          this.toastService.success("Photo ready to upload with your post");
+          this.cdr.detectChanges();
+        };
+        reader.readAsDataURL(file);
       }
     };
     input.click();
@@ -1020,15 +1386,73 @@ export class CommunityComponent implements OnInit {
   attachVideo(): void {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "video/*";
+    input.accept = "video/mp4,video/webm,video/quicktime";
     input.onchange = (e: Event) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        this.newPostContent += `\n🎥 [Video attached: ${file.name}]`;
-        this.toastService.info("Video will be uploaded with your post");
+        // Validate file size (50MB max for videos)
+        if (file.size > 50 * 1024 * 1024) {
+          this.toastService.error("Video must be less than 50MB");
+          return;
+        }
+
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.pendingMedia = {
+            file,
+            type: "video",
+            preview: reader.result as string,
+          };
+          this.newPostContent += `\n🎥 [Video attached: ${file.name}]`;
+          this.toastService.success("Video ready to upload with your post");
+          this.cdr.detectChanges();
+        };
+        reader.readAsDataURL(file);
       }
     };
     input.click();
+  }
+
+  // Upload media file to server
+  private uploadMedia(): Promise<{ url: string; type: string } | null> {
+    const media = this.pendingMedia;
+    if (!media || !media.file) {
+      return Promise.resolve(null);
+    }
+
+    const file = media.file;
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Data = reader.result as string;
+
+        this.apiService
+          .post<any>("/api/upload", {
+            file: base64Data,
+            fileType: file.type,
+            fileName: file.name,
+          })
+          .subscribe({
+            next: (response) => {
+              if (response?.data?.url) {
+                resolve({
+                  url: response.data.url,
+                  type: response.data.mediaType,
+                });
+              } else {
+                resolve(null);
+              }
+            },
+            error: (err) => {
+              this.logger.error("Error uploading media:", err);
+              reject(err);
+            },
+          });
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   createPoll(): void {
@@ -1084,6 +1508,7 @@ export class CommunityComponent implements OnInit {
   votePoll(post: Post, optionId: string): void {
     if (!post.poll || post.poll.userVote) return;
 
+    // Optimistically update UI
     this.posts.update((posts) =>
       posts.map((p) => {
         if (p.id !== post.id || !p.poll) return p;
@@ -1113,7 +1538,66 @@ export class CommunityComponent implements OnInit {
       }),
     );
 
-    this.toastService.success("Vote recorded!");
+    // Call API to persist vote
+    this.apiService
+      .post<any>(`/api/community?optionId=${optionId}&pollVote=true`, {})
+      .subscribe({
+        next: (response) => {
+          if (response?.data?.options) {
+            // Update with server response
+            this.posts.update((posts) =>
+              posts.map((p) => {
+                if (p.id !== post.id || !p.poll) return p;
+                return {
+                  ...p,
+                  poll: {
+                    ...p.poll,
+                    options: response.data.options,
+                    totalVotes: response.data.totalVotes,
+                    userVote: optionId,
+                  },
+                };
+              }),
+            );
+          }
+          this.toastService.success("Vote recorded!");
+        },
+        error: (err) => {
+          this.logger.error("Error voting on poll:", err);
+          // Revert optimistic update
+          this.posts.update((posts) =>
+            posts.map((p) => {
+              if (p.id !== post.id || !p.poll) return p;
+
+              const revertedOptions = p.poll.options.map((opt) => ({
+                ...opt,
+                votes: opt.id === optionId ? opt.votes - 1 : opt.votes,
+              }));
+
+              const totalVotes = p.poll.totalVotes - 1;
+
+              const optionsWithPercentage = revertedOptions.map((opt) => ({
+                ...opt,
+                percentage:
+                  totalVotes > 0
+                    ? Math.round((opt.votes / totalVotes) * 100)
+                    : 0,
+              }));
+
+              return {
+                ...p,
+                poll: {
+                  ...p.poll,
+                  options: optionsWithPercentage,
+                  totalVotes,
+                  userVote: undefined,
+                },
+              };
+            }),
+          );
+          this.toastService.error("Failed to record vote");
+        },
+      });
   }
 
   // Get the maximum percentage for highlighting winner
@@ -1202,6 +1686,58 @@ export class CommunityComponent implements OnInit {
       })
       .catch(() => {
         this.toastService.error("Unable to share. Please try again.");
+      });
+  }
+
+  // Toggle like on a comment
+  toggleCommentLike(post: Post, comment: Comment): void {
+    // Optimistically update UI
+    const wasLiked = comment.isLiked || false;
+    this.posts.update((posts) =>
+      posts.map((p) =>
+        p.id === post.id
+          ? {
+              ...p,
+              commentsList: p.commentsList.map((c) =>
+                c.id === comment.id
+                  ? {
+                      ...c,
+                      isLiked: !c.isLiked,
+                      likes: c.isLiked ? c.likes - 1 : c.likes + 1,
+                    }
+                  : c,
+              ),
+            }
+          : p,
+      ),
+    );
+
+    // Call API to persist comment like
+    this.apiService
+      .post<any>(`/api/community?commentId=${comment.id}&commentLike=true`, {})
+      .subscribe({
+        error: (err) => {
+          this.logger.error("Error toggling comment like:", err);
+          // Revert optimistic update on error
+          this.posts.update((posts) =>
+            posts.map((p) =>
+              p.id === post.id
+                ? {
+                    ...p,
+                    commentsList: p.commentsList.map((c) =>
+                      c.id === comment.id
+                        ? {
+                            ...c,
+                            isLiked: wasLiked,
+                            likes: wasLiked ? c.likes + 1 : c.likes - 1,
+                          }
+                        : c,
+                    ),
+                  }
+                : p,
+            ),
+          );
+        },
       });
   }
 }

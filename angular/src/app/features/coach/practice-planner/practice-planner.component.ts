@@ -689,7 +689,7 @@ export class PracticePlannerComponent implements OnInit {
     this.showDialog = true;
   }
 
-  startPractice(practice: PracticePlan): void {
+  startPractice(_practice: PracticePlan): void {
     this.messageService.add({
       severity: "info",
       summary: "Starting Practice",
@@ -772,7 +772,7 @@ export class PracticePlannerComponent implements OnInit {
     const match = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
     if (!match) return time;
 
-    let [, hours, mins, period] = match;
+    const [, hours, mins, period] = match;
     let h = parseInt(hours);
     let m = parseInt(mins) + minutes;
 

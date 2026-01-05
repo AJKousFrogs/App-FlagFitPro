@@ -76,20 +76,21 @@ interface WellnessMetrics {
   hydrationStatus: "poor" | "adequate" | "good" | "optimal";
 }
 
-interface NutritionistWeeklyReport {
-  reportPeriod: { start: Date; end: Date };
-  athlete: AthleteNutritionData;
-  trainingContext: TrainingLoadData;
-  bodyComposition: {
-    weightTrend: "gaining" | "stable" | "losing";
-    weeklyWeightChange: number;
-    measurementsThisWeek: number;
-    alerts: string[];
-  };
-  supplementCompliance: SupplementCompliance;
-  wellnessIndicators: WellnessMetrics;
-  recommendations: string[];
-}
+// NutritionistWeeklyReport reserved for future use
+// interface NutritionistWeeklyReport {
+//   reportPeriod: { start: Date; end: Date };
+//   athlete: AthleteNutritionData;
+//   trainingContext: TrainingLoadData;
+//   bodyComposition: {
+//     weightTrend: "gaining" | "stable" | "losing";
+//     weeklyWeightChange: number;
+//     measurementsThisWeek: number;
+//     alerts: string[];
+//   };
+//   supplementCompliance: SupplementCompliance;
+//   wellnessIndicators: WellnessMetrics;
+//   recommendations: string[];
+// }
 
 interface TournamentNutritionBrief {
   tournament: {

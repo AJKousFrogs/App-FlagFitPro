@@ -24,7 +24,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
 
 // ============================================================================
@@ -461,7 +461,7 @@ export class AgeAdjustedRecoveryService {
     trainingAge: number,
     sessionIntensity: "low" | "moderate" | "high",
     sessionDuration: number, // minutes
-    sessionType: string,
+    _sessionType: string,
   ): RecoveryRecommendation {
     const profile = this.getRecoveryProfile(chronologicalAge, trainingAge);
     const recoveryProfile = profile.recoveryProfile;

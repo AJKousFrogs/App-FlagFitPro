@@ -1,0 +1,889 @@
+/* ================================================================
+   PROFILE COMPONENT STYLES
+   Design System Compliant - Card Container Baseline v1.0
+   ViewEncapsulation.None - Styles are global, scoped by selectors
+   
+   Systematic Migration Checklist Applied:
+   - Phase 1: Audit ✓
+   - Phase 2: Card spacing ✓
+   - Phase 3: Tabs styling ✓
+   - Phase 4: Token normalization ✓
+   - Phase 5: Responsive verification ✓
+   ================================================================ */
+
+/* ========== Page Container ========== 
+ * MATCHES Dashboard .player-dashboard exactly
+ */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); // Dashboard: 24px between major sections
+  padding: var(--space-5) var(--space-4); // Dashboard: 20px 16px
+  max-width: 1400px; // Dashboard: Standard container width
+  margin: 0 auto;
+}
+
+/* ========== Deletion Pending Banner ========== */
+.profile-page .deletion-pending-banner {
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-bg) 0%,
+    rgba(var(--primitive-warning-500-rgb), 0.1) 100%
+  );
+  border: 1px solid var(--color-status-warning);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-page .deletion-banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.profile-page .deletion-banner-content > i {
+  font-size: 1.5rem;
+  color: var(--color-status-warning);
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}
+
+.profile-page .deletion-banner-text {
+  flex: 1;
+}
+
+.profile-page .deletion-banner-text h4 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-warning-text);
+}
+
+.profile-page .deletion-banner-text p {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.profile-page .deletion-banner-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.profile-page .deletion-help-link {
+  font-size: 0.875rem;
+  color: var(--color-warning-text);
+  text-decoration: underline;
+}
+
+.profile-page .deletion-help-link:hover {
+  color: var(--color-status-warning);
+}
+
+@media (max-width: 640px) {
+  .profile-page .deletion-banner-content {
+    flex-direction: column;
+  }
+
+  .profile-page .deletion-banner-actions {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ========== Loading State ========== */
+.profile-page .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16);
+  min-height: 400px;
+}
+
+.profile-page .loading-message {
+  margin-top: var(--space-4);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Profile Header Card ========== 
+ * Uses --radius-lg and --shadow-sm to match Dashboard cards
+ */
+.profile-page .profile-header-card {
+  position: relative;
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  overflow: hidden;
+  box-shadow: var(--shadow-sm); // Dashboard: var(--shadow-sm)
+  border: 1px solid var(--color-border-subtle);
+}
+
+.profile-page .profile-header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: var(--gradient-primary);
+  overflow: hidden;
+}
+
+.profile-page .bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ========== Avatar Section ========== */
+.profile-page .profile-avatar-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  z-index: 1;
+}
+
+.profile-page .avatar-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.profile-page .profile-avatar-img,
+.profile-page .profile-avatar-fallback {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-full);
+  border: 5px solid var(--surface-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-page .profile-avatar-img {
+  object-fit: cover;
+}
+
+.profile-page .profile-avatar-fallback {
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-page .profile-avatar-fallback span {
+  font-family: var(--font-family-sans);
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-on-primary);
+  letter-spacing: 2px;
+}
+
+.profile-page .avatar-upload-btn {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-green);
+  border: 3px solid var(--surface-primary);
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.profile-page .avatar-upload-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  background: var(--ds-primary-green-hover);
+}
+
+.profile-page .avatar-upload-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-page .avatar-upload-btn i {
+  font-size: 1.125rem;
+}
+
+.profile-page .hidden-file-input {
+  display: none;
+}
+
+/* ========== Jersey Badge ========== */
+.profile-page .jersey-badge {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  background: linear-gradient(135deg, #1a1a1a 0%, #404040 100%);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-page .jersey-badge span {
+  font-family: var(--font-family-sans);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+/* ========== Profile Info Section ========== */
+.profile-page .profile-info-section {
+  text-align: center;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+.profile-page .profile-display-name {
+  font-family: var(--font-family-sans);
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.2;
+}
+
+.profile-page .profile-position-team {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.profile-page .position-tag,
+.profile-page .team-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-sans);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.profile-page .position-tag {
+  background: rgba(8, 153, 73, 0.1);
+  color: var(--ds-primary-green);
+}
+
+.profile-page .team-tag {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+.profile-page .position-tag i,
+.profile-page .team-tag i {
+  font-size: 0.875rem;
+}
+
+.profile-page .profile-email-text {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.profile-page .member-since {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.profile-page .member-since i {
+  font-size: 0.875rem;
+}
+
+/* ========== Profile Header Actions ========== */
+.profile-page .profile-header-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+/* ========== Profile Tabs Container ========== 
+ * Uses --radius-lg and --shadow-sm to match Dashboard cards
+ */
+.profile-page .profile-tabs-container {
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  box-shadow: var(--shadow-sm); // Dashboard: var(--shadow-sm)
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-4); // Dashboard: var(--space-4) internal padding
+  overflow: hidden;
+}
+
+/* ========== PrimeNG Tabs Override ========== */
+.profile-page .profile-tabs-container .p-tabs {
+  background: transparent !important;
+  border: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tablist {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: var(--space-5) !important;
+}
+
+.profile-page .profile-tabs-container .p-tablist-content,
+.profile-page .profile-tabs-container .p-tablist-viewport {
+  background: var(--surface-secondary) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--space-1) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tablist-tab-list {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: var(--space-1) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tablist-active-bar {
+  display: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tab {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-2) !important;
+  padding: 0 var(--space-4) !important;
+  font-family: var(--font-family-sans) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important; // Medium weight for inactive tabs - reduces visual competition
+  color: var(--color-text-secondary) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  outline: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tab i {
+  font-size: 1rem !important;
+  color: var(--color-text-tertiary) !important;
+  transition: color 0.2s ease !important;
+}
+
+.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) {
+  background: var(--surface-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) i {
+  color: var(--ds-primary-green) !important;
+}
+
+.profile-page .profile-tabs-container .p-tab.p-tab-active,
+.profile-page .profile-tabs-container .p-tab[data-p-active="true"] {
+  background: var(--surface-primary) !important;
+  color: var(--ds-primary-green) !important;
+  font-weight: 600 !important; // Semibold for active tab - clear hierarchy
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--ds-primary-green) !important;
+}
+
+.profile-page .profile-tabs-container .p-tab.p-tab-active i,
+.profile-page .profile-tabs-container .p-tab[data-p-active="true"] i {
+  color: var(--ds-primary-green) !important;
+}
+
+.profile-page .profile-tabs-container .p-tabpanels {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.profile-page .profile-tabs-container .p-tabpanel {
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* ========== Invitation Badge ========== */
+.profile-page .invitation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  background: var(--color-status-error);
+  border-radius: var(--radius-md);
+  margin-left: var(--space-2);
+  line-height: 1;
+}
+
+.profile-page .tab-label {
+  color: inherit;
+}
+
+/* ========== Card Shell Overrides for Tab Panels ========== 
+ * Ensure proper spacing between card header icon and card border
+ */
+.profile-page .profile-tabs-container app-card-shell .card-shell__header {
+  padding: var(--space-4) var(--space-5) var(--space-3); // More left/right padding
+}
+
+.profile-page .profile-tabs-container app-card-shell .card-shell__body {
+  padding: var(--space-4) var(--space-5); // Match header padding
+}
+
+/* ========== Overview Content ========== */
+.profile-page .overview-content {
+  /* No extra margin needed - card-shell handles it */
+}
+
+.profile-page .activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile-page .activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3); // Dashboard: gap: var(--space-3)
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.profile-page .activity-item:hover {
+  background: var(--surface-secondary);
+}
+
+/* Activity icon with background - matches Dashboard .stat-icon EXACTLY */
+.profile-page .activity-icon {
+  width: var(--space-10); // Dashboard: 40px
+  height: var(--space-10);
+  min-width: var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
+  font-size: var(--font-body-md); // Dashboard: var(--font-body-md)
+}
+
+.profile-page .activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-page .activity-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.profile-page .activity-time {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* ========== Achievements Grid ========== */
+.profile-page .achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.profile-page .achievement-content {
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.profile-page .achievement-icon {
+  width: var(--space-12); // 48px - slightly larger than stat icons
+  height: var(--space-12);
+  margin: 0 auto var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  font-size: var(--icon-lg); // Use design token
+  color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
+}
+
+.profile-page .achievement-title {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+}
+
+.profile-page .achievement-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.5;
+}
+
+.profile-page .achievement-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========== Performance Stats Grid (Statistics Tab) ========== 
+ * NOTE: Uses .performance-stats-grid to avoid conflict with app-stats-grid component
+ * Typography hierarchy: Card title (semibold) > Stat value (medium) > Label (regular)
+ */
+.profile-page .performance-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.profile-page .stat-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  gap: var(--space-3);
+}
+
+.profile-page .stat-block__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.profile-page .stat-block__value {
+  font-size: var(--font-size-metric-md); // 24px - matches Dashboard
+  font-weight: var(--font-weight-semibold); // Reduced from bold to not compete with card title
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.profile-page .stat-block__label {
+  font-size: var(--font-size-caption); // 13px
+  font-weight: var(--font-weight-regular); // Lighter weight for labels
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-caption);
+}
+
+.profile-page .stat-block__tag {
+  flex-shrink: 0;
+}
+
+/* ========== Invitations Section ========== */
+.profile-page .invitations-section {
+  /* No extra margin needed */
+}
+
+.profile-page .loading-invitations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12);
+  color: var(--color-text-secondary);
+}
+
+.profile-page .invitations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page .invitation-card {
+  border-left: 4px solid var(--ds-primary-green);
+}
+
+.profile-page .invitation-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page .invitation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.profile-page .invitation-header h4 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.profile-page .invitation-message {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.profile-page .invitation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.profile-page .invitation-meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profile-page .expires-soon {
+  color: var(--color-status-warning);
+}
+
+.profile-page .invitation-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* ========== Empty States ========== 
+ * Matches Dashboard empty-schedule / empty-chart pattern
+ */
+.profile-page .card-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8); // Dashboard: consistent padding
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  border: 1px dashed var(--color-border-secondary);
+}
+
+.profile-page .card-empty-state--compact {
+  padding: var(--space-6);
+}
+
+.profile-page .card-empty-state__icon {
+  width: var(--space-12); // 48px - matches achievement icons
+  height: var(--space-12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-tertiary); // Dashboard: day-indicator background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  font-size: var(--icon-lg); // Use design token
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.profile-page .card-empty-state__content {
+  max-width: 300px;
+}
+
+.profile-page .card-empty-state__title {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.profile-page .card-empty-state__text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========== Responsive Styles ========== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .profile-page .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: var(--space-4);
+    gap: var(--space-5);
+  }
+
+  .profile-page .profile-header-card {
+    border-radius: var(--radius-lg);
+  }
+
+  .profile-page .profile-header-bg {
+    height: 120px;
+  }
+
+  .profile-page .profile-avatar-container {
+    padding-top: 60px;
+  }
+
+  .profile-page .avatar-wrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-page .profile-avatar-img,
+  .profile-page .profile-avatar-fallback {
+    width: 120px;
+    height: 120px;
+    border-width: 4px;
+  }
+
+  .profile-page .profile-avatar-fallback span {
+    font-size: 2rem;
+  }
+
+  .profile-page .avatar-upload-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-page .profile-display-name {
+    font-size: 1.5rem;
+  }
+
+  .profile-page .profile-info-section {
+    padding: var(--space-5) var(--space-4) var(--space-4);
+  }
+
+  .profile-page .profile-position-team {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .profile-page .profile-header-actions {
+    padding: 0 var(--space-4) var(--space-5);
+  }
+
+  .profile-page .profile-tabs-container {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .profile-page .profile-tabs-container .p-tablist-content,
+  .profile-page .profile-tabs-container .p-tablist-viewport {
+    padding: 3px !important;
+  }
+
+  .profile-page .profile-tabs-container .p-tablist-tab-list {
+    gap: 3px !important;
+  }
+
+  .profile-page .profile-tabs-container .p-tab {
+    padding: 0 var(--space-3) !important;
+    font-size: 0.8125rem !important;
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .profile-page .performance-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page .invitation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .profile-page .invitation-meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .profile-page .invitation-actions {
+    flex-direction: column;
+  }
+
+  .profile-page .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 540px) {
+  .profile-page .tab-label {
+    display: none;
+  }
+
+  .profile-page .profile-tabs-container .p-tablist-tab-list {
+    justify-content: center !important;
+  }
+
+  .profile-page .profile-tabs-container .p-tab {
+    padding: 0 var(--space-3) !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    gap: var(--space-1) !important;
+  }
+
+  .profile-page .profile-tabs-container .p-tab i {
+    font-size: 1rem !important;
+  }
+
+  .profile-page .invitation-badge {
+    margin-left: var(--space-1);
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.6875rem;
+  }
+
+  .profile-page .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page .activity-item {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .profile-page .activity-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1.125rem;
+  }
+}

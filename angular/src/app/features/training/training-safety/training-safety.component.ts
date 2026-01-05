@@ -22,7 +22,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {} from "@angular/core/rxjs-interop";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -35,7 +35,6 @@ import { SafetyWarningsComponent } from "../../../shared/components/safety-warni
 import { TrafficLightRiskComponent } from "../../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import {
   TrainingSafetyService,
-  SafetyWarning,
 } from "../../../core/services/training-safety.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AgeAdjustedRecoveryService } from "../../../core/services/age-adjusted-recovery.service";
@@ -481,7 +480,7 @@ export class TrainingSafetyComponent implements OnInit {
           this.minRestDays.set(2);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug(
         "[TrainingSafety] Could not load age data, using defaults",
       );
@@ -547,7 +546,7 @@ export class TrainingSafetyComponent implements OnInit {
         this.sleepDebtLevel.set("Unknown");
         this.trainingCapacity.set(100);
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug("[TrainingSafety] Could not load sleep data");
     }
   }
@@ -620,7 +619,7 @@ export class TrainingSafetyComponent implements OnInit {
       } else {
         this.movementLimitStatus.set("Safe");
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug("[TrainingSafety] Could not load movement limits");
     }
   }
@@ -692,7 +691,7 @@ export class TrainingSafetyComponent implements OnInit {
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug("[TrainingSafety] Could not load training history");
     }
   }
@@ -754,7 +753,7 @@ export class TrainingSafetyComponent implements OnInit {
       } else {
         this.hasActiveRTP.set(false);
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug("[TrainingSafety] Could not load RTP status");
       this.hasActiveRTP.set(false);
     }

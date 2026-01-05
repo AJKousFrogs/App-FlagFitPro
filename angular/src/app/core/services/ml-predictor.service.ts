@@ -1,6 +1,18 @@
 import { Injectable, inject } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import {
+  SprintPredictionInput,
+  RouteSkillInput,
+  DecisionPredictionInput,
+  SprintFeatures,
+  RouteFeatures,
+  DecisionFeatures,
+  FlagFootballOptimization,
+  SkillClassificationResult,
+  NeuralNetworkDecisionResult,
+  MLTrainingDataEntry,
+} from "../models/api.models";
 
 /**
  * Interface for ML Model Configuration
@@ -183,8 +195,8 @@ export class MlPredictorService {
   private supabase = inject(SupabaseService);
 
   private models = new Map<string, ModelConfig>();
-  private trainingData = new Map<string, any[]>();
-  private predictionCache = new Map<string, any>();
+  private trainingData = new Map<string, MLTrainingDataEntry[]>();
+  private predictionCache = new Map<string, SprintPredictionResult | RoutePredictionResult | DecisionPredictionResult>();
 
   private readonly modelAccuracy = {
     sprintPerformance: 0.874,
@@ -252,22 +264,26 @@ export class MlPredictorService {
   /**
    * Predict sprint performance for 10-25 yard distances (flag football optimized)
    */
-  predictSprintPerformance(athleteData: any): SprintPredictionResult {
+  predictSprintPerformance(athleteData: SprintPredictionInput): SprintPredictionResult {
     const cacheKey = `sprint_${athleteData.playerId}_${Date.now()}`;
 
-    if (this.predictionCache.has(cacheKey)) {
-      return this.predictionCache.get(cacheKey);
+    const cached = this.predictionCache.get(cacheKey);
+    if (cached && "predictedTime" in cached) {
+      return cached as SprintPredictionResult;
     }
 
     try {
-      const model = this.models.get("sprint")!;
+      const model = this.models.get("sprint");
+      if (!model) {
+        return this.getFallbackSprintPrediction(athleteData);
+      }
       const features = this.extractSprintFeatures(athleteData);
 
       // Weighted linear regression with flag football optimizations
       const prediction = this.computeLinearRegression(
         features,
-        model.weights!,
-        model.bias!,
+        model.weights ?? [],
+        model.bias ?? 0,
       );
 
       // Apply flag football specific adjustments
@@ -307,9 +323,12 @@ export class MlPredictorService {
   /**
    * Predict route running skill progression
    */
-  predictRouteProgression(skillData: any): RoutePredictionResult {
+  predictRouteProgression(skillData: RouteSkillInput): RoutePredictionResult {
     try {
-      const model = this.models.get("routes")!;
+      const model = this.models.get("routes");
+      if (!model) {
+        return this.getFallbackRoutePrediction();
+      }
       const features = this.extractRouteFeatures(skillData);
 
       // Multi-class classification for route types
@@ -344,12 +363,15 @@ export class MlPredictorService {
    * Enhanced decision making prediction for QBs and DBs
    */
   predictDecisionMaking(
-    playerData: any,
+    playerData: DecisionPredictionInput,
     position: string,
   ): DecisionPredictionResult {
     try {
-      const model = this.models.get("decisions")!;
-      const features = this.extractDecisionFeatures(playerData, position);
+      const model = this.models.get("decisions");
+      if (!model) {
+        return this.getFallbackDecisionPrediction(position);
+      }
+      const features = this.extractDecisionFeatures(playerData);
 
       // Position-specific decision scenarios
       const scenarios =
@@ -394,42 +416,42 @@ export class MlPredictorService {
     }
   }
 
-  private extractSprintFeatures(athleteData: any): any {
+  private extractSprintFeatures(athleteData: SprintPredictionInput): SprintFeatures {
     return {
-      current_speed: athleteData.sprintTimes?.average || 4.5,
-      training_load: athleteData.weeklyLoad || 100,
-      recovery_score: athleteData.recoveryMetrics?.overall || 0.7,
-      biomechanics: athleteData.movementQuality || 0.8,
-      weather: athleteData.conditions?.temperature || 70,
+      current_speed: athleteData.sprintTimes?.average ?? 4.5,
+      training_load: athleteData.weeklyLoad ?? 100,
+      recovery_score: athleteData.recoveryMetrics?.overall ?? 0.7,
+      biomechanics: athleteData.movementQuality ?? 0.8,
+      weather: athleteData.conditions?.temperature ?? 70,
       position_factor: this.getPositionSpeedFactor(athleteData.position),
-      age_factor: this.getAgeFactor(athleteData.age || 22),
+      age_factor: this.getAgeFactor(athleteData.age ?? 22),
     };
   }
 
-  private extractRouteFeatures(skillData: any): any {
+  private extractRouteFeatures(skillData: RouteSkillInput): RouteFeatures {
     return {
-      practice_reps: skillData.reps || 50,
-      success_rate: skillData.successRate || 0.65,
-      complexity_level: skillData.complexity || 0.5,
-      cognitive_load: skillData.fatigueLevel || 0.4,
-      fatigue: skillData.currentFatigue || 0.3,
+      practice_reps: skillData.reps ?? 50,
+      success_rate: skillData.successRate ?? 0.65,
+      complexity_level: skillData.complexity ?? 0.5,
+      cognitive_load: skillData.fatigueLevel ?? 0.4,
+      fatigue: skillData.currentFatigue ?? 0.3,
     };
   }
 
-  private extractDecisionFeatures(playerData: any, position: string): any {
+  private extractDecisionFeatures(playerData: DecisionPredictionInput): DecisionFeatures {
     return {
-      reaction_time: playerData.reactionTime || 0.45,
-      field_vision: playerData.visionScore || 0.75,
-      pressure_handling: playerData.pressureScore || 0.7,
-      experience: (playerData.yearsExperience || 2) / 10,
+      reaction_time: playerData.reactionTime ?? 0.45,
+      field_vision: playerData.visionScore ?? 0.75,
+      pressure_handling: playerData.pressureScore ?? 0.7,
+      experience: (playerData.yearsExperience ?? 2) / 10,
       game_situation: 0.5,
     };
   }
 
   private applyFlagFootballOptimization(
     prediction: number,
-    athleteData: any,
-  ): any {
+    athleteData: SprintPredictionInput,
+  ): FlagFootballOptimization {
     const agilityWeight = 0.3;
     const accelerationWeight = 0.4;
     const topSpeedWeight = 0.3;
@@ -437,20 +459,20 @@ export class MlPredictorService {
     const adjustedTime =
       prediction *
       (1 +
-        agilityWeight * (athleteData.agilityScore || 0.8) +
-        accelerationWeight * (athleteData.accelerationScore || 0.75) +
-        topSpeedWeight * (athleteData.topSpeedScore || 0.7));
+        agilityWeight * (athleteData.agilityScore ?? 0.8) +
+        accelerationWeight * (athleteData.accelerationScore ?? 0.75) +
+        topSpeedWeight * (athleteData.topSpeedScore ?? 0.7));
 
     return {
       time: Math.max(3.8, Math.min(6.0, adjustedTime)),
       improvement: (prediction - adjustedTime) / prediction,
-      acceleration: athleteData.accelerationScore || 0.75,
-      topSpeed: athleteData.topSpeedScore || 0.7,
-      agility: athleteData.agilityScore || 0.8,
+      acceleration: athleteData.accelerationScore ?? 0.75,
+      topSpeed: athleteData.topSpeedScore ?? 0.7,
+      agility: athleteData.agilityScore ?? 0.8,
     };
   }
 
-  private generateSprintRecommendations(performance: any): Recommendation[] {
+  private generateSprintRecommendations(performance: FlagFootballOptimization): Recommendation[] {
     const recommendations: Recommendation[] = [];
 
     if (performance.acceleration < 0.8) {
@@ -496,7 +518,7 @@ export class MlPredictorService {
   }
 
   private computeLinearRegression(
-    features: any,
+    features: SprintFeatures | RouteFeatures | DecisionFeatures,
     weights: number[],
     bias: number,
   ): number {
@@ -512,12 +534,12 @@ export class MlPredictorService {
     return prediction;
   }
 
-  private computeSkillClassification(features: any, model: ModelConfig): any {
+  private computeSkillClassification(features: RouteFeatures & { route_type?: string }, model: ModelConfig): SkillClassificationResult {
     // Simplified classification logic
     const score = this.computeLinearRegression(
       features,
-      model.weights || [],
-      model.bias || 0,
+      model.weights ?? [],
+      model.bias ?? 0,
     );
     return {
       current: score,
@@ -527,8 +549,8 @@ export class MlPredictorService {
     };
   }
 
-  private computeNeuralNetwork(features: any, _model: ModelConfig): any {
-    const input = Object.values(features) as number[];
+  private computeNeuralNetwork(features: DecisionFeatures & { scenario_type?: string }, _model: ModelConfig): NeuralNetworkDecisionResult {
+    const input = Object.values(features).filter((v): v is number => typeof v === "number");
     let output = input.reduce(
       (sum, val, idx) => sum + val * (0.1 + idx * 0.05),
       0,
@@ -569,7 +591,7 @@ export class MlPredictorService {
   }
 
   private assessCognitiveLoad(
-    features: any,
+    features: DecisionFeatures,
   ): DecisionPredictionResult["cognitiveLoad"] {
     const baseLoad =
       (features.field_vision +
@@ -599,7 +621,7 @@ export class MlPredictorService {
       .map(([scenario]) => scenario.replace(/_/g, " "));
   }
 
-  private getPositionSpeedFactor(position: string): number {
+  private getPositionSpeedFactor(position: string | undefined): number {
     const factors: Record<string, number> = {
       QB: 0.85,
       WR: 1.0,
@@ -608,7 +630,7 @@ export class MlPredictorService {
       LB: 0.8,
       DL: 0.7,
     };
-    return factors[position] || 0.85;
+    return position ? (factors[position] ?? 0.85) : 0.85;
   }
 
   private getAgeFactor(age: number): number {
@@ -618,7 +640,7 @@ export class MlPredictorService {
     return 0.95;
   }
 
-  private generateTrainingRecommendations(features: any): string[] {
+  private generateTrainingRecommendations(features: DecisionFeatures & { scenario_type?: string }): string[] {
     const recommendations: string[] = [];
     if (features.reaction_time > 0.4)
       recommendations.push("Reaction time drills");
@@ -634,12 +656,12 @@ export class MlPredictorService {
   async savePredictionData(
     playerId: string,
     predictionType: string,
-    input: any,
-    output: any,
-    actualResult: any = null,
+    input: SprintPredictionInput | RouteSkillInput | DecisionPredictionInput,
+    output: SprintPredictionResult | RoutePredictionResult | DecisionPredictionResult,
+    actualResult: unknown = null,
   ): Promise<void> {
     try {
-      const trainingEntry = {
+      const trainingEntry: MLTrainingDataEntry = {
         playerId,
         predictionType,
         timestamp: Date.now(),
@@ -654,7 +676,10 @@ export class MlPredictorService {
       if (!this.trainingData.has(predictionType)) {
         this.trainingData.set(predictionType, []);
       }
-      this.trainingData.get(predictionType)!.push(trainingEntry);
+      const existingData = this.trainingData.get(predictionType);
+      if (existingData) {
+        existingData.push(trainingEntry);
+      }
 
       // Persist to Supabase
       const { error } = await this.supabase.client
@@ -674,7 +699,7 @@ export class MlPredictorService {
     }
   }
 
-  private calculateAccuracy(predicted: any, actual: any): number {
+  private calculateAccuracy(predicted: unknown, actual: unknown): number {
     if (typeof predicted === "number" && typeof actual === "number") {
       return 1 - Math.abs(predicted - actual) / Math.max(predicted, actual);
     }
@@ -682,7 +707,7 @@ export class MlPredictorService {
   }
 
   private getFallbackSprintPrediction(
-    _athleteData: any,
+    _athleteData: SprintPredictionInput,
   ): SprintPredictionResult {
     return {
       predictedTime: 4.8,

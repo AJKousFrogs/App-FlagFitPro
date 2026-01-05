@@ -254,12 +254,13 @@ export class DataSourceService {
           "No data available yet. Start logging your training to see metrics.",
         );
         break;
-      case DataState.INSUFFICIENT_DATA:
+      case DataState.INSUFFICIENT_DATA: {
         const daysNeeded = requirement.minimumDays - currentDataPoints;
         warnings.push(
           `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`,
         );
         break;
+      }
     }
 
     // If data is insufficient, don't return the value

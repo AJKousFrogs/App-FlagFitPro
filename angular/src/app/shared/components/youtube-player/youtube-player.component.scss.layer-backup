@@ -1,0 +1,61 @@
+// ============================================================================
+// youtube-player.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .youtube-player-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: var(--space-8);
+    color: var(--color-text-secondary);
+  }
+
+  .youtube-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--surface-tertiary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .player-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .player-info {
+    display: flex;
+    gap: var(--space-6);
+    padding: 0.75rem;
+    background: var(--surface-tertiary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-h4);
+  }
+
+  .info-item {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .info-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+  }
+
+  .info-value {
+    color: var(--color-text-primary);
+  }
+}
+

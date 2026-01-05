@@ -356,7 +356,7 @@ export class TrainingBuilderComponent {
       description: "Dynamic stretching and light movement",
       aiGenerated: false,
     });
-    currentTime += 10;
+    let _currentTime = 10;
 
     // Main exercises
     this.generatedExercises().forEach((exercise, index) => {
@@ -633,10 +633,10 @@ export class TrainingBuilderComponent {
   }
 
   private generateExercisesForGoals(
-    goals: string[],
-    duration: number,
-    intensity: string,
-    equipment: string[] = [],
+    _goals: string[],
+    _duration: number,
+    _intensity: string,
+    _equipment: string[] = [],
   ): TrainingExercise[] {
     // Return empty array. In production, this would fetch from a rule-based engine or ExerciseDB
     return [];
@@ -880,10 +880,10 @@ export class TrainingBuilderComponent {
 
       // Optionally navigate to training schedule
       this.router.navigate(["/training/schedule"]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("Error saving session template:", error);
       this.toastService.error(
-        error.message || "Failed to save session template",
+        (error as Error)?.message || "Failed to save session template",
       );
     } finally {
       this.isSaving.set(false);

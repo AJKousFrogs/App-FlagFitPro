@@ -15,7 +15,6 @@
  */
 
 import { HttpInterceptorFn, HttpResponse } from "@angular/common/http";
-import { inject } from "@angular/core";
 import { of, tap } from "rxjs";
 
 interface CacheEntry {

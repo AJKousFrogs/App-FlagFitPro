@@ -20,8 +20,8 @@
     background: none;
     border: none;
     border-radius: var(--radius-md);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -43,7 +43,7 @@
   h3 {
     margin: 0 0 var(--space-3) 0;
     font-size: var(--font-body-lg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -76,13 +76,13 @@
     gap: var(--space-2);
 
     .program-icon {
-      font-size: var(--font-heading-md);
+      font-size: var(--font-size-h2);
     }
 
     h4 {
       margin: 0;
       font-size: var(--font-body-lg);
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -104,7 +104,7 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: center;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
 
     .detail-label {
       color: var(--ds-text-tertiary);
@@ -112,7 +112,7 @@
     }
 
     .compliance {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
 
       &.good {
         color: var(--ds-primary-green);
@@ -127,7 +127,7 @@
   .progress-label {
     display: block;
     margin-top: var(--space-1);
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
     text-align: right;
   }
@@ -145,19 +145,19 @@
     padding: var(--space-1) var(--space-2);
     background: var(--ds-surface-base);
     border-radius: var(--radius-full);
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-secondary);
     white-space: nowrap;
 
     &.current {
       background: var(--ds-primary-green);
       color: white;
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
     }
   }
 
   i {
-    font-size: 0.6rem;
+    font-size: var(--font-body-2xs); /* 10px - micro icon */
     color: var(--ds-text-tertiary);
   }
 }
@@ -170,32 +170,8 @@
   border-top: 1px solid var(--ds-border-subtle);
 }
 
-// Empty State
-.empty-state-card {
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--space-6);
-    text-align: center;
-
-    i {
-      font-size: var(--font-display-md);
-      color: var(--ds-text-tertiary);
-      margin-bottom: var(--space-3);
-    }
-
-    h3 {
-      margin: 0 0 var(--space-2) 0;
-      color: var(--ds-text-primary);
-    }
-
-    p {
-      margin: 0 0 var(--space-4) 0;
-      color: var(--ds-text-secondary);
-    }
-  }
-}
+// Empty State - REMOVED (use .card-empty-state from card-shell)
+// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Program Dialog Form
 .program-form {
@@ -213,8 +189,8 @@
 
   h4 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-md);
-    font-weight: 600;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--ds-border-subtle);
@@ -227,8 +203,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 
@@ -268,22 +244,22 @@
     gap: var(--space-1);
 
     .phase-name {
-      font-weight: 600;
-      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-primary);
     }
 
     .phase-weeks {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
     }
   }
 
   .phase-load {
     margin-top: var(--space-2);
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-primary-green);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
   }
 }
 
@@ -305,13 +281,13 @@
 
   .day-label {
     min-width: 40px;
-    font-weight: 600;
-    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-primary);
   }
 
   .rpe-label {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-tertiary);
   }
 }
@@ -328,7 +304,7 @@
     margin-bottom: var(--space-3);
 
     label {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       cursor: pointer;
     }
   }
@@ -353,19 +329,19 @@
   }
 
   label {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     cursor: pointer;
 
     .player-status {
       color: var(--ds-text-tertiary);
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
     }
   }
 }
 
 .selected-count {
   margin: var(--space-3) 0 0 0;
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 }
 

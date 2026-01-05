@@ -418,35 +418,81 @@
   }
 
   // ============================================
-  // CHECKBOX / RADIO
+  // CHECKBOX - 20px box, 6px radius, green check
+  // Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+  // Disabled: opacity 0.6, not interactive
   // ============================================
 
   .p-checkbox {
+    // Ensure consistent sizing and no layout shift
+    flex-shrink: 0;
+    width: var(--p-checkbox-width);
+    height: var(--p-checkbox-height);
+    min-width: var(--p-checkbox-width);
+    min-height: var(--p-checkbox-height);
+
     .p-checkbox-box {
       width: var(--p-checkbox-width);
       height: var(--p-checkbox-height);
+      min-width: var(--p-checkbox-width);
+      min-height: var(--p-checkbox-height);
       border-radius: var(--p-checkbox-border-radius);
-      border-color: var(--p-checkbox-border-color);
+      border: var(--p-checkbox-border-width) solid var(--p-checkbox-border-color);
+      background: var(--p-checkbox-background);
       transition: 
         background-color var(--p-transition-duration) var(--p-transition-timing-function),
-        border-color var(--p-transition-duration) var(--p-transition-timing-function);
+        border-color var(--p-transition-duration) var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
 
+      // Checked state - green background with white check
       &.p-highlight {
         background: var(--p-checkbox-checked-background);
         border-color: var(--p-checkbox-checked-border-color);
+
+        .p-checkbox-icon {
+          color: var(--p-checkbox-check-color);
+        }
       }
 
+      // Focus state - consistent focus ring
       &:focus-visible {
-        box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-checkbox-focus-ring-color);
+        box-shadow: var(--p-checkbox-focus-ring);
+        outline: none;
+      }
+    }
+
+    // Hover state (only on capable devices)
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.p-disabled):hover .p-checkbox-box {
+        border-color: var(--p-checkbox-hover-border-color);
+      }
+    }
+
+    // Disabled state
+    &.p-disabled {
+      opacity: var(--p-checkbox-disabled-opacity);
+      cursor: not-allowed;
+      pointer-events: none;
+
+      .p-checkbox-box {
+        cursor: not-allowed;
       }
     }
   }
 
   .p-radio {
+    // Ensure consistent sizing
+    flex-shrink: 0;
+    width: var(--p-radio-width);
+    height: var(--p-radio-height);
+
     .p-radio-box {
       width: var(--p-radio-width);
       height: var(--p-radio-height);
       border-color: var(--p-radio-border-color);
+      transition: 
+        border-color var(--p-transition-duration) var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
 
       &.p-highlight {
         border-color: var(--p-radio-checked-border-color);
@@ -455,31 +501,89 @@
           background: var(--p-radio-checked-background);
         }
       }
+
+      &:focus-visible {
+        box-shadow: var(--p-radio-focus-ring);
+        outline: none;
+      }
+    }
+
+    // Disabled state
+    &.p-disabled {
+      opacity: var(--p-checkbox-disabled-opacity);
+      cursor: not-allowed;
+      pointer-events: none;
     }
   }
 
   // ============================================
-  // TOGGLESWITCH
+  // TOGGLESWITCH - 44px hit area, visible track + thumb
+  // Green = ON, neutral = OFF
+  // Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+  // Disabled: opacity 0.6, not interactive
   // ============================================
 
   .p-toggleswitch {
+    // Ensure 44px hit area for accessibility
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--p-toggleswitch-width);
+    height: var(--p-toggleswitch-height);
+    min-width: var(--p-toggleswitch-width);
+    min-height: var(--p-toggleswitch-height);
+    cursor: pointer;
+
     .p-toggleswitch-slider {
+      position: relative;
       width: var(--p-toggleswitch-width);
       height: var(--p-toggleswitch-height);
       border-radius: var(--p-toggleswitch-border-radius);
       background: var(--p-toggleswitch-background);
-      transition: background-color var(--p-transition-duration) var(--p-transition-timing-function);
+      transition: 
+        background-color var(--p-transition-duration) var(--p-transition-timing-function),
+        box-shadow var(--p-transition-duration) var(--p-transition-timing-function);
 
+      // Thumb/handle
       &::before {
+        content: "";
+        position: absolute;
+        top: var(--p-toggleswitch-handle-offset);
+        left: var(--p-toggleswitch-handle-offset);
         width: var(--p-toggleswitch-handle-size);
         height: var(--p-toggleswitch-handle-size);
         background: var(--p-toggleswitch-handle-background);
         border-radius: var(--radius-full);
+        box-shadow: var(--p-toggleswitch-handle-shadow);
+        transition: transform var(--p-transition-duration) var(--p-transition-timing-function);
       }
     }
 
+    // Checked state - green background, thumb moves right
     &.p-toggleswitch-checked .p-toggleswitch-slider {
       background: var(--p-toggleswitch-checked-background);
+
+      &::before {
+        // Move thumb to the right: width - handle-size - (2 * offset)
+        transform: translateX(calc(var(--p-toggleswitch-width) - var(--p-toggleswitch-handle-size) - (var(--p-toggleswitch-handle-offset) * 2)));
+      }
+    }
+
+    // Focus state - consistent focus ring
+    &:focus-visible {
+      outline: none;
+
+      .p-toggleswitch-slider {
+        box-shadow: var(--p-toggleswitch-focus-ring);
+      }
+    }
+
+    // Disabled state
+    &.p-disabled {
+      opacity: var(--p-toggleswitch-disabled-opacity);
+      cursor: not-allowed;
+      pointer-events: none;
     }
   }
 

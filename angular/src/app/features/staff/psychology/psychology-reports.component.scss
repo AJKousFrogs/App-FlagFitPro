@@ -17,7 +17,7 @@
   margin-bottom: var(--ds-spacing-xl);
 
   i {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-size-h2);
     color: var(--blue-600);
     margin-top: var(--space-1);
   }
@@ -31,7 +31,7 @@
 
     p {
       margin: 0;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--blue-700);
     }
   }
@@ -48,8 +48,8 @@
 
   h3 {
     margin: 0;
-    font-size: var(--font-heading-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-semibold);
   }
 }
 
@@ -61,18 +61,9 @@
     gap: var(--ds-spacing-lg);
   }
 
-  :host ::ng-deep .report-card {
-    .p-card-header {
-      padding: var(--ds-spacing-md);
-      background: var(--surface-ground);
-    }
-
-    .p-card-footer {
-      display: flex;
-      gap: var(--ds-spacing-xs);
-      flex-wrap: wrap;
-    }
-  }
+  // .report-card .p-card-header/.p-card-footer REMOVED
+  // Use app-card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md
 
   .report-header {
     display: flex;
@@ -88,7 +79,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
     }
 
     .report-info {
@@ -96,11 +87,11 @@
       flex-direction: column;
 
       .report-type {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
       }
 
       .report-date {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         color: var(--text-color-secondary);
       }
     }
@@ -108,14 +99,14 @@
 
   .report-details {
     .report-period {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
       margin-bottom: var(--ds-spacing-md);
     }
 
     .included-sections {
       .section-label {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         color: var(--text-color-secondary);
         display: block;
         margin-bottom: var(--ds-spacing-xs);
@@ -127,7 +118,7 @@
         gap: var(--ds-spacing-xs);
 
         .section-tag {
-          font-size: var(--font-body-xs);
+          font-size: var(--font-size-badge);
           padding: var(--space-1) var(--space-2);
           background: var(--surface-ground);
           border-radius: var(--ds-radius-sm);
@@ -164,28 +155,28 @@
       margin-bottom: var(--ds-spacing-sm);
 
       .metric-label {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         color: var(--text-color-secondary);
       }
     }
 
     .metric-value {
       display: block;
-      font-size: var(--font-heading-md);
-      font-weight: 700;
+      font-size: var(--font-size-h2);
+      font-weight: var(--font-weight-bold);
       margin-bottom: var(--ds-spacing-sm);
     }
 
-    :host ::ng-deep .p-progressbar {
+    .p-progressbar {
       height: var(--space-2);
     }
 
-    :host ::ng-deep .stress-bar .p-progressbar-value {
+    .stress-bar .p-progressbar-value {
       background: var(--orange-500);
     }
   }
 
-  :host ::ng-deep p-chart {
+  p-chart {
     height: 300px;
   }
 
@@ -208,13 +199,13 @@
       align-items: center;
 
       .stat-value {
-        font-size: var(--font-heading-md);
-        font-weight: 700;
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-bold);
         color: var(--primary-color);
       }
 
       .stat-label {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         color: var(--text-color-secondary);
       }
     }
@@ -229,11 +220,11 @@
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-sm);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
 
       i {
-        font-size: var(--font-body-md);
+        font-size: var(--font-size-body);
       }
 
       &.positive {
@@ -251,12 +242,12 @@
     align-items: center;
     gap: var(--ds-spacing-sm);
     margin-bottom: var(--ds-spacing-md);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
   }
 
   .activities-list {
     .list-label {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--text-color-secondary);
       display: block;
       margin-bottom: var(--ds-spacing-xs);
@@ -268,7 +259,7 @@
       gap: var(--ds-spacing-xs);
 
       .activity-tag {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         padding: var(--space-1) var(--space-2);
         background: var(--green-50);
         color: var(--green-700);
@@ -288,7 +279,7 @@
         align-items: center;
         gap: var(--ds-spacing-sm);
         margin: 0 0 var(--ds-spacing-sm);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         color: var(--text-color-secondary);
 
         i {
@@ -299,7 +290,7 @@
       ul {
         margin: 0;
         padding-left: var(--ds-spacing-lg);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
 
         li {
           margin-bottom: var(--ds-spacing-xs);
@@ -325,12 +316,9 @@
     gap: var(--ds-spacing-lg);
   }
 
-  :host ::ng-deep .precomp-card {
-    .p-card-header {
-      padding: var(--ds-spacing-md);
-      background: var(--surface-ground);
-    }
-  }
+  // .precomp-card .p-card-header REMOVED
+  // Use app-card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md
 
   .precomp-header {
     display: flex;
@@ -342,11 +330,11 @@
       flex-direction: column;
 
       .comp-name {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
       }
 
       .comp-date {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         color: var(--text-color-secondary);
       }
     }
@@ -361,7 +349,7 @@
   .mental-state {
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
     }
 
@@ -375,7 +363,7 @@
         flex-direction: column;
 
         .metric-label {
-          font-size: var(--font-body-xs);
+          font-size: var(--font-size-badge);
           color: var(--text-color-secondary);
         }
 
@@ -385,11 +373,11 @@
           gap: var(--ds-spacing-xs);
 
           .metric-value {
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
           }
 
           i {
-            font-size: var(--font-body-sm);
+            font-size: var(--font-size-h4);
 
             &.positive {
               color: var(--green-500);
@@ -401,7 +389,7 @@
         }
 
         .metric-value {
-          font-weight: 600;
+          font-weight: var(--font-weight-semibold);
         }
       }
     }
@@ -414,7 +402,7 @@
 
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
     }
 
@@ -430,20 +418,20 @@
         align-items: center;
         gap: var(--ds-spacing-sm);
 
-        :host ::ng-deep .p-progressbar {
+        .p-progressbar {
           flex: 1;
           height: var(--space-2);
         }
 
         span {
-          font-weight: 600;
+          font-weight: var(--font-weight-semibold);
           min-width: var(--space-10);
         }
       }
     }
 
     .concern {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
 
       strong {
@@ -465,8 +453,8 @@
     gap: var(--ds-spacing-xs);
 
     label {
-      font-weight: 500;
-      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-h4);
     }
   }
 
@@ -487,7 +475,7 @@
     }
 
     .privacy-hint {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
       margin: 0 0 var(--ds-spacing-md);
     }
@@ -504,7 +492,7 @@
       gap: var(--ds-spacing-sm);
 
       label {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         cursor: pointer;
       }
     }
@@ -516,7 +504,7 @@
 
       h5 {
         margin: 0 0 var(--ds-spacing-sm);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         color: var(--text-color-secondary);
       }
 
@@ -539,33 +527,14 @@
     gap: var(--ds-spacing-xs);
 
     label {
-      font-weight: 500;
-      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-h4);
     }
   }
 }
 
-// Empty State
-.empty-state {
-  text-align: center;
-  padding: var(--ds-spacing-3xl);
-
-  i {
-    font-size: var(--font-display-md);
-    color: var(--text-color-secondary);
-    opacity: 0.5;
-    margin-bottom: var(--ds-spacing-md);
-  }
-
-  h4 {
-    margin: 0 0 var(--ds-spacing-sm);
-  }
-
-  p {
-    margin: 0 0 var(--ds-spacing-lg);
-    color: var(--text-color-secondary);
-  }
-}
+// Empty State - REMOVED (use .card-empty-state from card-shell)
+// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Responsive
 @media (max-width: 768px) {

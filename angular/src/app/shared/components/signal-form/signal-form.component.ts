@@ -9,7 +9,6 @@ import {
   Component,
   model,
   computed,
-  signal,
   output,
   inject,
 } from "@angular/core";

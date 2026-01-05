@@ -13,7 +13,6 @@ import {
   inject,
   computed,
   ChangeDetectionStrategy,
-  HostListener,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
@@ -21,8 +20,6 @@ import { ButtonComponent } from "../button/button.component";
 import { DividerModule } from "primeng/divider";
 import {
   KeyboardShortcutsService,
-  KeyboardShortcut,
-  ShortcutCategory,
 } from "../../../core/services/keyboard-shortcuts.service";
 
 @Component({

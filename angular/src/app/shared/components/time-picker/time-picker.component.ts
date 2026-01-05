@@ -81,7 +81,7 @@ export class TimePickerComponent implements ControlValueAccessor {
 
   // Value signal
   timeValue = signal<string>("");
-  private onChangeFn = (value: string) => {};
+  private onChangeFn = (_value: string) => {};
   private onTouchedFn = () => {};
 
   // Events
@@ -112,7 +112,7 @@ export class TimePickerComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Handled via disabled input
   }
 }

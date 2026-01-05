@@ -26,7 +26,6 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
-  UnreadAnnouncement,
 } from "../../../core/services/team-notification.service";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";

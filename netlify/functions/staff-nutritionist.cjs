@@ -46,7 +46,7 @@ async function getAthleteNutritionOverview(teamId) {
     .eq("team_id", teamId)
     .eq("role", "player");
 
-  if (membersError) throw membersError;
+  if (membersError) {throw membersError;}
 
   const athletes = [];
 
@@ -54,7 +54,7 @@ async function getAthleteNutritionOverview(teamId) {
     const userId = member.user_id;
     const user = member.users;
 
-    if (!user) continue;
+    if (!user) {continue;}
 
     // Get nutrition profile
     const { data: nutritionProfile } = await supabaseAdmin
@@ -130,7 +130,7 @@ async function getBodyCompositionTrends(userId, days = 90) {
     .gte("measurement_date", startDate.toISOString().split("T")[0])
     .order("measurement_date", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((m) => ({
     date: m.measurement_date,
@@ -196,7 +196,7 @@ async function getTeamHydrationSummary(teamId) {
     .eq("role", "player");
 
   const userIds = members?.map((m) => m.user_id) || [];
-  if (userIds.length === 0) return { adequate: 0, warning: 0, critical: 0 };
+  if (userIds.length === 0) {return { adequate: 0, warning: 0, critical: 0 };}
 
   const { data: wellness } = await supabaseAdmin
     .from("wellness_entries")
@@ -215,9 +215,9 @@ async function getTeamHydrationSummary(teamId) {
   let adequate = 0, warning = 0, critical = 0;
   for (const [, entry] of hydrationMap) {
     const level = entry.hydration_level || 5;
-    if (level >= 7) adequate++;
-    else if (level >= 4) warning++;
-    else critical++;
+    if (level >= 7) {adequate++;}
+    else if (level >= 4) {warning++;}
+    else {critical++;}
   }
 
   return { adequate, warning, critical };
@@ -295,15 +295,15 @@ async function generateNutritionReport(userId, reportType = "weekly") {
 
 // Helper functions
 function calculateSupplementCompliance(logs) {
-  if (!logs || logs.length === 0) return 0;
+  if (!logs || logs.length === 0) {return 0;}
   const taken = logs.filter((l) => l.taken).length;
   return Math.round((taken / logs.length) * 100);
 }
 
 function getHydrationStatus(level) {
-  if (!level) return "unknown";
-  if (level >= 7) return "adequate";
-  if (level >= 4) return "warning";
+  if (!level) {return "unknown";}
+  if (level >= 7) {return "adequate";}
+  if (level >= 4) {return "warning";}
   return "critical";
 }
 

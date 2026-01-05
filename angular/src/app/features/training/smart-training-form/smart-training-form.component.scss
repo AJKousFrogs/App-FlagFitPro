@@ -3,159 +3,157 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .smart-training-form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
+.smart-training-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
 
-  .ai-suggestions {
-    background: linear-gradient(135deg, var(--primitive-primary-50) 0%, var(--primitive-primary-100) 100%);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    margin-bottom: 1.5rem;
-    border-left: 4px solid var(--ds-primary-green);
-  }
+.ai-suggestions {
+  background: linear-gradient(135deg, var(--primitive-primary-50) 0%, var(--primitive-primary-100) 100%);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--ds-primary-green);
+}
 
-  .ai-suggestions h5 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0 0 0.5rem 0;
-    color: var(--ds-primary-green);
-    font-weight: var(--font-weight-semibold);
-  }
+.ai-suggestions h5 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--ds-primary-green);
+  font-weight: var(--font-weight-semibold);
+}
 
-  .suggestion-chips {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-  }
+.suggestion-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
 
-  .clickable-chip {
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
+.clickable-chip {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
 
-  .clickable-chip:hover {
-    transform: scale(1.05);
-  }
+.clickable-chip:hover {
+  transform: scale(1.05);
+}
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.session-type-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.session-type-option i {
+  font-size: var(--icon-lg);
+  color: var(--color-brand-primary);
+}
+
+.option-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.option-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-h4);
+}
+
+.duration-display {
+  font-weight: var(--font-weight-semibold);
+  color: var(--ds-primary-green);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.weather-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--surface-tertiary);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.5rem;
+}
+
+.weather-indicator i {
+  color: var(--color-brand-primary);
+}
+
+.switch-label {
+  margin-top: 0.5rem;
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.equipment-section {
+  margin-top: 1rem;
+}
+
+.equipment-section h5 {
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.equipment-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.equipment-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.equipment-option i {
+  font-size: var(--icon-lg);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+
+@media (max-width: 768px) {
   .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-6);
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .form-field label {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .session-type-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
-  }
-
-  .session-type-option i {
-    font-size: var(--icon-lg);
-    color: var(--color-brand-primary);
-  }
-
-  .option-label {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-primary);
-  }
-
-  .option-description {
-    color: var(--color-text-secondary);
-    font-size: var(--font-body-sm);
-  }
-
-  .duration-display {
-    font-weight: var(--font-weight-semibold);
-    color: var(--ds-primary-green);
-    text-align: center;
-    margin-top: 0.5rem;
-  }
-
-  .weather-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: var(--surface-tertiary);
-    border-radius: var(--radius-md);
-    margin-bottom: 0.5rem;
-  }
-
-  .weather-indicator i {
-    color: var(--color-brand-primary);
-  }
-
-  .switch-label {
-    margin-top: 0.5rem;
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .equipment-section {
-    margin-top: 1rem;
-  }
-
-  .equipment-section h5 {
-    margin-bottom: 1rem;
-    color: var(--color-text-primary);
-  }
-
-  .equipment-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .equipment-option {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-  }
-
-  .equipment-option i {
-    font-size: var(--icon-lg);
+    grid-template-columns: 1fr;
   }
 
   .form-actions {
-    display: flex;
-    gap: var(--space-4);
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border-primary);
+    flex-direction: column;
   }
 
-  @media (max-width: 768px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-      flex-direction: column;
-    }
-
-    .form-actions p-button {
-      width: 100%;
-    }
+  .form-actions p-button {
+    width: 100%;
   }
 }
 

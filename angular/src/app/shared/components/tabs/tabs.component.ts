@@ -12,7 +12,7 @@ export interface TabItem {
   content?: string;
   disabled?: boolean;
   icon?: string;
-  value?: any;
+  value?: string | number;
 }
 
 /**
@@ -66,5 +66,5 @@ export class TabsComponent {
   styleClass = input<string>();
 
   // Events
-  onChange = output<any>();
+  onChange = output<{ index: number; originalEvent: Event }>();
 }

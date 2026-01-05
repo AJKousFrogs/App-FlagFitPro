@@ -131,15 +131,15 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     }
 
     .tool-card i {
-      font-size: 2.5rem;
+      font-size: var(--icon-2xl); /* 32px - feature icon */
       color: var(--ds-primary-green);
       margin-bottom: var(--spacing-4);
     }
 
     .tool-card h3 {
-      font-size: var(--font-size-lg);
+      font-size: var(--font-size-h2); /* H2: Card titles - 18px */
       margin: 0 0 var(--spacing-2) 0;
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
     }
 
     .tool-card p {

@@ -24,27 +24,38 @@
      ================================================================ */
 
   .p-button {
+    // ─────────────────────────────────────────
+    // LOCKED GEOMETRY - MATCHES APP-BUTTON CONTRACT
+    // ─────────────────────────────────────────
     font-family: var(--font-family-sans);
     font-weight: var(--font-weight-semibold);
-    font-size: 0.9375rem; /* 15px - slightly larger for better readability */
+    font-size: var(--font-body-md, 16px);
     letter-spacing: 0.01em;
-    border-radius: var(--radius-lg, 0.5rem); /* 8px - Raised button style */
-    padding: 0.75rem 1.5rem;
-    min-height: var(--button-height-md);
-    border: none;
+    line-height: 1.5;
+    
+    // LOCKED SHAPE - RAISED RECTANGULAR (NOT PILL)
+    border-radius: var(--radius-button, 8px);
+    
+    // LOCKED SIZE
+    min-height: 44px;
+    padding: var(--space-3, 12px) var(--space-6, 24px);
+    
+    // LOCKED BORDER for hover state support
+    border: 2px solid transparent;
+    
     transition:
-      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
     position: relative;
     overflow: hidden;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--space-2, 8px);
 
     /* Subtle inner glow effect */
     &::before {
@@ -134,13 +145,13 @@
   .p-button.p-disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
+    transform: none;
+    box-shadow: none;
   }
 
   /* ================================
      PRIMARY BUTTON - Main CTA
-     Raised style with elevated shadow
+     DESIGN CONTRACT: Green bg → White bg + green text on hover
      ================================ */
   .p-button-primary,
   .p-button:not(.p-button-outlined):not(.p-button-text):not(
@@ -148,51 +159,41 @@
     ):not(.p-button-success):not(.p-button-info):not(.p-button-warning):not(
       .p-button-danger
     ):not(.p-button-help):not(.p-button-contrast) {
-    background: linear-gradient(
-      180deg,
-      var(--ds-primary-green-light) 0%,
-      var(--ds-primary-green) 100%
-    );
+    background: var(--ds-primary-green);
     color: var(--color-text-on-primary);
-    /* Raised button elevation - more pronounced depth */
+    border-color: transparent;
+    /* Raised button elevation */
     box-shadow:
-      0 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 1px 5px 0 rgba(var(--ds-primary-green-rgb), 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      0 4px 6px rgba(0, 0, 0, 0.15),
+      0 2px 4px rgba(0, 0, 0, 0.1);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: linear-gradient(
-          180deg,
-          var(--ds-primary-green) 0%,
-          var(--ds-primary-green-hover) 100%
-        );
-        /* Elevated hover state - stronger depth */
+        /* HOVER: White background + green text (inverted) */
+        background: var(--color-text-on-primary, #ffffff);
+        color: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
         box-shadow:
-          0 6px 10px 0 rgba(0, 0, 0, 0.14),
-          0 1px 18px 0 rgba(0, 0, 0, 0.12),
-          0 3px 5px -1px rgba(var(--ds-primary-green-rgb), 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          0 8px 20px rgba(34, 139, 34, 0.3),
+          0 4px 8px rgba(0, 0, 0, 0.1);
       }
     }
 
     &:active:not(:disabled) {
       background: var(--ds-primary-green-hover);
+      color: var(--color-text-on-primary);
+      border-color: transparent;
       /* Pressed state - reduced elevation */
       box-shadow:
-        0 2px 4px -1px rgba(0, 0, 0, 0.2),
-        0 1px 2px 0 rgba(0, 0, 0, 0.14),
-        inset 0 2px 4px rgba(0, 0, 0, 0.15);
+        0 2px 4px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     &:focus-visible {
       box-shadow:
         0 0 0 3px var(--surface-primary),
         0 0 0 5px var(--ds-primary-green),
-        0 3px 1px -2px rgba(0, 0, 0, 0.2),
-        0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 1px 5px 0 rgba(var(--ds-primary-green-rgb), 0.12);
+        0 4px 6px rgba(0, 0, 0, 0.15);
     }
   }
 
@@ -694,67 +695,73 @@
   .p-button-rounded,
   .p-button.p-button-rounded {
     /* Override: Use standard radius instead of pill shape */
-    border-radius: var(--radius-lg); /* 8px - standard raised button style */
-    padding: 0.75rem 1.5rem; /* Standard padding */
+    border-radius: var(--radius-button, 8px); /* RAISED style - NOT pill */
+    padding: var(--space-3, 12px) var(--space-6, 24px); /* Standard padding */
   }
 
   /* ================================
-     BUTTON SIZES
+     BUTTON SIZES - DESIGN CONTRACT
      ================================ */
   .p-button-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
-    min-height: var(--button-height-sm);
+    min-height: 36px;
+    padding: var(--space-2, 8px) var(--space-4, 16px);
+    font-size: var(--font-body-sm, 14px);
 
     .p-button-icon {
-      font-size: 0.9375rem;
+      font-size: var(--font-body-sm, 14px);
     }
 
     &.p-button-rounded {
       /* Override: Standard padding for small buttons */
-      padding: 0.5rem 1rem;
+      padding: var(--space-2, 8px) var(--space-4, 16px);
     }
   }
 
   .p-button-lg {
-    padding: 1rem 2rem;
-    font-size: 1.0625rem;
-    min-height: var(--button-height-lg);
+    min-height: 52px;
+    padding: var(--space-4, 16px) 2rem;
+    font-size: var(--font-body-lg, 18px);
 
     .p-button-icon {
-      font-size: 1.25rem;
+      font-size: var(--font-heading-sm, 18px);
     }
 
     &.p-button-rounded {
       /* Override: Standard padding for large buttons */
-      padding: 1rem 2rem;
+      padding: var(--space-4, 16px) 2rem;
     }
   }
 
   /* ================================
-     ICON ONLY BUTTONS
+     ICON ONLY BUTTONS - DESIGN CONTRACT
      ================================ */
   .p-button-icon-only {
-    padding: 0.75rem;
-    width: var(--button-height-md);
-    height: var(--button-height-md);
+    padding: var(--space-3, 12px);
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     justify-content: center;
 
     &.p-button-rounded {
       /* Override: Use standard radius instead of circle for icon-only buttons */
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-button, 8px);
     }
 
     &.p-button-sm {
-      width: var(--button-height-sm);
-      height: var(--button-height-sm);
-      padding: 0.5rem;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: var(--space-2, 8px);
     }
 
     &.p-button-lg {
-      width: var(--button-height-lg);
-      height: var(--button-height-lg);
-      padding: 1rem;
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      min-height: 52px;
+      padding: var(--space-4, 16px);
     }
   }
 
@@ -873,40 +880,37 @@
   }
 
   /* ================================================================
-     CARD COMPONENT ENHANCEMENTS
+     CARD COMPONENT BASELINE — LOCKED (Dashboard authority)
+     Non-interactive PrimeNG cards must remain calm (Option A).
+     Hover effects are handled only by app-card-shell interactive state.
      ================================================================ */
 
   .p-card {
     background: var(--surface-primary);
-    border-radius: var(--radius-xl);
+
+    /* ✅ LOCKED baseline */
+    border-radius: var(--radius-lg); /* 8px */
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-border-subtle);
+    border: var(--border-1) solid var(--color-border-subtle);
+
     overflow: hidden;
-    transition:
-      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* ✅ No "premium" hover animation for default cards */
+    transition: box-shadow var(--motion-base) var(--ease-standard);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .p-card:hover {
-      transform: translateY(-4px);
-      box-shadow:
-        0 12px 40px -10px rgba(0, 0, 0, 0.15),
-        0 4px 15px -5px rgba(0, 0, 0, 0.1);
-      border-color: rgba(var(--ds-primary-green-rgb), 0.2);
-    }
-  }
+  /* ✅ Option A: no hover visuals on non-interactive cards */
+  /* (intentionally no .p-card:hover rules) */
 
   .p-card-header {
-    padding: var(--space-5);
-    // Background removed for dashboard-consistent clean header styling
-    // Individual components can add background if needed via styleClass
+    /* Keep header clean; card-shell owns canonical header spacing */
+    padding: var(--space-3) var(--space-4) var(--space-2);
     background: transparent;
   }
 
   .p-card-body {
-    padding: var(--space-5);
+    /* ✅ LOCKED default body padding */
+    padding: var(--space-4);
   }
 
   .p-card-content {
@@ -914,21 +918,25 @@
   }
 
   .p-card-footer {
-    padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-border-secondary);
+    padding: var(--space-3) var(--space-4);
+    border-top: var(--border-1) solid var(--color-border-secondary);
     background: var(--surface-secondary);
   }
 
+  /* Typography mapping stays under unified typography system */
   .p-card-title {
-    font-size: var(--font-heading-md);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-h3-size);
+    font-weight: 600;
     color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
+    line-height: var(--font-h3-line-height);
+    margin: 0;
   }
 
   .p-card-subtitle {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
+    font-weight: var(--font-body-sm-weight);
     color: var(--color-text-secondary);
+    margin-top: var(--space-1);
   }
 
   /* ================================================================
@@ -984,14 +992,10 @@
   }
 
   .p-dialog-title {
-    font-family:
-      "Poppins",
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
-    font-size: 1.25rem; /* 20px - heading-sm per design system */
-    font-weight: 600; /* semibold per design system */
-    line-height: 1.4;
+    font-family: var(--font-family-sans);
+    font-size: var(--font-h2-size, 1.5rem); /* 24px - H2 unified typography */
+    font-weight: var(--font-h2-weight, 600); /* semibold */
+    line-height: var(--font-h2-line-height, 1.25);
     letter-spacing: 0;
     color: var(--color-text-primary, var(--primitive-neutral-900));
     margin: 0;
@@ -1418,30 +1422,176 @@
   }
 
   /* ================================================================
-     DROPDOWN COMPONENT ENHANCEMENTS
+     FORM CONTROL COMPONENT ENHANCEMENTS
+     Design Contract: 44px height, 8px radius, consistent states
      ================================================================ */
 
+  /* ================================
+     INPUT TEXT - Base Input Styling
+     ================================ */
+  .p-inputtext {
+    /* Geometry - Design Contract */
+    height: var(--p-form-control-height, 44px);
+    min-height: var(--p-form-control-min-height, 44px);
+    border-radius: var(--p-form-control-border-radius, 8px);
+    padding: var(--p-form-control-padding-y, 10px) var(--p-form-control-padding-x, 16px);
+    
+    /* Typography */
+    font-size: var(--p-form-control-font-size, 16px);
+    font-weight: var(--p-form-control-font-weight, 400);
+    line-height: var(--p-form-control-line-height, 1.5);
+    font-family: var(--font-family-sans);
+    
+    /* Colors */
+    background: var(--p-input-background, var(--surface-primary));
+    border: 1px solid var(--p-input-border-color, var(--color-border-primary));
+    color: var(--p-input-text-color, var(--color-text-primary));
+    
+    /* Transitions */
+    transition:
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* Hover - subtle border change only */
+    &:hover:not(:disabled):not(:focus):not(.p-invalid) {
+      border-color: var(--p-input-hover-border-color, var(--primitive-neutral-400));
+    }
+
+    /* Focus - green border + green ring */
+    &:focus,
+    &:focus-visible {
+      border-color: var(--p-input-focus-border-color, var(--ds-primary-green));
+      box-shadow: 0 0 0 3px var(--p-input-focus-ring-color, rgba(8, 153, 73, 0.15));
+      outline: none;
+    }
+
+    /* Invalid/Error state */
+    &.p-invalid,
+    &.ng-invalid.ng-touched {
+      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+
+      &:focus {
+        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+      }
+    }
+
+    /* Disabled state */
+    &:disabled {
+      background: var(--p-input-disabled-background, var(--surface-secondary));
+      border-color: var(--p-input-disabled-border-color, var(--color-border-primary));
+      opacity: var(--p-input-disabled-opacity, 0.6);
+      cursor: not-allowed;
+    }
+  }
+
+  .p-inputtext::placeholder {
+    color: var(--p-input-placeholder-color, var(--color-text-muted));
+    font-size: var(--p-input-placeholder-font-size, 14px);
+    font-weight: 400;
+  }
+
+  /* Float Label Enhancement */
+  .p-float-label {
+    .p-inputtext:focus ~ label,
+    .p-inputtext.p-filled ~ label {
+      color: var(--ds-primary-green);
+      transform: translateY(-1.5rem) scale(0.85);
+    }
+  }
+
+  /* ================================
+     DROPDOWN (Legacy) - Match p-select
+     ================================ */
   .p-dropdown {
-    border-radius: var(--radius-lg);
-    border-color: var(--color-border-primary);
+    /* Geometry - Design Contract */
+    height: var(--p-form-control-height, 44px);
+    min-height: var(--p-form-control-min-height, 44px);
+    border-radius: var(--p-form-control-border-radius, 8px);
+    padding: 0 var(--p-form-control-padding-x, 16px);
+    
+    /* Colors */
+    background: var(--p-dropdown-background, var(--surface-primary));
+    border: 1px solid var(--p-dropdown-border-color, var(--color-border-primary));
+    
+    /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    &:hover:not(.p-disabled) {
-      border-color: var(--ds-primary-green);
+    /* Hover */
+    &:hover:not(.p-disabled):not(.p-focus) {
+      border-color: var(--p-dropdown-hover-border-color, var(--primitive-neutral-400));
     }
 
-    &.p-focus {
-      border-color: var(--ds-primary-green);
-      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+    /* Focus */
+    &.p-focus,
+    &:focus {
+      border-color: var(--p-dropdown-focus-border-color, var(--ds-primary-green));
+      box-shadow: 0 0 0 3px var(--p-dropdown-focus-ring-color, rgba(8, 153, 73, 0.15));
+      outline: none;
+    }
+
+    /* Invalid */
+    &.p-invalid {
+      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+
+      &.p-focus {
+        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+      }
+    }
+
+    /* Disabled */
+    &.p-disabled {
+      background: var(--p-input-disabled-background, var(--surface-secondary));
+      opacity: var(--p-input-disabled-opacity, 0.6);
+      cursor: not-allowed;
+    }
+
+    /* Label alignment */
+    .p-dropdown-label {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      font-size: var(--p-form-control-font-size, 16px);
+      font-weight: var(--p-form-control-font-weight, 400);
+      color: var(--p-input-text-color, var(--color-text-primary));
+    }
+
+    .p-dropdown-label.p-placeholder {
+      color: var(--p-input-placeholder-color, var(--color-text-muted));
+      font-size: var(--p-input-placeholder-font-size, 14px);
+    }
+
+    /* Trigger icon */
+    .p-dropdown-trigger {
+      width: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: color 0.15s ease, transform 0.2s ease;
+    }
+
+    &.p-focus .p-dropdown-trigger,
+    &.p-dropdown-open .p-dropdown-trigger {
+      color: var(--ds-primary-green);
+    }
+
+    &.p-dropdown-open .p-dropdown-trigger {
+      transform: rotate(180deg);
     }
   }
 
+  /* Dropdown Panel */
   .p-dropdown-panel {
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--p-dropdown-panel-border-radius, 8px);
+    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
+    border: 1px solid var(--color-border-primary);
+    background: var(--surface-primary);
+    margin-top: 4px;
+    overflow: hidden;
     animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     transform-origin: top center;
   }
@@ -1457,65 +1607,369 @@
     }
   }
 
+  .p-dropdown-items-wrapper {
+    padding: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
   .p-dropdown-item {
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    margin: var(--space-1);
+    padding: var(--p-dropdown-option-padding, 12px 16px);
+    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    min-height: var(--p-dropdown-option-min-height, 40px);
+    margin: 2px 0;
+    font-size: var(--p-dropdown-option-font-size, 16px);
+    font-weight: 400;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
     transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     &:hover {
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+      background: var(--surface-secondary);
     }
 
     &.p-highlight {
-      background: var(--ds-primary-green);
-      color: var(--color-text-on-primary);
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+      font-weight: 500;
+    }
+
+    &.p-focus {
+      background: var(--surface-secondary);
+      outline: none;
     }
   }
 
-  /* ================================================================
-     INPUT COMPONENT ENHANCEMENTS
-     ================================================================ */
-
-  .p-inputtext {
-    border-radius: var(--radius-lg);
-    border-color: var(--color-border-primary);
-    padding: var(--space-3) var(--space-4);
+  /* ================================
+     SELECT (PrimeNG 21+) - Primary Select Component
+     ================================ */
+  .p-select {
+    /* Geometry - Design Contract */
+    height: var(--p-form-control-height, 44px);
+    min-height: var(--p-form-control-min-height, 44px);
+    border-radius: var(--p-form-control-border-radius, 8px);
+    padding: 0 var(--p-form-control-padding-x, 16px);
+    
+    /* Colors */
+    background: var(--p-select-background, var(--surface-primary));
+    border: 1px solid var(--p-select-border-color, var(--color-border-primary));
+    
+    /* Transitions */
     transition:
       border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    &:hover:not(:disabled):not(:focus) {
-      border-color: var(--color-text-secondary);
+    /* Hover */
+    &:hover:not(.p-disabled):not(.p-focus) {
+      border-color: var(--p-select-hover-border-color, var(--primitive-neutral-400));
     }
 
+    /* Focus */
+    &.p-focus,
     &:focus {
-      border-color: var(--ds-primary-green);
-      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+      border-color: var(--p-select-focus-border-color, var(--ds-primary-green));
+      box-shadow: 0 0 0 3px var(--p-select-focus-ring-color, rgba(8, 153, 73, 0.15));
+      outline: none;
     }
 
+    /* Invalid */
     &.p-invalid {
-      border-color: var(--color-status-error);
+      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
 
-      &:focus {
-        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.2);
+      &.p-focus {
+        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+      }
+    }
+
+    /* Disabled */
+    &.p-disabled {
+      background: var(--p-input-disabled-background, var(--surface-secondary));
+      opacity: var(--p-input-disabled-opacity, 0.6);
+      cursor: not-allowed;
+    }
+
+    /* Label alignment */
+    .p-select-label {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      font-size: var(--p-form-control-font-size, 16px);
+      font-weight: var(--p-form-control-font-weight, 400);
+      color: var(--p-input-text-color, var(--color-text-primary));
+    }
+
+    .p-select-label.p-placeholder {
+      color: var(--p-input-placeholder-color, var(--color-text-muted));
+      font-size: var(--p-input-placeholder-font-size, 14px);
+    }
+
+    /* Dropdown icon */
+    .p-select-dropdown {
+      width: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: color 0.15s ease, transform 0.2s ease;
+    }
+
+    &.p-focus .p-select-dropdown,
+    &.p-select-open .p-select-dropdown {
+      color: var(--ds-primary-green);
+    }
+
+    &.p-select-open .p-select-dropdown {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* Select Panel */
+  .p-select-overlay {
+    border-radius: var(--p-dropdown-panel-border-radius, 8px);
+    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
+    border: 1px solid var(--color-border-primary);
+    background: var(--surface-primary);
+    margin-top: 4px;
+    overflow: hidden;
+    animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: top center;
+  }
+
+  .p-select-list-container {
+    padding: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .p-select-option {
+    padding: var(--p-dropdown-option-padding, 12px 16px);
+    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    min-height: var(--p-dropdown-option-min-height, 40px);
+    margin: 2px 0;
+    font-size: var(--p-dropdown-option-font-size, 16px);
+    font-weight: 400;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition:
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    &:hover {
+      background: var(--surface-secondary);
+    }
+
+    &.p-highlight,
+    &[aria-selected="true"] {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+      font-weight: 500;
+    }
+
+    &.p-focus {
+      background: var(--surface-secondary);
+      outline: none;
+    }
+  }
+
+  /* ================================
+     MULTISELECT
+     ================================ */
+  .p-multiselect {
+    /* Geometry - Design Contract */
+    height: var(--p-form-control-height, 44px);
+    min-height: var(--p-form-control-min-height, 44px);
+    border-radius: var(--p-form-control-border-radius, 8px);
+    padding: 0 var(--p-form-control-padding-x, 16px);
+    
+    /* Colors */
+    background: var(--p-multiselect-background, var(--surface-primary));
+    border: 1px solid var(--p-multiselect-border-color, var(--color-border-primary));
+    
+    /* Transitions */
+    transition:
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* Hover */
+    &:hover:not(.p-disabled):not(.p-focus) {
+      border-color: var(--p-multiselect-hover-border-color, var(--primitive-neutral-400));
+    }
+
+    /* Focus */
+    &.p-focus,
+    &:focus {
+      border-color: var(--p-multiselect-focus-border-color, var(--ds-primary-green));
+      box-shadow: 0 0 0 3px var(--p-multiselect-focus-ring-color, rgba(8, 153, 73, 0.15));
+      outline: none;
+    }
+
+    /* Invalid */
+    &.p-invalid {
+      border-color: var(--p-input-invalid-border-color, var(--color-status-error));
+
+      &.p-focus {
+        box-shadow: 0 0 0 3px var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+      }
+    }
+
+    /* Disabled */
+    &.p-disabled {
+      background: var(--p-input-disabled-background, var(--surface-secondary));
+      opacity: var(--p-input-disabled-opacity, 0.6);
+      cursor: not-allowed;
+    }
+
+    /* Label alignment */
+    .p-multiselect-label {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      font-size: var(--p-form-control-font-size, 16px);
+      font-weight: var(--p-form-control-font-weight, 400);
+      color: var(--p-input-text-color, var(--color-text-primary));
+    }
+
+    .p-multiselect-label.p-placeholder {
+      color: var(--p-input-placeholder-color, var(--color-text-muted));
+      font-size: var(--p-input-placeholder-font-size, 14px);
+    }
+
+    /* Trigger icon */
+    .p-multiselect-trigger {
+      width: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: color 0.15s ease, transform 0.2s ease;
+    }
+
+    &.p-focus .p-multiselect-trigger {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  /* Multiselect Panel */
+  .p-multiselect-panel {
+    border-radius: var(--p-dropdown-panel-border-radius, 8px);
+    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
+    border: 1px solid var(--color-border-primary);
+    background: var(--surface-primary);
+    margin-top: 4px;
+    overflow: hidden;
+  }
+
+  .p-multiselect-items-wrapper {
+    padding: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .p-multiselect-item {
+    padding: var(--p-dropdown-option-padding, 12px 16px);
+    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    min-height: var(--p-dropdown-option-min-height, 40px);
+    margin: 2px 0;
+    font-size: var(--p-dropdown-option-font-size, 16px);
+    font-weight: 400;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition:
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    &:hover {
+      background: var(--surface-secondary);
+    }
+
+    &.p-highlight {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+
+    &.p-focus {
+      background: var(--surface-secondary);
+      outline: none;
+    }
+  }
+
+  /* ================================
+     CALENDAR / DATEPICKER INPUT
+     ================================ */
+  .p-calendar,
+  .p-datepicker:not(.p-datepicker-inline) {
+    width: 100%;
+    position: relative;
+
+    .p-inputtext {
+      /* Geometry - Design Contract */
+      height: var(--p-form-control-height, 44px);
+      min-height: var(--p-form-control-min-height, 44px);
+      border-radius: var(--p-form-control-border-radius, 8px);
+      padding: var(--p-form-control-padding-y, 10px) 2.75rem var(--p-form-control-padding-y, 10px) var(--p-form-control-padding-x, 16px);
+      width: 100%;
+    }
+
+    .p-datepicker-trigger {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 2.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 0 var(--p-form-control-border-radius, 8px) var(--p-form-control-border-radius, 8px) 0;
+      cursor: pointer;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: var(--ds-primary-green);
       }
     }
   }
 
-  .p-inputtext::placeholder {
-    color: var(--color-text-muted);
-  }
+  /* ================================
+     INPUTNUMBER
+     ================================ */
+  .p-inputnumber {
+    width: 100%;
 
-  /* Float Label Enhancement */
-  .p-float-label {
-    .p-inputtext:focus ~ label,
-    .p-inputtext.p-filled ~ label {
-      color: var(--ds-primary-green);
-      transform: translateY(-1.5rem) scale(0.85);
+    .p-inputtext {
+      /* Geometry - Design Contract */
+      height: var(--p-form-control-height, 44px);
+      min-height: var(--p-form-control-min-height, 44px);
+      border-radius: var(--p-form-control-border-radius, 8px);
+    }
+
+    &.p-inputnumber-buttons-stacked .p-inputtext {
+      border-radius: var(--p-form-control-border-radius, 8px) 0 0 var(--p-form-control-border-radius, 8px);
+    }
+
+    .p-inputnumber-button {
+      background: var(--surface-secondary);
+      border: 1px solid var(--color-border-primary);
+      color: var(--color-text-secondary);
+      transition: background-color 0.15s ease, color 0.15s ease;
+
+      &:hover {
+        background: var(--ds-primary-green-subtle);
+        color: var(--ds-primary-green);
+      }
     }
   }
 
@@ -1641,19 +2095,187 @@
     }
   }
 
+  /* Badge severity variants - moved to unified section below */
+
+  /* ================================================================
+     TAG/BADGE/CHIP UNIFIED PILL DESIGN SYSTEM
+     
+     SINGLE SOURCE OF TRUTH for all status indicators
+     Matches the "Good" pill badge in the player dashboard exactly
+     
+     Design Rules:
+     - Fixed height: 30px (no vertical growth)
+     - PILL shape: border-radius 9999px
+     - Green for positive (#63ad0e), neutral gray otherwise
+     - Semibold font weight (600)
+     - NO borders, shadows, outlines, or underlines
+     - text-transform: none
+     ================================================================ */
+
+  .p-tag {
+    /* UNIFIED PILL dimensions */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    
+    /* Fixed height - 30px, no vertical growth */
+    height: 30px;
+    min-height: 30px;
+    max-height: 30px;
+    
+    /* Padding: 13px horizontal */
+    padding: 0 13px;
+    
+    /* Typography - Semibold */
+    font-family: var(--font-family-sans);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: none;
+    text-decoration: none;
+    letter-spacing: 0;
+    white-space: nowrap;
+    
+    /* Shape: PILL (full rounded) */
+    border-radius: 9999px;
+    
+    /* NO borders, shadows, outlines, or underlines */
+    border: none;
+    box-shadow: none;
+    outline: none;
+    
+    /* Prevent flex row stretching */
+    flex-shrink: 0;
+    
+    /* Smooth transitions */
+    transition: opacity 0.15s ease;
+  }
+
+  /* Ensure internal spans also have no underline */
+  .p-tag *,
+  .p-tag .p-tag-value,
+  .p-tag .p-tag-icon,
+  .p-tag span {
+    text-decoration: none;
+    line-height: 1;
+  }
+
+  /* Default/Primary tag - Brand green with white text */
+  .p-tag:not(.p-tag-success):not(.p-tag-info):not(.p-tag-warn):not(.p-tag-warning):not(.p-tag-danger):not(.p-tag-secondary):not(.p-tag-contrast) {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Success tag - Solid green background (matches "Good" reference exactly) */
+  .p-tag-success {
+    background: var(--color-status-success);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Info tag - Blue with white text */
+  .p-tag-info {
+    background: var(--color-status-info);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Warning tag - Amber/yellow with dark text for contrast */
+  .p-tag-warning,
+  .p-tag-warn {
+    background: var(--color-status-warning);
+    color: var(--primitive-amber-900, #78350f);
+  }
+
+  /* Danger tag - Red with white text */
+  .p-tag-danger {
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Secondary tag - Neutral gray */
+  .p-tag-secondary {
+    background: var(--primitive-neutral-200);
+    color: var(--color-text-secondary);
+  }
+
+  /* Contrast tag - Dark background with white text */
+  .p-tag-contrast {
+    background: var(--primitive-neutral-900);
+    color: var(--color-text-on-primary);
+  }
+
+  /* Tag icon styling */
+  .p-tag .p-tag-icon {
+    font-size: 12px;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  /* Tag text/value styling */
+  .p-tag .p-tag-value {
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  /* Dark mode adjustments */
+  [data-theme="dark"] .p-tag-secondary,
+  .dark-theme .p-tag-secondary {
+    background: var(--primitive-neutral-700);
+    color: var(--primitive-neutral-300);
+  }
+
+  /* ================================================================
+     P-BADGE UNIFIED STYLING
+     Same design system as p-tag (6px radius, 28-32px height)
+     ================================================================ */
+
+  .p-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Height: 28-32px range - consistent with tags/chips */
+    height: 30px;
+    min-height: 28px;
+    max-height: 32px;
+    
+    padding: 0 12px;
+    font-family: var(--font-family-sans);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: none;
+    text-decoration: none;
+    white-space: nowrap;
+    
+    /* Shape: 6px border-radius (rounded, NOT pill) */
+    border-radius: 6px;
+    
+    border: none;
+    box-shadow: none;
+    outline: none;
+    flex-shrink: 0;
+  }
+
+  .p-badge *,
+  .p-badge span {
+    text-decoration: none;
+    line-height: 1;
+  }
+
   .p-badge-success {
     background: var(--color-status-success);
-    color: var(--color-text-primary);
+    color: var(--color-text-on-primary);
   }
 
   .p-badge-info {
-    background: var(--ds-primary-green);
+    background: var(--color-status-info);
     color: var(--color-text-on-primary);
   }
 
   .p-badge-warning {
     background: var(--color-status-warning);
-    color: var(--color-text-primary);
+    color: var(--primitive-amber-900, #78350f);
   }
 
   .p-badge-danger {
@@ -1661,86 +2283,85 @@
     color: var(--color-text-on-primary);
   }
 
+  .p-badge-secondary {
+    background: var(--primitive-neutral-200);
+    color: var(--color-text-secondary);
+  }
+
+  /* Dark mode for badges */
+  [data-theme="dark"] .p-badge-secondary,
+  .dark-theme .p-badge-secondary {
+    background: var(--primitive-neutral-700);
+    color: var(--primitive-neutral-200);
+  }
+
   /* ================================================================
-     TAG COMPONENT ENHANCEMENTS
-     Design System: Rectangular tags with minimal rounded corners
-     Standard style across all status indicators
+     P-CHIP UNIFIED STYLING
+     Same design system as p-tag (6px radius, 28-32px height)
      ================================================================ */
 
-  .p-tag {
-    /* Rectangular shape with minimal rounding - sharp corners like "Optimal" tag */
-    border-radius: var(--radius-sm, 4px);
-    font-family: var(--font-family-sans);
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-sm, 0.875rem);
-    padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1.2;
+  .p-chip {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1, 0.25rem);
+    justify-content: center;
+    gap: 6px;
+    
+    /* Height: 28-32px range - consistent with tags/badges */
+    height: 30px;
+    min-height: 28px;
+    max-height: 32px;
+    
+    padding: 0 12px;
+    font-family: var(--font-family-sans);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: none;
+    text-decoration: none;
     white-space: nowrap;
+    
+    /* Shape: 6px border-radius (rounded, NOT pill) */
+    border-radius: 6px;
+    
     border: none;
-    transition: all 0.15s ease;
+    box-shadow: none;
+    outline: none;
+    flex-shrink: 0;
+    
+    background: var(--primitive-neutral-200);
+    color: var(--color-text-secondary);
   }
 
-  /* Default/Primary tag - Green solid background with white text */
-  .p-tag:not(.p-tag-success):not(.p-tag-info):not(.p-tag-warn):not(.p-tag-warning):not(.p-tag-danger):not(.p-tag-secondary):not(.p-tag-contrast) {
-    background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
+  .p-chip *,
+  .p-chip .p-chip-text,
+  .p-chip span {
+    text-decoration: none;
+    line-height: 1;
   }
 
-  /* Success tag - Solid green background (same as primary/optimal) */
-  .p-tag-success {
-    background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
+  .p-chip .p-chip-icon {
+    font-size: 12px;
+    line-height: 1;
+    text-decoration: none;
   }
 
-  /* Info tag - Brand green with white text */
-  .p-tag-info {
-    background: var(--color-status-info);
-    color: var(--color-text-on-primary);
+  /* Chip remove button - ensure touch target */
+  .p-chip .p-chip-remove-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
   }
 
-  /* Warning tag - Amber/yellow background with dark text for contrast */
-  .p-tag-warning,
-  .p-tag-warn {
-    background: var(--color-status-warning);
-    color: var(--primitive-warning-900, #78350f);
+  .p-chip .p-chip-remove-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
-  /* Danger tag - Red background with white text */
-  .p-tag-danger {
-    background: var(--color-status-error);
-    color: var(--color-text-on-primary);
-  }
-
-  /* Secondary tag - Subtle gray background */
-  .p-tag-secondary {
-    background: var(--surface-secondary, var(--primitive-neutral-100));
-    color: var(--color-text-secondary, var(--primitive-neutral-600));
-  }
-
-  /* Contrast tag - Dark background with white text */
-  .p-tag-contrast {
-    background: var(--color-text-primary, var(--primitive-neutral-900));
-    color: var(--color-text-on-primary);
-  }
-
-  /* Tag icon styling */
-  .p-tag .p-tag-icon {
-    font-size: 0.75rem;
-  }
-
-  /* Rounded variant - use [rounded]="true" for pill shape when needed */
-  .p-tag-rounded {
-    border-radius: var(--radius-full, 9999px);
-  }
-
-  /* Dark mode adjustments */
-  [data-theme="dark"] .p-tag-secondary,
-  .dark-theme .p-tag-secondary {
+  /* Dark mode for chips */
+  [data-theme="dark"] .p-chip,
+  .dark-theme .p-chip {
     background: var(--primitive-neutral-700);
     color: var(--primitive-neutral-200);
   }
@@ -1752,42 +2373,42 @@
 
   .p-tooltip {
     .p-tooltip-text {
-      background: var(--surface-primary, var(--color-text-on-primary)) !important;
-      color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
-      border: 1px solid var(--ds-primary-green) !important;
-      border-radius: var(--radius-lg, 12px) !important;
-      padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
-      font-family: var(--font-family-sans) !important;
-      font-size: var(--font-body-sm, 0.875rem) !important;
-      font-weight: var(--font-weight-medium, 500) !important;
+      background: var(--surface-primary, var(--color-text-on-primary));
+      color: var(--color-text-primary, var(--primitive-neutral-900));
+      border: 1px solid var(--ds-primary-green);
+      border-radius: var(--radius-lg, 12px);
+      padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-body-sm, 0.875rem);
+      font-weight: var(--font-weight-medium, 500);
       box-shadow:
         0 8px 24px rgba(8, 153, 73, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.08) !important;
+        0 4px 12px rgba(0, 0, 0, 0.08);
       animation: tooltip-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
       max-width: 280px;
     }
 
     /* Tooltip arrow - make it match the border */
     .p-tooltip-arrow {
-      border-color: var(--ds-primary-green) !important;
+      border-color: var(--ds-primary-green);
     }
   }
 
   /* Position-specific arrow colors */
   .p-tooltip-top .p-tooltip-arrow {
-    border-top-color: var(--ds-primary-green) !important;
+    border-top-color: var(--ds-primary-green);
   }
 
   .p-tooltip-bottom .p-tooltip-arrow {
-    border-bottom-color: var(--ds-primary-green) !important;
+    border-bottom-color: var(--ds-primary-green);
   }
 
   .p-tooltip-left .p-tooltip-arrow {
-    border-left-color: var(--ds-primary-green) !important;
+    border-left-color: var(--ds-primary-green);
   }
 
   .p-tooltip-right .p-tooltip-arrow {
-    border-right-color: var(--ds-primary-green) !important;
+    border-right-color: var(--ds-primary-green);
   }
 
   @keyframes tooltip-scale-in {
@@ -1805,12 +2426,12 @@
   [data-theme="dark"] .p-tooltip,
   .dark-theme .p-tooltip {
     .p-tooltip-text {
-      background: var(--primitive-neutral-800, var(--primitive-neutral-800)) !important;
-      color: var(--color-text-on-primary) !important;
-      border-color: var(--ds-primary-green-light, var(--primitive-primary-500)) !important;
+      background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+      color: var(--color-text-on-primary);
+      border-color: var(--ds-primary-green-light, var(--primitive-primary-500));
       box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.4),
-        0 4px 12px rgba(16, 201, 107, 0.15) !important;
+        0 4px 12px rgba(16, 201, 107, 0.15);
     }
   }
 
@@ -1835,8 +2456,13 @@
     background: var(--surface-secondary);
     border-bottom: 2px solid var(--color-border-primary);
     padding: var(--space-4);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
+    /* Typography: Label (14px/600) - unified system */
+    font-size: var(--font-label-size, 0.875rem);
+    font-weight: var(--font-label-weight, 600);
+    line-height: var(--font-label-line-height, 1.2);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide, 0.05em);
+    color: var(--color-text-secondary);
     transition: background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     &.p-sortable-column:hover {
@@ -1865,6 +2491,11 @@
   .p-datatable-tbody > tr > td {
     padding: var(--space-4);
     border-bottom: 1px solid var(--color-border-secondary);
+    /* Typography: Body (16px/400) - unified system */
+    font-size: var(--font-body-size, 1rem);
+    font-weight: var(--font-body-weight, 400);
+    line-height: var(--font-body-line-height, 1.5);
+    color: var(--color-text-primary);
   }
 
   /* ================================================================
@@ -2049,6 +2680,10 @@
       border: none;
       border-bottom: 2px solid transparent;
       margin-bottom: -2px;
+      /* Typography: Body-sm (14px/600) - unified system */
+      font-size: var(--font-body-sm-size, 0.875rem);
+      font-weight: 600; /* semibold for tab labels */
+      line-height: var(--font-body-sm-line-height, 1.45);
       transition:
         color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
         border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -2082,23 +2717,29 @@
   }
 
   /* ================================================================
-     TABS COMPONENT ENHANCEMENTS (PrimeNG 21+)
-     Modern Segment Control Style - iOS/macOS Inspired
+     TABS COMPONENT - UNIFIED DESIGN SYSTEM
+     
+     Design Rules:
+     - Height: ~40px (consistent across app)
+     - Border-radius: 8-12px (rounded, NOT pill)
+     - Active: Green border or green text, subtle background
+     - Inactive: Neutral text, no heavy border
+     - Consistent spacing and typography
      ================================================================ */
 
   .p-tabs {
     background: transparent;
 
-    /* Tab List Container - Segment Control Style */
+    /* Tab List Container */
     .p-tablist {
       display: flex;
       align-items: stretch;
-      background: var(--primitive-neutral-100);
-      border-radius: 14px;
-      padding: 5px;
+      background: var(--surface-secondary);
+      border-radius: 10px; /* 8-12px range */
+      padding: 4px;
       gap: 4px;
-      border: none;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--color-border-secondary);
+      box-shadow: none;
       margin-bottom: 1.25rem;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -2109,43 +2750,51 @@
       }
     }
 
-    /* Individual Tab - Segment Button */
+    /* Hide the active bar indicator - we use background instead */
+    .p-tablist-active-bar {
+      display: none;
+    }
+
+    /* Individual Tab */
     .p-tab {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 12px 20px;
+      gap: 8px;
+      padding: 0 16px;
       font-family: var(--font-family-sans);
-      font-size: 0.9375rem;
-      font-weight: 500;
-      color: var(--primitive-neutral-600);
+      /* Typography: Body-sm (14px/600) - unified system */
+      font-size: var(--font-body-sm-size, 0.875rem);
+      font-weight: 600; /* semibold for tab labels */
+      line-height: var(--font-body-sm-line-height, 1.45);
+      color: var(--color-text-secondary);
       background: transparent;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px; /* 8-12px range */
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       position: relative;
-      min-height: 48px;
-      flex: 1;
+      height: 40px; /* Consistent 40px height */
+      min-height: 40px;
+      flex: none;
       outline: none;
 
       /* Icon within tab */
       i,
       .pi {
-        font-size: 1.125rem;
-        color: var(--primitive-neutral-400);
+        font-size: 1rem;
+        color: var(--color-text-tertiary);
         transition: color 0.2s ease;
       }
 
-      /* Hover state */
+      /* Hover state - inactive tabs */
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
             [data-p-active="true"]
           ) {
-          background: rgba(255, 255, 255, 0.6);
-          color: var(--primitive-neutral-700);
+          background: var(--surface-primary);
+          color: var(--color-text-primary);
 
           i,
           .pi {
@@ -2154,23 +2803,20 @@
         }
       }
 
-      /* Focus state */
+      /* Focus state for accessibility */
       &:focus-visible {
-        box-shadow:
-          0 0 0 2px var(--primitive-neutral-100),
-          0 0 0 4px var(--ds-primary-green);
+        box-shadow: 0 0 0 2px var(--ds-primary-green);
       }
 
-      /* Active/Selected state - White card that pops out */
+      /* Active/Selected state - Green accent */
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
-        background: var(--color-text-on-primary);
+        background: var(--surface-primary);
         color: var(--ds-primary-green);
         font-weight: 600;
-        box-shadow:
-          0 1px 3px rgba(0, 0, 0, 0.1),
-          0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--ds-primary-green);
 
         i,
         .pi {
@@ -2193,14 +2839,14 @@
     /* Individual Tab Panel */
     .p-tabpanel {
       padding: 0;
-      animation: tab-panel-fade-in 250ms ease-out;
+      animation: tab-panel-fade-in 200ms ease-out;
     }
   }
 
   @keyframes tab-panel-fade-in {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(4px);
     }
     to {
       opacity: 1;
@@ -2210,26 +2856,28 @@
 
   /* ================================================================
      TABS RESPONSIVE STYLES
-     Mobile-optimized tabs with horizontal scroll
+     Mobile-optimized with maintained 40px height
      ================================================================ */
 
   @media (max-width: 767px) {
     .p-tabs {
       .p-tablist {
-        padding: 4px;
-        border-radius: 12px;
+        padding: 3px;
+        border-radius: 8px;
+        gap: 3px;
       }
 
       .p-tab {
-        padding: 10px 14px;
-        font-size: 0.875rem;
-        gap: 8px;
-        min-height: 44px;
-        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 0.8125rem; /* 13px */
+        gap: 6px;
+        height: 36px; /* Slightly smaller on mobile */
+        min-height: 36px;
+        border-radius: 6px;
 
         i,
         .pi {
-          font-size: var(--font-body-md, 1rem);
+          font-size: 0.875rem;
         }
       }
     }
@@ -2237,10 +2885,10 @@
 
   /* ================================================================
      TABS VARIANTS
-     Different tab styles for various contexts
+     Different styles for specific contexts
      ================================================================ */
 
-  /* Underline variant - classic tab style */
+  /* Underline variant - classic tab style with green border bottom */
   .p-tabs.tabs-underline {
     .p-tablist {
       background: transparent;
@@ -2256,7 +2904,10 @@
     .p-tab {
       border-radius: 0;
       margin-bottom: -2px;
+      border: none;
       border-bottom: 2px solid transparent;
+      height: 40px;
+      min-height: 40px;
 
       &.p-tab-active,
       &[aria-selected="true"],
@@ -2265,6 +2916,9 @@
         color: var(--ds-primary-green);
         border-bottom-color: var(--ds-primary-green);
         box-shadow: none;
+        border-left: none;
+        border-right: none;
+        border-top: none;
 
         i,
         .pi {
@@ -2282,21 +2936,16 @@
     }
   }
 
-  /* Pill variant - Green filled active state */
+  /* Filled variant - Green filled active state */
   .p-tabs.tabs-filled {
     .p-tab {
       &.p-tab-active,
       &[aria-selected="true"],
       &[data-p-active="true"] {
-        background: linear-gradient(
-          135deg,
-          var(--ds-primary-green) 0%,
-          var(--primitive-primary-600) 100%
-        );
+        background: var(--ds-primary-green);
         color: white;
-        box-shadow:
-          0 4px 12px rgba(8, 153, 73, 0.25),
-          0 2px 4px rgba(0, 0, 0, 0.1);
+        border: none;
+        box-shadow: 0 2px 4px rgba(8, 153, 73, 0.2);
 
         i,
         .pi {
@@ -2311,14 +2960,15 @@
     .p-tablist {
       padding: 3px;
       gap: 2px;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     .p-tab {
-      padding: 8px 14px;
+      padding: 0 12px;
       font-size: 0.8125rem;
-      border-radius: 8px;
-      min-height: 36px;
+      border-radius: 6px;
+      height: 32px;
+      min-height: 32px;
     }
   }
 
@@ -2327,23 +2977,23 @@
   .dark-theme {
     .p-tabs {
       .p-tablist {
-        background: rgba(255, 255, 255, 0.08);
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--color-border-primary);
       }
 
       .p-tab {
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--color-text-secondary);
 
         i,
         .pi {
-          color: rgba(255, 255, 255, 0.4);
+          color: var(--color-text-tertiary);
         }
 
         &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
             [data-p-active="true"]
           ) {
-          background: rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.08);
+          color: var(--color-text-primary);
         }
 
         &.p-tab-active,
@@ -2351,6 +3001,7 @@
         &[data-p-active="true"] {
           background: var(--surface-primary);
           color: var(--ds-primary-green);
+          border-color: var(--ds-primary-green);
 
           i,
           .pi {
@@ -2482,30 +3133,10 @@
   }
 
   /* ================================================================
-     CHIP COMPONENT ENHANCEMENTS
-     Design System: Sharp rectangular chips (matches "Optimal" tag)
+     CHIP COMPONENT - UNIFIED PILL DESIGN SYSTEM
+     NOTE: Main p-chip styles defined earlier in this file.
+     This section provides hover enhancements only.
      ================================================================ */
-
-  .p-chip {
-    /* Sharp rectangular corners - matches "Optimal" tag exactly */
-    border-radius: var(--radius-sm, 4px);
-    padding: var(--space-2) var(--space-4);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: 0;
-    line-height: 1.2;
-    transition:
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: scale(1.02);
-        box-shadow: var(--shadow-sm);
-      }
-    }
-  }
 
   .p-chip-remove-icon {
     transition:
@@ -2527,11 +3158,11 @@
    ================================================================ */
 
 .p-button .p-button-icon-left {
-  margin-right: 0.5rem !important;
+  margin-right: 0.5rem;
 }
 
 .p-button .p-button-icon-right {
-  margin-left: 0.5rem !important;
+  margin-left: 0.5rem;
 }
 
 /* ================================================================
@@ -2560,8 +3191,8 @@
 *[style*="background-color: var(--ds-primary-green)"],
 *[style*="089949"],
 *[style*="green"] {
-  color: var(--color-text-on-primary) !important;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+  color: var(--color-text-on-primary);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   &,
   & *,
@@ -2575,7 +3206,7 @@
   & h6,
   & label,
   & a {
-    color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary);
   }
 }
 
@@ -2587,12 +3218,12 @@
 .bg-primary,
 .primary-bg,
 .bg-brand {
-  color: var(--color-text-on-primary) !important;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+  color: var(--color-text-on-primary);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   &,
   & * {
-    color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary);
   }
 }
 
@@ -2610,9 +3241,9 @@
   &[style*="089949"],
   &.p-button-green,
   &.bg-primary {
-    --text-color: var(--color-text-on-primary) !important;
-    --p-button-text-color: var(--color-text-on-primary) !important;
-    color: var(--color-text-on-primary) !important;
+    --text-color: var(--color-text-on-primary);
+    --p-button-text-color: var(--color-text-on-primary);
+    color: var(--color-text-on-primary);
 
     &,
     & *,
@@ -2621,7 +3252,7 @@
     & span,
     & i,
     & p {
-      color: var(--color-text-on-primary) !important;
+      color: var(--color-text-on-primary);
     }
   }
 }
@@ -2646,36 +3277,36 @@
 .p-button-danger:not(.p-button-outlined):not(.p-button-text),
 .p-button-help:not(.p-button-outlined):not(.p-button-text),
 .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-on-primary) !important;
+  color: var(--color-text-on-primary);
 
   .p-button-label {
-    color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary);
   }
 
   .p-button-icon {
-    color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary);
   }
 
   span {
-    color: var(--color-text-on-primary) !important;
+    color: var(--color-text-on-primary);
   }
 }
 
 /* Warning button - dark text for contrast on yellow/amber */
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--primitive-warning-900) !important;
+  color: var(--primitive-warning-900);
 
   .p-button-label {
-    color: var(--primitive-warning-900) !important;
+    color: var(--primitive-warning-900);
   }
 
   .p-button-icon {
-    color: var(--primitive-warning-900) !important;
+    color: var(--primitive-warning-900);
   }
 
   span {
-    color: var(--primitive-warning-900) !important;
+    color: var(--primitive-warning-900);
   }
 }
 
@@ -2683,156 +3314,176 @@
 .p-button-outlined,
 .p-button-text,
 .p-button-link {
-  color: var(--ds-primary-green) !important;
+  color: var(--ds-primary-green);
 
   .p-button-label {
-    color: var(--ds-primary-green) !important;
+    color: var(--ds-primary-green);
   }
 
   .p-button-icon {
-    color: var(--ds-primary-green) !important;
+    color: var(--ds-primary-green);
   }
 }
 
 /* Secondary button - inherit text color or use secondary text */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900));
 
   .p-button-label {
-    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900));
   }
 
   .p-button-icon {
-    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900));
   }
 }
 
 /* Outlined severity variants */
 .p-button-outlined.p-button-secondary {
-  color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
+  color: var(--color-text-secondary, var(--primitive-neutral-700));
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
+    color: var(--color-text-secondary, var(--primitive-neutral-700));
   }
 }
 
 .p-button-outlined.p-button-success {
-  color: var(--color-status-success) !important;
+  color: var(--color-status-success);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-success) !important;
+    color: var(--color-status-success);
   }
 }
 
 .p-button-outlined.p-button-info {
-  color: var(--color-status-info, var(--color-status-info)) !important;
+  color: var(--color-status-info, var(--color-status-info));
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-info, var(--color-status-info)) !important;
+    color: var(--color-status-info, var(--color-status-info));
   }
 }
 
 .p-button-outlined.p-button-warning,
 .p-button-outlined.p-button-warn {
-  color: var(--color-status-warning-text) !important;
+  color: var(--color-status-warning-text);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-warning-text) !important;
+    color: var(--color-status-warning-text);
   }
 }
 
 .p-button-outlined.p-button-danger {
-  color: var(--color-status-error) !important;
+  color: var(--color-status-error);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-error) !important;
+    color: var(--color-status-error);
   }
 }
 
 .p-button-outlined.p-button-help {
-  color: #8b5cf6 !important;
+  color: var(--primitive-purple-500, #8b5cf6);
 
   .p-button-label,
   .p-button-icon {
-    color: #8b5cf6 !important;
+    color: var(--primitive-purple-500, #8b5cf6);
   }
 }
 
 .p-button-outlined.p-button-contrast {
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900));
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+    color: var(--color-text-primary, var(--primitive-neutral-900));
   }
 }
 
 /* Text button severity variants */
 .p-button-text.p-button-secondary {
-  color: var(--color-text-secondary, var(--primitive-neutral-700)) !important;
+  color: var(--color-text-secondary, var(--primitive-neutral-700));
 }
 
 .p-button-text.p-button-success {
-  color: var(--color-status-success) !important;
+  color: var(--color-status-success);
 }
 
 .p-button-text.p-button-info {
-  color: var(--color-status-info, var(--color-status-info)) !important;
+  color: var(--color-status-info, var(--color-status-info));
 }
 
 .p-button-text.p-button-warning,
 .p-button-text.p-button-warn {
-  color: var(--color-status-warning-text) !important;
+  color: var(--color-status-warning-text);
 }
 
 .p-button-text.p-button-danger {
-  color: var(--color-status-error) !important;
+  color: var(--color-status-error);
 }
 
 .p-button-text.p-button-help {
-  color: #8b5cf6 !important;
+  color: var(--primitive-purple-500, #8b5cf6);
 }
 
 .p-button-text.p-button-contrast {
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+  color: var(--color-text-primary, var(--primitive-neutral-900));
 }
 
 /* ================================================================
-   GLOBAL BUTTON OVERRIDES - HIGHEST SPECIFICITY
-   Ensures all buttons are pill-shaped and have proper colors
+   GLOBAL BUTTON OVERRIDES - DESIGN SYSTEM ALIGNMENT
+   Ensures all PrimeNG buttons match the app-button design contract
+   
+   DESIGN CONTRACT:
+   - Shape: --radius-button (8px) - RAISED RECTANGULAR, NOT PILL
+   - Height: min-height 44px
+   - Hover: white background + green text (inverted)
    ================================================================ */
 
-/* Force pill-shaped border-radius on ALL PrimeNG buttons */
+/* RAISED RECTANGULAR border-radius on ALL PrimeNG buttons - NOT PILL */
 .p-button,
 button.p-button,
 .p-button.p-component,
 p-button .p-button,
 .p-button:not(.p-button-icon-only) {
-  border-radius: 9999px !important;
+  border-radius: var(--radius-button, 8px);
+  min-height: 44px;
 }
 
-/* Icon-only buttons should be circular */
+/* Icon-only buttons - square with same radius */
 .p-button.p-button-icon-only {
-  border-radius: 50% !important;
+  border-radius: var(--radius-button, 8px);
+  min-width: 44px;
+  min-height: 44px;
 }
 
-/* Primary button - ensure GREEN background with WHITE text */
+/* Primary button - GREEN background with WHITE text */
 .p-button:not(.p-button-outlined):not(.p-button-text):not(
     .p-button-secondary
   ):not(.p-button-link),
 .p-button.p-button-primary {
-  background: linear-gradient(
-    180deg,
-    var(--ds-primary-green-light, var(--primitive-primary-600)) 0%,
-    var(--ds-primary-green) 100%
-  ) !important;
-  border-color: var(--ds-primary-green) !important;
-  color: var(--color-text-on-primary) !important;
+  background: var(--ds-primary-green);
+  border: 2px solid transparent;
+  color: var(--color-text-on-primary);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary button hover - WHITE background with GREEN text (inverted) */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(
+    .p-button-secondary
+  ):not(.p-button-link):hover:not(:disabled),
+.p-button.p-button-primary:hover:not(:disabled) {
+  background: var(--color-text-on-primary, #ffffff);
+  color: var(--ds-primary-green);
+  border-color: var(--ds-primary-green);
+  box-shadow:
+    0 8px 20px rgba(34, 139, 34, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .p-button:not(.p-button-outlined):not(.p-button-text):not(
@@ -2845,7 +3496,7 @@ p-button .p-button,
   .p-button-icon,
 .p-button.p-button-primary .p-button-label,
 .p-button.p-button-primary .p-button-icon {
-  color: var(--color-text-on-primary) !important;
+  color: inherit;
 }
 
 /* ================================================================
@@ -2858,11 +3509,7 @@ p-button .p-button,
     background: rgba(0, 0, 0, 0.7);
   }
 
-  .p-card:hover {
-    box-shadow:
-      0 12px 40px -10px rgba(0, 0, 0, 0.5),
-      0 4px 15px -5px rgba(0, 0, 0, 0.3);
-  }
+  /* ✅ No .p-card:hover in dark mode either (Option A) */
 
   .p-button:hover:not(:disabled) {
     box-shadow:
@@ -2872,18 +3519,18 @@ p-button .p-button,
 
   /* Dark mode: Outlined contrast button should be white */
   .p-button-outlined.p-button-contrast {
-    color: var(--surface-primary, var(--color-text-on-primary)) !important;
-    border-color: var(--surface-primary, var(--color-text-on-primary)) !important;
+    color: var(--surface-primary, var(--color-text-on-primary));
+    border-color: var(--surface-primary, var(--color-text-on-primary));
 
     .p-button-label,
     .p-button-icon {
-      color: var(--surface-primary, var(--color-text-on-primary)) !important;
+      color: var(--surface-primary, var(--color-text-on-primary));
     }
   }
 
   /* Dark mode: Text contrast button should be white */
   .p-button-text.p-button-contrast {
-    color: var(--surface-primary, var(--color-text-on-primary)) !important;
+    color: var(--surface-primary, var(--color-text-on-primary));
   }
 }
 
@@ -2899,18 +3546,18 @@ p-button .p-button,
 .p-datepicker-panel,
 .p-datepicker-overlay,
 .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
-  z-index: 10000 !important;
-  background: var(--surface-primary, var(--color-text-on-primary)) !important;
-  border-radius: 16px !important;
+  z-index: 10000;
+  background: var(--surface-primary);
+  border-radius: 12px; /* Slightly larger for calendar panels */
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
+    0 10px 40px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border-primary);
   overflow: hidden;
-  min-width: 320px !important;
-  max-width: 360px !important;
-  padding: 0 !important;
-  animation: calendarSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  min-width: 320px;
+  max-width: 360px;
+  padding: 0;
+  animation: calendarSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes calendarSlideIn {
@@ -2929,27 +3576,27 @@ p-button .p-button,
   .p-datepicker-panel,
   .p-datepicker-overlay,
   .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
-    min-width: 280px !important;
-    max-width: calc(100vw - 32px) !important;
-    left: 16px !important;
-    right: 16px !important;
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+    left: 16px;
+    right: 16px;
   }
 }
 
-/* Select/Dropdown Panel */
+/* Select/Dropdown Panel - Design Contract: 8px radius (NOT pill) */
 .p-select-overlay,
 .p-select-panel,
 .p-dropdown-panel,
 .p-multiselect-panel,
 .p-autocomplete-panel,
 .p-cascadeselect-panel {
-  z-index: 10000 !important;
-  background: var(--surface-primary, var(--color-text-on-primary)) !important;
-  border-radius: var(--radius-lg, 12px) !important;
+  z-index: 10000;
+  background: var(--surface-primary);
+  border-radius: 8px;
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
+    0 10px 40px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border-primary);
   overflow: hidden;
   margin-top: 4px;
 }
@@ -2957,44 +3604,47 @@ p-button .p-button,
 /* Ensure overlay container has high z-index */
 .p-overlay,
 .p-component-overlay {
-  z-index: 9999 !important;
+  z-index: 9999;
 }
 
 /* Dialog should have lower z-index than dropdowns inside it */
 .p-dialog-mask {
-  z-index: 1000 !important;
+  z-index: 1000;
 }
 
 .p-dialog {
-  z-index: 1001 !important;
+  z-index: 1001;
 }
 
-/* Dropdown items styling */
+/* Dropdown items styling - Design Contract: 40px min-height, 6px radius */
 .p-select-list,
 .p-dropdown-items,
 .p-listbox-list {
-  padding: 0.5rem !important;
-  margin: 0 !important;
+  padding: 8px;
+  margin: 0;
 }
 
 .p-select-option,
 .p-select-item,
 .p-dropdown-item,
 .p-listbox-item {
-  padding: 0.75rem 1rem !important;
-  border-radius: 8px !important;
-  margin: 2px 0 !important;
-  font-size: 0.9375rem !important;
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
-  transition: all 0.15s ease !important;
+  padding: 12px 16px;
+  border-radius: 6px;
+  min-height: 40px;
+  margin: 2px 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .p-select-option:hover,
 .p-select-item:hover,
 .p-dropdown-item:hover,
 .p-listbox-item:hover {
-  background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.08)) !important;
-  color: var(--ds-primary-green) !important;
+  background: var(--surface-secondary);
 }
 
 .p-select-option.p-highlight,
@@ -3003,9 +3653,9 @@ p-button .p-button,
 .p-listbox-item.p-highlight,
 .p-select-option[aria-selected="true"],
 .p-select-item[data-p-selected="true"] {
-  background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.12)) !important;
-  color: var(--ds-primary-green) !important;
-  font-weight: 600 !important;
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green);
+  font-weight: 500;
 }
 
 /* ================================================================
@@ -3014,25 +3664,25 @@ p-button .p-button,
 
 /* Calendar Header */
 .p-datepicker-panel .p-datepicker-header {
-  padding: 1rem 1.25rem !important;
-  border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
   background: linear-gradient(
     to bottom,
     var(--surface-secondary, var(--primitive-neutral-50)),
     var(--surface-primary, var(--color-text-on-primary))
-  ) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
+  );
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Month/Year Title */
 .p-datepicker-panel .p-datepicker-title {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-  flex: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-month,
@@ -3045,17 +3695,17 @@ p-button .p-button,
     "Poppins",
     -apple-system,
     BlinkMacSystemFont,
-    sans-serif !important;
-  font-weight: 600 !important;
-  font-size: var(--font-body-md, 1rem) !important;
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
-  margin: 0 0.125rem !important;
-  background: none !important;
-  border: none !important;
-  cursor: pointer !important;
-  padding: 0.25rem 0.5rem !important;
-  border-radius: 6px !important;
-  transition: all 0.15s ease !important;
+    sans-serif;
+  font-weight: 600;
+  font-size: var(--font-body-md, 1rem);
+  color: var(--color-text-primary, var(--primitive-neutral-900));
+  margin: 0 0.125rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .p-datepicker-panel .p-datepicker-title button:hover,
@@ -3064,26 +3714,26 @@ p-button .p-button,
   background: var(
     --ds-primary-green-ultra-subtle,
     rgba(8, 153, 73, 0.08)
-  ) !important;
-  color: var(--ds-primary-green) !important;
+  );
+  color: var(--ds-primary-green);
 }
 
 /* Navigation Arrows */
 .p-datepicker-panel .p-datepicker-prev,
 .p-datepicker-panel .p-datepicker-next {
-  width: 2.5rem !important;
-  height: 2.5rem !important;
-  min-width: 2.5rem !important;
-  border-radius: 50% !important;
-  color: var(--color-text-secondary, var(--primitive-neutral-600)) !important;
-  background: var(--surface-secondary, var(--primitive-neutral-100)) !important;
-  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300)) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  flex-shrink: 0 !important;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  border-radius: 50%;
+  color: var(--color-text-secondary, var(--primitive-neutral-600));
+  background: var(--surface-secondary, var(--primitive-neutral-100));
+  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
 }
 
 .p-datepicker-panel .p-datepicker-prev:hover,
@@ -3091,79 +3741,79 @@ p-button .p-button,
   background: var(
     --ds-primary-green-ultra-subtle,
     rgba(8, 153, 73, 0.1)
-  ) !important;
+  );
   border-color: var(
     --ds-primary-green-subtle,
     rgba(8, 153, 73, 0.2)
-  ) !important;
-  color: var(--ds-primary-green) !important;
-  transform: scale(1.05) !important;
+  );
+  color: var(--ds-primary-green);
+  transform: scale(1.05);
 }
 
 .p-datepicker-panel .p-datepicker-prev:active,
 .p-datepicker-panel .p-datepicker-next:active {
-  transform: scale(0.95) !important;
+  transform: scale(0.95);
 }
 
 .p-datepicker-panel .p-datepicker-prev .pi,
 .p-datepicker-panel .p-datepicker-next .pi {
-  font-size: 0.875rem !important;
+  font-size: 0.875rem;
 }
 
 /* Calendar Body */
 .p-datepicker-panel .p-datepicker-calendar-container {
-  padding: 0.75rem 1rem 1rem !important;
+  padding: 0.75rem 1rem 1rem;
 }
 
 .p-datepicker-panel .p-datepicker-calendar {
-  width: 100% !important;
-  border-collapse: separate !important;
-  border-spacing: 4px !important;
-  margin: 0 !important;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+  margin: 0;
 }
 
 /* Weekday Headers */
 .p-datepicker-panel .p-datepicker-calendar th {
-  padding: 0.5rem 0 !important;
+  padding: 0.5rem 0;
   font-family:
     "Poppins",
     -apple-system,
     BlinkMacSystemFont,
-    sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 0.6875rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  color: var(--color-text-muted, var(--primitive-neutral-400)) !important;
-  text-align: center !important;
+    sans-serif;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, var(--primitive-neutral-400));
+  text-align: center;
 }
 
 /* Date Cells */
 .p-datepicker-panel .p-datepicker-calendar td {
-  padding: 2px !important;
-  text-align: center !important;
+  padding: 2px;
+  text-align: center;
 }
 
 .p-datepicker-panel .p-datepicker-calendar td > span,
 .p-datepicker-panel .p-datepicker-calendar td > button {
-  width: 2.5rem !important;
-  height: 2.5rem !important;
-  border-radius: 10px !important;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
   font-family:
     "Poppins",
     -apple-system,
     BlinkMacSystemFont,
-    sans-serif !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  border: none !important;
-  background: transparent !important;
-  color: var(--color-text-primary, var(--primitive-neutral-900)) !important;
+    sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary, var(--primitive-neutral-900));
 }
 
 /* Hover State */
@@ -3178,8 +3828,8 @@ p-button .p-button,
   background: var(
     --ds-primary-green-ultra-subtle,
     rgba(8, 153, 73, 0.08)
-  ) !important;
-  color: var(--ds-primary-green) !important;
+  );
+  color: var(--ds-primary-green);
 }
 
 /* Selected Date */
@@ -3187,10 +3837,10 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-calendar td > button.p-highlight,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > span,
 .p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > button {
-  background: var(--ds-primary-green) !important;
-  color: var(--color-text-on-primary) !important;
-  font-weight: 600 !important;
-  box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3) !important;
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
 }
 
 /* Today's Date */
@@ -3210,10 +3860,10 @@ p-button .p-button,
   .p-datepicker-calendar
   td[data-p-today="true"]
   > button:not(.p-highlight) {
-  border: 2px solid var(--ds-primary-green) !important;
-  background: transparent !important;
-  color: var(--ds-primary-green) !important;
-  font-weight: 600 !important;
+  border: 2px solid var(--ds-primary-green);
+  background: transparent;
+  color: var(--ds-primary-green);
+  font-weight: 600;
 }
 
 /* Disabled/Other Month Dates */
@@ -3224,42 +3874,42 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > button {
-  color: var(--color-text-disabled, var(--primitive-neutral-300)) !important;
-  cursor: not-allowed !important;
+  color: var(--color-text-disabled, var(--primitive-neutral-300));
+  cursor: not-allowed;
 }
 
 /* Responsive: Smaller cells on mobile */
 @media (max-width: 400px) {
   .p-datepicker-panel .p-datepicker-calendar td > span,
   .p-datepicker-panel .p-datepicker-calendar td > button {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    font-size: 0.8125rem !important;
-    border-radius: 8px !important;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.8125rem;
+    border-radius: 8px;
   }
 
   .p-datepicker-panel .p-datepicker-header {
-    padding: 0.875rem 1rem !important;
+    padding: 0.875rem 1rem;
   }
 
   .p-datepicker-panel .p-datepicker-title span,
   .p-datepicker-panel .p-datepicker-title button {
-    font-size: 0.9375rem !important;
+    font-size: 0.9375rem;
   }
 
   .p-datepicker-panel .p-datepicker-prev,
   .p-datepicker-panel .p-datepicker-next {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
   }
 }
 
 /* Dark Mode - DatePicker */
 [data-theme="dark"] .p-datepicker-panel,
 .dark-theme .p-datepicker-panel {
-  background: var(--primitive-neutral-800, var(--primitive-neutral-800)) !important;
-  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
+  background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-header,
@@ -3268,36 +3918,36 @@ p-button .p-button,
     to bottom,
     var(--primitive-neutral-700, var(--primitive-neutral-700)),
     var(--primitive-neutral-800, var(--primitive-neutral-800))
-  ) !important;
-  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
+  );
+  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-title span,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-title button,
 .dark-theme .p-datepicker-panel .p-datepicker-title span,
 .dark-theme .p-datepicker-panel .p-datepicker-title button {
-  color: var(--color-text-on-primary) !important;
+  color: var(--color-text-on-primary);
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-prev,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-next,
 .dark-theme .p-datepicker-panel .p-datepicker-prev,
 .dark-theme .p-datepicker-panel .p-datepicker-next {
-  background: var(--primitive-neutral-700, var(--primitive-neutral-700)) !important;
-  border-color: var(--primitive-neutral-600, var(--primitive-neutral-600)) !important;
-  color: var(--primitive-neutral-300, var(--primitive-neutral-400)) !important;
+  background: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  border-color: var(--primitive-neutral-600, var(--primitive-neutral-600));
+  color: var(--primitive-neutral-300, var(--primitive-neutral-400));
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar th,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar th {
-  color: var(--primitive-neutral-500, var(--primitive-neutral-600)) !important;
+  color: var(--primitive-neutral-500, var(--primitive-neutral-600));
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > span,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > button,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > span,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > button {
-  color: var(--primitive-neutral-200, var(--primitive-neutral-300)) !important;
+  color: var(--primitive-neutral-200, var(--primitive-neutral-300));
 }
 
 [data-theme="dark"]
@@ -3310,30 +3960,35 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > span {
-  color: var(--primitive-neutral-600, var(--primitive-neutral-600)) !important;
+  color: var(--primitive-neutral-600, var(--primitive-neutral-600));
 }
 
 /* Input wrapper positioning fix */
 .p-datepicker,
+.p-calendar,
 .p-select,
 .p-dropdown,
 .p-multiselect,
-.p-autocomplete {
-  position: relative !important;
+.p-autocomplete,
+.p-inputnumber {
+  position: relative;
+  width: 100%;
 }
 
 /* Ensure inputs in dialogs work correctly */
 .p-dialog .p-datepicker-panel,
 .p-dialog .p-select-overlay,
-.p-dialog .p-dropdown-panel {
-  position: fixed !important;
+.p-dialog .p-dropdown-panel,
+.p-dialog .p-multiselect-panel {
+  position: fixed;
 }
 
 /* Animation for panels */
 .p-select-overlay,
 .p-dropdown-panel,
+.p-multiselect-panel,
 .p-datepicker-panel {
-  animation: overlayFadeIn 0.15s ease-out !important;
+  animation: overlayFadeIn 0.2s ease-out;
 }
 
 @keyframes overlayFadeIn {

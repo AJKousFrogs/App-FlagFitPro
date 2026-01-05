@@ -1,21 +1,18 @@
 import {
   Component,
-  inject,
-  signal,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
 
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
   selector: "app-qb-assessment-tools",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, MainLayoutComponent, PageHeaderComponent,
+  imports: [CardModule, PageHeaderComponent,
     ButtonComponent,
   ],
   template: `

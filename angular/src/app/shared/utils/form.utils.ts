@@ -10,7 +10,7 @@ import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 /**
  * Form Field State (Signal-based)
  */
-export interface FormFieldState<T = any> {
+export interface FormFieldState<T = unknown> {
   value: Signal<T>;
   error: Signal<string | null>;
   touched: Signal<boolean>;
@@ -22,8 +22,8 @@ export interface FormFieldState<T = any> {
 /**
  * Create a signal-based form field state
  */
-export function createFormFieldState<T = any>(
-  initialValue: T = null as any,
+export function createFormFieldState<T = unknown>(
+  initialValue: T = null as T,
   validator?: (value: T) => string | null,
 ): FormFieldState<T> {
   const value = signal<T>(initialValue);
@@ -137,7 +137,7 @@ export const FormValidators = {
    */
   phone: (value: string | null | undefined): string | null => {
     if (!value) return null;
-    const cleaned = value.replace(/[\s\-\(\)]/g, "");
+    const cleaned = value.replace(/[\s\-()]/g, "");
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     return phoneRegex.test(cleaned)
       ? null

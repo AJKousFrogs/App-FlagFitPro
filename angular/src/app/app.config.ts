@@ -71,6 +71,17 @@ export const appConfig: ApplicationConfig = {
         menu: 1000,
         tooltip: 1100,
       },
+      // CSS Layers: Place PrimeNG styles in the cascade layer system
+      // This allows our custom styles to override PrimeNG without !important
+      // Layer order: reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
+      theme: {
+        options: {
+          cssLayer: {
+            name: 'primeng-base',
+            order: 'reset, tokens, primeng-base, primeng-brand, primitives, features, overrides',
+          },
+        },
+      },
     }),
     AcwrService,
     LoadMonitoringService,

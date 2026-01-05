@@ -8,14 +8,14 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule} from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { FileUpload, FileUploadModule } from "primeng/fileupload";
+import { FileUploadModule } from "primeng/fileupload";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -139,7 +139,6 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   imports: [
     CommonModule,
     FormsModule,
-    DatePipe,
     CardModule,
     DialogModule,
     FileUploadModule,
@@ -668,7 +667,7 @@ export class DataImportComponent implements OnInit {
     });
   }
 
-  private getDateRange(data: unknown[]): string {
+  private getDateRange(_data: unknown[]): string {
     // Simplified - would need actual date parsing
     return "Detected from file";
   }
@@ -700,7 +699,7 @@ export class DataImportComponent implements OnInit {
 
     // In real implementation, this would fetch the file
     this.api.post("/api/import/fetch-url", { url: this.importUrl }).subscribe({
-      next: (response: unknown) => {
+      next: (_response: unknown) => {
         // Process fetched data
         this.messageService.add({
           severity: "success",
@@ -775,7 +774,7 @@ export class DataImportComponent implements OnInit {
       } else {
         throw new Error(response?.message || "Import failed");
       }
-    } catch (err) {
+    } catch (_err) {
       // Demo success for development
       this.importResult.set({
         success: true,

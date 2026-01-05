@@ -19,7 +19,7 @@ import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { Radio } from "primeng/radiobutton";
+import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -109,7 +109,7 @@ imports: [
     Select,
     TableModule,
     TagModule,
-    Radio,
+    RadioButton,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -858,24 +858,29 @@ export class GameTrackerComponent implements OnInit {
 
   getPlayDetails(play: Play): string {
     switch (play.playType) {
-      case "pass_play":
+      case "pass_play": {
         const qbName = this.getPlayerName(play.quarterbackId);
         const wrName = this.getPlayerName(play.receiverId);
         const route = play.routeType || "route";
         return `${qbName} to ${wrName} on ${route}${play.outcome ? ` - ${play.outcome}` : ""}`;
-      case "run_play":
+      }
+      case "run_play": {
         const carrierName = this.getPlayerName(play.ballCarrierId);
         return `${carrierName} runs for ${play.yardsGained || 0} yards`;
-      case "flag_pull":
+      }
+      case "flag_pull": {
         const defenderName = this.getPlayerName(play.defenderId);
         const carrierNameFlag = this.getPlayerName(play.ballCarrierId);
         return `${defenderName} ${play.isSuccessful ? "pulls flag on" : "misses"} ${carrierNameFlag}`;
-      case "interception":
+      }
+      case "interception": {
         const interceptorName = this.getPlayerName(play.interceptorId);
         return `Intercepted by ${interceptorName}`;
-      case "pass_deflection":
+      }
+      case "pass_deflection": {
         const deflectedByName = this.getPlayerName(play.deflectedBy);
         return `Deflected by ${deflectedByName}`;
+      }
       default:
         return "No details";
     }

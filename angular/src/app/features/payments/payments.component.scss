@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-heading-sm);
+  font-size: var(--font-size-h2);
 }
 
 .summary-details {
@@ -67,43 +67,24 @@
   flex-direction: column;
 
   .summary-label {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
   .summary-value {
-    font-size: var(--font-heading-sm);
-    font-weight: 700;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
     color: var(--ds-text-primary);
   }
 
   .summary-amount {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }
 
-// Card Headers
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
-
-  h3 {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: var(--font-body-lg);
-    font-weight: 600;
-    color: var(--ds-text-primary);
-
-    i {
-      color: var(--ds-primary-green);
-    }
-  }
-}
+// Card Headers - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
 
 // Fees Card
 .fees-list {
@@ -135,26 +116,26 @@
 
     h4 {
       margin: 0 0 var(--space-1) 0;
-      font-size: var(--font-body-md);
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
 
     p {
       margin: 0;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
 
     .due-date {
       display: block;
       margin-top: var(--space-1);
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
 
       &.overdue {
         color: var(--primitive-error-500);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
       }
     }
   }
@@ -167,7 +148,7 @@
 
     .amount {
       font-size: var(--font-body-lg);
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
       color: var(--ds-text-primary);
     }
   }
@@ -185,7 +166,7 @@
     background: none;
     border: none;
     padding: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-primary-green);
     cursor: pointer;
 
@@ -209,7 +190,7 @@
     display: flex;
     justify-content: space-between;
     padding: var(--space-1) 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
 
     &:not(:last-child) {
       border-bottom: 1px dashed var(--ds-border-subtle);
@@ -220,7 +201,7 @@
     }
 
     span:last-child {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
     }
   }
@@ -250,10 +231,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
 
   i {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 }
@@ -303,23 +284,23 @@
     margin-bottom: var(--space-2);
 
     i {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
       color: var(--ds-primary-green);
     }
 
     h4 {
       margin: 0;
-      font-size: var(--font-body-md);
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
 
   .method-instructions {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
-    line-height: 1.5;
+    line-height: var(--line-height-base);
   }
 
   .method-details {
@@ -331,7 +312,7 @@
     pre {
       margin: 0;
       font-family: inherit;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-primary);
       white-space: pre-wrap;
     }
@@ -353,7 +334,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--primitive-warning-800);
   }
 }
@@ -381,9 +362,5 @@
     border-top: 1px dashed var(--ds-border-subtle);
   }
 
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
+  // .card-header responsive styles removed - use app-card-shell
 }

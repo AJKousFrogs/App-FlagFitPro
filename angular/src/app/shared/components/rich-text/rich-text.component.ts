@@ -148,7 +148,7 @@ export class RichTextComponent implements ControlValueAccessor {
 
   // Value signal
   value = signal<string>("");
-  private onChangeFn = (value: string) => {};
+  private onChangeFn = (_value: string) => {};
   private onTouchedFn = () => {};
 
   // Sanitized HTML for safe rendering

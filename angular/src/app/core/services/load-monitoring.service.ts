@@ -13,7 +13,7 @@
  * @version 2.0.0 - Added database integration
  */
 
-import { Injectable, signal, computed, Signal, inject } from "@angular/core";
+import { Injectable, signal, computed, inject } from "@angular/core";
 import {
   LoadMetrics,
   ExternalLoad,

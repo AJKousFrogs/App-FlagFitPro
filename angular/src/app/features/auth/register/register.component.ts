@@ -288,12 +288,12 @@ export class RegisterComponent {
 
   isFieldInvalid(fieldName: string): boolean {
     const control = this.registerForm.get(fieldName);
-    return isFormControlInvalid(control!);
+    return control ? isFormControlInvalid(control) : false;
   }
 
   getFieldError(fieldName: string): string {
     const control = this.registerForm.get(fieldName);
-    return getFormControlError(control!) || "";
+    return control ? getFormControlError(control) || "" : "";
   }
 
   async onSubmit(): Promise<void> {
@@ -306,8 +306,8 @@ export class RegisterComponent {
     try {
       const password = this.registerForm.value.password;
       const supabaseUrl =
-        (window as any)._env?.SUPABASE_URL ||
-        (window as any)._env?.VITE_SUPABASE_URL;
+        (window as { _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string } })._env?.SUPABASE_URL ||
+        (window as { _env?: { SUPABASE_URL?: string; VITE_SUPABASE_URL?: string } })._env?.VITE_SUPABASE_URL;
 
       if (supabaseUrl) {
         // Get auth token if available
@@ -315,7 +315,7 @@ export class RegisterComponent {
         try {
           const session = this.supabaseService.getSession();
           supabaseToken = session?.access_token || null;
-        } catch (e) {
+        } catch (_e) {
           // Token not available, continue without it
         }
 

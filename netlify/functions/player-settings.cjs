@@ -166,7 +166,7 @@ async function saveSettings(supabase, userId, payload, headers) {
 
   // Calculate age recovery modifier if birth date provided
   let ageRecoveryModifier = 1.0;
-  let acwrTargetMin = 0.8;
+  const acwrTargetMin = 0.8;
   let acwrTargetMax = 1.3;
 
   if (birthDate) {

@@ -11,7 +11,7 @@
 // API RESPONSE TYPES
 // ============================================================================
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -106,7 +106,7 @@ export interface ChartDataPoint {
   date: Date | string;
   value: number;
   label?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ChartSeries {
@@ -175,7 +175,7 @@ export interface FormState<T> {
 
 export interface SearchParams {
   query: string;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   sort?: SortOption;
   pagination?: Pagination;
 }
@@ -248,7 +248,7 @@ export interface AuditLog extends Timestamps {
   action: string;
   resource: string;
   resourceId: string;
-  changes?: Record<string, any>;
+  changes?: Record<string, unknown>;
   ip?: string;
   userAgent?: string;
 }

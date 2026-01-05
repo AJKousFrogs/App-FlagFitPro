@@ -1,0 +1,65 @@
+// ============================================================================
+// pull-to-refresh.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .pull-to-refresh-container {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pull-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.2s ease;
+  }
+
+  .pull-indicator.visible {
+    opacity: 1;
+  }
+
+  .pull-indicator.refreshing {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .indicator-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-primary);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    color: var(--color-brand-primary);
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .indicator-content i {
+    font-size: var(--font-size-body);
+  }
+
+  .pull-content {
+    min-height: 100%;
+    transition: transform 0.2s ease;
+  }
+
+  .pull-indicator.refreshing + .pull-content {
+    transform: translateY(60px);
+  }
+}
+

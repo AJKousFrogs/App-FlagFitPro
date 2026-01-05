@@ -14,7 +14,6 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { TagModule } from "primeng/tag";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { TooltipModule } from "primeng/tooltip";
 import { Chip } from "primeng/chip";
 
@@ -26,7 +25,6 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TagModule, TooltipModule, Chip,
-    ButtonComponent,
   ],
   template: `
     <div class="tab-content">

@@ -1,7 +1,6 @@
 import {
   Component,
   signal,
-  computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
@@ -198,7 +197,7 @@ export class TrainingHeatmapComponent {
 
   trackByStep(
     index: number,
-    step: { title: string; description: string },
+    _step: { title: string; description: string },
   ): number {
     return index;
   }

@@ -20,7 +20,6 @@ import { TagModule } from "primeng/tag";
 import { RouterModule } from "@angular/router";
 import {
   TrainingSafetyService,
-  SafetyWarning,
   WarningSeverity,
 } from "../../../core/services/training-safety.service";
 import { AuthService } from "../../../core/services/auth.service";

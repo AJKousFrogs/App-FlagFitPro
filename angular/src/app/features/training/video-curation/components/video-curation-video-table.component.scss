@@ -3,102 +3,100 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .tab-content {
-    padding: var(--space-4) 0;
-  }
+.tab-content {
+  padding: var(--space-4) 0;
+}
 
+.table-filters {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  min-width: 250px;
+}
+
+.filter-select {
+  min-width: 150px;
+}
+
+.video-title-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-title-cell .title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.video-title-cell .subtitle {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+}
+
+.creator-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.verified-icon {
+  color: var(--color-brand-twitter);
+  font-size: var(--font-size-h4);
+}
+
+.tags-cell {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.more-tag {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+}
+
+.rating-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-star-rating);
+  font-weight: var(--font-weight-semibold);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.video-avatar {
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+}
+
+.empty-message {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+
+  i {
+    font-size: var(--icon-3xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
   .table-filters {
-    display: flex;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
   }
 
   .filter-input {
-    min-width: 250px;
-  }
-
-  :host ::ng-deep .filter-select {
-    min-width: 150px;
-  }
-
-  .video-title-cell {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .video-title-cell .title {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .video-title-cell .subtitle {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-  }
-
-  .creator-cell {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .verified-icon {
-    color: var(--color-brand-twitter);
-    font-size: var(--font-body-sm);
-  }
-
-  .tags-cell {
-    display: flex;
-    gap: var(--space-1);
-    flex-wrap: wrap;
-  }
-
-  .more-tag {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-  }
-
-  .rating-cell {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    color: var(--color-star-rating);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: var(--space-1);
-  }
-
-  :host ::ng-deep .video-avatar {
-    background: var(--color-brand-primary) !important;
-    color: var(--color-text-on-primary) !important;
-  }
-
-  .empty-message {
-    text-align: center;
-    padding: var(--space-8);
-    color: var(--color-text-muted);
-
-    i {
-      font-size: var(--icon-3xl);
-      margin-bottom: var(--space-3);
-      display: block;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .table-filters {
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .filter-input {
-      width: 100%;
-    }
+    width: 100%;
   }
 }
 

@@ -274,7 +274,7 @@ export class StatisticsCalculationService {
 
     // Calculate current streak (backwards from today)
     let currentStreak = 0;
-    let expectedDate = new Date(refNormalized);
+    const expectedDate = new Date(refNormalized);
 
     for (const workoutDate of workoutDates) {
       const dayDifference =
@@ -519,7 +519,7 @@ export class StatisticsCalculationService {
     }
 
     let bodyFatPercentage: number;
-    let confidence: number = 0.85; // Default confidence (85%)
+    const confidence: number = 0.85; // Default confidence (85%)
 
     if (gender === "male") {
       // Navy method for males

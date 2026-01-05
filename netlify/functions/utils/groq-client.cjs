@@ -306,8 +306,8 @@ function buildAthleteContext(userContext) {
   if (userContext.todayProtocol) {
     const p = userContext.todayProtocol;
     let protocolDesc = `Today's Focus: ${p.focus || "General training"}.`;
-    if (p.rationale) protocolDesc += ` Rationale: ${p.rationale}`;
-    if (p.progress > 0) protocolDesc += ` (Progress: ${p.progress}% complete)`;
+    if (p.rationale) {protocolDesc += ` Rationale: ${p.rationale}`;}
+    if (p.progress > 0) {protocolDesc += ` (Progress: ${p.progress}% complete)`;}
     
     parts.push(protocolDesc);
     
@@ -330,16 +330,16 @@ function buildAthleteContext(userContext) {
   // Daily readiness & Wellness
   const wellness = userContext.latestWellness || userContext.dailyState;
   if (wellness) {
-    if (wellness.readiness_score) parts.push(`Today's Readiness Score: ${wellness.readiness_score}/100.`);
-    if (wellness.sleep_quality < 5) parts.push(`Poor sleep reported (${wellness.sleep_quality}/10).`);
-    if (wellness.pain_level > 5) parts.push(`Elevated pain today (${wellness.pain_level}/10).`);
-    if (wellness.fatigue_level > 7) parts.push(`High fatigue reported today.`);
+    if (wellness.readiness_score) {parts.push(`Today's Readiness Score: ${wellness.readiness_score}/100.`);}
+    if (wellness.sleep_quality < 5) {parts.push(`Poor sleep reported (${wellness.sleep_quality}/10).`);}
+    if (wellness.pain_level > 5) {parts.push(`Elevated pain today (${wellness.pain_level}/10).`);}
+    if (wellness.fatigue_level > 7) {parts.push(`High fatigue reported today.`);}
   }
 
   // Body Composition & Hydration
   if (userContext.bodyStats) {
     const stats = userContext.bodyStats;
-    if (stats.weight) parts.push(`Current weight: ${stats.weight}kg.`);
+    if (stats.weight) {parts.push(`Current weight: ${stats.weight}kg.`);}
     if (stats.hydration) {
       const hydrationDesc = stats.hydration < 5 ? "low" : stats.hydration > 8 ? "good" : "moderate";
       parts.push(`Hydration level is ${hydrationDesc} (${stats.hydration}/10).`);

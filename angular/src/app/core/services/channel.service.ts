@@ -229,7 +229,7 @@ export class ChannelService {
   // User role check
   readonly isCoach = computed(() => {
     const user = this.authService.getUser();
-    const metadata = (user as any)?.user_metadata;
+    const metadata = (user as { user_metadata?: { role?: string } } | null)?.user_metadata;
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 
@@ -501,7 +501,7 @@ export class ChannelService {
       if (!userId) throw new Error("Not authenticated");
 
       // Parse mentions from message text (@username)
-      const mentionMatches = request.message.match(/@(\w+)/g) || [];
+      const _mentionMatches = request.message.match(/@(\w+)/g) || [];
       const mentions = request.mentions || [];
 
       // Add parsed mentions (would need to resolve usernames to IDs in real implementation)
@@ -1021,7 +1021,7 @@ export class ChannelService {
         .gt("created_at", lastReadAt);
 
       return count || 0;
-    } catch (error) {
+    } catch (_error) {
       return 0;
     }
   }

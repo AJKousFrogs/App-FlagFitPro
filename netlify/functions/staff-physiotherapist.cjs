@@ -50,7 +50,7 @@ async function getAthletePhysioOverview(teamId) {
   for (const member of members || []) {
     const userId = member.user_id;
     const user = member.users;
-    if (!user) continue;
+    if (!user) {continue;}
 
     // Get active injuries
     const { data: injuries } = await supabaseAdmin
@@ -224,7 +224,7 @@ async function updateRTPProgress(injuryId, updates) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -291,16 +291,16 @@ async function logInjury(userId, injuryData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
 // Helper functions
 function calculateRiskLevel(acwr, injuries) {
-  if (!acwr) return "unknown";
+  if (!acwr) {return "unknown";}
 
   // High risk if ACWR > 1.5 or < 0.8
-  if (acwr > 1.5 || acwr < 0.8) return "high";
+  if (acwr > 1.5 || acwr < 0.8) {return "high";}
 
   // Medium risk if recovering from injury
   if (injuries?.some((i) => ["recovering", "rehab"].includes(i.recovery_status))) {
@@ -308,7 +308,7 @@ function calculateRiskLevel(acwr, injuries) {
   }
 
   // Medium risk if ACWR between 1.3-1.5
-  if (acwr > 1.3) return "medium";
+  if (acwr > 1.3) {return "medium";}
 
   return "low";
 }
@@ -323,8 +323,8 @@ function calculateRiskIndicators(loadHistory, injuries) {
 
   if (loadHistory && loadHistory.length > 0) {
     const latestAcwr = loadHistory[0]?.acwr;
-    if (latestAcwr > 1.5) indicators.acwrRisk = "high";
-    else if (latestAcwr > 1.3) indicators.acwrRisk = "medium";
+    if (latestAcwr > 1.5) {indicators.acwrRisk = "high";}
+    else if (latestAcwr > 1.3) {indicators.acwrRisk = "medium";}
 
     // Check for load spike (>10% increase in last 7 days)
     if (loadHistory.length >= 7) {

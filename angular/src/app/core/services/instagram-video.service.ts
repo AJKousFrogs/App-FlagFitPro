@@ -1350,19 +1350,21 @@ export class InstagramVideoService {
   filterVideos(filter: InstagramVideoFilter): InstagramVideo[] {
     return this._videos().filter((video) => {
       // Position filter
+      const positions = filter.positions;
       if (
-        filter.positions?.length &&
+        positions?.length &&
         !video.positions.some(
-          (p) => filter.positions!.includes(p) || p === "All",
+          (p) => positions.includes(p) || p === "All",
         )
       ) {
         return false;
       }
 
       // Focus filter
+      const focus = filter.focus;
       if (
-        filter.focus?.length &&
-        !video.trainingFocus.some((f) => filter.focus!.includes(f))
+        focus?.length &&
+        !video.trainingFocus.some((f) => focus.includes(f))
       ) {
         return false;
       }

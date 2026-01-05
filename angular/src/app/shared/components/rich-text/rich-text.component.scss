@@ -3,107 +3,105 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  .rich-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.rich-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  .rich-text-editor {
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
-    background: var(--surface-primary);
-    overflow: hidden;
-  }
+.rich-text-editor {
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  background: var(--surface-primary);
+  overflow: hidden;
+}
 
-  .rich-text-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--color-border-primary);
-    background: var(--surface-secondary);
-    flex-wrap: wrap;
-  }
+.rich-text-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--surface-secondary);
+  flex-wrap: wrap;
+}
 
-  .toolbar-btn {
-    background: none;
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: var(--radius-md);
-    color: var(--color-text-secondary);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.toolbar-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .toolbar-btn:hover:not(:disabled) {
-    background: var(--surface-tertiary);
-    color: var(--color-text-primary);
-  }
+.toolbar-btn:hover:not(:disabled) {
+  background: var(--surface-tertiary);
+  color: var(--color-text-primary);
+}
 
-  .toolbar-btn.active {
-    background: var(--ds-primary-green);
-    color: white;
-  }
+.toolbar-btn.active {
+  background: var(--ds-primary-green);
+  color: white;
+}
 
-  .toolbar-separator {
-    width: 1px;
-    height: 1.5rem;
-    background: var(--color-border-primary);
-    margin: 0 0.25rem;
-  }
+.toolbar-separator {
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border-primary);
+  margin: 0 0.25rem;
+}
 
-  .rich-text-content {
-    min-height: 200px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding: var(--space-4);
-    font-size: var(--font-body-md);
-    line-height: 1.5;
-    color: var(--color-text-primary);
-    outline: none;
-  }
+.rich-text-content {
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--space-4);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-base);
+  color: var(--color-text-primary);
+  outline: none;
+}
 
-  .rich-text-content:focus {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: -2px;
-  }
+.rich-text-content:focus {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: -2px;
+}
 
-  .rich-text-content p {
-    margin: 0 0 0.75rem 0;
-  }
+.rich-text-content p {
+  margin: 0 0 0.75rem 0;
+}
 
-  .rich-text-content p:last-child {
-    margin-bottom: 0;
-  }
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
 
-  .rich-text-content ul,
-  .rich-text-content ol {
-    margin: 0.75rem 0;
-    padding-left: 2rem;
-  }
+.rich-text-content ul,
+.rich-text-content ol {
+  margin: 0.75rem 0;
+  padding-left: 2rem;
+}
 
-  .rich-text-content a {
-    color: var(--ds-primary-green);
-    text-decoration: underline;
-  }
+.rich-text-content a {
+  color: var(--ds-primary-green);
+  text-decoration: underline;
+}
 
-  .form-help {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
+.form-help {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
 
-  .form-error {
-    font-size: var(--font-body-xs);
-    color: var(--color-status-error);
-  }
+.form-error {
+  font-size: var(--font-size-badge);
+  color: var(--color-status-error);
 }
 

@@ -15,10 +15,12 @@ import {
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
+import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
 import { InputTextModule } from "primeng/inputtext";
 import { PasswordModule } from "primeng/password";
+import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
@@ -33,6 +35,7 @@ import {
     ButtonComponent,
     CardComponent,
 } from "../../shared/components/ui-components";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 @Component({
@@ -43,10 +46,13 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     ReactiveFormsModule,
     FormsModule,
     CardModule,
+    DatePicker,
     InputTextModule,
+    ProgressBarModule,
     Select,
     ToastModule,
     ButtonComponent,
+    IconButtonComponent,
     CardComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -112,6 +118,19 @@ export class SettingsComponent implements OnInit {
   isEnabling2FA = signal(false);
   isDisabling2FA = signal(false);
   isRevokingAll = signal(false);
+  isExportingData = signal(false);
+  exportProgress = signal(0);
+  
+  // Data export dialog
+  showDataExportDialog = false;
+  exportFormat: 'json' | 'csv' = 'json';
+  exportOptions = {
+    profile: true,
+    training: true,
+    wellness: true,
+    achievements: true,
+    settings: true,
+  };
 
   visibilityOptions = [
     {
@@ -146,6 +165,9 @@ export class SettingsComponent implements OnInit {
     { label: "Danish", value: "da", flag: "🇩🇰", native: "Dansk" },
   ];
 
+  // Date constraints for date of birth field
+  maxBirthDate = new Date(new Date().setFullYear(new Date().getFullYear() - 5)); // Must be at least 5 years old
+
   positionOptions = [
     // Players
     { label: "Quarterback (QB)", value: "Quarterback" },
@@ -173,6 +195,7 @@ export class SettingsComponent implements OnInit {
     this.profileForm = this.fb.group({
       displayName: [user?.name || "", Validators.required],
       email: [user?.email || "", [Validators.required, Validators.email]],
+      dateOfBirth: [null as Date | null],
       position: [user?.position || ""],
       jerseyNumber: [""],
       teamName: [""],
@@ -186,6 +209,11 @@ export class SettingsComponent implements OnInit {
       emailNotifications: [true],
       pushNotifications: [true],
       trainingReminders: [true],
+      wellnessReminders: [true],
+      gameAlerts: [true],
+      teamAnnouncements: [true],
+      coachMessages: [true],
+      achievementAlerts: [true],
     });
 
     this.privacyForm = this.fb.group({
@@ -266,6 +294,7 @@ export class SettingsComponent implements OnInit {
             profile.full_name ||
             `${profile.first_name || ""} ${profile.last_name || ""}`.trim() ||
             this.profileForm.get("displayName")?.value,
+          dateOfBirth: profile.date_of_birth ? new Date(profile.date_of_birth) : null,
           position: profile.position || "",
           jerseyNumber: profile.jersey_number || "",
           teamName: profile.team || "",
@@ -724,7 +753,7 @@ export class SettingsComponent implements OnInit {
         sessions.filter((s) => s.id !== sessionId),
       );
       this.toastService.success("Session revoked");
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to revoke session");
     }
   }
@@ -741,10 +770,211 @@ export class SettingsComponent implements OnInit {
       );
       this.toastService.success("All other sessions revoked");
       this.showSessionsDialog = false;
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to revoke sessions");
     } finally {
       this.isRevokingAll.set(false);
     }
+  }
+
+  // ============================================================================
+  // DATA EXPORT
+  // ============================================================================
+
+  /**
+   * Export user data in selected format
+   */
+  async exportUserData(): Promise<void> {
+    this.isExportingData.set(true);
+    this.exportProgress.set(0);
+
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      if (!user) {
+        this.toastService.error("Please log in to export your data");
+        return;
+      }
+
+      const exportData: Record<string, any> = {
+        exportDate: new Date().toISOString(),
+        userId: user.id,
+        email: user.email,
+      };
+
+      // Collect data based on selected options
+      let progress = 0;
+      const totalSteps = Object.values(this.exportOptions).filter(Boolean).length;
+
+      if (this.exportOptions.profile) {
+        this.exportProgress.set(progress += (100 / totalSteps));
+        const { data: profile } = await this.supabaseService.client
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        if (profile) {
+          exportData.profile = {
+            fullName: profile.full_name,
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            dateOfBirth: profile.date_of_birth,
+            position: profile.position,
+            jerseyNumber: profile.jersey_number,
+            team: profile.team,
+            phone: profile.phone,
+            createdAt: profile.created_at,
+          };
+        }
+      }
+
+      if (this.exportOptions.training) {
+        this.exportProgress.set(progress += (100 / totalSteps));
+        const { data: sessions } = await this.supabaseService.client
+          .from("training_sessions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("session_date", { ascending: false })
+          .limit(500);
+        exportData.trainingSessions = sessions || [];
+      }
+
+      if (this.exportOptions.wellness) {
+        this.exportProgress.set(progress += (100 / totalSteps));
+        const { data: wellness } = await this.supabaseService.client
+          .from("wellness_checkins")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("checkin_date", { ascending: false })
+          .limit(365);
+        exportData.wellnessCheckins = wellness || [];
+      }
+
+      if (this.exportOptions.achievements) {
+        this.exportProgress.set(progress += (100 / totalSteps));
+        const { data: achievements } = await this.supabaseService.client
+          .from("user_achievements")
+          .select("*")
+          .eq("user_id", user.id);
+        exportData.achievements = achievements || [];
+      }
+
+      if (this.exportOptions.settings) {
+        this.exportProgress.set(progress += (100 / totalSteps));
+        // Get settings from localStorage
+        const localSettings = localStorage.getItem("user_settings");
+        exportData.settings = localSettings ? JSON.parse(localSettings) : {};
+      }
+
+      this.exportProgress.set(100);
+
+      // Generate and download the file
+      let content: string;
+      let filename: string;
+      let mimeType: string;
+
+      if (this.exportFormat === 'json') {
+        content = JSON.stringify(exportData, null, 2);
+        filename = `flagfit-data-export-${new Date().toISOString().split('T')[0]}.json`;
+        mimeType = 'application/json';
+      } else {
+        // CSV format - flatten the data
+        content = this.convertToCSV(exportData);
+        filename = `flagfit-data-export-${new Date().toISOString().split('T')[0]}.csv`;
+        mimeType = 'text/csv';
+      }
+
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      this.toastService.success("Data exported successfully!");
+      this.showDataExportDialog = false;
+    } catch (error) {
+      this.logger.error("Error exporting data:", error);
+      this.toastService.error("Failed to export data. Please try again.");
+    } finally {
+      this.isExportingData.set(false);
+      this.exportProgress.set(0);
+    }
+  }
+
+  /**
+   * Convert export data to CSV format
+   */
+  private convertToCSV(data: Record<string, any>): string {
+    const lines: string[] = [];
+    
+    // Add header
+    lines.push('FlagFit Pro Data Export');
+    lines.push(`Export Date: ${data.exportDate}`);
+    lines.push(`User ID: ${data.userId}`);
+    lines.push(`Email: ${data.email}`);
+    lines.push('');
+
+    // Profile section
+    if (data.profile) {
+      lines.push('=== PROFILE ===');
+      Object.entries(data.profile).forEach(([key, value]) => {
+        lines.push(`${key},${value || ''}`);
+      });
+      lines.push('');
+    }
+
+    // Training sessions
+    if (data.trainingSessions && data.trainingSessions.length > 0) {
+      lines.push('=== TRAINING SESSIONS ===');
+      const headers = Object.keys(data.trainingSessions[0]);
+      lines.push(headers.join(','));
+      data.trainingSessions.forEach((session: any) => {
+        lines.push(headers.map(h => JSON.stringify(session[h] || '')).join(','));
+      });
+      lines.push('');
+    }
+
+    // Wellness checkins
+    if (data.wellnessCheckins && data.wellnessCheckins.length > 0) {
+      lines.push('=== WELLNESS CHECKINS ===');
+      const headers = Object.keys(data.wellnessCheckins[0]);
+      lines.push(headers.join(','));
+      data.wellnessCheckins.forEach((checkin: any) => {
+        lines.push(headers.map(h => JSON.stringify(checkin[h] || '')).join(','));
+      });
+      lines.push('');
+    }
+
+    // Achievements
+    if (data.achievements && data.achievements.length > 0) {
+      lines.push('=== ACHIEVEMENTS ===');
+      const headers = Object.keys(data.achievements[0]);
+      lines.push(headers.join(','));
+      data.achievements.forEach((achievement: any) => {
+        lines.push(headers.map(h => JSON.stringify(achievement[h] || '')).join(','));
+      });
+    }
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Calculate user's age from date of birth
+   */
+  calculateAge(): number | null {
+    const dob = this.profileForm.get('dateOfBirth')?.value;
+    if (!dob) return null;
+    
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
   }
 }

@@ -24,7 +24,6 @@ import {
   ChangeDetectionStrategy,
   ElementRef,
   inject,
-  contentChildren,
   afterNextRender,
   Injector,
 } from "@angular/core";

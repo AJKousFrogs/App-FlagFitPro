@@ -1,6 +1,5 @@
 import {
   Component,
-  inject,
   signal,
   ChangeDetectionStrategy,
   OnInit,
@@ -11,7 +10,6 @@ import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
-import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
@@ -23,7 +21,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     CardModule,
     DatePicker,
     TagModule,
-    MainLayoutComponent,
     PageHeaderComponent,
   
     ButtonComponent,

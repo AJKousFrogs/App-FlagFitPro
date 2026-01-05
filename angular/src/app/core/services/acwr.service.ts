@@ -39,11 +39,11 @@ import {
   effect,
 } from "@angular/core";
 import {
-  LoadMetrics,
+  type LoadMetrics as _LoadMetrics,
   TrainingSession,
   ACWRData,
   RiskZone,
-  LoadType,
+  type LoadType as _LoadType,
   ACWRConfig,
   ACWRDataQuality,
   DataQualityLevel,
@@ -1079,11 +1079,14 @@ export class AcwrService {
       if (workoutLogs[0]?.load_monitoring?.length) {
         const history = workoutLogs
           .filter((log: WorkoutLog) => log.load_monitoring?.[0]?.acwr)
-          .map((log: WorkoutLog) => ({
-            date: new Date(log.completed_at),
-            ratio: log.load_monitoring![0]!.acwr!,
-            chronic: log.load_monitoring![0]!.chronic_load!,
-          }));
+          .map((log: WorkoutLog) => {
+            const monitoring = log.load_monitoring?.[0];
+            return {
+              date: new Date(log.completed_at),
+              ratio: monitoring?.acwr ?? 0,
+              chronic: monitoring?.chronic_load ?? 0,
+            };
+          });
         this.historicalACWR.set(history);
       }
     } catch (error) {

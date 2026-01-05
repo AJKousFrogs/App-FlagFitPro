@@ -1,12 +1,15 @@
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
-  [style]="{ width: '700px', maxWidth: '95vw', top: '10%' }"
   [showHeader]="false"
   [dismissableMask]="true"
   [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [blockScroll]="true"
   position="top"
   styleClass="command-palette-dialog"
+  appendTo="body"
 >
   <div class="search-panel">
     <!-- Search Input -->
@@ -22,6 +25,8 @@
         (keydown.escape)="close()"
         (keydown.arrowdown)="onArrowDown($event)"
         (keydown.arrowup)="onArrowUp($event)"
+        (keydown.arrowleft)="onArrowLeft($event)"
+        (keydown.arrowright)="onArrowRight($event)"
         placeholder="Search exercises, programs, players..."
         class="search-input"
         autocomplete="off"
@@ -201,7 +206,7 @@
 
       <!-- Quick Links (when no query) -->
       @if (!searchQuery) {
-        <div class="quick-links">
+        <div class="quick-links" role="listbox" aria-label="Quick Actions">
           <div class="section-header">
             <div class="section-title">
               <i class="pi pi-bolt"></i>
@@ -212,7 +217,11 @@
             <button
               type="button"
               class="quick-link-card"
+              [class.selected]="quickActionIndex() === 0"
               (click)="navigateTo('/training')"
+              (mouseenter)="quickActionIndex.set(0)"
+              role="option"
+              [attr.aria-selected]="quickActionIndex() === 0"
             >
               <div class="quick-link-icon training">
                 <i class="pi pi-calendar"></i>
@@ -225,7 +234,11 @@
             <button
               type="button"
               class="quick-link-card"
+              [class.selected]="quickActionIndex() === 1"
               (click)="navigateTo('/exercise-library')"
+              (mouseenter)="quickActionIndex.set(1)"
+              role="option"
+              [attr.aria-selected]="quickActionIndex() === 1"
             >
               <div class="quick-link-icon exercises">
                 <i class="pi pi-bolt"></i>
@@ -238,7 +251,11 @@
             <button
               type="button"
               class="quick-link-card"
+              [class.selected]="quickActionIndex() === 2"
               (click)="navigateTo('/analytics')"
+              (mouseenter)="quickActionIndex.set(2)"
+              role="option"
+              [attr.aria-selected]="quickActionIndex() === 2"
             >
               <div class="quick-link-icon analytics">
                 <i class="pi pi-chart-line"></i>
@@ -251,7 +268,11 @@
             <button
               type="button"
               class="quick-link-card"
+              [class.selected]="quickActionIndex() === 3"
               (click)="navigateTo('/roster')"
+              (mouseenter)="quickActionIndex.set(3)"
+              role="option"
+              [attr.aria-selected]="quickActionIndex() === 3"
             >
               <div class="quick-link-icon roster">
                 <i class="pi pi-users"></i>
@@ -269,7 +290,11 @@
     <!-- Keyboard Hints -->
     <div class="command-palette-footer">
       <div class="keyboard-hint">
-        <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
+        @if (!searchQuery && !searchService.hasResults()) {
+          <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd></span>
+        } @else {
+          <span class="key-combo"><kbd>↑</kbd><kbd>↓</kbd></span>
+        }
         <span>Navigate</span>
       </div>
       <div class="keyboard-hint">

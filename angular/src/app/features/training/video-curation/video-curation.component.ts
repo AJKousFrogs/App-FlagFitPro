@@ -30,8 +30,6 @@ import { ToastModule } from "primeng/toast";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TabsModule } from "primeng/tabs";
 import { BadgeModule } from "primeng/badge";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-
 // Services
 import { VideoCurationService } from "./video-curation.service";
 
@@ -78,8 +76,6 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
     VideoCurationAnalyticsComponent,
     VideoCurationPlaylistDialogComponent,
     VideoCurationPreviewDialogComponent,
-  
-    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>

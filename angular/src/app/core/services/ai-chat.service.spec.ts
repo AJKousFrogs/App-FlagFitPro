@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { of, throwError, firstValueFrom } from "rxjs";
 import {
   AiChatService,
-  ChatMessage,
+  type ChatMessage as _ChatMessage,
   ChatRequest,
   RiskLevel,
 } from "./ai-chat.service";

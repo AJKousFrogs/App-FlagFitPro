@@ -70,6 +70,17 @@ export class SearchPanelComponent implements OnDestroy {
   searchQuery = "";
   readonly selectedIndex = signal(0);
 
+  /** Index for Quick Actions keyboard navigation (2x2 grid) */
+  readonly quickActionIndex = signal(0);
+
+  /** Quick action routes for keyboard navigation */
+  private readonly quickActionRoutes = [
+    '/training',
+    '/exercise-library',
+    '/analytics',
+    '/roster'
+  ];
+
   /** Whether to show suggestions dropdown */
   readonly showSuggestions = signal(false);
 
@@ -148,6 +159,8 @@ export class SearchPanelComponent implements OnDestroy {
   open(): void {
     this.visible = true;
     this.searchService.open();
+    this.quickActionIndex.set(0);
+    this.selectedIndex.set(0);
     setTimeout(() => this.focusInput(), 100);
   }
 
@@ -155,6 +168,7 @@ export class SearchPanelComponent implements OnDestroy {
     this.visible = false;
     this.searchService.close();
     this.showSuggestions.set(false);
+    this.quickActionIndex.set(0);
   }
 
   private focusInput(): void {
@@ -175,6 +189,8 @@ export class SearchPanelComponent implements OnDestroy {
     this.searchQuery = "";
     this.searchService.clearResults();
     this.showSuggestions.set(false);
+    this.quickActionIndex.set(0);
+    this.selectedIndex.set(0);
     this.focusInput();
   }
 
@@ -201,25 +217,87 @@ export class SearchPanelComponent implements OnDestroy {
       return;
     }
 
-    // Otherwise select the current result
+    // If we have search results, select the current result
     const results = this.searchService.results();
     if (results.length > 0) {
       this.selectResult(results[this.selectedIndex()]);
+      return;
+    }
+
+    // If no query, navigate to selected quick action
+    if (!this.searchQuery) {
+      const route = this.quickActionRoutes[this.quickActionIndex()];
+      if (route) {
+        this.navigateTo(route);
+      }
     }
   }
 
   onArrowDown(event: Event): void {
     event.preventDefault();
+    
+    // If we have search results, navigate results
     const results = this.searchService.results();
-    if (this.selectedIndex() < results.length - 1) {
-      this.selectedIndex.update((i) => i + 1);
+    if (results.length > 0) {
+      if (this.selectedIndex() < results.length - 1) {
+        this.selectedIndex.update((i) => i + 1);
+      }
+      return;
+    }
+
+    // If no query, navigate Quick Actions grid (2x2)
+    if (!this.searchQuery) {
+      const current = this.quickActionIndex();
+      // Move down in 2x2 grid (0->2, 1->3)
+      if (current < 2) {
+        this.quickActionIndex.set(current + 2);
+      }
     }
   }
 
   onArrowUp(event: Event): void {
     event.preventDefault();
-    if (this.selectedIndex() > 0) {
-      this.selectedIndex.update((i) => i - 1);
+    
+    // If we have search results, navigate results
+    const results = this.searchService.results();
+    if (results.length > 0) {
+      if (this.selectedIndex() > 0) {
+        this.selectedIndex.update((i) => i - 1);
+      }
+      return;
+    }
+
+    // If no query, navigate Quick Actions grid (2x2)
+    if (!this.searchQuery) {
+      const current = this.quickActionIndex();
+      // Move up in 2x2 grid (2->0, 3->1)
+      if (current >= 2) {
+        this.quickActionIndex.set(current - 2);
+      }
+    }
+  }
+
+  onArrowLeft(event: Event): void {
+    // Only for Quick Actions when no query - don't prevent default when typing
+    if (!this.searchQuery && this.searchService.results().length === 0) {
+      event.preventDefault();
+      const current = this.quickActionIndex();
+      // Move left in 2x2 grid (1->0, 3->2)
+      if (current % 2 === 1) {
+        this.quickActionIndex.set(current - 1);
+      }
+    }
+  }
+
+  onArrowRight(event: Event): void {
+    // Only for Quick Actions when no query - don't prevent default when typing
+    if (!this.searchQuery && this.searchService.results().length === 0) {
+      event.preventDefault();
+      const current = this.quickActionIndex();
+      // Move right in 2x2 grid (0->1, 2->3)
+      if (current % 2 === 0) {
+        this.quickActionIndex.set(current + 1);
+      }
     }
   }
 

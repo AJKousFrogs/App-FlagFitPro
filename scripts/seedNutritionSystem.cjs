@@ -95,7 +95,7 @@ class NutritionSystemSeeder {
   async seedNutritionRecommendations() {
     console.log("💡 Seeding Nutrition Recommendations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const recommendations = [
       {
@@ -133,7 +133,7 @@ class NutritionSystemSeeder {
   async seedNutritionPerformanceCorrelations() {
     console.log("📊 Seeding Nutrition Performance Correlations...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const correlations = [
       {
@@ -169,7 +169,7 @@ class NutritionSystemSeeder {
   async seedUserNutritionTargets() {
     console.log("🎯 Seeding User Nutrition Targets...");
     const usersRes = await this.pool.query("SELECT id FROM users LIMIT 1");
-    if (usersRes.rows.length === 0) return;
+    if (usersRes.rows.length === 0) {return;}
 
     const target = {
       user_id: usersRes.rows[0].id,

@@ -15,7 +15,7 @@
   color: var(--text-color-secondary);
 
   i {
-    font-size: var(--font-heading-lg);
+    font-size: var(--font-size-metric-md);
   }
 }
 
@@ -45,7 +45,7 @@
     justify-content: center;
 
     i {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
       color: var(--surface-0);
     }
 
@@ -63,21 +63,9 @@
     }
   }
 
-  .stat-content {
-    display: flex;
-    flex-direction: column;
-
-    .stat-value {
-      font-size: var(--font-heading-md);
-      font-weight: 700;
-      color: var(--text-color);
-    }
-
-    .stat-label {
-      font-size: var(--font-body-sm);
-      color: var(--text-color-secondary);
-    }
-  }
+  // .stat-content/.stat-value/.stat-label REMOVED
+  // Use .stat-block classes from card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
 // Section styles
@@ -91,8 +79,8 @@
 
   h3 {
     margin: 0;
-    font-size: var(--font-heading-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-semibold);
   }
 
   .search-box {
@@ -123,17 +111,17 @@
     flex-direction: column;
 
     .athlete-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
 
     .athlete-age {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--text-color-secondary);
     }
   }
 
   .target-weight {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--text-color-secondary);
   }
 
@@ -147,14 +135,14 @@
     align-items: center;
     gap: var(--ds-spacing-sm);
 
-    :host ::ng-deep .compliance-bar {
+    .compliance-bar {
       width: 60px;
       height: var(--space-2);
     }
 
     span {
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
     }
   }
 
@@ -167,8 +155,8 @@
     border-radius: 50%;
     background: var(--red-500);
     color: var(--surface-0);
-    font-size: var(--font-body-xs);
-    font-weight: 600;
+    font-size: var(--font-size-badge);
+    font-weight: var(--font-weight-medium);
   }
 
   .ok-icon {
@@ -190,7 +178,7 @@
     gap: var(--ds-spacing-lg);
     margin-bottom: var(--ds-spacing-lg);
 
-    :host ::ng-deep p-chart {
+    p-chart {
       height: 250px;
     }
   }
@@ -209,7 +197,7 @@
       color: var(--orange-700);
 
       i {
-        font-size: var(--font-body-md);
+        font-size: var(--font-size-body);
       }
     }
 
@@ -252,16 +240,9 @@
     gap: var(--ds-spacing-lg);
   }
 
-  :host ::ng-deep .compliance-card {
-    .p-card-header {
-      padding: var(--ds-spacing-md);
-      border-bottom: var(--border-1) solid var(--surface-border);
-    }
-
-    .p-card-body {
-      padding: var(--ds-spacing-md);
-    }
-  }
+  // .compliance-card p-card padding overrides REMOVED
+  // Use app-card-shell component instead
+  // @see docs/CARD_SHELL_CONTRACT.md
 
   .compliance-header {
     display: flex;
@@ -269,7 +250,7 @@
     align-items: center;
 
     .athlete-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
   }
 
@@ -292,7 +273,7 @@
     }
 
     .supplement-name {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
     }
 
     .supplement-stats {
@@ -300,20 +281,20 @@
       align-items: center;
       gap: var(--ds-spacing-xs);
 
-      :host ::ng-deep .supplement-bar {
+      .supplement-bar {
         width: 60px;
         height: var(--space-2);
       }
 
       span {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-size-badge);
         min-width: 35px;
         text-align: right;
       }
     }
 
     .missed-days {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--red-500);
     }
   }
@@ -327,13 +308,13 @@
       display: block;
       margin-bottom: var(--ds-spacing-xs);
       color: var(--orange-600);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
     }
 
     ul {
       margin: 0;
       padding-left: var(--ds-spacing-lg);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
     }
   }
@@ -347,12 +328,9 @@
     gap: var(--ds-spacing-lg);
   }
 
-  :host ::ng-deep .tournament-card {
-    .p-card-header {
-      padding: var(--ds-spacing-md);
-      background: var(--surface-ground);
-    }
-  }
+  // .tournament-card .p-card-header REMOVED
+  // Use app-card-shell instead
+  // @see docs/CARD_SHELL_CONTRACT.md
 
   .tournament-header {
     display: flex;
@@ -361,7 +339,7 @@
 
     h4 {
       margin: 0;
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
     }
   }
 
@@ -389,7 +367,7 @@
 
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--text-color-secondary);
     }
 
@@ -403,38 +381,20 @@
         flex-direction: column;
 
         .need-value {
-          font-weight: 700;
+          font-weight: var(--font-weight-bold);
           color: var(--primary-color);
         }
 
         .need-label {
-          font-size: var(--font-body-xs);
+          font-size: var(--font-size-badge);
           color: var(--text-color-secondary);
         }
       }
     }
   }
 
-  .empty-state {
-    text-align: center;
-    padding: var(--ds-spacing-3xl);
-
-    i {
-      font-size: var(--font-display-md);
-      color: var(--text-color-secondary);
-      opacity: 0.5;
-      margin-bottom: var(--ds-spacing-md);
-    }
-
-    h4 {
-      margin: 0 0 var(--ds-spacing-sm);
-    }
-
-    p {
-      margin: 0;
-      color: var(--text-color-secondary);
-    }
-  }
+  // .empty-state REMOVED - use .card-empty-state from card-shell
+  // @see docs/CARD_SHELL_CONTRACT.md §8
 }
 
 // Dialogs
@@ -461,12 +421,12 @@
 
       .current-weight {
         display: block;
-        font-size: var(--font-heading-md);
-        font-weight: 700;
+        font-size: var(--font-size-metric-md);
+        font-weight: var(--font-weight-bold);
       }
 
       .target {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-size-h4);
         color: var(--text-color-secondary);
       }
     }
@@ -486,16 +446,9 @@
       background: var(--surface-ground);
       border-radius: var(--ds-radius-md);
 
-      .metric-label {
-        font-size: var(--font-body-xs);
-        color: var(--text-color-secondary);
-        margin-bottom: var(--ds-spacing-xs);
-      }
-
-      .metric-value {
-        font-size: var(--font-heading-sm);
-        font-weight: 600;
-      }
+      // .metric-label/.metric-value REMOVED
+      // Use .stat-block classes from card-shell instead
+      // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
     }
   }
 
@@ -532,8 +485,8 @@
     gap: var(--ds-spacing-xs);
 
     label {
-      font-weight: 500;
-      font-size: var(--font-body-sm);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-h4);
     }
   }
 

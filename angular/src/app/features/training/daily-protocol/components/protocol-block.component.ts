@@ -28,6 +28,7 @@ import {
   ProtocolBlock,
   PrescribedExercise,
   getBlockConfig,
+  formatPrescription,
 } from '../daily-protocol.models';
 import { ExerciseCardComponent } from './exercise-card.component';
 
@@ -83,22 +84,24 @@ import { ExerciseCardComponent } from './exercise-card.component';
         </div>
 
         <div class="header-right">
-          <!-- Status Tag -->
-          @if (block().status === 'complete') {
-            <p-tag value="Done" severity="success" ></p-tag>
-          } @else if (block().status === 'in_progress') {
-            <p-tag value="In Progress" severity="info" ></p-tag>
-          } @else if (block().status === 'skipped') {
-            <p-tag value="Skipped" severity="secondary" ></p-tag>
-          } @else {
-            <p-tag value="Pending" severity="warn" ></p-tag>
-          }
+          @if (!simpleView()) {
+            <!-- Status Tag -->
+            @if (block().status === 'complete') {
+              <p-tag value="Done" severity="success" ></p-tag>
+            } @else if (block().status === 'in_progress') {
+              <p-tag value="In Progress" severity="info" ></p-tag>
+            } @else if (block().status === 'skipped') {
+              <p-tag value="Skipped" severity="secondary" ></p-tag>
+            } @else {
+              <p-tag value="Pending" severity="warn" ></p-tag>
+            }
 
-          <!-- Progress -->
-          @if (block().status !== 'complete' && block().totalCount > 0) {
-            <div class="progress-indicator">
-              <span class="progress-text">{{ block().progressPercent }}%</span>
-            </div>
+            <!-- Progress -->
+            @if (block().status !== 'complete' && block().totalCount > 0) {
+              <div class="progress-indicator">
+                <span class="progress-text">{{ block().progressPercent }}%</span>
+              </div>
+            }
           }
 
           <!-- Expand Toggle -->
@@ -107,17 +110,13 @@ import { ExerciseCardComponent } from './exercise-card.component';
             [attr.aria-expanded]="isExpanded()"
             (click)="$event.stopPropagation()"
           >
-            <i
-              class="pi"
-              [class.pi-chevron-down]="!isExpanded()"
-              [class.pi-chevron-up]="isExpanded()"
-            ></i>
+            <span class="expand-text">▼ Expand</span>
           </button>
         </div>
       </div>
 
-      <!-- Progress Bar -->
-      @if (block().totalCount > 0) {
+      <!-- Progress Bar (only in detailed view) -->
+      @if (!simpleView() && block().totalCount > 0) {
         <div class="progress-bar-container" [style.--block-color]="blockConfig().color">
           <div
             class="progress-bar-fill"
@@ -139,13 +138,42 @@ import { ExerciseCardComponent } from './exercise-card.component';
 
           <!-- Exercise List -->
           <div class="exercise-list">
-            @for (exercise of block().exercises; track exercise.id; let i = $index) {
-              <app-exercise-card
-                [exercise]="exercise"
-                [sequenceNumber]="i + 1"
-                (complete)="onExerciseComplete($event)"
-                (skip)="onExerciseSkip($event)"
-              ></app-exercise-card>
+            @if (simpleView()) {
+              <!-- Simple list view matching wireframe -->
+              @for (exercise of block().exercises; track exercise.id) {
+                <div class="exercise-list-item">
+                  <label class="exercise-checkbox">
+                    <input
+                      type="checkbox"
+                      [checked]="exercise.status === 'complete'"
+                      (change)="onExerciseToggle(exercise)"
+                    />
+                    <span class="exercise-name">{{ exercise.exercise.name }}</span>
+                    <span class="exercise-prescription">– {{ formatPrescriptionText(exercise) }}</span>
+                    @if (exercise.exercise.videoUrl || exercise.exercise.videoId) {
+                      <a
+                        [href]="exercise.exercise.videoUrl || 'https://www.youtube.com/watch?v=' + exercise.exercise.videoId"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="video-link"
+                        (click)="$event.stopPropagation()"
+                      >
+                        [► Video]
+                      </a>
+                    }
+                  </label>
+                </div>
+              }
+            } @else {
+              <!-- Detailed card view -->
+              @for (exercise of block().exercises; track exercise.id; let i = $index) {
+                <app-exercise-card
+                  [exercise]="exercise"
+                  [sequenceNumber]="i + 1"
+                  (complete)="onExerciseComplete($event)"
+                  (skip)="onExerciseSkip($event)"
+                ></app-exercise-card>
+              }
             }
           </div>
 
@@ -174,6 +202,7 @@ export class ProtocolBlockComponent {
   // Inputs
   block = input.required<ProtocolBlock>();
   defaultExpanded = input<boolean>(false);
+  simpleView = input<boolean>(false); // Simple list view matching wireframe
 
   // Outputs
   exerciseComplete = output<PrescribedExercise>();
@@ -220,6 +249,20 @@ export class ProtocolBlockComponent {
 
   onSkipBlock(): void {
     this.skipBlock.emit(this.block());
+  }
+
+  onExerciseToggle(exercise: PrescribedExercise): void {
+    if (exercise.status === 'complete') {
+      // Toggle off - mark as pending (or emit skip if needed)
+      // For now, we'll just emit complete again to toggle
+      this.exerciseComplete.emit(exercise);
+    } else {
+      this.exerciseComplete.emit(exercise);
+    }
+  }
+
+  formatPrescriptionText(exercise: PrescribedExercise): string {
+    return formatPrescription(exercise);
   }
 
   formatTime(date: Date): string {

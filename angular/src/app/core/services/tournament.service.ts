@@ -74,7 +74,7 @@ export interface CreateTournamentDto {
   player_id?: string;
 }
 
-export interface UpdateTournamentDto extends Partial<CreateTournamentDto> {}
+export type UpdateTournamentDto = Partial<CreateTournamentDto>;
 
 @Injectable({
   providedIn: "root",

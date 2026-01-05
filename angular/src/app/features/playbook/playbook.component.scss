@@ -28,13 +28,13 @@
 
     .stat-value {
       display: block;
-      font-size: var(--font-heading-md);
-      font-weight: 700;
+      font-size: var(--font-size-h2);
+      font-weight: var(--font-weight-bold);
       color: var(--ds-text-primary);
     }
 
     .stat-label {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
   }
@@ -101,7 +101,7 @@
       h3 {
         margin: 0;
         font-size: var(--font-body-lg);
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         color: var(--ds-text-primary);
       }
     }
@@ -109,26 +109,26 @@
 
   .memorized-icon {
     color: var(--ds-primary-green);
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-size-h2);
   }
 
   .play-formation {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
   .play-assignment {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-primary);
-    line-height: 1.4;
+    line-height: var(--line-height-base);
   }
 
   .last-studied {
     display: block;
     margin-top: var(--space-3);
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 }
@@ -189,7 +189,7 @@
     padding: var(--space-6);
 
     i {
-      font-size: var(--font-heading-lg);
+      font-size: var(--font-size-metric-md);
     }
   }
 }
@@ -200,8 +200,8 @@
     align-items: center;
     gap: var(--space-2);
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-md);
-    font-weight: 600;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
 
     i {
@@ -212,7 +212,7 @@
   p {
     margin: 0;
     color: var(--ds-text-secondary);
-    line-height: 1.5;
+    line-height: var(--line-height-base);
   }
 }
 
@@ -233,7 +233,7 @@
     gap: var(--space-2);
 
     .label {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-secondary);
       min-width: 120px;
     }
@@ -300,7 +300,7 @@
 
 .quiz-progress {
   span {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
     display: block;
     margin-bottom: var(--space-2);
@@ -309,7 +309,7 @@
 
 .quiz-question {
   .play-reference {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-tertiary);
     margin: 0 0 var(--space-2) 0;
   }
@@ -373,8 +373,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    font-size: var(--font-body-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-primary);
   }
 
@@ -427,14 +427,14 @@
     margin: 0 0 var(--space-4) 0;
 
     .score {
-      font-size: var(--font-heading-lg);
-      font-weight: 700;
+      font-size: var(--font-size-metric-md);
+      font-weight: var(--font-weight-bold);
       color: var(--ds-primary-green);
     }
 
     .score-detail {
       display: block;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
     }
   }
@@ -476,7 +476,7 @@
     }
 
     p-select {
-      width: 100% !important;
+      width: 100%;
     }
   }
 }

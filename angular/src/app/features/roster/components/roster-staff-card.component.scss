@@ -3,175 +3,164 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .staff-card {
-    position: relative;
-    transition:
-      transform var(--transition-base),
-      box-shadow var(--transition-base);
-  }
+.staff-card {
+  position: relative;
+  // Hover transition/transform REMOVED - use app-card-shell with state="interactive"
+  // @see docs/CARD_SHELL_CONTRACT.md §2.8
+}
 
-  .staff-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
+/* Staff card category borders */
+.staff-card.staff-coaching {
+  border-left: 3px solid var(--color-staff-coaching);
+}
 
-  /* Staff card category borders */
-  .staff-card.staff-coaching {
-    border-left: 3px solid var(--color-staff-coaching);
-  }
+.staff-card.staff-medical {
+  border-left: 3px solid var(--color-staff-medical);
+}
 
-  .staff-card.staff-medical {
-    border-left: 3px solid var(--color-staff-medical);
-  }
+.staff-card.staff-performance {
+  border-left: 3px solid var(--color-staff-performance);
+}
 
-  .staff-card.staff-performance {
-    border-left: 3px solid var(--color-staff-performance);
-  }
+.role-badge {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-  .role-badge {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-lg);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+.role-badge.coaching {
+  background: var(--color-staff-coaching-light);
+  color: var(--color-staff-coaching);
+}
 
-  .role-badge.coaching {
-    background: var(--color-staff-coaching-light);
-    color: var(--color-staff-coaching);
-  }
+.role-badge.medical {
+  background: var(--color-staff-medical-light);
+  color: var(--color-staff-medical);
+}
 
-  .role-badge.medical {
-    background: var(--color-staff-medical-light);
-    color: var(--color-staff-medical);
-  }
+.role-badge.performance {
+  background: var(--color-staff-performance-light);
+  color: var(--color-staff-performance);
+}
 
-  .role-badge.performance {
-    background: var(--color-staff-performance-light);
-    color: var(--color-staff-performance);
-  }
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  margin-top: var(--space-4);
+}
 
-  .player-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-    margin-top: var(--space-4);
-  }
+.player-jersey {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-body-lg);
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
 
-  .player-jersey {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-body-lg);
-    color: var(--color-text-on-primary);
-    box-shadow: var(--shadow-md);
-    flex-shrink: 0;
-  }
+.staff-avatar {
+  background: var(--color-staff-coaching-gradient);
+}
 
-  .staff-avatar {
-    background: var(--color-staff-coaching-gradient);
-  }
+.coaching-avatar {
+  background: var(--color-staff-coaching-gradient);
+}
 
-  .coaching-avatar {
-    background: var(--color-staff-coaching-gradient);
-  }
+.medical-avatar {
+  background: var(--color-staff-medical-gradient);
+}
 
-  .medical-avatar {
-    background: var(--color-staff-medical-gradient);
-  }
+.performance-avatar {
+  background: var(--color-staff-performance-gradient);
+}
 
-  .performance-avatar {
-    background: var(--color-staff-performance-gradient);
-  }
+.player-info {
+  flex: 1;
+  min-width: 0;
+}
 
-  .player-info {
-    flex: 1;
-    min-width: 0;
-  }
+.player-name {
+  font-size: var(--font-body-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+  color: var(--color-text-primary);
+}
 
-  .player-name {
-    font-size: var(--font-body-lg);
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--space-1);
-    color: var(--color-text-primary);
-  }
+.player-position {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-1);
+}
 
-  .player-position {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
-    margin-bottom: var(--space-1);
-  }
+.player-meta {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
-  .player-meta {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
-  }
+.stat-item {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
 
-  .stat-item {
-    text-align: center;
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-  }
+.stat-value {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-body-lg);
+  color: var(--color-brand-primary);
+  margin-bottom: var(--space-1);
+}
 
-  .stat-value {
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-body-lg);
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-1);
-  }
+.stat-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
 
-  .stat-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
+.achievements {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+}
 
-  .achievements {
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
-  }
+.achievements-title {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
 
-  .achievements-title {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
-    margin-bottom: var(--space-2);
-  }
+.achievement-item {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
 
-  .achievement-item {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-1);
-  }
-
-  /* Touch devices */
-  @media (hover: none) and (pointer: coarse) {
-    .staff-card:hover {
-      transform: none;
-      box-shadow: var(--shadow-md);
-    }
-  }
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  // .staff-card:hover REMOVED - card-shell handles touch devices
 }
 

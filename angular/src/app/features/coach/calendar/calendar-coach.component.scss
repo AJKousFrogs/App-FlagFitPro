@@ -33,7 +33,7 @@
       min-width: 180px;
       text-align: center;
       font-size: var(--font-body-lg);
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -57,8 +57,8 @@
 
   .weekday {
     text-align: center;
-    font-size: var(--font-body-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-secondary);
     padding: var(--space-2);
   }
@@ -99,8 +99,8 @@
 
   .day-number {
     display: block;
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
     margin-bottom: var(--space-1);
   }
@@ -115,7 +115,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     padding: var(--space-1) var(--space-1);
     border-radius: var(--radius-sm);
     cursor: pointer;
@@ -143,7 +143,7 @@
   }
 
   .more-events {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 }
@@ -161,11 +161,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     .legend-icon {
-      font-size: var(--font-body-md);
+      font-size: var(--font-size-body);
     }
   }
 }
@@ -174,7 +174,7 @@
 .section-title {
   margin: 0 0 var(--space-3) 0;
   font-size: var(--font-body-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--ds-text-primary);
 }
 
@@ -220,19 +220,19 @@
     flex: 1;
 
     .event-icon {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
     }
 
     h4 {
       margin: 0;
-      font-size: var(--font-body-md);
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
 
   .event-date {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
@@ -248,7 +248,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }
@@ -260,7 +260,7 @@
   border-bottom: 1px solid var(--ds-border-subtle);
 
   .rsvp-item {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
 
     &.going {
       color: var(--ds-primary-green);
@@ -282,14 +282,14 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
   background: var(--ds-surface-base);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 }
 
 .event-rides,
 .event-payment {
   padding: var(--space-2) var(--space-4);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 }
 
@@ -333,8 +333,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
   }
 
@@ -356,8 +356,8 @@
 
   h5 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -407,7 +407,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     &.rsvp-totals {
@@ -441,8 +441,8 @@
 
   h4 {
     margin: 0;
-    font-size: var(--font-body-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -464,7 +464,7 @@
   gap: var(--space-2);
   padding: var(--space-2);
   border-bottom: 1px solid var(--ds-border-subtle);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-size-h4);
 
   &:last-child {
     border-bottom: none;
@@ -475,7 +475,7 @@
   }
 
   .rsvp-name {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
     min-width: 120px;
   }

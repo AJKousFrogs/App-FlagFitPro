@@ -14,7 +14,6 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { TagModule } from "primeng/tag";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { TooltipModule } from "primeng/tooltip";
 
 import { PlayerSuggestion } from "../video-curation.models";
@@ -29,7 +28,6 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TagModule, TooltipModule,
-    ButtonComponent,
   ],
   template: `
     <div class="tab-content">

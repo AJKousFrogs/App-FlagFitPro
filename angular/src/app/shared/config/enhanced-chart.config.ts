@@ -17,6 +17,7 @@ import {
   ChartEvent,
   ActiveElement,
   LegendElement,
+  ChartType,
 } from "chart.js";
 
 /**
@@ -64,11 +65,11 @@ function getResponsiveFontSize(baseSize: number): number {
  * Custom tooltip with trend data
  */
 export const CUSTOM_TOOLTIP_CALLBACKS = {
-  title: (tooltipItems: TooltipItem<any>[]) => {
+  title: (tooltipItems: TooltipItem<ChartType>[]) => {
     return tooltipItems[0]?.label || "";
   },
 
-  label: (tooltipItem: TooltipItem<any>) => {
+  label: (tooltipItem: TooltipItem<ChartType>) => {
     const dataset = tooltipItem.dataset;
     const value = tooltipItem.parsed.y;
     const label = dataset.label || "";
@@ -76,7 +77,7 @@ export const CUSTOM_TOOLTIP_CALLBACKS = {
     return `${label}: ${value}`;
   },
 
-  afterLabel: (tooltipItem: TooltipItem<any>) => {
+  afterLabel: (tooltipItem: TooltipItem<ChartType>) => {
     const dataset = tooltipItem.dataset;
     const datasetData = dataset.data as number[];
 
@@ -95,7 +96,7 @@ export const CUSTOM_TOOLTIP_CALLBACKS = {
     ];
   },
 
-  footer: (tooltipItems: TooltipItem<any>[]) => {
+  footer: (_tooltipItems: TooltipItem<ChartType>[]) => {
     // Add contextual information
     return ["", "Click to view details"];
   },
@@ -104,7 +105,7 @@ export const CUSTOM_TOOLTIP_CALLBACKS = {
 /**
  * Enhanced Chart Options with Zoom, Pan, Custom Tooltips
  */
-export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
+export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
   responsive: true,
   maintainAspectRatio: false,
 
@@ -436,8 +437,8 @@ export function exportChartAsPNG(
  * @param chart - Chart.js instance
  */
 export function resetChartZoom(chart: Chart): void {
-  if (chart && (chart as any).resetZoom) {
-    (chart as any).resetZoom();
+  if (chart && (chart as Chart & { resetZoom?: () => void }).resetZoom) {
+    (chart as Chart & { resetZoom: () => void }).resetZoom();
   }
 }
 

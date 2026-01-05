@@ -10,7 +10,7 @@
  * Provides computed metrics for Player Cards and Dashboard.
  */
 
-import { Injectable, inject, computed, signal } from "@angular/core";
+import { Injectable, inject,  signal } from "@angular/core";
 import { FlagFootballAthleteProfileService, FlagFootballPosition, PositionRequirements, BenchmarkRange } from "../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../core/services/acwr.service";
 import { WellnessService } from "../../../core/services/wellness.service";
@@ -468,7 +468,7 @@ export class PlayerMetricsService {
   /**
    * Check if cached metrics are still valid (5 min TTL)
    */
-  private isCacheValid(cached: PlayerWithMetrics): boolean {
+  private isCacheValid(_cached: PlayerWithMetrics): boolean {
     // For now, always refresh - in production, add timestamp check
     return false;
   }

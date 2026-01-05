@@ -7,11 +7,10 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
+import { CommonModule, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { MessageModule } from "primeng/message";
@@ -71,7 +70,6 @@ const DEBT_THRESHOLDS = {
   imports: [
     CommonModule,
     FormsModule,
-    DatePipe,
     DecimalPipe,
     CardModule,
     ChartModule,
@@ -81,8 +79,6 @@ const DEBT_THRESHOLDS = {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
-    ButtonComponent,
   ],
   providers: [MessageService],
   template: `

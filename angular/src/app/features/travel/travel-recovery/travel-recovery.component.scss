@@ -3,1541 +3,1509 @@
 // Design System Compliant - All tokens from design-system-tokens.scss
 // ============================================================================
 
-@layer features {
-  .travel-recovery-page {
-    padding: var(--space-6);
-    max-width: 1400px;
-    margin: 0 auto;
+.travel-recovery-page {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// ===== Planning Section =====
+.planning-section {
+  display: grid;
+  gap: var(--space-6);
+}
+
+// .card-header - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
+// Note: This component had transparent bg + no border (closer to canonical)
+// but still needs migration to app-card-shell for consistency
+
+// ===== Olympic Card (Dashboard-consistent) =====
+.olympic-header {
+  background: var(--surface-secondary);
+  border-bottom: 1px solid var(--surface-border);
+
+  h3,
+  p {
+    color: inherit;
+  }
+}
+
+.olympic-rings {
+  font-size: var(--icon-2xl); /* 32px - feature icon */
+}
+
+.olympic-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.olympic-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-primary);
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 
-  // ===== Planning Section =====
-  .planning-section {
-    display: grid;
-    gap: var(--space-6);
+  &.selected {
+    border-color: var(--ds-primary-green);
+    background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
+    box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
+  }
+}
+
+.venue-flag {
+  font-size: var(--font-size-h1);
+}
+
+.venue-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.venue-tz {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.olympic-impact {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  margin: var(--space-4);
+}
+
+.impact-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .stat-value {
+    font-size: var(--font-size-metric-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-primary);
   }
 
-  .card-header {
+  .stat-label {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+  }
+}
+
+// ===== Form Grid =====
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+// ===== Severity Card =====
+.severity-section {
+  margin-bottom: var(--space-6);
+}
+
+.severity-card {
+  overflow: hidden;
+
+  &.severity-none {
+    border-left: 4px solid var(--color-status-success);
+  }
+
+  &.severity-mild {
+    border-left: 4px solid var(--color-status-info);
+  }
+
+  &.severity-moderate {
+    border-left: 4px solid var(--color-status-warning);
+  }
+
+  &.severity-severe {
+    border-left: 4px solid var(--color-status-error);
+  }
+}
+
+.severity-content {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-4);
+}
+
+.severity-gauge {
+  flex-shrink: 0;
+}
+
+.gauge-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-full);
+  background: conic-gradient(
+    var(--color-brand-primary) calc(var(--score, 0) * 1%),
+    var(--color-border-secondary) 0
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: var(--radius-full);
+    background: var(--surface-primary);
+  }
+}
+
+.gauge-value {
+  position: relative;
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.gauge-label {
+  position: relative;
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
+
+.severity-details {
+  flex: 1;
+
+  h2 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-h2);
+    color: var(--color-text-primary);
+  }
+}
+
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.recovery-estimate,
+.competition-countdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+
+  &.warning {
+    color: var(--color-status-warning);
+  }
+}
+
+.warning-text {
+  color: var(--color-status-error);
+}
+
+.symptoms-section {
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-top: 1px solid var(--color-border-secondary);
+
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+  }
+}
+
+.symptoms-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.symptom-chip {
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface-tertiary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+// ===== Today's Protocol =====
+.today-card {
+  margin-bottom: var(--space-6);
+}
+
+.today-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.day-badge {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+}
+
+.protocol-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.protocol-section {
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+
+  h4 {
     display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    background: transparent;
-    border-bottom: none;
-
-    i {
-      font-size: 1.5rem;
-      color: var(--ds-primary-green);
-    }
-
-    h3 {
-      margin: 0;
-      font-size: var(--font-body-lg);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
-    }
-
-    p {
-      margin: 0;
-      font-size: var(--font-body-sm);
-      color: var(--color-text-secondary);
-    }
-  }
-
-  // ===== Olympic Card (Dashboard-consistent) =====
-  .olympic-header {
-    background: var(--surface-secondary);
-    border-bottom: 1px solid var(--surface-border);
-
-    h3,
-    p {
-      color: inherit;
-    }
-  }
-
-  .olympic-rings {
-    font-size: 2rem;
-  }
-
-  .olympic-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-    padding: var(--space-4);
-  }
-
-  .olympic-btn {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-5);
-    border: 1px solid var(--surface-border);
-    border-radius: 14px;
-    background: var(--surface-primary);
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+
+    i {
+      color: var(--color-brand-primary);
+    }
+  }
+}
+
+// ===== Sleep Times =====
+.sleep-times {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
+
+.time-value {
+  font-size: var(--font-size-metric-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+// ===== Light Windows =====
+.light-windows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.light-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+
+  &.seek {
+    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
+  }
+
+  &.avoid {
+    background: rgba(var(--primitive-blue-500-rgb, 59, 130, 246), 0.1);
+  }
+}
+
+.light-icon {
+  font-size: var(--font-size-metric-lg);
+}
+
+.light-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.light-action {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.light-time {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.light-reason {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+}
+
+// ===== Training Info =====
+.training-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.max-duration {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.activity-lists {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.activity-list {
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+
+  &.recommended {
+    background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.1);
+  }
+
+  &.avoid {
+    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  }
+
+  ul {
+    margin: var(--space-1) 0 0 var(--space-4);
+    padding: 0;
+    font-size: var(--font-size-h4);
+  }
+}
+
+.list-label {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-medium);
+}
+
+// ===== Hydration =====
+.hydration-target {
+  text-align: center;
+}
+
+.hydration-value {
+  display: block;
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+}
+
+.hydration-note {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+// ===== Recommendations =====
+.recommendations-section {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+
+  h4 {
+    margin: 0 0 var(--space-3) 0;
+  }
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+
+  &.importance-critical {
+    border-left: 3px solid var(--color-status-error);
+  }
+
+  &.importance-high {
+    border-left: 3px solid var(--color-status-warning);
+  }
+
+  &.importance-medium {
+    border-left: 3px solid var(--color-status-info);
+  }
+}
+
+.rec-time {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  min-width: 100px;
+}
+
+.rec-action {
+  flex: 1;
+  color: var(--color-text-primary);
+}
+
+// ===== Supplements =====
+.supplements-section {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3) 0;
+  }
+}
+
+.supplements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-3);
+}
+
+.supplement-item {
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.supp-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.supp-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.supp-dosage {
+  font-size: var(--font-size-h4);
+  color: var(--color-brand-primary);
+}
+
+.supp-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.supp-caution {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-badge);
+  color: var(--color-status-warning);
+}
+
+// ===== Timeline =====
+.timeline-card {
+  margin-bottom: var(--space-6);
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.timeline-day {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  min-width: 120px;
+}
+
+.timeline-date {
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.timeline-content {
+  padding: var(--space-3);
+}
+
+.timeline-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+
+  i {
+    color: var(--color-brand-primary);
+  }
+}
+
+.timeline-recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.mini-rec {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.rec-bullet {
+  font-size: var(--font-body-2xs);
+
+  &.importance-critical {
+    color: var(--color-status-error);
+  }
+
+  &.importance-high {
+    color: var(--color-status-warning);
+  }
+
+  &.importance-medium {
+    color: var(--color-status-info);
+  }
+}
+
+// ===== Checklist =====
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+
+  &.essential {
+    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.05);
+    border-radius: var(--radius-md);
+  }
+
+  label {
+    flex: 1;
     cursor: pointer;
-    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-    box-shadow: var(--shadow-sm);
 
-    &:hover {
-      border-color: var(--ds-primary-green);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-
-    &.selected {
-      border-color: var(--ds-primary-green);
-      background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
-      box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
+    &.packed {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
     }
   }
+}
 
-  .venue-flag {
-    font-size: var(--font-heading-2xl);
+.essential-badge {
+  font-size: var(--font-size-badge);
+  padding: var(--space-1) 6px;
+  background: var(--color-status-warning);
+  color: var(--color-text-on-primary);
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-2);
+}
+
+.item-note {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+}
+
+// ===== Travel Type Selector (Dashboard-consistent cards) =====
+.travel-type-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-primary);
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 
-  .venue-name {
+  &.active {
+    border-color: var(--ds-primary-green);
+    background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
+    box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
+  }
+
+  i {
+    font-size: var(--font-size-h1); /* 28px - large icon */
+    color: var(--ds-primary-green);
+  }
+
+  span {
     font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body);
+  }
+
+  small {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
+  }
+}
+
+// ===== Car Travel Section =====
+.car-travel-section {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.car-header {
+  background: linear-gradient(
+    135deg,
+    var(--ds-primary-green) 0%,
+    var(--primitive-teal-500) 100%
+  );
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+// ===== Risk Assessment =====
+.risk-preview-card,
+.car-risk-card {
+  overflow: hidden;
+}
+
+.risk-low {
+  border-left: 4px solid var(--color-status-success);
+}
+
+.risk-moderate {
+  border-left: 4px solid var(--color-status-warning);
+}
+
+.risk-high {
+  border-left: 4px solid var(--color-status-error);
+}
+
+.risk-very-high {
+  border-left: 4px solid var(--primitive-error-700);
+}
+
+.risk-content {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.risk-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.risk-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-full);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-tertiary);
+
+  &.risk-low {
+    background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.2);
+  }
+
+  &.risk-moderate {
+    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.2);
+  }
+
+  &.risk-high {
+    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
+  }
+
+  &.risk-very-high {
+    background: rgba(139, 0, 0, 0.2);
+  }
+}
+
+.risk-score {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.risk-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
+
+.risk-factors,
+.risk-recommendations {
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-h4);
     color: var(--color-text-primary);
   }
 
-  .venue-tz {
-    font-size: var(--font-body-sm);
+  ul {
+    margin: 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-size-h4);
+  }
+}
+
+.risk-factors li {
+  color: var(--color-status-warning);
+}
+
+.risk-recommendations li {
+  color: var(--color-status-success);
+}
+
+// ===== Car Risk Card =====
+.car-risk-content {
+  padding: var(--space-4);
+}
+
+.risk-header {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.risk-gauge-small {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-tertiary);
+}
+
+.risk-info h2 {
+  margin: 0 0 var(--space-2) 0;
+}
+
+.warning-symptoms {
+  padding: var(--space-4);
+  background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-status-error);
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3) 0;
+    color: var(--color-status-error);
+  }
+}
+
+.symptoms-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.warning-symptom {
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface-primary);
+  border: 1px solid var(--color-status-error);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-h4);
+  color: var(--color-status-error);
+}
+
+// ===== Compression Card =====
+.compression-header {
+  background: linear-gradient(135deg, var(--primitive-blue-400) 0%, var(--primitive-success-400) 100%);
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+.compression-icon,
+.massage-icon,
+.exercises-icon {
+  font-size: var(--font-size-h1);
+}
+
+.compression-content {
+  padding: var(--space-4);
+}
+
+.compression-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+
+  h4 {
+    margin: 0;
+  }
+}
+
+.compression-timing {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.timing-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+
+  i {
+    font-size: var(--font-size-metric-lg);
+    color: var(--color-brand-primary);
+  }
+
+  strong {
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+  }
+}
+
+.compression-cautions {
+  padding: var(--space-3);
+  background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-h4);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-size-h4);
+  }
+}
+
+.evidence-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-sm);
+  font-style: italic;
+
+  i {
+    color: var(--color-brand-primary);
+  }
+}
+
+// ===== Massage Gun Card =====
+.massage-header {
+  background: linear-gradient(135deg, var(--primitive-error-400) 0%, var(--primitive-orange-500) 100%);
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+.massage-protocol {
+  padding: var(--space-3);
+}
+
+.protocol-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.frequency {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.muscle-targets {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.muscle-item {
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.muscle-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.muscle-duration {
+  padding: var(--space-1) 8px;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-badge);
+}
+
+.muscle-technique {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.muscle-purpose {
+  margin: 0;
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.massage-cautions {
+  padding: var(--space-3);
+  background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+
+  h5 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-h4);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-size-h4);
+  }
+}
+
+// ===== Exercises Card =====
+.exercises-header {
+  background: linear-gradient(135deg, var(--primitive-teal-500) 0%, var(--primitive-success-400) 100%);
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+.exercises-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.exercise-card {
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-brand-primary);
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-2);
+
+  h4 {
+    margin: 0;
+    font-size: var(--font-size-body);
+  }
+}
+
+.exercise-description {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.exercise-details {
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-brand-primary);
+}
+
+.exercise-card .evidence {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+// ===== Rest Stop Card =====
+.rest-header {
+  background: linear-gradient(135deg, var(--primitive-indigo-500) 0%, var(--primitive-purple-500) 100%);
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+.rest-stop-content {
+  padding: var(--space-4);
+}
+
+.rest-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rest-stop-item {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.stop-marker {
+  flex-shrink: 0;
+  width: 80px;
+  text-align: center;
+
+  .hour {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-brand-primary);
+    color: var(--color-text-on-primary);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.stop-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+
+  &.importance-critical {
+    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  }
+
+  &.importance-high {
+    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
+  }
+
+  i {
+    color: var(--color-brand-primary);
+  }
+}
+
+// ===== Research Card =====
+.research-header {
+  background: linear-gradient(135deg, var(--primitive-slate-700) 0%, var(--primitive-cyan-500) 100%);
+  color: var(--color-text-on-primary);
+
+  h3,
+  p {
+    color: var(--color-text-on-primary);
+  }
+}
+
+.research-item {
+  padding: var(--space-3);
+
+  .finding {
+    margin: 0 0 var(--space-3) 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .source {
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-h4);
     color: var(--color-text-secondary);
   }
 
-  .olympic-impact {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-6);
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-    margin: var(--space-4);
+  .recommendation {
+    padding: var(--space-3);
+    background: var(--color-brand-light);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-h4);
+  }
+}
+
+.pubmed-link {
+  display: inline-block;
+  margin-left: var(--space-2);
+  color: var(--color-brand-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ===== RESPONSIVE BREAKPOINTS =====
+@media (min-width: 1400px) {
+  .protocol-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 
-  .impact-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .stat-value {
-      font-size: var(--font-heading-xl);
-      font-weight: var(--font-weight-bold);
-      color: var(--color-brand-primary);
-    }
-
-    .stat-label {
-      font-size: var(--font-body-sm);
-      color: var(--color-text-secondary);
-    }
-  }
-
-  // ===== Form Grid =====
   .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .exercises-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .protocol-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .exercises-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .protocol-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .exercises-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .protocol-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .exercises-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .olympic-impact {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .travel-recovery-page {
     padding: var(--space-4);
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-
-    label {
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-primary);
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
-  }
-
-  // ===== Severity Card =====
-  .severity-section {
-    margin-bottom: var(--space-6);
-  }
-
-  .severity-card {
-    overflow: hidden;
-
-    &.severity-none {
-      border-left: 4px solid var(--color-status-success);
-    }
-
-    &.severity-mild {
-      border-left: 4px solid var(--color-status-info);
-    }
-
-    &.severity-moderate {
-      border-left: 4px solid var(--color-status-warning);
-    }
-
-    &.severity-severe {
-      border-left: 4px solid var(--color-status-error);
-    }
   }
 
   .severity-content {
-    display: flex;
-    gap: var(--space-6);
-    padding: var(--space-4);
-  }
-
-  .severity-gauge {
-    flex-shrink: 0;
-  }
-
-  .gauge-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: var(--radius-full);
-    background: conic-gradient(
-      var(--color-brand-primary) calc(var(--score, 0) * 1%),
-      var(--color-border-secondary) 0
-    );
-    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    position: relative;
+    text-align: center;
+  }
+
+  .protocol-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .olympic-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-type-selector {
+    flex-direction: column;
+  }
+
+  .risk-content {
+    grid-template-columns: 1fr;
+  }
+
+  .compression-timing {
+    grid-template-columns: 1fr;
+  }
+
+  .exercises-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rest-stop-item {
+    flex-direction: column;
+  }
+
+  .stop-marker {
+    width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .olympic-impact {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .today-header {
+    flex-direction: column;
+    gap: var(--space-3);
+    text-align: center;
+  }
+
+  .header-left {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .olympic-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .compression-timing {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .travel-recovery-page {
+    padding: var(--space-3);
+  }
+
+  // .card-header responsive styles removed - use app-card-shell
+
+  .gauge-circle {
+    width: 100px;
+    height: 100px;
 
     &::before {
-      content: "";
-      position: absolute;
-      width: 90px;
-      height: 90px;
-      border-radius: var(--radius-full);
-      background: var(--surface-primary);
+      width: 75px;
+      height: 75px;
     }
   }
 
   .gauge-value {
-    position: relative;
-    font-size: var(--font-heading-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
-  .gauge-label {
-    position: relative;
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .severity-details {
-    flex: 1;
-
-    h2 {
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-heading-md);
-      color: var(--color-text-primary);
-    }
-  }
-
-  .detail-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-bottom: var(--space-3);
-  }
-
-  .recovery-estimate,
-  .competition-countdown {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    margin-top: var(--space-2);
-
-    &.warning {
-      color: var(--color-status-warning);
-    }
-  }
-
-  .warning-text {
-    color: var(--color-status-error);
-  }
-
-  .symptoms-section {
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-top: 1px solid var(--color-border-secondary);
-
-    h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-      color: var(--color-text-secondary);
-    }
-  }
-
-  .symptoms-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .symptom-chip {
-    padding: var(--space-1) var(--space-3);
-    background: var(--surface-tertiary);
-    border-radius: var(--radius-full);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  // ===== Today's Protocol =====
-  .today-card {
-    margin-bottom: var(--space-6);
-  }
-
-  .today-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .day-badge {
-    padding: var(--space-2) var(--space-3);
-    background: var(--color-brand-primary);
-    color: var(--color-text-on-primary);
-    border-radius: var(--radius-full);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .protocol-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-4);
-    padding: var(--space-4);
+    font-size: var(--font-size-metric-lg);
   }
 
   .protocol-section {
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
+    padding: var(--space-3);
 
     h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-body-md);
-      color: var(--color-text-primary);
-
-      i {
-        color: var(--color-brand-primary);
-      }
+      font-size: var(--font-size-h4);
     }
   }
 
-  // ===== Sleep Times =====
   .sleep-times {
-    display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .detail-chips {
     justify-content: center;
-    gap: var(--space-3);
   }
 
-  .time-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .symptom-chip {
+    font-size: var(--font-size-badge);
   }
 
-  .time-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
+  .impact-stat .stat-value {
+    font-size: var(--font-size-metric-md);
   }
+}
 
-  .time-value {
-    font-size: var(--font-heading-xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
-  // ===== Light Windows =====
-  .light-windows {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .light-item {
-    display: flex;
-    gap: var(--space-3);
+@media (max-width: 374px) {
+  .travel-recovery-page {
     padding: var(--space-2);
-    border-radius: var(--radius-md);
-
-    &.seek {
-      background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
-    }
-
-    &.avoid {
-      background: rgba(var(--primitive-blue-500-rgb, 59, 130, 246), 0.1);
-    }
   }
 
-  .light-icon {
-    font-size: var(--font-heading-xl);
-  }
-
-  .light-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .light-action {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-primary);
-  }
-
-  .light-time {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .light-reason {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-  }
-
-  // ===== Training Info =====
-  .training-info {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-  }
-
-  .max-duration {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .activity-lists {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .activity-list {
-    padding: var(--space-2);
-    border-radius: var(--radius-md);
-
-    &.recommended {
-      background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.1);
-    }
-
-    &.avoid {
-      background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
-    }
-
-    ul {
-      margin: var(--space-1) 0 0 var(--space-4);
-      padding: 0;
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  .list-label {
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-medium);
-  }
-
-  // ===== Hydration =====
-  .hydration-target {
-    text-align: center;
-  }
-
-  .hydration-value {
-    display: block;
-    font-size: var(--font-heading-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-brand-primary);
-  }
-
-  .hydration-note {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  // ===== Recommendations =====
-  .recommendations-section {
-    padding: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
-
-    h4 {
-      margin: 0 0 var(--space-3) 0;
-    }
-  }
-
-  .recommendations-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .recommendation-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-    background: var(--surface-secondary);
-
-    &.importance-critical {
-      border-left: 3px solid var(--color-status-error);
-    }
-
-    &.importance-high {
-      border-left: 3px solid var(--color-status-warning);
-    }
-
-    &.importance-medium {
-      border-left: 3px solid var(--color-status-info);
-    }
-  }
-
-  .rec-time {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    min-width: 100px;
-  }
-
-  .rec-action {
-    flex: 1;
-    color: var(--color-text-primary);
-  }
-
-  // ===== Supplements =====
-  .supplements-section {
-    padding: var(--space-4);
-    border-top: 1px solid var(--color-border-secondary);
-
-    h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-    }
-  }
-
-  .supplements-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-3);
-  }
-
-  .supplement-item {
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-  }
-
-  .supp-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: var(--space-2);
-  }
-
-  .supp-name {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .supp-dosage {
-    font-size: var(--font-body-sm);
-    color: var(--color-brand-primary);
-  }
-
-  .supp-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .supp-caution {
-    margin-top: var(--space-2);
-    padding: var(--space-2);
-    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-body-xs);
-    color: var(--color-status-warning);
-  }
-
-  // ===== Timeline =====
-  .timeline-card {
-    margin-bottom: var(--space-6);
-  }
-
-  .timeline-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-  }
-
-  .timeline-day {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    min-width: 120px;
-  }
-
-  .timeline-date {
-    color: var(--color-text-secondary);
-    flex: 1;
-  }
-
-  .timeline-content {
+  .olympic-btn {
     padding: var(--space-3);
   }
 
-  .timeline-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-bottom: var(--space-3);
+  .venue-flag {
+    font-size: var(--font-size-metric-lg);
   }
 
-  .summary-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
+  .day-badge {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-h4);
+  }
+}
 
-    i {
-      color: var(--color-brand-primary);
-    }
+@media (max-height: 500px) and (orientation: landscape) {
+  .travel-recovery-page {
+    padding: var(--space-3);
   }
 
-  .timeline-recommendations {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .mini-rec {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .rec-bullet {
-    font-size: var(--font-body-2xs);
-
-    &.importance-critical {
-      color: var(--color-status-error);
-    }
-
-    &.importance-high {
-      color: var(--color-status-warning);
-    }
-
-    &.importance-medium {
-      color: var(--color-status-info);
-    }
-  }
-
-  // ===== Checklist =====
-  .checklist-items {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .checklist-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-2);
-
-    &.essential {
-      background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.05);
-      border-radius: var(--radius-md);
-    }
-
-    label {
-      flex: 1;
-      cursor: pointer;
-
-      &.packed {
-        text-decoration: line-through;
-        color: var(--color-text-muted);
-      }
-    }
-  }
-
-  .essential-badge {
-    font-size: var(--font-body-xs);
-    padding: var(--space-1) 6px;
-    background: var(--color-status-warning);
-    color: var(--color-text-on-primary);
-    border-radius: var(--radius-sm);
-    margin-left: var(--space-2);
-  }
-
-  .item-note {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-  }
-
-  // ===== Travel Type Selector (Dashboard-consistent cards) =====
-  .travel-type-selector {
-    display: grid;
+  .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
   }
 
-  .type-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-5);
-    border: 1px solid var(--surface-border);
-    border-radius: 14px;
-    background: var(--surface-primary);
-    cursor: pointer;
-    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      border-color: var(--ds-primary-green);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-
-    &.active {
-      border-color: var(--ds-primary-green);
-      background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
-      box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
-    }
-
-    i {
-      font-size: 1.75rem;
-      color: var(--ds-primary-green);
-    }
-
-    span {
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
-      font-size: var(--font-body-md);
-    }
-
-    small {
-      font-size: var(--font-body-xs);
-      color: var(--color-text-secondary);
-    }
-  }
-
-  // ===== Car Travel Section =====
-  .car-travel-section {
-    display: grid;
-    gap: var(--space-6);
-  }
-
-  .car-header {
-    background: linear-gradient(
-      135deg,
-      var(--ds-primary-green) 0%,
-      var(--primitive-teal-500) 100%
-    );
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  // ===== Risk Assessment =====
-  .risk-preview-card,
-  .car-risk-card {
-    overflow: hidden;
-  }
-
-  .risk-low {
-    border-left: 4px solid var(--color-status-success);
-  }
-
-  .risk-moderate {
-    border-left: 4px solid var(--color-status-warning);
-  }
-
-  .risk-high {
-    border-left: 4px solid var(--color-status-error);
-  }
-
-  .risk-very-high {
-    border-left: 4px solid var(--primitive-error-700);
-  }
-
-  .risk-content {
-    display: grid;
-    grid-template-columns: auto 1fr 1fr;
-    gap: var(--space-4);
-    padding: var(--space-4);
-  }
-
-  .risk-gauge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .risk-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: var(--radius-full);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface-tertiary);
-
-    &.risk-low {
-      background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.2);
-    }
-
-    &.risk-moderate {
-      background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.2);
-    }
-
-    &.risk-high {
-      background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
-    }
-
-    &.risk-very-high {
-      background: rgba(139, 0, 0, 0.2);
-    }
-  }
-
-  .risk-score {
-    font-size: var(--font-heading-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
-  .risk-label {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .risk-factors,
-  .risk-recommendations {
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-
-    h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-      color: var(--color-text-primary);
-    }
-
-    ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  .risk-factors li {
-    color: var(--color-status-warning);
-  }
-
-  .risk-recommendations li {
-    color: var(--color-status-success);
-  }
-
-  // ===== Car Risk Card =====
-  .car-risk-content {
-    padding: var(--space-4);
-  }
-
-  .risk-header {
-    display: flex;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
-
-  .risk-gauge-small {
+  .gauge-circle {
     width: 80px;
     height: 80px;
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface-tertiary);
-  }
 
-  .risk-info h2 {
-    margin: 0 0 var(--space-2) 0;
-  }
-
-  .warning-symptoms {
-    padding: var(--space-4);
-    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-status-error);
-
-    h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-3) 0;
-      color: var(--color-status-error);
+    &::before {
+      width: 60px;
+      height: 60px;
     }
   }
+}
 
-  .symptoms-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
+// Touch Device Optimizations
+@media (hover: none) and (pointer: coarse) {
+  .olympic-btn:hover {
+    transform: none;
   }
 
-  .warning-symptom {
-    padding: var(--space-1) var(--space-3);
-    background: var(--surface-primary);
-    border: 1px solid var(--color-status-error);
-    border-radius: var(--radius-full);
-    font-size: var(--font-body-sm);
-    color: var(--color-status-error);
+  .olympic-btn:active {
+    transform: scale(0.98);
   }
 
-  // ===== Compression Card =====
-  .compression-header {
-    background: linear-gradient(135deg, var(--primitive-blue-400) 0%, var(--primitive-success-400) 100%);
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
+  .checklist-item,
+  .exercise-card,
+  .protocol-section {
+    min-height: 44px;
   }
-
-  .compression-icon,
-  .massage-icon,
-  .exercises-icon {
-    font-size: var(--font-heading-2xl);
-  }
-
-  .compression-content {
-    padding: var(--space-4);
-  }
-
-  .compression-type {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-
-    h4 {
-      margin: 0;
-    }
-  }
-
-  .compression-timing {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
-
-  .timing-item {
-    display: flex;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-
-    i {
-      font-size: var(--font-heading-xl);
-      color: var(--color-brand-primary);
-    }
-
-    strong {
-      display: block;
-      margin-bottom: var(--space-1);
-    }
-
-    p {
-      margin: 0;
-      font-size: var(--font-body-sm);
-      color: var(--color-text-secondary);
-    }
-  }
-
-  .compression-cautions {
-    padding: var(--space-3);
-    background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-3);
-
-    h4 {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-    }
-
-    ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  .evidence-note {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    padding: var(--space-2);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-sm);
-    font-style: italic;
-
-    i {
-      color: var(--color-brand-primary);
-    }
-  }
-
-  // ===== Massage Gun Card =====
-  .massage-header {
-    background: linear-gradient(135deg, var(--primitive-error-400) 0%, var(--primitive-orange-500) 100%);
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  .massage-protocol {
-    padding: var(--space-3);
-  }
-
-  .protocol-summary {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-
-  .frequency {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .muscle-targets {
-    display: grid;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-
-  .muscle-item {
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-  }
-
-  .muscle-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: var(--space-1);
-  }
-
-  .muscle-duration {
-    padding: var(--space-1) 8px;
-    background: var(--color-brand-primary);
-    color: var(--color-text-on-primary);
-    border-radius: var(--radius-full);
-    font-size: var(--font-body-xs);
-  }
-
-  .muscle-technique {
-    margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .muscle-purpose {
-    margin: 0;
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-    font-style: italic;
-  }
-
-  .massage-cautions {
-    padding: var(--space-3);
-    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-3);
-
-    h5 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-sm);
-    }
-
-    ul {
-      margin: 0;
-      padding-left: var(--space-4);
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  // ===== Exercises Card =====
-  .exercises-header {
-    background: linear-gradient(135deg, var(--primitive-teal-500) 0%, var(--primitive-success-400) 100%);
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  .exercises-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
-    padding: var(--space-4);
-  }
-
-  .exercise-card {
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-    border-left: 3px solid var(--color-brand-primary);
-  }
-
-  .exercise-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-2);
-
-    h4 {
-      margin: 0;
-      font-size: var(--font-body-md);
-    }
-  }
-
-  .exercise-description {
-    margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .exercise-details {
-    display: flex;
-    gap: var(--space-3);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-brand-primary);
-  }
-
-  .exercise-card .evidence {
-    display: block;
-    margin-top: var(--space-2);
-    font-size: var(--font-body-xs);
-    color: var(--color-text-muted);
-    font-style: italic;
-  }
-
-  // ===== Rest Stop Card =====
-  .rest-header {
-    background: linear-gradient(135deg, var(--primitive-indigo-500) 0%, var(--primitive-purple-500) 100%);
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  .rest-stop-content {
-    padding: var(--space-4);
-  }
-
-  .rest-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .rest-stop-item {
-    display: flex;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-  }
-
-  .stop-marker {
-    flex-shrink: 0;
-    width: 80px;
-    text-align: center;
-
-    .hour {
-      display: block;
-      padding: var(--space-2) var(--space-3);
-      background: var(--color-brand-primary);
-      color: var(--color-text-on-primary);
-      border-radius: var(--radius-md);
-      font-weight: var(--font-weight-semibold);
-    }
-  }
-
-  .stop-actions {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .action-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2);
-    border-radius: var(--radius-sm);
-
-    &.importance-critical {
-      background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
-    }
-
-    &.importance-high {
-      background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
-    }
-
-    i {
-      color: var(--color-brand-primary);
-    }
-  }
-
-  // ===== Research Card =====
-  .research-header {
-    background: linear-gradient(135deg, var(--primitive-slate-700) 0%, var(--primitive-cyan-500) 100%);
-    color: var(--color-text-on-primary);
-
-    h3,
-    p {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  .research-item {
-    padding: var(--space-3);
-
-    .finding {
-      margin: 0 0 var(--space-3) 0;
-      line-height: var(--line-height-relaxed);
-    }
-
-    .source {
-      margin-bottom: var(--space-2);
-      font-size: var(--font-body-sm);
-      color: var(--color-text-secondary);
-    }
-
-    .recommendation {
-      padding: var(--space-3);
-      background: var(--color-brand-light);
-      border-radius: var(--radius-md);
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  .pubmed-link {
-    display: inline-block;
-    margin-left: var(--space-2);
-    color: var(--color-brand-primary);
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  // ===== RESPONSIVE BREAKPOINTS =====
-  @media (min-width: 1400px) {
-    .protocol-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .form-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .exercises-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1200px) and (max-width: 1399px) {
-    .protocol-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .exercises-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) and (max-width: 1199px) {
-    .protocol-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .exercises-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 769px) and (max-width: 1023px) {
-    .protocol-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .form-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .exercises-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .olympic-impact {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .travel-recovery-page {
-      padding: var(--space-4);
-    }
-
-    .severity-content {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .protocol-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-3);
-    }
-
-    .olympic-buttons {
-      grid-template-columns: 1fr;
-    }
-
-    .travel-type-selector {
-      flex-direction: column;
-    }
-
-    .risk-content {
-      grid-template-columns: 1fr;
-    }
-
-    .compression-timing {
-      grid-template-columns: 1fr;
-    }
-
-    .exercises-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .rest-stop-item {
-      flex-direction: column;
-    }
-
-    .stop-marker {
-      width: 100%;
-    }
-
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .olympic-impact {
-      flex-direction: column;
-      gap: var(--space-3);
-    }
-
-    .today-header {
-      flex-direction: column;
-      gap: var(--space-3);
-      text-align: center;
-    }
-
-    .header-left {
-      flex-direction: column;
-    }
-  }
-
-  @media (min-width: 481px) and (max-width: 767px) {
-    .olympic-buttons {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .compression-timing {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 480px) {
-    .travel-recovery-page {
-      padding: var(--space-3);
-    }
-
-    .card-header {
-      padding: var(--space-3);
-
-      h3 {
-        font-size: var(--font-body-lg);
-      }
-    }
-
-    .gauge-circle {
-      width: 100px;
-      height: 100px;
-
-      &::before {
-        width: 75px;
-        height: 75px;
-      }
-    }
-
-    .gauge-value {
-      font-size: var(--font-heading-xl);
-    }
-
-    .protocol-section {
-      padding: var(--space-3);
-
-      h4 {
-        font-size: var(--font-body-sm);
-      }
-    }
-
-    .sleep-times {
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .detail-chips {
-      justify-content: center;
-    }
-
-    .symptom-chip {
-      font-size: var(--font-body-xs);
-    }
-
-    .impact-stat .stat-value {
-      font-size: var(--font-heading-lg);
-    }
-  }
-
-  @media (max-width: 374px) {
-    .travel-recovery-page {
-      padding: var(--space-2);
-    }
-
-    .olympic-btn {
-      padding: var(--space-3);
-    }
-
-    .venue-flag {
-      font-size: var(--font-heading-xl);
-    }
-
-    .day-badge {
-      padding: var(--space-1) var(--space-2);
-      font-size: var(--font-body-sm);
-    }
-  }
-
-  @media (max-height: 500px) and (orientation: landscape) {
-    .travel-recovery-page {
-      padding: var(--space-3);
-    }
-
-    .protocol-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .gauge-circle {
-      width: 80px;
-      height: 80px;
-
-      &::before {
-        width: 60px;
-        height: 60px;
-      }
-    }
-  }
-
-  // Touch Device Optimizations
-  @media (hover: none) and (pointer: coarse) {
-    .olympic-btn:hover {
-      transform: none;
-    }
-
-    .olympic-btn:active {
-      transform: scale(0.98);
-    }
-
-    .checklist-item,
-    .exercise-card,
-    .protocol-section {
-      min-height: 44px;
-    }
-  }
+}
 }
 
 // ============================================================================
 // @layer overrides - Print Styles
 // ============================================================================
 
-@layer overrides {
-  @media print {
-    .travel-type-selector,
-    .form-actions,
-    .olympic-buttons {
-      display: none !important;
-    }
+@media print {
+.travel-type-selector,
+.form-actions,
+.olympic-buttons {
+  display: none;
+}
 
-    .travel-recovery-page {
-      padding: 0;
-      max-width: 100%;
-    }
+.travel-recovery-page {
+  padding: 0;
+  max-width: 100%;
+}
 
-    .protocol-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
+.protocol-grid {
+  grid-template-columns: repeat(2, 1fr);
 }

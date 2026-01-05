@@ -11,7 +11,6 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { SkeletonModule } from "primeng/skeleton";
@@ -24,6 +23,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 interface TrainingSession {
   id: string;
@@ -36,6 +36,21 @@ interface TrainingSession {
   isTemplate: boolean;
 }
 
+interface CalendarDateMarker {
+  date: Date;
+  status: "scheduled" | "completed" | "missed" | "in_progress";
+  sessionType: string;
+  tooltip: string;
+}
+
+interface MonthlyStats {
+  totalSessions: number;
+  completedSessions: number;
+  missedSessions: number;
+  totalDuration: number;
+  completionRate: number;
+}
+
 @Component({
   selector: "app-training-schedule",
   standalone: true,
@@ -43,7 +58,6 @@ interface TrainingSession {
   imports: [
     FormsModule,
     CommonModule,
-    CardModule,
     DatePicker,
     TagModule,
     SkeletonModule,
@@ -52,8 +66,8 @@ interface TrainingSession {
     CheckboxModule,
     MainLayoutComponent,
     PageHeaderComponent,
-  
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
@@ -69,13 +83,10 @@ interface TrainingSession {
 
         <div class="schedule-content">
           <!-- STEP 2: Calendar Card with inline DatePicker and showWeek -->
-          <p-card class="calendar-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <i class="pi pi-calendar"></i>
-                <h3>Training Calendar</h3>
-              </div>
-            </ng-template>
+          <app-card-shell
+            title="Training Calendar"
+            headerIcon="pi-calendar"
+          >
             <p-datepicker
               [ngModel]="selectedDate()"
               (ngModelChange)="onDateSelect($event)"
@@ -125,17 +136,59 @@ interface TrainingSession {
                 ></p-checkbox>
                 <label for="showWeekNumbers">Show Week Numbers</label>
               </div>
+              
+              <!-- View Mode Toggle -->
+              <div class="view-toggle">
+                <app-button 
+                  [variant]="viewMode() === 'week' ? 'primary' : 'outlined'" 
+                  size="sm"
+                  (clicked)="viewMode.set('week'); loadSessions()"
+                >Week</app-button>
+                <app-button 
+                  [variant]="viewMode() === 'month' ? 'primary' : 'outlined'" 
+                  size="sm"
+                  (clicked)="viewMode.set('month'); loadSessions()"
+                >Month</app-button>
+              </div>
             </div>
-          </p-card>
+          </app-card-shell>
+          
+          <!-- Monthly Statistics Summary -->
+          @if (viewMode() === 'month' && monthlyStats().totalSessions > 0) {
+            <app-card-shell
+              title="Monthly Summary"
+              headerIcon="pi-chart-bar"
+            >
+              <div class="monthly-stats">
+                <div class="stat-item">
+                  <span class="stat-value">{{ monthlyStats().totalSessions }}</span>
+                  <span class="stat-label">Total Sessions</span>
+                </div>
+                <div class="stat-item completed">
+                  <span class="stat-value">{{ monthlyStats().completedSessions }}</span>
+                  <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat-item missed">
+                  <span class="stat-value">{{ monthlyStats().missedSessions }}</span>
+                  <span class="stat-label">Missed</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ monthlyStats().totalDuration }}m</span>
+                  <span class="stat-label">Total Duration</span>
+                </div>
+                <div class="stat-item completion">
+                  <span class="stat-value">{{ monthlyStats().completionRate }}%</span>
+                  <span class="stat-label">Completion Rate</span>
+                </div>
+              </div>
+            </app-card-shell>
+          }
 
           <!-- STEP 3: Sessions List Card -->
-          <p-card class="sessions-card">
-            <ng-template pTemplate="header">
-              <div class="card-header">
-                <i class="pi pi-clipboard"></i>
-                <h3>Upcoming Sessions</h3>
-              </div>
-            </ng-template>
+          <app-card-shell
+            title="Upcoming Sessions"
+            headerIcon="pi-clipboard"
+          >
             <div class="sessions-list">
               <!-- STEP 4: Error State with p-message and retry -->
               @if (hasError()) {
@@ -163,18 +216,23 @@ interface TrainingSession {
                 }
               } @else if (filteredSessions().length === 0) {
                 <!-- STEP 4: Empty State - Icon + message centered -->
-                <div class="empty-state">
-                  <i class="pi pi-calendar empty-state-icon" aria-hidden="true"></i>
-                  <h4 class="empty-state-title">No sessions scheduled</h4>
-                  <p class="empty-state-message">
-                    Click "New Session" to add one.
-                  </p>
+                <div class="card-empty-state">
+                  <div class="card-empty-state__icon">
+                    <i class="pi pi-calendar" aria-hidden="true"></i>
+                  </div>
+                  <div class="card-empty-state__content">
+                    <p class="card-empty-state__title">No sessions scheduled</p>
+                    <p class="card-empty-state__text">
+                      Click "New Session" to add one.
+                    </p>
+                  </div>
                 </div>
               } @else {
                 <!-- STEP 3: Session rows as card-like items -->
                 @for (session of filteredSessions(); track session.id) {
                   <div
                     class="session-item"
+                    [style.border-left-color]="getSessionTypeColor(session.type)"
                     (click)="viewSession(session)"
                     (keydown.enter)="viewSession(session)"
                     (keydown.space)="viewSession(session)"
@@ -183,6 +241,8 @@ interface TrainingSession {
                     [attr.aria-label]="session.type + ' on ' + (session.date | date: 'MMMM d, y') + ', ' + session.status"
                   >
                     <div class="session-info">
+                      <!-- Session type color indicator -->
+                      <span class="session-type-indicator" [style.background-color]="getSessionTypeColor(session.type)"></span>
                       <!-- Title visually dominant -->
                       <h4 class="session-title">{{ session.type }}</h4>
                       <!-- Date/time secondary -->
@@ -213,7 +273,7 @@ interface TrainingSession {
                 }
               }
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
       </div>
     </app-main-layout>
@@ -233,19 +293,64 @@ export class TrainingScheduleComponent implements OnInit {
   showWeekNumbers = signal<boolean>(true);
   today = new Date();
 
+  // Calendar date markers for visual indicators
+  dateMarkers = signal<CalendarDateMarker[]>([]);
+  
+  // View mode: week or month
+  viewMode = signal<'week' | 'month'>('week');
+  
+  // Monthly statistics
+  monthlyStats = signal<MonthlyStats>({
+    totalSessions: 0,
+    completedSessions: 0,
+    missedSessions: 0,
+    totalDuration: 0,
+    completionRate: 0
+  });
+
   // Runtime guard signals - prevent white screen crashes
   hasError = signal<boolean>(false);
   errorMessage = signal<string>(
     "Failed to load training sessions. Please try again.",
   );
 
-  // Sessions are already filtered by week in loadSessions()
+  // Sessions filtered by view mode (week or extended)
   filteredSessions = computed(() => {
     return this.sessions();
   });
 
+  // Computed: Get session type color for calendar markers
+  getSessionTypeColor(type: string): string {
+    const typeColors: Record<string, string> = {
+      'Strength': 'var(--primitive-blue-500)',
+      'Conditioning': 'var(--primitive-success-500)',
+      'Skills': 'var(--primitive-warning-500)',
+      'Recovery': 'var(--primitive-purple-500)',
+      'Game': 'var(--primitive-error-500)',
+      'Practice': 'var(--ds-primary-green)',
+      'Training': 'var(--p-primary-500)',
+    };
+    // Find partial match
+    for (const [key, color] of Object.entries(typeColors)) {
+      if (type.toLowerCase().includes(key.toLowerCase())) {
+        return color;
+      }
+    }
+    return 'var(--p-primary-500)';
+  }
+
+  // Check if a date has sessions (for calendar highlighting)
+  getDateMarker(date: Date): CalendarDateMarker | undefined {
+    const dateStr = date.toISOString().split('T')[0];
+    return this.dateMarkers().find(m => 
+      m.date.toISOString().split('T')[0] === dateStr
+    );
+  }
+
   ngOnInit(): void {
     this.loadSessions();
+    this.loadMonthlyStats();
+    this.loadDateMarkers();
   }
 
   async loadSessions(): Promise<void> {
@@ -260,14 +365,27 @@ export class TrainingScheduleComponent implements OnInit {
         return;
       }
 
-      // Calculate date range for the query (selected week)
+      // Calculate date range based on view mode
       const selected = this.selectedDate();
-      const startOfWeek = new Date(selected);
-      startOfWeek.setDate(selected.getDate() - selected.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
+      let startDate: Date;
+      let endDate: Date;
       
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      if (this.viewMode() === 'month') {
+        // Month view: show entire month
+        startDate = new Date(selected.getFullYear(), selected.getMonth(), 1);
+        endDate = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
+      } else {
+        // Week view: show selected week
+        startDate = new Date(selected);
+        startDate.setDate(selected.getDate() - selected.getDay());
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+      }
+      
+      // Alias for backward compatibility
+      const startOfWeek = startDate;
+      const endOfWeek = endDate;
 
       // 1. Fetch actual training sessions (logged/completed sessions)
       const { data: actualSessions, error: sessionsError } = await this.supabaseService.client
@@ -602,6 +720,106 @@ export class TrainingScheduleComponent implements OnInit {
       case "scheduled":
       default:
         return "scheduled";
+    }
+  }
+
+  /**
+   * Toggle between week and month view
+   */
+  toggleViewMode(): void {
+    const newMode = this.viewMode() === 'week' ? 'month' : 'week';
+    this.viewMode.set(newMode);
+    this.loadSessions();
+  }
+
+  /**
+   * Load date markers for the entire visible month (for calendar highlighting)
+   */
+  async loadDateMarkers(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      const selected = this.selectedDate();
+      const startOfMonth = new Date(selected.getFullYear(), selected.getMonth(), 1);
+      const endOfMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
+
+      const { data: sessions, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("session_date, session_type, training_type, status")
+        .eq("user_id", user.id)
+        .gte("session_date", startOfMonth.toISOString().split('T')[0])
+        .lte("session_date", endOfMonth.toISOString().split('T')[0]);
+
+      if (error) {
+        this.logger.warn("Failed to load date markers:", error);
+        return;
+      }
+
+      const markers: CalendarDateMarker[] = (sessions || []).map(s => ({
+        date: new Date(s.session_date),
+        status: this.mapDbStatusToUiStatus(s.status),
+        sessionType: s.session_type || s.training_type || 'Training',
+        tooltip: `${s.session_type || s.training_type || 'Training'} - ${this.mapDbStatusToUiStatus(s.status)}`
+      }));
+
+      this.dateMarkers.set(markers);
+    } catch (error) {
+      this.logger.error("Error loading date markers:", error);
+    }
+  }
+
+  /**
+   * Load monthly statistics for the summary card
+   */
+  async loadMonthlyStats(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      const selected = this.selectedDate();
+      const startOfMonth = new Date(selected.getFullYear(), selected.getMonth(), 1);
+      const endOfMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
+
+      const { data: sessions, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("status, duration_minutes, duration")
+        .eq("user_id", user.id)
+        .gte("session_date", startOfMonth.toISOString().split('T')[0])
+        .lte("session_date", endOfMonth.toISOString().split('T')[0]);
+
+      if (error) {
+        this.logger.warn("Failed to load monthly stats:", error);
+        return;
+      }
+
+      const total = sessions?.length || 0;
+      const completed = sessions?.filter(s => s.status === 'completed').length || 0;
+      const missed = sessions?.filter(s => s.status === 'cancelled').length || 0;
+      const totalDuration = sessions?.reduce((sum, s) => 
+        sum + (s.duration_minutes || s.duration || 0), 0) || 0;
+
+      this.monthlyStats.set({
+        totalSessions: total,
+        completedSessions: completed,
+        missedSessions: missed,
+        totalDuration,
+        completionRate: total > 0 ? Math.round((completed / total) * 100) : 0
+      });
+    } catch (error) {
+      this.logger.error("Error loading monthly stats:", error);
+    }
+  }
+
+  /**
+   * Get status color for calendar date cell
+   */
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'completed': return 'var(--primitive-success-500)';
+      case 'missed': return 'var(--primitive-error-500)';
+      case 'in_progress': return 'var(--primitive-warning-500)';
+      default: return 'var(--primitive-blue-500)';
     }
   }
 }

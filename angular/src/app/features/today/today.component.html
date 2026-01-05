@@ -2,6 +2,35 @@
   <p-toast />
 
   <!-- ========================================================================
+       COMPLETION CELEBRATION OVERLAY
+       ======================================================================== -->
+  @if (showCelebration()) {
+    <div class="celebration-overlay" @celebrationFade (click)="dismissCelebration()">
+      <div class="celebration-content" @celebrationBounce>
+        <div class="celebration-confetti">
+          @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+            <span class="confetti-piece" [style.--delay]="i * 0.1 + 's'" [style.--x]="(i * 30 - 180) + 'px'"></span>
+          }
+        </div>
+        <div class="celebration-icon">🎉</div>
+        <h2 class="celebration-title">Day Complete!</h2>
+        <p class="celebration-message">Amazing work! You've completed all your training for today.</p>
+        <div class="celebration-stats">
+          <div class="stat">
+            <span class="stat-number">{{ protocol()?.completedExercises || 0 }}</span>
+            <span class="stat-label">Exercises</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">{{ weekStats().currentStreak }}</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+        </div>
+        <app-button iconLeft="pi-times" size="lg" (clicked)="dismissCelebration()">Continue</app-button>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================================================
        LOADING STATE - Skeleton placeholders
        ======================================================================== -->
   @if (isLoading()) {
@@ -49,7 +78,7 @@
     <div class="today-page">
 
       <!-- ====================================================================
-           SECTION 1: Welcome Card
+           SECTION 1: Welcome Card with Quick Check-in
            ==================================================================== -->
       <section aria-labelledby="welcome-heading">
         <p-card styleClass="welcome-card">
@@ -58,16 +87,26 @@
               <i class="pi pi-user"></i>
             </div>
             <div class="welcome-text">
-              <span class="welcome-label">{{ greetingPrefix() }}</span>
-              <h1 id="welcome-heading" class="welcome-name">{{ userName() || 'Athlete' }}!</h1>
+              <h1 id="welcome-heading" class="welcome-greeting">{{ greetingPrefix() }}</h1>
+              <h2 class="welcome-name">{{ userName() || 'Athlete' }}!</h2>
               <p class="welcome-hint">{{ dayPhaseMessage() }}</p>
             </div>
             <div class="welcome-cta">
               @if (!hasCheckedInToday()) {
-                <app-button
-                  iconLeft="pi-heart"
-                  (clicked)="scrollToWellness()"
-                >Check-in</app-button>
+                <div class="checkin-buttons">
+                  <app-button
+                    iconLeft="pi-bolt"
+                    size="sm"
+                    variant="outlined"
+                    (clicked)="openQuickCheckin()"
+                    pTooltip="Quick 3-tap check-in"
+                  >Quick</app-button>
+                  <app-button
+                    iconLeft="pi-heart"
+                    size="sm"
+                    (clicked)="scrollToWellness()"
+                  >Full Check-in</app-button>
+                </div>
               } @else {
                 <p-tag severity="success" icon="pi pi-check" value="Checked In" />
               }
@@ -75,6 +114,100 @@
           </div>
         </p-card>
       </section>
+
+      <!-- ====================================================================
+           QUICK CHECK-IN DIALOG (3-tap flow)
+           ==================================================================== -->
+      <p-dialog
+        [visible]="showQuickCheckin()"
+        (visibleChange)="showQuickCheckin.set($event)"
+        header="Quick Check-in"
+        [modal]="true"
+        [style]="{ width: '95vw', maxWidth: '400px' }"
+        [contentStyle]="{ padding: '1.5rem' }"
+      >
+        <div class="quick-checkin-form">
+          <p class="quick-intro">How are you feeling today? Tap to select.</p>
+          
+          <!-- Step 1: Overall Feeling -->
+          <div class="quick-section">
+            <span class="quick-label">Overall Feeling</span>
+            <div class="mood-selector">
+              @for (mood of quickMoods; track mood.value) {
+                <button 
+                  type="button"
+                  class="mood-btn" 
+                  [class.selected]="quickFormData().overallFeeling === mood.value"
+                  (click)="setQuickField('overallFeeling', mood.value)"
+                  [attr.aria-label]="mood.label"
+                >
+                  <span class="mood-emoji">{{ mood.emoji }}</span>
+                  <span class="mood-text">{{ mood.label }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Step 2: Energy Level -->
+          <div class="quick-section">
+            <span class="quick-label">Energy Level</span>
+            <div class="energy-selector">
+              @for (level of quickEnergyLevels; track level.value) {
+                <button 
+                  type="button"
+                  class="energy-btn" 
+                  [class.selected]="quickFormData().energyLevel === level.value"
+                  (click)="setQuickField('energyLevel', level.value)"
+                >
+                  <i class="pi pi-bolt" [style.opacity]="level.value * 0.2 + 0.2"></i>
+                  <span>{{ level.label }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Step 3: Any Soreness -->
+          <div class="quick-section">
+            <span class="quick-label">Any Soreness?</span>
+            <div class="soreness-selector">
+              <button 
+                type="button"
+                class="soreness-btn" 
+                [class.selected]="quickFormData().hasSoreness === false"
+                (click)="setQuickField('hasSoreness', false)"
+              >
+                <i class="pi pi-check-circle"></i>
+                <span>Feeling Good</span>
+              </button>
+              <button 
+                type="button"
+                class="soreness-btn soreness-yes" 
+                [class.selected]="quickFormData().hasSoreness === true"
+                (click)="setQuickField('hasSoreness', true)"
+              >
+                <i class="pi pi-exclamation-circle"></i>
+                <span>Some Soreness</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Preview Score -->
+          <div class="quick-preview">
+            <span class="preview-label">Estimated Readiness</span>
+            <span class="preview-score" [class]="getQuickReadinessClass()">{{ quickReadinessScore() }}%</span>
+          </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+          <app-button variant="text" (clicked)="showQuickCheckin.set(false)">Cancel</app-button>
+          <app-button 
+            iconLeft="pi-check" 
+            [loading]="isSavingQuickCheckin()"
+            [disabled]="!isQuickFormValid()"
+            (clicked)="submitQuickCheckin()"
+          >Save</app-button>
+        </ng-template>
+      </p-dialog>
 
       <!-- ====================================================================
            SECTION 2: Key Stats (ACWR & Readiness)
@@ -93,12 +226,19 @@
               <i class="pi pi-chart-line"></i>
             </div>
             <div class="stat-info">
-              <span class="stat-value" [class]="acwrClass()">
-                {{ acwrValue().toFixed(2) }}
-              </span>
+              <div class="stat-value-row">
+                <span class="stat-value" [class]="acwrClass()">
+                  {{ acwrValue().toFixed(2) }}
+                </span>
+                @if (acwrStatusLabel() !== 'Unknown') {
+                  <span class="stat-status-label">
+                    ({{ acwrStatusLabel().toLowerCase() }})
+                  </span>
+                }
+              </div>
               <span class="stat-label">ACWR</span>
             </div>
-            <p-tag [value]="acwrStatusLabel()" [severity]="acwrSeverity()" />
+            <i class="pi pi-chevron-right stat-chevron" aria-hidden="true"></i>
           </div>
         </p-card>
 
@@ -115,12 +255,17 @@
               <i class="pi pi-heart"></i>
             </div>
             <div class="stat-info">
-              <span class="stat-value" [class]="readinessLevel()">
-                {{ readinessScore() }}%
-              </span>
+              <div class="stat-value-row">
+                <span class="stat-value" [class]="readinessLevel()">
+                  {{ readinessScore() }}%
+                </span>
+                <span class="stat-status-label">
+                  ({{ readinessStatusLabel().toLowerCase() }})
+                </span>
+              </div>
               <span class="stat-label">Readiness</span>
             </div>
-            <p-tag [value]="readinessStatusLabel()" [severity]="readinessSeverity()" />
+            <i class="pi pi-chevron-right stat-chevron" aria-hidden="true"></i>
           </div>
         </p-card>
       </section>
@@ -144,7 +289,7 @@
              ================================================================== -->
         @if (activeFocus() === 'checkin') {
           <section id="wellness-section" aria-labelledby="checkin-heading">
-            <p-card styleClass="content-card">
+            <p-card styleClass="content-card highlight-card">
               <div class="card-header">
                 <i class="pi pi-heart card-header-icon" aria-hidden="true"></i>
                 <span id="checkin-heading" class="card-header-title">Morning Check-in</span>
@@ -162,34 +307,33 @@
         }
 
         <!-- ==================================================================
-             AI INSIGHT CARD (shown when available)
+             PHASE 2: Training Protocol (show if checked in OR if protocol data exists)
              ================================================================== -->
-        @if (aiInsight()) {
-          <section aria-labelledby="insight-heading">
-            <p-card styleClass="insight-card">
-              <div class="insight-content">
-                <div class="insight-avatar" aria-hidden="true">
-                  <i class="pi pi-sparkles"></i>
+        @if (activeFocus() === 'protocol' || (protocol() && (hasCheckedInToday() || dayPhase() === 'midday'))) {
+          <!-- ==================================================================
+               AI INSIGHT CARD (shown in protocol phase when available)
+               ================================================================== -->
+          @if (aiInsight()) {
+            <section aria-labelledby="insight-heading">
+              <p-card styleClass="insight-card">
+                <div class="insight-content">
+                  <div class="insight-avatar" aria-hidden="true">
+                    <i class="pi pi-sparkles"></i>
+                  </div>
+                  <div class="insight-text">
+                    <h3 id="insight-heading" class="insight-title">✨ Merlin's Insight</h3>
+                    <p class="insight-message">{{ aiInsight() }}</p>
+                    <app-button
+                      iconLeft="pi-comments"
+                      size="sm"
+                      [routerLink]="'/chat'"
+                      [queryParams]="{ query: 'Tell me more about: ' + aiInsight() }"
+                    >Discuss with Merlin</app-button>
+                  </div>
                 </div>
-                <div class="insight-text">
-                  <h3 id="insight-heading" class="insight-title">Merlin's Insight</h3>
-                  <p class="insight-message">{{ aiInsight() }}</p>
-                  <app-button
-                    iconLeft="pi-comments"
-                    size="sm"
-                    [routerLink]="'/chat'"
-                    [queryParams]="{ query: 'Tell me more about: ' + aiInsight() }"
-                  >Discuss with Merlin</app-button>
-                </div>
-              </div>
-            </p-card>
-          </section>
-        }
-
-        <!-- ==================================================================
-             PHASE 2: Training Protocol
-             ================================================================== -->
-        @if (activeFocus() === 'protocol') {
+              </p-card>
+            </section>
+          }
           <section aria-labelledby="protocol-heading">
             <p-card styleClass="content-card">
               <div class="card-header">
@@ -219,6 +363,8 @@
                   @if (p.morningMobility) {
                     <app-protocol-block
                       [block]="p.morningMobility"
+                      [simpleView]="true"
+                      [defaultExpanded]="true"
                       (exerciseComplete)="refreshProtocol()"
                     />
                   }
@@ -226,6 +372,8 @@
                   @if (p.foamRoll && p.foamRoll.totalCount > 0) {
                     <app-protocol-block
                       [block]="p.foamRoll"
+                      [simpleView]="true"
+                      [defaultExpanded]="true"
                       (exerciseComplete)="refreshProtocol()"
                     />
                   }
@@ -233,6 +381,8 @@
                   @if (p.mainSession) {
                     <app-protocol-block
                       [block]="p.mainSession"
+                      [simpleView]="true"
+                      [defaultExpanded]="true"
                       (exerciseComplete)="refreshProtocol()"
                     />
                   }
@@ -240,6 +390,8 @@
                   @if (p.eveningRecovery && p.eveningRecovery.totalCount > 0) {
                     <app-protocol-block
                       [block]="p.eveningRecovery"
+                      [simpleView]="true"
+                      [defaultExpanded]="true"
                       (exerciseComplete)="refreshProtocol()"
                     />
                   }
@@ -254,19 +406,28 @@
                   >Advanced Training Workspace</app-button>
                 </div>
               } @else {
-                <!-- Empty State -->
+                <!-- Empty State - No Protocol Generated -->
                 <div class="empty-state">
                   <i class="pi pi-calendar-plus"></i>
                   <h3>No Training Plan Yet</h3>
-                  <p>We're still calculating your optimized path for today.</p>
-                  <app-button
-                    iconLeft="pi-refresh"
-                    (clicked)="refreshProtocol()"
-                  >Refresh Protocol</app-button>
+                  <p>Generate your personalized protocol to see exercises with videos and instructions.</p>
+                  <div class="empty-state-actions">
+                    <app-button
+                      iconLeft="pi-sparkles"
+                      [loading]="isGeneratingProtocol()"
+                      (clicked)="generateProtocol()"
+                    >Generate Today's Protocol</app-button>
+                    <app-button
+                      iconLeft="pi-refresh"
+                      variant="outlined"
+                      (clicked)="refreshProtocol()"
+                    >Refresh</app-button>
+                  </div>
                 </div>
               }
             </p-card>
           </section>
+
         }
 
         <!-- ==================================================================
@@ -274,7 +435,7 @@
              ================================================================== -->
         @if (activeFocus() === 'wrapup') {
           <section aria-labelledby="wrapup-heading">
-            <p-card styleClass="content-card">
+            <p-card styleClass="content-card highlight-card">
               <div class="card-header">
                 <i class="pi pi-moon card-header-icon" aria-hidden="true"></i>
                 <span id="wrapup-heading" class="card-header-title">Evening Wrap-up</span>
@@ -328,10 +489,78 @@
         }
 
         <!-- ==================================================================
-             TODAY'S SCHEDULE (always visible)
+             TODAY'S SCHEDULE (shown in ALL phases)
              ================================================================== -->
         <section aria-label="Today's schedule">
           <app-todays-schedule />
+        </section>
+
+        <!-- ==================================================================
+             TOMORROW'S TRAINING PREVIEW
+             ================================================================== -->
+        <section aria-labelledby="tomorrow-heading">
+          <p-card styleClass="content-card">
+            <div class="card-header">
+              <i class="pi pi-calendar card-header-icon" aria-hidden="true"></i>
+              <span id="tomorrow-heading" class="card-header-title">Tomorrow's Training</span>
+              <p-tag severity="info" [value]="tomorrowDateLabel()" />
+            </div>
+
+            @if (isLoadingTomorrow()) {
+              <div class="tomorrow-loading">
+                <p-skeleton width="100%" height="3rem" borderRadius="0.5rem" />
+                <p-skeleton width="80%" height="1.5rem" borderRadius="0.5rem" />
+              </div>
+            } @else if (tomorrowProtocol(); as tp) {
+              <div class="tomorrow-preview">
+                <p class="tomorrow-rationale">{{ tp.aiRationale || 'Training protocol ready for tomorrow.' }}</p>
+                
+                <div class="tomorrow-blocks">
+                  @if (tp.morningMobility && tp.morningMobility.totalCount > 0) {
+                    <div class="tomorrow-block-item">
+                      <i class="pi pi-sun"></i>
+                      <span>Morning Mobility</span>
+                      <span class="block-count">{{ tp.morningMobility.totalCount }} exercises</span>
+                    </div>
+                  }
+                  @if (tp.mainSession && tp.mainSession.totalCount > 0) {
+                    <div class="tomorrow-block-item">
+                      <i class="pi pi-bolt"></i>
+                      <span>{{ tp.trainingFocus || 'Main Session' }}</span>
+                      <span class="block-count">{{ tp.mainSession.totalCount }} exercises</span>
+                    </div>
+                  }
+                  @if (tp.eveningRecovery && tp.eveningRecovery.totalCount > 0) {
+                    <div class="tomorrow-block-item">
+                      <i class="pi pi-moon"></i>
+                      <span>Evening Recovery</span>
+                      <span class="block-count">{{ tp.eveningRecovery.totalCount }} exercises</span>
+                    </div>
+                  }
+                </div>
+
+                <div class="tomorrow-actions">
+                  <app-button
+                    iconLeft="pi-eye"
+                    variant="outlined"
+                    size="sm"
+                    (clicked)="viewTomorrowProtocol()"
+                  >View Full Protocol</app-button>
+                </div>
+              </div>
+            } @else {
+              <div class="tomorrow-empty">
+                <p>No protocol generated for tomorrow yet.</p>
+                <app-button
+                  iconLeft="pi-sparkles"
+                  variant="outlined"
+                  size="sm"
+                  [loading]="isGeneratingTomorrow()"
+                  (clicked)="generateTomorrowProtocol()"
+                >Generate Tomorrow's Protocol</app-button>
+              </div>
+            }
+          </p-card>
         </section>
 
         <!-- ==================================================================

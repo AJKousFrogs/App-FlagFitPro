@@ -1,943 +1,889 @@
 /* ================================================================
    PROFILE COMPONENT STYLES
-   Design System Compliant - January 2, 2026
+   Design System Compliant - Card Container Baseline v1.0
+   ViewEncapsulation.None - Styles are global, scoped by selectors
+   
+   Systematic Migration Checklist Applied:
+   - Phase 1: Audit ✓
+   - Phase 2: Card spacing ✓
+   - Phase 3: Tabs styling ✓
+   - Phase 4: Token normalization ✓
+   - Phase 5: Responsive verification ✓
    ================================================================ */
 
-@layer features {
-  .profile-page {
-    padding: var(--space-6);
-  }
+/* ========== Page Container ========== 
+ * MATCHES Dashboard .player-dashboard exactly
+ */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); // Dashboard: 24px between major sections
+  padding: var(--space-5) var(--space-4); // Dashboard: 20px 16px
+  max-width: 1400px; // Dashboard: Standard container width
+  margin: 0 auto;
+}
 
-  /* ========== Deletion Pending Banner ========== */
-  .deletion-pending-banner {
-    background: linear-gradient(
-      135deg,
-      var(--color-warning-bg) 0%,
-      rgba(var(--primitive-warning-500-rgb), 0.1) 100%
-    );
-    border: var(--border-1) solid var(--color-status-warning);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    margin-bottom: var(--space-6);
-    box-shadow: var(--shadow-1);
-  }
+/* ========== Deletion Pending Banner ========== */
+.profile-page .deletion-pending-banner {
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-bg) 0%,
+    rgba(var(--primitive-warning-500-rgb), 0.1) 100%
+  );
+  border: 1px solid var(--color-status-warning);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
 
-  .deletion-banner-content {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-  }
+.profile-page .deletion-banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
 
-  .deletion-banner-content > i {
-    font-size: var(--font-heading-xl);
-    color: var(--color-status-warning);
-    flex-shrink: 0;
-    margin-top: var(--space-1);
-  }
+.profile-page .deletion-banner-content > i {
+  font-size: 1.5rem;
+  color: var(--color-status-warning);
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}
 
-  .deletion-banner-text {
-    flex: 1;
-  }
+.profile-page .deletion-banner-text {
+  flex: 1;
+}
 
-  .deletion-banner-text h4 {
-    margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-heading-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-warning-text);
-  }
+.profile-page .deletion-banner-text h4 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-warning-text);
+}
 
-  .deletion-banner-text p {
-    margin: 0;
-    color: var(--color-text-primary);
-    font-size: var(--font-body-md);
-  }
+.profile-page .deletion-banner-text p {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
 
-  .deletion-banner-actions {
-    display: flex;
+.profile-page .deletion-banner-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.profile-page .deletion-help-link {
+  font-size: 0.875rem;
+  color: var(--color-warning-text);
+  text-decoration: underline;
+}
+
+.profile-page .deletion-help-link:hover {
+  color: var(--color-status-warning);
+}
+
+@media (max-width: 640px) {
+  .profile-page .deletion-banner-content {
     flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-2);
-    flex-shrink: 0;
   }
 
-  .deletion-help-link {
-    font-size: var(--font-body-sm);
-    color: var(--color-warning-text);
-    text-decoration: underline;
-  }
-
-  .deletion-help-link:hover {
-    color: var(--color-status-warning);
-  }
-
-  @media (max-width: 640px) {
-    .deletion-banner-content {
-      flex-direction: column;
-    }
-
-    .deletion-banner-actions {
-      flex-direction: row;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
-
-  /* ========== Loading State ========== */
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-12);
-    min-height: 300px;
-  }
-
-  .loading-message {
-    margin-top: var(--space-4);
-    font-size: var(--font-body-md);
-    color: var(--color-text-secondary);
-  }
-
-  /* ========== Profile Header Card ========== */
-  .profile-header-card {
-    position: relative;
-    background: var(--surface-primary);
-    border-radius: var(--radius-3xl);
-    margin-bottom: var(--space-6);
-    overflow: hidden;
-    box-shadow: var(--shadow-2);
-    border: var(--border-1) solid var(--color-border-secondary);
-  }
-
-  .profile-header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: var(--gradient-primary);
-    overflow: hidden;
-  }
-
-  .bg-pattern {
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  /* ========== Avatar Section ========== */
-  .profile-avatar-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: var(--space-16);
-    z-index: var(--z-index-base);
-  }
-
-  .avatar-wrapper {
-    position: relative;
-    width: 140px;
-    height: 140px;
-  }
-
-  .profile-avatar-img,
-  .profile-avatar-fallback {
-    width: 140px;
-    height: 140px;
-    border-radius: var(--radius-full);
-    border: 5px solid var(--surface-primary);
-    box-shadow: var(--shadow-3);
-  }
-
-  .profile-avatar-img {
-    object-fit: cover;
-  }
-
-  .profile-avatar-fallback {
-    background: var(--gradient-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .profile-avatar-fallback span {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-heading-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-on-primary);
-    letter-spacing: 2px;
-  }
-
-  .avatar-upload-btn {
-    position: absolute;
-    bottom: var(--space-2);
-    right: var(--space-2);
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    background: var(--ds-primary-green);
-    border: 3px solid var(--surface-primary);
-    color: var(--color-text-on-primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform var(--transition-fast), background-color var(--transition-fast);
-    box-shadow: var(--hover-shadow-md);
-  }
-
-  .avatar-upload-btn:hover:not(:disabled) {
-    transform: scale(1.1);
-    background: var(--ds-primary-green-hover);
-  }
-
-  .avatar-upload-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  .avatar-upload-btn i {
-    font-size: var(--font-body-lg);
-  }
-
-  .hidden-file-input {
-    display: none;
-  }
-
-  /* ========== Jersey Badge ========== */
-  .jersey-badge {
-    margin-top: var(--space-3);
-    padding: var(--space-1) var(--space-4);
-    background: linear-gradient(135deg, var(--primitive-neutral-900) 0%, var(--primitive-neutral-700) 100%);
-    border-radius: var(--radius-3xl);
-    box-shadow: var(--shadow-2);
-  }
-
-  .jersey-badge span {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-lg);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-on-primary);
-    letter-spacing: 1px;
-  }
-
-  /* ========== Profile Info Section ========== */
-  .profile-info-section {
-    text-align: center;
-    padding: var(--space-6) var(--space-8) var(--space-8);
-  }
-
-  .profile-display-name {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-heading-xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    margin: 0 0 var(--space-3) 0;
-    line-height: 1.2;
-  }
-
-  .profile-position-team {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-4);
-  }
-
-  .position-tag,
-  .team-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-3xl);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .position-tag {
-    background: var(--ds-primary-green-ultra-subtle);
-    color: var(--ds-primary-green);
-  }
-
-  .team-tag {
-    background: var(--color-info-bg);
-    color: var(--color-info-text);
-  }
-
-  .position-tag i,
-  .team-tag i {
-    font-size: var(--font-body-sm);
-  }
-
-  .profile-email-text {
-    font-size: var(--font-body-md);
-    color: var(--color-text-secondary);
-    margin: 0 0 var(--space-3) 0;
-  }
-
-  .member-since {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-tertiary);
-    margin: 0;
-  }
-
-  .member-since i {
-    font-size: var(--font-body-xs);
-  }
-
-  /* ========== Profile Header Actions ========== */
-  .profile-header-actions {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-3);
-    padding: 0 var(--space-8) var(--space-8);
-  }
-
-  .edit-profile-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-6);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-on-primary);
-    background: var(--gradient-primary);
-    border: none;
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    box-shadow: var(--hover-shadow-md);
-  }
-
-  .edit-profile-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: var(--hover-shadow-lg);
-  }
-
-  .edit-profile-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .share-profile-btn {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface-secondary);
-    border: var(--border-2) solid var(--color-border-primary);
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-  }
-
-  .share-profile-btn:hover {
-    background: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
-  }
-
-  .share-profile-btn i {
-    font-size: var(--font-body-lg);
-  }
-
-  /* ========== Stats Grid ========== */
-  .profile-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
-  }
-
-  .stat-card {
-    text-align: center;
-  }
-
-  .stat-value {
-    font-size: var(--font-heading-2xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .stat-label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  /* ========== Overview Content ========== */
-  .overview-content {
-    margin-top: var(--space-4);
-  }
-
-  .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .activity-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    border-radius: var(--radius-lg);
-    transition: background-color var(--transition-fast);
-  }
-
-  .activity-item:hover {
-    background: var(--surface-secondary);
-  }
-
-  .activity-icon {
-    font-size: var(--icon-3xl);
-  }
-
-  .activity-title {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-1);
-  }
-
-  .activity-time {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  /* ========== Achievements Grid ========== */
-  .achievements-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-  }
-
-  .achievement-card {
-    text-align: center;
-    transition: transform var(--transition-fast);
-  }
-
-  .achievement-card:hover {
-    transform: translateY(-4px);
-  }
-
-  .achievement-icon {
-    font-size: var(--icon-3xl);
-    margin-bottom: var(--space-3);
-  }
-
-  .achievement-title {
-    font-size: var(--font-body-lg);
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--space-2);
-    color: var(--color-text-primary);
-  }
-
-  .achievement-description {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-3);
-  }
-
-  .achievement-date {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* ========== Stats Grid ========== */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-4);
-  }
-
-  .performance-stat {
-    padding: var(--space-4);
-    background: var(--surface-primary);
-    border-radius: var(--radius-lg);
-    text-align: center;
-    border: none;
-    box-shadow: none;
-  }
-
-  .performance-stat .stat-label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-2);
-  }
-
-  .performance-stat .stat-value {
-    font-size: var(--font-heading-lg);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  /* ========== Profile Tabs Container ========== */
-  .profile-tabs-container {
-    margin-top: var(--space-6);
-  }
-
-  /* Invitation badge */
-  .invitation-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 var(--space-2);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-on-primary);
-    background: var(--color-status-error);
-    border-radius: var(--radius-lg);
-    margin-left: var(--space-2);
-    line-height: 1;
-  }
-
-  /* Tab label */
-  .tab-label {
-    color: inherit;
-  }
-
-  /* ========== Invitations Section ========== */
-  .invitations-section {
-    margin-top: var(--space-4);
-  }
-
-  .loading-invitations {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
-    padding: var(--space-8);
-    color: var(--color-text-secondary);
-  }
-
-  .invitations-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .invitation-card {
-    border-left: 4px solid var(--color-brand-primary);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .invitation-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-2);
-  }
-
-  .invitation-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .invitation-header {
-    display: flex;
-    align-items: center;
+  .profile-page .deletion-banner-actions {
+    flex-direction: row;
+    width: 100%;
     justify-content: space-between;
-  }
-
-  .invitation-header h4 {
-    margin: 0;
-    font-size: var(--font-heading-sm);
-    color: var(--color-text-primary);
-  }
-
-  .invitation-message {
-    font-style: italic;
-    color: var(--color-text-secondary);
-    margin: 0;
-    padding: var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-  }
-
-  .invitation-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .invitation-meta span {
-    display: flex;
     align-items: center;
-    gap: var(--space-2);
-  }
-
-  .expires-soon {
-    color: var(--color-status-warning);
-  }
-
-  .invitation-actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  /* ========== Responsive Styles ========== */
-  @media (max-width: 768px) {
-    .profile-header-card {
-      border-radius: var(--radius-2xl);
-    }
-
-    .profile-header-bg {
-      height: 100px;
-    }
-
-    .profile-avatar-container {
-      padding-top: var(--space-10);
-    }
-
-    .avatar-wrapper {
-      width: 120px;
-      height: 120px;
-    }
-
-    .profile-avatar-img,
-    .profile-avatar-fallback {
-      width: 120px;
-      height: 120px;
-      border-width: 4px;
-    }
-
-    .profile-avatar-fallback span {
-      font-size: var(--font-heading-xl);
-    }
-
-    .avatar-upload-btn {
-      width: 40px;
-      height: 40px;
-    }
-
-    .profile-display-name {
-      font-size: var(--font-heading-lg);
-    }
-
-    .profile-position-team {
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .profile-info-section {
-      padding: var(--space-4) var(--space-6) var(--space-6);
-    }
-
-    .profile-header-actions {
-      padding: 0 var(--space-6) var(--space-6);
-    }
-
-    .edit-profile-btn {
-      flex: 1;
-      justify-content: center;
-    }
-
-    .profile-stats {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .invitation-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-2);
-    }
-
-    .invitation-meta {
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .invitation-actions {
-      flex-direction: column;
-    }
-  }
-
-  /* Mobile - Compact pills */
-  @media (max-width: 540px) {
-    .tab-label {
-      display: none;
-    }
-
-    .invitation-badge {
-      margin-left: 0;
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      min-width: 18px;
-      height: 18px;
-      font-size: var(--font-body-xs);
-    }
   }
 }
 
-/* ================================================================
-   PRIMENG COMPONENT OVERRIDES
-   Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
-   ================================================================ */
+/* ========== Loading State ========== */
+.profile-page .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16);
+  min-height: 400px;
+}
 
-@layer overrides {
-  /*
-   * EXCEPTION: PrimeNG Card Border Removal in Tabs
-   * Reason: Statistics cards need borderless appearance
-   * Scope: profile-tabs-container cards only
-   * Owner: @design-system
-   * Remove by: When card variant system is implemented
-   */
-  :host ::ng-deep .profile-tabs-container p-card,
-  :host ::ng-deep .profile-tabs-container .p-card {
-    border: none;
-    box-shadow: none;
+.profile-page .loading-message {
+  margin-top: var(--space-4);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Profile Header Card ========== 
+ * Uses --radius-lg and --shadow-sm to match Dashboard cards
+ */
+.profile-page .profile-header-card {
+  position: relative;
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  overflow: hidden;
+  box-shadow: var(--shadow-sm); // Dashboard: var(--shadow-sm)
+  border: 1px solid var(--color-border-subtle);
+}
+
+.profile-page .profile-header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: var(--gradient-primary);
+  overflow: hidden;
+}
+
+.profile-page .bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ========== Avatar Section ========== */
+.profile-page .profile-avatar-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  z-index: 1;
+}
+
+.profile-page .avatar-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.profile-page .profile-avatar-img,
+.profile-page .profile-avatar-fallback {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-full);
+  border: 5px solid var(--surface-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-page .profile-avatar-img {
+  object-fit: cover;
+}
+
+.profile-page .profile-avatar-fallback {
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-page .profile-avatar-fallback span {
+  font-family: var(--font-family-sans);
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-on-primary);
+  letter-spacing: 2px;
+}
+
+.profile-page .avatar-upload-btn {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-green);
+  border: 3px solid var(--surface-primary);
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.profile-page .avatar-upload-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  background: var(--ds-primary-green-hover);
+}
+
+.profile-page .avatar-upload-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-page .avatar-upload-btn i {
+  font-size: 1.125rem;
+}
+
+.profile-page .hidden-file-input {
+  display: none;
+}
+
+/* ========== Jersey Badge ========== */
+.profile-page .jersey-badge {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  background: linear-gradient(135deg, var(--primitive-neutral-900) 0%, var(--primitive-neutral-700) 100%);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-page .jersey-badge span {
+  font-family: var(--font-family-sans);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-on-primary);
+  letter-spacing: 1px;
+}
+
+/* ========== Profile Info Section ========== */
+.profile-page .profile-info-section {
+  text-align: center;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+.profile-page .profile-display-name {
+  font-family: var(--font-family-sans);
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.2;
+}
+
+.profile-page .profile-position-team {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.profile-page .position-tag,
+.profile-page .team-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-sans);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.profile-page .position-tag {
+  background: rgba(8, 153, 73, 0.1);
+  color: var(--ds-primary-green);
+}
+
+.profile-page .team-tag {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+.profile-page .position-tag i,
+.profile-page .team-tag i {
+  font-size: 0.875rem;
+}
+
+.profile-page .profile-email-text {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.profile-page .member-since {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.profile-page .member-since i {
+  font-size: 0.875rem;
+}
+
+/* ========== Profile Header Actions ========== */
+.profile-page .profile-header-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+/* ========== Profile Tabs Container ========== 
+ * Uses --radius-lg and --shadow-sm to match Dashboard cards
+ */
+.profile-page .profile-tabs-container {
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  box-shadow: var(--shadow-sm); // Dashboard: var(--shadow-sm)
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-4); // Dashboard: var(--space-4) internal padding
+  overflow: hidden;
+}
+
+/* ========== PrimeNG Tabs Override ========== */
+.profile-page .profile-tabs-container .p-tabs {
+  background: transparent;
+  border: none;
+}
+
+.profile-page .profile-tabs-container .p-tablist {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-bottom: var(--space-5);
+}
+
+.profile-page .profile-tabs-container .p-tablist-content,
+.profile-page .profile-tabs-container .p-tablist-viewport {
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  border: none;
+  box-shadow: none;
+}
+
+.profile-page .profile-tabs-container .p-tablist-tab-list {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  background: transparent;
+  border: none;
+}
+
+.profile-page .profile-tabs-container .p-tablist-active-bar {
+  display: none;
+}
+
+.profile-page .profile-tabs-container .p-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  font-family: var(--font-family-sans);
+  font-size: 0.875rem;
+  font-weight: 500; // Medium weight for inactive tabs - reduces visual competition
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  height: 44px;
+  min-height: 44px;
+  outline: none;
+}
+
+.profile-page .profile-tabs-container .p-tab i {
+  font-size: 1rem;
+  color: var(--color-text-tertiary);
+  transition: color 0.2s ease;
+}
+
+.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) {
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+.profile-page .profile-tabs-container .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) i {
+  color: var(--ds-primary-green);
+}
+
+.profile-page .profile-tabs-container .p-tab.p-tab-active,
+.profile-page .profile-tabs-container .p-tab[data-p-active="true"] {
+  background: var(--surface-primary);
+  color: var(--ds-primary-green);
+  font-weight: 600; // Semibold for active tab - clear hierarchy
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--ds-primary-green);
+}
+
+.profile-page .profile-tabs-container .p-tab.p-tab-active i,
+.profile-page .profile-tabs-container .p-tab[data-p-active="true"] i {
+  color: var(--ds-primary-green);
+}
+
+.profile-page .profile-tabs-container .p-tabpanels {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.profile-page .profile-tabs-container .p-tabpanel {
+  padding: 0;
+  border: none;
+}
+
+/* ========== Invitation Badge ========== */
+.profile-page .invitation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  background: var(--color-status-error);
+  border-radius: var(--radius-md);
+  margin-left: var(--space-2);
+  line-height: 1;
+}
+
+.profile-page .tab-label {
+  color: inherit;
+}
+
+/* ========== Card Shell Overrides for Tab Panels ========== 
+ * Ensure proper spacing between card header icon and card border
+ */
+.profile-page .profile-tabs-container app-card-shell .card-shell__header {
+  padding: var(--space-4) var(--space-5) var(--space-3); // More left/right padding
+}
+
+.profile-page .profile-tabs-container app-card-shell .card-shell__body {
+  padding: var(--space-4) var(--space-5); // Match header padding
+}
+
+/* ========== Overview Content ========== */
+.profile-page .overview-content {
+  /* No extra margin needed - card-shell handles it */
+}
+
+.profile-page .activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile-page .activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3); // Dashboard: gap: var(--space-3)
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.profile-page .activity-item:hover {
+  background: var(--surface-secondary);
+}
+
+/* Activity icon with background - matches Dashboard .stat-icon EXACTLY */
+.profile-page .activity-icon {
+  width: var(--space-10); // Dashboard: 40px
+  height: var(--space-10);
+  min-width: var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
+  font-size: var(--font-body-md); // Dashboard: var(--font-body-md)
+}
+
+.profile-page .activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-page .activity-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.profile-page .activity-time {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* ========== Achievements Grid ========== */
+.profile-page .achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.profile-page .achievement-content {
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.profile-page .achievement-icon {
+  width: var(--space-12); // 48px - slightly larger than stat icons
+  height: var(--space-12);
+  margin: 0 auto var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  font-size: var(--icon-lg); // Use design token
+  color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
+}
+
+.profile-page .achievement-title {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+}
+
+.profile-page .achievement-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.5;
+}
+
+.profile-page .achievement-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========== Performance Stats Grid (Statistics Tab) ========== 
+ * NOTE: Uses .performance-stats-grid to avoid conflict with app-stats-grid component
+ * Typography hierarchy: Card title (semibold) > Stat value (medium) > Label (regular)
+ */
+.profile-page .performance-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.profile-page .stat-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  gap: var(--space-3);
+}
+
+.profile-page .stat-block__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.profile-page .stat-block__value {
+  font-size: var(--font-size-metric-md); // 24px - matches Dashboard
+  font-weight: var(--font-weight-semibold); // Reduced from bold to not compete with card title
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.profile-page .stat-block__label {
+  font-size: var(--font-size-caption); // 13px
+  font-weight: var(--font-weight-regular); // Lighter weight for labels
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-caption);
+}
+
+.profile-page .stat-block__tag {
+  flex-shrink: 0;
+}
+
+/* ========== Invitations Section ========== */
+.profile-page .invitations-section {
+  /* No extra margin needed */
+}
+
+.profile-page .loading-invitations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12);
+  color: var(--color-text-secondary);
+}
+
+.profile-page .invitations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page .invitation-card {
+  border-left: 4px solid var(--ds-primary-green);
+}
+
+.profile-page .invitation-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page .invitation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.profile-page .invitation-header h4 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.profile-page .invitation-message {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.profile-page .invitation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.profile-page .invitation-meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profile-page .expires-soon {
+  color: var(--color-status-warning);
+}
+
+.profile-page .invitation-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* ========== Empty States ========== 
+ * Matches Dashboard empty-schedule / empty-chart pattern
+ */
+.profile-page .card-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8); // Dashboard: consistent padding
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
+  border: 1px dashed var(--color-border-secondary);
+}
+
+.profile-page .card-empty-state--compact {
+  padding: var(--space-6);
+}
+
+.profile-page .card-empty-state__icon {
+  width: var(--space-12); // 48px - matches achievement icons
+  height: var(--space-12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-tertiary); // Dashboard: day-indicator background
+  border-radius: var(--radius-md); // Dashboard: var(--radius-md)
+  font-size: var(--icon-lg); // Use design token
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.profile-page .card-empty-state__content {
+  max-width: 300px;
+}
+
+.profile-page .card-empty-state__title {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.profile-page .card-empty-state__text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========== Responsive Styles ========== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .profile-page .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: var(--space-4);
+    gap: var(--space-5);
   }
 
-  /*
-   * EXCEPTION: PrimeNG Tag Transparent Style
-   * Reason: Performance stat tags need transparent background
-   * Scope: performance-stat tags only
-   * Owner: @design-system
-   */
-  :host ::ng-deep .performance-stat .p-tag {
-    background: transparent;
-    color: var(--color-text-primary);
-    border: none;
-    padding: 0;
-    font-weight: var(--font-weight-medium);
+  .profile-page .profile-header-card {
+    border-radius: var(--radius-lg);
   }
 
-  :host ::ng-deep .performance-stat .p-tag-info,
-  :host ::ng-deep .performance-stat .p-tag-secondary,
-  :host ::ng-deep .performance-stat .p-tag-success {
-    background: transparent;
-    color: var(--color-text-primary);
+  .profile-page .profile-header-bg {
+    height: 120px;
   }
 
-  /*
-   * EXCEPTION: PrimeNG Tabs - Premium Pill Button Design
-   * Reason: Custom tab styling for profile page branding
-   * Scope: profile-tabs-container only
-   * Owner: @design-system
-   * Remove by: When shared tab component is created
-   */
-  :host ::ng-deep .profile-tabs-container .p-tabs,
-  :host ::ng-deep .profile-tabs-container .p-tabs * {
-    border: none;
-    outline: none;
-    box-shadow: none;
+  .profile-page .profile-avatar-container {
+    padding-top: 60px;
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tabs {
-    background: transparent;
+  .profile-page .avatar-wrapper {
+    width: 120px;
+    height: 120px;
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tablist {
-    display: flex;
-    align-items: center;
-    background: transparent;
-    padding: 0;
-    margin-bottom: var(--space-6);
+  .profile-page .profile-avatar-img,
+  .profile-page .profile-avatar-fallback {
+    width: 120px;
+    height: 120px;
+    border-width: 4px;
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tablist-content,
-  :host ::ng-deep .profile-tabs-container .p-tablist-viewport {
-    background: transparent;
-    overflow: visible;
+  .profile-page .profile-avatar-fallback span {
+    font-size: 2rem;
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tablist-tab-list {
-    display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+  .profile-page .avatar-upload-btn {
+    width: 40px;
+    height: 40px;
   }
 
-  /* Hide the active bar indicator */
-  :host ::ng-deep .profile-tabs-container .p-tablist-active-bar {
+  .profile-page .profile-display-name {
+    font-size: 1.5rem;
+  }
+
+  .profile-page .profile-info-section {
+    padding: var(--space-5) var(--space-4) var(--space-4);
+  }
+
+  .profile-page .profile-position-team {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .profile-page .profile-header-actions {
+    padding: 0 var(--space-4) var(--space-5);
+  }
+
+  .profile-page .profile-tabs-container {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .profile-page .profile-tabs-container .p-tablist-content,
+  .profile-page .profile-tabs-container .p-tablist-viewport {
+    padding: 3px;
+  }
+
+  .profile-page .profile-tabs-container .p-tablist-tab-list {
+    gap: 3px;
+  }
+
+  .profile-page .profile-tabs-container .p-tab {
+    padding: 0 var(--space-3);
+    font-size: 0.8125rem;
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .profile-page .performance-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page .invitation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .profile-page .invitation-meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .profile-page .invitation-actions {
+    flex-direction: column;
+  }
+
+  .profile-page .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 540px) {
+  .profile-page .tab-label {
     display: none;
   }
 
-  /* Individual Tab - Premium Pill Button (Inactive) */
-  :host ::ng-deep .profile-tabs-container .p-tab {
-    display: inline-flex;
-    align-items: center;
+  .profile-page .profile-tabs-container .p-tablist-tab-list {
     justify-content: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-6);
-    font-family: var(--font-family-sans);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: 0.01em;
-    color: var(--color-text-primary);
-    background: var(--surface-primary);
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
-    box-shadow: var(--shadow-1);
-    min-height: 48px;
-    flex: none;
-    position: relative;
-    overflow: hidden;
   }
 
-  /* Subtle shine effect on inactive tabs */
-  :host ::ng-deep .profile-tabs-container .p-tab::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    pointer-events: none;
-    border-radius: var(--radius-full) var(--radius-full) 0 0;
+  .profile-page .profile-tabs-container .p-tab {
+    padding: 0 var(--space-3);
+    height: 36px;
+    min-height: 36px;
+    gap: var(--space-1);
   }
 
-  /* Icon styling in inactive tabs */
-  :host ::ng-deep .profile-tabs-container .p-tab i,
-  :host ::ng-deep .profile-tabs-container .p-tab .pi {
-    font-size: var(--font-body-lg);
-    color: var(--ds-primary-green);
-    transition: color var(--transition-fast), transform var(--transition-fast);
+  .profile-page .profile-tabs-container .p-tab i {
+    font-size: 1rem;
   }
 
-  /* Tab label styling */
-  :host ::ng-deep .profile-tabs-container .p-tab .tab-label {
-    color: var(--color-text-primary);
-    transition: color var(--transition-fast);
+  .profile-page .invitation-badge {
+    margin-left: var(--space-1);
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.6875rem;
   }
 
-  /* Hover state for inactive tabs */
-  :host ::ng-deep .profile-tabs-container .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) {
-    transform: translateY(-3px);
-    box-shadow: var(--hover-shadow-md);
-    background: var(--surface-primary);
+  .profile-page .achievements-grid {
+    grid-template-columns: 1fr;
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) i,
-  :host ::ng-deep .profile-tabs-container .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) .pi {
-    color: var(--ds-primary-green);
-    transform: scale(1.1);
+  .profile-page .activity-item {
+    padding: var(--space-3);
+    gap: var(--space-3);
   }
 
-  :host ::ng-deep .profile-tabs-container .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) .tab-label {
-    color: var(--ds-primary-green);
-  }
-
-  /* Active Tab - Premium Green Gradient */
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"],
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"],
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active {
-    color: var(--color-text-on-primary);
-    background: var(--gradient-primary);
-    box-shadow: var(--hover-shadow-lg);
-    transform: translateY(-1px);
-  }
-
-  /* Shine effect on active tab */
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"]::before,
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"]::before,
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active::before {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0) 100%
-    );
-  }
-
-  /* Icon in active tab - white */
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"] i,
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"] .pi,
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"] i,
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"] .pi,
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active i,
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active .pi {
-    color: var(--color-text-on-primary);
-  }
-
-  /* Tab label in active tab - white */
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"] .tab-label,
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"] .tab-label,
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active .tab-label {
-    color: var(--color-text-on-primary);
-  }
-
-  /* Active tab hover - elevated with glow */
-  :host ::ng-deep .profile-tabs-container .p-tab[data-p-active="true"]:hover,
-  :host ::ng-deep .profile-tabs-container .p-tab[aria-selected="true"]:hover,
-  :host ::ng-deep .profile-tabs-container .p-tab.p-tab-active:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--hover-shadow-xl);
-  }
-
-  /* Active/pressed state */
-  :host ::ng-deep .profile-tabs-container .p-tab:active {
-    transform: translateY(0) scale(0.98);
-  }
-
-  /* Focus state for accessibility */
-  :host ::ng-deep .profile-tabs-container .p-tab:focus-visible {
-    box-shadow: var(--shadow-focus);
-  }
-
-  /* ========== Responsive Tab Overrides ========== */
-  @media (max-width: 768px) {
-    :host ::ng-deep .profile-tabs-container .p-tablist-tab-list {
-      gap: var(--space-2);
-    }
-
-    :host ::ng-deep .profile-tabs-container .p-tab {
-      padding: var(--space-3) var(--space-5);
-      font-size: var(--font-body-sm);
-      min-height: 44px;
-    }
-
-    :host ::ng-deep .profile-tabs-container .p-tab i,
-    :host ::ng-deep .profile-tabs-container .p-tab .pi {
-      font-size: var(--font-body-md);
-    }
-  }
-
-  @media (max-width: 540px) {
-    :host ::ng-deep .profile-tabs-container .p-tablist-tab-list {
-      gap: var(--space-1);
-      justify-content: space-between;
-    }
-
-    :host ::ng-deep .profile-tabs-container .p-tab {
-      padding: var(--space-2) var(--space-3);
-      font-size: var(--font-body-sm);
-      min-height: 40px;
-      flex: 1;
-      max-width: calc(25% - var(--space-1));
-    }
-
-    :host ::ng-deep .profile-tabs-container .p-tab i,
-    :host ::ng-deep .profile-tabs-container .p-tab .pi {
-      font-size: var(--font-body-lg);
-    }
-
-    :host ::ng-deep .profile-tabs-container .p-tab {
-      position: relative;
-    }
+  .profile-page .activity-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1.125rem;
   }
 }

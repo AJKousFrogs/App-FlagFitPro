@@ -21,13 +21,12 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { DialogModule } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
-import { Select} from "primeng/selectbutton";
+import { SelectButtonModule } from "primeng/selectbutton";
 import { SpeedDialModule } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   SwipeGestureDirective,
-  SwipeEvent,
 } from "../../shared/directives/swipe-gesture.directive";
 import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
@@ -77,11 +76,10 @@ interface Play {
     DialogModule,
     Select,
     InputNumberModule,
-    Select
+    SelectButtonModule,
     SpeedDialModule,
     SwipeGestureDirective,
     GameTimePipe,
-  
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -447,8 +445,10 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   undoLastPlay(): void {
     if (this.playHistory.length === 0) return;
 
-    const lastPlay = this.playHistory.pop()!;
-    this.redoStack.push(lastPlay);
+    const lastPlay = this.playHistory.pop();
+    if (lastPlay) {
+      this.redoStack.push(lastPlay);
+    }
     this.currentPlay.update((p) => Math.max(1, p - 1));
     this.canUndo.set(this.playHistory.length > 0);
     this.canRedo.set(this.redoStack.length > 0);
@@ -458,8 +458,10 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   redoPlay(): void {
     if (this.redoStack.length === 0) return;
 
-    const play = this.redoStack.pop()!;
-    this.playHistory.push(play);
+    const play = this.redoStack.pop();
+    if (play) {
+      this.playHistory.push(play);
+    }
     this.currentPlay.update((p) => p + 1);
     this.canUndo.set(true);
     this.canRedo.set(this.redoStack.length > 0);
@@ -486,7 +488,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
     this.hapticService.trigger("light");
   }
 
-  selectPlayer(player: FieldPlayer): void {
+  selectPlayer(_player: FieldPlayer): void {
     this.hapticService.trigger("light");
     // Select player logic
   }

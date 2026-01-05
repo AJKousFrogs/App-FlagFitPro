@@ -165,7 +165,7 @@ export class WearableParserService {
 
     try {
       jsonData = JSON.parse(text);
-    } catch (error) {
+    } catch (_error) {
       throw new Error("Invalid JSON format");
     }
 

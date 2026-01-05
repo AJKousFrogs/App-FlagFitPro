@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal,  OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -72,11 +72,12 @@ interface DailyCheckin {
   notes?: string;
 }
 
-interface RecoveryChartData {
-  labels: string[];
-  painLevels: number[];
-  functionScores: number[];
-}
+// RecoveryChartData reserved for future use
+// interface RecoveryChartData {
+//   labels: string[];
+//   painLevels: number[];
+//   functionScores: number[];
+// }
 
 // ===== Constants =====
 const PROTOCOL_STAGES: ProtocolStage[] = [
@@ -874,13 +875,14 @@ export class ReturnToPlayComponent implements OnInit {
       const response = await firstValueFrom(this.api.post('/api/return-to-play/start', this.newProtocol));
 
       // Create local protocol
-      const severity = SEVERITY_LEVELS.find(s => s.value === this.newProtocol.severity);
+      const _severity = SEVERITY_LEVELS.find(s => s.value === this.newProtocol.severity);
+      const proto = this.newProtocol;
       const newProtocol: ActiveProtocol = {
         id: (response as { data?: { id: string } })?.data?.id || Date.now().toString(),
-        injuryType: this.newProtocol.injuryType!,
-        injuryLocation: this.newProtocol.injuryLocation!,
-        severity: this.newProtocol.severity!,
-        startDate: this.newProtocol.injuryDate!.toISOString().split('T')[0],
+        injuryType: proto.injuryType ?? '',
+        injuryLocation: proto.injuryLocation ?? '',
+        severity: proto.severity ?? 'mild',
+        startDate: proto.injuryDate?.toISOString().split('T')[0] ?? new Date().toISOString().split('T')[0],
         targetReturnDate: this.newProtocol.targetReturnDate?.toISOString().split('T')[0] || '',
         currentStage: 1,
         daysInRecovery: 1,

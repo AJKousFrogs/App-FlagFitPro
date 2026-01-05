@@ -1,11 +1,20 @@
-import { Component, signal, inject, output, input, effect, OnInit } from "@angular/core";
+import { 
+  Component, 
+  signal, 
+  inject, 
+  output, 
+  input, 
+  computed,
+  effect,
+  ChangeDetectionStrategy,
+  OnInit 
+} from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Slider } from "primeng/slider";
 import { Checkbox } from "primeng/checkbox";
-import { Textarea } from "primeng/textarea";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -33,22 +42,22 @@ export interface ReadinessResult {
 
 @Component({
   selector: "app-wellness-checkin",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule, 
     Slider, 
     Checkbox, 
-    Textarea, 
     DialogModule, 
     TagModule, 
-    TooltipModule
-  ,
+    TooltipModule,
     ButtonComponent,
     IconButtonComponent,
   ],
   template: `
     <!-- Quick Checkin Button -->
     @if (!hasCheckedIn()) {
-      <div class="checkin-prompt" (click)="showDialog = true">
+      <div class="checkin-prompt" (click)="showDialog.set(true)">
         <span class="prompt-icon">💚</span>
         <div class="prompt-content">
           <span class="prompt-title">Complete Wellness Check-in</span>
@@ -57,7 +66,7 @@ export interface ReadinessResult {
         <i class="pi pi-chevron-right"></i>
       </div>
     } @else {
-      <div class="checkin-complete" (click)="showDialog = true">
+      <div class="checkin-complete" (click)="showDialog.set(true)">
         <div class="readiness-display">
           <span class="readiness-score" [class]="getReadinessClass(readinessScore())">{{ readinessScore() }}</span>
           <span class="readiness-label">Readiness</span>
@@ -76,13 +85,14 @@ export interface ReadinessResult {
             <span>{{ getSorenessLabel(wellnessData().muscleSoreness) }}</span>
           </div>
         </div>
-        <app-icon-button icon="pi-pencil" variant="text" size="sm" ariaLabel="pencil" />
+        <app-icon-button icon="pi-pencil" variant="text" size="sm" ariaLabel="Edit check-in" />
       </div>
     }
 
     <!-- Checkin Dialog -->
     <p-dialog
-      [(visible)]="showDialog"
+      [visible]="showDialog()"
+      (visibleChange)="showDialog.set($event)"
       header="Daily Wellness Check-in"
       [modal]="true"
       [style]="{ width: '95vw', maxWidth: '500px' }"
@@ -94,11 +104,18 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">😴</span>
             <span>Sleep Quality</span>
-            <span class="value-badge">{{ getSleepLabel(formData.sleepQuality) }}</span>
+            <span class="value-badge">{{ getSleepLabel(formData().sleepQuality) }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Poor</span>
-            <p-slider [(ngModel)]="formData.sleepQuality" [min]="1" [max]="5" [step]="1" styleClass="flex-1" />
+            <p-slider 
+              [ngModel]="formData().sleepQuality" 
+              (ngModelChange)="updateFormField('sleepQuality', $event)"
+              [min]="1" 
+              [max]="5" 
+              [step]="1" 
+              styleClass="flex-1" 
+            />
             <span class="slider-label">Excellent</span>
           </div>
         </div>
@@ -108,11 +125,18 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">🕐</span>
             <span>Hours of Sleep</span>
-            <span class="value-badge">{{ formData.sleepHours }}h</span>
+            <span class="value-badge">{{ formData().sleepHours }}h</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">4h</span>
-            <p-slider [(ngModel)]="formData.sleepHours" [min]="4" [max]="12" [step]="0.5" styleClass="flex-1" />
+            <p-slider 
+              [ngModel]="formData().sleepHours" 
+              (ngModelChange)="updateFormField('sleepHours', $event)"
+              [min]="4" 
+              [max]="12" 
+              [step]="0.5" 
+              styleClass="flex-1" 
+            />
             <span class="slider-label">12h</span>
           </div>
         </div>
@@ -122,11 +146,18 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">⚡</span>
             <span>Energy Level</span>
-            <span class="value-badge">{{ getEnergyLabel(formData.energyLevel) }}</span>
+            <span class="value-badge">{{ getEnergyLabel(formData().energyLevel) }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Exhausted</span>
-            <p-slider [(ngModel)]="formData.energyLevel" [min]="1" [max]="5" [step]="1" styleClass="flex-1" />
+            <p-slider 
+              [ngModel]="formData().energyLevel" 
+              (ngModelChange)="updateFormField('energyLevel', $event)"
+              [min]="1" 
+              [max]="5" 
+              [step]="1" 
+              styleClass="flex-1" 
+            />
             <span class="slider-label">Energized</span>
           </div>
         </div>
@@ -136,17 +167,24 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">💪</span>
             <span>Muscle Soreness</span>
-            <span class="value-badge">{{ getSorenessLabel(formData.muscleSoreness) }}</span>
+            <span class="value-badge">{{ getSorenessLabel(formData().muscleSoreness) }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Very Sore</span>
-            <p-slider [(ngModel)]="formData.muscleSoreness" [min]="1" [max]="5" [step]="1" styleClass="flex-1" />
+            <p-slider 
+              [ngModel]="formData().muscleSoreness" 
+              (ngModelChange)="updateFormField('muscleSoreness', $event)"
+              [min]="1" 
+              [max]="5" 
+              [step]="1" 
+              styleClass="flex-1" 
+            />
             <span class="slider-label">No Soreness</span>
           </div>
         </div>
 
         <!-- Soreness Areas -->
-        @if (formData.muscleSoreness < 4) {
+        @if (formData().muscleSoreness < 4) {
           <div class="form-section">
             <label class="section-label">
               <span class="label-icon">📍</span>
@@ -156,7 +194,7 @@ export interface ReadinessResult {
               @for (area of bodyAreas; track area) {
                 <label class="area-checkbox">
                   <p-checkbox
-                    [ngModel]="formData.sorenessAreas.includes(area)"
+                    [ngModel]="formData().sorenessAreas.includes(area)"
                     (ngModelChange)="toggleArea(area, $event)"
                     [binary]="true"
                   />
@@ -172,11 +210,18 @@ export interface ReadinessResult {
           <label class="section-label">
             <span class="label-icon">🧠</span>
             <span>Stress Level</span>
-            <span class="value-badge">{{ getStressLabel(formData.stressLevel) }}</span>
+            <span class="value-badge">{{ getStressLabel(formData().stressLevel) }}</span>
           </label>
           <div class="slider-row">
             <span class="slider-label">Very High</span>
-            <p-slider [(ngModel)]="formData.stressLevel" [min]="1" [max]="5" [step]="1" styleClass="flex-1" />
+            <p-slider 
+              [ngModel]="formData().stressLevel" 
+              (ngModelChange)="updateFormField('stressLevel', $event)"
+              [min]="1" 
+              [max]="5" 
+              [step]="1" 
+              styleClass="flex-1" 
+            />
             <span class="slider-label">Very Low</span>
           </div>
         </div>
@@ -187,7 +232,13 @@ export interface ReadinessResult {
             <span class="label-icon">📝</span>
             <span>Notes (optional)</span>
           </label>
-          <textarea p-textarea [(ngModel)]="formData.notes" rows="2" placeholder="Any additional notes..."></textarea>
+          <textarea 
+            p-textarea 
+            [ngModel]="formData().notes || ''" 
+            (ngModelChange)="updateFormField('notes', $event)"
+            rows="2" 
+            placeholder="Any additional notes..."
+          ></textarea>
         </div>
 
         <!-- Preview Score -->
@@ -201,7 +252,7 @@ export interface ReadinessResult {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="text" (clicked)="showDialog = false">Cancel</app-button>
+        <app-button variant="text" (clicked)="showDialog.set(false)">Cancel</app-button>
         <app-button iconLeft="pi-check" [loading]="isSaving()" (clicked)="saveCheckin()">Save Check-in</app-button>
       </ng-template>
     </p-dialog>
@@ -209,19 +260,22 @@ export interface ReadinessResult {
   styleUrl: './wellness-checkin.component.scss',
 })
 export class WellnessCheckinComponent implements OnInit {
-  private trainingService = inject(UnifiedTrainingService);
-  private logger = inject(LoggerService);
+  // Dependency Injection (Angular 21 pattern)
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly logger = inject(LoggerService);
 
-  // Input/Output
-  date = input<string>(); // YYYY-MM-DD format
-  checkinComplete = output<ReadinessResult>();
+  // Input/Output (Angular 21 signals)
+  readonly date = input<string>(); // YYYY-MM-DD format
+  readonly checkinComplete = output<ReadinessResult>();
 
   // State from Unified Service
-  hasCheckedIn = this.trainingService.hasCheckedInToday;
-  readinessScore = this.trainingService.readinessScore;
+  readonly hasCheckedIn = this.trainingService.hasCheckedInToday;
+  readonly readinessScore = this.trainingService.readinessScore;
   
-  isSaving = signal(false);
-  wellnessData = signal<WellnessData>({
+  // Local State Signals
+  readonly isSaving = signal(false);
+  readonly showDialog = signal(false);
+  readonly wellnessData = signal<WellnessData>({
     sleepQuality: 3,
     sleepHours: 7,
     energyLevel: 3,
@@ -230,9 +284,8 @@ export class WellnessCheckinComponent implements OnInit {
     sorenessAreas: [],
   });
 
-  showDialog = false;
-
-  formData: WellnessData = {
+  // Form Data (reactive with signals)
+  readonly formData = signal<WellnessData>({
     sleepQuality: 3,
     sleepHours: 7,
     energyLevel: 3,
@@ -240,9 +293,10 @@ export class WellnessCheckinComponent implements OnInit {
     stressLevel: 3,
     sorenessAreas: [],
     notes: "",
-  };
+  });
 
-  bodyAreas = [
+  // Constants
+  readonly bodyAreas = [
     "Legs",
     "Lower Back",
     "Upper Back",
@@ -252,13 +306,19 @@ export class WellnessCheckinComponent implements OnInit {
     "Glutes",
     "Calves",
     "Core",
-  ];
+  ] as const;
 
-  previewScore = signal(50);
+  // Computed Values
+  readonly previewScore = computed(() => this.calculateScore(this.formData()));
 
   ngOnInit(): void {
     this.loadExistingCheckin();
-    this.updatePreviewScore();
+    
+    // Update preview score when form data changes
+    effect(() => {
+      this.formData(); // Track formData signal
+      // previewScore is computed, so it will update automatically
+    });
   }
 
   async loadExistingCheckin(): Promise<void> {
@@ -268,16 +328,11 @@ export class WellnessCheckinComponent implements OnInit {
 
       if (response?.success && response.data) {
         this.wellnessData.set(response.data);
-        this.formData = { ...response.data };
+        this.formData.set({ ...response.data });
       }
     } catch (err) {
       // No existing checkin - that's ok
     }
-  }
-
-  updatePreviewScore(): void {
-    const score = this.calculateScore(this.formData);
-    this.previewScore.set(score);
   }
 
   calculateScore(data: WellnessData): number {
@@ -302,24 +357,25 @@ export class WellnessCheckinComponent implements OnInit {
 
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      const readiness = this.calculateScore(this.formData);
+      const currentFormData = this.formData();
+      const readiness = this.calculateScore(currentFormData);
 
       const response: any = await this.trainingService.submitWellness({
         date: targetDate,
-        ...this.formData,
+        ...currentFormData,
         readinessScore: readiness,
       });
 
       if (response?.success) {
-        this.wellnessData.set(this.formData);
-        this.showDialog = false;
+        this.wellnessData.set(currentFormData);
+        this.showDialog.set(false);
 
         this.checkinComplete.emit({
           readinessScore: readiness,
-          sleepQuality: this.formData.sleepQuality,
-          energyLevel: this.formData.energyLevel,
-          muscleSoreness: this.formData.muscleSoreness,
-          stressLevel: this.formData.stressLevel,
+          sleepQuality: currentFormData.sleepQuality,
+          energyLevel: currentFormData.energyLevel,
+          muscleSoreness: currentFormData.muscleSoreness,
+          stressLevel: currentFormData.stressLevel,
           recommendation: this.getRecommendation(readiness),
         });
       }
@@ -331,11 +387,25 @@ export class WellnessCheckinComponent implements OnInit {
   }
 
   toggleArea(area: string, checked: boolean): void {
+    const currentData = this.formData();
     if (checked) {
-      this.formData.sorenessAreas = [...this.formData.sorenessAreas, area];
+      this.formData.set({
+        ...currentData,
+        sorenessAreas: [...currentData.sorenessAreas, area],
+      });
     } else {
-      this.formData.sorenessAreas = this.formData.sorenessAreas.filter((a) => a !== area);
+      this.formData.set({
+        ...currentData,
+        sorenessAreas: currentData.sorenessAreas.filter((a) => a !== area),
+      });
     }
+  }
+
+  updateFormField<K extends keyof WellnessData>(field: K, value: WellnessData[K]): void {
+    this.formData.set({
+      ...this.formData(),
+      [field]: value,
+    });
   }
 
   getSleepLabel(value: number): string {

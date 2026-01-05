@@ -27,7 +27,7 @@
     h3 {
       margin: 0 0 var(--space-2) 0;
       font-size: var(--font-body-lg);
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-primary-green);
     }
 
@@ -47,14 +47,14 @@
 
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-body-md);
-    font-weight: 600;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   .step-description {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }
@@ -83,15 +83,15 @@
 
   label {
     display: block;
-    font-size: var(--font-body-sm);
-    font-weight: 500;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
     margin-bottom: var(--space-1);
   }
 
   .event-info {
     margin-top: var(--space-2);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     strong {
@@ -115,7 +115,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
     }
   }
 }
@@ -135,7 +135,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
     }
   }
 }
@@ -152,8 +152,8 @@
 
     label {
       display: block;
-      font-size: var(--font-body-sm);
-      font-weight: 500;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
       margin-bottom: var(--space-1);
     }
@@ -178,7 +178,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
     }
   }
 }
@@ -206,15 +206,15 @@
     border-left: 4px solid var(--ds-primary-green);
 
     .merlin-icon {
-      font-size: var(--font-heading-lg);
+      font-size: var(--font-size-metric-md);
       flex-shrink: 0;
     }
 
     .recommendation-content {
       h3 {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-body-md);
-        font-weight: 600;
+        font-size: var(--font-size-body);
+        font-weight: var(--font-weight-semibold);
         color: var(--ds-primary-green);
       }
 
@@ -227,18 +227,8 @@
   }
 }
 
-// Card Headers
-.card-header {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
-
-  h3 {
-    margin: 0;
-    font-size: var(--font-body-lg);
-    font-weight: 600;
-    color: var(--ds-text-primary);
-  }
-}
+// Card Headers - REMOVED (use app-card-shell component)
+// @see docs/CARD_SHELL_CONTRACT.md
 
 // Periodization Timeline
 .periodization-timeline {
@@ -265,14 +255,14 @@
 
     .phase-dates {
       display: block;
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-tertiary);
     }
 
     .phase-name {
       display: block;
-      font-size: var(--font-body-sm);
-      font-weight: 600;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -281,7 +271,7 @@
     .load-label {
       display: block;
       margin-top: var(--space-1);
-      font-size: var(--font-body-xs);
+      font-size: var(--font-size-badge);
       color: var(--ds-text-secondary);
     }
   }
@@ -315,19 +305,19 @@
 
   .day-name {
     display: block;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     color: var(--ds-text-primary);
   }
 
   .day-date {
     display: block;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
   .day-time {
     display: block;
-    font-size: var(--font-body-xs);
+    font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
   }
 }
@@ -342,19 +332,19 @@
     margin-bottom: var(--space-2);
 
     .session-icon {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-size-h2);
     }
 
     h4 {
       margin: 0;
       flex: 1;
-      font-size: var(--font-body-md);
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
 
     .session-duration {
-      font-size: var(--font-body-sm);
+      font-size: var(--font-size-h4);
       color: var(--ds-text-tertiary);
     }
   }
@@ -362,7 +352,7 @@
   .session-activities {
     margin: 0 0 var(--space-2) 0;
     padding-left: var(--space-4);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     li {
@@ -373,13 +363,13 @@
   .session-meta {
     display: flex;
     gap: var(--space-3);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-tertiary);
   }
 
   .session-location {
     margin: var(--space-2) 0 0 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 }
@@ -404,8 +394,8 @@
 
   h4 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-sm);
-    font-weight: 600;
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -424,7 +414,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
 
     &.cleared {

@@ -3,7 +3,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  inject,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -302,8 +301,8 @@ export class WorkoutCalendarComponent implements OnInit {
     today: Date,
     isCurrentMonth: boolean,
   ): WorkoutDay {
-    const dateStr = date.toISOString().split("T")[0];
-    const workoutsForDay = this.workouts.filter((w) => {
+    const _dateStr = date.toISOString().split("T")[0];
+    const workoutsForDay = this.workouts.filter((_w) => {
       // Assuming workouts have a date property or we match by some logic
       return true; // Placeholder - would filter by actual date
     });

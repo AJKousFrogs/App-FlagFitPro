@@ -47,7 +47,7 @@ async function getMentalPerformanceLogs(userId, days = 30) {
     .gte("log_date", startDate.toISOString().split("T")[0])
     .order("log_date", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -61,7 +61,7 @@ async function getPsychologicalAssessments(userId) {
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -79,7 +79,7 @@ async function getWellnessTrends(userId, days = 30) {
     .gte("date", startDate.toISOString().split("T")[0])
     .order("date", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -87,7 +87,7 @@ async function getWellnessTrends(userId, days = 30) {
  * Generate mental wellness report
  */
 async function generateMentalWellnessReport(userId, options = {}) {
-  const { days = 30, includePrivate = false } = options;
+  const { days = 30, includePrivate: _includePrivate = false } = options;
 
   // Get mental performance data
   const mentalLogs = await getMentalPerformanceLogs(userId, days);
@@ -235,7 +235,7 @@ async function createAssessment(userId, assessmentData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -266,7 +266,7 @@ async function logMentalPerformance(userId, logData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -336,7 +336,7 @@ async function getTeamMentalOverview(teamId) {
 // Helper functions
 function calculateAverage(data, field) {
   const values = data.map((d) => d[field]).filter((v) => v !== null && v !== undefined);
-  if (values.length === 0) return null;
+  if (values.length === 0) {return null;}
   return Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10;
 }
 
@@ -346,7 +346,7 @@ function identifyPatterns(mentalLogs, wellness) {
   // Check for stress-sleep correlation
   const highStressDays = wellness.filter((w) => w.stress_level >= 7);
   const lowSleepAfterStress = wellness.filter((w, i) => {
-    if (i === 0) return false;
+    if (i === 0) {return false;}
     const prevDay = wellness[i - 1];
     return prevDay?.stress_level >= 7 && w.sleep_quality <= 4;
   });

@@ -333,7 +333,7 @@ export class ActionableInsightsComponent implements OnInit {
     try {
       // Get current data
       const acwrData = this.trainingService.acwrData();
-      const riskZone = this.trainingService.acwrRiskZone();
+      const _riskZone = this.trainingService.acwrRiskZone();
 
       const generatedInsights: Insight[] = [];
 

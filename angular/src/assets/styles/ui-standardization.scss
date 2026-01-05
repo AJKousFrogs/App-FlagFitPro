@@ -47,23 +47,23 @@
 
   /* ================================
      CARD TOKENS (p-card)
-     Enterprise: 14px radius, 16px padding, 12px gap
+     Design System: 8px radius (--radius-lg), spacing tokens
      ================================ */
   
-  --p-card-border-radius: 14px;
-  --p-card-body-padding: 16px;
-  --p-card-body-gap: 12px;
+  --p-card-border-radius: var(--radius-lg); /* 8px */
+  --p-card-body-padding: var(--space-4); /* 16px */
+  --p-card-body-gap: var(--space-3); /* 12px */
   --p-card-shadow: var(--shadow-sm);
-  --p-card-header-padding: 16px;
-  --p-card-footer-padding: 16px;
+  --p-card-header-padding: var(--space-4); /* 16px */
+  --p-card-footer-padding: var(--space-4); /* 16px */
   --p-card-content-padding: 0;
 
   /* ================================
      BUTTON TOKENS (p-button)
-     Enterprise: 10px radius, 44px icon-only width
+     Design System: 8px radius (--radius-button), 44px icon-only width
      ================================ */
   
-  --p-button-border-radius: 10px;
+  --p-button-border-radius: var(--radius-button, 8px); /* RAISED style - NOT pill */
   --p-button-padding-x: var(--space-6);       /* 24px */
   --p-button-padding-y: var(--space-3);       /* 12px */
   --p-button-icon-only-width: 44px;
@@ -77,19 +77,19 @@
 
   /* ================================
      FORM CONTROL TOKENS (p-inputtext, p-select)
-     Enterprise: 10px radius, calm focus ring
+     Design System: 8px radius (--radius-lg), calm focus ring
      ================================ */
   
   /* InputText */
   --p-inputtext-padding-x: var(--space-4);    /* 16px */
   --p-inputtext-padding-y: var(--space-3);    /* 12px */
-  --p-inputtext-border-radius: 10px;
+  --p-inputtext-border-radius: var(--radius-lg); /* 8px */
   --p-inputtext-min-height: 44px;
   
   /* Select/Dropdown */
   --p-select-padding-x: var(--space-4);       /* 16px */
   --p-select-padding-y: var(--space-3);       /* 12px */
-  --p-select-border-radius: 10px;
+  --p-select-border-radius: var(--radius-lg); /* 8px */
   
   /* Focus Ring - Calm, consistent, low-intensity */
   --p-focus-ring-width: 2px;
@@ -103,39 +103,48 @@
 
   /* ================================
      DIALOG TOKENS (p-dialog)
-     Enterprise: 14px radius, 16px padding throughout
+     Design System: 8px radius (--radius-lg), spacing tokens
      ================================ */
   
-  --p-dialog-border-radius: 14px;
-  --p-dialog-header-padding: 16px;
-  --p-dialog-content-padding: 16px;
-  --p-dialog-footer-padding: 16px;
+  --p-dialog-border-radius: var(--radius-lg); /* 8px */
+  --p-dialog-header-padding: var(--space-4); /* 16px */
+  --p-dialog-content-padding: var(--space-4); /* 16px */
+  --p-dialog-footer-padding: var(--space-4); /* 16px */
   --p-dialog-footer-gap: var(--space-3);      /* 12px between buttons */
 
   /* ================================
      MESSAGE/TOAST TOKENS
-     Enterprise: 12px radius, 12x14 padding
+     Design System: 8px radius (--radius-lg), spacing tokens
      ================================ */
   
   /* Message */
-  --p-message-border-radius: 12px;
-  --p-message-content-padding: 12px 14px;
+  --p-message-border-radius: var(--radius-lg); /* 8px */
+  --p-message-content-padding: var(--space-3) var(--space-4); /* 12px 16px */
   
   /* Toast */
-  --p-toast-border-radius: 12px;
-  --p-toast-content-padding: 12px 14px;
+  --p-toast-border-radius: var(--radius-lg); /* 8px */
+  --p-toast-content-padding: var(--space-3) var(--space-4); /* 12px 16px */
 
   /* ================================
      CHECKBOX/TOGGLE TOKENS
      Consistent control sizing - no layout shift
+     
+     Design Rules:
+     - Checkbox: 20px box, 6px radius, green check
+     - Toggle: 44px width, 24px height, green=ON
+     - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+     - Disabled: opacity 0.6, not interactive
      ================================ */
   
   --p-checkbox-width: 20px;
   --p-checkbox-height: 20px;
-  --p-checkbox-border-radius: 4px;
+  --p-checkbox-border-radius: 6px;
+  --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
   --p-toggleswitch-width: 44px;
   --p-toggleswitch-height: 24px;
+  --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
   --p-control-row-min-height: 44px;
+  --p-control-disabled-opacity: 0.6;
 }
 
 /* ================================================================
@@ -577,197 +586,284 @@
 /* ================================================================
    STEP 4: PRIMENG COMPONENT CONSISTENCY OVERRIDES
    Enterprise / Calm Clinical - Ensure PrimeNG uses standardized tokens
+   NOTE: removed - CSS layers handle specificity
    ================================================================ */
 
-/* ================================
-   CARD - Enterprise styling
-   ================================ */
-.p-card {
-  border-radius: var(--p-card-border-radius) !important;
-  box-shadow: var(--p-card-shadow) !important;
-}
+@layer overrides {
+  /* ================================
+     CARD - Enterprise styling
+     ================================ */
+  .p-card {
+    border-radius: var(--p-card-border-radius);
+    box-shadow: var(--p-card-shadow);
+  }
 
-.p-card .p-card-body {
-  padding: var(--p-card-body-padding) !important;
-  display: flex;
-  flex-direction: column;
-  gap: var(--p-card-body-gap);
-}
+  .p-card .p-card-body {
+    padding: var(--p-card-body-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--p-card-body-gap);
+  }
 
-.p-card .p-card-header {
-  padding: var(--p-card-header-padding) !important;
-}
+  .p-card .p-card-header {
+    padding: var(--p-card-header-padding);
+  }
 
-.p-card .p-card-content {
-  padding: var(--p-card-content-padding) !important;
-}
+  .p-card .p-card-content {
+    padding: var(--p-card-content-padding);
+  }
 
-.p-card .p-card-footer {
-  padding: var(--p-card-footer-padding) !important;
-}
+  .p-card .p-card-footer {
+    padding: var(--p-card-footer-padding);
+  }
 
-/* ================================
-   BUTTON - Enterprise styling
-   ================================ */
-.p-button {
-  border-radius: var(--p-button-border-radius) !important;
-}
+  /* ================================
+     BUTTON - Enterprise styling
+     ================================ */
+  .p-button {
+    border-radius: var(--p-button-border-radius);
+  }
 
-.p-button.p-button-icon-only {
-  width: var(--p-button-icon-only-width) !important;
-  height: var(--p-button-icon-only-height) !important;
-  min-width: var(--p-button-icon-only-width) !important;
-  min-height: var(--p-button-icon-only-height) !important;
-  flex-shrink: 0;
-}
+  .p-button.p-button-icon-only {
+    width: var(--p-button-icon-only-width);
+    height: var(--p-button-icon-only-height);
+    min-width: var(--p-button-icon-only-width);
+    min-height: var(--p-button-icon-only-height);
+    flex-shrink: 0;
+  }
 
-/* ================================
-   DIALOG - Enterprise styling
-   ================================ */
-.p-dialog {
-  border-radius: var(--p-dialog-border-radius) !important;
-}
+  /* ================================
+     DIALOG - Enterprise styling
+     ================================ */
+  .p-dialog {
+    border-radius: var(--p-dialog-border-radius);
+  }
 
-.p-dialog .p-dialog-header {
-  padding: var(--p-dialog-header-padding) !important;
-  border-radius: var(--p-dialog-border-radius) var(--p-dialog-border-radius) 0 0 !important;
-}
+  .p-dialog .p-dialog-header {
+    padding: var(--p-dialog-header-padding);
+    border-radius: var(--p-dialog-border-radius) var(--p-dialog-border-radius) 0 0;
+  }
 
-.p-dialog .p-dialog-content {
-  padding: var(--p-dialog-content-padding) !important;
-}
+  .p-dialog .p-dialog-content {
+    padding: var(--p-dialog-content-padding);
+  }
 
-.p-dialog .p-dialog-footer {
-  padding: var(--p-dialog-footer-padding) !important;
-  gap: var(--p-dialog-footer-gap) !important;
-  border-radius: 0 0 var(--p-dialog-border-radius) var(--p-dialog-border-radius) !important;
-}
+  .p-dialog .p-dialog-footer {
+    padding: var(--p-dialog-footer-padding);
+    gap: var(--p-dialog-footer-gap);
+    border-radius: 0 0 var(--p-dialog-border-radius) var(--p-dialog-border-radius);
+  }
 
-/* ================================
-   INPUT/SELECT - Enterprise styling
-   ================================ */
-.p-inputtext {
-  min-height: var(--p-inputtext-min-height) !important;
-  padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x) !important;
-  border-radius: var(--p-inputtext-border-radius) !important;
-}
+  /* ================================
+     INPUT/SELECT - Enterprise styling
+     ================================ */
+  .p-inputtext {
+    min-height: var(--p-inputtext-min-height);
+    padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
+    border-radius: var(--p-inputtext-border-radius);
+  }
 
-.p-select {
-  border-radius: var(--p-select-border-radius) !important;
-}
+  .p-select {
+    border-radius: var(--p-select-border-radius);
+  }
 
-.p-select .p-select-label {
-  padding: var(--p-select-padding-y) var(--p-select-padding-x) !important;
-}
+  .p-select .p-select-label {
+    padding: var(--p-select-padding-y) var(--p-select-padding-x);
+  }
 
-.p-select-overlay {
-  border-radius: var(--p-select-border-radius) !important;
-}
+  .p-select-overlay {
+    border-radius: var(--p-select-border-radius);
+  }
 
-/* Textarea consistent with inputs */
-.p-textarea {
-  border-radius: var(--p-inputtext-border-radius) !important;
-  padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x) !important;
+  /* Textarea consistent with inputs */
+  .p-textarea {
+    border-radius: var(--p-inputtext-border-radius);
+    padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
+  }
 }
 
 /* ================================
    MESSAGE/TOAST - Enterprise styling
+   NOTE: removed - CSS layers handle specificity
    ================================ */
-.p-message {
-  border-radius: var(--p-message-border-radius) !important;
-}
+@layer overrides {
+  .p-message {
+    border-radius: var(--p-message-border-radius);
+  }
 
-.p-message .p-message-content {
-  padding: var(--p-message-content-padding) !important;
-}
+  .p-message .p-message-content {
+    padding: var(--p-message-content-padding);
+  }
 
-.p-toast-message {
-  border-radius: var(--p-toast-border-radius) !important;
-}
+  .p-toast-message {
+    border-radius: var(--p-toast-border-radius);
+  }
 
-.p-toast-message-content {
-  padding: var(--p-toast-content-padding) !important;
-}
+  .p-toast-message-content {
+    padding: var(--p-toast-content-padding);
+  }
 
-/* ================================
-   CHECKBOX/TOGGLE - No layout shift
-   ================================ */
-.p-checkbox,
-.p-toggleswitch {
-  flex-shrink: 0;
-}
+  /* ================================
+     CHECKBOX/TOGGLE - Unified Styling
+     No layout shift, consistent appearance
+     
+     Design Rules:
+     - Checkbox: 20px box, 6px radius, green check
+     - Toggle: 44px width, 24px height, green=ON
+     - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+     - Disabled: opacity 0.6, not interactive
+     ================================ */
+  .p-checkbox,
+  .p-toggleswitch {
+    flex-shrink: 0;
+  }
 
-.p-checkbox .p-checkbox-box {
-  width: var(--p-checkbox-width) !important;
-  height: var(--p-checkbox-height) !important;
-  min-width: var(--p-checkbox-width) !important;
-  min-height: var(--p-checkbox-height) !important;
-  border-radius: var(--p-checkbox-border-radius) !important;
-}
+  .p-checkbox {
+    width: var(--p-checkbox-width);
+    height: var(--p-checkbox-height);
+    min-width: var(--p-checkbox-width);
+    min-height: var(--p-checkbox-height);
+  }
 
-.p-toggleswitch {
-  width: var(--p-toggleswitch-width) !important;
-  height: var(--p-toggleswitch-height) !important;
-  min-width: var(--p-toggleswitch-width) !important;
-  min-height: var(--p-toggleswitch-height) !important;
-}
+  .p-checkbox .p-checkbox-box {
+    width: var(--p-checkbox-width);
+    height: var(--p-checkbox-height);
+    min-width: var(--p-checkbox-width);
+    min-height: var(--p-checkbox-height);
+    border-radius: var(--p-checkbox-border-radius);
+    border: 2px solid var(--color-border-default, #d1d5db);
+    background: var(--color-surface-primary, white);
+    transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
 
-/* ================================
-   FOCUS RING - Calm, consistent
-   ================================ */
-.p-button:focus-visible,
-.p-inputtext:focus-visible,
-.p-select:focus-visible,
-.p-textarea:focus-visible,
-.p-checkbox:focus-visible .p-checkbox-box,
-.p-toggleswitch:focus-visible {
-  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
-  outline-offset: var(--p-focus-ring-offset) !important;
-}
+  .p-checkbox .p-checkbox-box.p-highlight {
+    background: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green, #089949);
+  }
 
-/* Input focus border */
-.p-inputtext:focus,
-.p-select.p-focus,
-.p-textarea:focus {
-  border-color: var(--p-inputtext-focus-border-color) !important;
-  box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color) !important;
-}
+  .p-checkbox .p-checkbox-box .p-checkbox-icon {
+    color: white;
+  }
 
-/* ================================
-   PANEL/ACCORDION - Consistent radius
-   ================================ */
-.p-panel {
-  border-radius: var(--p-card-border-radius) !important;
-}
+  .p-checkbox.p-disabled {
+    opacity: var(--p-control-disabled-opacity);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 
-.p-accordion .p-accordion-header a,
-.p-accordion .p-accordion-header button {
-  border-radius: var(--p-card-border-radius) !important;
-}
+  .p-toggleswitch {
+    width: var(--p-toggleswitch-width);
+    height: var(--p-toggleswitch-height);
+    min-width: var(--p-toggleswitch-width);
+    min-height: var(--p-toggleswitch-height);
+  }
 
-.p-accordion .p-accordion-content {
-  border-radius: 0 0 var(--p-card-border-radius) var(--p-card-border-radius) !important;
-}
+  .p-toggleswitch .p-toggleswitch-slider {
+    width: var(--p-toggleswitch-width);
+    height: var(--p-toggleswitch-height);
+    border-radius: var(--radius-full, 9999px);
+    background: var(--color-border-default, #d1d5db);
+    transition: background-color 200ms ease, box-shadow 200ms ease;
+  }
 
-/* ================================
-   MENU/DROPDOWN - Consistent radius
-   ================================ */
-.p-menu {
-  border-radius: var(--p-card-border-radius) !important;
-}
+  .p-toggleswitch .p-toggleswitch-slider::before {
+    width: 18px;
+    height: 18px;
+    top: 3px;
+    left: 3px;
+    background: var(--color-surface-primary, white);
+    border-radius: var(--radius-full, 9999px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 200ms ease;
+  }
 
-.p-contextmenu,
-.p-tieredmenu {
-  border-radius: var(--p-card-border-radius) !important;
-}
+  .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+    background: var(--ds-primary-green, #089949);
+  }
 
-/* ================================
-   TAG/BADGE - Consistent styling
-   ================================ */
-.p-tag {
-  border-radius: 6px !important;
-  padding: 4px 10px !important;
-}
+  .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider::before {
+    transform: translateX(20px);
+  }
+
+  .p-toggleswitch.p-disabled {
+    opacity: var(--p-control-disabled-opacity);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ================================
+     FOCUS RING - Calm, consistent
+     Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+     ================================ */
+  .p-button:focus-visible,
+  .p-inputtext:focus-visible,
+  .p-select:focus-visible,
+  .p-textarea:focus-visible {
+    outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color);
+    outline-offset: var(--p-focus-ring-offset);
+  }
+
+  /* Checkbox/Toggle use box-shadow for focus ring */
+  .p-checkbox:focus-visible .p-checkbox-box,
+  .p-checkbox .p-checkbox-box:focus-visible {
+    box-shadow: var(--p-checkbox-focus-ring);
+    outline: none;
+  }
+
+  .p-toggleswitch:focus-visible,
+  .p-toggleswitch:focus-visible .p-toggleswitch-slider {
+    box-shadow: var(--p-toggleswitch-focus-ring);
+    outline: none;
+  }
+
+  /* Input focus border */
+  .p-inputtext:focus,
+  .p-select.p-focus,
+  .p-textarea:focus {
+    border-color: var(--p-inputtext-focus-border-color);
+    box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-color);
+  }
+
+  /* ================================
+     PANEL/ACCORDION - Consistent radius
+     ================================ */
+  .p-panel {
+    border-radius: var(--p-card-border-radius);
+  }
+
+  .p-accordion .p-accordion-header a,
+  .p-accordion .p-accordion-header button {
+    border-radius: var(--p-card-border-radius);
+  }
+
+  .p-accordion .p-accordion-content {
+    border-radius: 0 0 var(--p-card-border-radius) var(--p-card-border-radius);
+  }
+
+  /* ================================
+     MENU/DROPDOWN - Consistent radius
+     ================================ */
+  .p-menu {
+    border-radius: var(--p-card-border-radius);
+  }
+
+  .p-contextmenu,
+  .p-tieredmenu {
+    border-radius: var(--p-card-border-radius);
+  }
+
+  /* ================================
+     TAG/BADGE - PILL styling (unified)
+     See primeng-theme.scss for complete styles
+     ================================ */
+  .p-tag {
+    border-radius: 9999px;
+    height: 30px;
+    min-height: 30px;
+    max-height: 30px;
+    padding: 0 13px;
+  }
+} /* End @layer overrides */
 
 /* ================================================================
    RESPONSIVE ADJUSTMENTS
@@ -777,14 +873,14 @@
 @media (max-width: 768px) {
   :root {
     /* Reduce card padding on mobile - maintain 12px minimum */
-    --p-card-body-padding: 14px;
-    --p-card-header-padding: 14px;
-    --p-card-footer-padding: 14px;
+    --p-card-body-padding: var(--space-3); /* 12px */
+    --p-card-header-padding: var(--space-3); /* 12px */
+    --p-card-footer-padding: var(--space-3); /* 12px */
     
     /* Reduce dialog padding on mobile */
-    --p-dialog-header-padding: 14px;
-    --p-dialog-content-padding: 14px;
-    --p-dialog-footer-padding: 14px;
+    --p-dialog-header-padding: var(--space-3); /* 12px */
+    --p-dialog-content-padding: var(--space-3); /* 12px */
+    --p-dialog-footer-padding: var(--space-3); /* 12px */
   }
   
   .section-stack {
@@ -803,10 +899,10 @@
 
 @media (max-width: 480px) {
   :root {
-    --p-card-body-padding: 12px;
-    --p-card-header-padding: 12px;
-    --p-card-footer-padding: 12px;
-    --p-card-body-gap: 10px;
+    --p-card-body-padding: var(--space-3); /* 12px */
+    --p-card-header-padding: var(--space-3); /* 12px */
+    --p-card-footer-padding: var(--space-3); /* 12px */
+    --p-card-body-gap: var(--space-2); /* 8px */
   }
   
   .section-stack {
@@ -818,7 +914,7 @@
   }
   
   .page-container {
-    padding: 0 12px;
+    padding: 0 var(--space-3); /* 12px */
   }
 }
 
@@ -829,8 +925,8 @@
 
 /* Consistent focus rings - using calm, low-intensity style */
 .icon-btn:focus-visible {
-  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
-  outline-offset: var(--p-focus-ring-offset) !important;
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color);
+  outline-offset: var(--p-focus-ring-offset);
 }
 
 /* Reduced motion preference */
@@ -842,8 +938,8 @@
   .p-card,
   .p-dialog,
   .p-toast {
-    transition: none !important;
-    animation: none !important;
+    transition: none;
+    animation: none;
   }
 }
 

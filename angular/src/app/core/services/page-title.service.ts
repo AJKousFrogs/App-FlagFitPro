@@ -96,7 +96,9 @@ export class PageTitleService {
       if (route.snapshot.data["title"]) {
         title = route.snapshot.data["title"];
       }
-      route = route.firstChild!;
+      const child = route.firstChild;
+      if (!child) break;
+      route = child;
     }
 
     return title;

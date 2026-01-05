@@ -20,8 +20,6 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { DataSourceService } from "./data-source.service";
@@ -675,7 +673,7 @@ export class TrainingSafetyService {
 
       // Similar checks for cuts
       if (plannedSession.cuts) {
-        const projectedCuts = movements.cuts + plannedSession.cuts;
+        const _projectedCuts = movements.cuts + plannedSession.cuts;
         if (plannedSession.cuts > limits.maxCutsPerSession) {
           warnings.push({
             id: "cuts_session_limit",

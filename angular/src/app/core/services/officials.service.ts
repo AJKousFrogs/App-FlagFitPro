@@ -408,10 +408,18 @@ export class OfficialsService {
    * Get upcoming games for a team
    */
   getUpcomingGames(teamId: string): Observable<Array<{ label: string; value: string; date: string; opponent: string }>> {
-    return this.apiService.get<any[]>(`/api/coach/games`, { teamId, limit: 50 }).pipe(
+    interface GameResponse {
+      id?: string;
+      game_id?: string;
+      date?: string;
+      game_date?: string;
+      opponent?: string;
+      opponent_name?: string;
+    }
+    return this.apiService.get<GameResponse[]>(`/api/coach/games`, { teamId, limit: 50 }).pipe(
       map(response => {
         if (response.success && response.data) {
-          return (response.data as any[]).map(g => ({
+          return response.data.map(g => ({
             label: `${new Date(g.date || g.game_date).toLocaleDateString()} vs ${g.opponent || g.opponent_name}`,
             value: g.id || g.game_id,
             date: g.date || g.game_date,

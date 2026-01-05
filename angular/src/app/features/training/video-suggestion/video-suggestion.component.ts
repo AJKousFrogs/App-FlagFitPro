@@ -42,7 +42,6 @@ import {
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
@@ -55,6 +54,7 @@ import { TextareaModule } from "primeng/textarea";
 import { TimelineModule } from "primeng/timeline";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -96,7 +96,6 @@ interface VideoSuggestion {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CardModule,
     InputTextModule,
     TextareaModule,
     MultiSelect,
@@ -112,8 +111,8 @@ interface VideoSuggestion {
     Chip,
     DividerModule,
     MainLayoutComponent,
-  
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -152,14 +151,10 @@ interface VideoSuggestion {
         <div class="content-grid">
           <!-- Submit Form Card -->
           <section class="submit-section">
-            <p-card styleClass="submit-card">
-              <ng-template pTemplate="header">
-                <div class="card-header">
-                  <i class="pi pi-plus-circle"></i>
-                  <span>Submit New Video</span>
-                </div>
-              </ng-template>
-
+            <app-card-shell
+              title="Submit New Video"
+              headerIcon="pi-plus-circle"
+            >
               <form
                 [formGroup]="suggestionForm"
                 (ngSubmit)="submitSuggestion()"
@@ -312,7 +307,7 @@ interface VideoSuggestion {
                   >Submit for Review</app-button>
                 </div>
               </form>
-            </p-card>
+            </app-card-shell>
           </section>
 
           <!-- My Submissions Section -->
@@ -345,12 +340,14 @@ interface VideoSuggestion {
               </div>
             } @else if (mySuggestions().length === 0) {
               <!-- Empty State -->
-              <div class="empty-state">
-                <div class="empty-icon">
+              <div class="card-empty-state">
+                <div class="card-empty-state__icon">
                   <i class="pi pi-inbox"></i>
                 </div>
-                <h3>No submissions yet</h3>
-                <p>Your submitted videos will appear here</p>
+                <div class="card-empty-state__content">
+                  <p class="card-empty-state__title">No submissions yet</p>
+                  <p class="card-empty-state__text">Your submitted videos will appear here</p>
+                </div>
               </div>
             } @else {
               <!-- Suggestions List -->
@@ -500,14 +497,10 @@ interface VideoSuggestion {
 
         <!-- Tips Section -->
         <section class="tips-section">
-          <p-card styleClass="tips-card">
-            <ng-template pTemplate="header">
-              <div class="tips-header">
-                <i class="pi pi-info-circle"></i>
-                <span>Tips for Getting Approved</span>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            title="Tips for Getting Approved"
+            headerIcon="pi-info-circle"
+          >
             <div class="tips-grid">
               <div class="tip-item">
                 <div class="tip-icon">
@@ -549,7 +542,7 @@ interface VideoSuggestion {
                 </div>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </section>
 
         <!-- Video Preview Dialog -->

@@ -1,0 +1,128 @@
+// ============================================================================
+// swipe-table.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .swipe-table-container {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .swipe-enabled-table {
+    width: 100%;
+  }
+
+  .swipe-row {
+    position: relative;
+    transition: transform 0.3s ease;
+    touch-action: pan-y;
+  }
+
+  .swipe-row.swiping {
+    transition: none;
+  }
+
+  .actions-header {
+    width: 120px;
+    text-align: center;
+  }
+
+  .actions-cell {
+    position: relative;
+    width: 120px;
+    overflow: visible;
+  }
+
+  .swipe-actions {
+    position: absolute;
+    right: -120px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 16px;
+    transition: right 0.3s ease;
+    background: var(--surface-card);
+    z-index: 10;
+  }
+
+  .swipe-actions.visible {
+    right: 0;
+  }
+
+  .action-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .action-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .action-btn:active {
+    transform: scale(0.95);
+  }
+
+  .action-btn.edit {
+    background: var(--ds-primary-green);
+  }
+
+  .action-btn.delete {
+    background: var(--color-status-error);
+  }
+
+  .action-btn i {
+    font-size: var(--icon-md);
+  }
+
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Focus styles for keyboard navigation */
+  .action-btn:focus {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  .action-btn:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .swipe-row {
+      transition: none;
+    }
+
+    .swipe-actions {
+      position: static;
+      right: auto;
+      display: flex;
+    }
+
+    .swipe-actions.visible {
+      right: auto;
+    }
+  }
+}
+

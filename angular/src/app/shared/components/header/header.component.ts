@@ -330,7 +330,7 @@ export class HeaderComponent implements OnDestroy {
     }
 
     // Set role (from user data or default)
-    const role = (user as any)?.role || "Player";
+    const role = (user as { role?: string } | null)?.role || "Player";
     this.userRole.set(role.charAt(0).toUpperCase() + role.slice(1));
 
     // Load real user stats from training service

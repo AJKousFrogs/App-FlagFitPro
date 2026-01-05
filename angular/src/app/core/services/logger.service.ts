@@ -6,6 +6,7 @@
  * @version 1.0.0
  */
 
+/* eslint-disable no-console */
 import { Injectable } from "@angular/core";
 import { isDevMode } from "@angular/core";
 

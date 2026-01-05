@@ -3,21 +3,19 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .skeleton-repeat {
-    display: flex;
-    flex-direction: column;
-  }
+.skeleton-repeat {
+  display: flex;
+  flex-direction: column;
+}
 
-  .skeleton-repeat.horizontal {
-    flex-direction: row;
-    gap: var(--space-4);
-  }
+.skeleton-repeat.horizontal {
+  flex-direction: row;
+  gap: var(--space-4);
+}
 
-  .skeleton-repeat.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-4);
-  }
+.skeleton-repeat.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
 }
 

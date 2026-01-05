@@ -256,7 +256,7 @@ export class MicrocyclePlannerComponent {
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
-      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      const _dayName = date.toLocaleDateString("en-US", { weekday: "short" });
 
       const plan = this.calculateDayPlan(
         date,

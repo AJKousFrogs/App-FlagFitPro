@@ -22,7 +22,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
 
 // ============================================================================

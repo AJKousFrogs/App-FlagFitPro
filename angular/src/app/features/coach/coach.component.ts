@@ -23,9 +23,8 @@ import { COLORS } from "../../core/constants/app.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { ConsentBlockedMessageComponent } from "../../shared/components/consent-blocked-message/consent-blocked-message.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -320,8 +319,8 @@ export class CoachComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
 
-  stats = signal<any[]>([]);
-  teamChartData = signal<any>(null);
+  stats = signal<{ label: string; value: number | string; icon: string; trend?: string }[]>([]);
+  teamChartData = signal<{ labels: string[]; datasets: { label: string; data: number[] }[] } | null>(null);
   teamMembers = signal<TeamMember[]>([]);
 
   // Consent blocked players tracking

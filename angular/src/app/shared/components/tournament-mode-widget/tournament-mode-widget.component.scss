@@ -3,417 +3,415 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  .tournament-widget {
-    background: linear-gradient(
-      135deg,
-      var(--surface-primary) 0%,
-      var(--primitive-warning-50) 100%
-    );
-    border: 2px solid var(--primitive-warning-300);
-    border-radius: var(--radius-xl);
-    padding: var(--space-5);
-    margin-bottom: var(--space-4);
-  }
+.tournament-widget {
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--primitive-warning-50) 100%
+  );
+  border: 2px solid var(--primitive-warning-300);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
 
-  /* Header */
-  .widget-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-4);
-  }
+/* Header */
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
 
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
 
-  .trophy-icon {
-    width: 44px;
-    height: 44px;
-    background: var(--primitive-warning-100);
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.trophy-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--primitive-warning-100);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .trophy-icon i {
-    font-size: var(--font-heading-md);
-    color: var(--primitive-warning-600);
-  }
+.trophy-icon i {
+  font-size: var(--font-size-h2);
+  color: var(--primitive-warning-600);
+}
 
-  .header-text h3 {
-    margin: 0;
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
+.header-text h3 {
+  margin: 0;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
 
-  .day-indicator {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
+.day-indicator {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
 
-  /* Game Progress */
-  .game-progress {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
+/* Game Progress */
+.game-progress {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
 
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-3);
-  }
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
 
-  .progress-label {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+.progress-label {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-  .progress-count {
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
+.progress-count {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
 
+.game-dots {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-bottom: var(--space-3);
+}
+
+.game-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  background: var(--surface-tertiary);
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.game-dot.upcoming {
+  border: 2px dashed var(--color-border-secondary);
+  background: transparent;
+}
+
+.game-dot.current {
+  background: var(--color-status-info);
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+.game-dot.won {
+  background: var(--ds-primary-green);
+  color: white;
+}
+
+.game-dot.lost {
+  background: var(--primitive-error-400);
+  color: white;
+}
+
+.game-dot i {
+  font-size: var(--font-size-h4);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.record {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+}
+
+.wins {
+  color: var(--ds-primary-green-hover);
+}
+
+.losses {
+  color: var(--color-status-error);
+}
+
+.separator {
+  color: var(--color-text-secondary);
+}
+
+/* Next Game */
+.next-game-section {
+  background: var(--primitive-warning-50);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.next-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.section-label {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.time-until {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-bold);
+  color: var(--primitive-warning-600);
+}
+
+.time-until.urgent {
+  color: var(--primitive-error-600);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.next-game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.opponent {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.time {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+/* Hydration */
+.hydration-section {
+  margin-bottom: var(--space-4);
+}
+
+.hydration-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.hydration-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.hydration-label i {
+  color: var(--color-status-info);
+}
+
+.hydration-status {
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) 8px;
+  border-radius: var(--radius-lg);
+}
+
+.hydration-status.on-track {
+  background: var(--primitive-success-100);
+  color: var(--primitive-success-700);
+}
+
+.hydration-status.behind {
+  background: var(--primitive-error-100);
+  color: var(--primitive-error-700);
+}
+
+.hydration-green .p-progressbar-value {
+  background: var(--color-status-info);
+}
+
+.hydration-orange .p-progressbar-value {
+  background: var(--color-status-warning);
+}
+
+.hydration-red .p-progressbar-value {
+  background: var(--color-status-error);
+}
+
+.hydration-details {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  font-size: var(--font-size-badge);
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.hydration-details .target {
+  color: var(--color-text-secondary);
+}
+
+.quick-hydration {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.hydration-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--primitive-info-50);
+  border: 1px solid var(--primitive-info-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-semibold);
+  color: var(--primitive-info-700);
+  cursor: pointer;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.hydration-btn:hover {
+  background: var(--primitive-info-100);
+}
+
+.hydration-btn.sports {
+  background: var(--primitive-warning-50);
+  border-color: var(--primitive-warning-300);
+  color: var(--primitive-warning-700);
+}
+
+.hydration-btn.sports:hover {
+  background: var(--primitive-warning-100);
+}
+
+/* Nutrition Suggestion */
+.nutrition-suggestion {
+  background: var(--primitive-success-50);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.suggestion-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.suggestion-header i {
+  color: var(--ds-primary-green-hover);
+}
+
+.phase-badge {
+  font-size: var(--font-body-2xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) 8px;
+  border-radius: var(--radius-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.phase-badge.phase-pre-game {
+  background: var(--primitive-warning-100);
+  color: var(--primitive-warning-700);
+}
+
+.phase-badge.phase-during {
+  background: var(--primitive-error-100);
+  color: var(--primitive-error-700);
+}
+
+.phase-badge.phase-post-game {
+  background: var(--primitive-info-100);
+  color: var(--primitive-info-700);
+}
+
+.phase-badge.phase-recovery {
+  background: var(--primitive-success-100);
+  color: var(--primitive-success-700);
+}
+
+.suggestion-text {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-h4);
+  color: var(--color-text-primary);
+}
+
+.suggested-foods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.food-chip {
+  font-size: var(--font-size-badge);
+  padding: var(--space-1) 8px;
+  background: white;
+  border-radius: var(--radius-lg);
+  color: var(--primitive-success-700);
+}
+
+/* Actions */
+.widget-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   .game-dots {
-    display: flex;
-    gap: var(--space-2);
-    justify-content: center;
-    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
   }
 
   .game-dot {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    background: var(--surface-tertiary);
-    color: var(--color-text-secondary);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
-  }
-
-  .game-dot.upcoming {
-    border: 2px dashed var(--color-border-secondary);
-    background: transparent;
-  }
-
-  .game-dot.current {
-    background: var(--color-status-info);
-    color: white;
-    animation: pulse 1.5s infinite;
-  }
-
-  .game-dot.won {
-    background: var(--ds-primary-green);
-    color: white;
-  }
-
-  .game-dot.lost {
-    background: var(--primitive-error-400);
-    color: white;
-  }
-
-  .game-dot i {
-    font-size: var(--font-body-sm);
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-
-  .record {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-md);
-    font-weight: var(--font-weight-bold);
-  }
-
-  .wins {
-    color: var(--ds-primary-green-hover);
-  }
-
-  .losses {
-    color: var(--color-status-error);
-  }
-
-  .separator {
-    color: var(--color-text-secondary);
-  }
-
-  /* Next Game */
-  .next-game-section {
-    background: var(--primitive-warning-50);
-    border-radius: var(--radius-md);
-    padding: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-
-  .next-game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2);
-  }
-
-  .section-label {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-  }
-
-  .time-until {
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-bold);
-    color: var(--primitive-warning-600);
-  }
-
-  .time-until.urgent {
-    color: var(--primitive-error-600);
-    animation: blink 1s infinite;
-  }
-
-  @keyframes blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  .next-game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .opponent {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .time {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-  }
-
-  /* Hydration */
-  .hydration-section {
-    margin-bottom: var(--space-4);
-  }
-
-  .hydration-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2);
-  }
-
-  .hydration-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-body-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  .hydration-label i {
-    color: var(--color-status-info);
-  }
-
-  .hydration-status {
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    padding: var(--space-1) 8px;
-    border-radius: var(--radius-lg);
-  }
-
-  .hydration-status.on-track {
-    background: var(--primitive-success-100);
-    color: var(--primitive-success-700);
-  }
-
-  .hydration-status.behind {
-    background: var(--primitive-error-100);
-    color: var(--primitive-error-700);
-  }
-
-  :host ::ng-deep .hydration-green .p-progressbar-value {
-    background: var(--color-status-info);
-  }
-
-  :host ::ng-deep .hydration-orange .p-progressbar-value {
-    background: var(--color-status-warning);
-  }
-
-  :host ::ng-deep .hydration-red .p-progressbar-value {
-    background: var(--color-status-error);
-  }
-
-  .hydration-details {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--space-1);
-    font-size: var(--font-body-xs);
-    margin-top: var(--space-1);
-    margin-bottom: var(--space-3);
-  }
-
-  .hydration-details .target {
-    color: var(--color-text-secondary);
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-body-2xs);
   }
 
   .quick-hydration {
-    display: flex;
-    gap: var(--space-2);
-  }
-
-  .hydration-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    background: var(--primitive-info-50);
-    border: 1px solid var(--primitive-info-200);
-    border-radius: var(--radius-md);
-    font-size: var(--font-body-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--primitive-info-700);
-    cursor: pointer;
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
-  }
-
-  .hydration-btn:hover {
-    background: var(--primitive-info-100);
-  }
-
-  .hydration-btn.sports {
-    background: var(--primitive-warning-50);
-    border-color: var(--primitive-warning-300);
-    color: var(--primitive-warning-700);
-  }
-
-  .hydration-btn.sports:hover {
-    background: var(--primitive-warning-100);
-  }
-
-  /* Nutrition Suggestion */
-  .nutrition-suggestion {
-    background: var(--primitive-success-50);
-    border-radius: var(--radius-md);
-    padding: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-
-  .suggestion-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
-  .suggestion-header i {
-    color: var(--ds-primary-green-hover);
-  }
-
-  .phase-badge {
-    font-size: var(--font-body-2xs);
-    font-weight: var(--font-weight-semibold);
-    padding: var(--space-1) 8px;
-    border-radius: var(--radius-lg);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .phase-badge.phase-pre-game {
-    background: var(--primitive-warning-100);
-    color: var(--primitive-warning-700);
-  }
-
-  .phase-badge.phase-during {
-    background: var(--primitive-error-100);
-    color: var(--primitive-error-700);
-  }
-
-  .phase-badge.phase-post-game {
-    background: var(--primitive-info-100);
-    color: var(--primitive-info-700);
-  }
-
-  .phase-badge.phase-recovery {
-    background: var(--primitive-success-100);
-    color: var(--primitive-success-700);
-  }
-
-  .suggestion-text {
-    margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-sm);
-    color: var(--color-text-primary);
-  }
-
-  .suggested-foods {
-    display: flex;
     flex-wrap: wrap;
-    gap: var(--space-1);
-  }
-
-  .food-chip {
-    font-size: var(--font-body-xs);
-    padding: var(--space-1) 8px;
-    background: white;
-    border-radius: var(--radius-lg);
-    color: var(--primitive-success-700);
-  }
-
-  /* Actions */
-  .widget-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    .game-dots {
-      flex-wrap: wrap;
-    }
-
-    .game-dot {
-      width: 28px;
-      height: 28px;
-      font-size: var(--font-body-2xs);
-    }
-
-    .quick-hydration {
-      flex-wrap: wrap;
-    }
   }
 }
 

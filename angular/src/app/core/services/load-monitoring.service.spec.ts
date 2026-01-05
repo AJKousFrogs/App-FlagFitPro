@@ -17,7 +17,6 @@ import {
   ExternalLoad,
   WellnessMetrics,
   TrainingSession,
-  SessionType,
 } from "../models/acwr.models";
 
 // Mock services

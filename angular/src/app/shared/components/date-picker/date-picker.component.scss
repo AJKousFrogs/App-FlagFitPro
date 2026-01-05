@@ -3,33 +3,31 @@
 // Design System Compliant
 // ============================================================================
 
-@layer features {
-  :host {
-    display: block;
-  }
+:host {
+  display: block;
+}
 
-  .date-picker-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.date-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  :host ::ng-deep .p-datepicker {
-    width: 100%;
-  }
+.p-datepicker {
+  width: 100%;
+}
 
-  :host ::ng-deep .p-datepicker-input {
-    width: 100%;
-  }
+.p-datepicker-input {
+  width: 100%;
+}
 
-  .form-help {
-    font-size: var(--font-body-xs);
-    color: var(--color-text-secondary);
-  }
+.form-help {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+}
 
-  .form-error {
-    font-size: var(--font-body-xs);
-    color: var(--color-status-error);
-  }
+.form-error {
+  font-size: var(--font-size-badge);
+  color: var(--color-status-error);
 }
 

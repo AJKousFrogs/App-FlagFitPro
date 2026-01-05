@@ -5,7 +5,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
@@ -25,8 +24,6 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
     InputTextModule,
     MessageModule,
     ToastModule,
-  
-    ButtonComponent,
   ],
 
   template: `

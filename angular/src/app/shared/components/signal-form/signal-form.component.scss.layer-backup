@@ -1,0 +1,50 @@
+// ============================================================================
+// signal-form.component Styles
+// Design System Compliant
+// ============================================================================
+
+@layer features {
+  .form-status {
+    padding: 0.5rem;
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+  }
+
+  .valid {
+    color: var(--color-status-success);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .invalid {
+    color: var(--color-status-error);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  label.required::after {
+    content: " *";
+    color: var(--color-status-error);
+    margin-left: 0.25rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  input:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  input[aria-invalid="true"] {
+    border-color: var(--color-status-error);
+  }
+}
+

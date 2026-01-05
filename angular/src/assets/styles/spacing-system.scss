@@ -31,28 +31,28 @@
 
 /* Standard Card Padding */
 .p-card .p-card-body {
-  padding: var(--space-5) !important; /* 20px */
+  padding: var(--space-5); /* 20px */
 }
 
 .p-card .p-card-content {
-  padding: 0 !important;
+  padding: 0;
 }
 
 .p-card .p-card-header {
-  padding: var(--space-5) var(--space-5) 0 !important;
+  padding: var(--space-5) var(--space-5) 0;
 }
 
 .p-card .p-card-footer {
-  padding: var(--space-4) var(--space-5) var(--space-5) !important;
+  padding: var(--space-4) var(--space-5) var(--space-5);
 }
 
 /* Compact Card Variant */
 .card-compact .p-card-body {
-  padding: var(--space-4) !important;
+  padding: var(--space-4);
 }
 
 .card-compact .p-card-header {
-  padding: var(--space-4) var(--space-4) 0 !important;
+  padding: var(--space-4) var(--space-4) 0;
 }
 
 /* ================================================================
@@ -60,31 +60,31 @@
    ================================================================ */
 
 .p-dialog .p-dialog-header {
-  padding: var(--space-5) var(--space-6) !important;
+  padding: var(--space-5) var(--space-6);
   border-bottom: 1px solid var(--color-border-primary);
 }
 
 .p-dialog .p-dialog-content {
-  padding: var(--space-5) var(--space-6) !important;
+  padding: var(--space-5) var(--space-6);
 }
 
 .p-dialog .p-dialog-footer {
-  padding: var(--space-4) var(--space-6) var(--space-5) !important;
+  padding: var(--space-4) var(--space-6) var(--space-5);
   border-top: 1px solid var(--color-border-primary);
   gap: var(--space-3);
 }
 
 /* Compact Dialog */
 .dialog-compact .p-dialog-header {
-  padding: var(--space-4) var(--space-5) !important;
+  padding: var(--space-4) var(--space-5);
 }
 
 .dialog-compact .p-dialog-content {
-  padding: var(--space-4) var(--space-5) !important;
+  padding: var(--space-4) var(--space-5);
 }
 
 .dialog-compact .p-dialog-footer {
-  padding: var(--space-3) var(--space-5) var(--space-4) !important;
+  padding: var(--space-3) var(--space-5) var(--space-4);
 }
 
 /* ================================================================
@@ -144,21 +144,21 @@
 .p-select,
 .p-multiselect,
 .p-textarea {
-  padding: var(--space-3) var(--space-4) !important; /* 12px 16px */
+  padding: var(--space-3) var(--space-4); /* 12px 16px */
   min-height: 44px; /* Touch target minimum */
 }
 
 /* Small Inputs */
 .p-inputtext-sm,
 input.input-sm {
-  padding: var(--space-2) var(--space-3) !important; /* 8px 12px */
+  padding: var(--space-2) var(--space-3); /* 8px 12px */
   min-height: 36px;
 }
 
 /* Large Inputs */
 .p-inputtext-lg,
 input.input-lg {
-  padding: var(--space-4) var(--space-5) !important; /* 16px 20px */
+  padding: var(--space-4) var(--space-5); /* 16px 20px */
   min-height: 52px;
 }
 
@@ -192,17 +192,17 @@ input.input-lg {
 
 /* Table Cells */
 .p-datatable .p-datatable-thead > tr > th {
-  padding: var(--space-3) var(--space-4) !important;
+  padding: var(--space-3) var(--space-4);
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
-  padding: var(--space-3) var(--space-4) !important;
+  padding: var(--space-3) var(--space-4);
 }
 
 /* Compact Table */
 .table-compact .p-datatable-thead > tr > th,
 .table-compact .p-datatable-tbody > tr > td {
-  padding: var(--space-2) var(--space-3) !important;
+  padding: var(--space-2) var(--space-3);
 }
 
 /* ================================================================
@@ -402,24 +402,24 @@ input.input-lg {
 @media (max-width: 768px) {
   /* Reduce card padding on mobile */
   .p-card .p-card-body {
-    padding: var(--space-4) !important;
+    padding: var(--space-4);
   }
 
   .p-card .p-card-header {
-    padding: var(--space-4) var(--space-4) 0 !important;
+    padding: var(--space-4) var(--space-4) 0;
   }
 
   /* Reduce dialog padding on mobile */
   .p-dialog .p-dialog-header {
-    padding: var(--space-4) var(--space-5) !important;
+    padding: var(--space-4) var(--space-5);
   }
 
   .p-dialog .p-dialog-content {
-    padding: var(--space-4) var(--space-5) !important;
+    padding: var(--space-4) var(--space-5);
   }
 
   .p-dialog .p-dialog-footer {
-    padding: var(--space-3) var(--space-5) var(--space-4) !important;
+    padding: var(--space-3) var(--space-5) var(--space-4);
   }
 
   /* Reduce section spacing */
@@ -441,11 +441,11 @@ input.input-lg {
 @media (max-width: 480px) {
   /* Further reduce on small screens */
   .p-card .p-card-body {
-    padding: var(--space-3) !important;
+    padding: var(--space-3);
   }
 
   .p-dialog .p-dialog-content {
-    padding: var(--space-3) var(--space-4) !important;
+    padding: var(--space-3) var(--space-4);
   }
 
   .section {

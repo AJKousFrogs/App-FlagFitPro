@@ -936,7 +936,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       if (channels.length > 0 && !this.currentChannel()) {
         await this.selectChannel(channels[0]);
       }
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to load channels");
     }
   }
@@ -991,7 +991,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Select the new channel
       await this.selectChannel(channel);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to create channel");
     }
   }
@@ -1008,14 +1008,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   // ============================================================================
 
   async sendMessage(): Promise<void> {
-    if (!this.newMessage.trim() || !this.currentChannel()) return;
+    const channel = this.currentChannel();
+    if (!this.newMessage.trim() || !channel) return;
 
     try {
       // Parse mentions from message
       const mentions = this.parseMentions(this.newMessage);
 
       await this.channelService.sendMessage({
-        channel_id: this.currentChannel()!.id,
+        channel_id: channel.id,
         message: this.newMessage,
         is_important: this.markAsImportant,
         mentions: mentions,
@@ -1026,7 +1027,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this._showMentionSuggestions.set(false);
 
       setTimeout(() => this.scrollToBottom(), 100);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to send message");
     }
   }
@@ -1034,7 +1035,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   async togglePin(message: ChatMessage): Promise<void> {
     try {
       await this.channelService.togglePinMessage(message.id);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to update pin");
     }
   }
@@ -1042,7 +1043,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   async toggleImportant(message: ChatMessage): Promise<void> {
     try {
       await this.channelService.toggleImportantMessage(message.id);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to update importance");
     }
   }
@@ -1053,7 +1054,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       await this.channelService.deleteMessage(message.id);
       this.toastService.success("Message deleted");
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to delete message");
     }
   }
@@ -1113,7 +1114,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this._mentionSuggestions.set(suggestions);
       this._showMentionSuggestions.set(suggestions.length > 0);
-    } catch (error) {
+    } catch (_error) {
       // Fallback to empty suggestions on error
       this._showMentionSuggestions.set(false);
     }
@@ -1276,7 +1277,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         channel.id,
       );
       this._channelMembersData.set(membersData);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to load channel members");
       this._channelMembersData.set(null);
     } finally {
@@ -1312,7 +1313,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastService.success(
         `Started conversation with ${member.full_name}`,
       );
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to start conversation");
     }
   }

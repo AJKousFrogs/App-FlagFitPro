@@ -16,7 +16,6 @@ import { FormsModule } from "@angular/forms";
 
 // PrimeNG
 import { DialogModule } from "primeng/dialog";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { InputTextModule } from "primeng/inputtext";
 import { TextareaModule } from "primeng/textarea";
 import { Select } from "primeng/select";
@@ -37,8 +36,6 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
     TextareaModule,
     Select,
     MultiSelect,
-  
-    ButtonComponent,
   ],
   template: `
     <p-dialog

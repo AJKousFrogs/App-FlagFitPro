@@ -86,7 +86,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
 
   // Value signal
   value = signal<boolean>(false);
-  private onChangeFn = (value: boolean) => {};
+  private onChangeFn = (_value: boolean) => {};
   private onTouchedFn = () => {};
 
   // Events
@@ -117,7 +117,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Handled via disabled input
   }
 }

@@ -26,9 +26,7 @@ import {
   query,
   animate,
   group,
-  AnimationTriggerMetadata,
   animateChild,
-  state,
 } from "@angular/animations";
 
 // ================================

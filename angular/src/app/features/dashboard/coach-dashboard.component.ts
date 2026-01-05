@@ -16,7 +16,6 @@ import { ChartModule } from "primeng/chart";
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -56,7 +55,8 @@ interface ConsentInfo {
 }
 
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
-type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
+// SortField reserved for future use
+// type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
 
 
 @Component({
@@ -71,7 +71,6 @@ type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
     ChartModule,
     DialogModule,
     TooltipModule,
-    ProgressBar,
     AvatarModule,
     BadgeModule,
     InputTextModule,

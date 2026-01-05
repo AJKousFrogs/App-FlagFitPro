@@ -114,20 +114,20 @@
         180deg,
         var(--hover-bg-primary-light) 0%,
         var(--hover-bg-primary) 100%
-      ) !important;
-      border-color: var(--hover-bg-primary) !important;
-      box-shadow: var(--hover-shadow-md) !important;
+      );
+      border-color: var(--hover-bg-primary);
+      box-shadow: var(--hover-shadow-md);
       transform: var(--hover-lift-normal);
     }
   }
 
   &:active:not(:disabled):not(.p-disabled) {
     transform: translateY(0) scale(0.98);
-    box-shadow: var(--hover-shadow-sm) !important;
+    box-shadow: var(--hover-shadow-sm);
   }
 
   &:focus-visible {
-    box-shadow: var(--hover-focus-ring) !important;
+    box-shadow: var(--hover-focus-ring);
     outline: var(--hover-focus-outline);
     outline-offset: 2px;
   }
@@ -195,7 +195,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-secondary) !important;
+      background-color: var(--hover-bg-secondary);
       color: var(--ds-primary-green);
     }
 
@@ -227,8 +227,8 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-tertiary) !important;
-      color: var(--ds-primary-green) !important;
+      background-color: var(--hover-bg-tertiary);
+      color: var(--ds-primary-green);
       padding-left: calc(var(--space-4, 1rem) + 4px);
     }
   }
@@ -258,7 +258,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      color: var(--hover-text-primary) !important;
+      color: var(--hover-text-primary);
 
       &::after {
         width: 100%;
@@ -278,7 +278,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      color: var(--hover-text-primary) !important;
+      color: var(--hover-text-primary);
     }
   }
 }
@@ -296,7 +296,7 @@
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       transform: var(--hover-scale-icon);
-      color: var(--ds-primary-green) !important;
+      color: var(--ds-primary-green);
     }
   }
 
@@ -314,7 +314,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-tertiary) !important;
+      background-color: var(--hover-bg-tertiary);
       transform: var(--hover-scale-subtle);
       box-shadow: var(--hover-shadow-sm);
     }
@@ -340,16 +340,16 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary) !important;
-      border-color: var(--hover-border-primary) !important;
-      color: var(--ds-primary-green) !important;
-      box-shadow: var(--hover-shadow-sm) !important;
+      background-color: var(--hover-bg-tertiary);
+      border-color: var(--hover-border-primary);
+      color: var(--ds-primary-green);
+      box-shadow: var(--hover-shadow-sm);
       transform: var(--hover-lift-subtle);
     }
   }
 
   &:active:not(:disabled):not(.p-disabled) {
-    background-color: var(--hover-bg-secondary) !important;
+    background-color: var(--hover-bg-secondary);
     transform: translateY(0) scale(0.98);
   }
 }
@@ -367,14 +367,14 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary) !important;
-      color: var(--hover-text-primary) !important;
+      background-color: var(--hover-bg-tertiary);
+      color: var(--hover-text-primary);
       transform: var(--hover-lift-subtle);
     }
   }
 
   &:active:not(:disabled):not(.p-disabled) {
-    background-color: var(--hover-bg-secondary) !important;
+    background-color: var(--hover-bg-secondary);
     transform: translateY(0);
   }
 }
@@ -398,16 +398,16 @@
         180deg,
         var(--hover-bg-primary-light) 0%,
         var(--hover-bg-primary) 100%
-      ) !important;
-      border-color: var(--hover-bg-primary) !important;
-      box-shadow: var(--hover-shadow-md) !important;
+      );
+      border-color: var(--hover-bg-primary);
+      box-shadow: var(--hover-shadow-md);
       transform: var(--hover-lift-normal);
     }
   }
 
   &:active:not(:disabled):not(.p-disabled) {
-    transform: translateY(0) scale(0.98) !important;
-    box-shadow: var(--hover-shadow-sm) !important;
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--hover-shadow-sm);
   }
 }
 
@@ -415,9 +415,9 @@
 .p-button.p-button-outlined {
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary) !important;
-      border-color: var(--hover-border-primary) !important;
-      box-shadow: var(--hover-shadow-sm) !important;
+      background-color: var(--hover-bg-tertiary);
+      border-color: var(--hover-border-primary);
+      box-shadow: var(--hover-shadow-sm);
       transform: var(--hover-lift-subtle);
     }
   }
@@ -428,7 +428,7 @@
 .p-button.p-button-link {
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--hover-bg-tertiary) !important;
+      background-color: var(--hover-bg-tertiary);
       transform: var(--hover-lift-subtle);
     }
   }
@@ -438,10 +438,10 @@
 .p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(.p-disabled) {
-      background-color: var(--surface-tertiary) !important;
-      border-color: var(--hover-border-primary) !important;
-      color: var(--ds-primary-green) !important;
-      box-shadow: var(--hover-shadow-sm) !important;
+      background-color: var(--surface-tertiary);
+      border-color: var(--hover-border-primary);
+      color: var(--ds-primary-green);
+      box-shadow: var(--hover-shadow-sm);
       transform: var(--hover-lift-subtle);
     }
   }
@@ -454,15 +454,15 @@
 .p-card {
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      transform: var(--hover-lift-strong) !important;
-      box-shadow: var(--hover-shadow-lg) !important;
-      border-color: var(--hover-border-subtle) !important;
+      transform: var(--hover-lift-strong);
+      box-shadow: var(--hover-shadow-lg);
+      border-color: var(--hover-border-subtle);
     }
   }
 
   @media (hover: none) and (pointer: coarse) {
     &:active {
-      transform: scale(0.99) !important;
+      transform: scale(0.99);
     }
   }
 }
@@ -475,9 +475,9 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      transform: var(--hover-lift-strong) !important;
-      box-shadow: var(--hover-shadow-lg) !important;
-      border-color: var(--hover-border-primary) !important;
+      transform: var(--hover-lift-strong);
+      box-shadow: var(--hover-shadow-lg);
+      border-color: var(--hover-border-primary);
     }
   }
 }
@@ -490,7 +490,7 @@
 .p-select {
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.p-disabled) {
-      border-color: var(--hover-border-primary) !important;
+      border-color: var(--hover-border-primary);
     }
   }
 }
@@ -505,8 +505,8 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.p-disabled):not(.p-highlight) {
-      background-color: var(--hover-bg-secondary) !important;
-      color: var(--ds-primary-green) !important;
+      background-color: var(--hover-bg-secondary);
+      color: var(--ds-primary-green);
     }
   }
 }
@@ -515,8 +515,8 @@
 .p-dropdown-item.p-highlight,
 .p-select-option.p-highlight,
 .p-listbox-option.p-highlight {
-  background-color: var(--ds-primary-green) !important;
-  color: var(--hover-text-on-primary) !important;
+  background-color: var(--ds-primary-green);
+  color: var(--hover-text-on-primary);
 }
 
 /* ================================
@@ -532,14 +532,14 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(.p-disabled) {
-        border-color: var(--hover-border-primary) !important;
+        border-color: var(--hover-border-primary);
         transform: var(--hover-scale-subtle);
       }
     }
 
     &.p-highlight {
-      background-color: var(--ds-primary-green) !important;
-      border-color: var(--ds-primary-green) !important;
+      background-color: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
     }
   }
 }
@@ -556,16 +556,16 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(.p-disabled) {
-        border-color: var(--hover-border-primary) !important;
+        border-color: var(--hover-border-primary);
         transform: var(--hover-scale-subtle);
       }
     }
 
     &.p-highlight {
-      border-color: var(--ds-primary-green) !important;
+      border-color: var(--ds-primary-green);
 
       .p-radiobutton-icon {
-        background-color: var(--ds-primary-green) !important;
+        background-color: var(--ds-primary-green);
       }
     }
   }
@@ -583,7 +583,7 @@
   }
 
   &.p-inputswitch-checked .p-inputswitch-slider {
-    background-color: var(--ds-primary-green) !important;
+    background-color: var(--ds-primary-green);
   }
 }
 
@@ -599,12 +599,12 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-tertiary) !important;
-      color: var(--ds-primary-green) !important;
-      padding-left: calc(var(--space-4, 1rem) + 4px) !important;
+      background-color: var(--hover-bg-tertiary);
+      color: var(--ds-primary-green);
+      padding-left: calc(var(--space-4, 1rem) + 4px);
 
       .p-menuitem-icon {
-        color: var(--ds-primary-green) !important;
+        color: var(--ds-primary-green);
       }
     }
   }
@@ -622,14 +622,14 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.p-highlight):not(.p-disabled) {
-      color: var(--ds-primary-green) !important;
-      border-bottom-color: var(--hover-border-subtle) !important;
+      color: var(--ds-primary-green);
+      border-bottom-color: var(--hover-border-subtle);
     }
   }
 
   &.p-highlight {
-    color: var(--ds-primary-green) !important;
-    border-bottom-color: var(--ds-primary-green) !important;
+    color: var(--ds-primary-green);
+    border-bottom-color: var(--ds-primary-green);
   }
 }
 
@@ -644,12 +644,12 @@
     &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
         [data-p-active="true"]
       ) {
-      background-color: rgba(255, 255, 255, 0.6) !important;
-      color: var(--color-text-primary) !important;
+      background-color: rgba(255, 255, 255, 0.6);
+      color: var(--color-text-primary);
 
       i,
       .pi {
-        color: var(--ds-primary-green) !important;
+        color: var(--ds-primary-green);
       }
     }
   }
@@ -657,15 +657,15 @@
   &.p-tab-active,
   &[aria-selected="true"],
   &[data-p-active="true"] {
-    background-color: var(--color-text-on-primary) !important;
-    color: var(--ds-primary-green) !important;
+    background-color: var(--color-text-on-primary);
+    color: var(--ds-primary-green);
     box-shadow:
       0 1px 3px rgba(0, 0, 0, 0.1),
-      0 2px 8px rgba(0, 0, 0, 0.05) !important;
+      0 2px 8px rgba(0, 0, 0, 0.05);
 
     i,
     .pi {
-      color: var(--ds-primary-green) !important;
+      color: var(--ds-primary-green);
     }
   }
 }
@@ -681,14 +681,14 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-ultra-light) !important;
+      background-color: var(--hover-bg-ultra-light);
       transform: translateX(4px);
     }
   }
 
   &.p-highlight {
-    background-color: var(--hover-bg-tertiary) !important;
-    color: var(--ds-primary-green) !important;
+    background-color: var(--hover-bg-tertiary);
+    color: var(--ds-primary-green);
   }
 }
 
@@ -698,7 +698,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--surface-tertiary) !important;
+      background-color: var(--surface-tertiary);
     }
   }
 }
@@ -714,8 +714,8 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-tertiary) !important;
-      color: var(--ds-primary-green) !important;
+      background-color: var(--hover-bg-tertiary);
+      color: var(--ds-primary-green);
     }
   }
 }
@@ -744,7 +744,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      color: var(--color-status-error) !important;
+      color: var(--color-status-error);
       transform: scale(1.2);
     }
   }
@@ -839,14 +839,14 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not(:focus) {
-      border-color: var(--color-text-secondary) !important;
+      border-color: var(--color-text-secondary);
     }
   }
 
   &:focus {
-    border-color: var(--ds-primary-green) !important;
-    box-shadow: var(--hover-focus-ring) !important;
-    outline: none !important;
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--hover-focus-ring);
+    outline: none;
   }
 }
 
@@ -869,10 +869,10 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--hover-bg-tertiary) !important;
-      border-color: var(--hover-border-subtle) !important;
-      color: var(--ds-primary-green) !important;
-      box-shadow: var(--hover-shadow-sm) !important;
+      background-color: var(--hover-bg-tertiary);
+      border-color: var(--hover-border-subtle);
+      color: var(--ds-primary-green);
+      box-shadow: var(--hover-shadow-sm);
 
       .pi,
       .p-icon,
@@ -885,7 +885,7 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
 
   &:active {
     transform: scale(0.92);
-    background-color: var(--hover-bg-secondary) !important;
+    background-color: var(--hover-bg-secondary);
   }
 }
 
@@ -898,8 +898,8 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
   }
 
   .hover-card:hover,
@@ -908,7 +908,7 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
   .p-button:hover,
   .p-card:hover,
   .p-avatar:hover {
-    transform: none !important;
+    transform: none;
   }
 }
 

@@ -1,11 +1,9 @@
-import { Component, input, computed } from "@angular/core";
-
+import { Component, input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import {
   formatNumber,
-  formatPercentage,
-  formatAverage,
   formatStat,
 } from "../../utils/format.utils";
 
@@ -13,7 +11,8 @@ export interface StatItem {
   label: string;
   value: string | number;
   icon?: string;
-  color?: string;
+  /** Icon type for predefined color schemes: 'primary' | 'error' | 'warning' | 'info' */
+  iconType?: "primary" | "error" | "warning" | "info";
   trend?: string;
   trendType?: "positive" | "negative" | "neutral";
   /**
@@ -30,49 +29,50 @@ export interface StatItem {
 @Component({
   selector: "app-stats-grid",
   standalone: true,
-  imports: [CardModule, TagModule],
+  imports: [CommonModule, CardModule, TagModule],
   template: `
-    <div class="stats-grid">
+    <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {
-        <p-card class="stat-card">
-          <div class="stat-content">
+        <p-card styleClass="stat-card">
+          <div class="stat-card-content">
             @if (stat.icon) {
-              <div
-                class="stat-icon"
-                [style.background]="
-                  (stat.color || 'var(--ds-primary-green)') + '20'
-                "
-                [style.color]="stat.color || 'var(--ds-primary-green)'"
-              >
+              <div class="stat-icon" [ngClass]="getIconClass(stat.iconType)">
                 <i [class]="'pi ' + stat.icon"></i>
               </div>
             }
-            <div class="stat-info">
-              <div class="stat-value">{{ formatStatValue(stat) }}</div>
-              <div class="stat-label">{{ stat.label }}</div>
-              @if (stat.trend) {
-                <div class="stat-trend">
-                  <p-tag
-                    [value]="stat.trend"
-                    [severity]="getTrendSeverity(stat.trendType)"
-                  >
-                  </p-tag>
-                </div>
-              }
+            <div class="stat-details">
+              <span class="stat-value">{{ formatStatValue(stat) }}</span>
+              <span class="stat-label">{{ stat.label }}</span>
             </div>
+            @if (stat.trend) {
+              <p-tag
+                [value]="stat.trend"
+                [severity]="getTrendSeverity(stat.trendType)"
+                styleClass="stat-tag"
+              />
+            }
           </div>
         </p-card>
       }
-    </div>
+    </section>
   `,
   styleUrl: './stats-grid.component.scss',
 })
 export class StatsGridComponent {
-  // Angular 21: Use input() signal instead of @Input()
   stats = input<StatItem[]>([]);
 
   trackByLabel(index: number, item: StatItem): string {
     return item.label;
+  }
+
+  getIconClass(iconType?: string): string {
+    const classes: Record<string, string> = {
+      primary: "icon-primary",
+      error: "icon-error",
+      warning: "icon-warning",
+      info: "icon-info",
+    };
+    return classes[iconType || "primary"] || "icon-primary";
   }
 
   getTrendSeverity(
@@ -89,23 +89,15 @@ export class StatsGridComponent {
     return severities[trendType || "neutral"] || "info";
   }
 
-  /**
-   * Format stat value based on formatType
-   * If formatType is provided, automatically formats the value
-   * Otherwise, returns the value as-is (for pre-formatted strings)
-   */
   formatStatValue(stat: StatItem): string {
-    // If value is already a string, return as-is (pre-formatted)
     if (typeof stat.value === "string") {
       return stat.value;
     }
 
-    // If no formatType specified, format as whole number
     if (!stat.formatType || stat.formatType === "none") {
       return formatNumber(stat.value, 0);
     }
 
-    // Apply formatting based on formatType
     return formatStat(
       stat.value,
       stat.formatType as "number" | "percent" | "average",

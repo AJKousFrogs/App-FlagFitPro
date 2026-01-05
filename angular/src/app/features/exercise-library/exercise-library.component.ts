@@ -567,7 +567,7 @@ export class ExerciseLibraryComponent implements OnInit {
         detail: `"${exercise.name}" has been logged to your daily protocol`,
         life: 3000,
       });
-    }).catch(err => {
+    }).catch(_err => {
       this.messageService.add({
         severity: "error",
         summary: "Error",

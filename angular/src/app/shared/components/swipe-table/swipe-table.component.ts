@@ -1,6 +1,5 @@
 import {
   Component,
-  HostListener,
   ViewChild,
   ElementRef,
   ChangeDetectionStrategy,

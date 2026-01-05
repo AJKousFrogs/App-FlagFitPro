@@ -3,7 +3,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  inject,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -631,8 +630,9 @@ export class PlayerComparisonComponent implements OnChanges {
 
   private getStatValue(player: PlayerStats, key: string): number | string {
     // Check direct property first
-    if (key in player && (player as any)[key] !== undefined) {
-      return (player as any)[key];
+    const playerRecord = player as Record<string, unknown>;
+    if (key in player && playerRecord[key] !== undefined) {
+      return playerRecord[key] as number | string;
     }
     // Check stats object
     if (player.stats && key in player.stats) {

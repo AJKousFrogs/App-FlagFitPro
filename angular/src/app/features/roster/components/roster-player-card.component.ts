@@ -19,16 +19,13 @@ import { TitleCasePipe, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
-import { Player, PlayerRiskLevel } from "../roster.models";
+import { Player } from "../roster.models";
 import { PlayerMetricsService, PlayerWithMetrics } from "../services/player-metrics.service";
 import {
   getJerseyColor,
-  getStatusSeverity,
   getPlayerStats,
   formatHeight,
   formatWeight,
@@ -47,10 +44,7 @@ import {
     FormsModule,
     TitleCasePipe,
     DecimalPipe,
-  
-    ButtonComponent,
-    IconButtonComponent,
-  ],
+    Icon],
   template: `
     <p-card class="player-card" [class.selected]="isSelected()" [class.risk-high]="enrichedPlayer().riskLevel === 'high'" [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'">
       <!-- Selection Checkbox (Coach+ only) -->
