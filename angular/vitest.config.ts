@@ -1,10 +1,13 @@
-import { defineConfig } from "vitest/config";
+/// <reference types="vitest" />
+import { defineConfig } from "vite";
+import angular from "@analogjs/vite-plugin-angular";
 import { resolve } from "path";
 
 export default defineConfig({
+  plugins: [angular()],
   test: {
-    environment: "jsdom",
     globals: true,
+    environment: "jsdom",
     include: ["src/**/*.spec.ts"],
     exclude: ["node_modules", "dist"],
     setupFiles: ["src/test-setup.ts"],
@@ -13,6 +16,9 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       exclude: ["node_modules/", "dist/", "**/*.spec.ts"],
     },
+    // Increase timeout for Angular compilation
+    testTimeout: 15000,
+    hookTimeout: 15000,
   },
   resolve: {
     alias: {
