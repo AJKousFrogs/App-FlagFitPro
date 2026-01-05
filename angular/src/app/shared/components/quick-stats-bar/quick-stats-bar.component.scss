@@ -208,16 +208,15 @@
 }
 
 .variant-glass {
-  background: rgba(255, 255, 255, 0.8);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: var(--surface-primary);
   padding: var(--space-3);
   border-radius: var(--radius-xl);
+  border: var(--border-1) solid var(--color-border-muted);
 }
 
 .variant-glass .stat-item {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-muted);
 }
 
 /* Responsive */

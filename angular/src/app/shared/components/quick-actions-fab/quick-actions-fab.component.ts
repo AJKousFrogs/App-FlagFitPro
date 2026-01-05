@@ -28,7 +28,6 @@ interface QuickActionItem {
   selector: "app-quick-actions-fab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   imports: [CommonModule, TooltipModule],
   template: `
     @if (showFAB()) {

@@ -1,12 +1,11 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   signal,
   computed,
   ChangeDetectionStrategy,
   OnInit,
+  input,
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
@@ -203,9 +202,9 @@ export interface WorkoutEntry {
   styleUrl: "./workout-calendar.component.scss",
 })
 export class WorkoutCalendarComponent implements OnInit {
-  @Input() workouts: WorkoutEntry[] = [];
-  @Output() daySelected = new EventEmitter<Date>();
-  @Output() workoutSelected = new EventEmitter<WorkoutEntry>();
+  readonly workouts = input<WorkoutEntry[]>([]);
+  readonly daySelected = output<Date>();
+  readonly workoutSelected = output<WorkoutEntry>();
 
   currentDate = signal(new Date());
   viewMode = signal<"month" | "week">("month");

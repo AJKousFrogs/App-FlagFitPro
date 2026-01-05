@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -55,12 +55,12 @@ import {
                   ></div>
                 </div>
                 <span class="progress-text">
-                  {{ currentDataPoints }} / {{ minimumRequired }} days
+                  {{ currentDataPoints() }} / {{ minimumRequired() }} days
                 </span>
               </div>
             }
           </div>
-          @if (showDismiss) {
+          @if (showDismiss()) {
             <button
               class="dismiss-btn"
               (click)="onDismiss()"
@@ -70,9 +70,9 @@ import {
             </button>
           }
         </div>
-        @if (warnings.length > 0) {
+        @if (warnings().length > 0) {
           <div class="banner-warnings">
-            @for (warning of warnings; track $index) {
+            @for (warning of warnings(); track $index) {
               <span class="warning-item">
                 <i class="pi pi-info-circle"></i>
                 {{ warning }}
@@ -86,21 +86,21 @@ import {
   styleUrl: "./data-source-banner.component.scss",
 })
 export class DataSourceBannerComponent {
-  @Input() dataState: DataState = DataState.NO_DATA;
-  @Input() currentDataPoints: number = 0;
-  @Input() minimumRequired: number = 28;
-  @Input() warnings: string[] = [];
-  @Input() metricName: string = "metrics";
-  @Input() showDismiss: boolean = false;
-  @Input() showWhenReal: boolean = false;
+  readonly dataState = input<DataState>(DataState.NO_DATA);
+  readonly currentDataPoints = input<number>(0);
+  readonly minimumRequired = input<number>(28);
+  readonly warnings = input<string[]>([]);
+  readonly metricName = input<string>("metrics");
+  readonly showDismiss = input<boolean>(false);
+  readonly showWhenReal = input<boolean>(false);
 
   private dismissed = false;
 
   private getPrivacyMessage(): DataStateMessage {
     const stateKey = (
-      this.dataState === DataState.INSUFFICIENT_DATA
+      this.dataState() === DataState.INSUFFICIENT_DATA
         ? "INSUFFICIENT_DATA"
-        : this.dataState === DataState.NO_DATA
+        : this.dataState() === DataState.NO_DATA
           ? "NO_DATA"
           : "REAL_DATA"
     ) as DataStateType;
@@ -110,13 +110,13 @@ export class DataSourceBannerComponent {
   // Computed properties
   shouldShow = computed(() => {
     if (this.dismissed) return false;
-    if (this.dataState === DataState.REAL_DATA && !this.showWhenReal)
+    if (this.dataState() === DataState.REAL_DATA && !this.showWhenReal())
       return false;
     return true;
   });
 
   bannerClass = computed(() => {
-    switch (this.dataState) {
+    switch (this.dataState()) {
       case DataState.NO_DATA:
         return "no-data";
       case DataState.INSUFFICIENT_DATA:
@@ -138,16 +138,16 @@ export class DataSourceBannerComponent {
 
   message = computed(() => {
     const msg = this.getPrivacyMessage();
-    return msg.reason.replace("training data", this.metricName + " data");
+    return msg.reason.replace("training data", this.metricName() + " data");
   });
 
   showProgress = computed(() => {
-    return this.dataState === DataState.INSUFFICIENT_DATA;
+    return this.dataState() === DataState.INSUFFICIENT_DATA;
   });
 
   progressPercent = computed(() => {
-    if (this.minimumRequired === 0) return 0;
-    return Math.min((this.currentDataPoints / this.minimumRequired) * 100, 100);
+    if (this.minimumRequired() === 0) return 0;
+    return Math.min((this.currentDataPoints() / this.minimumRequired()) * 100, 100);
   });
 
   onDismiss(): void {

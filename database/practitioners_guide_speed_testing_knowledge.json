@@ -1,0 +1,189 @@
+{
+  "metadata": {
+    "title": "Practitioner's Guide to Speed Testing",
+    "authors": [
+      "VALD Performance Contributors"
+    ],
+    "total_pages": 38,
+    "document_type": "practitioner_guide"
+  },
+  "research_article": {
+    "title": "Practitioner's Guide to Speed Testing",
+    "authors": [
+      "VALD Performance Contributors"
+    ],
+    "publication_year": 2024,
+    "publisher": "VALD Performance",
+    "primary_category": "training",
+    "categories": [
+      "assessment",
+      "training",
+      "performance",
+      "monitoring"
+    ],
+    "tags": [
+      "speed",
+      "testing",
+      "sprinting",
+      "timing_gates",
+      "acceleration",
+      "max_velocity",
+      "force_plates",
+      "40_yard_dash"
+    ],
+    "study_type": "review",
+    "evidence_level": "B",
+    "sport_type": "field_sports",
+    "key_findings": "Comprehensive guide on speed testing protocols using timing gates and force plates. Covers standardized testing distances (10m, 20m, 30m, 40-yard), split time analysis, acceleration profiling, and data interpretation for training program design.",
+    "practical_applications": [
+      "Implement standardized speed testing protocols",
+      "Use timing gates for objective sprint measurement",
+      "Analyze split times for acceleration profiling",
+      "Compare results to sport-specific normative data",
+      "Inform training programming from test results",
+      "Monitor speed development longitudinally",
+      "Assess both acceleration and max velocity capabilities"
+    ],
+    "training_types": [
+      "speed",
+      "acceleration",
+      "sprinting",
+      "assessment"
+    ],
+    "is_open_access": false,
+    "verified": true,
+    "quality_score": 9,
+    "keywords": [
+      "speed_testing",
+      "sprinting",
+      "timing_gates",
+      "acceleration",
+      "assessment",
+      "40yd_dash"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "training_method",
+      "topic": "speed_testing_protocols",
+      "question": "What are the best practices for speed testing in athletes?",
+      "answer": "Speed testing using timing gates provides objective measurement of acceleration and maximum velocity capabilities. Standard protocols include 10m, 20m, 30m splits and 40-yard dash for field sports. Testing requires environmental control, standardized warm-up, multiple trials for reliability, and consideration of starting technique. Force plates can add additional insights into force production during acceleration.",
+      "summary": "Speed testing protocols use timing gates at standardized distances to objectively measure acceleration and max velocity in athletes.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "elite_athletes",
+        "field_sport_athletes",
+        "running_athletes"
+      ],
+      "sport_specificity": "field_sports",
+      "categories": [
+        "assessment",
+        "testing",
+        "speed"
+      ],
+      "tags": [
+        "speed",
+        "testing",
+        "sprinting",
+        "acceleration",
+        "timing_gates",
+        "40yd_dash"
+      ],
+      "protocols": {
+        "standard_distances": [
+          "10m",
+          "20m",
+          "30m",
+          "40yd"
+        ],
+        "equipment": [
+          "timing_gates",
+          "force_plates"
+        ],
+        "trials": "minimum_2_maximum_3",
+        "rest_between_trials": "3-5_minutes"
+      },
+      "best_practices": [
+        "Use timing gates for objective measurement",
+        "Standardize warm-up protocols across testing sessions",
+        "Test multiple distances (10m, 20m, 30m, 40yd)",
+        "Control environmental conditions (wind, surface)",
+        "Use multiple trials (2-3) for reliability",
+        "Track split times for acceleration analysis",
+        "Allow adequate rest between trials (3-5 min)"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "speed_development_training",
+      "question": "How should speed development be programmed for athletes?",
+      "answer": "Speed development requires integration of technical sprint mechanics, power development, and specific sprint training. Programming should differentiate between acceleration work (0-20m) and max velocity training (30m+). Include mechanics coaching, resisted/assisted sprints, and plyometric work. Periodize based on season phase with higher volumes in off-season and maintenance during competition.",
+      "summary": "Speed development combines technical mechanics, power training, and specific sprint work periodized throughout the training year.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "training",
+        "speed_development"
+      ],
+      "tags": [
+        "speed_development",
+        "training",
+        "acceleration",
+        "max_velocity",
+        "sprint_mechanics"
+      ],
+      "training_types": [
+        "speed",
+        "power",
+        "technical"
+      ],
+      "best_practices": [
+        "Include technical sprint mechanics coaching",
+        "Develop both acceleration and max velocity separately",
+        "Periodize training volume by season phase",
+        "Monitor training load and ensure adequate recovery",
+        "Individualize based on athlete testing results",
+        "Progress from technical work to speed endurance"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "speed_data_interpretation",
+      "question": "How should speed test results be interpreted and applied?",
+      "answer": "Speed test interpretation involves analyzing split times to create acceleration profiles, comparing to normative data, and identifying individual characteristics. Acceleration is assessed through 0-10m and 10-20m splits, while max velocity through later splits. Asymmetries or weaknesses guide training focus. Track longitudinal changes to assess program effectiveness.",
+      "summary": "Speed data interpretation uses split time analysis, normative comparisons, and longitudinal tracking to inform individualized training.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "elite_athletes",
+        "amateur_athletes"
+      ],
+      "sport_specificity": "field_sports",
+      "categories": [
+        "assessment",
+        "data_analysis"
+      ],
+      "tags": [
+        "assessment",
+        "interpretation",
+        "split_times",
+        "normative_data",
+        "acceleration_profile"
+      ],
+      "best_practices": [
+        "Analyze split times for acceleration profile",
+        "Compare to position and sport-specific norms",
+        "Track longitudinal changes over time",
+        "Identify individual acceleration vs max velocity strengths",
+        "Use results to guide training emphasis",
+        "Consider contextual factors (fatigue, conditions)"
+      ]
+    }
+  ]
+}

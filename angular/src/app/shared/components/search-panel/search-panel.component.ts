@@ -47,7 +47,6 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   selector: "app-search-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   imports: [
     RouterModule,
     FormsModule,

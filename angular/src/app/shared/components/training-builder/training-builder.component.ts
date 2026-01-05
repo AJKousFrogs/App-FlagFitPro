@@ -22,7 +22,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { Toggle } from "primeng/togglebutton";
@@ -64,7 +64,7 @@ interface Goal {
     ReactiveFormsModule,
     FormsModule,
     CardModule,
-    StepsModule,
+    StepperModule,
     Select,
     Slider,
     InputTextModule,
@@ -76,8 +76,13 @@ interface Goal {
   ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
-      <p-steps [(activeIndex)]="activeStep" [model]="steps" [readonly]="false">
-      </p-steps>
+      <p-stepper [value]="activeStep" (valueChange)="activeStep = $event" [linear]="false">
+        <p-step-list>
+          @for (step of steps; track $index) {
+            <p-step [value]="$index">{{ step.label }}</p-step>
+          }
+        </p-step-list>
+      </p-stepper>
 
       <div class="step-content-wrapper">
         <!-- Step 1: Session Goals -->

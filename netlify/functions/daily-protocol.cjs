@@ -199,6 +199,16 @@ async function getUserTrainingContext(supabase, userId, date) {
       .eq("day_of_week", dayOfWeek)
       .single();
     sessionTemplate = template;
+    
+    console.log("[daily-protocol] Session template lookup:", {
+      weekId: currentWeek.id,
+      dayOfWeek,
+      dayName,
+      templateFound: !!template,
+      templateName: template?.session_name,
+    });
+  } else {
+    console.log("[daily-protocol] No current week found for date:", date);
   }
 
   // 7. Check if today has flag practice
@@ -539,6 +549,256 @@ async function getProtocol(supabase, userId, params, headers) {
 }
 
 /**
+ * Generate Return-to-Play Protocol
+ * Progressive 3-week foundation building program for injured athletes
+ * Based on sports medicine best practices for safe return to training
+ */
+async function generateReturnToPlayProtocol(
+  supabase,
+  userId,
+  date,
+  context,
+  wellnessCheckin,
+) {
+  console.log("[RTP] Generating return-to-play protocol for", date);
+
+  // Parse injury information
+  const injuries = wellnessCheckin.soreness_areas || [];
+  const injurySeverity = wellnessCheckin.overall_soreness || 3; // 1-5 scale
+  const painLevel = wellnessCheckin.pain_level || 2; // 1-5 scale
+
+  // Determine RTP phase based on pain level and time since injury
+  let rtpPhase = 1; // Phase 1: Pain management & gentle mobility
+  let phaseName = "Phase 1: Foundation & Pain Management";
+  let aiRationale = `🏥 RETURN-TO-PLAY PROTOCOL - ${phaseName}\n\n`;
+
+  // Add injury-specific guidance
+  aiRationale += `Active concerns: ${injuries.join(", ")}\n`;
+  aiRationale += `Pain level: ${painLevel}/5\n\n`;
+
+  if (painLevel >= 4) {
+    aiRationale += `⚠️ HIGH PAIN LEVEL: Focus on pain-free movement only. No loading exercises. Consult physiotherapist if pain persists.\n\n`;
+    rtpPhase = 1;
+  } else if (painLevel === 3) {
+    aiRationale += `⚠️ MODERATE PAIN: Light activity only. Avoid aggravating movements. Progress slowly.\n\n`;
+    rtpPhase = 1;
+  } else if (painLevel === 2) {
+    aiRationale += `✓ MILD DISCOMFORT: Can begin light loading. Monitor response carefully.\n\n`;
+    rtpPhase = 2;
+    phaseName = "Phase 2: Light Loading & Strengthening";
+  } else {
+    aiRationale += `✓ MINIMAL/NO PAIN: Can progress to moderate loading. Continue building foundation.\n\n`;
+    rtpPhase = 3;
+    phaseName = "Phase 3: Progressive Loading & Conditioning";
+  }
+
+  aiRationale += `📋 TODAY'S FOCUS:\n`;
+  if (rtpPhase === 1) {
+    aiRationale += `- Gentle mobility and pain-free movement\n`;
+    aiRationale += `- Focus on areas NOT injured\n`;
+    aiRationale += `- Build base conditioning without aggravation\n`;
+    aiRationale += `- Daily foam rolling and mobility work\n`;
+  } else if (rtpPhase === 2) {
+    aiRationale += `- Light resistance training (bodyweight only)\n`;
+    aiRationale += `- Controlled movements in pain-free ranges\n`;
+    aiRationale += `- Progressive mobility work\n`;
+    aiRationale += `- Monitor for any pain increase\n`;
+  } else {
+    aiRationale += `- Moderate loading (20-30% of normal)\n`;
+    aiRationale += `- Position-specific skill work at reduced intensity\n`;
+    aiRationale += `- Build work capacity progressively\n`;
+    aiRationale += `- Prepare for return to team practice\n`;
+  }
+
+  aiRationale += `\n⚕️ STOP if pain increases beyond 3/10 during any exercise.\n`;
+  aiRationale += `✓ Update your wellness check-in daily to track progress.\n`;
+
+  // Create the RTP protocol in database
+  const { data: protocol, error: protocolError } = await supabase
+    .from("daily_protocols")
+    .insert({
+      user_id: userId,
+      protocol_date: date,
+      readiness_score: Math.max(30, 50 - painLevel * 10), // Lower readiness with injury
+      acwr_value: 0.5, // Keep load very low during RTP
+      training_focus: `return_to_play_phase_${rtpPhase}`,
+      ai_rationale: aiRationale,
+      total_load_target_au: rtpPhase * 100, // Progressive: 100, 200, 300 AU
+    })
+    .select()
+    .single();
+
+  if (protocolError) {
+    console.error("[RTP] Error creating protocol:", protocolError);
+    throw protocolError;
+  }
+
+  const protocolExercises = [];
+  let sequenceOrder = 0;
+
+  // ============================================================================
+  // 1. MORNING MOBILITY - Always included, gentle version
+  // ============================================================================
+  const { data: mobilityExercises } = await supabase
+    .from("exercises")
+    .select("*")
+    .eq("category", "mobility")
+    .eq("subcategory", "morning_routine")
+    .eq("active", true)
+    .order("default_order")
+    .limit(5);
+
+  if (mobilityExercises && mobilityExercises.length > 0) {
+    mobilityExercises.forEach((ex) => {
+      protocolExercises.push({
+        protocol_id: protocol.id,
+        exercise_id: ex.id,
+        block_type: "morning_mobility",
+        block_order: 1,
+        sequence_order: sequenceOrder++,
+        prescribed_sets: 1,
+        prescribed_reps: ex.default_reps || 10,
+        prescribed_hold_seconds: ex.default_hold_seconds || 30,
+        rest_seconds: 30,
+        notes: "Pain-free range of motion only. Gentle movements.",
+        load_contribution_au: Math.round((ex.load_contribution_au || 10) * 0.5), // 50% load
+      });
+    });
+  }
+
+  // ============================================================================
+  // 2. REHAB-SPECIFIC EXERCISES - Based on injury area
+  // ============================================================================
+  if (rtpPhase >= 2) {
+    // Get rehab exercises from database
+    const { data: rehabExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "rehab")
+      .eq("active", true)
+      .order("difficulty_level") // Start with easiest
+      .limit(4);
+
+    if (rehabExercises && rehabExercises.length > 0) {
+      rehabExercises.forEach((ex) => {
+        const loadModifier = rtpPhase === 2 ? 0.3 : 0.5; // 30% or 50% normal load
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "rehab_progression",
+          block_order: 2,
+          sequence_order: sequenceOrder++,
+          prescribed_sets: rtpPhase === 2 ? 2 : 3,
+          prescribed_reps: ex.default_reps || 10,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          rest_seconds: 90,
+          notes: `RTP Phase ${rtpPhase}: ${loadModifier * 100}% intensity. Monitor pain closely.`,
+          load_contribution_au: Math.round(
+            (ex.load_contribution_au || 20) * loadModifier,
+          ),
+        });
+      });
+    }
+  }
+
+  // ============================================================================
+  // 3. PAIN-FREE CONDITIONING - Non-injured areas
+  // ============================================================================
+  if (rtpPhase >= 2) {
+    // Add light conditioning that avoids injured areas
+    const { data: conditioningExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "conditioning")
+      .eq("subcategory", "low_impact")
+      .eq("active", true)
+      .limit(3);
+
+    if (conditioningExercises && conditioningExercises.length > 0) {
+      conditioningExercises.forEach((ex) => {
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "conditioning",
+          block_order: 3,
+          sequence_order: sequenceOrder++,
+          prescribed_sets: 2,
+          prescribed_duration_seconds: rtpPhase === 2 ? 30 : 45,
+          rest_seconds: 60,
+          notes: "Low impact only. Stop if pain occurs.",
+          load_contribution_au: Math.round((ex.load_contribution_au || 15) * 0.4),
+        });
+      });
+    }
+  }
+
+  // ============================================================================
+  // 4. EVENING MOBILITY & FOAM ROLLING - Always included
+  // ============================================================================
+  const { data: eveningMobility } = await supabase
+    .from("exercises")
+    .select("*")
+    .eq("category", "mobility")
+    .eq("subcategory", "evening_routine")
+    .eq("active", true)
+    .order("default_order")
+    .limit(4);
+
+  if (eveningMobility && eveningMobility.length > 0) {
+    eveningMobility.forEach((ex) => {
+      protocolExercises.push({
+        protocol_id: protocol.id,
+        exercise_id: ex.id,
+        block_type: "evening_mobility",
+        block_order: 4,
+        sequence_order: sequenceOrder++,
+        prescribed_sets: 1,
+        prescribed_reps: ex.default_reps || 8,
+        prescribed_hold_seconds: ex.default_hold_seconds || 30,
+        rest_seconds: 30,
+        notes: "Gentle recovery work. Focus on relaxation.",
+        load_contribution_au: Math.round((ex.load_contribution_au || 8) * 0.5),
+      });
+    });
+  }
+
+  // Insert all exercises
+  if (protocolExercises.length > 0) {
+    const { error: insertError } = await supabase
+      .from("protocol_exercises")
+      .insert(protocolExercises);
+
+    if (insertError) {
+      console.error("[RTP] Error inserting exercises:", insertError);
+      throw insertError;
+    }
+  }
+
+  console.log(
+    `[RTP] Generated Phase ${rtpPhase} protocol with ${protocolExercises.length} exercises`,
+  );
+
+  // Return the complete protocol
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+    },
+    body: JSON.stringify({
+      success: true,
+      data: {
+        ...protocol,
+        exercises: protocolExercises,
+        is_return_to_play: true,
+        rtp_phase: rtpPhase,
+        phase_name: phaseName,
+      },
+    }),
+  };
+}
+
+/**
  * POST /api/daily-protocol/generate
  * Generate a new protocol for a given date using structured training data
  */
@@ -547,6 +807,38 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   // Get user's full training context
   const context = await getUserTrainingContext(supabase, userId, date);
+
+  // ============================================================================
+  // INJURY CHECK - Priority #1 for athlete safety
+  // ============================================================================
+  // Check for active injuries from daily wellness checkin
+  const { data: wellnessCheckin } = await supabase
+    .from("daily_wellness_checkin")
+    .select("*")
+    .eq("user_id", userId)
+    .order("checkin_date", { ascending: false })
+    .limit(1)
+    .single();
+
+  const hasActiveInjuries =
+    wellnessCheckin?.soreness_areas &&
+    wellnessCheckin.soreness_areas.length > 0;
+
+  // If injuries exist, generate return-to-play protocol instead
+  if (hasActiveInjuries) {
+    console.log(
+      "[daily-protocol] Active injuries detected:",
+      wellnessCheckin.soreness_areas,
+    );
+    return await generateReturnToPlayProtocol(
+      supabase,
+      userId,
+      date,
+      context,
+      wellnessCheckin,
+    );
+  }
+  // ============================================================================
 
   // Check if protocol already exists
   const { data: existing } = await supabase

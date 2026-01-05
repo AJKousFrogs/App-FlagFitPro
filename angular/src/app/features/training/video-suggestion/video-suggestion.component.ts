@@ -48,7 +48,7 @@ import { DividerModule } from "primeng/divider";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { SkeletonModule } from "primeng/skeleton";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TimelineModule } from "primeng/timeline";
@@ -107,7 +107,7 @@ interface VideoSuggestion {
     SkeletonModule,
     AvatarModule,
     TimelineModule,
-    StepsModule,
+    StepperModule,
     Chip,
     DividerModule,
     MainLayoutComponent,

@@ -1359,6 +1359,55 @@ app.get("/api/training/stats", async (req, res) => {
   }
 });
 
+// Training stats enhanced endpoint - REAL DATA
+app.get("/api/training/stats-enhanced", async (req, res) => {
+  if (!supabase) {
+    return res
+      .status(503)
+      .json({ success: false, error: "Database not configured" });
+  }
+
+  try {
+    // Get training stats similar to the function
+    const { data: sessions, error } = await supabase
+      .from("training_sessions")
+      .select("*")
+      .eq("status", "completed")
+      .order("session_date", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      throw error;
+    }
+
+    const totalMinutes =
+      sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
+
+    // Calculate enhanced stats
+    const intensityDistribution = sessions?.reduce((acc, s) => {
+      const intensity = s.intensity || "moderate";
+      acc[intensity] = (acc[intensity] || 0) + 1;
+      return acc;
+    }, {});
+
+    res.json({
+      success: true,
+      data: {
+        sessions: sessions || [],
+        totalHours: Math.round((totalMinutes / 60) * 10) / 10,
+        sessionCount: sessions?.length || 0,
+        intensityDistribution: intensityDistribution || {},
+        avgDuration: sessions?.length ? Math.round(totalMinutes / sessions.length) : 0,
+      },
+    });
+  } catch (error) {
+    console.error("[Training Stats Enhanced] Error:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to load enhanced training stats" });
+  }
+});
+
 app.get("/api/training/sessions", async (req, res) => {
   if (!supabase) {
     return res

@@ -1,0 +1,335 @@
+{
+  "metadata": {
+    "title": "Practitioner's Guide to Shoulders",
+    "authors": [
+      "Jo Clubb",
+      "Ben Ashworth"
+    ],
+    "organizations": [
+      "Global Performance Insights",
+      "Athletic Shoulder",
+      "VALD Performance"
+    ],
+    "total_pages": 66,
+    "document_type": "practitioner_guide",
+    "primary_focus": "shoulder_assessment_rehabilitation"
+  },
+  "research_article": {
+    "title": "Practitioner's Guide to Shoulders",
+    "authors": [
+      "Jo Clubb",
+      "Ben Ashworth"
+    ],
+    "publication_year": 2024,
+    "publisher": "VALD Performance",
+    "primary_category": "injury",
+    "categories": [
+      "injury_prevention",
+      "training",
+      "recovery",
+      "assessment",
+      "biomechanics"
+    ],
+    "tags": [
+      "shoulder",
+      "assessment",
+      "rehabilitation",
+      "strength_testing",
+      "ROM",
+      "overhead_athletes",
+      "force_testing",
+      "rotator_cuff"
+    ],
+    "study_type": "review",
+    "evidence_level": "B",
+    "sport_type": "general",
+    "key_findings": "Comprehensive guide covering shoulder anatomy, biomechanics, common injuries, assessment methods using modern technology (VALD force plates and dynamometers), and evidence-based rehabilitation strategies. Emphasizes objective measurement, monitoring RFD, and the importance of lower body in shoulder function.",
+    "practical_applications": [
+      "Use force plates (ForceDecks) and dynamometers (DynaMo, ForceFrame) for objective shoulder assessment",
+      "Implement standardized ROM testing protocols",
+      "Monitor rate of force development (RFD) not just peak strength",
+      "Apply evidence-based rehabilitation progressions",
+      "Monitor shoulder health in overhead and throwing athletes",
+      "Integrate lower body assessment for complete shoulder evaluation",
+      "Use case-specific protocols for different sports and injuries"
+    ],
+    "injury_types": [
+      "shoulder_impingement",
+      "rotator_cuff_tear",
+      "shoulder_instability",
+      "labral_injury"
+    ],
+    "training_types": [
+      "strength",
+      "stability",
+      "prehab",
+      "ROM"
+    ],
+    "recovery_methods": [
+      "rehabilitation",
+      "return_to_sport_protocols",
+      "progressive_loading"
+    ],
+    "is_open_access": false,
+    "verified": true,
+    "quality_score": 9,
+    "keywords": [
+      "shoulder",
+      "assessment",
+      "injury_prevention",
+      "rehabilitation",
+      "overhead_athletes",
+      "force_testing",
+      "ROM",
+      "RFD",
+      "VALD",
+      "rotator_cuff"
+    ],
+    "performance_metrics": [
+      "90\u00b0",
+      "1.4N/kg",
+      "21.2%",
+      "7%",
+      "2.1N/kg",
+      "50%",
+      "17.1%",
+      "180\u00b0",
+      "30%",
+      "40%",
+      "2.0N/kg",
+      "80%",
+      "135\u00b0"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "training_method",
+      "topic": "shoulder_anatomy_biomechanics",
+      "question": "What is the anatomy and biomechanics of the shoulder complex?",
+      "answer": "Jo Clubb is the Founder and Sports Science Consultant at Global Performance Insights , which \nprovides sports science support to professional teams, athletes, practitioners and sports tech \ncompanies all around the world. Previously, she worked as an Applied Sports Scientist for the Buffalo \nBills in the NFL and Buffalo Sabres in the NHL, as well as Chelsea Football Club and Brighton and Hove \nAlbion in English soccer. She shares sports science insights through her blog, YouTube channel and \nscientific publications and textbooks.\n\u201c\n  \nJo Clubb \nFounder and Sports Science Consultant  \nGlobal Performance Insights\n   @joclubbsportssci  \nAbout the Authors\nBen Ashworth\nDirector and High Performance Consultant  \nAthletic Shoulder\nBen Ashworth is the Director of Athletic Shoulder, working as a consultant with teams and individuals \nto help solve shoulder performance problems. He has over two decades of experience as a practitioner \nwith Masters in both Physiotherapy and Strength & Conditioning and is currently undertaking his PhD \nat Liverpool Hope University \u2013 a shoulder centre of excellence. \nBen\u2019s interest and experience in shoulders developed from his time in professional rugby at London \nWasps (2002-2005) and was accelerated through his work with the English Institute of Sport and, \nin particular, the British Judo team in the lead-up to his Team Great Britain role at the Olympics in \nLondon 2012. The Athletic Shoulder testing and monitoring philosophy combines Ben\u2019s shoulder \nexpertise with over 15 years of monitoring athletes in performance environments.  \n\u201c\n   @benphysiocoach\nOur athletic shoulder testing framework relies heavily on force assessment, enabling us to gather critical \ninsights that shape rehabilitation and recovery programs. We utilize VALD technology for comprehensive \nathlete profiling, ongoing monitoring and supporting the return-to-performance process. This approach has \nbeen instrumental across a broad range of elite performers, their coaches and performance teams, ensuring \ndata-driven decisions that optimize shoulder health and performance outcomes for all our clients.    \nThe shoulder plays a pivotal role in many sporting activities, yet its complex anatomy and biomechanics \nmake it one of the most challenging joints to understand. Recent advancements in technology and \nassessments, led by VALD, have greatly improved our ability to objectively measure and monitor shoulder \nfunction. Moreover, given the significant influence of the lower body on upper body tasks, it\u2019s crucial to \nintegrate assessments of both in evaluating shoulder performance comprehensively.\n2  |  Practitioner\u2019s Guide to Shoulders\n\n6  |  Practitioner\u2019s Guide to Shoulders\nAnatomy and Biomechanics \nof the Shoulder\nThe shoulder complex is one of the most intricate and mobile regions of the human body, enabling \na wide range of movements necessary for daily activities and athletic performance. This wide ROM \ncomes at the expense of joint stability and, therefore, is prone to dislocation and injury.\nShoulders are subjected to stress, both through everyday life and particularly in certain sports and \nplaying positions. Very minor changes in joint integrity can make the shoulder symptomatic  \nand dysfunctional.\nWhile we acknowledge that most readers will be familiar with the anatomy of the shoulder, given its \ncomplexity, we thought it would be worthwhile to provide a short refresher. \n\u2026most readers will be familiar with the anatomy of the \nshoulder, [but] given its complexity, we thought it would \nbe worthwhile to provide a short refresher. \nBack to Contents\n\n",
+      "summary": "The shoulder is a complex structure involving multiple joints (glenohumeral, acromioclavicular, sternoclavicular, scapulothoracic) and the rotator cuff muscles that provide stability and mobility.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "elite_athletes",
+        "amateur_athletes",
+        "general_population",
+        "overhead_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "anatomy",
+        "biomechanics",
+        "shoulder_health"
+      ],
+      "tags": [
+        "shoulder_complex",
+        "rotator_cuff",
+        "scapula",
+        "glenohumeral",
+        "biomechanics"
+      ],
+      "best_practices": [
+        "Understand the kinetic chain relationship between lower body and shoulder",
+        "Assess all components of shoulder complex",
+        "Monitor both ROM and strength metrics"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "shoulder_assessment_protocols",
+      "question": "What are the best practices for shoulder assessment?",
+      "answer": "Jo Clubb is the Founder and Sports Science Consultant at Global Performance Insights , which \nprovides sports science support to professional teams, athletes, practitioners and sports tech \ncompanies all around the world. Previously, she worked as an Applied Sports Scientist for the Buffalo \nBills in the NFL and Buffalo Sabres in the NHL, as well as Chelsea Football Club and Brighton and Hove \nAlbion in English soccer. She shares sports science insights through her blog, YouTube channel and \nscientific publications and textbooks.\n\u201c\n  \nJo Clubb \nFounder and Sports Science Consultant  \nGlobal Performance Insights\n   @joclubbsportssci  \nAbout the Authors\nBen Ashworth\nDirector and High Performance Consultant  \nAthletic Shoulder\nBen Ashworth is the Director of Athletic Shoulder, working as a consultant with teams and individuals \nto help solve shoulder performance problems. He has over two decades of experience as a practitioner \nwith Masters in both Physiotherapy and Strength & Conditioning and is currently undertaking his PhD \nat Liverpool Hope University \u2013 a shoulder centre of excellence. \nBen\u2019s interest and experience in shoulders developed from his time in professional rugby at London \nWasps (2002-2005) and was accelerated through his work with the English Institute of Sport and, \nin particular, the British Judo team in the lead-up to his Team Great Britain role at the Olympics in \nLondon 2012. The Athletic Shoulder testing and monitoring philosophy combines Ben\u2019s shoulder \nexpertise with over 15 years of monitoring athletes in performance environments.  \n\u201c\n   @benphysiocoach\nOur athletic shoulder testing framework relies heavily on force assessment, enabling us to gather critical \ninsights that shape rehabilitation and recovery programs. We utilize VALD technology for comprehensive \nathlete profiling, ongoing monitoring and supporting the return-to-performance process. This approach has \nbeen instrumental across a broad range of elite performers, their coaches and performance teams, ensuring \ndata-driven decisions that optimize shoulder health and performance outcomes for all our clients.    \nThe shoulder plays a pivotal role in many sporting activities, yet its complex anatomy and biomechanics \nmake it one of the most challenging joints to understand. Recent advancements in technology and \nassessments, led by VALD, have greatly improved our ability to objectively measure and monitor shoulder \nfunction. Moreover, given the significant influence of the lower body on upper body tasks, it\u2019s crucial to \nintegrate assessments of both in evaluating shoulder performance comprehensively.\n2  |  Practitioner\u2019s Guide to Shoulders\n\nShoulder health is critical for both everyday life \nand sporting performance.  \n \nThe shoulder complex, with its wide range of \nmotion (ROM) and intricate biomechanics, is \npivotal in many sports that require overhead \nactivities, throwing or contact actions, such as \ntackles and scrums. \nGiven these high demands, the shoulder is \nsusceptible to a variety of injuries, particularly \nwhen subjected to repetitive stress, improper \ntechnique or muscular imbalances. \nMaintaining optimal shoulder function is \nessential, not only for maximizing performance \nbut also for injury prevention.  \nAthletes across  \ndisciplines \u2013 such as \npitchers in baseball, swimmers, tennis \nathletes or weightlifters \u2013 rely heavily on \nshoulder stability, strength and flexibility.  \nShoulder function is also critical in many \nworkplaces, making shoulder health, injury \nprevention and rehabilitation relevant \nin health settings.  \n \nA dysfunctional shoulder can significantly  \nhinder an individual\u2019s ability to perform, often \nleading to compensatory movements that \nexacerbate the problem or create new issues \nelsewhere in the kinetic chain. \nShould injury occur, a well-structured rehabilitation program focusing on restoring ROM, strength and \nrate of force development (RFD) is essential to avoid reinjury and ensure a safe return to sport (or the \nworkplace). The body is a kinetic chain, so the influence of the lower body on upper body performance \nand injury risk must not be overlooked either. \nAdvancements in assessment technologies, including dynamometers and force plates such as VALD\u2019s \nDynaMo, ForceFrame and ForceDecks, allow for more precise diagnosis and targeted interventions. \nThey provide deeper insights into shoulder function, capturing not just peak forces but the RFD, which \nhelps practitioners make data-informed decisions on programming.\nThe Importance of \nShoulder Health\nPractitioner\u2019s Guide to Shoulders  |  3\n\n",
+      "summary": "Modern shoulder assessment uses force plates, dynamometers, and ROM testing to objectively measure shoulder function, strength, and rate of force development.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "elite_athletes",
+        "overhead_athletes",
+        "throwing_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "assessment",
+        "testing",
+        "monitoring"
+      ],
+      "tags": [
+        "force_plate",
+        "dynamometer",
+        "ROM",
+        "strength_testing",
+        "RFD",
+        "VALD"
+      ],
+      "protocols": {
+        "equipment": [
+          "DynaMo",
+          "ForceFrame",
+          "ForceDecks"
+        ],
+        "metrics": [
+          "peak_force",
+          "rate_of_force_development",
+          "ROM",
+          "asymmetry"
+        ],
+        "frequency": "regular monitoring throughout season"
+      },
+      "best_practices": [
+        "Use objective technology-based assessments",
+        "Monitor both strength and ROM",
+        "Track rate of force development (RFD)",
+        "Assess lower body influence on shoulder function",
+        "Regular monitoring for injury prevention"
+      ]
+    },
+    {
+      "entry_type": "injury",
+      "topic": "shoulder_injuries_pathologies",
+      "question": "What are common shoulder injuries in athletes and how are they identified?",
+      "answer": "Shoulder health is critical for both everyday life \nand sporting performance.  \n \nThe shoulder complex, with its wide range of \nmotion (ROM) and intricate biomechanics, is \npivotal in many sports that require overhead \nactivities, throwing or contact actions, such as \ntackles and scrums. \nGiven these high demands, the shoulder is \nsusceptible to a variety of injuries, particularly \nwhen subjected to repetitive stress, improper \ntechnique or muscular imbalances. \nMaintaining optimal shoulder function is \nessential, not only for maximizing performance \nbut also for injury prevention.  \nAthletes across  \ndisciplines \u2013 such as \npitchers in baseball, swimmers, tennis \nathletes or weightlifters \u2013 rely heavily on \nshoulder stability, strength and flexibility.  \nShoulder function is also critical in many \nworkplaces, making shoulder health, injury \nprevention and rehabilitation relevant \nin health settings.  \n \nA dysfunctional shoulder can significantly  \nhinder an individual\u2019s ability to perform, often \nleading to compensatory movements that \nexacerbate the problem or create new issues \nelsewhere in the kinetic chain. \nShould injury occur, a well-structured rehabilitation program focusing on restoring ROM, strength and \nrate of force development (RFD) is essential to avoid reinjury and ensure a safe return to sport (or the \nworkplace). The body is a kinetic chain, so the influence of the lower body on upper body performance \nand injury risk must not be overlooked either. \nAdvancements in assessment technologies, including dynamometers and force plates such as VALD\u2019s \nDynaMo, ForceFrame and ForceDecks, allow for more precise diagnosis and targeted interventions. \nThey provide deeper insights into shoulder function, capturing not just peak forces but the RFD, which \nhelps practitioners make data-informed decisions on programming.\nThe Importance of \nShoulder Health\nPractitioner\u2019s Guide to Shoulders  |  3\n\nTip: Click any heading to jump to section\nIn this document, we will cover a wide range of topics and \nanswer some common questions, including:\nCase Studies\nFootball\nAthlete\nBaseball \nAthlete\nData Interpretation and \nAnalysis\nShoulder Complex Overview\nCommon Pathologies \nand Injuries\nImportance of Shoulder Health\nStrength Testing\nRange of Motion Testing\nASH Test Spotlight\nShoulder Assessment\nTraining and \nRehab Strategies\nCore Components of \nShoulder Prehab\nRehab of Common \nShoulder Issues\nWarehouse \nStocker\nTennis \nAthlete\n4  |  Practitioner\u2019s Guide to Shoulders\n\n6  |  Practitioner\u2019s Guide to Shoulders\nAnatomy and Biomechanics \nof the Shoulder\nThe shoulder complex is one of the most intricate and mobile regions of the human body, enabling \na wide range of movements necessary for daily activities and athletic performance. This wide ROM \ncomes at the expense of joint stability and, therefore, is prone to dislocation and injury.\nShoulders are subjected to stress, both through everyday life and particularly in certain sports and \nplaying positions. Very minor changes in joint integrity can make the shoulder symptomatic  \nand dysfunctional.\nWhile we acknowledge that most readers will be familiar with the anatomy of the shoulder, given its \ncomplexity, we thought it would be worthwhile to provide a short refresher. \n\u2026most readers will be familiar with the anatomy of the \nshoulder, [but] given its complexity, we thought it would \nbe worthwhile to provide a short refresher. \nBack to Contents\n\n",
+      "summary": "Common shoulder injuries include impingement, rotator cuff tears, instability, and labral injuries. These are prevalent in overhead and throwing athletes.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "overhead_athletes",
+        "throwing_athletes",
+        "contact_sport_athletes"
+      ],
+      "sport_specificity": "overhead_sports",
+      "categories": [
+        "injury",
+        "pathology",
+        "diagnosis"
+      ],
+      "tags": [
+        "impingement",
+        "rotator_cuff",
+        "instability",
+        "labral_tear",
+        "overhead_athletes"
+      ],
+      "injury_types": [
+        "shoulder_impingement",
+        "rotator_cuff_tear",
+        "shoulder_instability",
+        "labral_injury"
+      ],
+      "contraindications": [
+        "Avoid overhead activities during acute pain",
+        "Do not ignore compensatory movement patterns"
+      ],
+      "safety_warnings": [
+        "Repetitive overhead activities increase injury risk",
+        "Muscular imbalances can lead to injury",
+        "Improper technique significantly increases risk"
+      ]
+    },
+    {
+      "entry_type": "recovery_method",
+      "topic": "shoulder_rehabilitation",
+      "question": "What are evidence-based shoulder rehabilitation strategies?",
+      "answer": "Jo Clubb is the Founder and Sports Science Consultant at Global Performance Insights , which \nprovides sports science support to professional teams, athletes, practitioners and sports tech \ncompanies all around the world. Previously, she worked as an Applied Sports Scientist for the Buffalo \nBills in the NFL and Buffalo Sabres in the NHL, as well as Chelsea Football Club and Brighton and Hove \nAlbion in English soccer. She shares sports science insights through her blog, YouTube channel and \nscientific publications and textbooks.\n\u201c\n  \nJo Clubb \nFounder and Sports Science Consultant  \nGlobal Performance Insights\n   @joclubbsportssci  \nAbout the Authors\nBen Ashworth\nDirector and High Performance Consultant  \nAthletic Shoulder\nBen Ashworth is the Director of Athletic Shoulder, working as a consultant with teams and individuals \nto help solve shoulder performance problems. He has over two decades of experience as a practitioner \nwith Masters in both Physiotherapy and Strength & Conditioning and is currently undertaking his PhD \nat Liverpool Hope University \u2013 a shoulder centre of excellence. \nBen\u2019s interest and experience in shoulders developed from his time in professional rugby at London \nWasps (2002-2005) and was accelerated through his work with the English Institute of Sport and, \nin particular, the British Judo team in the lead-up to his Team Great Britain role at the Olympics in \nLondon 2012. The Athletic Shoulder testing and monitoring philosophy combines Ben\u2019s shoulder \nexpertise with over 15 years of monitoring athletes in performance environments.  \n\u201c\n   @benphysiocoach\nOur athletic shoulder testing framework relies heavily on force assessment, enabling us to gather critical \ninsights that shape rehabilitation and recovery programs. We utilize VALD technology for comprehensive \nathlete profiling, ongoing monitoring and supporting the return-to-performance process. This approach has \nbeen instrumental across a broad range of elite performers, their coaches and performance teams, ensuring \ndata-driven decisions that optimize shoulder health and performance outcomes for all our clients.    \nThe shoulder plays a pivotal role in many sporting activities, yet its complex anatomy and biomechanics \nmake it one of the most challenging joints to understand. Recent advancements in technology and \nassessments, led by VALD, have greatly improved our ability to objectively measure and monitor shoulder \nfunction. Moreover, given the significant influence of the lower body on upper body tasks, it\u2019s crucial to \nintegrate assessments of both in evaluating shoulder performance comprehensively.\n2  |  Practitioner\u2019s Guide to Shoulders\n\nShoulder health is critical for both everyday life \nand sporting performance.  \n \nThe shoulder complex, with its wide range of \nmotion (ROM) and intricate biomechanics, is \npivotal in many sports that require overhead \nactivities, throwing or contact actions, such as \ntackles and scrums. \nGiven these high demands, the shoulder is \nsusceptible to a variety of injuries, particularly \nwhen subjected to repetitive stress, improper \ntechnique or muscular imbalances. \nMaintaining optimal shoulder function is \nessential, not only for maximizing performance \nbut also for injury prevention.  \nAthletes across  \ndisciplines \u2013 such as \npitchers in baseball, swimmers, tennis \nathletes or weightlifters \u2013 rely heavily on \nshoulder stability, strength and flexibility.  \nShoulder function is also critical in many \nworkplaces, making shoulder health, injury \nprevention and rehabilitation relevant \nin health settings.  \n \nA dysfunctional shoulder can significantly  \nhinder an individual\u2019s ability to perform, often \nleading to compensatory movements that \nexacerbate the problem or create new issues \nelsewhere in the kinetic chain. \nShould injury occur, a well-structured rehabilitation program focusing on restoring ROM, strength and \nrate of force development (RFD) is essential to avoid reinjury and ensure a safe return to sport (or the \nworkplace). The body is a kinetic chain, so the influence of the lower body on upper body performance \nand injury risk must not be overlooked either. \nAdvancements in assessment technologies, including dynamometers and force plates such as VALD\u2019s \nDynaMo, ForceFrame and ForceDecks, allow for more precise diagnosis and targeted interventions. \nThey provide deeper insights into shoulder function, capturing not just peak forces but the RFD, which \nhelps practitioners make data-informed decisions on programming.\nThe Importance of \nShoulder Health\nPractitioner\u2019s Guide to Shoulders  |  3\n\n",
+      "summary": "Effective shoulder rehabilitation focuses on restoring ROM, building strength, improving RFD, and ensuring safe return to sport through progressive loading.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "injured_athletes",
+        "post_surgery",
+        "overhead_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "rehabilitation",
+        "recovery",
+        "return_to_sport"
+      ],
+      "tags": [
+        "rehab",
+        "ROM",
+        "strength",
+        "RFD",
+        "return_to_sport",
+        "progressive_loading"
+      ],
+      "recovery_methods": [
+        "ROM_restoration",
+        "strength_building",
+        "RFD_training",
+        "progressive_loading"
+      ],
+      "protocols": {
+        "phases": [
+          "pain_management",
+          "ROM_restoration",
+          "strength_building",
+          "RFD_training",
+          "return_to_sport"
+        ],
+        "key_metrics": [
+          "ROM",
+          "strength",
+          "RFD",
+          "pain_levels",
+          "function"
+        ],
+        "progression_criteria": "objective_measures_guide_advancement"
+      },
+      "best_practices": [
+        "Restore full ROM before heavy strength work",
+        "Focus on RFD not just peak strength",
+        "Use objective measures to guide progression",
+        "Address kinetic chain deficits",
+        "Gradual return to sport activities"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "shoulder_prehab_training",
+      "question": "What are effective shoulder prehabilitation and training strategies?",
+      "answer": "Tip: Click any heading to jump to section\nIn this document, we will cover a wide range of topics and \nanswer some common questions, including:\nCase Studies\nFootball\nAthlete\nBaseball \nAthlete\nData Interpretation and \nAnalysis\nShoulder Complex Overview\nCommon Pathologies \nand Injuries\nImportance of Shoulder Health\nStrength Testing\nRange of Motion Testing\nASH Test Spotlight\nShoulder Assessment\nTraining and \nRehab Strategies\nCore Components of \nShoulder Prehab\nRehab of Common \nShoulder Issues\nWarehouse \nStocker\nTennis \nAthlete\n4  |  Practitioner\u2019s Guide to Shoulders\n\n23\nContents\nThe Importance of Shoulder Health .................................................3\nShoulder Assessment ......................................................................10\nData Interpretation and Analysis ..................................................... 21\nTraining and Rehabilitation Strategies .............................................30\nCase Studies ....................................................................................41\nPractitioner\u2019s Guide to Shoulders  |  5\n\n10  |  Practitioner\u2019s Guide to Shoulders Back to Contents\nShoulder Assessment\nAdvancements in technology have significantly enhanced the precision and scope of shoulder \nassessments. Technology adds value by: \n\u2022 Quantifying shoulder function  through objective data; \n\u2022 Calculating asymmetries between left and right sides and imbalances within the shoulder joint; \n\u2022 Providing biofeedback to improve exercise application during training; \n\u2022 Allowing training to be used as testing in an ongoing monitoring process; \n\u2022 Enhancing criteria-based progression; and \n\u2022 Benchmarking \u2013 enabling greater insights by comparison to normative data.\nShoulder assessment is critical for tailoring training and rehabilitation programs to individual athletes \nand patients. In particular, assessing shoulder strength and ROM is essential for understanding an \nathlete\u2019s shoulder function and identifying potential asymmetries and deficiencies in order to maximize \nperformance and minimize injury risk. \nAssessment Tools and Technology\n\n18  |  Practitioner\u2019s Guide to Shoulders Back to Contents\nThe ratio of ER to IR strength is a critical metric (ER:IR), as significant imbalances can increase the risk \nof injury, and we will explore how to interpret this ratio in the data interpretation and analysis section. \nIsometric training is a strength method where the joint angle \nremains unchanged during contraction. Its popularity has \ngrown due to its safety, simplicity and effectiveness. \nA major benefit of isometric training is the ability to assess \nand train force in nearly any position. It allows for greater \nforce production than traditional weights, as it removes \ntechnical demands, enabling more intensive muscle training. \nFor more on the science and application of isometric training, \ndownload VALD\u2019s Practitioner\u2019s Guide to Isometrics .  \nExamples of Shoulder \nStrength Testing Options \nIsometric Strength\n\nPractitioner\u2019s Guide to Shoulders  |  23Back to Contents\nHowever, large data sets cover a large population and may not display information specific to the \npopulation of interest.  \nFor example, overhead athletes will have greater strength numbers compared to the general population.\nTherefore, basing decisions on general population data may over-predict readiness to return to sport.\nNormative data reports, such as those provided to VALD users, focus on distributions of specific \nathletes and levels of sport (e.g., collegiate and professional) to help better benchmark and individualize \nathlete training and rehabilitation. \nStrength Testing Analysis\nPeak force represents the maximum force a \nmuscle or muscle group can generate during \na contraction, providing insight into the joint\u2019s \nability to handle physical demands. \nThis is especially useful for athletes who rely on \ntheir shoulder function for overhead movements, \nsuch as throwers, swimmers and tennis players. \nCommonly, an athlete performs resisted \nisometric contractions in IR and ER at various \ndegrees of shoulder abduction or flexion to \nevaluate their peak force capacity, measured in \nNewtons (N) using a dynamometer or force plate. \nThe goal is to assess the strength of the rotator \ncuff, deltoids and surrounding muscles that \ncontribute to shoulder stability. \nModern technologies, such as ForceDecks, \nForceFrame and DynaMo, provide age- and \ngender-matched Norms for nearly all strength \nassessments for both the lower and upper body.\nThis normative data is cultivated from millions  \nof individual data points, allowing practitioners to \nassess how their clients compare to the general \npopulation. \n\n",
+      "summary": "Shoulder prehab focuses on strengthening rotator cuff, improving scapular stability, maintaining ROM, and preventing muscular imbalances in overhead athletes.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "overhead_athletes",
+        "throwing_athletes",
+        "all_athletes"
+      ],
+      "sport_specificity": "overhead_sports",
+      "categories": [
+        "training",
+        "prehab",
+        "injury_prevention"
+      ],
+      "tags": [
+        "prehab",
+        "rotator_cuff",
+        "scapular_stability",
+        "injury_prevention",
+        "overhead_training"
+      ],
+      "training_types": [
+        "strength",
+        "stability",
+        "mobility",
+        "prehab"
+      ],
+      "best_practices": [
+        "Include rotator cuff strengthening in all programs",
+        "Maintain external/internal rotation balance",
+        "Regular scapular stability work",
+        "Monitor and maintain ROM",
+        "Progressive loading principles"
+      ]
+    }
+  ],
+  "case_studies": [
+    "Football\nAthlete\n",
+    "Baseball \nAthlete\nData Interpretation and \nAnalysis\nShoulder Complex Overview\nCommon Pathologies \nand Injuries\nImportance of Shoulder Health\nStrength Testing\nRange of Motion Testing\nASH Test Spotlight\nShoulder Assessment\nTraining and \nRehab Strategies\nCore Components of \nShoulder Prehab\nRehab of Common \nShoulder Issues\n",
+    "Warehouse \nStocker\n",
+    "Tennis \nAthlete\n4  |  Practitioner\u2019s Guide to Shoulders\n\n23\nContents\nThe Importance of Shoulder Health .................................................3\nShoulder Assessment ......................................................................10\nData Interpretation and Analysis ..................................................... 21\nTraining and Rehabilitation Strategies .............................................30\nCase Studies ....................................................................................41\nPractitioner\u2019s Guide to Shoulders  |  5\n\n6  |  Practitioner\u2019s Guide to Shoulders\nAnatomy and Biomechanics \nof the Shoulder\nThe shoulder complex is one of the most intricate and mobile regions of the human body, enabling \na wide range of movements necessary for daily activities and athletic performance. This wide ROM \ncomes at the expense of joint stability and, therefore, is prone to dislocation and injury.\nShoulders are subjected to stress, both through everyday life and",
+    "Warehouse Stocker\nEarly-Stage Testing to Training\n/C23 /C27 /C24/C11 /C15/C24/C21 /C21 /C14 /C19 /C21\n/C16/C12/C9/C8/C12/C26\n/C23 /C12 /C20 /C21 /C6/C17 /C10 /C4/C3 /C5 /C2/C7/C21 /C27 /C22 /C19 /C2/C13 /C18 /C1 /C10/C13 /C21\n/C21 /C14 /C19 /C21 /C16 /C12 /C9 /C8 /C12 /C26\n/C23 /C21/C0/C12/C25/C21\n/C40/C41/C42/C44/C36 /C35 /C41/C34\n/C39/C41/C42/C44/C36 /C35 /C41/C34\n/C43 /C30 /C29/C33/C38 /C28 /C30 /C32/C29/C37/C29/C37/C31\n/C52 /C56 /C50/C55 /C53/C51 /C54 /C51 /C49/C48/C55 /C49/C54 /C55 /C53/C54 /C53/C51 /C56 /C46 /C49/C45 /C47 /C70/C67 /C68 /C58 /C54 /C58 /C66/C58 /C61/C60 /C62 /C65 /C58 /C54 /C59/C69 /C57 /C64\n\n50  |  Practitioner\u2019s Guide to Shoulders Back to Contents\nAfter demonstrating improved force production, decreased pain and improved ROM from the clinical \nexamination, Jane progressed Jerry\u2019s rehabilitation testing and training to a more compromising \nposition to continue building strength through his ROM.  \nShe continued to use grip training and testing as an upper extremity"
+  ]
+}

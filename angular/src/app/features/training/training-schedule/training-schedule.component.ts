@@ -91,6 +91,10 @@ interface MonthlyStats {
               (ngModelChange)="onDateSelect($event)"
               [inline]="true"
               [showWeek]="showWeekNumbers()"
+              [touchUI]="false"
+              [disabled]="false"
+              [selectOtherMonths]="true"
+              [showOtherMonths]="true"
               aria-label="Training calendar date picker"
             ></p-datepicker>
 
@@ -368,7 +372,60 @@ export class TrainingScheduleComponent implements OnInit {
 
   // Sessions filtered by view mode (week or extended)
   filteredSessions = computed(() => {
-    return this.sessions();
+    const allSessions = this.sessions();
+    const mode = this.viewMode();
+    const selected = this.selectedDate();
+
+    console.warn("🔍 Filtering sessions:", {
+      totalSessions: allSessions.length,
+      mode,
+      selectedDate: selected.toISOString().split('T')[0],
+      firstSessionDate: allSessions[0]?.date?.toISOString?.() || 'none'
+    });
+
+    if (mode === 'week') {
+      // Show only sessions in the selected week
+      const weekStart = new Date(selected);
+      weekStart.setDate(selected.getDate() - selected.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      console.warn("📆 Week range:", {
+        start: weekStart.toISOString().split('T')[0],
+        end: weekEnd.toISOString().split('T')[0],
+        startTime: weekStart.getTime(),
+        endTime: weekEnd.getTime()
+      });
+
+      const filtered = allSessions.filter(session => {
+        // Normalize ALL dates to midnight by comparing just the date strings
+        const sessionDateStr = session.date.toISOString().split('T')[0];
+        const weekStartStr = weekStart.toISOString().split('T')[0];
+        const weekEndStr = weekEnd.toISOString().split('T')[0];
+        
+        const isInRange = sessionDateStr >= weekStartStr && sessionDateStr <= weekEndStr;
+        
+        if (!isInRange) {
+          console.warn(`❌ Session "${session.type}" on ${sessionDateStr} is OUTSIDE week range ${weekStartStr} to ${weekEndStr}`);
+        }
+        return isInRange;
+      });
+
+      console.warn(`✅ Filtered to ${filtered.length} sessions for this week`);
+      return filtered;
+    } else {
+      // Month view - show all sessions in the selected month
+      const monthStart = new Date(selected.getFullYear(), selected.getMonth(), 1);
+      const monthEnd = new Date(selected.getFullYear(), selected.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      return allSessions.filter(session => {
+        const sessionDate = new Date(session.date);
+        return sessionDate >= monthStart && sessionDate <= monthEnd;
+      });
+    }
   });
 
   // Computed: Get session type color for calendar markers
@@ -513,6 +570,8 @@ export class TrainingScheduleComponent implements OnInit {
       // Map scheduled templates to sessions (if no template error)
       let mappedScheduledSessions: TrainingSession[] = [];
       if (!templatesError && scheduledTemplates) {
+        console.warn("🔍 TEMPLATES FOUND:", scheduledTemplates.length);
+        this.logger.debug("Found scheduled templates", { count: scheduledTemplates.length });
         mappedScheduledSessions = scheduledTemplates
           .filter((template) => {
             // training_weeks is an array from the join - ensure it has data
@@ -529,11 +588,15 @@ export class TrainingScheduleComponent implements OnInit {
               week_number: number;
             }>;
             const weekData = weeks[0];
-            const weekStart = new Date(weekData.start_date);
+            
+            // Parse date string as local date to avoid timezone issues
+            // If start_date is "2026-01-03", parse as local midnight
+            const dateStr = weekData.start_date.split('T')[0]; // Get just YYYY-MM-DD
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
+            
             const sessionDate = new Date(weekStart);
-            sessionDate.setDate(
-              weekStart.getDate() + (template.day_of_week || 0),
-            );
+            sessionDate.setDate(weekStart.getDate() + (template.day_of_week || 0));
 
             return {
               id: template.id,
@@ -545,9 +608,16 @@ export class TrainingScheduleComponent implements OnInit {
               isTemplate: true,
             };
           });
+        this.logger.debug("Mapped scheduled sessions", { count: mappedScheduledSessions.length });
+      } else if (templatesError) {
+        console.error("❌ TEMPLATE ERROR:", templatesError);
+        this.logger.error("Error loading templates", templatesError);
+      } else {
+        console.warn("⚠️ NO TEMPLATES FOUND for this week");
+        this.logger.debug("No scheduled templates found for week range");
       }
 
-      // Combine both sources, avoiding duplicates by checking if actual session exists for same date/type
+      // Combine both sources, but prioritize templates over test data
       const actualDates = new Set(
         mappedActualSessions.map(
           (s) => `${s.date.toISOString().split("T")[0]}-${s.type}`,
@@ -559,9 +629,29 @@ export class TrainingScheduleComponent implements OnInit {
           !actualDates.has(`${s.date.toISOString().split("T")[0]}-${s.type}`),
       );
 
-      const allSessions = [...mappedActualSessions, ...uniqueScheduled].sort(
-        (a, b) => a.date.getTime() - b.date.getTime(),
-      );
+      // IMPORTANT: Prioritize templates over test data
+      // If we have scheduled templates, show ONLY those + completed/in-progress actual sessions
+      // This prevents generic test sessions from overriding the 52-week program
+      let allSessions: TrainingSession[];
+      if (mappedScheduledSessions.length > 0) {
+        // Use templates ONLY - don't mix with test data for now
+        allSessions = mappedScheduledSessions.sort(
+          (a, b) => a.date.getTime() - b.date.getTime(),
+        );
+        console.warn("🎯 Using ONLY templates (no test data)", {
+          templateCount: mappedScheduledSessions.length
+        });
+        this.logger.debug("Using scheduled templates as primary source", {
+          templateCount: mappedScheduledSessions.length,
+          activeSessionCount: 0
+        });
+      } else {
+        // No templates found, fallback to actual sessions
+        allSessions = [...mappedActualSessions, ...uniqueScheduled].sort(
+          (a, b) => a.date.getTime() - b.date.getTime(),
+        );
+        this.logger.debug("No templates found, using actual sessions");
+      }
 
       this.sessions.set(allSessions);
     } catch (error) {
@@ -598,6 +688,7 @@ export class TrainingScheduleComponent implements OnInit {
     if (!date) return;
 
     const previousDate = this.selectedDate();
+    this.logger.debug("Date selected", { date });
 
     // Check if the week changed
     const prevWeekStart = new Date(previousDate);
@@ -611,9 +702,18 @@ export class TrainingScheduleComponent implements OnInit {
     // Update the selected date
     this.selectedDate.set(date);
 
-    // Reload sessions if the week changed
-    if (prevWeekStart.getTime() !== newWeekStart.getTime()) {
+    // Always reload sessions when date changes (not just week)
+    // This allows filtering by specific dates
+    const weekChanged = prevWeekStart.getTime() !== newWeekStart.getTime();
+    this.logger.debug("Week changed check", { weekChanged });
+    
+    // Reload if week changed OR if in month view (to show relevant sessions)
+    if (weekChanged || this.viewMode() === 'month') {
       this.loadSessions();
+    } else {
+      // In week view, just update the filter without reloading
+      // The filtered sessions will automatically update based on selectedDate
+      this.logger.debug("Same week, sessions already loaded");
     }
   }
 

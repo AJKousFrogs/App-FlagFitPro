@@ -332,9 +332,9 @@ const CATEGORY_LABELS: Record<
               <div class="stat-details">
                 <span class="stat-label">Recent Unlock</span>
                 <span class="stat-value recent">{{
-                  recentUnlock()?.name || "None yet"
+                  recentUnlock() ? recentUnlock()!.name : "None yet"
                 }}</span>
-                @if (recentUnlock()?.unlockedAt) {
+                @if (recentUnlock()) {
                   <span class="stat-hint">{{
                     getTimeAgo(recentUnlock()!.unlockedAt!)
                   }}</span>

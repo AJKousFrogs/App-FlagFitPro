@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "title": "Practitioner's Guide to Hamstrings",
+    "authors": [
+      "VALD Performance Contributors"
+    ],
+    "total_pages": 100,
+    "document_type": "practitioner_guide"
+  },
+  "research_article": {
+    "title": "Practitioner's Guide to Hamstrings",
+    "authors": [
+      "VALD Performance Contributors"
+    ],
+    "publication_year": 2024,
+    "publisher": "VALD Performance",
+    "primary_category": "injury",
+    "categories": [
+      "injury_prevention",
+      "rehabilitation",
+      "assessment",
+      "training",
+      "strength"
+    ],
+    "tags": [
+      "hamstring",
+      "injury_prevention",
+      "nordic_curl",
+      "eccentric_training",
+      "rehabilitation",
+      "strength_testing",
+      "biceps_femoris"
+    ],
+    "study_type": "review",
+    "evidence_level": "A",
+    "sport_type": "running_sports",
+    "key_findings": "Evidence-based hamstring injury prevention and rehabilitation guide. Nordic curl programs reduce injury risk by 50-70%. Emphasizes eccentric strength development, bilateral symmetry monitoring, and criteria-based return to sport. Previous injury is the strongest risk factor for reinjury.",
+    "practical_applications": [
+      "Implement Nordic curl programs (2-3x per week)",
+      "Assess eccentric hamstring strength regularly",
+      "Use criteria-based rehabilitation progression",
+      "Monitor bilateral asymmetries (<10%)",
+      "Implement progressive running programs post-injury",
+      "Continue prevention programs long-term",
+      "Address previous injury history proactively"
+    ],
+    "injury_types": [
+      "hamstring_strain",
+      "biceps_femoris_strain",
+      "proximal_hamstring_injury"
+    ],
+    "training_types": [
+      "eccentric",
+      "strength",
+      "prevention",
+      "nordic_curl"
+    ],
+    "recovery_methods": [
+      "nordic_curls",
+      "eccentric_training",
+      "progressive_loading",
+      "criteria_based_return"
+    ],
+    "is_open_access": false,
+    "verified": true,
+    "quality_score": 10,
+    "keywords": [
+      "hamstring",
+      "nordic_curl",
+      "injury_prevention",
+      "eccentric_training",
+      "rehabilitation",
+      "biceps_femoris"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "injury",
+      "topic": "hamstring_injuries_pathologies",
+      "question": "What are common hamstring injuries in athletes and their risk factors?",
+      "answer": "Hamstring strains are among the most common injuries in sprinting and field sports, with the biceps femoris long head most frequently affected. Injuries typically occur during high-speed running in the terminal swing phase. Risk factors include previous hamstring injury (strongest predictor), age, inadequate eccentric strength, bilateral asymmetries >15%, fatigue, and insufficient warm-up. Reinjury rates range from 12-30%.",
+      "summary": "Hamstring strains commonly affect the biceps femoris during high-speed running. Previous injury is the strongest risk factor.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "running_athletes",
+        "field_sport_athletes",
+        "sprinters"
+      ],
+      "sport_specificity": "running_sports",
+      "categories": [
+        "injury",
+        "pathology"
+      ],
+      "tags": [
+        "hamstring_strain",
+        "injury",
+        "biceps_femoris",
+        "sprinting",
+        "risk_factors"
+      ],
+      "injury_types": [
+        "hamstring_strain",
+        "biceps_femoris_strain",
+        "proximal_hamstring_injury"
+      ],
+      "contraindications": [
+        "Avoid high-speed running during acute phase",
+        "Do not stretch aggressively early in rehabilitation",
+        "Avoid premature return to sport before criteria met",
+        "Do not ignore persistent pain or tightness"
+      ],
+      "safety_warnings": [
+        "Hamstring reinjury rates are high (12-30%)",
+        "Previous injury is the strongest risk factor",
+        "Inadequate rehabilitation significantly increases recurrence",
+        "Bilateral deficits >15% indicate elevated risk",
+        "Premature return to sport leads to reinjury"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "hamstring_strength_assessment",
+      "question": "How should hamstring strength be assessed in athletes?",
+      "answer": "Hamstring strength assessment prioritizes eccentric strength measurement using Nordic curl testing, isokinetic dynamometry at various speeds, and isometric testing. Key metrics include peak eccentric force, bilateral asymmetry (<10% ideal), and hamstring:quadriceps ratios (eccentric H:Q >0.8 ideal, conventional H:Q >0.6). Regular testing (preseason and monthly during season) identifies at-risk athletes before injury occurs.",
+      "summary": "Hamstring assessment emphasizes eccentric strength via Nordic curls and isokinetics, monitoring asymmetries and H:Q ratios.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "running_athletes",
+        "field_sport_athletes"
+      ],
+      "sport_specificity": "running_sports",
+      "categories": [
+        "assessment",
+        "testing"
+      ],
+      "tags": [
+        "nordic_curl",
+        "strength_testing",
+        "eccentric_strength",
+        "isokinetic",
+        "asymmetry"
+      ],
+      "protocols": {
+        "primary_tests": [
+          "nordic_curl",
+          "isokinetic_eccentric",
+          "isometric_hamstring"
+        ],
+        "key_metrics": [
+          "peak_eccentric_force",
+          "bilateral_asymmetry",
+          "hamstring_quadriceps_ratio"
+        ],
+        "asymmetry_threshold": "<10%_ideal_<15%_acceptable",
+        "hq_ratio_targets": "eccentric_>0.8_conventional_>0.6",
+        "frequency": "preseason_baseline_monthly_monitoring"
+      },
+      "best_practices": [
+        "Prioritize eccentric strength testing",
+        "Monitor bilateral asymmetries (<10% ideal)",
+        "Track hamstring:quadriceps ratios (eccentric H:Q >0.8)",
+        "Use Nordic curl for field-based assessment",
+        "Isokinetic testing for comprehensive profiling",
+        "Regular monitoring throughout season",
+        "Test previously injured athletes more frequently"
+      ]
+    },
+    {
+      "entry_type": "recovery_method",
+      "topic": "hamstring_rehabilitation",
+      "question": "What are evidence-based hamstring rehabilitation strategies?",
+      "answer": "Hamstring rehabilitation follows progressive phases: acute management (POLICE protocol), early mobility and isometric strength, progressive eccentric strengthening (Nordic curls central), running progression (jog to sprint), and return to sport testing. Duration ranges 3-12+ weeks depending on severity. Criteria-based progression (not time-based) prevents reinjury. Key criteria include >90% strength symmetry, pain-free high-speed running, and sport-specific testing.",
+      "summary": "Hamstring rehab progresses through phases emphasizing eccentric strength (Nordic curls), with criteria-based return to sport.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "injured_athletes",
+        "running_athletes"
+      ],
+      "sport_specificity": "running_sports",
+      "categories": [
+        "rehabilitation",
+        "recovery"
+      ],
+      "tags": [
+        "rehab",
+        "nordic_curl",
+        "eccentric_training",
+        "return_to_sport",
+        "progressive_running"
+      ],
+      "recovery_methods": [
+        "eccentric_training",
+        "nordic_curls",
+        "progressive_running",
+        "criteria_based_progression"
+      ],
+      "protocols": {
+        "phases": [
+          "acute_management_POLICE",
+          "early_mobility_isometric_strength",
+          "progressive_eccentric_strengthening",
+          "running_progression_jog_to_sprint",
+          "return_to_sport_testing"
+        ],
+        "key_exercise": "nordic_curls_progressive_overload",
+        "typical_duration": "3-12_weeks_severity_dependent",
+        "return_criteria": [
+          ">90%_bilateral_strength_symmetry",
+          "pain_free_high_speed_running",
+          "sport_specific_testing_passed"
+        ]
+      },
+      "best_practices": [
+        "Use POLICE protocol acutely (not RICE)",
+        "Progress based on criteria, not time",
+        "Emphasize eccentric strengthening (Nordic curls)",
+        "Implement progressive running program (structured)",
+        "Achieve >90% bilateral strength symmetry",
+        "Ensure pain-free high-speed running before return",
+        "Continue Nordic curls post-return (prevention)",
+        "Address biomechanical factors and load management"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "hamstring_injury_prevention",
+      "question": "What are evidence-based hamstring injury prevention strategies?",
+      "answer": "Nordic curl programs are the cornerstone of hamstring injury prevention, reducing injury risk by 50-70% when performed 2-3x weekly. Combine with proper warm-up protocols, sprint mechanics training, progressive load management, and regular strength monitoring. Address bilateral asymmetries >10% immediately. Previously injured athletes require ongoing prevention programs indefinitely. Prevention is more effective and cost-efficient than treating injuries.",
+      "summary": "Nordic curl programs (2-3x/week) reduce hamstring injury risk by 50-70%. Combine with warm-up, mechanics, and load management.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "running_athletes",
+        "field_sport_athletes"
+      ],
+      "sport_specificity": "running_sports",
+      "categories": [
+        "injury_prevention",
+        "training"
+      ],
+      "tags": [
+        "injury_prevention",
+        "nordic_curl",
+        "eccentric_training",
+        "load_management",
+        "warm_up"
+      ],
+      "training_types": [
+        "eccentric",
+        "sprint_mechanics",
+        "strength",
+        "prevention"
+      ],
+      "protocols": {
+        "nordic_curl_frequency": "2-3_times_per_week",
+        "sets_reps": "progress_from_1x5_to_3x12",
+        "injury_risk_reduction": "50-70_percent",
+        "key_components": [
+          "nordic_curl_program",
+          "proper_warm_up",
+          "sprint_mechanics_training",
+          "load_management"
+        ]
+      },
+      "best_practices": [
+        "Implement Nordic curl programs year-round (2-3x/week)",
+        "Proper progressive warm-up before high-speed running",
+        "Sprint mechanics and running technique coaching",
+        "Progressive load management (avoid spikes)",
+        "Monitor and address bilateral asymmetries >10%",
+        "Ongoing prevention for previously injured athletes",
+        "Regular eccentric strength testing",
+        "Combine multiple prevention strategies (not just one)"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "nordic_curl_programming",
+      "question": "How should Nordic curl programs be implemented and progressed?",
+      "answer": "Nordic curls should be introduced gradually with eccentric-focused progressions. Start with assisted variations (band assistance, partner catch) and progress to bodyweight and then eccentric overload. Frequency of 2-3x per week is optimal. Progress from 1 set of 5 reps to 3 sets of 12 reps over 6-8 weeks. Can be performed as part of warm-up or in strength sessions. Maintain year-round for injury prevention.",
+      "summary": "Nordic curls progress from assisted to bodyweight to overload variations, performed 2-3x weekly year-round for prevention.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "running_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "training",
+        "prevention",
+        "exercise"
+      ],
+      "tags": [
+        "nordic_curl",
+        "eccentric_training",
+        "programming",
+        "progression"
+      ],
+      "training_types": [
+        "eccentric",
+        "strength"
+      ],
+      "protocols": {
+        "frequency": "2-3_times_per_week",
+        "progression": [
+          "assisted_band_or_partner",
+          "bodyweight_full_range",
+          "eccentric_overload_variations"
+        ],
+        "sets_reps_progression": "1x5_to_3x12_over_6-8_weeks",
+        "timing": "warm_up_or_strength_session",
+        "duration": "year_round_ongoing"
+      },
+      "best_practices": [
+        "Start with assisted variations for beginners",
+        "Progress gradually over 6-8 weeks",
+        "Maintain 2-3x per week frequency",
+        "Focus on controlled eccentric lowering",
+        "Use full range of motion",
+        "Continue year-round (not just preseason)",
+        "Can integrate into team warm-ups",
+        "Monitor for excessive soreness (reduce if needed)"
+      ]
+    }
+  ]
+}

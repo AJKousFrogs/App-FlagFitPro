@@ -13,14 +13,13 @@
 
 import {
   Component,
-  EventEmitter,
   inject,
-  Input,
   OnInit,
-  Output,
   signal,
   computed,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -256,11 +255,11 @@ export class DailyReadinessComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
-  @Input() mode = signal<"modal" | "card">("modal");
-  @Input() showOnInit = true;
+  readonly mode = input<any>(signal<"modal" | "card">("modal"));
+  readonly showOnInit = input<any>(true);
 
-  @Output() completed = new EventEmitter<DailyState>();
-  @Output() skipped = new EventEmitter<void>();
+  readonly completed = output<DailyState>();
+  readonly skipped = output<void>();
 
   dialogVisible = false;
   saving = signal(false);
@@ -325,7 +324,7 @@ export class DailyReadinessComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.showOnInit && this.mode() === "modal") {
+    if (this.showOnInit() && this.mode() === "modal") {
       this.checkAndShowPrompt();
     }
   }

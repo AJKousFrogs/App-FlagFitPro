@@ -39,13 +39,12 @@
 .header-icon {
   width: 64px;
   height: 64px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  border: var(--border-1) solid rgba(255, 255, 255, 0.2);
 }
 
 .header-icon i {
@@ -73,7 +72,7 @@
 }
 
 .stat-pill {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   display: flex;
@@ -81,8 +80,7 @@
   gap: var(--space-2);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  border: var(--border-1) solid rgba(255, 255, 255, 0.2);
 }
 
 .stat-pill.approved {

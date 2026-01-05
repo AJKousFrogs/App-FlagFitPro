@@ -22,7 +22,7 @@ import { FileUploadModule } from "primeng/fileupload";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Subject, debounceTime } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
@@ -61,7 +61,7 @@ interface InjuryEntry {
     InputTextModule,
     Select,
     AutoCompleteModule,
-    StepsModule,
+    StepperModule,
     ToastModule,
     DatePicker,
     CheckboxModule,
@@ -106,11 +106,20 @@ interface InjuryEntry {
             </div>
           </div>
 
-          <p-steps
-            [model]="steps()"
-            [activeIndex]="currentStep()"
-            [readonly]="false"
-          ></p-steps>
+          <p-stepper [value]="currentStep()" (valueChange)="goToStep($event)" [linear]="false">
+            <p-step-list>
+              @for (step of steps(); track $index) {
+                <p-step [value]="$index">
+                  <ng-template pTemplate="content">
+                    <div class="step-with-icon">
+                      <i [class]="'pi ' + step.icon"></i>
+                      <span>{{ step.label }}</span>
+                    </div>
+                  </ng-template>
+                </p-step>
+              }
+            </p-step-list>
+          </p-stepper>
 
           <div class="onboarding-content">
             @if (currentStep() === 0) {
@@ -1346,98 +1355,115 @@ interface InjuryEntry {
 
                   <div class="consent-list">
                     <!-- Required Consents -->
+                    <!-- Debug: Show current consent values -->
+                    <div style="padding: 1rem; background: #f0f0f0; border-radius: 8px; margin-bottom: 1rem; font-family: monospace; font-size: 12px;">
+                      <strong>Debug - Consent Values:</strong><br/>
+                      Terms: {{ onboardingData.consentTermsOfService }}<br/>
+                      Privacy: {{ onboardingData.consentPrivacyPolicy }}<br/>
+                      Data: {{ onboardingData.consentDataUsage }}<br/>
+                      AI: {{ onboardingData.consentAICoach }}<br/>
+                      Email: {{ onboardingData.consentEmailUpdates }}
+                    </div>
+
                     <div class="consent-item required">
-                      <label class="consent-checkbox">
-                        <input
-                          type="checkbox"
+                      <div class="consent-checkbox-wrapper">
+                        <p-checkbox
                           [(ngModel)]="onboardingData.consentTermsOfService"
-                          id="consent-terms"
+                          [binary]="true"
+                          inputId="consent-terms"
+                          name="consentTermsOfService"
+                          (onChange)="onConsentChange('Terms of Service', $event)"
                         />
-                        <span class="checkmark"></span>
-                        <span class="consent-text">
+                        <label for="consent-terms" class="consent-label">
                           I accept the
                           <a
                             [routerLink]="['/terms']"
                             target="_blank"
                             class="consent-link"
+                            (click)="$event.stopPropagation()"
                             >Terms of Service</a
                           >
                           <span class="required-indicator">*</span>
-                        </span>
-                      </label>
+                        </label>
+                      </div>
                     </div>
 
                     <div class="consent-item required">
-                      <label class="consent-checkbox">
-                        <input
-                          type="checkbox"
+                      <div class="consent-checkbox-wrapper">
+                        <p-checkbox
                           [(ngModel)]="onboardingData.consentPrivacyPolicy"
-                          id="consent-privacy"
+                          [binary]="true"
+                          inputId="consent-privacy"
+                          name="consentPrivacyPolicy"
+                          (onChange)="onConsentChange('Privacy Policy', $event)"
                         />
-                        <span class="checkmark"></span>
-                        <span class="consent-text">
+                        <label for="consent-privacy" class="consent-label">
                           I accept the
                           <a
                             [routerLink]="['/privacy']"
                             target="_blank"
                             class="consent-link"
+                            (click)="$event.stopPropagation()"
                             >Privacy Policy</a
                           >
                           <span class="required-indicator">*</span>
-                        </span>
-                      </label>
+                        </label>
+                      </div>
                     </div>
 
                     <div class="consent-item required">
-                      <label class="consent-checkbox">
-                        <input
-                          type="checkbox"
+                      <div class="consent-checkbox-wrapper">
+                        <p-checkbox
                           [(ngModel)]="onboardingData.consentDataUsage"
-                          id="consent-data"
+                          [binary]="true"
+                          inputId="consent-data"
+                          name="consentDataUsage"
+                          (onChange)="onConsentChange('Data Usage', $event)"
                         />
-                        <span class="checkmark"></span>
-                        <span class="consent-text">
+                        <label for="consent-data" class="consent-label">
                           I consent to my data being used to personalize my
                           training experience
                           <span class="consent-hint"
                             >(required for app functionality)</span
                           >
                           <span class="required-indicator">*</span>
-                        </span>
-                      </label>
+                        </label>
+                      </div>
                     </div>
 
                     <!-- Optional Consents -->
                     <div class="consent-item optional">
-                      <label class="consent-checkbox">
-                        <input
-                          type="checkbox"
+                      <div class="consent-checkbox-wrapper">
+                        <p-checkbox
                           [(ngModel)]="onboardingData.consentAICoach"
-                          id="consent-ai"
+                          [binary]="true"
+                          inputId="consent-ai"
+                          name="consentAICoach"
+                          (onChange)="onConsentChange('AI Coach', $event)"
                         />
-                        <span class="checkmark"></span>
-                        <span class="consent-text">
+                        <label for="consent-ai" class="consent-label">
                           I consent to AI Coach (Merlin) providing personalized
                           advice based on my training and wellness data
                           <span class="consent-hint">(optional)</span>
-                        </span>
-                      </label>
+                        </label>
+                      </div>
                     </div>
 
                     <div class="consent-item optional">
-                      <label class="consent-checkbox">
-                        <input
-                          type="checkbox"
+                      <div class="consent-checkbox-wrapper">
+                        <p-checkbox
                           [(ngModel)]="onboardingData.consentEmailUpdates"
-                          id="consent-email"
+                          [binary]="true"
+                          inputId="consent-email"
+                          name="consentEmailUpdates"
+                          (onChange)="onConsentChange('Email Updates', $event)"
                         />
-                        <span class="checkmark"></span>
-                        <span class="consent-text">
+                        <label for="consent-email" class="consent-label">
                           I want to receive email updates about new features and
                           tips
                           <span class="consent-hint">(optional)</span>
-                        </span>
-                      </label>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
@@ -2111,15 +2137,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   };
 
   steps = signal<OnboardingStep[]>([
-    { label: "Personal", icon: "pi pi-user", completed: false },
-    { label: "Team", icon: "pi pi-users", completed: false },
-    { label: "Physical", icon: "pi pi-heart", completed: false },
-    { label: "Health", icon: "pi pi-shield", completed: false },
-    { label: "Equipment", icon: "pi pi-box", completed: false },
-    { label: "Goals", icon: "pi pi-flag", completed: false },
-    { label: "Schedule", icon: "pi pi-calendar", completed: false },
-    { label: "Recovery", icon: "pi pi-refresh", completed: false },
-    { label: "Summary", icon: "pi pi-check", completed: false },
+    { label: "1 · Personal", icon: "pi pi-user", completed: false },
+    { label: "2 · Team", icon: "pi pi-users", completed: false },
+    { label: "3 · Physical", icon: "pi pi-heart", completed: false },
+    { label: "4 · Health", icon: "pi pi-shield", completed: false },
+    { label: "5 · Equipment", icon: "pi pi-box", completed: false },
+    { label: "6 · Goals", icon: "pi pi-flag", completed: false },
+    { label: "7 · Schedule", icon: "pi pi-calendar", completed: false },
+    { label: "8 · Recovery", icon: "pi pi-refresh", completed: false },
+    { label: "9 · Summary", icon: "pi pi-check", completed: false },
   ]);
 
   // Computed progress percentage
@@ -2548,6 +2574,51 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // Auto-save on step change
       this.saveDraft();
+    }
+  }
+
+  /**
+   * Debug method to track checkbox changes
+   */
+  onConsentChange(consentType: string, event: any): void {
+    this.logger.debug(`Consent ${consentType} changed`, { checked: event.checked });
+    
+    // Manually update the value to ensure it's set
+    switch (consentType) {
+      case 'Terms of Service':
+        this.onboardingData.consentTermsOfService = event.checked;
+        break;
+      case 'Privacy Policy':
+        this.onboardingData.consentPrivacyPolicy = event.checked;
+        break;
+      case 'Data Usage':
+        this.onboardingData.consentDataUsage = event.checked;
+        break;
+      case 'AI Coach':
+        this.onboardingData.consentAICoach = event.checked;
+        break;
+      case 'Email Updates':
+        this.onboardingData.consentEmailUpdates = event.checked;
+        break;
+    }
+    // Signal-based components don't need manual change detection
+    this.saveDraft();
+  }
+
+  /**
+   * Navigate to a specific step when user clicks on a step number
+   * Only allows navigation to completed steps or the next step
+   */
+  goToStep(event: any): void {
+    const targetIndex = event.index;
+    const currentIndex = this.currentStep();
+
+    // Allow navigation to any previous step or the immediate next step
+    if (targetIndex <= currentIndex + 1) {
+      this.currentStep.set(targetIndex);
+      this.saveDraft();
+    } else {
+      this.toastService.info("Please complete the current step first");
     }
   }
 

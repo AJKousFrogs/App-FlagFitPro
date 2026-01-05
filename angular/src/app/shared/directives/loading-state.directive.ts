@@ -1,11 +1,11 @@
 import {
   Directive,
-  Input,
   TemplateRef,
   ViewContainerRef,
   inject,
   Signal,
   ComponentRef,
+  input,
 } from "@angular/core";
 import { SkeletonLoaderComponent } from "../components/skeleton-loader/skeleton-loader.component";
 
@@ -39,9 +39,9 @@ export class LoadingStateDirective {
   private hasView = false;
   private skeletonRef: ComponentRef<SkeletonLoaderComponent> | null = null;
 
-  @Input() appLoadingStateSkeleton: SkeletonVariant = "text";
-  @Input() appLoadingStateLineCount: number = 3;
-  @Input() appLoadingStateRowCount: number = 5;
+  readonly appLoadingStateSkeleton = input<SkeletonVariant>("text");
+  readonly appLoadingStateLineCount = input<number>(3);
+  readonly appLoadingStateRowCount = input<number>(5);
 
   @Input()
   set appLoadingState(condition: boolean | Signal<boolean>) {

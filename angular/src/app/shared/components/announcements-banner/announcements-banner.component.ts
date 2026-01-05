@@ -18,9 +18,8 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -107,11 +106,11 @@ export class AnnouncementsBannerComponent implements OnInit {
   private notificationService = inject(TeamNotificationService);
 
   // Inputs
-  @Input() maxDisplay = 1;
+  readonly maxDisplay = input<any>(1);
 
   // Outputs
-  @Output() viewed = new EventEmitter<string>();
-  @Output() acknowledged = new EventEmitter<string>();
+  readonly viewed = output<string>();
+  readonly acknowledged = output<string>();
 
   // State
   private readonly _visible = signal(true);

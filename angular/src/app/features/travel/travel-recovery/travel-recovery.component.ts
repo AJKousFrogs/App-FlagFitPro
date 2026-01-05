@@ -35,7 +35,7 @@ import { Select } from "primeng/select";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 import { TimelineModule } from "primeng/timeline";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -84,7 +84,7 @@ interface TimezoneOption {
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
-    StepsModule,
+    StepperModule,
     TimelineModule,
     TagModule,
     ProgressBarModule,

@@ -69,12 +69,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-lg);
   color: var(--color-text-on-primary);
   font-size: var(--font-size-metric-md);
   box-shadow: var(--shadow-1);
+  border: var(--border-1) solid rgba(255, 255, 255, 0.2);
 }
 
 .chat-title {

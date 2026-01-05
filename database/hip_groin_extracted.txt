@@ -1,0 +1,2139 @@
+Practitioner’s Guide to
+Hip and Groin
+A comprehensive guide for practitioners
+leveraging technology to assess, manage and
+ optimize outcomes in hip and groin health.
+2  |  Practitioner’s Guide to Hip and Groin
+Nicol van Dyk is a specialist sports physiotherapist, clinical researcher and performance health consultant. He completed his 
+BSc (2005) and MSc (2010) in Physiotherapy at Stellenbosch University and later his PhD in Health Sciences (2018) at Ghent 
+University, focusing on hamstring injury risk in professional football. 
+Nicol has worked at the Sports Science Institute of South Africa and Aspetar Sports Medicine Hospital in Qatar. He also served 
+as Medical Research Lead for the Irish Rugby Football Union. In 2024, he was appointed an Ad Astra Fellow at University 
+College Dublin. His main interests are injury prevention, athlete risk management and promoting sport for health. Nicol is a 
+deputy editor of the British Journal of Sports Medicine and is a champion of interdisciplinary care, shared decision-making and 
+evidence-based practice.
+Eamonn Delahunt is a Professor at the UCD School of Public Health, Physiotherapy and Sports Science and a CORU-accredited 
+Chartered Physiotherapist. He completed his BSc (Physiotherapy) at UCD in 2003 with first-class honors and a PhD in 2006, 
+becoming the first physiotherapy graduate in Ireland to receive an IRCSET scholarship. Eamonn’s research focuses on the 
+prevention and rehabilitation of sport-related injuries, particularly in the hip and groin. 
+He has authored over 175 peer-reviewed articles and is ranked among the top 1% of researchers globally in Sport Sciences. 
+He is a co-author of the Doha Agreement on groin pain in athletes and has held several academic leadership roles at UCD.
+About the Authors
+Dr. Nicol van Dyk
+Physiotherapy and Sport Science 
+University College Dublin
+@nicolvandyk
+Dr. Eamonn Delahunt
+Physiotherapy and Sports Science 
+University College Dublin
+@EamonnDelahunt
+“ Hip and groin function continues to be a key part of elite sport performance as well as our everyday life. Whether 
+managing adductor-related groin pain, recovering from a total hip arthroplasty or implementing a proper strengthening 
+and prevention program, accurate and reliable objective measurements are a crucial part of evidence-based-practice. 
+The suite of testing available through VALD technologies, as well as the additional support such as normative data 
+reports, have elevated our ability to manage and recover from hip and groin pain or pathology.
+“ Groin injuries are commonly sustained by athletes who participate in field-based sports and are associated with 
+multiple functional impairments across the spectrum of human movement. Valid and reliable clinical assessment 
+protocols, such as those provided by VALD technologies, can enable practitioners to acquire accurate data that 
+can assist them in implementing high-quality rehabilitation and return-to-sport practices.
+3  |  Practitioner’s Guide to Hip and Groin
+Isometric testing, particularly in the long-lever hip adduction position, is a highly valuable test in the primary and 
+secondary prevention of Athletic Groin Pain. It is often a sensitive early marker in athletes who do not complain of 
+groin pain during sport for reduced force tolerance across the pelvic ring. It can be an early flag that a more 
+comprehensive review of the entire kinetic chain is required to identify drivers during this pre-symptomatic phase.  
+In those rehabilitating chronic groin pain, it is a key marker to track the effectiveness of rehabilitation strategies to  
+reduce symptoms and tolerance of re-introduction of running, change of direction and kickingload through that process.  
+Regular measurement highlights continuous progress or plateauing improvement, allowing the clinician to respond 
+proactively to maintain progress. It is essential for the prevention and rehabilitation of groin pain in all athletes.   
+Some Words from Other 
+Hip and Groin Experts
+Athletes sometimes develop decreased adductor 
+strength before they report groin pain. Regular 
+strength measurement may identify these issues 
+early, providing an opportunity for early intervention 
+before the pathology progresses.
+Dr. Justin Crow
+Doctor of Physiotherapy 
+AHPRA, ESSA, ASCA
+@Crow_Justin
+Using objective methods of strength measurement 
+is an essential component of my patient assessment 
+regardless of diagnosis, sport, level of athlete and age. 
+It provides baseline scores, which I can compare to 
+normative data and indicates the strength impairments 
+that may be contributing to the patient presentation.  
+These data provide considerable motivation for 
+patients to work towards improving, which enhances 
+their rehabilitation outcomes. I am never too far from 
+a handheld dynamometer in my clinical practice!
+“
+Dr. Andrea Mosler
+Specialist Sports and 
+Exercise Physiotherapist 
+La Trobe University
+@andarea_mo
+Dr. Enda King
+Head of Elite Performance and Development 
+Aspetar
+@enda.king
+“
+4  |  Practitioner’s Guide to Hip and Groin
+The Importance of  
+Hip Health
+Hip and groin function is important in both elite sport and across the spectrum of musculoskeletal 
+health, influencing the daily function of people of all ages and activity levels. With injuries varying from 
+acute traumatic strains to self-limiting chronic conditions, individuals with a hip or groin injury rarely 
+respond to a one-size-fits-all clinical assessment and rehabilitation approach.
+…individuals with a hip or groin injury rarely respond to a one-size-fits-
+all clinical assessment and rehabilitation approach.
+Instead, practitioners must find commonalities in the fundamental principles underpinning high-quality 
+clinical assessment, rehabilitation and return-to-activity or performance practices while acknowledging 
+the variability between and within individuals that they frequently encounter in clinical practice. 
+Restoring ROM
+Restoring force 
+production
+Integrating force 
+and ROM
+Re-integrating to 
+sport demands
+Monitoring KPIs 
+during return to sport
+Restoring force production capacities to accepted values  
+(e.g., long-lever isometric hip adduction strength)
+Restoring impaired joint range of motion (ROM) to accepted values  
+(e.g., hip flexion ROM)
+Integrating force and ROM assessments to improve  
+closed-environment biomechanics  
+(e.g., squat assessments)
+Evaluating the performance of sport-specific tasks  
+(e.g., change of direction assessment)
+Monitoring key performance indicators (KPIs) during return-to- 
+activity participation, return to sport and return to performance   
+(e,g., regular jump and isometric assessment monitoring)
+Principles of Hip and Groin Rehabilitation
+5  |  Practitioner’s Guide to Hip and Groin
+As a central hub and “transition zone” of forces, the hip is commonly affected by other segments of the 
+kinetic chain. Therefore, monitoring the core, back and lower leg is essential throughout rehabilitation 
+and training to effectively restore hip function and support the athlete or patient’s long-term goals. 
+Increased availability and usability of assessment technologies, including dynamometers, force plates 
+and timing gates – such as VALD’s suite of systems – allow for more precise kinetic and perfor-
+mance diagnoses, enabling more targeted interventions. 
+This technology accelerates practitioners’ capabilities to detect changes, monitor outcomes and 
+deliver tailored interventions to optimize function, rehabilitation and performance.
+…technology accelerates practitioners’ capabilities to detect changes…
+and deliver tailored interventions to optimize function, rehabilitation 
+and performance..
+
+6  |  Practitioner’s Guide to Hip and Groin
+The Importance of Hip Health ............................................................................................................. 4
+Hip and Groin Healt
+h Across the Lifespan ........................................................................................... 8
+Anat
+omy and Biomechanics of the Hip and Groin ............................................................................... 9
+Common P
+athologies of the Hip and Groin ....................................................................................... 13
+Hip and Groin Assessment ...................................................................................................................... 17
+Rehabilitat
+ion and Treatment Approaches ............................................................................................. 43
+S
+creening and Prevention .................................................................................................................. 56
+Case S
+tudies ...............................................................................................................................
+....... 59
+What Next? ...............................................................................................................................
+......... 67
+In this document, we will cover a wide range of topics and 
+answer some common questions, including:
+Click any heading to jump to section
+Contents
+Anatomy and Biomechanics of the Hip and Groin
+Hip and Groin 
+ Assessment
+Common Pathologies 
+of the Hip and Groin
+Rehabilitation and 
+Treatment Approaches
+The Importance of  
+Context in Hip and Groin 
+Testing (Jo Clubb)
+Professional Soccer  
+Case Study:  
+Fearghal Kerin
+Australian Football 
+Case Study:  
+Joshua Heerey
+Case Studies
+7  |  Practitioner’s Guide to Hip and Groin Back to Contents
+The Athletic Hip and Groin
+Without sufficient strength, mobility and neuromuscular control, the hip and groin are vulnerable 
+to injury. Injuries in these regions range from acute strains to chronic, overuse-related pathologies. 
+For athletes, developing and maintaining robust hip function is not only essential for enhancing 
+their performance – it can also be a critical component in their transition from injury back to full 
+participation, from “patient” to “performer.”
+…maintaining robust hip function is…a critical component in  
+transitioning from injury back to full participation…
+The ability of clinicians to monitor strength, mobility and neuromuscular control of the athletic hip  
+and groin is critical. Whether evaluating the force production capacity of a muscle group,  
+closed-environment biomechanics or sport-specific jump performance, the regular, reliable and objective 
+monitoring of these tasks is crucial to keeping the athletic hip and groin injury-free and ready to perform. 
+Pain and dysfunction in the hip and groin regions can have a profound impact on an athlete’s 
+performance, longevity and quality of life. A comprehensive understanding of hip and groin 
+biomechanics, common injury presentations and evidence-based assessment strategies is essential 
+for effective injury evaluation, diagnosis and rehabilitation in athletic populations.
+The Aging Hip
+Pain is not only a limiting factor for elite athletes. Chronic degenerative changes and injury can 
+leave lasting impacts on anyone, with nearly 30% of adults over 55 suffering from symptomatic hip 
+osteoarthritis (OA) (Fu et al., 2022). 
+While the forces experienced at the hip joint during daily activities are significantly lower than those  
+experienced during high-performance sport-specific tasks, even subtle changes in balance or functional 
+capacity – often undetectable without objective tools – can signal the early stages of dysfunction.  
+High-fidelity technologies like force plates can help uncover these changes, providing valuable  
+insight into functional decline and enabling earlier, more targeted interventions, regardless of age  
+or activity level.
+…[technology] can help uncover [functional] changes, providing 
+valuable insight into functional decline and enabling earlier…  
+targeted interventions…
+8  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Hip and Groin Health Across 
+the Lifespan
+Hip pathology evolves across different life stages, affecting mobility, function and quality of life. 
+Understanding these conditions is essential for early identification, management and prevention.
+Early Life: Ages <15
+Pathologies
+Pathologies
+Mid-Life: Ages 40-65
+Pathologies
+Young Adult: Ages 18-35
+Femoroacetabular 
+Impingement (FAI)
+Early OA
+Progressive cartilage degeneration secondary to previous injury or surgery 
+(e.g., Perthes or FAI).
+Late FAI
+Late-developed bony overgrowth of the femoral head and the acetabular rim.
+Legg-Calve Perthes
+Avascular necrosis of the 
+femoral head.
+Developmental Dysplasia
+Abnormal congruency develops 
+between the acetabulum and femur.
+Slipped Capital Femoral Epiphysis
+High-impact growth plate injury of the femoral head.
+Overgrowth of femoral head 
+and the acetabulum.
+Labral Tears
+Fraying, tearing or separation of the 
+labrum from the acetabular rim.
+Groin Strains
+Muscle injury leading to partial
+or complete rupture of thigh  
+muscles.
+Chronic Groin Pain
+Sequelae of common symptoms 
+after groin injury.
+9  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Pathologies
+Older Adult: Ages 65+
+Osteoarthritis
+Chronic degeneration of hip articular cartilage.
+Hip Fracture
+Common result of falls and loss of balance; associated with a 20-30% 
+1-year mortality rate in older adults.
+A strong, mobile hip joint is essential for lifelong function. Early screening, strength monitoring 
+and preventive strategies – assisted by objective measurement tools – can mitigate hip pathology 
+progression, improving mobility and quality of life at every stage.
+Hip Anatomy and Biomechanics
+Hip and groin anatomy and function are complex and highly interconnected. Muscles and bony 
+structures serve as key landmarks, supporting movement when functioning well and inhibiting function 
+when structurally unsound. While most practitioners are familiar with this anatomy, we include a brief 
+refresher to highlight key regions relevant to rehabilitation, performance training and injury prevention. 
+Vertebrae 
+(L4 and L5)
+Iliac Crest
+Sacroiliac 
+Joint
+Acetabulum
+Femoral 
+Head
+Greater 
+Trochanter
+Pubic
+Tubercle Pubic
+Symphysis
+Anterior Superior 
+Iliac Spine (ASIS)
+Anterior Inferior 
+Iliac Spine (AIIS)
+
+10  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Functional Muscle Anatomy
+There are five key muscle groups within the hip and groin regions that are commonly affected in 
+individuals with hip and groin injuries. When clinically assessing an individual with a hip or groin injury, 
+it is important for clinicians to evaluate the force production capacities of these muscle groups. 
+• Hip Flexors:
+ Iliopsoas, rectus femoris, sartorius and tensor fascia latae. Optimal test position:  
+Supine (long lever) or sitting (short lever).
+• Abdominals: Rectus abdominis, external oblique, internal oblique and tr
+ansversus abdominis.  
+Optimal test position: Supine.
+• Adduct
+ors: Adductor longus, adductor brevis, adductor magnus, pectineus, gracilis and  
+obturator externus, optimal ranges vary from 0 to 90° of hip flexion, depending on the specific  
+muscle of interest.
+• Hip Extensor
+s: Gluteal muscles, adductor magnus and hamstrings. Optimal test position: Prone 
+(long and short lever). 
+• Hip Rotat
+ors: Gluteus medius, gluteus minimus, superior and inferior gemellus, piriformis, 
+obturator internus and obturator externus. Optimal test position: Supine with hips and knees in  
+90° flexion.
+Assessment Positions: Adductors
+When testing most adductors, such as adductor magnus, 
+adductor longus and gracilis, the supine position with the hips at 
+0° or 45° is optimal. However, if pectineus pathology is suspected, 
+testing in supine with 90° of hip flexion is recommended. 
+11  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Groin
+The groin, located between the lower abdomen and thigh, serves as a key connection point between 
+the pelvis and lower limb. Clinically, the region is often defined using the “groin triangle,” which is 
+demarcated by three anatomical landmarks: the anterior superior iliac spine (ASIS), the pubic tubercle 
+and the 3G point (midway between the ASIS and the top of the patella). 
+The triangle’s borders are imaginary lines connecting the following points: 
+• AS
+IS to pubic tubercle (superior) 
+• Pubic tuber
+cle to 3G point (medial) 
+• 3G point back t
+o ASIS (lateral)
+Originally introduced by Falvey et al. (2009), the groin triangle, when used as an anatomical 
+reference, can assist clinicians in identifying structures that are commonly injured in athletes with 
+hip and groin injuries. 
+Falvey et al. (2009) also proposed the “pubic clock,”  
+a clinical reference using the pubic tubercle as a  
+clock face to map the attachment sites of key  
+anatomical structures that are commonly implicated  
+in athletes with hip and groin injuries.
+Pubic Tubercle
+3G Point
+ASIS
+Anterior Superior 
+Iliac Spine
+The Groin Triangle
+12  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Pubic Symphysis: A fibrocartilaginous joint uniting the pubic bones, critical for pelvic stability and 
+force transfer between lower limbs. 
+The Pubic Clock: This schematic representation of the anatomy of the area serves as a guide to what 
+may be palpable following the invagination of the scrotum. The examining clinician can therefore “walk 
+their finger” around the tubercle, assigning each part of the clock face to the relevant attachment. 
+Articular Structures
+The primary joint in the hip complex is the femoroacetabular joint (FAJ), a large ball-and-socket joint 
+essential for lower-body mobility and stability. While other joints, such as the sacroiliac, contribute to 
+pelvic function, they are difficult to assess objectively and are excluded from this guide. 
+The FAJ is built to withstand high compressive forces. Without proper conditioning, these forces –
+combined with factors like genetics, metabolic syndrome and injury history – can lead to cartilage 
+damage and OA. 
+The joint is stabilized passively by a strong fibrous capsule reinforced by ligaments and dynamically 
+stabilized by muscles such as the iliacus and psoas major. The labrum, a ring of fibrocartilage, 
+deepens the socket, improves load distribution, maintains joint congruency and supports cartilage 
+health. However, it is prone to tears and impingement, which can disrupt hip function.
+The pubic symphysis, a fibrocartilaginous joint, also contributes to hip stability by transferring force 
+between the legs.
+Rectus
+Abdominis
+Pubic 
+Symphysis
+Adductor 
+Longus
+Inguinal
+Ligament
+Superficial 
+Inguinal Ring
+Pubic Clock depiction for 
+the right pubic tubercle.
+13  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Hip LabrumHip Joint Capsule
+Supporting Structures 
+of the FAJ 
+Common Pathologies of the Hip and Groin
+Area Example Injuries Susceptible Populations
+FAJ (Non-Arthritic) 
+FAI, acetabular dysplasia  
+osteochondral lesions (osteochondritis 
+dissecans (OCD))
+FA
+I: Repetitive overuse with change of 
+direction and end ranges; hockey, soccer and 
+basketball are common 
+Dysplasia: Often genetic, commonly 
+symptomatic in performing arts 
+OCD: Repetitive overuse in high-impact 
+movements in basketball, gymnastics  
+and soccer 
+FAJ (Arthritic) OA – degenerative articular cartilage 
+pathology  Aging population
+Acetabular Labrum Labral tear; anterior (most common) and 
+posterior Soccer, basketball and hockey 
+Groin Musculature Adductor muscle or aponeurosis strain; 
+adductor tendon rupture or avulsion Soccer, football, rugby and basketball 
+Abdominal  
+Musculature 
+Insertional tendinopathy, muscle strain, 
+“sports hernia” Soccer, football, rugby and basketball 
+Hip Flexor  
+Musculature 
+Muscle strain, tendon rupture or avulsion, 
+conjoint tendon pathology Soccer, rugby, football and track and field 
+Lateral Hip Greater trochanteric pain syndrome (GTPS),  
+gluteal muscle strain, piriformis syndrome 
+GTPS:
+ Common in middle-aged women 
+Muscle Strain: Uncommon, often from falls 
+or accidents 
+Piriformis S
+yndrome: Potentially common 
+cause of sciatic nerve irritation 
+Sacroiliac Joint Sacroiliac joint pain 
+Potential cause of low back pain (LBP)  
+– no directly susceptible populations have  
+been identified 
+Defined clinical entities for groin pain (adductor-related,  
+iliopsoas-related, inguinal-related and pubic-related groin pain)
+Hip-r
+elated groin pain
+Other causes of groin pain in athletes
+Weir et al. (2015) created three major classifications  
+associated with groin pain in athletes:
+Defined clinical entities for groin pain
+Iliopsoas-related groin pain 
+A frequently overlooked cause of hip and groin 
+pain. It can result from overuse or compensatory 
+dysfunction in response to other hip or 
+pelvic imbalances. 
+Inguinal-related groin pain 
+Commonly involving the rectus abdominis 
+insertion and inguinal ligament. It is prevalent  
+in athletes performing forceful flexion and  
+rotational movements.
+Pubic-related groin pain
+Caused by excessive stress at the pubic  
+symphysis (e.g., osteitis pubis),  
+commonly associated with high impact,  
+asymmetrical loading.
+Adductor-related groin pain
+Often due to strain or enthesopathy of the adductor 
+longus. One of the most common causes of groin 
+pain and is frequently seen in sports with rapid 
+change of direction demands.
+Hip-related groin pain
+It encompasses FAI and labral tears, which 
+develop from repetitive mechanical stress and 
+can impair hip function.
+Other causes of groin pain 
+A category of exclusion when symptoms do not present neatly into any category.  
+Causes could be orthopedic, neurological, rheumatological, urological, gastrointestinal, 
+dermatological, oncological or sur
+gical in nature.
+The Doha Agreement
+1.
+2.
+3.
+14  |  Practitioner’s Guide to Hip and Groin
+ 15  |  Practitioner’s Guide to Hip and Groin Back to Contents
+16  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Applications of Consensus Statements
+The complex anatomy of the hip and groin regions presents a difficult clinical challenge for 
+practitioners searching for a single structural cause of pain and dysfunction. 
+To address this problem, consensus meetings such as the “Doha Agreement meeting on terminology  
+and definitions in groin pain in athletes” and the “Warwick Agreement on FAI syndrome” have 
+established clinical classification systems based on patient-reported injury history and clinical 
+examination findings. 
+These classification systems help to ensure consistent treatment strategies are followed to optimize 
+hip and groin rehabilitation. 
+Repetitive impingement of the femoral neck against the acetabular rim is the leading hypothesis for 
+chondrolabral damage, predisposing individuals to the premature development of OA.
+Management strategies vary from conservative to operative, depending on clinical severity. 
+Long-term monitoring and movement assessments are essential to track functional progress and 
+prevent recurrent symptoms.
+The Warwick Agreement
+The Warwick Agreement (2016) defines FAI as requiring a 
+combination of symptoms, clinical signs and imaging findings for 
+diagnosis. Detection and diagnosis of F
+AI are important due to its 
+acceleration of chondrolabral damage and time-loss.
+Clinical signs 
+consistent with FAI 
+(e.g., restricted ROM)
+Radiological findings 
+of FAI morphology
+FAI-like symptoms 
+(e.g., pain, giving 
+way, locking  
+and catching)
+Diagnost
+ic hip injections to 
+confirm hip as source of pain
+Additional imaging if needed 
+(e.g., MRI)
+FAI
+17  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Hip and Groin Assessment
+Assessing hip function is essential for optimizing movement efficiency, reducing injury risk and guiding 
+rehabilitation and training programs. The hip joint plays a central role in load distribution, force genera-
+tion and mobility, particularly in athletes and active individuals.  
+Identifying strength impairments, asymmetries and mobility limitations allows for the implementation of 
+targeted impairment-based interventions that can enhance performance and mitigate the risk of injuries.
+Identifying [hip] strength impairments…and mobility limitations allows 
+for the implementation of targeted impairment-based interventions 
+that can enhance performance and mitigate the risk of injuries.
+Assessment Tools and Technology
+Technological advancements have improved the precision and scope of hip assessments, adding 
+value by:
+Providing biofeedback to refine exercise technique 
+and optimize rehabilitation.
+Enhancing criteria-based progression, 
+ensuring athletes and patients meet 
+key strength and function benchmarks.
+Allowing training to serve as ongoing 
+testing and monitoring.
+Identifying left-to-right asymmetries 
+and hip muscle balance.
+Quantifying hip strength and mobility 
+through objective data. 
+Enabling comparisons with normative
+data for performance and recovery trends.
+18  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Sphygmomanometers
+Sphygmomanometers are simple pneumatic 
+devices that measure internal pressure and are 
+often used as low-tech biofeedback tools. 
+While their main purpose is blood pressure 
+measurement, they have long been used in  
+musculoskeletal health for lower back rehabilitation 
+and hip and groin testing and training.  
+Practitioners inflate the device to a set baseline 
+(e.g., 100mmHg) and have patients perform 
+adductor squeezes or isometric holds, aiming 
+to reach or maintain a target pressure (e.g., 
+130mmHg).
+This helps assess and train hip strength  
+and control.
+Isokinetic Dynamometers (IKDs)
+IKDs have long been used to measure hip torque and muscle strength across different contraction types  
+(isometric, concentric, eccentric). 
+These devices provide precise kinetic data but are often impractical for day-to-day clinical use due to their 
+expense, size and complexity of test set-ups, especially when assessing the force production capacities 
+of the hip musculature. 
+19  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Handheld Dynamometers (HHDs)
+HHDs provide a convenient alternative for measuring isometric strength in clinical and performance  
+settings. While they are effective for assessing hip flexor, abductor and adductor strength, their accuracy 
+and reliability largely depend on the standardization of the testing procedure.  
+Some HHDs, such as the DynaMo range, also have in-built inclinometers, allowing practitioners to assess 
+strength and range of motion (ROM) with a single device.
+Fixed-Frame Dynamometers (FFDs)
+In sports and rehabilitation settings, the use of FFDs has increased due to their portability and usability. 
+They enable standardized isometric strength testing in multiple hip positions, making them valuable for 
+assessing side-to-side differences in muscle strength and monitoring rehabilitation progress.
+
+20  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Force Plates
+Force plates, such as ForceDecks, are commonly used to assess closed-environment biomechanics and 
+jump performance during the rehabilitation and return-to-sport phases following hip and groin injury.  
+By quantifying performance outcome metrics (e.g., jump height, peak force, rate of force development 
+(RFD) and others) and strategy metrics (e.g., contraction time, countermovement depth and others), 
+force plates can help identify performance impairments and side-to-side differences in lower limb 
+strength and power, which can be used to inform training and rehabilitation practices. 
+…force plates can help identify performance impairments and side-
+to-side differences in lower limb strength and power, which can be 
+used to inform training and rehabilitation practices. 
+The Hip and the Kinetic Chain
+The hip serves as a central link in the kinetic chain, affecting pelvic stability, trunk control and lower-
+limb mechanics. As previously discussed, functional limitations in mobility, strength and balance at 
+the hip can lead to compensatory patterns, off-loading the hip and increasing the loads borne by the 
+knees, ankles and lumbar spine. 
+However, the opposite may also be true. Certain hip pathologies may come about not due to 
+insufficient qualities within the hip and groin but rather due to a lack of capacity elsewhere in the 
+kinetic chain. 
+Therefore, leveraging holistic, technology-enabled assessments allows practitioners to uncover 
+impairments that can be modified through the implementation of an individualized training or 
+rehabilitation program.
+
+21  |  Practitioner’s Guide to Hip and Groin Back to Contents
+…holistic, technology-enabled assessments allow practitioners to 
+uncover impairments that can be modified through the implementation 
+of an indvidualized training or rehabilitation program.
+The Role of Hip Musculature in Athletic Performance
+Hip strength alters 
+jumping performance
+Hip flexors assist  
+during acceleration
+Hip stability impr
+oves 
+change of direction
+performance
+Hip flexors are prime 
+movers for kicking
+Hip abductors are key 
+stabilizers in jogging
+22  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Functional Kinematic Assessments
+Observation of a patient’s posture, balance and movement strategies is a fundamental element of 
+clinical assessment. By observing a patient’s posture, balance performance and gait, using a head-to-
+toe or toe-to-head sequential approach, practitioners will often identify one or more of the following hip 
+pathologies associated with aberrant movement strategies:  
+• Static offloading 
+• Self-selected hip position in stance (e.g., internal or external rotation)
+ 
+• Excessiv
+e anterior or posterior pelvic tilt 
+• Circumduction during gait
+ 
+• Hip hiking
+ 
+• Tr
+endelenburg gait 
+• Foot pr
+ogression angle
+Technologies like HumanTrak can provide objective quantitative data on a patient’s posture, balance 
+performance and movement strategies. This data can be used to inform clinical decisions and monitor 
+patients’ rehabilitation progress. 
+
+23  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Previously, visual movement assessments were implemented to qualitatively evaluate a patient’s 
+movement strategies during the performance of functional tasks such as a double-leg squat.  
+Motion analysis technologies can now help to supplement a practitioner’s visual movement 
+assessment by providing objective data from the same assessment strategies practitioners already 
+use to assess patient function. This allows for more consistent and reliable progress tracking during 
+patient re-evaluations. 
+Motion analysis technologies…[provide] objective data from the same 
+assessment strategies practitioners already use to assess  
+patient function.
+Other modern technologies, such as ForceDecks, allow practitioners to combine high-fidelity force 
+assessment with visual analysis through applications like ForceDecks Vision. This can help educate 
+clients by pairing common kinematic faults with a change in recorded force production.
+[ForceDecks Vision] can help educate clients by pairing common  
+kinematic faults with a change in recorded force production.
+Sit to Stand
+Assessments
+Traditional measurement options
+Technology-enabled measurement options
+Traditional 
+Assessment
+Pain
+Traditional MeasuresTechnology-Enabled Measures
+Force  
+Production
+Subject
+ive 
+Execution
+Asymmet
+ry
+Repetitions
+RFD
+Time
+ROM
+Center of Mass 
+Displacement
+Mov
+ement 
+Velocity
+Traditional 
+Assessment
+Traditional 
+Assessment
+Traditional 
+Assessment
+Traditional 
+Assessment
+Tech- 
+Enabled
+Tech- 
+Enabled
+Tech- 
+Enabled
+Tech- 
+Enabled
+Tech- 
+Enabled
+Squat Balance Lunge Drop Jump
+24  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Functional Testing
+Incorporating simple assessments into daily routines empowers clients to track their own progress, 
+promoting self-sufficiency and a stronger internal locus of control. Some of these patient self-
+administered assessments include: 
+• Crossing legs
+ 
+• Stairs (up and down) 
+• Lunge (later
+al) 
+Not only do these assessments provide a functional measure, but they can also be used to identify the 
+presence of pain or impairments. 
+...simple assessments...empower clients to track their own progress, 
+promoting self-sufficiency...
+Osteoarthritis Research Society International (OARSI) recommends the following performance-based 
+tests for evaluating function in older adults (Dobson et al., 2013 ): 
+• 30s chair-stand test (able to be tested using F
+orceDecks) 
+• 40m fast-paced walk test (av
+ailable with SmartSpeed) 
+• Stair-climb test 
+• Timed up-and-go test 
+• 6-min walk test (able to be tested using Smar
+tSpeed) 
+Any activity that the patient identifies as aggravating their symptoms can also be used as a functional 
+test, provided it is appropriate for their current pain level or irritability. 
+Patients can track their progress with home exercise programs (HEPs), such as MoveHealth, by completing assigned 
+programs and questionnaires.
+25  |  Practitioner’s Guide to Hip and Groin Back to Contents
+ROM Testing
+The assessment of hip ROM is another fundamental element of clinical assessment. Practitioners 
+primarily assess hip ROM to establish whether any pain or mobility restrictions are present. The use of 
+standardized testing procedures ensures the accurate and reliable quantification of ROM, particularly 
+for movements like hip flexion, extension, abduction (Abd), adduction (Add), internal rotation (IR) and 
+external rotation (ER).
+Often, practitioners use active range of motion (AROM) as a starting point. During AROM assessments, 
+practitioners typically take note of the following:  
+• The total r
+ange of motion
+• Whether the patient repor
+ts any symptoms (e.g., pain or stiffness) 
+If the AROM is lower than typically expected for that movement, it is important to also take note of 
+the primary restraint to movement (e.g., pain, muscle flexibility, joint stiffness or psychosocial factors 
+like fear).
+ROM Assessment
+ROM assessment is a critical component of hip and groin injury assessment protocols. Technology-enabled 
+assessments, such as those provided by DynaMo, allow practitioners to quickly and accurately assess 
+active and passive ROM while automatically storing data within cloud-based platforms like VALD Hub. 
+Movements of the Hip
+Flexion and Extension
+Sagittal Plane
+Internal and External Rotation
+Transverse Plane
+Abduction and Adduction
+Frontal Plane
+26  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+However, ROM data is only valuable when it is able to influence a 
+practitioner’s treatment plan. Therefore, benchmarked norms and 
+standards are important for practitioners to compare to their patient’s 
+scores. The following table provides examples of ROM assessment 
+methods for the hip with common ROM benchmarks.
+These tables provide a structured overview for assessing both active and passive ranges of motion, 
+including positions, expected ranges and key observations for each movement. Always remember to 
+compare differences between sides. 
+Hip ROM Tests Available in DynaMo System
+Flexion Extension Abduction Adduction External  
+Rotation 
+Internal  
+Rot ation 
+Hip Flexion 
+– Seated
+Hip Extension 
+– Standing
+Hip Abduction 
+– Supine
+Hip Adduction 
+– Supine
+Hip External
+Rotation – Prone
+Hip Internal 
+Rotation – Prone
+Hip Flexion 
+– Standing
+Hip Extension 
+– Side Lying
+Hip Abduction 
+– Standing
+Hip External 
+Rotation – Supine
+Hip Internal 
+Rotation – Supine
+Hip Flexion 
+– Supine
+Hip Extension 
+– Prone
+Hip Abduction 
+– Side Lying
+Hip Flexion 
+– Supine (Long 
+Lever)
+Movement Patient Position Expected Range Comments
+Flexion Standing or seated
+Active: 120-130° 
+Passive: 135-140° 
+Assess bilaterally; note when  
+symptoms begin and what limits 
+the motion at the end of the range. 
+Extension Standing or seated 
+Active: 20° (with knee  
+extended);  
+10° (with knee flexed)  
+Passive: 10-20° 
+Compare AROM 
+and  observe any 
+discomfort or limitations. 
+Abduction Standing or seated
+Active: 30-50° 
+Passive: 30-50° 
+Evaluate symmetry  
+and note any restrictions 
+or pain during movement. 
+Adduction Standing or seated 
+Active: 30° 
+Passive: 30° 
+Observe for discomfort and any 
+limitation in range. 
+External  
+Rotation Standing or seated
+Active: 40-60° 
+Passive: 40-60° 
+Assess the quality of  
+movement and note any 
+bilateral differences. 
+Internal  
+Rotation Standing or seated 
+Active: 30-40° 
+Passive: 30-40° 
+Record the onset of  
+symptoms and factors that limit 
+ the end-ROM. 
+
+27  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Online resources, such as VALD’s Knowledge Base, outline easy-to-implement protocols for the 
+measurement of both passive and AROM in different starting positions.
+Strength Testing
+Impairments in hip adduction strength are a modifiable risk factor for hip and groin injuries in 
+fieldsport athletes, making regular assessment essential for early detection and prevention. One of 
+the earliest tools used for this was the adductor squeeze test, which utilizes a sphygmomanometer 
+placed between the knees. Malliaras et al. (2009) found that athletes with self-reported groin pain 
+demonstrated lower squeeze values compared to pain-free athletes. 
+...regular assessment [of hip  
+adduction strength is] essential  
+for early detection and [injury]  
+prevention.
+Delahunt et al. (2011a, 2011b) confirmed the test’s 
+reliability and noted that maximum values are 
+achieved in a supine position with 45° hip flexion.
+However, the test has limitations: it provides only 
+a surrogate measure of strength and suffers from 
+a ceiling effect, often maxing out at 300 mmHg   
+(Roe et al., 2016; Toohey et al., 2018). 
+HHDs offer a more precise alternative, with  Thorborg et al. (2010) showing they can reliably measure 
+unilateral isometric adductor strength. However, HHDs are limited by the need for practitioner-applied 
+resistance, which can affect accuracy.
+Photo taken from Aspetar Sports Medicine Journal.
+28  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+FFDs, such as ForceFrame, address these 
+limitations by using independent load cells to 
+assess bilateral isometric adductor strength 
+simultaneously.
+O’Connor et al. (2023) reported that the 
+ForceFrame provides reliable data at 0° and 45° 
+hip flexion, establishing it as the current clinical 
+gold standard for assessing isometric adductor 
+muscle strength.
+It is common for patients with hip and groin injuries to present with impaired muscle strength. 
+Therefore, practitioners should include assessments of the force production capacities of the hip and 
+groin as a fundamental principle of their clinical assessment. The data from these assessments can 
+be used to inform the design of strength training programs.  
+…practitioners should include assessments of the force production 
+capacities of the hip and groin as a fundamental principle of their 
+clinical assessment.
+FFDs, HHDs and fixed-point dynamometers (FPDs) can be used to accurately and reliably quantify the 
+force production capacities of the hip and groin musculature. Their usability enables practitioners to 
+serially monitor their patients’ responses to therapeutic interventions throughout their rehabilitation, 
+return-to-activity and return-to-sport journeys.
+SUPINE ABDUCTION 60°
+SIDEL YING ABDUCTION HHD
+LONG LEVER ADDUCTION  
+(5S SQUEEZE TEST)
+SUPINE EXTERNAL ROTATION 90°
+29  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Fixed-Frame Dynamometry Hip Strength Assessment
+ForceFrame Test Protocol –
+Hip Adduction/Abduction 
+The optimal testing procedure involves 
+positioning the individual in supine lying with 
+45° hip flexion and the feet flat on the ground. 
+Various other test positions have been 
+described in clinical research, such as supine 
+lying with 0°, 60° and 90° hip flexion. 
+Other testing options are also available here.
+ForceFrame Test Protocol – 
+Hip Flexion 
+The optimal testing procedure involves 
+positioning the individual in a seated position. 
+However, depending on the clinical reasoning 
+of the practitioner, other test positions may 
+be considered. 
+
+30  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+ForceFrame Test Protocol –
+Hip Internal Rotation/External 
+Rotation  
+The optimal testing procedure involves 
+positioning the individual in supine lying with 90° 
+hip flexion and 90° knee flexion. However, the 
+configuration of the ForceFrame also enables 
+testing in prone lying. 
+If an FFD (e.g., ForceFrame) is not available, most 
+of the hip strength tests described above can 
+also be performed using an HHD (e.g., DynaMo).
+Benchmarked or Balanced?
+Hip strength assessment benchmarks are often variable. Although 
+Norms are available for key hip strength markers, simply meeting the 
+standards may not be enough. Having balanced force production in all 
+planes of motion may be a key consideration for chronic or recurrent 
+hip and groin injuries.
+ForceFrame Test Protocol –  
+Hip Extension  
+The optimal testing procedure involves 
+positioning the individual in prone lying with 
+90° knee flexion. However, the configuration 
+of the ForceFrame also enables testing in 
+positions of supine lying and standing. 
+Special Tests for the Hip and Groin
+Special tests are often used to increase or decrease the likelihood that certain pathologies are present. 
+To underscore their importance, we have included common special tests for the hip and groin in the 
+guide’s Appendix.
+31  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Advanced 
+Assessments
+The inclusion of specific functional tests 
+provides the clinician with valuable additional 
+information to complement the standard 
+clinical assessment. 
+COUNTERMOVEMENT JUMP (CMJ) ISOMETRIC MID-THIGH PULL (IMTP)
+CHANGE OF DIRECTION (5-0-5)
+Countermovement Jump
+The CMJ is a simple, efficient tool for assessing lower-body power, neuromuscular function and 
+movement strategy in both performance and rehabilitation settings.
+Its ability to break down force production across distinct movement phases makes it a powerful 
+indicator of readiness, fatigue and asymmetries.
+Change of Direction
+Change of direction assessments using SmartSpeed provide objective, time-based insights into an 
+athlete’s agility, reactivity and movement efficiency during directional transitions. 
+It is especially valuable for identifying performance deficits, asymmetries or decision-making delays 
+that impact real-world sport performance.
+Key Insight 
+A pre-planned (or reactive) movement 
+executed as quickly as possible, 
+commonly seen with American football 
+receivers running specific routes to 
+evade a defender.
+Key Insight 
+When performing the CMJ, peak power 
+provides a direct measure of an individual’s 
+ability to generate maximum power  
+during the concentric phase of the jump. 
+Given the impact of body mass (BM)  
+on generating velocity crucial for jump  
+height in a CMJ, normalizing peak power  
+to BM allows for comparable results  
+across individuals.
+32  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Increased force
+May reflect training effectiveness
+Interlimb discrepancies
+Highlights asymmetries  
+or compensation patterns
+Hop and Return
+The hop and return test is a dynamic, unilateral assessment that evaluates lower-limb power,  
+control and reactive ability during rapid deceleration and re-acceleration. 
+It is particularly useful in rehabilitation and return-to-sport settings to detect asymmetries, 
+compensation strategies and neuromuscular deficits under sport-specific demands.  
+Isometric Mid-Thigh Pull
+The IMTP is a gold-standard test for assessing maximal force production and RFD in a safe, 
+joint-friendly setup. It is highly effective for tracking strength progress, neuromuscular readiness and 
+identifying deficits post-injury or during return-to-play protocols.
+Key Insight 
+Comparing metrics helps to identify any 
+residual differences and can be used to 
+target specific outcomes in rehabilitation. 
+Three metrics practitioners can monitor are: 
+• Contact
+ Time 
+• Peak 
+Takeoff Force Asymmetry % 
+• Peak Landing F
+orce Asymmetry %
+Key Insight 
+Increases in peak force over time may reflect return to sport and training effectiveness, while limb 
+discrepancies may highlight asymmetries or compensation patterns to address in your rehabilitation.
+33  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Squat Assessment
+The squat assessment provides detailed insight into lower-body strength, symmetry and movement 
+quality through a foundational, functional pattern. It is valuable for identifying compensations, 
+assessing control and stability and guiding both performance training and rehabilitation strategies. 
+Standing Posture
+The standing assessment (both bilateral and 
+unilateral) offers a quick snapshot of static weight 
+distribution, postural symmetry and balance, 
+serving as a baseline for identifying imbalances or 
+compensatory loading patterns. 
+Key Insight 
+Maximum negative displacement represents the greatest downward distance from standing 
+(in centimeters) during the squat, indicating the depth of the squat.
+It provides insight into the ROM and control during the eccentric phase. Factors that influence 
+maximum negative displacement include flexibility, strength and movement strategy.
+Key Insight
+It is especially useful in early-stage 
+rehabilitation or return-to-function protocols 
+to monitor changes in limb loading over time. 
+This quantitative measure can be  
+useful to detect any subtle change in 
+weight distribution.
+Maximum Negative Displacement2
+Lower values
+May suggest movement
+limitations or the need for a
+more cautious progression
+0cm
+–17cm
+Rep 1
+–21cm
+Rep 2
+–29cm
+Rep 3
+–42cm
+Rep 5
+–37cm
+Rep 4
+Greater values
+Often reflects good mobility
+Also requires good strength and control
+Maximum Negative Displacement2
+Lower values
+May suggest movement
+limitations or the need for a
+more cautious progression
+0cm
+–17cm
+Rep 1
+–21cm
+Rep 2
+–29cm
+Rep 3
+–42cm
+Rep 5
+–37cm
+Rep 4
+Greater values
+Often reflects good mobility
+Also requires good strength and control
+Maximum Negative Displacement2
+Lower values
+May suggest movement
+limitations or the need for a
+more cautious progression
+0cm
+–17cm
+Rep 1
+–21cm
+Rep 2
+–29cm
+Rep 3
+–42cm
+Rep 5
+–37cm
+Rep 4
+Greater values
+Often reflects good mobility
+Also requires good strength and control
+Greater values
+Often reflects good mobility
+Also requires good strength and control
+34  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+35  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Patient Reported Outcome Measures 
+(PROMs)
+While capturing insights on the physical characteristics of movement and strength in the hip and groin 
+region is important, PROMs can also provide valuable insights. Specifically, with hip and groin injuries, 
+they can provide reliable measures on the impact of a condition on pain, function, quality of life and 
+factors that are meaningful to the patient or athlete. 
+Historically, many of the PROMs used with hip and groin injuries were less effective and responsive for  
+athletes and physically active patients, who form a significant portion of people impacted by these injuries. 
+The development and validation of the 
+Hip and Groin Outcome Score (HAGOS)  
+by Professor Kristian Thorborg and his 
+colleagues was an important step forward. 
+By breaking up the HAGOS into six domains 
+of symptoms, pain, activities of daily living, 
+sports and recreation, physical activity and 
+quality of life, a better appreciation of the 
+impact of physical deficits upon the patient 
+from their perspective. 
+It is recommended that any use of the 
+HAGOS should assess these individual 
+domains rather than simply assess the 
+overall score of the questionnaire. 
+It is recommended that any use of the HAGOS should assess these 
+individual domains rather than simply assess the overall score of 
+the questionnaire.
+While the scale was designed for use with active young to middle-aged adults, the individual domains 
+do enable the HAGOS to be implemented with non-athletic populations. This is evidenced by the 
+application of the score in an OA population. 
+For older, less active populations, a reduced focus on the sport and recreation (and potentially physical 
+activity) domain is recommended. With longstanding groin pain, it is recommended that the HAGOS be 
+repeated at 3-, 6- and 12-month follow-up time points.
+36  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Status of the Injury
+Understanding pain, strength, ROM and function helps to determine both the severity  
+and the nature of the injury or pathology. These factors allow for prioritization and focus 
+of rehabilitation efforts at key checkpoints during the rehabilitation process.
+Criteria for Progression
+Natural healing is an important part of rehabilitation. However, most programs (including 
+return to sport and performance) should follow pre-outlined criteria. Assessments offer a 
+starting point to assess if patients have met the criteria for progression.
+Optimized Decision Making
+Objective outcomes are key to optimizing our treatment and exercise prescription. 
+Modern technologies can provide training feedback (e.g., Training Mode) and, therefore, 
+allowing practitioners to optimize each training session to the intended outcome.
+Repeated assessments of adductor muscle strength, hip adduction ROM and palpation pain have been 
+reported to offer a general indication of rehabilitation progress in male athletes with acute adductor 
+muscle injuries (Serner et al., 2021). 
+While these clinical measures do not provide a precise marker of recovery during rehabilitation, 
+they can provide practitioners with pertinent information that can be used to inform the choice of 
+therapeutic interventions for the recovering athlete: 
+Hip Adduction/Abduction Strength: Hip strength assessments, tested in supine at 60° with ForceFrame 
+or DynaMo, can be performed frequently to measure progress. Serner and colleagues tested patients as 
+often as three times per week to monitor day-to-day fluctuations in hip and groin performance.
+What to Do with Assessment Findings
+Three essential outcomes from assessment inform rehabilitation practice.
+Hip Adduction ROM in Prone or Standing:
+this measure of flexibility helps us to manage 
+both the players’ response and help dictate 
+future progressions.
+37  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Palpation pain is also an important measure to include, and a general objective measure of pain, 
+such as a visual analog scale (VAS) or numeric pain rating scale (NPRS), can be used to quantify the 
+patient’s self-reported pain upon palpation of the injured tissue. See Appendix.
+A typical dashboard might look like this: 
+
+38  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Practitioners will often use rolling averages (e.g., comparing the most recent test results to the 
+average of the previous three) to get a more accurate representation of how the athlete’s performance 
+measures are changing within a training macro-cycle. 
+Practitioners will use rolling 
+averages to get a more accurate 
+representation of [the athlete]…
+For example, high congestion of competitive 
+fixtures may significantly reduce an athlete’s hip 
+adduction force production capacities enough to 
+signal a performance deficit when benchmarked 
+to their preseason value. 
+However, this trend may suggest a normal 
+response to the physical demands imposed 
+by the competitive fixture congestion, thus 
+potentially leading to excessive precautions being 
+taken by the health and performance teams.
+Important Considerations for Monitoring Athletes
+Given the gradual onset of many hip and groin injuries, several monitoring options can be used to 
+identify when an athlete may be at an increased risk of injury or performance deficit. 
+Common monitoring practices involve profiling individual athletes to understand their baseline performance 
+measures, which enables the creation of benchmarks and bandwidths of acceptable change. 
+MD +3:
+Three days after a match, once the athlete has received appropriate 
+treatment and recovery strategies to mitigate the effects of fatigue.
+Significant Drop In Performance (MD +1):
+After a back-to-back game, the athlete 
+reports increases in hip and groin pain and 
+a significant drop in performance.
+MD +1:
+Afte
+r the following match, the athlete has a fatigue response, 
+showing diminished force production.
+Match Day (MD) +1:
+An athlete is tested 24 hours post-match to detect fatigue 
+or impairments after heavy competition.
+Customized flagging thresholds for Group Monitoring  
+Dashboards available in VALD Hub. Both z-score and  
+percentage change thresholds are available.
+39  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Online dashboard systems, such as VALD Hub, 
+provide individual monitoring dashboards where 
+score flagging can be easily customized to the 
+preferences of the individual practitioner.
+Similarly, differences in the strength of 
+antagonistic muscles can provide practitioners 
+with important information.
+The ratio of hip adductor to hip abductor muscle 
+strength is a commonly used muscle strength 
+ratio in athletes and patients with hip and groin 
+injuries. Sport-specific normative data ratios are 
+listed below.
+Add:Abd Ratio
+Percentile Tennis Soccer Ice Hockey
+1st 0.72 0.56 0.59
+25th 0.95 0.88 0.93
+50th 1.02 1.01 1.06
+75th 1.09 1.14 1.20
+99th 1.27 1.46 1.51
+427N
+51st Percentile
+343N
+26th Percentile
+1.25
+82nd Percentile
+Adduction Peak Force 60° Abduction Peak Force 60°
+Add:Abd Ratio 60°
+40  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+This easy-to-implement method of musculoskeletal screening could enable practitioners to intervene 
+prophylactically, forestalling the development of hip and groin injuries, thus further legitimizing the role 
+of technology-enhanced assessments in injury prevention. 
+However, even with potentially dampened sensitivity, squeeze assessment benchmarks have 
+established clinically significant and meaningful benchmarks to use when rehabilitating hip and groin 
+injury and monitoring for potential injury risk.  
+A low adductor:abductor ratio (>0.8) and low absolute adduction force production are suggested as 
+major risk factors (Bourne et al., 2019) for hip and groin pain as measured on technology-enabled 
+systems such as DynaMo or ForceFrame.   
+Similarly, hip abduction imbalance (favoring the preferred kicking limb), higher levels of hip adductor 
+and abductor strength and superior HAGOS values are associated with a reduced likelihood of future 
+hip or groin injury in professional soccer players (Bourne et al., 2019 ). 
+Understanding Adductor Asymmetry
+Recent literature has discovered a blunted sensitivity to detect 
+asymmetries in bilateral assessments of abductor and adductor 
+strength (e.g., squeeze tests). However, due to its ease of testing and 
+clinical utility, practitioners may be able to use these assessments as 
+a quick screen to determine if further testing is warranted.
+362N
+40th Percentile
+392N
+64th Percentile
+0.93
+26th Percentile
+Adduction Peak Force 60° Abduction Peak Force 60°
+Add:Abd Ratio 60°
+41  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Imaging
+Imaging has become a central part of evaluating hip-related groin pain, especially with increased 
+awareness of conditions like femoroacetabular impingement (FAI) and labral tears. However, 
+overreliance on imaging risks mismanagement, unnecessary interventions and patient anxiety. 
+While imaging advances have improved anatomical visualization, structural findings like cam 
+morphology or labral tears are commonly seen in asymptomatic individuals. For example, over 65% 
+of asymptomatic individuals may show labral tears, and more than half of athletes exhibit cam 
+morphology without pain.
+Therefore, imaging findings must be interpreted with caution and always in conjunction with clinical 
+symptoms, history and physical examination. 
+…over 65% of asymptomatic individuals may show labral tears, and 
+more than half of athletes exhibit cam morphology without pain.
+O’Sullivan et al. (2018) argue for clinical 
+context over imaging alone, warning against 
+“hip-nosis” – the overemphasis on structural 
+abnormalities as the sole pain driver. 
+Imaging should not be the default first step, 
+but rather a tool used selectively after a 
+thorough assessment.
+Even when pathology is identified, such as cam 
+morphology, the evidence does not strongly 
+support surgery over conservative management.
+Hip Add:Abd Ratio <0.8 leads to
+17x greater risk of groin strain injury
+Isometric Adductor strength <465N
+Increased likelihood of groin injury by 72%
+65% of asymptomatic people 
+show labral pathology
+50% of asymptomatic athletes 
+have cam morphology
+42  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+O’Sullivan et al. (2018) argue for clinical context over imaging alone, 
+warning against “hip-nosis”– the overemphasis on structural 
+abnormalities as the sole pain driver.
+O’Sullivan et al. (2018) suggest using the CLEAR principle for reporting imaging findings: 
+• Consistent Language:
+ Use non-threatening, clear terminology. 
+• Link to Epidemiology: 
+Reference normal prevalence in similar populations. 
+• Assess Rele
+vance: Explain the clinical significance – or lack thereof – of findings. 
+Do Not Forget the Trunk and Upper Body 
+Although the hip and groin are primary focus areas in assessment and training, it is essential to 
+consider the body as a connected and integrated system. Strength and stability in the trunk and upper 
+body are crucial for optimal hip and groin performance.  
+In dynamic activities such as sprinting, cutting and kicking, the upper body and core contribute 
+significantly to force production and movement control. Impaired proximal segment force production 
+and movement control can result in increased load distribution across the hip and groin regions, 
+thereby increasing their vulnerability to injury. 
+Consequently, for athletes with hip and groin injuries, it is also important to assess the force 
+production capacities of the trunk and upper body. Additionally, practitioners should also consider the 
+contribution of the trunk to the performance of closed-environment tasks such as a single-leg squat.  
+Focusing solely on building hip and groin strength while neglecting the trunk and upper body can lead 
+to imbalances, ultimately impacting performance and elevating injury risk.
+43  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Rehabilitation and Treatment 
+Approaches
+A criteria-based progressive, data-informed rehabilitation framework can ensure an athlete’s safe 
+return to play while also minimizing their risk of re-injury. Technologies can provide practitioners 
+with objective data about their athlete’s rehabilitation progress, which can be used to inform clinical 
+decisions and rehabilitation planning.
+Representation of progression through rehabilitation (adapted from Dreyfus, 2004 ).
+Early Stage
+In the initial stage of rehabilitation, primary goals include reducing the patient’s pain and activating 
+their neuromuscular system to prepare them for the progressive loading of a structured rehabilitation 
+program. A good place to start is with isometric adduction holds and general activation drills using 
+ForceFrame’s Training Mode. These targeted exercises are designed to activate the adductor muscles 
+and restore control and coordination. 
+Common Training Mode drills are used for adduction, abduction, flexion and extension of the hip joint. 
+Targets and training zones are used to create biofeedback for the participant and better restore their 
+control of graded force production in a controlled setting.
+44  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+AROM work is also a key focus during this stage. The assessment of hip abduction ROM in 
+conjunction with an assessment like the bent knee fall out test can be used by practitioners to ensure 
+that the athlete has adequate hip ROM before they are exposed to more dynamic movements. 
+Strength monitoring plays a crucial role throughout the process. Regular assessments using tools 
+like DynaMo allow clinicians to track progress objectively and tailor interventions accordingly. By 
+combining traditional clinical assessments with real-time, technology-enabled feedback, practitioners 
+can fine-tune the rehabilitation approach to achieve the best possible outcomes early in the athlete’s 
+rehabilitation journey.
+[Technology] can fine-tune the rehabilitation approach to achieve the 
+best possible outcomes early in the athlete’s rehabilitation journey.
+High “Hamstring” Tears and Tendinopathies
+Hamstring strain injuries are widely prevalent in elite sport. However, 
+the adductor magnus plays a key role in hip extension, whereby a 
+strain or injury to this muscle may masquerade as a high hamstring 
+injury. Screening adductor strength can help to reduce uncertainty 
+during proximal thigh muscle injury assessments.
+Setting clear key performance indicators (KPIs) during this stage allows the practitioner to develop a 
+criteria-based progression approach to rehabilitation. In the presence of adductor-related groin pain, 
+isometric adduction force production in a fixed-frame dynamometry setup allows for quick and easy 
+progression of pain-free (or pain-threshold) strength improvements. 
+45  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Throughout the rehabilitation of hip and groin pathology, testing and 
+training become intertwined. 
+Throughout the rehabilitation of hip and groin pathology, testing and training become intertwined.
+Neuromuscular activation interventions, such as low-load adductor squeezes, can provide insightful 
+data when integrated into technology such as Training Mode for biofeedback and force-monitoring.  
+Similarly, progression and tolerance to daily activities such as squatting can easily be tracked through 
+metrics like peak negative displacement and eccentric deceleration impulse in ForceDecks.
+Similarly, inclinometry can provide an objective marker of movement tolerance. Using abduction 
+ROM with DynaMo or the bent knee fall out test can help gather information about tissue tolerance to 
+lengthening forces.
+46  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Mid Stage
+As the athlete’s pain experienced during the 
+performance of daily activities subsides, the focus 
+of rehabilitation shifts towards progressive strength 
+development and increased load tolerance.
+Mid-stage rehabilitation for hip and groin injuries 
+often defaults to repetitive loading strategies that are 
+monotonous and may result in athlete disengagement.
+While progressive overload is 
+essential, it should not come at the  
+cost of athlete engagement.  
+Dull or overly repetitive exercise-based 
+sessions can result in reduced effort by the 
+athlete and lack of confidence and trust in the 
+rehabilitation process.
+The use of technology in rehabilitation can 
+overcome these issues. Tools like Training Mode 
+allow practitioners to incrementally increase 
+isometric load thresholds with precision, while 
+real-time biofeedback keeps athletes engaged 
+and motivated.
+These sessions also provide an ideal opportunity 
+to build strength in adjacent muscle groups, thus 
+introducing variability to the rehabilitation program 
+while also still progressing the primary injury.
+Dynamic biofeedback tools like NordBord’s 
+Training Mode help individualize hamstring 
+strengthening – an area often overlooked 
+during mid-stage rehabilitation. 
+Force plates can be used to assess balance 
+and strength through center of pressure visuals 
+and force traces that guide progression in 
+single-leg stance and loaded squatting tasks. 
+
+47  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Current research also underscores the role of supporting muscle groups – such as the quadriceps  
+and calves – in deceleration and change of direction tasks. By screening these areas and addressing 
+any noted impairments, practitioners reduce the risk of overloading the hip and groin complex when 
+reintroducing high-velocity and change of direction movements. 
+Throughout this phase, ForceDecks jump assessments (e.g., CMJ or squat jump) provide valuable 
+insights into power output, impulse and side-to-side asymmetries – helping to inform progression 
+criteria and guide return-to-play decisions. 
+While the mid-stage of rehabilitation can become stagnant and uncertain, technology-enabled 
+benchmarks help to bring structure to this rehabilitation phase. The following benchmarks offer clear, 
+objective milestones for guiding rehabilitation progression:
+Adductors: Culprit or Victim?
+Adductor-related groin injuries often have a clear focus on restoring force 
+tolerance and capacity to the adductor complex. However, in cases of 
+recurrent injury, assessing supporting and stabilizing musculature, such as 
+abductors, quadriceps and even the calves, may play a key role in detecting 
+the true culprit of the injury.
+Benchmarks are not certain thresholds but rather evidence-informed guidelines to provide the patient 
+and practitioner with appropriate progression targets.  
+Practitioners Guide to Hip and Groin Pain
+Mid-Stage Return to Play Benchmarks
+No symptoms at rest, and minimal pain (<2/10) 
+during rehabilitation or training activities.
+<20% adductor asymmetry if using 
+unilateral assessment.
+<15% adductor asymmetry if using bilateral assessment 
+(e.g., 5s squeeze test).
+All accessory muscle groups within 10% of common 
+performance benchmarks:
+Soleus: 1.8x bodyweight
+Quadriceps: 2.5Nm/kg bodyweight
+Hamstrings: 400N Nordic
+OR
+48  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Late Stage
+As clients enter the late stages of rehabilitation, the training emphasis shifts to restoring explosive 
+power and integrating movement patterns that closely resemble the physical demands of the 
+athlete’s sport.  
+High velocity, multi-planar adduction strength is essential for successful rehabilitation for patients 
+with hip and groin injuries, yet it is often underdeveloped with traditional rehabilitation approaches. 
+By using unilateral, handheld dynamometry assessments, practitioners can track and progress 
+high-intent quasi-eccentric adduction strength.
+HHD break testing creates a  
+quasi-eccentric muscle  
+contraction, assessing long-lever  
+adductor strength capacity.
+Technology-enabled assessments provide clear, quantifiable feedback – transforming an often-vague 
+component (e.g., strength) into a measurable and trainable quality.
+By combining these isolated performance assessments with jump tests, monitored via force plates, 
+practitioners can better determine which regions and qualities require the most attention for a successful 
+rehabilitation outcome.  
+49  |  Practitioner’s Guide to Hip and Groin Back to Contents
+While sagittal plane benchmarks are important rehabilitation milestones, exposing athletes to reactive, 
+multidirectional, sport-specific tasks is essential for successful recovery from hip and groin injuries.
+Timing gate systems such as SmartSpeed allow practitioners to create reactive agility and cutting 
+drills with randomized stimuli, adding chaos to the environment while maintaining objective timing and 
+performance feedback. 
+This can sharpen an athlete’s cognitive-motor processing as well as build their confidence as they 
+transition toward a return-to-sport or unrestricted activity. 
+Team sport athletes, such as those playing basketball or soccer, can better attune themselves to 
+reactive stimuli by using technology-enabled agility training.
+At this stage, conditioning shifts from general aerobic work to load-specific and mechanically relevant 
+efforts. Sprint and change of direction drills, especially when tracked with timing systems, allow 
+practitioners to quantify the performance of relevant sporting tasks.  
+Performance assessment based on cutting angle (e.g., 90° change of direction vs. 180°) and 
+curvilinear assessments can help practitioners gain a better understanding of an athlete’s 
+preparedness for sport-specific running demands.  
+Basketball
+Basketball is a reactive sport  
+with moderate volumes of  
+curvilinear running and high  
+demands for acceleration,  
+deceleration and change-of-  
+direction tasks due to its  
+smaller court size compared  
+to a soccer field.
+Maximum
+Velocity
+Change of
+Direction
+Deceleration
+Speed
+Endurance
+Curvilinear
+Speed
+Acceleration
+50  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Noted deficit in deceleration technique  
+(e.g., excessive trunk flexion)...
+...leads to isolated assessment t
+o detect 
+specific tissue deficits.
+As the return-to-sport milestone approaches, specific benchmarks and KPIs help to ensure relevant 
+capacities have been restored during the rehabilitation process. Below is a list of relevant benchmarks 
+for practitioners navigating return to sport for athletes with hip or groin injuries: 
+• No symptoms during r
+est and no pain during training activities 
+• Minimal soreness for 24-48 hours after tr
+aining is acceptable 
+• Less than 10% unilateral and bilater
+al asymmetry in isometric adduction and abduction strength 
+• Change of direction per
+formance
+…mechanical deficits are often due to isolated capacities [like] 
+peak force…that can easily be assessed using a range of technology-
+enhanced systems.
+While assessing mechanics is a key piece of the return-to-sport process, mechanical deficits are often 
+due to isolated capacities in peak force, RFD or timing and coordination, qualities that can easily be 
+assessed using a range of technology-enhanced systems.
+51  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Running and Sports 
+Function Protocol
+Controlled Sports Training Criteria
+• Illinois Agility test pain free at 100% intensity
+• Spider test pain free at 100% intensity with and without ball
+• Individual sports-specific drills
+Exercises Progression Criteria
+Progressive  
+Running and  
+Change of 
+Direction
+• 30m linear running intervals. Maximum speed.
+• Side steps and ladder drills at maximum intent.
+• Acceleration and deceleration maximum speed.
+• Maximum speed zig-zag shuffles and turns with 
+and without ball.
+• Change of direction at multiple angles with max 
+speed (45, 90, 135, 180°).
+• 10x30m sprints at 100% intensity, 
+pain-free.
+• T-Test at 100% intensity, pain-free.
+Exercises Progression Criteria
+Progressive 
+Running 
+and Change 
+of Direction
+• 30m linear running intervals. Increasing speed.
+• Side steps and ladder drills.
+• Hard acceleration and decelerations.
+• Zig-zag shuffles and turns with and without ball.
+• 10x30m sprints at 80% intensity,  
+pain-free.
+• T
+-Test at 80% intensity, pain-free.
+Exercises Progression Criteria
+Slow  
+Running and 
+Side Steps
+• Linear running. Increasing speed and time.
+• Narrow side steps. Increasing width and speed.
+• Forward and backward running.
+• Zig-zag shuffles.
+• Running pain-free for 15 minutes. 
+Up to 60% intensity.
+• Side steps and zig-zag runs pain-fr
+ee 
+at 60% intensity.
+Exercises Progression Criteria
+Running 
+Movements
+• Jogging in place progressed into slow running. • Running movements performed  
+pain-free at 30% intensity.
+52  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Return to Sport and 
+Performance Optimization
+As rehabilitation transitions into return-to-sport 
+and performance optimization, elite practitioners 
+ensure the athlete not only meets pre-injury 
+benchmarks but exceeds them.  
+Isokinetic testing has long been used to assess 
+limb symmetry and maximal strength, particularly 
+in return-to-play decision-making. While valuable, 
+it is not always accessible or necessary.  
+Isometric testing using tools like DynaMo 
+or ForceFrame provides an efficient, reliable 
+alternative – enabling practitioners to assess 
+qualities like peak force, RFD and limb 
+asymmetries under safe, controlled conditions. 
+For most settings, isometric profiles can offer the 
+critical data needed to make informed return-to-
+play decisions.
+Isometric force 
+monitoring
+Change of direction
+ 
+assessments
+Jump power 
+testing
+Multi-joint isometric 
+assessments  
+Another critical part of returning an athlete to sport is change of direction assessment. The T-Test, 
+when measured with timing gate technologies (e.g., SmartSpeed), offers a simple but powerful way to 
+assess change of direction capacity and sprint-agility readiness.
+With precise timing and customizable drill design, practitioners can track progress and ensure the athlete 
+is regaining not only physical output but also reactivity and decision-making speed. 
+Advanced testing technologies, such as force plates, continue to play a key role during this phase – 
+particularly in assessing plyometric readiness. Although not solely attributed to hip and groin pathology, 
+metrics such as countermovement depth, force at zero velocity asymmetry and flight time:contraction 
+time (FT:CT) can be helpful performance indicators to add to a return-to-play battery.  
+These insights can guide the prescription of advanced plyometrics, sprint mechanics and return-to-
+training programs.
+53  |  Practitioner’s Guide to Hip and Groin Back to Contents
+The return-to-play process goes beyond a simple laundry list of pass or fail criteria. As practitioners, it 
+is important to acknowledge that returning to participation is not the same as returning to the same 
+level of play. Continuous monitoring through isometric and jump assessments can help to guide the 
+load-monitoring process as athletes progress from drills to practice and eventually elite performance.
+Early Stage Mid Stage Late Stage
+Pain
+Minimal pain (<2/10) at 
+rest without significant 
+exacerbation during 
+rehabilitation activities.
+No symptoms at rest and 
+minimal pain (<2/10) during 
+rehab or training activities.
+No symptoms at rest and no pain 
+during training activities.
+Minimal soreness 24-48 hours 
+after training is acceptable.
+Local Tissue 
+Capacity
+Achieve full ROM of hip joint.
+Begin motor control and 
+activation exercises (e.g., 
+Training Mode).
+<20% adduction and 
+abduction asymmetry when 
+measured unilaterally.
+<15% adduction and 
+abduction asymmetry when 
+measured bilaterally.
+<10% adduction and abduction 
+asymmetry in bilateral and 
+unilateral assessment.
+Accessory 
+Testing and 
+Training 
+Begin pain-free, heavy 
+resistance training of trunk, 
+quadriceps, calves and 
+hamstrings.
+Within 10% of the following:
+Quadriceps: 2.5-3.0Nm/kg
+Calves: 1.8-2.0x bodyweight 
+(seated)
+Hamstrings: Nordic >400N
+10x30m sprints at 100% intensity, 
+pain-free.
+T-Test at 100% intensity, pain-free.
+54  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Return-to-Play Criteria
+To progress to sports training, it is recommended that the person is clinically pain-free and regained 
+full function. Adapted from the Aspetar Protocol and integrated with VALD Technology measurements, 
+some key considerations are:
+Maximum
+Velocity
+Change of
+Direction
+Deceleration
+Speed
+Endurance
+Curvilinear
+Speed
+Acceleration
+Maximum
+Velocity
+Change of
+Direction
+Deceleration
+Speed
+Endurance
+Curvilinear
+Speed
+Acceleration
+Practitioners Guide to Hip and Groin Pain
+Return-to-Play Criteria
+Pain-free adductor palpation
+Maximal isometric adduction without pain
+Pain-free Copenhagen adduction exercise (10 reps)
+Sprint and agility testing at 100% effort
+Strength symmetry >90% between limbs on  
+performance assessments (e.g., CMJ and drop jump)
+55  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Once clinically pain-free criteria have been met, the next step is to perform on-court or on-field 
+exercises at an intensity similar to a typical training session.
+This phase usually takes a minimum of two to three days. The specific exercises will vary depending 
+on the sporting demands and playing position of the athlete.
+After completing on-field rehabilitation without an increase in symptoms, athletes have shown they 
+are able to tolerate the demands and workloads of their sport. Optimal return-to-sport processes will 
+involve continuous monitoring during this process. However, after this stage, individuals will begin 
+full-intensity practices and scrimmages and start playing games – often on minutes restriction.
+Maximum
+Velocity
+Maximum
+VelocityChange of
+Direction
+Change of
+Direction
+Deceleration
+Deceleration
+Speed
+Endurance
+Speed
+Endurance
+Curvilinear
+Speed
+Curvilinear
+Speed
+Acceleration
+Acceleration
+56  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Screening and Prevention
+Proactive Management
+The high incidence and recurrence of hip and groin injuries in sport – particularly in multidirectional and 
+high-speed sports – underscores the importance of early screening and structured prevention strategies. 
+Screening should not only identify at-risk individuals but also inform the prescription of targeted 
+interventions that address modifiable deficits, including muscle weakness, strength asymmetries and 
+poor neuromuscular control.
+Screening should…also inform the prescription of targeted 
+interventions that address modifiable deficits…
+Evidence-Informed Screening
+Key screening assessments that have gained 
+traction due to their clinical utility and predictive  
+validity include: 
+• Isometric hip adduction strength testing (e.g.,
+ 
+5-second squeeze test (5SST)) 
+• Hip adduct
+or:abductor strength ratios  
+• Hip ROM A
+ssessment 
+• CMJ and drop jump assessments
+ 
+• Sport-specific asymmetr
+y and movement 
+testing (ForceDecks, HumanTrak) 
+Emerging evidence has shown that athletes 
+reporting >6/10 pain on the 5SST are more likely 
+to have functional limitations as measured by 
+the Hip and Groin Outcome Score (HAGOS) 
+Sport subscale. 
+DeLang et al. (2023) demonstrated that weekly 
+force assessments using ForceFrame identified 
+significant declines in adductor strength  
+prior to the onset of groin pain, highlighting its 
+value for musculoskeletal surveillance and  
+early intervention.
+57  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Objective Monitoring
+Technology-enabled strength and ROM testing (e.g., ForceFrame, DynaMo, VALD Hub) allow clinicians 
+to identify subtle impairments that may not present as overt symptoms. 
+Regular strength testing in preseason and throughout competition offers baseline benchmarking 
+and the opportunity to track deviations from an athlete’s norms. A decline in hip adductor force or 
+adductor:abductor strength ratio below 0.8 has been associated with an increased risk of groin injury.
+Prevention Strategies
+Two of the most effective, evidence-backed strategies for groin injury prevention include: 
+Copenhagen Adduction Exercise 
+The Copenhagen adduction exercise is a partner-based eccentric strengthening exercise targeting the 
+hip adductors, particularly effective in groin injury prevention.
+• Adducts
+ the lower leg upward to meet the top leg so that the feet touch. 
+• Lowers the body halfwa
+y down under control, allowing the bottom leg to drop until the foot lightly 
+contacts the ground without bearing weight. 
+• The mov
+ement targets eccentric control of the adductors and should be performed on both sides, 
+progressing in repetitions and sets as tolerated. It is best integrated into warm-up or strength 
+sessions, typically 2 to 3 times per week. 
+This exercise has been shown to increase eccentric hip adduction strength by nearly 9% in 8 weeks. 
+Execution:
+The subject lies on their side, propped up on the forearm of the lower arm.
+The upper leg is supported by a bench (or manually from a partner) at hip height.
+The subject then raises their body off the ground into a straight line. Similar to a side-plank position.
+The subject lowers their body halfway down under control, allowing the bottom leg to contact the  
+ground without bearing weight.
+58  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+FIFA 11+ Program (with Copenhagen Adduction Exercise Integration) 
+As summarized by Ishøi et al. (2020), both the FIFA 11+ and Copenhagen adduction strengthening 
+programs significantly reduced groin injury risk compared to usual care.
+The Copenhagen program showed a medium to large risk reduction effect (RR: ~0.59), supporting 
+its widespread implementation in team sport environments. These programs are accessible, require 
+minimal equipment and are especially impactful when delivered consistently during the preseason and 
+maintained throughout the competitive period.
+Practical Considerations
+• Individualize Load:  Adjust the volume and intensity of Copenhagen adduction exercise based on the 
+athlete’s tolerance and DOMS response. 
+• Integr
+ate Into Warm-Ups: As with the FIFA 11+, brief but consistent integration into daily routines 
+ensures better compliance. 
+• Monitor
+ Recovery: Use neuromuscular efficiency markers like reactive strength index-modified  
+(RSI-Mod) (via CMJ) to manage load and performance readiness. 
+• Flagging Tools:
+ Athlete monitoring systems such as VALD Hub can automate the identification of 
+outliers or declining trends, enabling timely intervention.
+59  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Case Studies
+The Importance of Context in Hip and 
+Groin Testing
+Ice Hockey
+My use of hip and groin testing increased significantly when I began working in the National Hockey 
+League (NHL). This was hardly surprising, given the unique demands of ice skating, which places a 
+heavy load on the hip and groin region. 
+During the skating stride, the adductor is highly activated at the end of the push-off phase, 
+transitioning from a decelerating eccentric contraction to a forceful concentric contraction in the 
+recovery phase. These biomechanical demands may help explain the high prevalence of hip and groin 
+injuries in ice hockey. In one study of professional players, over half (53%) reported experiencing hip or 
+groin issues in the previous season. 
+Research in ice hockey has played a key role in advancing research on the relationship between adductor/
+abductor strength imbalances and injury risk. One landmark study by Tim Tyler and colleagues (2001) 
+followed 47 NHL players over two seasons and found that players with an adductor:abductor strength 
+ratio below 0.8 were 17 times more likely to sustain an adductor muscle strain. 
+Isometric adductor strength <465N
+Increased likelihood of groin injury by 72%Hip Add:Abd Ratio <0.8 leads to
+17x greater risk of groin strain injury
+Jo Clubb  
+Founder and Sports Science Consultant, 
+Global Performance Insights
+
+60  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+In response, players identified as “at risk” based 
+on this ratio completed a preseason intervention 
+program that included targeted warm-ups and 
+strengthening programs. 
+The results were striking – the incidence of 
+adductor strains dropped from 3.2 strains per 
+1,000 player-game exposures to 0.71.  
+In an applied setting, ForceFrame has made 
+monitoring adductor and abductor strength more 
+practical. All athletes receive some level of hip 
+and groin injury prevention work.
+However, additional emphasis is placed on those 
+flagged through between-athlete and within-
+athlete monitoring. 
+Understanding this information within this 
+population is further strengthened by VALD’s 
+normative data, which revealed that approximately 
+66% of NHL athletes assessed in 2021 (at a 
+60° testing position) had an adductor:abductor 
+strength ratio between 0.8 and 1.2. 
+Of course, strength – both magnitude and 
+asymmetry – is just one piece of the puzzle.  
+Hip and groin injuries involve a complex interplay 
+of anatomical and biomechanical factors. 
+Yet, this research, combined with the objectivity 
+provided by the ForceFrame, helped shape a 
+more targeted approach to injury risk mitigation 
+in hockey athletes.
+453N
+64th Percentile
+433N
+48th Percentile
+1.04
+82nd Percentile
+Adduction Peak Force 60° Abduction Peak Force 60°
+Add:Abd Ratio 60°
+61  |  Practitioner’s Guide to Hip and Groin Back to Contents
+American Football 
+While understanding the sport itself is crucial in athlete testing, another key layer of context is playing 
+position. Nowhere is this more evident than in the NFL, where few, if any, team sports exhibit a wider 
+range of physical demands across positions. This variation extends to the stresses placed on the hip 
+and groin region. 
+Consider the differences across a few of the positions:
+• Wide Receivers and Cor
+nerbacks rely on rapid acceleration, deceleration and changes of direction  
+to either gain or close separation from their opponent. 
+• Center
+s and Long Snappers require explosive strength, core control and hip mobility in low-position 
+stances to snap the football. 
+• Quart
+erbacks generate powerful rotational forces when throwing while also requiring agility to  
+evade defenders. 
+• Kickers
+ rely on explosive strength and power for their kicks, often developing significant side-to-side 
+imbalances given such asymmetrical demands.
+This positional context is critical when interpreting testing and monitoring results. VALD’s ForceFrame 
+data provides insight into strength profiles across playing positions. For instance, linemen exhibit  
+20-34% greater hip abduction and adduction forces on average than other players.
+However, the balance between these forces can differ based on position-specific demands. In this 
+dataset, the median adductor:abductor strength ratio was 0.96 for Defensive Linemen but 0.87 for 
+Offensive Linemen. 
+This discrepancy is driven by notably higher abduction force in the Offensive Linemen (607N vs. 560N), 
+potentially a result of the frequent kick step movements used in pass protection.
+Offensive Line Defensive Line
+62  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Drilling down further, Guards and Tackles often adopt the same stance on every snap – an 
+asymmetrical kick stance. They tend to line up on either the Quarterback’s left or right side and play 
+that side in that stance for every snap. 
+Over time, these repeated ipsilateral loading patterns can contribute to functional asymmetries, 
+reinforcing the need for position-specific monitoring and intervention strategies. 
+Furthermore, the kick step technique can also differ between Guards and Tackles on the Offensive 
+Line. Tackles often take longer, more aggressive kick steps to counter the opponent’s pass rusher. 
+Such demands have implications for physical preparation and athlete monitoring.  
+This all underscores the importance of combining both positional and individual data for athlete 
+monitoring. Z-scores allow comparisons of an individual to themselves and to their positional group, 
+providing a better understanding of their norms and trends over time.
+Customizable Dashboard:
+Monitor the groups that matter to 
+you while customizing the tests 
+and metrics that matter most.
+Customizable Thresholds:
+Choose from percentage 
+or standard deviation 
+(z-scores) differences for  
+monitoring thresholds.
+An adductor:abductor ratio less than 0.8 may be a functional norm for a particular offensive lineman, 
+but ongoing monitoring is essential. We also need to track the ratio’s component parts, i.e., adductor 
+and abductor strength, to identify potential overload or weakening that could increase injury risk. 
+By refining how we interpret data within positional contexts, we can enhance decision-making in 
+performance management and injury risk reduction.
+63  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Australian Football Case Study
+This case study outlines how to use objective strength testing in the assessment and management of 
+a semi-elite male Australian football athlete with longstanding groin pain.
+Clinical History and Presentation 
+David presented with a six-month history of right-sided groin pain. He had several failed attempts at 
+returning to Australian football. He was able to tolerate slow jogging (3km three times per week) and 
+was undertaking a bodyweight lower limb resistance training program for his groin pain. 
+David had no other significant health conditions that needed to be considered in his rehabilitation. 
+David’s clinical presentation and imaging findings are outlined in detail in Table 1. David was classified 
+as having adductor- and pubic-related groin pain.
+He had notable right hip adductor isometric muscle strength deficits (30% asymmetry right to left in 
+session 1) and an adductor:abductor isometric strength ratio of 0.6 (normal 1.0-1.05) when assessed 
+with handheld dynamometry. The objective strength findings were used to educate David and identify 
+rehabilitation targets.
+Table 1. Clinical Presentation
+Functional  
+Performance Testing
+Single leg repeated rise test: Subjective increase effort right compared  
+to left with 10 repetitions
+Hip Joint
+Active hip flexion ROM: right = left 110°
+Passive hip internal rotation ROM: right = left 20°
+Passive hip external rotation ROM: right = left 45°
+Flexion-adduction-internal-rotation (FADIR) test: Negative
+Clinical Entities
+Pubic-related groin pain: Positive
+Adductor-related groin pain: Positive
+Inguinal-related groin pain: Negative
+lliopsoas-related groin pain: Negative
+Handheld Dynamometry 
+(Session 1)
+Isometric hip adduction: left 130N / right 95N
+Isometric hip abduction: left 164N / right 162N
+Imaging Findings  
+(Magnetic Resonance 
+Imaging)
+Superior cleft sign (right)
+Pubic bone oedema (right > left)
+Normal hip morphology
+Joshua Heerey, PhD 
+Research Fellow, L a T robe Sport and Exercise 
+Medicine Research Centre
+
+64  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+A comprehensive lower limb and abdominal 
+strengthening program was provided to David to 
+address the identified strength deficits. 
+Isometric handheld dynamometry testing was 
+repeated over 21-to-28-day intervals during the 
+next two months. David’s right hip adductor 
+muscle strength and hip adductor:abductor ratio 
+improved during this period.
+Despite the improvement in David’s isometric 
+hip adductor strength, he was still having groin 
+pain the morning after completing his running 
+program and football training. 
+This was frustrating for David as he had been 
+diligent with his rehabilitation program.  
+The versatility of the HHD enabled further 
+evaluation of his adductor complex, with eccentric 
+muscle strength testing (via break-test) revealing a 
+22% asymmetry relative to his left side. 
+David’s rehabilitation program was altered to 
+target the identified eccentric strength deficit. 
+Eccentric testing was completed again one 
+month later with the correction of David’s 
+eccentric adductor muscle strength deficit.
+The use of handheld dynamometry in the assessment and management of David’s longstanding 
+groin pain enabled objective evaluation of hip muscle strength and targeted rehabilitation. Handheld 
+dynamometry findings are also important for educating patients about their condition and showing 
+clinical progression if they are undertaking a rehabilitation program.
+65  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Professional Soccer Case Study:  
+Managing hip and groin pain, particularly chronic cases, remains one of the most challenging 
+scenarios in clinical sports medicine. However, advancements in research and technology have 
+provided more tools to guide rehabilitation frameworks. 
+A foundational approach often stems from Per Holmich’s seminal work (1999), which demonstrated 
+that targeted adductor strengthening can yield positive outcomes in groin pain rehabilitation. This has 
+led to an emphasis on adductor-centric exercises for a generation of rehabilitation programs. However, 
+in practice, the site of pain is not necessarily the culprit.  
+More recent evidence by King et al. (2018) showed significant results using an intersegmental ap-
+proach, focusing on the lumbopelvic region. Remarkably, athletes with up to two years of chronic groin 
+pain returned to sport in an average of 9.9 weeks, with improvements not solely explained by changes 
+in adductor strength.  
+This presents a key question: where should rehabilitation focus, and is it always necessary to target 
+the painful tissue directly?
+Soccer
+Soccer is a highly reactive 
+and dynamic sport with high 
+volumes of curvilinear running, 
+endurance and change-of-
+direction tasks, played on a 
+large field that allows maximum 
+velocity breakaway plays.
+Maximum
+Velocity
+Change of
+Direction
+Deceleration
+Speed
+Endurance
+Curvilinear
+Speed
+Acceleration
+The Doha Agreement (2015) identified four distinct clinical entities for categorizing groin pain in 
+athletes: adductor-related, iliopsoas-related, inguinal-related and pubic-related groin pain. Additionally, 
+hip-related groin pain and “other” causes are recognized as broader categories.  
+With such disparity, objective testing becomes central to keeping rehabilitation outcomes focused. 
+Identifying specific areas of weakness, asymmetry or low strength can inform targeted intervention. 
+Tools such as HHDs (DynaMo) or FFDs (ForceFrame) allow for accurate assessment of isolated 
+muscle strength and function, as well as ROM.
+Fearghal Kerin   
+Cofounder and Clinical Director,  
+Kerin Performance
+
+66  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Isometric or eccentric strength testing can reveal side-to-side asymmetries that may not be clinically 
+detectable. Demonstrating an upward trend in data can be empowering for patients, particularly those 
+who feel they have plateaued. Even if the chosen rehabilitation approach does not directly load these 
+areas, such metrics provide a reliable way to gauge progress and increase load tolerance. 
+Once baseline strength and control are restored, the focus can shift to dynamic tasks that challenge 
+the hip and pelvis in sport-specific ways. Monitoring performance in tasks, such as jumping, landing 
+and change of direction, can reveal residual deficits.
+ForceDecks can capture data like ground contact times and asymmetries in jump performance, 
+offering insights into readiness for more dynamic drills such as running and agility. 
+Case Example: Monitoring In-Season Groin Pain in  
+Professional Soccer 
+DynaMo and ForceFrame can be used at a team level to monitor and manage in-season groin pain 
+as part of regular match day +2 protocols. If an athlete develops pain or even reduced function on 
+testing–that is still subclinical–this should activate a targeted management pathway involving clinical 
+assessment and identifying an appropriate treatment plan. 
+If these testing outcomes do not improve, it may result in the next stage of the pathway, such as 
+a reduction in training load. These processes can have a major influence on days lost to in-season 
+groin pain.
+Step 1: Regular in-season monitoring of lumbopelvic function using objective testing.  
+Step 2: Identify reductions in performance or increases in pain.  
+Step 3: Conduct a thorough clinical assessment and commence physiotherapy intervention.  
+Step 4: If there is no improvement within one week, consider a graded reduction in training load.
+Regular Monitoring
+Perform match day +2  
+objective assessments.
+Identify Flags
+Detect pain or subclinical  
+reductions in function or 
+strength and compare to  
+baseline values.
+Reassessment
+If no improvement in testing 
+metrics occurs after one week, 
+initiate a graded training  
+load reduction.
+Clinical Intervention
+Initiate targeted physiotherapy 
+based on findings. Address 
+deficits even if pain is minimal.
+67  |  Practitioner’s Guide to Hip and Groin Back to Contents
+What Next?
+Like any area of healthcare, sports medicine and sport science, to stay at the forefront of hip and groin 
+care, it is essential for practitioners to continuously update their knowledge and skills.  
+Here are some tips for staying ahead in the field: 
+• Continuing E
+ducation: Regularly participate in workshops, seminars and courses focused on the 
+latest developments in shoulder assessment and rehabilitation. This includes VALD webinars, 
+podcasts and blogs which are free, interactive and educational resources ranging from product 
+tutorials to seminars from performance and health industry leaders. 
+• Networking and Collabor
+ation: Engage with other professionals in the field, including 
+physiotherapists, orthopedic surgeons and sports scientists. Collaborative efforts can lead to new 
+insights and approaches that improve patient outcomes. 
+• Research and 
+Innovation: Stay informed about the latest research and technological advancements. 
+Consider contributing to the field by participating in or conducting research studies, which can 
+provide valuable data and improve clinical practices. 
+• Embrace T
+echnology: Incorporate the latest tools and technologies into your practice to provide 
+more accurate assessments and enhance the effectiveness of rehabilitation and prehabilitation 
+programs. Want to learn more about any of the VALD technologies discussed in this guide? Get in 
+touch via: info@vald.com  
+• Pat
+ient-Centered Care: Prioritize the patient’s needs and preferences when designing assessment 
+and rehabilitation protocols. Involving patients in the decision-making process can lead to better 
+adherence and outcomes. 
+• Holistic A
+pproach: Always consider the patient’s overall health and lifestyle when designing 
+treatment plans. Factors such as nutrition, mental health and sleep can significantly impact  
+recovery and performance.
+Key Leaders Worth Following
+Mike Reiman 
+Assistant Professor of Physical Therapy, 
+Duke University
+Eamonn Delahunt
+Physiotherapy and Sports Science,  
+University College Dublin
+Enda King
+Head of Elite Performance and Development, 
+Aspetar
+Joanne Kemp
+Associate Professor, NHMRC Emerging Leadership 
+Fellow, La Trobe University
+68  |  Practitioner’s Guide to Hip and Groin
+ Back to Contents
+Appendices
+Hip-Based Pathology (Cartilage defect,  
+ligament, labrum, capsule, FAI, Hip OA) 
+Flexion Adduction Internal Rotation (FADDIR) Test
+With the patient supine, the examiner passively flexes the hip to 90° before moving it into end-range 
+adduction and internal rotation. A positive test is indicated by pain or a clicking sensation, suggesting 
+potential issues with the cartilage, labrum, capsule or signs of femoroacetabular impingement (FAI) 
+and hip OA. 
+Hip Quadrant Test
+Also performed with the patient supine, the examiner flexes the hip to 90° while allowing comfortable 
+knee flexion. By interlocking the fingers and cupping the patient’s knee, an adduction force is applied 
+and the hip is then moved from 90° into full flexion – with possible added compression. Pain or clicking 
+during this maneuver is considered a positive sign of intra-articular hip pathology. 
+Flexion, Abduction and External Rotation (FABER) Test (Sacroiliac 
+Joint Stress Test)
+In this test, the patient lies supine with the foot of the test leg placed on the opposite knee. The 
+examiner stabilizes the pelvis by pressing on the opposite anterior superior iliac spine (ASIS) and 
+slowly lowers the test leg’s knee toward the table until it reaches the table or aligns parallel with the 
+opposite leg. Pain in the hip or sacroiliac region indicates a positive test. 
+Trendelenburg Test for Abductor Dysfunction
+The patient is asked to stand on one leg. A positive Trendelenburg sign is noted if the pelvis on the 
+contralateral side drops, often accompanied by ipsilateral hip pain, indicating weakness or dysfunction 
+of the hip abductors. 
+69  |  Practitioner’s Guide to Hip and Groin Back to Contents
+Greater Trochanteric Pain Syndrome  
+(GTPS) 
+Assessment for this syndrome involves direct palpation of the greater trochanter, often complemented 
+by a positive FABER and Ober test. The cluster of these findings – local tenderness, pain with specific 
+movements and resistance tests – helps confirm the diagnosis. 
+FADIR-R
+Performed with the patient supine and the hip flexed to 90°, this test involves resistively testing IR. The 
+emergence of lateral hip pain during the resisted motion signals a positive finding, suggesting lateral 
+hip pathology. 
+ADD-R Test
+In a side-lying position, the patient’s top leg is adducted over the edge of the plinth. Resistance is 
+then applied as the patient attempts to abduct the leg. The development of lateral hip pain during this 
+maneuver is considered a positive sign. 
+Iliotibial Band (ITB) Syndrome (exclude 
+hip based tightness) 
+Modified Thomas Test
+The patient perches at the end of a plinth, brings the non-test leg to the chest and lies back so the test 
+leg hangs off the end. If the hanging leg remains in hip flexion, it indicates tightness of the iliopsoas; if 
+it abducts, tightness of the ITB and tensor fasciae latae (TFL) may be present; and if the knee extends 
+beyond 90°, the rectus femoris is likely tight. 
+ 
+Other Assessments
+Isometric Abdominal Assessments 
+The patient lies supine with hips and knees extended. The patient performs a sit-up movement, 
+lifting the head and scapulae off the examination table. The examiner applies resistance by placing 
+one hand on the patient’s knees and the other on the chest to maintain an isometric contraction. This 
+test is considered positive if the patient experiences recognizable pain in the inguinal region during 
+the maneuver. 
+70  |  Practitioner’s Guide to Hip and Groin
+

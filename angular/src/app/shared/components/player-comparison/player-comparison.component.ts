@@ -1,13 +1,13 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   signal,
   computed,
   ChangeDetectionStrategy,
   OnChanges,
   SimpleChanges,
+  effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -331,11 +331,11 @@ interface StatComparison {
   `,
   styleUrl: "./player-comparison.component.scss",
 })
-export class PlayerComparisonComponent implements OnChanges {
-  @Input() players: PlayerStats[] = [];
-  @Input() initialPlayer1Id?: string;
-  @Input() initialPlayer2Id?: string;
-  @Output() comparisonChanged = new EventEmitter<{
+export class PlayerComparisonComponent {
+  readonly players = input<PlayerStats[]>([]);
+  readonly initialPlayer1Id = input<string>();
+  readonly initialPlayer2Id = input<string>();
+  readonly comparisonChanged = output<{
     player1Id: string;
     player2Id: string;
   }>();
@@ -346,6 +346,29 @@ export class PlayerComparisonComponent implements OnChanges {
   availablePlayers = signal<PlayerStats[]>([]);
   player1 = signal<PlayerStats | null>(null);
   player2 = signal<PlayerStats | null>(null);
+
+  constructor() {
+    // Use effects to react to input changes
+    effect(() => {
+      this.availablePlayers.set(this.players());
+    });
+
+    effect(() => {
+      const id = this.initialPlayer1Id();
+      if (id) {
+        this.selectedPlayer1 = id;
+        this.updatePlayer1();
+      }
+    });
+
+    effect(() => {
+      const id = this.initialPlayer2Id();
+      if (id) {
+        this.selectedPlayer2 = id;
+        this.updatePlayer2();
+      }
+    });
+  }
 
   statCategories = [
     { key: "game", label: "Game Stats", icon: "pi-flag" },
@@ -538,22 +561,6 @@ export class PlayerComparisonComponent implements OnChanges {
     return "tie";
   });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["players"]) {
-      this.availablePlayers.set(this.players);
-    }
-
-    if (changes["initialPlayer1Id"] && this.initialPlayer1Id) {
-      this.selectedPlayer1 = this.initialPlayer1Id;
-      this.updatePlayer1();
-    }
-
-    if (changes["initialPlayer2Id"] && this.initialPlayer2Id) {
-      this.selectedPlayer2 = this.initialPlayer2Id;
-      this.updatePlayer2();
-    }
-  }
-
   onPlayerChange(): void {
     this.updatePlayer1();
     this.updatePlayer2();
@@ -567,12 +574,12 @@ export class PlayerComparisonComponent implements OnChanges {
   }
 
   private updatePlayer1(): void {
-    const player = this.players.find((p) => p.id === this.selectedPlayer1);
+    const player = this.players().find((p) => p.id === this.selectedPlayer1);
     this.player1.set(player || null);
   }
 
   private updatePlayer2(): void {
-    const player = this.players.find((p) => p.id === this.selectedPlayer2);
+    const player = this.players().find((p) => p.id === this.selectedPlayer2);
     this.player2.set(player || null);
   }
 

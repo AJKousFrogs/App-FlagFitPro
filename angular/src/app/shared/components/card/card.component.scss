@@ -155,19 +155,17 @@
   }
 }
 
-/* Glass Card */
+/* Glass Card - REMOVED: Using standard card styling instead */
 .card-glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: var(--border-1) solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--shadow-3);
+  background: var(--surface-primary);
+  border: var(--border-1) solid var(--color-border-muted);
+  box-shadow: var(--shadow-1);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card-glass:hover {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: var(--shadow-3);
+    background: var(--surface-secondary);
+    box-shadow: var(--shadow-2);
   }
 }
 

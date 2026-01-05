@@ -1,7 +1,5 @@
 import { Component, input, computed } from "@angular/core";
 
-import { ButtonComponent } from "../button/button.component";
-
 /**
  * Page Header Component
  *
@@ -15,7 +13,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-page-header",
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [],
   template: `
     <div class="page-header" [class.hidden-in-composite]="hideInComposite()">
       <div class="header-content">

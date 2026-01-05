@@ -125,7 +125,7 @@ interface AnnouncementBanner {
                     <app-button
                       iconLeft="pi-envelope"
                       variant="outlined"
-                      (onClick)="contactCoach()"
+                      (clicked)="contactCoach()"
                     >
                       Contact Coach
                     </app-button>

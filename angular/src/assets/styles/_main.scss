@@ -121,10 +121,11 @@ body {
   }
 }
 
-// Backdrop filter support
+// Backdrop filter for overlays - KEPT for accessibility
 @supports (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px)) {
-  .glass-effect {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+  .modal-backdrop,
+  .overlay-backdrop {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
   }
 }

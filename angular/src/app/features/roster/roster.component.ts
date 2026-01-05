@@ -591,7 +591,7 @@ import {
                       </div>
                     }
                   </div>
-                  @if (riskAssessment()!.recommendations?.length) {
+                  @if (riskAssessment()!.recommendations.length) {
                     <div class="risk-recommendations">
                       <strong>Recommendations:</strong>
                       <ul>

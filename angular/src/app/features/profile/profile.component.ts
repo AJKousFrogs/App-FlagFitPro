@@ -26,7 +26,6 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -51,7 +50,6 @@ interface PendingInvitation {
   selector: "app-profile",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     RouterModule,
@@ -66,14 +64,13 @@ interface PendingInvitation {
     ProgressSpinnerModule,
     TooltipModule,
     MainLayoutComponent,
-    StatsGridComponent,
-    EmptyStateComponent,
     PageErrorStateComponent,
     DatePipe,
     TitleCasePipe,
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
+    StatsGridComponent,
   ],
   template: `
     <app-main-layout>

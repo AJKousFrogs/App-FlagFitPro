@@ -29,7 +29,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { ProgressBarModule } from "primeng/progressbar";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -58,7 +58,7 @@ interface WalkthroughStep {
     CommonModule,
     RouterModule,
     DialogModule,
-    StepsModule,
+    StepperModule,
     ProgressBarModule,
     CardModule,
     ButtonComponent,

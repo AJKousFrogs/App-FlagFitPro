@@ -42,7 +42,6 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   selector: "app-header",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   imports: [
     RouterModule,
     InputTextModule,

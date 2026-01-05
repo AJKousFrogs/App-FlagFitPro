@@ -20,7 +20,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { StepsModule } from "primeng/steps";
+import { StepperModule } from "primeng/stepper";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
@@ -182,7 +182,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     MessageModule,
     ProgressBarModule,
     Select,
-    StepsModule,
+    StepperModule,
     TableModule,
     TagModule,
     ToastModule,
@@ -239,12 +239,13 @@ const WEARABLE_DEVICES: WearableDevice[] = [
             >
 
             <!-- Steps Indicator -->
-            <p-steps
-              [model]="importSteps"
-              [activeIndex]="currentStep()"
-              [readonly]="true"
-              styleClass="import-steps"
-            ></p-steps>
+            <p-stepper [value]="currentStep()" [linear]="false">
+              <p-step-list>
+                @for (step of importSteps; track $index) {
+                  <p-step [value]="$index">{{ step.label }}</p-step>
+                }
+              </p-step-list>
+            </p-stepper>
 
             <!-- Step 1: Upload -->
             @if (currentStep() === 0) {

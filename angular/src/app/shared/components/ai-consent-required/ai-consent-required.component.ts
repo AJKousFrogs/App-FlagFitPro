@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -44,15 +43,15 @@ import {
     IconButtonComponent,
   ],
   template: `
-    <div class="ai-consent-required" [class]="variant">
+    <div class="ai-consent-required" [class]="variant()">
       <div class="consent-icon">
         <i [class]="'pi ' + getIcon()"></i>
       </div>
       <div class="consent-content">
         <h4 class="consent-title">{{ getTitle() }}</h4>
         <p class="consent-message">
-          @if (featureName) {
-            <strong>{{ featureName }}</strong> requires AI processing to work.
+          @if (featureName()) {
+            <strong>{{ featureName() }}</strong> requires AI processing to work.
           } @else {
             This feature requires AI processing to work.
           }
@@ -66,7 +65,7 @@ import {
             settings.
           </small>
         </p>
-        @if (showSettingsLink) {
+        @if (showSettingsLink()) {
           <div class="consent-actions">
             <app-icon-button
               icon="pi-cog"
@@ -75,7 +74,7 @@ import {
               routerLink="getHelpLink()"
               ariaLabel="cog"
             />
-            @if (showDismiss) {
+            @if (showDismiss()) {
               <app-button variant="text" size="sm" (clicked)="onDismiss.emit()"
                 >Continue Without AI</app-button
               >
@@ -88,14 +87,13 @@ import {
   styleUrl: "./ai-consent-required.component.scss",
 })
 export class AiConsentRequiredComponent {
-  @Input() featureName?: string;
-  @Input() showSettingsLink = true;
-  @Input() showDismiss = false;
-  @Input() variant: "default" | "banner" | "card" = "default";
-  @Input() status: "disabled" | "not_consented" | "consent_required" =
-    "consent_required";
+  readonly featureName = input<string>();
+  readonly showSettingsLink = input<boolean>(true);
+  readonly showDismiss = input<boolean>(false);
+  readonly variant = input<"default" | "banner" | "card">("default");
+  readonly status = input<"disabled" | "not_consented" | "consent_required">("consent_required");
 
-  @Output() onDismiss = new EventEmitter<void>();
+  readonly onDismiss = output<void>();
 
   private getPrivacyMessage(): PrivacyMessage {
     // Map snake_case status to camelCase keys in AI_PROCESSING_MESSAGES
@@ -104,7 +102,7 @@ export class AiConsentRequiredComponent {
       not_consented: "notConsented",
       consent_required: "consentRequired",
     };
-    const key = statusMap[this.status] || "consentRequired";
+    const key = statusMap[this.status()] || "consentRequired";
     return AI_PROCESSING_MESSAGES[key];
   }
 

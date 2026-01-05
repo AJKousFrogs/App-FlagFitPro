@@ -1,12 +1,11 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   signal,
   computed,
   ChangeDetectionStrategy,
   OnDestroy,
+  input,
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
@@ -185,9 +184,9 @@ import { FormsModule } from "@angular/forms";
   styleUrl: "./rest-timer.component.scss",
 })
 export class RestTimerComponent implements OnDestroy {
-  @Input() defaultDuration = 60; // seconds
-  @Output() timerComplete = new EventEmitter<void>();
-  @Output() timerClosed = new EventEmitter<void>();
+  readonly defaultDuration = input<any>(60); // seconds
+  readonly timerComplete = output<void>();
+  readonly timerClosed = output<void>();
 
   dialogVisible = true;
   customDuration = 60;

@@ -1,5 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input } from "@angular/core";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+} from "@angular/core";
 import { ReadinessService } from "../../../core/services/readiness.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
 

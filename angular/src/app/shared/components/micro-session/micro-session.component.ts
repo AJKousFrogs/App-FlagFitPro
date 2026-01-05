@@ -16,13 +16,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  EventEmitter,
   inject,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
   signal,
+  input,
+  output,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -371,7 +370,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
-  @Input() session = signal<MicroSessionData>({
+  readonly session = input<any>(signal<MicroSessionData>({
     title: "",
     session_type: "recovery",
     estimated_duration_minutes: 5,
@@ -381,17 +380,17 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     steps: [],
     coaching_cues: [],
     follow_up_prompt: "How do you feel? (0-10)",
-  });
+  }));
 
-  @Input() mode = signal<"modal" | "card">("card");
-  @Input() autoStart = false;
+  readonly mode = input<any>(signal<"modal" | "card">("card"));
+  readonly autoStart = input<any>(false);
 
-  @Output() sessionCompleted = new EventEmitter<{
+  readonly sessionCompleted = output<{
     duration_minutes: number;
     follow_up_response?: { rating: number; notes: string };
   }>();
-  @Output() sessionSkipped = new EventEmitter<void>();
-  @Output() closed = new EventEmitter<void>();
+  readonly sessionSkipped = output<void>();
+  readonly closed = output<void>();
 
   // State
   dialogVisible = false;
@@ -452,7 +451,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     // Initialize equipment checklist
     this.equipmentChecked = this.session().equipment_needed.map(() => false);
 
-    if (this.autoStart) {
+    if (this.autoStart()) {
       this.startSession();
     }
   }

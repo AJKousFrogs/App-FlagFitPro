@@ -63,13 +63,12 @@
 /* Safe Area Support for iOS devices (notch, home indicator) */
 /* Note: Safe area handled by specific components, not body padding */
 
-/* Safari-specific backdrop-filter fix */
+/* Overlay backdrop blur - KEPT for accessibility (indicates modal state) */
 @supports (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px)) {
-  .glass-effect,
   .modal-backdrop,
   .sidebar-overlay {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
   }
 }
 
