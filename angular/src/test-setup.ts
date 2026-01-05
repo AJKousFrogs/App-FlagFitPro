@@ -5,7 +5,7 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
-import { afterEach, beforeAll, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 // Jasmine compatibility shim for tests that use jasmine.createSpyObj
 (globalThis as unknown as { jasmine: unknown }).jasmine = {
@@ -17,7 +17,19 @@ import { afterEach, beforeAll, vi } from "vitest";
     return obj;
   },
   createSpy: (name?: string) => vi.fn(),
+  stringContaining: (expected: string) => ({
+    asymmetricMatch: (actual: string) => actual.includes(expected),
+    jasmineToString: () => `<jasmine.stringContaining("${expected}")>`,
+  }),
 };
+
+// Mock environment variables for Supabase
+vi.stubGlobal("import.meta", {
+  env: {
+    NG_APP_SUPABASE_URL: "https://test.supabase.co",
+    NG_APP_SUPABASE_ANON_KEY: "test-anon-key",
+  },
+});
 
 // Initialize Angular testing environment once
 beforeAll(() => {

@@ -11,21 +11,22 @@ import { TestBed, fakeAsync, tick } from "@angular/core/testing";
 import { ThemeService } from "./theme.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 describe("ThemeService", () => {
   let service: ThemeService;
-  let mockMatchMedia: jasmine.Spy;
+  let mockMatchMedia: ReturnType<typeof vi.fn>;
   let mediaQueryListeners: ((e: MediaQueryListEvent) => void)[] = [];
 
   const mockLoggerService = {
-    debug: jasmine.createSpy("debug"),
-    info: jasmine.createSpy("info"),
-    warn: jasmine.createSpy("warn"),
-    error: jasmine.createSpy("error"),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
 
   const mockSupabaseService = {
-    currentUser: () => null,
+    currentUser: vi.fn(() => null),
     client: {
       from: () => ({
         upsert: () => Promise.resolve({ error: null }),
@@ -42,6 +43,9 @@ describe("ThemeService", () => {
     // Clear localStorage
     localStorage.clear();
 
+    // Reset mocks
+    vi.clearAllMocks();
+
     // Mock matchMedia
     mediaQueryListeners = [];
     const mockMediaQueryList = {
@@ -57,9 +61,8 @@ describe("ThemeService", () => {
       removeListener: () => {},
     };
 
-    mockMatchMedia = spyOn(window, "matchMedia").and.returnValue(
-      mockMediaQueryList as any,
-    );
+    mockMatchMedia = vi.fn().mockReturnValue(mockMediaQueryList);
+    vi.stubGlobal("matchMedia", mockMatchMedia);
 
     TestBed.configureTestingModule({
       providers: [
@@ -74,6 +77,7 @@ describe("ThemeService", () => {
 
   afterEach(() => {
     localStorage.clear();
+    vi.unstubAllGlobals();
   });
 
   it("should be created", () => {
@@ -285,7 +289,7 @@ describe("ThemeService", () => {
       service.setMode("dark");
 
       expect(mockLoggerService.debug).toHaveBeenCalledWith(
-        jasmine.stringContaining("Theme mode set to"),
+        expect.stringContaining("Theme mode set to"),
       );
     });
 
@@ -294,7 +298,7 @@ describe("ThemeService", () => {
       tick();
 
       expect(mockLoggerService.debug).toHaveBeenCalledWith(
-        jasmine.stringContaining("Applied theme"),
+        expect.stringContaining("Applied theme"),
       );
     }));
   });
@@ -326,9 +330,7 @@ describe("ThemeService", () => {
   describe("Supabase Sync", () => {
     it("should attempt to save to Supabase when user is authenticated", fakeAsync(() => {
       const mockUser = { id: "test-user-id" };
-      spyOn(mockSupabaseService, "currentUser").and.returnValue(
-        mockUser as any,
-      );
+      mockSupabaseService.currentUser.mockReturnValue(mockUser as any);
 
       service.setMode("dark");
       tick();
@@ -339,9 +341,7 @@ describe("ThemeService", () => {
 
     it("should handle Supabase errors gracefully", fakeAsync(() => {
       const mockUser = { id: "test-user-id" };
-      spyOn(mockSupabaseService, "currentUser").and.returnValue(
-        mockUser as any,
-      );
+      mockSupabaseService.currentUser.mockReturnValue(mockUser as any);
 
       // Even if Supabase fails, localStorage should work
       service.setMode("dark");

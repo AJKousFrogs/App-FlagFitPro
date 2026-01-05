@@ -43,9 +43,9 @@ describe("EnhancedDataTableComponent", () => {
   ];
 
   beforeEach(async () => {
-    // Mock localStorage
+    // Mock localStorage using vi.stubGlobal
     localStorageMock = new Map();
-    global.localStorage = {
+    vi.stubGlobal("localStorage", {
       getItem: vi.fn((key: string) => localStorageMock.get(key) || null),
       setItem: vi.fn((key: string, value: string) =>
         localStorageMock.set(key, value),
@@ -56,14 +56,10 @@ describe("EnhancedDataTableComponent", () => {
         (index: number) => Array.from(localStorageMock.keys())[index] || null,
       ),
       length: 0,
-    } as Storage;
-
-    // Mock window.innerWidth
-    Object.defineProperty(window, "innerWidth", {
-      writable: true,
-      configurable: true,
-      value: 1024,
     });
+
+    // Mock window.innerWidth using vi.stubGlobal for the whole window
+    vi.stubGlobal("innerWidth", 1024);
 
     await TestBed.configureTestingModule({
       imports: [EnhancedDataTableComponent],
@@ -75,6 +71,7 @@ describe("EnhancedDataTableComponent", () => {
 
   afterEach(() => {
     localStorageMock.clear();
+    vi.unstubAllGlobals();
   });
 
   describe("Component Initialization", () => {

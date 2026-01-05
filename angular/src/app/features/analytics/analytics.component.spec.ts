@@ -10,6 +10,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import {
   exportChartAsPNG,
   resetChartZoom,
@@ -73,6 +74,22 @@ describe("AnalyticsComponent", () => {
       info: vi.fn(),
       error: vi.fn(),
       warn: vi.fn(),
+      debug: vi.fn(),
+      success: vi.fn(),
+    };
+
+    // Mock SupabaseService to prevent real initialization
+    const mockSupabaseService = {
+      currentUser: vi.fn(() => null),
+      session: vi.fn(() => null),
+      userId: vi.fn(() => null),
+      client: {
+        from: vi.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      },
     };
 
     await TestBed.configureTestingModule({
@@ -87,6 +104,7 @@ describe("AnalyticsComponent", () => {
         },
         { provide: TrainingDataService, useValue: mockTrainingDataService },
         { provide: LoggerService, useValue: mockLoggerService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
       ],
       schemas: [NO_ERRORS_SCHEMA], // Ignore unknown elements in template
     }).compileComponents();
