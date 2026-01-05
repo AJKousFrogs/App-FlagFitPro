@@ -150,25 +150,12 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        ONBOARDING BANNER (First-time users)
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
     .onboarding-banner {
       position: sticky;
       top: 0;
       z-index: 10;
-    }
-
-    :host ::ng-deep .onboarding-card {
-      background: var(--color-brand-primary) !important;
-      border: none;
-      border-radius: var(--radius-lg);
-    }
-
-    :host ::ng-deep .onboarding-card .p-card-body {
-      padding: var(--space-5);
-    }
-
-    :host ::ng-deep .onboarding-card .p-card-content {
-      padding: 0;
     }
 
     .onboarding-content {
@@ -211,21 +198,8 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        WELCOME CARD
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
-    :host ::ng-deep .welcome-card {
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border-secondary);
-    }
-
-    :host ::ng-deep .welcome-card .p-card-body {
-      padding: var(--space-4);
-    }
-
-    :host ::ng-deep .welcome-card .p-card-content {
-      padding: 0;
-    }
-
     .welcome-row {
       display: flex;
       align-items: center;
@@ -275,32 +249,12 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        STATS GRID
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-3);
-    }
-
-    :host ::ng-deep .stat-card {
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border-secondary);
-      cursor: pointer;
-      transition: transform var(--hover-transition-fast), box-shadow var(--hover-transition-fast);
-    }
-
-    :host ::ng-deep .stat-card:hover {
-      transform: var(--transform-hover-lift-subtle);
-      box-shadow: var(--hover-shadow-sm);
-    }
-
-    :host ::ng-deep .stat-card .p-card-body {
-      padding: var(--space-3);
-    }
-
-    :host ::ng-deep .stat-card .p-card-content {
-      padding: 0;
     }
 
     .stat-row {
@@ -377,47 +331,17 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        WEEK PROGRESS CARD
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
-    :host ::ng-deep .week-card {
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border-secondary);
-    }
-
-    :host ::ng-deep .week-card .p-card-body {
-      padding: var(--space-3) var(--space-4);
-    }
-
-    :host ::ng-deep .week-card .p-card-content {
-      padding: 0;
-    }
 
     /* --------------------------------------------------------------------------
        CONTENT CARDS (Check-in, Protocol, Wrap-up)
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
     .content-section {
       display: flex;
       flex-direction: column;
       gap: var(--space-5);
-    }
-
-    :host ::ng-deep .content-card {
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border-secondary);
-    }
-
-    :host ::ng-deep .highlight-card {
-      border-left: 4px solid var(--color-brand-primary);
-      border-left-width: 4px;
-    }
-
-    :host ::ng-deep .content-card .p-card-body {
-      padding: var(--space-4);
-    }
-
-    :host ::ng-deep .content-card .p-card-content {
-      padding: 0;
     }
 
     .card-header {
@@ -452,31 +376,8 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        MERLIN INSIGHT CARD
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
-    :host ::ng-deep .insight-card {
-      background: var(--color-brand-primary) !important;
-      border: none;
-      border-radius: var(--radius-lg);
-    }
-
-    :host ::ng-deep .insight-card .p-card-body {
-      padding: var(--space-4);
-    }
-
-    :host ::ng-deep .insight-card .p-card-content {
-      padding: 0;
-    }
-
-    :host ::ng-deep .insight-card .p-button-outlined {
-      color: var(--color-text-on-primary);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    :host ::ng-deep .insight-card .p-button-outlined:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: white;
-    }
-
     .insight-content {
       display: flex;
       gap: var(--space-4);
@@ -522,13 +423,7 @@ interface QuickFormData {
       margin-bottom: var(--space-4);
     }
 
-    :host ::ng-deep .protocol-bar {
-      height: 6px;
-    }
-
-    :host ::ng-deep .protocol-bar .p-progressbar-value {
-      background: var(--color-brand-primary);
-    }
+    /* Protocol progress bar styling handled globally in _brand-overrides.scss */
 
     .protocol-meta {
       display: flex;
@@ -553,32 +448,12 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        WRAP-UP ACTION CARDS
+       PrimeNG card styling handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
     .action-list {
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
-    }
-
-    :host ::ng-deep .action-card {
-      cursor: pointer;
-      border: 1px solid var(--color-border-secondary);
-      border-radius: var(--radius-lg);
-      box-shadow: none;
-      transition: border-color var(--hover-transition-fast), background var(--hover-transition-fast);
-    }
-
-    :host ::ng-deep .action-card:hover {
-      border-color: var(--color-brand-primary);
-      background: var(--hover-bg-secondary);
-    }
-
-    :host ::ng-deep .action-card .p-card-body {
-      padding: var(--space-3);
-    }
-
-    :host ::ng-deep .action-card .p-card-content {
-      padding: 0;
     }
 
     .action-row {
@@ -1106,13 +981,9 @@ interface QuickFormData {
 
     /* --------------------------------------------------------------------------
        ACCESSIBILITY - Reduced Motion
+       PrimeNG card transitions handled globally in _brand-overrides.scss
        -------------------------------------------------------------------------- */
     @media (prefers-reduced-motion: reduce) {
-      :host ::ng-deep .stat-card,
-      :host ::ng-deep .action-card {
-        transition: none;
-      }
-      
       .confetti-piece {
         animation: none;
         opacity: 0;

@@ -709,4 +709,320 @@
       border: 1px solid CanvasText;
     }
   }
+
+  // ============================================
+  // DASHBOARD CARD VARIANTS
+  // Extracted from player-dashboard for reuse
+  // ============================================
+
+  // Stat Card - compact KPI display
+  .p-card.stat-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    transition: 
+      transform var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
+
+    .p-card-body {
+      padding: var(--space-3);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .p-card.stat-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+  }
+
+  // Welcome Card - hero greeting card
+  .p-card.welcome-card {
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-primary) 50%);
+    border: var(--border-1) solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  // Dashboard Grid Card - standard content card
+  .p-card.progress-card,
+  .p-card.schedule-card,
+  .p-card.actions-card,
+  .p-card.trend-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+
+    .p-card-header {
+      padding: 0;
+    }
+
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  // Event Card - upcoming events strip
+  .p-card.event-card {
+    border-radius: var(--radius-lg);
+    border-left: var(--space-1) solid var(--color-brand-primary);
+    box-shadow: var(--shadow-1);
+    transition: 
+      transform var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
+
+    .p-card-body {
+      padding: var(--space-3);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+
+    &.event-game {
+      border-left-color: var(--primitive-error-500);
+    }
+
+    &.event-tournament {
+      border-left-color: var(--primitive-warning-500);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .p-card.event-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+  }
+
+  // ============================================
+  // MESSAGE / ANNOUNCEMENT BANNER
+  // ============================================
+
+  .p-message.announcement-banner {
+    border-radius: var(--radius-lg);
+
+    .p-message-content {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .p-message-close-button {
+      align-self: center;
+    }
+  }
+
+  // ============================================
+  // TIMELINE (Schedule)
+  // ============================================
+
+  .p-timeline.schedule-timeline {
+    margin-bottom: var(--space-2);
+
+    .p-timeline-event-opposite {
+      display: none;
+    }
+
+    .p-timeline-event-content {
+      padding-left: var(--space-2);
+    }
+
+    .p-timeline-event {
+      min-height: auto;
+    }
+
+    .p-timeline-event-separator {
+      flex: 0;
+    }
+  }
+
+  // ============================================
+  // PROGRESSBAR (Custom slim variant)
+  // ============================================
+
+  .p-progressbar.custom-progress {
+    height: var(--space-1);
+    border-radius: var(--radius-full);
+
+    .p-progressbar-value {
+      background: var(--color-brand-primary);
+      border-radius: var(--radius-full);
+    }
+  }
+
+  // ============================================
+  // TAG (Stat tags)
+  // ============================================
+
+  .p-tag.stat-tag,
+  .p-tag.event-type-tag {
+    font-size: var(--font-body-xs);
+    padding: var(--space-1) var(--space-2);
+    line-height: 1.2;
+  }
+
+  // ============================================
+  // TODAY'S PRACTICE CARD PATTERNS
+  // Migrated from today.component.ts ::ng-deep
+  // ============================================
+
+  // Onboarding Banner Card
+  .p-card.onboarding-card {
+    background: var(--color-brand-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+
+    .p-card-body {
+      padding: var(--space-5);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  // Welcome Card
+  .p-card.welcome-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-secondary);
+
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  // Stat Cards (clickable)
+  .p-card.stat-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-secondary);
+    cursor: pointer;
+    transition: transform var(--hover-transition-fast), box-shadow var(--hover-transition-fast);
+
+    .p-card-body {
+      padding: var(--space-3);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .p-card.stat-card:hover {
+      transform: var(--transform-hover-lift-subtle);
+      box-shadow: var(--hover-shadow-sm);
+    }
+  }
+
+  // Week Progress Card
+  .p-card.week-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-secondary);
+
+    .p-card-body {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  // Content Cards (Check-in, Protocol, Wrap-up)
+  .p-card.content-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-secondary);
+
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+
+    &.highlight-card {
+      border-left: 4px solid var(--color-brand-primary);
+    }
+  }
+
+  // Merlin Insight Card (branded)
+  .p-card.insight-card {
+    background: var(--color-brand-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+
+    .p-button-outlined {
+      color: var(--color-text-on-primary);
+      border-color: rgba(255, 255, 255, 0.5);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+      }
+    }
+  }
+
+  // Protocol Progress Bar
+  .p-progressbar.protocol-bar {
+    height: 6px;
+
+    .p-progressbar-value {
+      background: var(--color-brand-primary);
+    }
+  }
+
+  // Action Cards (wrap-up actions)
+  .p-card.action-card {
+    cursor: pointer;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: none;
+    transition: border-color var(--hover-transition-fast), background var(--hover-transition-fast);
+
+    .p-card-body {
+      padding: var(--space-3);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .p-card.action-card:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--hover-bg-secondary);
+    }
+  }
 }

@@ -1,7 +1,24 @@
 // ============================================================================
 // page-header.component Styles
-// Design System Compliant
+// Design System Compliant - Refactored January 5, 2026
+// Removed ::ng-deep dependency - Using CSS custom properties
 // ============================================================================
+
+/*
+ * COMPOSITE VIEW PATTERN
+ * Parent composite views can hide child headers by setting:
+ *   --page-header-display: none;
+ * 
+ * Example in qb-hub.component.ts:
+ *   .hub-tab-content { --page-header-display: none; }
+ * 
+ * This eliminates the need for ::ng-deep to pierce encapsulation.
+ */
+
+:host {
+  // Inherit display from CSS custom property, default to block
+  display: var(--page-header-display, block);
+}
 
 /* Uses standardized layout-system.scss classes */
 .page-header {
@@ -14,6 +31,11 @@
   border: 1px solid var(--color-border-primary, #e0e0e0);
   border-radius: var(--radius-xl);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  // Support explicit hiding via input binding
+  &.hidden-in-composite {
+    display: none;
+  }
 }
 
 .header-content {

@@ -1,0 +1,617 @@
+/**
+ * Dashboard Primitives
+ * ====================
+ * 
+ * Reusable layout patterns for dashboard pages.
+ * Extracted from Player Dashboard as the visual benchmark.
+ * 
+ * See DESIGN_SYSTEM_RULES.md for token constraints.
+ * 
+ * RECIPES:
+ *   .dashboard-layout      - Main dashboard container
+ *   .dashboard-grid        - 2-column content grid
+ *   .stats-overview        - 4-column stat cards row
+ *   .stat-card-content     - Stat card inner layout
+ *   .card-header-custom    - Card header with icon + title
+ *   .events-strip          - Horizontal event cards
+ *   .section-title         - Section heading with icon
+ */
+
+@layer primitives {
+  // ============================================
+  // DASHBOARD LAYOUT (Decision 8)
+  // ============================================
+  // Main container with vertical section stacking
+
+  .dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-4);
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
+
+  // Alias for backward compatibility
+  .section-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  // ============================================
+  // DASHBOARD GRID (Decision 8.1)
+  // ============================================
+  // 2-column grid for main content cards
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 3-column variant for wider layouts
+  .dashboard-grid--3col {
+    grid-template-columns: repeat(3, 1fr);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ============================================
+  // STATS OVERVIEW (Decision 33)
+  // ============================================
+  // 4-column grid for KPI stat cards
+
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+
+  // 6-column variant for coach dashboards
+  .stats-overview--6col {
+    grid-template-columns: repeat(6, 1fr);
+
+    @media (max-width: 1280px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ============================================
+  // STAT CARD CONTENT (Decision 33)
+  // ============================================
+  // Inner layout for stat/KPI cards
+
+  .stat-card-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  // Stat icon container
+  .stat-icon {
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-body-size);
+    flex-shrink: 0;
+
+    // Status color variants
+    &--success {
+      background: var(--color-success-bg);
+      color: var(--color-success-text);
+    }
+
+    &--warning {
+      background: var(--color-warning-bg);
+      color: var(--color-warning-text);
+    }
+
+    &--danger {
+      background: var(--color-danger-bg);
+      color: var(--color-danger-text);
+    }
+
+    &--info {
+      background: var(--color-info-bg);
+      color: var(--color-info-text);
+    }
+
+    &--primary {
+      background: var(--ds-primary-green-ultra-subtle);
+      color: var(--color-brand-primary);
+    }
+  }
+
+  // Stat details (value + label)
+  .stat-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: var(--space-1);
+  }
+
+  // Stat value (large number)
+  .stat-value {
+    font-size: var(--font-size-metric-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+  }
+
+  // Stat label (uppercase caption)
+  .stat-label {
+    font-size: var(--font-caption-size);
+    font-weight: var(--font-caption-weight);
+    color: var(--color-text-muted);
+    line-height: var(--font-caption-line-height);
+    letter-spacing: var(--letter-spacing-caption);
+    text-transform: uppercase;
+  }
+
+  // ============================================
+  // CARD HEADER CUSTOM (Decision 33)
+  // ============================================
+  // Card header with icon and title
+
+  .card-header-custom {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4) var(--space-2);
+  }
+
+  .card-header-icon {
+    font-size: var(--font-body-size);
+    color: var(--color-brand-primary);
+    opacity: 0.85;
+  }
+
+  .card-header-title {
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: var(--font-h3-line-height);
+    margin: 0;
+  }
+
+  // ============================================
+  // CARD FOOTER ACTION (Decision 33)
+  // ============================================
+  // Footer with link/action button
+
+  .card-footer-action {
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: var(--border-1) solid var(--color-border-muted);
+    text-align: center;
+  }
+
+  // ============================================
+  // EVENTS STRIP (Decision 8.1)
+  // ============================================
+  // Horizontal scrollable event cards
+
+  .events-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Event card content layout
+  .event-card-content {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  .event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: var(--icon-container-sm);
+  }
+
+  .date-day {
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  .date-month {
+    font-size: var(--font-compact-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .event-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .event-title {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    font-size: var(--font-body-sm-size);
+    line-height: 1.3;
+  }
+
+  // ============================================
+  // SECTION TITLE (Decision 4)
+  // ============================================
+  // Section heading with optional icon
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    font-size: var(--font-body-size);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+
+    i {
+      opacity: 0.7;
+    }
+  }
+
+  // ============================================
+  // WELCOME SECTION (Player Dashboard specific)
+  // ============================================
+
+  .welcome-wrapper {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  .merlin-avatar,
+  .welcome-avatar {
+    width: var(--space-12);
+    height: var(--space-12);
+    min-width: var(--space-12);
+    border-radius: var(--radius-full);
+    background: var(--color-brand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-h2-size);
+    color: var(--color-text-on-primary);
+    flex-shrink: 0;
+
+    @media (max-width: 640px) {
+      margin: 0 auto;
+    }
+  }
+
+  .welcome-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .welcome-greeting {
+    margin: 0 0 var(--space-1);
+    font-size: var(--font-h1-size);
+    font-weight: var(--font-h1-weight);
+    color: var(--color-text-primary);
+    line-height: var(--font-h1-line-height);
+  }
+
+  .welcome-subtitle,
+  .merlin-insight {
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--font-body-sm-size);
+    line-height: var(--font-body-sm-line-height);
+  }
+
+  .welcome-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    align-items: center;
+
+    @media (max-width: 640px) {
+      justify-content: center;
+    }
+  }
+
+  // ============================================
+  // PROGRESS INDICATORS
+  // ============================================
+
+  .week-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+  }
+
+  .day-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .day-indicator {
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    min-height: var(--space-8);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-caption-size);
+    background: var(--surface-tertiary);
+    color: var(--color-text-muted);
+    border: 2px solid transparent;
+    transition: 
+      background-color var(--motion-fast) var(--ease-standard),
+      border-color var(--motion-fast) var(--ease-standard);
+
+    &.completed {
+      background: var(--color-brand-primary);
+      color: var(--color-text-on-primary);
+    }
+
+    &.today {
+      border-color: var(--color-brand-primary);
+      color: var(--color-brand-primary);
+      background: var(--ds-primary-green-ultra-subtle);
+    }
+
+    &.future {
+      opacity: 0.4;
+    }
+  }
+
+  .day-name {
+    font-size: var(--font-caption-size);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    font-weight: var(--font-weight-medium);
+    opacity: 0.75;
+  }
+
+  .progress-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .progress-text {
+    font-size: var(--font-caption-size);
+    color: var(--color-text-secondary);
+    text-align: center;
+    opacity: 0.75;
+  }
+
+  // ============================================
+  // TIMELINE / SCHEDULE ITEMS
+  // ============================================
+
+  .timeline-marker {
+    width: var(--space-6);
+    height: var(--space-6);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-tertiary);
+    color: var(--color-text-muted);
+    font-size: var(--font-caption-size);
+    flex-shrink: 0;
+
+    &.completed {
+      background: var(--color-brand-primary);
+      color: var(--color-text-on-primary);
+    }
+  }
+
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+
+    &.completed {
+      opacity: 0.55;
+    }
+  }
+
+  .item-time {
+    font-size: var(--font-caption-size);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-brand-primary);
+    min-width: var(--touch-target-min);
+  }
+
+  .item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .item-title {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    font-size: var(--font-body-sm-size);
+    line-height: 1.3;
+  }
+
+  .item-duration {
+    font-size: var(--font-caption-size);
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+
+  .more-items {
+    font-size: var(--font-caption-size);
+    color: var(--color-text-muted);
+    text-align: center;
+    margin: var(--space-1) 0;
+    opacity: 0.7;
+  }
+
+  // ============================================
+  // EMPTY STATES
+  // ============================================
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .empty-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm-size);
+  }
+
+  .empty-icon {
+    font-size: var(--font-body-size);
+    opacity: 0.7;
+  }
+
+  // ============================================
+  // QUICK ACTIONS GRID
+  // ============================================
+
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+
+    @media (max-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    app-button {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  // 2-column variant
+  .quick-actions-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // ============================================
+  // ANNOUNCEMENT BANNER
+  // ============================================
+
+  .announcement-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    flex-wrap: wrap;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .announcement-text {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+  }
+
+  .announcement-icon {
+    font-size: var(--font-body-size);
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+
+  .announcement-message {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-body-sm-size);
+  }
+
+  .announcement-meta {
+    font-size: var(--font-caption-size);
+    opacity: 0.65;
+    margin-left: 0;
+    white-space: nowrap;
+
+    @media (max-width: 640px) {
+      margin-left: var(--space-5);
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION (Decision 51)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .day-indicator {
+      transition: none;
+    }
+  }
+}
+

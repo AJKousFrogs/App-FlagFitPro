@@ -409,36 +409,33 @@ interface AnnouncementBanner {
     </app-main-layout>
   `,
   styles: [`
+    /**
+     * Player Dashboard Styles
+     * =======================
+     * Design System Compliant - All tokens from design-system-tokens.scss
+     * PrimeNG overrides moved to primeng/_brand-overrides.scss
+     * 
+     * NOTE: ::ng-deep and !important removed per DESIGN_SYSTEM_RULES.md
+     * PrimeNG component styling is handled globally via styleClass bindings
+     */
+
     /* ==========================================
-       BASE LAYOUT - Improved spacing & rhythm
+       BASE LAYOUT - 8-point grid spacing
        ========================================== */
     .player-dashboard {
       display: flex;
       flex-direction: column;
-      gap: var(--space-6); /* 24px between major sections */
+      gap: var(--space-6);
       padding: var(--space-5) var(--space-4);
-      max-width: 1400px; /* Standard container width - matches page-container--wide pattern */
+      max-width: var(--container-max);
       margin: 0 auto;
     }
 
     /* ==========================================
-       SECTION 1: Announcement Banner - Compact
+       SECTION 1: Announcement Banner
        ========================================== */
     .announcement-section {
       margin-bottom: 0;
-    }
-
-    :host ::ng-deep .announcement-banner {
-      border-radius: var(--radius-lg);
-    }
-
-    :host ::ng-deep .announcement-banner .p-message-content {
-      width: 100%;
-      padding: var(--space-3) var(--space-4); /* Reduced padding */
-    }
-
-    :host ::ng-deep .announcement-banner .p-message-close-button {
-      align-self: center; /* Vertically center dismiss icon */
     }
 
     .announcement-content {
@@ -458,43 +455,28 @@ interface AnnouncementBanner {
     }
 
     .announcement-icon {
-      font-size: var(--font-body-md); /* Use design token */
+      font-size: var(--font-body-size);
       flex-shrink: 0;
       opacity: 0.9;
     }
 
     .announcement-message {
       font-weight: var(--font-weight-medium);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-body-sm-size);
     }
 
     .announcement-meta {
-      font-size: var(--font-body-xs); /* Smaller timestamp */
-      opacity: 0.65; /* Reduced opacity for visual calm */
+      font-size: var(--font-caption-size);
+      opacity: 0.65;
       margin-left: 0;
       white-space: nowrap;
     }
 
     /* ==========================================
-       SECTION 2: Welcome Section - Softer gradient
+       SECTION 2: Welcome Section
        ========================================== */
     .welcome-section {
       margin-bottom: 0;
-    }
-
-    :host ::ng-deep .welcome-card {
-      background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-primary) 50%); /* Softer gradient */
-      border: 1px solid var(--color-border-secondary);
-      border-radius: var(--radius-lg); /* Consistent radius */
-      box-shadow: var(--shadow-sm); /* Consistent shadow */
-    }
-
-    :host ::ng-deep .welcome-card .p-card-body {
-      padding: var(--space-4); /* 16px internal padding */
-    }
-
-    :host ::ng-deep .welcome-card .p-card-content {
-      padding: 0;
     }
 
     .welcome-wrapper {
@@ -504,15 +486,15 @@ interface AnnouncementBanner {
     }
 
     .merlin-avatar {
-      width: var(--space-12); /* 48px - Use design token */
+      width: var(--space-12);
       height: var(--space-12);
       min-width: var(--space-12);
-      border-radius: 50%;
-      background: var(--color-brand-primary); /* Solid color, less gradient */
+      border-radius: var(--radius-full);
+      background: var(--color-brand-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--font-heading-md); /* Use design token */
+      font-size: var(--font-h2-size);
       color: var(--color-text-on-primary);
       flex-shrink: 0;
     }
@@ -524,17 +506,17 @@ interface AnnouncementBanner {
 
     .welcome-greeting {
       margin: 0 0 var(--space-1);
-      font-size: var(--font-size-h1); /* H1: Page greeting - 28px */
-      font-weight: var(--font-weight-semibold); /* H1: Semibold (600) - reduced from 700 */
+      font-size: var(--font-h1-size);
+      font-weight: var(--font-h1-weight);
       color: var(--color-text-primary);
-      line-height: var(--line-height-tight); /* H1: 1.2 */
+      line-height: var(--font-h1-line-height);
     }
 
     .merlin-insight {
       margin: 0 0 var(--space-3);
-      color: var(--color-text-muted); /* Muted color for informational text */
-      font-size: var(--font-body-sm);
-      line-height: var(--line-height-base);
+      color: var(--color-text-muted);
+      font-size: var(--font-body-sm-size);
+      line-height: var(--font-body-sm-line-height);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -543,60 +525,18 @@ interface AnnouncementBanner {
 
     .welcome-actions {
       display: flex;
-      gap: var(--space-2); /* Tighter gap */
+      gap: var(--space-2);
       flex-wrap: wrap;
       align-items: center;
     }
 
-    :host ::ng-deep .start-training-btn {
-      /* Primary CTA - default styling */
-    }
-
-    /* Ask Merlin button - ensure always visible */
-    :host ::ng-deep .welcome-actions .p-button.p-button-text,
-    :host ::ng-deep .welcome-actions a[routerlink="/chat"],
-    :host ::ng-deep .welcome-actions .p-button[routerlink="/chat"] {
-      opacity: 1 !important;
-      padding: var(--space-2) var(--space-4) !important;
-      color: var(--ds-primary-green) !important;
-    }
-
-    :host ::ng-deep .welcome-actions .p-button.p-button-text .p-button-label,
-    :host ::ng-deep .welcome-actions .p-button.p-button-text .p-button-icon,
-    :host ::ng-deep .welcome-actions a[routerlink="/chat"] .p-button-label,
-    :host ::ng-deep .welcome-actions a[routerlink="/chat"] .p-button-icon,
-    :host ::ng-deep .welcome-actions a[routerlink="/chat"] span,
-    :host ::ng-deep .welcome-actions a[routerlink="/chat"] i {
-      color: var(--ds-primary-green) !important;
-      opacity: 1 !important;
-    }
-
     /* ==========================================
-       SECTION 3: Stats Overview - Tighter layout
+       SECTION 3: Stats Overview - 4-column grid
        ========================================== */
     .stats-overview {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-3); /* Tighter gap */
-    }
-
-    :host ::ng-deep .stat-card {
-      border-radius: var(--radius-lg); /* Consistent radius */
-      box-shadow: var(--shadow-sm); /* Consistent shadow */
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    :host ::ng-deep .stat-card:hover {
-      transform: translateY(-1px); /* Subtler lift */
-      box-shadow: var(--shadow-md);
-    }
-
-    :host ::ng-deep .stat-card .p-card-body {
-      padding: var(--space-3); /* Reduced padding */
-    }
-
-    :host ::ng-deep .stat-card .p-card-content {
-      padding: 0;
+      gap: var(--space-3);
     }
 
     .stat-card-content {
@@ -606,33 +546,33 @@ interface AnnouncementBanner {
     }
 
     .stat-icon {
-      width: var(--space-10); /* 40px - Use design token */
+      width: var(--space-10);
       height: var(--space-10);
       min-width: var(--space-10);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--font-body-md); /* Use design token */
+      font-size: var(--font-body-size);
     }
 
     .readiness-icon {
-      background: var(--color-status-error-subtle); /* Use design token */
+      background: var(--color-status-error-subtle);
       color: var(--primitive-error-500);
     }
 
     .acwr-icon {
-      background: var(--color-status-info-subtle); /* Use design token */
+      background: var(--color-status-info-subtle);
       color: var(--color-status-info);
     }
 
     .streak-icon {
-      background: var(--color-status-warning-subtle); /* Use design token */
+      background: var(--color-status-warning-subtle);
       color: var(--primitive-success-500);
     }
 
     .sessions-icon {
-      background: rgba(8, 153, 73, 0.08);
+      background: var(--ds-primary-green-ultra-subtle);
       color: var(--color-brand-primary);
     }
 
@@ -641,93 +581,57 @@ interface AnnouncementBanner {
       flex-direction: column;
       flex: 1;
       min-width: 0;
-      gap: var(--space-1); /* Use design token */
+      gap: var(--space-1);
     }
 
     .stat-value {
-      font-size: var(--font-size-metric-md); /* Metric: KPI numbers - 24px */
-      font-weight: var(--font-weight-bold); /* Metric: Bold (700) */
+      font-size: var(--font-size-metric-md);
+      font-weight: var(--font-weight-bold);
       color: var(--color-text-primary);
-      line-height: var(--line-height-tight); /* Metric: 1.2 */
+      line-height: var(--line-height-tight);
     }
 
     .stat-label {
-      font-size: var(--font-size-caption); /* Caption: Helper text - 13px */
-      font-weight: var(--font-weight-regular); /* Caption: Regular (400) */
+      font-size: var(--font-caption-size);
+      font-weight: var(--font-caption-weight);
       color: var(--color-text-muted);
-      line-height: var(--line-height-base); /* Caption: 1.5 */
-      letter-spacing: var(--letter-spacing-caption); /* 0.04em for labels like READINESS, ACWR */
+      line-height: var(--font-caption-line-height);
+      letter-spacing: var(--letter-spacing-caption);
       text-transform: uppercase;
     }
 
-    :host ::ng-deep .stat-tag {
-      font-size: var(--font-body-xs); /* Use design token */
-      padding: var(--space-1) var(--space-2);
-      line-height: 1.2;
-    }
-
     /* ==========================================
-       SECTION 4-7: Dashboard Grid - Consistent cards
+       SECTION 4-7: Dashboard Grid
        ========================================== */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5); /* 20px gap */
-    }
-
-    /* Unified card styling */
-    :host ::ng-deep .progress-card,
-    :host ::ng-deep .schedule-card,
-    :host ::ng-deep .actions-card,
-    :host ::ng-deep .trend-card {
-      border-radius: var(--radius-lg); /* Consistent radius */
-      box-shadow: var(--shadow-sm); /* Consistent shadow */
+      gap: var(--space-5);
     }
 
     .card-header-custom {
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      padding: var(--space-3) var(--space-4) var(--space-2); /* Tighter header */
+      padding: var(--space-3) var(--space-4) var(--space-2);
     }
 
     .card-header-icon {
-      font-size: var(--font-body-md); /* Use design token */
+      font-size: var(--font-body-size);
       color: var(--color-brand-primary);
       opacity: 0.85;
     }
 
     .card-header-title {
-      font-size: var(--font-size-h2); /* H2: Card titles - 18px */
-      font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
+      font-size: var(--font-h3-size);
+      font-weight: var(--font-weight-semibold);
       color: var(--color-text-primary);
-      line-height: var(--line-height-tight); /* H2: 1.2 */
-      margin-bottom: var(--space-3); /* 12px consistent margin */
-    }
-
-    :host ::ng-deep .progress-card .p-card-header,
-    :host ::ng-deep .schedule-card .p-card-header,
-    :host ::ng-deep .actions-card .p-card-header,
-    :host ::ng-deep .trend-card .p-card-header {
-      padding: 0;
-    }
-
-    :host ::ng-deep .progress-card .p-card-body,
-    :host ::ng-deep .schedule-card .p-card-body,
-    :host ::ng-deep .actions-card .p-card-body,
-    :host ::ng-deep .trend-card .p-card-body {
-      padding: var(--space-4); /* 16px internal padding */
-    }
-
-    :host ::ng-deep .progress-card .p-card-content,
-    :host ::ng-deep .schedule-card .p-card-content,
-    :host ::ng-deep .actions-card .p-card-content,
-    :host ::ng-deep .trend-card .p-card-content {
-      padding: 0;
+      line-height: var(--font-h3-line-height);
+      margin-bottom: var(--space-3);
     }
 
     /* ==========================================
-       Weekly Progress - Tighter spacing
+       Weekly Progress
        ========================================== */
     .week-progress {
       display: flex;
@@ -739,42 +643,44 @@ interface AnnouncementBanner {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--space-1); /* Tighter */
+      gap: var(--space-1);
     }
 
     .day-indicator {
-      width: var(--space-8); /* 32px - Use design token */
+      width: var(--space-8);
       height: var(--space-8);
       min-width: var(--space-8);
       min-height: var(--space-8);
-      border-radius: 50%;
+      border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--font-body-xs); /* Use design token */
+      font-size: var(--font-caption-size);
       background: var(--surface-tertiary);
       color: var(--color-text-muted);
-      border: var(--space-1) solid transparent; /* Use design token */
-      transition: all 0.15s ease;
+      border: 2px solid transparent;
+      transition: 
+        background-color var(--motion-fast) var(--ease-standard),
+        border-color var(--motion-fast) var(--ease-standard);
     }
 
     .day-indicator.completed {
       background: var(--color-brand-primary);
-      color: white;
+      color: var(--color-text-on-primary);
     }
 
     .day-indicator.today {
       border-color: var(--color-brand-primary);
       color: var(--color-brand-primary);
-      background: var(--ds-primary-green-ultra-subtle); /* Softer background */
+      background: var(--ds-primary-green-ultra-subtle);
     }
 
     .day-indicator.future {
-      opacity: 0.4; /* More muted */
+      opacity: 0.4;
     }
 
     .day-name {
-      font-size: var(--font-body-xs); /* Use design token */
+      font-size: var(--font-caption-size);
       color: var(--color-text-secondary);
       text-transform: uppercase;
       font-weight: var(--font-weight-medium);
@@ -787,68 +693,38 @@ interface AnnouncementBanner {
       gap: var(--space-1);
     }
 
-    :host ::ng-deep .custom-progress {
-      height: var(--space-1); /* Use design token */
-      border-radius: var(--radius-full);
-    }
-
-    :host ::ng-deep .custom-progress .p-progressbar-value {
-      background: var(--color-brand-primary);
-      border-radius: var(--radius-full);
-    }
-
     .progress-text {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-caption-size);
       color: var(--color-text-secondary);
       text-align: center;
       opacity: 0.75;
     }
 
     /* ==========================================
-       Schedule Timeline - Tighter list items
+       Schedule Timeline
        ========================================== */
-    :host ::ng-deep .schedule-timeline {
-      margin-bottom: var(--space-2);
-    }
-
-    :host ::ng-deep .schedule-timeline .p-timeline-event-opposite {
-      display: none;
-    }
-
-    :host ::ng-deep .schedule-timeline .p-timeline-event-content {
-      padding-left: var(--space-2);
-    }
-
-    :host ::ng-deep .schedule-timeline .p-timeline-event {
-      min-height: auto;
-    }
-
-    :host ::ng-deep .schedule-timeline .p-timeline-event-separator {
-      flex: 0;
-    }
-
     .timeline-marker {
-      width: var(--space-6); /* 24px - Use design token */
+      width: var(--space-6);
       height: var(--space-6);
-      border-radius: 50%;
+      border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--surface-tertiary);
       color: var(--color-text-muted);
-      font-size: var(--font-body-xs); /* Use design token */
+      font-size: var(--font-caption-size);
     }
 
     .timeline-marker.completed {
       background: var(--color-brand-primary);
-      color: white;
+      color: var(--color-text-on-primary);
     }
 
     .schedule-item {
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      padding: var(--space-1) 0; /* Reduced vertical padding */
+      padding: var(--space-1) 0;
     }
 
     .schedule-item.completed {
@@ -856,10 +732,10 @@ interface AnnouncementBanner {
     }
 
     .item-time {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-caption-size);
       font-weight: var(--font-weight-semibold);
       color: var(--color-brand-primary);
-      min-width: calc(var(--space-10) + var(--space-1)); /* 44px - Touch target standard */
+      min-width: var(--touch-target-min);
     }
 
     .item-info {
@@ -872,18 +748,18 @@ interface AnnouncementBanner {
     .item-title {
       font-weight: var(--font-weight-medium);
       color: var(--color-text-primary);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-body-sm-size);
       line-height: 1.3;
     }
 
     .item-duration {
-      font-size: var(--font-body-xs); /* Use design token */
+      font-size: var(--font-caption-size);
       color: var(--color-text-secondary);
       opacity: 0.7;
     }
 
     .more-items {
-      font-size: var(--font-body-xs);
+      font-size: var(--font-caption-size);
       color: var(--color-text-muted);
       text-align: center;
       margin: var(--space-1) 0;
@@ -893,15 +769,8 @@ interface AnnouncementBanner {
     .card-footer-action {
       margin-top: var(--space-2);
       padding-top: var(--space-2);
-      border-top: 1px solid var(--color-border-secondary);
+      border-top: var(--border-1) solid var(--color-border-secondary);
       text-align: center;
-    }
-
-    :host ::ng-deep .footer-link-btn {
-      width: 100%;
-      justify-content: center;
-      font-size: var(--font-body-sm);
-      padding: var(--space-2) !important; /* Use design token */
     }
 
     .empty-schedule,
@@ -913,24 +782,20 @@ interface AnnouncementBanner {
       padding: var(--space-3);
     }
 
-    :host ::ng-deep .empty-message {
-      width: 100%;
-    }
-
     .empty-content {
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-body-sm-size);
     }
 
     .empty-icon {
-      font-size: var(--font-body-md); /* Use design token */
+      font-size: var(--font-body-size);
       opacity: 0.7;
     }
 
     /* ==========================================
-       Quick Actions Grid - Equal sizing
+       Quick Actions Grid
        ========================================== */
     .quick-actions-grid {
       display: grid;
@@ -938,14 +803,8 @@ interface AnnouncementBanner {
       gap: var(--space-3);
     }
 
-    /* Make app-button stretch to fill grid cell */
     .quick-actions-grid app-button {
       display: block;
-      width: 100%;
-    }
-
-    /* Make the inner button fill the host */
-    :host ::ng-deep .quick-actions-grid .btn {
       width: 100%;
     }
 
@@ -953,7 +812,7 @@ interface AnnouncementBanner {
        Performance Chart
        ========================================== */
     .chart-container {
-      height: calc(var(--space-8) * 5); /* 160px - Use design tokens (32px * 5) */
+      height: 160px;
     }
 
     /* ==========================================
@@ -968,8 +827,8 @@ interface AnnouncementBanner {
       align-items: center;
       gap: var(--space-2);
       margin-bottom: var(--space-3);
-      font-size: var(--font-body-md);
-      font-weight: var(--font-weight-medium); /* Not too heavy */
+      font-size: var(--font-body-size);
+      font-weight: var(--font-weight-medium);
       color: var(--color-text-primary);
     }
 
@@ -983,34 +842,6 @@ interface AnnouncementBanner {
       gap: var(--space-3);
     }
 
-    :host ::ng-deep .event-card {
-      border-radius: var(--radius-lg);
-      border-left: var(--space-1) solid var(--color-brand-primary); /* Use design token */
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    :host ::ng-deep .event-card:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-    }
-
-    :host ::ng-deep .event-card.event-game {
-      border-left-color: var(--primitive-error-500);
-    }
-
-    :host ::ng-deep .event-card.event-tournament {
-      border-left-color: var(--primitive-warning-500);
-    }
-
-    :host ::ng-deep .event-card .p-card-body {
-      padding: var(--space-3);
-    }
-
-    :host ::ng-deep .event-card .p-card-content {
-      padding: 0;
-    }
-
     .event-card-content {
       display: flex;
       gap: var(--space-2);
@@ -1021,18 +852,18 @@ interface AnnouncementBanner {
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: calc(var(--space-4) + var(--space-1)); /* 36px - Use design tokens */
+      min-width: var(--icon-container-sm);
     }
 
     .date-day {
-      font-size: var(--font-heading-sm);
+      font-size: var(--font-h3-size);
       font-weight: var(--font-weight-bold);
       color: var(--color-text-primary);
       line-height: 1;
     }
 
     .date-month {
-      font-size: var(--font-body-2xs); /* 10px - micro label */
+      font-size: var(--font-compact-sm);
       color: var(--color-text-secondary);
       text-transform: uppercase;
       letter-spacing: var(--letter-spacing-wide);
@@ -1049,14 +880,8 @@ interface AnnouncementBanner {
     .event-title {
       font-weight: var(--font-weight-medium);
       color: var(--color-text-primary);
-      font-size: var(--font-body-sm);
+      font-size: var(--font-body-sm-size);
       line-height: 1.3;
-    }
-
-    :host ::ng-deep .event-type-tag {
-      font-size: var(--font-body-xs); /* Use design token */
-      padding: var(--space-1) var(--space-2);
-      line-height: 1.2;
     }
 
     /* ==========================================
