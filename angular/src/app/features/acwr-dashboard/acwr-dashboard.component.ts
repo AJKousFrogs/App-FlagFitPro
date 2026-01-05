@@ -421,7 +421,7 @@ export class AcwrDashboardComponent implements OnInit {
   public readonly insufficientDataMessage = METRIC_INSUFFICIENT_DATA.acwr;
 
   // Trend chart data
-  trendChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number }[] } | null>(null);
+  trendChartData = signal<{ labels: string[]; datasets: { label: string; data: number[]; borderColor?: string; backgroundColor?: string; fill?: boolean; tension?: number; pointRadius?: number; pointHoverRadius?: number; borderDash?: number[] }[] } | null>(null);
   
   // Chart options for trend visualization
   trendChartOptions = {

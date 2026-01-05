@@ -95,13 +95,13 @@ export class AnalyticsViewModel extends ReactiveViewModel {
           this.trainingDistribution.set(data.trainingDistribution);
         }
         if (data.positionPerformance) {
-          this.positionPerformance.set(data.positionPerformance);
+          this.positionPerformance.set(data.positionPerformance as unknown as Record<string, number>);
         }
         if (data.injuryRisk) {
-          this.injuryRisk.set(data.injuryRisk);
+          this.injuryRisk.set(data.injuryRisk as unknown as { score: number; factors: string[] });
         }
         if (data.speedDevelopment) {
-          this.speedDevelopment.set(data.speedDevelopment);
+          this.speedDevelopment.set(data.speedDevelopment as unknown as { labels: string[]; data: number[] });
         }
         this.initialized.set(true);
       },

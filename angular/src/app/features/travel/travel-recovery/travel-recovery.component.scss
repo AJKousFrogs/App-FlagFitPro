@@ -52,7 +52,10 @@
   border-radius: 14px;
   background: var(--surface-primary);
   cursor: pointer;
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
   box-shadow: var(--shadow-sm);
 
   &:hover {
@@ -694,7 +697,10 @@
   border-radius: 14px;
   background: var(--surface-primary);
   cursor: pointer;
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
   box-shadow: var(--shadow-sm);
 
   &:hover {
@@ -904,7 +910,11 @@
 
 // ===== Compression Card =====
 .compression-header {
-  background: linear-gradient(135deg, var(--primitive-blue-400) 0%, var(--primitive-success-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-blue-400) 0%,
+    var(--primitive-success-400) 100%
+  );
   color: var(--color-text-on-primary);
 
   h3,
@@ -1002,7 +1012,11 @@
 
 // ===== Massage Gun Card =====
 .massage-header {
-  background: linear-gradient(135deg, var(--primitive-error-400) 0%, var(--primitive-orange-500) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-error-400) 0%,
+    var(--primitive-orange-500) 100%
+  );
   color: var(--color-text-on-primary);
 
   h3,
@@ -1086,7 +1100,11 @@
 
 // ===== Exercises Card =====
 .exercises-header {
-  background: linear-gradient(135deg, var(--primitive-teal-500) 0%, var(--primitive-success-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-teal-500) 0%,
+    var(--primitive-success-400) 100%
+  );
   color: var(--color-text-on-primary);
 
   h3,
@@ -1145,7 +1163,11 @@
 
 // ===== Rest Stop Card =====
 .rest-header {
-  background: linear-gradient(135deg, var(--primitive-indigo-500) 0%, var(--primitive-purple-500) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-indigo-500) 0%,
+    var(--primitive-purple-500) 100%
+  );
   color: var(--color-text-on-primary);
 
   h3,
@@ -1216,7 +1238,11 @@
 
 // ===== Research Card =====
 .research-header {
-  background: linear-gradient(135deg, var(--primitive-slate-700) 0%, var(--primitive-cyan-500) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primitive-slate-700) 0%,
+    var(--primitive-cyan-500) 100%
+  );
   color: var(--color-text-on-primary);
 
   h3,
@@ -1488,24 +1514,24 @@
     min-height: 44px;
   }
 }
-}
 
 // ============================================================================
 // @layer overrides - Print Styles
 // ============================================================================
 
 @media print {
-.travel-type-selector,
-.form-actions,
-.olympic-buttons {
-  display: none;
-}
+  .travel-type-selector,
+  .form-actions,
+  .olympic-buttons {
+    display: none;
+  }
 
-.travel-recovery-page {
-  padding: 0;
-  max-width: 100%;
-}
+  .travel-recovery-page {
+    padding: 0;
+    max-width: 100%;
+  }
 
-.protocol-grid {
-  grid-template-columns: repeat(2, 1fr);
+  .protocol-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

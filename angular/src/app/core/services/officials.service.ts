@@ -420,10 +420,10 @@ export class OfficialsService {
       map(response => {
         if (response.success && response.data) {
           return response.data.map(g => ({
-            label: `${new Date(g.date || g.game_date).toLocaleDateString()} vs ${g.opponent || g.opponent_name}`,
-            value: g.id || g.game_id,
-            date: g.date || g.game_date,
-            opponent: g.opponent || g.opponent_name
+            label: `${new Date(g.date || g.game_date || new Date()).toLocaleDateString()} vs ${g.opponent || g.opponent_name || 'TBD'}`,
+            value: g.id || g.game_id || '',
+            date: g.date || g.game_date || '',
+            opponent: g.opponent || g.opponent_name || ''
           }));
         }
         return [];

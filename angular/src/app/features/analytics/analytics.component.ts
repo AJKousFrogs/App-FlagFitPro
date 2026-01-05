@@ -1085,7 +1085,10 @@ export class AnalyticsComponent implements AfterViewInit {
   onWindowResize(): void {
     // Update font sizes for all charts on resize
     this.chartInstances.forEach((chart) => {
-      updateChartFontSizes(chart);
+      const chartInstance = (chart as any).chart;
+      if (chartInstance) {
+        updateChartFontSizes(chartInstance);
+      }
     });
   }
 
@@ -1246,8 +1249,8 @@ export class AnalyticsComponent implements AfterViewInit {
       .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
       .subscribe({
         next: (response) => {
-          if (response.success && (response.data as { metrics?: MetricCard[] })?.metrics) {
-            this.metrics.set((response.data as { metrics: MetricCard[] }).metrics);
+          if (response.success && (response.data as { metrics?: Metric[] })?.metrics) {
+            this.metrics.set((response.data as { metrics: Metric[] }).metrics);
           } else {
             this.loadFallbackMetrics();
           }
@@ -1499,9 +1502,12 @@ export class AnalyticsComponent implements AfterViewInit {
     }
 
     try {
-      // Export chart as PNG image
-      exportChartAsPNG(chart, `${chartType}-analytics`);
-      this.logger.info(`Chart exported successfully: ${chartType}`);
+      // Export chart as PNG image - access underlying Chart.js instance
+      const chartInstance = (chart as any).chart;
+      if (chartInstance) {
+        exportChartAsPNG(chartInstance, `${chartType}-analytics`);
+        this.logger.info(`Chart exported successfully: ${chartType}`);
+      }
     } catch (error) {
       this.logger.error(`Failed to export chart: ${chartType}`, error);
     }
@@ -1518,8 +1524,12 @@ export class AnalyticsComponent implements AfterViewInit {
     }
 
     try {
-      resetChartZoom(chart);
-      this.logger.info(`Zoom reset successfully: ${chartType}`);
+      // Access underlying Chart.js instance
+      const chartInstance = (chart as any).chart;
+      if (chartInstance) {
+        resetChartZoom(chartInstance);
+        this.logger.info(`Zoom reset successfully: ${chartType}`);
+      }
     } catch (error) {
       this.logger.error(`Failed to reset zoom: ${chartType}`, error);
     }
@@ -1667,7 +1677,7 @@ export class AnalyticsComponent implements AfterViewInit {
               ...g,
               deadline: new Date(g.deadline),
             }));
-            this.developmentGoals.set(goals);
+            this.developmentGoals.set(goals as unknown as DevelopmentGoal[]);
           } else {
             // Set empty array if no goals
             this.developmentGoals.set([]);
@@ -1800,7 +1810,14 @@ export class AnalyticsComponent implements AfterViewInit {
         next: (response) => {
           const data = response.data as { gaps?: { area: string; current: number; target: number }[] } | undefined;
           if (response.success && Array.isArray(data?.gaps)) {
-            this.processGapAnalysisData(data.gaps);
+            // Map API response to expected format
+            const mappedGaps = data.gaps.map(g => ({
+              metric: g.area,
+              current: g.current,
+              benchmark: g.target,
+              unit: ''
+            }));
+            this.processGapAnalysisData(mappedGaps);
           } else {
             // Use sample data for demonstration
             this.loadSampleGapAnalysis();

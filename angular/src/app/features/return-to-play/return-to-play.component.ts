@@ -898,7 +898,7 @@ export class ReturnToPlayComponent implements OnInit {
       this.messageService.add({
         severity: 'success',
         summary: 'Protocol Started',
-        detail: `Your ${severity?.days || 14}-day recovery protocol has begun. Follow the stages carefully.`,
+        detail: `Your ${_severity?.days || 14}-day recovery protocol has begun. Follow the stages carefully.`,
         life: 5000
       });
     } catch (err) {

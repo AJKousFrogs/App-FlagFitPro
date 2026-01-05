@@ -184,7 +184,8 @@ export class PrivacySettingsService {
 
     try {
       // Load privacy settings (create default if doesn't exist)
-      const { data: settings, error } = await this.supabase.client
+      let settingsData;
+      const { data: existingSettings, error } = await this.supabase.client
         .from("privacy_settings")
         .select("*")
         .eq("user_id", userId)
@@ -200,13 +201,15 @@ export class PrivacySettingsService {
             .single();
 
         if (insertError) throw insertError;
-        settings = newSettings;
+        settingsData = newSettings;
       } else if (error) {
         throw error;
+      } else {
+        settingsData = existingSettings;
       }
 
-      if (settings) {
-        this._settings.set(this.mapDbToSettings(settings));
+      if (settingsData) {
+        this._settings.set(this.mapDbToSettings(settingsData));
       }
 
       // Load team sharing settings

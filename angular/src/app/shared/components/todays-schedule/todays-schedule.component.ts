@@ -105,12 +105,7 @@ export class TodaysScheduleComponent {
     // Handled by service refresh
   }
 
-  private mapPracticeToSchedule(practice: {
-    sessionType?: string;
-    totalDuration?: number;
-    focus?: string[];
-    location?: string;
-  }): ScheduleItem[] {
+  private mapPracticeToSchedule(practice: Record<string, unknown>): ScheduleItem[] {
     const items: ScheduleItem[] = [];
     const now = new Date();
     const currentHour = now.getHours();
@@ -142,12 +137,12 @@ export class TodaysScheduleComponent {
       items.push({
         id: "training-main",
         time: "10:00",
-        title: practice.sessionType || "Training Session",
+        title: typeof practice.sessionType === "string" ? practice.sessionType : "Training Session",
         type: "training",
-        duration: practice.totalDuration || 60,
+        duration: typeof practice.totalDuration === "number" ? practice.totalDuration : 60,
         status: currentHour >= 11 ? "completed" : currentHour >= 10 ? "in-progress" : "upcoming",
-        description: practice.focus?.join(", ") || "Scheduled training",
-        location: practice.location,
+        description: Array.isArray(practice.focus) ? practice.focus.join(", ") : "Scheduled training",
+        location: typeof practice.location === "string" ? practice.location : undefined,
       });
     } else {
       items.push({

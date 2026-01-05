@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of, from } from "rxjs";
+import { Observable, of, from, throwError } from "rxjs";
 import { map, catchError, switchMap } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { PrivacySettingsService } from "./privacy-settings.service";

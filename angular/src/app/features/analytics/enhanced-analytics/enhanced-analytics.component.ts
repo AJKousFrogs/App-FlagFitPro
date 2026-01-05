@@ -293,7 +293,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     });
 
     const highIntensityCount = recentSessions.filter(
-      (s) => s.intensity === "high" || s.intensity === "very_high",
+      (s) => s.intensity_level === "high" || s.intensity_level === "very_high",
     ).length;
 
     // Risk increases with high intensity sessions

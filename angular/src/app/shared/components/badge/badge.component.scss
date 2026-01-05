@@ -23,15 +23,15 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  
+
   /* Fixed height - 30px, no vertical growth */
   height: 30px;
   min-height: 30px;
   max-height: 30px;
-  
+
   /* Padding: 13px horizontal */
   padding: 0 13px;
-  
+
   /* Typography - Semibold */
   font-family: var(--font-family-sans);
   font-size: 14px;
@@ -41,22 +41,22 @@
   text-transform: none;
   text-decoration: none;
   letter-spacing: 0;
-  
+
   /* Shape: PILL (full rounded) */
   border-radius: 9999px;
-  
+
   /* NO borders, shadows, outlines */
   border: none;
   box-shadow: none;
   outline: none;
-  
+
   /* Prevent flex row stretching */
   flex-shrink: 0;
-  
+
   /* Default: Success green */
   background-color: var(--color-status-success);
   color: var(--color-text-on-primary);
-  
+
   /* Smooth transitions */
   transition: opacity 0.15s ease;
 }
@@ -145,12 +145,12 @@
   left: -8px;
   right: auto;
 }
-}
 
 /* Dark mode adjustments */
 [data-theme="dark"],
 .dark-theme {
-.badge-secondary {
-  background-color: var(--primitive-neutral-700);
-  color: var(--primitive-neutral-200);
+  .badge-secondary {
+    background-color: var(--primitive-neutral-700);
+    color: var(--primitive-neutral-200);
+  }
 }

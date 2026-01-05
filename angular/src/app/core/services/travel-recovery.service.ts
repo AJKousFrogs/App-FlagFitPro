@@ -953,12 +953,12 @@ export class TravelRecoveryService {
       recommendations,
       sleepWindow: {
         bedTime: isRecovered
-          ? profile.naturalBedTime
+          ? _profile.naturalBedTime
           : isEastward
             ? "21:00"
             : "23:30",
         wakeTime: isRecovered
-          ? profile.naturalWakeTime
+          ? _profile.naturalWakeTime
           : isEastward
             ? "06:00"
             : "08:00",

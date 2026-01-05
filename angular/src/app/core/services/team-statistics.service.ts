@@ -237,11 +237,13 @@ export class TeamStatisticsService {
               dataState: undefined,
             };
           }
-          const members = Array.isArray(data.members) ? data.members : [];
+          // Type narrowing: data is now the object type, not the array
+          const dataObj = data as { members?: PlayerPerformanceStats[]; consentInfo?: ConsentInfo; dataState?: string };
+          const members = Array.isArray(dataObj.members) ? dataObj.members : [];
           return {
             members: this.processPlayersData(members),
-            consentInfo: data.consentInfo,
-            dataState: data.dataState,
+            consentInfo: dataObj.consentInfo,
+            dataState: dataObj.dataState,
           };
         }
         throw new Error("No team players stats available");

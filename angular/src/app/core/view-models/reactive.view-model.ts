@@ -68,7 +68,7 @@ export abstract class ReactiveViewModel extends BaseViewModel {
    * Get a stream by key
    */
   protected getStream<T>(key: string): Observable<T> | undefined {
-    return this.streams.get(key);
+    return this.streams.get(key) as Observable<T> | undefined;
   }
 
   /**
