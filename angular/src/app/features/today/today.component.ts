@@ -41,6 +41,7 @@ import { TooltipModule } from 'primeng/tooltip';
 // Layout & Components
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
 import { PostTrainingRecoveryComponent } from '../../shared/components/post-training-recovery/post-training-recovery.component';
+import { TodaysScheduleComponent } from '../../shared/components/todays-schedule/todays-schedule.component';
 import { ProtocolBlockComponent } from '../training/daily-protocol/components/protocol-block.component';
 import {
     WeekDay,
@@ -98,6 +99,7 @@ interface QuickFormData {
     PostTrainingRecoveryComponent,
     WeekProgressStripComponent,
     ButtonComponent,
+    TodaysScheduleComponent,
   ],
   providers: [MessageService],
   animations: [

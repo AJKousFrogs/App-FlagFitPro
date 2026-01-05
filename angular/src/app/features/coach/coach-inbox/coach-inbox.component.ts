@@ -103,7 +103,7 @@ interface InboxStats {
           </div>
         </div>
 
-        <p-tabs [value]="activeTabIndex" (onChange)="onTabChange($event)">
+        <p-tabs [value]="activeTabIndex" (valueChange)="onTabChange($event)">
           <p-tabpanel value="0">
             <ng-template pTemplate="header">
               <span>Safety Alerts</span>
@@ -219,8 +219,14 @@ export class CoachInboxComponent {
     }, 500);
   }
 
-  onTabChange(event: { index: number }): void {
-    this.activeTabIndex = event.index;
+  onTabChange(event: number | { index: number }): void {
+    if (typeof event === 'number') {
+      this.activeTabIndex = event;
+    } else if (typeof event === 'string') {
+      this.activeTabIndex = parseInt(event, 10) || 0;
+    } else {
+      this.activeTabIndex = event.index;
+    }
   }
 
   openItem(item: InboxItem): void {

@@ -223,8 +223,8 @@ export class HydrationTrackerComponent implements OnInit {
     this.isLoading.set(true);
 
     this.trainingService.addHydration(amount)
-      .then((result: { success?: boolean }) => {
-        if (result.success) {
+      .then((result) => {
+        if (result?.success) {
           const newLog: HydrationLog = {
             id: Date.now().toString(),
             amount,

@@ -281,12 +281,12 @@ export class SupplementTrackerComponent implements OnInit {
       next: (response) => {
         if (response?.data?.supplements && response.data.supplements.length > 0) {
           // Map API response to our interface
-          const mapped = response.data.supplements.map((s) => ({
-            id: s.id || s.supplement_id || this.generateId(s.name),
-            name: s.name || s.supplement_name,
+          const mapped: Supplement[] = response.data.supplements.map((s) => ({
+            id: s.id || s.supplement_id || this.generateId(s.name || ""),
+            name: s.name || s.supplement_name || "Unknown",
             dosage: s.dosage || s.dose,
-            timing: s.timing || "anytime",
-            category: s.category || "other",
+            timing: (s.timing as Supplement["timing"]) || "anytime",
+            category: (s.category as Supplement["category"]) || "other",
             taken: s.taken_today || s.taken || false,
             takenAt: s.taken_at ? new Date(s.taken_at) : undefined,
             notes: s.notes,

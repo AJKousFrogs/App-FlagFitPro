@@ -105,7 +105,12 @@ export class TodaysScheduleComponent {
     // Handled by service refresh
   }
 
-  private mapPracticeToSchedule(practice: Record<string, unknown>): ScheduleItem[] {
+  private mapPracticeToSchedule(practice: {
+    sessionType?: string;
+    totalDuration?: number;
+    focus?: string[];
+    location?: string;
+  }): ScheduleItem[] {
     const items: ScheduleItem[] = [];
     const now = new Date();
     const currentHour = now.getHours();

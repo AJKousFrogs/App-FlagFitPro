@@ -22,6 +22,7 @@ import { TagModule } from "primeng/tag";
 import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Player } from "../roster.models";
 import { PlayerMetricsService, PlayerWithMetrics } from "../services/player-metrics.service";
 import {
@@ -44,7 +45,8 @@ import {
     FormsModule,
     TitleCasePipe,
     DecimalPipe,
-    Icon],
+    IconButtonComponent,
+  ],
   template: `
     <p-card class="player-card" [class.selected]="isSelected()" [class.risk-high]="enrichedPlayer().riskLevel === 'high'" [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'">
       <!-- Selection Checkbox (Coach+ only) -->

@@ -154,7 +154,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
         font: {
           size: getResponsiveFontSize(12),
           family: "'Poppins', sans-serif",
-          weight: "500",
+          weight: 500,
         },
         color: "var(--color-text-primary)",
         generateLabels: (chart: Chart) => {
@@ -217,48 +217,6 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       displayColors: true,
       callbacks: CUSTOM_TOOLTIP_CALLBACKS,
     },
-
-    // Zoom plugin configuration
-    zoom: {
-      zoom: {
-        wheel: {
-          enabled: true,
-          speed: 0.1,
-        },
-        pinch: {
-          enabled: true,
-        },
-        mode: "x",
-        onZoomComplete: ({ chart }: { chart: Chart }) => {
-          // Dispatch custom event when zoom completes
-          const customEvent = new CustomEvent("chartZoom", {
-            detail: {
-              scales: chart.scales,
-            },
-          });
-          chart.canvas.dispatchEvent(customEvent);
-        },
-      },
-      pan: {
-        enabled: true,
-        mode: "x",
-        modifierKey: "shift",
-        onPanComplete: ({ chart }: { chart: Chart }) => {
-          // Dispatch custom event when pan completes
-          const customEvent = new CustomEvent("chartPan", {
-            detail: {
-              scales: chart.scales,
-            },
-          });
-          chart.canvas.dispatchEvent(customEvent);
-        },
-      },
-      limits: {
-        x: {
-          minRange: 2, // Minimum 2 data points visible
-        },
-      },
-    },
   },
 
   scales: {
@@ -267,7 +225,6 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       grid: {
         display: true,
         color: "rgba(0, 0, 0, 0.05)",
-        drawBorder: false,
       },
       ticks: {
         font: {
@@ -285,7 +242,6 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       grid: {
         display: true,
         color: "rgba(0, 0, 0, 0.05)",
-        drawBorder: false,
       },
       ticks: {
         font: {
@@ -302,8 +258,85 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
 /**
  * Line Chart Options with Enhanced Features
  */
-export const ENHANCED_LINE_CHART_OPTIONS: ChartOptions<"line"> = {
-  ...ENHANCED_CHART_OPTIONS,
+export const ENHANCED_LINE_CHART_OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      align: "center",
+      labels: {
+        usePointStyle: true,
+        padding: 15,
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+          weight: 500,
+        },
+        color: "var(--color-text-primary)",
+      },
+    },
+    tooltip: {
+      enabled: true,
+      mode: "index",
+      intersect: false,
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      titleColor: "#fff",
+      bodyColor: "#fff",
+      borderColor: "var(--color-brand-primary)",
+      borderWidth: 1,
+      padding: 12,
+      titleFont: {
+        size: getResponsiveFontSize(14),
+        weight: "bold",
+        family: "'Poppins', sans-serif",
+      },
+      bodyFont: {
+        size: getResponsiveFontSize(13),
+        family: "'Poppins', sans-serif",
+      },
+      displayColors: true,
+    },
+  },
+  scales: {
+    x: {
+      display: true,
+      grid: {
+        display: true,
+        color: "rgba(0, 0, 0, 0.05)",
+      },
+      ticks: {
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+        },
+        color: "var(--color-text-secondary)",
+        maxRotation: 45,
+        minRotation: 0,
+      },
+    },
+    y: {
+      display: true,
+      beginAtZero: true,
+      grid: {
+        display: true,
+        color: "rgba(0, 0, 0, 0.05)",
+      },
+      ticks: {
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+        },
+        color: "var(--color-text-secondary)",
+        padding: 8,
+      },
+    },
+  },
   elements: {
     line: {
       tension: 0.4,
@@ -321,8 +354,85 @@ export const ENHANCED_LINE_CHART_OPTIONS: ChartOptions<"line"> = {
 /**
  * Bar Chart Options with Enhanced Features
  */
-export const ENHANCED_BAR_CHART_OPTIONS: ChartOptions<"bar"> = {
-  ...ENHANCED_CHART_OPTIONS,
+export const ENHANCED_BAR_CHART_OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      align: "center",
+      labels: {
+        usePointStyle: true,
+        padding: 15,
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+          weight: 500,
+        },
+        color: "var(--color-text-primary)",
+      },
+    },
+    tooltip: {
+      enabled: true,
+      mode: "index",
+      intersect: false,
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      titleColor: "#fff",
+      bodyColor: "#fff",
+      borderColor: "var(--color-brand-primary)",
+      borderWidth: 1,
+      padding: 12,
+      titleFont: {
+        size: getResponsiveFontSize(14),
+        weight: "bold",
+        family: "'Poppins', sans-serif",
+      },
+      bodyFont: {
+        size: getResponsiveFontSize(13),
+        family: "'Poppins', sans-serif",
+      },
+      displayColors: true,
+    },
+  },
+  scales: {
+    x: {
+      display: true,
+      grid: {
+        display: true,
+        color: "rgba(0, 0, 0, 0.05)",
+      },
+      ticks: {
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+        },
+        color: "var(--color-text-secondary)",
+        maxRotation: 45,
+        minRotation: 0,
+      },
+    },
+    y: {
+      display: true,
+      beginAtZero: true,
+      grid: {
+        display: true,
+        color: "rgba(0, 0, 0, 0.05)",
+      },
+      ticks: {
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+        },
+        color: "var(--color-text-secondary)",
+        padding: 8,
+      },
+    },
+  },
   elements: {
     bar: {
       borderWidth: 0,
@@ -335,14 +445,43 @@ export const ENHANCED_BAR_CHART_OPTIONS: ChartOptions<"bar"> = {
  * Doughnut Chart Options with Enhanced Features
  */
 export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
-  ...ENHANCED_CHART_OPTIONS,
-  scales: undefined, // Doughnut charts don't use scales
+  responsive: true,
+  maintainAspectRatio: false,
   cutout: "65%",
   plugins: {
-    ...ENHANCED_CHART_OPTIONS.plugins,
     legend: {
-      ...ENHANCED_CHART_OPTIONS.plugins?.legend,
+      display: true,
       position: "right",
+      align: "center",
+      labels: {
+        usePointStyle: true,
+        padding: 15,
+        font: {
+          size: getResponsiveFontSize(12),
+          family: "'Poppins', sans-serif",
+          weight: 500,
+        },
+        color: "var(--color-text-primary)",
+      },
+    },
+    tooltip: {
+      enabled: true,
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      titleColor: "#fff",
+      bodyColor: "#fff",
+      borderColor: "var(--color-brand-primary)",
+      borderWidth: 1,
+      padding: 12,
+      titleFont: {
+        size: getResponsiveFontSize(14),
+        weight: "bold",
+        family: "'Poppins', sans-serif",
+      },
+      bodyFont: {
+        size: getResponsiveFontSize(13),
+        family: "'Poppins', sans-serif",
+      },
+      displayColors: true,
     },
   },
 };

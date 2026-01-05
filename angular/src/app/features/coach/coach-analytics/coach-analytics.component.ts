@@ -20,6 +20,7 @@ import {
     signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { ChartOptions } from "chart.js";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
@@ -430,7 +431,13 @@ export class CoachAnalyticsComponent {
   classification = signal<ClassificationBreakdown | null>(null);
   trends = signal<TrendData | null>(null);
   leaderboard = signal<LeaderboardEntry[]>([]);
-  feedbackStats = signal<{ positive: number; negative: number; neutral: number } | null>(null);
+  feedbackStats = signal<{
+    positive: number;
+    negative: number;
+    neutral: number;
+    athleteFeedback?: { helpful?: number; notHelpful?: number; helpfulRate?: number };
+    coachFeedback?: { appropriate?: number; tooStrict?: number; tooLenient?: number; wrongIntent?: number; accuracyRate?: number };
+  } | null>(null);
 
   teamOptions: TeamOption[] = [
     { label: "All Athletes", value: "all" },

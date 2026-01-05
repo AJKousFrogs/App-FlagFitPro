@@ -1058,16 +1058,17 @@ export class CommunityComponent implements OnInit {
     };
 
     // Call API to create post
-    this.apiService.post<{ data: { id?: string; authorName?: string; location?: string; content?: string } }>("/api/community", postData).subscribe({
+    this.apiService.post<{ id?: string; authorName?: string; location?: string; content?: string }>("/api/community", postData).subscribe({
       next: (response) => {
-        if (response?.data) {
+        const data = response?.data;
+        if (data) {
           const newPost: Post = {
-            id: response.data.id || Date.now().toString(),
-            author: response.data.authorName || "You",
+            id: data.id || Date.now().toString(),
+            author: data.authorName || "You",
             authorInitials: this.currentUserInitials(),
             timeAgo: "Just now",
-            location: response.data.location,
-            content: response.data.content || content,
+            location: data.location,
+            content: data.content || content,
             likes: 0,
             comments: 0,
             shares: 0,
@@ -1190,16 +1191,17 @@ export class CommunityComponent implements OnInit {
     // Load comments from API when expanding
     if (willShow && post.commentsList.length === 0 && post.comments > 0) {
       this.apiService
-        .get<{ data: { comments?: Comment[] } }>(`/api/community?postId=${post.id}&comment=true`)
+        .get<{ comments?: Comment[] }>(`/api/community?postId=${post.id}&comment=true`)
         .subscribe({
           next: (response) => {
-            if (response?.data?.comments) {
+            const comments = response?.data?.comments;
+            if (comments) {
               this.posts.update((posts) =>
                 posts.map((p) =>
                   p.id === post.id
                     ? {
                         ...p,
-                        commentsList: response.data.comments.map((c: any) => ({
+                        commentsList: comments.map((c: Comment) => ({
                           id: c.id,
                           author: c.author,
                           authorInitials: this.getInitials(c.author || "??"),
