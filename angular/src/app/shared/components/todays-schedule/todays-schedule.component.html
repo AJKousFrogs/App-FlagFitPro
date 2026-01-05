@@ -126,17 +126,17 @@
       <div class="schedule-footer-unified">
         @if (nextItem()?.type === 'training') {
           <app-button 
-            [block]="true"
-            icon="play"
+            [fullWidth]="true"
+            iconLeft="play"
             routerLink="/training/daily"
           >
             Start {{ nextItem()?.title }}
           </app-button>
         } @else if (nextItem()?.type === 'wellness') {
           <app-button 
-            [block]="true"
+            [fullWidth]="true"
             variant="secondary"
-            icon="pencil"
+            iconLeft="pencil"
             routerLink="/wellness"
           >
             Log {{ nextItem()?.title }}

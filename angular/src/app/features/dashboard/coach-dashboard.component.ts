@@ -350,7 +350,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   }
                 </div>
                 <div class="card-footer">
-                  <app-button variant="text" size="sm" [block]="true" routerLink="/calendar">Full Schedule</app-button>
+                  <app-button variant="text" size="sm" [fullWidth]="true" routerLink="/calendar">Full Schedule</app-button>
                 </div>
               </app-card>
 

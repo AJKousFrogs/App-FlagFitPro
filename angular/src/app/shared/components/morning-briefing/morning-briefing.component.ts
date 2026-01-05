@@ -165,9 +165,8 @@ interface TodaysPlan {
 
           <app-button 
             variant="text" 
-            [block]="true"
-            icon="chevron-down"
-            iconPosition="right"
+            [fullWidth]="true"
+            iconRight="chevron-down"
           >
             {{ hasCheckedInToday() ? "View Details" : "Quick Check-in" }}
           </app-button>
@@ -299,8 +298,8 @@ interface TodaysPlan {
                 </div>
 
                 <app-button
-                  icon="check"
-                  [block]="true"
+                  iconLeft="check"
+                  [fullWidth]="true"
                   [loading]="isSubmitting()"
                   (clicked)="submitQuickCheckIn()"
                 >Submit Quick Check-in</app-button>
@@ -382,8 +381,8 @@ interface TodaysPlan {
                 </div>
 
                 <app-button
-                  icon="play"
-                  [block]="true"
+                  iconLeft="play"
+                  [fullWidth]="true"
                   routerLink="/training/daily"
                 >Start Today's Practice</app-button>
               </app-card>
@@ -394,7 +393,7 @@ interface TodaysPlan {
                 <p>Focus on recovery and nutrition today.</p>
                 <app-button
                   variant="outlined"
-                  icon="heart"
+                  iconLeft="heart"
                   routerLink="/wellness"
                 >View Recovery Protocols</app-button>
               </div>
