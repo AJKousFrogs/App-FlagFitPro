@@ -10,6 +10,7 @@
 import { TestBed, fakeAsync, tick } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { provideRouter } from "@angular/router";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 import {
   KeyboardShortcutsService,
@@ -19,16 +20,18 @@ import { LoggerService } from "./logger.service";
 
 describe("KeyboardShortcutsService", () => {
   let service: KeyboardShortcutsService;
-  let _router: Router;
+  let router: Router;
 
   const mockLoggerService = {
-    debug: jasmine.createSpy("debug"),
-    info: jasmine.createSpy("info"),
-    warn: jasmine.createSpy("warn"),
-    error: jasmine.createSpy("error"),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     TestBed.configureTestingModule({
       providers: [
         KeyboardShortcutsService,
@@ -54,7 +57,7 @@ describe("KeyboardShortcutsService", () => {
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,
-        action: jasmine.createSpy("action"),
+        action: vi.fn(),
         description: "Test shortcut",
       };
 
@@ -68,7 +71,7 @@ describe("KeyboardShortcutsService", () => {
       const shortcut: Shortcut = {
         key: "/",
         ctrl: true,
-        action: jasmine.createSpy("action"),
+        action: vi.fn(),
         description: "Help",
         global: true,
       };
@@ -82,7 +85,7 @@ describe("KeyboardShortcutsService", () => {
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,
-        action: jasmine.createSpy("action"),
+        action: vi.fn(),
         description: "Test",
       };
 
@@ -211,7 +214,7 @@ describe("KeyboardShortcutsService", () => {
 
   describe("Shortcut Execution", () => {
     it("should execute shortcut action on keydown", fakeAsync(() => {
-      const actionSpy = jasmine.createSpy("action");
+      const actionSpy = vi.fn();
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,
@@ -323,7 +326,7 @@ describe("KeyboardShortcutsService", () => {
 
   describe("Input Field Handling", () => {
     it("should not trigger shortcuts when input is focused", fakeAsync(() => {
-      const actionSpy = jasmine.createSpy("action");
+      const actionSpy = vi.fn();
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,
@@ -356,7 +359,7 @@ describe("KeyboardShortcutsService", () => {
     }));
 
     it("should not trigger shortcuts when textarea is focused", fakeAsync(() => {
-      const actionSpy = jasmine.createSpy("action");
+      const actionSpy = vi.fn();
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,
@@ -386,7 +389,7 @@ describe("KeyboardShortcutsService", () => {
     }));
 
     it("should not trigger shortcuts in contenteditable", fakeAsync(() => {
-      const actionSpy = jasmine.createSpy("action");
+      const actionSpy = vi.fn();
       const shortcut: Shortcut = {
         key: "k",
         ctrl: true,

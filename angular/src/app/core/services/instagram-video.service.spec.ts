@@ -1,23 +1,25 @@
 import { TestBed } from "@angular/core/testing";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { InstagramVideoService } from "./instagram-video.service";
 import { LoggerService } from "./logger.service";
 
 describe("InstagramVideoService", () => {
   let service: InstagramVideoService;
-  let loggerSpy: jasmine.SpyObj<LoggerService>;
+
+  const mockLoggerService = {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  };
 
   beforeEach(() => {
-    loggerSpy = jasmine.createSpyObj("LoggerService", [
-      "debug",
-      "info",
-      "warn",
-      "error",
-    ]);
+    vi.clearAllMocks();
 
     TestBed.configureTestingModule({
       providers: [
         InstagramVideoService,
-        { provide: LoggerService, useValue: loggerSpy },
+        { provide: LoggerService, useValue: mockLoggerService },
       ],
     });
 
@@ -68,7 +70,7 @@ describe("InstagramVideoService", () => {
       qbVideos.forEach((video) => {
         expect(
           video.positions.includes("QB") || video.positions.includes("All"),
-        ).toBeTrue();
+        ).toBe(true);
       });
     });
 
@@ -102,7 +104,7 @@ describe("InstagramVideoService", () => {
       filtered.forEach((video) => {
         expect(
           video.positions.includes("WR") || video.positions.includes("All"),
-        ).toBeTrue();
+        ).toBe(true);
         expect(video.trainingFocus).toContain("route_running");
       });
     });
@@ -170,7 +172,7 @@ describe("InstagramVideoService", () => {
         expect(
           featured.positions.includes("QB") ||
             featured.positions.includes("All"),
-        ).toBeTrue();
+        ).toBe(true);
       }
     });
   });
@@ -300,13 +302,13 @@ describe("InstagramVideoService", () => {
 
     it("should select video by ID", () => {
       const result = service.selectVideoById("ig_qb_001");
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
       expect(service.selectedVideo()?.id).toBe("ig_qb_001");
     });
 
     it("should return false for non-existent ID", () => {
       const result = service.selectVideoById("non_existent");
-      expect(result).toBeFalse();
+      expect(result).toBe(false);
     });
 
     it("should clear selection", () => {
@@ -365,14 +367,14 @@ describe("InstagramVideoService", () => {
     it("should compute reels only", () => {
       const reels = service.reelsOnly();
       reels.forEach((video) => {
-        expect(video.isReel).toBeTrue();
+        expect(video.isReel).toBe(true);
       });
     });
 
     it("should compute verified creators", () => {
       const verified = service.verifiedCreators();
       verified.forEach((creator) => {
-        expect(creator.verified).toBeTrue();
+        expect(creator.verified).toBe(true);
       });
     });
 
