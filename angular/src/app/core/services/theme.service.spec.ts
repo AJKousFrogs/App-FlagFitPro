@@ -177,21 +177,21 @@ describe("ThemeService", () => {
   describe("LocalStorage Persistence", () => {
     it("should save preference to localStorage", () => {
       service.setMode("dark");
-      expect(localStorage.getItem("flagfit-theme")).toBe("dark");
+      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
     });
 
     it("should load preference from localStorage", () => {
-      localStorage.setItem("flagfit-theme", "dark");
+      localStorage.setItem("flagfit_theme", "dark");
 
       // Create a new instance to test loading
       const _newService = TestBed.inject(ThemeService);
 
       // Note: The service loads on construction, so we check the stored value
-      expect(localStorage.getItem("flagfit-theme")).toBe("dark");
+      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
     });
 
     it("should handle invalid localStorage values", () => {
-      localStorage.setItem("flagfit-theme", "invalid-value");
+      localStorage.setItem("flagfit_theme", "invalid-value");
 
       // Service should handle gracefully and use default
       const state = service.getState();
@@ -347,7 +347,7 @@ describe("ThemeService", () => {
       service.setMode("dark");
       tick();
 
-      expect(localStorage.getItem("flagfit-theme")).toBe("dark");
+      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
     }));
   });
 
