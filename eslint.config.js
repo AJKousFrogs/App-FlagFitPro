@@ -8,6 +8,7 @@ export default [
   {
     ignores: [
       "node_modules/**",
+      "node_modules.bak*/**",
       "dist/**",
       "build/**",
       "angular/**",
@@ -185,7 +186,15 @@ export default [
     files: ["netlify/functions/**/*.js", "netlify/functions/**/*.cjs"],
     rules: {
       "no-console": "off",
-      "no-unused-vars": "warn",
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
       "require-await": "off",
       "no-await-in-loop": "off",
       "no-promise-executor-return": "warn",

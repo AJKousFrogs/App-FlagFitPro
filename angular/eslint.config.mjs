@@ -21,6 +21,7 @@ js.configs.recommended, ...tseslint.configs.recommended, // Ignore patterns
 {
   ignores: [
     "node_modules/**",
+    "node_modules.bak*/**",
     "dist/**",
     ".angular/**",
     "coverage/**",
