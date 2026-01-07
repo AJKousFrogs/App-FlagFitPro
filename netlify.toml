@@ -1,6 +1,6 @@
 [build]
   base = "."
-  command = "cd angular && npm ci && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
+  command = "cd angular && npm ci --legacy-peer-deps && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
   publish = "angular/dist/flagfit-pro/browser"
 
 [functions]
