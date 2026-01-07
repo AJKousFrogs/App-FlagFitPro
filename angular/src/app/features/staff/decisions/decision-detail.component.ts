@@ -18,7 +18,6 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { AccordionModule } from "primeng/accordion";
-import { MainLayoutComponent } from "@shared/layouts/main-layout/main-layout.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
@@ -40,14 +39,12 @@ import type {
     ButtonModule,
     TagModule,
     AccordionModule,
-    MainLayoutComponent,
     PageHeaderComponent,
     CardShellComponent,
     ConfidenceIndicatorComponent,
     ReviewDecisionDialogComponent,
   ],
   template: `
-    <app-main-layout>
       <div class="decision-detail">
         <!-- Loading State -->
         @if (isLoading()) {
@@ -182,7 +179,7 @@ import type {
                 @if (decision()!.reviewedBy) {
                   <div class="review-item">
                     <label>Reviewed By</label>
-                    <p>{{ decision()!.reviewedBy.name }}</p>
+                    <p>{{ decision()!.reviewedBy!.name }}</p>
                   </div>
                 }
 
@@ -201,51 +198,63 @@ import type {
             <!-- Decision Basis (Expandable) -->
             <app-card-shell title="Decision Basis" headerIcon="pi-file-edit">
               <p-accordion>
-                <p-accordionTab header="Data Points Used">
-                  <ul class="data-points-list">
-                    @for (
-                      point of decision()!.decisionBasis.dataPoints;
-                      track point
-                    ) {
-                      <li>{{ point }}</li>
-                    }
-                  </ul>
-                </p-accordionTab>
+                <p-accordion-panel value="0">
+                  <p-accordion-header>Data Points Used</p-accordion-header>
+                  <p-accordion-content>
+                    <ul class="data-points-list">
+                      @for (
+                        point of decision()!.decisionBasis.dataPoints;
+                        track point
+                      ) {
+                        <li>{{ point }}</li>
+                      }
+                    </ul>
+                  </p-accordion-content>
+                </p-accordion-panel>
 
-                <p-accordionTab header="Constraints Considered">
-                  <ul class="constraints-list">
-                    @for (
-                      constraint of decision()!.decisionBasis.constraints;
-                      track constraint
-                    ) {
-                      <li>{{ constraint }}</li>
-                    }
-                  </ul>
-                </p-accordionTab>
+                <p-accordion-panel value="1">
+                  <p-accordion-header>Constraints Considered</p-accordion-header>
+                  <p-accordion-content>
+                    <ul class="constraints-list">
+                      @for (
+                        constraint of decision()!.decisionBasis.constraints;
+                        track constraint
+                      ) {
+                        <li>{{ constraint }}</li>
+                      }
+                    </ul>
+                  </p-accordion-content>
+                </p-accordion-panel>
 
-                <p-accordionTab header="Rationale">
-                  <p>{{ decision()!.decisionBasis.rationale }}</p>
-                </p-accordionTab>
+                <p-accordion-panel value="2">
+                  <p-accordion-header>Rationale</p-accordion-header>
+                  <p-accordion-content>
+                    <p>{{ decision()!.decisionBasis.rationale }}</p>
+                  </p-accordion-content>
+                </p-accordion-panel>
 
-                <p-accordionTab header="Data Quality">
-                  <div class="data-quality">
-                    <div class="quality-item">
-                      <label>Completeness</label>
-                      <p>
-                        {{
-                          (decision()!.decisionBasis.dataQuality?.completeness ||
-                            0) * 100
-                        }}%
-                      </p>
+                <p-accordion-panel value="3">
+                  <p-accordion-header>Data Quality</p-accordion-header>
+                  <p-accordion-content>
+                    <div class="data-quality">
+                      <div class="quality-item">
+                        <label>Completeness</label>
+                        <p>
+                          {{
+                            (decision()!.decisionBasis.dataQuality.completeness ||
+                              0) * 100
+                          }}%
+                        </p>
+                      </div>
+                      <div class="quality-item">
+                        <label>Stale Days</label>
+                        <p>
+                          {{ decision()!.decisionBasis.dataQuality.staleDays || 0 }}
+                        </p>
+                      </div>
                     </div>
-                    <div class="quality-item">
-                      <label>Stale Days</label>
-                      <p>
-                        {{ decision()!.decisionBasis.dataQuality?.staleDays || 0 }}
-                      </p>
-                    </div>
-                  </div>
-                </p-accordionTab>
+                  </p-accordion-content>
+                </p-accordion-panel>
               </p-accordion>
             </app-card-shell>
 
@@ -258,7 +267,7 @@ import type {
                     <p-tag
                       [value]="decision()!.outcomeData!.goalAchieved ? 'Yes' : 'No'"
                       [severity]="
-                        decision()!.outcomeData!.goalAchieved ? 'success' : 'warning'
+                        decision()!.outcomeData!.goalAchieved ? 'success' : 'warn'
                       "
                     ></p-tag>
                   </div>
@@ -316,11 +325,10 @@ import type {
         <app-review-decision-dialog
           [visible]="showReviewDialog()"
           [decision]="decision()"
-          (visibleChange)="showReviewDialog.set($event)"
+          (visibleChange)="onDialogVisibleChange($event)"
           (reviewed)="onDecisionReviewed($event)"
         ></app-review-decision-dialog>
       </div>
-    </app-main-layout>
   `,
   styles: [
     `
@@ -471,19 +479,17 @@ export class DecisionDetailComponent implements OnInit {
   confidenceScore = computed(() => {
     const d = this.decision();
     if (!d) return 0.8;
-    return d.decisionBasis.confidence || d.decisionBasis.overall || 0.8;
+    return d.decisionBasis.confidence || 0.8;
   });
 
   missingInputs = computed(() => {
-    const d = this.decision();
-    if (!d) return [];
-    return d.decisionBasis.missingInputs || [];
+    // DecisionBasis doesn't have missingInputs - return empty array
+    return [] as string[];
   });
 
   staleData = computed(() => {
-    const d = this.decision();
-    if (!d) return [];
-    return d.decisionBasis.staleData || [];
+    // DecisionBasis doesn't have staleData - return empty array
+    return [] as string[];
   });
 
   ngOnInit(): void {
@@ -528,6 +534,10 @@ export class DecisionDetailComponent implements OnInit {
     this.showReviewDialog.set(true);
   }
 
+  onDialogVisibleChange(visible: boolean): void {
+    this.showReviewDialog.set(visible);
+  }
+
   async onDecisionReviewed(request: ReviewDecisionRequest): Promise<void> {
     try {
       const decisionId = this.decision()?.id;
@@ -568,13 +578,13 @@ export class DecisionDetailComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "warning" | "danger" | "info" {
-    const severityMap: Record<string, "success" | "warning" | "danger" | "info"> =
+  ): "success" | "warn" | "danger" | "info" {
+    const severityMap: Record<string, "success" | "warn" | "danger" | "info"> =
       {
         active: "info",
         reviewed: "success",
-        superseded: "warning",
-        expired: "warning",
+        superseded: "warn",
+        expired: "warn",
         cancelled: "danger",
       };
     return severityMap[status] || "info";
@@ -582,10 +592,10 @@ export class DecisionDetailComponent implements OnInit {
 
   getPrioritySeverity(
     priority: "critical" | "high" | "normal" | "low",
-  ): "danger" | "warning" | "info" | "success" {
+  ): "danger" | "warn" | "info" | "success" {
     const severityMap = {
       critical: "danger" as const,
-      high: "warning" as const,
+      high: "warn" as const,
       normal: "info" as const,
       low: "success" as const,
     };

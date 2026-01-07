@@ -242,7 +242,8 @@ export class ContinuityIndicatorsService {
       }> = [];
 
       for (const member of teamMembers) {
-        const user = member.users as { id: string; name: string };
+        const users = member.users as Array<{ id: string; name: string }>;
+        const user = users?.[0] || { id: "", name: "Unknown" };
         const playerId = member.user_id;
 
         // Check game day recovery

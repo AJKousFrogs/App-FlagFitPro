@@ -1,0 +1,448 @@
+{
+  "metadata": {
+    "title": "Practitioner's Guide to Hip and Groin",
+    "authors": [
+      "Dr. Nicol van Dyk",
+      "Dr. Eamonn Delahunt"
+    ],
+    "total_pages": 69,
+    "document_type": "practitioner_guide",
+    "publication_year": 2024,
+    "publisher": "VALD Performance"
+  },
+  "research_article": {
+    "title": "Practitioner's Guide to Hip and Groin",
+    "authors": [
+      "Dr. Nicol van Dyk",
+      "Dr. Eamonn Delahunt"
+    ],
+    "publication_year": 2024,
+    "publisher": "VALD Performance",
+    "primary_category": "injury",
+    "categories": [
+      "injury_prevention",
+      "training",
+      "recovery",
+      "assessment",
+      "rehabilitation"
+    ],
+    "tags": [
+      "hip",
+      "groin",
+      "adductor",
+      "hip_flexor",
+      "FAI",
+      "groin_pain",
+      "isometric_testing",
+      "ForceFrame",
+      "DynaMo",
+      "athletic_groin_pain",
+      "rehabilitation",
+      "strength_assessment"
+    ],
+    "study_type": "review",
+    "evidence_level": "B",
+    "sport_type": "general",
+    "key_findings": "Comprehensive guide on hip and groin assessment, rehabilitation and injury prevention. Covers the Doha Agreement classification system for groin pain, isometric strength testing protocols (hip adduction, abduction, flexion, rotation), rehabilitation progressions, and return-to-sport criteria. Emphasizes the importance of balanced hip strength (adductor:abductor ratio 0.8-1.2) and position-specific considerations. Groin injuries are common in field-based sports with cutting and change of direction demands.",
+    "practical_applications": [
+      "Implement isometric hip strength testing protocols",
+      "Use ForceFrame/DynaMo for objective strength assessment",
+      "Monitor adductor:abductor strength ratios (target 0.8-1.2)",
+      "Guide rehabilitation with objective progression criteria",
+      "Screen athletes for hip and groin injury risk",
+      "Track bilateral asymmetries (<10% ideal)",
+      "Position-specific monitoring for different demands",
+      "Implement targeted hip strengthening programs"
+    ],
+    "injury_types": [
+      "adductor_strain",
+      "groin_pain",
+      "hip_flexor_strain",
+      "FAI",
+      "labral_tear",
+      "sports_hernia",
+      "osteitis_pubis"
+    ],
+    "training_types": [
+      "strength",
+      "isometric",
+      "rehabilitation",
+      "prevention"
+    ],
+    "recovery_methods": [
+      "isometric_testing",
+      "criteria_based_progression",
+      "return_to_sport_monitoring",
+      "change_of_direction_assessment"
+    ],
+    "is_open_access": false,
+    "verified": true,
+    "quality_score": 9,
+    "keywords": [
+      "hip_groin",
+      "adductor",
+      "isometric_testing",
+      "ForceFrame",
+      "groin_pain",
+      "FAI",
+      "strength_assessment",
+      "rehabilitation",
+      "field_sports"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "training_method",
+      "topic": "hip_groin_anatomy_biomechanics",
+      "question": "What is the anatomy and biomechanics of the hip and groin region?",
+      "answer": "The hip joint is a central hub and transition zone for forces in the kinetic chain, playing a critical role in load distribution, force generation and mobility. Key muscle groups include the hip adductors (adductor longus, brevis, magnus), abductors (gluteus medius, minimus), hip flexors (iliopsoas, rectus femoris), and extensors (gluteus maximus, hamstrings). The hip joint is a ball-and-socket joint allowing movement in multiple planes: flexion/extension, abduction/adduction, and internal/external rotation. Common pathologies affect the femoroacetabular joint (FAI, labral tears), groin musculature (adductor strains), abdominal musculature (sports hernia), and hip flexors. The hip's central position means it is commonly affected by dysfunction in other segments of the kinetic chain (core, back, lower leg).",
+      "summary": "Hip and groin anatomy involves complex musculature (adductors, abductors, flexors) functioning as a force transition zone in multi-planar movement.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes",
+        "aging_adults"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "anatomy",
+        "biomechanics",
+        "injury_prevention"
+      ],
+      "tags": [
+        "hip_anatomy",
+        "groin_anatomy",
+        "biomechanics",
+        "adductors",
+        "hip_flexors",
+        "kinetic_chain"
+      ],
+      "protocols": {
+        "key_muscle_groups": [
+          "hip_adductors",
+          "hip_abductors",
+          "hip_flexors",
+          "hip_extensors",
+          "hip_rotators"
+        ],
+        "movement_planes": [
+          "sagittal_flexion_extension",
+          "frontal_abduction_adduction",
+          "transverse_rotation"
+        ],
+        "common_pathologies": [
+          "FAI",
+          "labral_tears",
+          "adductor_strains",
+          "hip_flexor_strains",
+          "sports_hernia"
+        ]
+      },
+      "best_practices": [
+        "Assess hip in context of entire kinetic chain",
+        "Monitor core, back, and lower leg function",
+        "Understand position-specific demands",
+        "Consider multi-planar movement requirements",
+        "Address mobility and strength together",
+        "Recognize hip as force transition zone"
+      ]
+    },
+    {
+      "entry_type": "injury",
+      "topic": "hip_groin_common_pathologies",
+      "question": "What are the common pathologies of the hip and groin in athletes?",
+      "answer": "The Doha Agreement (2015) established three major classifications for groin pain in athletes: (1) Defined clinical entities - adductor-related, iliopsoas-related, inguinal-related, and pubic-related groin pain; (2) Hip-related groin pain - including FAI and labral tears from repetitive mechanical stress; (3) Other causes - orthopedic, neurological, or systemic. Adductor-related groin pain is one of the most common, often from strain or enthesopathy of adductor longus, seen in sports with rapid change of direction. FAI (femoroacetabular impingement) involves repetitive impingement of femoral neck against acetabular rim, leading to chondrolabral damage and potentially early osteoarthritis. The Warwick Agreement defines FAI diagnosis requiring symptoms (pain, giving way, locking), clinical signs (restricted ROM), and imaging findings. Common in soccer, basketball, hockey, football, rugby athletes.",
+      "summary": "Common hip/groin pathologies include adductor-related groin pain (most common), FAI, labral tears, hip flexor strains, and sports hernias, per Doha Agreement classification.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "field_sport_athletes",
+        "soccer_players",
+        "basketball_players",
+        "football_players",
+        "hockey_players"
+      ],
+      "sport_specificity": "field_sports",
+      "categories": [
+        "injury",
+        "pathology",
+        "diagnosis"
+      ],
+      "tags": [
+        "groin_pain",
+        "adductor_strain",
+        "FAI",
+        "labral_tear",
+        "sports_hernia",
+        "Doha_Agreement",
+        "diagnosis"
+      ],
+      "injury_types": [
+        "adductor_strain",
+        "groin_pain",
+        "FAI",
+        "labral_tear",
+        "hip_flexor_strain",
+        "sports_hernia"
+      ],
+      "protocols": {
+        "doha_agreement_classifications": {
+          "defined_clinical_entities": [
+            "adductor_related_groin_pain",
+            "iliopsoas_related_groin_pain",
+            "inguinal_related_groin_pain",
+            "pubic_related_groin_pain"
+          ],
+          "hip_related_groin_pain": [
+            "FAI",
+            "labral_tears"
+          ],
+          "other_causes": "exclusion_diagnosis"
+        },
+        "FAI_diagnosis_criteria": {
+          "symptoms": "pain_giving_way_locking_catching",
+          "clinical_signs": "restricted_ROM",
+          "imaging": "radiological_FAI_morphology",
+          "confirmation": "diagnostic_hip_injection_optional"
+        }
+      },
+      "best_practices": [
+        "Use Doha Agreement classification system",
+        "Combine symptoms, clinical signs, and imaging for FAI diagnosis",
+        "Consider multiple contributing factors",
+        "Rule out systemic causes",
+        "Assess for contributing kinetic chain dysfunction",
+        "Monitor athletes in cutting/change of direction sports",
+        "Early detection prevents progression"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "hip_groin_strength_assessment",
+      "question": "How should hip and groin strength be assessed?",
+      "answer": "Isometric strength testing using ForceFrame (fixed-frame dynamometry) or DynaMo (handheld dynamometry) provides reliable, objective assessment of hip strength. Key tests include: (1) Hip adduction - supine with 45° hip flexion, feet flat (long-lever 5-second squeeze test); (2) Hip abduction - same position or sidelying; (3) Hip flexion - seated position; (4) Hip internal/external rotation - supine with 90° hip and knee flexion; (5) Hip extension - prone with 90° knee flexion. Critical metrics include peak force, rate of force development (RFD), bilateral asymmetries (<10% ideal), and adductor:abductor strength ratio (target 0.8-1.2). Normative data shows ~66% of NHL athletes have add:abd ratio between 0.8-1.2. Position-specific considerations are important - NFL offensive linemen show 20-34% greater forces than other positions. Advanced assessments include CMJ for power, change of direction tests, and sport-specific movements.",
+      "summary": "Hip strength assessment uses isometric testing (ForceFrame/DynaMo) for adduction, abduction, flexion, rotation; monitor add:abd ratio (0.8-1.2 target) and asymmetries (<10%).",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes",
+        "rehabilitation_patients"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "assessment",
+        "testing",
+        "strength"
+      ],
+      "tags": [
+        "isometric_testing",
+        "ForceFrame",
+        "DynaMo",
+        "hip_adduction",
+        "hip_abduction",
+        "strength_assessment",
+        "asymmetry",
+        "normative_data"
+      ],
+      "protocols": {
+        "equipment": [
+          "ForceFrame",
+          "DynaMo_HHD",
+          "force_plates"
+        ],
+        "key_tests": {
+          "hip_adduction": "supine_45deg_hip_flexion_feet_flat",
+          "hip_abduction": "supine_45deg_or_sidelying",
+          "hip_flexion": "seated_position",
+          "hip_rotation": "supine_90deg_hip_90deg_knee",
+          "hip_extension": "prone_90deg_knee_flexion"
+        },
+        "key_metrics": [
+          "peak_force",
+          "RFD",
+          "bilateral_asymmetry",
+          "adductor_abductor_ratio"
+        ],
+        "normative_benchmarks": {
+          "add_abd_ratio": "0.8_to_1.2",
+          "asymmetry_threshold": "<10%_ideal"
+        },
+        "testing_protocol": "2-3_trials_per_test"
+      },
+      "best_practices": [
+        "Use standardized test positions across sessions",
+        "Monitor adductor:abductor ratio (0.8-1.2 target)",
+        "Track bilateral asymmetries (<10% ideal)",
+        "Consider position-specific demands",
+        "Compare to normative data for sport/position",
+        "Assess balanced force production in all planes",
+        "Use for baseline screening and ongoing monitoring",
+        "Combine with functional assessments (CMJ, COD)",
+        "Document test setup clearly for reproducibility"
+      ]
+    },
+    {
+      "entry_type": "recovery_method",
+      "topic": "hip_groin_rehabilitation",
+      "question": "What are the key principles of hip and groin rehabilitation?",
+      "answer": "Hip and groin rehabilitation follows five key principles: (1) Restore ROM - address impaired joint ROM to accepted values; (2) Restore force production - achieve accepted isometric strength values (e.g., long-lever hip adduction); (3) Integrate force and ROM - improve closed-environment biomechanics (squat assessments); (4) Re-integrate to sport demands - evaluate sport-specific tasks (change of direction); (5) Monitor KPIs during return to sport - regular jump and isometric testing. Progression phases include: early (no pain at rest), mid (controlled running, <10% asymmetry), late (high-velocity multi-planar training, explosive power), and return to sport (no symptoms, <10% asymmetry in add/abd, sport-specific drills pain-free at 100%). Return-to-sport criteria: no pain during training, minimal 24-48hr soreness, <10% bilateral/unilateral asymmetry, change of direction performance benchmarks. Technology-enabled monitoring (ForceFrame, force plates, timing gates) provides objective progression criteria and prevents one-size-fits-all approaches.",
+      "summary": "Hip/groin rehab progresses through ROM restoration, force production, integration, sport-specific tasks, with <10% asymmetry and pain-free sport drills as RTS criteria.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "injured_athletes",
+        "post_surgery",
+        "rehabilitation_patients",
+        "field_sport_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "rehabilitation",
+        "recovery",
+        "return_to_sport"
+      ],
+      "tags": [
+        "rehabilitation",
+        "return_to_sport",
+        "criteria_based_progression",
+        "isometric_testing",
+        "change_of_direction",
+        "monitoring"
+      ],
+      "recovery_methods": [
+        "isometric_strengthening",
+        "ROM_restoration",
+        "criteria_based_progression",
+        "change_of_direction_training",
+        "sport_specific_training"
+      ],
+      "protocols": {
+        "rehabilitation_phases": {
+          "early": {
+            "focus": "ROM_restoration_and_force_production",
+            "criteria": "pain_free_at_rest"
+          },
+          "mid": {
+            "focus": "integrate_force_and_ROM",
+            "criteria": "<10%_asymmetry_controlled_running"
+          },
+          "late": {
+            "focus": "high_velocity_multi_planar_strength",
+            "criteria": "explosive_power_sport_specific_movements"
+          },
+          "return_to_sport": {
+            "focus": "unrestricted_sport_participation",
+            "criteria": "no_symptoms_<10%_asymmetry_sport_drills_100%"
+          }
+        },
+        "return_to_sport_criteria": {
+          "pain": "no_symptoms_during_rest_or_training",
+          "soreness": "minimal_24_48hr_post_training",
+          "asymmetry": "<10%_unilateral_bilateral",
+          "function": "COD_performance_benchmarks",
+          "sport_specific": "100%_intensity_pain_free"
+        },
+        "progression_milestones": [
+          "running_movements_30%_intensity",
+          "slow_running_15min_60%_intensity",
+          "10x30m_sprints_80%_intensity",
+          "10x30m_sprints_100%_intensity",
+          "T_test_100%_pain_free",
+          "sport_specific_drills_100%"
+        ]
+      },
+      "best_practices": [
+        "Use objective criteria for progression (not time-based)",
+        "Monitor strength bilaterally throughout rehab",
+        "Target <10% asymmetry before return to sport",
+        "Progress from general to sport-specific movements",
+        "Include reactive multidirectional tasks",
+        "Use technology for quantifiable feedback",
+        "Assess change of direction at multiple angles",
+        "Monitor KPIs during return-to-sport phase",
+        "Ensure balanced strength in all planes",
+        "Address entire kinetic chain, not just hip/groin"
+      ],
+      "contraindications": [
+        "Progressing with pain during activities",
+        "Advancing despite >10% asymmetry",
+        "Returning to sport without meeting criteria",
+        "Excessive soreness beyond 48 hours",
+        "Skipping objective strength testing"
+      ]
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "hip_groin_injury_prevention_screening",
+      "question": "How should hip and groin injury prevention and screening be implemented?",
+      "answer": "Hip and groin injury prevention requires proactive screening and targeted interventions based on objective data. Key screening metrics include: (1) Isometric hip adduction/abduction strength with target add:abd ratio of 0.8-1.2 (normative data shows ~66% of NHL athletes in this range); (2) Bilateral asymmetries with <10% as ideal threshold; (3) Position-specific considerations - e.g., NFL linemen show 20-34% greater forces than other positions, offensive linemen have different ratios than defensive linemen due to kick-step demands. Screening should combine between-athlete monitoring (comparison to positional norms) and within-athlete monitoring (individual trends over time). Prevention programs should emphasize all athletes but provide additional focus to those flagged through monitoring. Regular isometric testing (ForceFrame/DynaMo) enables early detection of strength deficits before symptoms appear - athletes sometimes develop decreased adductor strength before reporting pain. Z-scores allow comparison to both self and positional group. High-risk populations include athletes in soccer, basketball, hockey, football, rugby with cutting and change of direction demands.",
+      "summary": "Hip/groin prevention uses isometric screening (add:abd ratio 0.8-1.2, <10% asymmetry), position-specific monitoring, and early detection of deficits before symptoms.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes",
+        "soccer_players",
+        "basketball_players",
+        "football_players",
+        "hockey_players"
+      ],
+      "sport_specificity": "field_sports",
+      "categories": [
+        "injury_prevention",
+        "screening",
+        "monitoring"
+      ],
+      "tags": [
+        "injury_prevention",
+        "screening",
+        "isometric_testing",
+        "normative_data",
+        "asymmetry",
+        "monitoring",
+        "position_specific"
+      ],
+      "protocols": {
+        "screening_metrics": {
+          "add_abd_ratio": "target_0.8_to_1.2",
+          "bilateral_asymmetry": "<10%_ideal",
+          "position_specific_norms": "compare_to_positional_data"
+        },
+        "screening_frequency": "preseason_and_regular_inseason_monitoring",
+        "monitoring_approach": {
+          "between_athlete": "compare_to_positional_norms",
+          "within_athlete": "track_individual_trends_over_time",
+          "z_scores": "standardized_comparison"
+        },
+        "high_risk_indicators": [
+          "add_abd_ratio_<0.8_or_>1.2",
+          "bilateral_asymmetry_>10%",
+          "declining_strength_trends",
+          "previous_groin_injury_history"
+        ],
+        "equipment": [
+          "ForceFrame",
+          "DynaMo",
+          "force_plates"
+        ]
+      },
+      "best_practices": [
+        "Conduct comprehensive preseason screening",
+        "Monitor adductor:abductor ratio (0.8-1.2 target)",
+        "Track bilateral asymmetries (<10% threshold)",
+        "Use position-specific normative data",
+        "Monitor individual trends over time (within-athlete)",
+        "Flag athletes with declining strength patterns",
+        "Implement targeted prevention for high-risk athletes",
+        "Early detection before symptoms appear",
+        "Universal prevention with enhanced focus on flagged athletes",
+        "Consider position-specific demands (e.g., linemen asymmetries)",
+        "Regular ongoing monitoring, not just preseason",
+        "Use z-scores for standardized comparisons",
+        "Address strength imbalances proactively"
+      ]
+    }
+  ]
+}

@@ -50,8 +50,7 @@ export class DecisionLedgerService {
 
   readonly lowConfidenceDecisions = computed(() =>
     this.decisions().filter(
-      (d) =>
-        (d.decisionBasis.confidence || d.decisionBasis.overall || 1.0) < 0.7,
+      (d) => (d.decisionBasis.confidence || 1.0) < 0.7,
     ),
   );
 
@@ -64,7 +63,7 @@ export class DecisionLedgerService {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<DecisionLedgerEntry[]>("/api/decisions", filters),
+        this.apiService.get<DecisionLedgerEntry[]>("/api/decisions", filters as Record<string, unknown> | undefined),
       );
 
       if (response.success && response.data) {

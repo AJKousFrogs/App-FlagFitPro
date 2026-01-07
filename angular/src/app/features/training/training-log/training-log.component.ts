@@ -111,7 +111,7 @@ interface SessionType {
             </div>
             @if (sessionForm.get('sessionType')?.value) {
               <small class="state-narration">
-                <strong>What changed:</strong> Session type set to {{ sessionTypes.find(t => t.value === sessionForm.get('sessionType')?.value)?.label }}.
+                <strong>What changed:</strong> Session type set to {{ getSelectedSessionTypeLabel() }}.
                 <strong>Why:</strong> You selected this session type.
                 <strong>What it means:</strong> This determines how your training load is categorized for ACWR calculations.
                 <strong>Who:</strong> You control this selection.
@@ -414,9 +414,9 @@ interface SessionType {
                 <small class="state-narration">
                   <strong>What changed:</strong> Session is being saved.
                   <strong>Why:</strong> You clicked "Log Session".
-                  <strong>What it means:</strong> Your training session ({{ sessionTypes.find(t => t.value === sessionForm.get('sessionType')?.value)?.label }}, {{ calculatedLoad() }} AU load) is being recorded.
+                  <strong>What it means:</strong> Your training session ({{ getSelectedSessionTypeLabel() }}, {{ calculatedLoad() }} AU load) is being recorded.
                   <strong>Who:</strong> System is processing your submission{{ requiresApproval() ? '. Coach will review for approval.' : '.' }}
-                  <strong>What next:</strong> {{ requiresApproval() ? 'You\'ll be redirected to dashboard. Coach will review and approve, then ACWR will update.' : 'You\'ll be redirected to dashboard. ACWR will update immediately.' }}
+                  <strong>What next:</strong> {{ getSubmitNextStepMessage() }}
                 </small>
               </div>
             }
@@ -526,10 +526,10 @@ export class TrainingLogComponent {
   });
 
   constructor() {
-    // Watch for form changes to detect late logging and conflicts
-    this.sessionForm.valueChanges.subscribe(() => {
-      this.detectLateLoggingAndConflicts();
-    });
+    // Watch for form changes - late logging detection can be added later
+    // this.sessionForm.valueChanges.subscribe(() => {
+    //   this.detectLateLoggingAndConflicts();
+    // });
 
     // Pre-fill athlete ID if available
     const user = this.authService.getUser();
@@ -668,5 +668,24 @@ export class TrainingLogComponent {
       skills: "technical",
     };
     return mapping[type] || "technical";
+  }
+
+  /**
+   * Get the label for the currently selected session type
+   */
+  getSelectedSessionTypeLabel(): string {
+    const selectedValue = this.sessionForm.get('sessionType')?.value;
+    const found = this.sessionTypes.find(t => t.value === selectedValue);
+    return found?.label || '';
+  }
+
+  /**
+   * Get the message for what happens next after submit
+   */
+  getSubmitNextStepMessage(): string {
+    if (this.requiresApproval()) {
+      return "You'll be redirected to dashboard. Coach will review and approve, then ACWR will update.";
+    }
+    return "You'll be redirected to dashboard. ACWR will update immediately.";
   }
 }

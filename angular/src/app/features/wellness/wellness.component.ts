@@ -31,6 +31,9 @@ import {
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { OfflineQueueService } from "../../core/services/offline-queue.service";
+import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 
 interface WellnessAlert {
   id: string;
@@ -497,6 +500,11 @@ export class WellnessComponent {
   readonly sleepChartData = signal<any>(null);
   readonly recoveryChartData = signal<any>(null);
   readonly wellnessAlerts = signal<WellnessAlert[]>([]);
+
+  // Confidence tracking
+  readonly wellnessConfidence = signal<{ score: number; missingInputs: string[] }>({ score: 1.0, missingInputs: [] });
+  readonly completedMetricsCount = signal<number>(0);
+  readonly totalMetricsCount = signal<number>(4);
 
   checkInData = {
     sleepHours: 7,

@@ -224,7 +224,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   >
                   <p-badge
                     [value]="playersWithMissingData().length.toString()"
-                    severity="warning"
+                    severity="warn"
                   ></p-badge>
                 </div>
                 <div class="athlete-scroll">
@@ -328,7 +328,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         <span class="player-name">{{ player.playerName }}</span>
                         <p-tag
                           [value]="player.sessionsRemaining + ' sessions remaining'"
-                          severity="warning"
+                          severity="warn"
                           styleClass="protocol-tag"
                         ></p-tag>
                       </div>
@@ -625,7 +625,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                 <div class="data-sharing-cell">
                                   <p-tag
                                     value="⚠️ Partial"
-                                    severity="warning"
+                                    severity="warn"
                                     styleClass="data-sharing-tag"
                                     [pTooltip]="'Some metrics are shared, some are not'"
                                   ></p-tag>
@@ -1354,12 +1354,12 @@ export class CoachDashboardComponent {
   /**
    * Get severity badge for missing data
    */
-  getMissingDataSeverity(severity: string): "success" | "info" | "warning" | "danger" {
+  getMissingDataSeverity(severity: string): "success" | "info" | "warn" | "danger" {
     switch (severity) {
       case "critical":
         return "danger";
       case "warning":
-        return "warning";
+        return "warn";
       default:
         return "info";
     }

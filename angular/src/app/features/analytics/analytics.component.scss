@@ -588,17 +588,6 @@
 
   .share-dialog {
     // PrimeNG dialog mobile overrides moved to _exceptions.scss (DS-EXC-052)
-
-      app-button {
-        width: 100%;
-
-        button {
-          width: 100%;
-          justify-content: center;
-          min-height: 44px;
-        }
-      }
-    }
   }
 
   .share-intro {

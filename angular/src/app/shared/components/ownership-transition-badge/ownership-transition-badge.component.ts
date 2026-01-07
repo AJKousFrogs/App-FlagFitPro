@@ -57,7 +57,7 @@ import { LoggerService } from "../../../core/services/logger.service";
             @if (transition()!.createdAt) {
               <div class="detail-item">
                 <span class="detail-label">Notified:</span>
-                <span class="detail-value">{{ getTimeAgo(transition()!.createdAt) }}</span>
+                <span class="detail-value">{{ getTimeAgo(transition()!.createdAt!) }}</span>
               </div>
             }
             @if (getResponseTimeline(transition()!)) {
@@ -205,9 +205,9 @@ export class OwnershipTransitionBadgeComponent {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: OwnershipTransition["status"]): string {
-    const severities: Record<string, string> = {
-      pending: "warning",
+  getStatusSeverity(status: OwnershipTransition["status"]): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<string, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
+      pending: "warn",
       in_progress: "info",
       completed: "success",
       overdue: "danger",

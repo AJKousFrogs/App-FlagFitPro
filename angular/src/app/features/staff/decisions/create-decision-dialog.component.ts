@@ -17,11 +17,11 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { InputTextModule } from "primeng/inputtext";
-import { InputTextareaModule } from "primeng/inputtextarea";
+import { Textarea } from "primeng/textarea";
 import { CheckboxModule } from "primeng/checkbox";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { StepperComponent } from "@shared/components/stepper/stepper.component";
@@ -44,11 +44,11 @@ import type {
     FormsModule,
     DialogModule,
     ButtonModule,
-    DropdownModule,
+    Select,
     InputTextModule,
-    InputTextareaModule,
+    Textarea,
     CheckboxModule,
-    CalendarModule,
+    DatePicker,
     TagModule,
     ModalComponent,
     StepperComponent,
@@ -77,7 +77,7 @@ import type {
         @if (currentStep() === 0) {
           <div class="step-panel">
             <h3>Select Athlete</h3>
-            <p-dropdown
+            <p-select
               [options]="athletes()"
               [(ngModel)]="formData.athleteId"
               optionLabel="name"
@@ -86,7 +86,7 @@ import type {
               [filter]="true"
               [showClear]="true"
               styleClass="w-full"
-            ></p-dropdown>
+            ></p-select>
             @if (formData.athleteId) {
               <div class="athlete-info">
                 <p>Selected: {{ getAthleteName(formData.athleteId) }}</p>
@@ -99,13 +99,13 @@ import type {
         @if (currentStep() === 1) {
           <div class="step-panel">
             <h3>Select Decision Type</h3>
-            <p-dropdown
+            <p-select
               [options]="decisionTypeOptions"
               [(ngModel)]="formData.decisionType"
               placeholder="Select decision type"
               styleClass="w-full"
               (onChange)="onDecisionTypeChange()"
-            ></p-dropdown>
+            ></p-select>
             @if (formData.decisionType) {
               <div class="info-box">
                 <p>
@@ -199,13 +199,13 @@ import type {
           <div class="step-panel">
             <h3>Review Trigger</h3>
             <p>When should this decision be reviewed?</p>
-            <p-dropdown
+            <p-select
               [options]="reviewTriggerOptions"
               [(ngModel)]="formData.reviewTrigger"
               placeholder="Select review trigger"
               styleClass="w-full"
               (onChange)="onReviewTriggerChange()"
-            ></p-dropdown>
+            ></p-select>
             @if (formData.reviewTrigger) {
               <div class="review-info">
                 <p>
@@ -251,7 +251,7 @@ import type {
               @if (calculatedConfidence() < 0.7) {
                 <div class="confidence-warning">
                   <p-tag
-                    severity="warning"
+                    severity="warn"
                     value="Low Confidence - Consider collecting more data"
                   ></p-tag>
                 </div>
@@ -385,6 +385,7 @@ import type {
 export class CreateDecisionDialogComponent {
   // Inputs/Outputs
   visible = input<boolean>(false);
+  visibleChange = output<boolean>();
   created = output<CreateDecisionRequest>();
 
   // Services
@@ -417,7 +418,7 @@ export class CreateDecisionDialogComponent {
     const players = this.rosterService.allPlayers();
     return players.map((p) => ({
       id: p.id,
-      name: p.fullName || "Unknown",
+      name: p.name || "Unknown",
     }));
   });
 
@@ -571,6 +572,7 @@ export class CreateDecisionDialogComponent {
 
   // Methods
   onVisibleChange(visible: boolean): void {
+    this.visibleChange.emit(visible);
     if (!visible) {
       this.reset();
     }

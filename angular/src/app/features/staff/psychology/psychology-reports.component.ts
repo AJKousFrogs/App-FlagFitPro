@@ -839,7 +839,7 @@ interface ReportPrivacySettings {
                         <div class="insight-content">
                           <h4 class="insight-title">{{ insight.title }}</h4>
                           <p class="insight-text">{{ insight.content }}</p>
-                          @if (insight.metadata && Object.keys(insight.metadata).length > 0) {
+                          @if (insight.metadata && hasMetadata(insight.metadata)) {
                             <div class="insight-metadata">
                               @for (entry of getMetadataEntries(insight.metadata); track entry.key) {
                                 <div class="metadata-item">
@@ -1072,7 +1072,7 @@ interface ReportPrivacySettings {
 export class PsychologyReportsComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
-  private insightFeedService = inject(SharedInsightFeedService);
+  protected insightFeedService = inject(SharedInsightFeedService);
 
   // State
   loading = signal(false);
@@ -1622,11 +1622,11 @@ export class PsychologyReportsComponent implements OnInit {
     };
   }
 
-  getRoleSeverity(role: string): "success" | "info" | "warning" | "danger" {
-    const roleMap: Record<string, "success" | "info" | "warning" | "danger"> = {
+  getRoleSeverity(role: string): "success" | "info" | "warn" | "danger" {
+    const roleMap: Record<string, "success" | "info" | "warn" | "danger"> = {
       coach: "info",
       physiotherapist: "success",
-      nutritionist: "warning",
+      nutritionist: "warn",
       psychologist: "danger",
     };
     return roleMap[role] || "info";
@@ -1642,10 +1642,10 @@ export class PsychologyReportsComponent implements OnInit {
     return typeMap[type] || type;
   }
 
-  getPrioritySeverity(priority: string): "success" | "info" | "warning" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> = {
+  getPrioritySeverity(priority: string): "success" | "info" | "warn" | "danger" {
+    const priorityMap: Record<string, "success" | "info" | "warn" | "danger"> = {
       low: "info",
-      medium: "warning",
+      medium: "warn",
       high: "danger",
     };
     return priorityMap[priority] || "info";
@@ -1670,5 +1670,9 @@ export class PsychologyReportsComponent implements OnInit {
       key: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
       value: String(value),
     }));
+  }
+
+  hasMetadata(metadata: Record<string, unknown>): boolean {
+    return Object.keys(metadata).length > 0;
   }
 }

@@ -236,15 +236,15 @@ export class ActionRequiredBadgeComponent {
     return labels[u] || "Action Required";
   }
 
-  getSeverity(): string {
+  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
     const u = this.urgency();
-    const severities: Record<ActionUrgency, string> = {
+    const severities: Record<ActionUrgency, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
       low: "info",
-      medium: "warning",
-      high: "warning",
+      medium: "warn",
+      high: "warn",
       critical: "danger",
     };
-    return severities[u] || "warning";
+    return severities[u] || "warn";
   }
 
   getDefaultTooltip(): string {

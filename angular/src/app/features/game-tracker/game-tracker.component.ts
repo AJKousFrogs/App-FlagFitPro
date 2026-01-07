@@ -653,14 +653,14 @@ export class GameTrackerComponent implements OnInit {
         error: (err) => {
           // If network error, queue for retry
           if (err.status === 0 || err.message?.includes("network")) {
-            this.offlineQueue.queueAction({
-              type: "game_action",
-              payload: {
+            this.offlineQueue.queueAction(
+              "game_action",
+              {
                 action: "create_game",
                 data: gameData,
               },
-              priority: "high",
-            });
+              "high"
+            );
             this.toastService.info("Game will be saved when connection is restored");
             this.showGameForm.set(false);
             this.gameForm.reset();
@@ -729,15 +729,15 @@ export class GameTrackerComponent implements OnInit {
     }
 
     // Check if offline and queue action
-    if (!this.networkStatus.isOnline()()) {
-      this.offlineQueue.queueAction({
-        type: "game_action",
-        payload: {
+    if (!this.networkStatus.isOnline()) {
+      this.offlineQueue.queueAction(
+        "game_action",
+        {
           action: "create_play",
           data: playData,
         },
-        priority: "high",
-      });
+        "high"
+      );
       this.toastService.info("Play will be saved when connection is restored");
       this.plays.update((plays) => [...plays, playData as Play]);
       this.playForm.reset({
@@ -772,14 +772,14 @@ export class GameTrackerComponent implements OnInit {
         error: (error) => {
           // If network error, queue for retry
           if (error.status === 0 || error.message?.includes("network")) {
-            this.offlineQueue.queueAction({
-              type: "game_action",
-              payload: {
+            this.offlineQueue.queueAction(
+              "game_action",
+              {
                 action: "create_play",
                 data: playData,
               },
-              priority: "high",
-            });
+              "high"
+            );
             this.toastService.info("Play will be saved when connection is restored");
             this.plays.update((plays) => [...plays, playData as Play]);
             this.playForm.reset({

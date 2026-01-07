@@ -263,9 +263,9 @@ export class MissingDataExplanationComponent {
     return "Warning";
   }
 
-  getSeverityTag(): string {
+  getSeverityTag(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
     const severity = this.missingStatus()?.severity || "warning";
-    return severity === "critical" ? "danger" : "warning";
+    return severity === "critical" ? "danger" : "warn";
   }
 
   getWhyItMatters(): string {

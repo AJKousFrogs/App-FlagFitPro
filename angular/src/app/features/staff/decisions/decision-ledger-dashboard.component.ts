@@ -18,8 +18,7 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { DropdownModule } from "primeng/dropdown";
-import { MainLayoutComponent } from "@shared/layouts/main-layout/main-layout.component";
+import { Select } from "primeng/select";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { DecisionCardComponent } from "./decision-card.component";
@@ -44,8 +43,7 @@ import type {
     CardModule,
     ButtonModule,
     TagModule,
-    DropdownModule,
-    MainLayoutComponent,
+    Select,
     PageHeaderComponent,
     CardShellComponent,
     DecisionCardComponent,
@@ -53,8 +51,7 @@ import type {
     ReviewDecisionDialogComponent,
   ],
   template: `
-    <app-main-layout>
-      <div class="decision-ledger-dashboard">
+    <div class="decision-ledger-dashboard">
         <app-page-header
           title="Decision Ledger"
           subtitle="Track decisions, reviews, and outcomes"
@@ -101,32 +98,32 @@ import type {
             <div class="filters-grid">
               <div class="filter-item">
                 <label>Status</label>
-                <p-dropdown
+                <p-select
                   [options]="statusOptions"
                   [(ngModel)]="filters().status"
                   placeholder="All Statuses"
                   (onChange)="applyFilters()"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="filter-item">
                 <label>Category</label>
-                <p-dropdown
+                <p-select
                   [options]="categoryOptions"
                   [(ngModel)]="filters().decisionCategory"
                   placeholder="All Categories"
                   (onChange)="applyFilters()"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="filter-item">
                 <label>Priority</label>
-                <p-dropdown
+                <p-select
                   [options]="priorityOptions"
                   [(ngModel)]="filters().reviewPriority"
                   placeholder="All Priorities"
                   (onChange)="applyFilters()"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="filter-item">
@@ -228,7 +225,7 @@ import type {
         <!-- Create Decision Dialog -->
         <app-create-decision-dialog
           [visible]="showCreateDialog()"
-          (visibleChange)="showCreateDialog.set($event)"
+          (visibleChange)="onCreateDialogVisibleChange($event)"
           (created)="onDecisionCreated($event)"
         ></app-create-decision-dialog>
 
@@ -236,11 +233,10 @@ import type {
         <app-review-decision-dialog
           [visible]="showReviewDialog()"
           [decision]="selectedDecisionForReview()"
-          (visibleChange)="showReviewDialog.set($event)"
+          (visibleChange)="onReviewDialogVisibleChange($event)"
           (reviewed)="onDecisionReviewed($event)"
         ></app-review-decision-dialog>
       </div>
-    </app-main-layout>
   `,
   styles: [
     `
@@ -417,6 +413,14 @@ export class DecisionLedgerDashboardComponent implements OnInit {
 
   openCreateDialog(): void {
     this.showCreateDialog.set(true);
+  }
+
+  onCreateDialogVisibleChange(visible: boolean): void {
+    this.showCreateDialog.set(visible);
+  }
+
+  onReviewDialogVisibleChange(visible: boolean): void {
+    this.showReviewDialog.set(visible);
   }
 
   async onDecisionCreated(request: CreateDecisionRequest): Promise<void> {

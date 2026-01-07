@@ -184,12 +184,12 @@ export class RiskBadgeComponent {
     return icons[l] || "pi pi-info-circle";
   }
 
-  getSeverity(): string {
+  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
     const l = this.level();
-    const severities: Record<RiskLevel, string> = {
+    const severities: Record<RiskLevel, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
       low: "success",
-      moderate: "warning",
-      high: "warning",
+      moderate: "warn",
+      high: "warn",
       critical: "danger",
     };
     return severities[l] || "info";

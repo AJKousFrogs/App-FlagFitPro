@@ -183,7 +183,8 @@ export class MissingDataDetectionService {
 
       for (const member of teamMembers) {
         const status = await this.checkMissingWellness(member.user_id);
-        const user = member.users as { id: string; name: string };
+        const users = member.users as Array<{ id: string; name: string }>;
+        const user = users?.[0] || { id: "", name: "Unknown" };
 
         if (status.missing) {
           playersWithMissingData.push({

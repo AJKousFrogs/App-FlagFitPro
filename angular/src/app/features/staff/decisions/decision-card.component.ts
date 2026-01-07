@@ -200,17 +200,17 @@ export class DecisionCardComponent {
   // Computed
   confidenceScore = computed(() => {
     const basis = this.decision().decisionBasis;
-    return basis.confidence || basis.overall || 0.8;
+    return basis.confidence || 0.8;
   });
 
   missingInputs = computed(() => {
-    const basis = this.decision().decisionBasis;
-    return basis.missingInputs || [];
+    // DecisionBasis doesn't have missingInputs - return empty array
+    return [] as string[];
   });
 
   staleData = computed(() => {
-    const basis = this.decision().decisionBasis;
-    return basis.staleData || [];
+    // DecisionBasis doesn't have staleData - return empty array
+    return [] as string[];
   });
 
   // Helpers
@@ -237,10 +237,10 @@ export class DecisionCardComponent {
 
   getPrioritySeverity(
     priority: "critical" | "high" | "normal" | "low",
-  ): "danger" | "warning" | "info" | "success" {
+  ): "danger" | "warn" | "info" | "success" {
     const severityMap = {
       critical: "danger" as const,
-      high: "warning" as const,
+      high: "warn" as const,
       normal: "info" as const,
       low: "success" as const,
     };

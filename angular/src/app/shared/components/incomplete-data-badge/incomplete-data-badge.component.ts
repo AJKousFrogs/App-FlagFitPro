@@ -175,9 +175,9 @@ export class IncompleteDataBadgeComponent {
     return s === "critical" ? "Critical" : "Warning";
   }
 
-  getSeverityTag(): string {
+  getSeverityTag(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
     const s = this.severity();
-    return s === "critical" ? "danger" : "warning";
+    return s === "critical" ? "danger" : "warn";
   }
 
   getDefaultTooltip(): string {

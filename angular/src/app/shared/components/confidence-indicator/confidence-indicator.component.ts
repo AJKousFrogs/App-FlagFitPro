@@ -273,11 +273,11 @@ export class ConfidenceIndicatorComponent {
     return "very-low";
   });
 
-  getSeverity(): string {
+  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
     const s = this.score();
     if (s >= 0.9) return "success";
-    if (s >= 0.7) return "warning";
-    if (s >= 0.5) return "warning";
+    if (s >= 0.7) return "warn";
+    if (s >= 0.5) return "warn";
     return "danger";
   }
 

@@ -318,7 +318,8 @@ export class UnifiedTrainingService {
     }
 
     const sessions = tomorrowSchedule.sessions;
-    const metadata = this.performanceDataService.userMetadata();
+    // User metadata not available from performance data service
+    const metadata = null;
 
     // Get user routine for tomorrow (same routine applies daily)
     const defaultRoutine: DailyRoutineSlot[] = [
@@ -332,7 +333,7 @@ export class UnifiedTrainingService {
       { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
     ];
 
-    const userRoutine: DailyRoutineSlot[] = metadata.dailyRoutine || defaultRoutine;
+    const userRoutine: DailyRoutineSlot[] = (metadata as any)?.dailyRoutine || defaultRoutine;
 
     const getItemType = (slotId: string): TodayScheduleItem["type"] => {
       if (slotId === "breakfast" || slotId === "lunch") return "nutrition";

@@ -9,6 +9,7 @@ import {
   ElementRef,
   inject,
   afterNextRender,
+  model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
@@ -476,7 +477,7 @@ import { ButtonModule } from "primeng/button";
 })
 export class ModalComponent {
   // Visibility
-  visible = signal<boolean>(false);
+  visible = model<boolean>(false);
 
   // Configuration inputs
   modal = input<boolean>(true);
@@ -494,10 +495,10 @@ export class ModalComponent {
     | "bottom"
     | "left"
     | "right"
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right"
+    | "topleft"
+    | "topright"
+    | "bottomleft"
+    | "bottomright"
   >("center");
   blockScroll = input<boolean>(true);
   dismissableMask = input<boolean>(false);
@@ -518,7 +519,7 @@ export class ModalComponent {
   confirmDisabled = input<boolean>(false);
   confirmLoading = input<boolean>(false);
   confirmSeverity = input<
-    "success" | "info" | "warning" | "danger" | "secondary" | "primary"
+    "success" | "info" | "warn" | "danger" | "secondary" | "primary"
   >("primary");
 
   // Events

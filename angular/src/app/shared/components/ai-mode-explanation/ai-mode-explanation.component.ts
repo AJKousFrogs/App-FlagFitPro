@@ -53,7 +53,7 @@ export interface AIModeStatus {
           </div>
           <p-tag
             value="Conservative"
-            severity="warning"
+            severity="warn"
             styleClass="mode-badge"
             [pTooltip]="'AI is being cautious because data confidence is below 70%'"
           ></p-tag>

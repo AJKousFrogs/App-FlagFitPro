@@ -201,10 +201,10 @@ export class DataConfidenceService {
    */
   getConfidenceSeverity(
     score: number
-  ): "success" | "info" | "warning" | "danger" {
+  ): "success" | "info" | "warn" | "danger" {
     if (score >= 0.9) return "success";
     if (score >= 0.7) return "info";
-    if (score >= 0.5) return "warning";
+    if (score >= 0.5) return "warn";
     return "danger";
   }
 }

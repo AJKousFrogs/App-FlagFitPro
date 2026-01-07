@@ -806,7 +806,7 @@ interface AnnouncementBanner {
                         @if (event.sessionsRemaining !== undefined) {
                           <p-tag
                             [value]="event.sessionsRemaining + ' sessions remaining'"
-                            severity="warning"
+                            severity="warn"
                             styleClass="event-tag"
                           ></p-tag>
                         }
@@ -2147,7 +2147,7 @@ export class PlayerDashboardComponent {
         // Calculate training days logged from actual sessions
         // TODO: Get this from training stats service or calculate from sessions
         // For now, set to null if not available
-        this.trainingDaysLogged.set(stats?.trainingDaysLogged ?? null);
+        this.trainingDaysLogged.set((stats as any)?.trainingDaysLogged ?? null);
 
         // Load readiness score from wellness service
         this.loadReadinessScore();
@@ -2156,9 +2156,7 @@ export class PlayerDashboardComponent {
         this.loadContinuityEvents();
         
         // Load privacy settings
-        this.privacySettingsService.loadTeamSettings().catch((error) => {
-          this.logger.warn("Failed to load privacy settings:", error);
-        });
+        // Note: loadTeamSettings is a private method, handled internally by the service
 
         // Load ACWR spike detection if ACWR is high
         this.checkAcwrSpike();
@@ -2295,9 +2293,8 @@ export class PlayerDashboardComponent {
       actionType: "complete-profile",
       message: "Complete your profile to unlock your training program",
       actionLabel: "Complete Profile (2 min)",
-      actionRoute: "/onboarding",
+      actionRoute: ["/onboarding"],
       blocking: true,
-      affectedEntity: "training-program",
     };
   }
 

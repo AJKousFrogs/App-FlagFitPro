@@ -47,6 +47,9 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
+import { AIModeExplanationComponent, AIModeStatus } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
+import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 
 interface ChatMessage {
   id?: string;

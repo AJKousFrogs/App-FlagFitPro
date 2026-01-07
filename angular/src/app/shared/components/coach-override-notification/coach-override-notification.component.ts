@@ -58,7 +58,7 @@ import { LoggerService } from "../../../core/services/logger.service";
               [placement]="'inline'"
               [showTag]="true"
               [showTimestamp]="true"
-              [timestamp]="override()!.createdAt ? new Date(override()!.createdAt) : null"
+              [timestamp]="getTimestamp(override()!.createdAt)"
             ></app-coach-override-badge>
           </div>
         </ng-template>
@@ -183,7 +183,7 @@ import { LoggerService } from "../../../core/services/logger.service";
                   [placement]="'inline'"
                   [showTag]="true"
                   [showTimestamp]="true"
-                  [timestamp]="item.createdAt ? new Date(item.createdAt) : null"
+                  [timestamp]="getTimestamp(item.createdAt)"
                 ></app-coach-override-badge>
               </div>
               @if (item.reason) {
@@ -468,6 +468,11 @@ export class CoachOverrideNotificationComponent {
       hour: "2-digit",
       minute: "2-digit",
     });
+  }
+
+  getTimestamp(dateValue: Date | string | undefined): Date | null {
+    if (!dateValue) return null;
+    return typeof dateValue === "string" ? new Date(dateValue) : dateValue;
   }
 
   async askCoach(): Promise<void> {

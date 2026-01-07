@@ -13,14 +13,14 @@ import {
   ChangeDetectionStrategy,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { DropdownModule } from "primeng/dropdown";
-import { InputTextareaModule } from "primeng/inputtextarea";
+import { Select } from "primeng/select";
+import { Textarea } from "primeng/textarea";
 import { CheckboxModule } from "primeng/checkbox";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
@@ -39,10 +39,10 @@ import type {
     FormsModule,
     DialogModule,
     ButtonModule,
-    DropdownModule,
-    InputTextareaModule,
+    Select,
+    Textarea,
     CheckboxModule,
-    CalendarModule,
+    DatePicker,
     TagModule,
     ModalComponent,
   ],
@@ -92,24 +92,24 @@ import type {
         <!-- Review Options -->
         <div class="review-options">
           <h3>Review Outcome</h3>
-          <p-dropdown
+          <p-select
             [options]="reviewOutcomeOptions"
             [(ngModel)]="formData.reviewOutcome"
             placeholder="Select review outcome"
             styleClass="w-full"
             (onChange)="onOutcomeChange()"
-          ></p-dropdown>
+          ></p-select>
 
           @if (formData.reviewOutcome === "extended") {
             <div class="extension-options">
               <label>New Review Date</label>
-              <p-calendar
+              <p-datepicker
                 [(ngModel)]="formData.newReviewDate"
-                [minDate]="new Date()"
+                [minDate]="minDate"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
                 styleClass="w-full"
-              ></p-calendar>
+              ></p-datepicker>
             </div>
           }
         </div>
@@ -261,6 +261,7 @@ import type {
 export class ReviewDecisionDialogComponent {
   // Inputs/Outputs
   visible = input<boolean>(false);
+  visibleChange = output<boolean>();
   decision = input<DecisionLedgerEntry | null>(null);
   reviewed = output<ReviewDecisionRequest>();
 
@@ -269,17 +270,19 @@ export class ReviewDecisionDialogComponent {
 
   // State
   isSubmitting = signal(false);
-  formData: ReviewDecisionRequest = {
+  minDate = new Date();
+  formData = {
     decisionId: "",
     reviewOutcome: "maintained" as ReviewOutcome,
     reviewNotes: "",
     outcomeData: {
-      athleteStateBefore: {},
-      athleteStateAfter: {},
+      athleteStateBefore: {} as Record<string, unknown>,
+      athleteStateAfter: {} as Record<string, unknown>,
       goalAchieved: false,
-      unintendedConsequences: [],
+      unintendedConsequences: [] as string[],
       lessonsLearned: "",
     },
+    newReviewDate: undefined as Date | undefined,
   };
 
   // Computed
@@ -298,6 +301,7 @@ export class ReviewDecisionDialogComponent {
 
   // Methods
   onVisibleChange(visible: boolean): void {
+    this.visibleChange.emit(visible);
     if (visible && this.decision()) {
       this.formData.decisionId = this.decision()!.id;
     } else if (!visible) {
@@ -349,12 +353,13 @@ export class ReviewDecisionDialogComponent {
       reviewOutcome: "maintained" as ReviewOutcome,
       reviewNotes: "",
       outcomeData: {
-        athleteStateBefore: {},
-        athleteStateAfter: {},
+        athleteStateBefore: {} as Record<string, unknown>,
+        athleteStateAfter: {} as Record<string, unknown>,
         goalAchieved: false,
-        unintendedConsequences: [],
+        unintendedConsequences: [] as string[],
         lessonsLearned: "",
       },
+      newReviewDate: undefined as Date | undefined,
     };
   }
 
