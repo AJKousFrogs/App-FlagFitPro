@@ -1202,8 +1202,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .not("subcategory", "eq", "morning_routine");
 
   // For QB, include QB-specific warm-up exercises (unless practice day)
-  // DEPRECATED: availability is informational only; team_activities is authority.
-  const isPracticeDay = context.sessionResolution?.override?.type === 'flag_practice';
+  // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
   if (context.isQB && !isPracticeDay) {
     // Add QB pre-throwing warm-up (rotator cuff, scapular)
     const { data: qbWarmUp } = await supabase
@@ -1254,9 +1253,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // 4. Main Session - From structured program templates
-  // DEPRECATED: availability is informational only; team_activities is authority.
-  const isPracticeDay = context.sessionResolution?.override?.type === 'flag_practice';
-  const isFilmRoomDay = context.sessionResolution?.override?.type === 'film_room';
+  // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
   if (context.sessionTemplate && !isPracticeDay && !isFilmRoomDay) {
     // Get exercises from session_exercises table
     const { data: sessionExercises } = await supabase
