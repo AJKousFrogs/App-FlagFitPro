@@ -81,7 +81,7 @@ async function getWellnessTrends(userId, days = 30) {
     .select(
       "date, mood, stress_level, sleep_quality, motivation_level, energy_level",
     )
-    .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+    .eq("athlete_id", userId)
     .gte("date", startDate.toISOString().split("T")[0])
     .order("date", { ascending: true });
 
@@ -333,7 +333,7 @@ async function getTeamMentalOverview(teamId) {
     const { data: wellness } = await supabaseAdmin
       .from("wellness_entries")
       .select("mood, stress_level, motivation_level")
-      .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+      .eq("athlete_id", userId)
       .order("date", { ascending: false })
       .limit(1)
       .single();

@@ -26,6 +26,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 // ===== Interfaces =====
 interface FilmSession {
@@ -78,7 +79,7 @@ interface DiscussionMessage {
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-
+    MobileOptimizedImageDirective,
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -151,7 +152,13 @@ interface DiscussionMessage {
               <p-card styleClass="film-card" (click)="selectFilm(film)">
                 <div class="film-thumbnail">
                   @if (film.thumbnailUrl) {
-                    <img [src]="film.thumbnailUrl" [alt]="film.title" />
+                    <img
+                      appMobileOptimized
+                      [width]="320"
+                      [height]="180"
+                      [src]="film.thumbnailUrl"
+                      [alt]="film.title"
+                    />
                   } @else {
                     <div class="thumbnail-placeholder">
                       <i class="pi pi-video"></i>

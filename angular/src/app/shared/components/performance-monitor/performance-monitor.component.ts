@@ -113,7 +113,6 @@ export class PerformanceMonitorComponent {
     // Initialize on construction (Angular 21 pattern)
     this.checkAndShowMonitor();
 
-    // Subscribe to metrics changes using RxJS timer with automatic cleanup
     // timer(0, 5000) emits immediately, then every 5 seconds
     // takeUntilDestroyed automatically unsubscribes when component is destroyed
     timer(0, 5000)

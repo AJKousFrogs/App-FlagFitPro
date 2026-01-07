@@ -6,13 +6,6 @@
 //
 // NORMALIZED DESIGN CONTRACT (STRICTLY ENFORCED):
 // ============================================================================
-// 1. HEIGHT: Fixed 44px for ALL buttons (no min-height, exact height)
-// 2. PADDING: Identical padding for ALL variants (12px 24px)
-// 3. RADIUS: Identical border-radius for ALL variants (8px)
-// 4. TYPOGRAPHY: Identical font-size (16px) and weight (600) for ALL variants
-// 5. DEFAULT: Green background + white text/icons
-// 6. HOVER: White background + green text/icons + visible border
-// 7. VARIANTS: May ONLY change color/background/border - NEVER geometry
 //
 // ARCHITECTURE:
 // - Base .btn: ALL geometry is LOCKED and IDENTICAL across variants

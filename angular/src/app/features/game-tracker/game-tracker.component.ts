@@ -296,6 +296,11 @@ export class GameTrackerComponent implements OnInit {
     return "Log a game from your domestic league or personal competition. Only you and coaches you've given consent to can see this.";
   }
 
+  viewPracticeSchedule(): void {
+    // Navigate to training schedule
+    window.location.href = "/training";
+  }
+
   /**
    * Load temperature unit preference from localStorage
    */

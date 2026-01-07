@@ -1,0 +1,531 @@
+/**
+ * Mobile Touch-Friendly Components
+ * ================================================================
+ * Global touch-friendly button and form input styles
+ * Optimized for Chrome Mobile & Safari iOS
+ * Apple HIG & Material Design Guidelines compliant
+ * 
+ * Key Requirements:
+ * - Minimum 44x44px touch targets (Apple HIG)
+ * - 16px font size to prevent iOS zoom
+ * - Proper spacing between interactive elements
+ * - Clear visual feedback for touch
+ * ================================================================
+ */
+
+// ================================================================
+// TOUCH-FRIENDLY BUTTONS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // All buttons (including PrimeNG)
+    button,
+    [role="button"],
+    .p-button,
+    .action-btn,
+    .btn {
+      min-height: 44px !important;
+      min-width: 44px !important;
+      padding: var(--space-2) var(--space-4) !important;
+      font-size: var(--font-size-h4) !important;
+      border-radius: var(--radius-md) !important;
+      cursor: pointer;
+      
+      // Prevent accidental double-tap zoom
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+
+      // Active state feedback for touch
+      &:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+      }
+
+      // Ensure proper spacing between buttons
+      & + button,
+      & + .p-button {
+        margin-left: var(--space-2);
+      }
+    }
+
+    // Icon-only buttons - ensure square
+    button.icon-only,
+    .p-button.p-button-icon-only {
+      width: 44px !important;
+      height: 44px !important;
+      padding: var(--space-2) !important;
+
+      i {
+        font-size: var(--font-size-h3) !important;
+      }
+    }
+
+    // Small buttons still need minimum touch target
+    button.small,
+    .p-button.p-button-sm {
+      min-height: 40px !important;
+      min-width: 40px !important;
+      padding: var(--space-1) var(--space-3) !important;
+      font-size: var(--font-body-2xs) !important;
+    }
+
+    // Full-width buttons on mobile (common pattern)
+    button.full-width,
+    .p-button.full-width {
+      width: 100% !important;
+      justify-content: center !important;
+    }
+
+    // Floating action button (FAB) - ensure proper size
+    .fab,
+    .floating-action-button {
+      width: 56px !important;
+      height: 56px !important;
+      border-radius: var(--radius-full) !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: var(--shadow-2) !important;
+
+      i {
+        font-size: var(--font-size-h2) !important;
+      }
+
+      &:active {
+        box-shadow: var(--shadow-1) !important;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY FORM INPUTS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // All text inputs
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    textarea,
+    select,
+    .p-inputtext,
+    .p-select,
+    .p-textarea,
+    .p-inputnumber-input {
+      min-height: 44px !important;
+      font-size: 16px !important; // CRITICAL: Prevents iOS zoom
+      padding: var(--space-2) var(--space-3) !important;
+      border-radius: var(--radius-md) !important;
+      border: 1px solid var(--surface-border) !important;
+      background: var(--surface-card) !important;
+      color: var(--text-color) !important;
+      
+      // Smooth transitions
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+      // Focus state - clear visual feedback
+      &:focus,
+      &:focus-visible {
+        outline: none !important;
+        border-color: var(--ds-primary-green) !important;
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15) !important;
+      }
+
+      // Disabled state
+      &:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background: var(--surface-ground) !important;
+      }
+
+      // Placeholder
+      &::placeholder {
+        color: var(--text-color-secondary) !important;
+        opacity: 0.7 !important;
+      }
+    }
+
+    // Textarea specific
+    textarea,
+    .p-textarea {
+      min-height: 88px !important; // 2x button height
+      resize: vertical !important;
+      line-height: 1.5 !important;
+    }
+
+    // Select dropdowns
+    select,
+    .p-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right var(--space-3) center !important;
+      padding-right: var(--space-8) !important; // Space for dropdown arrow
+    }
+
+    // Number input - hide spinners (too small for touch)
+    input[type="number"] {
+      -moz-appearance: textfield;
+      
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    // Search input - clear button
+    input[type="search"] {
+      -webkit-appearance: none;
+      
+      &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23666' d='M10 8.586L14.95 3.636 16.364 5.05 11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636z'/%3E%3C/svg%3E");
+        cursor: pointer;
+      }
+    }
+
+    // Date/Time inputs
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      position: relative;
+      
+      // Larger touch target for calendar icon
+      &::-webkit-calendar-picker-indicator {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY CHECKBOXES & RADIOS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // Native checkboxes and radios
+    input[type="checkbox"],
+    input[type="radio"] {
+      min-width: 24px !important;
+      min-height: 24px !important;
+      width: 24px !important;
+      height: 24px !important;
+      margin: var(--space-2) !important;
+      cursor: pointer !important;
+      accent-color: var(--ds-primary-green) !important;
+
+      // Ensure proper spacing with label
+      & + label {
+        margin-left: var(--space-2) !important;
+        cursor: pointer !important;
+        user-select: none !important;
+      }
+    }
+
+    // PrimeNG checkboxes
+    .p-checkbox {
+      width: 24px !important;
+      height: 24px !important;
+
+      .p-checkbox-box {
+        width: 24px !important;
+        height: 24px !important;
+        border-width: 2px !important;
+      }
+
+      .p-checkbox-icon {
+        font-size: 16px !important;
+      }
+    }
+
+    // PrimeNG radio buttons
+    .p-radiobutton {
+      width: 24px !important;
+      height: 24px !important;
+
+      .p-radiobutton-box {
+        width: 24px !important;
+        height: 24px !important;
+        border-width: 2px !important;
+      }
+
+      .p-radiobutton-icon {
+        width: 12px !important;
+        height: 12px !important;
+      }
+    }
+
+    // Checkbox/Radio groups - ensure proper spacing
+    .p-checkbox-group,
+    .p-radiobutton-group,
+    .form-check-group {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--space-3) !important;
+
+      .p-field-checkbox,
+      .p-field-radiobutton,
+      .form-check {
+        display: flex !important;
+        align-items: center !important;
+        gap: var(--space-2) !important;
+        min-height: 44px !important; // Touch target
+        padding: var(--space-2) !important;
+        border-radius: var(--radius-md) !important;
+        transition: background 0.2s ease !important;
+
+        &:active {
+          background: var(--surface-ground) !important;
+        }
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY TOGGLES / SWITCHES
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    .p-toggleswitch,
+    .toggle-switch {
+      width: 48px !important;
+      height: 28px !important;
+
+      .p-toggleswitch-slider,
+      .toggle-slider {
+        border-radius: var(--radius-full) !important;
+      }
+
+      .p-toggleswitch-handle,
+      .toggle-handle {
+        width: 24px !important;
+        height: 24px !important;
+      }
+
+      // Increase touch area
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY SLIDERS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    .p-slider,
+    input[type="range"] {
+      height: 8px !important;
+
+      // Larger thumb for touch
+      .p-slider-handle,
+      &::-webkit-slider-thumb {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: var(--radius-full) !important;
+        cursor: pointer !important;
+      }
+
+      &::-moz-range-thumb {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: var(--radius-full) !important;
+        cursor: pointer !important;
+      }
+
+      // Increase touch area
+      &::before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY FORM LABELS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    label,
+    .p-field-label,
+    .form-label {
+      font-size: var(--font-size-h4) !important;
+      font-weight: var(--font-weight-medium) !important;
+      color: var(--text-color-secondary) !important;
+      margin-bottom: var(--space-2) !important;
+      display: block !important;
+      cursor: pointer !important;
+
+      // Required indicator
+      &.required::after,
+      &[required]::after {
+        content: " *";
+        color: var(--primitive-error-500) !important;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY FORM GROUPS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    .p-field,
+    .form-field,
+    .form-group {
+      margin-bottom: var(--space-4) !important;
+
+      // Stack labels above inputs
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--space-2) !important;
+    }
+
+    // Form rows - stack on mobile
+    .form-row,
+    .p-formgroup-row {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--space-4) !important;
+    }
+
+    // Helper text
+    .p-field-helper,
+    .form-helper,
+    small.helper-text {
+      font-size: var(--font-body-2xs) !important;
+      color: var(--text-color-secondary) !important;
+      margin-top: var(--space-1) !important;
+    }
+
+    // Error messages
+    .p-error,
+    .form-error,
+    small.error-text {
+      font-size: var(--font-body-2xs) !important;
+      color: var(--primitive-error-500) !important;
+      margin-top: var(--space-1) !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: var(--space-1) !important;
+
+      &::before {
+        content: "⚠";
+        font-size: var(--font-size-h4) !important;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY LINKS
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    a {
+      min-height: 44px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      padding: var(--space-1) 0 !important;
+      touch-action: manipulation !important;
+
+      // Active state
+      &:active {
+        opacity: 0.7 !important;
+      }
+    }
+
+    // Text links (not buttons)
+    a:not(.btn):not(.p-button) {
+      text-decoration: underline !important;
+      text-underline-offset: 2px !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE FORM VALIDATION
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // Invalid state
+    .p-invalid,
+    .form-control.invalid,
+    input:invalid,
+    textarea:invalid,
+    select:invalid {
+      border-color: var(--primitive-error-500) !important;
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15) !important;
+      }
+    }
+
+    // Valid state
+    .p-valid,
+    .form-control.valid,
+    input:valid:not(:placeholder-shown),
+    textarea:valid:not(:placeholder-shown),
+    select:valid:not(:placeholder-shown) {
+      border-color: var(--primitive-success-500) !important;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.15) !important;
+      }
+    }
+  }
+}
+
+// ================================================================
+// PREVENT IOS ZOOM ON INPUT FOCUS
+// ================================================================
+
+@media (max-width: 767px) {
+  // This is the most important rule for iOS Safari
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; // Prevents iOS zoom
+  }
+
+  // Prevent viewport zoom
+  :root {
+    touch-action: pan-x pan-y;
+  }
+}
+

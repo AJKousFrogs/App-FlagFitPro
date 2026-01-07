@@ -162,12 +162,14 @@ interface DayOption {
           </div>
         </div>
 
-        <!-- Flag Practice Schedule -->
+        <!-- Availability Schedule (PROMPT 2.11: Renamed from "Flag Practice Schedule") -->
         <div class="form-section">
-          <h4>Flag Football Practice Schedule</h4>
+          <h4>Availability</h4>
           <p class="section-description">
-            Add your team practice times. Training will be adjusted on practice
-            days.
+            This does not schedule team practice. Coaches schedule team activities.
+          </p>
+          <p class="section-description" style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Add your typical training times for reference. This information helps coaches understand your availability but does not create team practices.
           </p>
 
           @for (slot of settings.flagPracticeSchedule; track slot.day) {
@@ -328,7 +330,7 @@ export class PlayerSettingsDialogComponent {
     primaryPosition: "wr_db",
     secondaryPosition: undefined,
     birthDate: undefined,
-    flagPracticeSchedule: [],
+    flagPracticeSchedule: [], // PROMPT 2.11: Internal name kept, but API maps to availabilitySchedule
     preferredTrainingDays: [1, 2, 4, 5, 6], // Mon, Tue, Thu, Fri, Sat
     dailyRoutine: [
       { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -431,9 +433,13 @@ export class PlayerSettingsDialogComponent {
         this.api.get("/api/player-settings"),
       );
       if (response?.success && response.data) {
+        // PROMPT 2.11: Map availabilitySchedule from API to flagPracticeSchedule in component
+        const availabilitySchedule = response.data.availabilitySchedule || response.data.flagPracticeSchedule || [];
+        
         this.settings = {
           ...this.settings,
           ...response.data,
+          flagPracticeSchedule: availabilitySchedule, // Map API field to component field
           birthDate: response.data.birthDate
             ? new Date(response.data.birthDate)
             : undefined,
@@ -535,10 +541,14 @@ export class PlayerSettingsDialogComponent {
     this.isSaving.set(true);
 
     try {
+      // PROMPT 2.11: Map flagPracticeSchedule to availabilitySchedule for API
       const payload = {
         ...this.settings,
+        availabilitySchedule: this.settings.flagPracticeSchedule, // Map component field to API field
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
+      // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)
+      delete (payload as any).flagPracticeSchedule;
 
       await firstValueFrom(this.api.post("/api/player-settings", payload));
 

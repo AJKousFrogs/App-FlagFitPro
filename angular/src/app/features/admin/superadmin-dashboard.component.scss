@@ -75,8 +75,21 @@
   }
 }
 
-// Card Header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
+// Card Header
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--ds-border-default);
+  
+  h3 {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--ds-text-primary);
+  }
+}
 
 // Quick Actions
 .quick-actions {

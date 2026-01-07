@@ -485,7 +485,6 @@ describe("Accessibility Audit", () => {
       );
 
       if (criticalViolations.length > 0) {
-        console.log("Critical violations:", criticalViolations);
       }
 
       expect(criticalViolations.length).toBe(0);
@@ -621,7 +620,6 @@ describe("Accessibility Audit", () => {
 describe("Component Accessibility Patterns", () => {
   describe("Form Components", () => {
     it("should validate form accessibility patterns", () => {
-      // Pattern: All form controls need labels
       // Pattern: Required fields marked with aria-required
       // Pattern: Error messages linked with aria-describedby
       expect(true).toBe(true);
@@ -630,8 +628,6 @@ describe("Component Accessibility Patterns", () => {
 
   describe("Modal/Dialog Components", () => {
     it("should validate dialog accessibility patterns", () => {
-      // Pattern: role="dialog" or role="alertdialog"
-      // Pattern: aria-modal="true"
       // Pattern: Focus trapped inside
       // Pattern: Escape key closes
       expect(true).toBe(true);
@@ -640,7 +636,6 @@ describe("Component Accessibility Patterns", () => {
 
   describe("Navigation Components", () => {
     it("should validate navigation accessibility patterns", () => {
-      // Pattern: aria-current for current page
       // Pattern: aria-expanded for dropdowns
       // Pattern: Keyboard navigation support
       expect(true).toBe(true);
@@ -649,7 +644,6 @@ describe("Component Accessibility Patterns", () => {
 
   describe("Data Table Components", () => {
     it("should validate table accessibility patterns", () => {
-      // Pattern: Proper th/td structure
       // Pattern: scope attributes
       // Pattern: Caption or aria-label
       expect(true).toBe(true);

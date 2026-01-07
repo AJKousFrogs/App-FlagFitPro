@@ -12,7 +12,7 @@ import { Router, RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// // import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent // REMOVED: Now using LazyChartComponent
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -42,6 +42,8 @@ import {
   CardComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -67,7 +69,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     CardModule,
     TableModule,
     TagModule,
-    ChartModule,
+    // // ChartModule, // REMOVED: Using LazyChartComponent
+    LazyChartComponent,
+    ChartSkeletonComponent,
     DialogModule,
     TooltipModule,
     AvatarModule,
@@ -407,13 +411,25 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                     <div class="analytics-workspace">
                       <div class="analytics-hero">
                         <div class="chart-container">
-                          @if (performanceChartData()) {
-                            <p-chart
+                          @defer (on viewport; prefetch on idle) {
+                            @if (performanceChartData()) {
+                              <app-lazy-chart
+                                type="line"
+                                [data]="performanceChartData()"
+                                [options]="lineChartOptions"
+                                height="200px"
+                              ></app-lazy-chart>
+                            }
+                          } @placeholder {
+                            <app-chart-skeleton
                               type="line"
-                              [data]="performanceChartData()"
-                              [options]="lineChartOptions"
-                              [style]="{ height: '200px' }"
-                            ></p-chart>
+                              height="200px"
+                            />
+                          } @loading (minimum 500ms) {
+                            <app-chart-skeleton
+                              type="line"
+                              height="200px"
+                            />
                           }
                         </div>
                         <div class="hero-stats">

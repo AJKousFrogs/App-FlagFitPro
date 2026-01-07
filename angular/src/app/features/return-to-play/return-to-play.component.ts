@@ -14,7 +14,7 @@ import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -34,6 +34,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 // ===== Interfaces =====
 interface ProtocolStage {
@@ -72,10 +73,6 @@ interface DailyCheckin {
   notes?: string;
 }
 
-// RecoveryChartData reserved for future use
-// interface RecoveryChartData {
-//   labels: string[];
-//   painLevels: number[];
 //   functionScores: number[];
 // }
 
@@ -274,7 +271,9 @@ const SEVERITY_LEVELS = [
     FormsModule,
     CardModule,
     Checkbox,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DatePicker,
     DialogModule,
     InputNumberModule,
@@ -608,11 +607,11 @@ const SEVERITY_LEVELS = [
           <!-- Recovery Progress Chart -->
           <p-card header="Recovery Progress Chart" styleClass="chart-card">
             @if (chartData()) {
-              <p-chart
+              <app-lazy-chart
                 type="line"
                 [data]="chartData()"
                 [options]="chartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             } @else {
               <div class="empty-state small">
                 <i class="pi pi-chart-line"></i>

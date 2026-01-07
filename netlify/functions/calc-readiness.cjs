@@ -185,10 +185,11 @@ exports.handler = async (event, context) => {
 
       // Get sessions from training_sessions table
       // Include both rpe and intensity_level (fallback for RPE)
+      // Note: athlete_id is the canonical user reference column (NOT NULL)
       let { data: sessions, error: sessErr } = await supabaseAdmin // eslint-disable-line prefer-const
         .from("training_sessions")
         .select("session_date, date, duration_minutes, rpe, intensity_level")
-        .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+        .eq("athlete_id", athleteId)
         .gte("session_date", startChronic.toISOString().slice(0, 10))
         .lte("session_date", dayStr);
 
@@ -198,7 +199,7 @@ exports.handler = async (event, context) => {
         const { data: altSessions, error: altErr } = await supabaseAdmin
           .from("training_sessions")
           .select("session_date, date, duration_minutes, rpe, intensity_level")
-          .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+          .eq("athlete_id", athleteId)
           .gte("date", startChronic.toISOString().slice(0, 10))
           .lte("date", dayStr);
 

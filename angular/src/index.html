@@ -12,13 +12,18 @@
       name="description"
       content="Professional flag football training and performance tracking platform"
     />
-    <meta name="theme-color" content="#3B82F6" />
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#10b981" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
     />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+    
+    <!-- Prevent zoom on iOS Safari (already handled in CSS, but belt-and-suspenders) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
 
     <!-- Favicon -->
     <link
@@ -31,7 +36,16 @@
     />
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Performance Optimization: Preload Critical Resources -->
+    <link rel="preload" href="assets/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/poppins-semibold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/poppins-bold.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- Preload critical scripts for faster initial render -->
+    <link rel="modulepreload" href="main.js" />
+    <link rel="modulepreload" href="polyfills.js" />
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,11 +53,9 @@
     <link rel="preconnect" href="https://*.supabase.co" />
     <link rel="dns-prefetch" href="https://*.supabase.co" />
 
-    <!-- Fonts with display=swap for better CLS -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts are now hosted locally in assets/fonts/poppins.css -->
+    <!-- CRITICAL FIX: Using local Poppins font to fix missing 's' characters issue -->
+    <!-- The font is imported in styles.scss and will work on both local dev and production (Netlify) -->
   </head>
   <body>
     <app-root></app-root>

@@ -15,6 +15,7 @@ import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../../core/services/logger.service";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MobileOptimizedImageDirective } from "../../directives/mobile-optimized-image.directive";
 
 export interface ImageUploadResult {
   file: File;
@@ -32,7 +33,7 @@ export interface ImageUploadResult {
   selector: "app-image-upload",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarModule, MessageModule, ButtonComponent],
+  imports: [CommonModule, ProgressBarModule, MessageModule, ButtonComponent, MobileOptimizedImageDirective],
   template: `
     <div [class]="containerClass()">
       <!-- Upload Area -->
@@ -71,6 +72,10 @@ export interface ImageUploadResult {
         <div class="image-preview-container">
           <div class="image-preview-wrapper">
             <img
+              appMobileOptimized
+              [width]="maxWidth()"
+              [height]="maxHeight()"
+              [lazy]="false"
               [src]="uploadedImage()!.preview"
               [alt]="uploadedImage()!.file.name"
               class="preview-image"

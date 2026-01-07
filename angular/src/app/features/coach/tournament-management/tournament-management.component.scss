@@ -7,6 +7,24 @@
   gap: var(--space-4);
 }
 
+.rsvp-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.payment-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
 // Tab Navigation
 .tab-navigation {
   display: flex;

@@ -629,7 +629,6 @@ export class TrainingScheduleComponent implements OnInit {
           !actualDates.has(`${s.date.toISOString().split("T")[0]}-${s.type}`),
       );
 
-      // IMPORTANT: Prioritize templates over test data
       // If we have scheduled templates, show ONLY those + completed/in-progress actual sessions
       // This prevents generic test sessions from overriding the 52-week program
       let allSessions: TrainingSession[];

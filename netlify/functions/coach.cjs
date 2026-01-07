@@ -451,11 +451,34 @@ async function getTrainingAnalytics(userId, coachId) {
 /**
  * Create training session
  * Note: This is a WRITE operation, not subject to consent reading rules
+ * Contract: Section 3.2 - Coach Modification APIs
  */
-async function createTrainingSession(userId, sessionData) {
+async function createTrainingSession(userId, sessionData, requestInfo = {}) {
   try {
+    // Verify coach role
+    const { getUserRole, requireRole, logViolation } = require("./utils/authorization-guard.cjs");
+    const roleCheck = await requireRole(userId, ['coach', 'admin']);
+    
+    if (!roleCheck.authorized) {
+      await logViolation(
+        userId,
+        null,
+        "session",
+        "create",
+        "INSUFFICIENT_PERMISSIONS",
+        "Coach role required",
+        requestInfo
+      );
+      throw new Error("Insufficient permissions: coach role required");
+    }
+
+    const targetUserId = sessionData.userId || sessionData.user_id;
+    if (!targetUserId) {
+      throw new Error("user_id is required");
+    }
+
     const session = {
-      user_id: sessionData.userId || sessionData.user_id,
+      user_id: targetUserId,
       session_date:
         sessionData.sessionDate ||
         sessionData.session_date ||
@@ -467,6 +490,9 @@ async function createTrainingSession(userId, sessionData) {
         sessionData.durationMinutes || sessionData.duration_minutes || 60,
       notes: sessionData.notes || "",
       created_by: userId, // Coach who created it
+      modified_by_coach_id: userId, // Set coach attribution
+      session_state: "PLANNED", // Set initial state
+      coach_locked: false, // New sessions are not locked by default
     };
 
     const { data, error } = await supabaseAdmin

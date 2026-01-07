@@ -1,0 +1,18 @@
+<div class="acwr-baseline">
+  <div class="acwr-header">
+    <span class="acwr-label">{{ label() }}</span>
+    <span class="acwr-progress-text">
+      Building baseline: {{ daysLogged() }}/{{ targetDays() }} days
+    </span>
+  </div>
+  
+  <p-progressBar 
+    [value]="progressPercent()" 
+    [showValue]="false"
+    styleClass="acwr-progress-bar"
+  ></p-progressBar>
+  
+  <p class="acwr-hint">
+    Keep logging to unlock injury-risk insights
+  </p>
+</div>

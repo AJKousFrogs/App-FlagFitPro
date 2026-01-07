@@ -54,13 +54,17 @@ import {
   WeekProgressStripComponent,
 } from "../training/daily-protocol/components/week-progress-strip.component";
 import { WellnessCheckinComponent } from "../training/daily-protocol/components/wellness-checkin.component";
-import { DailyProtocol } from "../training/daily-protocol/daily-protocol.models";
+import { DailyProtocol, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
+import { resolveTodayState, ProtocolJson, TodayViewModel } from "../../today/resolution/today-state.resolver";
+import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
+import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
 
 // Services
 import { DataSourceService } from "../../core/services/data-source.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { ApiService } from "../../core/services/api.service";
 
 // Types
 type DayPhase = "morning" | "midday" | "evening";
@@ -112,6 +116,8 @@ interface QuickFormData {
     WeekProgressStripComponent,
     ButtonComponent,
     TodaysScheduleComponent,
+    AppBannerComponent,
+    AcwrBaselineComponent,
   ],
   providers: [MessageService],
   animations: [
@@ -955,6 +961,109 @@ interface QuickFormData {
       }
 
       /* --------------------------------------------------------------------------
+       COACH ATTRIBUTION & ALERT GATE
+       -------------------------------------------------------------------------- */
+      .coach-attribution {
+        margin-bottom: var(--space-4);
+      }
+
+      .attribution-card {
+        background: var(--surface-tertiary);
+        border-left: 3px solid var(--ds-primary-green);
+      }
+
+      .attribution-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .attribution-content i {
+        color: var(--ds-primary-green);
+      }
+
+      .attribution-time {
+        margin-left: auto;
+        font-size: var(--font-body-xs);
+        color: var(--color-text-muted);
+      }
+
+      .coach-alert-gate {
+        margin-bottom: var(--space-4);
+      }
+
+      .alert-gate-card {
+        background: var(--color-status-warning-light);
+        border: 2px solid var(--color-status-warning);
+      }
+
+      .alert-gate-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .alert-gate-icon {
+        font-size: var(--icon-xl);
+        color: var(--color-status-warning);
+        flex-shrink: 0;
+      }
+
+      .alert-gate-text {
+        flex: 1;
+      }
+
+      .alert-gate-text h3 {
+        margin: 0 0 var(--space-1);
+        font-size: var(--font-heading-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+
+      .alert-gate-text p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .banners-section {
+        margin-bottom: var(--space-4);
+      }
+
+      .acwr-section {
+        margin-bottom: var(--space-4);
+      }
+
+      .welcome-stats {
+        margin-top: var(--space-2);
+        display: flex;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-2);
+        font-size: var(--font-body-sm);
+      }
+
+      .stat-item .stat-label {
+        color: var(--color-text-secondary);
+      }
+
+      .stat-item .stat-value {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+
+      .stat-item .stat-value.logged {
+        color: var(--ds-primary-green);
+      }
+
+      /* --------------------------------------------------------------------------
        TOMORROW'S TRAINING PREVIEW
        -------------------------------------------------------------------------- */
       .tomorrow-loading {
@@ -1056,11 +1165,14 @@ export class TodayComponent {
   private readonly messageService = inject(MessageService);
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly api = inject(ApiService);
 
   // ============================================================================
   // STATE SIGNALS
   // ============================================================================
   readonly protocol = signal<Partial<DailyProtocol> | null>(null);
+  readonly protocolJson = signal<ProtocolJson | null>(null); // Raw JSON from API
+  readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
   readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentTime = signal(new Date());
@@ -1248,6 +1360,17 @@ export class TodayComponent {
     return severityMap[this.readinessLevel()] ?? "secondary";
   });
 
+  // Computed signals for template use
+  readonly hasAlertBanner = computed(() => {
+    const banners = this.todayViewModel()?.banners ?? [];
+    return banners.some(b => b.type === 'alert' && b.text.includes('Acknowledgment required'));
+  });
+
+  readonly alertBannerText = computed(() => {
+    const banners = this.todayViewModel()?.banners ?? [];
+    return banners.find(b => b.type === 'alert')?.text ?? '';
+  });
+
   readonly tomorrowDate = computed(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1325,26 +1448,116 @@ export class TodayComponent {
   }
 
   // ============================================================================
-  // DATA LOADING
+  // DATA LOADING (Contract-Compliant)
   // ============================================================================
+  /**
+   * Load TODAY data per contract:
+   * 1. Call GET /api/daily-protocol?date=today
+   * 2. If not found, call POST /api/daily-protocol/generate once, then GET again
+   * 3. Resolve state using deterministic resolver
+   * 4. Do NOT generate multiple times
+   * 5. Do NOT fabricate fallback UI if generation fails
+   */
   private loadTodayData(): void {
-    this.trainingService
-      .getTodayOverview()
+    const today = new Date().toISOString().split("T")[0];
+    let generationAttempted = false;
+    
+    // Step 1: Try GET first
+    this.api
+      .get<{ success: boolean; data?: ProtocolJson }>(`/api/daily-protocol?date=${today}`)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => {
-          this.protocol.set(
-            (data?.protocol?.data as Partial<DailyProtocol>) ?? null,
-          );
-          this.error.set(null);
+        next: (response) => {
+          if (response?.success && response.data) {
+            // Protocol found, resolve state
+            const protocolData = response.data as ProtocolJson;
+            this.protocolJson.set(protocolData);
+            this.resolveAndUpdateViewModel(protocolData);
+            this.error.set(null);
+          } else if (!generationAttempted) {
+            // Protocol not found, generate once
+            generationAttempted = true;
+            this.generateAndLoadProtocol(today);
+          } else {
+            // Generation already attempted, show error
+            this.error.set(
+              "Unable to generate your training plan. Please contact support.",
+            );
+            this.protocolJson.set(null);
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
         },
         error: (err) => {
           this.logger.error("Failed to load today data", err);
-          this.error.set(
-            "Failed to load your training data. Please try again.",
-          );
+          if (!generationAttempted) {
+            generationAttempted = true;
+            this.generateAndLoadProtocol(today);
+          } else {
+            this.error.set(
+              "Failed to load your training data. Please try again.",
+            );
+            this.protocolJson.set(null);
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
         },
       });
+  }
+  
+  /**
+   * Generate protocol and then reload
+   */
+  private generateAndLoadProtocol(date: string): void {
+    this.isGeneratingProtocol.set(true);
+    
+    this.api
+      .post<{ success: boolean; data?: ProtocolJson }>("/api/daily-protocol/generate", { date })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.isGeneratingProtocol.set(false);
+          if (response?.success) {
+            // Generation succeeded, reload via GET
+            this.loadTodayData();
+          } else {
+            // Generation failed, show explicit error
+            this.error.set(
+              "Unable to generate your training plan. Please contact support.",
+            );
+            this.protocolJson.set(null);
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
+        },
+        error: (err) => {
+          this.logger.error("Failed to generate protocol", err);
+          this.isGeneratingProtocol.set(false);
+          this.error.set(
+            "Failed to generate your training plan. Please contact support.",
+          );
+          this.protocolJson.set(null);
+          this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+        },
+      });
+  }
+  
+  /**
+   * Resolve protocol JSON to TodayViewModel and update signals
+   */
+  private resolveAndUpdateViewModel(protocolJson: ProtocolJson): void {
+    const viewModel = resolveTodayState(protocolJson, this.currentTime());
+    this.todayViewModel.set(viewModel);
+    
+    // Also update protocol signal for backward compatibility (if needed)
+    // Convert ProtocolJson to DailyProtocol format if needed
+    if (protocolJson.blocks) {
+      // Map protocolJson to DailyProtocol structure
+      // This is a simplified mapping - adjust based on actual API response structure
+      this.protocol.set({
+        id: protocolJson.id,
+        protocolDate: protocolJson.protocol_date,
+        readinessScore: protocolJson.readiness_score ?? undefined,
+        acwrValue: protocolJson.acwr_value ?? undefined,
+      } as Partial<DailyProtocol>);
+    }
   }
 
   refreshProtocol(): void {
@@ -1563,5 +1776,303 @@ export class TodayComponent {
 
   navigateToWellness(): void {
     this.router.navigate(["/wellness"]);
+  }
+
+  // ============================================================================
+  // CTA HANDLERS (Contract-Compliant)
+  // ============================================================================
+  /**
+   * Handle CTA actions from TodayViewModel banners and CTAs
+   * Maps action IDs to component methods
+   */
+  handleCta(actionId: string): void {
+    switch (actionId) {
+      case 'open_checkin':
+      case 'start_checkin':
+      case 'update_checkin':
+        this.scrollToWellness();
+        break;
+        
+      case 'start_training':
+      case 'start_training_anyway':
+      case 'continue_anyway':
+        // Scroll to first block or start first block
+        this.scrollToFirstBlock();
+        break;
+        
+      case 'view_practice_details':
+        // TODO: Navigate to practice details or show modal
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Practice Details',
+          detail: 'Practice details view coming soon',
+        });
+        break;
+        
+      case 'view_film_room_details':
+        // TODO: Navigate to film room details
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Film Room',
+          detail: 'Film room details view coming soon',
+        });
+        break;
+        
+      case 'view_rehab':
+      case 'view_rehab_details':
+        // TODO: Navigate to rehab details
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Rehab Protocol',
+          detail: 'Rehab details view coming soon',
+        });
+        break;
+        
+      case 'contact_coach':
+        // TODO: Open coach contact/messaging
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Contact Coach',
+          detail: 'Coach messaging coming soon',
+        });
+        break;
+        
+      case 'contact_physio':
+        // TODO: Open physio contact
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Contact Physio',
+          detail: 'Physio contact coming soon',
+        });
+        break;
+        
+      case 'view_taper':
+      case 'view_taper_plan':
+        // TODO: Navigate to taper plan
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Taper Plan',
+          detail: 'Taper plan view coming soon',
+        });
+        break;
+        
+      case 'log_session':
+        // TODO: Open session logging
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Log Session',
+          detail: 'Session logging coming soon',
+        });
+        break;
+        
+      case 'read_coach_alert':
+        // Show coach alert modal/dialog
+        this.showCoachAlertDialog();
+        break;
+        
+      case 'acknowledge_coach_alert':
+        this.acknowledgeCoachAlert();
+        break;
+        
+      case 'view_coach_note':
+        // Show coach note modal
+        this.showCoachNoteDialog();
+        break;
+        
+      default:
+        this.logger.warn(`Unknown CTA action: ${actionId}`);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Action Not Available',
+          detail: 'This action is not yet implemented',
+        });
+    }
+  }
+  
+  private scrollToFirstBlock(): void {
+    const firstBlock = document.querySelector('[data-block-type]');
+    if (firstBlock) {
+      firstBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  
+  private showCoachAlertDialog(): void {
+    const vm = this.todayViewModel();
+    const protocol = this.protocolJson();
+    
+    if (!vm || !protocol) {
+      return;
+    }
+    
+    // Show coach alert message in a dialog or toast
+    const alertMessage = protocol.coach_alert_message || 'Coach has updated your plan.';
+    const coachName = protocol.modified_by_coach_name || 'Your coach';
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: `Coach Alert from ${coachName}`,
+      detail: alertMessage,
+      life: 10000, // Show for 10 seconds
+    });
+    
+    // If there's a coach note, show that too
+    if (protocol.coach_note?.content) {
+      const noteContent = protocol.coach_note.content;
+      setTimeout(() => {
+        this.messageService.add({
+          severity: 'info',
+          summary: `Coach Note from ${coachName}`,
+          detail: noteContent,
+          life: 10000,
+        });
+      }, 500);
+    }
+  }
+  
+  private acknowledgeCoachAlert(): void {
+    const vm = this.todayViewModel();
+    const protocol = this.protocolJson();
+    
+    if (!vm || !protocol || !protocol.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Unable to acknowledge alert. Please refresh the page.',
+      });
+      return;
+    }
+    
+    const alertId = protocol.id;
+    const sessionDate = protocol.protocol_date || new Date().toISOString().split('T')[0];
+    
+    // Call backend endpoint to acknowledge coach alert
+    this.api
+      .post<{ success: boolean; data?: any; error?: string; code?: string }>(
+        `/api/coach-alerts/${alertId}/acknowledge`,
+        { sessionDate }
+      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          if (response?.success) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Alert Acknowledged',
+              detail: 'You can now proceed with training',
+            });
+            // Refresh protocol to update state
+            this.loadTodayData();
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: response?.error || 'Failed to acknowledge alert',
+            });
+          }
+        },
+        error: (err) => {
+          this.logger.error('Failed to acknowledge coach alert', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to acknowledge alert. Please try again.',
+          });
+        },
+      });
+  }
+  
+  private showCoachNoteDialog(): void {
+    // TODO: Show coach note in dialog
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Coach Note',
+      detail: 'Coach note view coming soon',
+    });
+  }
+  
+  // ============================================================================
+  // COMPUTED HELPERS FOR TEMPLATE
+  // ============================================================================
+  readonly todayDateLabel = computed(() => {
+    return new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+    });
+  });
+  
+  readonly readinessDisplay = computed(() => {
+    const vm = this.todayViewModel();
+    const protocol = this.protocolJson();
+    
+    if (!vm || !protocol) {
+      return { value: '—', logged: false };
+    }
+    
+    const score = protocol.readiness_score;
+    if (score === null || score === undefined) {
+      return { value: '—', logged: false };
+    }
+    
+    // Check if logged today (from confidence metadata)
+    const logged = protocol.confidence_metadata?.readiness?.daysStale === 0;
+    
+    return {
+      value: `${score}`,
+      logged,
+    };
+  });
+  
+  // ============================================================================
+  // TEMPLATE HELPERS
+  // ============================================================================
+  /**
+   * Get block by type from DailyProtocol
+   */
+  getBlockByType(protocol: Partial<DailyProtocol>, blockType: string): ProtocolBlock | null {
+    if (!protocol) return null;
+    
+    const blockMap: Record<string, keyof DailyProtocol> = {
+      'morning_mobility': 'morningMobility',
+      'foam_roll': 'foamRoll',
+      'main_session': 'mainSession',
+      'recovery': 'eveningRecovery',
+      'evening_recovery': 'eveningRecovery',
+    };
+    
+    const prop = blockMap[blockType];
+    if (!prop) return null;
+    
+    return (protocol[prop] as ProtocolBlock) || null;
+  }
+  
+  /**
+   * Format coach modification timestamp
+   */
+  formatCoachTimestamp(timestamp: string): string {
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      
+      if (diffHours < 24) {
+        const hours = Math.floor(diffHours);
+        if (hours === 0) {
+          const minutes = Math.floor(diffMs / (1000 * 60));
+          return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+        }
+        return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+      }
+      
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    } catch {
+      return timestamp;
+    }
   }
 }

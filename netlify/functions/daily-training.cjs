@@ -709,15 +709,17 @@ function getCoachingNotes(season, sessionType) {
 
 /**
  * Update training progress
+ * Contract: Section 3.3 - Logging APIs (execution logging only)
  */
-async function updateTrainingProgress(userId, updates) {
+async function updateTrainingProgress(userId, updates, requestInfo = {}) {
   try {
+    const { requireAuthorization, logViolation } = require("./utils/authorization-guard.cjs");
     const today = new Date().toISOString().split("T")[0];
 
     // Check if there's an existing session for today
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from("training_sessions")
-      .select("id")
+      .select("id, session_state, coach_locked")
       .eq("user_id", userId)
       .eq("scheduled_date", today)
       .single();
@@ -727,7 +729,21 @@ async function updateTrainingProgress(userId, updates) {
     }
 
     if (existing) {
-      // Update existing session
+      // Check authorization for update (execution logging)
+      const authCheck = await requireAuthorization(
+        userId,
+        existing.id,
+        "session",
+        "update",
+        "execution",
+        requestInfo
+      );
+
+      if (!authCheck.success) {
+        return { success: false, message: authCheck.error.body || "Authorization failed" };
+      }
+
+      // Update existing session (execution data only)
       const { error: updateError } = await supabaseAdmin
         .from("training_sessions")
         .update({
@@ -737,18 +753,32 @@ async function updateTrainingProgress(userId, updates) {
         .eq("id", existing.id);
 
       if (updateError) {
+        // Check if error is from trigger
+        if (updateError.message && updateError.message.includes("Cannot modify")) {
+          await logViolation(
+            userId,
+            existing.id,
+            "session",
+            "update",
+            "DB_TRIGGER_REJECTED",
+            updateError.message,
+            requestInfo
+          );
+        }
         throw updateError;
       }
 
       return { success: true, message: "Progress updated" };
     } else {
-      // Create new session
+      // Create new session (athletes can create their own sessions)
       const { error: insertError } = await supabaseAdmin
         .from("training_sessions")
         .insert({
           user_id: userId,
           scheduled_date: today,
           status: "in_progress",
+          session_state: "IN_PROGRESS",
+          coach_locked: false,
           ...updates,
         });
 

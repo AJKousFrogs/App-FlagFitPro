@@ -310,7 +310,6 @@ const EVIDENCE_BASE: Record<string, EvidenceReference> = {
  * 5. Peak for major tournaments
  */
 const ANNUAL_PHASES: Record<string, PhaseConfig> = {
-  // ========================================
   // NOVEMBER: Active Recovery / Off-Season Rest
   // ========================================
   november_recovery: {
@@ -367,7 +366,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     evidenceBase: [EVIDENCE_BASE["bompa_2009"]],
   },
 
-  // ========================================
   // DECEMBER: Foundation / General Preparation
   // ========================================
   december_foundation: {
@@ -440,7 +438,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     ],
   },
 
-  // ========================================
   // JANUARY: Strength Accumulation
   // ========================================
   january_strength: {
@@ -515,7 +512,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     ],
   },
 
-  // ========================================
   // FEBRUARY: Power Development
   // ========================================
   february_power: {
@@ -589,7 +585,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     ],
   },
 
-  // ========================================
   // MARCH: Speed & Explosive Phase
   // ========================================
   march_explosive: {
@@ -727,7 +722,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     ],
   },
 
-  // ========================================
   // JULY: Mid-Season Reload / Extra Base Building
   // ========================================
   july_reload: {
@@ -800,7 +794,6 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
     ],
   },
 
-  // ========================================
   // AUGUST: World Championship Prep / Peak Phase
   // ========================================
   august_peak: {

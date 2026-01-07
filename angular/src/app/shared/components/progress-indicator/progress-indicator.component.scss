@@ -141,6 +141,25 @@
   color: var(--text-secondary, #6b7280);
 }
 
+/* Time Estimate */
+.time-estimate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  margin-top: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  background: var(--surface-secondary, #f9fafb);
+  border-radius: var(--radius-md, 0.5rem);
+  font-size: var(--font-body-sm, 0.875rem);
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: var(--font-weight-medium);
+}
+
+.time-estimate i {
+  color: var(--ds-primary-green, #089949);
+  font-size: var(--font-body-md, 1rem);
+}
+
 /* Size variants */
 .progress-sm .progress-label {
   font-size: var(--font-body-sm, 0.875rem);

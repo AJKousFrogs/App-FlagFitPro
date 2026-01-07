@@ -8,7 +8,7 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";
@@ -28,6 +28,7 @@ import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 /**
  * Interface for consent information returned from API
@@ -57,7 +58,9 @@ interface TeamMember {
     CardModule,
     ButtonComponent,
     IconButtonComponent,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     TableModule,
     TagModule,
     DialogModule,
@@ -110,11 +113,11 @@ interface TeamMember {
               <h3>Team Performance Overview</h3>
             </ng-template>
             @if (teamChartData()) {
-              <p-chart
+              <app-lazy-chart
                 type="line"
                 [data]="teamChartData()"
                 [options]="chartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             }
           </p-card>
         } @placeholder {

@@ -1,6 +1,8 @@
 /**
  * Roster Player Form Dialog Component
  * Add/Edit player dialog
+ * 
+ * Enhanced with Form Error Summary (WCAG 2.1 AA)
  */
 import {
   Component,
@@ -10,6 +12,7 @@ import {
   OnChanges,
   SimpleChanges,
   ChangeDetectionStrategy,
+  computed,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -23,6 +26,8 @@ import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { FormErrorSummaryComponent, FormError } from "../../../shared/components/form-error-summary/form-error-summary.component";
+import { FormErrorService } from "../../../core/services/form-error.service";
 import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 export interface PlayerFormData {
@@ -51,6 +56,7 @@ export interface PlayerFormData {
 
     ButtonComponent,
     IconButtonComponent,
+    FormErrorSummaryComponent,
   ],
   template: `
     <p-dialog
@@ -61,6 +67,12 @@ export interface PlayerFormData {
       [style]="{ width: '550px' }"
       [closable]="true"
     >
+      <!-- Form Error Summary (WCAG 2.1 AA) -->
+      <app-form-error-summary
+        [errors]="formErrors()"
+        (scrollToField)="scrollToField($event)"
+      />
+      
       <form [formGroup]="playerForm" class="player-form">
         <div class="form-field">
           <label for="roster-player-name">Full Name *</label>
@@ -69,10 +81,11 @@ export interface PlayerFormData {
             id="roster-player-name"
             name="name"
             formControlName="name"
-            placeholder="Enter player name"
+            placeholder="e.g., John Smith"
             class="w-full"
             autocomplete="name"
           />
+          <small class="field-hint">First and last name</small>
         </div>
 
         <div class="form-row">
@@ -84,7 +97,7 @@ export interface PlayerFormData {
               [options]="positionOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select position"
+              placeholder="Select primary position"
               styleClass="w-full"
             ></p-select>
           </div>
@@ -96,10 +109,11 @@ export interface PlayerFormData {
               id="roster-player-jersey"
               name="jersey"
               formControlName="jersey"
-              placeholder="00"
+              placeholder="00-99"
               class="w-full"
               autocomplete="off"
             />
+            <small class="field-hint">Number between 0-99</small>
           </div>
         </div>
 
@@ -111,7 +125,7 @@ export interface PlayerFormData {
               id="roster-player-country"
               name="country"
               formControlName="country"
-              placeholder="Country"
+              placeholder="e.g., United States"
               class="w-full"
               autocomplete="country-name"
             />
@@ -124,6 +138,7 @@ export interface PlayerFormData {
               formControlName="age"
               [min]="16"
               [max]="60"
+              placeholder="16-60"
               styleClass="w-full"
             ></p-inputNumber>
           </div>
@@ -137,10 +152,11 @@ export interface PlayerFormData {
               id="roster-player-height"
               name="height"
               formControlName="height"
-              placeholder="e.g., 6'2&quot;"
+              placeholder="e.g., 6'2&quot; or 188cm"
               class="w-full"
               autocomplete="off"
             />
+            <small class="field-hint">Format: 6'2" or 188cm</small>
           </div>
 
           <div class="form-field">
@@ -150,10 +166,11 @@ export interface PlayerFormData {
               id="roster-player-weight"
               name="weight"
               formControlName="weight"
-              placeholder="e.g., 210 lbs"
+              placeholder="e.g., 210 lbs or 95kg"
               class="w-full"
               autocomplete="off"
             />
+            <small class="field-hint">Format: 210 lbs or 95kg</small>
           </div>
         </div>
 
@@ -166,10 +183,11 @@ export interface PlayerFormData {
                 id="roster-player-email"
                 name="email"
                 formControlName="email"
-                placeholder="player@email.com"
+                placeholder="player@example.com"
                 class="w-full"
                 autocomplete="email"
               />
+              <small class="field-hint">Must be a valid email address</small>
             </div>
 
             <div class="form-field">
@@ -179,7 +197,7 @@ export interface PlayerFormData {
                 id="roster-player-phone"
                 name="phone"
                 formControlName="phone"
-                placeholder="+1 234 567 8900"
+                placeholder="+1 234-567-8900"
                 class="w-full"
                 autocomplete="tel"
               />
@@ -222,6 +240,7 @@ export interface PlayerFormData {
 })
 export class RosterPlayerFormDialogComponent implements OnChanges {
   private fb = inject(FormBuilder);
+  private formErrorService = inject(FormErrorService);
 
   // Inputs
   visible = input<boolean>(false);
@@ -251,6 +270,78 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
   positionOptions = POSITION_OPTIONS;
   statusOptions = STATUS_OPTIONS;
 
+  // Computed: Form errors for error summary
+  formErrors = computed<FormError[]>(() => {
+    const errors: FormError[] = [];
+    const form = this.playerForm;
+
+    // Only show errors after form is touched/submitted
+    if (!form.touched && !form.dirty) {
+      return errors;
+    }
+
+    // Name validation
+    const nameControl = form.get('name');
+    if (nameControl?.invalid && (nameControl.dirty || nameControl.touched)) {
+      if (nameControl.errors?.['required']) {
+        errors.push({
+          field: 'roster-player-name',
+          fieldLabel: 'Full Name',
+          message: 'Player name is required',
+          suggestion: 'Enter the player\'s full name (first and last)'
+        });
+      } else if (nameControl.errors?.['minlength']) {
+        errors.push({
+          field: 'roster-player-name',
+          fieldLabel: 'Full Name',
+          message: 'Name must be at least 2 characters',
+        });
+      }
+    }
+
+    // Position validation
+    const positionControl = form.get('position');
+    if (positionControl?.invalid && (positionControl.dirty || positionControl.touched)) {
+      errors.push({
+        field: 'roster-player-position',
+        fieldLabel: 'Position',
+        message: 'Position is required',
+        suggestion: 'Select the player\'s primary position on the field'
+      });
+    }
+
+    // Jersey validation
+    const jerseyControl = form.get('jersey');
+    if (jerseyControl?.invalid && (jerseyControl.dirty || jerseyControl.touched)) {
+      errors.push({
+        field: 'roster-player-jersey',
+        fieldLabel: 'Jersey Number',
+        message: 'Jersey number is required',
+        suggestion: 'Enter a number between 0-99'
+      });
+    }
+
+    // Email validation
+    const emailControl = form.get('email');
+    if (emailControl?.invalid && emailControl.value && (emailControl.dirty || emailControl.touched)) {
+      errors.push({
+        field: 'roster-player-email',
+        fieldLabel: 'Email Address',
+        message: 'Enter a valid email address',
+        suggestion: 'Format: player@example.com'
+      });
+    }
+
+    return errors;
+  });
+
+  /**
+   * Scroll to field with error
+   */
+  scrollToField(fieldId: string): void {
+    this.formErrorService.scrollToField(fieldId);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["editingPlayer"] || changes["visible"]) {
       const player = this.editingPlayer();
@@ -276,6 +367,11 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
   onSave(): void {
     if (this.playerForm.valid) {
       this.save.emit(this.playerForm.value as PlayerFormData);
+    } else {
+      // Mark all fields as touched to trigger error display
+      Object.keys(this.playerForm.controls).forEach(key => {
+        this.playerForm.get(key)?.markAsTouched();
+      });
     }
   }
 }

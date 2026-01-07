@@ -40,6 +40,7 @@ import {
 } from "../../shared/components/ui-components";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 @Component({
   selector: "app-settings",
@@ -59,6 +60,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     CardComponent,
     MainLayoutComponent,
     PageHeaderComponent,
+    MobileOptimizedImageDirective,
     PasswordModule,
     DialogModule,
     DividerModule,
@@ -715,7 +717,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.isDeletingAccount.set(true);
 
     try {
-      // Note: Account deletion requires a Supabase Edge Function or admin API
       // For now, we'll sign out and show a message
       // In production, implement a proper account deletion flow
 

@@ -9,6 +9,48 @@
   margin: 0 auto;
 }
 
+/* Protocol Dashboard */
+.protocol-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.supp-purpose {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.supp-timing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}
+
+.driver-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.car-protocol-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
 // ===== Planning Section =====
 .planning-section {
   display: grid;
@@ -69,6 +111,16 @@
     border-color: var(--ds-primary-green);
     background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
     box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
+  }
+
+  &.la28.selected {
+    border-color: var(--ds-primary-green);
+    background: rgba(8, 153, 73, 0.1);
+  }
+
+  &.brisbane.selected {
+    border-color: var(--ds-primary-green);
+    background: rgba(8, 153, 73, 0.1);
   }
 
   .olympic-btn-content {

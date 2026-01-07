@@ -892,7 +892,6 @@ const CURATED_INSTAGRAM_VIDEOS: InstagramVideo[] = [
     isReel: true,
   },
 
-  // ============================================================================
   // TWITCHES (FAST TWITCH MUSCLE FIBER TRAINING)
   // ============================================================================
   {

@@ -635,7 +635,7 @@
 }
 
 /* ================================================================
-   RESPONSIVE
+   RESPONSIVE - Mobile Optimized (Chrome & Safari)
    ================================================================ */
 
 /* Tablet breakpoint */
@@ -643,66 +643,420 @@
   .form-row.four-col {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  .quick-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-/* Mobile breakpoint */
+/* Mobile breakpoint - PRIMARY (Chrome & Safari) */
 @media (max-width: 768px) {
   .game-tracker-page {
-    padding: var(--space-4);
+    padding: var(--space-3);
   }
 
   .header-actions {
     width: 100%;
     flex-direction: column;
+    gap: var(--space-2);
+
+    app-button {
+      width: 100%;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px; // Apple HIG touch target
+      }
+    }
   }
+
+  // ================================================================
+  // FORM MOBILE OPTIMIZATIONS
+  // ================================================================
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 
   .form-row.four-col,
   .form-row.three-col,
   .form-row.two-col {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .form-field {
+    label {
+      font-size: var(--font-body-2xs);
+    }
+
+    // Larger form controls for touch
+    :global(input),
+    :global(select),
+    :global(textarea),
+    :global(.p-inputtext),
+    :global(.p-select) {
+      min-height: 44px;
+      font-size: 16px !important; // Prevent iOS zoom
+      padding: var(--space-2) var(--space-3);
+    }
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
+    margin-top: var(--space-4);
+
+    app-button {
+      width: 100%;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+      }
+    }
+  }
+
+  // ================================================================
+  // PLAY TYPE SECTION - MOBILE STACK
+  // ================================================================
+
+  .play-type-section {
+    padding: var(--space-4);
+    margin: var(--space-4) 0;
   }
 
   .play-type-options {
     flex-direction: column;
     gap: var(--space-3);
+
+    .play-type-option {
+      padding: var(--space-2);
+      min-height: 44px; // Touch-friendly
+      
+      :global(.p-checkbox) {
+        width: 24px;
+        height: 24px;
+      }
+
+      .play-type-label-text {
+        font-size: var(--font-size-h4);
+      }
+    }
   }
+
+  // ================================================================
+  // GAME HEADER - MOBILE STACK
+  // ================================================================
 
   .game-header-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-4);
+
+    h3 {
+      font-size: var(--font-size-h3);
+    }
   }
 
   .score-display {
     width: 100%;
     justify-content: center;
+    padding: var(--space-3);
+    background: var(--surface-ground);
+    border-radius: var(--radius-md);
+
+    .score-group {
+      label {
+        font-size: var(--font-body-2xs);
+      }
+
+      :global(input) {
+        width: 60px;
+        text-align: center;
+        font-size: var(--font-size-h2);
+        min-height: 48px;
+      }
+    }
+
+    .score-separator {
+      font-size: var(--font-display-xs);
+    }
   }
+
+  // ================================================================
+  // QUICK STATS - MOBILE GRID
+  // ================================================================
 
   .quick-stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .stat-box {
+    padding: var(--space-3);
+    
+    .stat-label {
+      font-size: var(--font-body-2xs);
+    }
+
+    .stat-value {
+      font-size: var(--font-size-h3);
+    }
+  }
+
+  // ================================================================
+  // OUTCOME BUTTONS - MOBILE GRID
+  // ================================================================
+
+  .outcome-section {
+    margin-top: var(--space-4);
   }
 
   .outcome-buttons {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
   }
 
-  /* Temperature toggle on mobile */
+  .outcome-btn {
+    min-height: 56px; // Larger for touch
+    padding: var(--space-3);
+    font-size: var(--font-size-h4);
+
+    i {
+      font-size: var(--font-size-h3);
+    }
+  }
+
+  // ================================================================
+  // TABLE MOBILE SCROLL - CRITICAL FIX
+  // ================================================================
+
+  .games-list-card {
+    // Horizontal scroll container
+    :global(.p-datatable-wrapper) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch; // iOS smooth scrolling
+      
+      // Scroll shadow indicators (shows there's more content)
+      background: 
+        linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
+        linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
+        radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.15), transparent),
+        radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.15), transparent) 0 100%;
+      background-repeat: no-repeat;
+      background-color: var(--surface-card);
+      background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+      background-attachment: local, local, scroll, scroll;
+    }
+
+    // Force table to allow horizontal scroll
+    :global(table) {
+      min-width: 800px; // Minimum width to trigger scroll
+    }
+
+    // Sticky first column (Date) for context while scrolling
+    :global(th:first-child),
+    :global(td:first-child) {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--surface-card);
+      box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+    }
+
+    // Compact table cells
+    :global(th),
+    :global(td) {
+      padding: var(--space-2) var(--space-3) !important;
+      font-size: var(--font-size-h4) !important;
+      white-space: nowrap;
+    }
+
+    // Action buttons - touch-friendly
+    .action-cell {
+      gap: var(--space-1);
+
+      .action-btn {
+        min-width: 40px;
+        min-height: 40px;
+        padding: var(--space-2);
+      }
+    }
+
+    // Tags - smaller on mobile
+    :global(.p-tag) {
+      font-size: 10px !important;
+      padding: 4px 8px !important;
+    }
+  }
+
+  // ================================================================
+  // VISIBILITY BANNER - MOBILE COMPACT
+  // ================================================================
+
+  .visibility-info-banner {
+    padding: var(--space-3);
+    gap: var(--space-2);
+    font-size: var(--font-body-2xs);
+    flex-wrap: wrap;
+
+    .pi {
+      font-size: var(--font-size-h3);
+    }
+  }
+
+  // ================================================================
+  // TEMPERATURE TOGGLE - MOBILE
+  // ================================================================
+
   .unit-toggle-switch {
     justify-content: flex-start;
+    
+    .unit-label {
+      font-size: var(--font-body-2xs);
+    }
+
+    .toggle-track {
+      width: 48px;
+      height: 28px;
+    }
+
+    .toggle-thumb {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  // ================================================================
+  // PLAY DETAILS SECTION - MOBILE
+  // ================================================================
+
+  .play-details-section {
+    padding: var(--space-4);
+    margin-top: var(--space-4);
+
+    h4 {
+      font-size: var(--font-size-h4);
+      margin-bottom: var(--space-3);
+    }
+  }
+
+  // ================================================================
+  // DROP/MISS ANALYSIS - MOBILE
+  // ================================================================
+
+  .drop-analysis-section,
+  .miss-analysis-section {
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+
+    .form-field {
+      :global(input),
+      :global(select),
+      :global(textarea) {
+        font-size: 16px !important;
+      }
+    }
   }
 }
 
-/* Small mobile */
-@media (max-width: 480px) {
-  .form-actions {
-    flex-direction: column;
+/* ================================================================
+   EMPTY STATE CONTAINER
+   ================================================================ */
 
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+  min-height: 300px;
+}
+
+.empty-state-container i {
+  font-size: var(--font-size-metric-lg);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.empty-state-container p {
+  margin: 0;
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+/* Small mobile - Extra compact */
+@media (max-width: 480px) {
+  .game-tracker-page {
+    padding: var(--space-2);
+  }
+  
+  .empty-state-container {
+    padding: var(--space-6);
+    min-height: 200px;
+  }
+
+  .game-header-content {
+    padding: var(--space-3);
+
+    h3 {
+      font-size: var(--font-size-body);
+    }
+  }
+
+  .quick-stats-grid {
+    grid-template-columns: 1fr; // Single column on small phones
+    gap: var(--space-2);
+  }
+
+  .stat-box {
+    padding: var(--space-2);
+  }
+
+  .outcome-buttons {
+    grid-template-columns: 1fr; // Stack outcomes vertically
+  }
+
+  .form-actions {
     .btn-full-width {
       width: 100%;
       justify-content: center;
     }
+  }
+
+  // Smaller cards/sections
+  .game-form-card,
+  .play-tracker-card,
+  .plays-list-card,
+  .games-list-card {
+    margin-bottom: var(--space-3);
+    
+    :global(.p-card-body) {
+      padding: var(--space-3) !important;
+    }
+  }
+
+  .visibility-info-banner {
+    padding: var(--space-2);
+    font-size: 11px;
+  }
+}
+
+/* Landscape mode on phones */
+@media (max-width: 768px) and (orientation: landscape) {
+  .outcome-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .quick-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

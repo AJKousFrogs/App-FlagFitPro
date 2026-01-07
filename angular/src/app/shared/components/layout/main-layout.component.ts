@@ -12,6 +12,7 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
 import { BottomNavComponent } from "../bottom-nav/bottom-nav.component";
 import { OfflineBannerComponent } from "../offline-banner/offline-banner.component";
 import { KeyboardShortcutsModalComponent } from "../keyboard-shortcuts-modal/keyboard-shortcuts-modal.component";
+import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
 import { ThemeService } from "../../../core/services/theme.service";
 
 @Component({
@@ -26,6 +27,7 @@ import { ThemeService } from "../../../core/services/theme.service";
     BottomNavComponent,
     OfflineBannerComponent,
     KeyboardShortcutsModalComponent,
+    ScrollToTopComponent,
   ],
   template: `
     <!-- Offline Banner -->
@@ -46,6 +48,9 @@ import { ThemeService } from "../../../core/services/theme.service";
 
       <!-- Mobile Bottom Navigation -->
       <app-bottom-nav></app-bottom-nav>
+      
+      <!-- Scroll to Top Button (UX Audit Fix #10) -->
+      <app-scroll-to-top></app-scroll-to-top>
     </div>
 
     <!-- Keyboard Shortcuts Modal (Global) -->

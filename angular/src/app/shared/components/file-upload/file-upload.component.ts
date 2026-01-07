@@ -15,6 +15,7 @@ import { FileUploadModule } from "primeng/fileupload";
 import { HttpClient } from "@angular/common/http";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MobileOptimizedImageDirective } from "../../directives/mobile-optimized-image.directive";
 
 export interface UploadedFile {
   name: string;
@@ -39,7 +40,7 @@ export interface UploadedFile {
     ProgressBarModule,
     MessageModule,
     FileUploadModule,
-
+    MobileOptimizedImageDirective,
     ButtonComponent,
   ],
   template: `
@@ -124,7 +125,13 @@ export interface UploadedFile {
           @for (file of previewFiles(); track file.name) {
             <div class="preview-item">
               @if (isImageFile(file)) {
-                <img [src]="file.url" [alt]="file.name" />
+                <img
+                  appMobileOptimized
+                  [width]="200"
+                  [height]="200"
+                  [src]="file.url"
+                  [alt]="file.name"
+                />
               } @else if (isTextFile(file)) {
                 <pre>{{ filePreviewContent() }}</pre>
               }

@@ -7,7 +7,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ChartModule } from "primeng/chart";
+import { RouterModule } from "@angular/router";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import {
@@ -16,18 +17,84 @@ import {
   FlagMetrics,
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 @Component({
   selector: "app-flag-load",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TableModule, ChartModule],
+  imports: [CommonModule, RouterModule, CardModule, TableModule, LazyChartComponent],
   template: `
     <div
       class="flag-load-container bg-surface-primary p-6 rounded-lg shadow-medium"
     >
-      <!-- ACWR Table -->
-      <div class="acwr-section mb-8">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <div class="loading-state">
+          <div class="skeleton-grid">
+            @for (i of [1, 2]; track i) {
+              <div class="skeleton-card">
+                <div class="skeleton-header"></div>
+                <div class="skeleton-content">
+                  <div class="skeleton-line"></div>
+                  <div class="skeleton-line"></div>
+                  <div class="skeleton-line short"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @else if (!hasData()) {
+        <div class="empty-state-container">
+          <div class="empty-state-icon">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <h3>No Training Load Data Yet</h3>
+          <p>Start logging your training sessions to track your workload, ACWR, and flag football metrics.</p>
+          
+          <div class="empty-state-benefits">
+            <h4>What you'll see here:</h4>
+            <ul>
+              <li>
+                <i class="pi pi-check-circle"></i>
+                <div>
+                  <strong>ACWR Analysis</strong>
+                  <span>Track acute and chronic workload to prevent injury</span>
+                </div>
+              </li>
+              <li>
+                <i class="pi pi-check-circle"></i>
+                <div>
+                  <strong>4-Week Metrics</strong>
+                  <span>Visualize performance trends over time</span>
+                </div>
+              </li>
+              <li>
+                <i class="pi pi-check-circle"></i>
+                <div>
+                  <strong>Load Monitoring</strong>
+                  <span>Optimize training intensity and recovery</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="empty-state-cta">
+            <a routerLink="/training" class="cta-button">
+              <i class="pi pi-calendar"></i>
+              Go to Training Schedule
+            </a>
+          </div>
+        </div>
+      }
+
+      <!-- Data Content -->
+      @else {
+        <!-- ACWR Table -->
+        <div class="acwr-section mb-8">
         <h2 class="text-2xl font-bold text-text-primary mb-4">ACWR Analysis</h2>
         <div class="overflow-x-auto bg-white rounded-lg shadow-low">
           <table class="w-full">
@@ -103,10 +170,11 @@ import { LoggerService } from "../../core/services/logger.service";
           4-Week Flag Football Metrics
         </h2>
         <div class="bg-white rounded-lg shadow-low p-6">
-          <p-chart type="line" [data]="chartData()" [options]="chartOptions">
-          </p-chart>
+          <app-lazy-chart type="line" [data]="chartData()" [options]="chartOptions">
+          </app-lazy-chart>
         </div>
       </div>
+      }
     </div>
   `,
   styleUrl: "./flag-load.component.scss",
@@ -120,6 +188,8 @@ export class FlagLoadComponent implements OnInit {
 
   acwrData = signal<ACWRData[]>([]);
   flagMetrics = signal<FlagMetrics[]>([]);
+  isLoading = signal(true);
+  hasData = signal(false);
 
   chartData = signal<any>({
     labels: [],
@@ -146,20 +216,25 @@ export class FlagLoadComponent implements OnInit {
     const athleteId = this.athleteId();
     if (!athleteId) {
       this.logger.error("FlagLoadComponent: athleteId is required");
+      this.isLoading.set(false);
       return;
     }
 
     try {
+      this.isLoading.set(true);
       const acwr = await this.metricsService.getACWR(athleteId);
       const flag = await this.metricsService.get4WeekFlagMetrics(athleteId);
 
       this.acwrData.set(acwr);
       this.flagMetrics.set(flag);
+      this.hasData.set(acwr.length > 0 || flag.length > 0);
 
       // Update chart data
       this.updateChartData(flag);
     } catch (error) {
       this.logger.error("Error loading metrics:", error);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 

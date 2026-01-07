@@ -765,7 +765,7 @@ export class UnifiedTrainingService {
     const { data } = await this.supabase.client
       .from("training_sessions")
       .select("*")
-      .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+      .eq("athlete_id", userId)
       .eq("session_date", today)
       .eq("status", "scheduled")
       .order("start_time", { ascending: true, nullsFirst: false });

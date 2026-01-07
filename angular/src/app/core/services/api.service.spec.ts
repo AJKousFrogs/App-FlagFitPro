@@ -441,7 +441,6 @@ describe("ApiService", () => {
   // ============================================================================
 
   describe("Base URL Detection", () => {
-    // Note: These tests are skipped because window.location cannot be mocked
     // in Vitest without breaking other tests. The URL detection is tested
     // implicitly through integration tests.
     it.skip("should detect Netlify production URL", () => {

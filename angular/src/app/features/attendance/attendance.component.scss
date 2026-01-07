@@ -39,12 +39,11 @@
   }
 }
 
-// .stat-info/.stat-value/.stat-label REMOVED
-// Use .stat-block classes from card-shell instead
-// @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
-
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
+.filter-actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
 
 // .empty-state REMOVED - use .card-empty-state from card-shell
 // @see docs/CARD_SHELL_CONTRACT.md §8

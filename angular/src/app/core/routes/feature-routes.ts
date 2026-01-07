@@ -263,7 +263,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoFeedComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: false }, // Heavy component - load on demand
   },
   {
     path: "training/videos/curation",
@@ -280,7 +280,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoSuggestionComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" },
+    data: { preload: false }, // Load on demand
   },
   // Advanced tool redirects - consolidate orphaned routes
   {
@@ -326,7 +326,7 @@ export const trainingRoutes: Routes = [
         (m) => m.PeriodizationDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" },
+    data: { preload: false }, // Advanced feature - load on demand
   },
 ];
 
@@ -404,7 +404,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachActivityFeedComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Important for coach workflow
+    data: { preload: false }, // Load on demand
   },
   {
     path: "coach/analytics",
@@ -587,7 +587,7 @@ export const gameRoutes: Routes = [
         (m) => m.GameDayReadinessComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Critical for game days
+    data: { preload: false }, // Only needed on game days - load on demand
   },
   {
     path: "game/nutrition",
@@ -596,7 +596,7 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentNutritionComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Critical for tournament days
+    data: { preload: false }, // Only needed on tournament days - load on demand
   },
   {
     path: "travel/recovery",
@@ -605,7 +605,7 @@ export const gameRoutes: Routes = [
         (m) => m.TravelRecoveryComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Critical for Olympic travel planning
+    data: { preload: false }, // Only needed when traveling - load on demand
   },
   {
     path: "game-tracker",

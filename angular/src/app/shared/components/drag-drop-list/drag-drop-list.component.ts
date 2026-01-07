@@ -214,7 +214,6 @@ export class DragDropListComponent {
   }
 
   onDrop(event: CdkDragDrop<DragDropItem[]>): void {
-    // Note: CDK drag-drop modifies arrays in place
     // For signal-based inputs, you would typically emit events to parent
     // For now, this works because CDK uses the array reference directly
     if (event.previousContainer === event.container) {

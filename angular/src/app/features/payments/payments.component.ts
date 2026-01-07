@@ -1,8 +1,17 @@
 /**
  * My Payments Component (Player View)
  *
- * Displays player's payment status, outstanding fees, and payment history.
- * Allows viewing fee breakdowns and payment instructions.
+ * ⚠️ IMPORTANT: This is for TRACKING ONLY - No payment processing!
+ * 
+ * FlagFit Pro does NOT process payments (no Stripe, PayPal, credit cards).
+ * Players pay coaches directly via cash, Venmo, Zelle, CashApp, etc.
+ * 
+ * This component allows:
+ * - Track what players owe (fees, equipment, tournament registration)
+ * - View payment status and history
+ * - See payment instructions from coaches
+ * - Download receipts (if coach provides)
+ * - Export payment history
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
@@ -126,6 +135,16 @@ const PAYMENT_METHOD_CONFIG: Record<
           subtitle="View fees and payment history"
           icon="pi-wallet"
         ></app-page-header>
+
+        <!-- Tracking Only Disclaimer -->
+        <div class="payment-disclaimer">
+          <i class="pi pi-info-circle"></i>
+          <p>
+            <strong>Payment Tracking Only:</strong> FlagFit Pro does not process
+            payments. Pay your coach directly (cash, Venmo, Zelle, etc.) and
+            they'll mark it as received.
+          </p>
+        </div>
 
         <!-- Account Summary -->
         <div class="summary-grid">

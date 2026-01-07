@@ -74,10 +74,6 @@ interface CycleEntry {
   notes?: string;
 }
 
-// SymptomLog interface reserved for future use
-// interface SymptomLog {
-//   date: string;
-//   symptoms: string[];
 //   severity: string;
 // }
 

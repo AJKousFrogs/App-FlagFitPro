@@ -97,6 +97,19 @@
   color: var(--color-text-primary);
 }
 
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+
+.mt-2 {
+  margin-top: var(--space-2);
+}
+
+.my-4 {
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
 .terms-label a {
   color: var(--color-brand-primary);
   text-decoration: none;

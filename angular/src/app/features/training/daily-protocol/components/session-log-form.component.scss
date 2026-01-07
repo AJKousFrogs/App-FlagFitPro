@@ -49,6 +49,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-2, 8px);
+}
+
+/* Info icon for tooltips (UX Audit Fix #7) */
+.info-icon {
+  color: var(--color-text-tertiary, #a3a3a3);
+  font-size: var(--font-body-xs, 12px);
+  cursor: help;
+  transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
+  margin-left: var(--space-1, 4px);
+  
+  &:hover {
+    color: var(--ds-primary-green, #16a34a);
+  }
 }
 
 .rpe-description {

@@ -37,11 +37,8 @@ import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.s
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Angular 21: Zoneless change detection (stable in v21)
-    // Benefits:
     // - No Zone.js overhead (smaller bundle, faster change detection)
     // - Better DevTools integration with real-time change detection tracing
-    // - More predictable reactivity with signals
     // - Automatic change detection on signal updates and DOM events
     // Note: zone.js is available as optional peer dependency for third-party libraries if needed
     provideZonelessChangeDetection(),

@@ -19,7 +19,7 @@ import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -28,6 +28,7 @@ import { COLORS } from "../../../core/constants/app.constants";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 interface OverviewMetrics {
   totalAthletes: number;
@@ -97,7 +98,9 @@ interface TeamOption {
     DecimalPipe,
     FormsModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DividerModule,
     ProgressBarModule,
     Select,
@@ -329,11 +332,11 @@ interface TeamOption {
                   </div>
                 </div>
                 <div class="chart-container">
-                  <p-chart
+                  <app-lazy-chart
                     type="line"
                     [data]="trendChartData"
                     [options]="lineChartOptions"
-                  ></p-chart>
+                  ></app-lazy-chart>
                 </div>
               }
             </p-card>

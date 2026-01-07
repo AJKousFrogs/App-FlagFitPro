@@ -165,16 +165,19 @@
   --color-status-success: #63ad0e;
   --color-status-success-light: rgba(99, 173, 14, 0.1);
   --color-status-success-subtle: rgba(99, 173, 14, 0.05);
+  --color-status-success-surface: rgba(99, 173, 14, 0.1); /* NEW: Background for success tags */
 
   /* Warning: Yellow/Orange for potential problems or non-critical alerts */
   --color-status-warning: #ffc000;
   --color-status-warning-light: rgba(255, 192, 0, 0.1);
   --color-status-warning-subtle: rgba(255, 192, 0, 0.05);
+  --color-status-warning-surface: rgba(255, 192, 0, 0.1); /* NEW: Background for warning tags */
 
   /* Error: Red for critical issues, deletions, or blocking actions */
   --color-status-error: #ff003c;
   --color-status-error-light: rgba(255, 0, 60, 0.1);
   --color-status-error-subtle: rgba(255, 0, 60, 0.05);
+  --color-status-error-surface: rgba(255, 0, 60, 0.1); /* NEW: Background for error/danger tags */
 
   /* Warning/Error text colors for use on light backgrounds */
   --color-status-warning-text: var(
@@ -185,6 +188,7 @@
   --color-status-info: #0ea5e9;
   --color-status-info-light: rgba(14, 165, 233, 0.1);
   --color-status-info-subtle: rgba(14, 165, 233, 0.05);
+  --color-status-info-surface: rgba(14, 165, 233, 0.1); /* NEW: Background for info tags */
 
   /* Help/Purple: Secondary brand/PrimeNG help color */
   --color-status-help: #8b5cf6;

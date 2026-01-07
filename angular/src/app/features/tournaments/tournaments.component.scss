@@ -228,6 +228,10 @@
   justify-content: flex-end;
 }
 
+.tournament-body {
+  margin-top: var(--space-4);
+}
+
 /* ================================================================
    TOURNAMENT DIALOG - Premium Form Design
    ================================================================ */
@@ -390,6 +394,13 @@
   margin: var(--space-1) 0;
   color: var(--color-text-secondary);
   font-size: var(--font-size-h4);
+}
+
+.availability-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
 }
 
 .availability-options {
@@ -613,6 +624,16 @@
 .player-position {
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
+}
+
+.player-status {
+  display: flex;
+  align-items: center;
+}
+
+.player-payment {
+  display: flex;
+  align-items: center;
 }
 
 .player-reason {

@@ -25,6 +25,9 @@ jobs:
     name: Daily Security Audit
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 6 * * *' || github.event.inputs.task == 'security-audit' || github.event.inputs.task == 'all'
+    permissions:
+      issues: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

@@ -23,6 +23,14 @@ interface NavItem {
   group?: string; // Navigation group for organization
 }
 
+interface CollapsibleGroup {
+  id: string;
+  label: string;
+  icon: string;
+  items: NavItem[];
+  isExpanded: boolean;
+}
+
 @Component({
   selector: "app-sidebar",
   standalone: true,
@@ -68,58 +76,96 @@ interface NavItem {
       </div>
 
       <nav class="nav-section" aria-label="Main navigation">
-        @for (group of navGroups; track group.id) {
-          @if (getGroupItems(group.id).length > 0) {
-            <div
-              class="nav-group"
-              role="group"
-              [attr.aria-label]="group.label + ' navigation'"
+        <!-- PRIMARY NAVIGATION (4-5 core items) -->
+        <div class="primary-nav">
+          @for (item of primaryNavItems(); track trackByRoute($index, item)) {
+            <a
+              [routerLink]="item.route"
+              [attr.data-testid]="getNavTestId(item.route)"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{
+                exact: item.route === '/dashboard' || item.route === '/todays-practice',
+              }"
+              class="nav-item"
+              [class.nav-item-primary]="true"
+              [attr.aria-label]="item.ariaLabel"
+              [id]="'nav-' + item.route.replace('/', '')"
+              (click)="onNavItemClick()"
             >
-              <div class="nav-group-header">
-                <i [class]="'pi ' + group.icon" aria-hidden="true"></i>
-                <span class="nav-group-label">{{ group.label }}</span>
-              </div>
-              @for (
-                item of getGroupItems(group.id);
-                track trackByRoute($index, item)
-              ) {
+              <span class="nav-item-icon">
+                <i [class]="'pi ' + item.icon"></i>
+              </span>
+              <span class="nav-item-label">{{ item.label }}</span>
+            </a>
+          }
+        </div>
+
+        <!-- ADDITIONAL NAVIGATION ITEMS -->
+        @if (additionalItems().length > 0) {
+          <div class="additional-nav">
+            @for (item of additionalItems(); track trackByRoute($index, item)) {
+              <a
+                [routerLink]="item.route"
+                [attr.data-testid]="getNavTestId(item.route)"
+                routerLinkActive="active"
+                class="nav-item"
+                [attr.aria-label]="item.ariaLabel"
+                [id]="'nav-' + item.route.replace('/', '')"
+                (click)="onNavItemClick()"
+              >
+                <span class="nav-item-icon">
+                  <i [class]="'pi ' + item.icon"></i>
+                </span>
+                <span class="nav-item-label">{{ item.label }}</span>
+              </a>
+            }
+          </div>
+        }
+
+        <!-- COLLAPSIBLE "ME" GROUP -->
+        <div class="me-group-container">
+          <button
+            class="me-group-header"
+            (click)="toggleMeGroup()"
+            [attr.aria-expanded]="meGroupExpanded()"
+            aria-controls="me-group-items"
+          >
+            <span class="me-group-icon">
+              <i [class]="meGroupExpanded() ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+            </span>
+            <span class="me-group-label">Me</span>
+          </button>
+
+          @if (meGroupExpanded()) {
+            <div id="me-group-items" class="me-group-items">
+              @for (item of meItems(); track trackByRoute($index, item)) {
                 <a
                   [routerLink]="item.route"
                   [attr.data-testid]="getNavTestId(item.route)"
                   routerLinkActive="active"
-                  [routerLinkActiveOptions]="{
-                    exact: item.route === '/dashboard',
-                  }"
-                  class="nav-item"
+                  class="nav-item nav-item-sub"
                   [attr.aria-label]="item.ariaLabel"
                   [id]="'nav-' + item.route.replace('/', '')"
                   (click)="onNavItemClick()"
                 >
                   <span class="nav-item-icon">
                     <i [class]="'pi ' + item.icon"></i>
-                    @if (item.badge && item.badge > 0) {
-                      <p-badge
-                        [value]="item.badge.toString()"
-                        severity="danger"
-                        class="nav-badge"
-                      ></p-badge>
-                    }
                   </span>
                   <span class="nav-item-label">{{ item.label }}</span>
                 </a>
               }
             </div>
           }
-        }
+        </div>
       </nav>
 
-      <!-- Bottom Section -->
+      <!-- Bottom Section (Profile quick access + Logout) -->
       <div class="sidebar-footer">
         <a
           routerLink="/profile"
           routerLinkActive="active"
           class="nav-item"
-          aria-label="Profile"
+          aria-label="Profile - Quick access"
           (click)="onNavItemClick()"
         >
           <span class="nav-item-icon">
@@ -151,35 +197,27 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerSub?: Subscription;
 
   isOpen = signal(false);
+  
+  // State persistence for "Me" group expansion
+  meGroupExpanded = signal(this.loadMeGroupState());
 
   /**
-   * Navigation groups for better organization and cognitive load reduction
+   * FULL NAVIGATION STRUCTURE
+   * All navigation items restored for complete functionality
    */
-  navGroups = [
-    { id: "primary", label: "Daily", icon: "pi-home" },
-    { id: "wellness", label: "Wellness", icon: "pi-heart" },
-    { id: "competition", label: "Competition", icon: "pi-flag-fill" },
-    { id: "team", label: "Team", icon: "pi-users" },
-    { id: "resources", label: "Resources", icon: "pi-book" },
-    { id: "community", label: "Community", icon: "pi-comments" },
-  ];
-
-  /**
-   * Reorganized navigation for better UX flow with grouping:
-   * - Primary: Most-used daily features
-   * - Wellness: Health & recovery
-   * - Competition: Game-related features
-   * - Team: Team management
-   * - Resources: Learning materials
-   * - Community: Social features
-   */
-  private baseNavItems: NavItem[] = [
-    // === PRIMARY (Daily Use) ===
+  private athleteNavItems: NavItem[] = [
     {
       label: "Dashboard",
       route: "/dashboard",
       icon: "pi-home",
-      ariaLabel: "Dashboard Overview",
+      ariaLabel: "Dashboard - Overview of your training and progress",
+      group: "primary",
+    },
+    {
+      label: "Today",
+      route: "/todays-practice",
+      icon: "pi-calendar",
+      ariaLabel: "Today's Practice - Your training for today",
       group: "primary",
     },
     {
@@ -190,129 +228,271 @@ export class SidebarComponent implements OnInit, OnDestroy {
       group: "primary",
     },
     {
-      label: "Today's Practice",
-      route: "/todays-practice",
-      icon: "pi-play",
-      ariaLabel: "Today's Practice - Your training for today with videos",
+      label: "Wellness",
+      route: "/wellness",
+      icon: "pi-heart",
+      ariaLabel: "Wellness & Recovery - Daily check-in and recovery metrics",
       group: "primary",
     },
     {
       label: "Analytics",
       route: "/analytics",
-      icon: "pi-chart-bar",
-      ariaLabel: "Performance Analytics",
+      icon: "pi-chart-line",
+      ariaLabel: "Analytics - Performance metrics and insights",
       group: "primary",
     },
-    // === WELLNESS & RECOVERY ===
     {
-      label: "Wellness",
-      route: "/wellness",
-      icon: "pi-heart",
-      ariaLabel: "Wellness & Recovery",
-      group: "wellness",
+      label: "Performance",
+      route: "/performance-tracking",
+      icon: "pi-bullseye",
+      ariaLabel: "Performance Tracking - Track and analyze your performance metrics",
+      group: "primary",
     },
     {
-      label: "Travel Recovery",
-      route: "/travel/recovery",
-      icon: "pi-globe",
-      ariaLabel: "Travel & Jet Lag Recovery",
-      group: "wellness",
-    },
-    // === COMPETITION ===
-    {
-      label: "Game Day",
-      route: "/game/readiness",
-      icon: "pi-flag-fill",
-      ariaLabel: "Game Day Readiness",
-      group: "competition",
-    },
-    {
-      label: "Tournament Fuel",
-      route: "/game/nutrition",
-      icon: "pi-apple",
-      ariaLabel: "Tournament Nutrition",
-      group: "competition",
-    },
-    {
-      label: "Game Tracker",
-      route: "/game-tracker",
-      icon: "pi-video",
-      ariaLabel: "Live Game Tracker",
-      group: "competition",
-    },
-    {
-      label: "Tournaments",
-      route: "/tournaments",
-      icon: "pi-trophy",
-      ariaLabel: "Tournament Schedule",
-      group: "competition",
-    },
-    // === TEAM ===
-    {
-      label: "Roster",
+      label: "Team",
       route: "/roster",
       icon: "pi-users",
-      ariaLabel: "Team Roster",
-      group: "team",
-    },
-    {
-      label: "Depth Chart",
-      route: "/depth-chart",
-      icon: "pi-sitemap",
-      ariaLabel: "Depth Chart",
-      roles: ["coach", "assistant_coach", "admin"],
-      group: "team",
-    },
-    // === RESOURCES ===
-    {
-      label: "Training Videos",
-      route: "/training/videos",
-      icon: "pi-youtube",
-      ariaLabel: "Training Video Library",
-      group: "resources",
-    },
-    {
-      label: "Exercise Library",
-      route: "/exercise-library",
-      icon: "pi-book",
-      ariaLabel: "Exercise Library",
-      group: "resources",
-    },
-    // === COMMUNITY ===
-    {
-      label: "AI Coach",
-      route: "/chat",
-      icon: "pi-sparkles",
-      ariaLabel: "AI Coach Merlin",
-      group: "community",
+      ariaLabel: "Team - Roster, games, and team calendar",
+      group: "primary",
     },
     {
       label: "Team Chat",
       route: "/team-chat",
       icon: "pi-comments",
-      ariaLabel: "Team Chat Channels",
-      group: "community",
+      ariaLabel: "Team Chat - Communicate with your team",
+      group: "primary",
+    },
+    {
+      label: "Tournaments",
+      route: "/tournaments",
+      icon: "pi-trophy",
+      ariaLabel: "Tournaments - Games and competitions",
+      group: "primary",
+    },
+    {
+      label: "Tournament Fuel",
+      route: "/game/nutrition",
+      icon: "pi-apple",
+      ariaLabel: "Tournament Fuel - Nutrition and hydration for tournament days",
+      group: "primary",
+    },
+    {
+      label: "Travel Recovery",
+      route: "/travel/recovery",
+      icon: "pi-map-marker",
+      ariaLabel: "Travel Recovery - Recovery protocols for travel days",
+      group: "primary",
+    },
+    {
+      label: "Game Tracker",
+      route: "/game-tracker",
+      icon: "pi-flag",
+      ariaLabel: "Game Tracker - Track live games and statistics",
+      group: "primary",
+    },
+    {
+      label: "Merlin AI",
+      route: "/chat",
+      icon: "pi-sparkles",
+      ariaLabel: "Merlin AI Coach - Chat with your AI coach",
+      group: "primary",
     },
     {
       label: "Community",
       route: "/community",
-      icon: "pi-users",
-      ariaLabel: "Community Hub",
-      group: "community",
+      icon: "pi-globe",
+      ariaLabel: "Community - Connect with other players and share experiences",
+      group: "primary",
+    },
+    {
+      label: "Exercise Library",
+      route: "/exercise-library",
+      icon: "pi-book",
+      ariaLabel: "Exercise Library - Browse exercise database",
+      group: "primary",
+    },
+    {
+      label: "Video Library",
+      route: "/training/videos",
+      icon: "pi-video",
+      ariaLabel: "Video Library - Training videos and drills",
+      group: "primary",
+    },
+    {
+      label: "ACWR",
+      route: "/acwr",
+      icon: "pi-chart-bar",
+      ariaLabel: "ACWR Dashboard - Acute Chronic Workload Ratio monitoring",
+      group: "primary",
     },
   ];
 
-  visibleNavItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
-    const unreadCount = this.notificationState.unreadCount();
+  private coachNavItems: NavItem[] = [
+    {
+      label: "Dashboard",
+      route: "/coach/dashboard",
+      icon: "pi-home",
+      ariaLabel: "Coach Dashboard - Team overview and insights",
+      group: "primary",
+    },
+    {
+      label: "Players",
+      route: "/coach/team",
+      icon: "pi-users",
+      ariaLabel: "Players - Roster management and player monitoring",
+      group: "primary",
+    },
+    {
+      label: "Team Chat",
+      route: "/team-chat",
+      icon: "pi-comments",
+      ariaLabel: "Team Chat - Communicate with your team",
+      group: "primary",
+    },
+    {
+      label: "Planning",
+      route: "/coach/programs",
+      icon: "pi-calendar",
+      ariaLabel: "Planning - Programs, practice planner, and calendar",
+      group: "primary",
+    },
+    {
+      label: "Analytics",
+      route: "/coach/analytics",
+      icon: "pi-chart-line",
+      ariaLabel: "Analytics - Team performance metrics and insights",
+      group: "primary",
+    },
+    {
+      label: "Performance",
+      route: "/performance-tracking",
+      icon: "pi-bullseye",
+      ariaLabel: "Performance Tracking - Track and analyze team performance metrics",
+      group: "primary",
+    },
+    {
+      label: "Competition",
+      route: "/tournaments",
+      icon: "pi-trophy",
+      ariaLabel: "Competition - Games and tournaments",
+      group: "primary",
+    },
+    {
+      label: "Travel Recovery",
+      route: "/travel/recovery",
+      icon: "pi-map-marker",
+      ariaLabel: "Travel Recovery - Recovery protocols for travel days",
+      group: "primary",
+    },
+    {
+      label: "Game Tracker",
+      route: "/game-tracker",
+      icon: "pi-flag",
+      ariaLabel: "Game Tracker - Track live games and statistics",
+      group: "primary",
+    },
+    {
+      label: "Merlin AI",
+      route: "/chat",
+      icon: "pi-sparkles",
+      ariaLabel: "Merlin AI Coach - Chat with your AI coach",
+      group: "primary",
+    },
+    {
+      label: "Community",
+      route: "/community",
+      icon: "pi-globe",
+      ariaLabel: "Community - Connect with players and share experiences",
+      group: "primary",
+    },
+    {
+      label: "Exercise Library",
+      route: "/exercise-library",
+      icon: "pi-book",
+      ariaLabel: "Exercise Library - Browse exercise database",
+      group: "primary",
+    },
+    {
+      label: "Video Library",
+      route: "/training/videos",
+      icon: "pi-video",
+      ariaLabel: "Video Library - Training videos and drills",
+      group: "primary",
+    },
+    {
+      label: "Knowledge Base",
+      route: "/coach/knowledge",
+      icon: "pi-bookmark",
+      ariaLabel: "Knowledge Base - Training resources and guides",
+      group: "primary",
+    },
+  ];
 
-    return this.baseNavItems
-      .filter((item) => !item.roles || item.roles.includes(userRole))
-      .map((item) => ({
-        ...item,
-        badge: item.route === "/chat" ? unreadCount : undefined,
-      }));
+  /**
+   * "Me" group items - collapsible accordion
+   */
+  private meGroupItems: NavItem[] = [
+    {
+      label: "Profile",
+      route: "/profile",
+      icon: "pi-user",
+      ariaLabel: "Profile - View and edit your profile",
+      group: "me",
+    },
+    {
+      label: "Settings",
+      route: "/settings",
+      icon: "pi-cog",
+      ariaLabel: "Settings - App preferences and account settings",
+      group: "me",
+    },
+    {
+      label: "Achievements",
+      route: "/achievements",
+      icon: "pi-trophy",
+      ariaLabel: "Achievements - View your progress and badges",
+      group: "me",
+    },
+  ];
+
+  /**
+   * Additional navigation items (shown after primary nav)
+   * Currently empty - can be used for less frequently accessed items
+   */
+  private additionalNavItems: NavItem[] = [];
+
+  /**
+   * Primary navigation items based on user role
+   */
+  primaryNavItems = computed(() => {
+    const userRole = this.authService.getUser()?.role || "player";
+    const isCoach = ["coach", "assistant_coach", "admin"].includes(userRole);
+    
+    return isCoach ? this.coachNavItems : this.athleteNavItems;
   });
+
+  /**
+   * Additional navigation items filtered by role
+   */
+  additionalItems = computed(() => {
+    const userRole = this.authService.getUser()?.role || "player";
+    return this.additionalNavItems.filter(
+      (item) => !item.roles || item.roles.includes(userRole)
+    );
+  });
+
+  /**
+   * "Me" group items (always same for all roles)
+   */
+  meItems = computed(() => this.meGroupItems);
+
+  /**
+   * Navigation groups for organized display
+   */
+  navGroups = [
+    { id: 'primary', label: 'Main', icon: 'pi-home' },
+    { id: 'me', label: 'Me', icon: 'pi-user' }
+  ];
 
   userName = computed(() => {
     const user = this.authService.getUser();
@@ -336,7 +516,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    // Close sidebar on navigation (mobile)
+    // Auto-close sidebar on navigation (mobile)
     this.routerSub = this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -359,7 +539,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   onNavItemClick(): void {
-    // Close sidebar on mobile after navigation
+    // Auto-close sidebar on mobile after navigation
     if (window.innerWidth <= 768) {
       this.closeSidebar();
     }
@@ -376,10 +556,34 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get navigation items for a specific group
+   * Toggle "Me" group expansion and persist state
    */
-  getGroupItems(groupId: string): NavItem[] {
-    return this.visibleNavItems().filter((item) => item.group === groupId);
+  toggleMeGroup(): void {
+    this.meGroupExpanded.update((val) => {
+      const newVal = !val;
+      this.saveMeGroupState(newVal);
+      return newVal;
+    });
+  }
+
+  /**
+   * Load "Me" group expanded state from localStorage
+   */
+  private loadMeGroupState(): boolean {
+    if (typeof window === "undefined") return false;
+    const saved = localStorage.getItem("sidebar-me-group-expanded");
+    return saved === "true";
+  }
+
+  /**
+   * Save "Me" group expanded state to localStorage
+   */
+  private saveMeGroupState(isExpanded: boolean): void {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(
+      "sidebar-me-group-expanded",
+      isExpanded.toString(),
+    );
   }
 
   /**
@@ -388,5 +592,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
   getNavTestId(route: string): string {
     const cleaned = route.replace(/^\//, "").replace(/\//g, "-");
     return `nav-${cleaned || "home"}`;
+  }
+
+  /**
+   * Get navigation items for a specific group
+   */
+  getGroupItems(groupId: string): NavItem[] {
+    if (groupId === 'primary') {
+      return this.primaryNavItems();
+    } else if (groupId === 'me') {
+      return this.meItems();
+    }
+    return [];
   }
 }

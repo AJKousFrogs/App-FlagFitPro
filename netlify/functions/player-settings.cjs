@@ -120,7 +120,8 @@ async function getSettings(supabase, userId, headers) {
           primaryPosition: "wr_db",
           secondaryPosition: null,
           birthDate: userData?.date_of_birth || userData?.birth_date || null,
-          flagPracticeSchedule: [],
+          availabilitySchedule: [],
+          availabilityDisclaimer: "Availability does not schedule practice. Coaches schedule team activities.",
           preferredTrainingDays: [1, 2, 4, 5, 6],
           maxSessionsPerWeek: 5,
           hasGymAccess: true,
@@ -131,6 +132,7 @@ async function getSettings(supabase, userId, headers) {
   }
 
   // Transform to frontend format
+  // PROMPT 2.11: Rename flag_practice_schedule to availability (non-authority)
   return {
     statusCode: 200,
     headers,
@@ -140,7 +142,10 @@ async function getSettings(supabase, userId, headers) {
         primaryPosition: config.primary_position,
         secondaryPosition: config.secondary_position,
         birthDate: config.birth_date,
-        flagPracticeSchedule: config.flag_practice_schedule || [],
+        // DEPRECATED: flagPracticeSchedule renamed to availabilitySchedule
+        // This is for player availability notes only, NOT authority for team activities
+        availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
+        availabilityDisclaimer: "Availability does not schedule practice. Coaches schedule team activities.",
         preferredTrainingDays: config.preferred_training_days || [
           1, 2, 4, 5, 6,
         ],
@@ -165,12 +170,15 @@ async function saveSettings(supabase, userId, payload, headers) {
     primaryPosition,
     secondaryPosition,
     birthDate,
-    flagPracticeSchedule,
+    availabilitySchedule, // PROMPT 2.11: Renamed from flagPracticeSchedule
     preferredTrainingDays,
     maxSessionsPerWeek,
     hasGymAccess,
     hasFieldAccess,
   } = payload;
+  
+  // Map availabilitySchedule back to DB field (for backward compatibility)
+  const flagPracticeSchedule = availabilitySchedule || payload.flagPracticeSchedule || [];
 
   // Calculate age recovery modifier if birth date provided
   let ageRecoveryModifier = 1.0;
@@ -243,7 +251,8 @@ async function saveSettings(supabase, userId, payload, headers) {
         primaryPosition: config.primary_position,
         secondaryPosition: config.secondary_position,
         birthDate: config.birth_date,
-        flagPracticeSchedule: config.flag_practice_schedule,
+        availabilitySchedule: config.flag_practice_schedule, // PROMPT 2.11: Renamed
+        availabilityDisclaimer: "Availability does not schedule practice. Coaches schedule team activities.",
         preferredTrainingDays: config.preferred_training_days,
         maxSessionsPerWeek: config.max_sessions_per_week,
         hasGymAccess: config.has_gym_access,

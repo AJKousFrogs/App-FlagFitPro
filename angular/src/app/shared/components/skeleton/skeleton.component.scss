@@ -1,82 +1,71 @@
 // ============================================================================
-// skeleton.component Styles
+// Skeleton Component Styles
+// Evidence-Based Loading UX Pattern
 // Design System Compliant
 // ============================================================================
 
-:host {
-  display: inline-block;
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--primitive-neutral-100, #f5f5f5) 25%,
+    var(--primitive-neutral-200, #e5e5e5) 50%,
+    var(--primitive-neutral-100, #f5f5f5) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md, 8px);
+  
+  // Prevent layout shift
+  min-height: 1rem;
 }
 
-.skeleton {
-  background-color: var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
+// Variants
+.skeleton-rectangle {
+  // Default styling
 }
 
 .skeleton-circle {
   border-radius: 50%;
+  aspect-ratio: 1;
 }
 
 .skeleton-text {
-  height: 1rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm, 4px);
+  height: 1em;
+  transform-origin: 0 60%;
+  transform: scale(1, 0.8);
 }
 
-.skeleton-rect {
-  border-radius: var(--radius-md);
-}
-
-.skeleton-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.skeleton-line {
-  background-color: var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.skeleton-shimmer {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
-}
-
+// Shimmer animation (subtle, not distracting)
 @keyframes shimmer {
   0% {
-    left: -100%;
+    background-position: 200% 0;
   }
   100% {
-    left: 100%;
+    background-position: -200% 0;
   }
 }
 
-/* Animation variants */
-.skeleton-pulse .skeleton-shimmer {
-  animation: pulse 1.5s ease-in-out infinite;
-  background: var(--color-border-secondary);
-  left: 0;
+// Dark theme support
+:host-context([data-theme="dark"]) .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--primitive-neutral-800, #262626) 25%,
+    var(--primitive-neutral-700, #404040) 50%,
+    var(--primitive-neutral-800, #262626) 75%
+  );
+  background-size: 200% 100%;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
+// Reduced motion support (WCAG)
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--primitive-neutral-200, #e5e5e5);
   }
-  50% {
-    opacity: 0.5;
+  
+  :host-context([data-theme="dark"]) .skeleton {
+    background: var(--primitive-neutral-800, #262626);
   }
 }

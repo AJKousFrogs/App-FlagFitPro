@@ -796,7 +796,6 @@ describe("LoadMonitoringService", () => {
 
       const score = service.calculateReadinessScore(wellness);
 
-      // Formula: sleep*15 + sleepDur*2.14 + soreness*10 + (10-stress)*10 + energy*25 + mood*25
       // = 2*15 + 4*2.14 + 2*10 + 1*10 + 2*25 + 2*25 = 30 + 8.56 + 20 + 10 + 50 + 50 = 168.56
       // Capped at 100, so this test expectation was wrong
       // Low wellness should still produce a score, just lower than excellent

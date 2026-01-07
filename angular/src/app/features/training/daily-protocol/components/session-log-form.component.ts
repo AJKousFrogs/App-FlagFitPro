@@ -24,6 +24,7 @@ import { ButtonComponent } from "../../../../shared/components/button/button.com
 import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { Textarea } from "primeng/textarea";
+import { TooltipModule } from "primeng/tooltip";
 
 export interface SessionLogData {
   actualDurationMinutes: number;
@@ -41,6 +42,7 @@ export interface SessionLogData {
     Slider,
     InputNumberModule,
     Textarea,
+    TooltipModule,
 
     ButtonComponent,
   ],
@@ -56,6 +58,12 @@ export interface SessionLogData {
         <div class="form-field">
           <label for="rpe">
             Session RPE (Rate of Perceived Exertion)
+            <i 
+              class="pi pi-info-circle info-icon" 
+              pTooltip="RPE (1-10 scale) measures how hard you felt the session was. This helps track training load for injury prevention. 1=Very Easy, 10=Maximal Effort"
+              tooltipPosition="right"
+              [showDelay]="300"
+            ></i>
             <span class="rpe-description">{{
               getRpeDescription(rpeValue())
             }}</span>

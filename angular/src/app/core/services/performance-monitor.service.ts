@@ -98,7 +98,6 @@ export class PerformanceMonitorService {
         }
       });
 
-      // Observe different entry types
       // Note: PerformanceObserver.observe() requires specific entry types
       // We'll observe them individually as browser support varies
       try {

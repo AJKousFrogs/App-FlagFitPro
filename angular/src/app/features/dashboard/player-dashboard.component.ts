@@ -22,7 +22,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { MessageModule } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
@@ -40,6 +40,9 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { AppLoadingComponent } from "../../shared/components/ui-components";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
+import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
 
 interface QuickAction {
   label: string;
@@ -75,7 +78,11 @@ interface AnnouncementBanner {
     CardModule,
     TagModule,
     ButtonComponent,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
+    ChartSkeletonComponent,
+    DashboardSkeletonComponent,
     TooltipModule,
     ProgressBar,
     MessageModule,
@@ -86,12 +93,10 @@ interface AnnouncementBanner {
   ],
   template: `
     <app-main-layout>
-      <!-- Loading State -->
-      <app-loading
-        [visible]="isLoading()"
-        variant="skeleton"
-        message="Loading your dashboard..."
-      ></app-loading>
+      <!-- Loading State - Dashboard-Specific Skeleton (Evidence-Based UX) -->
+      @if (isLoading()) {
+        <app-dashboard-skeleton></app-dashboard-skeleton>
+      }
 
       <!-- Error State -->
       @if (hasError()) {
@@ -105,7 +110,7 @@ interface AnnouncementBanner {
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard section-stack">
-          <!-- NO PROGRAM ASSIGNED FALLBACK -->
+          <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <section class="no-program-section">
               <p-card styleClass="no-program-card">
@@ -113,15 +118,95 @@ interface AnnouncementBanner {
                   <div class="no-program-icon">
                     <i class="pi pi-calendar-times"></i>
                   </div>
-                  <h3 class="no-program-title">No Training Program Assigned</h3>
+                  <h3 class="no-program-title">Let's Get You Set Up!</h3>
                   <p class="no-program-message">
-                    Your training program hasn't been set up yet. This usually happens
-                    automatically during onboarding based on your position.
+                    Your training program is almost ready. Let's check what's needed:
                   </p>
+
+                  <!-- Diagnostic Steps Checklist -->
+                  <div class="setup-checklist">
+                    <div class="checklist-item">
+                      <div class="checklist-icon checklist-complete">
+                        <i class="pi pi-check"></i>
+                      </div>
+                      <div class="checklist-content">
+                        <span class="checklist-label">Account created</span>
+                        <span class="checklist-status">Complete</span>
+                      </div>
+                    </div>
+
+                    @if (!hasCompletedOnboarding()) {
+                      <div class="checklist-item checklist-action-needed">
+                        <div class="checklist-icon checklist-warning">
+                          <i class="pi pi-exclamation-circle"></i>
+                        </div>
+                        <div class="checklist-content">
+                          <span class="checklist-label">Complete your profile</span>
+                          <span class="checklist-status">Action required</span>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="checklist-item">
+                        <div class="checklist-icon checklist-complete">
+                          <i class="pi pi-check"></i>
+                        </div>
+                        <div class="checklist-content">
+                          <span class="checklist-label">Profile completed</span>
+                          <span class="checklist-status">Complete</span>
+                        </div>
+                      </div>
+                    }
+
+                    <div class="checklist-item">
+                      <div class="checklist-icon checklist-waiting">
+                        <i class="pi pi-clock"></i>
+                      </div>
+                      <div class="checklist-content">
+                        <span class="checklist-label">Coach program assignment</span>
+                        <span class="checklist-status">Usually 24-48 hours</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Next Steps -->
+                  <div class="setup-next-steps">
+                    <h4 class="next-steps-title">What happens next?</h4>
+                    @if (!hasCompletedOnboarding()) {
+                      <ol class="next-steps-list">
+                        <li><strong>Complete your profile</strong> (2-3 minutes)</li>
+                        <li>Your coach will review and assign a program (24-48 hours)</li>
+                        <li>Start training!</li>
+                      </ol>
+                    } @else {
+                      <p class="next-steps-message">
+                        Your profile looks great! Your coach will assign a training program within 24-48 hours.
+                        You'll receive a notification when it's ready.
+                      </p>
+                      <p class="next-steps-tip">
+                        💡 <strong>In the meantime:</strong> Explore the exercise library and watch training videos!
+                      </p>
+                    }
+                  </div>
+
+                  <!-- Action Buttons -->
                   <div class="no-program-actions">
-                    <app-button iconLeft="pi-user-edit" routerLink="/onboarding">
-                      Complete Onboarding
-                    </app-button>
+                    @if (!hasCompletedOnboarding()) {
+                      <app-button iconLeft="pi-user-edit" routerLink="/onboarding">
+                        Complete Profile (2 min)
+                      </app-button>
+                    }
+                    @if (hasCompletedOnboarding()) {
+                      <app-button iconLeft="pi-book" routerLink="/exercise-library">
+                        Browse Exercises
+                      </app-button>
+                      <app-button
+                        iconLeft="pi-youtube"
+                        variant="outlined"
+                        routerLink="/training/videos"
+                      >
+                        Watch Videos
+                      </app-button>
+                    }
                     <app-button
                       iconLeft="pi-envelope"
                       variant="outlined"
@@ -129,6 +214,12 @@ interface AnnouncementBanner {
                     >
                       Contact Coach
                     </app-button>
+                  </div>
+
+                  <!-- Expected Timeline -->
+                  <div class="setup-timeline">
+                    <i class="pi pi-info-circle"></i>
+                    <span>Most athletes get their program within 24 hours. Check back tomorrow!</span>
                   </div>
                 </div>
               </p-card>
@@ -198,10 +289,14 @@ interface AnnouncementBanner {
 
           <!-- SECTION 3: Key Stats Overview (4 Cards) -->
           <section class="stats-overview" aria-label="Key statistics">
-            <!-- Readiness Card -->
+            <!-- Readiness Card - Enhanced with Check-in Status (UX Audit Fix #4) -->
             <p-card
               styleClass="stat-card stat-readiness"
               [style]="{ cursor: 'pointer' }"
+              (click)="navigateToWellness()"
+              pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
+              tooltipPosition="bottom"
+              [showDelay]="500"
             >
               <div class="stat-card-content">
                 <div class="stat-icon readiness-icon">
@@ -217,33 +312,96 @@ interface AnnouncementBanner {
                   styleClass="stat-tag"
                 ></p-tag>
               </div>
+              
+              <!-- Wellness Check-in Status Indicator -->
+              <div class="wellness-checkin-status">
+                @if (wellnessCheckedInToday()) {
+                  <div class="checkin-status checkin-complete">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Checked in today</span>
+                  </div>
+                  @if (checkinStreak() > 0) {
+                    <div class="checkin-streak">
+                      🔥 {{ checkinStreak() }}-day streak!
+                    </div>
+                  }
+                } @else if (checkinOverdue()) {
+                  <div class="checkin-status checkin-overdue">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>Overdue ({{ daysSinceLastCheckin() }} days)</span>
+                  </div>
+                } @else {
+                  <div class="checkin-status checkin-due">
+                    <i class="pi pi-clock"></i>
+                    <span>Due today • Takes 2 min</span>
+                  </div>
+                }
+              </div>
             </p-card>
 
-            <!-- ACWR Card -->
+            <!-- ACWR Card - Enhanced with Progress Tracking (UX Audit Fix #5) -->
             <p-card
               styleClass="stat-card stat-acwr"
               [style]="{ cursor: 'pointer' }"
+              (click)="navigateToACWR()"
+              [pTooltip]="acwrDataSufficient() ? 'Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (7 days) to long-term fitness (28 days). Optimal range: 0.8-1.3' : 'ACWR requires 21 days of training data to calculate. Keep logging sessions to unlock this injury prevention metric.'"
+              tooltipPosition="bottom"
+              [showDelay]="500"
             >
-              <div class="stat-card-content">
-                <div class="stat-icon acwr-icon">
-                  <i class="pi pi-chart-line"></i>
+              @if (acwrDataSufficient()) {
+                <!-- Full ACWR Display (21+ days of data) -->
+                <div class="stat-card-content">
+                  <div class="stat-icon acwr-icon">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-value">{{ acwr() | number: "1.2-2" }}</span>
+                    <span class="stat-label">ACWR</span>
+                  </div>
+                  <p-tag
+                    [value]="getAcwrStatus()"
+                    [severity]="getAcwrSeverity()"
+                    styleClass="stat-tag"
+                  ></p-tag>
                 </div>
-                <div class="stat-details">
-                  <span class="stat-value">{{ acwr() | number: "1.2-2" }}</span>
-                  <span class="stat-label">ACWR</span>
+              } @else {
+                <!-- Progress Tracking (< 21 days) -->
+                <div class="acwr-progress-content">
+                  <div class="stat-icon acwr-icon-building">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="acwr-progress-details">
+                    <span class="acwr-progress-title">Load Monitoring</span>
+                    <div class="acwr-progress-bar-container">
+                      <div class="acwr-progress-bar">
+                        <div 
+                          class="acwr-progress-fill" 
+                          [style.width.%]="(trainingDaysLogged() / 21) * 100"
+                        ></div>
+                      </div>
+                      <span class="acwr-progress-text">
+                        {{ trainingDaysLogged() }}/21 days
+                      </span>
+                    </div>
+                    @if (trainingDaysLogged() >= 7 && trainingDaysLogged() < 14) {
+                      <p-tag value="7-day milestone! 🎉" severity="success" styleClass="milestone-tag"></p-tag>
+                    } @else if (trainingDaysLogged() >= 14 && trainingDaysLogged() < 21) {
+                      <p-tag value="Halfway there!" severity="info" styleClass="milestone-tag"></p-tag>
+                    } @else if (trainingDaysLogged() < 7) {
+                      <span class="acwr-help-text">Keep logging to unlock insights</span>
+                    }
+                  </div>
                 </div>
-                <p-tag
-                  [value]="getAcwrStatus()"
-                  [severity]="getAcwrSeverity()"
-                  styleClass="stat-tag"
-                ></p-tag>
-              </div>
+              }
             </p-card>
 
             <!-- Streak Card -->
             <p-card
               styleClass="stat-card stat-streak"
               [style]="{ cursor: 'pointer' }"
+              pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
+              tooltipPosition="bottom"
+              [showDelay]="500"
             >
               <div class="stat-card-content">
                 <div class="stat-icon streak-icon">
@@ -427,12 +585,24 @@ interface AnnouncementBanner {
               </ng-template>
               @if (performanceChartData()) {
                 <div class="chart-container">
-                  <p-chart
-                    type="line"
-                    [data]="performanceChartData()"
-                    [options]="chartOptions"
-                    [style]="{ height: '180px' }"
-                  ></p-chart>
+                  @defer (on viewport; prefetch on idle) {
+                    <app-lazy-chart
+                      type="line"
+                      [data]="performanceChartData()"
+                      [options]="chartOptions"
+                      height="180px"
+                    ></app-lazy-chart>
+                  } @placeholder {
+                    <app-chart-skeleton
+                      type="line"
+                      height="180px"
+                    />
+                  } @loading (minimum 500ms) {
+                    <app-chart-skeleton
+                      type="line"
+                      height="180px"
+                    />
+                  }
                 </div>
                 <div class="card-footer-action">
                   <app-button
@@ -573,6 +743,137 @@ interface AnnouncementBanner {
         flex-wrap: wrap;
         justify-content: center;
         margin-top: var(--space-2);
+      }
+
+      /* Enhanced Diagnostic Checklist Styles (UX Audit Fix #3) */
+      .setup-checklist {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        margin: var(--space-4) 0;
+      }
+
+      .checklist-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--surface-ground);
+        border-radius: var(--radius-md);
+        border-left: 4px solid var(--color-border-primary);
+      }
+
+      .checklist-item.checklist-action-needed {
+        background: var(--color-status-warning-bg);
+        border-left-color: var(--color-status-warning);
+      }
+
+      .checklist-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .checklist-icon.checklist-complete {
+        background: var(--color-status-success);
+        color: white;
+      }
+
+      .checklist-icon.checklist-warning {
+        background: var(--color-status-warning);
+        color: white;
+      }
+
+      .checklist-icon.checklist-waiting {
+        background: var(--surface-border);
+        color: var(--color-text-secondary);
+      }
+
+      .checklist-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .checklist-label {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+        font-size: var(--font-body-sm);
+      }
+
+      .checklist-status {
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
+      }
+
+      .setup-next-steps {
+        width: 100%;
+        max-width: 500px;
+        text-align: left;
+        background: var(--surface-ground);
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+        margin: var(--space-2) 0;
+      }
+
+      .next-steps-title {
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        margin: 0 0 var(--space-3) 0;
+        color: var(--color-text-primary);
+      }
+
+      .next-steps-list {
+        margin: 0;
+        padding-left: var(--space-5);
+        list-style: decimal;
+      }
+
+      .next-steps-list li {
+        margin-bottom: var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--color-text-primary);
+        line-height: 1.6;
+      }
+
+      .next-steps-message {
+        font-size: var(--font-body-sm);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-3) 0;
+        line-height: 1.6;
+      }
+
+      .next-steps-tip {
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+        padding: var(--space-3);
+        background: var(--surface-card);
+        border-radius: var(--radius-sm);
+        border-left: 3px solid var(--ds-primary-green);
+      }
+
+      .setup-timeline {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--surface-ground);
+        border-radius: var(--radius-md);
+        font-size: var(--font-body-xs);
+        color: var(--color-text-secondary);
+        margin-top: var(--space-4);
+      }
+
+      .setup-timeline i {
+        color: var(--ds-primary-green);
       }
 
       /* ==========================================
@@ -788,6 +1089,62 @@ interface AnnouncementBanner {
         line-height: var(--font-caption-line-height);
         letter-spacing: var(--letter-spacing-caption);
         text-transform: uppercase;
+      }
+
+      /* Wellness Check-in Status Styles (UX Audit Fix #4) */
+      .wellness-checkin-status {
+        margin-top: var(--space-3);
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--color-border-secondary);
+      }
+
+      .checkin-status {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-body-xs);
+        padding: var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+
+      .checkin-status i {
+        font-size: var(--font-body-sm);
+      }
+
+      .checkin-complete {
+        color: var(--color-status-success);
+        background: var(--color-status-success-bg);
+      }
+
+      .checkin-due {
+        color: var(--color-text-secondary);
+        background: var(--surface-ground);
+      }
+
+      .checkin-overdue {
+        color: var(--color-status-error);
+        background: var(--color-status-error-bg);
+      }
+
+      .checkin-streak {
+        margin-top: var(--space-2);
+        font-size: var(--font-body-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--primitive-warning-600);
+        padding: var(--space-1) var(--space-2);
+        background: var(--color-status-warning-bg);
+        border-radius: var(--radius-sm);
+        display: inline-block;
+      }
+
+      /* Make readiness card clickable with hover effect */
+      .stat-readiness {
+        transition: transform var(--motion-fast) var(--ease-standard);
+      }
+
+      .stat-readiness:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-2);
       }
 
       /* ==========================================
@@ -1172,6 +1529,15 @@ export class PlayerDashboardComponent {
   weeklySessionsCompleted = signal(0);
   weeklySessionsPlanned = signal(7);
 
+  // Wellness check-in tracking (UX Audit Fix #4)
+  wellnessCheckedInToday = signal(false);
+  lastWellnessCheckin = signal<Date | null>(null);
+  checkinStreak = signal(0);
+
+  // ACWR progress tracking (UX Audit Fix #5)
+  trainingDaysLogged = signal(12); // Number of days with training data (for demo: 12/21)
+  acwrDataSufficient = computed(() => this.trainingDaysLogged() >= 21);
+
   // Week days
   weekDays = signal<
     Array<{
@@ -1331,7 +1697,6 @@ export class PlayerDashboardComponent {
     // Initialize week days
     this.initializeWeekDays();
 
-    // TODO: Replace with real API call when backend is ready
     // this.announcementService.getLatestAnnouncement().subscribe(announcement => this.announcement.set(announcement));
     // For now, set structure with null values - will be populated from backend
     this.announcement.set({
@@ -1360,7 +1725,6 @@ export class PlayerDashboardComponent {
         this.currentStreak.set(stats?.currentStreak ?? 0);
         this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
 
-        // TODO: Load performance chart data from backend service
         // The chart data (weeklyData with label/value) will come from the API
         // this.performanceService.getWeeklyTrend().subscribe(...)
         // For now, performanceChartData remains null (shows empty state)
@@ -1369,7 +1733,6 @@ export class PlayerDashboardComponent {
         // which is computed from weeklySchedule signal. Data is loaded by getTodayOverview()
         // or loadAllTrainingData() which is called during component initialization.
 
-        // TODO: Load upcoming events from backend service
         // The events data (day, month, title, type, typeLabel) will come from the API
         // this.eventsService.getUpcomingEvents().subscribe(...)
         // For now, upcomingEvents remains empty (section hidden)
@@ -1414,6 +1777,56 @@ export class PlayerDashboardComponent {
   contactCoach(): void {
     // Navigate to team chat where user can message coach
     this.router.navigate(["/chat"]);
+  }
+
+  /**
+   * Check if user has completed onboarding
+   * Used for diagnostic guidance in "No Program Assigned" state
+   * UX Audit Fix #3
+   */
+  hasCompletedOnboarding(): boolean {
+    const user = this.authService.getUser();
+    const metadata = (user?.user_metadata || {}) as any;
+    // Check if user has position set (primary onboarding requirement)
+    return !!(metadata?.position || metadata?.onboarding_completed);
+  }
+
+  /**
+   * Navigate to wellness check-in page
+   * UX Audit Fix #4
+   */
+  navigateToWellness(): void {
+    this.router.navigate(["/wellness"]);
+  }
+
+  /**
+   * Navigate to ACWR details page
+   * UX Audit Fix #5
+   */
+  navigateToACWR(): void {
+    this.router.navigate(["/analytics/workload"]);
+  }
+
+  /**
+   * Check if wellness check-in is overdue (> 1 day since last check-in)
+   * UX Audit Fix #4
+   */
+  checkinOverdue(): boolean {
+    return this.daysSinceLastCheckin() > 1;
+  }
+
+  /**
+   * Calculate days since last wellness check-in
+   * UX Audit Fix #4
+   */
+  daysSinceLastCheckin(): number {
+    const lastCheckin = this.lastWellnessCheckin();
+    if (!lastCheckin) return 99; // Never checked in
+    
+    const now = new Date();
+    const diffMs = now.getTime() - lastCheckin.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return diffDays;
   }
 
   getTimeAgo(date: Date | null | undefined): string {

@@ -59,10 +59,6 @@ interface ProgramPhase {
   focus: string;
 }
 
-// WeekSchedule interface reserved for future use
-// interface WeekSchedule {
-//   weekNumber: number;
-//   phaseName: string;
 //   sessions: DaySession[];
 // }
 

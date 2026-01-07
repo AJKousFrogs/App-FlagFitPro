@@ -10,7 +10,7 @@ import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -30,6 +30,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 interface PerformanceMetric {
   name: string;
@@ -116,7 +117,9 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   imports: [
     FormsModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     TableModule,
     TagModule,
     DialogModule,
@@ -177,11 +180,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <h3>Performance Over Time</h3>
                 </ng-template>
                 @if (performanceChartData()) {
-                  <p-chart
+                  <app-lazy-chart
                     type="line"
                     [data]="performanceChartData()"
                     [options]="chartOptions"
-                  ></p-chart>
+                  ></app-lazy-chart>
                 }
               </p-card>
             } @placeholder {
@@ -198,11 +201,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <h3>Speed Metrics</h3>
                 </ng-template>
                 @if (speedChartData()) {
-                  <p-chart
+                  <app-lazy-chart
                     type="bar"
                     [data]="speedChartData()"
                     [options]="chartOptions"
-                  ></p-chart>
+                  ></app-lazy-chart>
                 }
               </p-card>
             } @placeholder {

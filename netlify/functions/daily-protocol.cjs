@@ -12,6 +12,8 @@
  */
 
 const { createClient } = require("@supabase/supabase-js");
+const { resolveTodaySession } = require("./utils/session-resolver.cjs");
+const { resolveTeamActivityForAthleteDay } = require("./utils/team-activity-resolver.cjs");
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -189,32 +191,85 @@ async function getUserTrainingContext(supabase, userId, date) {
     }
   }
 
-  // 6. Get today's session template from structured program
-  let sessionTemplate = null;
-  if (currentWeek) {
-    const { data: template } = await supabase
-      .from("training_session_templates")
-      .select("*")
-      .eq("week_id", currentWeek.id)
-      .eq("day_of_week", dayOfWeek)
-      .single();
-    sessionTemplate = template;
-    
-    console.log("[daily-protocol] Session template lookup:", {
-      weekId: currentWeek.id,
-      dayOfWeek,
-      dayName,
-      templateFound: !!template,
-      templateName: template?.session_name,
-    });
-  } else {
-    console.log("[daily-protocol] No current week found for date:", date);
+  // 6. Resolve team activity for this athlete-day (PROMPT 2.10 - Source of Truth)
+  let teamActivityResult = null;
+  try {
+    teamActivityResult = await resolveTeamActivityForAthleteDay(
+      supabase,
+      userId,
+      null, // teamId will be looked up
+      date
+    );
+  } catch (error) {
+    console.warn("[daily-protocol] Team activity resolution error:", error);
+    // Non-fatal - continue without team activity
   }
 
-  // 7. Check if today has flag practice
-  const flagPracticeSchedule = config?.flag_practice_schedule || [];
-  const todayPractice = flagPracticeSchedule.find((p) => p.day === dayOfWeek);
-  const hasFlagPractice = !!todayPractice;
+  // 7. Get today's session template using deterministic resolver (BLOCKER A FIX)
+  // This ensures we always get a real session from the 52-week plan, never generic fallbacks
+  let sessionTemplate = null;
+  let sessionResolution = null;
+  
+  try {
+    sessionResolution = await resolveTodaySession(supabase, userId, date);
+    
+    if (sessionResolution.success) {
+      sessionTemplate = sessionResolution.session;
+      console.log("[daily-protocol] Session resolved successfully:", {
+        sessionName: sessionTemplate?.session_name,
+        override: sessionResolution.override?.type || 'none',
+        metadata: sessionResolution.metadata,
+      });
+    } else {
+      console.log("[daily-protocol] Session resolution failed:", {
+        status: sessionResolution.status,
+        reason: sessionResolution.reason,
+        metadata: sessionResolution.metadata,
+      });
+      // sessionTemplate remains null - we'll handle this truthfully below
+    }
+  } catch (error) {
+    console.error("[daily-protocol] Session resolution error:", error);
+    // Continue with sessionTemplate = null
+  }
+
+  // 8. Apply team activity override to session resolution (PROMPT 2.10)
+  // Priority: rehab_protocol > team_activity (practice/film) > normal session
+  if (teamActivityResult?.exists && teamActivityResult.activity) {
+    const teamActivity = teamActivityResult.activity;
+    const participation = teamActivityResult.participation;
+    
+    // Only override if participation is NOT excluded (rehab wins)
+    if (participation !== 'excluded') {
+      if (teamActivity.type === 'practice') {
+        // Override to flag_practice
+        if (!sessionResolution) {
+          sessionResolution = { success: true, status: 'resolved', override: null };
+        }
+        sessionResolution.override = {
+          type: 'flag_practice',
+          reason: `Team practice scheduled at ${teamActivity.startTimeLocal || '18:00'}`,
+          replaceSession: teamActivity.replacesSession,
+        };
+      } else if (teamActivity.type === 'film_room') {
+        // Override to film_room
+        if (!sessionResolution) {
+          sessionResolution = { success: true, status: 'resolved', override: null };
+        }
+        sessionResolution.override = {
+          type: 'film_room',
+          reason: `Film room scheduled at ${teamActivity.startTimeLocal || '10:00'}`,
+          replaceSession: teamActivity.replacesSession,
+        };
+      }
+    } else {
+      // Participation is excluded (rehab active) - keep rehab override but include team activity context
+      console.log("[daily-protocol] Team activity exists but athlete excluded (rehab):", {
+        activityType: teamActivity.type,
+        participation,
+      });
+    }
+  }
 
   // 8. Get ACWR and readiness from wellness checkin
   let readiness = null;
@@ -335,8 +390,9 @@ async function getUserTrainingContext(supabase, userId, date) {
     currentPhase,
     currentWeek,
     sessionTemplate,
-    hasFlagPractice,
-    flagPracticeDetails: todayPractice,
+    sessionResolution, // BREACH FIX #1: Return session resolution for confidence metadata
+    teamActivity: teamActivityResult, // PROMPT 2.10: Team activity source of truth
+    // DEPRECATED: availability is informational only; team_activities is authority.
     readiness,
     positionModifiers: positionModifiers || [],
     dayOfWeek,
@@ -513,6 +569,46 @@ async function getProtocol(supabase, userId, params, headers) {
     };
   }
 
+  // Get coach name if protocol was modified by coach
+  let coachName = null;
+  if (protocol.modified_by_coach_id) {
+    const { data: coach } = await supabase
+      .from("users")
+      .select("name")
+      .eq("id", protocol.modified_by_coach_id)
+      .single();
+    if (coach) {
+      coachName = coach.name;
+    }
+  }
+
+  // Resolve team activity for this athlete-day (PROMPT 2.10)
+  let teamActivity = null;
+  try {
+    const teamActivityResult = await resolveTeamActivityForAthleteDay(
+      supabase,
+      userId,
+      null, // teamId will be looked up
+      date
+    );
+    
+    if (teamActivityResult.exists && teamActivityResult.activity) {
+      teamActivity = {
+        type: teamActivityResult.activity.type,
+        startTimeLocal: teamActivityResult.activity.startTimeLocal,
+        endTimeLocal: teamActivityResult.activity.endTimeLocal,
+        location: teamActivityResult.activity.location,
+        participation: teamActivityResult.participation,
+        createdByCoachName: teamActivityResult.activity.createdByCoachName,
+        updatedAtLocal: teamActivityResult.activity.updatedAt,
+        note: teamActivityResult.activity.note,
+      };
+    }
+  } catch (teamActivityError) {
+    console.warn("[daily-protocol] Team activity resolution failed:", teamActivityError);
+    // Non-fatal - continue without team activity
+  }
+
   // Get all exercises for this protocol
   const { data: protocolExercises, error: exercisesError } = await supabase
     .from("protocol_exercises")
@@ -539,6 +635,8 @@ async function getProtocol(supabase, userId, params, headers) {
   const transformedProtocol = transformProtocolResponse(
     protocol,
     protocolExercises,
+    coachName,
+    teamActivity, // Pass team activity to transformer
   );
 
   return {
@@ -812,10 +910,12 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // INJURY CHECK - Priority #1 for athlete safety
   // ============================================================================
   // Check for active injuries from daily wellness checkin
+  // Scope to check-ins on/before target date to prevent future check-ins
   const { data: wellnessCheckin } = await supabase
     .from("daily_wellness_checkin")
     .select("*")
     .eq("user_id", userId)
+    .lte("checkin_date", date)
     .order("checkin_date", { ascending: false })
     .limit(1)
     .single();
@@ -856,32 +956,85 @@ async function generateProtocol(supabase, userId, payload, headers) {
     await supabase.from("daily_protocols").delete().eq("id", existing.id);
   }
 
-  // Get readiness data (use actual data or defaults)
-  const readinessScore = context.readiness?.score || 75;
-  const acwrValue = context.readiness?.acwr || 1.05;
+  // ============================================================================
+  // PROMPT 6: TRUTHFULNESS CONTRACT - Remove Misleading Defaults
+  // ============================================================================
+  // Get readiness data (TRUTHFULLY - null when missing)
+  // We compute confidence from canonical sources and keep safe defaults internal only
+  
+  // Raw truth from database
+  const readinessScore = context.readiness?.score || null;
+  const acwrValue = context.readiness?.acwr || null;
+  
+  // Calculate confidence metadata based on what we actually have
+  // BREACH FIX #1: Use context.sessionResolution (now returned from getUserTrainingContext)
+  const confidenceMetadata = {
+    readiness: {
+      hasData: readinessScore !== null,
+      source: context.readiness?.hasCheckin ? 'wellness_checkin' : 'none',
+      daysStale: null, // TODO: Calculate from last checkin date
+      confidence: readinessScore !== null ? 'high' : 'none',
+    },
+    acwr: {
+      hasData: acwrValue !== null,
+      source: acwrValue !== null ? 'training_sessions' : 'none',
+      trainingDaysLogged: null, // TODO: Calculate from session history
+      confidence: acwrValue !== null ? 'high' : 'building_baseline',
+    },
+    sessionResolution: {
+      success: context.sessionResolution?.success || false,
+      status: context.sessionResolution?.status || 'unknown',
+      hasProgram: !!context.playerProgram,
+      hasSessionTemplate: !!context.sessionTemplate,
+      override: context.sessionResolution?.override?.type || null,
+    },
+  };
+  
+  // Safe defaults for internal logic only (NOT persisted to database)
+  // These allow generation logic to work while stored values remain truthful
+  const readinessForLogic = readinessScore !== null ? readinessScore : 70;
+  const acwrForLogic = acwrValue !== null ? acwrValue : 1.0;
+  
+  console.log("[daily-protocol] Truthfulness contract check:", {
+    readiness: {
+      truth: readinessScore,
+      forLogic: readinessForLogic,
+      willPersist: readinessScore, // Only truth gets persisted
+    },
+    acwr: {
+      truth: acwrValue,
+      forLogic: acwrForLogic,
+      willPersist: acwrValue, // Only truth gets persisted
+    },
+    confidence: confidenceMetadata,
+  });
 
   // Determine training focus based on context
   let trainingFocus = "strength";
   let aiRationale = "";
 
-  // Check if it's a flag practice day
-  if (context.hasFlagPractice) {
-    const practiceTime = context.flagPracticeDetails?.start_time || "18:00";
+  // Check if it's a flag practice day (from teamActivity, not player schedule)
+  // DEPRECATED: player schedule is not authority; canonical source is team_activities.
+  const isPracticeDay = context.sessionResolution?.override?.type === 'flag_practice';
+  const isFilmRoomDay = context.sessionResolution?.override?.type === 'film_room';
+  
+  if (isPracticeDay && context.teamActivity?.activity) {
+    const practiceTime = context.teamActivity.activity.startTimeLocal || "18:00";
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;
 
     if (context.isQB) {
-      aiRationale += `QB: ${context.flagPracticeDetails?.expected_throws || 40 - 50} throws expected at practice. Arm care is light activation only - no heavy throwing before practice.`;
+      aiRationale += `QB: Practice scheduled. Arm care is light activation only - no heavy throwing before practice.`;
       trainingFocus = "practice_day_qb";
     } else {
       aiRationale +=
         "Training adjusted to complement practice. Lower body work OK, rest before practice.";
       trainingFocus = "practice_day";
     }
-  } else if (readinessScore < 50 || acwrValue > context.acwrTargetRange.max) {
+  } else if (readinessForLogic < 50 || acwrForLogic > context.acwrTargetRange.max) {
     trainingFocus = "recovery";
     aiRationale =
       "⚠️ Readiness is low or ACWR is high. Today focuses on recovery and mobility.";
-  } else if (readinessScore < 70) {
+  } else if (readinessForLogic < 70) {
     trainingFocus = "skill";
     aiRationale =
       "Moderate readiness. Technical work recommended over high intensity.";
@@ -927,7 +1080,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // Calculate load target (adjusted by age AND taper)
-  const baseLoadTarget = Math.round(readinessScore * 15);
+  const baseLoadTarget = Math.round(readinessForLogic * 15);
   let adjustedLoadTarget = Math.round(
     baseLoadTarget / (context.ageModifier?.recovery_modifier || 1),
   );
@@ -937,17 +1090,19 @@ async function generateProtocol(supabase, userId, payload, headers) {
     adjustedLoadTarget = Math.round(adjustedLoadTarget * taperLoadMultiplier);
   }
 
-  // Create the protocol
+  // Create the protocol (TRUTHFULNESS: store actual values, not defaults)
   const { data: protocol, error: createError } = await supabase
     .from("daily_protocols")
     .insert({
       user_id: userId,
       protocol_date: date,
-      readiness_score: readinessScore,
-      acwr_value: acwrValue,
+      readiness_score: readinessScore, // NULL if no checkin (truthful)
+      acwr_value: acwrValue, // NULL if no training history (truthful)
       training_focus: trainingFocus,
       ai_rationale: aiRationale,
       total_load_target_au: adjustedLoadTarget,
+      // Add confidence metadata to protocol
+      confidence_metadata: confidenceMetadata,
     })
     .select()
     .single();
@@ -1046,8 +1201,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .eq("active", true)
     .not("subcategory", "eq", "morning_routine");
 
-  // For QB, include QB-specific warm-up exercises
-  if (context.isQB && !context.hasFlagPractice) {
+  // For QB, include QB-specific warm-up exercises (unless practice day)
+  // DEPRECATED: availability is informational only; team_activities is authority.
+  const isPracticeDay = context.sessionResolution?.override?.type === 'flag_practice';
+  if (context.isQB && !isPracticeDay) {
     // Add QB pre-throwing warm-up (rotator cuff, scapular)
     const { data: qbWarmUp } = await supabase
       .from("exercises")
@@ -1097,7 +1254,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // 4. Main Session - From structured program templates
-  if (context.sessionTemplate && !context.hasFlagPractice) {
+  // DEPRECATED: availability is informational only; team_activities is authority.
+  const isPracticeDay = context.sessionResolution?.override?.type === 'flag_practice';
+  const isFilmRoomDay = context.sessionResolution?.override?.type === 'film_room';
+  if (context.sessionTemplate && !isPracticeDay && !isFilmRoomDay) {
     // Get exercises from session_exercises table
     const { data: sessionExercises } = await supabase
       .from("session_exercises")
@@ -1158,11 +1318,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
           : null;
         let progressionNote = null;
 
-        // Apply progressive overload logic
+        // Apply progressive overload logic (use forLogic values)
         if (
           prev &&
-          readinessScore >= 70 &&
-          acwrValue < context.acwrTargetRange.max
+          readinessForLogic >= 70 &&
+          acwrForLogic < context.acwrTargetRange.max
         ) {
           // If previous was completed successfully, progress
           if (prev.reps >= prescribedReps && prev.sets >= prescribedSets) {
@@ -1178,7 +1338,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
               progressionNote = `↑ +2.5% load progression`;
             }
           }
-        } else if (readinessScore < 50) {
+        } else if (readinessForLogic < 50) {
           // Reduce volume on low readiness
           prescribedSets = Math.max(prescribedSets - 1, 2);
           progressionNote = "⚠️ Volume reduced due to low readiness";
@@ -1200,34 +1360,28 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       });
     }
-  } else if (!context.hasFlagPractice) {
-    // Fallback: Get generic main session exercises if no template
-    const mainCategories = ["strength", "power", "plyometric", "agility"];
-    const { data: mainExercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .in("category", mainCategories)
-      .eq("active", true)
-      .limit(20);
-
-    if (mainExercises && mainExercises.length > 0) {
-      const shuffled = mainExercises
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 6);
-      shuffled.forEach((ex, idx) => {
-        protocolExercises.push({
-          protocol_id: protocol.id,
-          exercise_id: ex.id,
-          block_type: "main_session",
-          sequence_order: idx + 1,
-          prescribed_sets: ex.default_sets || 3,
-          prescribed_reps: ex.default_reps || 8,
-          load_contribution_au: ex.load_contribution_au || 10,
-          ai_note:
-            "Generic exercise - configure your program for personalized training",
-        });
-      });
-    }
+  } else if (!isPracticeDay && !isFilmRoomDay) {
+    // BREACH FIX #2: NO GENERIC FALLBACK (Blocker A violation)
+    // DEPRECATED: availability is informational only; team_activities is authority.
+    // If no session template, this is a truthful failure - return explicit error
+    console.error("[daily-protocol] BLOCKER A VIOLATION: No session template found", {
+      hasProgram: !!context.playerProgram,
+      hasSessionTemplate: !!context.sessionTemplate,
+      sessionResolution: context.sessionResolution,
+    });
+    
+    return {
+      statusCode: 400,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: "Cannot generate protocol",
+        details: {
+          reason: context.sessionResolution?.reason || "No session template available for this date",
+          sessionResolution: context.sessionResolution,
+        },
+      }),
+    };
   }
 
   // 6. Cool-down
@@ -1599,7 +1753,9 @@ async function logSession(supabase, userId, payload, headers) {
   }
 
   // Log to training_sessions table for ACWR calculation
+  // Contract: Section 3.3 - Logging APIs (execution logging)
   try {
+    // This is execution logging, not structure modification - allowed for athletes
     await supabase.from("training_sessions").insert({
       user_id: userId,
       session_date: protocol.protocol_date,
@@ -1609,6 +1765,8 @@ async function logSession(supabase, userId, payload, headers) {
       load_au: actualLoadAu,
       notes: sessionNotes,
       source: "daily_protocol",
+      session_state: "COMPLETED", // Execution logging creates completed session
+      coach_locked: false, // Execution logs are not coach-locked
     });
   } catch (sessionError) {
     console.warn("Could not log to training_sessions:", sessionError.message);
@@ -1781,7 +1939,7 @@ async function logSession(supabase, userId, payload, headers) {
 /**
  * Transform protocol data for frontend
  */
-function transformProtocolResponse(protocol, exercises) {
+function transformProtocolResponse(protocol, exercises, coachName = null, teamActivity = null) {
   // Group exercises by block type
   const blocks = {
     morning_mobility: [],
@@ -1822,12 +1980,21 @@ function transformProtocolResponse(protocol, exercises) {
     };
   };
 
+  // Build blocks array for resolver
+  const blocksArray = [];
+  if (blocks.morning_mobility.length > 0) blocksArray.push({ type: "morning_mobility", title: "Morning Mobility" });
+  if (blocks.foam_roll.length > 0) blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });
+  if (blocks.warm_up.length > 0) blocksArray.push({ type: "warm_up", title: "Warm Up" });
+  if (blocks.main_session.length > 0) blocksArray.push({ type: "main_session", title: "Main Session" });
+  if (blocks.cool_down.length > 0) blocksArray.push({ type: "cool_down", title: "Cool Down" });
+  if (blocks.evening_recovery.length > 0) blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });
+
   return {
     id: protocol.id,
     userId: protocol.user_id,
-    protocolDate: protocol.protocol_date,
-    readinessScore: protocol.readiness_score,
-    acwrValue: protocol.acwr_value,
+    protocol_date: protocol.protocol_date,
+    readiness_score: protocol.readiness_score,
+    acwr_value: protocol.acwr_value,
     totalLoadTargetAu: protocol.total_load_target_au,
     aiRationale: protocol.ai_rationale,
     trainingFocus: protocol.training_focus,
@@ -1847,6 +2014,7 @@ function transformProtocolResponse(protocol, exercises) {
       "Evening Recovery",
       "pi-moon",
     ),
+    blocks: blocksArray, // For resolver
     overallProgress: protocol.overall_progress || 0,
     completedExercises: protocol.completed_exercises || 0,
     totalExercises: protocol.total_exercises || 0,
@@ -1856,6 +2024,23 @@ function transformProtocolResponse(protocol, exercises) {
     sessionNotes: protocol.session_notes,
     generatedAt: protocol.generated_at,
     updatedAt: protocol.updated_at,
+    // Coach alert fields (for resolver)
+    coach_alert_active: protocol.coach_alert_active || false,
+    coach_alert_message: protocol.coach_alert_message || null,
+    coach_alert_requires_acknowledgment: protocol.coach_alert_requires_acknowledgment || false,
+    coach_acknowledged: protocol.coach_acknowledged || false,
+    modified_by_coach_id: protocol.modified_by_coach_id || null,
+    modified_by_coach_name: coachName || protocol.modified_by_coach_name || null,
+    modified_at: protocol.modified_at || null,
+    // Coach note fields
+    coach_note: protocol.coach_note ? {
+      content: protocol.coach_note,
+      priority: protocol.coach_note_priority || "info",
+      coachName: coachName || protocol.modified_by_coach_name || null,
+      timestampLocal: protocol.modified_at || protocol.updated_at,
+    } : null,
+    // Team activity (PROMPT 2.10)
+    teamActivity: teamActivity,
   };
 }
 

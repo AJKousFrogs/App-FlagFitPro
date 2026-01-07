@@ -1,0 +1,35 @@
+<div 
+  class="banner"
+  [class.banner-info]="type() === 'info'"
+  [class.banner-warning]="type() === 'warning'"
+  [class.banner-alert]="type() === 'alert'"
+  [class.banner-error]="type() === 'error'"
+>
+  <div class="banner-content">
+    <i [class]="getIconClass()" class="banner-icon" aria-hidden="true"></i>
+    <p class="banner-message">{{ message() }}</p>
+  </div>
+  
+  @if (primaryCta() || secondaryCta()) {
+    <div class="banner-actions">
+      @if (primaryCta()) {
+        <app-button
+          [variant]="primaryCta()?.variant === 'secondary' ? 'outlined' : 'primary'"
+          size="sm"
+          (clicked)="onCtaClick(primaryCta()!.action)"
+        >
+          {{ primaryCta()!.label }}
+        </app-button>
+      }
+      @if (secondaryCta()) {
+        <app-button
+          variant="text"
+          size="sm"
+          (clicked)="onCtaClick(secondaryCta()!.action)"
+        >
+          {{ secondaryCta()!.label }}
+        </app-button>
+      }
+    </div>
+  }
+</div>

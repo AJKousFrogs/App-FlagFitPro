@@ -99,6 +99,18 @@ export class SearchPanelComponent implements OnDestroy {
     article: "Article",
   };
 
+  /** Popular searches to show when empty (UX Audit Fix #6) */
+  readonly popularSearches = [
+    "Sprint Training",
+    "Quarterback Drills",
+    "Receiver Routes",
+    "Agility Drills",
+    "Strength Training",
+    "Recovery Protocol",
+    "Conditioning",
+    "Footwork Drills",
+  ];
+
   constructor() {
     // Setup debounced search stream
     this.searchSubject

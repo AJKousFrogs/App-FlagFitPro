@@ -1,0 +1,480 @@
+/**
+ * Mobile Responsive Utilities
+ * ================================================================
+ * Comprehensive mobile-first responsive utilities optimized for:
+ * - Chrome Mobile (Primary: 70% of users)
+ * - Safari iOS (Primary: 25% of users)
+ * - Touch interactions
+ * - Small screens (320px - 768px)
+ * 
+ * Breakpoints:
+ * - xs: 0-479px (Small phones)
+ * - sm: 480-639px (Phones)
+ * - md: 640-767px (Large phones)
+ * - lg: 768-1023px (Tablets)
+ * - xl: 1024px+ (Desktop)
+ * ================================================================
+ */
+
+// ================================================================
+// MOBILE BREAKPOINT MIXINS
+// ================================================================
+
+@mixin mobile-xs {
+  @media (max-width: 479px) {
+    @content;
+  }
+}
+
+@mixin mobile-sm {
+  @media (max-width: 639px) {
+    @content;
+  }
+}
+
+@mixin mobile-md {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin desktop-only {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// ================================================================
+// MOBILE-SPECIFIC RESETS (Chrome & Safari iOS)
+// ================================================================
+
+// Remove iOS Safari input shadows and zoom
+:global {
+  @media (max-width: 767px) {
+    // Prevent zoom on input focus (iOS Safari)
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    textarea,
+    select {
+      font-size: 16px !important; // iOS Safari zooms on < 16px
+    }
+
+    // Better tap targets (44px minimum - Apple HIG & Material Design)
+    button,
+    [role="button"],
+    a,
+    input[type="checkbox"],
+    input[type="radio"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    // Disable pull-to-refresh in Chrome on Android
+    body {
+      overscroll-behavior-y: contain;
+    }
+
+    // Smooth scrolling for iOS
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    // Remove iOS Safari callout menu
+    * {
+      -webkit-touch-callout: none;
+    }
+
+    // Better text rendering on mobile
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+  }
+}
+
+// ================================================================
+// RESPONSIVE GRID UTILITIES
+// ================================================================
+
+.mobile-grid-1 {
+  @media (max-width: 767px) {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--space-3) !important;
+  }
+}
+
+.mobile-grid-2 {
+  @media (max-width: 767px) {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-3) !important;
+  }
+}
+
+.tablet-grid-2 {
+  @media (max-width: 1023px) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+// ================================================================
+// RESPONSIVE SPACING UTILITIES
+// ================================================================
+
+.mobile-p-2 {
+  @media (max-width: 767px) {
+    padding: var(--space-2) !important;
+  }
+}
+
+.mobile-p-3 {
+  @media (max-width: 767px) {
+    padding: var(--space-3) !important;
+  }
+}
+
+.mobile-gap-2 {
+  @media (max-width: 767px) {
+    gap: var(--space-2) !important;
+  }
+}
+
+.mobile-gap-3 {
+  @media (max-width: 767px) {
+    gap: var(--space-3) !important;
+  }
+}
+
+// ================================================================
+// RESPONSIVE TEXT UTILITIES
+// ================================================================
+
+.mobile-text-sm {
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h4) !important;
+  }
+}
+
+.mobile-text-base {
+  @media (max-width: 767px) {
+    font-size: var(--font-size-body) !important;
+  }
+}
+
+.mobile-hide {
+  @media (max-width: 767px) {
+    display: none !important;
+  }
+}
+
+.desktop-hide {
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED CARD STYLES
+// ================================================================
+
+.mobile-card-compact {
+  @media (max-width: 767px) {
+    :global(.p-card-body) {
+      padding: var(--space-3) !important;
+    }
+
+    :global(.p-card-title) {
+      font-size: var(--font-size-h3) !important;
+      margin-bottom: var(--space-2) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED TABLE STYLES
+// ================================================================
+
+.mobile-table-scroll {
+  @media (max-width: 767px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    
+    // Scroll shadow indicators
+    background: 
+      linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+      linear-gradient(to right, rgba(255,255,255,0), white 70%) 0 100%,
+      radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+
+    table {
+      min-width: 600px; // Force horizontal scroll
+    }
+
+    // Sticky first column on mobile
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      background: var(--surface-card);
+      z-index: 1;
+    }
+  }
+}
+
+// ================================================================
+// TOUCH-FRIENDLY BUTTON STYLES
+// ================================================================
+
+.mobile-button-large {
+  @media (max-width: 767px) {
+    min-height: 48px !important;
+    padding: var(--space-3) var(--space-4) !important;
+    font-size: var(--font-size-body) !important;
+
+    i {
+      font-size: var(--font-size-h3) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED FORM STYLES
+// ================================================================
+
+.mobile-form-stack {
+  @media (max-width: 767px) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-3) !important;
+
+    .form-field,
+    .p-field {
+      width: 100% !important;
+      margin-bottom: 0 !important;
+    }
+
+    .form-row {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--space-3) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED CHART CONTAINERS
+// ================================================================
+
+.mobile-chart-responsive {
+  @media (max-width: 767px) {
+    canvas {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    // Reduce chart padding on mobile
+    :global(.p-chart) {
+      padding: var(--space-2) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE SAFE AREAS (iOS Notch Support)
+// ================================================================
+
+@supports (padding: max(0px)) {
+  .mobile-safe-bottom {
+    @media (max-width: 767px) {
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom)) !important;
+    }
+  }
+
+  .mobile-safe-top {
+    @media (max-width: 767px) {
+      padding-top: max(var(--space-4), env(safe-area-inset-top)) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED DIALOG/MODAL
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // Full-screen dialogs on mobile
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 95vw !important;
+      max-height: 90vh !important;
+    }
+
+    .p-dialog-content {
+      padding: var(--space-3) !important;
+      max-height: calc(90vh - 120px) !important;
+      overflow-y: auto !important;
+    }
+
+    // Bottom sheet style for mobile
+    .p-dialog.mobile-bottom-sheet {
+      bottom: 0 !important;
+      top: auto !important;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+      animation: slideUpFromBottom 0.3s ease-out !important;
+    }
+  }
+}
+
+@keyframes slideUpFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// ================================================================
+// MOBILE-OPTIMIZED PRIMENG OVERRIDES
+// ================================================================
+
+:global {
+  @media (max-width: 767px) {
+    // DatePicker full width
+    .p-datepicker {
+      max-width: calc(100vw - var(--space-6)) !important;
+      
+      .p-datepicker-calendar {
+        font-size: var(--font-size-h4) !important;
+      }
+
+      td, th {
+        padding: var(--space-2) !important;
+      }
+    }
+
+    // Select dropdown full width
+    .p-select-overlay {
+      max-width: calc(100vw - var(--space-6)) !important;
+    }
+
+    // Toast notifications
+    .p-toast {
+      width: calc(100vw - var(--space-6)) !important;
+      left: var(--space-3) !important;
+      right: var(--space-3) !important;
+
+      .p-toast-message {
+        margin: var(--space-2) 0 !important;
+      }
+    }
+
+    // Menu/Dropdown
+    .p-menu {
+      max-width: calc(100vw - var(--space-6)) !important;
+    }
+
+    // Toolbar
+    .p-toolbar {
+      flex-wrap: wrap !important;
+      gap: var(--space-2) !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE SCROLLBAR STYLING (Webkit - Chrome & Safari)
+// ================================================================
+
+@media (max-width: 767px) {
+  // Thin scrollbars for mobile
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ds-border-default) transparent;
+  }
+
+  // Webkit scrollbar (Chrome, Safari, Edge)
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--ds-border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--ds-border-strong);
+  }
+}
+
+// ================================================================
+// PERFORMANCE OPTIMIZATIONS FOR MOBILE
+// ================================================================
+
+@media (max-width: 767px) {
+  // Use GPU acceleration for animations
+  .mobile-gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  // Reduce motion for better performance
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+// ================================================================
+// MOBILE DEBUGGING UTILITIES (Remove in production)
+// ================================================================
+
+// Uncomment to see breakpoints while developing
+// body::before {
+//   content: 'xs';
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   padding: 4px 8px;
+//   background: red;
+//   color: white;
+//   z-index: 99999;
+//   font-size: 12px;
+//   
+//   @media (min-width: 480px) { content: 'sm'; background: orange; }
+//   @media (min-width: 640px) { content: 'md'; background: yellow; color: black; }
+//   @media (min-width: 768px) { content: 'lg'; background: green; }
+//   @media (min-width: 1024px) { content: 'xl'; background: blue; }
+// }
+

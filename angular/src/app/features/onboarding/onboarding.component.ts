@@ -2867,15 +2867,23 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // This maps UI position values to normalized database keys
       await this.createAthleteTrainingConfig(user.id);
 
-      // Assign training program based on position
-      // This is non-blocking - if it fails, user can still enter app
-      // and admin can assign later
+      // BLOCKER B ENFORCEMENT: Assign training program based on position
+      // This is now MANDATORY - every athlete must have a real plan
       const assignmentResult = await this.assignTrainingProgram();
       
       if (!assignmentResult) {
-        this.logger.warn(
-          "[Onboarding] Program assignment may have failed - user will see 'No Program Assigned' message",
+        this.logger.error(
+          "[Onboarding] Program assignment FAILED - this is a critical error",
         );
+        
+        // Show user a clear error message
+        this.toastService.error(
+          "We couldn't assign your training program. Please contact support or try again.",
+          "Setup Error"
+        );
+        
+        // Don't proceed - they need a program
+        throw new Error("Program assignment failed - cannot complete onboarding without a training program");
       }
 
       // Clear the draft after successful completion
@@ -2987,13 +2995,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         this.onboardingData.position || "WR",
       );
 
-      // Build practice schedule from onboarding data
-      const practiceSchedule = this.onboardingData.practiceDays?.map(
-        (day: string) => ({
-          day: this.getDayNumber(day),
-          type: "flag_practice",
-        }),
-      ) || [];
+      // Availability schedule is set separately via player-settings API
+      // Coaches schedule team activities via team_activities table (authority)
 
       const config = {
         user_id: userId,
@@ -3001,7 +3004,6 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         secondary_position: this.onboardingData.secondaryPosition
           ? normalizePositionForModifiers(this.onboardingData.secondaryPosition)
           : null,
-        flag_practice_schedule: practiceSchedule,
         birth_date: this.onboardingData.dateOfBirth
           ?.toISOString()
           .split("T")[0] || null,
@@ -3153,8 +3155,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     const position = this.onboardingData.position;
 
     if (!position) {
-      this.logger.warn(
-        "[Onboarding] No position selected, skipping program assignment",
+      // BLOCKER B: Position is mandatory for program assignment
+      this.logger.error(
+        "[Onboarding] No position selected - cannot assign program (CRITICAL)",
       );
       return false;
     }
@@ -3174,21 +3177,22 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       if (assignment) {
         this.logger.info(
-          `[Onboarding] Successfully assigned program: ${assignment.program.name}`,
+          `[Onboarding] ✅ Successfully assigned program: ${assignment.program.name}`,
         );
         return true;
       } else {
-        // Assignment returned null - could be an error or conflict
-        // Log but don't block onboarding
-        this.logger.warn(
-          "[Onboarding] Program assignment returned null - may need manual assignment",
+        // Assignment returned null - this is now a CRITICAL failure
+        this.logger.error(
+          "[Onboarding] ❌ Program assignment returned null (CRITICAL - BLOCKER B)",
         );
         return false;
       }
     } catch (error) {
-      // Non-blocking error - log and continue
-      this.logger.error("[Onboarding] Failed to assign training program:", error);
-      // User can still proceed; admin can assign program later if needed
+      // BLOCKER B: This is now a BLOCKING error - don't let them proceed
+      this.logger.error(
+        "[Onboarding] ❌ Failed to assign training program (CRITICAL - BLOCKER B):",
+        error,
+      );
       return false;
     }
   }

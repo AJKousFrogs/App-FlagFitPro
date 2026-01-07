@@ -2,7 +2,7 @@
   <p-toast />
 
   <!-- ========================================================================
-       COMPLETION CELEBRATION OVERLAY
+       COMPLETION CELEBRATION OVERLAY (keep existing)
        ======================================================================== -->
   @if (showCelebration()) {
     <div
@@ -48,9 +48,9 @@
   }
 
   <!-- ========================================================================
-       LOADING STATE - Skeleton placeholders
+       LOADING STATE
        ======================================================================== -->
-  @if (isLoading()) {
+  @if (isLoading() || isGeneratingProtocol()) {
     <div
       class="today-page"
       aria-busy="true"
@@ -67,619 +67,319 @@
   }
 
   <!-- ========================================================================
-       ONBOARDING BANNER - First-time users who haven't checked in
+       MAIN CONTENT - VIEWMODEL-DRIVEN
        ======================================================================== -->
-  @if (isFirstTimeUser() && !hasCheckedInToday() && !isLoading()) {
-    <div class="onboarding-banner" @fadeSlideIn>
-      <p-card styleClass="onboarding-card">
-        <div class="onboarding-content">
-          <div class="onboarding-info">
-            <div class="onboarding-avatar">
-              <i class="pi pi-sparkles"></i>
-            </div>
-            <div class="onboarding-text">
-              <h2>Welcome, {{ userName() || "Athlete" }}!</h2>
-              <p>
-                I'm Merlin, your AI coach. Let me know how you're feeling to
-                build your plan.
-              </p>
-            </div>
-          </div>
-          <app-button
-            iconLeft="pi-arrow-down"
-            size="lg"
-            (clicked)="scrollToWellness()"
-            >Start Check-in</app-button
-          >
-        </div>
-      </p-card>
-    </div>
-  }
-
-  <!-- ========================================================================
-       MAIN CONTENT
-       ======================================================================== -->
-  @if (!isLoading()) {
-    <div class="today-page">
-      <!-- ====================================================================
-           SECTION 1: Welcome Card with Quick Check-in
-           ==================================================================== -->
-      <section aria-labelledby="welcome-heading">
-        <p-card styleClass="welcome-card">
-          <div class="welcome-row">
-            <div class="user-avatar" aria-hidden="true">
-              <i class="pi pi-user"></i>
-            </div>
-            <div class="welcome-text">
-              <h1 id="welcome-heading" class="welcome-greeting">
-                {{ greetingPrefix() }}
-              </h1>
-              <h2 class="welcome-name">{{ userName() || "Athlete" }}!</h2>
-              <p class="welcome-hint">{{ dayPhaseMessage() }}</p>
-            </div>
-            <div class="welcome-cta">
-              @if (!hasCheckedInToday()) {
-                <div class="checkin-buttons">
-                  <app-button
-                    iconLeft="pi-bolt"
-                    size="sm"
-                    variant="outlined"
-                    (clicked)="openQuickCheckin()"
-                    pTooltip="Quick 3-tap check-in"
-                    >Quick</app-button
-                  >
-                  <app-button
-                    iconLeft="pi-heart"
-                    size="sm"
-                    (clicked)="scrollToWellness()"
-                    >Full Check-in</app-button
-                  >
-                </div>
-              } @else {
-                <p-tag
-                  severity="success"
-                  icon="pi pi-check"
-                  value="Checked In"
-                />
-              }
-            </div>
-          </div>
-        </p-card>
-      </section>
-
-      <!-- ====================================================================
-           QUICK CHECK-IN DIALOG (3-tap flow)
-           ==================================================================== -->
-      <p-dialog
-        [visible]="showQuickCheckin()"
-        (visibleChange)="showQuickCheckin.set($event)"
-        header="Quick Check-in"
-        [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '400px' }"
-        [contentStyle]="{ padding: '1.5rem' }"
-      >
-        <div class="quick-checkin-form">
-          <p class="quick-intro">How are you feeling today? Tap to select.</p>
-
-          <!-- Step 1: Overall Feeling -->
-          <div class="quick-section">
-            <span class="quick-label">Overall Feeling</span>
-            <div class="mood-selector">
-              @for (mood of quickMoods; track mood.value) {
-                <button
-                  type="button"
-                  class="mood-btn"
-                  [class.selected]="
-                    quickFormData().overallFeeling === mood.value
-                  "
-                  (click)="setQuickField('overallFeeling', mood.value)"
-                  [attr.aria-label]="mood.label"
-                >
-                  <span class="mood-emoji">{{ mood.emoji }}</span>
-                  <span class="mood-text">{{ mood.label }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Step 2: Energy Level -->
-          <div class="quick-section">
-            <span class="quick-label">Energy Level</span>
-            <div class="energy-selector">
-              @for (level of quickEnergyLevels; track level.value) {
-                <button
-                  type="button"
-                  class="energy-btn"
-                  [class.selected]="quickFormData().energyLevel === level.value"
-                  (click)="setQuickField('energyLevel', level.value)"
-                >
-                  <i
-                    class="pi pi-bolt"
-                    [style.opacity]="level.value * 0.2 + 0.2"
-                  ></i>
-                  <span>{{ level.label }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Step 3: Any Soreness -->
-          <div class="quick-section">
-            <span class="quick-label">Any Soreness?</span>
-            <div class="soreness-selector">
-              <button
-                type="button"
-                class="soreness-btn"
-                [class.selected]="quickFormData().hasSoreness === false"
-                (click)="setQuickField('hasSoreness', false)"
-              >
-                <i class="pi pi-check-circle"></i>
-                <span>Feeling Good</span>
-              </button>
-              <button
-                type="button"
-                class="soreness-btn soreness-yes"
-                [class.selected]="quickFormData().hasSoreness === true"
-                (click)="setQuickField('hasSoreness', true)"
-              >
-                <i class="pi pi-exclamation-circle"></i>
-                <span>Some Soreness</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Preview Score -->
-          <div class="quick-preview">
-            <span class="preview-label">Estimated Readiness</span>
-            <span class="preview-score" [class]="getQuickReadinessClass()"
-              >{{ quickReadinessScore() }}%</span
-            >
-          </div>
-        </div>
-
-        <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="showQuickCheckin.set(false)"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [loading]="isSavingQuickCheckin()"
-            [disabled]="!isQuickFormValid()"
-            (clicked)="submitQuickCheckin()"
-            >Save</app-button
-          >
-        </ng-template>
-      </p-dialog>
-
-      <!-- ====================================================================
-           SECTION 2: Key Stats (ACWR & Readiness)
-           ==================================================================== -->
-      <section class="stats-grid" aria-label="Key performance metrics">
-        <p-card
-          styleClass="stat-card"
-          (click)="navigateToAcwr()"
-          role="button"
-          tabindex="0"
-          (keydown.enter)="navigateToAcwr()"
-          (keydown.space)="navigateToAcwr()"
-        >
-          <div class="stat-row">
-            <div class="stat-icon acwr" aria-hidden="true">
-              <i class="pi pi-chart-line"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value-row">
-                <span class="stat-value" [class]="acwrClass()">
-                  {{ acwrValue().toFixed(2) }}
-                </span>
-                @if (acwrStatusLabel() !== "Unknown") {
-                  <span class="stat-status-label">
-                    ({{ acwrStatusLabel().toLowerCase() }})
+  @if (!isLoading() && !isGeneratingProtocol()) {
+    @if (todayViewModel(); as vm) {
+      <div class="today-page">
+        <!-- ====================================================================
+             HEADER: 5-Second Comprehension
+             ==================================================================== -->
+        <section aria-labelledby="today-heading">
+          <p-card styleClass="welcome-card">
+            <div class="welcome-row">
+              <div class="user-avatar" aria-hidden="true">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="welcome-text">
+                <h1 id="today-heading" class="welcome-greeting">
+                  Today
+                </h1>
+                <h2 class="welcome-name">{{ todayDateLabel() }}</h2>
+                <div class="welcome-stats">
+                  <span class="stat-item">
+                    <span class="stat-label">Readiness:</span>
+                    <span class="stat-value" [class.logged]="readinessDisplay().logged">
+                      {{ readinessDisplay().value }}
+                      @if (readinessDisplay().logged) {
+                        <i class="pi pi-check" style="margin-left: 4px;"></i>
+                      }
+                    </span>
                   </span>
-                }
+                </div>
               </div>
-              <span class="stat-label">ACWR</span>
             </div>
-            <i class="pi pi-chevron-right stat-chevron" aria-hidden="true"></i>
-          </div>
-        </p-card>
-
-        <p-card
-          styleClass="stat-card"
-          (click)="navigateToWellness()"
-          role="button"
-          tabindex="0"
-          (keydown.enter)="navigateToWellness()"
-          (keydown.space)="navigateToWellness()"
-        >
-          <div class="stat-row">
-            <div class="stat-icon readiness" aria-hidden="true">
-              <i class="pi pi-heart"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value-row">
-                <span class="stat-value" [class]="readinessLevel()">
-                  {{ readinessScore() }}%
-                </span>
-                <span class="stat-status-label">
-                  ({{ readinessStatusLabel().toLowerCase() }})
-                </span>
-              </div>
-              <span class="stat-label">Readiness</span>
-            </div>
-            <i class="pi pi-chevron-right stat-chevron" aria-hidden="true"></i>
-          </div>
-        </p-card>
-      </section>
-
-      <!-- ====================================================================
-           SECTION 3: Week Progress Strip
-           ==================================================================== -->
-      <section aria-label="Weekly progress">
-        <p-card styleClass="week-card">
-          <app-week-progress-strip
-            [weekDays]="weekDays()"
-            [stats]="weekStats()"
-          />
-        </p-card>
-      </section>
-
-      <!-- ====================================================================
-           DYNAMIC CONTENT AREA
-           ==================================================================== -->
-      <main class="content-section">
-        <!-- ==================================================================
-             PHASE 1: Morning Check-in
-             ================================================================== -->
-        @if (activeFocus() === "checkin") {
-          <section id="wellness-section" aria-labelledby="checkin-heading">
-            <p-card styleClass="content-card highlight-card">
-              <div class="card-header">
-                <i class="pi pi-heart card-header-icon" aria-hidden="true"></i>
-                <span id="checkin-heading" class="card-header-title"
-                  >Morning Check-in</span
-                >
-                <p-tag severity="warn" value="Required" />
-              </div>
-              <p class="card-description">
-                Start your day by logging your readiness. This optimizes your
-                training protocol.
-              </p>
-              <app-wellness-checkin
-                [date]="currentDate()"
-                (checkinComplete)="onWellnessComplete($event)"
-              />
-            </p-card>
-          </section>
-        }
-
-        <!-- ==================================================================
-             PHASE 2: Training Protocol (show if checked in OR if protocol data exists)
-             ================================================================== -->
-        @if (
-          activeFocus() === "protocol" ||
-          (protocol() && (hasCheckedInToday() || dayPhase() === "midday"))
-        ) {
-          <!-- ==================================================================
-               AI INSIGHT CARD (shown in protocol phase when available)
-               ================================================================== -->
-          @if (aiInsight()) {
-            <section aria-labelledby="insight-heading">
-              <p-card styleClass="insight-card">
-                <div class="insight-content">
-                  <div class="insight-avatar" aria-hidden="true">
-                    <i class="pi pi-sparkles"></i>
-                  </div>
-                  <div class="insight-text">
-                    <h3 id="insight-heading" class="insight-title">
-                      ✨ Merlin's Insight
-                    </h3>
-                    <p class="insight-message">{{ aiInsight() }}</p>
-                    <app-button
-                      iconLeft="pi-comments"
-                      size="sm"
-                      [routerLink]="'/chat'"
-                      [queryParams]="{
-                        query: 'Tell me more about: ' + aiInsight(),
-                      }"
-                      >Discuss with Merlin</app-button
-                    >
-                  </div>
-                </div>
-              </p-card>
-            </section>
-          }
-          <section aria-labelledby="protocol-heading">
-            <p-card styleClass="content-card">
-              <div class="card-header">
-                <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
-                <span id="protocol-heading" class="card-header-title"
-                  >Today's Protocol</span
-                >
-                @if (protocol()?.overallProgress === 100) {
-                  <p-tag
-                    severity="success"
-                    value="Complete"
-                    icon="pi pi-check"
-                  />
-                }
-              </div>
-
-              @if (protocol(); as p) {
-                <!-- Progress Bar -->
-                <div class="protocol-progress-wrapper">
-                  <p-progressbar
-                    [value]="p.overallProgress"
-                    [showValue]="false"
-                    styleClass="protocol-bar"
-                  />
-                  <div class="protocol-meta">
-                    <span
-                      >{{ p.completedExercises }}/{{
-                        p.totalExercises
-                      }}
-                      Exercises</span
-                    >
-                    <span>{{ p.overallProgress }}%</span>
-                  </div>
-                </div>
-
-                <!-- Protocol Blocks -->
-                <div class="protocol-blocks" data-testid="protocol-blocks">
-                  @if (p.morningMobility) {
-                    <app-protocol-block
-                      data-testid="protocol-block-morning-mobility"
-                      [block]="p.morningMobility"
-                      [simpleView]="true"
-                      [defaultExpanded]="true"
-                      (exerciseComplete)="refreshProtocol()"
-                    />
-                  }
-
-                  @if (p.foamRoll && p.foamRoll.totalCount > 0) {
-                    <app-protocol-block
-                      data-testid="protocol-block-foam-rolling"
-                      [block]="p.foamRoll"
-                      [simpleView]="true"
-                      [defaultExpanded]="true"
-                      (exerciseComplete)="refreshProtocol()"
-                    />
-                  }
-
-                  @if (p.mainSession) {
-                    <app-protocol-block
-                      [block]="p.mainSession"
-                      [simpleView]="true"
-                      [defaultExpanded]="true"
-                      (exerciseComplete)="refreshProtocol()"
-                    />
-                  }
-
-                  @if (p.eveningRecovery && p.eveningRecovery.totalCount > 0) {
-                    <app-protocol-block
-                      [block]="p.eveningRecovery"
-                      [simpleView]="true"
-                      [defaultExpanded]="true"
-                      (exerciseComplete)="refreshProtocol()"
-                    />
-                  }
-                </div>
-
-                <!-- Footer Link -->
-                <div class="card-footer">
-                  <app-button
-                    iconRight="pi-external-link"
-                    variant="text"
-                    routerLink="/training/advanced"
-                    >Advanced Training Workspace</app-button
-                  >
-                </div>
-              } @else {
-                <!-- Empty State - No Protocol Generated -->
-                <div class="empty-state">
-                  <i class="pi pi-calendar-plus"></i>
-                  <h3>No Training Plan Yet</h3>
-                  <p>
-                    Generate your personalized protocol to see exercises with
-                    videos and instructions.
-                  </p>
-                  <div class="empty-state-actions">
-                    <app-button
-                      iconLeft="pi-sparkles"
-                      [loading]="isGeneratingProtocol()"
-                      (clicked)="generateProtocol()"
-                      >Generate Today's Protocol</app-button
-                    >
-                    <app-button
-                      iconLeft="pi-refresh"
-                      variant="outlined"
-                      (clicked)="refreshProtocol()"
-                      >Refresh</app-button
-                    >
-                  </div>
-                </div>
-              }
-            </p-card>
-          </section>
-        }
-
-        <!-- ==================================================================
-             PHASE 3: Evening Wrap-up
-             ================================================================== -->
-        @if (activeFocus() === "wrapup") {
-          <section aria-labelledby="wrapup-heading">
-            <p-card styleClass="content-card highlight-card">
-              <div class="card-header">
-                <i class="pi pi-moon card-header-icon" aria-hidden="true"></i>
-                <span id="wrapup-heading" class="card-header-title"
-                  >Evening Wrap-up</span
-                >
-                <p-tag severity="info" value="Recovery Time" />
-              </div>
-              <p class="card-description">
-                Great job today! Log your effort to keep your ACWR accurate.
-              </p>
-
-              <div class="action-list">
-                <p-card
-                  styleClass="action-card"
-                  (click)="openRecoveryDialog()"
-                  role="button"
-                  tabindex="0"
-                  (keydown.enter)="openRecoveryDialog()"
-                  (keydown.space)="openRecoveryDialog()"
-                >
-                  <div class="action-row">
-                    <div class="action-icon" aria-hidden="true">
-                      <i class="pi pi-book"></i>
-                    </div>
-                    <div class="action-text">
-                      <h4>Log Session Effort (RPE)</h4>
-                      <p>Tell Merlin how hard you worked.</p>
-                    </div>
-                    <i
-                      class="pi pi-chevron-right action-chevron"
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                </p-card>
-
-                <p-card
-                  styleClass="action-card"
-                  [routerLink]="['/wellness']"
-                  role="button"
-                  tabindex="0"
-                >
-                  <div class="action-row">
-                    <div class="action-icon" aria-hidden="true">
-                      <i class="pi pi-heart"></i>
-                    </div>
-                    <div class="action-text">
-                      <h4>Review Recovery Stats</h4>
-                      <p>Check your trends and sleep debt.</p>
-                    </div>
-                    <i
-                      class="pi pi-chevron-right action-chevron"
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                </p-card>
-              </div>
-            </p-card>
-          </section>
-        }
-
-        <!-- ==================================================================
-             TODAY'S SCHEDULE (shown in ALL phases)
-             ================================================================== -->
-        <section aria-label="Today's schedule">
-          <app-todays-schedule />
-        </section>
-
-        <!-- ==================================================================
-             TOMORROW'S TRAINING PREVIEW
-             ================================================================== -->
-        <section aria-labelledby="tomorrow-heading">
-          <p-card styleClass="content-card">
-            <div class="card-header">
-              <i class="pi pi-calendar card-header-icon" aria-hidden="true"></i>
-              <span id="tomorrow-heading" class="card-header-title"
-                >Tomorrow's Training</span
-              >
-              <p-tag severity="info" [value]="tomorrowDateLabel()" />
-            </div>
-
-            @if (isLoadingTomorrow()) {
-              <div class="tomorrow-loading">
-                <p-skeleton width="100%" height="3rem" borderRadius="0.5rem" />
-                <p-skeleton width="80%" height="1.5rem" borderRadius="0.5rem" />
-              </div>
-            } @else if (tomorrowProtocol(); as tp) {
-              <div class="tomorrow-preview">
-                <p class="tomorrow-rationale">
-                  {{
-                    tp.aiRationale || "Training protocol ready for tomorrow."
-                  }}
-                </p>
-
-                <div class="tomorrow-blocks">
-                  @if (
-                    tp.morningMobility && tp.morningMobility.totalCount > 0
-                  ) {
-                    <div class="tomorrow-block-item">
-                      <i class="pi pi-sun"></i>
-                      <span>Morning Mobility</span>
-                      <span class="block-count"
-                        >{{ tp.morningMobility.totalCount }} exercises</span
-                      >
-                    </div>
-                  }
-                  @if (tp.mainSession && tp.mainSession.totalCount > 0) {
-                    <div class="tomorrow-block-item">
-                      <i class="pi pi-bolt"></i>
-                      <span>{{ tp.trainingFocus || "Main Session" }}</span>
-                      <span class="block-count"
-                        >{{ tp.mainSession.totalCount }} exercises</span
-                      >
-                    </div>
-                  }
-                  @if (
-                    tp.eveningRecovery && tp.eveningRecovery.totalCount > 0
-                  ) {
-                    <div class="tomorrow-block-item">
-                      <i class="pi pi-moon"></i>
-                      <span>Evening Recovery</span>
-                      <span class="block-count"
-                        >{{ tp.eveningRecovery.totalCount }} exercises</span
-                      >
-                    </div>
-                  }
-                </div>
-
-                <div class="tomorrow-actions">
-                  <app-button
-                    iconLeft="pi-eye"
-                    variant="outlined"
-                    size="sm"
-                    (clicked)="viewTomorrowProtocol()"
-                    >View Full Protocol</app-button
-                  >
-                </div>
-              </div>
-            } @else {
-              <div class="tomorrow-empty">
-                <p>No protocol generated for tomorrow yet.</p>
-                <app-button
-                  iconLeft="pi-sparkles"
-                  variant="outlined"
-                  size="sm"
-                  [loading]="isGeneratingTomorrow()"
-                  (clicked)="generateTomorrowProtocol()"
-                  >Generate Tomorrow's Protocol</app-button
-                >
-              </div>
-            }
           </p-card>
         </section>
 
-        <!-- ==================================================================
-             ERROR STATE
-             ================================================================== -->
-        @if (error()) {
-          <p-message severity="error" [text]="error()!" styleClass="w-full" />
+        <!-- ====================================================================
+             ERROR STATE (if training not allowed)
+             ==================================================================== -->
+        @if (vm.errorState) {
+          <section aria-labelledby="error-heading">
+            <app-banner
+              type="error"
+              [message]="vm.errorState.message"
+              [primaryCta]="vm.errorState.cta ? { label: vm.errorState.cta.label, action: vm.errorState.cta.action } : null"
+              (ctaClick)="handleCta($event)"
+            />
+          </section>
         }
-      </main>
-    </div>
+
+        <!-- ====================================================================
+             COACH ALERT ACKNOWLEDGMENT GATE (blocking)
+             ==================================================================== -->
+        @if (hasAlertBanner()) {
+          <section class="coach-alert-gate">
+            <p-card styleClass="alert-gate-card">
+              <div class="alert-gate-content">
+                <i class="pi pi-bell alert-gate-icon"></i>
+                <div class="alert-gate-text">
+                  <h3>Coach Alert</h3>
+                  <p>{{ alertBannerText() }}</p>
+                </div>
+                @if (vm.primaryCta) {
+                  <app-button
+                    variant="primary"
+                    (clicked)="handleCta(vm.primaryCta!.action)"
+                  >
+                    {{ vm.primaryCta.label }}
+                  </app-button>
+                }
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ====================================================================
+             COACH ATTRIBUTION (if coach modified)
+             ==================================================================== -->
+        @if (vm.headerContext?.coachAttribution) {
+          <section class="coach-attribution">
+            <p-card styleClass="attribution-card">
+              <div class="attribution-content">
+                <i class="pi pi-user-edit"></i>
+                <span>{{ vm.headerContext?.coachAttribution }}</span>
+                @if (protocolJson()?.modified_at) {
+                  <span class="attribution-time">
+                    {{ formatCoachTimestamp(protocolJson()!.modified_at!) }}
+                  </span>
+                }
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ====================================================================
+             BANNERS (ordered by priority, above first block)
+             ==================================================================== -->
+        @if (vm.banners.length > 0) {
+          <section class="banners-section">
+            @for (banner of vm.banners; track $index) {
+              <app-banner
+                [type]="banner.type"
+                [message]="banner.text"
+                [primaryCta]="banner.ctas?.[0] || null"
+                [secondaryCta]="banner.ctas?.[1] || null"
+                (ctaClick)="handleCta($event)"
+              />
+            }
+          </section>
+        }
+
+        <!-- ====================================================================
+             ACWR BASELINE WIDGET (if building baseline)
+             ==================================================================== -->
+        @if (vm.acwrBaseline) {
+          <section class="acwr-section">
+            <app-acwr-baseline
+              [daysLogged]="vm.acwrBaseline.trainingDaysLogged"
+              [targetDays]="21"
+              label="Load Management"
+            />
+          </section>
+        }
+
+        <!-- ====================================================================
+             MAIN EXECUTION BLOCKS (ordered by ViewModel)
+             ==================================================================== -->
+        @if (vm.trainingAllowed && vm.blocksDisplayed.length > 0) {
+          <main class="content-section">
+            <section aria-labelledby="protocol-heading">
+              <p-card styleClass="content-card">
+                <div class="card-header">
+                  <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
+                  <span id="protocol-heading" class="card-header-title">
+                    Today's Protocol
+                  </span>
+                </div>
+
+                @if (protocol(); as p) {
+                  <!-- Progress Bar -->
+                  @if (p.overallProgress !== undefined) {
+                    <div class="protocol-progress-wrapper">
+                      <p-progressbar
+                        [value]="p.overallProgress"
+                        [showValue]="false"
+                        styleClass="protocol-bar"
+                      />
+                      <div class="protocol-meta">
+                        <span>{{ p.completedExercises }}/{{ p.totalExercises }} Exercises</span>
+                        <span>{{ p.overallProgress }}%</span>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Protocol Blocks (ordered by ViewModel) -->
+                  <div class="protocol-blocks" data-testid="protocol-blocks">
+                    @for (blockType of vm.blocksDisplayed; track blockType) {
+                      @if (getBlockByType(p, blockType); as block) {
+                        <app-protocol-block
+                          [attr.data-block-type]="blockType"
+                          [block]="block"
+                          [simpleView]="true"
+                          [defaultExpanded]="true"
+                          (exerciseComplete)="refreshProtocol()"
+                        />
+                      }
+                    }
+                  </div>
+
+                  <!-- Footer Link -->
+                  <div class="card-footer">
+                    <app-button
+                      iconRight="pi-external-link"
+                      variant="text"
+                      routerLink="/training/advanced"
+                      >Advanced Training Workspace</app-button
+                    >
+                  </div>
+                } @else {
+                  <!-- Empty State -->
+                  <div class="empty-state">
+                    <i class="pi pi-calendar-plus"></i>
+                    <h3>No Training Plan Yet</h3>
+                    <p>
+                      Generate your personalized protocol to see exercises with videos and instructions.
+                    </p>
+                    <div class="empty-state-actions">
+                      <app-button
+                        iconLeft="pi-sparkles"
+                        [loading]="isGeneratingProtocol()"
+                        (clicked)="generateProtocol()"
+                        >Generate Today's Protocol</app-button
+                      >
+                    </div>
+                  </div>
+                }
+              </p-card>
+            </section>
+          </main>
+        }
+      </div>
+    } @else {
+      <!-- No ViewModel - show error -->
+      <div class="today-page">
+        <p-card styleClass="error-card">
+          <div class="empty-state">
+            <i class="pi pi-exclamation-triangle"></i>
+            <h3>Unable to Load Plan</h3>
+            <p>{{ error() || 'Please try refreshing the page.' }}</p>
+            <app-button
+              iconLeft="pi-refresh"
+              (clicked)="refreshProtocol()"
+              >Refresh</app-button
+            >
+          </div>
+        </p-card>
+      </div>
+    }
   }
 
   <!-- ========================================================================
-       RECOVERY DIALOG
+       QUICK CHECK-IN DIALOG (keep existing)
        ======================================================================== -->
-  @if (showRecoveryDialog()) {
-    <app-post-training-recovery
-      sessionName="Today's Training"
-      (closed)="closeRecoveryDialog()"
-      (saved)="onRecoverySaved()"
-    />
-  }
+  <p-dialog
+    [visible]="showQuickCheckin()"
+    (visibleChange)="showQuickCheckin.set($event)"
+    header="Quick Check-in"
+    [modal]="true"
+    [style]="{ width: '95vw', maxWidth: '400px' }"
+    [contentStyle]="{ padding: '1.5rem' }"
+  >
+    <div class="quick-checkin-form">
+      <p class="quick-intro">How are you feeling today? Tap to select.</p>
+
+      <!-- Step 1: Overall Feeling -->
+      <div class="quick-section">
+        <span class="quick-label">Overall Feeling</span>
+        <div class="mood-selector">
+          @for (mood of quickMoods; track mood.value) {
+            <button
+              type="button"
+              class="mood-btn"
+              [class.selected]="quickFormData().overallFeeling === mood.value"
+              (click)="setQuickField('overallFeeling', mood.value)"
+              [attr.aria-label]="mood.label"
+            >
+              <span class="mood-emoji">{{ mood.emoji }}</span>
+              <span class="mood-text">{{ mood.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Step 2: Energy Level -->
+      <div class="quick-section">
+        <span class="quick-label">Energy Level</span>
+        <div class="energy-selector">
+          @for (level of quickEnergyLevels; track level.value) {
+            <button
+              type="button"
+              class="energy-btn"
+              [class.selected]="quickFormData().energyLevel === level.value"
+              (click)="setQuickField('energyLevel', level.value)"
+            >
+              <i class="pi pi-bolt" [style.opacity]="level.value * 0.2 + 0.2"></i>
+              <span>{{ level.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Step 3: Any Soreness -->
+      <div class="quick-section">
+        <span class="quick-label">Any Soreness?</span>
+        <div class="soreness-selector">
+          <button
+            type="button"
+            class="soreness-btn"
+            [class.selected]="quickFormData().hasSoreness === false"
+            (click)="setQuickField('hasSoreness', false)"
+          >
+            <i class="pi pi-check-circle"></i>
+            <span>Feeling Good</span>
+          </button>
+          <button
+            type="button"
+            class="soreness-btn soreness-yes"
+            [class.selected]="quickFormData().hasSoreness === true"
+            (click)="setQuickField('hasSoreness', true)"
+          >
+            <i class="pi pi-exclamation-circle"></i>
+            <span>Some Soreness</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Score -->
+      <div class="quick-preview">
+        <span class="preview-label">Estimated Readiness</span>
+        <span class="preview-score" [class]="getQuickReadinessClass()">
+          {{ quickReadinessScore() }}%
+        </span>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <app-button variant="text" (clicked)="showQuickCheckin.set(false)">Cancel</app-button>
+      <app-button
+        iconLeft="pi-check"
+        [loading]="isSavingQuickCheckin()"
+        [disabled]="!isQuickFormValid()"
+        (clicked)="submitQuickCheckin()"
+        >Save</app-button
+      >
+    </ng-template>
+  </p-dialog>
 </app-main-layout>

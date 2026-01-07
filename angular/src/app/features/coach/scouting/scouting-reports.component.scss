@@ -34,6 +34,17 @@
   }
 }
 
+.filter-group {
+  display: flex;
+  gap: var(--ds-spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.w-full {
+  width: 100%;
+}
+
 // Reports Section
 .reports-section {
   .reports-grid {

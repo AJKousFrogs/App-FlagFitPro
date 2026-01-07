@@ -12,6 +12,8 @@ import { ProgressBarModule } from "primeng/progressbar";
  *
  * A standardized progress indicator component for showing completion status
  * Uses Angular signals for reactive state management
+ * 
+ * Enhanced with time estimates (UX Best Practice - Nielsen Norman Group)
  */
 @Component({
   selector: "app-progress-indicator",
@@ -97,6 +99,14 @@ import { ProgressBarModule } from "primeng/progressbar";
         }
       </div>
 
+      <!-- Time Estimate (UX Best Practice) -->
+      @if (timeEstimate()) {
+        <div class="time-estimate" [attr.aria-label]="timeEstimateAriaLabel()">
+          <i class="pi pi-clock" aria-hidden="true"></i>
+          <span>{{ formattedTimeEstimate() }}</span>
+        </div>
+      }
+
       <!-- Helper Text -->
       @if (helperText()) {
         <div class="progress-helper">{{ helperText() }}</div>
@@ -125,6 +135,13 @@ export class ProgressIndicatorComponent {
       active: boolean;
     }>
   >([]);
+
+  // Time estimate inputs
+  /**
+   * Estimated time remaining in seconds
+   * Set to null to hide time estimate
+   */
+  timeEstimate = input<number | null>(null);
 
   // Computed values
   displayValue = computed(() => {
@@ -156,6 +173,38 @@ export class ProgressIndicatorComponent {
     const circumference = this.circumference();
     const progress = this.value() / 100;
     return circumference - progress * circumference;
+  });
+
+  /**
+   * Format time estimate for display
+   */
+  formattedTimeEstimate = computed(() => {
+    const seconds = this.timeEstimate();
+    if (seconds === null || seconds === undefined) return "";
+
+    if (seconds < 60) {
+      return `~${Math.max(1, Math.round(seconds))} sec remaining`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+      return `~${minutes} min remaining`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (remainingMinutes === 0) {
+      return `~${hours} hr remaining`;
+    }
+    return `~${hours} hr ${remainingMinutes} min remaining`;
+  });
+
+  /**
+   * ARIA label for time estimate
+   */
+  timeEstimateAriaLabel = computed(() => {
+    const formatted = this.formattedTimeEstimate();
+    return `Estimated time: ${formatted}`;
   });
 
   isLastStep(step: {

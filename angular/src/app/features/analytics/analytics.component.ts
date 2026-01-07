@@ -13,7 +13,8 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { DialogModule } from "primeng/dialog";
 import { CardModule } from "primeng/card";
-import { ChartModule, UIChart } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
+import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -50,6 +51,7 @@ import {
   updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 interface Metric {
   icon: string;
@@ -82,7 +84,9 @@ interface DevelopmentGoal {
     FormsModule,
     RouterModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DialogModule,
     ProgressBarModule,
     TableModule,
@@ -273,11 +277,11 @@ interface DevelopmentGoal {
                 </ng-template>
                 @if (performanceChartData()) {
                   <div class="chart-container">
-                    <p-chart
+                    <app-lazy-chart
                       type="line"
                       [data]="performanceChartData()"
                       [options]="lineChartOptions"
-                    ></p-chart>
+                    ></app-lazy-chart>
                   </div>
                   <div class="chart-insights">
                     <div class="insight-item">
@@ -329,11 +333,11 @@ interface DevelopmentGoal {
                 </ng-template>
                 @if (chemistryChartData()) {
                   <div class="chart-container radar">
-                    <p-chart
+                    <app-lazy-chart
                       type="radar"
                       [data]="chemistryChartData()"
                       [options]="radarChartOptions"
-                    ></p-chart>
+                    ></app-lazy-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
@@ -369,11 +373,11 @@ interface DevelopmentGoal {
                 </ng-template>
                 @if (distributionChartData()) {
                   <div class="chart-container doughnut">
-                    <p-chart
+                    <app-lazy-chart
                       type="doughnut"
                       [data]="distributionChartData()"
                       [options]="DOUGHNUT_CHART_OPTIONS"
-                    ></p-chart>
+                    ></app-lazy-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
@@ -407,11 +411,11 @@ interface DevelopmentGoal {
                 </ng-template>
                 @if (positionChartData()) {
                   <div class="chart-container">
-                    <p-chart
+                    <app-lazy-chart
                       type="bar"
                       [data]="positionChartData()"
                       [options]="BAR_CHART_OPTIONS"
-                    ></p-chart>
+                    ></app-lazy-chart>
                   </div>
                 } @else {
                   <div class="empty-chart-state">
@@ -573,11 +577,11 @@ interface DevelopmentGoal {
               </div>
             </ng-template>
             @if (speedChartData()) {
-              <p-chart
+              <app-lazy-chart
                 type="line"
                 [data]="speedChartData()"
                 [options]="lineChartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             }
             <div class="chart-insights">
               <div class="insight-item">

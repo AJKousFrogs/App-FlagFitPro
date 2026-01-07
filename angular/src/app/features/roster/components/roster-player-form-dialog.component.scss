@@ -22,6 +22,14 @@
   color: var(--color-text-secondary);
 }
 
+.field-hint {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-badge);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
 .form-row {
   display: flex;
   gap: var(--space-4);

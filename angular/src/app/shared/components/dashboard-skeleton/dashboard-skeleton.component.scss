@@ -1,0 +1,129 @@
+// ============================================================================
+// Dashboard Skeleton Styles
+// Matches PlayerDashboardComponent layout
+// ============================================================================
+
+.dashboard-skeleton {
+  padding: var(--page-padding-desktop, 24px);
+  
+  @media (max-width: 768px) {
+    padding: var(--page-padding-tablet, 16px);
+  }
+  
+  @media (max-width: 480px) {
+    padding: var(--page-padding-mobile, 12px);
+  }
+}
+
+// Header
+.header-skeleton {
+  margin-bottom: var(--space-6, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+// Stat Cards Grid
+.stats-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4, 16px);
+  margin-bottom: var(--space-6, 32px);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card-skeleton {
+  background: var(--surface-card, #ffffff);
+  border: 1px solid var(--surface-border, #e5e5e5);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-4, 16px);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  min-height: 100px;
+}
+
+.stat-icon-skeleton {
+  flex-shrink: 0;
+}
+
+.stat-content-skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+// Content Grid
+.content-grid-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4, 16px);
+}
+
+.card-skeleton {
+  background: var(--surface-card, #ffffff);
+  border: 1px solid var(--surface-border, #e5e5e5);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-5, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.card-header-skeleton {
+  padding-bottom: var(--space-2, 8px);
+  border-bottom: 1px solid var(--surface-border, #e5e5e5);
+}
+
+// Weekly Progress
+.progress-skeleton {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-2, 8px);
+  margin-bottom: var(--space-3, 12px);
+}
+
+// Schedule Items
+.schedule-item-skeleton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  padding: var(--space-3, 12px);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-ground, #fafafa);
+  margin-bottom: var(--space-2, 8px);
+}
+
+.schedule-content-skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+// Quick Actions
+.quick-actions-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+// Dark theme
+:host-context([data-theme="dark"]) {
+  .card-skeleton {
+    background: var(--surface-card, #171717);
+    border-color: var(--surface-border, #404040);
+  }
+  
+  .schedule-item-skeleton {
+    background: var(--surface-ground, #262626);
+  }
+}

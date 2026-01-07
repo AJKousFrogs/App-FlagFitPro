@@ -33,6 +33,7 @@ import {
   DELETION_MESSAGES,
   getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 interface PendingInvitation {
   id: string;
@@ -65,6 +66,7 @@ interface PendingInvitation {
     TooltipModule,
     MainLayoutComponent,
     PageErrorStateComponent,
+    MobileOptimizedImageDirective,
     DatePipe,
     TitleCasePipe,
     ButtonComponent,
@@ -133,6 +135,10 @@ interface PendingInvitation {
               <div class="avatar-wrapper">
                 @if (avatarUrl()) {
                   <img
+                    appMobileOptimized
+                    [width]="200"
+                    [height]="200"
+                    [lazy]="false"
                     [src]="avatarUrl()"
                     alt="Profile picture"
                     class="profile-avatar-img"

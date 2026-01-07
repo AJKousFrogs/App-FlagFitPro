@@ -20,6 +20,21 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.icon-activity,
+.icon-plus,
+.icon-alert,
+.icon-check,
+.icon-chart,
+.icon-download,
+.icon-file-pdf {
+  font-size: var(--font-size-h3);
+  color: var(--ds-primary-green);
 }
 
 .subtitle {
@@ -194,6 +209,26 @@
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   border: 2px solid var(--color-border-primary);
+}
+
+.zone-card.zone-under {
+  border-color: var(--color-status-warning);
+  background: var(--color-status-warning-subtle);
+}
+
+.zone-card.zone-sweet {
+  border-color: var(--color-status-success);
+  background: var(--color-status-success-subtle);
+}
+
+.zone-card.zone-elevated {
+  border-color: var(--color-status-warning-text);
+  background: var(--color-status-warning-subtle);
+}
+
+.zone-card.zone-danger {
+  border-color: var(--color-status-error);
+  background: var(--color-status-error-subtle);
 }
 
 .zone-header {
@@ -468,35 +503,544 @@
   color: var(--color-text-secondary);
 }
 
+/* Weekly Progression Section */
+.weekly-progression {
+  margin-bottom: var(--space-8);
+}
+
+.weekly-progression h3 {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+}
+
+.progression-card {
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  border: 2px solid var(--color-border-primary);
+}
+
+.progression-card.unsafe {
+  border-color: var(--color-status-error);
+  background: var(--color-status-error-subtle);
+}
+
+.progression-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.stat-value {
+  font-size: var(--font-size-metric-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.stat-value.positive {
+  color: var(--color-status-success);
+}
+
+.progression-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-status-error-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-status-error);
+  font-weight: var(--font-weight-medium);
+}
+
+.progression-safe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-status-success-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-status-success);
+  font-weight: var(--font-weight-medium);
+}
+
+.dashboard-footer {
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-h4);
+  margin-top: var(--space-8);
+}
+
+// ================================================================
+// MOBILE RESPONSIVE - CHROME & SAFARI OPTIMIZED
+// ================================================================
+
 @media (max-width: 768px) {
-  .acwr-ratio-display {
-    flex-direction: column;
+  // ================================================================
+  // MAIN CONTAINER
+  // ================================================================
+  
+  .acwr-dashboard {
+    padding: var(--space-3);
   }
 
-  .quick-actions {
+  // ================================================================
+  // HEADER
+  // ================================================================
+
+  .dashboard-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--font-size-h2);
+    margin-bottom: var(--space-1);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-h4);
+  }
+
+  // ================================================================
+  // ALERT BANNER - MOBILE COMPACT
+  // ================================================================
+
+  .alert-banner {
+    padding: var(--space-3);
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .alert-icon {
+    font-size: var(--font-size-h1);
+  }
+
+  .alert-content h3 {
+    font-size: var(--font-size-body);
+    margin-bottom: var(--space-1);
+  }
+
+  .alert-content p {
+    font-size: var(--font-size-h4);
+  }
+
+  .alert-dismiss {
+    font-size: var(--font-size-h3);
+    padding: var(--space-1);
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  // ================================================================
+  // MAIN ACWR CARD - MOBILE STACK
+  // ================================================================
+
+  .acwr-main-card {
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .acwr-ratio-display {
     flex-direction: column;
+    gap: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+
+  // Smaller ratio circle on mobile
+  .ratio-circle {
+    width: 140px;
+    height: 140px;
+    border-width: 6px;
+  }
+
+  .ratio-value {
+    font-size: var(--font-display-md);
+  }
+
+  .ratio-label {
+    font-size: var(--font-body-2xs);
+  }
+
+  // Risk zone indicator - full width on mobile
+  .risk-zone-indicator {
+    width: 100%;
+    min-width: auto;
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  .risk-icon {
+    font-size: var(--font-size-h1);
+    margin-bottom: var(--space-1);
+  }
+
+  .risk-label {
+    font-size: var(--font-size-h3);
+    margin-bottom: var(--space-1);
+  }
+
+  .risk-description {
+    font-size: var(--font-body-2xs);
+  }
+
+  // ================================================================
+  // LOAD BREAKDOWN - MOBILE STACK
+  // ================================================================
+
+  .load-breakdown {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+  }
+
+  .load-metric {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--surface-ground);
+    border-radius: var(--radius-md);
+  }
+
+  .metric-label {
+    font-size: var(--font-body-2xs);
+  }
+
+  .metric-value {
+    font-size: var(--font-size-h1);
+  }
+
+  .metric-description {
+    font-size: 11px;
+  }
+
+  .load-divider {
+    display: none; // Hide divider on mobile (vertical stack)
+  }
+
+  // ================================================================
+  // RISK ZONES GUIDE - MOBILE
+  // ================================================================
+
+  .risk-zones-guide {
+    margin-bottom: var(--space-4);
+  }
+
+  .risk-zones-guide h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: var(--space-3);
   }
 
   .zones-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .zone-card {
+    padding: var(--space-4);
+  }
+
+  .zone-header {
+    margin-bottom: var(--space-2);
+  }
+
+  .zone-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .zone-range {
+    font-size: var(--font-body-2xs);
+  }
+
+  .zone-label {
+    font-size: var(--font-size-body);
+    margin-bottom: var(--space-1);
+  }
+
+  .zone-card p {
+    font-size: var(--font-body-2xs);
+  }
+
+  // ================================================================
+  // QUICK ACTIONS - MOBILE STACK
+  // ================================================================
+
+  .quick-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .action-btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-h4);
+    min-height: 48px; // Touch-friendly
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // ================================================================
+  // EMPTY STATE - MOBILE
+  // ================================================================
+
+  .acwr-empty-state {
+    padding: var(--space-6);
+  }
+
+  .acwr-empty-state .empty-icon {
+    font-size: var(--font-display-sm);
+    margin-bottom: var(--space-3);
+  }
+
+  .acwr-empty-state h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: var(--space-2);
+  }
+
+  .acwr-empty-state p {
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-4);
+    max-width: 100%;
+  }
+
+  .data-progress {
+    max-width: 100%;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
   }
 
   .progress-item {
     flex-wrap: wrap;
+    gap: var(--space-2);
   }
 
   .progress-label {
     flex: 1 1 100%;
-    margin-bottom: var(--space-1);
+    margin-bottom: 0;
+    font-size: var(--font-body-2xs);
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+
+  .progress-value {
+    flex: 0 0 auto;
+    font-size: var(--font-body-2xs);
+  }
+
+  .empty-tip {
+    padding: var(--space-3);
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-4);
+  }
+
+  // ================================================================
+  // TREND CHART - MOBILE
+  // ================================================================
+
+  .trend-chart-section {
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .trend-chart-section h3 {
+    font-size: var(--font-size-body);
+    margin-bottom: var(--space-3);
   }
 
   .chart-container {
     height: 250px;
+
+    // Ensure canvas is responsive
+    canvas {
+      max-width: 100% !important;
+      height: auto !important;
+    }
   }
 
   .chart-legend {
     flex-direction: column;
     align-items: center;
     gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+  }
+
+  .legend-item {
+    font-size: var(--font-size-h4);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  // ================================================================
+  // RECOMMENDATIONS - MOBILE
+  // ================================================================
+
+  .recommendations-section {
+    margin-bottom: var(--space-4);
+  }
+
+  .recommendations-section h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: var(--space-3);
+  }
+
+  .recommendation-card {
+    padding: var(--space-4);
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .rec-icon {
+    font-size: var(--font-size-h1);
+    text-align: center;
+  }
+
+  .rec-content h4 {
+    font-size: var(--font-size-body);
+    margin-bottom: var(--space-1);
+  }
+
+  .rec-content p {
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-3);
+  }
+
+  .modifications {
+    padding: var(--space-2);
+  }
+
+  .modifications h5 {
+    font-size: var(--font-size-h4);
+  }
+
+  .modifications ul {
+    margin: var(--space-1) 0 0 var(--space-3);
+  }
+
+  .modifications li {
+    font-size: var(--font-body-2xs);
+    margin-bottom: 4px;
+  }
+}
+
+// ================================================================
+// SMALL MOBILE - EXTRA COMPACT
+// ================================================================
+
+@media (max-width: 480px) {
+  .acwr-dashboard {
+    padding: var(--space-2);
+  }
+
+  .dashboard-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--font-size-h3);
+  }
+
+  .alert-banner {
+    padding: var(--space-2);
+  }
+
+  .acwr-main-card {
+    padding: var(--space-3);
+  }
+
+  .ratio-circle {
+    width: 120px;
+    height: 120px;
+    border-width: 4px;
+  }
+
+  .ratio-value {
+    font-size: var(--font-display-sm);
+  }
+
+  .risk-zone-indicator {
+    padding: var(--space-3);
+  }
+
+  .load-metric {
+    padding: var(--space-2);
+  }
+
+  .metric-value {
+    font-size: var(--font-size-h2);
+  }
+
+  .zones-grid {
+    gap: var(--space-2);
+  }
+
+  .zone-card {
+    padding: var(--space-3);
+  }
+
+  .trend-chart-section {
+    padding: var(--space-3);
+  }
+
+  .chart-container {
+    height: 220px;
+  }
+
+  .recommendation-card {
+    padding: var(--space-3);
+  }
+
+  .acwr-empty-state {
+    padding: var(--space-4);
+  }
+}
+
+// ================================================================
+// LANDSCAPE MODE ON PHONES
+// ================================================================
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .acwr-ratio-display {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .risk-zone-indicator {
+    max-width: 300px;
+  }
+
+  .load-breakdown {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .zones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chart-container {
+    height: 200px;
   }
 }

@@ -12,7 +12,7 @@ import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { MessageModule } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
@@ -23,6 +23,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 // ===== Interfaces =====
 interface SleepEntry {
@@ -73,7 +74,9 @@ const DEBT_THRESHOLDS = {
     FormsModule,
     DecimalPipe,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     MessageModule,
     ProgressBarModule,
     TagModule,
@@ -357,11 +360,11 @@ const DEBT_THRESHOLDS = {
         <!-- 7-Day Sleep History Chart -->
         <p-card header="7-Day Sleep History" styleClass="chart-card">
           @if (sleepHistoryChartData()) {
-            <p-chart
+            <app-lazy-chart
               type="bar"
               [data]="sleepHistoryChartData()"
               [options]="sleepChartOptions"
-            ></p-chart>
+            ></app-lazy-chart>
           } @else {
             <div class="empty-state">
               <i class="pi pi-chart-bar"></i>
@@ -373,11 +376,11 @@ const DEBT_THRESHOLDS = {
         <!-- Cumulative Debt Trend Chart -->
         <p-card header="Cumulative Debt Trend" styleClass="chart-card">
           @if (debtTrendChartData()) {
-            <p-chart
+            <app-lazy-chart
               type="line"
               [data]="debtTrendChartData()"
               [options]="debtChartOptions"
-            ></p-chart>
+            ></app-lazy-chart>
           } @else {
             <div class="empty-state">
               <i class="pi pi-chart-line"></i>

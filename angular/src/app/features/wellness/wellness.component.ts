@@ -9,7 +9,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { InputNumberModule } from "primeng/inputnumber";
 import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../core/services/logger.service";
@@ -30,6 +30,7 @@ import {
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 interface WellnessAlert {
   id: string;
@@ -56,7 +57,9 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     InputNumberModule,
     MessageModule,
     AppLoadingComponent,
@@ -109,11 +112,11 @@ interface WellnessMetric {
             @defer (on viewport) {
               <app-card title="Sleep Quality (7-day)">
                 @if (sleepChartData()) {
-                  <p-chart
+                  <app-lazy-chart
                     type="line"
                     [data]="sleepChartData()"
                     [options]="chartOptions"
-                  ></p-chart>
+                  ></app-lazy-chart>
                 } @else {
                   <div class="chart-empty">
                     No sleep data yet. Start logging daily check-ins.
@@ -129,11 +132,11 @@ interface WellnessMetric {
             @defer (on viewport) {
               <app-card title="Recovery Score (7-day)">
                 @if (recoveryChartData()) {
-                  <p-chart
+                  <app-lazy-chart
                     type="bar"
                     [data]="recoveryChartData()"
                     [options]="chartOptions"
-                  ></p-chart>
+                  ></app-lazy-chart>
                 } @else {
                   <div class="chart-empty">
                     No recovery data yet. Start logging daily check-ins.

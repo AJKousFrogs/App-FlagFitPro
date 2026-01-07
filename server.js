@@ -2863,7 +2863,7 @@ app.all("/api/calc-readiness", async (req, res) => {
     const { data: sessions, error: sError } = await supabase
       .from("training_sessions")
       .select("rpe, duration_minutes")
-      .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
+      .eq("athlete_id", userId)
       .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
       .eq("status", "completed");
 
@@ -2997,7 +2997,7 @@ app.get("/api/trends/change-of-direction", async (req, res) => {
     const { data: currentSessions, error: cError } = await supabase
       .from("training_sessions")
       .select("id, session_date, session_type, workout_type")
-      .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+      .eq("athlete_id", athleteId)
       .gte("session_date", currentStart.toISOString().split("T")[0])
       .eq("status", "completed")
       .or(
@@ -3012,7 +3012,7 @@ app.get("/api/trends/change-of-direction", async (req, res) => {
     const { data: previousSessions, error: pError } = await supabase
       .from("training_sessions")
       .select("id")
-      .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+      .eq("athlete_id", athleteId)
       .gte("session_date", previousStart.toISOString().split("T")[0])
       .lt("session_date", currentStart.toISOString().split("T")[0])
       .eq("status", "completed")
@@ -3076,7 +3076,7 @@ app.get("/api/trends/sprint-volume", async (req, res) => {
     const { data: currentSessions, error: cError } = await supabase
       .from("training_sessions")
       .select("duration_minutes")
-      .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+      .eq("athlete_id", athleteId)
       .gte("session_date", currentStart.toISOString().split("T")[0])
       .eq("status", "completed")
       .or(
@@ -3090,7 +3090,7 @@ app.get("/api/trends/sprint-volume", async (req, res) => {
     const { data: previousSessions, error: pError } = await supabase
       .from("training_sessions")
       .select("duration_minutes")
-      .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+      .eq("athlete_id", athleteId)
       .gte("session_date", previousStart.toISOString().split("T")[0])
       .lt("session_date", currentStart.toISOString().split("T")[0])
       .eq("status", "completed")

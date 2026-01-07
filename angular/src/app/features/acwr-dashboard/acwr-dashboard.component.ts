@@ -21,7 +21,7 @@ import {
   signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
@@ -32,6 +32,7 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -40,7 +41,9 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
   imports: [
     CommonModule,
     RouterModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
   ],
@@ -300,11 +303,11 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
           <div class="trend-chart-section">
             <h3>ACWR Trend (Last 28 Days)</h3>
             <div class="chart-container">
-              <p-chart
+              <app-lazy-chart
                 type="line"
                 [data]="trendChartData()"
                 [options]="trendChartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             </div>
             <div class="chart-legend">
               <div class="legend-item">

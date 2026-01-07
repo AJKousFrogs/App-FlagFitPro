@@ -31,6 +31,7 @@ import {
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 // ===== Interfaces =====
 interface Play {
@@ -91,7 +92,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
-
+    MobileOptimizedImageDirective,
     ButtonComponent,
   ],
   providers: [MessageService],
@@ -238,7 +239,13 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             <!-- Play Diagram -->
             @if (play.diagramUrl) {
               <div class="play-diagram">
-                <img [src]="play.diagramUrl" [alt]="play.name + ' diagram'" />
+                <img
+                  appMobileOptimized
+                  [width]="600"
+                  [height]="400"
+                  [src]="play.diagramUrl"
+                  [alt]="play.name + ' diagram'"
+                />
               </div>
             } @else {
               <div class="play-diagram placeholder">

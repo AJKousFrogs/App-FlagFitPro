@@ -51,6 +51,14 @@ Based on Gabbett (2016) research - "The training-injury prevention paradox":
 - **Performance Analytics**: Advanced metrics and visualizations
 - **Position-Specific Metrics**: QB, WR, DB, LB tracking
 
+### 💰 Payment Tracking
+
+- **Important**: FlagFit Pro does **NOT** process payments (no Stripe/PayPal)
+- **Track Only**: Monitor fees, payments, and balances
+- **Player Pays Direct**: Players pay coaches via cash, Venmo, Zelle, CashApp, etc.
+- **Coach Marks Received**: Coaches update payment status manually
+- **Export Reports**: Generate payment history for records
+
 ### 🎨 Modern UI/UX
 
 - **PrimeNG 21**: Native CSS animations (80+ KB bundle savings)

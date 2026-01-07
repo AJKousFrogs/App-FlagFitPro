@@ -13,6 +13,22 @@
   background: var(--surface-secondary);
 }
 
+.icon-2xl {
+  font-size: var(--font-display-sm); // 36px
+}
+
+.icon-3xl {
+  font-size: var(--font-display-md); // 48px
+}
+
+.icon-secondary {
+  color: var(--color-text-secondary);
+}
+
+.w-full {
+  width: 100%;
+}
+
 .chat-header {
   display: flex;
   justify-content: space-between;

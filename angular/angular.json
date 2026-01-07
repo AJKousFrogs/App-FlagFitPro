@@ -29,11 +29,18 @@
               "src/manifest.webmanifest"
             ],
             "serviceWorker": "ngsw-config.json",
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [],
             "stylePreprocessorOptions": {
-              "includePaths": ["src", "node_modules"]
-            }
+              "includePaths": [
+                "src",
+                "node_modules"
+              ]
+            },
+            "outputMode": "static",
+            "prerender": false
           },
           "configurations": {
             "production": {

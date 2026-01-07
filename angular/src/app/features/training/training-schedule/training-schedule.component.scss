@@ -1,645 +1,965 @@
-// ============================================================================
-// training-schedule.component Styles
-// Design System Compliant - Final Compact Dashboard-Grade Pass
-// ============================================================================
+/**
+ * Training Schedule - Mobile Responsive Styles
+ * ================================================================
+ * Optimized for Chrome Mobile & Safari iOS
+ * Focus: Calendar, session cards, date picker, monthly stats
+ * ================================================================
+ */
 
-// -------------------------------------------------------------------------
-// 1. PAGE LAYOUT - Compact, aligned
-// -------------------------------------------------------------------------
-.training-schedule-page {
+// ================================================================
+// MAIN CONTAINER
+// ================================================================
+
+:host {
+  display: block;
   padding: var(--space-4);
+
+  @media (max-width: 767px) {
+    padding: var(--space-3);
+  }
+
+  @media (max-width: 479px) {
+    padding: var(--space-2);
+  }
 }
 
-// Two-column layout - balanced weights
+.training-schedule-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Empty State */
+.card-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.card-empty-state__icon {
+  font-size: var(--font-display-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.card-empty-state__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.card-empty-state__title {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.card-empty-state__text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Skeleton States */
+.skeleton-date {
+  width: 60%;
+}
+
+.skeleton-duration {
+  width: 40%;
+}
+
+/* Completion Rate */
+.stat-item.completion {
+  .stat-value {
+    color: var(--ds-primary-green);
+  }
+}
+
+// ================================================================
+// SCHEDULE CONTENT LAYOUT - RESPONSIVE GRID
+// ================================================================
+
 .schedule-content {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.6fr);
-  gap: var(--space-4);
-  margin-top: var(--space-5);
-}
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
 
-@media (max-width: 1024px) {
-  .schedule-content {
+  // Tablet: Smaller gap, still 2 columns
+  @media (max-width: 1023px) {
+    gap: var(--space-4);
+  }
+
+  // Mobile: Stack vertically
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  // Calendar card (first child) - left column
+  app-card-shell:first-child {
+    grid-column: 1;
+  }
+
+  // Monthly stats card (second child when visible) - left column, below calendar
+  app-card-shell:nth-child(2) {
+    grid-column: 1;
+  }
+
+  // Sessions list card - right column (third child if monthly stats visible, second if not)
+  app-card-shell:last-child {
+    grid-column: 2;
+    grid-row: 1 / -1; // Span all rows
+    
+    @media (max-width: 767px) {
+      grid-column: 1;
+      grid-row: auto;
+    }
   }
 }
 
-// -------------------------------------------------------------------------
-// 2. CARD BALANCE - Using app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
-// -------------------------------------------------------------------------
+// ================================================================
+// CALENDAR GRID - RESPONSIVE (DEPRECATED - kept for reference)
+// ================================================================
 
-app-card-shell {
-  height: fit-content;
+.calendar-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+
+  // Tablet: Smaller sidebar
+  @media (max-width: 1023px) {
+    grid-template-columns: 1fr 250px;
+    gap: var(--space-3);
+  }
+
+  // Mobile: Stack vertically
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
 }
 
-// -------------------------------------------------------------------------
-// 3. CALENDAR - Tighter, centered
-// -------------------------------------------------------------------------
+// ================================================================
+// DATE PICKER - MOBILE OPTIMIZED
+// ================================================================
 
-// Calendar styling - using global selectors
-// These styles target PrimeNG datepicker rendered within this component
-.p-datepicker {
-  width: 100%;
+.calendar-container {
+  :global(.p-datepicker) {
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--surface-border);
 
-  .p-datepicker-calendar {
-    th {
-      padding: 0.25rem 0.375rem;
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-tertiary);
-      font-size: var(--font-body-2xs);
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
+    // Mobile: Full width, larger touch targets
+    @media (max-width: 767px) {
+      .p-datepicker-calendar {
+        th, td {
+          padding: var(--space-2);
+          
+          span {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-body);
+          }
+        }
 
-    td {
-      padding: 0.125rem;
+        th {
+          font-size: var(--font-size-h4);
+        }
+      }
 
-      > span {
-        width: 1.75rem;
-        height: 1.75rem;
-        font-size: var(--font-size-badge);
-        color: var(--color-text-secondary);
+      .p-datepicker-header {
+        padding: var(--space-3);
+        
+        .p-datepicker-title {
+          font-size: var(--font-size-h3);
+        }
+
+        button {
+          width: 40px;
+          height: 40px;
+        }
       }
     }
 
-    // Current month dates - slightly stronger
-    td:not(.p-datepicker-other-month) > span {
-      color: var(--color-text-primary);
-    }
-  }
-
-  // Selected day - keep clearly visible
-  .p-datepicker-selected > span {
-    background: var(--p-primary-500);
-    color: white;
-    font-weight: var(--font-weight-medium);
-  }
-
-  // Today highlight - subtle but visible
-  .p-datepicker-today > span {
-    background: var(--p-primary-50, rgba(59, 130, 246, 0.06));
-    color: var(--p-primary-600);
-    font-weight: var(--font-weight-medium);
-
-    &:not(.p-datepicker-selected) {
-      border: 1px solid var(--p-primary-200);
-    }
-  }
-
-  // Month navigation - compact
-  .p-datepicker-header {
-    padding: 0.375rem 0.5rem;
-    margin-bottom: 0.25rem;
-
-    .p-datepicker-prev-button,
-    .p-datepicker-next-button {
-      width: 1.5rem;
-      height: 1.5rem;
-
-      .p-icon {
-        width: 0.625rem;
-        height: 0.625rem;
-      }
-    }
-
-    .p-datepicker-title {
-      font-size: var(--font-compact-lg); // 13px - compact heading
-      font-weight: var(--font-weight-medium);
-    }
-  }
-
-  // Week numbers - subtle
-  .p-datepicker-weeknumber {
-    font-size: var(--font-body-2xs);
-    color: var(--color-text-tertiary);
-    opacity: 0.6;
-  }
-}
-
-// -------------------------------------------------------------------------
-// 3. LEGEND BLOCK - Unified visual block, tight spacing
-// -------------------------------------------------------------------------
-.calendar-legend {
-  margin-top: 0.5rem;
-  padding: 0.625rem 0.75rem;
-  background: var(--surface-secondary);
-  border-radius: var(--radius-sm);
-}
-
-// Today row
-.legend-today {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  margin: 0 0 0.5rem 0;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  line-height: 1;
-}
-
-.legend-today-icon {
-  font-size: var(--font-compact-xs); // 8px - micro icon
-  color: var(--p-primary-500);
-  line-height: 1;
-}
-
-// Legend section
-.legend-section {
-  margin-bottom: 0.5rem;
-}
-
-.legend-label {
-  display: block;
-  font-size: var(--font-body-2xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-tertiary);
-  margin-bottom: 0.375rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-// Legend items - baseline aligned
-.legend-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: baseline;
-}
-
-.legend-item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.3rem;
-  font-size: var(--font-compact-md); // 11px - compact body text
-  color: var(--color-text-secondary);
-  line-height: 1;
-
-  i {
-    font-size: var(--font-compact-xs); // 8px - micro icon
-    position: relative;
-    top: -0.05rem; // Fine-tune baseline alignment
-  }
-}
-
-.legend-completed {
-  color: var(--p-green-600);
-}
-
-.legend-scheduled {
-  color: var(--p-blue-500);
-}
-
-.legend-in-progress {
-  color: var(--p-yellow-600);
-}
-
-.legend-missed {
-  color: var(--p-red-500);
-}
-
-// Checkbox row - tight, aligned
-.show-week-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--color-border-secondary);
-  cursor: pointer;
-
-  .p-checkbox {
-    width: 0.875rem;
-    height: 0.875rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .p-checkbox-box {
-      width: 0.875rem;
-      height: 0.875rem;
-      border-radius: 0.1875rem;
-      border: 1.5px solid var(--color-border-primary);
-      background: var(--surface-primary);
-      transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard);
-
-      &:hover {
-        border-color: var(--p-primary-400);
-      }
-
-      &.p-highlight {
-        background: var(--p-primary-500);
-        border-color: var(--p-primary-500);
-
-        .p-checkbox-icon {
-          color: white;
-          font-size: var(--font-compact-xs); // 8px
+    // Small phones: Even more compact
+    @media (max-width: 479px) {
+      .p-datepicker-calendar {
+        th, td {
+          padding: var(--space-1);
+          
+          span {
+            width: 36px;
+            height: 36px;
+            font-size: var(--font-size-h4);
+          }
         }
       }
     }
   }
+}
 
-  label {
-    cursor: pointer;
-    font-size: var(--font-compact-md); // 11px - compact body text
-    font-weight: var(--font-weight-normal);
-    color: var(--color-text-secondary);
-    line-height: var(--font-size-h4);
-    user-select: none;
+// Calendar date markers (dots for scheduled/completed sessions)
+.calendar-date-marker {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+
+  &.scheduled {
+    background: var(--ds-primary-green);
+  }
+
+  &.completed {
+    background: var(--primitive-success-500);
+  }
+
+  &.missed {
+    background: var(--primitive-error-500);
+  }
+
+  &.in-progress {
+    background: var(--primitive-warning-500);
+  }
+
+  // Mobile: Slightly larger markers
+  @media (max-width: 767px) {
+    width: 7px;
+    height: 7px;
   }
 }
 
-// -------------------------------------------------------------------------
-// 4. SESSIONS LIST - Card-like rows matching wireframe
-// -------------------------------------------------------------------------
+// ================================================================
+// MONTHLY STATS SIDEBAR - RESPONSIVE
+// ================================================================
+
+.monthly-stats {
+  :global(.p-card-body) {
+    padding: var(--space-4);
+  }
+
+  @media (max-width: 767px) {
+    // Mobile: Horizontal stats grid
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    :global(.p-card-body) {
+      padding: var(--space-3);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+}
+
+.stat-item {
+  padding: var(--space-3);
+  background: var(--surface-ground);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--ds-primary-green);
+  margin-bottom: var(--space-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 767px) {
+    padding: var(--space-2);
+    margin-bottom: 0; // Grid handles spacing
+  }
+}
+
+.stat-label {
+  font-size: var(--font-size-h4);
+  color: var(--ds-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-1);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-body-2xs);
+  }
+}
+
+.stat-value {
+  font-size: var(--font-display-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-text-primary);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h2);
+  }
+
+  @media (max-width: 479px) {
+    font-size: var(--font-size-h3);
+  }
+}
+
+.stat-subtitle {
+  font-size: var(--font-body-2xs);
+  color: var(--ds-text-tertiary);
+  margin-top: var(--space-1);
+
+  @media (max-width: 767px) {
+    font-size: 11px;
+  }
+}
+
+// ================================================================
+// SESSION LIST - RESPONSIVE
+// ================================================================
+
 .sessions-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3); // 12px gap between items for breathing room
-  min-height: 140px;
+  gap: var(--space-3);
 }
 
-// Session row - Card-like appearance with proper padding
 .session-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4) var(--space-5); // 16px 20px for comfortable touch targets
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg); // 8px for consistency
-  border: 1px solid var(--color-border-secondary);
-  box-shadow: var(--shadow-sm);
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-left: 4px solid var(--ds-primary-green);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+  transition: all var(--transition-fast);
 
   &:hover {
-    background: var(--surface-secondary);
-    border-color: var(--color-border-primary);
-    box-shadow: var(--shadow-1);
+    background: var(--surface-tertiary);
+    transform: translateX(2px);
+    box-shadow: var(--shadow-sm);
   }
 
-  &:focus,
-  &:focus-visible {
-    outline: 2px solid var(--p-primary-400);
-    outline-offset: 1px;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3);
   }
 }
 
 .session-item-skeleton {
   cursor: default;
-  background: var(--surface-secondary);
-  box-shadow: none;
-
+  
   &:hover {
-    background: var(--surface-secondary);
+    transform: none;
     box-shadow: none;
   }
 }
 
-// Session info - clear hierarchy with proper spacing
 .session-info {
   flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1); // 4px between text elements
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.session-type-indicator {
+  display: inline-block;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
 .session-title {
   margin: 0;
-  font-size: var(--font-size-h3); // Larger for better readability
+  font-size: var(--font-size-body);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
 }
 
 .session-date {
   margin: 0;
-  font-size: var(--font-body-sm-size); // 14px for better readability
+  font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-tight);
 }
 
 .session-duration {
   margin: 0;
-  font-size: var(--font-body-sm-size);
-  color: var(--color-text-tertiary);
-  line-height: var(--line-height-tight);
+  font-size: var(--font-size-h4);
+  color: var(--color-text-muted);
 }
 
-// Session actions - status tag + checkmark button
 .session-actions {
   display: flex;
-  align-items: center;
-  gap: var(--space-3); // 12px gap between elements
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
   flex-shrink: 0;
 
-  // Mark complete button
-  .p-button.p-button-text {
-    width: 1.75rem;
-    height: 1.75rem;
-    padding: 0;
-
-    .p-button-icon {
-      font-size: var(--font-size-h4);
-    }
+  @media (max-width: 767px) {
+    width: 100%;
+    align-items: stretch;
   }
 }
 
-// -------------------------------------------------------------------------
-// STATUS TAG - Design system compliant
-// -------------------------------------------------------------------------
 .status-tag {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-medium);
-  line-height: 1;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  text-transform: capitalize;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-
-  i {
-    font-size: var(--font-compact-xs); // 8px
-  }
-
-  // Completed - Green
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-medium);
+  
   &.status-completed {
-    background: var(--primitive-success-50);
-    color: var(--primitive-success-700);
-    border: 1px solid var(--primitive-success-200);
-
-    i {
-      color: var(--primitive-success-500);
-    }
+    background: var(--color-status-success-subtle);
+    color: var(--color-status-success);
   }
-
-  // Scheduled - Blue
+  
   &.status-scheduled {
-    background: var(--primitive-blue-50);
-    color: var(--primitive-blue-700);
-    border: 1px solid var(--primitive-blue-200);
-
-    i {
-      color: var(--primitive-blue-500);
-    }
+    background: var(--ds-primary-green-subtle);
+    color: var(--ds-primary-green);
   }
-
-  // In Progress - Amber/Orange
+  
   &.status-in_progress {
-    background: var(--primitive-warning-50);
-    color: var(--primitive-warning-700);
-    border: 1px solid var(--primitive-warning-200);
-
-    i {
-      color: var(--primitive-warning-500);
-    }
+    background: var(--color-status-warning-subtle);
+    color: var(--color-status-warning);
   }
-
-  // Missed - Red
+  
   &.status-missed {
-    background: var(--primitive-error-50);
-    color: var(--primitive-error-700);
-    border: 1px solid var(--primitive-error-200);
-
-    i {
-      color: var(--primitive-error-500);
-    }
+    background: var(--color-status-error-subtle);
+    color: var(--color-status-error);
   }
 }
-
-// Dark mode adjustments
-:host-context(.dark-mode) {
-  .status-tag {
-    &.status-completed {
-      background: var(--primitive-success-900);
-      color: var(--primitive-success-300);
-      border-color: var(--primitive-success-800);
-    }
-
-    &.status-scheduled {
-      background: var(--primitive-blue-900);
-      color: var(--primitive-blue-300);
-      border-color: var(--primitive-blue-800);
-    }
-
-    &.status-in_progress {
-      background: var(--primitive-warning-900);
-      color: var(--primitive-warning-300);
-      border-color: var(--primitive-warning-800);
-    }
-
-    &.status-missed {
-      background: var(--primitive-error-900);
-      color: var(--primitive-error-300);
-      border-color: var(--primitive-error-800);
-    }
-  }
-}
-
-// Skeleton adjustments
-.skeleton-date {
-  margin-top: 0.375rem;
-}
-
-.skeleton-duration {
-  margin-top: 0.25rem;
-}
-
-// -------------------------------------------------------------------------
-// STATES - Error (empty state uses .card-empty-state from card-shell)
-// @see docs/CARD_SHELL_CONTRACT.md §8
-// -------------------------------------------------------------------------
 
 .error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: var(--space-4);
-  min-height: 140px;
+  gap: var(--space-4);
+  padding: var(--space-6);
   text-align: center;
-  max-width: 240px;
-  margin: 0 auto;
 }
 
 .error-icon {
-  font-size: var(--font-size-h2);
-  color: var(--p-red-300);
-  opacity: 0.7;
+  font-size: var(--font-size-metric-lg);
+  color: var(--color-status-error);
 }
 
 .error-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  
   strong {
-    display: block;
-    margin-bottom: 0.125rem;
-    font-size: var(--font-size-badge);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-body);
     color: var(--color-text-primary);
   }
-
+  
   p {
     margin: 0;
-    font-size: var(--font-body-2xs);
-    color: var(--color-text-tertiary);
-    line-height: var(--line-height-tight);
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
   }
 }
 
-.retry-button {
-  margin-top: var(--space-1);
+.session-list-container {
+  margin-top: var(--space-4);
 
-  .p-button {
-    height: var(--badge-lg); // 28px
-    padding: 0 var(--space-2);
-    font-size: var(--font-compact-md); // 11px
+  @media (max-width: 767px) {
+    margin-top: var(--space-3);
+  }
+}
 
-    .p-button-icon {
-      font-size: var(--font-size-badge);
+.session-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  @media (max-width: 767px) {
+    margin-bottom: var(--space-3);
+  }
+
+  @media (max-width: 639px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.session-list-title {
+  font-size: var(--font-display-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-text-primary);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h1);
+  }
+}
+
+.session-filters {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+
+  @media (max-width: 639px) {
+    width: 100%;
+    
+    app-button {
+      flex: 1;
+      
+      button {
+        width: 100%;
+      }
     }
   }
 }
 
-// ============================================================================
-// PRIMENG CARD OVERRIDES - REMOVED
-// Use app-card-shell component instead of p-card with ::ng-deep overrides
-// @see docs/CARD_SHELL_CONTRACT.md
-// ============================================================================
+// ================================================================
+// SESSION CARDS - MOBILE OPTIMIZED
+// ================================================================
 
-// -------------------------------------------------------------------------
-// VIEW TOGGLE - Week/Month switcher
-// -------------------------------------------------------------------------
-.view-toggle {
-  display: flex;
-  gap: 0.375rem;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-// -------------------------------------------------------------------------
-// MONTHLY STATISTICS - Summary card
-// -------------------------------------------------------------------------
-.monthly-stats {
+.sessions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-4);
+
+  // Mobile: Single column
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
 }
 
-.stat-item {
+.session-card {
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--ds-primary-green);
+    background: var(--ds-primary-green-subtle);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+
+  // Mobile: Touch-friendly, compact
+  @media (max-width: 767px) {
+    padding: var(--space-3);
+    min-height: 100px;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+  gap: var(--space-2);
+
+  @media (max-width: 767px) {
+    margin-bottom: var(--space-2);
+  }
+}
+
+.session-date {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--ds-text-primary);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h4);
+  }
+}
+
+.session-status-tag {
+  :global(.p-tag) {
+    font-size: var(--font-body-2xs);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-semibold);
+
+    @media (max-width: 767px) {
+      font-size: 10px;
+      padding: 4px var(--space-1);
+    }
+  }
+}
+
+.session-type {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-text-primary);
+  margin-bottom: var(--space-2);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-body);
+    margin-bottom: var(--space-1);
+  }
+}
+
+.session-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+
+  @media (max-width: 767px) {
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+}
+
+.session-detail-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-h4);
+  color: var(--ds-text-secondary);
+
+  i {
+    color: var(--ds-primary-green);
+  }
+
+  @media (max-width: 767px) {
+    font-size: var(--font-body-2xs);
+  }
+}
+
+.session-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--surface-border);
+
+  // Mobile: Stack buttons vertically for better touch targets
+  @media (max-width: 639px) {
+    flex-direction: column;
+    
+    app-button {
+      width: 100%;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+      }
+    }
+  }
+}
+
+// ================================================================
+// TEMPLATE INDICATOR
+// ================================================================
+
+.template-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--primitive-info-50);
+  color: var(--primitive-info-700);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-body-2xs);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-2);
+
+  i {
+    font-size: 12px;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 10px;
+    padding: 4px var(--space-1);
+  }
+}
+
+// ================================================================
+// LOADING STATES - MOBILE OPTIMIZED
+// ================================================================
+
+.loading-skeletons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-4);
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+.skeleton-card {
+  :global(.p-skeleton) {
+    border-radius: var(--radius-md);
+  }
+}
+
+// ================================================================
+// EMPTY STATE - MOBILE OPTIMIZED
+// ================================================================
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-8);
+
+  @media (max-width: 767px) {
+    padding: var(--space-6);
+  }
+
+  @media (max-width: 479px) {
+    padding: var(--space-4);
+  }
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--surface-ground);
+  color: var(--ds-text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+  font-size: var(--font-display-md);
+
+  @media (max-width: 767px) {
+    width: 64px;
+    height: 64px;
+    font-size: var(--font-display-sm);
+  }
+}
+
+.empty-title {
+  font-size: var(--font-display-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-text-primary);
+  margin-bottom: var(--space-2);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h1);
+  }
+}
+
+.empty-message {
+  font-size: var(--font-size-body);
+  color: var(--ds-text-secondary);
+  max-width: 500px;
+  margin: 0 auto var(--space-4);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h4);
+  }
+}
+
+// ================================================================
+// LEGEND - MOBILE OPTIMIZED
+// ================================================================
+
+.calendar-legend {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 0.75rem;
-  background: var(--surface-secondary);
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-ground);
   border-radius: var(--radius-md);
-  text-align: center;
+  margin-top: var(--space-4);
 
-  .stat-value {
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .stat-label {
-    font-size: var(--font-compact-md);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  &.completed .stat-value {
-    color: var(--primitive-success-600);
-  }
-
-  &.missed .stat-value {
-    color: var(--primitive-error-600);
-  }
-
-  &.completion .stat-value {
-    color: var(--p-primary-600);
+  @media (max-width: 767px) {
+    gap: var(--space-3);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
   }
 }
 
-// -------------------------------------------------------------------------
-// SESSION TYPE COLOR INDICATOR
-// -------------------------------------------------------------------------
-.session-item {
-  border-left: 4px solid transparent;
-  transition: border-left-color 0.15s ease;
-}
-
-.session-type-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  margin-right: 0.5rem;
-  flex-shrink: 0;
-}
-
-.session-info {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.session-title {
+.legend-today {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--space-2);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
-// -------------------------------------------------------------------------
-// CALENDAR DATE MARKERS (for PrimeNG DatePicker)
-// -------------------------------------------------------------------------
-// Date cell with session marker
-.p-datepicker .has-session {
-  position: relative;
+.legend-today-icon {
+  color: var(--ds-primary-green);
+  font-size: var(--font-size-h4);
+}
 
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
+.legend-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.legend-label {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+
+  @media (max-width: 767px) {
+    gap: var(--space-2);
+  }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--ds-text-secondary);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-body-2xs);
   }
 
-  &.session-completed::after {
+  i {
+    font-size: var(--font-size-body);
+    
+    &.legend-completed {
+      color: var(--primitive-success-500);
+    }
+    
+    &.legend-scheduled {
+      color: var(--ds-primary-green);
+    }
+    
+    &.legend-in-progress {
+      color: var(--primitive-warning-500);
+    }
+    
+    &.legend-missed {
+      color: var(--primitive-error-500);
+    }
+  }
+}
+
+.show-week-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  
+  label {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    margin: 0;
+  }
+}
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+
+  &.scheduled {
+    background: var(--ds-primary-green);
+  }
+
+  &.completed {
     background: var(--primitive-success-500);
   }
 
-  &.session-scheduled::after {
-    background: var(--primitive-blue-500);
+  &.missed {
+    background: var(--primitive-error-500);
   }
 
-  &.session-in_progress::after {
+  &.in-progress {
     background: var(--primitive-warning-500);
   }
 
-  &.session-missed::after {
-    background: var(--primitive-error-500);
+  @media (max-width: 767px) {
+    width: 8px;
+    height: 8px;
   }
 }
 
-// -------------------------------------------------------------------------
-// RESPONSIVE - Mobile adjustments for monthly stats
-// -------------------------------------------------------------------------
-@media (max-width: 640px) {
-  .monthly-stats {
-    grid-template-columns: repeat(2, 1fr);
+// ================================================================
+// WEEK NAVIGATION - MOBILE OPTIMIZED
+// ================================================================
+
+.week-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  gap: var(--space-2);
+
+  @media (max-width: 767px) {
+    margin-bottom: var(--space-3);
   }
 
-  .view-toggle {
-    justify-content: center;
+  @media (max-width: 639px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.week-title {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-text-primary);
+
+  @media (max-width: 767px) {
+    font-size: var(--font-size-h3);
+  }
+}
+
+.week-nav-buttons {
+  display: flex;
+  gap: var(--space-2);
+
+  @media (max-width: 639px) {
+    width: 100%;
+    justify-content: space-between;
+    
+    app-button {
+      flex: 1;
+      
+      button {
+        width: 100%;
+      }
+    }
   }
 }

@@ -263,26 +263,689 @@
   line-height: 1.3;
 }
 
+// ================================================================
+// MOBILE RESPONSIVE - CHROME & SAFARI OPTIMIZED
+// ================================================================
+
 // Responsive adjustments
 @media (max-width: 768px) {
+  // ================================================================
+  // PAGE LAYOUT - MOBILE
+  // ================================================================
+  
+  .analytics-page {
+    padding: var(--space-3);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .page-title {
+    font-size: var(--font-size-h2);
+    gap: var(--space-2);
+  }
+
+  .page-subtitle {
+    font-size: var(--font-size-h4);
+  }
+
+  // ================================================================
+  // METRICS GRID - MOBILE OPTIMIZED
+  // ================================================================
+
+  .metrics-grid {
+    grid-template-columns: 1fr; // Stack vertically
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .metric-card {
+    .p-card-body {
+      padding: var(--space-3);
+    }
+  }
+
+  .metric-card-content {
+    gap: var(--space-3);
+  }
+
+  .metric-icon {
+    width: var(--space-10); // 40px
+    height: var(--space-10);
+    min-width: var(--space-10);
+    font-size: var(--font-size-h2);
+  }
+
+  .metric-value {
+    font-size: var(--font-size-h1);
+  }
+
+  .metric-label {
+    font-size: var(--font-body-2xs);
+  }
+
+  .metric-trend {
+    font-size: 10px;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  // ================================================================
+  // CHARTS GRID - MOBILE SINGLE COLUMN
+  // ================================================================
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .chart-card {
+    min-height: 350px; // Smaller on mobile
+
+    ::ng-deep .p-card-header {
+      padding: var(--space-3);
+    }
+
+    ::ng-deep .p-card-body {
+      padding: var(--space-3);
+    }
+  }
+
+  // ================================================================
+  // CHART HEADER - MOBILE STACK
+  // ================================================================
+
+  .chart-header {
+    gap: var(--space-3);
+  }
+
+  .chart-title {
+    font-size: var(--font-size-h3);
+  }
+
+  .chart-subtitle {
+    font-size: 11px;
+  }
+
+  .chart-actions {
+    width: 100%;
+    justify-content: flex-start;
+    align-self: flex-start;
+    flex-wrap: wrap;
+
+    app-button {
+      flex: 1;
+      min-width: 100px;
+
+      button {
+        width: 100%;
+        min-height: 40px;
+      }
+    }
+  }
+
+  // ================================================================
+  // CHART CONTAINER - MOBILE SIZING
+  // ================================================================
+
+  .chart-container {
+    height: 250px; // Smaller charts on mobile
+
+    &.radar,
+    &.doughnut {
+      height: 280px;
+    }
+
+    // Ensure charts are responsive
+    canvas {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+  }
+
+  // ================================================================
+  // CHART INSIGHTS - MOBILE STACK
+  // ================================================================
+
+  .chart-insights {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    margin-top: var(--space-3);
+  }
+
+  .insight-item {
+    padding: var(--space-2);
+    background: var(--surface-ground);
+    border-radius: var(--radius-md);
+  }
+
+  .insight-value {
+    font-size: var(--font-size-h2);
+  }
+
+  .insight-label {
+    font-size: var(--font-body-2xs);
+  }
+
+  .chart-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-2);
+  }
+
+  // ================================================================
+  // TABS NAVIGATION - MOBILE SCROLL
+  // ================================================================
+
   .modern-step-nav {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-2);
     gap: var(--space-1);
   }
 
   .step-nav-item {
     min-width: 80px;
-    padding: var(--space-2) var(--space-2);
+    padding: var(--space-2);
   }
 
   .step-number {
     width: 36px;
     height: 36px;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-h4);
   }
 
   .step-label {
-    font-size: var(--font-size-xs);
+    font-size: 11px;
+  }
+
+  // ================================================================
+  // PRIMENG TABS - MOBILE
+  // ================================================================
+
+  .p-tabs {
+    .p-tablist {
+      padding: var(--space-1);
+      gap: 0;
+    }
+
+    .p-tab {
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-h4);
+      min-height: 40px;
+
+      i {
+        font-size: var(--font-size-h4);
+      }
+    }
+
+    .p-tabpanels {
+      padding: var(--space-3);
+    }
+  }
+
+  // ================================================================
+  // LOADING & EMPTY STATES - MOBILE
+  // ================================================================
+
+  .loading-placeholder {
+    padding: var(--space-6);
+    font-size: var(--font-body-2xs);
+  }
+
+  .empty-chart-state {
+    padding: var(--space-6);
+    min-height: 220px;
+
+    .empty-icon {
+      font-size: var(--font-display-xs);
+      margin-bottom: var(--space-3);
+    }
+
+    h4 {
+      font-size: var(--font-size-body);
+    }
+
+    p {
+      font-size: var(--font-body-2xs);
+      max-width: 240px;
+      margin-bottom: var(--space-4);
+    }
+  }
+
+  // ================================================================
+  // PLAYER STATS - MOBILE
+  // ================================================================
+
+  .player-stats-card {
+    margin-top: var(--space-4);
+  }
+
+  .stats-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .stat-summary-item {
+    padding: var(--space-2);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .stat-card {
+    padding: var(--space-3);
+
+    h4,
+    h5 {
+      font-size: var(--font-size-body);
+      margin-bottom: var(--space-3);
+    }
+  }
+
+  .stat-row {
+    padding: var(--space-1) 0;
+    font-size: var(--font-size-h4);
+  }
+
+  .multi-season-stats h4 {
+    margin: var(--space-4) 0 var(--space-3) 0;
+    font-size: var(--font-size-h3);
+  }
+
+  // ================================================================
+  // CHART HELP NOTE - MOBILE
+  // ================================================================
+
+  .chart-help-note {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-2);
+    font-size: 11px;
+  }
+
+  // ================================================================
+  // DEVELOPMENT GOALS - MOBILE HORIZONTAL SCROLL
+  // ================================================================
+
+  .development-goals-card {
+    margin-bottom: var(--space-4);
+  }
+
+  .goals-header {
+    padding: var(--space-3);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .goals-title {
+    h3 {
+      font-size: var(--font-size-h3);
+    }
+
+    .coach-label {
+      font-size: 10px;
+    }
+  }
+
+  .view-all-link {
+    font-size: var(--font-body-2xs);
+  }
+
+  .goals-empty-state {
+    padding: var(--space-6);
+
+    .empty-icon {
+      font-size: var(--font-display-xs);
+      margin-bottom: var(--space-3);
+    }
+
+    h4 {
+      font-size: var(--font-size-body);
+    }
+
+    p {
+      font-size: var(--font-body-2xs);
+      max-width: 280px;
+    }
+  }
+
+  // Horizontal scroll for goal cards
+  .goals-grid {
+    grid-template-columns: 1fr;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    -webkit-overflow-scrolling: touch; // iOS smooth scrolling
+
+    // Scroll shadow indicators
+    background: 
+      linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
+      linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
+      radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.1), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.1), transparent) 0 100%;
+    background-repeat: no-repeat;
+    background-color: var(--surface-card);
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+
+    .goal-card {
+      min-width: 280px;
+      max-width: 320px;
+      flex-shrink: 0;
+    }
+  }
+
+  .goal-header {
+    gap: var(--space-2);
+
+    i {
+      font-size: var(--font-size-body);
+    }
+
+    .goal-name {
+      font-size: var(--font-size-body);
+    }
+  }
+
+  .goal-targets {
+    margin-bottom: var(--space-2);
+  }
+
+  .target-row {
+    font-size: var(--font-body-2xs);
+  }
+
+  .goal-progress {
+    margin-bottom: var(--space-2);
+
+    .goal-progress-bar {
+      height: 6px;
+    }
+
+    .progress-percent {
+      font-size: 10px;
+    }
+  }
+
+  .goal-meta {
+    margin-bottom: var(--space-2);
+
+    .days-remaining {
+      font-size: 10px;
+    }
+  }
+
+  .coach-note {
+    padding: var(--space-2);
+    font-size: 10px;
+  }
+
+  // ================================================================
+  // SHARE DIALOG - MOBILE
+  // ================================================================
+
+  .header-actions {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    width: 100%;
+
+    app-button {
+      flex: 1;
+      min-width: 140px;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .share-dialog {
+    :global(.p-dialog) {
+      width: 95vw !important;
+      max-width: 95vw !important;
+    }
+
+    .p-dialog-header {
+      padding: var(--space-3);
+    }
+
+    .p-dialog-title {
+      font-size: var(--font-size-body);
+    }
+
+    .p-dialog-content {
+      padding: var(--space-3);
+    }
+
+    .p-dialog-footer {
+      padding: var(--space-3);
+      flex-direction: column;
+
+      app-button {
+        width: 100%;
+
+        button {
+          width: 100%;
+          justify-content: center;
+          min-height: 44px;
+        }
+      }
+    }
+  }
+
+  .share-intro {
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-3);
+  }
+
+  .share-options {
+    margin-bottom: var(--space-3);
+
+    h4 {
+      font-size: var(--font-body-2xs);
+      margin-bottom: var(--space-2);
+    }
+  }
+
+  .option-item {
+    padding: var(--space-2);
+    margin-bottom: var(--space-2);
+
+    label {
+      font-size: var(--font-size-h4);
+      gap: var(--space-2);
+
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .message-section {
+    margin-top: var(--space-3);
+
+    label {
+      font-size: var(--font-body-2xs);
+    }
+
+    textarea {
+      font-size: 16px !important; // Prevent iOS zoom
+      padding: var(--space-2);
+      min-height: 100px;
+    }
+  }
+
+  // ================================================================
+  // GAP ANALYSIS - MOBILE
+  // ================================================================
+
+  .gap-analysis-card {
+    margin-bottom: var(--space-4);
+  }
+
+  .gap-analysis-content {
+    padding: var(--space-3) 0;
+  }
+
+  .gap-legend {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+  }
+
+  .gap-legend .legend-item {
+    font-size: var(--font-size-h4);
+  }
+
+  .gap-bars {
+    gap: var(--space-3);
+  }
+
+  // Single column layout on mobile
+  .gap-bar-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .gap-metric-label {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .gap-metric-label .metric-name {
+    font-size: var(--font-size-h4);
+  }
+
+  .gap-metric-label .gap-value {
+    font-size: 11px;
+  }
+
+  .gap-bar-track {
+    height: 20px;
+  }
+
+  .gap-bar-values {
+    font-size: 11px;
+  }
+
+  // Hide status icons on mobile (too crowded)
+  .gap-status {
+    display: none;
+  }
+
+  // 2x2 grid on mobile
+  .gap-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+  }
+
+  .gap-summary .summary-item {
+    padding: var(--space-3);
+  }
+
+  .gap-summary .summary-value {
+    font-size: var(--font-size-h3);
+  }
+
+  .gap-summary .summary-label {
+    font-size: 10px;
+  }
+}
+
+// ================================================================
+// SMALL MOBILE - EXTRA COMPACT
+// ================================================================
+
+@media (max-width: 480px) {
+  .analytics-page {
+    padding: var(--space-2);
+  }
+
+  .page-title {
+    font-size: var(--font-size-h3);
+  }
+
+  .metrics-grid {
+    gap: var(--space-2);
+  }
+
+  .metric-card .p-card-body {
+    padding: var(--space-2);
+  }
+
+  .charts-grid {
+    gap: var(--space-2);
+  }
+
+  .chart-card {
+    min-height: 300px;
+
+    ::ng-deep .p-card-header,
+    ::ng-deep .p-card-body {
+      padding: var(--space-2);
+    }
+  }
+
+  .chart-container {
+    height: 220px;
+
+    &.radar,
+    &.doughnut {
+      height: 250px;
+    }
+  }
+
+  .stats-summary {
+    grid-template-columns: 1fr; // Single column on small phones
+    gap: var(--space-2);
+  }
+
+  .goals-grid {
+    padding: var(--space-2);
+    gap: var(--space-2);
+
+    .goal-card {
+      min-width: 260px;
+    }
+  }
+
+  .gap-summary {
+    grid-template-columns: 1fr; // Stack vertically on small phones
+  }
+}
+
+// ================================================================
+// LANDSCAPE MODE ON PHONES
+// ================================================================
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-summary {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .chart-container {
+    height: 200px; // Shorter in landscape
   }
 }
 

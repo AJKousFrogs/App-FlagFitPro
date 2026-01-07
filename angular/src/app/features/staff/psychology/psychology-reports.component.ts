@@ -12,7 +12,7 @@ import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -27,6 +27,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
 interface MentalWellnessReport {
@@ -133,7 +134,9 @@ interface ReportPrivacySettings {
     RouterModule,
     CardModule,
     CheckboxModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DialogModule,
     InputTextModule,
     ProgressBarModule,
@@ -402,11 +405,11 @@ interface ReportPrivacySettings {
 
                     <!-- Trends Chart -->
                     <p-card header="Wellness Trends Over Time">
-                      <p-chart
+                      <app-lazy-chart
                         type="line"
                         [data]="wellnessChartData()"
                         [options]="chartOptions"
-                      ></p-chart>
+                      ></app-lazy-chart>
                     </p-card>
 
                     <!-- Sleep & Recovery -->

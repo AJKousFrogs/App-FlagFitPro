@@ -75,6 +75,13 @@
   margin-top: var(--space-4);
 }
 
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
 .position-indicator {
   display: flex;
   align-items: center;

@@ -1,7 +1,17 @@
-import { bootstrapApplication } from "@angular/platform-browser";
 import { AppComponent } from "./app/app.component";
-import { config } from "./app/app.config.server";
+import { appConfig } from "./app/app.config";
+import { provideServerRendering } from "@angular/platform-server";
+import { mergeApplicationConfig } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
 
-const bootstrap = () => bootstrapApplication(AppComponent, config);
+const serverConfig = {
+  providers: [
+    provideServerRendering()
+  ]
+};
 
-export default bootstrap;
+const config = mergeApplicationConfig(appConfig, serverConfig);
+
+export default async function bootstrap(context: any) {
+  return bootstrapApplication(AppComponent, { ...config, ...context });
+}

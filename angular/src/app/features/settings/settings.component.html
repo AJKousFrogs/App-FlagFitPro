@@ -11,14 +11,46 @@
       >
     </app-page-header>
 
+    <!-- Settings Navigation / Quick Links -->
+    <p-card styleClass="settings-nav-card">
+      <div class="settings-nav">
+        <a href="#account-settings" class="settings-nav-item">
+          <i class="pi pi-user"></i>
+          <span>Account</span>
+        </a>
+        <a href="#notifications-settings" class="settings-nav-item">
+          <i class="pi pi-bell"></i>
+          <span>Notifications</span>
+        </a>
+        <a href="#privacy-settings" class="settings-nav-item">
+          <i class="pi pi-lock"></i>
+          <span>Privacy & Security</span>
+        </a>
+        <a href="#preferences-settings" class="settings-nav-item">
+          <i class="pi pi-sliders-h"></i>
+          <span>Preferences</span>
+        </a>
+      </div>
+    </p-card>
+
     <!-- Settings Grid -->
     <div class="settings-grid">
-      <!-- Profile Settings -->
-      <app-card
-        title="Profile Settings"
-        headerIcon="pi-user"
-        headerIconColor="primary"
-      >
+      <!-- Section 1: Account Settings -->
+      <div id="account-settings" class="settings-section">
+        <h2 class="settings-section-title">
+          <i class="pi pi-user"></i>
+          Account Settings
+        </h2>
+        <div class="settings-section-description">
+          Manage your personal information and account details
+        </div>
+        
+        <!-- Profile Settings -->
+        <app-card
+          title="Profile Information"
+          headerIcon="pi-user"
+          headerIconColor="primary"
+        >
         <form [formGroup]="profileForm">
           <div class="p-field mb-4">
             <label for="settings-displayName" class="p-label"
@@ -144,9 +176,19 @@
         </form>
       </app-card>
 
+      <!-- Section 2: Notifications -->
+      <div id="notifications-settings" class="settings-section">
+        <h2 class="settings-section-title">
+          <i class="pi pi-bell"></i>
+          Notifications
+        </h2>
+        <div class="settings-section-description">
+          Control how and when you receive notifications
+        </div>
+
       <!-- Notification Settings -->
       <app-card
-        title="Notification Settings"
+        title="Notification Preferences"
         headerIcon="pi-bell"
         headerIconColor="warning"
       >
@@ -319,10 +361,21 @@
           </div>
         </form>
       </app-card>
+      </div>
+
+      <!-- Section 3: Privacy & Security -->
+      <div id="privacy-settings" class="settings-section">
+        <h2 class="settings-section-title">
+          <i class="pi pi-lock"></i>
+          Privacy & Security
+        </h2>
+        <div class="settings-section-description">
+          Manage your privacy settings and account security
+        </div>
 
       <!-- Privacy Settings -->
       <app-card
-        title="Privacy Settings"
+        title="Privacy Controls"
         headerIcon="pi-lock"
         headerIconColor="error"
       >
@@ -393,6 +446,17 @@
           >
         </div>
       </app-card>
+      </div>
+
+      <!-- Section 4: Preferences -->
+      <div id="preferences-settings" class="settings-section">
+        <h2 class="settings-section-title">
+          <i class="pi pi-sliders-h"></i>
+          Preferences
+        </h2>
+        <div class="settings-section-description">
+          Customize your app experience and display options
+        </div>
 
       <!-- App Preferences -->
       <app-card
@@ -562,9 +626,12 @@
       </app-card>
     </div>
   </div>
+</div>
+</app-main-layout>
 
-  <!-- Change Password Dialog -->
-  <p-dialog
+<!-- All Dialogs (outside main layout for proper portal rendering) -->
+<!-- Change Password Dialog -->
+<p-dialog
     [(visible)]="showChangePasswordDialog"
     [modal]="true"
     [closable]="true"
@@ -882,7 +949,15 @@
               </p>
               <div class="qr-wrapper">
                 @if (qrCodeUrl()) {
-                  <img [src]="qrCodeUrl()" alt="2FA QR Code" class="qr-image" />
+                  <img
+                    appMobileOptimized
+                    [width]="256"
+                    [height]="256"
+                    [lazy]="false"
+                    [src]="qrCodeUrl()"
+                    alt="2FA QR Code"
+                    class="qr-image"
+                  />
                 } @else {
                   <div class="qr-loading">
                     <i class="pi pi-spin pi-spinner"></i>
@@ -1175,136 +1250,135 @@
     </div>
   </p-dialog>
 
-  <!-- Data Export Dialog -->
-  <p-dialog
-    [(visible)]="showDataExportDialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="export-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header">
-        <div class="dialog-icon">
-          <i class="pi pi-download"></i>
-        </div>
-        <div class="dialog-title-section">
-          <h2>Export Your Data</h2>
-          <p>Download a copy of your FlagFit Pro data</p>
-        </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="showDataExportDialog = false"
-        ></app-button>
+<!-- Data Export Dialog -->
+<p-dialog
+  [(visible)]="showDataExportDialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="export-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header">
+      <div class="dialog-icon">
+        <i class="pi pi-download"></i>
       </div>
-
-      <!-- Export Options -->
-      <div class="export-content">
-        <div class="export-format-section">
-          <h4>Export Format</h4>
-          <div class="format-options">
-            <button
-              type="button"
-              class="format-option"
-              [class.active]="exportFormat === 'json'"
-              (click)="exportFormat = 'json'"
-            >
-              <i class="pi pi-code"></i>
-              <span>JSON</span>
-              <small>Machine-readable</small>
-            </button>
-            <button
-              type="button"
-              class="format-option"
-              [class.active]="exportFormat === 'csv'"
-              (click)="exportFormat = 'csv'"
-            >
-              <i class="pi pi-file"></i>
-              <span>CSV</span>
-              <small>Spreadsheet-friendly</small>
-            </button>
-          </div>
-        </div>
-
-        <div class="export-data-section">
-          <h4>Data to Include</h4>
-          <div class="data-options">
-            <div class="data-option">
-              <div class="option-info">
-                <i class="pi pi-user"></i>
-                <span>Profile Information</span>
-              </div>
-              <p-toggleswitch
-                [(ngModel)]="exportOptions.profile"
-              ></p-toggleswitch>
-            </div>
-            <div class="data-option">
-              <div class="option-info">
-                <i class="pi pi-calendar"></i>
-                <span>Training Sessions</span>
-              </div>
-              <p-toggleswitch
-                [(ngModel)]="exportOptions.training"
-              ></p-toggleswitch>
-            </div>
-            <div class="data-option">
-              <div class="option-info">
-                <i class="pi pi-heart"></i>
-                <span>Wellness Check-ins</span>
-              </div>
-              <p-toggleswitch
-                [(ngModel)]="exportOptions.wellness"
-              ></p-toggleswitch>
-            </div>
-            <div class="data-option">
-              <div class="option-info">
-                <i class="pi pi-trophy"></i>
-                <span>Achievements</span>
-              </div>
-              <p-toggleswitch
-                [(ngModel)]="exportOptions.achievements"
-              ></p-toggleswitch>
-            </div>
-            <div class="data-option">
-              <div class="option-info">
-                <i class="pi pi-cog"></i>
-                <span>Settings & Preferences</span>
-              </div>
-              <p-toggleswitch
-                [(ngModel)]="exportOptions.settings"
-              ></p-toggleswitch>
-            </div>
-          </div>
-        </div>
-
-        @if (isExportingData()) {
-          <div class="export-progress-section">
-            <p-progressBar
-              [value]="exportProgress()"
-              [showValue]="true"
-            ></p-progressBar>
-            <span class="progress-label">Preparing your data...</span>
-          </div>
-        }
+      <div class="dialog-title-section">
+        <h2>Export Your Data</h2>
+        <p>Download a copy of your FlagFit Pro data</p>
       </div>
-
-      <!-- Footer Actions -->
-      <div class="dialog-actions">
-        <app-button variant="text" (clicked)="showDataExportDialog = false"
-          >Cancel</app-button
-        >
-        <app-button
-          icon="download"
-          [loading]="isExportingData()"
-          (clicked)="exportUserData()"
-          >Export Data</app-button
-        >
-      </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showDataExportDialog = false"
+      ></app-button>
     </div>
-  </p-dialog>
-</app-main-layout>
+
+    <!-- Export Options -->
+    <div class="export-content">
+      <div class="export-format-section">
+        <h4>Export Format</h4>
+        <div class="format-options">
+          <button
+            type="button"
+            class="format-option"
+            [class.active]="exportFormat === 'json'"
+            (click)="exportFormat = 'json'"
+          >
+            <i class="pi pi-code"></i>
+            <span>JSON</span>
+            <small>Machine-readable</small>
+          </button>
+          <button
+            type="button"
+            class="format-option"
+            [class.active]="exportFormat === 'csv'"
+            (click)="exportFormat = 'csv'"
+          >
+            <i class="pi pi-file"></i>
+            <span>CSV</span>
+            <small>Spreadsheet-friendly</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="export-data-section">
+        <h4>Data to Include</h4>
+        <div class="data-options">
+          <div class="data-option">
+            <div class="option-info">
+              <i class="pi pi-user"></i>
+              <span>Profile Information</span>
+            </div>
+            <p-toggleswitch
+              [(ngModel)]="exportOptions.profile"
+            ></p-toggleswitch>
+          </div>
+          <div class="data-option">
+            <div class="option-info">
+              <i class="pi pi-calendar"></i>
+              <span>Training Sessions</span>
+            </div>
+            <p-toggleswitch
+              [(ngModel)]="exportOptions.training"
+            ></p-toggleswitch>
+          </div>
+          <div class="data-option">
+            <div class="option-info">
+              <i class="pi pi-heart"></i>
+              <span>Wellness Check-ins</span>
+            </div>
+            <p-toggleswitch
+              [(ngModel)]="exportOptions.wellness"
+            ></p-toggleswitch>
+          </div>
+          <div class="data-option">
+            <div class="option-info">
+              <i class="pi pi-trophy"></i>
+              <span>Achievements</span>
+            </div>
+            <p-toggleswitch
+              [(ngModel)]="exportOptions.achievements"
+            ></p-toggleswitch>
+          </div>
+          <div class="data-option">
+            <div class="option-info">
+              <i class="pi pi-cog"></i>
+              <span>Settings & Preferences</span>
+            </div>
+            <p-toggleswitch
+              [(ngModel)]="exportOptions.settings"
+            ></p-toggleswitch>
+          </div>
+        </div>
+      </div>
+
+      @if (isExportingData()) {
+        <div class="export-progress-section">
+          <p-progressBar
+            [value]="exportProgress()"
+            [showValue]="true"
+          ></p-progressBar>
+          <span class="progress-label">Preparing your data...</span>
+        </div>
+      }
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+      <app-button variant="text" (clicked)="showDataExportDialog = false"
+        >Cancel</app-button
+      >
+      <app-button
+        icon="download"
+        [loading]="isExportingData()"
+        (clicked)="exportUserData()"
+        >Export Data</app-button
+      >
+    </div>
+  </div>
+</p-dialog>

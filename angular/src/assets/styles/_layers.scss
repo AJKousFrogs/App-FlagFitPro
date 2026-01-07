@@ -54,7 +54,10 @@
   body {
     min-height: 100vh;
     min-height: 100dvh;
-    text-rendering: optimizeLegibility;
+    /* CRITICAL FIX: Changed from optimizeLegibility to auto
+     * optimizeLegibility was causing missing 's' characters throughout the app
+     * auto provides better compatibility and prevents glyph rendering issues */
+    text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -12,7 +12,7 @@ import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -28,6 +28,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
 interface Injury {
@@ -193,7 +194,9 @@ const RTP_PHASES = [
     FormsModule,
     RouterModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DialogModule,
     InputTextModule,
     ProgressBarModule,

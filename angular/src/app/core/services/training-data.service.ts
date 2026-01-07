@@ -1,4 +1,5 @@
 import { Injectable, inject, computed } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 import { Observable, from, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
@@ -55,9 +56,23 @@ export interface TrainingSessionsOptions {
 export class TrainingDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
+  private http = inject(HttpClient);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
+
+  private getApiBaseUrl(): string {
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      if (hostname.includes("netlify.app") || hostname.includes("netlify.com")) {
+        return window.location.origin + "/.netlify/functions";
+      }
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return "http://localhost:8888/.netlify/functions";
+      }
+    }
+    return "/.netlify/functions";
+  }
 
   /**
    * Get all training sessions for the current user
@@ -199,7 +214,8 @@ export class TrainingDataService {
 
   /**
    * Update a training session
-   * Uses direct Supabase update with RLS
+   * Contract: Routes through API endpoint with authorization guards
+   * Violation Fix: Removed direct Supabase write (V-003)
    */
   updateTrainingSession(
     id: string,
@@ -224,62 +240,46 @@ export class TrainingDataService {
       user_id?: string;
     };
 
-    return from(
-      this.supabaseService.client
-        .from("training_sessions")
-        .update(updateData)
-        .eq("id", id)
-        .eq("user_id", userId) // RLS ensures user can only update their own sessions
-        .select()
-        .single(),
-    ).pipe(
-      map(({ data, error }) => {
-        if (error) {
+    // Route through API endpoint with authorization guards
+    // Contract: Section 9.1 - No frontend direct writes
+    const apiUrl = this.getApiBaseUrl();
+    return this.http
+      .put<{ success: boolean; data: TrainingSession }>(
+        `${apiUrl}/training-sessions`,
+        { sessionId: id, ...updateData }
+      )
+      .pipe(
+        map((response) => {
+          // API returns { success: true, data: session } from createSuccessResponse
+          const session = response.data;
+          if (session) {
+            this.logger.info("Training session updated successfully:", session.id);
+          }
+          return session || null;
+        }),
+        catchError((error) => {
           this.logger.error("Error updating training session:", error);
-          throw error;
-        }
-        this.logger.info("Training session updated successfully:", data.id);
-        return data;
-      }),
-      catchError((error) => {
-        this.logger.error("Error updating training session:", error);
-        return of(null);
-      }),
-    );
+          // Return explicit error, don't swallow
+          if (error.status === 403) {
+            this.logger.error("Authorization failed - session may be coach_locked or IN_PROGRESS");
+          }
+          return of(null);
+        }),
+      );
   }
 
   /**
    * Delete a training session
-   * Uses direct Supabase delete with RLS
+   * Contract: Sessions should be locked, not deleted (Section 8.11)
+   * Violation Fix: Removed delete operation - violates contract
    */
   deleteTrainingSession(id: string): Observable<boolean> {
-    const userId = this.userId();
-
-    if (!userId) {
-      this.logger.error("Cannot delete training session: No user logged in");
-      return of(false);
-    }
-
-    return from(
-      this.supabaseService.client
-        .from("training_sessions")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", userId), // RLS ensures user can only delete their own sessions
-    ).pipe(
-      map(({ error }) => {
-        if (error) {
-          this.logger.error("Error deleting training session:", error);
-          return false;
-        }
-        this.logger.info("Training session deleted successfully:", id);
-        return true;
-      }),
-      catchError((error) => {
-        this.logger.error("Error deleting training session:", error);
-        return of(false);
-      }),
+    // Contract violation: Sessions MUST be locked, not deleted
+    // See AUTHORIZATION_AND_GUARDRAILS_CONTRACT_v1 Section 8.11
+    this.logger.warn(
+      "Session deletion not allowed per contract. Sessions must be locked, not deleted."
     );
+    return of(false);
   }
 
   /**

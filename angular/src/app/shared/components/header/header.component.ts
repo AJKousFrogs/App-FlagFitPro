@@ -19,6 +19,7 @@ import { MenuItem } from "primeng/api";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
+import { DialogModule } from "primeng/dialog";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
@@ -53,6 +54,7 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
     ToolbarModule,
     TagModule,
     MenuModule,
+    DialogModule,
     SearchPanelComponent,
     NotificationsPanelComponent,
     ButtonModule,
@@ -81,6 +83,19 @@ export class HeaderComponent implements OnDestroy {
   onEscapePress(): void {
     if (this.isUserMenuOpen()) {
       this.closeUserMenu();
+    }
+    if (this.showShortcutsDialog()) {
+      this.showShortcutsDialog.set(false);
+    }
+  }
+
+  // Show shortcuts dialog on "?"
+  @HostListener("document:keydown", ["$event"])
+  onKeyDown(event: KeyboardEvent): void {
+    // Show shortcuts on "?" (Shift + /)
+    if (event.key === "?" && !this.isInputFocused()) {
+      event.preventDefault();
+      this.showShortcutsDialog.set(true);
     }
   }
 
@@ -125,6 +140,17 @@ export class HeaderComponent implements OnDestroy {
   userEmail = signal("user@example.com");
   userRole = signal("Player");
   userStats = signal({ trainingSessions: 0, streak: 0, level: 0 });
+
+  // Keyboard shortcuts dialog
+  showShortcutsDialog = signal(false);
+  shortcuts = [
+    { key: "⌘K / Ctrl+K", description: "Open Global Search", icon: "pi-search" },
+    { key: "⌘D / Ctrl+D", description: "Go to Dashboard", icon: "pi-home" },
+    { key: "⌘T / Ctrl+T", description: "Go to Training", icon: "pi-bolt" },
+    { key: "⌘N / Ctrl+N", description: "Toggle Notifications", icon: "pi-bell" },
+    { key: "Escape", description: "Close Dialogs/Menus", icon: "pi-times" },
+    { key: "?", description: "Show Keyboard Shortcuts", icon: "pi-question-circle" },
+  ];
 
   // User menu items for p-menu
   userMenuItems = computed<MenuItem[]>(() => [
@@ -400,6 +426,15 @@ export class HeaderComponent implements OnDestroy {
 
   formatNumber(num: number): string {
     return num.toString().padStart(2, "0");
+  }
+
+  private isInputFocused(): boolean {
+    const activeElement = document.activeElement;
+    return (
+      activeElement?.tagName === "INPUT" ||
+      activeElement?.tagName === "TEXTAREA" ||
+      activeElement?.getAttribute("contenteditable") === "true"
+    );
   }
 
   ngOnDestroy(): void {

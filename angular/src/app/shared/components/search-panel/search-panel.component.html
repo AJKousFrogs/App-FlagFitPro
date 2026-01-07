@@ -150,29 +150,52 @@
             }}</strong
             >"
           </p>
+          
+          <!-- Search Tips -->
+          <div class="search-tips">
+            <h4>Search tips:</h4>
+            <ul>
+              <li><i class="pi pi-check-circle"></i> Check your spelling</li>
+              <li><i class="pi pi-check-circle"></i> Try broader terms (e.g., "drill" instead of "specific drill name")</li>
+              <li><i class="pi pi-check-circle"></i> Use fewer keywords</li>
+              <li><i class="pi pi-check-circle"></i> Try synonyms (e.g., "workout" instead of "training")</li>
+            </ul>
+          </div>
+          
           <div class="no-results-suggestions">
             <span>Try searching for:</span>
             <div class="suggestion-chips">
               <button
                 type="button"
                 class="suggestion-chip"
-                (click)="searchFor('Sprint')"
+                (click)="searchFor('Sprint Training')"
               >
-                Sprint
+                <i class="pi pi-search"></i>
+                Sprint Training
               </button>
               <button
                 type="button"
                 class="suggestion-chip"
-                (click)="searchFor('Quarterback')"
+                (click)="searchFor('Quarterback Drills')"
               >
-                Quarterback
+                <i class="pi pi-search"></i>
+                Quarterback Drills
               </button>
               <button
                 type="button"
                 class="suggestion-chip"
-                (click)="searchFor('Drills')"
+                (click)="searchFor('Conditioning')"
               >
-                Drills
+                <i class="pi pi-search"></i>
+                Conditioning
+              </button>
+              <button
+                type="button"
+                class="suggestion-chip"
+                (click)="searchFor('Recovery')"
+              >
+                <i class="pi pi-search"></i>
+                Recovery
               </button>
             </div>
           </div>
@@ -204,6 +227,30 @@
               >
                 <span>{{ recent }}</span>
                 <i class="pi pi-arrow-up-left"></i>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Popular Searches (when no query and no recent) - UX Audit Fix #6 -->
+      @if (!searchQuery && searchService.recentSearches().length === 0) {
+        <div class="popular-searches">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="pi pi-sparkles"></i>
+              <span>Popular Searches</span>
+            </div>
+          </div>
+          <div class="popular-grid">
+            @for (popular of popularSearches; track popular) {
+              <button
+                type="button"
+                class="popular-tag"
+                (click)="searchFor(popular)"
+              >
+                <i class="pi pi-search"></i>
+                <span>{{ popular }}</span>
               </button>
             }
           </div>

@@ -55,7 +55,6 @@ export class LoggerService {
   debug(...args: unknown[]): void {
     if (!this.shouldLog("debug")) return;
     if (this.isDevelopment) {
-      console.log("🔍 [DEBUG]", ...args);
     }
   }
 
@@ -66,7 +65,6 @@ export class LoggerService {
   info(...args: unknown[]): void {
     if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
-      console.log("ℹ️ [INFO]", ...args);
     }
   }
 
@@ -101,7 +99,6 @@ export class LoggerService {
   success(...args: unknown[]): void {
     if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
-      console.log("✅ [SUCCESS]", ...args);
     }
   }
 }

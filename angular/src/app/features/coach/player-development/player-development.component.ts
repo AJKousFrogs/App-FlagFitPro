@@ -13,7 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -30,6 +30,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 // ===== Interfaces =====
 interface Player {
@@ -105,7 +106,9 @@ const COMPARE_OPTIONS = [
     CommonModule,
     FormsModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DatePicker,
     DialogModule,
     InputTextModule,
@@ -231,11 +234,11 @@ const COMPARE_OPTIONS = [
               </div>
             </ng-template>
             <div class="spider-chart-container">
-              <p-chart
+              <app-lazy-chart
                 type="radar"
                 [data]="radarChartData()"
                 [options]="radarChartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             </div>
             <div class="chart-legend">
               <span class="legend-item"
@@ -355,11 +358,11 @@ const COMPARE_OPTIONS = [
               ></p-select>
             </div>
             <div class="history-chart">
-              <p-chart
+              <app-lazy-chart
                 type="line"
                 [data]="lineChartData()"
                 [options]="lineChartOptions"
-              ></p-chart>
+              ></app-lazy-chart>
             </div>
             <div class="history-stats">
               <span><strong>Best:</strong> {{ historyStats().best }}</span>
@@ -394,7 +397,7 @@ const COMPARE_OPTIONS = [
                     <p-progressBar
                       [value]="skill.score"
                       [showValue]="false"
-                      [style]="{ height: '16px' }"
+                      height="16px"
                     ></p-progressBar>
                   </div>
                   <span class="skill-score">{{ skill.score }}%</span>

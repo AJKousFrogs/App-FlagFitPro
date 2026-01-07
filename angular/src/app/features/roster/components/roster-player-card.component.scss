@@ -272,6 +272,19 @@
   margin-top: var(--space-1);
 }
 
+.acwr-zone {
+  position: absolute;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  
+  &.safe {
+    left: 40%;
+    width: 25%;
+    background: var(--color-status-success);
+    opacity: 0.3;
+  }
+}
+
 .acwr-marker {
   position: absolute;
   top: -2px;

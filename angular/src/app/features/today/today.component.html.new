@@ -1,0 +1,386 @@
+<app-main-layout>
+  <p-toast />
+
+  <!-- ========================================================================
+       COMPLETION CELEBRATION OVERLAY (keep existing)
+       ======================================================================== -->
+  @if (showCelebration()) {
+    <div
+      class="celebration-overlay"
+      @celebrationFade
+      (click)="dismissCelebration()"
+    >
+      <div class="celebration-content" @celebrationBounce>
+        <div class="celebration-confetti">
+          @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track i) {
+            <span
+              class="confetti-piece"
+              [style.--delay]="i * 0.1 + 's'"
+              [style.--x]="i * 30 - 180 + 'px'"
+            ></span>
+          }
+        </div>
+        <div class="celebration-icon">🎉</div>
+        <h2 class="celebration-title">Day Complete!</h2>
+        <p class="celebration-message">
+          Amazing work! You've completed all your training for today.
+        </p>
+        <div class="celebration-stats">
+          <div class="stat">
+            <span class="stat-number">{{
+              protocol()?.completedExercises || 0
+            }}</span>
+            <span class="stat-label">Exercises</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">{{ weekStats().currentStreak }}</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+        </div>
+        <app-button
+          iconLeft="pi-times"
+          size="lg"
+          (clicked)="dismissCelebration()"
+          >Continue</app-button
+        >
+      </div>
+    </div>
+  }
+
+  <!-- ========================================================================
+       LOADING STATE
+       ======================================================================== -->
+  @if (isLoading() || isGeneratingProtocol()) {
+    <div
+      class="today-page"
+      aria-busy="true"
+      aria-label="Loading today's practice"
+    >
+      <p-skeleton width="100%" height="5rem" borderRadius="0.75rem" />
+      <div class="skeleton-grid">
+        <p-skeleton width="100%" height="4rem" borderRadius="0.75rem" />
+        <p-skeleton width="100%" height="4rem" borderRadius="0.75rem" />
+      </div>
+      <p-skeleton width="100%" height="3.5rem" borderRadius="0.75rem" />
+      <p-skeleton width="100%" height="10rem" borderRadius="0.75rem" />
+    </div>
+  }
+
+  <!-- ========================================================================
+       MAIN CONTENT - VIEWMODEL-DRIVEN
+       ======================================================================== -->
+  @if (!isLoading() && !isGeneratingProtocol()) {
+    @if (todayViewModel(); as vm) {
+      <div class="today-page">
+        <!-- ====================================================================
+             HEADER: 5-Second Comprehension
+             ==================================================================== -->
+        <section aria-labelledby="today-heading">
+          <p-card styleClass="welcome-card">
+            <div class="welcome-row">
+              <div class="user-avatar" aria-hidden="true">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="welcome-text">
+                <h1 id="today-heading" class="welcome-greeting">
+                  Today
+                </h1>
+                <h2 class="welcome-name">{{ todayDateLabel() }}</h2>
+                <div class="welcome-stats">
+                  <span class="stat-item">
+                    <span class="stat-label">Readiness:</span>
+                    <span class="stat-value" [class.logged]="readinessDisplay().logged">
+                      {{ readinessDisplay().value }}
+                      @if (readinessDisplay().logged) {
+                        <i class="pi pi-check" style="margin-left: 4px;"></i>
+                      }
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </section>
+
+        <!-- ====================================================================
+             ERROR STATE (if training not allowed)
+             ==================================================================== -->
+        @if (vm.errorState) {
+          <section aria-labelledby="error-heading">
+            <app-banner
+              type="error"
+              [message]="vm.errorState.message"
+              [primaryCta]="vm.errorState.cta ? { label: vm.errorState.cta.label, action: vm.errorState.cta.action } : null"
+              [ctaClick]="handleCta.bind(this)"
+            />
+          </section>
+        }
+
+        <!-- ====================================================================
+             COACH ALERT ACKNOWLEDGMENT GATE (blocking)
+             ==================================================================== -->
+        @if (vm.banners.some(b => b.type === 'alert' && b.text.includes('Acknowledgment required'))) {
+          <section class="coach-alert-gate">
+            <p-card styleClass="alert-gate-card">
+              <div class="alert-gate-content">
+                <i class="pi pi-bell alert-gate-icon"></i>
+                <div class="alert-gate-text">
+                  <h3>Coach Alert</h3>
+                  <p>{{ vm.banners.find(b => b.type === 'alert')?.text }}</p>
+                </div>
+                @if (vm.primaryCta) {
+                  <app-button
+                    variant="primary"
+                    (clicked)="handleCta(vm.primaryCta!.action)"
+                  >
+                    {{ vm.primaryCta.label }}
+                  </app-button>
+                }
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ====================================================================
+             COACH ATTRIBUTION (if coach modified)
+             ==================================================================== -->
+        @if (vm.headerContext?.coachAttribution) {
+          <section class="coach-attribution">
+            <p-card styleClass="attribution-card">
+              <div class="attribution-content">
+                <i class="pi pi-user-edit"></i>
+                <span>{{ vm.headerContext.coachAttribution }}</span>
+                @if (protocolJson()?.modified_at) {
+                  <span class="attribution-time">
+                    {{ formatCoachTimestamp(protocolJson()!.modified_at!) }}
+                  </span>
+                }
+              </div>
+            </p-card>
+          </section>
+        }
+
+        <!-- ====================================================================
+             BANNERS (ordered by priority, above first block)
+             ==================================================================== -->
+        @if (vm.banners.length > 0) {
+          <section class="banners-section">
+            @for (banner of vm.banners; track $index) {
+              <app-banner
+                [type]="banner.type"
+                [message]="banner.text"
+                [primaryCta]="banner.ctas?.[0] || null"
+                [secondaryCta]="banner.ctas?.[1] || null"
+                [ctaClick]="handleCta.bind(this)"
+              />
+            }
+          </section>
+        }
+
+        <!-- ====================================================================
+             ACWR BASELINE WIDGET (if building baseline)
+             ==================================================================== -->
+        @if (vm.acwrBaseline) {
+          <section class="acwr-section">
+            <app-acwr-baseline
+              [daysLogged]="vm.acwrBaseline.trainingDaysLogged"
+              [targetDays]="21"
+              label="Load Management"
+            />
+          </section>
+        }
+
+        <!-- ====================================================================
+             MAIN EXECUTION BLOCKS (ordered by ViewModel)
+             ==================================================================== -->
+        @if (vm.trainingAllowed && vm.blocksDisplayed.length > 0) {
+          <main class="content-section">
+            <section aria-labelledby="protocol-heading">
+              <p-card styleClass="content-card">
+                <div class="card-header">
+                  <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
+                  <span id="protocol-heading" class="card-header-title">
+                    Today's Protocol
+                  </span>
+                </div>
+
+                @if (protocol(); as p) {
+                  <!-- Progress Bar -->
+                  @if (p.overallProgress !== undefined) {
+                    <div class="protocol-progress-wrapper">
+                      <p-progressbar
+                        [value]="p.overallProgress"
+                        [showValue]="false"
+                        styleClass="protocol-bar"
+                      />
+                      <div class="protocol-meta">
+                        <span>{{ p.completedExercises }}/{{ p.totalExercises }} Exercises</span>
+                        <span>{{ p.overallProgress }}%</span>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Protocol Blocks (ordered by ViewModel) -->
+                  <div class="protocol-blocks" data-testid="protocol-blocks">
+                    @for (blockType of vm.blocksDisplayed; track blockType) {
+                      @if (getBlockByType(p, blockType); as block) {
+                        <app-protocol-block
+                          [data-block-type]="blockType"
+                          [block]="block"
+                          [simpleView]="true"
+                          [defaultExpanded]="true"
+                          (exerciseComplete)="refreshProtocol()"
+                        />
+                      }
+                    }
+                  </div>
+
+                  <!-- Footer Link -->
+                  <div class="card-footer">
+                    <app-button
+                      iconRight="pi-external-link"
+                      variant="text"
+                      routerLink="/training/advanced"
+                      >Advanced Training Workspace</app-button
+                    >
+                  </div>
+                } @else {
+                  <!-- Empty State -->
+                  <div class="empty-state">
+                    <i class="pi pi-calendar-plus"></i>
+                    <h3>No Training Plan Yet</h3>
+                    <p>
+                      Generate your personalized protocol to see exercises with videos and instructions.
+                    </p>
+                    <div class="empty-state-actions">
+                      <app-button
+                        iconLeft="pi-sparkles"
+                        [loading]="isGeneratingProtocol()"
+                        (clicked)="generateProtocol()"
+                        >Generate Today's Protocol</app-button
+                      >
+                    </div>
+                  </div>
+                }
+              </p-card>
+            </section>
+          </main>
+        }
+      </div>
+    } @else {
+      <!-- No ViewModel - show error -->
+      <div class="today-page">
+        <p-card styleClass="error-card">
+          <div class="empty-state">
+            <i class="pi pi-exclamation-triangle"></i>
+            <h3>Unable to Load Plan</h3>
+            <p>{{ error() || 'Please try refreshing the page.' }}</p>
+            <app-button
+              iconLeft="pi-refresh"
+              (clicked)="refreshProtocol()"
+              >Refresh</app-button
+            >
+          </div>
+        </p-card>
+      </div>
+    }
+  }
+
+  <!-- ========================================================================
+       QUICK CHECK-IN DIALOG (keep existing)
+       ======================================================================== -->
+  <p-dialog
+    [visible]="showQuickCheckin()"
+    (visibleChange)="showQuickCheckin.set($event)"
+    header="Quick Check-in"
+    [modal]="true"
+    [style]="{ width: '95vw', maxWidth: '400px' }"
+    [contentStyle]="{ padding: '1.5rem' }"
+  >
+    <div class="quick-checkin-form">
+      <p class="quick-intro">How are you feeling today? Tap to select.</p>
+
+      <!-- Step 1: Overall Feeling -->
+      <div class="quick-section">
+        <span class="quick-label">Overall Feeling</span>
+        <div class="mood-selector">
+          @for (mood of quickMoods; track mood.value) {
+            <button
+              type="button"
+              class="mood-btn"
+              [class.selected]="quickFormData().overallFeeling === mood.value"
+              (click)="setQuickField('overallFeeling', mood.value)"
+              [attr.aria-label]="mood.label"
+            >
+              <span class="mood-emoji">{{ mood.emoji }}</span>
+              <span class="mood-text">{{ mood.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Step 2: Energy Level -->
+      <div class="quick-section">
+        <span class="quick-label">Energy Level</span>
+        <div class="energy-selector">
+          @for (level of quickEnergyLevels; track level.value) {
+            <button
+              type="button"
+              class="energy-btn"
+              [class.selected]="quickFormData().energyLevel === level.value"
+              (click)="setQuickField('energyLevel', level.value)"
+            >
+              <i class="pi pi-bolt" [style.opacity]="level.value * 0.2 + 0.2"></i>
+              <span>{{ level.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Step 3: Any Soreness -->
+      <div class="quick-section">
+        <span class="quick-label">Any Soreness?</span>
+        <div class="soreness-selector">
+          <button
+            type="button"
+            class="soreness-btn"
+            [class.selected]="quickFormData().hasSoreness === false"
+            (click)="setQuickField('hasSoreness', false)"
+          >
+            <i class="pi pi-check-circle"></i>
+            <span>Feeling Good</span>
+          </button>
+          <button
+            type="button"
+            class="soreness-btn soreness-yes"
+            [class.selected]="quickFormData().hasSoreness === true"
+            (click)="setQuickField('hasSoreness', true)"
+          >
+            <i class="pi pi-exclamation-circle"></i>
+            <span>Some Soreness</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Score -->
+      <div class="quick-preview">
+        <span class="preview-label">Estimated Readiness</span>
+        <span class="preview-score" [class]="getQuickReadinessClass()">
+          {{ quickReadinessScore() }}%
+        </span>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <app-button variant="text" (clicked)="showQuickCheckin.set(false)">Cancel</app-button>
+      <app-button
+        iconLeft="pi-check"
+        [loading]="isSavingQuickCheckin()"
+        [disabled]="!isQuickFormValid()"
+        (clicked)="submitQuickCheckin()"
+        >Save</app-button
+      >
+    </ng-template>
+  </p-dialog>
+</app-main-layout>
+

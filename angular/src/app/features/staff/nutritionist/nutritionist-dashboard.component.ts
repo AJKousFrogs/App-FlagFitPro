@@ -12,7 +12,7 @@ import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -26,6 +26,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §30
 interface AthleteNutritionData {
@@ -81,19 +82,6 @@ interface WellnessMetrics {
   hydrationStatus: "poor" | "adequate" | "good" | "optimal";
 }
 
-// NutritionistWeeklyReport reserved for future use
-// interface NutritionistWeeklyReport {
-//   reportPeriod: { start: Date; end: Date };
-//   athlete: AthleteNutritionData;
-//   trainingContext: TrainingLoadData;
-//   bodyComposition: {
-//     weightTrend: "gaining" | "stable" | "losing";
-//     weeklyWeightChange: number;
-//     measurementsThisWeek: number;
-//     alerts: string[];
-//   };
-//   supplementCompliance: SupplementCompliance;
-//   wellnessIndicators: WellnessMetrics;
 //   recommendations: string[];
 // }
 
@@ -136,7 +124,9 @@ interface TournamentNutritionBrief {
     FormsModule,
     RouterModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     DialogModule,
     InputTextModule,
     ProgressBarModule,
@@ -365,18 +355,18 @@ interface TournamentNutritionBrief {
                   @if (selectedAthleteId) {
                     <div class="charts-grid">
                       <p-card header="Weight Trend">
-                        <p-chart
+                        <app-lazy-chart
                           type="line"
                           [data]="weightChartData()"
                           [options]="chartOptions"
-                        ></p-chart>
+                        ></app-lazy-chart>
                       </p-card>
                       <p-card header="Body Fat %">
-                        <p-chart
+                        <app-lazy-chart
                           type="line"
                           [data]="bodyFatChartData()"
                           [options]="chartOptions"
-                        ></p-chart>
+                        ></app-lazy-chart>
                       </p-card>
                     </div>
 

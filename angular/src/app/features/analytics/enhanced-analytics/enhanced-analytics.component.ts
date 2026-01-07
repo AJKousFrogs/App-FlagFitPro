@@ -10,7 +10,7 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { ChartModule } from "primeng/chart";
+// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -20,6 +20,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
+import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import {
   DATA_STATE_MESSAGES,
   METRIC_INSUFFICIENT_DATA,
@@ -32,7 +33,9 @@ import {
   imports: [
     RouterModule,
     CardModule,
-    ChartModule,
+    // ChartModule, // REMOVED: Using LazyChartComponent
+
+    LazyChartComponent,
     Tabs,
     TabPanel,
     MainLayoutComponent,
@@ -77,11 +80,11 @@ import {
                   />
                 </div>
               } @else if (performanceChartData()) {
-                <p-chart
+                <app-lazy-chart
                   type="line"
                   [data]="performanceChartData()"
                   [options]="chartOptions"
-                ></p-chart>
+                ></app-lazy-chart>
               }
             </p-card>
           </p-tabpanel>

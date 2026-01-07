@@ -35,6 +35,7 @@ import {
   ExerciseApprovalData,
 } from "../../core/services/exercisedb.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 @Component({
   selector: "app-exercisedb-manager",
@@ -64,7 +65,7 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
-
+    MobileOptimizedImageDirective,
     ButtonComponent,
   ],
   template: `
@@ -222,10 +223,12 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                         <div class="exercise-image-container">
                           @if (exercise.gif_url) {
                             <img
+                              appMobileOptimized
+                              [width]="300"
+                              [height]="300"
                               [src]="exercise.gif_url"
                               [alt]="exercise.name"
                               class="exercise-gif"
-                              loading="lazy"
                             />
                           } @else {
                             <div class="exercise-placeholder">
@@ -477,6 +480,9 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
                       <div class="approval-header">
                         @if (exercise.gif_url) {
                           <img
+                            appMobileOptimized
+                            [width]="200"
+                            [height]="200"
                             [src]="exercise.gif_url"
                             [alt]="exercise.name"
                             class="approval-gif"
@@ -553,6 +559,9 @@ import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
               <div class="detail-media">
                 @if (selectedExercise()?.gif_url) {
                   <img
+                    appMobileOptimized
+                    [width]="400"
+                    [height]="400"
                     [src]="selectedExercise()?.gif_url"
                     [alt]="selectedExercise()?.name"
                     class="detail-gif"

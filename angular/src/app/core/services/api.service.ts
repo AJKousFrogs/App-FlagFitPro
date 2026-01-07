@@ -184,13 +184,11 @@ export class ApiService {
   };
 }
 
-// API Endpoints Configuration
 // Note: Auth login/register/logout use Supabase directly via SupabaseService
 // Only auth-me endpoint uses backend API for token verification
 export const API_ENDPOINTS = {
   auth: {
     me: "/auth-me", // ✅ Exists - used for token verification
-    // login/register: Use SupabaseService.signIn()/signUp() directly
     // logout: Use SupabaseService.signOut() directly
     // refresh/csrf: Not implemented - using Supabase session management
   },
