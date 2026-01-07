@@ -3,6 +3,10 @@
   command = "cd angular && npm ci && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
   publish = "angular/dist/flagfit-pro/browser"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [build.environment]
   NODE_VERSION = "22"
   # Ensure devDependencies are installed (needed for @angular/cli, @angular-devkit/build-angular)
