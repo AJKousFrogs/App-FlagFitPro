@@ -1,27 +1,27 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  input,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
+import { TooltipModule } from "primeng/tooltip";
+import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { DialogModule } from "primeng/dialog";
-import { TextareaModule } from "primeng/textarea";
-import { FormsModule } from "@angular/forms";
-import { TooltipModule } from "primeng/tooltip";
-import { SkeletonModule } from "primeng/skeleton";
-import { SupabaseService } from "../../../core/services/supabase.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { ToastService } from "../../../core/services/toast.service";
-import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * AI Recommendation from the backend

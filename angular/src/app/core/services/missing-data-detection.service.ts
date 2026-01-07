@@ -5,7 +5,7 @@
  * Used to show "Data Incomplete" badges to coaches
  */
 
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 

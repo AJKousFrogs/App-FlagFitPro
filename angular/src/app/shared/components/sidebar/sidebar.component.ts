@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
@@ -23,7 +23,7 @@ interface NavItem {
   group?: string; // Navigation group for organization
 }
 
-interface CollapsibleGroup {
+interface _CollapsibleGroup {
   id: string;
   label: string;
   icon: string;

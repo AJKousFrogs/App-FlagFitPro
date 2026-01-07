@@ -6,6 +6,7 @@ import {
   Signal,
   ComponentRef,
   input,
+  Input,
 } from "@angular/core";
 import { SkeletonLoaderComponent } from "../components/skeleton-loader/skeleton-loader.component";
 

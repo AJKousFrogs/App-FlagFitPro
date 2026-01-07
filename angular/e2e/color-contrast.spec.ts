@@ -15,8 +15,8 @@
 
 import { expect, test } from "@playwright/test";
 
-// Brand green color in various formats
-const GREEN_BACKGROUNDS = [
+// Brand green color in various formats - kept for documentation purposes
+const _GREEN_BACKGROUNDS = [
   "rgb(8, 153, 73)", // Primary green
   "#089949",
   "rgb(10, 184, 90)", // Light green
@@ -25,8 +25,8 @@ const GREEN_BACKGROUNDS = [
   "#036d35",
 ];
 
-// Forbidden text colors on green backgrounds
-const FORBIDDEN_TEXT_COLORS = [
+// Forbidden text colors on green backgrounds - kept for documentation purposes
+const _FORBIDDEN_TEXT_COLORS = [
   "rgb(0, 0, 0)", // Pure black
   "#000000",
   "#000",
@@ -90,8 +90,8 @@ function isGreenBackground(color: string): boolean {
   return false;
 }
 
-// Pages to test for color contrast violations
-const PAGES_TO_TEST = [
+// Pages to test for color contrast violations - kept for documentation purposes
+const _PAGES_TO_TEST = [
   "/",
   "/ai-coach", // AI Coach chat - has green message bubbles
 ];

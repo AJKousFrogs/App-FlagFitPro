@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { resolveTodayState, ProtocolJson, TodayViewModel } from './today-state.resolver';
+import { resolveTodayState, ProtocolJson } from './today-state.resolver';
 
 describe('resolveTodayState', () => {
   const nowLocal = new Date('2026-01-06T10:00:00Z');

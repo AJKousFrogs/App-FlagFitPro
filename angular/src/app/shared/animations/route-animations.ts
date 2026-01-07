@@ -27,6 +27,7 @@ import {
   animate,
   group,
   animateChild,
+  AnimationTriggerMetadata,
 } from "@angular/animations";
 
 // ================================
@@ -467,11 +468,15 @@ export const staggerContentAnimation: AnimationTriggerMetadata = trigger(
 export function prepareRoute(outlet: {
   activatedRouteData: Record<string, unknown>;
 }): string | number {
-  return (
-    outlet?.activatedRouteData?.["animation"] ||
-    outlet?.activatedRouteData?.["depth"] ||
-    ""
-  );
+  const animation = outlet?.activatedRouteData?.["animation"];
+  const depth = outlet?.activatedRouteData?.["depth"];
+  if (typeof animation === "string" || typeof animation === "number") {
+    return animation;
+  }
+  if (typeof depth === "string" || typeof depth === "number") {
+    return depth;
+  }
+  return "";
 }
 
 // ================================

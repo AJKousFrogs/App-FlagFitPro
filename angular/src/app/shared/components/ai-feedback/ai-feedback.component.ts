@@ -11,7 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
-import { Radio } from "primeng/radiobutton";
+import { RadioButton } from "primeng/radiobutton";
 import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
@@ -55,7 +55,7 @@ interface FeedbackData {
     FormsModule,
     DialogModule,
     TextareaModule,
-    Radio,
+    RadioButton,
     TooltipModule,
     ButtonComponent,
   ],

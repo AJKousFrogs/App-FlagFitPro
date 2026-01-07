@@ -10,7 +10,6 @@ import {
   output,
   signal,
   ViewChild,
-  ViewEncapsulation,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";

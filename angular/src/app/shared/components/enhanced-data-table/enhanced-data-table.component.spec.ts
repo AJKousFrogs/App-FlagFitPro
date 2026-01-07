@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { TestBed, ComponentFixture } from "@angular/core/testing";
-import { signal } from "@angular/core";
 import {
   EnhancedDataTableComponent,
   EnhancedTableColumn,

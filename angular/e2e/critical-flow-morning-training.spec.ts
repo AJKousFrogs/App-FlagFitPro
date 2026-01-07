@@ -447,7 +447,7 @@ test.describe("Critical Flow - Morning Training Block", () => {
     const timerSection = morningMobilityBlock.locator(
       ".exercise-timer-section, app-countdown-timer, .timer",
     );
-    const hasTimer = await timerSection.isVisible({ timeout: 2000 }).catch(() => false);
+    const _hasTimer = await timerSection.isVisible({ timeout: 2000 }).catch(() => false);
     
     // Mark first exercise as started/complete
     const firstCheckbox = checkboxes.first();

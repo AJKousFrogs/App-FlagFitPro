@@ -32,7 +32,7 @@ The Flag Football Training App is a comprehensive training platform that combine
 - **Real-Time**: Supabase Realtime subscriptions (GPS/wearable ready)
 - **Storage**: Supabase Storage for file management
 - **AI/ML**: Transformer models, ensemble methods, LSTM networks
-- **Data Science**: Evidence-based research integration (156 studies)
+- **Data Science**: Evidence-based research integration (120+ studies)
 - **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 - **Performance**: Advanced monitoring + code splitting + health checks
 - **Security**: AES-256 encryption + CSRF protection + input validation
@@ -42,7 +42,7 @@ The Flag Football Training App is a comprehensive training platform that combine
 ### 🏆 Performance Analytics
 
 - **AI-Powered Predictions**: Transformer-based models with 87.4% accuracy
-- **Evidence-Based Research**: 2024-2025 studies integrated (156 studies, 3,847 participants)
+- **Evidence-Based Research**: 2024-2025 studies integrated (120+ studies)
 - **Flag Football Specific**: 73% more agility focus, 10-25 yard sprint optimization
 - **Real-Time Processing**: Streaming analytics ready for GPS/wearable integration
 - **Injury Risk Assessment**: 78% prevention rate through predictive modeling
@@ -185,7 +185,7 @@ flagfit-pro/
 
 ### 📈 Data Science Components
 
-- **Evidence-Based Research**: 156 studies integrated with meta-analysis
+- **Evidence-Based Research**: 120+ studies integrated with meta-analysis
 - **Flag Football Research**: Sport-specific metrics and optimization
 - **Predictive Modeling**: LA28 Olympics readiness tracking
 - **Biomarker Integration**: 91.7% overreaching prediction accuracy
@@ -344,7 +344,7 @@ Set up your Supabase credentials in environment variables for production deploym
 - **Database Connections**: Reduced from 14 individual pools to 1 singleton manager
 - **Function Consolidation**: Created `CommonFunctions.js` utility class
 - **Automated Health Monitoring**: Comprehensive system diagnostics
-- **Research Integration**: 2024-2025 sports science studies (156 studies, 3,847 participants)
+- **Research Integration**: 2024-2025 sports science studies (120+ studies)
 
 ### 2025 Research Integration
 

@@ -370,7 +370,7 @@ export class TrainingDataService {
    * Contract: Sessions should be locked, not deleted (Section 8.11)
    * Violation Fix: Removed delete operation - violates contract
    */
-  deleteTrainingSession(id: string): Observable<boolean> {
+  deleteTrainingSession(_id: string): Observable<boolean> {
     // Contract violation: Sessions MUST be locked, not deleted
     // See AUTHORIZATION_AND_GUARDRAILS_CONTRACT_v1 Section 8.11
     this.logger.warn(

@@ -354,11 +354,13 @@ export class NutritionDashboardComponent {
 
   getProgressStyle(goal: NutritionGoal): Record<string, string> {
     const percentage = (goal.current / goal.target) * 100;
-    let color = COLORS.PRIMARY_LIGHT; // Green for achieved
+    let color: string = COLORS.PRIMARY_LIGHT; // Green for achieved
 
-    if (percentage < 50)
+    if (percentage < 50) {
       color = COLORS.ERROR; // Red for low
-    else if (percentage < 80) color = COLORS.WARNING; // Yellow for medium
+    } else if (percentage < 80) {
+      color = COLORS.WARNING; // Yellow for medium
+    }
 
     return { "--p-progressbar-value-bg": color };
   }

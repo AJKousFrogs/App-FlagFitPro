@@ -116,7 +116,6 @@ netlify deploys --json | jq '.[:5]'
 ## Related Documentation
 
 - [SECURITY.md](../SECURITY.md) - Security policies and patterns
-- [HEALTH_CHECK_SYSTEM.md](../HEALTH_CHECK_SYSTEM.md) - Health check details
 - [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) - Common issues
 
 ---

@@ -1,32 +1,17 @@
-import {
-  Component,
-  signal,
-  inject,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../button/button.component";
-import { TagModule } from "primeng/tag";
-import { Tabs } from "primeng/tabs";
-import { AdminService } from "../../../core/services/admin.service";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
+} from "@angular/core";
 import { MessageService } from "primeng/api";
+import { CardModule } from "primeng/card";
+import { Tabs } from "primeng/tabs";
+import { TagModule } from "primeng/tag";
 import { firstValueFrom } from "rxjs";
-
-interface HealthMetric {
-  name: string;
-  icon: string;
-  color: string;
-  value: string;
-  status: string;
-  severity: "success" | "info" | "warn" | "danger";
-}
-
-interface SyncStatus {
-  source: string;
-  lastSync: string;
-  status: string;
-}
+import { AdminService, HealthMetric, SyncStatus } from "../../../core/services/admin.service";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-admin-database-dashboard",

@@ -27,10 +27,48 @@ export default tseslint.config(
       "dist/**",
       ".angular/**",
       "coverage/**",
+      "out-tsc/**", // Compiled TypeScript output
       "*.d.ts",
       "**/*.stories.ts", // Stories can show legacy patterns for comparison
+      // Config files in root/subdirs that use different tsconfig
+      "vite.config.ts",
+      "vitest.config.ts",
+      "playwright.config.ts",
+      "server.ts",
+      ".storybook/**",
     ],
-  }, // TypeScript files configuration
+  },
+  // ============================================
+  // NODE.JS SCRIPTS (JavaScript files)
+  // ============================================
+  {
+    files: ["scripts/**/*.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
+    rules: {
+      // Disable TypeScript-specific rules for JS files
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      // Enable standard JS rules
+      "no-console": "off",
+      "no-undef": "off", // Node globals handled by globals.node
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  // TypeScript files configuration
   {
     files: ["**/*.ts"],
     languageOptions: {
@@ -81,7 +119,7 @@ export default tseslint.config(
       // ============================================
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "prefer-const": "warn",
-      eqeqeq: ["warn", "always"],
+      eqeqeq: ["warn", "always", { null: "ignore" }], // Allow == null for null/undefined checks
     },
   }, // Component template inline strings - additional checks
   {
@@ -89,11 +127,48 @@ export default tseslint.config(
     rules: {
       // Additional rules for component files
     },
-  }, // Test files - relaxed rules
+  }, // Test files - relaxed rules and separate tsconfig
   {
     files: ["**/*.spec.ts", "**/*.test.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parserOptions: {
+        project: "./tsconfig.spec.json",
+      },
+    },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "no-console": "off",
+    },
+  },
+  // E2E tests - relaxed rules and separate tsconfig
+  {
+    files: ["e2e/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: "./e2e/tsconfig.json",
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "off",
+    },
+  },
+  // CLI validation scripts - need console for output
+  {
+    files: ["src/scripts/**/*.ts"],
+    rules: {
       "no-console": "off",
     },
   },

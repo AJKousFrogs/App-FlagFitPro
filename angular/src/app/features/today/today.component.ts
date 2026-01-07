@@ -16,25 +16,24 @@
  */
 
 import {
-  animate,
-  keyframes,
-  style,
-  transition,
-  trigger,
+    animate,
+    keyframes,
+    style,
+    transition,
+    trigger,
 } from "@angular/animations";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  effect,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    computed,
+    effect,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { MessageModule } from "primeng/message";
@@ -43,28 +42,29 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 
 // Layout & Components
+import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
+import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PostTrainingRecoveryComponent } from "../../shared/components/post-training-recovery/post-training-recovery.component";
 import { TodaysScheduleComponent } from "../../shared/components/todays-schedule/todays-schedule.component";
+import { ProtocolJson, TodayViewModel, resolveTodayState } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import {
-  WeekDay,
-  WeekProgressStripComponent,
+    WeekDay,
+    WeekProgressStripComponent,
 } from "../training/daily-protocol/components/week-progress-strip.component";
 import { WellnessCheckinComponent } from "../training/daily-protocol/components/wellness-checkin.component";
 import { DailyProtocol, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
-import { resolveTodayState, ProtocolJson, TodayViewModel } from "../../today/resolution/today-state.resolver";
-import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
-import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
 
 // Services
+import { ApiService } from "../../core/services/api.service";
 import { DataSourceService } from "../../core/services/data-source.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { ApiService } from "../../core/services/api.service";
 
 // Types
 type DayPhase = "morning" | "midday" | "evening";
@@ -1647,8 +1647,8 @@ export class TodayComponent {
         readinessScore: readiness,
       };
 
-      const response: any =
-        await this.trainingService.submitWellness(wellnessData);
+      const response =
+        await this.trainingService.submitWellness(wellnessData) as { success?: boolean };
 
       if (response?.success) {
         this.showQuickCheckin.set(false);
@@ -1683,81 +1683,59 @@ export class TodayComponent {
   // ============================================================================
   generateProtocol(): void {
     this.isGeneratingProtocol.set(true);
-
-    this.trainingService
-      .generateDailyProtocol()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: any) => {
-          if (response?.success && response.data) {
-            this.protocol.set(response.data as Partial<DailyProtocol>);
-            this.messageService.add({
-              severity: "success",
-              summary: "Protocol Generated",
-              detail: "Your personalized training plan is ready!",
-            });
-          }
-          this.isGeneratingProtocol.set(false);
-        },
-        error: (err) => {
-          this.logger.error("Failed to generate protocol", err);
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to generate protocol. Please try again.",
-          });
-          this.isGeneratingProtocol.set(false);
-        },
-      });
+    this.handleProtocolRequest(
+      this.trainingService.generateDailyProtocol(),
+      this.protocol,
+      this.isGeneratingProtocol,
+      { success: "Protocol Generated", detail: "Your personalized training plan is ready!" }
+    );
   }
 
   generateTomorrowProtocol(): void {
     this.isGeneratingTomorrow.set(true);
-
-    this.trainingService
-      .generateDailyProtocol(this.tomorrowDate())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: any) => {
-          if (response?.success && response.data) {
-            this.tomorrowProtocol.set(response.data as Partial<DailyProtocol>);
-            this.messageService.add({
-              severity: "success",
-              summary: "Tomorrow's Protocol Ready",
-              detail: "Your training plan for tomorrow has been generated!",
-            });
-          }
-          this.isGeneratingTomorrow.set(false);
-        },
-        error: (err) => {
-          this.logger.error("Failed to generate tomorrow protocol", err);
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to generate tomorrow's protocol.",
-          });
-          this.isGeneratingTomorrow.set(false);
-        },
-      });
+    this.handleProtocolRequest(
+      this.trainingService.generateDailyProtocol(this.tomorrowDate()),
+      this.tomorrowProtocol,
+      this.isGeneratingTomorrow,
+      { success: "Tomorrow's Protocol Ready", detail: "Your training plan for tomorrow has been generated!" }
+    );
   }
 
   loadTomorrowProtocol(): void {
     this.isLoadingTomorrow.set(true);
+    this.handleProtocolRequest(
+      this.trainingService.getProtocolForDate(this.tomorrowDate()),
+      this.tomorrowProtocol,
+      this.isLoadingTomorrow
+    );
+  }
 
-    this.trainingService
-      .getProtocolForDate(this.tomorrowDate())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: any) => {
-          if (response?.success && response.data) {
-            this.tomorrowProtocol.set(response.data as Partial<DailyProtocol>);
+   
+  private handleProtocolRequest(
+    request: ReturnType<typeof this.trainingService.generateDailyProtocol>,
+    targetSignal: typeof this.protocol,
+    loadingSignal: typeof this.isGeneratingProtocol,
+    toast?: { success: string; detail: string }
+  ): void {
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      next: (response: any) => {
+        if (response?.success && response.data) {
+          targetSignal.set(response.data as Partial<DailyProtocol>);
+          if (toast) {
+            this.messageService.add({ severity: "success", summary: toast.success, detail: toast.detail });
           }
-          this.isLoadingTomorrow.set(false);
-        },
-        error: () => {
-          this.isLoadingTomorrow.set(false);
-        },
-      });
+        }
+        loadingSignal.set(false);
+      },
+      error: (err) => {
+        if (toast) {
+          this.logger.error("Protocol request failed", err);
+          this.messageService.add({ severity: "error", summary: "Error", detail: "Request failed. Please try again." });
+        }
+        loadingSignal.set(false);
+      },
+    });
   }
 
   viewTomorrowProtocol(): void {
@@ -1947,7 +1925,7 @@ export class TodayComponent {
     
     // Call backend endpoint to acknowledge coach alert
     this.api
-      .post<{ success: boolean; data?: any; error?: string; code?: string }>(
+      .post<{ success: boolean; data?: unknown; error?: string; code?: string }>(
         `/api/coach-alerts/${alertId}/acknowledge`,
         { sessionDate }
       )

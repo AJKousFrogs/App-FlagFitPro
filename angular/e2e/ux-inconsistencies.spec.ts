@@ -132,10 +132,12 @@ test.describe("UX Inconsistencies", () => {
         const text = await button.textContent();
 
         if (boundingBox) {
+          const viewportSize = page.viewportSize();
+          const viewportWidth = viewportSize?.width ?? 1920;
           const position =
-            boundingBox.x > page.viewportSize()!.width * 0.7
+            boundingBox.x > viewportWidth * 0.7
               ? "right"
-              : boundingBox.x < page.viewportSize()!.width * 0.3
+              : boundingBox.x < viewportWidth * 0.3
                 ? "left"
                 : "center";
 
@@ -196,7 +198,8 @@ test.describe("UX Inconsistencies", () => {
       "/training",
     ];
 
-    const inconsistencies: Array<{
+    // Reserved for future use - will track loading state inconsistencies
+    const _inconsistencies: Array<{
       route: string;
       issue: string;
     }> = [];
@@ -211,7 +214,7 @@ test.describe("UX Inconsistencies", () => {
       const loadingIndicators = page.locator(
         ".p-progress-spinner, .spinner, [aria-busy='true'], .loading, .p-skeleton",
       );
-      const loadingCount = await loadingIndicators.count();
+      const _loadingCount = await loadingIndicators.count();
 
       // Check if buttons show loading state when clicked
       const buttons = page.locator("button:not([disabled])");
@@ -280,7 +283,7 @@ test.describe("UX Inconsistencies", () => {
     const formErrors = page.locator(
       ".p-invalid, .ng-invalid, .field-error, [aria-invalid='true']",
     );
-    const formErrorCount = await formErrors.count();
+    const _formErrorCount = await formErrors.count();
 
     // Check consistency of error display methods
     if (errorCount > 0 && toastCount > 0) {

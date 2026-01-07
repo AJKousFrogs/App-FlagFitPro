@@ -82,7 +82,7 @@ async function navigateAndVerify(
   page: Page,
   route: string,
   expectedUrlPattern: RegExp,
-  pageTitle?: string,
+  _pageTitle?: string,
 ): Promise<void> {
   console.log(`📍 Navigating to: ${route}`);
   
@@ -323,7 +323,7 @@ test.describe("Navigation & Routing - Comprehensive Click-Through", () => {
     // Navigate to a sub-route
     await page.goto(`${BASE_URL}/training/videos`);
     await page.waitForLoadState("networkidle");
-    const videosUrl = page.url();
+    const _videosUrl = page.url();
 
     // Try browser back
     await page.goBack();

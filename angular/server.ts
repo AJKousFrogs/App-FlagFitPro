@@ -49,7 +49,8 @@ app.get("*", async (req, res, next) => {
 });
 
 const port = process.env["PORT"] || 4000;
-const server = app.listen(port, () => {
+const _server = app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Node Express server listening on http://localhost:${port}`);
 });
 

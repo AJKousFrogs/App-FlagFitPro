@@ -25,7 +25,7 @@ import { Slider } from "primeng/slider";
 import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { Toggle } from "primeng/togglebutton";
+import { ToggleButton } from "primeng/togglebutton";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -71,7 +71,7 @@ interface Goal {
     TagModule,
     TimelineModule,
     DialogModule,
-    Toggle,
+    ToggleButton,
     ButtonComponent,
   ],
   template: `
@@ -393,7 +393,6 @@ export class TrainingBuilderComponent {
     }
 
     const events: TimelineEvent[] = [];
-    let currentTime = 0;
 
     // Warmup
     events.push({
@@ -404,7 +403,6 @@ export class TrainingBuilderComponent {
       description: "Dynamic stretching and light movement",
       aiGenerated: false,
     });
-    let _currentTime = 10;
 
     // Main exercises
     this.generatedExercises().forEach((exercise, index) => {
@@ -416,7 +414,6 @@ export class TrainingBuilderComponent {
         description: exercise.description,
         aiGenerated: exercise.aiRecommended || false,
       });
-      currentTime += exercise.duration;
 
       // Add rest period between exercises
       if (index < this.generatedExercises().length - 1) {
@@ -428,7 +425,6 @@ export class TrainingBuilderComponent {
           description: "Active recovery and hydration",
           aiGenerated: false,
         });
-        currentTime += 2;
       }
     });
 

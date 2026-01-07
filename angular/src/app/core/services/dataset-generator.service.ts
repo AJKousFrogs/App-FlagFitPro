@@ -183,7 +183,7 @@ export class DatasetGeneratorService {
   private generateSpeed(
     base: number,
     variation: number,
-    intensity: string,
+    _intensity: string,
   ): number {
     // Use normal distribution approximation
     const random =

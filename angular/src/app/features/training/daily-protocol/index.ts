@@ -2,9 +2,6 @@
  * Daily Protocol Module Exports
  */
 
-// Main Component
-export * from "./daily-protocol.component";
-
 // Models
 export * from "./daily-protocol.models";
 

@@ -19,7 +19,6 @@ import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { COLORS } from "../../core/constants/app.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -322,7 +321,7 @@ export class CoachComponent implements OnInit {
   private router = inject(Router);
 
   stats = signal<
-    { label: string; value: number | string; icon: string; trend?: string }[]
+    { label: string; value: number | string; icon: string; iconType?: "primary" | "error" | "warning" | "info"; trend?: string }[]
   >([]);
   teamChartData = signal<{
     labels: string[];
@@ -370,25 +369,25 @@ export class CoachComponent implements OnInit {
         label: "Team Members",
         value: "0",
         icon: "pi-users",
-        color: "var(--ds-primary-green)",
+        iconType: "primary",
       },
       {
         label: "Avg Performance",
         value: "0%",
         icon: "pi-chart-line",
-        color: COLORS.PRIMARY_LIGHT,
+        iconType: "primary",
       },
       {
         label: "Active Sessions",
         value: "0",
         icon: "pi-calendar",
-        color: COLORS.WARNING,
+        iconType: "warning",
       },
       {
         label: "Upcoming Games",
         value: "0",
         icon: "pi-trophy",
-        color: COLORS.ERROR,
+        iconType: "error",
       },
     ]);
 
@@ -463,7 +462,10 @@ export class CoachComponent implements OnInit {
         (s) => s.label === "Active Sessions",
       );
       if (sessionsStat) {
-        sessionsStat.value = String(parseInt(sessionsStat.value) + 1);
+        const currentValue = typeof sessionsStat.value === 'string' 
+          ? parseInt(sessionsStat.value, 10) 
+          : sessionsStat.value;
+        sessionsStat.value = String((currentValue || 0) + 1);
         this.stats.set([...currentStats]);
       }
     } catch (error) {

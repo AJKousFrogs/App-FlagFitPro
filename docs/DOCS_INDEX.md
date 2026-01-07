@@ -1,7 +1,7 @@
 # FlagFit Pro - Documentation Index
 
 **Last Updated:** January 2026  
-**Status:** ✅ Verified Clean Slate Documentation
+**Status:** ✅ Single Source of Truth - Ready for User Testing
 
 ---
 
@@ -20,99 +20,150 @@
 
 ---
 
-## Core Documentation (Single Source of Truth)
+## 📱 Product & Features
 
-### 📱 Product & Features
-
-| Document                                                                 | Description                                                                                                      |
-| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)                   | **THE source of truth** - All 49 features with business logic, calculations, female athlete support (Appendix E) |
-| [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research behind the app                                                                           |
-| [AI_GOVERNANCE.md](./AI_GOVERNANCE.md)                                   | AI Coach safety tiers and governance                                                                             |
-
----
-
-### 🏗️ Technical
-
-| Document                                               | Description                              |
-| ------------------------------------------------------ | ---------------------------------------- |
-| [ARCHITECTURE.md](./ARCHITECTURE.md)                   | System architecture overview             |
-| [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns         |
-| [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)     | **UI rules and design tokens** (binding) |
-| [API.md](./API.md)                                     | API reference                            |
-| [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
+| Document | Description |
+| -------- | ----------- |
+| [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) | **THE source of truth** - All features, business logic, calculations |
+| [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research behind the app |
+| [AI_GOVERNANCE.md](./AI_GOVERNANCE.md) | AI Coach safety tiers and governance |
+| [AI_TRAINING_SCHEDULER_GUIDE.md](./AI_TRAINING_SCHEDULER_GUIDE.md) | AI scheduler feature documentation |
+| [PLAYER_DATA_SAFETY_GUIDE.md](./PLAYER_DATA_SAFETY_GUIDE.md) | Critical - mock vs real data safety |
 
 ---
 
-### 🗄️ Database
+## 🏗️ Technical - Development
 
-| Document                                                     | Description                 |
-| ------------------------------------------------------------ | --------------------------- |
-| [DATABASE_SETUP.md](./DATABASE_SETUP.md)                     | Database setup guide        |
+| Document | Description |
+| -------- | ----------- |
+| [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Local dev setup |
+| [DEVELOPMENT.md](./DEVELOPMENT.md) | Development workflow |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture overview |
+| [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns |
+| [STYLE_GUIDE.md](./STYLE_GUIDE.md) | Code style and conventions |
+| [ERROR_HANDLING_GUIDE.md](./ERROR_HANDLING_GUIDE.md) | Error handling patterns |
+| [TESTING_GUIDE.md](./TESTING_GUIDE.md) | Testing setup and patterns |
+| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Common issues and fixes |
+
+---
+
+## 🎨 UI & Design System
+
+| Document | Description |
+| -------- | ----------- |
+| [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) | **UI rules and design tokens** (binding) |
+| [PRIMENG_DESIGN_SYSTEM_RULES.md](./PRIMENG_DESIGN_SYSTEM_RULES.md) | PrimeNG component token reference |
+
+---
+
+## 🔌 API & Backend
+
+| Document | Description |
+| -------- | ----------- |
+| [API.md](./API.md) | API reference |
+| [BACKEND_SETUP.md](./BACKEND_SETUP.md) | Backend/Netlify Functions setup |
+
+---
+
+## 🗄️ Database
+
+| Document | Description |
+| -------- | ----------- |
+| [DATABASE_SETUP.md](./DATABASE_SETUP.md) | Database setup guide |
 | [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) | Row-Level Security policies |
 
 ---
 
-### 🔐 Security & Privacy
+## 🔐 Security & Privacy
 
-| Document                                                                   | Description                    |
-| -------------------------------------------------------------------------- | ------------------------------ |
-| [SECURITY.md](./SECURITY.md)                                               | Security architecture          |
-| [SECURITY_PRIVACY_OVERVIEW.md](./SECURITY_PRIVACY_OVERVIEW.md)             | Privacy and security overview  |
-| [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md)                   | Auth implementation patterns   |
-| [AUTHENTICATION_LOGIN_ONBOARDING.md](./AUTHENTICATION_LOGIN_ONBOARDING.md) | Login and onboarding flow      |
-| [PRIVACY_CONTROLS_SPEC.md](./PRIVACY_CONTROLS_SPEC.md)                     | Privacy control specifications |
-| [THREAT_MODEL.md](./THREAT_MODEL.md)                                       | Security threat model          |
+| Document | Description |
+| -------- | ----------- |
+| [SECURITY.md](./SECURITY.md) | Security architecture (comprehensive) |
+| [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md) | Auth implementation patterns |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | Security threat model |
+| [ADDING_NEW_FEATURES_SAFELY.md](./ADDING_NEW_FEATURES_SAFELY.md) | Safe extension playbook |
 
 ---
 
-### 🚀 Development
+## 📋 Runbooks (Operations)
 
-| Document                                                   | Description                                                          |
-| ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Local dev setup for Angular 21 + Netlify + Supabase |
-
----
-
-### 📋 Runbooks (Operations)
-
-| Document                                                             | Description               |
-| -------------------------------------------------------------------- | ------------------------- |
-| [RUNBOOKS/README.md](./RUNBOOKS/README.md)                           | Runbook index             |
-| [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md)     | Incident response         |
-| [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md) | Deployment and rollback   |
-| [RUNBOOKS/BACKUP_RESTORE.md](./RUNBOOKS/BACKUP_RESTORE.md)           | Database backup/restore   |
-| [RUNBOOKS/ACCOUNT_DELETION.md](./RUNBOOKS/ACCOUNT_DELETION.md)       | User account deletion     |
-| [RUNBOOKS/PRIVACY_INCIDENT.md](./RUNBOOKS/PRIVACY_INCIDENT.md)       | Privacy incident response |
+| Document | Description |
+| -------- | ----------- |
+| [RUNBOOKS/README.md](./RUNBOOKS/README.md) | Runbook index |
+| [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md) | Incident response |
+| [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md) | Deployment and rollback |
+| [RUNBOOKS/BACKUP_RESTORE.md](./RUNBOOKS/BACKUP_RESTORE.md) | Database backup/restore |
+| [RUNBOOKS/ACCOUNT_DELETION.md](./RUNBOOKS/ACCOUNT_DELETION.md) | User account deletion |
+| [RUNBOOKS/PRIVACY_INCIDENT.md](./RUNBOOKS/PRIVACY_INCIDENT.md) | Privacy incident response |
 
 ---
 
-### 📜 Legal
+## 📜 Legal
 
-| Document                                 | Description      |
-| ---------------------------------------- | ---------------- |
-| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy   |
-| [TERMS_OF_USE.md](./TERMS_OF_USE.md)     | Terms of use     |
-| [LICENSE.md](./LICENSE.md)               | Software license |
+| Document | Description |
+| -------- | ----------- |
+| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy |
+| [TERMS_OF_USE.md](./TERMS_OF_USE.md) | Terms of use |
+| [LICENSE.md](./LICENSE.md) | Software license |
 
 ---
 
-## File Structure
+## File Structure (28 files)
 
 ```
-/docs/ (30 files)
-├── DOCS_INDEX.md                 ← YOU ARE HERE
-├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
-├── ARCHITECTURE.md
-├── API.md
-├── DATABASE_SETUP.md
-├── SECURITY.md
-├── ANGULAR_PRIMENG_GUIDE.md
-├── DESIGN_SYSTEM_RULES.md
-├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
-├── AI_GOVERNANCE.md
-├── RUNBOOKS/                     ← 8 operational docs
-└── [Legal docs]
+/docs/
+├── DOCS_INDEX.md                      ← YOU ARE HERE
+│
+├── Product & Features
+│   ├── FEATURE_DOCUMENTATION.md       ← All features (6500+ lines)
+│   ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
+│   ├── AI_GOVERNANCE.md
+│   ├── AI_TRAINING_SCHEDULER_GUIDE.md
+│   └── PLAYER_DATA_SAFETY_GUIDE.md
+│
+├── Development
+│   ├── LOCAL_DEVELOPMENT_SETUP.md     ← Start here
+│   ├── DEVELOPMENT.md
+│   ├── ARCHITECTURE.md
+│   ├── ANGULAR_PRIMENG_GUIDE.md
+│   ├── STYLE_GUIDE.md
+│   ├── ERROR_HANDLING_GUIDE.md
+│   ├── TESTING_GUIDE.md
+│   └── TROUBLESHOOTING.md
+│
+├── UI & Design System
+│   ├── DESIGN_SYSTEM_RULES.md         ← Binding rules
+│   └── PRIMENG_DESIGN_SYSTEM_RULES.md
+│
+├── API & Backend
+│   ├── API.md
+│   └── BACKEND_SETUP.md
+│
+├── Database
+│   ├── DATABASE_SETUP.md
+│   └── RLS_POLICY_SPECIFICATION.md
+│
+├── Security
+│   ├── SECURITY.md
+│   ├── AUTHENTICATION_PATTERN.md
+│   ├── THREAT_MODEL.md
+│   └── ADDING_NEW_FEATURES_SAFELY.md
+│
+├── Legal
+│   ├── PRIVACY_POLICY.md
+│   ├── TERMS_OF_USE.md
+│   └── LICENSE.md
+│
+├── RUNBOOKS/                          ← 8 operational docs
+│   ├── README.md
+│   ├── INCIDENT_RESPONSE.md
+│   ├── DEPLOYMENT_ROLLBACK.md
+│   ├── BACKUP_RESTORE.md
+│   ├── ACCOUNT_DELETION.md
+│   ├── PRIVACY_INCIDENT.md
+│   └── RETENTION_CLEANUP.md
+│
+└── README.md                          ← Docs overview
 ```
 
 ---

@@ -16,9 +16,10 @@
  * ```
  */
 
-export { ButtonComponent, ButtonVariant, ButtonSize } from "./button.component";
-export {
-  IconButtonComponent,
+export { ButtonComponent } from "./button.component";
+export type { ButtonVariant, ButtonSize } from "./button.component";
+export { IconButtonComponent } from "./icon-button.component";
+export type {
   IconButtonVariant,
   IconButtonSize,
 } from "./icon-button.component";

@@ -723,7 +723,7 @@ export class VideoSuggestionComponent implements OnInit {
     return patterns.some((pattern) => pattern.test(url));
   }
 
-  onUrlPaste(event: ClipboardEvent): void {
+  onUrlPaste(_event: ClipboardEvent): void {
     // Auto-validate on paste
     setTimeout(() => {
       if (this.isValidUrl()) {

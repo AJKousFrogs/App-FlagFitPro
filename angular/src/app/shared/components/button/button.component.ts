@@ -5,7 +5,6 @@ import {
   computed,
   input,
   output,
-  signal,
   booleanAttribute,
   HostBinding,
 } from "@angular/core";

@@ -6,6 +6,7 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
@@ -155,11 +156,11 @@ export class OffboardingService {
    */
   async archiveSeason(seasonId: string): Promise<void> {
     try {
-      const { error } = await this.apiService.post("/api/season/archive", {
+      const response = await firstValueFrom(this.apiService.post("/api/season/archive", {
         season_id: seasonId,
-      });
+      }));
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error);
 
       this.toastService.success("Season data archived successfully");
       
@@ -180,14 +181,14 @@ export class OffboardingService {
    */
   async generateSeasonReports(seasonId: string): Promise<SeasonSummaryReport[]> {
     try {
-      const { data, error } = await this.apiService.post("/api/season/generate-reports", {
+      const response = await firstValueFrom(this.apiService.post<SeasonSummaryReport[]>("/api/season/generate-reports", {
         season_id: seasonId,
-      });
+      }));
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error);
 
       this.toastService.success("Season reports generated successfully");
-      return data || [];
+      return response.data || [];
     } catch (error) {
       this.logger.error("[Offboarding] Error generating reports:", error);
       this.toastService.error("Failed to generate season reports");
@@ -226,17 +227,17 @@ export class OffboardingService {
     reason?: string
   ): Promise<AccountPause> {
     try {
-      const { data, error } = await this.apiService.post("/api/account/pause", {
+      const response = await firstValueFrom(this.apiService.post<AccountPause>("/api/account/pause", {
         user_id: userId,
         paused_until: pausedUntil,
         reason,
-      });
+      }));
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error);
 
       await this.loadAccountPause(userId);
       this.toastService.success("Account paused successfully");
-      return data;
+      return response.data as AccountPause;
     } catch (error) {
       this.logger.error("[Offboarding] Error pausing account:", error);
       this.toastService.error("Failed to pause account");
@@ -249,11 +250,11 @@ export class OffboardingService {
    */
   async resumeAccount(userId: string): Promise<void> {
     try {
-      const { error } = await this.apiService.post("/api/account/resume", {
+      const response = await firstValueFrom(this.apiService.post("/api/account/resume", {
         user_id: userId,
-      });
+      }));
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error);
 
       await this.loadAccountPause(userId);
       this.toastService.success("Account resumed successfully");
@@ -297,12 +298,12 @@ export class OffboardingService {
    */
   async notifyInactivePlayer(userId: string, daysInactive: number): Promise<void> {
     try {
-      const { error } = await this.apiService.post("/api/player/notify-inactive", {
+      const response = await firstValueFrom(this.apiService.post("/api/player/notify-inactive", {
         user_id: userId,
         days_inactive: daysInactive,
-      });
+      }));
 
-      if (error) throw error;
+      if (response.error) throw new Error(response.error);
 
       this.toastService.success("Notification sent to player");
     } catch (error) {

@@ -1746,10 +1746,11 @@ export class TournamentsComponent implements OnInit {
         : undefined,
     };
 
-    // Remove date objects before sending
-    delete (data as any).start_date_obj;
-    delete (data as any).end_date_obj;
-    delete (data as any).registration_deadline_obj;
+    // Remove date objects before sending (they're only used for form binding)
+    const dataToSend = { ...data } as Record<string, unknown>;
+    delete dataToSend["start_date_obj"];
+    delete dataToSend["end_date_obj"];
+    delete dataToSend["registration_deadline_obj"];
 
     let success = false;
     if (this.editingTournament) {
@@ -1990,12 +1991,13 @@ export class TournamentsComponent implements OnInit {
       });
 
       this.showAvailabilityDialog = false;
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("Error saving availability:", error);
+      const message = error instanceof Error ? error.message : "Failed to save availability";
       this.messageService.add({
         severity: "error",
         summary: "Error",
-        detail: error.message || "Failed to save availability",
+        detail: message,
       });
     } finally {
       this.savingAvailability.set(false);
@@ -2043,6 +2045,7 @@ export class TournamentsComponent implements OnInit {
         (availability || []).map((a) => [a.player_id, a]),
       );
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const playerList: PlayerAvailability[] = (members || []).map((m: any) => {
         const avail = availabilityMap.get(m.id);
         return {
@@ -2258,12 +2261,13 @@ export class TournamentsComponent implements OnInit {
       // Reload budget to get calculated fields
       await this.loadTournamentBudget(this.selectedTournament.id);
       this.showBudgetDialog = false;
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("Error saving budget:", error);
+      const message = error instanceof Error ? error.message : "Failed to save budget";
       this.messageService.add({
         severity: "error",
         summary: "Error",
-        detail: error.message || "Failed to save budget",
+        detail: message,
       });
     } finally {
       this.savingBudget.set(false);

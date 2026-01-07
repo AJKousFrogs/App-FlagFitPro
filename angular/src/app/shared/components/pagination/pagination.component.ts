@@ -333,7 +333,7 @@ export class PaginationComponent {
 
       // Calculate start and end of visible range
       let start = Math.max(2, current - Math.floor(maxVisible / 2));
-      let end = Math.min(total - 1, start + maxVisible - 3);
+      const end = Math.min(total - 1, start + maxVisible - 3);
 
       // Adjust if we're near the end
       if (end === total - 1) {

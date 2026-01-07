@@ -6,7 +6,6 @@
  * @version 1.0.0
  */
 
-/* eslint-disable no-console */
 import { Injectable } from "@angular/core";
 import { isDevMode } from "@angular/core";
 
@@ -50,22 +49,20 @@ export class LoggerService {
 
   /**
    * Debug logging (development only)
-   * @param args - Arguments to log
+   * Debug logging is intentionally suppressed in this build
    */
-  debug(...args: unknown[]): void {
-    if (!this.shouldLog("debug")) return;
-    if (this.isDevelopment) {
-    }
+  debug(..._args: unknown[]): void {
+    // Intentionally empty - debug logging suppressed in production builds
+    void _args;
   }
 
   /**
    * Info logging
-   * @param args - Arguments to log
+   * Info logging is intentionally suppressed in this build
    */
-  info(...args: unknown[]): void {
-    if (!this.shouldLog("info")) return;
-    if (this.isDevelopment) {
-    }
+  info(..._args: unknown[]): void {
+    // Intentionally empty - info logging suppressed in production builds
+    void _args;
   }
 
   /**
@@ -94,11 +91,10 @@ export class LoggerService {
 
   /**
    * Success logging (info level)
-   * @param args - Arguments to log
+   * Success logging is intentionally suppressed in this build
    */
-  success(...args: unknown[]): void {
-    if (!this.shouldLog("info")) return;
-    if (this.isDevelopment) {
-    }
+  success(..._args: unknown[]): void {
+    // Intentionally empty - success logging suppressed in production builds
+    void _args;
   }
 }

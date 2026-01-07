@@ -81,6 +81,57 @@ interface Post {
   poll?: Poll;
 }
 
+// API Response types
+interface ApiPostData {
+  id: string;
+  authorName?: string;
+  author?: string;
+  postType?: string;
+  timestamp: string;
+  location?: string;
+  content: string;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  isLiked?: boolean;
+  isBookmarked?: boolean;
+  mediaUrl?: string;
+  mediaType?: "image" | "video";
+}
+
+interface ApiLeaderboardEntry {
+  rank: number;
+  name?: string;
+  points: number;
+}
+
+interface CommunityFeedResponse {
+  posts: ApiPostData[];
+}
+
+interface TrendingTopicsResponse {
+  topics: Array<{ name: string; count: number }>;
+}
+
+interface UserMetadata {
+  role?: string;
+}
+
+interface ApiCommentResponse {
+  id: string;
+  author?: string;
+}
+
+interface ApiUploadResponse {
+  url: string;
+  mediaType: string;
+}
+
+interface ApiPollVoteResponse {
+  options: PollOption[];
+  totalVotes: number;
+}
+
 @Component({
   selector: "app-community",
   standalone: true,
@@ -854,7 +905,7 @@ export class CommunityComponent implements OnInit {
   // Check if user is a coach
   readonly isCoach = computed(() => {
     const user = this.authService.getUser();
-    const metadata = (user as any)?.user_metadata;
+    const metadata = (user as { user_metadata?: UserMetadata } | null)?.user_metadata;
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 
@@ -890,13 +941,13 @@ export class CommunityComponent implements OnInit {
     const offset = (nextPage - 1) * this.POSTS_PER_PAGE;
 
     this.apiService
-      .get<any>(
+      .get<CommunityFeedResponse>(
         `/api/community?feed=true&limit=${this.POSTS_PER_PAGE}&offset=${offset}`,
       )
       .subscribe({
         next: (response) => {
           if (response?.data?.posts) {
-            const newPosts = response.data.posts.map((p: any) => ({
+            const newPosts = response.data.posts.map((p: ApiPostData) => ({
               id: p.id,
               author: p.authorName || p.author || "Unknown",
               authorInitials: this.getInitials(
@@ -951,10 +1002,10 @@ export class CommunityComponent implements OnInit {
 
   loadCommunityData(): void {
     // Load posts from real API
-    this.apiService.get<any>("/api/community?feed=true").subscribe({
+    this.apiService.get<CommunityFeedResponse>("/api/community?feed=true").subscribe({
       next: (response) => {
         if (response?.data?.posts) {
-          const mappedPosts = response.data.posts.map((p: any) => ({
+          const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
             id: p.id,
             author: p.authorName || p.author || "Unknown",
             authorInitials: this.getInitials(p.authorName || p.author || "??"),
@@ -981,13 +1032,13 @@ export class CommunityComponent implements OnInit {
     });
 
     // Load leaderboard from real API
-    this.apiService.get<any>("/api/community?leaderboard=true").subscribe({
+    this.apiService.get<ApiLeaderboardEntry[]>("/api/community?leaderboard=true").subscribe({
       next: (response) => {
         if (response?.data) {
           const leaderboardData = Array.isArray(response.data)
             ? response.data
             : [];
-          const mappedLeaderboard = leaderboardData.map((entry: any) => ({
+          const mappedLeaderboard = leaderboardData.map((entry: ApiLeaderboardEntry) => ({
             rank: entry.rank,
             name: entry.name || "Anonymous",
             initials: this.getInitials(entry.name || "??"),
@@ -1000,7 +1051,7 @@ export class CommunityComponent implements OnInit {
     });
 
     // Load trending topics from real API
-    this.apiService.get<any>("/api/community?trending=true").subscribe({
+    this.apiService.get<TrendingTopicsResponse>("/api/community?trending=true").subscribe({
       next: (response) => {
         if (response?.data?.topics) {
           this.trendingTopics.set(response.data.topics);
@@ -1289,7 +1340,7 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist bookmark
     this.apiService
-      .post<any>(`/api/community?postId=${post.id}&bookmark=true`, {})
+      .post<void>(`/api/community?postId=${post.id}&bookmark=true`, {})
       .subscribe({
         next: () => {
           if (!wasBookmarked) {
@@ -1346,13 +1397,14 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist comment
     this.apiService
-      .post<any>(`/api/community?postId=${post.id}&comment=true`, {
+      .post<ApiCommentResponse>(`/api/community?postId=${post.id}&comment=true`, {
         content: commentContent,
       })
       .subscribe({
         next: (response) => {
           // Replace temp comment with real one from server
           if (response?.data?.id) {
+            const responseData = response.data;
             this.posts.update((posts) =>
               posts.map((p) =>
                 p.id === post.id
@@ -1362,8 +1414,8 @@ export class CommunityComponent implements OnInit {
                         c.id === tempComment.id
                           ? {
                               ...c,
-                              id: response.data.id,
-                              author: response.data.author || c.author,
+                              id: responseData.id,
+                              author: responseData.author || c.author,
                             }
                           : c,
                       ),
@@ -1485,7 +1537,7 @@ export class CommunityComponent implements OnInit {
         const base64Data = reader.result as string;
 
         this.apiService
-          .post<any>("/api/upload", {
+          .post<ApiUploadResponse>("/api/upload", {
             file: base64Data,
             fileType: file.type,
             fileName: file.name,
@@ -1596,25 +1648,28 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist vote
     this.apiService
-      .post<any>(`/api/community?optionId=${optionId}&pollVote=true`, {})
+      .post<ApiPollVoteResponse>(`/api/community?optionId=${optionId}&pollVote=true`, {})
       .subscribe({
         next: (response) => {
           if (response?.data?.options) {
             // Update with server response
-            this.posts.update((posts) =>
-              posts.map((p) => {
-                if (p.id !== post.id || !p.poll) return p;
-                return {
-                  ...p,
-                  poll: {
-                    ...p.poll,
-                    options: response.data.options,
-                    totalVotes: response.data.totalVotes,
-                    userVote: optionId,
-                  },
-                };
-              }),
-            );
+            if (response.data) {
+              const pollData = response.data;
+              this.posts.update((posts) =>
+                posts.map((p) => {
+                  if (p.id !== post.id || !p.poll) return p;
+                  return {
+                    ...p,
+                    poll: {
+                      ...p.poll,
+                      options: pollData.options,
+                      totalVotes: pollData.totalVotes,
+                      userVote: optionId,
+                    },
+                  };
+                }),
+              );
+            }
           }
           this.toastService.success("Vote recorded!");
         },
@@ -1770,7 +1825,7 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist comment like
     this.apiService
-      .post<any>(`/api/community?commentId=${comment.id}&commentLike=true`, {})
+      .post<void>(`/api/community?commentId=${comment.id}&commentLike=true`, {})
       .subscribe({
         error: (err) => {
           this.logger.error("Error toggling comment like:", err);

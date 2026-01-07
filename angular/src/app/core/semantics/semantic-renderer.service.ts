@@ -95,8 +95,6 @@ export class SemanticRendererService {
     meaning: RiskMeaning,
     context: MeaningMetadata["context"]
   ): RenderDecision {
-    const grammar = MEANING_VISUAL_GRAMMAR.risk;
-
     // Determine component based on context
     let component = "app-risk-badge";
     let placement: RenderDecision["placement"] = "top";
@@ -141,7 +139,7 @@ export class SemanticRendererService {
     meaning: IncompleteDataMeaning,
     context: MeaningMetadata["context"]
   ): RenderDecision {
-    const grammar = MEANING_VISUAL_GRAMMAR["incomplete-data"];
+    const _grammar = MEANING_VISUAL_GRAMMAR["incomplete-data"];
 
     return {
       component: "app-incomplete-data-badge",
@@ -169,9 +167,9 @@ export class SemanticRendererService {
    */
   private renderActionRequired(
     meaning: ActionRequiredMeaning,
-    context: MeaningMetadata["context"]
+    _context: MeaningMetadata["context"]
   ): RenderDecision {
-    const grammar = MEANING_VISUAL_GRAMMAR["action-required"];
+    const _grammar = MEANING_VISUAL_GRAMMAR["action-required"];
 
     // If blocking, use ActionPanel component
     const component = meaning.blocking
@@ -206,7 +204,7 @@ export class SemanticRendererService {
     meaning: CoachOverrideMeaning,
     context: MeaningMetadata["context"]
   ): RenderDecision {
-    const grammar = MEANING_VISUAL_GRAMMAR["coach-override"];
+    const _grammar = MEANING_VISUAL_GRAMMAR["coach-override"];
 
     return {
       component: "app-coach-override-badge",

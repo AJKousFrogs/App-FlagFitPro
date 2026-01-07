@@ -1,24 +1,24 @@
 import {
-  Component,
-  signal,
-  inject,
-  output,
-  input,
-  computed,
-  ChangeDetectionStrategy,
-  OnInit,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    input,
+    OnInit,
+    output,
+    signal,
 } from "@angular/core";
-import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { Slider } from "primeng/slider";
 import { Checkbox } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
+import { Slider } from "primeng/slider";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
+import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../../core/services/logger.service";
+import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 
 export interface WellnessData {
   sleepQuality: number;
@@ -226,7 +226,7 @@ export interface ReadinessResult {
           <small class="state-narration">
             <strong>What changed:</strong> Muscle soreness set to {{ getSorenessLabel(formData().muscleSoreness) }}.
             <strong>Why:</strong> Based on your input.
-            <strong>What it means:</strong> This affects 15% of your readiness score. {{ formData().muscleSoreness < 4 ? 'Since soreness is moderate or higher, you\'ll be asked to specify affected areas below.' : 'Low soreness indicates good recovery.' }}
+            <strong>What it means:</strong> This affects 15% of your readiness score. {{ formData().muscleSoreness < 4 ? 'Since soreness is moderate or higher, you will be asked to specify affected areas below.' : 'Low soreness indicates good recovery.' }}
             <strong>Who:</strong> You control this value.
             <strong>What next:</strong> {{ formData().muscleSoreness < 4 ? 'Select affected body areas below, then readiness score updates.' : 'Your readiness score updates automatically below.' }}
           </small>
@@ -332,7 +332,7 @@ export interface ReadinessResult {
             <strong>Why:</strong> Calculated from your sleep quality (30%), sleep hours (15%), energy (25%), soreness (15%), and stress (15%).
             <strong>What it means:</strong> {{ getRecommendation(previewScore()) }}
             <strong>Who:</strong> System calculates this automatically based on your inputs.
-            <strong>What next:</strong> {{ previewScore() >= 70 ? 'You\'re ready for training. Save your check-in to record this score.' : previewScore() >= 50 ? 'Consider lighter training today. Save your check-in to record this score.' : 'Rest day recommended. Save your check-in to record this score.' }}
+            <strong>What next:</strong> {{ previewScore() >= 70 ? 'You are ready for training. Save your check-in to record this score.' : previewScore() >= 50 ? 'Consider lighter training today. Save your check-in to record this score.' : 'Rest day recommended. Save your check-in to record this score.' }}
           </small>
         </div>
       </div>
@@ -432,7 +432,7 @@ export class WellnessCheckinComponent implements OnInit {
         this.wellnessData.set(response.data);
         this.formData.set({ ...response.data });
       }
-    } catch (err) {
+    } catch (_err) {
       // No existing checkin - that's ok
     }
   }

@@ -18,7 +18,6 @@ import { CheckboxModule } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { DailyTrainingService, DailyTrainingResponse } from "../../../core/services/daily-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService } from "../../../core/services/header.service";

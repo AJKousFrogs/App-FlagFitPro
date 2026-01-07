@@ -21,7 +21,6 @@ import {
   OnInit,
   inject,
   signal,
-  computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -49,9 +48,7 @@ import { BadgeModule } from "primeng/badge";
 // Services
 import {
   TravelRecoveryService,
-  TravelPlan,
   RecoveryProtocol,
-  JetLagSeverity,
   TravelChecklist,
   CarTravelProtocol,
   CirculationExercise,

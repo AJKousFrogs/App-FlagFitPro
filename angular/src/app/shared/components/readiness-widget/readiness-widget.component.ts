@@ -5,6 +5,8 @@ import {
   inject,
   input,
 } from "@angular/core";
+import { TagModule } from "primeng/tag";
+import { SkeletonModule } from "primeng/skeleton";
 import { ReadinessService } from "../../../core/services/readiness.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
 

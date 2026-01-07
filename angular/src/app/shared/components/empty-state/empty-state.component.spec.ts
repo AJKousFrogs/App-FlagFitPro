@@ -291,7 +291,7 @@ describe("EmptyStateComponent", () => {
   describe("Animation", () => {
     it("should have fade-in animation class", () => {
       const container = fixture.nativeElement.querySelector(".empty-state");
-      const computedStyle = window.getComputedStyle(container);
+      const _computedStyle = window.getComputedStyle(container); // Available for animation checks
 
       // Animation should be defined (may vary by browser)
       expect(container).toBeTruthy();

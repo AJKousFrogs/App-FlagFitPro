@@ -10,14 +10,12 @@ import { CommonModule, DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
-  signal,
 } from "@angular/core";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { OwnershipTransitionService, OwnershipTransition } from "../../../core/services/ownership-transition.service";
+import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({

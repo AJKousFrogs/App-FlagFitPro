@@ -17,7 +17,7 @@ import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
-import { Select } from "primeng/selectbutton";
+import { SelectButton } from "primeng/selectbutton";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -94,7 +94,7 @@ interface ChartOptions {
     ProgressBarModule,
     Tabs,
     TimelineModule,
-    Select,
+    SelectButton,
     DialogModule,
     TooltipModule,
     CountdownTimerComponent,

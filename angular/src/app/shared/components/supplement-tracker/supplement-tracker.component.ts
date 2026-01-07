@@ -405,7 +405,7 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   getCategoryColor(
-    category: Supplement["category"],
+    _category: Supplement["category"],
   ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     // All categories use the same neutral color for visual consistency
     return "secondary";

@@ -37,7 +37,7 @@ import { TournamentModeWidgetComponent } from "../../shared/components/tournamen
 import { ActionableInsightsComponent } from "../../shared/components/actionable-insights/actionable-insights.component";
 import { GameDayCountdownComponent } from "../../shared/components/game-day-countdown/game-day-countdown.component";
 import { WeatherWidgetComponent } from "../../shared/components/weather-widget/weather-widget.component";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { AcwrService } from "../../core/services/acwr.service";
 import { ReadinessService } from "../../core/services/readiness.service";
@@ -574,7 +574,7 @@ export class AthleteDashboardComponent
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // If tables don't exist, default to showing the button on weekends (common game days)
       const dayOfWeek = new Date().getDay();
       // Show on Friday (5), Saturday (6), Sunday (0)
@@ -711,7 +711,7 @@ export class AthleteDashboardComponent
     this.loadTrends(userId);
   }
 
-  loadTodayWorkload(userId: string): void {
+  loadTodayWorkload(_userId: string): void {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayStr = today.toISOString().split("T")[0];

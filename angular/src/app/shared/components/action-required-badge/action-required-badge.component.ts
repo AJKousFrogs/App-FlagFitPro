@@ -248,7 +248,7 @@ export class ActionRequiredBadgeComponent {
   }
 
   getDefaultTooltip(): string {
-    const type = this.actionType();
+    const _type = this.actionType(); // Available for future type-specific tooltips
     const u = this.urgency();
     let message = this.getLabel();
     if (u === "critical") {

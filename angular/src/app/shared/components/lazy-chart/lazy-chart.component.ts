@@ -16,36 +16,50 @@ import {
   signal,
   ViewChild,
   ViewContainerRef,
-  inject,
   ComponentRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartSkeletonComponent } from '../chart-skeleton/chart-skeleton.component';
 
+export interface ChartDatasetConfig {
+  label?: string;
+  data: number[];
+  backgroundColor?: string | string[];
+  borderColor?: string | string[];
+  borderWidth?: number;
+  fill?: boolean;
+  tension?: number;
+  [key: string]: unknown;
+}
+
 export interface LazyChartData {
   labels?: string[];
-  datasets: Array<{
-    label?: string;
-    data: number[];
-    backgroundColor?: string | string[];
-    borderColor?: string | string[];
-    borderWidth?: number;
-    fill?: boolean;
-    tension?: number;
-    [key: string]: any;
-  }>;
+  datasets: ChartDatasetConfig[];
+}
+
+export interface ChartPlugins {
+  legend?: Record<string, unknown>;
+  tooltip?: Record<string, unknown>;
+  title?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface ChartScales {
+  x?: Record<string, unknown>;
+  y?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface LazyChartOptions {
   responsive?: boolean;
   maintainAspectRatio?: boolean;
-  plugins?: any;
-  scales?: any;
-  [key: string]: any;
+  plugins?: ChartPlugins;
+  scales?: ChartScales;
+  [key: string]: unknown;
 }
 
 // Type alias for better compatibility with Chart.js types
-export type LazyChartOptionsInput = LazyChartOptions | any | null;
+export type LazyChartOptionsInput = LazyChartOptions | Record<string, unknown> | null;
 
 @Component({
   selector: 'app-lazy-chart',
@@ -75,16 +89,16 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   chartContainer!: ViewContainerRef;
 
   @Input() type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea' = 'line';
-  @Input() data: LazyChartData | any | null = null;
+  @Input() data: LazyChartData | Record<string, unknown> | null = null;
   @Input() options: LazyChartOptionsInput = {};
   @Input() width: string = '100%';
   @Input() height: string = '300px';
   
-  @Output() chartClick = new EventEmitter<any>();
-  @Output() chartHover = new EventEmitter<any>();
+  @Output() chartClick = new EventEmitter<unknown>();
+  @Output() chartHover = new EventEmitter<unknown>();
 
   loading = signal(true);
-  private chartComponentRef: ComponentRef<any> | null = null;
+  private chartComponentRef: ComponentRef<unknown> | null = null;
 
   async ngOnInit() {
     // Only load Chart.js when this component is actually rendered
@@ -109,7 +123,8 @@ export class LazyChartComponent implements OnInit, OnDestroy {
         this.chartComponentRef.setInput('height', this.height);
 
         // Wire up outputs
-        this.chartComponentRef.instance.onDataSelect?.subscribe((event: any) => {
+        const instance = this.chartComponentRef.instance as { onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void } };
+        instance.onDataSelect?.subscribe((event: unknown) => {
           this.chartClick.emit(event);
         });
       }
@@ -150,7 +165,8 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    */
   refresh() {
     if (this.chartComponentRef) {
-      this.chartComponentRef.instance.refresh?.();
+      const instance = this.chartComponentRef.instance as { refresh?: () => void };
+      instance.refresh?.();
     }
   }
 }

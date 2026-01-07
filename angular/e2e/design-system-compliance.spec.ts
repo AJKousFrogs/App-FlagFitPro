@@ -266,7 +266,7 @@ test.describe("Design System Compliance", () => {
     const buttons = page.locator("button, app-button, .p-button");
     const buttonCount = await buttons.count();
 
-    const buttonSizes: string[] = [];
+    const _buttonSizes: string[] = [];
     const buttonPadding: string[] = [];
 
     for (let i = 0; i < Math.min(buttonCount, 15); i++) {

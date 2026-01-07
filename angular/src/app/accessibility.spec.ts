@@ -8,7 +8,7 @@
  */
 
 import { TestBed, ComponentFixture } from "@angular/core/testing";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { Component } from "@angular/core";
 import { By } from "@angular/platform-browser";
 
@@ -70,8 +70,8 @@ function hasAccessibleName(element: HTMLElement): boolean {
  * Check color contrast ratio (simplified check)
  */
 function checkColorContrast(
-  foreground: string,
-  background: string,
+  _foreground: string,
+  _background: string,
 ): { ratio: number; passes: boolean } {
   // Simplified contrast check - real implementation would calculate luminance
   // This is a placeholder that always passes for testing purposes
@@ -484,9 +484,7 @@ describe("Accessibility Audit", () => {
         (v) => v.impact === "critical" || v.impact === "serious",
       );
 
-      if (criticalViolations.length > 0) {
-      }
-
+      // Critical violations are checked in the expect below
       expect(criticalViolations.length).toBe(0);
     });
 
@@ -603,7 +601,7 @@ describe("Accessibility Audit", () => {
 
     it("should announce dynamic content changes", () => {
       // Check for aria-live regions
-      const liveRegions = fixture.debugElement.queryAll(
+      const _liveRegions = fixture.debugElement.queryAll(
         By.css("[aria-live], [role='alert'], [role='status']"),
       );
       // At minimum, forms should have error announcement regions

@@ -14,7 +14,7 @@ const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 // Test credentials (matching existing test files)
 // Default: aljkous@gmail.com / Futsal12!!!!
 // Set TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables to override
-const TEST_USER = {
+const _TEST_USER = {
   email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
   password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
 };

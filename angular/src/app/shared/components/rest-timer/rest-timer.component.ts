@@ -184,7 +184,7 @@ import { FormsModule } from "@angular/forms";
   styleUrl: "./rest-timer.component.scss",
 })
 export class RestTimerComponent implements OnDestroy {
-  readonly defaultDuration = input<any>(60); // seconds
+  readonly defaultDuration = input<number>(60); // seconds
   readonly timerComplete = output<void>();
   readonly timerClosed = output<void>();
 
@@ -411,23 +411,25 @@ export class RestTimerComponent implements OnDestroy {
 
       // Play second note
       setTimeout(() => {
-        const osc2 = this.audioContext!.createOscillator();
-        const gain2 = this.audioContext!.createGain();
+        if (!this.audioContext) return;
+        const ctx = this.audioContext;
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
 
         osc2.connect(gain2);
-        gain2.connect(this.audioContext!.destination);
+        gain2.connect(ctx.destination);
 
         osc2.frequency.value = 659.25; // E5
         osc2.type = "sine";
 
-        gain2.gain.setValueAtTime(0.3, this.audioContext!.currentTime);
+        gain2.gain.setValueAtTime(0.3, ctx.currentTime);
         gain2.gain.exponentialRampToValueAtTime(
           0.01,
-          this.audioContext!.currentTime + 0.5,
+          ctx.currentTime + 0.5,
         );
 
-        osc2.start(this.audioContext!.currentTime);
-        osc2.stop(this.audioContext!.currentTime + 0.5);
+        osc2.start(ctx.currentTime);
+        osc2.stop(ctx.currentTime + 0.5);
       }, 150);
     } catch {
       // Audio not supported

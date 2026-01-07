@@ -1,24 +1,22 @@
-import {
-  Component,
-  input,
-  output,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  OnChanges,
-  SimpleChanges,
-  effect,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    input,
+    output,
+    signal
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../button/button.component";
-import { Select } from "primeng/select";
-import { ChartModule } from "primeng/chart";
 import { AvatarModule } from "primeng/avatar";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { DialogModule } from "primeng/dialog";
+import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DialogModule } from "primeng/dialog";
+import { ButtonComponent } from "../button/button.component";
 
 export interface PlayerStats {
   id: string;
@@ -627,7 +625,7 @@ export class PlayerComparisonComponent {
 
   private getStatValue(player: PlayerStats, key: string): number | string {
     // Check direct property first
-    const playerRecord = player as Record<string, unknown>;
+    const playerRecord = player as unknown as Record<string, unknown>;
     if (key in player && playerRecord[key] !== undefined) {
       return playerRecord[key] as number | string;
     }

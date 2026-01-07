@@ -317,10 +317,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.retryCount = 0;
 
     // Mark as set up to avoid duplicate listeners
-    if ((inputElement as any)["__suggestionListenerSetup"]) {
+    const el = inputElement as HTMLInputElement & { __suggestionListenerSetup?: boolean };
+    if (el.__suggestionListenerSetup) {
       return;
     }
-    (inputElement as any)["__suggestionListenerSetup"] = true;
+    el.__suggestionListenerSetup = true;
 
     // Listen for input events (manual typing)
     const inputHandler = (event: Event) => {
@@ -1018,7 +1019,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      const exportData: Record<string, any> = {
+      const exportData: Record<string, unknown> = {
         exportDate: new Date().toISOString(),
         userId: user.id,
         email: user.email,
@@ -1130,31 +1131,32 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   /**
    * Convert export data to CSV format
    */
-  private convertToCSV(data: Record<string, any>): string {
+  private convertToCSV(data: Record<string, unknown>): string {
     const lines: string[] = [];
 
     // Add header
     lines.push("FlagFit Pro Data Export");
-    lines.push(`Export Date: ${data.exportDate}`);
-    lines.push(`User ID: ${data.userId}`);
-    lines.push(`Email: ${data.email}`);
+    lines.push(`Export Date: ${data["exportDate"]}`);
+    lines.push(`User ID: ${data["userId"]}`);
+    lines.push(`Email: ${data["email"]}`);
     lines.push("");
 
     // Profile section
-    if (data.profile) {
+    if (data["profile"]) {
       lines.push("=== PROFILE ===");
-      Object.entries(data.profile).forEach(([key, value]) => {
+      Object.entries(data["profile"] as Record<string, unknown>).forEach(([key, value]) => {
         lines.push(`${key},${value || ""}`);
       });
       lines.push("");
     }
 
     // Training sessions
-    if (data.trainingSessions && data.trainingSessions.length > 0) {
+    const sessions = data["trainingSessions"] as Record<string, unknown>[] | undefined;
+    if (sessions && sessions.length > 0) {
       lines.push("=== TRAINING SESSIONS ===");
-      const headers = Object.keys(data.trainingSessions[0]);
+      const headers = Object.keys(sessions[0]);
       lines.push(headers.join(","));
-      data.trainingSessions.forEach((session: any) => {
+      sessions.forEach((session: Record<string, unknown>) => {
         lines.push(
           headers.map((h) => JSON.stringify(session[h] || "")).join(","),
         );
@@ -1163,11 +1165,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }
 
     // Wellness checkins
-    if (data.wellnessCheckins && data.wellnessCheckins.length > 0) {
+    const checkins = data["wellnessCheckins"] as Record<string, unknown>[] | undefined;
+    if (checkins && checkins.length > 0) {
       lines.push("=== WELLNESS CHECKINS ===");
-      const headers = Object.keys(data.wellnessCheckins[0]);
+      const headers = Object.keys(checkins[0]);
       lines.push(headers.join(","));
-      data.wellnessCheckins.forEach((checkin: any) => {
+      checkins.forEach((checkin: Record<string, unknown>) => {
         lines.push(
           headers.map((h) => JSON.stringify(checkin[h] || "")).join(","),
         );
@@ -1176,11 +1179,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }
 
     // Achievements
-    if (data.achievements && data.achievements.length > 0) {
+    const achievements = data["achievements"] as Record<string, unknown>[] | undefined;
+    if (achievements && achievements.length > 0) {
       lines.push("=== ACHIEVEMENTS ===");
-      const headers = Object.keys(data.achievements[0]);
+      const headers = Object.keys(achievements[0]);
       lines.push(headers.join(","));
-      data.achievements.forEach((achievement: any) => {
+      achievements.forEach((achievement: Record<string, unknown>) => {
         lines.push(
           headers.map((h) => JSON.stringify(achievement[h] || "")).join(","),
         );

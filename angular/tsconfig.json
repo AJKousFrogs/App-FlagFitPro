@@ -6,11 +6,8 @@
     "strict": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
-    // "noPropertyAccessFromIndexSignature": true, // Disabled - too strict for Chart.js types
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    // "noUncheckedIndexedAccess": true, // Disabled - causes many false positives with known-key access
-    // "exactOptionalPropertyTypes": true, // Disabled - too strict for current codebase
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
@@ -31,6 +28,8 @@
       "@assets/*": ["assets/*"]
     }
   },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "e2e/**/*", "**/*.spec.ts", "**/*.test.ts"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

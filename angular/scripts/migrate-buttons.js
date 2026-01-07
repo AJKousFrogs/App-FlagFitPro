@@ -12,10 +12,9 @@
  *   node scripts/migrate-buttons.js src/app/features/chat  # Specific directory
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join, relative } from "path";
+import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import { dirname, join, relative } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -165,7 +164,7 @@ function migrateFile(filePath, dryRun = false) {
     }
 
     if (routerLink) {
-      newAttrs.push(`routerLink="${routerLink.replace(/[\[\]']/g, "")}"`);
+      newAttrs.push(`routerLink="${routerLink.replace(/[['\]]/g, "")}"`);
     }
 
     if (loading) {

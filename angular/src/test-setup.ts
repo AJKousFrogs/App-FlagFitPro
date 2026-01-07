@@ -5,7 +5,7 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
-import { afterEach, beforeAll, beforeEach, vi } from "vitest";
+import { afterEach, beforeAll, vi } from "vitest";
 
 // Jasmine compatibility shim for tests that use jasmine.createSpyObj
 (globalThis as unknown as { jasmine: unknown }).jasmine = {
@@ -16,7 +16,7 @@ import { afterEach, beforeAll, beforeEach, vi } from "vitest";
     });
     return obj;
   },
-  createSpy: (name?: string) => vi.fn(),
+  createSpy: (_name?: string) => vi.fn(),
   stringContaining: (expected: string) => ({
     asymmetricMatch: (actual: string) => actual.includes(expected),
     jasmineToString: () => `<jasmine.stringContaining("${expected}")>`,

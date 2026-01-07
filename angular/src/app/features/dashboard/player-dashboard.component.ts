@@ -77,7 +77,7 @@ interface QuickAction {
   description: string;
 }
 
-interface ScheduleItem {
+interface _ScheduleItem {
   id: string;
   time: string;
   title: string;
@@ -1912,7 +1912,8 @@ export class PlayerDashboardComponent {
     }>
   >([]);
 
-  // Performance chart
+  // Performance chart - uses Chart.js format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   performanceChartData = signal<any>(null);
 
   // Quick actions (order preserved from wireframe)
@@ -2075,6 +2076,7 @@ export class PlayerDashboardComponent {
   });
 
   // Continuity Events
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   continuityEvents = signal<any[]>([]);
 
   constructor() {
@@ -2147,7 +2149,9 @@ export class PlayerDashboardComponent {
         // Calculate training days logged from actual sessions
         // TODO: Get this from training stats service or calculate from sessions
         // For now, set to null if not available
-        this.trainingDaysLogged.set((stats as any)?.trainingDaysLogged ?? null);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const statsAny = stats as any;
+        this.trainingDaysLogged.set(statsAny?.trainingDaysLogged ?? null);
 
         // Load readiness score from wellness service
         this.loadReadinessScore();
@@ -2497,7 +2501,7 @@ export class PlayerDashboardComponent {
    */
   hasCompletedOnboarding(): boolean {
     const user = this.authService.getUser();
-    const metadata = (user?.user_metadata || {}) as any;
+    const metadata = (user?.user_metadata || {}) as { position?: string; onboarding_completed?: boolean };
     // Check if user has position set (primary onboarding requirement)
     return !!(metadata?.position || metadata?.onboarding_completed);
   }

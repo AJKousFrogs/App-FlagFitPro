@@ -859,8 +859,10 @@ export class CalendarCoachComponent implements OnInit {
 
       if (this.isEditing() && this.selectedEvent()) {
         // Update existing event
+        const selectedEventId = this.selectedEvent()?.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response: any = await firstValueFrom(
-          this.api.put(`/api/coach/calendar?id=${this.selectedEvent()!.id}`, eventData),
+          this.api.put(`/api/coach/calendar?id=${selectedEventId}`, eventData),
         );
         if (response?.success) {
           this.messageService.add({
@@ -872,6 +874,7 @@ export class CalendarCoachComponent implements OnInit {
         }
       } else {
         // Create new event
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response: any = await firstValueFrom(
           this.api.post("/api/coach/calendar", eventData),
         );
@@ -926,6 +929,7 @@ export class CalendarCoachComponent implements OnInit {
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await firstValueFrom(
         this.api.delete(`/api/coach/calendar?id=${event.id}`),
       );

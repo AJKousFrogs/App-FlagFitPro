@@ -1,18 +1,18 @@
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  HostListener,
-  QueryList,
-  ViewChildren,
-  inject,
-  signal,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    HostListener,
+    QueryList,
+    ViewChildren,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { DialogModule } from "primeng/dialog";
 import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
 // import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBarModule } from "primeng/progressbar";
@@ -27,31 +27,31 @@ import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-  PlayerGameStats,
-  PlayerMultiSeasonStats,
-  PlayerSeasonStats,
-  PlayerStatisticsService,
+    PlayerGameStats,
+    PlayerMultiSeasonStats,
+    PlayerSeasonStats,
+    PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
-import { TrainingDataService } from "../../core/services/training-data.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-  ENHANCED_BAR_CHART_OPTIONS,
-  ENHANCED_DOUGHNUT_CHART_OPTIONS,
-  ENHANCED_LINE_CHART_OPTIONS,
-  ENHANCED_RADAR_CHART_OPTIONS,
-  exportChartAsPNG,
-  resetChartZoom,
-  updateChartFontSizes,
+    ENHANCED_BAR_CHART_OPTIONS,
+    ENHANCED_DOUGHNUT_CHART_OPTIONS,
+    ENHANCED_LINE_CHART_OPTIONS,
+    ENHANCED_RADAR_CHART_OPTIONS,
+    exportChartAsPNG,
+    resetChartZoom,
+    updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 interface Metric {
   icon: string;
@@ -1065,11 +1065,11 @@ export class AnalyticsComponent implements AfterViewInit {
 
   metrics = signal<Metric[]>([]);
   developmentGoals = signal<DevelopmentGoal[]>([]);
-  performanceChartData = signal<any>(null);
-  chemistryChartData = signal<any>(null);
-  distributionChartData = signal<any>(null);
-  positionChartData = signal<any>(null);
-  speedChartData = signal<any>(null);
+  performanceChartData = signal<Record<string, unknown> | null>(null);
+  chemistryChartData = signal<Record<string, unknown> | null>(null);
+  distributionChartData = signal<Record<string, unknown> | null>(null);
+  positionChartData = signal<Record<string, unknown> | null>(null);
+  speedChartData = signal<Record<string, unknown> | null>(null);
 
   // Player statistics
   playerGameStats = signal<PlayerGameStats[]>([]);
@@ -1077,7 +1077,9 @@ export class AnalyticsComponent implements AfterViewInit {
   playerMultiSeasonStats = signal<PlayerMultiSeasonStats | null>(null);
 
   // Training statistics
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trainingStats = signal<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   acwrData = signal<any>(null);
 
   // Gap Analysis data
@@ -1170,12 +1172,10 @@ export class AnalyticsComponent implements AfterViewInit {
 
   @HostListener("window:resize")
   onWindowResize(): void {
-    // Update font sizes for all charts on resize
     this.chartInstances.forEach((chart) => {
-      const chartInstance = (chart as any).chart;
-      if (chartInstance) {
-        updateChartFontSizes(chartInstance);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const instance = (chart as any).chart;
+      if (instance) updateChartFontSizes(instance);
     });
   }
 
@@ -1597,47 +1597,38 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   // Chart action methods
-  exportChart(chartType: string): void {
-    this.logger.info(`Exporting ${chartType} chart as PNG`);
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getChartInstance(chartType: string): any {
     const chart = this.chartInstances.get(chartType);
-
     if (!chart) {
-      this.logger.error(`Chart instance not found for type: ${chartType}`);
-      return;
+      this.logger.error(`Chart instance not found: ${chartType}`);
+      return null;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (chart as any).chart || null;
+  }
+
+  exportChart(chartType: string): void {
+    const chartInstance = this.getChartInstance(chartType);
+    if (!chartInstance) return;
 
     try {
-      // Export chart as PNG image - access underlying Chart.js instance
-      const chartInstance = (chart as any).chart;
-      if (chartInstance) {
-        exportChartAsPNG(chartInstance, `${chartType}-analytics`);
-        this.logger.info(`Chart exported successfully: ${chartType}`);
-      }
+      exportChartAsPNG(chartInstance, `${chartType}-analytics`);
+      this.logger.info(`Chart exported: ${chartType}`);
     } catch (error) {
-      this.logger.error(`Failed to export chart: ${chartType}`, error);
+      this.logger.error(`Export failed: ${chartType}`, error);
     }
   }
 
   resetChartZoom(chartType: string): void {
-    this.logger.info(`Resetting zoom for ${chartType} chart`);
-
-    const chart = this.chartInstances.get(chartType);
-
-    if (!chart) {
-      this.logger.error(`Chart instance not found for type: ${chartType}`);
-      return;
-    }
+    const chartInstance = this.getChartInstance(chartType);
+    if (!chartInstance) return;
 
     try {
-      // Access underlying Chart.js instance
-      const chartInstance = (chart as any).chart;
-      if (chartInstance) {
-        resetChartZoom(chartInstance);
-        this.logger.info(`Zoom reset successfully: ${chartType}`);
-      }
+      resetChartZoom(chartInstance);
+      this.logger.info(`Zoom reset: ${chartType}`);
     } catch (error) {
-      this.logger.error(`Failed to reset zoom: ${chartType}`, error);
+      this.logger.error(`Reset failed: ${chartType}`, error);
     }
   }
 

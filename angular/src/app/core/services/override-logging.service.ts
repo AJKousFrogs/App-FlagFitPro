@@ -4,7 +4,7 @@
  * Logs all coach overrides of AI recommendations for transparency and accountability
  */
 
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { AuthService } from "./auth.service";

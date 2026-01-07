@@ -316,7 +316,7 @@ export class WorkoutCalendarComponent implements OnInit {
     isCurrentMonth: boolean,
   ): WorkoutDay {
     const _dateStr = date.toISOString().split("T")[0];
-    const workoutsForDay = this.workouts.filter((_w) => {
+    const workoutsForDay = this.workouts().filter((_w: WorkoutEntry) => {
       // Assuming workouts have a date property or we match by some logic
       return true; // Placeholder - would filter by actual date
     });

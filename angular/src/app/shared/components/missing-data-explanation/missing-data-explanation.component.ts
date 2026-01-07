@@ -9,7 +9,6 @@ import { CommonModule, DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   input,
   inject,
 } from "@angular/core";
@@ -17,7 +16,7 @@ import { RouterModule } from "@angular/router";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { MissingDataDetectionService, MissingDataStatus } from "../../../core/services/missing-data-detection.service";
+import { MissingDataStatus } from "../../../core/services/missing-data-detection.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({

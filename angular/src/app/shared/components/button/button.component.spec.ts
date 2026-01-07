@@ -7,13 +7,7 @@
  * @author FlagFit Pro Team
  */
 
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from "@angular/core/testing";
-import { By } from "@angular/platform-browser";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import { ButtonComponent } from "./button.component";
@@ -170,12 +164,13 @@ describe("ButtonComponent", () => {
       const content = button.querySelector(".btn-content");
 
       // Icon should come before content in DOM
-      const iconIndex = Array.from(button.children).indexOf(
+      const _iconIndex = Array.from(button.children).indexOf(
         icon.parentElement || icon,
       );
-      const contentIndex = Array.from(button.children).indexOf(content);
+      const _contentIndex = Array.from(button.children).indexOf(content);
 
       // This is a simplified check - actual position depends on DOM structure
+      // _iconIndex and _contentIndex available for future position verification
       expect(icon).toBeTruthy();
     });
 

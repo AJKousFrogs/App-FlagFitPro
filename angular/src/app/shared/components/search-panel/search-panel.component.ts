@@ -21,7 +21,6 @@ import {
   OnDestroy,
   signal,
   ViewChild,
-  ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";

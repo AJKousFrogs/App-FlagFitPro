@@ -4,11 +4,6 @@ import {
   output,
   computed,
   ChangeDetectionStrategy,
-  signal,
-  effect,
-  ElementRef,
-  inject,
-  afterNextRender,
   model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";

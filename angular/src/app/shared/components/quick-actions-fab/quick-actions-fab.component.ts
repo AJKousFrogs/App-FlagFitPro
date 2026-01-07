@@ -7,7 +7,6 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  ViewEncapsulation,
 } from "@angular/core";
 
 import { NavigationEnd, Router } from "@angular/router";

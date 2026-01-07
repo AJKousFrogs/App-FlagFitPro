@@ -944,7 +944,7 @@ export class ReturnToPlayComponent implements OnInit {
       // Phase 2.3: Store previous phase days for celebration
       const previousPhaseDays = protocol.daysInCurrentStage;
       const newStage = protocol.currentStage + 1;
-      const currentStageData = PROTOCOL_STAGES[protocol.currentStage - 1];
+      const _currentStageData = PROTOCOL_STAGES[protocol.currentStage - 1]; // Available for stage comparison
       const nextStageData = PROTOCOL_STAGES[newStage - 1];
 
       // Update local state

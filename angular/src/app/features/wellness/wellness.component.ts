@@ -496,8 +496,11 @@ export class WellnessComponent {
   readonly isSubmitting = signal(false);
 
   readonly metrics = signal<WellnessMetric[]>([]);
-  readonly wellnessStats = signal<any[]>([]);
+  readonly wellnessStats = signal<Record<string, unknown>[]>([]);
+  // Chart data - uses Chart.js format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly sleepChartData = signal<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly recoveryChartData = signal<any>(null);
   readonly wellnessAlerts = signal<WellnessAlert[]>([]);
 
@@ -773,7 +776,7 @@ export class WellnessComponent {
 
     this.trainingService
       .submitWellness(wellnessData)
-      .then((response: any) => {
+      .then((response: { success: boolean; error?: string }) => {
         this.isSubmitting.set(false);
         if (response.success) {
           this.toastService.success("Wellness check-in saved! 💪");
@@ -802,11 +805,11 @@ export class WellnessComponent {
         
         // Check if we should queue this action for offline sync
         if (this.offlineQueue.shouldQueue(err)) {
-          const actionId = this.offlineQueue.queueAction(
+          const _actionId = this.offlineQueue.queueAction(
             "wellness_checkin",
             wellnessData,
             "high"
-          );
+          ); // Action ID available for tracking
           this.toastService.info(
             "You're offline. Check-in queued for sync when connection is restored."
           );
@@ -836,6 +839,7 @@ export class WellnessComponent {
   /**
    * Generate wellness alerts based on current data
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateWellnessAlerts(data: any[]): void {
     const alerts: WellnessAlert[] = [];
 

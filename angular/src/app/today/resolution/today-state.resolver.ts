@@ -169,7 +169,7 @@ export interface TodayViewModel {
  */
 export function resolveTodayState(
   protocolJson: ProtocolJson | null,
-  nowLocal: Date = new Date()
+  _nowLocal: Date = new Date()
 ): TodayViewModel {
   // Handle null/undefined protocol
   if (!protocolJson) {

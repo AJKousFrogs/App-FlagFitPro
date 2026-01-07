@@ -519,7 +519,7 @@ export class DepthChartComponent implements OnInit {
     const chart = this.activeChart();
     if (!chart || !this.isCoach()) return;
 
-    const newDepthOrder = group.players.length + 1;
+    const _newDepthOrder = group.players.length + 1; // Available for future position ordering
 
     this.depthChartService
       .addPosition(chart.id, group.position, group.abbreviation)

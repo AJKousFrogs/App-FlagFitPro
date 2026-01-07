@@ -17,7 +17,7 @@ import {} from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -229,6 +229,7 @@ export class WorkoutComponent implements OnInit {
       }
 
       if (workoutLogs && workoutLogs.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const workouts: Workout[] = workoutLogs.map((log: any) => {
           // Parse exercises from training session if available
           let exercises: WorkoutExercise[] = [];
@@ -240,16 +241,16 @@ export class WorkoutComponent implements OnInit {
                   : log.training_sessions.exercises;
 
               exercises = (parsedExercises || []).map(
-                (ex: any, idx: number) => ({
-                  id: ex.id || `${log.id}-${idx}`,
-                  name: ex.name || ex.exercise_name || "Exercise",
-                  sets: ex.sets || 3,
-                  reps: ex.reps || 10,
-                  weight: ex.weight,
+                (ex: Record<string, unknown>, idx: number) => ({
+                  id: (ex["id"] as string) || `${log.id}-${idx}`,
+                  name: (ex["name"] as string) || (ex["exercise_name"] as string) || "Exercise",
+                  sets: (ex["sets"] as number) || 3,
+                  reps: (ex["reps"] as number) || 10,
+                  weight: ex["weight"] as number | undefined,
                   completed: true,
                 }),
               );
-            } catch (e) {
+            } catch (_e) {
               this.logger.debug("[Workout] Could not parse exercises");
             }
           }
@@ -360,7 +361,8 @@ export class WorkoutComponent implements OnInit {
       return;
     }
 
-    const workout = this.activeWorkout()!;
+    const workout = this.activeWorkout();
+    if (!workout) return;
 
     try {
       // Save as workout log
@@ -392,7 +394,9 @@ export class WorkoutComponent implements OnInit {
       return;
     }
 
-    const workout = { ...this.activeWorkout()!, completed: true };
+    const activeWorkout = this.activeWorkout();
+    if (!activeWorkout) return;
+    const workout = { ...activeWorkout, completed: true };
 
     try {
       // Save completed workout to database

@@ -306,7 +306,7 @@ export class UnifiedTrainingService {
     const weekly = this._weeklySchedule();
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const _tomorrowStr = tomorrow.toISOString().split("T")[0]; // Reserved for future API calls
     const tomorrowDayOfWeek = tomorrow.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
     // Find tomorrow in weekly schedule (convert Sunday=0 to Monday=0 format)

@@ -312,7 +312,7 @@ export class AcwrAlertsService {
                 coachEmail = profile.email || null;
                 coachName = profile.full_name || coachName;
               }
-            } catch (profileError) {
+            } catch (_profileError) {
               // Profiles table might not exist or have different schema
               this.logger.debug(
                 `[ACWR Alert] Could not fetch profile for coach ${coachUserId}, will skip email`,

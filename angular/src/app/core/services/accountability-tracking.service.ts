@@ -8,7 +8,7 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { OwnershipTransitionService, OwnershipTransition } from "./ownership-transition.service";
+import { OwnershipTransitionService } from "./ownership-transition.service";
 
 export interface AccountabilityItem {
   id: string;
@@ -119,7 +119,7 @@ export class AccountabilityTrackingService {
   /**
    * Mark item as in progress
    */
-  async markInProgress(itemId: string, acknowledgedBy: string): Promise<boolean> {
+  async markInProgress(itemId: string, _acknowledgedBy: string): Promise<boolean> {
     return this.updateItemStatus(itemId, "in_progress");
   }
 

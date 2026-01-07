@@ -7,13 +7,15 @@
  * Pattern: View Model = Signals (state) + RxJS (data fetching)
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { BaseViewModel } from "./base.view-model";
+import { Injectable, computed, inject, signal } from "@angular/core";
 import {
-  DashboardDataService,
-  DashboardStats,
-  DashboardData,
+    ActivityItem,
+    DashboardData,
+    DashboardDataService,
+    DashboardStats,
+    UpcomingSession,
 } from "../services/data/dashboard-data.service";
+import { BaseViewModel } from "./base.view-model";
 
 @Injectable()
 export class DashboardViewModel extends BaseViewModel {
@@ -21,12 +23,8 @@ export class DashboardViewModel extends BaseViewModel {
 
   // State signals
   readonly stats = signal<DashboardStats | null>(null);
-  readonly recentActivity = signal<
-    { id: string; type: string; date: string; description: string }[]
-  >([]);
-  readonly upcomingSessions = signal<
-    { id: string; title: string; date: string; type: string }[]
-  >([]);
+  readonly recentActivity = signal<ActivityItem[]>([]);
+  readonly upcomingSessions = signal<UpcomingSession[]>([]);
   readonly performanceChartData = signal<{
     labels: string[];
     datasets: { label: string; data: number[] }[];

@@ -26,7 +26,6 @@ import {
   ComponentRef,
   OnDestroy,
   OnInit,
-  OnChanges,
   effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -34,7 +33,7 @@ import {
   SemanticMeaning,
   MeaningMetadata,
 } from "../../../core/semantics/semantic-meaning.types";
-import { SemanticRendererService, RenderDecision } from "../../../core/semantics/semantic-renderer.service";
+import { SemanticRendererService } from "../../../core/semantics/semantic-renderer.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 // Import all semantic components

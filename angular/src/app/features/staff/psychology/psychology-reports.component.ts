@@ -1,17 +1,17 @@
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
 // import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
@@ -24,11 +24,11 @@ import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
+import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { SharedInsightFeedService, SharedInsight } from "../../../core/services/shared-insight-feed.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
 interface MentalWellnessReport {

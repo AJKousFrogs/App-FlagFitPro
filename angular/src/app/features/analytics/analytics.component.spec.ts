@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { TestBed, ComponentFixture } from "@angular/core/testing";
 import { QueryList, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { AnalyticsComponent } from "./analytics.component";
 import { UIChart } from "primeng/chart";
 import { ApiService } from "../../core/services/api.service";
@@ -13,10 +13,11 @@ import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { MessageService } from "primeng/api";
-import {
-  exportChartAsPNG,
-  resetChartZoom,
-  updateChartFontSizes,
+// Chart utility imports for mocking (prefixed to indicate mock usage)
+import type {
+  exportChartAsPNG as _exportChartAsPNG,
+  resetChartZoom as _resetChartZoom,
+  updateChartFontSizes as _updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 
 // Mock the enhanced chart config module

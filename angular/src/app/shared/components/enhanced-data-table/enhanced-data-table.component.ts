@@ -9,7 +9,6 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
-  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -20,7 +19,6 @@ import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { MenuModule } from "primeng/menu";
-import { MenuItem } from "primeng/api";
 
 /**
  * Generic table row type with selection support
@@ -473,7 +471,7 @@ export class EnhancedDataTableComponent {
     }
   }
 
-  onRowSelect(row: TableRow): void {
+  onRowSelect(_row: TableRow): void {
     const selected = this.data().filter((r) => r._selected);
     this.selectedRows.set(selected);
     this.selectAll.set(selected.length === this.data().length);
@@ -506,7 +504,7 @@ export class EnhancedDataTableComponent {
   }
 
   // Inline editing
-  startEdit(row: TableRow, field: string, event: Event): void {
+  startEdit(row: TableRow, field: string, _event: Event): void {
     const col = this.columns().find((c) => c.field === field);
     if (!col?.editable) return;
 
@@ -560,7 +558,10 @@ export class EnhancedDataTableComponent {
 
   // Actions
   hasActions(): boolean {
-    return this.onEdit.observed || this.onDelete.observed;
+    // Since outputs are always available, we check if handlers are subscribed
+    // In Angular's output() API, there's no direct way to check subscribers
+    // Instead, we'll return true if the table is meant to show actions
+    return true;
   }
 
   editRow(row: TableRow): void {

@@ -622,10 +622,13 @@ export class PerformanceTrackingComponent {
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   readonly metrics = signal<PerformanceMetric[]>([]);
-  readonly performanceStats = signal<any[]>([]);
+  readonly performanceStats = signal<Record<string, unknown>[]>([]);
+  // Chart data - uses Chart.js format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly performanceChartData = signal<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly speedChartData = signal<any>(null);
-  readonly performanceHistory = signal<any[]>([]);
+  readonly performanceHistory = signal<Record<string, unknown>[]>([]);
   readonly positionBenchmarks = signal<PositionBenchmark[]>([]);
   readonly gapAnalysis = signal<GapAnalysis[]>([]);
   readonly selectedPosition = signal<string>("WR");
@@ -780,7 +783,7 @@ export class PerformanceTrackingComponent {
     this.hasPageError.set(false);
   }
 
-  onPositionChange(event: any): void {
+  onPositionChange(event: { value: string }): void {
     this.selectedPosition.set(event.value);
     this.updatePositionBenchmarks();
   }

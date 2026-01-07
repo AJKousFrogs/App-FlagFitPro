@@ -14,8 +14,8 @@
  * @version 1.0.0 - Angular 21 Signal Forms
  */
 
-import { signal, computed, WritableSignal, untracked } from "@angular/core";
 import type { Signal } from "@angular/core";
+import { computed, signal, untracked, WritableSignal } from "@angular/core";
 
 // ============================================================================
 // Signal Form Types
@@ -304,7 +304,7 @@ export const SignalValidators = {
 // Form Submission Helper
 // ============================================================================
 
-export interface SubmitOptions<T, R> {
+export interface SubmitOptions<T extends Record<string, unknown>, R> {
   form: SignalFormGroup<T>;
   onSubmit: (data: T) => Promise<R>;
   onSuccess?: (result: R) => void;

@@ -4,7 +4,6 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  ViewEncapsulation,
   inject,
   signal,
 } from "@angular/core";

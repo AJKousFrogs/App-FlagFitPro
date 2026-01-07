@@ -4,7 +4,7 @@
  * Helper functions and formatters for the video curation feature.
  */
 
-import { TrainingFocus, VideoStatus } from "./video-curation.models";
+import { TrainingFocus } from "./video-curation.models";
 
 /**
  * Format training focus for display

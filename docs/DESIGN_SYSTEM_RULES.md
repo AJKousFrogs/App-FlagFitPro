@@ -10,7 +10,7 @@
 > - **Legacy files** (existing before enforcement date): Tolerated (warnings only)
 > - **Changed files** (modified after enforcement date): Strict enforcement (errors block merge)
 > 
-> See [Design System Enforcement](./DESIGN_SYSTEM_ENFORCEMENT.md) for details.
+> Enforcement is automated via **Stylelint + code review**.
 
 ---
 

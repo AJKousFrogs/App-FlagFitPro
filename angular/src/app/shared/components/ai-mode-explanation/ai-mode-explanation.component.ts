@@ -10,7 +10,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   input,
-  computed,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";

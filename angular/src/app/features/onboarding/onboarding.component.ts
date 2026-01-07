@@ -24,7 +24,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
-import { Subject, debounceTime } from "rxjs";
+import { Subject, Subscription, debounceTime } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
@@ -1537,7 +1537,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Auto-save subject
   private autoSaveSubject = new Subject<void>();
-  private autoSaveSubscription: any;
+  private autoSaveSubscription: Subscription | null = null;
   private readonly STORAGE_KEY = "flagfit_onboarding_draft";
 
   // Team options - loaded from database with fallback
@@ -2580,7 +2580,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   /**
    * Debug method to track checkbox changes
    */
-  onConsentChange(consentType: string, event: any): void {
+  onConsentChange(consentType: string, event: { checked: boolean }): void {
     this.logger.debug(`Consent ${consentType} changed`, { checked: event.checked });
     
     // Manually update the value to ensure it's set
@@ -2609,7 +2609,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    * Navigate to a specific step when user clicks on a step number
    * Only allows navigation to completed steps or the next step
    */
-  goToStep(event: any): void {
+  goToStep(event: { index: number }): void {
     const targetIndex = event.index;
     const currentIndex = this.currentStep();
 
@@ -2678,7 +2678,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   /**
    * Handle team selection - allows free text entry
    */
-  onTeamSelect(event: any): void {
+  onTeamSelect(event: string | { value: string } | null): void {
     // If user selected from dropdown, use the value
     // If user typed free text, use the typed value directly
     if (event && typeof event === "object" && event.value) {
@@ -2858,7 +2858,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       }
 
       // Save training preferences (schedule, mobility, recovery)
-      await this.saveTrainingPreferences(user.email!);
+      await this.saveTrainingPreferences(user.email ?? "");
 
       // Save current injuries to wellness_checkins table
       await this.saveCurrentInjuries(user.id);
@@ -2961,7 +2961,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           JSON.stringify(preferences),
         );
       }
-    } catch (e) {
+    } catch (_e) {
       const preferences = {
         scheduleType: this.onboardingData.scheduleType,
         practicesPerWeek: this.onboardingData.practicesPerWeek,
