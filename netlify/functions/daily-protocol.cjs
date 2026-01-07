@@ -584,6 +584,8 @@ async function getProtocol(supabase, userId, params, headers) {
 
   // Resolve team activity for this athlete-day (PROMPT 2.10)
   let teamActivity = null;
+  let sessionResolution = null;
+  
   try {
     const teamActivityResult = await resolveTeamActivityForAthleteDay(
       supabase,
@@ -603,6 +605,27 @@ async function getProtocol(supabase, userId, params, headers) {
         updatedAtLocal: teamActivityResult.activity.updatedAt,
         note: teamActivityResult.activity.note,
       };
+      
+      // Build sessionResolution based on team activity (PROMPT 2.12)
+      if (teamActivity.type === 'practice') {
+        sessionResolution = {
+          success: true,
+          status: 'resolved',
+          override: {
+            type: 'flag_practice',
+            reason: `Team practice scheduled at ${teamActivity.startTimeLocal || '18:00'}`,
+          },
+        };
+      } else if (teamActivity.type === 'film_room') {
+        sessionResolution = {
+          success: true,
+          status: 'resolved',
+          override: {
+            type: 'film_room',
+            reason: `Film room scheduled at ${teamActivity.startTimeLocal || '10:00'}`,
+          },
+        };
+      }
     }
   } catch (teamActivityError) {
     console.warn("[daily-protocol] Team activity resolution failed:", teamActivityError);
@@ -637,6 +660,7 @@ async function getProtocol(supabase, userId, params, headers) {
     protocolExercises,
     coachName,
     teamActivity, // Pass team activity to transformer
+    sessionResolution, // Pass session resolution for PROMPT 2.12
   );
 
   return {
@@ -1936,7 +1960,7 @@ async function logSession(supabase, userId, payload, headers) {
 /**
  * Transform protocol data for frontend
  */
-function transformProtocolResponse(protocol, exercises, coachName = null, teamActivity = null) {
+function transformProtocolResponse(protocol, exercises, coachName = null, teamActivity = null, sessionResolution = null) {
   // Group exercises by block type
   const blocks = {
     morning_mobility: [],
@@ -2038,6 +2062,10 @@ function transformProtocolResponse(protocol, exercises, coachName = null, teamAc
     } : null,
     // Team activity (PROMPT 2.10)
     teamActivity: teamActivity,
+    // Session resolution (PROMPT 2.12 - Authority SOT)
+    sessionResolution: sessionResolution,
+    // Confidence metadata (Truthfulness Contract)
+    confidenceMetadata: protocol.confidence_metadata || null,
   };
 }
 
